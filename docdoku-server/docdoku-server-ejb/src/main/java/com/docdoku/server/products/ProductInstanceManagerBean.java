@@ -930,35 +930,6 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public PathToPathLink createPathToPathLink(String workspaceId, String configurationItemId, String serialNumber, String type, String pathFrom, String pathTo) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathLinkAlreadyExistsException, CreationException, PathToPathCyclicException {
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        Locale locale = new Locale(user.getLanguage());
-        // Load the product instance
-        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
-        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
-        ProductInstanceIteration lastIteration = prodInstM.getLastIteration();
-
-        checkProductInstanceWriteAccess(workspaceId,prodInstM,user);
-
-        PathToPathLink pathToPathLink = new PathToPathLink(type, pathFrom, pathTo);
-        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
-        PathToPathLink samePathToPathLink = pathToPathLinkDAO.getSamePathToPathLink(lastIteration, pathToPathLink);
-
-        if(samePathToPathLink != null){
-            throw new PathToPathLinkAlreadyExistsException(locale,pathToPathLink);
-        }
-
-        pathToPathLinkDAO.createPathToPathLink(pathToPathLink);
-
-        lastIteration.addPathToPathLink(pathToPathLink);
-
-        checkCyclicPathToPathLink(lastIteration, pathToPathLink, user, new ArrayList<>());
-
-        return pathToPathLink;
-    }
-
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    @Override
     public PathToPathLink getPathToPathLink(String workspaceId, String configurationItemId, String serialNumber, int pathToPathLinkId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathLinkNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
@@ -969,24 +940,6 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         checkProductInstanceReadAccess(workspaceId, prodInstM, user);
         PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
         return pathToPathLinkDAO.loadPathToPathLink(pathToPathLinkId);
-    }
-
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    @Override
-    public void deletePathToPathLink(String workspaceId, String configurationItemId, String serialNumber, int pathToPathLinkId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathLinkNotFoundException {
-
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        Locale locale = new Locale(user.getLanguage());
-        // Load the product instance
-        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
-        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
-
-        checkProductInstanceWriteAccess(workspaceId,prodInstM,user);
-        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
-        PathToPathLink pathToPathLink = pathToPathLinkDAO.loadPathToPathLink(pathToPathLinkId);
-        prodInstM.getLastIteration().removePathToPathLink(pathToPathLink);
-        pathToPathLinkDAO.removePathToPathLink(pathToPathLink);
-
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -1026,21 +979,6 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
         checkProductInstanceReadAccess(workspaceId, prodInstM, user);
         return new PathToPathLinkDAO(locale, em).findRootPathToPathLinks(prodInstM.getLastIteration(), type);
-    }
-
-    private void checkCyclicPathToPathLink (ProductInstanceIteration productInstanceIteration, PathToPathLink startLink, User user, List<PathToPathLink> visitedLinks) throws PathToPathCyclicException {
-        Locale locale = new Locale(user.getLanguage());
-        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
-
-        PathToPathLink nextPathToPathLink = pathToPathLinkDAO.getNextPathToPathLink(productInstanceIteration, startLink);
-        if(nextPathToPathLink != null){
-            if(visitedLinks.contains(nextPathToPathLink)){
-                throw new PathToPathCyclicException(locale);
-            }
-            visitedLinks.add(nextPathToPathLink);
-            checkCyclicPathToPathLink(productInstanceIteration, startLink, user, visitedLinks);
-        }
-
     }
 
     private User checkProductInstanceReadAccess(String workspaceId, ProductInstanceMaster prodInstM, User user) throws AccessRightException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {

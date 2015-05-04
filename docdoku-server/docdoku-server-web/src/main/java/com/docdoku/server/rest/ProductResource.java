@@ -155,15 +155,26 @@ public class ProductResource {
     @GET
     @Path("{ciId}/filter")
     @Produces(MediaType.APPLICATION_JSON)
-    public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path, @QueryParam("depth") Integer depth)
+    public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path, @QueryParam("depth") Integer depth, @QueryParam("linkType") String linkType)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter filter = productService.getPSFilter(ciKey, configSpecType);
-        List<PartLink> decodedPath = productService.decodePath(ciKey, path);
-        Component component = productService.filterProductStructure(ciKey,filter,decodedPath,depth);
+
+        Component component = null;
         String serialNumber = null;
-        if(configSpecType != null && configSpecType.startsWith("pi-")){
+
+        if(linkType == null){
+            PSFilter filter = productService.getPSFilter(ciKey, configSpecType);
+            List<PartLink> decodedPath = productService.decodePath(ciKey, path);
+            component = productService.filterProductStructure(ciKey,filter,decodedPath,depth);
+        }
+
+        if(component == null && configSpecType != null && configSpecType.startsWith("pi-")){
             serialNumber = configSpecType.substring(3);
+            component = productService.filterProductStructureOnLinkType(ciKey, serialNumber, path, linkType);
+        }
+
+        if(component == null){
+            throw new IllegalArgumentException();
         }
         return createComponentDTO(component,workspaceId,ciId,serialNumber);
     }
@@ -418,6 +429,23 @@ public class ProductResource {
                 .header("Content-Disposition", "attachment; filename=\""+ciId+"-"+configSpecType+"-export.zip\"")
                 .entity(fileExportEntity).build();
     }
+
+    @POST
+    @Path("{ciId}/path-to-path-links")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public PathToPathLinkDTO createPathToPathLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, PathToPathLinkDTO pathToPathLinkDTO) throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathCyclicException, ConfigurationItemNotFoundException {
+        PathToPathLink pathToPathLink = productService.createPathToPathLink(workspaceId, configurationItemId, pathToPathLinkDTO.getType(), pathToPathLinkDTO.getSourcePath(), pathToPathLinkDTO.getTargetPath());
+        return mapper.map(pathToPathLink,PathToPathLinkDTO.class);
+    }
+
+    @DELETE
+    @Path("{ciId}/path-to-path-links/{pathToPathLinkId}")
+    public Response deletePathToPathLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathToPathLinkId") int pathToPathLinkId) throws PathToPathLinkNotFoundException, UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, ConfigurationItemNotFoundException {
+        productService.deletePathToPathLink(workspaceId, configurationItemId, pathToPathLinkId);
+        return Response.ok().build();
+    }
+
 
     /**
      * Because some AS (like Glassfish) forbids the use of CacheControl

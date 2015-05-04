@@ -24,6 +24,8 @@ import com.docdoku.core.common.Workspace;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class represents an entire product or some portion
@@ -78,6 +80,17 @@ public class ConfigurationItem implements Serializable {
             @JoinColumn(name = "AUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
     private User author;
+
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "CONFIGURATIONITEM_P2PLINK",
+            inverseJoinColumns = {
+                    @JoinColumn(name = "PATHTOPATHLINK_ID", referencedColumnName = "ID")
+            },
+            joinColumns = {
+                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="ID"),
+                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+            })
+    private List<PathToPathLink> pathToPathLinks =new ArrayList<>();
 
     public ConfigurationItem() {
     }
@@ -136,6 +149,22 @@ public class ConfigurationItem implements Serializable {
 
     public void setAuthor(User author) {
         this.author = author;
+    }
+
+    public List<PathToPathLink> getPathToPathLinks() {
+        return pathToPathLinks;
+    }
+
+    public void setPathToPathLinks(List<PathToPathLink> pathToPathLinks) {
+        this.pathToPathLinks = pathToPathLinks;
+    }
+
+    public void addPathToPathLink(PathToPathLink pathToPathLink) {
+        pathToPathLinks.add(pathToPathLink);
+    }
+
+    public void removePathToPathLink(PathToPathLink pathToPathLink) {
+        pathToPathLinks.remove(pathToPathLink);
     }
 
     @Override

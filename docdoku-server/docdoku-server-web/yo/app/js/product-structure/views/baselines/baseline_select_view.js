@@ -105,6 +105,7 @@ define([
 
         onTypeChanged:function(e){
             this.$selectConfSpec.show();
+            App.config.linkType = null;
 
             var selectedType = this.$selectConfSpec.val();
 
@@ -152,19 +153,23 @@ define([
 
         fetchPathToPathLinkTypes:function(){
             var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.$selectProdInstSpec.val().substr(3) + '/path-to-path-links-types';
+            var $select = this.$selectPathToPathLink;
+            $select.empty();
+            $select.append('<option value="">'+App.config.i18n.STRUCTURE+'</option>');
             $.getJSON(url).success(function(data){
-
+                data.map(function(link){
+                    $select.append('<option value="'+link.type+'">'+link.type+'</option>');
+                });
             });
         },
 
-        changePathToPathLink:function(){
-
+        changePathToPathLink:function(e){
+            App.config.linkType = e.target.value;
         },
 
         setDescription:function(desc){
             this.$('.description').text(desc);
         },
-
 
         refresh:function(){
             var selectedConfigSpecOption = this.$('option[value="'+App.config.configSpec+'"]');

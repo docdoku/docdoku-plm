@@ -4,6 +4,7 @@ import com.docdoku.core.configuration.ProductInstanceIteration;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.PathToPathLinkAlreadyExistsException;
 import com.docdoku.core.exceptions.PathToPathLinkNotFoundException;
+import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.PathToPathLink;
 
 import javax.persistence.EntityExistsException;
@@ -66,6 +67,19 @@ public class PathToPathLinkDAO {
                 .getResultList();
     }
 
+    public PathToPathLink getSamePathToPathLink(ConfigurationItem configurationItem, PathToPathLink pathToPathLink){
+        try {
+            return em.createNamedQuery("PathToPathLink.findSamePathToPathLinkInProduct", PathToPathLink.class)
+                    .setParameter("configurationItem", configurationItem)
+                    .setParameter("targetPath", pathToPathLink.getTargetPath())
+                    .setParameter("sourcePath", pathToPathLink.getSourcePath())
+                    .setParameter("type", pathToPathLink.getType())
+                    .getSingleResult();
+        }catch(NoResultException e){
+            return null;
+        }
+    }
+
     public PathToPathLink getSamePathToPathLink(ProductInstanceIteration productInstanceIteration, PathToPathLink pathToPathLink){
         try {
             return em.createNamedQuery("PathToPathLink.findSamePathToPathLinkInProductInstanceIteration", PathToPathLink.class)
@@ -79,7 +93,19 @@ public class PathToPathLinkDAO {
         }
     }
 
-    public PathToPathLink getNextPathToPathLink(ProductInstanceIteration productInstanceIteration, PathToPathLink pathToPathLink){
+    public PathToPathLink getNextPathToPathLinkInProduct(ConfigurationItem configurationItem, PathToPathLink pathToPathLink){
+        try {
+            return em.createNamedQuery("PathToPathLink.findNextPathToPathLinkInProduct", PathToPathLink.class)
+                    .setParameter("configurationItem", configurationItem)
+                    .setParameter("targetPath", pathToPathLink.getTargetPath())
+                    .setParameter("type", pathToPathLink.getType())
+                    .getSingleResult();
+        }catch(NoResultException e){
+            return null;
+        }
+    }
+
+    public PathToPathLink getNextPathToPathLinkInProductInstance(ProductInstanceIteration productInstanceIteration, PathToPathLink pathToPathLink){
         try {
             return em.createNamedQuery("PathToPathLink.findNextPathToPathLinkInProductInstanceIteration", PathToPathLink.class)
                     .setParameter("productInstanceIteration", productInstanceIteration)

@@ -75,6 +75,7 @@ import java.util.logging.Logger;
 @Local(IProductManagerLocal.class)
 @Stateless(name = "ProductManagerBean")
 @WebService(endpointInterface = "com.docdoku.core.services.IProductManagerWS")
+
 public class ProductManagerBean implements IProductManagerWS, IProductManagerLocal {
 
     @PersistenceContext
@@ -2257,6 +2258,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
+    public Component filterProductStructureOnLinkType(ConfigurationItemKey ciKey, String serialNumber, String path, String linkType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
+        // TODO
+        return null;
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
     public List<PartLink> decodePath(ConfigurationItemKey ciKey, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
@@ -2721,6 +2729,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         return rows;
     }
+
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public List<PartIteration> getInversePartsLink(DocumentIterationKey docKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, PartRevisionNotFoundException, DocumentIterationNotFoundException {
@@ -2743,7 +2752,63 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return iterations;
     }
 
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public PathToPathLink createPathToPathLink(String workspaceId, String configurationItemId, String type, String pathFrom, String pathTo) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PathToPathLinkAlreadyExistsException, CreationException, PathToPathCyclicException {
+        User user = userManager.checkWorkspaceWriteAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
 
+        // Load the product
+        ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(new ConfigurationItemKey(workspaceId,configurationItemId));
+
+        PathToPathLink pathToPathLink = new PathToPathLink(type, pathFrom, pathTo);
+        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
+        PathToPathLink samePathToPathLink = pathToPathLinkDAO.getSamePathToPathLink(ci, pathToPathLink);
+
+        if(samePathToPathLink != null){
+            throw new PathToPathLinkAlreadyExistsException(locale,pathToPathLink);
+        }
+
+        pathToPathLinkDAO.createPathToPathLink(pathToPathLink);
+
+        ci.addPathToPathLink(pathToPathLink);
+
+        checkCyclicPathToPathLink(ci, pathToPathLink, user, new ArrayList<>());
+
+        return pathToPathLink;
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public void deletePathToPathLink(String workspaceId, String configurationItemId, int pathToPathLinkId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PathToPathLinkNotFoundException {
+
+        User user = userManager.checkWorkspaceWriteAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+
+        // Load the product
+        ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(new ConfigurationItemKey(workspaceId, configurationItemId));
+
+        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
+        PathToPathLink pathToPathLink = pathToPathLinkDAO.loadPathToPathLink(pathToPathLinkId);
+        ci.removePathToPathLink(pathToPathLink);
+        pathToPathLinkDAO.removePathToPathLink(pathToPathLink);
+
+    }
+
+    private void checkCyclicPathToPathLink (ConfigurationItem ci, PathToPathLink startLink, User user, List<PathToPathLink> visitedLinks) throws PathToPathCyclicException {
+        Locale locale = new Locale(user.getLanguage());
+        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
+
+        PathToPathLink nextPathToPathLink = pathToPathLinkDAO.getNextPathToPathLinkInProduct(ci, startLink);
+        if(nextPathToPathLink != null){
+            if(visitedLinks.contains(nextPathToPathLink)){
+                throw new PathToPathCyclicException(locale);
+            }
+            visitedLinks.add(nextPathToPathLink);
+            checkCyclicPathToPathLink(ci, startLink, user, visitedLinks);
+        }
+
+    }
 
     private PSFilter getConfigSpecForBaseline(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
         return productBaselineManager.getBaselinePSFilter(baselineId);
