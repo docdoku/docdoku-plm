@@ -104,7 +104,7 @@ public class ProductInstancesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ProductInstanceMasterDTO createProductInstanceMaster(@PathParam("workspaceId") String workspaceId, ProductInstanceCreationDTO productInstanceCreationDTO)
-            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException, NotAllowedException {
+            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException, NotAllowedException, EntityConstraintException, UserNotActiveException {
 
         InstanceAttributeFactory factory = new InstanceAttributeFactory();
         ACLDTO acldto = productInstanceCreationDTO.getAcl();
@@ -319,7 +319,7 @@ public class ProductInstancesResource {
     @Path("{serialNumber}/rebase")
     public Response rebaseProductInstance(@PathParam("workspaceId") String workspaceId,
                                           @PathParam("ciId") String configurationItemId,
-                                          @PathParam("serialNumber") String serialNumber, BaselineDTO baselineDTO) throws UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
+                                          @PathParam("serialNumber") String serialNumber, BaselineDTO baselineDTO) throws UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemNotFoundException, PathToPathLinkAlreadyExistsException, PartMasterNotFoundException, CreationException, EntityConstraintException {
 
         productInstanceService.rebaseProductInstance(workspaceId, serialNumber, new ConfigurationItemKey(workspaceId, configurationItemId), baselineDTO.getId());
         return Response.ok().build();

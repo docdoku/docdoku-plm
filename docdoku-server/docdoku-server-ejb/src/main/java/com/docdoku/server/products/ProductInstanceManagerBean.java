@@ -23,7 +23,9 @@ package com.docdoku.server.products;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.*;
-import com.docdoku.core.document.*;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentIterationKey;
+import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
@@ -31,9 +33,12 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.util.NamingConvention;
+import com.docdoku.core.util.Tools;
 import com.docdoku.server.LogDocument;
+import com.docdoku.server.configuration.PSFilterVisitor;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.factory.ACLFactory;
 
@@ -58,6 +63,9 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
     private EntityManager em;
     @EJB
     private IUserManagerLocal userManager;
+
+    @EJB
+    private IProductManagerLocal productManager;
 
     @Resource
     private SessionContext ctx;
@@ -125,7 +133,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductInstanceMaster createProductInstance(String workspaceId, ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, Map<String, ACL.Permission> userEntries, Map<String, ACL.Permission> groupEntries, List<InstanceAttribute> attributes, DocumentIterationKey[] links, String[] documentLinkComments) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, BaselineNotFoundException, CreationException, ProductInstanceAlreadyExistsException, NotAllowedException {
+    public ProductInstanceMaster createProductInstance(String workspaceId, ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, Map<String, ACL.Permission> userEntries, Map<String, ACL.Permission> groupEntries, List<InstanceAttribute> attributes, DocumentIterationKey[] links, String[] documentLinkComments) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, BaselineNotFoundException, CreationException, ProductInstanceAlreadyExistsException, NotAllowedException, EntityConstraintException, UserNotActiveException, PathToPathLinkAlreadyExistsException, PartMasterNotFoundException, ProductInstanceMasterNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
         Locale userLocale = new Locale(user.getLanguage());
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocale, em);
@@ -162,14 +170,15 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
         productInstanceMasterDAO.createProductInstanceMaster(productInstanceMaster);
 
-
         for (BaselinedPart baselinedPart : productBaseline.getBaselinedParts().values()) {
             partCollection.addBaselinedPart(baselinedPart.getTargetPart());
         }
+
         productInstanceIteration.setPartCollection(partCollection);
 
         productInstanceIteration.setInstanceAttributes(attributes);
         DocumentLinkDAO linkDAO = new DocumentLinkDAO(userLocale, em);
+
         if (links != null) {
             ArrayList<DocumentIterationKey> linkKeys = new ArrayList<>(Arrays.asList(links));
             ArrayList<DocumentIterationKey> currentLinkKeys = new ArrayList<>();
@@ -190,6 +199,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             }
         }
 
+        copyPathToPathLinks(user,productInstanceIteration);
 
         return productInstanceMaster;
     }
@@ -246,7 +256,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductInstanceMaster rebaseProductInstance(String workspaceId, String serialNumber, ConfigurationItemKey configurationItemKey, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, BaselineNotFoundException, NotAllowedException {
+    public ProductInstanceMaster rebaseProductInstance(String workspaceId, String serialNumber, ConfigurationItemKey configurationItemKey, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, BaselineNotFoundException, NotAllowedException, ConfigurationItemNotFoundException, PathToPathLinkAlreadyExistsException, PartMasterNotFoundException, CreationException, EntityConstraintException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale userLocale = new Locale(user.getLanguage());
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocale, em);
@@ -289,11 +299,71 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             nextIteration.setSubstituteLinks(new HashSet<>(baseline.getSubstituteLinks()));
             nextIteration.setOptionalUsageLinks(new HashSet<>(baseline.getOptionalUsageLinks()));
 
+            copyPathToPathLinks(user,lastIteration);
+
         } else {
             throw new NotAllowedException(userLocale, "NotAllowedException53");
         }
 
         return productInstanceMaster;
+
+    }
+
+    private void copyPathToPathLinks(User user, ProductInstanceIteration productInstanceIteration) throws PathToPathLinkAlreadyExistsException, CreationException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
+
+        ConfigurationItem configurationItem = productInstanceIteration.getBasedOn().getConfigurationItem();
+        PartLink rootPartUsageLink = productManager.getRootPartUsageLink(configurationItem.getKey());
+        PSFilter filter = productManager.getPSFilter(configurationItem.getKey(), "pi-" + productInstanceIteration.getSerialNumber());
+
+        List<PartLink> startPath = new ArrayList<>();
+        startPath.add(rootPartUsageLink);
+
+        List<String> visitedPaths = new ArrayList<>();
+
+        // Reset the list
+        productInstanceIteration.setPathToPathLinks(new ArrayList<>());
+
+        new PSFilterVisitor(em, user, filter, null, startPath, -1) {
+            @Override
+            public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations)  throws NotAllowedException{
+            }
+            @Override
+            public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
+            }
+
+            @Override
+            public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
+
+            }
+
+            @Override
+            public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+            }
+
+            @Override
+            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+
+            }
+
+            @Override
+            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+                String encodedPath = Tools.getPathAsString(path);
+                visitedPaths.add(encodedPath);
+            }
+
+            @Override
+            public void onUnresolvedVersion(PartMaster partMaster) {
+
+            }
+        };
+
+        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(new Locale(user.getLanguage()), em);
+        List<PathToPathLink> links = pathToPathLinkDAO.getPathToPathLinkFromPathList(configurationItem,visitedPaths);
+        for(PathToPathLink link : links){
+            PathToPathLink clone = link.clone();
+            pathToPathLinkDAO.createPathToPathLink(clone);
+            productInstanceIteration.addPathToPathLink(clone);
+        }
 
     }
 

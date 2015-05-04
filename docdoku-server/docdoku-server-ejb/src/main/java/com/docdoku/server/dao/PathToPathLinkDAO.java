@@ -146,4 +146,10 @@ public class PathToPathLinkDAO {
                 .getResultList();
     }
 
+    public List<PathToPathLink> getPathToPathLinkFromPathList(ConfigurationItem configurationItem, List<String> paths) {
+        return em.createNamedQuery("PathToPathLink.findPathToPathLinkByPathListInProduct", PathToPathLink.class)
+                .setParameter("configurationItem", configurationItem)
+                .setParameter("paths",paths)
+                .getResultList();
+    }
 }

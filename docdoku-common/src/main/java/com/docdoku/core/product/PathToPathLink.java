@@ -41,9 +41,10 @@ import java.io.Serializable;
         @NamedQuery(name="PathToPathLink.findSamePathToPathLinkInProduct", query="SELECT DISTINCT p FROM PathToPathLink p JOIN ConfigurationItem ci WHERE p member of ci.pathToPathLinks AND ci = :configurationItem AND p.sourcePath = :sourcePath AND p.targetPath = :targetPath AND p.type = :type"),
         @NamedQuery(name="PathToPathLink.findSamePathToPathLinkInProductInstanceIteration", query="SELECT DISTINCT p FROM PathToPathLink p JOIN ProductInstanceIteration pi WHERE p member of pi.pathToPathLinks AND pi = :productInstanceIteration AND p.sourcePath = :sourcePath AND p.targetPath = :targetPath AND p.type = :type"),
         @NamedQuery(name="PathToPathLink.findPathToPathLinksForGivenProductInstanceIterationAndType", query="SELECT DISTINCT p FROM PathToPathLink p JOIN ProductInstanceIteration pi WHERE p member of pi.pathToPathLinks AND pi = :productInstanceIteration AND p.type = :type"),
-        @NamedQuery(name="PathToPathLink.findRootPathToPathLinkForGivenProductInstanceIterationAndType", query="SELECT DISTINCT p FROM PathToPathLink p JOIN ProductInstanceIteration pi WHERE p member of pi.pathToPathLinks AND p.type = :type AND pi = :productInstanceIteration AND p.sourcePath not in (SELECT _p.targetPath FROM PathToPathLink _p WHERE _p member of pi.pathToPathLinks AND _p.type = :type)")
+        @NamedQuery(name="PathToPathLink.findRootPathToPathLinkForGivenProductInstanceIterationAndType", query="SELECT DISTINCT p FROM PathToPathLink p JOIN ProductInstanceIteration pi WHERE p member of pi.pathToPathLinks AND p.type = :type AND pi = :productInstanceIteration AND p.sourcePath not in (SELECT _p.targetPath FROM PathToPathLink _p WHERE _p member of pi.pathToPathLinks AND _p.type = :type)"),
+        @NamedQuery(name="PathToPathLink.findPathToPathLinkByPathListInProduct", query="SELECT DISTINCT p FROM PathToPathLink p JOIN ConfigurationItem ci WHERE p member of ci.pathToPathLinks AND ci = :configurationItem AND p.sourcePath in :paths AND p.targetPath in :paths")
 })
-public class PathToPathLink implements Serializable{
+public class PathToPathLink implements Serializable, Cloneable{
 
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Id
@@ -94,4 +95,16 @@ public class PathToPathLink implements Serializable{
     public void setType(String type) {
         this.type = type;
     }
+
+    @Override
+    public PathToPathLink clone(){
+        PathToPathLink clone;
+        try {
+            clone = (PathToPathLink) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError();
+        }
+        return clone;
+    }
+
 }
