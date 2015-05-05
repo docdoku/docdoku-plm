@@ -9,7 +9,7 @@ define([
     'common-objects/views/part/parts_management_view',
     'common-objects/views/part/modification_notification_group_list_view',
     'common-objects/views/linked/linked_documents',
-    'views/used_by/used_by_group_list_view',
+    'common-objects/views/part/used_by_group_list_view',
     'common-objects/views/alert',
     'common-objects/collections/linked/linked_document_collection',
     'common-objects/views/workflow/lifecycle',

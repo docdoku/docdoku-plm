@@ -2,7 +2,7 @@
 define([
     'backbone',
     'mustache',
-    'views/used_by/used_by_list_view',
+    'common-objects/views/part/used_by_list_view',
     'common-objects/models/product_instance',
     'common-objects/collections/product_instances'
 ], function (Backbone, Mustache, UsedByListView, ProductInstance, ProductInstancesCollection) {
