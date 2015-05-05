@@ -3,10 +3,10 @@ define([
     'backbone',
     'mustache',
     'collections/used_by_product_instance',
-    //'common-objects/collections/part_collection',
+    'collections/used_by_configuration_item',
     'views/used_by/used_by_list_item_view',
     'text!templates/used_by/used_by_list.html'
-], function (Backbone, Mustache, UsedByProductInstanceList, /*PartList, */UsedByListItemView, template) {
+], function (Backbone, Mustache, UsedByProductInstanceList, UsedByConfigurationItemList, UsedByListItemView, template) {
     'use strict';
     var UsedByListView = Backbone.View.extend({
 
@@ -18,21 +18,13 @@ define([
             this.linkedPartIterationId = this.options.linkedPartIterationId;
             this.linkedPart = this.options.linkedPart;
 
+            this.configurationItemsCollection = new UsedByConfigurationItemList();
+            this.configurationItemsCollection.setLinkedPart(this.linkedPart);
+            this.listenTo(this.configurationItemsCollection, 'reset', this.addConfigurationItemViews);
+
             this.productInstancesCollection = new UsedByProductInstanceList();
             this.productInstancesCollection.setLinkedPart(this.linkedPart);
-
             this.listenTo(this.productInstancesCollection, 'reset', this.addProductInstanceViews);
-
-            //var that = this;
-            //this.linkedDocument.getUsedByPartList(this.linkedDocumentIterationId, {
-            //    success: function (parts) {
-            //        that.partsCollection = new PartList(parts);
-            //        that.addPartViews();
-            //    },
-            //    error: function () {
-            //        console.log('error getting where used parts list');
-            //    }
-            //});
         },
 
         render: function () {
@@ -43,34 +35,35 @@ define([
             this.$el.html(Mustache.render(template, data));
             this.bindDomElements();
 
-            //this.usedByPartViews = [];
+            this.usedByConfigurationItemViews = [];
             this.usedByProductInstanceViews = [];
 
+            this.configurationItemsCollection.fetch({reset: true});
             this.productInstancesCollection.fetch({reset: true});
 
             return this;
         },
 
         bindDomElements: function () {
+            this.configurationItemsUL = this.$('#used-by-configuration-items');
             this.productInstancesUL = this.$('#used-by-product-instances');
-            this.partsUL = this.$('#used-by-parts');
         },
 
-        addPartViews: function () {
-            this.partsCollection.each(this.addPartView.bind(this));
-        },
-
-        addProductInstanceViews: function () {
-            this.productInstancesCollection.each(this.addProductInstanceView.bind(this));
-        },
-
-        addPartView: function (model) {
+        addConfigurationItemView: function (model) {
             var usedByView = new UsedByListItemView({
                 model: model
             }).render();
 
-            this.usedByPartViews.push(usedByView);
-            this.partsUL.append(usedByView.$el);
+            this.usedByConfigurationItemViews.push(usedByView);
+            this.configurationItemsUL.append(usedByView.$el);
+        },
+
+        addConfigurationItemViews: function () {
+            this.configurationItemsCollection.each(this.addConfigurationItemView.bind(this));
+        },
+
+        addProductInstanceViews: function () {
+            this.productInstancesCollection.each(this.addProductInstanceView.bind(this));
         },
 
         addProductInstanceView: function (model) {
