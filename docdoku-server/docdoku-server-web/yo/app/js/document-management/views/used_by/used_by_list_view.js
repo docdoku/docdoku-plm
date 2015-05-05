@@ -31,7 +31,7 @@ define([
                     that.addPartViews();
                 },
                 error: function () {
-                    console.log('error getting where used parts list');
+                    console.log('error getting used by list');
                 }
             });
         },
