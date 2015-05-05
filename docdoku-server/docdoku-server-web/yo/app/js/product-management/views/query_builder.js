@@ -358,7 +358,7 @@ define([
                 }).render().$el);
             });
 
-            contextSelectize.on('item_add', function(value){
+            contextSelectize.on('item_add', function(){
                 self.$select[0].selectize.addOption(queryBuilderOptions.contextFields);
                 self.$select[0].selectize.refreshOptions(false);
 
@@ -369,7 +369,7 @@ define([
                 }
             });
 
-            contextSelectize.on('item_remove', function(value){
+            contextSelectize.on('item_remove', function(){
 
                 if(contextSelectize.items.length === 0) {
                     _.each(queryBuilderOptions.contextFields, function (field) {

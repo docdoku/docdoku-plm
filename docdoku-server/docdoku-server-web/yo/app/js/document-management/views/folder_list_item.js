@@ -270,7 +270,7 @@ define([
 
         },
 
-        onDragEnd : function(e){
+        onDragEnd : function(){
 
         },
 

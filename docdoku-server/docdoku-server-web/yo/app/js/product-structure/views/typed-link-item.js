@@ -1,4 +1,4 @@
-/*global define,App,_,$*/
+/*global define,App,$*/
 define([
     'backbone',
     'mustache',
@@ -53,8 +53,8 @@ define([
             var copy = this.model.sourceModel;
             this.model.sourceModel = this.model.targetModel;
             this.model.targetModel = copy;
-            this.model.pathToPath['source'] = this.model.sourceModel.getEncodedPath();
-            this.model.pathToPath['target'] = this.model.targetModel.getEncodedPath();
+            this.model.pathToPath.source = this.model.sourceModel.getEncodedPath();
+            this.model.pathToPath.target = this.model.targetModel.getEncodedPath();
             this.render();
         },
 
@@ -63,9 +63,7 @@ define([
                 this.remove();
             }else{
                 var self = this;
-                var urlToDelete = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.model.productId
-                    + '/path-to-path-links/' + this.model.pathToPath.id;
-
+                var urlToDelete = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.model.productId + '/path-to-path-links/' + this.model.pathToPath.id;
                 $.ajax({
                     type: 'DELETE',
                     url: urlToDelete,
@@ -86,8 +84,7 @@ define([
         onSave: function(){
 
             var self = this;
-            var urlToPost = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.model.productId
-                + '/path-to-path-links';
+            var urlToPost = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.model.productId + '/path-to-path-links';
 
             this.model.pathToPath.type = this.$('.type-select').val() !== ''? this.$('.type-select').val() : this.$('.add-type-input').val();
             this.model.pathToPath.description = this.$('.path-to-path-description').val();

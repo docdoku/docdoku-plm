@@ -1,16 +1,15 @@
 /*global _,define,App*/
 define([
-        'backbone',
-        'mustache',
-        'text!templates/search_document_advanced_form.html',
-        'common-objects/collections/users',
-        'common-objects/views/attributes/attribute_list',
-        'collections/template',
-        'common-objects/utils/date',
-        'common-objects/collections/lovs'
-    ],
-function (Backbone,Mustache, template, Users, DocumentAttributeListView, Templates, date,LOVCollection) {
-	'use strict';
+    'backbone',
+    'mustache',
+    'text!templates/search_document_advanced_form.html',
+    'common-objects/collections/users',
+    'common-objects/views/attributes/attribute_list',
+    'collections/template',
+    'common-objects/utils/date',
+    'common-objects/collections/lovs'
+], function (Backbone,Mustache, template, Users, DocumentAttributeListView, Templates, date,LOVCollection) {
+    'use strict';
     var AdvancedSearchView = Backbone.View.extend({
 
         events: {
@@ -48,7 +47,7 @@ function (Backbone,Mustache, template, Users, DocumentAttributeListView, Templat
 
                 that.$('#attributes-list').html(that.attributesView.$el);
             });
-            
+
         },
 
         fillInputs: function () {

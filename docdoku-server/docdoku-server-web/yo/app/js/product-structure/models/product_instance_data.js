@@ -1,4 +1,4 @@
-/*global define,_,App*/
+/*global define,App*/
 define(['backbone'], function (Backbone) {
 
     'use strict';
@@ -22,7 +22,7 @@ define(['backbone'], function (Backbone) {
             this.set('linkedDocuments', linkedDocuments);
         },
 
-        getAttributes: function(attributes){
+        getAttributes: function(){
             return this.get('instanceAttributes');
         },
 

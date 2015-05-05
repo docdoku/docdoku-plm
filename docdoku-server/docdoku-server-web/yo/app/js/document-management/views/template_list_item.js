@@ -39,7 +39,7 @@ define([
             data.hasAttachedFiles = this.model.getAttachedFiles().length;
             return data;
         },
-        actionEdit: function (evt) {
+        actionEdit: function () {
             var that = this;
             this.model.fetch().success(function () {
                 that.editView = that.addSubView(
@@ -51,7 +51,7 @@ define([
             });
         },
 
-        openDocumentTemplateModal: function (evt) {
+        openDocumentTemplateModal: function () {
             var that = this;
             this.model.fetch().success(function () {
                 that.editView = that.addSubView(

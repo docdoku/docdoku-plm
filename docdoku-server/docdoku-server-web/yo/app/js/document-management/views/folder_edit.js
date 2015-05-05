@@ -24,7 +24,7 @@ define([
 
             var name = this.nameInput.val() ? this.nameInput.val().trim():'';
 
-            if (name && name != this.model.get('name')) {
+            if (name && name !== this.model.get('name')) {
                 this.model.save({
                     name: name
                 }, {

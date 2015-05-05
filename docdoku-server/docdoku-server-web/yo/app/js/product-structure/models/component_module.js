@@ -201,7 +201,7 @@ define(['backbone', 'common-objects/utils/date'],
                     this.parentUsageLinkId = options.parentUsageLinkId;
                     this.path = options.path;
                 } else if(!App.config.linkType){
-                    this.parentUsageLinkId = '-1'
+                    this.parentUsageLinkId = '-1';
                     this.path = '-1';
                 }
 

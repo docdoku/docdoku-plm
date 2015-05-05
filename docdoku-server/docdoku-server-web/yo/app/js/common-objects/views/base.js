@@ -18,7 +18,7 @@ define([
             'add': 'collectionAdd',
             'remove': 'collectionRemove'
         },
-        initialize: function (options) {
+        initialize: function () {
 
             // Owned events
             this.events = {};

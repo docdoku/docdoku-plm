@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global define*/
 define([
     'backbone',
     'models/document'

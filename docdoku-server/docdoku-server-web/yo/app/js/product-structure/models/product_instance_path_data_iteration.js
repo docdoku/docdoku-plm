@@ -30,7 +30,7 @@ define(['backbone'], function (Backbone) {
             this.set('linkedDocuments', linkedDocuments);
         },
 
-        getInstanceAttributes: function (attributes) {
+        getInstanceAttributes: function () {
             return this.get('instanceAttributes');
         },
 

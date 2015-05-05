@@ -103,7 +103,7 @@ define([
             this.remove();
         },
 
-        onSubmitForm: function (e) {
+        onSubmitForm: function () {
             var queryString = this.constructQueryString();
             if (queryString) {
                 App.router.navigate(App.config.workspaceId + '/parts-search/' + queryString, {trigger: true});

@@ -67,7 +67,7 @@ define([
             this.$deleteButton.hide();
         },
 
-        onOneTemplateSelected: function (workflow) {
+        onOneTemplateSelected: function () {
             this.$aclButton.show();
             this.$deleteButton.show();
 
@@ -139,7 +139,7 @@ define([
 
             return false;
         },
-        onError: function (model, error) {
+        onError: function (model) {
             var errorMessage = model.responseText;
             // TODO : remove global jquery calls.
             $('#acl_edit_modal').find('.notifications').first().append(new AlertView({
