@@ -210,13 +210,15 @@ define(['backbone', 'common-objects/utils/date'],
                 var url = this.urlBase() + '/filter?configSpec=' + App.config.configSpec + '&depth=1';
 
                 if(!App.config.linkType){
-                    url+= '&path=' + (path?'-1'+path:'-1');
+                    url+= '&path=' + (path?'-1-'+path:'-1');
                 }
                 else{
-                    if(path){
-                        url+= '&path=' + path;
+                    if(path === '-1'){
+                        url+= '&path=-1';
                     }
-
+                    else if(path){
+                        url+= '&path=-1-'+path;
+                    }
                     url += '&linkType='+App.config.linkType;
                 }
                 return url;

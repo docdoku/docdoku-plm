@@ -2366,7 +2366,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             Component subComponent = new Component();
 
-            List<PartLink> decodedPath = decodePath(ciKey, rootLink.getSourcePath());
+            List<PartLink> decodedPath = decodePath(ciKey, rootLink.getTargetPath());
             PartLink link = decodedPath.get(decodedPath.size() - 1);
             List<PartIteration> partIterations = filter.filter(link.getComponent());
             PartIteration retainedIteration = partIterations.get(partIterations.size() - 1);

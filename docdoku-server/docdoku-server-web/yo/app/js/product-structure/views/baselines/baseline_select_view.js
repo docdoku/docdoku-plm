@@ -168,6 +168,7 @@ define([
 
         changePathToPathLink:function(e){
             App.config.linkType = e.target.value;
+            this.trigger('config_spec:changed', this.$selectBaselineSpec.val());
         },
 
         setDescription:function(desc){
