@@ -1,6 +1,7 @@
 /*global _,$,define,App*/
 define([
-    'moment'
+    'moment',
+    'momentTimeZone'
 ], function (moment) {
     'use strict';
 
