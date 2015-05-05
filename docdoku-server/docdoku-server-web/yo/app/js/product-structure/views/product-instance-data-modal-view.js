@@ -30,7 +30,7 @@ define([
             },
 
             initialize: function () {
-                this.path = this.options.path ? this.options.path : '-1';
+                this.path = this.options.path;// ? this.options.path : '-1';
                 this.serialNumber = this.options.serialNumber;
                 _.bindAll(this);
             },

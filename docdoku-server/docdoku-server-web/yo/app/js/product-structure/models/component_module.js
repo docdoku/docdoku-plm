@@ -168,11 +168,7 @@ define(['backbone', 'common-objects/utils/date'],
 
             getEncodedPath : function(){
                 var path = this.getPath();
-                if(!path){
-                    return  '-1';
-                }else{
-                    return '-1-'+path;
-                }
+                return path;
             },
 
             getUrlForBom: function () {
@@ -199,9 +195,16 @@ define(['backbone', 'common-objects/utils/date'],
 
             initialize: function (models, options) {
                 this.isRoot = _.isUndefined(options.isRoot) ? false : options.isRoot;
+
                 if (!this.isRoot) {
                     this.parentUsageLinkId = options.parentUsageLinkId;
                     this.path = options.path;
+                } else if(!App.config.linkType){
+                    this.parentUsageLinkId = '-1'
+                    this.path = '-1';
+                }else{
+                    this.parentUsageLinkId = undefined;
+                    this.path = undefined;
                 }
             },
 
@@ -209,18 +212,18 @@ define(['backbone', 'common-objects/utils/date'],
                 var path = this.path;
                 var url = this.urlBase() + '/filter?configSpec=' + App.config.configSpec + '&depth=1';
 
-                if(!App.config.linkType){
-                    url+= '&path=' + (path?'-1-'+path:'-1');
+                if(App.config.linkType ){
+                    if(!this.isRoot){
+                        url+= '&path=' + path;
+                    }
+                }else{
+                    url+= '&path=' + path;
                 }
-                else{
-                    if(path === '-1'){
-                        url+= '&path=-1';
-                    }
-                    else if(path){
-                        url+= '&path=-1-'+path;
-                    }
+
+                if(App.config.linkType){
                     url += '&linkType='+App.config.linkType;
                 }
+
                 return url;
             },
 
@@ -230,7 +233,7 @@ define(['backbone', 'common-objects/utils/date'],
 
             parse: function (response) {
                 if (this.isRoot) {
-                    response.path = null;
+                    response.path = '-1';
                     return [response];
                 } else {
                     var self = this;

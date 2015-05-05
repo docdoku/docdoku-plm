@@ -26,7 +26,6 @@ define(['backbone', 'models/component_module', 'views/component_views'
                 this.checkedPath.splice(this.checkedPath.indexOf(model), 1);
             }
             Backbone.Events.trigger('pathSelected', this.checkedPath);
-
         },
 
         setSelectedComponent: function (component) {
@@ -54,7 +53,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
 
         render: function () {
             var self = this;
-            var rootCollection = new ComponentModule.Collection([], { isRoot: true });
+            var rootCollection = new ComponentModule.Collection([], { isRoot: true, path:'-1' });
 
             this.smartPath = [];
 
