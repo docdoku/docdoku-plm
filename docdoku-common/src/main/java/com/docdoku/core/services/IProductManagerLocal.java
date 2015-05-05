@@ -192,7 +192,7 @@ public interface IProductManagerLocal{
 
     List<ModificationNotification> getModificationNotifications(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException;
 
-    List<ProductInstanceMaster> getProductInstanceMasters(String pWorkspaceId, String pPartNumber, String pPartVersion) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException;
+    List<ProductInstanceMaster> getProductInstanceMasters(PartRevision pPartRevision) throws PartRevisionNotFoundException;
 
     void createModificationNotifications(PartIteration modifiedPartIteration) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException;
 

@@ -22,8 +22,11 @@ package com.docdoku.server.dao;
 
 import com.docdoku.core.configuration.*;
 import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.PartRevisionNotFoundException;
 import com.docdoku.core.exceptions.ProductInstanceAlreadyExistsException;
 import com.docdoku.core.exceptions.ProductInstanceMasterNotFoundException;
+import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.PartRevisionKey;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
@@ -58,11 +61,9 @@ public class ProductInstanceMasterDAO {
                 .getResultList();
     }
 
-    public List<ProductInstanceMaster> findProductInstanceMasters(String workspaceId, String partNumber, String partVersion) {
+    public List<ProductInstanceMaster> findProductInstanceMasters(PartRevision partRevision) {
         return em.createNamedQuery("ProductInstanceMaster.findByPart", ProductInstanceMaster.class)
-                .setParameter("partNumber", partNumber)
-                .setParameter("partVersion", partVersion)
-                .setParameter("workspaceId", workspaceId)
+                .setParameter("partRevision", partRevision)
                 .getResultList();
     }
 

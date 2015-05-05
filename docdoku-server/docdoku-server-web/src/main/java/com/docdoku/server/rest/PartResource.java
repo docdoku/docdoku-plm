@@ -98,7 +98,9 @@ public class PartResource {
     public List<ProductInstanceMasterDTO> getProductInstanceMasterDTOs(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
 
-        List<ProductInstanceMaster> productInstanceMasters = productService.getProductInstanceMasters(pWorkspaceId, partNumber, partVersion);
+        PartRevisionKey revisionKey = new PartRevisionKey(pWorkspaceId, partNumber, partVersion);
+        PartRevision partRevision = productService.getPartRevision(revisionKey);
+        List<ProductInstanceMaster> productInstanceMasters = productService.getProductInstanceMasters(partRevision);
         List<ProductInstanceMasterDTO> productInstanceMasterDTOs = new ArrayList<>();
 
         for (ProductInstanceMaster productInstanceMaster : productInstanceMasters) {
