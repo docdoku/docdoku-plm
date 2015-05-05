@@ -2873,14 +2873,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public PathToPathLink createPathToPathLink(String workspaceId, String configurationItemId, String type, String pathFrom, String pathTo) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PathToPathLinkAlreadyExistsException, CreationException, PathToPathCyclicException {
+    public PathToPathLink createPathToPathLink(String workspaceId, String configurationItemId, String type, String pathFrom, String pathTo, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PathToPathLinkAlreadyExistsException, CreationException, PathToPathCyclicException {
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
 
         // Load the product
         ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(new ConfigurationItemKey(workspaceId,configurationItemId));
 
-        PathToPathLink pathToPathLink = new PathToPathLink(type, pathFrom, pathTo);
+        PathToPathLink pathToPathLink = new PathToPathLink(type, pathFrom, pathTo, description);
         PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
         PathToPathLink samePathToPathLink = pathToPathLinkDAO.getSamePathToPathLink(ci, pathToPathLink);
 

@@ -57,13 +57,17 @@ public class PathToPathLink implements Serializable, Cloneable{
     private String sourcePath;
     private String targetPath;
 
+    @Lob
+    private String description;
+
     public PathToPathLink() {
     }
 
-    public PathToPathLink(String type, String sourcePath, String targetPath) {
+    public PathToPathLink(String type, String sourcePath, String targetPath, String description) {
         this.type = type;
         this.sourcePath = sourcePath;
         this.targetPath = targetPath;
+        this.description = description;
     }
 
     public int getId() {
@@ -96,6 +100,14 @@ public class PathToPathLink implements Serializable, Cloneable{
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

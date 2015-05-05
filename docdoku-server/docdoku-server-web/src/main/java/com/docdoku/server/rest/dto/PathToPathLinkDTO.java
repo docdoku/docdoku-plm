@@ -27,6 +27,7 @@ public class PathToPathLinkDTO implements Serializable{
     private String type;
     private String sourcePath;
     private String targetPath;
+    private String description;
 
     public PathToPathLinkDTO() {
     }
@@ -53,5 +54,13 @@ public class PathToPathLinkDTO implements Serializable{
 
     public void setTargetPath(String targetPath) {
         this.targetPath = targetPath;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
