@@ -225,6 +225,15 @@ define([
                 return '< ' + this.getNumber() + '-' + this.getVersion() + ' >';
             },
 
+            getUsedByProductInstances: function (args) {
+                $.ajax({
+                    type: 'GET',
+                    url: this.getUrl() + '/used-by-productInstanceMasters',
+                    success: args.success,
+                    error: args.error
+                });
+            },
+
             addTags: function (tags) {
 
                 return $.ajax({
