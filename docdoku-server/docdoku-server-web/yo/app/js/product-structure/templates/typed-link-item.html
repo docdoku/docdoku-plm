@@ -1,20 +1,38 @@
 <div class="error-div"></div>
-<button type="button" class="close delete-item">×</button>
-Source : {{source.getName}} < {{source.getNumber}} >
-Target : {{target.getName}} < {{target.getNumber}} >
+<div class="typed-link-content">
+    <button type="button" class="close delete-item">×</button>
+    <div class="link-source"><strong>{{i18n.PATH_TO_PATH_SOURCE}}</strong> : {{source.getName}} < {{source.getNumber}} > </div>
 
-<textarea class="path-to-path-description" placeholder="Description" {{^isEditMode}}disabled{{/isEditMode}}></textarea>
+    {{#isEditMode}}
+    <i class="fa fa-exchange invert-source-target" title="{{i18n.INVERT}}"></i>
+    {{/isEditMode}}
+    <div class="link-target"><strong>{{i18n.PATH_TO_PATH_TARGET}}</strong> : {{target.getName}} < {{target.getNumber}} > </div>
 
-{{#isEditMode}}
-<a class="invert-source-target">Inverser</a>
-<select class="type-select">
-    <option value=""></option>
-    {{#availableType}}
-    <option value="{{.}}">{{.}}</option>
-    {{/availableType}}
-</select>
 
-<input class="add-type-input" type="text" placeholder="New type of link">
-{{/isEditMode}}
+    <div class="link-type-block">
+        {{^isEditMode}}
+        <strong>{{i18n.TYPE}}</strong> : {{type}}
+        {{/isEditMode}}
 
-<button class="btn btn-primary save-button">{{i18n.SAVE}}</button>
+        {{#isEditMode}}
+
+        <strong>{{i18n.TYPE}}</strong> :
+        <select class="type-select input-medium">
+            <option value=""></option>
+            {{#availableType}}
+            <option value="{{.}}">{{.}}</option>
+            {{/availableType}}
+        </select>
+        {{i18n.OR}}
+        <input class="add-type-input input-medium" type="text" placeholder="{{i18n.NEW_LINK_TYPE}}">
+        {{/isEditMode}}
+    </div>
+
+    <div class="description-block">
+        <textarea class="path-to-path-description" placeholder="{{i18n.DESCRIPTION}}" {{^isEditMode}}disabled{{/isEditMode}}>{{description}}</textarea>
+        {{#isEditMode}}
+        <button class="btn btn-primary save-button">{{i18n.SAVE}}</button>
+        {{/isEditMode}}
+    </div>
+</div>
+

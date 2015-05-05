@@ -4,8 +4,8 @@ define([
     'mustache',
     'text!templates/typed-link-modal.html',
     'views/typed-link-item',
-    'async'
-], function (Backbone, Mustache, template, TypedLinkItemView, async){
+    'common-objects/views/alert'
+], function (Backbone, Mustache, template, TypedLinkItemView, AlertView){
     'use strict';
 
     var TypedLinkModalView = Backbone.View.extend({
@@ -83,12 +83,13 @@ define([
                     _.each(pathToPathLinkDTOs, function(pathToPathLinkDTO){
                         self.availableType.push(pathToPathLinkDTO.type);
                     });
-
                     self.getExistingPathToPath();
-
                 },
-                error: function(){
-
+                error: function(errorMessage){
+                    self.$('#typed-link-alerts').append(new AlertView({
+                        type: 'error',
+                        message: errorMessage.responseText
+                    }).render().$el);
                 }
             });
         },
@@ -103,8 +104,8 @@ define([
                 success: function(pathToPathLinkDTOs){
                     _.each(pathToPathLinkDTOs, function(pathToPathLinkDTO){
                         self.existingPathToPathLinkCollection.push({
-                            sourceModel : self.pathSelected[0].getEncodedPath() === pathToPathLinkDTO.source ? self.pathSelected[0] : self.pathSelected[1],
-                            targetModel : self.pathSelected[1].getEncodedPath() === pathToPathLinkDTO.source ? self.pathSelected[1] : self.pathSelected[0],
+                            sourceModel : self.pathSelected[0].getEncodedPath() === pathToPathLinkDTO.sourcePath ? self.pathSelected[0] : self.pathSelected[1],
+                            targetModel : self.pathSelected[1].getEncodedPath() === pathToPathLinkDTO.targetPath ? self.pathSelected[1] : self.pathSelected[0],
                             pathToPath : pathToPathLinkDTO,
                             isEditMode : false,
                             availableType : self.availableType,
@@ -122,8 +123,11 @@ define([
                     });
 
                 },
-                error: function(){
-
+                error: function(errorMessage){
+                    self.$('#typed-link-alerts').append(new AlertView({
+                        type: 'error',
+                        message: errorMessage.responseText
+                    }).render().$el);
                 }
             });
         },

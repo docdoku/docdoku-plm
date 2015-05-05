@@ -2,8 +2,9 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/typed-link-item.html'
-], function (Backbone, Mustache, template){
+    'text!templates/typed-link-item.html',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, template, AlertView){
     'use strict';
 
     var TypedLinkItemView = Backbone.View.extend({
@@ -34,7 +35,9 @@ define([
                 isEditMode : this.model.isEditMode,
                 source : this.model.sourceModel,
                 target : this.model.targetModel,
-                availableType: this.model.availableType
+                availableType: this.model.availableType,
+                description : this.model.pathToPath.description,
+                type : this.model.pathToPath.type
             };
 
             this.$el.html(Mustache.render(template, data));
@@ -56,22 +59,28 @@ define([
         },
 
         onDeleteItem : function(){
-            var self = this;
-            var urlToDelete = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.model.productId
-                + '/path-to-path-links/' + this.model.pathToPath.id;
+            if(this.model.isEditMode){
+                this.remove();
+            }else{
+                var self = this;
+                var urlToDelete = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.model.productId
+                    + '/path-to-path-links/' + this.model.pathToPath.id;
 
-            $.ajax({
-                type: 'DELETE',
-                url: urlToDelete,
-                contentType: 'application/json',
-                success:function(){
-                    self.remove();
-                },
-                error: function(){
-                    self.$('.error-div').html('error');
-                }
-            });
-
+                $.ajax({
+                    type: 'DELETE',
+                    url: urlToDelete,
+                    contentType: 'application/json',
+                    success:function(){
+                        self.remove();
+                    },
+                    error: function(errorMessage){
+                        self.$('.error-div').append(new AlertView({
+                            type: 'error',
+                            message: errorMessage.responseText
+                        }).render().$el);
+                    }
+                });
+            }
         },
 
         onSave: function(){
@@ -101,8 +110,11 @@ define([
                     self.model.isEditMode = false;
                     self.render();
                 },
-                error: function(){
-                    self.$('.error-div').html('error');
+                error: function(errorMessage){
+                    self.$('.error-div').append(new AlertView({
+                        type: 'error',
+                        message: errorMessage.responseText
+                    }).render().$el);
                 }
             });
 
