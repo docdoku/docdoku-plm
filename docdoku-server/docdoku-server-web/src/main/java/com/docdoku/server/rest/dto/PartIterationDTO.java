@@ -37,6 +37,7 @@ public class PartIterationDTO implements Serializable {
     private Date modificationDate;
     private Date checkInDate;
     private List<InstanceAttributeDTO> instanceAttributes;
+    private List<InstanceAttributeTemplateDTO> instanceAttributeTemplates;
     private List<PartUsageLinkDTO> components;
     private List<DocumentIterationDTO> linkedDocuments;
     private String number;
@@ -164,5 +165,13 @@ public class PartIterationDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<InstanceAttributeTemplateDTO> getInstanceAttributeTemplates() {
+        return instanceAttributeTemplates;
+    }
+
+    public void setInstanceAttributeTemplates(List<InstanceAttributeTemplateDTO> instanceAttributeTemplates) {
+        this.instanceAttributeTemplates = instanceAttributeTemplates;
     }
 }

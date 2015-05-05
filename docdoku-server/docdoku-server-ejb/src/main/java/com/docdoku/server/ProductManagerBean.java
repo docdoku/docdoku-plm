@@ -689,7 +689,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     * */
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys, String[] documentLinkComments)
+    public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, List<InstanceAttributeTemplate> pAttributeTemplates, DocumentIterationKey[] pLinkKeys, String[] documentLinkComments)
             throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException, EntityConstraintException, UserNotActiveException {
 
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
@@ -805,6 +805,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     InstanceAttribute newAttr = pAttributes.get(i);
                     partIte.getInstanceAttributes().add(newAttr);
                 }
+            }
+
+            if (pAttributeTemplates != null) {
+                partIte.setInstanceAttributeTemplates(pAttributeTemplates);
             }
 
             partIte.setIterationNote(pIterationNote);

@@ -43,6 +43,10 @@ define([
             return this.get('instanceAttributes');
         },
 
+        getAttributeTemplates: function () {
+            return this.get('instanceAttributeTemplates');
+        },
+
         getWorkspace: function () {
             return this.get('workspaceId');
         },

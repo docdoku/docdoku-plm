@@ -6,6 +6,7 @@ define([
     'common-objects/views/file/file_list',
     'text!common-objects/templates/part/part_modal.html',
     'common-objects/views/attributes/attributes',
+    'common-objects/views/attributes/template_new_attributes',
     'common-objects/views/part/parts_management_view',
     'common-objects/views/part/modification_notification_group_list_view',
     'common-objects/views/linked/linked_documents',
@@ -17,7 +18,7 @@ define([
     'common-objects/utils/date',
     'common-objects/views/tags/tag',
     'common-objects/models/tag'
-], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, PartsManagementView, ModificationNotificationGroupListView, LinkedDocumentsView, UsedByGroupListView, AlertView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
+], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, TemplateNewAttributesView, PartsManagementView, ModificationNotificationGroupListView, LinkedDocumentsView, UsedByGroupListView, AlertView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
     'use strict';
     var PartModalView = ModalView.extend({
 
@@ -170,7 +171,6 @@ define([
             });
 
             this.attributesView.setAttributesLocked(this.model.isAttributesLocked());
-
             this.attributesView.setEditMode(this.editMode);
             this.attributesView.render();
 
@@ -178,6 +178,12 @@ define([
                 that.attributesView.addAndFillAttribute(item);
             });
 
+            this.attributeTemplatesView =  new TemplateNewAttributesView({
+                el: this.$('#attribute-templates-list'),
+                attributesLocked: false
+            });
+            this.attributeTemplatesView.render();
+            this.attributeTemplatesView.collection.reset(this.iteration.getAttributeTemplates());
         },
 
         interceptSubmit: function () {
@@ -198,6 +204,7 @@ define([
                 iterationNote: this.$inputIterationNote.val(),
                 components: this.partsManagementView.collection.toJSON(),
                 instanceAttributes: this.attributesView.collection.toJSON(),
+                instanceAttributeTemplates: this.attributeTemplatesView.collection.toJSON(),
                 linkedDocuments: this.linkedDocumentsView.collection.toJSON()
             }, {
                 success: function () {
@@ -387,6 +394,7 @@ define([
                     iterationNote: this.$inputIterationNote.val() || null,
                     components: this.partsManagementView.collection.toJSON(),
                     instanceAttributes: this.attributesView.collection.toJSON(),
+                    instanceAttributeTemplates: this.attributeTemplatesView.collection.toJSON(),
                     linkedDocuments: this.linkedDocumentsView.collection.toJSON()
                 }, {
                     success: function () {

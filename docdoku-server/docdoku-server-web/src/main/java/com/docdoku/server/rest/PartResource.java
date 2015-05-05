@@ -131,6 +131,12 @@ public class PartResource {
             attributes = createInstanceAttributes(instanceAttributes);
         }
 
+        List<InstanceAttributeTemplateDTO> instanceAttributeTemplates = data.getInstanceAttributeTemplates();
+        List<InstanceAttributeTemplate> attributeTemplates = null;
+        if (instanceAttributeTemplates != null) {
+            attributeTemplates = createInstanceAttributeTemplateFromDto(instanceAttributeTemplates);
+        }
+
         List<PartUsageLinkDTO> components = data.getComponents();
         List<PartUsageLink> newComponents = null;
         if (components != null) {
@@ -155,7 +161,7 @@ public class PartResource {
 
         PartIteration.Source sameSource = partRevision.getIteration(partIteration).getSource();
 
-        PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, newComponents, attributes, links, documentLinkComments);
+        PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, newComponents, attributes, attributeTemplates, links, documentLinkComments);
 
         PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partRevisionUpdated);
         return Response.ok(partDTO).build();
@@ -517,6 +523,30 @@ public class PartResource {
         return attr;
     }
 
+    private List<InstanceAttributeTemplate> createInstanceAttributeTemplateFromDto(List<InstanceAttributeTemplateDTO> dtos) {
+        List<InstanceAttributeTemplate> data = new ArrayList<>();
+        for (InstanceAttributeTemplateDTO dto: dtos) {
+            data.add(createInstanceAttributeTemplateObject(dto));
+        }
+        return data;
+    }
+
+    private InstanceAttributeTemplate createInstanceAttributeTemplateObject(InstanceAttributeTemplateDTO dto) {
+        InstanceAttributeTemplate data;
+        if(dto.getLovName()==null || dto.getLovName().isEmpty()) {
+            DefaultAttributeTemplate defaultIA = new DefaultAttributeTemplate();
+            defaultIA.setAttributeType(DefaultAttributeTemplate.AttributeType.valueOf(dto.getAttributeType().name()));
+            data=defaultIA;
+        }
+        else {
+            ListOfValuesAttributeTemplate lovA = new ListOfValuesAttributeTemplate();
+            data=lovA;
+        }
+
+        data.setName(dto.getName());
+        data.setMandatory(dto.isMandatory());
+        return data;
+    }
 
     public List<PartUsageLink> createComponents(String workspaceId, List<PartUsageLinkDTO> pComponents)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException, UserNotActiveException {

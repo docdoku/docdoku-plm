@@ -35,7 +35,7 @@ import java.io.Serializable;
 @XmlSeeAlso({DefaultAttributeTemplate.class, ListOfValuesAttributeTemplate.class})
 @Inheritance()
 @Entity
-public abstract class InstanceAttributeTemplate implements Serializable {
+public abstract class InstanceAttributeTemplate implements Serializable, Cloneable {
 
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Id
@@ -87,6 +87,14 @@ public abstract class InstanceAttributeTemplate implements Serializable {
 
     public abstract InstanceAttribute createInstanceAttribute();
 
+    @Override
+    public InstanceAttributeTemplate clone() {
+        try {
+            return (InstanceAttributeTemplate) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError();
+        }
+    }
 
     @Override
     public boolean equals(Object o) {

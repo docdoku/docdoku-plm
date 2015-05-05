@@ -25,6 +25,7 @@ import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -133,6 +134,20 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         @JoinColumn(name="ITERATION", referencedColumnName="ITERATION")
     })
     private List<InstanceAttribute> instanceAttributes=new ArrayList<>();
+
+    @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @OrderColumn(name="ATTRIBUTE_ORDER")
+    @JoinTable(name="PARTITERATION_PATHDATA_ATTR",
+            inverseJoinColumns={
+                    @JoinColumn(name="INSTANCEATTRIBUTE_TEMPLATE_ID", referencedColumnName="ID")
+            },
+            joinColumns={
+                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+                    @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTMASTER_PARTNUMBER"),
+                    @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="PARTREVISION_VERSION"),
+                    @JoinColumn(name="ITERATION", referencedColumnName="ITERATION")
+            })
+    private List<InstanceAttributeTemplate> instanceAttributeTemplates=new ArrayList<>();
 
     @OrderColumn(name="COMPONENT_ORDER")
     @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.LAZY)
@@ -345,6 +360,14 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         return partRevision==null ? "" : this.partRevision.getPartName();
     }
 
+    public List<InstanceAttributeTemplate> getInstanceAttributeTemplates() {
+        return instanceAttributeTemplates;
+    }
+
+    public void setInstanceAttributeTemplates(List<InstanceAttributeTemplate> instanceAttributeTemplates) {
+        this.instanceAttributeTemplates = instanceAttributeTemplates;
+    }
+
     @Override
     public String toString() {
         return partRevision + "-" + iteration;
@@ -422,6 +445,14 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
             clonedInstanceAttributes.add(clonedAttribute);
         }
         clone.instanceAttributes = clonedInstanceAttributes;
+
+        //perform a deep copy
+        List<InstanceAttributeTemplate> clonedInstanceAttributeTemplates = new ArrayList<>();
+        for (InstanceAttributeTemplate attribute : instanceAttributeTemplates) {
+            InstanceAttributeTemplate clonedAttribute = attribute.clone();
+            clonedInstanceAttributeTemplates.add(clonedAttribute);
+        }
+        clone.instanceAttributeTemplates = clonedInstanceAttributeTemplates;
 
         if (creationDate != null) {
             clone.creationDate = (Date) creationDate.clone();
