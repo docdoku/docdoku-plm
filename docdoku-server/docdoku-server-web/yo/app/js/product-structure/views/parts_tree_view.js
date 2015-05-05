@@ -53,13 +53,14 @@ define(['backbone', 'models/component_module', 'views/component_views'
 
         render: function () {
             var self = this;
-            var rootCollection = new ComponentModule.Collection([], { isRoot: true, path:'-1' });
+
+            this.rootCollection = new ComponentModule.Collection([], { isRoot: true });
 
             this.smartPath = [];
 
             this.rootComponent = undefined;
 
-            this.listenTo(rootCollection, 'reset', function (collection) {
+            this.listenTo(this.rootCollection, 'reset', function (collection) {
 
                 self.rootComponent = collection.first();
 
@@ -74,7 +75,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
             });
 
             this.componentViews = new ComponentViews.Components({
-                collection: rootCollection,
+                collection: this.rootCollection,
                 resultPathCollection: this.options.resultPathCollection,
                 parentView: this.$el,
                 parentChecked: false
@@ -206,6 +207,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
         refreshAll: function () {
             this.checkedPath = [];
             Backbone.Events.trigger('pathSelected', this.checkedPath);
+            this.rootCollection.path = App.config.linkType ? null : '-1';
             this.componentViews.fetchAll();
             this.onProductTitleClicked();
             App.instancesManager.clear();

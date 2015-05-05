@@ -85,7 +85,7 @@ define([
                 resultPathCollection: this.options.resultPathCollection
             };
 
-            var componentView = component.isAssembly() ? new ComponentViews.Assembly(optionsForComponentView) : new ComponentViews.Leaf(optionsForComponentView);
+            var componentView = component.isAssembly() || App.config.linkType ? new ComponentViews.Assembly(optionsForComponentView) : new ComponentViews.Leaf(optionsForComponentView);
 
             this.$el.append(componentView.render().el);
 
@@ -223,7 +223,7 @@ define([
             this.isExpanded = false;
             _.bindAll(this, ['onLoad3D']);
             this.listenTo(this.options.resultPathCollection, 'reset', this.onAllResultPathAdded);
-            this.$el.attr('id', 'path_' + String(this.model.getEncodedPath() /*|| '-1'*/));
+            this.$el.attr('id', 'path_' + this.model.getEncodedPath());
             this.isForbidden = this.model.isForbidden();
             this.isLock = this.model.isCheckout() && this.model.isLastIteration(this.model.get('iteration')) && !this.model.isCheckoutByConnectedUser();
         },

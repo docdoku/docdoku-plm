@@ -2270,12 +2270,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         component.setUser(user);
         component.setComponents(new ArrayList<>());
 
-        List<PathToPathLink> links;
+        Set<String> links = new HashSet<>();
 
         // If path is null => get Root links embedded as subComponents of a virtual component
         if(path == null){
 
-            links = pathToPathLinkDAO.findRootPathToPathLinks(ci, linkType);
+            List<PathToPathLink> rootPathToPathLinks = pathToPathLinkDAO.findRootPathToPathLinks(ci, linkType);
+            for(PathToPathLink link : rootPathToPathLinks){
+                links.add(link.getSourcePath());
+            }
 
             PartMaster virtualPartMaster = new PartMaster(ci.getWorkspace(),linkType,user);
             PartRevision virtualPartRevision = new PartRevision(virtualPartMaster,user);
@@ -2349,7 +2352,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         // If path is not null => get next path to path links
 
         else{
-            links = pathToPathLinkDAO.getSourcesPathToPathLinksInProduct(ci, linkType, path);
+            List<PathToPathLink> sourcesPathToPathLinksInProduct = pathToPathLinkDAO.getSourcesPathToPathLinksInProduct(ci, linkType, path);
+            for(PathToPathLink link : sourcesPathToPathLinksInProduct){
+                links.add(link.getTargetPath());
+            }
             List<PartLink> decodedSourcePath = decodePath(ciKey, path);
             PartLink link = decodedSourcePath.get(decodedSourcePath.size() - 1);
             List<PartIteration> partIterations = filter.filter(link.getComponent());
@@ -2362,16 +2368,17 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         // Iterate the list and populate sub components
 
-        for(PathToPathLink rootLink:links){
+        for(String link:links){
 
             Component subComponent = new Component();
 
-            List<PartLink> decodedPath = decodePath(ciKey, rootLink.getTargetPath());
-            PartLink link = decodedPath.get(decodedPath.size() - 1);
-            List<PartIteration> partIterations = filter.filter(link.getComponent());
+            List<PartLink> decodedPath = decodePath(ciKey, link);
+
+            PartLink partLink = decodedPath.get(decodedPath.size() - 1);
+            List<PartIteration> partIterations = filter.filter(partLink.getComponent());
             PartIteration retainedIteration = partIterations.get(partIterations.size() - 1);
 
-            subComponent.setPartMaster(link.getComponent());
+            subComponent.setPartMaster(partLink.getComponent());
             subComponent.setPath(decodedPath);
             subComponent.setRetainedIteration(retainedIteration);
             subComponent.setUser(user);
@@ -2873,12 +2880,20 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public PathToPathLink createPathToPathLink(String workspaceId, String configurationItemId, String type, String pathFrom, String pathTo, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PathToPathLinkAlreadyExistsException, CreationException, PathToPathCyclicException {
+    public PathToPathLink createPathToPathLink(String workspaceId, String configurationItemId, String type, String pathFrom, String pathTo, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PathToPathLinkAlreadyExistsException, CreationException, PathToPathCyclicException, PartUsageLinkNotFoundException, UserNotActiveException, NotAllowedException {
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
 
         // Load the product
         ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(new ConfigurationItemKey(workspaceId,configurationItemId));
+
+        // Decode the paths to insure path validity
+        decodePath(ci.getKey(),pathFrom);
+        decodePath(ci.getKey(),pathTo);
+
+        if(type == null || type.isEmpty()){
+            throw new NotAllowedException(locale,"NotAllowedException54");
+        }
 
         PathToPathLink pathToPathLink = new PathToPathLink(type, pathFrom, pathTo, description);
         PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);

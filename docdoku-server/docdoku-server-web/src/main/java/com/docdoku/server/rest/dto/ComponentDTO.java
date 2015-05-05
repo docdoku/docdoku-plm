@@ -59,6 +59,8 @@ public class ComponentDTO implements Serializable{
     private boolean accessDeny;
     private List<ModificationNotificationDTO> notifications;
     private boolean hasPathData;
+    private boolean isVirtual;
+    private String path;
 
 
     public ComponentDTO() {
@@ -259,5 +261,21 @@ public class ComponentDTO implements Serializable{
 
     public void setHasPathData(boolean hasPathData) {
         this.hasPathData = hasPathData;
+    }
+
+    public boolean isVirtual() {
+        return isVirtual;
+    }
+
+    public void setVirtual(boolean isVirtual) {
+        this.isVirtual = isVirtual;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

@@ -7,7 +7,7 @@ define(['backbone', 'common-objects/utils/date'],
         ComponentModule.Model = Backbone.Model.extend({
 
             initialize: function () {
-                if (this.isAssembly()) {
+                if (this.isAssembly() || App.config.linkType) {
                     this.children = new ComponentModule.Collection([], { parentUsageLinkId: this.getPartUsageLinkId(), path: this.getPath() });
                 }
                 _.bindAll(this);
@@ -167,8 +167,7 @@ define(['backbone', 'common-objects/utils/date'],
             },
 
             getEncodedPath : function(){
-                var path = this.getPath();
-                return path;
+                return this.getPath();
             },
 
             getUrlForBom: function () {
@@ -202,21 +201,16 @@ define(['backbone', 'common-objects/utils/date'],
                 } else if(!App.config.linkType){
                     this.parentUsageLinkId = '-1'
                     this.path = '-1';
-                }else{
-                    this.parentUsageLinkId = undefined;
-                    this.path = undefined;
                 }
+
             },
 
             url: function () {
                 var path = this.path;
+
                 var url = this.urlBase() + '/filter?configSpec=' + App.config.configSpec + '&depth=1';
 
-                if(App.config.linkType ){
-                    if(!this.isRoot){
-                        url+= '&path=' + path;
-                    }
-                }else{
+                if(path){
                     url+= '&path=' + path;
                 }
 
@@ -232,15 +226,11 @@ define(['backbone', 'common-objects/utils/date'],
             },
 
             parse: function (response) {
-                if (this.isRoot) {
-                    response.path = '-1';
+                if (this.isRoot ){
+                    response.path = response.partUsageLinkId;
                     return [response];
                 } else {
-                    var self = this;
-                    return _.map(response.components, function (component) {
-                        var path = self.path === null ? component.partUsageLinkId : self.path + '-' + component.partUsageLinkId;
-                        return _.extend(component, {path: path});
-                    });
+                    return response.components;
                 }
             }
         });

@@ -161,7 +161,7 @@ public class ProductResource {
 
         PSFilter filter = productService.getPSFilter(ciKey, configSpecType);
 
-        Component component = null;
+        Component component;
         String serialNumber = null;
 
         if(configSpecType.startsWith("pi-")){
@@ -437,7 +437,7 @@ public class ProductResource {
     @Path("{ciId}/path-to-path-links")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PathToPathLinkDTO createPathToPathLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, PathToPathLinkDTO pathToPathLinkDTO) throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathCyclicException, ConfigurationItemNotFoundException {
+    public PathToPathLinkDTO createPathToPathLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, PathToPathLinkDTO pathToPathLinkDTO) throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathCyclicException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, NotAllowedException {
         PathToPathLink pathToPathLink = productService.createPathToPathLink(workspaceId, configurationItemId, pathToPathLinkDTO.getType(), pathToPathLinkDTO.getSourcePath(), pathToPathLinkDTO.getTargetPath(), pathToPathLinkDTO.getDescription());
         return mapper.map(pathToPathLink,PathToPathLinkDTO.class);
     }
@@ -480,7 +480,7 @@ public class ProductResource {
      * Because some AS (like Glassfish) forbids the use of CacheControl
      * when authenticated we use the LastModified header to fake
      * a similar behavior (15 minutes of cache)
-     * @param request The incomming request
+     * @param request The incoming request
      * @return Nothing if there still have cache
      */
     private Response.ResponseBuilder fakeSimilarBehavior(Request request){
@@ -505,6 +505,9 @@ public class ProductResource {
         PartLink usageLink = path.get(path.size()-1);
 
         ComponentDTO dto = new ComponentDTO();
+
+        dto.setPath(com.docdoku.core.util.Tools.getPathAsString(path));
+        dto.setVirtual(component.isVirtual());
         dto.setNumber(pm.getNumber());
         dto.setPartUsageLinkId(usageLink.getFullId());
         dto.setName(pm.getName());
@@ -568,7 +571,7 @@ public class ProductResource {
             }
         }
 
-        dto.setAssembly(component.isVirtual() && !component.getComponents().isEmpty() || retainedIteration.isAssembly());
+        dto.setAssembly(retainedIteration.isAssembly());
         dto.setAttributes(lstAttributes);
 
         if(!component.isVirtual()) {
