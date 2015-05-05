@@ -916,10 +916,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public List<ProductInstanceMaster> getProductInstanceMasters(PartRevision pPartRevision)
-            throws PartRevisionNotFoundException {
+    public List<ProductInstanceMaster> getProductInstanceMasters(PartRevision pPartRevision) {
         return new ProductInstanceMasterDAO(em).findProductInstanceMasters(pPartRevision);
     }
+
+
 
 
 
