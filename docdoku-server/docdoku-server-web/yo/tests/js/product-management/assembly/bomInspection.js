@@ -124,16 +124,16 @@ casper.test.begin('Bom inspection tests suite',13, function bomInspectionTestsSu
      */
 
     casper.then(function checkRootNode(){
-        this.test.assertExists('#product_nav_list_container > .treeview > ul > li > input[type=checkbox]:not(:checked)','Checkbox is unchecked');
-        this.click('#product_nav_list_container > .treeview > ul > li > input[type=checkbox]');
-        this.test.assertExists('#product_nav_list_container > .treeview > ul > li > input[type=checkbox]:checked','Checkbox is now checked');
+        this.test.assertExists('#product_nav_list_container > .treeview > ul > li > .load-3D:not(:checked)','Checkbox is unchecked');
+        this.click('#product_nav_list_container > .treeview > ul > li > .load-3D');
+        this.test.assertExists('#product_nav_list_container > .treeview > ul > li > .load-3D:checked','Checkbox is now checked');
     });
 
     /**
      * Count child nodes checked
      * */
     casper.then(function countChildNodesCheckedInTree(){
-        this.test.assertElementCount('#product_nav_list_container > .treeview > ul > li > ul > li  > input[type=checkbox]:checked',4,'4 child nodes checked');
+        this.test.assertElementCount('#product_nav_list_container > .treeview > ul > li > ul > li  > .load-3D:checked',4,'4 child nodes checked');
     });
 
     /**
@@ -141,15 +141,15 @@ casper.test.begin('Bom inspection tests suite',13, function bomInspectionTestsSu
      */
 
     casper.then(function unCheckRootNode(){
-        this.click('#product_nav_list_container > .treeview > ul > li > input[type=checkbox]');
-        this.test.assertExists('#product_nav_list_container > .treeview > ul > li > input[type=checkbox]:not(:checked)','Checkbox is now unchecked');
+        this.click('#product_nav_list_container > .treeview > ul > li > .load-3D');
+        this.test.assertExists('#product_nav_list_container > .treeview > ul > li > .load-3D:not(:checked)','Checkbox is now unchecked');
     });
 
     /**
      * Count child nodes checked
      * */
     casper.then(function countChildNodesUnCheckedInTree(){
-        this.test.assertElementCount('#product_nav_list_container > .treeview > ul > li > ul > li  > input[type=checkbox]:not(:checked)',4,'4 child nodes are now unchecked');
+        this.test.assertElementCount('#product_nav_list_container > .treeview > ul > li > ul > li  > .load-3D:not(:checked)',4,'4 child nodes are now unchecked');
     });
 
 
