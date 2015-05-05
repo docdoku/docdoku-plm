@@ -1,0 +1,20 @@
+<div class="error-div"></div>
+<button type="button" class="close delete-item">×</button>
+Source : {{source.getName}} < {{source.getNumber}} >
+Target : {{target.getName}} < {{target.getNumber}} >
+
+<textarea class="path-to-path-description" placeholder="Description" {{^isEditMode}}disabled{{/isEditMode}}></textarea>
+
+{{#isEditMode}}
+<a class="invert-source-target">Inverser</a>
+<select class="type-select">
+    <option value=""></option>
+    {{#availableType}}
+    <option value="{{.}}">{{.}}</option>
+    {{/availableType}}
+</select>
+
+<input class="add-type-input" type="text" placeholder="New type of link">
+{{/isEditMode}}
+
+<button class="btn btn-primary save-button">{{i18n.SAVE}}</button>

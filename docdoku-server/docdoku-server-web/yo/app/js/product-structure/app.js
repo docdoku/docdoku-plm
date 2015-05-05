@@ -165,16 +165,18 @@ define([
 
         updateDisplayTypedLinkButton: function(pathSelected){
             this.pathSelected = pathSelected;
-            if(pathSelected.length > 1){
+            if (pathSelected.length === 2) {
                 this.typedLinkButton.show();
-            }else{
+            } else {
                 this.typedLinkButton.hide();
             }
         },
 
         openTypedLinkModal:function(){
             var typedModal = new TypedLinkModalView({
-                pathSelected : this.pathSelected
+                pathSelected : this.pathSelected,
+                productId : App.config.productId,
+                serialNumber : App.baselineSelectView.isSerialNumberSelected() ? App.config.configSpec.substring(3) : null
             }).render();
             window.document.body.appendChild(typedModal.el);
             typedModal.openModal();

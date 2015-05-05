@@ -204,7 +204,8 @@ define(['backbone', 'models/component_module', 'views/component_views'
         },
 
         refreshAll: function () {
-            this.checkedParts = [];
+            this.checkedPath = [];
+            Backbone.Events.trigger('pathSelected', this.checkedPath);
             this.componentViews.fetchAll();
             this.onProductTitleClicked();
             App.instancesManager.clear();
