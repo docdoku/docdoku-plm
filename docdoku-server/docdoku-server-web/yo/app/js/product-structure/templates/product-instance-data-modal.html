@@ -29,7 +29,13 @@
                 {{/iteration}}
 
             </div>
-            <div id="tab-attributes" class="tab-pane tab-attributes attributes attributes-edit">attributes</div>
+            <div id="tab-attributes" class="tab-pane tab-attributes">
+                <p>{{i18n.ATTRIBUTES}}</p>
+                <div id="partAttributes" class="attributes attributes-edit"></div>
+                <p>{{i18n.PRODUCT_INSTANCE_DATA}}</p>
+                <div id="pathDataAttributes" class="attributes attributes-edit"></div>
+                <button class="btn btn-primary" id="addTemplateAttributes" type="button">{{i18n.ADD_TEMPLATE_ATTRIBUTES}}</button>
+            </div>
             <div id="tab-files" class="tab-pane tab-files">files</div>
             <div id="tab-link" class="tab-pane tab-part-link">link</div>
         </form>

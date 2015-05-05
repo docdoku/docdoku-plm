@@ -25,6 +25,7 @@ import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartLink;
@@ -352,6 +353,7 @@ public class ProductInstancesResource {
         dto.setPartsPath(partList);
 
         List<InstanceAttributeDTO> attributesDTO = new ArrayList<>();
+        List<InstanceAttributeTemplateDTO> attributeTemplatesDTO = new ArrayList<>();
         PartLink partLink = partLinks.get(partLinks.size() - 1);
         PSFilter filter = productService.getPSFilter(ciKey,"pi-"+serialNumber);
         List<PartIteration> partIterations = filter.filter(partLink.getComponent());
@@ -362,6 +364,10 @@ public class ProductInstancesResource {
                 attributesDTO.add(mapper.map(instanceAttribute,InstanceAttributeDTO.class));
             }
             dto.setPartAttributes(attributesDTO);
+            for(InstanceAttributeTemplate instanceAttributeTemplate : partIteration.getInstanceAttributeTemplates()){
+                attributeTemplatesDTO.add(mapper.map(instanceAttributeTemplate,InstanceAttributeTemplateDTO.class));
+            }
+            dto.setPartAttributeTemplates(attributeTemplatesDTO);
         }
 
         return dto;

@@ -15,6 +15,7 @@ define({
 		ADD_PART: "Add a part",
 		ADD_REQUEST: "Add a request",
 		ADD_TASK: "Add task",
+        ADD_TEMPLATE_ATTRIBUTES:"Add deliverable attributes",
 		ADMINISTRATED: 'Administrated',
 		ADVANCED: "Advanced",
 		ADVANCED_SEARCH: "Advanced search",

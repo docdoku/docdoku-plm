@@ -26,7 +26,8 @@ define([
                 'click .save-button': 'onSave',
                 'click .new-iteration': 'createIteration',
                 'click a#previous-iteration': 'onPreviousIteration',
-                'click a#next-iteration': 'onNextIteration'
+                'click a#next-iteration': 'onNextIteration',
+                'click #addTemplateAttributes':'addPartAttributeTemplatesAsAttributes'
             },
 
             initialize: function () {
@@ -153,10 +154,11 @@ define([
             },
             buildAttributesTab: function () {
                 var self = this;
-                this.attributesView = new AttributesView({});
+                this.attributesView = new AttributesView({
+                    el:this.$('#pathDataAttributes')
+                });
                 this.attributesView.setEditMode(!this.iteration || this.iteration.getIteration() === this.model.getIterations().size());
                 this.attributesView.render();
-                this.$('#tab-attributes').html(this.attributesView.$el);
 
                 if (!this.isNew) {
                     _.each(this.iteration.getInstanceAttributes(), function (item) {
@@ -305,16 +307,24 @@ define([
 
             addPartAttributes:function(){
 
-                var attributesView = new AttributesView({});
+                var attributesView = new AttributesView({el:this.$('#partAttributes')});
                 attributesView.setEditMode(false);
                 attributesView.render();
 
                 _.each(this.model.getPartAttributes(), function (item) {
+                    console.log(item)
                     attributesView.addAndFillAttribute(new Attribute(item));
                 });
+            },
 
-                this.attributesView.$el.before(attributesView.el);
-
+            addPartAttributeTemplatesAsAttributes:function(){
+                var self = this;
+                _.each(this.model.getPartAttributeTemplates(), function (item) {
+                    self.attributesView.addAndFillAttribute(new Attribute({
+                        name:item.name,
+                        type:item.attributeType
+                    }));
+                });
             },
 
             openModal: function () {
