@@ -44,7 +44,7 @@ import java.util.List;
 @IdClass(PartMasterKey.class)
 @Entity
 @NamedQueries({
-    @NamedQuery(name="PartMaster.findByNumber", query="SELECT pm FROM PartMaster pm WHERE pm.number LIKE :partNumber AND pm.workspace.id = :workspaceId"),
+    @NamedQuery(name="PartMaster.findByNameOrNumber", query="SELECT pm FROM PartMaster pm WHERE (pm.name LIKE :partName OR pm.number LIKE :partNumber) AND pm.workspace.id = :workspaceId"),
     @NamedQuery(name="PartMaster.findByWorkspace", query="SELECT pm FROM PartMaster pm WHERE pm.workspace.id = :workspaceId ORDER BY pm.creationDate DESC")
 })
 public class PartMaster implements Serializable {

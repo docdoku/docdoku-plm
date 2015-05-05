@@ -524,7 +524,7 @@ public interface IProductManagerWS{
      * @throws AccessRightException
      * @throws WorkspaceNotFoundException
      */
-    List<PartMaster> findPartMasters(String workspaceId, String partNumber, int maxResults) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException;
+    List<PartMaster> findPartMasters(String workspaceId, String partNumber, String pPartName, int maxResults) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException;
 
     /**
      * Fetches the components of the supplied part assembly

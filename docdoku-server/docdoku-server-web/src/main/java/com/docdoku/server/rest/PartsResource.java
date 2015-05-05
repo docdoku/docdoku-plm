@@ -266,7 +266,8 @@ public class PartsResource {
     public List<LightPartMasterDTO> searchPartNumbers(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q)
             throws EntityNotFoundException, AccessRightException {
 
-        List<PartMaster> partMasters = productService.findPartMasters(Tools.stripTrailingSlash(workspaceId), "%" + q + "%", 8);
+        String search = "%" + q + "%";
+        List<PartMaster> partMasters = productService.findPartMasters(Tools.stripTrailingSlash(workspaceId), search, search, 8);
         List<LightPartMasterDTO> partsMastersDTO = new ArrayList<>();
         for (PartMaster p : partMasters) {
             LightPartMasterDTO lightPartMasterDTO = new LightPartMasterDTO(p.getNumber(), p.getName());
