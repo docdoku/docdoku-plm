@@ -157,7 +157,9 @@ define(['backbone', 'common-objects/utils/date'],
             isOptional : function(){
                 return this.get('optional');
             },
-
+            isVirtual : function(){
+                return this.get('virtual');
+            },
             getPartUsageLinkReferenceDescription:function(){
                 return this.get('partUsageLinkReferenceDescription');
             },

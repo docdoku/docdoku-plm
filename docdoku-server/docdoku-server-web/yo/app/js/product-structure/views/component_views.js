@@ -9,27 +9,35 @@ define([
     var ComponentViews = {};
 
     var nodeTemplate = _.template(
-        '<input id="select-<%= path %>" type="checkbox" class="selectable-part-checkbox">' +
+        '<%if(path){%>'+
+            '<input id="select-<%= path %>" type="checkbox" class="selectable-part-checkbox">' +
+        '<%}%>'+
         '<%if(!isLock && !isForbidden) {%>' +
             '<%if(isNode) {%>' +
                 '<div class="hitarea expandable-hitarea"></div>' +
             '<%}%>' +
-            '<input id="load-3D-<%= path %>" type="checkbox" class="load-3D available" <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
-            '<label for="load-3D-<%= path %>"><i class="toggle-3D fa"></i></label>' +
+            '<%if(path){%>'+
+                '<input id="load-3D-<%= path %>" type="checkbox" class="load-3D available" <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
+                '<label for="load-3D-<%= path %>"><i class="toggle-3D fa"></i></label>' +
+            '<%}%>'+
         '<%} else {%>' +
             '<input type="checkbox" class="load-3D" disabled <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
         '<%}%>' +
             '<a><label class="checkbox <%if(isNode) {%>isNode<%}%>">' +
         '<%if(isSubstitute) {%> ' +
-        '<i class="fa fa-arrows-h" title="'+App.config.i18n.PART_SUBSTITUTE+'"></i>' +
+            '<i class="fa fa-arrows-h" title="'+App.config.i18n.PART_SUBSTITUTE+'"></i>' +
         '<%}%>' +
         '<%if(hasSubstitutes) {%> ' +
-        '<i class="fa fa-random" title="'+App.config.i18n.HAS_SUBSTITUTES+'"></i>' +
+            '<i class="fa fa-random" title="'+App.config.i18n.HAS_SUBSTITUTES+'"></i>' +
         '<%}%>' +
         '<%if(isOptional) {%> ' +
-        '<i class="fa fa-question" title="'+App.config.i18n.OPTIONAL+'"></i>' +
+            '<i class="fa fa-question" title="'+App.config.i18n.OPTIONAL+'"></i>' +
         '<%}%>' +
-        '<%= name %> < <%= number %>-<%= version %>-<%= iteration %> > (<%= amount %><%if (unit) {%> <%= unit %>  <%}%>)  </label>' +
+        '<%if(path) {%> ' +
+            '<%= name %> < <%= number %>-<%= version %>-<%= iteration %> > (<%= amount %><%if (unit) {%> <%= unit %>  <%}%>)  </label>' +
+        '<%}else{%>' +
+            '<%= number %>' +
+        '<%}%>' +
         '</a>' +
         '<%if(isForbidden) {%> ' +
             '<i class="fa fa-ban"></i>' +
@@ -41,7 +49,7 @@ define([
             '<i class="fa openModal fa-check"></i>' +
         '<%} else if(isObsolete){%> ' +
             '<i class="fa openModal fa-frown-o"></i>' +
-        '<%} else{%> ' +
+        '<%} else if(path) {%> ' +
             '<i class="fa openModal fa-eye"></i>' +
         '<%}%>'+
         '<%if(hasUnreadModificationNotifications) {%> ' +
@@ -192,6 +200,7 @@ define([
         onComponentSelected: function (e) {
             e.stopPropagation();
             this.$('>a').trigger('component:selected', [this.model, this.$el]);
+
         },
 
 	    onEditPart: function () {

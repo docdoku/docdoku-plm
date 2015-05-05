@@ -45,18 +45,22 @@ define([
 
         update: function (component) {
             this.itemViews = [];
-            this.partsCollection = new PartList();
-            this.partsCollection.setFilterUrl(component.getUrlForBom());
-            this.listenTo(this.partsCollection, 'reset', this.addAllBomItem);
-            this.partsCollection.fetch({reset: true});
+            if(!component.isVirtual()){
+                this.partsCollection = new PartList();
+                this.partsCollection.setFilterUrl(component.getUrlForBom());
+                this.listenTo(this.partsCollection, 'reset', this.addAllBomItem);
+                this.partsCollection.fetch({reset: true});
+            }
         },
 
         showRoot: function (rootComponent) {
             this.itemViews = [];
-            this.partsCollection = new PartList();
-            this.partsCollection.setFilterUrl(rootComponent.getRootUrlForBom());
-            this.listenTo(this.partsCollection, 'reset', this.addAllBomItem);
-            this.partsCollection.fetch({reset: true});
+            if(!rootComponent.isVirtual()){
+                this.partsCollection = new PartList();
+                this.partsCollection.setFilterUrl(rootComponent.getRootUrlForBom());
+                this.listenTo(this.partsCollection, 'reset', this.addAllBomItem);
+                this.partsCollection.fetch({reset: true});
+            }
         },
 
         addAllBomItem: function (parts) {
