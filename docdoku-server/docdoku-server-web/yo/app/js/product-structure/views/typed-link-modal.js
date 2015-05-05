@@ -155,6 +155,7 @@ define([
 
         closeModal: function () {
             this.$modal.modal('hide');
+            App.baselineSelectView.fetchPathToPathLinkTypes();
         },
 
         onHidden: function () {
