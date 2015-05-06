@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 public class BinaryResourceDownloadMeta {
     private static final Logger LOGGER = Logger.getLogger(BinaryResourceDownloadMeta.class.getName());
     private static MimetypesFileTypeMap fileTypeMap = null;
-    private static final String ENCODAGE = "UTF-8";
+    private static final String CHARSET = "UTF-8";
 
     private String fullName;
     private String outputFormat;
@@ -76,7 +76,7 @@ public class BinaryResourceDownloadMeta {
     public String getFileName(){
         String fileName = fullName;
         try {
-            fileName = URLEncoder.encode(fileName, ENCODAGE).replace("+", "%20");
+            fileName = URLEncoder.encode(fileName, CHARSET).replace("+", " ");
         } catch (UnsupportedEncodingException e) {
             LOGGER.log(Level.WARNING,null,e);
         }
@@ -149,7 +149,7 @@ public class BinaryResourceDownloadMeta {
         }
 
         if (contentType!=null && contentType.startsWith("text")) {
-            contentType += ";charset="+ENCODAGE;
+            contentType += ";charset="+ CHARSET;
         }
 
         return (contentType != null) ? contentType : "application/octet-stream";
