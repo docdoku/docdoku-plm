@@ -183,7 +183,7 @@ define([
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { 'bSortable': false, 'aTargets': [ 0, 5, 6, 7 ] }
+                    { 'bSortable': false, 'aTargets': [ 0, 1, 6, 7, 8 ] }
                 ]
             });
             this.$el.find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);

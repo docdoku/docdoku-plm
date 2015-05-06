@@ -39,6 +39,8 @@ public class ProductBaselineDTO extends BaselineDTO {
     private List<PartMinimalListDTO> substitutesParts;
     private List<PartMinimalListDTO> optionalsParts;
     private UserDTO author;
+    private boolean hasObsoletePartRevisions;
+
     public ProductBaselineDTO() {
     }
 
@@ -124,5 +126,13 @@ public class ProductBaselineDTO extends BaselineDTO {
 
     public void setAuthor(UserDTO author) {
         this.author = author;
+    }
+
+    public boolean isHasObsoletePartRevisions() {
+        return hasObsoletePartRevisions;
+    }
+
+    public void setHasObsoletePartRevisions(boolean hasObsoletePartRevisions) {
+        this.hasObsoletePartRevisions = hasObsoletePartRevisions;
     }
 }

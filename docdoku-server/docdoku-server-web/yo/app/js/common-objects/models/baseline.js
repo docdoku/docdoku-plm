@@ -2,27 +2,35 @@
 define(['backbone'], function (Backbone) {
 	'use strict';
     var Baseline = Backbone.Model.extend({
+
         initialize: function () {
             _.bindAll(this);
         },
+
         getId: function () {
             return this.get('id');
         },
+
         getName: function () {
             return this.get('name');
         },
+
         getIterationNote:function(){
             return this.get('description');
         },
+
         getCreationDate: function () {
             return this.get('creationDate');
         },
+
         getBaselinedParts:function(){
             return this.get('baselinedParts');
         },
+
         getConfigurationItemId: function(){
             return this.get('configurationItemId');
         },
+
         setConfigurationItemId: function(configurationItemId){
             this.set('configurationItemId',configurationItemId);
         },
@@ -42,8 +50,13 @@ define(['backbone'], function (Backbone) {
         getSubstitutesParts:function(){
             return this.get('substitutesParts');
         },
+
         getOptionalsParts:function(){
             return this.get('optionalsParts');
+        },
+
+        hasObsoletePartRevisions:function(){
+            return this.get('hasObsoletePartRevisions');
         }
 
     });

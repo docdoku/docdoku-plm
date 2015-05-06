@@ -87,7 +87,9 @@ public class ProductBaselinesResource {
             ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline,ProductBaselineDTO.class);
             productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
             productBaselineDTO.setConfigurationItemLatestRevision(productBaseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
+            productBaselineDTO.setHasObsoletePartRevisions(!productBaselineService.getObsoletePartRevisionsInBaseline(workspaceId, productBaseline.getId()).isEmpty());
             baselinesDTO.add(productBaselineDTO);
+
         }
         return baselinesDTO;
     }

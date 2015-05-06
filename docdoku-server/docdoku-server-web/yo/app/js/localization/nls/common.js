@@ -90,6 +90,7 @@ define({
         CONFIRM: "Confirm password",
 		CONNECTED: "Connected",
 		CONNECTING: "Connecting...",
+        CONTAINS_OBSOLETE_PARTS:"Contains obsolete parts",
 		CONTENT: "Content",
 		CONTENT_HELP: "Document content",
 		CONTROLS_SHORTCUTS: "Mouse/keyboard shortcuts",

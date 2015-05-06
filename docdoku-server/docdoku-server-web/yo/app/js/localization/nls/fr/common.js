@@ -89,6 +89,7 @@ define({
 	CONFIRM: "Confirmer le mot de passe",
 	CONNECTED: "Connecté",
 	CONNECTING: "Connexion ...",
+    CONTAINS_OBSOLETE_PARTS:"Contient des articles obsolètes",
 	CONTENT: "Contenu",
 	CONTENT_HELP: "Contenu du document",
 	CONTROLS_SHORTCUTS: "Raccourcis clavier/souris",

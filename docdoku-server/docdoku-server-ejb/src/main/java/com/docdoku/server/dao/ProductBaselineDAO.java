@@ -105,6 +105,13 @@ public class ProductBaselineDAO {
                 .getResultList();
     }
 
+    public List<PartRevision> findObsoletePartsInBaseline(String workspaceId, ProductBaseline productBaseline) {
+        return em.createNamedQuery("ProductBaseline.findObsoletePartRevisions", PartRevision.class)
+                .setParameter("productBaseline", productBaseline)
+                .setParameter("workspaceId", workspaceId)
+                .getResultList();
+    }
+
     public ProductBaseline findBaselineById(int baselineId) {
         return em.find(ProductBaseline.class,baselineId);
     }
@@ -115,6 +122,5 @@ public class ProductBaselineDAO {
                                                   .setParameter("partCollection",collectionId)
                                                   .setMaxResults(maxResults)
                                                   .getResultList();
-
     }
 }

@@ -1,4 +1,5 @@
 <td><input type="checkbox"/></td>
+<td>{{#model.hasObsoletePartRevisions}}<i title="{{i18n.CONTAINS_OBSOLETE_PARTS}}" class="fa fa-frown-o"></i>{{/model.hasObsoletePartRevisions}}</td>
 <td class="reference">{{model.getName}}</td>
 <td><a class="product_id">{{model.getConfigurationItemId}}</a></td>
 <td>

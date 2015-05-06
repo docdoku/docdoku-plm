@@ -19,11 +19,14 @@
  */
 package com.docdoku.core.services;
 
-import com.docdoku.core.configuration.*;
+import com.docdoku.core.configuration.BaselinedPart;
+import com.docdoku.core.configuration.PSFilter;
+import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.configuration.ProductConfiguration;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.ConfigurationItemKey;
-import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartRevision;
 
 import javax.jws.WebService;
 import java.util.List;
@@ -54,4 +57,6 @@ public interface IProductBaselineManagerWS {
     void deleteProductConfiguration(ConfigurationItemKey ciKey, int productConfigurationId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductConfigurationNotFoundException, AccessRightException;
     //void updateACLForConfiguration(ConfigurationItemKey ciKey, int productConfigurationId, Map<String,String> userEntries, Map<String,String> groupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductConfigurationNotFoundException, AccessRightException;
     void removeACLFromConfiguration(ConfigurationItemKey ciKey, int productConfigurationId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductConfigurationNotFoundException, AccessRightException;
+    List<PartRevision> getObsoletePartRevisionsInBaseline(String workspaceId, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException;
+
 }

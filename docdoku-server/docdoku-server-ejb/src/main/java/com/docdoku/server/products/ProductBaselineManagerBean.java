@@ -529,4 +529,15 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
 
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public List<PartRevision> getObsoletePartRevisionsInBaseline(String workspaceId, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(locale, em);
+        ProductBaseline baseline = productBaselineDAO.loadBaseline(baselineId);
+        List<PartRevision> obsoletePartsInBaseline = productBaselineDAO.findObsoletePartsInBaseline(workspaceId, baseline);
+        return obsoletePartsInBaseline;
+    }
+
 }

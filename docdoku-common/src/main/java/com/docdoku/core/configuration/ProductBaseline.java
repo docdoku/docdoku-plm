@@ -41,7 +41,9 @@ import java.util.*;
 @Entity
 @NamedQueries({
         @NamedQuery(name= "ProductBaseline.findByConfigurationItemId", query="SELECT b FROM ProductBaseline b WHERE b.configurationItem.id = :ciId AND b.configurationItem.workspace.id = :workspaceId"),
-        @NamedQuery(name= "ProductBaseline.getBaselinesForPartRevision", query="SELECT b FROM ProductBaseline b WHERE b.partCollection IN (SELECT bl.partCollection FROM BaselinedPart bl WHERE bl.targetPart.partRevision = :partRevision)")
+        @NamedQuery(name= "ProductBaseline.getBaselinesForPartRevision", query="SELECT b FROM ProductBaseline b WHERE b.partCollection IN (SELECT bl.partCollection FROM BaselinedPart bl WHERE bl.targetPart.partRevision = :partRevision)"),
+        @NamedQuery(name="ProductBaseline.findObsoletePartRevisions", query="SELECT pr FROM PartRevision pr JOIN ProductBaseline pb JOIN BaselinedPart bp WHERE pb = :productBaseline AND pb.partCollection.id = bp.partCollection.id AND bp.targetPart.partRevision.status = com.docdoku.core.product.PartRevision.RevisionStatus.OBSOLETE AND bp.targetPart.partRevision.partMasterWorkspaceId = :workspaceId")
+
 })
 public class ProductBaseline implements Serializable {
 
