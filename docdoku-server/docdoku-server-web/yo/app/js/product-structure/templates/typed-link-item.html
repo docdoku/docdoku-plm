@@ -1,12 +1,12 @@
 <div class="error-div"></div>
 <div class="typed-link-content">
     <button type="button" class="close delete-item">×</button>
-    <div class="link-source"><strong>{{i18n.PATH_TO_PATH_SOURCE}}</strong> : {{source.getName}} < {{source.getNumber}} > </div>
+    <div class="link-source"><strong>{{i18n.PATH_TO_PATH_SOURCE}}</strong> : {{source.getName}} < {{source.getNumber}} > ({{source.getPartUsageLinkReferenceDescription}})</div>
 
     {{#isEditMode}}
     <i class="fa fa-exchange invert-source-target" title="{{i18n.INVERT}}"></i>
     {{/isEditMode}}
-    <div class="link-target"><strong>{{i18n.PATH_TO_PATH_TARGET}}</strong> : {{target.getName}} < {{target.getNumber}} > </div>
+    <div class="link-target"><strong>{{i18n.PATH_TO_PATH_TARGET}}</strong> : {{target.getName}} < {{target.getNumber}} > ({{target.getPartUsageLinkReferenceDescription}})</div>
 
 
     <div class="link-type-block">
