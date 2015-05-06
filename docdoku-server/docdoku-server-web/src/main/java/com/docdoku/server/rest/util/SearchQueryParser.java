@@ -25,6 +25,7 @@ import com.docdoku.core.query.PartSearchQuery;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,6 +36,7 @@ public class SearchQueryParser {
     private SearchQueryParser(){
         super();
     }
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public static DocumentSearchQuery parseDocumentStringQuery(String workspaceId , String pQuery){
         String fullText = null;
@@ -74,10 +76,18 @@ public class SearchQueryParser {
                         pType = filter[1];
                         break;
                     case "from" :
-                        pCreationDateFrom = new Date(Long.valueOf(filter[1]));
+                        try {
+                            pCreationDateFrom =  simpleDateFormat.parse(filter[1]);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case "to" :
-                        pCreationDateTo = new Date(Long.valueOf(filter[1]));
+                        try {
+                            pCreationDateTo =  simpleDateFormat.parse(filter[1]);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case "tags" :
                         pTags = filter[1].split(",");
@@ -139,10 +149,18 @@ public class SearchQueryParser {
                         pType = filter[1];
                         break;
                     case "from" :
-                        pCreationDateFrom = new Date(Long.valueOf(filter[1]));
+                        try {
+                            pCreationDateFrom =  simpleDateFormat.parse(filter[1]);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case "to" :
-                        pCreationDateTo = new Date(Long.valueOf(filter[1]));
+                        try {
+                            pCreationDateTo =  simpleDateFormat.parse(filter[1]);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case "standardPart" :
                         standardPart = Boolean.valueOf(filter[1]);

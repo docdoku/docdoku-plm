@@ -81,8 +81,9 @@
                         <label class="control-label" for="search-from">{{i18n.CREATION_DATE}}</label>
 
                         <div class="controls">
-                            <input id="search-from" type="date"><br/>
-                            <input id="search-to" type="date">
+                            <p>{{i18n.FROM}}</p> <input id="search-from" type="date"><br/>
+                            <p>{{i18n.TO}}</p> <input id="search-to" type="date">
+                            <p class="help-block"> <i class="fa fa-clock-o">{{timeZone}}</i></p>
                         </div>
                     </div>
 

@@ -27,7 +27,7 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n,timeZone:App.config.timeZone}));
             this.bindDomElements();
             this.fillInputs();
             this.initAttributesView();
