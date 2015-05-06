@@ -44,7 +44,9 @@ public abstract class InstanceAttributeTemplate implements Serializable, Cloneab
     @Column(length=100)
     protected String name = "";
 
-    protected  boolean mandatory;
+    protected boolean mandatory;
+
+    protected boolean locked;
 
     public enum AttributeType {
 
@@ -83,7 +85,13 @@ public abstract class InstanceAttributeTemplate implements Serializable, Cloneab
         this.mandatory = mandatory;
     }
 
+    public boolean isLocked() {
+        return locked;
+    }
 
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
 
     public abstract InstanceAttribute createInstanceAttribute();
 

@@ -84,7 +84,7 @@ public class InstanceAttributeDozerConverter extends DozerConverter<InstanceAttr
         else {
             throw new IllegalArgumentException("Instance attribute not supported");
         }
-        InstanceAttributeDTO dto = new InstanceAttributeDTO(source.getName(), type, value, source.isMandatory());
+        InstanceAttributeDTO dto = new InstanceAttributeDTO(source.getName(), type, value, source.isMandatory(), source.isLocked());
         if (itemsDTO != null){
             dto.setItems(itemsDTO);
         }

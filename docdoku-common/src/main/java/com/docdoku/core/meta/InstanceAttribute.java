@@ -46,6 +46,8 @@ public abstract class InstanceAttribute implements Serializable, Cloneable {
 
     protected boolean mandatory;
 
+    protected boolean locked;
+
     public InstanceAttribute() {
     }
 
@@ -69,6 +71,14 @@ public abstract class InstanceAttribute implements Serializable, Cloneable {
 
     public void setMandatory(boolean mandatory) {
         this.mandatory = mandatory;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
     @Override

@@ -30,6 +30,8 @@ public class InstanceAttributeDTO  implements Serializable{
     
     private String name;
     private boolean mandatory;
+    private boolean locked;
+
     private Type type;
     public enum Type {
         TEXT, NUMBER, DATE, BOOLEAN, URL, LOV
@@ -44,15 +46,15 @@ public class InstanceAttributeDTO  implements Serializable{
     
     }
 
-    public InstanceAttributeDTO(String pName, Type pType, String pValue, Boolean pMandatory){
+    public InstanceAttributeDTO(String pName, Type pType, String pValue, Boolean pMandatory, Boolean pLocked){
         this.name=pName;
         this.type=pType;
         this.value=pValue;
         this.mandatory=pMandatory;
     }
     
-    public InstanceAttributeDTO(String pName, String pType, String pValue, Boolean pMandatory){
-        this(pName,InstanceAttributeDTO.Type.valueOf(pType),pValue,pMandatory);
+    public InstanceAttributeDTO(String pName, String pType, String pValue, Boolean pMandatory, Boolean pLocked){
+        this(pName,InstanceAttributeDTO.Type.valueOf(pType),pValue,pMandatory,pLocked);
     }
     
     public String getName() {
@@ -81,6 +83,14 @@ public class InstanceAttributeDTO  implements Serializable{
     }
     public void setMandatory(boolean mandatory) {
         this.mandatory = mandatory;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
     public String getLovName() {
