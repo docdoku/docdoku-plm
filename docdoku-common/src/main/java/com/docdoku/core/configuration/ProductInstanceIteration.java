@@ -166,6 +166,16 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
             })
     private List<PathToPathLink> pathToPathLinks =new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name = "AUTHOR_LOGIN", referencedColumnName = "LOGIN"),
+            @JoinColumn(name = "AUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
+    })
+    private User author;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate;
+
     public ProductInstanceIteration() {
     }
 
@@ -319,5 +329,21 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
 
     public void removePathToPathLink(PathToPathLink pathToPathLink) {
         pathToPathLinks.remove(pathToPathLink);
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 }

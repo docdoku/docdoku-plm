@@ -157,6 +157,8 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         }
         ProductInstanceIteration productInstanceIteration = productInstanceMaster.createNextIteration();
         productInstanceIteration.setIterationNote("Initial");
+        productInstanceIteration.setAuthor(user);
+        productInstanceIteration.setCreationDate(new Date());
 
         PartCollection partCollection = new PartCollection();
         new PartCollectionDAO(em).createPartCollection(partCollection);
@@ -288,6 +290,9 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             new PartCollectionDAO(em).createPartCollection(partCollection);
             partCollection.setAuthor(user);
             partCollection.setCreationDate(new Date());
+
+            nextIteration.setAuthor(user);
+            nextIteration.setCreationDate(new Date());
 
             for (BaselinedPart baselinedPart : baseline.getBaselinedParts().values()) {
                 partCollection.addBaselinedPart(baselinedPart.getTargetPart());
