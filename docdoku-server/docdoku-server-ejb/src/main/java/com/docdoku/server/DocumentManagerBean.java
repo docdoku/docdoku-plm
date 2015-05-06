@@ -1323,7 +1323,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             if (pAttributes != null) {
                 List<InstanceAttribute> currentAttrs = new ArrayList<>(doc.getInstanceAttributes());
                 if (docR.isAttributesLocked()) {
-                    //Check attributs haven't changed
+                    //Check attributes haven't changed
                     if (currentAttrs.size() != pAttributes.size()) {
                         throw new NotAllowedException(userLocale, "NotAllowedException44");
                     } else {
@@ -1333,7 +1333,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                             if (newAttr == null
                                     || !newAttr.getName().equals(currentAttr.getName())
                                     || !newAttr.getClass().equals(currentAttr.getClass())) {
-                                //Attribut has been swapped with a new attributs or his type has changed
+                                //Attribute has been swapped with a new attribute or his type has changed
                                 throw new NotAllowedException(userLocale, "NotAllowedException44");
                             }
                         }
