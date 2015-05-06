@@ -41,9 +41,9 @@ define([
                 animation: true,
                 html: true,
                 trigger: 'manual',
-                content: '<b>'+App.config.i18n.CAD_FILE+'</b> : <a href="'+(zipUrl+ '&exportNativeCADFiles=true&exportDocumentLinks=false')+'"><i class="fa fa-file-archive-o"></i></a><br/>' +
-                '<b>'+App.config.i18n.LINKS+'</b> : <a href="'+(zipUrl+ '&exportNativeCADFiles=false&exportDocumentLinks=true')+'"><i class="fa fa-file-archive-o"></i></a><br/>' +
-                '<b>'+App.config.i18n.BOTH+'</b> : <a href="'+(zipUrl+ '&exportNativeCADFiles=true&exportDocumentLinks=true')+'"><i class="fa fa-file-archive-o"></i></a><br/>',
+                content: '<a href="'+(zipUrl+ '&exportNativeCADFiles=true&exportDocumentLinks=false')+'">'+App.config.i18n.CAD_FILE+'</a> | ' +
+                '<a href="'+(zipUrl+ '&exportNativeCADFiles=false&exportDocumentLinks=true')+'">'+App.config.i18n.LINKS+'</a> | ' +
+                '<a href="'+(zipUrl+ '&exportNativeCADFiles=true&exportDocumentLinks=true')+'">'+App.config.i18n.BOTH+'</a>',
                 placement: 'top'
             }).click(function (e) {
                 $(this).popover('show');
