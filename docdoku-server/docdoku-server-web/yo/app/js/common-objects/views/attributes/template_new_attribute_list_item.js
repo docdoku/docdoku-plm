@@ -15,12 +15,16 @@ define([
         initialize: function () {
             ListItemView.prototype.initialize.apply(this, arguments);
             this.lovList = this.options.lovs;
+            this.editMode = this.options.editMode;
             this.events['change .type'] = 'typeChanged';
             this.events['change .name'] = 'updateName';
             this.events['click .fa-times'] = 'removeAction';
             this.events['change .attribute-mandatory input'] = 'mandatoryChanged';
             this.events.drop = 'drop';
-            this.templateExtraData = {lovs : this.lovList.models};
+            this.templateExtraData = {
+                lovs : this.lovList.models,
+                editMode : this.editMode
+            };
         },
         rendered: function () {
 

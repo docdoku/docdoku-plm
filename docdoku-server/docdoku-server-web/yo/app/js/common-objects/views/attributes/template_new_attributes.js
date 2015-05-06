@@ -26,6 +26,14 @@ define([
             if (this.options.attributesLocked) {
                 this.attributesLocked = this.options.attributesLocked;
             }
+
+            if(this.options.editMode){
+                this.editMode = this.options.editMode;
+            }
+
+            this.templateExtraData = {
+                editMode : this.editMode
+            };
         },
 
         updateSort: function(event,model,index){
@@ -41,7 +49,8 @@ define([
             var listViewAttributs = new TemplateNewAttributeListView({
                 el: '#items-' + this.cid,
                 collection: this.collection,
-                lovs:this.lovs
+                lovs:this.lovs,
+                editMode: this.editMode
             });
             this.attributesView = this.addSubView(
                 listViewAttributs

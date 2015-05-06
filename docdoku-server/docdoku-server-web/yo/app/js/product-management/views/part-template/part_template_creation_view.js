@@ -27,7 +27,8 @@ define([
 
             this.attributesView = this.addSubView(
                 new TemplateNewAttributesView({
-                    el: '#tab-attributes'
+                    el: '#tab-attributes',
+                    editMode: true
                 })
             ).render();
 

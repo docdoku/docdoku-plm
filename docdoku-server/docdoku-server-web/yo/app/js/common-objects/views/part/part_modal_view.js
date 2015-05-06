@@ -180,7 +180,8 @@ define([
 
             this.attributeTemplatesView =  new TemplateNewAttributesView({
                 el: this.$('#attribute-templates-list'),
-                attributesLocked: false
+                attributesLocked: false,
+                editMode : this.editMode
             });
             this.attributeTemplatesView.render();
             this.attributeTemplatesView.collection.reset(this.iteration.getAttributeTemplates());

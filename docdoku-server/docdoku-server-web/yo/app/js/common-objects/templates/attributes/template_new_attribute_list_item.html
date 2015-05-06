@@ -1,12 +1,14 @@
+{{#editMode}}
 <i class="fa fa-bars sortable-handler"></i>
 <div class="controls">
     <a class="fa fa-times"></a>
 </div>
+{{/editMode}}
 <div class="controls">
-    <input type="text" class="input-xlarge name" placeholder="{{i18n.NAME}}" value="{{model.name}}" required/>
+    <input type="text" class="input-xlarge name" placeholder="{{i18n.NAME}}" value="{{model.name}}" required {{^editMode}}disabled{{/editMode}}/>
 </div>
 <div class="controls">
-    <select class="type">
+    <select class="type" {{^editMode}}disabled{{/editMode}}>
 
         <option value="TEXT">{{i18n.TEXT}}</option>
         <option value="BOOLEAN">{{i18n.BOOLEAN}}</option>
@@ -21,5 +23,5 @@
     </select>
 </div>
 <label class="checkbox attribute-mandatory">
-    <input type="checkbox" {{#model.mandatory}}checked=checked{{/model.mandatory}}"> {{i18n.MANDATORY}}
+    <input type="checkbox" {{#model.mandatory}}checked=checked{{/model.mandatory}}" {{^editMode}}disabled{{/editMode}}> {{i18n.MANDATORY}}
 </label>

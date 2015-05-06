@@ -9,12 +9,14 @@ define([
         initialize: function () {
             ListView.prototype.initialize.apply(this, arguments);
             this.lovs = this.options.lovs;
+            this.editMode = this.options.editMode;
         },
 
         itemViewFactory: function (model) {
             return new TemplateNewAttributeListItemView({
                 model: model,
-                lovs:this.lovs
+                lovs:this.lovs,
+                editMode:this.editMode
             });
         }
     });

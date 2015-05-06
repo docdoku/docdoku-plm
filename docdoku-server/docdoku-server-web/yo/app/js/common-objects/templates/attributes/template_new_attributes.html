@@ -1,9 +1,13 @@
+{{#editMode}}
 <label class="checkbox lock">
     <input type="checkbox" value="false"> {{i18n.LOCK_ATTRIBUTES}}
 </label>
+{{/editMode}}
 
 <div id="items-{{view.cid}}"></div>
 
+{{#editMode}}
 <a class="btn add">
     {{i18n.APPEND}}
 </a>
+{{/editMode}}

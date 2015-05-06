@@ -35,7 +35,8 @@ define([
             this.attributesView = this.addSubView(
                 new TemplateNewAttributesView({
                     el: '#tab-attributes',
-                    attributesLocked: this.model.isAttributesLocked()
+                    attributesLocked: this.model.isAttributesLocked(),
+                    editMode:true
                 })
             ).render();
 
