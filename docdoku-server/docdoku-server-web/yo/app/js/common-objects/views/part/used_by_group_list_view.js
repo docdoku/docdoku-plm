@@ -23,7 +23,7 @@ define([
                     that.groupCollection(productInstancesArray);
                 },
                 error: function () {
-                    console.log('error getting used by list');
+                    //console.log('error getting used by list');
                 }
             });
 

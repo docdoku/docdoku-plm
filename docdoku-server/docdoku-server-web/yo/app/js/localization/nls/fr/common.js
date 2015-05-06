@@ -422,7 +422,7 @@ define({
     QUERY_CONTEXT:"Contexte",
     QUERY_WHERE:"Critères",
     QUERY_ORDER_BY:"Ordonner par",
-    QUERY_GROUP_BY:"Groupper par",
+    QUERY_GROUP_BY:"Grouper par",
     QUERY_CLEAR:"vider",
     QUERY_CHOOSE_EXISTING_REQUEST:"Ou utiliser une requête sauvegardée...",
     QUERY_REMOVE_SAVED_QUERY:"Supprimer de la liste des requêtes",

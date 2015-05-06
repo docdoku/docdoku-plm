@@ -31,7 +31,7 @@ define([
                     that.addPartViews();
                 },
                 error: function () {
-                    console.log('error getting used by list');
+                    //console.log('error getting used by list');
                 }
             });
         },
