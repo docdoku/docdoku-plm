@@ -45,6 +45,7 @@ define({
 		BLOCKER_TITLE: "Click to launch the scene",
 		BOM_VIEW: "Product Breakdown Structure",
 		BOOLEAN: "Boolean",
+        BOTH:"Both",
         BY: "by",
 		CAD_FILE: "CAD File",
 		CALL_TO_TITLE: "Call to",

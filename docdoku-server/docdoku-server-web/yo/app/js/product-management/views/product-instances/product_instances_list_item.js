@@ -34,6 +34,24 @@ define([
             this.bindUserPopover();
             date.dateHelper(this.$('.date-popover'));
             this.trigger('rendered', this);
+
+            var zipUrl = this.model.getZipUrl();
+            this.$('.download-zip').popover({
+                title: '<b>'+App.config.i18n.DOWNLOAD_ZIP+'<br/>',
+                animation: true,
+                html: true,
+                trigger: 'manual',
+                content: '<b>'+App.config.i18n.CAD_FILE+'</b> : <a href="'+(zipUrl+ '&exportNativeCADFiles=true&exportDocumentLinks=false')+'"><i class="fa fa-file-archive-o"></i></a><br/>' +
+                '<b>'+App.config.i18n.LINKS+'</b> : <a href="'+(zipUrl+ '&exportNativeCADFiles=false&exportDocumentLinks=true')+'"><i class="fa fa-file-archive-o"></i></a><br/>' +
+                '<b>'+App.config.i18n.BOTH+'</b> : <a href="'+(zipUrl+ '&exportNativeCADFiles=true&exportDocumentLinks=true')+'"><i class="fa fa-file-archive-o"></i></a><br/>',
+                placement: 'top'
+            }).click(function (e) {
+                $(this).popover('show');
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
+            });
+
             return this;
         },
 

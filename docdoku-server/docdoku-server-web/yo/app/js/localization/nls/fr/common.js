@@ -44,6 +44,7 @@ define({
 	BLOCKER_TITLE: "Cliquez pour lancer la visualisation",
 	BOM_VIEW: "Visualiser structure produit",
 	BOOLEAN: "Booléen",
+    BOTH:"Tout",
     BY: "par",
 	CAD_FILE: "Fichier CAO",
 	CALL_TO_TITLE: "Appel en cours",
