@@ -20,6 +20,7 @@ define([
             this.events['change .name'] = 'updateName';
             this.events['click .fa-times'] = 'removeAction';
             this.events['change .attribute-mandatory input'] = 'mandatoryChanged';
+            this.events['change .attribute-locked input'] = 'lockedChanged';
             this.events.drop = 'drop';
             this.templateExtraData = {
                 lovs : this.lovList.models,
@@ -64,10 +65,21 @@ define([
             });
         },
         mandatoryChanged: function () {
+            var mandatory = this.$el.find('.attribute-mandatory input')[0].checked;
             this.model.set({
-                mandatory: this.$el.find('.attribute-mandatory input')[0].checked
+                mandatory: mandatory,
+                locked : this.model.get('locked') || mandatory
             });
         },
+
+        lockedChanged: function(){
+            var locked = this.$el.find('.attribute-locked input')[0].checked;
+            this.model.set({
+                mandatory : !locked ? false : this.model.get('mandatory'),
+                locked: locked
+            });
+        },
+
         drop: function(event, index) {
             this.$el.trigger('update-sort', [this.model, index]);
         },

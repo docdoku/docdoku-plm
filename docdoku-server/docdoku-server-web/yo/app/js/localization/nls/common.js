@@ -313,6 +313,7 @@ define({
 		NUMBER: "Number",
         LITER: "l",
         LIST_LOV:"Edit lists of values",
+        LOCK:"Lock",
         LOV:"List of values",
 		OBJECTS: "Objects",
         OBSOLETE: "Obsolete",

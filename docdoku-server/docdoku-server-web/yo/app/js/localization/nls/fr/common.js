@@ -240,6 +240,7 @@ define({
     LIST_LOV:"Ensemble des listes de valeurs",
     LOV:"Liste de valeurs",
     LOADING:'Chargement',
+    LOCK:"Verrouiller",
 	LOCK_ATTRIBUTES: "Geler la structure des attributs",
 	LOGOUT: 'Se déconnecter',
 	LOOK_AT: "Regarder",

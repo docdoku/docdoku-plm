@@ -38,29 +38,21 @@
     }
   }
   .controls.boolean {
-    > label {
-        height : 12px;
-        > input {
-            &:checked ~ .false {
-                display: none;
-            }
-            &:not(:checked) ~ .true {
-                display: none;
-            }
-        }
-    }
-    input[type="checkbox"].input-xlarge.value {
-      height: 18px;
-    }
+      > label {
+          height: 12px;
+          > input {
+              &:checked ~ .false {
+                  display: none;
+              }
+              &:not(:checked) ~ .true {
+                  display: none;
+              }
+          }
+      }
+      input[type="checkbox"].input-xlarge.value {
+          height: 18px;
+      }
   }
-
-  .attribute-mandatory {
-    display: none;
-  }
-  &.attributes-locked .attribute-mandatory {
-    display: inline-block;
-  }
-
 
   .controls {
     input[type="date"] {
