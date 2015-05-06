@@ -245,7 +245,7 @@ public class ESIndexer{
             String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString(ES_INDEX_ERROR_3);
             LOGGER.log(Level.WARNING, logMessage + " \n " + failureMessage);
         }else{
-            LOGGER.log(Level.INFO, "The workspace " + workspaceId + " have been indexed");
+            LOGGER.log(Level.INFO, "The workspace " + workspaceId + " has been indexed");
         }
 
         try{
