@@ -96,7 +96,7 @@ define([
                 this.$selectConfSpec.val('serial-number');
                 this.$selectBaselineSpec.hide();
                 this.$selectLatestFilter.hide();
-                this.$selectProdInstSpec.val(selected.getSerialNumber()).show();
+                this.$selectProdInstSpec.val('pi-'+selected.getSerialNumber()).show();
                 this.setDescription('');
             }
         },
