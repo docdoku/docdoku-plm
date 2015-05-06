@@ -25,7 +25,6 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.configuration.ProductBaseline;
-import com.docdoku.core.configuration.ProductInstanceMaster;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
@@ -192,16 +191,13 @@ public interface IProductManagerLocal{
 
     List<ModificationNotification> getModificationNotifications(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException;
 
-    List<ProductInstanceMaster> getProductInstanceMasters(PartRevision pPartRevision);
-
     void createModificationNotifications(PartIteration modifiedPartIteration) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException;
 
     void removeModificationNotificationsOnIteration(PartIterationKey pPartIPK);
     void removeModificationNotificationsOnRevision(PartRevisionKey pPartRPK);
 
-    List<PartIteration> getUsedByAsComponent(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException;
-
-    List<PartIteration> getUsedByAsSubstitute(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException;
+    List<PartIteration> getUsedByAsComponent(PartRevisionKey pPartRPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException;
+    List<PartIteration> getUsedByAsSubstitute(PartRevisionKey pPartRPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException;
 
     void checkCyclicAssemblyForPartIteration(PartIteration partIteration) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException ;
     Component filterProductStructure(ConfigurationItemKey ciKey, PSFilter filter, List<PartLink> path, Integer depth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException, AccessRightException, PartMasterNotFoundException, EntityConstraintException;

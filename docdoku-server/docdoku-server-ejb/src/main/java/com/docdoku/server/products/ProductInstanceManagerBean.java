@@ -1056,6 +1056,26 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         return new PathToPathLinkDAO(locale, em).findRootPathToPathLinks(prodInstM.getLastIteration(), type);
     }
 
+    @Override
+    public List<ProductInstanceMaster> getProductInstanceMasters(PartRevision pPartRevision) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        String workspaceId = pPartRevision.getWorkspaceId();
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        List<ProductInstanceMaster> productInstanceMasters = new ProductInstanceMasterDAO(em).findProductInstanceMasters(pPartRevision);
+        ListIterator<ProductInstanceMaster> ite = productInstanceMasters.listIterator();
+
+        while(ite.hasNext()){
+            ProductInstanceMaster next = ite.next();
+            try {
+                checkProductInstanceWriteAccess(workspaceId, next, user);
+            } catch (AccessRightException e) {
+                ite.remove();
+            }
+        }
+
+        return productInstanceMasters;
+
+    }
+
     private User checkProductInstanceReadAccess(String workspaceId, ProductInstanceMaster prodInstM, User user) throws AccessRightException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         if (user.isAdministrator()) {
             // Check if the user is workspace administrator

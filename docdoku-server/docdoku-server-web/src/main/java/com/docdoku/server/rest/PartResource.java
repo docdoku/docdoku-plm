@@ -35,6 +35,7 @@ import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IConverterManagerLocal;
+import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.sharing.SharedPart;
@@ -61,6 +62,8 @@ public class PartResource {
 
     @EJB
     private IProductManagerLocal productService;
+    @EJB
+    private IProductInstanceManagerLocal productInstanceService;
     @EJB
     private IUserManagerLocal userManager;
     @EJB
@@ -93,14 +96,14 @@ public class PartResource {
     }
 
     @GET
-    @Path("/used-by-productInstanceMasters")
+    @Path("/used-by-product-instance-masters")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ProductInstanceMasterDTO> getProductInstanceMasterDTOs(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+    public List<ProductInstanceMasterDTO> getProductInstanceMasterWherePartRevisionIsInUse(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(pWorkspaceId, partNumber, partVersion);
         PartRevision partRevision = productService.getPartRevision(revisionKey);
-        List<ProductInstanceMaster> productInstanceMasters = productService.getProductInstanceMasters(partRevision);
+        List<ProductInstanceMaster> productInstanceMasters = productInstanceService.getProductInstanceMasters(partRevision);
         List<ProductInstanceMasterDTO> productInstanceMasterDTOs = new ArrayList<>();
 
         for (ProductInstanceMaster productInstanceMaster : productInstanceMasters) {
@@ -111,6 +114,54 @@ public class PartResource {
         }
 
         return productInstanceMasterDTOs;
+    }
+
+    @GET
+    @Path("/used-by-as-component")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PartDTO> getPartRevisionsWherePartRevisionIsUsedAsComponent(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+
+        List<PartIteration> partIterations = productService.getUsedByAsComponent(new PartRevisionKey(pWorkspaceId,partNumber,partVersion));
+
+        Set<PartRevision> partRevisions = new HashSet<>();
+
+        for(PartIteration partIteration:partIterations){
+            partRevisions.add(partIteration.getPartRevision());
+        }
+
+        List<PartDTO> partDTOs = new ArrayList<>();
+
+        for(PartRevision partRevision:partRevisions){
+            PartDTO partDTO = mapper.map(partRevision, PartDTO.class);
+            partDTOs.add(partDTO);
+        }
+
+        return partDTOs;
+    }
+
+    @GET
+    @Path("/used-by-as-substitute")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PartDTO> getPartRevisionsWherePartRevisionIsUsedAsSubstitute(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+
+        List<PartIteration> partIterations = productService.getUsedByAsSubstitute(new PartRevisionKey(pWorkspaceId,partNumber,partVersion));
+
+        Set<PartRevision> partRevisions = new HashSet<>();
+
+        for(PartIteration partIteration:partIterations){
+            partRevisions.add(partIteration.getPartRevision());
+        }
+
+        List<PartDTO> partDTOs = new ArrayList<>();
+
+        for(PartRevision partRevision:partRevisions){
+            PartDTO partDTO = mapper.map(partRevision, PartDTO.class);
+            partDTOs.add(partDTO);
+        }
+
+        return partDTOs;
     }
 
     @PUT

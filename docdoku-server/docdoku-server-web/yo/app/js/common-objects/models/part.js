@@ -228,7 +228,25 @@ define([
             getUsedByProductInstances: function (args) {
                 $.ajax({
                     type: 'GET',
-                    url: this.getUrl() + '/used-by-productInstanceMasters',
+                    url: this.getUrl() + '/used-by-product-instance-masters',
+                    success: args.success,
+                    error: args.error
+                });
+            },
+
+            getUsedByPartsAsComponent: function (args) {
+                $.ajax({
+                    type: 'GET',
+                    url: this.getUrl() + '/used-by-as-component',
+                    success: args.success,
+                    error: args.error
+                });
+            },
+
+            getUsedByPartsAsSubstitute: function (args) {
+                $.ajax({
+                    type: 'GET',
+                    url: this.getUrl() + '/used-by-as-substitute',
                     success: args.success,
                     error: args.error
                 });
