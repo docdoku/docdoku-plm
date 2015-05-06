@@ -312,7 +312,6 @@ define([
                 attributesView.render();
 
                 _.each(this.model.getPartAttributes(), function (item) {
-                    console.log(item)
                     attributesView.addAndFillAttribute(new Attribute(item));
                 });
             },
