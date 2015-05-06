@@ -404,7 +404,7 @@ public class ProductResource {
 
     @GET
     @Path("{ciId}/export-files")
-    public Response exportFiles(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpecType") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ProductInstanceMasterNotFoundException {
+    public Response exportFiles(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpecType") String configSpecType, @QueryParam("exportNativeCADFiles") boolean exportNativeCADFiles,@QueryParam("exportDocumentLinks") boolean exportDocumentLinks) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ProductInstanceMasterNotFoundException {
 
         if(configSpecType == null){
             configSpecType = "wip";
@@ -417,13 +417,16 @@ public class ProductResource {
         fileExportEntity.setPsFilter(psFilter);
         fileExportEntity.setConfigurationItemKey(ciKey);
 
+        fileExportEntity.setExportNativeCADFile(exportNativeCADFiles);
+        fileExportEntity.setExportDocumentLinks(exportDocumentLinks);
+
         if(configSpecType.startsWith("pi-")){
             fileExportEntity.setSerialNumber(configSpecType.substring(3));
         }else if(configSpecType!="wip" && configSpecType!="latest" && configSpecType!="released"){
             try {
                 fileExportEntity.setBaselineId(Integer.parseInt(configSpecType));
             }catch(NumberFormatException e){
-                e.printStackTrace();
+                LOGGER.log(Level.FINEST, null, e);
             }
         }
 

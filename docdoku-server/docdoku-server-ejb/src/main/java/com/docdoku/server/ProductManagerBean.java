@@ -2725,7 +2725,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Map<String, Set<BinaryResource>> getBinariesInTree(String workspaceId, ConfigurationItemKey ciKey, PSFilter psFilter) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
+    public Map<String, Set<BinaryResource>> getBinariesInTree(String workspaceId, ConfigurationItemKey ciKey, PSFilter psFilter, boolean exportNativeCADFiles, boolean exportDocumentLinks) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Map<String, Set<BinaryResource>> result = new HashMap<>();
@@ -2775,17 +2775,22 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                         binaryResources = new HashSet<>();
                         result.put(partMasterNumber,binaryResources);
                     }
-                    BinaryResource nativeCADFile = partIteration.getNativeCADFile();
 
-                    if(nativeCADFile != null){
-                        binaryResources.add(nativeCADFile);
+                    if(exportNativeCADFiles) {
+                        BinaryResource nativeCADFile = partIteration.getNativeCADFile();
+
+                        if (nativeCADFile != null) {
+                            binaryResources.add(nativeCADFile);
+                        }
                     }
 
-                    Set<DocumentLink> linkedDocuments = partIteration.getLinkedDocuments();
+                    if(exportDocumentLinks){
+                        Set<DocumentLink> linkedDocuments = partIteration.getLinkedDocuments();
 
-                    for(DocumentLink documentLink :linkedDocuments){
-                        Set<BinaryResource> attachedFiles = documentLink.getTargetDocument().getAttachedFiles();
-                        binaryResources.addAll(attachedFiles);
+                        for(DocumentLink documentLink :linkedDocuments){
+                            Set<BinaryResource> attachedFiles = documentLink.getTargetDocument().getAttachedFiles();
+                            binaryResources.addAll(attachedFiles);
+                        }
                     }
 
                 }

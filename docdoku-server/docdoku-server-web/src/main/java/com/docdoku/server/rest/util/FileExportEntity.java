@@ -34,6 +34,10 @@ public class FileExportEntity {
     private String serialNumber;
     private Integer baselineId;
 
+    private boolean exportNativeCADFile;
+    private boolean exportDocumentLinks;
+
+
     public FileExportEntity() {
     }
 
@@ -67,5 +71,21 @@ public class FileExportEntity {
 
     public void setBaselineId(Integer baselineId) {
         this.baselineId = baselineId;
+    }
+
+    public boolean isExportNativeCADFile() {
+        return exportNativeCADFile;
+    }
+
+    public void setExportNativeCADFile(boolean exportNativeCADFile) {
+        this.exportNativeCADFile = exportNativeCADFile;
+    }
+
+    public boolean isExportDocumentLinks() {
+        return exportDocumentLinks;
+    }
+
+    public void setExportDocumentLinks(boolean exportDocumentLinks) {
+        this.exportDocumentLinks = exportDocumentLinks;
     }
 }
