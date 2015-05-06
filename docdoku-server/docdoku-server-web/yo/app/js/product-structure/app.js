@@ -81,6 +81,7 @@ define([
             App.$ControlsContainer.append(new ControlMeasureView().render().$el);
 
             this.typedLinkButton.hide();
+            this.productInstanceModalButton.hide();
             try {
                 App.sceneManager.init();
                 this.bindDatGUIControls();
@@ -170,6 +171,20 @@ define([
             } else {
                 this.typedLinkButton.hide();
             }
+
+
+            if(App.baselineSelectView.isSerialNumberSelected()){
+                if (pathSelected.length === 1) {
+                    this.productInstanceModalButton.show();
+                    this.checkedComponent = pathSelected[0];
+                }else{
+                    this.productInstanceModalButton.hide();
+                    this.checkedComponent = null;
+                }
+            }else{
+                this.productInstanceModalButton.hide();
+                this.checkedComponent = null;
+            }
         },
 
         openTypedLinkModal:function(){
@@ -221,12 +236,6 @@ define([
         onComponentSelected: function (showRoot) {
             this.exportSceneButton.show();
 
-            if(App.baselineSelectView.isSerialNumberSelected()){
-                this.productInstanceModalButton.show();
-            }else{
-                this.productInstanceModalButton.hide();
-            }
-
             this.updateBom(showRoot);
             this.showPartMetadata();
             App.sceneManager.setPathForIFrame(App.partsTreeView.componentSelected.getPath());
@@ -260,7 +269,7 @@ define([
 
             var productInstanceModal = new ProductInstanceDataModalView({
                 serialNumber: App.config.configSpec.substr(3),
-                path : App.partsTreeView.componentSelected.getEncodedPath()
+                path : this.checkedComponent.getEncodedPath()
             });
             window.document.body.appendChild(productInstanceModal.el);
             productInstanceModal.initAndOpenModal();
