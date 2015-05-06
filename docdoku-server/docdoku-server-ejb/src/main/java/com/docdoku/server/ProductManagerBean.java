@@ -439,6 +439,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 attrs.add(newAttr);
             }
             newPartIteration.setInstanceAttributes(attrs);
+
+            List<InstanceAttributeTemplate> attrsTemplate = new ArrayList<>();
+            for (InstanceAttributeTemplate attr : beforeLastPartIteration.getInstanceAttributeTemplates()) {
+                InstanceAttributeTemplate newAttr = attr.clone();
+                attrsTemplate.add(newAttr);
+            }
+            newPartIteration.setInstanceAttributeTemplates(attrsTemplate);
+
         }
 
         return partR;
