@@ -57,7 +57,12 @@ define([
             );
             listViewAttributs.collectionReset();
 
-            this.$el.find('.lock input')[0].checked = this.attributesLocked;
+            var lockInput = this.$el.find('.lock input');
+
+            if(lockInput){
+                lockInput.checked = this.attributesLocked;
+            }
+
             this.$el.toggleClass('attributes-locked', this.attributesLocked);
 
             this.attributesView.$el.sortable({
@@ -67,6 +72,7 @@ define([
                     ui.item.trigger('drop', ui.item.index());
                 }
             });
+
         },
 
         addAttribute: function () {
