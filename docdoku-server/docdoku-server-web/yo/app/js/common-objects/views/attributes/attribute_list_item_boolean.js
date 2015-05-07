@@ -23,7 +23,8 @@ define([
             return {
                 name: this.model.get('name'),
                 type: this.model.get('type'),
-                value: this.model.get('value') === true || this.model.get('value') === 'true'
+                value: this.model.get('value') === true || this.model.get('value') === 'true',
+                locked: this.model.get('locked')
             };
         }
     });

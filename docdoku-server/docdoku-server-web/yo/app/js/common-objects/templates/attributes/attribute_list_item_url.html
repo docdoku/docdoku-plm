@@ -1,5 +1,5 @@
 {{> attribute_list_item}}
-<div class="controls">
+<div class="controls{{#model.locked}} shift-margin{{/model.locked}}">
     {{#editMode}}
     <input type="url" class="input-xlarge value" placeholder="{{i18n.VALUE}}" value="{{model.value}}"
     {{#model.mandatory}}required{{/model.mandatory}}/>
