@@ -229,6 +229,7 @@ public class PartTemplateResource {
 
         data.setName(dto.getName());
         data.setMandatory(dto.isMandatory());
+        data.setLocked(dto.isLocked());
         return data;
     }
 }

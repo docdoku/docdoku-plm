@@ -33,6 +33,8 @@ public class InstanceAttributeTemplateDTO implements Serializable {
 
     private String lovName;
 
+    private boolean locked;
+
     public enum AttributeType {
         TEXT, NUMBER, DATE, BOOLEAN, URL, LOV
     }
@@ -40,10 +42,11 @@ public class InstanceAttributeTemplateDTO implements Serializable {
     public InstanceAttributeTemplateDTO() {
     }
 
-    public InstanceAttributeTemplateDTO(String pName, AttributeType pAttributeType, boolean pMandatory) {
+    public InstanceAttributeTemplateDTO(String pName, AttributeType pAttributeType, boolean pMandatory, boolean locked) {
         name = pName;
         attributeType = pAttributeType;
         mandatory = pMandatory;
+        this.locked = locked;
     }
 
     
@@ -77,6 +80,14 @@ public class InstanceAttributeTemplateDTO implements Serializable {
 
     public void setLovName(String lovName) {
         this.lovName = lovName;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
     @Override

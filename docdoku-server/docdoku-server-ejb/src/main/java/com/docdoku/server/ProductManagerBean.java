@@ -803,6 +803,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                             partIte.getInstanceAttributes().get(i).setName(newAttr.getName());
                             partIte.getInstanceAttributes().get(i).setValue(newAttr.getValue());
                             partIte.getInstanceAttributes().get(i).setMandatory(newAttr.isMandatory());
+                            partIte.getInstanceAttributes().get(i).setLocked(newAttr.isLocked());
                         }
                     }else{
                         //no more attribute to add remove all of them still end of iteration

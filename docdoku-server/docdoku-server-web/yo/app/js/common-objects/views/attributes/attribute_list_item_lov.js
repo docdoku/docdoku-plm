@@ -34,6 +34,11 @@ define([
             }else{
                 this.$('div.type').html(type);
             }
+
+            if(this.model.get('locked') === true){
+                this.$el.find('div.type').html(App.config.i18n.LOV);
+            }
+
             this.$el.addClass('well');
             this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
 
@@ -63,6 +68,10 @@ define([
                             this.$el.find('select.type').parent().html(App.config.i18n.LOV);
                         }else{
                             this.$('div.type').html(App.config.i18n.LOV);
+                        }
+
+                        if(this.model.get('locked') === true){
+                            this.$el.find('div.type').html(App.config.i18n.LOV);
                         }
                     }
                     this.addOptions(items);

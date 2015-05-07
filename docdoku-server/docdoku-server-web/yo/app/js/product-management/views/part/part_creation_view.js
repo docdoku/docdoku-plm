@@ -89,7 +89,8 @@ define([
                     type: object.attributeType,
                     mandatory: object.mandatory,
                     value: '',
-                    lovName:object.lovName
+                    lovName:object.lovName,
+                    locked:object.locked
                 });
             });
 

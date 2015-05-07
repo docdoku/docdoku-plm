@@ -40,6 +40,11 @@ define([
             else {
                 this.$el.find('div.type').html(App.config.i18n[type]);
             }
+
+            if(this.model.get('locked') === true){
+                this.$el.find('div.type').html(App.config.i18n[type]);
+            }
+
             this.$el.addClass('well');
             this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
         },

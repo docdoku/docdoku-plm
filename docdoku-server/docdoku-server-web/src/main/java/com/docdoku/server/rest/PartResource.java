@@ -580,6 +580,7 @@ public class PartResource {
 
         attr.setName(dto.getName());
         attr.setValue(dto.getValue());
+        attr.setLocked(dto.isLocked());
         return attr;
     }
 
@@ -605,6 +606,7 @@ public class PartResource {
 
         data.setName(dto.getName());
         data.setMandatory(dto.isMandatory());
+        data.setLocked(dto.isLocked());
         return data;
     }
 

@@ -1351,6 +1351,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                             doc.getInstanceAttributes().get(i).setName(newAttr.getName());
                             doc.getInstanceAttributes().get(i).setValue(newAttr.getValue());
                             doc.getInstanceAttributes().get(i).setMandatory(newAttr.isMandatory());
+                            doc.getInstanceAttributes().get(i).setLocked(newAttr.isLocked());
                         }
                     } else {
                         //no more attribute to add remove all of them still end of iteration

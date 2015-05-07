@@ -78,6 +78,7 @@ public class DefaultAttributeTemplate extends InstanceAttributeTemplate {
 
             attr.setName(name);
             attr.setMandatory(mandatory);
+            attr.setLocked(locked);
         }
 
         return attr;

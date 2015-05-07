@@ -51,6 +51,7 @@ public class InstanceAttributeDTO  implements Serializable{
         this.type=pType;
         this.value=pValue;
         this.mandatory=pMandatory;
+        this.locked = pLocked;
     }
     
     public InstanceAttributeDTO(String pName, String pType, String pValue, Boolean pMandatory, Boolean pLocked){

@@ -229,6 +229,7 @@ public class DocumentTemplateResource {
 
         data.setName(dto.getName());
         data.setMandatory(dto.isMandatory());
+        data.setLocked(dto.isLocked());
         return data;
     }
 }

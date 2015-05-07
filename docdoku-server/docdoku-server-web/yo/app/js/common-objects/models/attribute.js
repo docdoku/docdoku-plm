@@ -27,6 +27,10 @@ define(['backbone'], function (Backbone) {
             return this.get('items');
         },
 
+        getLocked: function () {
+            return this.get('locked');
+        },
+
         toString: function () {
             return this.getName() + ':' + this.getValue() + '(' + this.getType() + ') ';
         }

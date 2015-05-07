@@ -74,6 +74,7 @@ public class ListOfValuesAttributeTemplate extends InstanceAttributeTemplate {
         attr.setItems(items);
         attr.setName(name);
         attr.setMandatory(mandatory);
+        attr.setLocked(locked);
 
         return attr;
     }

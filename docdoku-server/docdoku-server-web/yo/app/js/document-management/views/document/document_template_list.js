@@ -53,7 +53,8 @@ define([
                         name: attributes[i].name,
                         mandatory: attributes[i].mandatory,
                         value: '',
-                        lovName:attributes[i].lovName
+                        lovName:attributes[i].lovName,
+                        locked:attributes[i].locked
                     });
                 }
                 if (template.get('mask')) {

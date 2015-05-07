@@ -1,13 +1,21 @@
 {{#lockMode}}
 <i class="fa fa-bars sortable-handler"></i>
+{{^model.locked}}
 <div class="controls">
     <a class="fa fa-times"></a>
 </div>
+{{/model.locked}}
 {{/lockMode}}
 <div class="controls">
     <input type="text" class="input-xlarge name" placeholder="{{i18n.NAME}}" value="{{model.name}}" required
     {{^lockMode}}disabled="disabled"{{/lockMode}} />
 </div>
+
+{{#model.locked}}
+<div class="controls type">
+</div>
+{{/model.locked}}
+{{^model.locked}}
 {{#lockMode}}
 <div class="controls">
     <select class="type">
@@ -28,3 +36,4 @@
 <div class="controls type">
 </div>
 {{/lockMode}}
+{{/model.locked}}

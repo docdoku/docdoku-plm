@@ -87,7 +87,8 @@ define([
                 name: '',
                 type: 'TEXT',
                 value: '',
-                lovName:null
+                lovName:null,
+                locked:false
             });
         },
 
@@ -98,7 +99,8 @@ define([
                 type: attribute.getType(),
                 value: attribute.getValue(),
                 lovName: attribute.getLOVName(),
-                items:attribute.getItems()
+                items:attribute.getItems(),
+                locked:attribute.getLocked()
             });
         }
 
