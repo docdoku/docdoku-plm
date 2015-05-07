@@ -2,7 +2,7 @@
 define([
     'backbone',
     'mustache',
-    'text!common-objects/templates/part/used_by_list_item.html'
+    'text!common-objects/templates/part/used_by_list_item_part.html'
 ], function (Backbone, Mustache, template) {
     'use strict';
     var UsedByListItemPartView = Backbone.View.extend({

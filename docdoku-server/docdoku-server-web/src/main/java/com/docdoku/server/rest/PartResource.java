@@ -134,6 +134,11 @@ public class PartResource {
 
         for(PartRevision partRevision:partRevisions){
             PartDTO partDTO = mapper.map(partRevision, PartDTO.class);
+            partDTO.setNumber(partRevision.getPartNumber());
+            partDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
+            partDTO.setName(partRevision.getPartMaster().getName());
+            partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
+
             partDTOs.add(partDTO);
         }
 
@@ -158,6 +163,10 @@ public class PartResource {
 
         for(PartRevision partRevision:partRevisions){
             PartDTO partDTO = mapper.map(partRevision, PartDTO.class);
+            partDTO.setNumber(partRevision.getPartNumber());
+            partDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
+            partDTO.setName(partRevision.getPartMaster().getName());
+            partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
             partDTOs.add(partDTO);
         }
 
