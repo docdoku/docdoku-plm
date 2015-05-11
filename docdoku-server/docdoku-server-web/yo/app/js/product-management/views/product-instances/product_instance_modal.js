@@ -221,13 +221,11 @@ define([
             this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
         },
 
-        onSubmitForm: function (e) {
-            var _this = this;
+        updateDataForm:function(){
             this.iteration.setIterationNote(this.$inputIterationNote.val());
             this.iteration.setBaselinedParts(this.baselinePartListView.getBaselinedParts());
             this.iteration.setInstanceAttributes(this.attributesView.collection.toJSON());
             this.iteration.setLinkedDocuments(this.linkedDocumentsView.collection.toJSON());
-
             var files = this.iteration.get('attachedFiles');
 
             /*tracking back files*/
@@ -235,6 +233,10 @@ define([
                 attachedFiles: files
             });
 
+        },
+        onSubmitForm: function (e) {
+            var _this = this;
+            this.updateDataForm();
             this.iteration.save(JSON.stringify(this.iteration), '', {
                 success: function () {
                     _this.model.fetch();
@@ -250,6 +252,17 @@ define([
 
         onRebase : function(){
             var self = this;
+            //save the previous iteration before create a new one
+            this.updateDataForm();
+            this.iteration.save(JSON.stringify(this.iteration), '', {
+                success: function () {
+                    debugger;
+                    self.model.fetch();
+                },
+                error: self.onError.bind(self)
+            });
+            this.fileListView.deleteFilesToDelete();
+
             //Do the rebase
             var selectedBaselineId = this.$('.rebase-baseline-select').val();
 
