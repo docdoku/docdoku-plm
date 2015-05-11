@@ -127,6 +127,9 @@ define([
                 return this.isCheckout() ? this.getCheckOutUserLogin() === App.config.login : false;
             },
 
+            isLocked:function(){
+                return this.isCheckout() && !this.isCheckoutByConnectedUser();
+            },
             getUrl: function () {
                 return this.url();
             },

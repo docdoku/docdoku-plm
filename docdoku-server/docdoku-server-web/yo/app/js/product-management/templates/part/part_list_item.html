@@ -1,4 +1,7 @@
-<td><a href="#" class="parthandle fa fa-bars"></a></td>
+<td> {{^model.isLocked}}
+    <a href="#" class="parthandle fa fa-bars"></a>
+    {{/model.isLocked}}
+</td>
 <td><input type="checkbox"/></td>
 <td class="modification_notification">
     {{#model.hasUnreadModificationNotifications}}
