@@ -10,7 +10,7 @@ define([
     'common-objects/views/part/parts_management_view',
     'common-objects/views/part/modification_notification_group_list_view',
     'common-objects/views/linked/linked_documents',
-    'common-objects/views/part/used_by_group_list_view',
+    'common-objects/views/part/used_by_view',
     'common-objects/views/alert',
     'common-objects/collections/linked/linked_document_collection',
     'common-objects/views/workflow/lifecycle',
@@ -18,7 +18,7 @@ define([
     'common-objects/utils/date',
     'common-objects/views/tags/tag',
     'common-objects/models/tag'
-], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, TemplateNewAttributesView, PartsManagementView, ModificationNotificationGroupListView, LinkedDocumentsView, UsedByGroupListView, AlertView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
+], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, TemplateNewAttributesView, PartsManagementView, ModificationNotificationGroupListView, LinkedDocumentsView, UsedByView, AlertView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
     'use strict';
     var PartModalView = ModalView.extend({
 
@@ -140,7 +140,7 @@ define([
                 this.initPartsManagementView();
 
                 this.initLinkedDocumentsView();
-                this.initUsedByGroupListView();
+                this.initUsedByView();
                 this.initLifeCycleView();
 
                 if (!data.iteration.hasNextIteration) {
@@ -278,13 +278,13 @@ define([
             this.$('#iteration-links').html(this.linkedDocumentsView.el);
         },
 
-        initUsedByGroupListView: function () {
-            this.usedByGroupListView = new UsedByGroupListView({
+        initUsedByView: function () {
+            this.usedByView = new UsedByView({
                 linkedPart: this.model
             }).render();
 
-            /* Add the usedByGroupListView to the tab */
-            this.$('#iteration-used-by').html(this.usedByGroupListView.el);
+            /* Add the usedByView to the tab */
+            this.$('#iteration-used-by').html(this.usedByView.el);
         },
 
         initLifeCycleView: function () {

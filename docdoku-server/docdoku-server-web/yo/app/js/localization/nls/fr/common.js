@@ -218,6 +218,8 @@ define({
 	INSTRUCTIONS: "Instructions",
 	INVITE: "Inviter des collaborateurs",
 	ISSUES: "Anomalies",
+    IS_COMPONENT_OF:"Est un composant de :",
+    IS_SUBSTITUTE_OF:"Est une variante de :",
 	ITERATION_CHANGE: "Changement d'iteration",
 	ITERATION: "Itération",
 	ITERATION_NOTE: "Note d'itération",

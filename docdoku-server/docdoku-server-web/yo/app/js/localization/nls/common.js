@@ -218,6 +218,8 @@ define({
 		INVITE: "Invite coworkers",
         INVERT:"Invert",
 		ISSUES: "Issues",
+        IS_COMPONENT_OF:"Is component of :",
+        IS_SUBSTITUTE_OF:"Is substitute of :",
 		ITERATION_CHANGE: "Iteration change",
 		ITERATION: "Iteration",
 		ITERATION_NOTE: "Iteration note",
