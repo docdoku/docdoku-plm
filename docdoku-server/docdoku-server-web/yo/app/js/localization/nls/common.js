@@ -139,7 +139,7 @@ define({
 		DELETE_TASK: "Remove task",
 		DESCRIPTION: 'Description',
 		DEVICE_ERROR: "Cannot access you audio/video device, please insure your browser is WebRTC capable, and if there's no exception for this website.",
-        DISPLAY_COMMENT: "Toggle comments",
+        DISPLAY_COMMENT: "Show/Hide details",
 		DOCUMENT: "Document",
 		DOCUMENT_S_DESCRIPTION: "Document description",
 		DOCUMENTS: 'Documents',
