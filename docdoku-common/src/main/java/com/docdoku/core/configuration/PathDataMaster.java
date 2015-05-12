@@ -47,7 +47,7 @@ public class PathDataMaster implements Serializable{
 
     @OneToMany(mappedBy = "pathDataMaster", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy("iteration ASC")
-    private List<PathDataIteration> pathDataIterations = new ArrayList<>();;
+    private List<PathDataIteration> pathDataIterations = new ArrayList<>();
 
 
     public int getId() {
