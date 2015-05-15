@@ -421,7 +421,7 @@ public class ProductInstancesResource {
     @Path("{serialNumber}/pathdata/{path}/{pathId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PathDataMasterDTO createPathDataIteration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber,@PathParam("pathId") int pathId,@PathParam("path") String path, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, FileAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+    public PathDataMasterDTO createPathDataIteration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber,@PathParam("pathId") int pathId,@PathParam("path") String path, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, FileAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, BaselineNotFoundException {
 
         InstanceAttributeFactory factory = new InstanceAttributeFactory();
 
@@ -453,10 +453,25 @@ public class ProductInstancesResource {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
         PartMinimalListDTO partList = new PartMinimalListDTO();
+        List<PartLink> partLinks = productService.decodePath(ciKey, path);
         for(PartLink partLink : productService.decodePath(ciKey, path)){
             partList.addPart(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
         }
         dto.setPartsPath(partList);
+
+        List<InstanceAttributeDTO> attributesDTO = new ArrayList<>();
+        List<InstanceAttributeTemplateDTO> attributeTemplatesDTO = new ArrayList<>();
+        PartLink partLink = partLinks.get(partLinks.size() - 1);
+        PSFilter filter = productService.getPSFilter(ciKey,"pi-"+serialNumber);
+        List<PartIteration> partIterations = filter.filter(partLink.getComponent());
+        PartIteration partIteration = partIterations.get(0);
+
+        if(partIteration != null){
+            for(InstanceAttribute instanceAttribute : partIteration.getInstanceAttributes()){
+                attributesDTO.add(mapper.map(instanceAttribute,InstanceAttributeDTO.class));
+            }
+            dto.setPartAttributes(attributesDTO);
+        }
 
         return dto;
     }
