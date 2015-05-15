@@ -2791,8 +2791,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                         Set<DocumentLink> linkedDocuments = partIteration.getLinkedDocuments();
 
                         for(DocumentLink documentLink :linkedDocuments){
-                            Set<BinaryResource> attachedFiles = documentLink.getTargetDocument().getLastIteration().getAttachedFiles();
-                            binaryResources.addAll(attachedFiles);
+                            DocumentIteration ite = documentLink.getTargetDocument().getLastIteration();
+                            if(ite!=null) {
+                                Set<BinaryResource> attachedFiles = ite.getAttachedFiles();
+                                binaryResources.addAll(attachedFiles);
+                            }
                         }
                     }
 
