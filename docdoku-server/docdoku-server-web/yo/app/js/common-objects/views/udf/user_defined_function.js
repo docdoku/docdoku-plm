@@ -14,7 +14,8 @@ define([
         events: {
             'hidden #user_defined_function_modal': 'onHidden',
             'submit #user_defined_function_form':'run',
-            'change .user-defined-product-select':'fetchBaselines'
+            'change .user-defined-product-select':'fetchValues',
+            'change .user-defined-type-select':'fetchValues'
         },
 
         initialize: function () {
@@ -25,7 +26,8 @@ define([
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.$modal= this.$('#user_defined_function_modal');
             this.$productList = this.$('.user-defined-product-select');
-            this.$baselineList = this.$('.user-defined-baseline-select');
+            this.$typeList = this.$('.user-defined-type-select');
+            this.$valueList = this.$('.user-defined-value-select');
             this.$runButton = this.$('.run-udf');
             this.$udfResult = this.$('.udf-result');
             this.$userDefineInit = this.$('.user-defined-init');
@@ -34,32 +36,42 @@ define([
             return this;
         },
 
-        fetchProducts:function(){
+        fetchProducts: function () {
             var productList = this.$productList;
-            var baselineList = this.$baselineList;
+            var typeList = this.$typeList;
+            var valueList = this.$valueList;
             var _this = this;
             new ConfigurationItemCollection().fetch({success:function(products){
                 products.each(function(product){
                     productList.append('<option value="'+product.getId()+'">'+product.getId()+'</option>');
-                    baselineList.empty().append('<option value="latest">'+App.config.i18n.LATEST+'</option>');
+                    typeList.empty();
+                    typeList.append('<option value="latest">'+App.config.i18n.LATEST_SHORT+'</option>');
+                    typeList.append('<option value="baseline">'+App.config.i18n.BASELINE+'</option>');
                 });
-                _this.fetchBaselines();
+                _this.fetchValues();
             }});
         },
 
-        fetchBaselines:function(){
+        fetchValues: function () {
             var productId = this.$productList.val();
-            var baselineList = this.$baselineList;
-            baselineList.empty();
-            baselineList.append('<option value="wip">'+App.config.i18n.HEAD_WIP+'</option>');
-            baselineList.append('<option value="latest">'+App.config.i18n.HEAD_CHECKIN+'</option>');
-            baselineList.append('<option value="latest-released">'+App.config.i18n.HEAD_RELEASED+'</option>');
-            if(productId){
-                new Baselines({},{type:'product',productId:productId}).fetch({success:function(baselines) {
-                    baselines.each(function(baseline){
-                        baselineList.append('<option value="'+baseline.getId()+'">'+baseline.getName()+'</option>');
-                    });
-                }});
+            var typeId = this.$typeList.val();
+            var valueList = this.$valueList;
+            valueList.empty();
+
+            if (productId) {
+                if (typeId === "latest") {
+                    valueList.append('<option value="wip">'+App.config.i18n.HEAD_WIP+'</option>');
+                    valueList.append('<option value="latest">'+App.config.i18n.HEAD_CHECKIN+'</option>');
+                    valueList.append('<option value="latest-released">'+App.config.i18n.HEAD_RELEASED+'</option>');
+
+                } else if (typeId === "baseline") {
+                    new Baselines({},{type:'product',productId:productId}).fetch({success:function(baselines) {
+                        baselines.each(function(baseline){
+                            valueList.append('<option value="'+baseline.getId()+'">'+baseline.getName()+'</option>');
+                        });
+                    }});
+
+                }
             }
         },
 
@@ -77,10 +89,8 @@ define([
 
         run: function(e){
             this.$udfResult.html('');
-            var productList = this.$productList;
-            var productId = productList.val();
-            var baselineList = this.$baselineList;
-            var baselineId = baselineList.val();
+            var productId = this.$productList.val();
+            var valueId = this.$valueList.val();
             var runButton = this.$runButton;
             var _this = this;
 
@@ -88,7 +98,7 @@ define([
 
             var partCollection = Backbone.Collection.extend({
                 url: function () {
-                    return this.urlBase() + '/filter?configSpec=' + baselineId + '&depth=10';
+                    return this.urlBase() + '/filter?configSpec=' + valueId + '&depth=10';
                 },
 
                 urlBase: function () {
