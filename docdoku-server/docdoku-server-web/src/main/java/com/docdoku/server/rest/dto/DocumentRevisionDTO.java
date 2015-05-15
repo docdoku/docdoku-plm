@@ -40,6 +40,8 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     private String type;
     private UserDTO author;
     private Date creationDate;
+    @XmlElement(nillable = true)
+    private String commentLink;
     private String title;
 
     @XmlElement(nillable = true)
@@ -195,6 +197,14 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     }
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getCommentLink() {
+        return commentLink;
+    }
+
+    public void setCommentLink(String commentLink) {
+        this.commentLink = commentLink;
     }
 
     public boolean isIterationSubscription() {

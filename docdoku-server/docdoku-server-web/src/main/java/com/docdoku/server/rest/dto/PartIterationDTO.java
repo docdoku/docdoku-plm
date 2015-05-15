@@ -19,6 +19,8 @@
  */
 package com.docdoku.server.rest.dto;
 
+import com.docdoku.core.document.DocumentRevision;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
@@ -39,7 +41,7 @@ public class PartIterationDTO implements Serializable {
     private List<InstanceAttributeDTO> instanceAttributes;
     private List<InstanceAttributeTemplateDTO> instanceAttributeTemplates;
     private List<PartUsageLinkDTO> components;
-    private List<DocumentIterationDTO> linkedDocuments;
+    private List<DocumentRevisionDTO> linkedDocuments;
     private String number;
     private String name;
     private String version;
@@ -135,11 +137,11 @@ public class PartIterationDTO implements Serializable {
         this.components = components;
     }
 
-    public List<DocumentIterationDTO> getLinkedDocuments() {
+    public List<DocumentRevisionDTO> getLinkedDocuments() {
         return linkedDocuments;
     }
 
-    public void setLinkedDocuments(List<DocumentIterationDTO> linkedDocuments) {
+    public void setLinkedDocuments(List<DocumentRevisionDTO> linkedDocuments) {
         this.linkedDocuments = linkedDocuments;
     }
 

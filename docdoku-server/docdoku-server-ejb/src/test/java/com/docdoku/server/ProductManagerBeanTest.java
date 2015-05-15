@@ -24,6 +24,7 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIterationKey;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
@@ -126,24 +127,24 @@ public class ProductManagerBeanTest {
 
         try{
             //Test to remove attribute
-            productManagerBean.updatePartIteration(partIteration.getKey(), "Iteration note", null, partUsageLinks, newAttributes, newAttributeTemplates, new DocumentIterationKey[]{}, null, lovNames);
+            productManagerBean.updatePartIteration(partIteration.getKey(), "Iteration note", null, partUsageLinks, newAttributes, newAttributeTemplates, new DocumentRevisionKey[]{}, null, lovNames);
             Assert.assertTrue("updatePartIteration should have raise an exception because we have removed attributes", false);
         }catch (NotAllowedException notAllowedException){
             try{
                 //Test with a swipe of attribute
                 newAttributes.add(new InstanceDateAttribute("Test", new Date(), false));
-                productManagerBean.updatePartIteration(partIteration.getKey(), "Iteration note", null, partUsageLinks, newAttributes, newAttributeTemplates, new DocumentIterationKey[]{}, null, lovNames);
+                productManagerBean.updatePartIteration(partIteration.getKey(), "Iteration note", null, partUsageLinks, newAttributes, newAttributeTemplates, new DocumentRevisionKey[]{}, null, lovNames);
                 Assert.assertTrue("updateDocument should have raise an exception because we have changed the attribute type attributes", false);
             }catch (NotAllowedException notAllowedException2){
                 try {
                     //Test without modifying the attribute
                     newAttributes = new ArrayList<>();
                     newAttributes.add(attribute);
-                    productManagerBean.updatePartIteration(partIteration.getKey(), "Iteration note", null, partUsageLinks, newAttributes, newAttributeTemplates, new DocumentIterationKey[]{}, null, lovNames);
+                    productManagerBean.updatePartIteration(partIteration.getKey(), "Iteration note", null, partUsageLinks, newAttributes, newAttributeTemplates, new DocumentRevisionKey[]{}, null, lovNames);
                     //Test with a new value of the attribute
                     newAttributes = new ArrayList<>();
                     newAttributes.add(new InstanceTextAttribute("Test", "newValue", false));
-                    productManagerBean.updatePartIteration(partIteration.getKey(), "Iteration note", null, partUsageLinks, newAttributes, newAttributeTemplates, new DocumentIterationKey[]{}, null, lovNames);
+                    productManagerBean.updatePartIteration(partIteration.getKey(), "Iteration note", null, partUsageLinks, newAttributes, newAttributeTemplates, new DocumentRevisionKey[]{}, null, lovNames);
                 } catch (NotAllowedException notAllowedException3){
                     Assert.assertTrue("updateDocument shouldn't have raised an exception because we haven't change the number of attribute or the type", false);
                 }
@@ -178,18 +179,18 @@ public class ProductManagerBeanTest {
 
         try{
             //Test to remove attribute
-            productManagerBean.updatePartIteration(partIteration.getKey(), "Iteration note", null, partUsageLinks, newAttributes, newAttributeTemplates, new DocumentIterationKey[]{}, null, lovNames);
+            productManagerBean.updatePartIteration(partIteration.getKey(), "Iteration note", null, partUsageLinks, newAttributes, newAttributeTemplates, new DocumentRevisionKey[]{}, null, lovNames);
             //Test with a swipe of attribute
             newAttributes.add(new InstanceDateAttribute("Test", new Date(), false));
-            productManagerBean.updatePartIteration(partIteration.getKey(), "Iteration note", null, partUsageLinks, newAttributes, newAttributeTemplates, new DocumentIterationKey[]{}, null, lovNames);
+            productManagerBean.updatePartIteration(partIteration.getKey(), "Iteration note", null, partUsageLinks, newAttributes, newAttributeTemplates, new DocumentRevisionKey[]{}, null, lovNames);
             //Test without modifying the attribute
             newAttributes = new ArrayList<>();
             newAttributes.add(attribute);
-            productManagerBean.updatePartIteration(partIteration.getKey(), "Iteration note", null, partUsageLinks, newAttributes, newAttributeTemplates, new DocumentIterationKey[]{}, null, lovNames);
+            productManagerBean.updatePartIteration(partIteration.getKey(), "Iteration note", null, partUsageLinks, newAttributes, newAttributeTemplates, new DocumentRevisionKey[]{}, null, lovNames);
             //Test with a new value of the attribute
             newAttributes = new ArrayList<>();
             newAttributes.add(new InstanceTextAttribute("Test", "newValue", false));
-            productManagerBean.updatePartIteration(partIteration.getKey(), "Iteration note", null, partUsageLinks, newAttributes, newAttributeTemplates, new DocumentIterationKey[]{}, null, lovNames);
+            productManagerBean.updatePartIteration(partIteration.getKey(), "Iteration note", null, partUsageLinks, newAttributes, newAttributeTemplates, new DocumentRevisionKey[]{}, null, lovNames);
 
         }catch (NotAllowedException notAllowedException){
             Assert.assertTrue("updateDocument shouldn't have raised an exception because the attributes are not frozen", false);

@@ -22,9 +22,7 @@ package com.docdoku.server;
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.*;
 import com.docdoku.core.configuration.*;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentIterationKey;
-import com.docdoku.core.document.DocumentLink;
+import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
@@ -697,7 +695,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     * */
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, List<InstanceAttributeTemplate> pAttributeTemplates, DocumentIterationKey[] pLinkKeys, String[] documentLinkComments, String[] lovNames)
+    public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, List<InstanceAttributeTemplate> pAttributeTemplates, DocumentRevisionKey[] pLinkKeys, String[] documentLinkComments, String[] lovNames)
             throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException, EntityConstraintException, UserNotActiveException, ListOfValuesNotFoundException {
 
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
@@ -717,9 +715,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         if (isCheckoutByUser(user,partRev) && partIte.getKey().equals(pKey)) {
             if (pLinkKeys != null) {
-                ArrayList<DocumentIterationKey> linkKeys = new ArrayList<>(Arrays.asList(pLinkKeys));
-                ArrayList<DocumentIterationKey> currentLinkKeys = new ArrayList<>();
-
                 Set<DocumentLink> currentLinks = new HashSet<>(partIte.getLinkedDocuments());
 
                 for (DocumentLink link : currentLinks) {
@@ -727,8 +722,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
 
                 int counter = 0;
-                for (DocumentIterationKey link : linkKeys) {
-                    DocumentLink newLink = new DocumentLink(em.getReference(DocumentIteration.class, link));
+                for (DocumentRevisionKey link : pLinkKeys) {
+                    DocumentLink newLink = new DocumentLink(em.getReference(DocumentRevision.class, link));
                     newLink.setComment(documentLinkComments[counter]);
                     linkDAO.createLink(newLink);
                     partIte.getLinkedDocuments().add(newLink);
@@ -2796,7 +2791,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                         Set<DocumentLink> linkedDocuments = partIteration.getLinkedDocuments();
 
                         for(DocumentLink documentLink :linkedDocuments){
-                            Set<BinaryResource> attachedFiles = documentLink.getTargetDocument().getAttachedFiles();
+                            Set<BinaryResource> attachedFiles = documentLink.getTargetDocument().getLastIteration().getAttachedFiles();
                             binaryResources.addAll(attachedFiles);
                         }
                     }

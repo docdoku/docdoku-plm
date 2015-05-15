@@ -21,10 +21,12 @@
 package com.docdoku.server.rest.dto.product;
 
 import com.docdoku.core.document.DocumentLink;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.security.ACL;
 import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.DocumentIterationDTO;
+import com.docdoku.server.rest.dto.DocumentRevisionDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 
 import java.util.ArrayList;
@@ -39,7 +41,7 @@ public class ProductInstanceCreationDTO {
     private int baselineId;
     private ACLDTO acl;
     private List<InstanceAttributeDTO> instanceAttributes = new ArrayList<>();
-    private Set<DocumentIterationDTO> linkedDocuments = new HashSet<>();
+    private Set<DocumentRevisionDTO> linkedDocuments = new HashSet<>();
     private List<String> attachedFiles;
 
     public ProductInstanceCreationDTO() {
@@ -82,11 +84,11 @@ public class ProductInstanceCreationDTO {
         this.instanceAttributes = instanceAttributes;
     }
 
-    public Set<DocumentIterationDTO> getLinkedDocuments() {
+    public Set<DocumentRevisionDTO> getLinkedDocuments() {
         return linkedDocuments;
     }
 
-    public void setLinkedDocuments(Set<DocumentIterationDTO> linkedDocuments) {
+    public void setLinkedDocuments(Set<DocumentRevisionDTO> linkedDocuments) {
         this.linkedDocuments = linkedDocuments;
     }
 

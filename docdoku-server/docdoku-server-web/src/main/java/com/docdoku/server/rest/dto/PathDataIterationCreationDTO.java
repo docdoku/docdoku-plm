@@ -18,6 +18,8 @@ package com.docdoku.server.rest.dto;/*
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import com.docdoku.core.document.DocumentRevision;
+
 import java.util.List;
 import java.util.Set;
 
@@ -31,7 +33,7 @@ public class PathDataIterationCreationDTO {
     private String noteIteration;
     private PartMinimalListDTO partsPath;
     private List<String> attachedFiles;
-    private Set<DocumentIterationDTO> linkedDocuments;
+    private Set<DocumentRevisionDTO> linkedDocuments;
     private List<InstanceAttributeDTO> instanceAttributes;
 
     public PathDataIterationCreationDTO() {
@@ -89,11 +91,11 @@ public class PathDataIterationCreationDTO {
         this.attachedFiles = attachedFiles;
     }
 
-    public Set<DocumentIterationDTO> getLinkedDocuments() {
+    public Set<DocumentRevisionDTO> getLinkedDocuments() {
         return linkedDocuments;
     }
 
-    public void setLinkedDocuments(Set<DocumentIterationDTO> linkedDocuments) {
+    public void setLinkedDocuments(Set<DocumentRevisionDTO> linkedDocuments) {
         this.linkedDocuments = linkedDocuments;
     }
 

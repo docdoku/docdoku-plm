@@ -216,15 +216,15 @@ public class DocumentResource {
         String pRevisionNote = data.getRevisionNote();
         int pIteration = Integer.parseInt(docIteration);
 
-        List<DocumentIterationDTO> linkedDocs = data.getLinkedDocuments();
-        DocumentIterationKey[] links = null;
+        List<DocumentRevisionDTO> linkedDocs = data.getLinkedDocuments();
+        DocumentRevisionKey[] links = null;
         String[] documentLinkComments = null;
         if (linkedDocs != null) {
             documentLinkComments = new String[linkedDocs.size()];
-            links = createDocumentIterationKeys(linkedDocs);
+            links = createDocumentRevisionKeys(linkedDocs);
             int i = 0;
-            for (DocumentIterationDTO docItereationForLink : linkedDocs){
-                String comment = docItereationForLink.getCommentLink();
+            for (DocumentRevisionDTO docRevisionForLink : linkedDocs){
+                String comment = docRevisionForLink.getCommentLink();
                 if (comment == null){
                     comment = "";
                 }
@@ -540,11 +540,11 @@ public class DocumentResource {
         return attr;
     }
 
-    private DocumentIterationKey[] createDocumentIterationKeys(List<DocumentIterationDTO> dtos) {
-        DocumentIterationKey[] data = new DocumentIterationKey[dtos.size()];
+    private DocumentRevisionKey[] createDocumentRevisionKeys(List<DocumentRevisionDTO> dtos) {
+        DocumentRevisionKey[] data = new DocumentRevisionKey[dtos.size()];
         int i = 0;
-        for (DocumentIterationDTO dto : dtos) {
-            data[i++] = new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getDocumentRevisionVersion(), dto.getIteration());
+        for (DocumentRevisionDTO dto : dtos) {
+            data[i++] = new DocumentRevisionKey(dto.getWorkspaceId(), dto.getId(), dto.getVersion());
         }
 
         return data;

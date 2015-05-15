@@ -21,7 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.configuration.*;
-import com.docdoku.core.document.DocumentIterationKey;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttribute;
@@ -120,15 +120,15 @@ public class ProductInstancesResource {
             userEntries = acldto.getUserEntries();
             grpEntries= acldto.getGroupEntries();
         }
-        Set<DocumentIterationDTO> linkedDocs = productInstanceCreationDTO.getLinkedDocuments();
-        DocumentIterationKey[] links = null;
+        Set<DocumentRevisionDTO> linkedDocs = productInstanceCreationDTO.getLinkedDocuments();
+        DocumentRevisionKey[] links = null;
         String[] documentLinkComments = null;
         if (linkedDocs != null) {
             documentLinkComments = new String[linkedDocs.size()];
-            links = createDocumentIterationKeys(linkedDocs);
+            links = createDocumentRevisionKeys(linkedDocs);
             int i = 0;
-            for (DocumentIterationDTO docItereationForLink : linkedDocs){
-                String comment = docItereationForLink.getCommentLink();
+            for (DocumentRevisionDTO docRevisionForLink : linkedDocs){
+                String comment = docRevisionForLink.getCommentLink();
                 if (comment == null){
                     comment = "";
                 }
@@ -155,15 +155,15 @@ public class ProductInstancesResource {
             attributes = factory.createInstanceAttributes(instanceAttributes);
         }
 
-        Set<DocumentIterationDTO> linkedDocs = productInstanceCreationDTO.getLinkedDocuments();
-        DocumentIterationKey[] links = null;
+        Set<DocumentRevisionDTO> linkedDocs = productInstanceCreationDTO.getLinkedDocuments();
+        DocumentRevisionKey[] links = null;
         String[] documentLinkComments = null;
         if (linkedDocs != null) {
             documentLinkComments = new String[linkedDocs.size()];
-            links = createDocumentIterationKeys(linkedDocs);
+            links = createDocumentRevisionKeys(linkedDocs);
             int i = 0;
-            for (DocumentIterationDTO docItereationForLink : linkedDocs){
-                String comment = docItereationForLink.getCommentLink();
+            for (DocumentRevisionDTO docRevisionForLink : linkedDocs){
+                String comment = docRevisionForLink.getCommentLink();
                 if (comment == null){
                     comment = "";
                 }
@@ -430,15 +430,15 @@ public class ProductInstancesResource {
         if (instanceAttributes != null) {
             attributes = factory.createInstanceAttributes(instanceAttributes);
         }
-        Set<DocumentIterationDTO> linkedDocs = pathDataIterationCreationDTO.getLinkedDocuments();
-        DocumentIterationKey[] links = null;
+        Set<DocumentRevisionDTO> linkedDocs = pathDataIterationCreationDTO.getLinkedDocuments();
+        DocumentRevisionKey[] links = null;
         String[] documentLinkComments = null;
         if (linkedDocs != null) {
             documentLinkComments = new String[linkedDocs.size()];
-            links = createDocumentIterationKeys(linkedDocs);
+            links = createDocumentRevisionKeys(linkedDocs);
             int i = 0;
-            for (DocumentIterationDTO docItereationForLink : linkedDocs){
-                String comment = docItereationForLink.getCommentLink();
+            for (DocumentRevisionDTO docRevisionForLink : linkedDocs){
+                String comment = docRevisionForLink.getCommentLink();
                 if (comment == null){
                     comment = "";
                 }
@@ -489,15 +489,15 @@ public class ProductInstancesResource {
         if (instanceAttributes != null) {
             attributes = factory.createInstanceAttributes(instanceAttributes);
         }
-        Set<DocumentIterationDTO> linkedDocs = pathDataIterationCreationDTO.getLinkedDocuments();
-        DocumentIterationKey[] links = null;
+        Set<DocumentRevisionDTO> linkedDocs = pathDataIterationCreationDTO.getLinkedDocuments();
+        DocumentRevisionKey[] links = null;
         String[] documentLinkComments = null;
         if (linkedDocs != null) {
             documentLinkComments = new String[linkedDocs.size()];
-            links = createDocumentIterationKeys(linkedDocs);
+            links = createDocumentRevisionKeys(linkedDocs);
             int i = 0;
-            for (DocumentIterationDTO docItereationForLink : linkedDocs){
-                String comment = docItereationForLink.getCommentLink();
+            for (DocumentRevisionDTO docRevisionForLink : linkedDocs){
+                String comment = docRevisionForLink.getCommentLink();
                 if (comment == null){
                     comment = "";
                 }
@@ -534,15 +534,15 @@ public class ProductInstancesResource {
             attributes = factory.createInstanceAttributes(instanceAttributes);
         }
 
-        Set<DocumentIterationDTO> linkedDocs = pathDataIterationCreationDTO.getLinkedDocuments();
-        DocumentIterationKey[] links = null;
+        Set<DocumentRevisionDTO> linkedDocs = pathDataIterationCreationDTO.getLinkedDocuments();
+        DocumentRevisionKey[] links = null;
         String[] documentLinkComments = null;
         if (linkedDocs != null) {
             documentLinkComments = new String[linkedDocs.size()];
-            links = createDocumentIterationKeys(linkedDocs);
+            links = createDocumentRevisionKeys(linkedDocs);
             int i = 0;
-            for (DocumentIterationDTO docItereationForLink : linkedDocs){
-                String comment = docItereationForLink.getCommentLink();
+            for (DocumentRevisionDTO docRevisionForLink : linkedDocs){
+                String comment = docRevisionForLink.getCommentLink();
                 if (comment == null){
                     comment = "";
                 }
@@ -611,16 +611,13 @@ public class ProductInstancesResource {
         return dtos;
     }
 
-    private DocumentIterationKey[] createDocumentIterationKeys(Set<DocumentIterationDTO> dtos) {
-        DocumentIterationKey[] data = new DocumentIterationKey[dtos.size()];
+    private DocumentRevisionKey[] createDocumentRevisionKeys(Set<DocumentRevisionDTO> dtos) {
+        DocumentRevisionKey[] data = new DocumentRevisionKey[dtos.size()];
         int i = 0;
-        for (DocumentIterationDTO dto : dtos) {
-            data[i++] = createObject(dto);
+        for (DocumentRevisionDTO dto : dtos) {
+            data[i++] = new DocumentRevisionKey(dto.getWorkspaceId(), dto.getId(), dto.getVersion());
         }
         return data;
     }
 
-    private DocumentIterationKey createObject(DocumentIterationDTO dto) {
-        return new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getDocumentRevisionVersion(), dto.getIteration());
-    }
 }

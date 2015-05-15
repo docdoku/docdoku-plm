@@ -38,15 +38,13 @@ public class DocumentIterationDTO implements Serializable {
     private Date creationDate;
     private Date modificationDate;
     private Date checkInDate;
-    @XmlElement(nillable = true)
-    private String commentLink;
     private String documentTitle;
     private UserDTO author;
     @XmlElement(nillable = true)
     private String revisionNote;
     private List<String> attachedFiles;
     private List<InstanceAttributeDTO> instanceAttributes;
-    private List<DocumentIterationDTO> linkedDocuments;
+    private List<DocumentRevisionDTO> linkedDocuments;
 
     public DocumentIterationDTO() {
     }
@@ -110,7 +108,7 @@ public class DocumentIterationDTO implements Serializable {
         return attachedFiles;
     }
 
-    public List<DocumentIterationDTO> getLinkedDocuments() {
+    public List<DocumentRevisionDTO> getLinkedDocuments() {
         return linkedDocuments;
     }
 
@@ -118,7 +116,7 @@ public class DocumentIterationDTO implements Serializable {
         this.attachedFiles = attachedFiles;
     }
 
-    public void setLinkedDocuments(List<DocumentIterationDTO> linkedDocuments) {
+    public void setLinkedDocuments(List<DocumentRevisionDTO> linkedDocuments) {
         this.linkedDocuments = linkedDocuments;
     }
 
@@ -170,15 +168,6 @@ public class DocumentIterationDTO implements Serializable {
     public DocumentRevisionDTO getDocumentRevision() {
         return new DocumentRevisionDTO(workspaceId, id+"-"+documentRevisionVersion, documentRevisionVersion);
     }
-
-    public String getCommentLink() {
-        return commentLink;
-    }
-
-    public void setCommentLink(String commentLink) {
-        this.commentLink = commentLink;
-    }
-
 
     public String getDocumentTitle() {
         return documentTitle;

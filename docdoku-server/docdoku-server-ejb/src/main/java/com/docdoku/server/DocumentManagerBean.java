@@ -1289,7 +1289,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevision updateDocument(DocumentIterationKey iKey, String pRevisionNote, List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys, String[] documentLinkComments) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
+    public DocumentRevision updateDocument(DocumentIterationKey iKey, String pRevisionNote, List<InstanceAttribute> pAttributes, DocumentRevisionKey[] pLinkKeys, String[] documentLinkComments) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
         DocumentRevisionKey rKey = new DocumentRevisionKey(iKey.getWorkspaceId(), iKey.getDocumentMasterId(), iKey.getDocumentRevisionVersion());
         User user = checkDocumentRevisionWriteAccess(rKey);
         Locale userLocale = new Locale(user.getLanguage());
@@ -1301,8 +1301,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         if (isCheckoutByUser(user, docR) && docR.getLastIteration().getKey().equals(iKey)) {
             DocumentIteration doc = docR.getLastIteration();
 
-            ArrayList<DocumentIterationKey> linkKeys = new ArrayList<>(Arrays.asList(pLinkKeys));
-
             Set<DocumentLink> currentLinks = new HashSet<>(doc.getLinkedDocuments());
 
             for (DocumentLink link : currentLinks) {
@@ -1310,9 +1308,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
 
             int counter = 0;
-            for (DocumentIterationKey link : linkKeys) {
+            for (DocumentRevisionKey link : pLinkKeys) {
                 if(!link.equals(iKey)){
-                    DocumentLink newLink = new DocumentLink(em.getReference(DocumentIteration.class, link));
+                    DocumentLink newLink = new DocumentLink(em.getReference(DocumentRevision.class, link));
                     newLink.setComment(documentLinkComments[counter]);
                     linkDAO.createLink(newLink);
                     doc.getLinkedDocuments().add(newLink);
