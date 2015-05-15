@@ -44,11 +44,11 @@ define([
             this.$inputPartNumber.typeahead({
                 source: function (query, process) {
                     $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/numbers?q=' + query, function (data) {
-                        var partNumbers = [];
+                        var part = [];
                         _(data).each(function (d) {
-                            partNumbers.push(d.partNumber);
+                            part.push(d.partName + '<' + d.partNumber + '>');
                         });
-                        process(partNumbers);
+                        process(part);
                     });
                 }
             });
@@ -65,7 +65,7 @@ define([
                     id: this.$inputProductId.val(),
                     workspaceId: App.config.workspaceId,
                     description: this.$inputDescription.val(),
-                    designItemNumber: this.$inputPartNumber.val()
+                    designItemNumber: this.$inputPartNumber.val().substring(this.$inputPartNumber.val().lastIndexOf("<")+1,this.$inputPartNumber.val().lastIndexOf(">"))
                 });
 
                 this.model.save({}, {
