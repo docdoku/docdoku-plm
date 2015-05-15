@@ -24,7 +24,7 @@ define([
                 'hidden': 'onHidden',
                 'click .cancel-button': 'closeModal',
                 'click .save-button': 'onSave',
-                'click .new-iteration': 'createIteration',
+                'click .new-iteration': 'saveAndCreateNewIteration',
                 'click a#previous-iteration': 'onPreviousIteration',
                 'click a#next-iteration': 'onNextIteration',
                 'click #addTemplateAttributes':'addPartAttributeTemplatesAsAttributes'
@@ -203,10 +203,9 @@ define([
             },
 
             onSave: function () {
-                var self = this;
 
                 if (!this.iteration) {
-
+                    var self = this;
                     this.iterations = this.model.iterations;
                     this.iteration = new ProductInstancePathIterationDataModel(this.model.attributes);
                     this.iterations.add(this.iteration);
@@ -238,34 +237,39 @@ define([
                         }
                     });
 
+                } else {
+                    this.updateIteration(this.closeModal);
                 }
-                else {
-                    this.iteration.setId(this.model.getId());
-                    this.iteration.setInstanceAttributes(this.attributesView.collection.toJSON());
-                    this.iteration.setIterationNote(this.$('.description-input').val());
-                    this.iteration.setDocumentLinked(this.linkedDocumentsView.collection.toJSON());
-                    this.iteration.set({
-                        attachedFiles: this.attachedFiles
-                    });
-                    //PUT
-                    var updateURL = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/' + this.iteration.getId() + '/iterations/' + this.iteration.getIteration();
-                    $.ajax({
-                        type: 'PUT',
-                        url: updateURL,
-                        data: JSON.stringify(this.iteration),
-                        contentType: 'application/json',
-                        success: function () {
-                            self.closeModal();
-                        },
-                        error: function (errorMessage) {
-                            self.$('#alerts').append(new AlertView({
-                                type: 'error',
-                                message: errorMessage
-                            }).render().$el);
-                        }
-                    });
-                    this.fileListView.deleteFilesToDelete();
-                }
+            },
+
+            updateIteration: function (callback) {
+                this.iteration.setId(this.model.getId());
+                this.iteration.setInstanceAttributes(this.attributesView.collection.toJSON());
+                this.iteration.setIterationNote(this.$('.description-input').val());
+                this.iteration.setDocumentLinked(this.linkedDocumentsView.collection.toJSON());
+                this.iteration.set({
+                    attachedFiles: this.attachedFiles
+                });
+
+                //PUT
+                var updateURL = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/' + this.iteration.getId() + '/iterations/' + this.iteration.getIteration();
+                $.ajax({
+                    type: 'PUT',
+                    url: updateURL,
+                    data: JSON.stringify(this.iteration),
+                    contentType: 'application/json',
+                    success: function () {
+                        callback();
+                    },
+                    error: function (errorMessage) {
+                        self.$('#alerts').append(new AlertView({
+                            type: 'error',
+                            message: errorMessage
+                        }).render().$el);
+                    }
+                });
+
+                this.fileListView.deleteFilesToDelete();
             },
 
             createIteration: function () {
@@ -279,6 +283,7 @@ define([
                 this.iteration.set({
                     attachedFiles: this.lasIteration.getAttachedFiles()
                 });
+
                 //POST
                 var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/' + this.iteration.getPath() + '/' + this.iteration.getId();
                 var self = this;
@@ -303,6 +308,10 @@ define([
                         }).render().$el);
                     }
                 });
+            },
+
+            saveAndCreateNewIteration: function () {
+                this.updateIteration(this.createIteration);
             },
 
             addPartAttributes:function(){
