@@ -28,7 +28,8 @@ define([
         },
 
         setRootPartNumber:function(partNumber){
-            this.$inputPartNumber.val(partNumber);
+            number = partNumber.substring(partNumber.lastIndexOf("<")+1,partNumber.lastIndexOf(">"));
+            this.$inputPartNumber.val(number);
             return this;
         },
 
