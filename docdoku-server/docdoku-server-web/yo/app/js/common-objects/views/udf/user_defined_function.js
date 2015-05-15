@@ -51,7 +51,9 @@ define([
             var productId = this.$productList.val();
             var baselineList = this.$baselineList;
             baselineList.empty();
-            baselineList.append('<option value="latest">'+App.config.i18n.LATEST+'</option>');
+            baselineList.append('<option value="wip">'+App.config.i18n.HEAD_WIP+'</option>');
+            baselineList.append('<option value="latest">'+App.config.i18n.HEAD_CHECKIN+'</option>');
+            baselineList.append('<option value="latest-released">'+App.config.i18n.HEAD_RELEASED+'</option>');
             if(productId){
                 new Baselines({},{type:'product',productId:productId}).fetch({success:function(baselines) {
                     baselines.each(function(baseline){
