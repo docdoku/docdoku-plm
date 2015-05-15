@@ -27,8 +27,8 @@ define([
             return this;
         },
 
-        setRootPartNumber:function(partNumber){
-            number = partNumber.substring(partNumber.lastIndexOf("<")+1,partNumber.lastIndexOf(">"));
+        setRootPartNumber:function(part){
+            number = this.getIdFromTemplates(part);
             this.$inputPartNumber.val(number);
             return this;
         },
@@ -55,6 +55,11 @@ define([
             });
         },
 
+        getIdFromTemplates: function(inputValue) {
+
+            return inputValue.substring(inputValue.lastIndexOf("<")+1,inputValue.lastIndexOf(">"));
+        },
+
         interceptSubmit : function(){
             this.isValid = ! this.$('.tabs').invalidFormTabSwitcher();
         },
@@ -66,7 +71,7 @@ define([
                     id: this.$inputProductId.val(),
                     workspaceId: App.config.workspaceId,
                     description: this.$inputDescription.val(),
-                    designItemNumber: this.$inputPartNumber.val().substring(this.$inputPartNumber.val().lastIndexOf("<")+1,this.$inputPartNumber.val().lastIndexOf(">"))
+                    designItemNumber: this.getIdFromTemplates(this.$inputPartNumber.val())
                 });
 
                 this.model.save({}, {
