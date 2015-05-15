@@ -48,7 +48,7 @@ public class DocumentLink implements Serializable, Cloneable{
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Id
     private int id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
         @JoinColumn(name="TARGET_DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),
@@ -56,19 +56,19 @@ public class DocumentLink implements Serializable, Cloneable{
         @JoinColumn(name="TARGET_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
     private DocumentRevision targetDocument;
-    
+
     @Column(name = "TARGET_DOCUMENTMASTER_ID", length=100, insertable = false, updatable = false)
     private String targetDocumentMasterId ="";
-    
+
     @Column(name = "TARGET_DOCREVISION_VERSION", length=10, insertable = false, updatable = false)
     private String targetDocumentVersion ="";
-    
+
     @Column(name = "TARGET_WORKSPACE_ID", length=100, insertable = false, updatable = false)
     private String targetDocumentWorkspaceId="";
 
     @Column(name="COMMENTDATA")
     private String comment;
-    
+
     
     public DocumentLink() {
     }
