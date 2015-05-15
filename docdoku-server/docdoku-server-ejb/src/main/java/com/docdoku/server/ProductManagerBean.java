@@ -812,19 +812,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             if (pAttributeTemplates != null) {
-
-                LOVDAO lovDAO=new LOVDAO(locale,em);
-
-                List<InstanceAttributeTemplate> templateAttrs = new ArrayList<>();
-                for(int i=0;i<pAttributeTemplates.size();i++){
-                    templateAttrs.add(pAttributeTemplates.get(i));
-                    if(pAttributeTemplates.get(i) instanceof ListOfValuesAttributeTemplate){
-                        ListOfValuesAttributeTemplate lovAttr=(ListOfValuesAttributeTemplate)pAttributeTemplates.get(i);
-                        ListOfValuesKey lovKey = new ListOfValuesKey(user.getWorkspaceId(), lovNames[i]);
-                        lovAttr.setLov(lovDAO.loadLOV(lovKey));
-                    }
-                }
-                partIte.setInstanceAttributeTemplates(templateAttrs);
+                partIte.setInstanceAttributeTemplates(pAttributeTemplates);
             }
 
             partIte.setIterationNote(pIterationNote);
@@ -1575,14 +1563,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public PartMasterTemplate getPartMasterTemplate(PartMasterTemplateKey pKey) throws WorkspaceNotFoundException, PartMasterTemplateNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
-
         return new PartMasterTemplateDAO(new Locale(user.getLanguage()), em).loadPartMTemplate(pKey);
     }
 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, String[] lovNames, InstanceAttributeTemplate[] pAttributeInstanceTemplates, String[] instanceLovNames, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException, WorkflowModelNotFoundException, ListOfValuesNotFoundException {
+    public PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, String[] lovNames, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException, WorkflowModelNotFoundException, ListOfValuesNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         Locale locale = new Locale(user.getLanguage());
         checkNameValidity(pId, locale);
@@ -1608,17 +1595,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
         }
         template.setAttributeTemplates(attrs);
-
-        List<InstanceAttributeTemplate> instanceAttrs = new ArrayList<>();
-        for(int i=0;i<pAttributeInstanceTemplates.length;i++){
-            instanceAttrs.add(pAttributeInstanceTemplates[i]);
-            if(pAttributeInstanceTemplates[i] instanceof ListOfValuesAttributeTemplate){
-                ListOfValuesAttributeTemplate lovAttr=(ListOfValuesAttributeTemplate)pAttributeInstanceTemplates[i];
-                ListOfValuesKey lovKey = new ListOfValuesKey(user.getWorkspaceId(), lovNames[i]);
-                lovAttr.setLov(lovDAO.loadLOV(lovKey));
-            }
-        }
-        template.setAttributeInstanceTemplates(instanceAttrs);
 
         if (pWorkflowModelId != null){
             WorkflowModel workflowModel = new WorkflowModelDAO(locale, em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
@@ -2793,11 +2769,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                         for(DocumentLink documentLink :linkedDocuments){
                             Set<BinaryResource> attachedFiles = documentLink.getTargetDocument().getLastIteration().getAttachedFiles();
                             binaryResources.addAll(attachedFiles);
-                            DocumentIteration ite = documentLink.getTargetDocument().getLastIteration();
-                            if(ite!=null) {
-                                Set<BinaryResource> attachedFiles = ite.getAttachedFiles();
-                                binaryResources.addAll(attachedFiles);
-                            }
                         }
                     }
 
@@ -2893,15 +2864,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public List<PartIteration> getInversePartsLink(DocumentRevisionKey docKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, PartIterationNotFoundException, PartRevisionNotFoundException {
+    public List<PartIteration> getInversePartsLink(DocumentIterationKey docKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, PartRevisionNotFoundException, DocumentIterationNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(docKey.getWorkspaceId());
 
         Locale locale = new Locale(user.getLanguage());
 
-        DocumentRevision documentRevision = new DocumentRevisionDAO(locale, em).loadDocR(docKey);
+        DocumentIteration documentIteration = new DocumentRevisionDAO(locale, em).loadDocI(docKey);
 
         DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(locale,em);
-        List<PartIteration> iterations = documentLinkDAO.getInversePartsLinks(documentRevision);
+        List<PartIteration> iterations = documentLinkDAO.getInversePartsLinks(documentIteration);
         ListIterator<PartIteration> ite = iterations.listIterator();
 
         while(ite.hasNext()){
