@@ -26,8 +26,7 @@ define([
                 'click .save-button': 'onSave',
                 'click .new-iteration': 'saveAndCreateNewIteration',
                 'click a#previous-iteration': 'onPreviousIteration',
-                'click a#next-iteration': 'onNextIteration',
-                'click #addTemplateAttributes':'addPartAttributeTemplatesAsAttributes'
+                'click a#next-iteration': 'onNextIteration'
             },
 
             initialize: function () {
@@ -160,7 +159,10 @@ define([
                 this.attributesView.setEditMode(!this.iteration || this.iteration.getIteration() === this.model.getIterations().size());
                 this.attributesView.render();
 
-                if (!this.isNew) {
+                if (this.isNew) {
+                    this.addPartAttributeTemplatesAsAttributes();
+
+                } else {
                     _.each(this.iteration.getInstanceAttributes(), function (item) {
                         self.attributesView.addAndFillAttribute(new Attribute(item));
                     });
@@ -325,7 +327,7 @@ define([
                 });
             },
 
-            addPartAttributeTemplatesAsAttributes:function(){
+            addPartAttributeTemplatesAsAttributes: function () {
                 var self = this;
                 _.each(this.model.getPartAttributeTemplates(), function (item) {
                     self.attributesView.addAndFillAttribute(new Attribute({
