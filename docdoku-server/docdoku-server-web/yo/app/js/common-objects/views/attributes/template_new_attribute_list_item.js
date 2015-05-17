@@ -39,6 +39,7 @@ define([
                 var lovNameSelected = this.model.get('lovName');
                 this.$('select.type:first').val(lovNameSelected);
             }
+            this.$el.toggleClass('isLocked',this.model.locked);
         },
         removeAction: function () {
             this.model.destroy({

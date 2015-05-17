@@ -214,6 +214,7 @@ define({
     LINKS: "Links",
     LOADING:'Loading',
 	LOCK_ATTRIBUTES: "Freeze attributes structure",
+	LOCK_ATTRIBUTES: "Freeze attribute",
 	LOGOUT: 'Logout',
 	LOOK_AT: "Look at",
 	MANAGE_PRODUCT: "Products management",
