@@ -39,7 +39,7 @@ define([
                 var lovNameSelected = this.model.get('lovName');
                 this.$('select.type:first').val(lovNameSelected);
             }
-            this.$el.toggleClass('isLocked',this.model.locked);
+            this.$el.toggleClass('isLocked',this.model.attributes.locked);
         },
         removeAction: function () {
             this.model.destroy({
@@ -74,8 +74,13 @@ define([
             this.model.set({
                 locked: e.target.checked
             });
+            if(!e.target.checked) {
+                this.model.set({
+                    mandatory: false
+                });
+            }
 
-            this.$el.toggleClass('isLocked',this.model.locked);
+            this.$el.toggleClass('isLocked',e.target.checked);
         },
 drop: function(event, index) {
             this.$el.trigger('update-sort', [this.model, index]);
