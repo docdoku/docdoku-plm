@@ -34,7 +34,7 @@ define([
 
         rendered: function () {
             var type = this.model.get('type');
-            if (this.editMode && !this.attributesLocked) {
+            if (this.editMode && !this.attributesLocked && !this.model.attributes.locked) {
                 this.$el.find('select.type').val(type);
             }
             else {
@@ -89,7 +89,7 @@ define([
             this.deleteSubViews();
             var partials = this.partials ? this.partials : null;
             var data = this.renderData();
-            data.lockMode = this.editMode && !this.attributesLocked;
+            data.lockMode = (this.editMode && !this.attributesLocked && !this.model.attributes.locked);
             data.editMode = this.editMode;
             data.attribute = this.model.attributes;
             data.lovs = this.lovs;

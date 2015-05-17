@@ -87,11 +87,13 @@ define([
 
             if (!this.attributesLocked) {
                 _.map(this.collection.models, function (attribute) {
-                    return attribute.set('mandatory', false);
+                    attribute.set('mandatory', false);
+                    attribute.set('locked',false);
                 });
+                this.$el.find('.list-item').toggleClass('isLocked', false);
             }
 
-            this.$el.toggleClass('attributes-locked', this.attributesLocked);
+            this.$el.toggleClass('.attributes-locked', this.attributesLocked);
         },
 
         isAttributesLocked: function () {
