@@ -330,10 +330,7 @@ define([
             addPartAttributeTemplatesAsAttributes: function () {
                 var self = this;
                 _.each(this.model.getPartAttributeTemplates(), function (item) {
-                    self.attributesView.addAndFillAttribute(new Attribute({
-                        name:item.name,
-                        type:item.attributeType
-                    }));
+                    self.attributesView.addAndFillAttribute(new Attribute(item));
                 });
             },
 

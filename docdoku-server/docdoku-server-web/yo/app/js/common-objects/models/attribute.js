@@ -4,7 +4,13 @@ define(['backbone'], function (Backbone) {
     var Attribute = Backbone.Model.extend({
 
         getType: function () {
-            return this.get('type');
+            if (this.get('type')) {
+                return this.get('type');
+            } else if (this.get('attributeType')) {
+                return this.get('attributeType');
+            } else {
+                return null;
+            }
         },
 
         isMandatory: function () {
