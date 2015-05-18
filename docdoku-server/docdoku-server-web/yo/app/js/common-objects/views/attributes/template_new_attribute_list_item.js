@@ -39,6 +39,10 @@ define([
                 var lovNameSelected = this.model.get('lovName');
                 this.$('select.type:first').val(lovNameSelected);
             }
+            if(typeof this.model.attributes.locked ==='undefined') {
+                this.model.attributes.locked = false;
+            }
+
             this.$el.toggleClass('isLocked',this.model.attributes.locked);
         },
         removeAction: function () {
