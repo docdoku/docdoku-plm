@@ -41,7 +41,6 @@ import java.util.*;
 @Table(name = "DOCUMENTITERATION")
 @javax.persistence.IdClass(com.docdoku.core.document.DocumentIterationKey.class)
 @NamedQueries ({
-    @NamedQuery(name="DocumentIteration.findLinks", query = "SELECT l FROM DocumentLink l WHERE l.targetDocument = :target"),
     @NamedQuery(name="DocumentIteration.findByBinaryResource", query = "SELECT d FROM DocumentIteration d WHERE :binaryResource member of d.attachedFiles")
 })
 @javax.persistence.Entity

@@ -49,48 +49,6 @@ public class DocumentDAO {
     }
 
     public void removeDoc(DocumentIteration pDoc){
-
-        TypedQuery<DocumentIteration> docQuery = em.createNamedQuery("DocumentLink.findDocumentOwner", DocumentIteration.class);
-        TypedQuery<PartIteration> partQuery = em.createNamedQuery("DocumentLink.findPartOwner", PartIteration.class);
-        TypedQuery<ProductInstanceIteration> productInstanceQuery = em.createNamedQuery("DocumentLink.findProductInstanceIteration", ProductInstanceIteration.class);
-        TypedQuery<PathDataMaster> pathDataQuery = em.createNamedQuery("DocumentLink.findPathData", PathDataMaster.class);
-
-        TypedQuery<DocumentLink> linkQuery = em.createNamedQuery("DocumentIteration.findLinks", DocumentLink.class);
-        List<DocumentLink> result = linkQuery.setParameter("target", pDoc).getResultList();
-
-        for(DocumentLink link:result){
-
-            try{
-                DocumentIteration doc = docQuery.setParameter("link",link).getSingleResult();
-                doc.getLinkedDocuments().remove(link);
-            }catch(NoResultException ex){
-                LOGGER.log(Level.FINER,null,ex);
-            }
-
-            try{
-                PartIteration part = partQuery.setParameter("link",link).getSingleResult();
-                part.getLinkedDocuments().remove(link);
-            }catch(NoResultException ex){
-                LOGGER.log(Level.FINER,null,ex);
-            }
-
-            try{
-                ProductInstanceIteration productInstanceIteration = productInstanceQuery.setParameter("link",link).getSingleResult();
-                productInstanceIteration.getLinkedDocuments().remove(link);
-            }catch(NoResultException ex){
-                LOGGER.log(Level.FINER,null,ex);
-            }
-
-            try{
-                PathDataMaster pathDataMaster = pathDataQuery.setParameter("link",link).getSingleResult();
-                for (PathDataIteration pathDataIteration:pathDataMaster.getPathDataIterations()){
-                    pathDataIteration.getLinkedDocuments().remove(link);
-                }
-            }catch(NoResultException ex){
-                LOGGER.log(Level.FINER,null,ex);
-            }
-
-        }
         em.remove(pDoc);
     }
 }

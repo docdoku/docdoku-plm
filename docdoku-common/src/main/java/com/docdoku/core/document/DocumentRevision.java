@@ -43,6 +43,7 @@ import java.util.*;
 @IdClass(DocumentRevisionKey.class)
 @Entity
 @NamedQueries ({
+        @NamedQuery(name="DocumentRevision.findLinks", query = "SELECT l FROM DocumentLink l WHERE l.targetDocument = :target"),
         @NamedQuery(name="DocumentRevision.findWithAssignedTasksForUser", query="SELECT d FROM DocumentRevision d, Task t WHERE t.activity.workflow = d.workflow AND d.workflow IS NOT NULL AND t.worker.login = :assignedUserLogin AND d.documentMasterWorkspaceId = :workspaceId"),
         @NamedQuery(name="DocumentRevision.findWithOpenedTasksForUser", query="SELECT d FROM DocumentRevision d, Task t WHERE t.activity.workflow = d.workflow AND d.workflow IS NOT NULL AND t.worker.login = :assignedUserLogin AND d.documentMasterWorkspaceId = :workspaceId AND t.status = com.docdoku.core.workflow.Task.Status.IN_PROGRESS"),
         @NamedQuery(name="DocumentRevision.findByReferenceOrTitle", query="SELECT d FROM DocumentRevision d WHERE (d.documentMasterId LIKE :id OR d.title LIKE :title) AND d.documentMasterWorkspaceId = :workspaceId"),

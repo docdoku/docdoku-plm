@@ -2891,15 +2891,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public List<PartIteration> getInversePartsLink(DocumentIterationKey docKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, PartRevisionNotFoundException, DocumentIterationNotFoundException {
+    public List<PartIteration> getInversePartsLink(DocumentRevisionKey docKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, PartIterationNotFoundException, PartRevisionNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(docKey.getWorkspaceId());
 
         Locale locale = new Locale(user.getLanguage());
 
-        DocumentIteration documentIteration = new DocumentRevisionDAO(locale, em).loadDocI(docKey);
+        DocumentRevision documentRevision = new DocumentRevisionDAO(locale, em).loadDocR(docKey);
 
         DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(locale,em);
-        List<PartIteration> iterations = documentLinkDAO.getInversePartsLinks(documentIteration);
+        List<PartIteration> iterations = documentLinkDAO.getInversePartsLinks(documentRevision);
         ListIterator<PartIteration> ite = iterations.listIterator();
 
         while(ite.hasNext()){

@@ -47,6 +47,11 @@ public class DocumentRevisionKey implements Serializable, Comparable<DocumentRev
         version = pVersion;
     }
 
+    public String getWorkspaceId() {
+        return documentMaster.getWorkspace();
+    }
+
+
     public DocumentMasterKey getDocumentMaster() {
         return documentMaster;
     }

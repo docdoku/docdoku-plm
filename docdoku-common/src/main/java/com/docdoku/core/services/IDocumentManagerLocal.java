@@ -201,5 +201,5 @@ public interface IDocumentManagerLocal {
     boolean canUserAccess(User user, DocumentRevisionKey docRKey) throws DocumentRevisionNotFoundException;
     boolean canUserAccess(User user, DocumentIterationKey docRKey) throws DocumentRevisionNotFoundException;
 
-    List<DocumentIteration> getInverseDocumentsLink(DocumentIterationKey docKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, DocumentIterationNotFoundException;
+    List<DocumentIteration> getInverseDocumentsLink(DocumentRevisionKey docKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException;
 }

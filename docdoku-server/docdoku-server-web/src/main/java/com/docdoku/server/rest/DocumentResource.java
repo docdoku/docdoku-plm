@@ -460,9 +460,8 @@ public class DocumentResource {
     public List<DocumentRevisionDTO> getInverseDocumentLinks(@PathParam("workspaceId") String workspaceId,
                                                    @PathParam("documentId") String documentId,
                                                    @PathParam("documentVersion") String documentVersion,
-                                                   @PathParam("iteration") int iteration,
                                                    @QueryParam("configSpec") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, DocumentIterationNotFoundException {
-        DocumentIterationKey docKey = new DocumentIterationKey(workspaceId,documentId,documentVersion,iteration);
+        DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId,documentId,documentVersion);
         List<DocumentIteration> documents = documentService.getInverseDocumentsLink(docKey);
         Set<DocumentRevisionDTO> dtos = new HashSet<>();
         for(DocumentIteration doc : documents){
@@ -477,9 +476,8 @@ public class DocumentResource {
     public List<PartDTO> getInversePartsLinks(@PathParam("workspaceId") String workspaceId,
                                                         @PathParam("documentId") String documentId,
                                                         @PathParam("documentVersion") String documentVersion,
-                                                        @PathParam("iteration") int iteration,
-                                                        @QueryParam("configSpec") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentIterationNotFoundException {
-        DocumentIterationKey docKey = new DocumentIterationKey(workspaceId,documentId,documentVersion,iteration);
+                                                        @QueryParam("configSpec") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentRevisionNotFoundException {
+        DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId,documentId,documentVersion);
         List<PartIteration> parts = productService.getInversePartsLink(docKey);
         Set<PartDTO> dtos = new HashSet<>();
         for(PartIteration part : parts){

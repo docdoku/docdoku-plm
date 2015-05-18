@@ -1655,15 +1655,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public List<DocumentIteration> getInverseDocumentsLink(DocumentIterationKey docKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, DocumentIterationNotFoundException {
+    public List<DocumentIteration> getInverseDocumentsLink(DocumentRevisionKey docKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(docKey.getWorkspaceId());
 
         Locale locale = new Locale(user.getLanguage());
 
-        DocumentIteration documentIteration = new DocumentRevisionDAO(locale, em).loadDocI(docKey);
+        DocumentRevision documentRevision = new DocumentRevisionDAO(locale, em).loadDocR(docKey);
 
         DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(locale,em);
-        List<DocumentIteration> iterations = documentLinkDAO.getInverseDocumentsLinks(documentIteration);
+        List<DocumentIteration> iterations = documentLinkDAO.getInverseDocumentsLinks(documentRevision);
 
         ListIterator<DocumentIteration> ite = iterations.listIterator();
 

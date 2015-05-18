@@ -22,6 +22,7 @@ package com.docdoku.server.dao;
 
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentLink;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartIteration;
 
 import javax.persistence.EntityExistsException;
@@ -59,15 +60,15 @@ public class DocumentLinkDAO {
         }
     }
 
-    public List<DocumentIteration> getInverseDocumentsLinks(DocumentIteration documentIteration){
+    public List<DocumentIteration> getInverseDocumentsLinks(DocumentRevision documentRevision){
         return em.createNamedQuery("DocumentLink.findInverseDocumentLinks",DocumentIteration.class)
-                .setParameter("documentIteration",documentIteration)
+                .setParameter("documentRevision",documentRevision)
                 .getResultList();
     }
 
-    public List<PartIteration> getInversePartsLinks(DocumentIteration documentIteration){
+    public List<PartIteration> getInversePartsLinks(DocumentRevision documentRevision){
         return em.createNamedQuery("DocumentLink.findInversePartLinks",PartIteration.class)
-                .setParameter("documentIteration",documentIteration)
+                .setParameter("documentRevision",documentRevision)
                 .getResultList();
     }
 }
