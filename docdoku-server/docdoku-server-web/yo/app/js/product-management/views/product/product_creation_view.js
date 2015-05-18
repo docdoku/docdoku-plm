@@ -12,7 +12,7 @@ define([
         events: {
             'click .modal-footer .btn-primary': 'interceptSubmit',
             'submit #product_creation_form': 'onSubmitForm',
-            'hidden #product_creation_modal': 'onHidden'
+            'hidden #product_creation_modal': 'onHidden',
         },
 
         initialize: function () {
@@ -36,21 +36,32 @@ define([
             this.$notifications = this.$el.find('.notifications').first();
             this.$modal = this.$('#product_creation_modal');
             this.$inputPartNumber = this.$('#inputPartNumber');
+            this.$inputPartName = this.$('#inputPartName');
+            console.log(this.$inputPartName);
             this.$inputProductId = this.$('#inputProductId');
             this.$inputDescription = this.$('#inputDescription');
         },
 
         bindTypeahead: function () {
+            var map = {};
+            var that = this;
             this.$inputPartNumber.typeahead({
                 source: function (query, process) {
-                    $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/numbers?q=' + query, function (data) {
                         var partNumbers = [];
+
+                    $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/numbers?q=' + query, function (data) {
                         _(data).each(function (d) {
-                            partNumbers.push(d.partNumber);
+                            var label = d.partName + ' < ' + d.partNumber + ' >';
+                            partNumbers.push(label);
+                            map[label] = d;
                         });
                         process(partNumbers);
                     });
-                }
+                },
+                updater: function(item) {
+                    that.$inputPartName.val(map[item].partName);
+                    return map[item].partNumber;
+                },
             });
         },
 
@@ -65,7 +76,8 @@ define([
                     id: this.$inputProductId.val(),
                     workspaceId: App.config.workspaceId,
                     description: this.$inputDescription.val(),
-                    designItemNumber: this.$inputPartNumber.val()
+                    designItemNumber: this.$inputPartNumber.val(),
+                    designItemName: this.$inputPartName.val(),
                 });
 
                 this.model.save({}, {
@@ -73,6 +85,7 @@ define([
                     success: this.onProductCreated,
                     error: this.onError
                 });
+                this.model.fetch();
             }
 
             e.preventDefault();
