@@ -36,8 +36,8 @@ define([
             this.$notifications = this.$el.find('.notifications').first();
             this.$modal = this.$('#product_creation_modal');
             this.$inputPartNumber = this.$('#inputPartNumber');
+            this.$inputPart = this.$('#inputPart');
             this.$inputPartName = this.$('#inputPartName');
-            console.log(this.$inputPartName);
             this.$inputProductId = this.$('#inputProductId');
             this.$inputDescription = this.$('#inputDescription');
         },
@@ -45,7 +45,7 @@ define([
         bindTypeahead: function () {
             var map = {};
             var that = this;
-            this.$inputPartNumber.typeahead({
+            this.$inputPart.typeahead({
                 source: function (query, process) {
                         var partNumbers = [];
 
@@ -60,7 +60,8 @@ define([
                 },
                 updater: function(item) {
                     that.$inputPartName.val(map[item].partName);
-                    return map[item].partNumber;
+                    that.$inputPartNumber.val(map[item].partNumber);
+                    return item;
                 },
             });
         },
