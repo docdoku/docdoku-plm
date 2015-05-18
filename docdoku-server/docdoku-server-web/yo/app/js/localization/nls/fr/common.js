@@ -409,7 +409,6 @@ define({
     QUERY_GROUP_AUTHOR:"Auteur",
     QUERY_GROUP_PART_MASTER:"Article",
     QUERY_GROUP_PART_REVISION:"Revision d'article",
-    QUERY_GROUP_PRODUCT_INSTANCE:"Exemplaire",
     QUERY_GROUP_PRODUCT:"Produit",
     QUERY_GROUP_ATTRIBUTE_STRING:"Attributs de type chaine",
     QUERY_GROUP_ATTRIBUTE_URL:"Attributs de type URL",

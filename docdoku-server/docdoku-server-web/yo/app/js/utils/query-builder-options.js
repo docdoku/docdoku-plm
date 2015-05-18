@@ -230,7 +230,7 @@ define(function () {
     var groups = [
         {id: 'pm', name: App.config.i18n.QUERY_GROUP_PART_MASTER},
         {id: 'pr', name: App.config.i18n.QUERY_GROUP_PART_REVISION},
-        {id: 'pi', name: App.config.i18n.QUERY_GROUP_PRODUCT_INSTANCE},
+        {id: 'pi', name: App.config.i18n.QUERY_GROUP_PRODUCT},
         {id: 'author', name: App.config.i18n.QUERY_GROUP_AUTHOR},
         {id: 'attr-TEXT', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_STRING},
         {id: 'attr-URL', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_URL},
