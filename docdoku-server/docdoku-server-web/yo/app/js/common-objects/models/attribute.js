@@ -10,6 +10,9 @@ define(['backbone'], function (Backbone) {
         isMandatory: function () {
             return this.get('mandatory');
         },
+        isLocked: function () {
+            return this.get('locked');
+        },
 
         getName: function () {
             return this.get('name');

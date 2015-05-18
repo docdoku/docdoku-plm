@@ -20,6 +20,7 @@ define([
             this.events['change .name'] = 'updateName';
             this.events['click .fa-times'] = 'removeAction';
             this.events['change .attribute-mandatory input'] = 'mandatoryChanged';
+            this.events['change .attribute-locked input'] = this.lockedChanged;
             this.events.drop = 'drop';
             this.templateExtraData = {
                 lovs : this.lovList.models,
@@ -38,6 +39,11 @@ define([
                 var lovNameSelected = this.model.get('lovName');
                 this.$('select.type:first').val(lovNameSelected);
             }
+            if(typeof this.model.attributes.locked ==='undefined') {
+                this.model.attributes.locked = false;
+            }
+
+            this.$el.toggleClass('isLocked',this.model.attributes.locked);
         },
         removeAction: function () {
             this.model.destroy({
@@ -68,7 +74,19 @@ define([
                 mandatory: this.$el.find('.attribute-mandatory input')[0].checked
             });
         },
-        drop: function(event, index) {
+        lockedChanged: function (e) {
+            this.model.set({
+                locked: e.target.checked
+            });
+            if(!e.target.checked) {
+                this.model.set({
+                    mandatory: false
+                });
+            }
+
+            this.$el.toggleClass('isLocked',e.target.checked);
+        },
+drop: function(event, index) {
             this.$el.trigger('update-sort', [this.model, index]);
         },
         setChoice:function(value){

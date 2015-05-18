@@ -84,6 +84,7 @@ define([
         addAttribute: function () {
             this.collection.add({
                 mandatory: false,
+                locked: false,
                 name: '',
                 type: 'TEXT',
                 value: '',
@@ -94,6 +95,7 @@ define([
         addAndFillAttribute: function (attribute) {
             this.collection.add({
                 mandatory: attribute.isMandatory(),
+                locked: attribute.isLocked(),
                 name: attribute.getName(),
                 type: attribute.getType(),
                 value: attribute.getValue(),

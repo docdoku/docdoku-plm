@@ -9,13 +9,13 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * DocDokuPLM is distributed in the hope that it will be useful,  
- * but WITHOUT ANY WARRANTY; without even the implied warranty of  
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
- * GNU Affero General Public License for more details.  
- *  
- * You should have received a copy of the GNU Affero General Public License  
- * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.docdoku.core.meta;
 
@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * {@link InstanceAttributeTemplate} implementation that can instantiate list of values based
  * attributes.
- * 
+ *
  * @author Florent Garin
  * @version 2.0, 02/03/15
  * @since   V2.0
@@ -74,6 +74,7 @@ public class ListOfValuesAttributeTemplate extends InstanceAttributeTemplate {
         attr.setItems(items);
         attr.setName(name);
         attr.setMandatory(mandatory);
+        attr.setLocked(locked);
 
         return attr;
     }

@@ -88,6 +88,7 @@ define([
                     name: object.name,
                     type: object.attributeType,
                     mandatory: object.mandatory,
+                    locked: object.locked,
                     value: '',
                     lovName:object.lovName
                 });

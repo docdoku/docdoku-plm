@@ -241,6 +241,7 @@ define({
     LOV:"Liste de valeurs",
     LOADING:'Chargement',
 	LOCK_ATTRIBUTES: "Geler la structure des attributs",
+    LOCK_ATTRIBUTE: "Geler l'attribut",
 	LOGOUT: 'Se déconnecter',
 	LOOK_AT: "Regarder",
 	MANAGE_PRODUCT: "Gestion des produits",

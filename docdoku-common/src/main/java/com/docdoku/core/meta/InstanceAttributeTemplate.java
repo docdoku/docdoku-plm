@@ -9,13 +9,13 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * DocDokuPLM is distributed in the hope that it will be useful,  
- * but WITHOUT ANY WARRANTY; without even the implied warranty of  
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
- * GNU Affero General Public License for more details.  
- *  
- * You should have received a copy of the GNU Affero General Public License  
- * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.docdoku.core.meta;
 
@@ -26,7 +26,7 @@ import java.io.Serializable;
 /**
  * This class holds the definition of the custom attribute of the documents and parts
  * created by the template.
- * 
+ *
  * @author Florent Garin
  * @version 1.1, 23/01/12
  * @since   V1.0
@@ -45,6 +45,8 @@ public abstract class InstanceAttributeTemplate implements Serializable, Cloneab
     protected String name = "";
 
     protected  boolean mandatory;
+
+    protected boolean locked;
 
     public enum AttributeType {
 
@@ -81,6 +83,14 @@ public abstract class InstanceAttributeTemplate implements Serializable, Cloneab
 
     public void setMandatory(boolean mandatory) {
         this.mandatory = mandatory;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
 

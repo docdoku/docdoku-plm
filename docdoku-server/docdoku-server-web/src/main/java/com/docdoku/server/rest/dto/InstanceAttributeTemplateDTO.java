@@ -9,13 +9,13 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * DocDokuPLM is distributed in the hope that it will be useful,  
- * but WITHOUT ANY WARRANTY; without even the implied warranty of  
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
- * GNU Affero General Public License for more details.  
- *  
- * You should have received a copy of the GNU Affero General Public License  
- * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.docdoku.server.rest.dto;
@@ -28,6 +28,8 @@ public class InstanceAttributeTemplateDTO implements Serializable {
     private String name;
 
     private boolean mandatory;
+
+    private boolean locked;
 
     private AttributeType attributeType;
 
@@ -46,7 +48,7 @@ public class InstanceAttributeTemplateDTO implements Serializable {
         mandatory = pMandatory;
     }
 
-    
+
     public String getName() {
         return name;
     }
@@ -62,6 +64,15 @@ public class InstanceAttributeTemplateDTO implements Serializable {
     public void setMandatory(boolean mandatory) {
         this.mandatory = mandatory;
     }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
 
     public InstanceAttributeTemplateDTO.AttributeType getAttributeType() {
         return attributeType;
@@ -95,7 +106,7 @@ public class InstanceAttributeTemplateDTO implements Serializable {
         InstanceAttributeTemplateDTO attr = (InstanceAttributeTemplateDTO) pObj;
         return attr.name.equals(name);
     }
-    
+
     @Override
     public String toString() {
         return name + "-" + attributeType;
