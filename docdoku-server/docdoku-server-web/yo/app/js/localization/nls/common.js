@@ -482,7 +482,6 @@ define({
 		ROLE_NAME: "Role name",
 		ROLE: "Role",
 		ROLES: "Roles",
-		ROOT_PART_NUMBER: "Root part number",
 		ROOT_PART: "Root part",
 		ROTATE: "Rotate",
 		ROTATE_SCENE: "Rotate the scene",

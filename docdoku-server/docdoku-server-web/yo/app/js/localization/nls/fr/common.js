@@ -478,7 +478,6 @@ define({
 	ROLE: "Rôle",
 	ROLES: "Rôles",
 	ROOT_PART: "Article de tête",
-	ROOT_PART_NUMBER: "Numéro de l'article de tête",
 	ROTATE: "Rotation",
 	ROTATE_SCENE: "Pivoter la scène",
     RUN:'Lancer',
