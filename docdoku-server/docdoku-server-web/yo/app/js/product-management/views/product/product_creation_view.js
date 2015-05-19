@@ -12,7 +12,7 @@ define([
         events: {
             'click .modal-footer .btn-primary': 'interceptSubmit',
             'submit #product_creation_form': 'onSubmitForm',
-            'hidden #product_creation_modal': 'onHidden',
+            'hidden #product_creation_modal': 'onHidden'
         },
 
         initialize: function () {
@@ -47,7 +47,7 @@ define([
             var that = this;
             this.$inputPart.typeahead({
                 source: function (query, process) {
-                        var partNumbers = [];
+                    var partNumbers = [];
 
                     $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/numbers?q=' + query, function (data) {
                         _(data).each(function (d) {
@@ -62,7 +62,7 @@ define([
                     that.$inputPartName.val(map[item].partName);
                     that.$inputPartNumber.val(map[item].partNumber);
                     return item;
-                },
+                }
             });
         },
 
@@ -78,7 +78,7 @@ define([
                     workspaceId: App.config.workspaceId,
                     description: this.$inputDescription.val(),
                     designItemNumber: this.$inputPartNumber.val(),
-                    designItemName: this.$inputPartName.val(),
+                    designItemName: this.$inputPartName.val()
                 });
 
                 this.model.save({}, {
