@@ -18,6 +18,12 @@ define([
                 lovs:this.lovs,
                 editMode:this.editMode
             });
+        },
+        setAttributesLocked: function(attributesLocked) {
+            this.attributesLocked = attributesLocked;
+            $.each(this.subViews,function(index,view) {
+                view.setAttributesLocked(attributesLocked);
+            });
         }
     });
     return TemplateNewAttributeListView;

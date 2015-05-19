@@ -28,7 +28,6 @@ define([
             };
         },
         rendered: function () {
-
             this.$el.addClass('well');
             this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
 
@@ -65,11 +64,21 @@ define([
             });
         },
         mandatoryChanged: function () {
+
             var mandatory = this.$el.find('.attribute-mandatory input')[0].checked;
-            this.model.set({
-                mandatory: mandatory,
-                locked : this.model.get('locked') || mandatory
-            });
+            if(this.attributesLocked) {
+                // Silent has to be true, if not set the render method will print the
+                // locked checkbox.
+                this.model.set({
+                    mandatory: mandatory
+                }, {silent: true});
+            } else {
+                this.model.set({
+                    mandatory: mandatory,
+                    locked: this.model.get('locked') || mandatory
+                });
+            }
+
         },
 
         lockedChanged: function(){
@@ -78,6 +87,11 @@ define([
                 mandatory : !locked ? false : this.model.get('mandatory'),
                 locked: locked
             });
+
+        },
+
+        setAttributesLocked: function(attributesLocked) {
+            this.attributesLocked = attributesLocked;
         },
 
         drop: function(event, index) {

@@ -84,11 +84,20 @@ define([
 
         attributesLockedChange: function (e) {
             this.attributesLocked = e.target.checked;
-
+            this.attributesView.setAttributesLocked(this.attributesLocked);
             if (!this.attributesLocked) {
                 _.map(this.collection.models, function (attribute) {
+                    attribute.set('locked', false);
                     return attribute.set('mandatory', false);
                 });
+                this.$el.find('.attribute-locked').show();
+                this.$el.find('.attribute-locked input').prop('checked', false);
+            } else {
+                _.map(this.collection.models, function (attribute) {
+                    //attribute.set('locked', true);
+                });
+                //this.$el.find('.attribute-locked input').prop('checked', true)
+                this.$el.find('.attribute-locked').hide();
             }
 
             this.$el.toggleClass('attributes-locked', this.attributesLocked);
