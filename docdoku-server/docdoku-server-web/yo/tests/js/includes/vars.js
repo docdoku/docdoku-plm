@@ -88,7 +88,7 @@ var products = {
 	},
 	product1: {
 		number : '000-AAA-CasperJsTestProduct',
-		name : 'CasperJsTestProduct'
+        description : 'CasperJsTestProduct'
 	},
     assembly:{
         parts: {

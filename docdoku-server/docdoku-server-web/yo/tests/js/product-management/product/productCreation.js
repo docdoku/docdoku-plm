@@ -43,7 +43,7 @@ casper.test.begin('Product creation tests suite',3, function productCreationTest
     casper.then(function waitForModalToBeDisplayed(){
         this.waitForSelector('#product_creation_modal',function createEmptyProduct(){
             this.click('#product_creation_modal .btn-primary');
-            this.test.assertExists('#product_creation_modal #inputPartNumber:invalid', 'Should not create product without a product id');
+            this.test.assertExists('#product_creation_modal #inputProductId:invalid', 'Should not create product without a product id');
         },function fail() {
             this.capture('screenshot/productCreation/waitForNewProductModal-error.png');
             this.test.assert(false,'New part modal can not be found');
@@ -56,8 +56,17 @@ casper.test.begin('Product creation tests suite',3, function productCreationTest
     casper.then(function fillProductCreationForm(){
         this.waitForSelector('#product_creation_modal #inputDescription',function onNewPartFormReady(){
             this.sendKeys('#product_creation_modal #inputProductId', products.product1.number, {reset:true});
-            this.sendKeys('#product_creation_modal #inputDescription', products.product1.name, {reset:true});
-            this.sendKeys('#product_creation_modal #inputPartNumber', products.part1.number, {reset:true});
+            this.sendKeys('#product_creation_modal #inputDescription', products.product1.description, {reset:true});
+            this.sendKeys('#product_creation_modal #inputPart', products.part1.number, {reset:true});
+
+            this.evaluate(function(number, name) {
+                document.querySelector('input#inputPartNumber').setAttribute('value', number);
+                document.querySelector('input#inputPartName').setAttribute('value', name);
+            }, {
+                number: products.part1.number,
+                name: products.part1.name
+            });
+
         },function fail() {
             this.capture('screenshot/productCreation/onNewProductFormReady-error.png');
             this.test.assert(false,'New product form can not be found');
