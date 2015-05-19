@@ -2,12 +2,13 @@
 define([
 	'backbone',
 	'mustache',
+    'async',
 	'views/bom_item_view',
 	'text!templates/bom_content.html',
 	'collections/part_collection',
     'common-objects/views/prompt',
     'common-objects/views/security/acl_edit'
-],function (Backbone, Mustache, BomItemView, template, PartList, PromptView, ACLEditView) {
+],function (Backbone, Mustache, Async, BomItemView, template, PartList, PromptView, ACLEditView) {
 	'use strict';
     var BomContentView = Backbone.View.extend({
 
@@ -85,56 +86,69 @@ define([
 
         actionCheckout: function () {
             var self = this;
+            var listViews = this.checkedViews();
 
-            _.each(this.checkedViews(), function (view) {
-                view.model.checkout().then(self.onSuccess);
-            });
+                var ajaxes = [];
+                _(listViews).each(function (view) {
+                    ajaxes.push(view.model.checkout());
+                });
+                $.when.apply($, ajaxes).then(this.onSuccess);
+
 
             return false;
         },
 
         actionUndocheckout: function () {
             var self = this;
+            var listViews = this.checkedViews();
 
-            _.each(this.checkedViews(), function (view) {
-                view.model.undocheckout().then(self.onSuccess);
-            });
+                var ajaxes = [];
+                _(listViews).each(function (view) {
+                    ajaxes.push(view.model.undocheckout());
+                });
+                $.when.apply($, ajaxes).then(this.onSuccess);
+
 
             return false;
         },
 
         actionCheckin: function () {
             var self = this;
+            var listViews = this.checkedViews();
+            var promptView = new PromptView();
+            promptView.setPromptOptions(App.config.i18n.ITERATION_NOTE, App.config.i18n.ITERATION_NOTE_PROMPT_LABEL, App.config.i18n.ITERATION_NOTE_PROMPT_OK, App.config.i18n.ITERATION_NOTE_PROMPT_CANCEL);
+            window.document.body.appendChild(promptView.render().el);
+            promptView.openModal();
 
-            _.each(this.checkedViews(), function (view) {
-                if (!view.model.getLastIteration().get('iterationNote')) {
-                    var promptView = new PromptView();
-                    promptView.setPromptOptions(App.config.i18n.ITERATION_NOTE, App.config.i18n.ITERATION_NOTE_PROMPT_LABEL, App.config.i18n.ITERATION_NOTE_PROMPT_OK, App.config.i18n.ITERATION_NOTE_PROMPT_CANCEL);
-                    window.document.body.appendChild(promptView.render().el);
-                    promptView.openModal();
+            self.listenTo(promptView, 'prompt-ok', function (args) {
+                var iterationNote = args[0];
+                if (_.isEqual(iterationNote, '')) {
+                    iterationNote = null;
+                }
 
-                    self.listenTo(promptView, 'prompt-ok', function (args) {
-                        var iterationNote = args[0];
-                        if (_.isEqual(iterationNote, '')) {
-                            iterationNote = null;
-                        }
+                Async.each(listViews, function (view, callback) {
                         view.model.getLastIteration().save({
                             iterationNote: iterationNote
                         }).success(function () {
-                            view.model.checkin().success(self.onSuccess);
+                            //view.model.checkin().success(callback);
+                            view.model.checkin().success(callback);
                         });
+                    },
+                function(err) {
+                    if(!err) {
+                        self.onSuccess();
+                    }
+                });
 
-                    });
-
-                    self.listenTo(promptView, 'prompt-cancel', function () {
-                        view.model.checkin().success(self.onSuccess);
-                    });
-
-                } else {
-                    view.model.checkin().success(self.onSuccess);
-                }
             });
 
+            this.listenTo(promptView, 'prompt-cancel', function () {
+                var ajaxes = [];
+                _(listViews).each(function (view) {
+                    ajaxes.push(view.model.checkin());
+                });
+                $.when.apply($, ajaxes).then(this.onSuccess);
+            });
             return false;
         },
 

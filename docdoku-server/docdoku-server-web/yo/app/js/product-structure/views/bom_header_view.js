@@ -94,7 +94,7 @@ define([
         },
 
         onSeveralComponentsSelected: function () {
-            this.hideCheckGroup();
+            //this.hideCheckGroup();
             this.hideACLButton();
         },
 
