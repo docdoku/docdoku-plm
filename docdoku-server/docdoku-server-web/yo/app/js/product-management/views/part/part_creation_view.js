@@ -151,6 +151,7 @@ define([
                             that.model.fetch({
                                 success: function (model) {
                                     that.trigger('part:created', model);
+                                    Backbone.Events.trigger('part:iterationChange');
                                 }
                             });
                         });
@@ -159,6 +160,7 @@ define([
                         that.model.fetch({
                             success: function (model) {
                                 that.trigger('part:created', model);
+                                Backbone.Events.trigger('part:iterationChange');
                             }
                         });
                     }
