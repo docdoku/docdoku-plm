@@ -130,7 +130,6 @@ define([
                         view.model.getLastIteration().save({
                             iterationNote: iterationNote
                         }).success(function () {
-                            //view.model.checkin().success(callback);
                             view.model.checkin().success(callback);
                         });
                     },

@@ -45,7 +45,6 @@ define([
         },
 
         onSelectionChange: function (checkedViews) {
-
             switch (checkedViews.length) {
                 case 0:
                     this.onNoComponentSelected();
@@ -54,7 +53,7 @@ define([
                     this.onOneComponentSelected(checkedViews[0].model);
                     break;
                 default:
-                    this.onSeveralComponentsSelected();
+                    this.onSeveralComponentsSelected(checkedViews);
                     break;
             }
 
@@ -81,27 +80,56 @@ define([
                 this.aclButton.show();
             }
 
-            if (component.isCheckout()) {
-                if (component.isCheckoutByConnectedUser()) {
-                    this.updateActionsButton(false, true);
-                } else {
-                    this.updateActionsButton(false, false);
-                }
-            } else {
-                this.updateActionsButton(true, false);
-            }
+        this.updateActionsButton(this.getPermission(component));
 
         },
 
-        onSeveralComponentsSelected: function () {
-            //this.hideCheckGroup();
+        getPermission: function(component) {
+            if (component.isCheckout()) {
+                if (component.isCheckoutByConnectedUser()) {
+                    return {
+                        canCheckout: false,
+                        canUndoAndCheckin: true
+                    };
+                } else {
+                    return {
+                        canCheckout: false,
+                        canUndoAndCheckin: false
+                    };
+                }
+            } else {
+                return {
+                    canCheckout: true,
+                    canUndoAndCheckin: false
+                };
+            }
+        },
+
+        onSeveralComponentsSelected: function (listComponent) {
+            var noneReleased = true;
+            var permission = this.getPermission(listComponent[0].model);
+            var samePermission = true;
+            var that = this;
+            _.each(listComponent, function(component){
+                var permComponent = that.getPermission(component.model);
+                samePermission &= (permission.canCheckout === permComponent.canCheckout &&
+                permComponent.canUndoAndCheckin === permComponent.canUndoAndCheckin);
+                noneReleased &= !component.model.isReleased();
+            });
+            if(noneReleased && samePermission) {
+                this.checkoutGroup.show();
+                this.updateActionsButton(permission);
+            } else {
+                this.hideCheckGroup();
+            }
+
             this.hideACLButton();
         },
 
-        updateActionsButton: function (canCheckout, canUndoAndCheckin) {
-            this.checkoutButton.prop('disabled', !canCheckout);
-            this.undoCheckoutButton.prop('disabled', !canUndoAndCheckin);
-            this.checkinButton.prop('disabled', !canUndoAndCheckin);
+        updateActionsButton: function (permission) {
+            this.checkoutButton.prop('disabled', !permission.canCheckout);
+            this.undoCheckoutButton.prop('disabled', !permission.canUndoAndCheckin);
+            this.checkinButton.prop('disabled', !permission.canUndoAndCheckin);
         }
 
     });
