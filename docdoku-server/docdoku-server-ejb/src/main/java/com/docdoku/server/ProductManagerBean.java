@@ -387,7 +387,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 String fileName = sourceFile.getName();
                 long length = sourceFile.getContentLength();
                 Date lastModified = sourceFile.getLastModified();
-                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + newPartIteration.getIteration() + "/" + fileName;
+                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + newPartIteration.getIteration() + "/attachedfiles/" + fileName;
                 BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
                 binDAO.createBinaryResource(targetFile);
                 newPartIteration.addAttachedFile(targetFile);
