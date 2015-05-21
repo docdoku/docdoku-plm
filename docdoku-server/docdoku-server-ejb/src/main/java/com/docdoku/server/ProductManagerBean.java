@@ -1393,22 +1393,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void removeCADFileFromPartIteration(PartIterationKey partIKey)
-            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, PartRevisionNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(partIKey.getWorkspaceId());
-        Locale locale = new Locale(user.getLanguage());
-
-        PartRevisionDAO partRDAO = new PartRevisionDAO(locale, em);
-        PartRevision partR = partRDAO.loadPartR(partIKey.getPartRevision());
-        PartIteration partIteration = partR.getIteration(partIKey.getIteration());
-        if (isCheckoutByUser(user, partR) && partR.getLastIteration().equals(partIteration)) {
-            removeCADFile(partIteration);
-        }
-    }
-
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    @Override
-    public BinaryResource renameCADFileInPartIteration(String pFullName, String pNewName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, FileAlreadyExistsException, CreationException, StorageException {
+    public BinaryResource renameFileInPartIteration(String pSubType, String pFullName, String pNewName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, FileAlreadyExistsException, CreationException, StorageException {
 
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
         Locale userLocale = new Locale(user.getLanguage());
@@ -1424,13 +1409,22 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             dataManager.renameFile(file, pNewName);
 
-            partIteration.setNativeCADFile(null);
+            if (pSubType != null && pSubType.equals("nativecad")) {
+                partIteration.setNativeCADFile(null);
+            } else {
+                partIteration.removeAttachedFile(file);
+            }
             binDAO.removeBinaryResource(file);
 
             BinaryResource newFile = new BinaryResource(file.getNewFullName(pNewName), file.getContentLength(), file.getLastModified());
 
             binDAO.createBinaryResource(newFile);
-            partIteration.setNativeCADFile(newFile);
+
+            if (pSubType != null && pSubType.equals("nativecad")) {
+                partIteration.setNativeCADFile(newFile);
+            } else {
+                partIteration.addAttachedFile(newFile);
+            }
 
             return newFile;
         } else {

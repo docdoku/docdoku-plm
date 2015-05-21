@@ -125,6 +125,11 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
         return (parts.length==7 && "nativecad".equals(parts[5]));
     }
 
+    private boolean isAttachedFile() {
+        String[] parts = fullName.split("/");
+        return (parts.length==7 && "attachedfiles".equals(parts[5]));
+    }
+
     public BinaryResource getPrevious(){
         if(getOwnerType().equals("document-templates") || getOwnerType().equals("part-templates")) {
             return null;
@@ -133,7 +138,7 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
         int lastS = fullName.lastIndexOf('/');
         String name = fullName.substring(lastS+1);
 
-        if(isNativeCADFile()){
+        if (isNativeCADFile()) {
             String[] parts = fullName.split("/");
             int iteration=Integer.parseInt(parts[4]);
             iteration--;
@@ -143,15 +148,25 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
             }else {
                 return null;
             }
-        }else{
+        } else if (isAttachedFile()) {
+            String[] parts = fullName.split("/");
+            int iteration=Integer.parseInt(parts[4]);
+            iteration--;
+            if (iteration>0) {
+                String previousFullName=parts[0] + "/parts/" + parts[2] + "/" +parts[3]  + "/" + iteration + "/attachedfiles/" +name;
+                return new BinaryResource(previousFullName, contentLength, lastModified);
+            } else {
+                return null;
+            }
+        } else {
             String truncatedName=fullName.substring(0,lastS);
             int beforeLastS = truncatedName.lastIndexOf('/');
             int iteration=Integer.parseInt(truncatedName.substring(beforeLastS+1));
             iteration--;
-            if(iteration>0){
+            if (iteration>0) {
                 String previousFullName=truncatedName.substring(0,beforeLastS)+"/"+iteration+"/"+name;
                 return new BinaryResource(previousFullName, contentLength, lastModified);
-            }else {
+            } else {
                 return null;
             }
         }
