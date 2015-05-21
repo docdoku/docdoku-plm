@@ -109,6 +109,7 @@ define([
                         that.hide();
                         model.fetch();
                     }
+                    Backbone.Events.trigger('document:iterationChange');
                 },
                 error: this.error
             });
