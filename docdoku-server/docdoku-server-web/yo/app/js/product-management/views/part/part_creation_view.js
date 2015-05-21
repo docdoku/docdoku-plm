@@ -75,18 +75,12 @@ define([
             this.attributesView = new AttributesView({
                 el: this.$('#attributes-list')
             });
-            /*
-            this.productInstanceAttributesView = new TemplateNewAttributesView({
-                el: this.$('#attribute-product-instance-list'),
-                editMode: true,
-                unfreezable: true
-            })
-            */
-            console.log("editMode - creation: ",this.editMode);
+
             this.attributeTemplatesView =  new TemplateNewAttributesView({
                 el: this.$('#attribute-templates-list'),
                 attributesLocked: false,
-                editMode : true
+                editMode : true,
+                unfreezable: true
             });
             this.attributeTemplatesView.render();
 

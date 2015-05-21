@@ -93,6 +93,7 @@ define([
         },
 
         addAndFillAttribute: function (attribute) {
+            console.log('attribute: ', attribute);
             this.collection.add({
                 mandatory: attribute.isMandatory(),
                 name: attribute.getName(),
