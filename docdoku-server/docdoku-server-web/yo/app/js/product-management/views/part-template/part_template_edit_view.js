@@ -115,6 +115,7 @@ define([
                     mask: this.$partTemplateMask.val(),
                     idGenerated: this.$partTemplateIdGenerated.is(':checked'),
                     attributeTemplates: this.attributesView.collection.toJSON(),
+                    attributeInstanceTemplates: this.productInstanceAttributesView.collection.toJSON(),
                     attributesLocked: this.attributesView.isAttributesLocked(),
                     workflowModelId: workflow ? workflow.get('id') : null
                 }, {

@@ -24,7 +24,7 @@ define([
             this.workflowsView = new WorkflowListView({
                 el: this.$('#workflows-list')
             });
-            // Better to create a new View ?
+
             this.productInstanceAttributesView = this.addSubView(
                 new TemplateNewAttributesView({
                     el: '#attribute-product-instance-list',
@@ -32,6 +32,7 @@ define([
                     unfreezable: true
                 })
             ).render();
+
             this.attributesView = this.addSubView(
                 new TemplateNewAttributesView({
                     el: '#attributes-list',
@@ -94,6 +95,7 @@ define([
                     error: this.onError
                 });
             }
+            console.log("model: ",this.model);
 
             e.preventDefault();
             e.stopPropagation();

@@ -7,11 +7,12 @@ define([
     'common-objects/models/tag',
     'collections/part_templates',
     'common-objects/views/attributes/attributes',
+    'common-objects/views/attributes/template_new_attributes',
     'common-objects/views/workflow/workflow_list',
     'common-objects/views/workflow/workflow_mapping',
     'common-objects/views/security/acl',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, Part, Tag, PartTemplateCollection, AttributesView, WorkflowListView, DocumentWorkflowMappingView, ACLView, AlertView) {
+], function (Backbone, Mustache, template, Part, Tag, PartTemplateCollection, AttributesView, TemplateNewAttributesView, WorkflowListView, DocumentWorkflowMappingView, ACLView, AlertView) {
     'use strict';
     var PartCreationView = Backbone.View.extend({
 
@@ -47,6 +48,7 @@ define([
             }).render();
 
             this.attributesView.render();
+            this.attributeTemplatesView.render();
 
             this.$inputPartNumber.customValidity(App.config.i18n.REQUIRED_FIELD);
             console.log('part_creation_view');
@@ -69,9 +71,27 @@ define([
         },
 
         bindAttributesView: function () {
+
             this.attributesView = new AttributesView({
-                el: this.$('#tab-attributes')
+                el: this.$('#attributes-list')
             });
+            /*
+            this.productInstanceAttributesView = new TemplateNewAttributesView({
+                el: this.$('#attribute-product-instance-list'),
+                editMode: true,
+                unfreezable: true
+            })
+            */
+            console.log("editMode - creation: ",this.editMode);
+            this.attributeTemplatesView =  new TemplateNewAttributesView({
+                el: this.$('#attribute-templates-list'),
+                attributesLocked: false,
+                editMode : true
+            });
+            this.attributeTemplatesView.render();
+
+
+
         },
 
         setWorkflowModel: function(template) {
@@ -93,9 +113,24 @@ define([
                     locked:object.locked
                 });
             });
+            console.log(template);
+            _.each(template.get('attributeInstanceTemplates'), function (object) {
+                console.log('instanceAttribute: ',object);
+                that.attributeTemplatesView.collection.add({
+                    name: object.name,
+                    attributeType: object.attributeType,
+                    mandatory: object.mandatory,
+                    value: '',
+                    lovName:object.lovName,
+                    locked:object.locked
+                });
+            });
 
             this.attributesView.render();
+            this.attributeTemplatesView.render();
         },
+
+
 
         interceptSubmit:function(){
             this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
@@ -137,7 +172,8 @@ define([
             var that = this;
 
             this.model.getLastIteration().save({
-                instanceAttributes: this.attributesView.collection.toJSON()
+                instanceAttributes: this.attributesView.collection.toJSON(),
+                instanceAttributeTemplates: that.attributeTemplatesView.collection.toJSON()
             }, {
                 success: function () {
                     if (that.options.autoAddTag) {
@@ -212,11 +248,8 @@ define([
                     this.setWorkflowModel(template);
                 }
 
-                if (template.get('attributeTemplates')) {
+                if (template.get('attributeTemplates') || template.get('attributeInstanceTemplates')) {
                     this.addAttributes(template);
-                }
-                if(template.get('attributeInstanceTemplate')) {
-                    console.log('yooooooo');
                 }
             }
         },

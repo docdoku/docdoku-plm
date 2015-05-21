@@ -179,7 +179,7 @@ define([
                 that.attributesView.addAndFillAttribute(item);
             });
 
-            // TODO: should be changed to AttributesView
+            console.log("editMode - modal: ",this.editMode);
             this.attributeTemplatesView =  new TemplateNewAttributesView({
                 el: this.$('#attribute-templates-list'),
                 attributesLocked: false,
