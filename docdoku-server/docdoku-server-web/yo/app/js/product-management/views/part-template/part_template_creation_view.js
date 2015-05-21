@@ -24,13 +24,21 @@ define([
             this.workflowsView = new WorkflowListView({
                 el: this.$('#workflows-list')
             });
-
+            // Better to create a new View ?
+            this.productInstanceAttributesView = this.addSubView(
+                new TemplateNewAttributesView({
+                    el: '#attribute-product-instance-list',
+                    editMode: true,
+                    unfreezable: true
+                })
+            ).render();
             this.attributesView = this.addSubView(
                 new TemplateNewAttributesView({
-                    el: '#tab-attributes',
+                    el: '#attributes-list',
                     editMode: true
                 })
             ).render();
+
 
             var $popoverLink = this.$('#mask-help');
 
@@ -75,6 +83,7 @@ define([
                     mask: this.$partTemplateMask.val(),
                     idGenerated: this.$partTemplateIdGenerated.is(':checked'),
                     attributeTemplates: this.attributesView.collection.toJSON(),
+                    attributeInstanceTemplates: this.productInstanceAttributesView.collection.toJSON(),
                     attributesLocked: this.attributesView.isAttributesLocked(),
                     workflowModelId: workflow ? workflow.get('id') : null
                 });

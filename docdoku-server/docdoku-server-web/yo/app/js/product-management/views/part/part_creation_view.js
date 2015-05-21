@@ -49,7 +49,7 @@ define([
             this.attributesView.render();
 
             this.$inputPartNumber.customValidity(App.config.i18n.REQUIRED_FIELD);
-
+            console.log('part_creation_view');
             return this;
         },
 
@@ -214,6 +214,9 @@ define([
 
                 if (template.get('attributeTemplates')) {
                     this.addAttributes(template);
+                }
+                if(template.get('attributeInstanceTemplate')) {
+                    console.log('yooooooo');
                 }
             }
         },

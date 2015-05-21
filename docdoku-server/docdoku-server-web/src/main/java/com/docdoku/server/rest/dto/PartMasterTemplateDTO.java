@@ -37,6 +37,7 @@ public class PartMasterTemplateDTO {
     private String mask;
     private String attachedFile;
     private List<InstanceAttributeTemplateDTO> attributeTemplates;
+    private List<InstanceAttributeTemplateDTO> attributeInstanceTemplates;
     private boolean attributesLocked;
     private String workflowModelId;
     private ACLDTO acl;
@@ -116,6 +117,14 @@ public class PartMasterTemplateDTO {
 
     public void setAttributeTemplates(List<InstanceAttributeTemplateDTO> attributeTemplates) {
         this.attributeTemplates = attributeTemplates;
+    }
+
+    public List<InstanceAttributeTemplateDTO> getAttributeInstanceTemplates() {
+        return attributeInstanceTemplates;
+    }
+
+    public void setAttributeInstanceTemplates(List<InstanceAttributeTemplateDTO> attributeInstanceTemplates) {
+        this.attributeInstanceTemplates = attributeInstanceTemplates;
     }
 
     public List<InstanceAttributeTemplateDTO> getAttributeTemplates() {

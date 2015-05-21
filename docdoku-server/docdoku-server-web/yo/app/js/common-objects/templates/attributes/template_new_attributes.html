@@ -1,7 +1,9 @@
 {{#editMode}}
+{{^unfreezable}}
 <label class="checkbox lock">
     <input type="checkbox" value="false"> {{i18n.LOCK_ATTRIBUTES}}
 </label>
+{{/unfreezable}}
 {{/editMode}}
 
 <div id="items-{{view.cid}}"></div>

@@ -110,6 +110,19 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     @Column(name = "WORKFLOWMODEL_ID", length=100, insertable = false, updatable = false)
     private String workflowModelId;
 
+    @OrderColumn(name="ATTR_ORDER")
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, orphanRemoval = true)
+    @JoinTable(name="PARTMASTERTPL_INSTANCE_ATTR",
+            inverseJoinColumns={
+                    @JoinColumn(name="INSTANCEATTRIBUTETEMPLATE_ID", referencedColumnName="ID")
+            },
+            joinColumns={
+                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+                    @JoinColumn(name="PARTMASTERTEMPLATE_ID", referencedColumnName="ID")
+            }
+    )
+    private List<InstanceAttributeTemplate> attributeInstanceTemplates = new ArrayList<>();
+
 
     public PartMasterTemplate() {
     }
@@ -274,5 +287,12 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
             return id.compareTo(pTemplate.id);
         }
     }
-    
+
+    public void setAttributeInstanceTemplates(List<InstanceAttributeTemplate> attributeInstanceTemplates) {
+        this.attributeInstanceTemplates = attributeInstanceTemplates;
+    }
+
+    public List<InstanceAttributeTemplate> getAttributeInstanceTemplates() {
+        return attributeInstanceTemplates;
+    }
 }

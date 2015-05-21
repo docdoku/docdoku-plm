@@ -12,6 +12,8 @@ define([
         template: template,
 
         attributesLocked: false,
+        //boolean to check if the list of attributes can be frozen
+        unfreezable: false,
 
         collection: function () {
             return new Backbone.Collection();
@@ -27,12 +29,17 @@ define([
                 this.attributesLocked = this.options.attributesLocked;
             }
 
+            if(this.options.unfreezable) {
+                this.unfreezable = this.options.unfreezable;
+            }
+
             if(this.options.editMode){
                 this.editMode = this.options.editMode;
             }
 
             this.templateExtraData = {
-                editMode : this.editMode
+                editMode : this.editMode,
+                unfreezable: this.unfreezable
             };
         },
 
@@ -50,7 +57,8 @@ define([
                 el: '#items-' + this.cid,
                 collection: this.collection,
                 lovs:this.lovs,
-                editMode: this.editMode
+                editMode: this.editMode,
+                freezable: this.freezable
             });
             this.attributesView = this.addSubView(
                 listViewAttributs

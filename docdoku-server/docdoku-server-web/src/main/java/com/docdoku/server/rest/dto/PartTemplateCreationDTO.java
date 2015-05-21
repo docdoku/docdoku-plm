@@ -31,6 +31,7 @@ public class PartTemplateCreationDTO {
     private String mask;
     private String attachedFiles;
     private List<InstanceAttributeTemplateDTO> attributeTemplates;
+    private List<InstanceAttributeTemplateDTO> attributeInstanceTemplates;
     private boolean attributesLocked;
     private String workflowModelId;
 
@@ -97,6 +98,15 @@ public class PartTemplateCreationDTO {
     public List<InstanceAttributeTemplateDTO> getAttributeTemplates() {
         return attributeTemplates;
     }
+
+    public void setAttributeInstanceTemplates(List<InstanceAttributeTemplateDTO> attributeInstanceTemplates) {
+        this.attributeInstanceTemplates = attributeInstanceTemplates;
+    }
+
+    public List<InstanceAttributeTemplateDTO> getAttributeInstanceTemplates() {
+        return attributeInstanceTemplates;
+    }
+
 
     public boolean isAttributesLocked() {
         return attributesLocked;

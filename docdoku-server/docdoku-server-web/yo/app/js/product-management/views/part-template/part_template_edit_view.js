@@ -34,9 +34,17 @@ define([
 
             this.attributesView = this.addSubView(
                 new TemplateNewAttributesView({
-                    el: '#tab-attributes',
+                    el: '#attributes-list',
                     attributesLocked: this.model.isAttributesLocked(),
                     editMode:true
+                })
+            ).render();
+
+            this.productInstanceAttributesView = this.addSubView(
+                new TemplateNewAttributesView({
+                    el: '#attribute-product-instance-list',
+                    editMode: true,
+                    unfreezable: true
                 })
             ).render();
 
@@ -53,6 +61,7 @@ define([
             this.$('#tab-files').append(this.fileListView.el);
 
             this.attributesView.collection.reset(this.model.get('attributeTemplates'));
+            this.productInstanceAttributesView.collection.reset(this.model.get('attributeInstanceTemplates'));
 
             var $popoverLink = this.$('a#mask-help');
 
@@ -69,6 +78,7 @@ define([
                 e.preventDefault();
                 return false;
             });
+            console.log(template);
 
         },
 

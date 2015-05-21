@@ -44,6 +44,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  *
@@ -85,7 +86,7 @@ public class PartTemplateResource {
     @GET
     @Path("{templateId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public PartMasterTemplateDTO getPartMasterTemplates(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
+    public PartMasterTemplateDTO getPartMasterTemplate(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
             throws EntityNotFoundException, UserNotActiveException {
 
         PartMasterTemplate partMsTemplate = productService.getPartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId));
@@ -117,10 +118,17 @@ public class PartTemplateResource {
 
         List<InstanceAttributeTemplateDTO> attributeTemplates = templateCreationDTO.getAttributeTemplates();
         String[] lovNames=new String[attributeTemplates.size()];
-        for (int i=0;i<attributeTemplates.size();i++)
-            lovNames[i]=attributeTemplates.get(i).getLovName();
+        for (int i=0;i<attributeTemplates.size();i++) {
+            lovNames[i] = attributeTemplates.get(i).getLovName();
+        }
 
-        PartMasterTemplate template = productService.createPartMasterTemplate(workspaceId, id, partType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, idGenerated, attributesLocked);
+        List<InstanceAttributeTemplateDTO> attributeInstanceTemplates = templateCreationDTO.getAttributeInstanceTemplates();
+        String[] instanceLovNames = new String[attributeInstanceTemplates.size()];
+        for (int i=0;i<attributeInstanceTemplates.size();i++) {
+            instanceLovNames[i] = attributeInstanceTemplates.get(i).getLovName();
+        }
+
+        PartMasterTemplate template = productService.createPartMasterTemplate(workspaceId, id, partType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, createInstanceAttributeTemplateFromDto(attributeInstanceTemplates), instanceLovNames, idGenerated, attributesLocked);
         return mapper.map(template, PartMasterTemplateDTO.class);
     }
     
@@ -142,7 +150,7 @@ public class PartTemplateResource {
         for (int i=0;i<attributeTemplates.size();i++)
             lovNames[i]=attributeTemplates.get(i).getLovName();
 
-        PartMasterTemplate template = productService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, idGenerated, attributesLocked);
+        PartMasterTemplate template = productService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames,  idGenerated, attributesLocked);
         return mapper.map(template, PartMasterTemplateDTO.class);
     }
 

@@ -68,6 +68,7 @@ define([
         },
 
         toPartModal: function () {
+            console.log('mwahahaha');
             var self = this;
             self.model.fetch().success(function () {
                 var partModalView = new PartModalView({

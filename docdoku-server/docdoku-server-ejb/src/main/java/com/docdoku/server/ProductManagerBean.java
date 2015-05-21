@@ -1568,13 +1568,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public PartMasterTemplate getPartMasterTemplate(PartMasterTemplateKey pKey) throws WorkspaceNotFoundException, PartMasterTemplateNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
+
         return new PartMasterTemplateDAO(new Locale(user.getLanguage()), em).loadPartMTemplate(pKey);
     }
 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, String[] lovNames, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException, WorkflowModelNotFoundException, ListOfValuesNotFoundException {
+    public PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, String[] lovNames, InstanceAttributeTemplate[] pAttributeInstanceTemplates, String[] instanceLovNames, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException, WorkflowModelNotFoundException, ListOfValuesNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         Locale locale = new Locale(user.getLanguage());
         checkNameValidity(pId, locale);
@@ -1600,6 +1601,17 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
         }
         template.setAttributeTemplates(attrs);
+
+        List<InstanceAttributeTemplate> instanceAttrs = new ArrayList<>();
+        for(int i=0;i<pAttributeInstanceTemplates.length;i++){
+            instanceAttrs.add(pAttributeInstanceTemplates[i]);
+            if(pAttributeInstanceTemplates[i] instanceof ListOfValuesAttributeTemplate){
+                ListOfValuesAttributeTemplate lovAttr=(ListOfValuesAttributeTemplate)pAttributeInstanceTemplates[i];
+                ListOfValuesKey lovKey = new ListOfValuesKey(user.getWorkspaceId(), lovNames[i]);
+                lovAttr.setLov(lovDAO.loadLOV(lovKey));
+            }
+        }
+        template.setAttributeInstanceTemplates(instanceAttrs);
 
         if (pWorkflowModelId != null){
             WorkflowModel workflowModel = new WorkflowModelDAO(locale, em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
