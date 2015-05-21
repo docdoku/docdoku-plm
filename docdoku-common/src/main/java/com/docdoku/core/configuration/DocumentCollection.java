@@ -22,6 +22,8 @@ package com.docdoku.core.configuration;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionKey;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -32,7 +34,7 @@ import java.util.Map;
 /**
  * This class maintains a collection of document iterations which cannot hold
  * more than one {@link com.docdoku.core.document.DocumentIteration} in
- * the same {@link com.docdoku.core.document.DocumentMaster}.
+ * the same {@link com.docdoku.core.document.DocumentRevision}.
  *
  * @author Taylor LABEJOF
  * @version 2.0, 25/08/14
@@ -72,18 +74,15 @@ public class DocumentCollection implements Serializable {
 
     public BaselinedDocument addBaselinedDocument(DocumentIteration targetDocument){
         BaselinedDocument baselinedDocument = new BaselinedDocument(this, targetDocument);
-        baselinedDocument.setTargetDocumentVersion(targetDocument.getDocumentVersion());
-        baselinedDocument.setTargetDocumentIteration(targetDocument.getIteration());
         baselinedDocuments.put(baselinedDocument.getKey(),baselinedDocument);
         return baselinedDocument;
-
     }
 
     public BaselinedDocument getBaselinedDocument(BaselinedDocumentKey baselinedDocumentKey){
         return baselinedDocuments.get(baselinedDocumentKey);
     }
-    public boolean hasBaselinedDocument(DocumentMasterKey documentMasterKey){
-        BaselinedDocumentKey baselinedDocumentKey = new BaselinedDocumentKey(id,documentMasterKey.getWorkspace(), documentMasterKey.getId());
+    public boolean hasBaselinedDocument(DocumentRevisionKey documentRevisionKey){
+        BaselinedDocumentKey baselinedDocumentKey = new BaselinedDocumentKey(id,documentRevisionKey.getWorkspaceId(), documentRevisionKey.getDocumentMasterId(), documentRevisionKey.getVersion());
         return baselinedDocuments.containsKey(baselinedDocumentKey);
     }
 

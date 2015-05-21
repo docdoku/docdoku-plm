@@ -33,6 +33,8 @@ import java.util.*;
  * "snapshots in time" of configurations. More concretely, baselines are collections
  * of items (like parts) at a specified iteration.
  * Within a baseline, there must not be two different iterations of the same part.
+ * Because {@link com.docdoku.core.product.PartIteration} may reference documents
+ * baselines capture also {@link com.docdoku.core.configuration.DocumentCollection}.
  * 
  * @author Florent Garin
  * @version 2.0, 15/05/13
@@ -73,6 +75,9 @@ public class ProductBaseline implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
     private PartCollection partCollection=new PartCollection();
+
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
+    private DocumentCollection documentCollection=new DocumentCollection();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
@@ -210,6 +215,8 @@ public class ProductBaseline implements Serializable {
     public PartCollection getPartCollection() {
         return partCollection;
     }
+
+    public DocumentCollection getDocumentCollection() { return documentCollection; }
 
     public int getId() {
         return id;

@@ -55,8 +55,6 @@ public class BaselinedDocument implements Serializable{
     })
     private DocumentIteration targetDocument;
 
-    @Column(name = "TARGET_DOCREVISION_VERSION", length=10, nullable = false, insertable = false, updatable = false)
-    private String targetDocumentVersion="";
     @Column(name = "TARGET_ITERATION", nullable = false, insertable = false, updatable = false)
     private int targetDocumentIteration;
 
@@ -65,9 +63,8 @@ public class BaselinedDocument implements Serializable{
     public BaselinedDocument(DocumentCollection documentCollection, DocumentIteration targetDocument) {
         this.documentCollection = documentCollection;
         this.targetDocument =targetDocument;
-        this.baselinedDocumentKey = new BaselinedDocumentKey(documentCollection.getId(),targetDocument.getWorkspaceId(), targetDocument.getDocumentMasterId());
+        this.baselinedDocumentKey = new BaselinedDocumentKey(documentCollection.getId(),targetDocument.getWorkspaceId(), targetDocument.getDocumentMasterId(),targetDocument.getDocumentVersion());
         this.targetDocumentIteration = targetDocument.getIteration();
-        this.targetDocumentVersion = targetDocument.getDocumentVersion();
     }
 
     public BaselinedDocumentKey getKey() {
@@ -89,12 +86,7 @@ public class BaselinedDocument implements Serializable{
         return targetDocument.getDocumentMasterId();
     }
 
-    public String getTargetDocumentVersion() {
-        return targetDocumentVersion;
-    }
-    public void setTargetDocumentVersion(String targetDocumentVersion) {
-        this.targetDocumentVersion = targetDocumentVersion;
-    }
+    public String getTargetDocumentVersion() {return targetDocument.getDocumentVersion();}
 
     public int getTargetDocumentIteration() {
         return targetDocumentIteration;
@@ -105,23 +97,19 @@ public class BaselinedDocument implements Serializable{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         BaselinedDocument that = (BaselinedDocument) o;
 
-        return documentCollection.equals(that.documentCollection)
-                && targetDocument.equals(that.targetDocument);
+        if (baselinedDocumentKey != null ? !baselinedDocumentKey.equals(that.baselinedDocumentKey) : that.baselinedDocumentKey != null)
+            return false;
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        int result = documentCollection.hashCode();
-        result = 31 * result + targetDocument.hashCode();
-        return result;
+        return baselinedDocumentKey != null ? baselinedDocumentKey.hashCode() : 0;
     }
 }

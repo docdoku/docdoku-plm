@@ -79,6 +79,8 @@ public class BaselinedPart implements Serializable{
         this.partCollection = partCollection;
         this.targetPart = targetPart;
         this.baselinedPartKey=new BaselinedPartKey(partCollection.getId(), targetPart.getWorkspaceId(),targetPart.getPartNumber());
+        this.targetPartIteration=targetPart.getIteration();
+        this.targetPartVersion=targetPart.getVersion();
     }
 
 

@@ -76,8 +76,6 @@ public class PartCollection implements Serializable {
 
     public void addBaselinedPart(PartIteration targetPart){
         BaselinedPart baselinedPart = new BaselinedPart(this, targetPart);
-        baselinedPart.setTargetPartIteration(targetPart.getIteration());
-        baselinedPart.setTargetPartVersion(targetPart.getVersion());
         baselinedParts.put(baselinedPart.getBaselinedPartKey(),baselinedPart);
     }
 
