@@ -23,7 +23,7 @@ define([
 
         initialize: function () {
             this.editMode = this.options.editMode;
-            this.model.url = this.options.deleteBaseUrl + '/files/' + this.model.get('shortName');
+            this.model.url = this.options.deleteBaseUrl + '/files/' + this.model.getSubType() + '/' + this.model.get('shortName');
             this.fileUrl = this.options.uploadBaseUrl + this.model.get('shortName');
         },
 

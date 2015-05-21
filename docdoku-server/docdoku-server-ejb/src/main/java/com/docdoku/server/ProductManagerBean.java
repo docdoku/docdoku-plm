@@ -390,7 +390,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + newPartIteration.getIteration() + "/" + fileName;
                 BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
                 binDAO.createBinaryResource(targetFile);
-                newPartIteration.addFile(targetFile);
+                newPartIteration.addAttachedFile(targetFile);
             }
 
             List<PartUsageLink> components = new LinkedList<>();
@@ -644,7 +644,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             if (binaryResource == null) {
                 binaryResource = new BinaryResource(fullName, pSize, new Date());
                 new BinaryResourceDAO(locale, em).createBinaryResource(binaryResource);
-                partI.addFile(binaryResource);
+                partI.addAttachedFile(binaryResource);
             } else {
                 binaryResource.setContentLength(pSize);
                 binaryResource.setLastModified(new Date());
@@ -1468,7 +1468,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     private void removeAttachedFiles(PartIteration partIteration)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException {
 
-        // Delete attached files
+            // Delete attached files
         for (BinaryResource file : partIteration.getAttachedFiles()) {
             try {
                 dataManager.deleteData(file);
@@ -1477,6 +1477,35 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             esIndexer.delete(partIteration);
+        }
+    }
+
+    @Override
+    public void removeFileInPartIteration(PartIterationKey pPartIPK, String pSubType, String pName)
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, FileNotFoundException {
+
+        User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
+
+        PartIteration partIteration = new PartIterationDAO(new Locale(user.getLanguage()),em).loadPartI(pPartIPK);
+        PartRevision partR = partIteration.getPartRevision();
+
+        if (isCheckoutByUser(user,partR) && partR.getLastIteration().equals(partIteration)) {
+
+            BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
+            BinaryResource file = binDAO.loadBinaryResource(pName);
+
+            try {
+                dataManager.deleteData(file);
+            } catch (StorageException e) {
+                LOGGER.log(Level.INFO, null, e);
+            }
+
+            if (pSubType != null && pSubType.equals("nativecad")) {
+                partIteration.setNativeCADFile(null);
+            } else {
+                partIteration.removeAttachedFile(file);
+            }
+            binDAO.removeBinaryResource(file);
         }
     }
 
@@ -2008,7 +2037,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/1/" + fileName;
                 BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
                 binDAO.createBinaryResource(targetFile);
-                firstPartI.addFile(targetFile);
+                firstPartI.addAttachedFile(targetFile);
                 try {
                     dataManager.copyData(sourceFile, targetFile);
                 } catch (StorageException e) {

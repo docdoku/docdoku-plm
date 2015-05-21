@@ -411,12 +411,12 @@ public class PartResource {
 
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/iterations/{partIteration}/files/{fileName}")
-    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, @PathParam("fileName") String fileName)
+    @Path("/iterations/{partIteration}/files/{subType}/{fileName}")
+    public Response removeFile(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, @PathParam("subType") String subType, @PathParam("fileName") String fileName)
             throws EntityNotFoundException, UserNotActiveException {
         PartIterationKey partIKey = new PartIterationKey(workspaceId, partNumber, partVersion, partIteration);
-        String fileFullName = workspaceId + "/parts/" + partNumber + "/" + partVersion + "/" + partIteration + "/" + fileName;
-        productService.removeFileInPartIteration(partIKey, fileFullName);
+        String fileFullName = workspaceId + "/parts/" + partNumber + "/" + partVersion + "/" + partIteration + "/" + subType + "/" + fileName;
+        productService.removeFileInPartIteration(partIKey, subType, fileFullName);
         return Response.ok().build();
     }
 
@@ -425,7 +425,7 @@ public class PartResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/iterations/{partIteration}/files/{fileName}")
     public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, @PathParam("fileName") String fileName, FileDTO fileDTO) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
-        String fileFullName = workspaceId + "/parts/" + partNumber + "/" + partVersion+ "/" + partIteration+ "/nativecad/" + fileName;
+        String fileFullName = workspaceId + "/parts/" + partNumber + "/" + partVersion+ "/" + partIteration + fileName;
         BinaryResource binaryResource = productService.renameCADFileInPartIteration(fileFullName, fileDTO.getShortName());
         return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
     }

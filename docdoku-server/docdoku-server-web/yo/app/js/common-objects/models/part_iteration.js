@@ -82,8 +82,8 @@ define([
             return this.get('attachedFiles');
         },
 
-        getBaseName: function () {
-            return this.getWorkspace() + '/parts/' + this.getNumber() + '/' + this.getVersion() + '/' + this.get('iteration') + '/nativecad';
+        getBaseName: function (subType) {
+            return this.getWorkspace() + '/parts/' + this.getNumber() + '/' + this.getVersion() + '/' + this.get('iteration') + '/' + subType;
         },
 
         getNumber: function () {
@@ -127,17 +127,9 @@ define([
         launchConversion:function(){
             return $.ajax({method:'PUT',url:this.getConversionUrl()});
         },
-        /**
-         * file Upload uses the old servlet, not the JAXRS Api         *
-         * return /files/{workspace}/parts/{docId}/{version}/{iteration}/
-         * @returns string
-         */
-        getUploadBaseUrl: function () {
-            return App.config.contextPath + '/api/files/' + this.getWorkspace() + '/parts/' + this.getNumber() + '/' + this.getVersion() + '/' + this.get('iteration') + '/nativecad/';
-        },
 
-        getAttachedFileUploadBaseUrl: function () {
-            return App.config.contextPath + '/api/files/' + this.getWorkspace() + '/parts/' + this.getNumber() + '/' + this.getVersion() + '/' + this.get('iteration') + '/mtl/';
+        getAttachedFilesUploadBaseUrl: function () {
+            return App.config.contextPath + '/api/files/' + this.getWorkspace() + '/parts/' + this.getNumber() + '/' + this.getVersion() + '/' + this.get('iteration') + '/attachedfiles/';
         },
 
         getNativeCadFileUploadBaseUrl: function () {

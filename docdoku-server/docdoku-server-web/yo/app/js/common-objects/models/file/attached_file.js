@@ -22,6 +22,16 @@ define(['backbone'], function (Backbone) {
             this.set('shortName',name);
         },
 
+        getSubType: function () {
+            if (this.getFullName().indexOf('nativecad') > 0) {
+                return 'nativecad';
+            } else if (this.getFullName().indexOf('attachedfiles') > 0) {
+                return 'attachedfiles';
+            } else {
+                return '';
+            }
+        },
+
         rewriteUrl:function(){
             var name = this.getShortName();
             var url = this.url;

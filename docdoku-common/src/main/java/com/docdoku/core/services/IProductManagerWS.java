@@ -323,7 +323,7 @@ public interface IProductManagerWS{
     BinaryResource saveFileInPartIteration(PartIterationKey partIPK, String name, String subType, long size) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
 
 
-    void removeFileInPartIteration(PartIterationKey pPartIPK, String pName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, FileNotFoundException;
+    void removeFileInPartIteration(PartIterationKey pPartIPK, String pSubType, String pName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, FileNotFoundException;
 
     /**
      * Updates the specified <a href="PartIteration.html">PartIteration</a> with

@@ -36,7 +36,7 @@ define([
             this.events['click .action-checkout'] = 'actionCheckout';
             this.events['click .action-undocheckout'] = 'actionUndoCheckout';
             this.events['notification:acknowledged'] = 'updateModificationNotifications';
-            this.events['file:uploaded'] = 'updateCadFileUploadView';
+            this.events['file:uploaded'] = 'updateFileUploadView';
 
             this.tagsToRemove = [];
         },
@@ -135,7 +135,8 @@ define([
             this.bindUserPopover();
             if (this.iteration) {
                 this.initCadFileUploadView();
-                this.initMaterialFileUploadView();
+                this.initAttachedFilesUploadView();
+
                 this.initAttributesView();
 
                 this.initPartsManagementView();
@@ -236,7 +237,7 @@ define([
         initCadFileUploadView: function () {
             this.cadFileView = new FileListView({
                 title:'CAD',
-                baseName: this.iteration.getBaseName(),
+                baseName: this.iteration.getBaseName('nativecad'),
                 deleteBaseUrl: this.iteration.url(),
                 uploadBaseUrl: this.iteration.getNativeCadFileUploadBaseUrl(),
                 collection: this.iteration._nativeCADFile,
@@ -248,13 +249,12 @@ define([
 
         },
 
-        initMaterialFileUploadView: function () {
-
+        initAttachedFilesUploadView: function () {
             this.attachedFilesView = new FileListView({
                 title:'Attached files',
-                baseName: this.iteration.getBaseName(),
+                baseName: this.iteration.getBaseName('attachedfiles'),
                 deleteBaseUrl: this.iteration.url(),
-                uploadBaseUrl: this.iteration.getAttachedFileUploadBaseUrl(),
+                uploadBaseUrl: this.iteration.getAttachedFilesUploadBaseUrl(),
                 collection: this.iteration.getAttachedFiles(),
                 editMode: this.editMode
             }).render();
@@ -273,6 +273,7 @@ define([
             this.$('.file-list').append(this.conversionStatusView.el);
             this.conversionStatusView.launch();
         },
+
         initPartsManagementView: function () {
             this.partsManagementView = new PartsManagementView({
                 el: '#iteration-components',

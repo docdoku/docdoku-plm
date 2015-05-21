@@ -256,22 +256,22 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         this.nativeCADFile = nativeCADFile;
     }
 
-    public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
-        this.attachedFiles = attachedFiles;
-    }
-
-    public void addFile(BinaryResource pBinaryResource){
-        attachedFiles.add(pBinaryResource);
-    }
-    public boolean removeFile(BinaryResource pBinaryResource){
-        return attachedFiles.remove(pBinaryResource);
-    }
-
     @Override
     public Set<BinaryResource> getAttachedFiles() {
         return attachedFiles;
     }
- 
+    public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
+        this.attachedFiles = attachedFiles;
+    }
+
+    public void addAttachedFile(BinaryResource pBinaryResource){
+        attachedFiles.add(pBinaryResource);
+    }
+    public boolean removeAttachedFile(BinaryResource pBinaryResource){
+        return attachedFiles.remove(pBinaryResource);
+    }
+
+
     public Set<DocumentLink> getLinkedDocuments() {
         return linkedDocuments;
     }
