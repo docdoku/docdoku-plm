@@ -175,8 +175,21 @@ define([
 
         deleteSelectedParts: function () {
             var _this = this;
+
             bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PART, function (result) {
                 if (result) {
+                    var checkedViews = _(_this.listItemViews).select(function(view) {
+                        return view.isChecked();
+                    });
+                    var requestsToBeDone = checkedViews.length;
+                    var requestsDone = 0;
+
+                    var onRequestOver = function () {
+                        if (++requestsDone === requestsToBeDone) {
+                            _this.onSelectionChanged();
+                            Backbone.Events.trigger('part:iterationChange');
+                        }
+                    };
                     _(_this.listItemViews).each(function (view) {
                         if (view.isChecked()) {
                             view.model.destroy({
@@ -184,13 +197,18 @@ define([
                                 dataType: 'text', // server doesn't send a json hash in the response body
                                 success: function () {
                                     _this.removePart(view.model);
-                                    _this.onSelectionChanged();
+                                    onRequestOver();
+
                                 }, error: function (model, err) {
                                     _this.trigger('error', model, err);
+                                    //must be called, if not the ones which succeed
+                                    //won't trigger the event while the part did change.
+                                    Backbone.Events.trigger('part:iterationChange');
                                     _this.onSelectionChanged();
                                 }});
                         }
                     });
+
                 }
             });
         },

@@ -275,12 +275,14 @@ define([
 
                     var checkedViews = that.listView.checkedViews();
                     var requestsToBeDone = checkedViews.length;
+                    var requestsDone = 0;
 
                     var onRequestOver = function () {
-                        if (++requestsToBeDone === requestsToBeDone) {
+                        if (++requestsDone === requestsToBeDone) {
                             that.listView.redraw();
                             that.collection.fetch();
                             that.onStateChange();
+                            Backbone.Events.trigger('document:iterationChange');
                         }
                     };
 
@@ -294,7 +296,6 @@ define([
                                 onRequestOver();
                             }
                         });
-
                     });
                 }
             });
