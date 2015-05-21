@@ -8,7 +8,7 @@
 {{/lockMode}}
 <div class="controls">
     <input type="text" class="input-xlarge name" placeholder="{{i18n.NAME}}" value="{{model.name}}" required
-    {{^lockMode}}disabled="disabled"{{/lockMode}} />
+    {{^lockMode}}disabled="disabled"{{/lockMode}} {{#lockMode}}{{#model.locked}}disabled="disabled"{{/model.locked}}{{/lockMode}} />
 </div>
 
 {{#model.locked}}
