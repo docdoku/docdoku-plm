@@ -35,6 +35,7 @@ import java.util.*;
  */
 @Table(name="PATHDATAITERATION")
 @Entity
+@IdClass(PathDataIterationKey.class)
 public class PathDataIteration implements Serializable, FileHolder {
 
     @Id
