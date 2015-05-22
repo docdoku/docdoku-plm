@@ -615,7 +615,7 @@ public class ProductInstancesResource {
         DocumentRevisionKey[] data = new DocumentRevisionKey[dtos.size()];
         int i = 0;
         for (DocumentRevisionDTO dto : dtos) {
-            data[i++] = new DocumentRevisionKey(dto.getWorkspaceId(), dto.getId(), dto.getVersion());
+            data[i++] = new DocumentRevisionKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getVersion());
         }
         return data;
     }
