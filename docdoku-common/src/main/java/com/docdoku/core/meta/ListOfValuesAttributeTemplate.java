@@ -65,7 +65,7 @@ public class ListOfValuesAttributeTemplate extends InstanceAttributeTemplate {
     }
 
     public String getLovName(){
-        return this.lov.getName();
+        return this.lov != null ? this.lov.getName():null;
     }
 
     public InstanceAttribute createInstanceAttribute() {

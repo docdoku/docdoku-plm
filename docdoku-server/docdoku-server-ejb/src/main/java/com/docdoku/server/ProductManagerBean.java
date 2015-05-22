@@ -697,8 +697,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     * */
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, List<InstanceAttributeTemplate> pAttributeTemplates, DocumentIterationKey[] pLinkKeys, String[] documentLinkComments)
-            throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException, EntityConstraintException, UserNotActiveException {
+    public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, List<InstanceAttributeTemplate> pAttributeTemplates, DocumentIterationKey[] pLinkKeys, String[] documentLinkComments, String[] lovNames)
+            throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException, EntityConstraintException, UserNotActiveException, ListOfValuesNotFoundException {
 
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
         Locale locale = new Locale(user.getLanguage());
@@ -817,7 +817,19 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             if (pAttributeTemplates != null) {
-                partIte.setInstanceAttributeTemplates(pAttributeTemplates);
+
+                LOVDAO lovDAO=new LOVDAO(locale,em);
+
+                List<InstanceAttributeTemplate> templateAttrs = new ArrayList<>();
+                for(int i=0;i<pAttributeTemplates.size();i++){
+                    templateAttrs.add(pAttributeTemplates.get(i));
+                    if(pAttributeTemplates.get(i) instanceof ListOfValuesAttributeTemplate){
+                        ListOfValuesAttributeTemplate lovAttr=(ListOfValuesAttributeTemplate)pAttributeTemplates.get(i);
+                        ListOfValuesKey lovKey = new ListOfValuesKey(user.getWorkspaceId(), lovNames[i]);
+                        lovAttr.setLov(lovDAO.loadLOV(lovKey));
+                    }
+                }
+                partIte.setInstanceAttributeTemplates(templateAttrs);
             }
 
             partIte.setIterationNote(pIterationNote);

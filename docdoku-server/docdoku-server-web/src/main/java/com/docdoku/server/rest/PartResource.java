@@ -197,6 +197,10 @@ public class PartResource {
             attributeTemplates = createInstanceAttributeTemplateFromDto(instanceAttributeTemplates);
         }
 
+        String[] lovNames=new String[instanceAttributeTemplates.size()];
+        for (int i=0;i<instanceAttributeTemplates.size();i++)
+            lovNames[i]=instanceAttributeTemplates.get(i).getLovName();
+
         List<PartUsageLinkDTO> components = data.getComponents();
         List<PartUsageLink> newComponents = null;
         if (components != null) {
@@ -210,8 +214,8 @@ public class PartResource {
             documentLinkComments = new String[linkedDocs.size()];
             links = createDocumentIterationKey(linkedDocs);
             int i = 0;
-            for (DocumentIterationDTO docItereationForLink : linkedDocs){
-                String comment = docItereationForLink.getCommentLink();
+            for (DocumentIterationDTO docIterationForLink : linkedDocs){
+                String comment = docIterationForLink.getCommentLink();
                 if (comment == null){
                     comment = "";
                 }
@@ -221,7 +225,7 @@ public class PartResource {
 
         PartIteration.Source sameSource = partRevision.getIteration(partIteration).getSource();
 
-        PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, newComponents, attributes, attributeTemplates, links, documentLinkComments);
+        PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, newComponents, attributes, attributeTemplates, links, documentLinkComments, lovNames);
 
         PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partRevisionUpdated);
         return Response.ok(partDTO).build();

@@ -342,6 +342,9 @@ public interface IProductManagerWS{
      *
      * @param linkKeys
      * Links to documents
+     *
+     * @param lovNames
+     * Names of lovs
      * 
      * @return
      * The <a href="PartRevision.html">PartRevision</a> of the updated
@@ -354,7 +357,7 @@ public interface IProductManagerWS{
      * @throws PartRevisionNotFoundException
      * @throws PartMasterNotFoundException
      */
-    PartRevision updatePartIteration(PartIterationKey key, java.lang.String iterationNote, PartIteration.Source source, java.util.List<PartUsageLink> usageLinks, java.util.List<InstanceAttribute> attributes, java.util.List<InstanceAttributeTemplate> pAttributesTemplates, DocumentIterationKey[] linkKeys, String[] documentLinkComments) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException, EntityConstraintException, UserNotActiveException;
+    PartRevision updatePartIteration(PartIterationKey key, java.lang.String iterationNote, PartIteration.Source source, java.util.List<PartUsageLink> usageLinks, java.util.List<InstanceAttribute> attributes, java.util.List<InstanceAttributeTemplate> pAttributesTemplates, DocumentIterationKey[] linkKeys, String[] documentLinkComments, String[] lovNames) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException, EntityConstraintException, UserNotActiveException, ListOfValuesNotFoundException;
     
     /**
      * Retrieves all product structures that belong to the given workspace.
