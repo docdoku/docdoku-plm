@@ -18,20 +18,16 @@ define(['backbone'], function (Backbone) {
             return this.get('id');
         },
 
-        getIteration: function () {
-            return this.get('iteration');
-        },
-
         getDocumentMasterId: function () {
             return this.get('documentMasterId');
         },
 
         getDocumentRevisionTitle: function () {
-            return this.get('documentTitle');
+            return this.get('title');
         },
 
         getDocumentRevisionVersion: function () {
-            return this.get('documentRevisionVersion');
+            return this.get('version');
         },
 
         getDocKey: function () {
