@@ -76,7 +76,6 @@ define([
 
         activateNotificationsTab: function(){
             this.activateTab(this.$tabs.length - 1);
-            console.log(this.$tabs);
         },
 
         render: function () {
@@ -179,7 +178,6 @@ define([
                 that.attributesView.addAndFillAttribute(item);
             });
 
-            console.log("editMode - modal: ",this.editMode);
             this.attributeTemplatesView =  new TemplateNewAttributesView({
                 el: this.$('#attribute-templates-list'),
                 attributesLocked: false,

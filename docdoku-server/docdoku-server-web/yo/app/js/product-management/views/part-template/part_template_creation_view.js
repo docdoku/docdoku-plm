@@ -95,7 +95,6 @@ define([
                     error: this.onError
                 });
             }
-            console.log("model: ",this.model);
 
             e.preventDefault();
             e.stopPropagation();
