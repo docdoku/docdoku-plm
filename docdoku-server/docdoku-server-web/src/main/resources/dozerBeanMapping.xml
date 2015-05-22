@@ -31,18 +31,14 @@
     
     <mapping>
         <class-a>com.docdoku.core.document.DocumentLink</class-a>
-        <class-b>com.docdoku.server.rest.dto.DocumentIterationDTO</class-b>
+        <class-b>com.docdoku.server.rest.dto.DocumentRevisionDTO</class-b>
         <field>
-            <a>targetDocumentIteration</a>
-            <b>iteration</b>
+            <a>targetDocumentMasterId</a>
+            <b>id</b>
         </field>
         <field>
-            <a>targetDocumentDocumentMasterId</a>
-            <b>documentMasterId</b>
-        </field>
-        <field>
-            <a>targetDocumentDocumentRevisionVersion</a>
-            <b>documentRevisionVersion</b>
+            <a>targetDocumentVersion</a>
+            <b>version</b>
         </field>
         <field>
             <a>targetDocumentWorkspaceId</a>
@@ -54,7 +50,7 @@
         </field>
         <field>
             <a>documentTitle</a>
-            <b>documentTitle</b>
+            <b>title</b>
         </field>
     </mapping>
 
