@@ -357,7 +357,7 @@ define({
 		PRODUCT: "Product",
 		PRODUCT_ID: "Product Id",
 		PRODUCT_INSTANCES: "Deliverables",
-        PRODUCT_INSTANCE_DATA : "Deliverable data",
+        PRODUCT_INSTANCE_DATA : "Deliverable data attributes",
         PRODUCT_NAME: 'Product name',
 		PRODUCTS_MANAGEMENT: 'Products management',
 		PRODUCTS: "Products",
