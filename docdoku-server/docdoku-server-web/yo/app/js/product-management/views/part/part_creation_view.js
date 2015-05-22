@@ -51,7 +51,6 @@ define([
             this.attributeTemplatesView.render();
 
             this.$inputPartNumber.customValidity(App.config.i18n.REQUIRED_FIELD);
-            console.log('part_creation_view');
             return this;
         },
 
