@@ -47,9 +47,6 @@ define([
                 editMode: true
             }).render();
 
-            this.attributesView.render();
-            this.attributeTemplatesView.render();
-
             this.$inputPartNumber.customValidity(App.config.i18n.REQUIRED_FIELD);
             return this;
         },
@@ -83,9 +80,6 @@ define([
             });
             this.attributeTemplatesView.render();
             this.attributesView.render();
-
-
-
         },
 
         setWorkflowModel: function(template) {
