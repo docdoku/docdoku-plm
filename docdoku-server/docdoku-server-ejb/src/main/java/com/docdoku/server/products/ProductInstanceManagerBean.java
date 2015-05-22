@@ -297,7 +297,14 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             nextIteration.setSubstituteLinks(new HashSet<>(baseline.getSubstituteLinks()));
             nextIteration.setOptionalUsageLinks(new HashSet<>(baseline.getOptionalUsageLinks()));
 
-            copyPathToPathLinks(user,nextIteration);
+            Set<DocumentLink> linkedDocuments = lastIteration.getLinkedDocuments();
+            Set<DocumentLink> newLinks = new HashSet<>();
+            for(DocumentLink link : linkedDocuments){
+                newLinks.add(link.clone());
+            }
+            nextIteration.setLinkedDocuments(newLinks);
+
+            copyPathToPathLinks(user, nextIteration);
 
         } else {
             throw new NotAllowedException(userLocale, "NotAllowedException53");
