@@ -278,10 +278,17 @@ define([
         undocheckout: function () {
             this.partListView.getSelectedPartIndexes();
             var _this= this;
+            var toBeDone = this.partListView.selectedPartIndexes.length;
+            var done = 0;
+            var onSuccess = function() {
+                if(++done === toBeDone) {
+                    _this.allCheckinDone()
+                }
+            }
             bootbox.confirm(App.config.i18n.UNDO_CHECKOUT_QUESTION, function(result){
                 if(result){
                     _(_this.partListView.getSelectedParts()).each(function (view) {
-                        view.undocheckout().success(_this.allCheckinDone);
+                        view.undocheckout().success(onSuccess);
                     });
                 }
 
