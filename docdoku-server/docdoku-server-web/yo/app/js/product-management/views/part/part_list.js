@@ -105,11 +105,18 @@ define([
         },
 
         checkCheckboxes: function () {
-            for (var i = 0; i < this.selectedPartIndexes.length; i++) {
-                this.listItemViews[this.selectedPartIndexes[i]].check();
-                this.listItemViews[this.selectedPartIndexes[i]].selectionChanged();
-            }
+            var that = this;
+            _.each(that.selectedPartIndexes, function(selectedView) {
+                _.each(that.listItemViews, function(view) {
+                    if(selectedView.model.id === view.model.id) {
+                        view.check();
+                        view.selectionChanged();
+                    }
+                });
+            });
+
             this.selectedPartIndexes = [];
+
         },
 
         onSelectionChanged: function () {
@@ -251,7 +258,7 @@ define([
         getSelectedPartIndexes: function () {
             for (var i=0; i<this.listItemViews.length; i++) {
                 if (this.listItemViews[i].isChecked()) {
-                    this.selectedPartIndexes[this.selectedPartIndexes.length] = i;
+                    this.selectedPartIndexes[this.selectedPartIndexes.length] = this.listItemViews[i];
                 }
             }
         },
