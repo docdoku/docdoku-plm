@@ -71,14 +71,14 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     public DocumentRevisionDTO(String workspaceId, String id, String version) {
         this.workspaceId = workspaceId;
         this.id = id;
-        this.documentMasterId = documentMasterId;
+        this.documentMasterId = id;
         this.version = version;
     }
 
     public DocumentRevisionDTO(String workspaceId, String id, String title, String version) {
         this.workspaceId = workspaceId;
         this.id = id;
-        this.documentMasterId = documentMasterId;
+        this.documentMasterId = id;
         this.title = title;
         this.version = version;
     }

@@ -369,25 +369,21 @@ public class DocumentsResource {
 
 
     @GET
-    @Path("docs_last_iter")
+    @Path("doc_revs")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentIterationDTO[] searchDocumentsLastIterationToLink(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q, @QueryParam("l") int limit)
+    public DocumentRevisionDTO[] searchDocumentRevisionsToLink(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q, @QueryParam("l") int limit)
             throws EntityNotFoundException, UserNotActiveException {
 
         int maxResults = limit==0 ? 15 : limit;
         DocumentRevision[] docRs = documentService.getDocumentRevisionsWithReferenceOrTitle(workspaceId, q, maxResults);
 
-        List<DocumentIterationDTO> docsLastIter = new ArrayList<>();
+        List<DocumentRevisionDTO> docRevDTOS = new ArrayList<>();
         for (DocumentRevision docR : docRs) {
-            DocumentIteration docLastIter = docR.getLastIteration();
-            if (docLastIter != null) {
-                DocumentIterationDTO iterationDTO = new DocumentIterationDTO(docLastIter.getWorkspaceId(), docLastIter.getId(), docLastIter.getDocumentVersion(), docLastIter.getIteration());
-                iterationDTO.setDocumentTitle(docR.getTitle());
-                docsLastIter.add(iterationDTO);
-            }
+            DocumentRevisionDTO docRevDTO = new DocumentRevisionDTO(docR.getWorkspaceId(),docR.getDocumentMasterId(),docR.getTitle(),docR.getVersion());
+            docRevDTOS.add(docRevDTO);
         }
 
-        return docsLastIter.toArray(new DocumentIterationDTO[docsLastIter.size()]);
+        return docRevDTOS.toArray(new DocumentRevisionDTO[docRevDTOS.size()]);
     }
 
     @Path("baselines")
