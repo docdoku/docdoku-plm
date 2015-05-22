@@ -39,7 +39,8 @@ define([
 
             this.templateExtraData = {
                 editMode : this.editMode,
-                unfreezable: this.unfreezable
+                unfreezable: this.unfreezable,
+                attributesLocked: this.attributesLocked
             };
         },
 
@@ -58,7 +59,8 @@ define([
                 collection: this.collection,
                 lovs:this.lovs,
                 editMode: this.editMode,
-                freezable: this.freezable
+                freezable: this.freezable,
+                attributesLocked: this.attributesLocked
             });
             this.attributesView = this.addSubView(
                 listViewAttributs
@@ -102,10 +104,8 @@ define([
                 this.$el.find('.attribute-locked input').prop('checked', false);
             } else {
                 _.map(this.collection.models, function (attribute) {
-                    //attribute.set('locked', true);
+                    attribute.set('locked', true);
                 });
-                //this.$el.find('.attribute-locked input').prop('checked', true)
-                this.$el.find('.attribute-locked').hide();
             }
 
             this.$el.toggleClass('attributes-locked', this.attributesLocked);

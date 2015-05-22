@@ -83,6 +83,7 @@ define([
                 unfreezable: true
             });
             this.attributeTemplatesView.render();
+            this.attributesView.render();
 
 
 
@@ -107,9 +108,7 @@ define([
                     locked:object.locked
                 });
             });
-            console.log(template);
             _.each(template.get('attributeInstanceTemplates'), function (object) {
-                console.log('instanceAttribute: ',object);
                 that.attributeTemplatesView.collection.add({
                     name: object.name,
                     attributeType: object.attributeType,

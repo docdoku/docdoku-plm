@@ -16,12 +16,13 @@ define([
             return new TemplateNewAttributeListItemView({
                 model: model,
                 lovs:this.lovs,
-                editMode:this.editMode
+                editMode:this.editMode,
+                attributesLocked: this.attributesLocked
             });
         },
         setAttributesLocked: function(attributesLocked) {
             this.attributesLocked = attributesLocked;
-            $.each(this.subViews,function(index,view) {
+            _.each(this.subViews,function(view) {
                 view.setAttributesLocked(attributesLocked);
             });
         }

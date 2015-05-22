@@ -24,7 +24,8 @@ define([
             this.events.drop = 'drop';
             this.templateExtraData = {
                 lovs : this.lovList.models,
-                editMode : this.editMode
+                editMode : this.editMode,
+                attributesLocked: this.options.attributesLocked
             };
         },
         rendered: function () {
@@ -67,11 +68,9 @@ define([
 
             var mandatory = this.$el.find('.attribute-mandatory input')[0].checked;
             if(this.attributesLocked) {
-                // Silent has to be true, if not set the render method will print the
-                // locked checkbox.
                 this.model.set({
                     mandatory: mandatory
-                }, {silent: true});
+                });
             } else {
                 this.model.set({
                     mandatory: mandatory,
@@ -92,6 +91,13 @@ define([
 
         setAttributesLocked: function(attributesLocked) {
             this.attributesLocked = attributesLocked;
+            this.attributesLocked = attributesLocked;
+            this.templateExtraData = {
+                lovs : this.lovList.models,
+                editMode : this.editMode,
+                attributesLocked: this.attributesLocked
+            };
+            this.render();
         },
 
         drop: function(event, index) {
