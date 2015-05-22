@@ -22,6 +22,7 @@ package com.docdoku.core.configuration;
 import com.docdoku.core.common.User;
 import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PathToPathLink;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -111,6 +112,15 @@ public class ProductBaseline implements Serializable {
     )
     private Set<String> optionalUsageLinks=new HashSet<>();
 
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "PRODUCTBASELINE_P2PLINK",
+            inverseJoinColumns = {
+                    @JoinColumn(name = "PATHTOPATHLINK_ID", referencedColumnName = "ID")
+            },
+            joinColumns = {
+                    @JoinColumn(name = "PRODUCTBASELINE_ID", referencedColumnName="ID")
+            })
+    private List<PathToPathLink> pathToPathLinks =new ArrayList<>();
 
     public enum BaselineType {
         LATEST, RELEASED
@@ -229,6 +239,22 @@ public class ProductBaseline implements Serializable {
 
     public void setAuthor(User author) {
         this.author = author;
+    }
+
+    public List<PathToPathLink> getPathToPathLinks() {
+        return pathToPathLinks;
+    }
+
+    public void setPathToPathLinks(List<PathToPathLink> pathToPathLinks) {
+        this.pathToPathLinks = pathToPathLinks;
+    }
+
+    public void addPathToPathLink(PathToPathLink pathToPathLink) {
+        pathToPathLinks.add(pathToPathLink);
+    }
+
+    public void removePathToPathLink(PathToPathLink pathToPathLink) {
+        pathToPathLinks.remove(pathToPathLink);
     }
 
     @Override
