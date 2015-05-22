@@ -1,15 +1,15 @@
 /*global _,define,App,window,$*/
 define([
-	'backbone',
-	'mustache',
+    'backbone',
+    'mustache',
     'async',
-	'views/bom_item_view',
-	'text!templates/bom_content.html',
-	'collections/part_collection',
+    'views/bom_item_view',
+    'text!templates/bom_content.html',
+    'collections/part_collection',
     'common-objects/views/prompt',
     'common-objects/views/security/acl_edit'
-],function (Backbone, Mustache, Async, BomItemView, template, PartList, PromptView, ACLEditView) {
-	'use strict';
+], function (Backbone, Mustache, Async, BomItemView, template, PartList, PromptView, ACLEditView) {
+    'use strict';
     var BomContentView = Backbone.View.extend({
 
         el: '#bom_table_container',
@@ -46,7 +46,7 @@ define([
 
         update: function (component) {
             this.itemViews = [];
-            if(!component.isVirtual()){
+            if (!component.isVirtual()) {
                 this.partsCollection = new PartList();
                 this.partsCollection.setFilterUrl(component.getUrlForBom());
                 this.listenTo(this.partsCollection, 'reset', this.addAllBomItem);
@@ -56,7 +56,7 @@ define([
 
         showRoot: function (rootComponent) {
             this.itemViews = [];
-            if(!rootComponent.isVirtual()){
+            if (!rootComponent.isVirtual()) {
                 this.partsCollection = new PartList();
                 this.partsCollection.setFilterUrl(rootComponent.getRootUrlForBom());
                 this.listenTo(this.partsCollection, 'reset', this.addAllBomItem);
@@ -85,28 +85,26 @@ define([
         },
 
         actionCheckout: function () {
-            var self = this;
             var listViews = this.checkedViews();
 
-                var ajaxes = [];
-                _(listViews).each(function (view) {
-                    ajaxes.push(view.model.checkout());
-                });
-                $.when.apply($, ajaxes).then(this.onSuccess);
+            var ajaxes = [];
+            _(listViews).each(function (view) {
+                ajaxes.push(view.model.checkout());
+            });
+            $.when.apply($, ajaxes).then(this.onSuccess);
 
 
             return false;
         },
 
         actionUndocheckout: function () {
-            var self = this;
             var listViews = this.checkedViews();
 
-                var ajaxes = [];
-                _(listViews).each(function (view) {
-                    ajaxes.push(view.model.undocheckout());
-                });
-                $.when.apply($, ajaxes).then(this.onSuccess);
+            var ajaxes = [];
+            _(listViews).each(function (view) {
+                ajaxes.push(view.model.undocheckout());
+            });
+            $.when.apply($, ajaxes).then(this.onSuccess);
 
 
             return false;
@@ -133,11 +131,11 @@ define([
                             view.model.checkin().success(callback);
                         });
                     },
-                function(err) {
-                    if(!err) {
-                        self.onSuccess();
-                    }
-                });
+                    function (err) {
+                        if (!err) {
+                            self.onSuccess();
+                        }
+                    });
 
             });
 
@@ -155,7 +153,7 @@ define([
             Backbone.Events.trigger('part:saved');
         },
 
-        actionUpdateACL:function(){
+        actionUpdateACL: function () {
             var _this = this;
 
             var selectedPart = this.checkedViews()[0].model;
@@ -207,15 +205,15 @@ define([
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { 'bSortable': false, 'aTargets': [ 0, 1, 11, 12, 13 ] },
-                    { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [8] },
-                    { 'sType': 'strip_html', 'aTargets': [2] }
+                    {'bSortable': false, 'aTargets': [0, 1, 11, 12, 13]},
+                    {'sType': App.config.i18n.DATE_SORT, 'aTargets': [8]},
+                    {'sType': 'strip_html', 'aTargets': [2]}
                 ]
             });
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
         },
 
-        onError:function(model, error){
+        onError: function (model, error) {
             var errorMessage = error ? error.responseText : model;
             window.alert(errorMessage);
         }

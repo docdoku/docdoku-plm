@@ -73,18 +73,18 @@ define([
         },
 
         onOneComponentSelected: function (component) {
-            if(!component.isReleased()){
+            if (!component.isReleased()) {
                 this.checkoutGroup.show();
             }
-            if(App.config.workspaceAdmin || component.getAuthorLogin() === App.config.login){
+            if (App.config.workspaceAdmin || component.getAuthorLogin() === App.config.login) {
                 this.aclButton.show();
             }
 
-        this.updateActionsButton(this.getPermission(component));
+            this.updateActionsButton(this.getPermission(component));
 
         },
 
-        getPermission: function(component) {
+        getPermission: function (component) {
             if (component.isCheckout()) {
                 if (component.isCheckoutByConnectedUser()) {
                     return {
@@ -110,13 +110,13 @@ define([
             var permission = this.getPermission(listComponent[0].model);
             var samePermission = true;
             var that = this;
-            _.each(listComponent, function(component){
+            _.each(listComponent, function (component) {
                 var permComponent = that.getPermission(component.model);
-                samePermission &= (permission.canCheckout === permComponent.canCheckout &&
+                samePermission = samePermission && (permission.canCheckout === permComponent.canCheckout &&
                 permComponent.canUndoAndCheckin === permComponent.canUndoAndCheckin);
-                noneReleased &= !component.model.isReleased();
+                noneReleased = noneReleased && !component.model.isReleased();
             });
-            if(noneReleased && samePermission) {
+            if (noneReleased && samePermission) {
                 this.checkoutGroup.show();
                 this.updateActionsButton(permission);
             } else {
