@@ -35,7 +35,8 @@ import java.util.List;
 public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRevisionDTO> {
 
     private String workspaceId;
-    private String id;    
+    private String id;
+    private String documentMasterId;
     private String version;
     private String type;
     private UserDTO author;
@@ -70,12 +71,14 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     public DocumentRevisionDTO(String workspaceId, String id, String version) {
         this.workspaceId = workspaceId;
         this.id = id;
+        this.documentMasterId = documentMasterId;
         this.version = version;
     }
 
     public DocumentRevisionDTO(String workspaceId, String id, String title, String version) {
         this.workspaceId = workspaceId;
         this.id = id;
+        this.documentMasterId = documentMasterId;
         this.title = title;
         this.version = version;
     }
@@ -197,6 +200,13 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     }
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getDocumentMasterId() {
+        return documentMasterId;
+    }
+    public void setDocumentMasterId(String documentMasterId) {
+        this.documentMasterId = documentMasterId;
     }
 
     public String getCommentLink() {

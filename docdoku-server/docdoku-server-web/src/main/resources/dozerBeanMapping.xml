@@ -34,7 +34,7 @@
         <class-b>com.docdoku.server.rest.dto.DocumentRevisionDTO</class-b>
         <field>
             <a>targetDocumentMasterId</a>
-            <b>id</b>
+            <b>documentMasterId</b>
         </field>
         <field>
             <a>targetDocumentVersion</a>
