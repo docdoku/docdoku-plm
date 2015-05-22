@@ -91,7 +91,7 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
 
         try {
 
-            Map<String, Set<BinaryResource>> binariesInTree = productService.getBinariesInTree(fileExportEntity.getConfigurationItemKey().getWorkspace(),fileExportEntity.getConfigurationItemKey(),fileExportEntity.getPsFilter(),fileExportEntity.isExportNativeCADFile(),fileExportEntity.isExportNativeCADFile());
+            Map<String, Set<BinaryResource>> binariesInTree = productService.getBinariesInTree(fileExportEntity.getConfigurationItemKey().getWorkspace(),fileExportEntity.getConfigurationItemKey(),fileExportEntity.getPsFilter(),fileExportEntity.isExportNativeCADFile(),fileExportEntity.isExportDocumentLinks());
             Set<Map.Entry<String, Set<BinaryResource>>> entries = binariesInTree.entrySet();
 
             for(Map.Entry<String, Set<BinaryResource>> entry:entries){
