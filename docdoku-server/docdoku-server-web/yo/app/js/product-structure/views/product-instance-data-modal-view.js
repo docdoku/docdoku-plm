@@ -245,6 +245,7 @@ define([
             },
 
             updateIteration: function (callback) {
+                var self = this;
                 this.iteration.setId(this.model.getId());
                 this.iteration.setInstanceAttributes(this.attributesView.collection.toJSON());
                 this.iteration.setIterationNote(this.$('.description-input').val());

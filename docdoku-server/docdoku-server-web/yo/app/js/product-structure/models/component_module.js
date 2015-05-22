@@ -7,7 +7,7 @@ define(['backbone', 'common-objects/utils/date'],
         ComponentModule.Model = Backbone.Model.extend({
 
             initialize: function () {
-                if (this.isAssembly() || App.config.linkType) {
+                if(this.isAssembly()||App.config.linkType){
                     this.children = new ComponentModule.Collection([], { parentUsageLinkId: this.getPartUsageLinkId(), path: this.getPath() });
                 }
                 _.bindAll(this);

@@ -256,7 +256,6 @@ define([
             this.updateDataForm();
             this.iteration.save(JSON.stringify(this.iteration), '', {
                 success: function () {
-                    debugger;
                     self.model.fetch();
                 },
                 error: self.onError.bind(self)

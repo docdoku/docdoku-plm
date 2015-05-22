@@ -44,7 +44,7 @@ define([
 
         addListView: function (key) {
             var usedByView = new UsedByListView({
-                collection: new ProductInstancesCollection(this.groupedMap[key]),
+                collection: new ProductInstancesCollection(this.groupedMap[key])
             }).render();
 
             this.usedByViews.push(usedByView);

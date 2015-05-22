@@ -1,5 +1,6 @@
 /*global define,App*/
 define([
+    'backbone',
     'mustache',
     'common-objects/views/components/modal',
     'common-objects/views/attributes/attributes',
@@ -8,7 +9,7 @@ define([
     'common-objects/views/workflow/workflow_mapping',
     'common-objects/views/security/acl',
     'text!templates/document/document_new.html'
-], function (Mustache, ModalView, AttributesView, DocumentTemplateListView, DocumentWorkflowListView, DocumentWorkflowMappingView, ACLView, template) {
+], function (Backbone, Mustache, ModalView, AttributesView, DocumentTemplateListView, DocumentWorkflowListView, DocumentWorkflowMappingView, ACLView, template) {
     'use strict';
     var DocumentNewView = ModalView.extend({
 

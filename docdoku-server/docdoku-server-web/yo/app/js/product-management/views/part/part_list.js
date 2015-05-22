@@ -108,7 +108,6 @@ define([
             var that = this;
             _.each(that.selectedPartIndexes, function(selectedView) {
                 _.each(that.listItemViews, function(view) {
-                    selectedView.model
                     if(selectedView.model.getPartKey() === view.model.getPartKey()) {
                         view.check();
                         view.selectionChanged();
