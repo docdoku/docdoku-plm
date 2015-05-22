@@ -29,7 +29,7 @@ public class PathDataIterationDTO {
     private String noteIteration;
     private PartMinimalListDTO partsPath;
     private List<String> attachedFiles;
-    private Set<DocumentIterationDTO> linkedDocuments;
+    private Set<DocumentRevisionDTO> linkedDocuments;
     private List<InstanceAttributeDTO> instanceAttributes;
 
     public int getIteration() {
@@ -64,11 +64,11 @@ public class PathDataIterationDTO {
         this.attachedFiles = attachedFiles;
     }
 
-    public Set<DocumentIterationDTO> getLinkedDocuments() {
+    public Set<DocumentRevisionDTO> getLinkedDocuments() {
         return linkedDocuments;
     }
 
-    public void setLinkedDocuments(Set<DocumentIterationDTO> linkedDocuments) {
+    public void setLinkedDocuments(Set<DocumentRevisionDTO> linkedDocuments) {
         this.linkedDocuments = linkedDocuments;
     }
 
