@@ -276,11 +276,12 @@ define([
             });
         },
         undocheckout: function () {
+            this.partListView.getSelectedPartIndexes();
             var _this= this;
             bootbox.confirm(App.config.i18n.UNDO_CHECKOUT_QUESTION, function(result){
                 if(result){
                     _(_this.partListView.getSelectedParts()).each(function (view) {
-                        view.undocheckout();
+                        view.undocheckout().success(_this.allCheckinDone);
                     });
                 }
 
