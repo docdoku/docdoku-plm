@@ -61,8 +61,6 @@ define([
             this.checkbox = this.$('input.file-check');
             this.fileNameEl = this.$('.fileName');
             this.fileNameInput = this.$('input[name=filename]');
-            // TODO : remove global jquery calls, moreover, we don't know if we are in modal. Not reliable.
-            this.notifications = $('.modal .notifications');
         },
 
         editName:function(){
@@ -81,7 +79,7 @@ define([
                 this.model.save().success(function(){
                     _this.model.rewriteUrl();
                     _this.onModelChanged();
-                    _this.notifications.text("");
+                    _this.trigger('clear');
                     _this.render();
                     _this.$el.toggleClass('edition');
                 }).error(function(error){
@@ -93,11 +91,7 @@ define([
                     _this.$el.toggleClass('edition');
 
                     var errorMessage = error ? error.responseText : _this.model;
-
-                    _this.notifications.append(new AlertView({
-                        type: 'error',
-                        message: errorMessage
-                    }).render().$el);
+                    _this.trigger('notification','error',errorMessage);
 
 
                 });

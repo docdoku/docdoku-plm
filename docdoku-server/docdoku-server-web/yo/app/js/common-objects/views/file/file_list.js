@@ -97,8 +97,21 @@ define([
                 uploadBaseUrl: self.options.uploadBaseUrl,
                 editMode: self.editMode
             });
+            this.listenTo(fileView,'notification',this.printNotifications);
+            this.listenTo(fileView,'clear', this.clearNotifications);
             fileView.render();
             self.filesUL.append(fileView.el);
+        },
+
+        printNotifications: function(type,message) {
+            this.notifications.append(new AlertView({
+                type: type,
+                message: message
+            }).render().$el);
+        },
+
+        clearNotifications: function() {
+            this.notifications.text("");
         },
 
         addSingleFile: function (attachedFile) {
