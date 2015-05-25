@@ -25,6 +25,7 @@ import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.meta.*;
+import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.security.ACL;
@@ -758,7 +759,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         checkNameValidity(pId, locale);
 
         //Check pMask
-        if (pMask!= null && !pMask.isEmpty() && !NamingConvention.correctNameMask(pMask)){
+        if (pMask != null && !pMask.isEmpty() && !NamingConvention.correctNameMask(pMask)) {
             throw new NotAllowedException(locale, "MaskCreationException");
         }
 
@@ -1111,6 +1112,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(userLocale, em);
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
+        DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(userLocale, em);
+        ProductInstanceIterationDAO productInstanceIterationDAO = new ProductInstanceIterationDAO(userLocale,em);
 
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
         if (isInAnotherUserHomeFolder(user, docR)) {
@@ -1122,6 +1125,22 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             throw new EntityConstraintException(userLocale, "EntityConstraintException6");
         }
 
+        for (DocumentRevision documentRevision : docR.getDocumentMaster().getDocumentRevisions()) {
+            if (!documentLinkDAO.getInverseDocumentsLinks(documentRevision).isEmpty()) {
+                throw new EntityConstraintException(userLocale, "EntityConstraintException17");
+            }
+            if (!documentLinkDAO.getInversePartsLinks(documentRevision).isEmpty()) {
+
+                throw new EntityConstraintException(userLocale, "EntityConstraintException18");
+            }
+            if(!documentLinkDAO.getInverseProductInstanceIteration(documentRevision).isEmpty()){
+                throw new EntityConstraintException(userLocale, "EntityConstraintException19");
+            }
+            if(!documentLinkDAO.getInversefindPathData(documentRevision).isEmpty()){
+                throw new EntityConstraintException(userLocale, "EntityConstraintException20");
+            }
+
+        }
         ChangeItemDAO changeItemDAO = new ChangeItemDAO(userLocale, em);
         if (changeItemDAO.hasChangeItems(pDocRPK)) {
             throw new EntityConstraintException(userLocale, "EntityConstraintException7");
@@ -1141,7 +1160,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         DocumentMaster documentMaster = docR.getDocumentMaster();
         boolean isLastRevision = documentMaster.getDocumentRevisions().size() == 1;
-
         if (isLastRevision) {
             documentMasterDAO.removeDocM(documentMaster);
         } else {
@@ -1209,8 +1227,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
-        if (file == null){
-            throw new FileNotFoundException(userLocale,pFullName);
+        if (file == null) {
+            throw new FileNotFoundException(userLocale, pFullName);
         }
         if (binDAO.loadBinaryResource(file.getNewFullName(pNewName)) == null) {
 
@@ -1264,8 +1282,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
-        if (file == null){
-            throw new FileNotFoundException(userLocale,pFullName);
+        if (file == null) {
+            throw new FileNotFoundException(userLocale, pFullName);
         }
 
         if (binDAO.loadBinaryResource(file.getNewFullName(pNewName)) == null) {
@@ -1282,7 +1300,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             binDAO.createBinaryResource(newFile);
             template.addFile(newFile);
             return newFile;
-        }else {
+        } else {
             throw new FileAlreadyExistsException(userLocale, pNewName);
         }
     }
@@ -1309,7 +1327,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
             int counter = 0;
             for (DocumentRevisionKey link : pLinkKeys) {
-                if(!link.equals(iKey)){
+                if (!link.equals(iKey)) {
                     DocumentLink newLink = new DocumentLink(em.getReference(DocumentRevision.class, link));
                     newLink.setComment(documentLinkComments[counter]);
                     linkDAO.createLink(newLink);
@@ -1662,14 +1680,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         DocumentRevision documentRevision = new DocumentRevisionDAO(locale, em).loadDocR(docKey);
 
-        DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(locale,em);
+        DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(locale, em);
         List<DocumentIteration> iterations = documentLinkDAO.getInverseDocumentsLinks(documentRevision);
 
         ListIterator<DocumentIteration> ite = iterations.listIterator();
 
-        while(ite.hasNext()){
+        while (ite.hasNext()) {
             DocumentIteration next = ite.next();
-            if(!canAccess(next.getKey())){
+            if (!canAccess(next.getKey())) {
                 ite.remove();
             }
         }

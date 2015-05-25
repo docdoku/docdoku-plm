@@ -38,8 +38,8 @@ import java.io.Serializable;
 @NamedQueries ({
     @NamedQuery(name="DocumentLink.findDocumentOwner", query = "SELECT d FROM DocumentIteration d WHERE :link MEMBER OF d.linkedDocuments"),
     @NamedQuery(name="DocumentLink.findPartOwner", query = "SELECT p FROM PartIteration p WHERE :link MEMBER OF p.linkedDocuments"),
-    @NamedQuery(name="DocumentLink.findProductInstanceIteration", query = "SELECT p FROM ProductInstanceIteration p WHERE :link MEMBER OF p.linkedDocuments"),
-    @NamedQuery(name="DocumentLink.findPathData", query = "SELECT p FROM PathDataIteration p WHERE :link MEMBER OF p.linkedDocuments"),
+    @NamedQuery(name="DocumentLink.findProductInstanceIteration", query = "SELECT p FROM ProductInstanceIteration p JOIN p.linkedDocuments dl where dl.targetDocument = :documentRevision"),
+    @NamedQuery(name="DocumentLink.findPathData", query = "SELECT p FROM PathDataIteration p JOIN p.linkedDocuments dl where dl.targetDocument = :documentRevision"),
     @NamedQuery(name="DocumentLink.findInverseDocumentLinks", query = "SELECT d FROM DocumentIteration d JOIN d.linkedDocuments dl where dl.targetDocument = :documentRevision"),
     @NamedQuery(name="DocumentLink.findInversePartLinks", query = "SELECT p FROM PartIteration p JOIN p.linkedDocuments dl where dl.targetDocument = :documentRevision")
 })

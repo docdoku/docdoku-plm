@@ -20,6 +20,8 @@
 
 package com.docdoku.server.dao;
 
+import com.docdoku.core.configuration.PathDataIteration;
+import com.docdoku.core.configuration.ProductInstanceIteration;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.document.DocumentRevision;
@@ -71,4 +73,16 @@ public class DocumentLinkDAO {
                 .setParameter("documentRevision",documentRevision)
                 .getResultList();
     }
+    public List<ProductInstanceIteration> getInverseProductInstanceIteration(DocumentRevision documentRevision){
+        return em.createNamedQuery("DocumentLink.findProductInstanceIteration", ProductInstanceIteration.class)
+                .setParameter("documentRevision",documentRevision)
+                .getResultList();
+    }
+    public List<PathDataIteration> getInversefindPathData(DocumentRevision documentRevision){
+        return em.createNamedQuery("DocumentLink.findPathData", PathDataIteration.class)
+                .setParameter("documentRevision",documentRevision)
+                .getResultList();
+    }
+
+
 }
