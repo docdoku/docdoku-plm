@@ -24,7 +24,7 @@ package com.docdoku.server.util;
  *
  * @author Asmae CHADID on 07/01/15.
  */
-     public class ResourceUtil {
+public class ResourceUtil {
     public static final String WORKSPACE_ID="TestWorkspace";
     public static final String DOCUMENT_ID="TestDocument";
     public static final String VERSION="A";
