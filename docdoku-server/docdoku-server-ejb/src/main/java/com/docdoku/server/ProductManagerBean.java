@@ -1137,35 +1137,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
-    @Override
-    public void removeFileInPartIteration(PartIterationKey pPartIPK, String pSubType, String pName)
-            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, FileNotFoundException {
-
-        User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
-
-        PartIteration partIteration = new PartIterationDAO(new Locale(user.getLanguage()),em).loadPartI(pPartIPK);
-        PartRevision partR = partIteration.getPartRevision();
-
-        if (isCheckoutByUser(user,partR) && partR.getLastIteration().equals(partIteration)) {
-
-            BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
-            BinaryResource file = binDAO.loadBinaryResource(pName);
-
-            try {
-                dataManager.deleteData(file);
-            } catch (StorageException e) {
-                Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
-            }
-
-            if (pSubType != null && pSubType.equals("nativecad")) {
-                partIteration.setNativeCADFile(null);
-            } else {
-                removeAttachedFiles(partIteration);
-            }
-            binDAO.removeBinaryResource(file);
-        }
-    }
-
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartRevision saveTags(PartRevisionKey revisionKey, String[] pTags) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, TagException {
@@ -1462,22 +1433,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     private void removeAttachedFiles(PartIteration partIteration)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException {
 
-            // Delete attached files
-        for (BinaryResource file : partIteration.getAttachedFiles()) {
-            try {
-                dataManager.deleteData(file);
-            } catch (StorageException e) {
-                LOGGER.log(Level.INFO, null, e);
-            }
-
-            esIndexer.delete(partIteration);
-        }
-    }
-
-    private void removeAttachedFiles(PartIteration partIteration)
-            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException {
         // Delete attached files
-
         for (BinaryResource file : partIteration.getAttachedFiles()) {
             try {
                 dataManager.deleteData(file);
@@ -1489,6 +1445,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void removeFileInPartIteration(PartIterationKey pPartIPK, String pSubType, String pName)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, FileNotFoundException {
@@ -1506,7 +1463,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             try {
                 dataManager.deleteData(file);
             } catch (StorageException e) {
-                LOGGER.log(Level.INFO, null, e);
+                Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
             }
 
             if (pSubType != null && pSubType.equals("nativecad")) {
@@ -1516,6 +1473,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
             binDAO.removeBinaryResource(file);
         }
+
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

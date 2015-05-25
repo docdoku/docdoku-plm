@@ -18,7 +18,7 @@ define([
 
         events: {
             'click form button.cancel-upload-btn': 'cancelButtonClicked',
-            'change form input.upload-btn': 'fileSelectHandler',
+            'change form input#upload-btn': 'fileSelectHandler',
             'dragover .droppable': 'fileDragHover',
             'dragleave .droppable': 'fileDragHover',
             'drop .droppable': 'fileDropHandler',
@@ -259,7 +259,7 @@ define([
         },
 
         bindDomElements: function () {
-            this.filedroparea = this.$('.filedroparea');
+            this.filedroparea = this.$('#filedroparea');
             this.filesUL = this.$('ul.file-list');
             this.uploadInput = this.$('input#upload-btn');
             this.progressBars = this.$('div.progress-bars');

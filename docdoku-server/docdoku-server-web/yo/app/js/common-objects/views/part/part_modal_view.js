@@ -146,7 +146,7 @@ define([
                 this.initLifeCycleView();
 
                 if (!data.iteration.hasNextIteration) {
-                    this.initModificationNotificatIProductManagerLocal.javaionGroupListView();
+                    this.initModificationNotificationGroupListView();
                 }
             }
 
@@ -224,9 +224,9 @@ define([
             });
 
 
-            this.fileListView.deleteFilesToDelete();
             that.deleteClickedTags();
             this.cadFileView.deleteFilesToDelete();
+            this.attachedFilesView.deleteFilesToDelete();
 
             e.preventDefault();
             e.stopPropagation();
@@ -402,7 +402,7 @@ define([
         actionCheckin: function () {
 
             // cannot pass a collection of cad file to server.
-            var cadFile = this.fileListView.collection.first();
+            var cadFile = this.cadFileView.collection.first();
             if (cadFile) {
                 this.iteration.set('nativeCADFile', cadFile.get('fullName'));
             } else {
@@ -426,8 +426,9 @@ define([
                 }
             );
 
-            this.fileListView.deleteFilesToDelete();
             this.deleteClickedTags();
+            this.cadFileView.deleteFilesToDelete();
+            this.attachedFilesView.deleteFilesToDelete();
         },
 
         actionCheckout: function () {
