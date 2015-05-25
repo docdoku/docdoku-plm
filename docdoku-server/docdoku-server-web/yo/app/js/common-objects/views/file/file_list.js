@@ -148,13 +148,12 @@ define([
             xhr.addEventListener('load', function (e) {
 
                 if (e.currentTarget.status !== 200 && e.currentTarget.status !== 201) {
-                    window.alert(e.currentTarget.statusText);
-                    self.xhrFinished(xhr);
+                    self.xhrFinishedWithError(xhr, App.config.i18n.FILE + ' <' + fileName + '> : ' + e.currentTarget.statusText);
                     progressBar.remove();
                     return false;
                 }
 
-                self.xhrFinished(xhr);
+                self.xhrFinishedWithSuccess(xhr);
                 progressBar.remove();
                 newFile.isNew = function () {
                     return false;
@@ -182,15 +181,35 @@ define([
             this.xhrs.push(xhr);
         },
 
-        xhrFinished : function(xhr) {
+        xhrFinishedWithSuccess: function(xhr) {
             this.xhrs.splice(this.xhrs.indexOf(xhr), 1);
             if (!this.xhrs.length) {
                 this.gotoIdleState();
 
-                this.notifications.append(new AlertView({
-                    type: 'info',
-                    message: App.config.i18n.FILE_UPLOADED
-                }).render().$el);
+                if (this.options.singleFile) {
+                    this.notifications.append(new AlertView({
+                        type: 'info',
+                        message: App.config.i18n.FILE_UPLOADED
+                    }).render().$el);
+
+                } else {
+                    this.notifications.append(new AlertView({
+                        type: 'info',
+                        message: App.config.i18n.FILES_UPLOADED
+                    }).render().$el);
+                }
+            }
+        },
+
+        xhrFinishedWithError: function(xhr, error) {
+            this.notifications.append(new AlertView({
+                type: 'error',
+                message: error
+            }).render().$el);
+
+            this.xhrs.splice(this.xhrs.indexOf(xhr), 1);
+            if (!this.xhrs.length) {
+                this.gotoIdleState();
             }
         },
 
