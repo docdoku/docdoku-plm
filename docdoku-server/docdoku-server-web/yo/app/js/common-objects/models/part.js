@@ -156,7 +156,7 @@ define([
 
             hasLastIterationAttachedFiles: function () {
                 if (this.hasIterations()) {
-                    return this.getLastIteration().getAttachedFiles();
+                    return this.getLastIteration().getAttachedFiles().length != 0;
                 }
                 return false;
             },
