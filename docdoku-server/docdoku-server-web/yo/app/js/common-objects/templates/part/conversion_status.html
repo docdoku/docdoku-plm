@@ -1,5 +1,4 @@
 {{#hasCadFile}}
-<div class="conversion-status">
 {{#status}}
     {{#pending}}
     <i class="fa fa-refresh fa-spin" title="{{i18n.CONVERSION_PENDING}}"></i><b>{{i18n.CONVERSION_PENDING}} ...</b>
@@ -14,7 +13,7 @@
     {{/pending}}
 {{/status}}
 {{^status}}
-    <i class="fa fa-times" title="{{i18n.NO_CONVERSION}}"></i>
+<i class="fa fa-refresh fa-spin" title="{{i18n.CONVERSION_PENDING}}"></i><b>{{i18n.CONVERSION_PENDING}} ...</b>
 {{/status}}
     {{#status}}
     {{^succeed}}
@@ -23,6 +22,4 @@
     </span>
     {{/succeed}}
     {{/status}}
-
-</div>
 {{/hasCadFile}}
