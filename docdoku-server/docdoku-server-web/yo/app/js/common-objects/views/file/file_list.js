@@ -185,27 +185,14 @@ define([
             this.xhrs.splice(this.xhrs.indexOf(xhr), 1);
             if (!this.xhrs.length) {
                 this.gotoIdleState();
-
-                if (this.options.singleFile) {
-                    this.notifications.append(new AlertView({
-                        type: 'info',
-                        message: App.config.i18n.FILE_UPLOADED
-                    }).render().$el);
-
-                } else {
-                    this.notifications.append(new AlertView({
-                        type: 'info',
-                        message: App.config.i18n.FILES_UPLOADED
-                    }).render().$el);
-                }
+                var message = this.options.singleFile ? App.config.i18n.FILE_UPLOADED : App.config.i18n.FILES_UPLOADED;
+                this.printNotifications('info',message);
             }
+
         },
 
         xhrFinishedWithError: function(xhr, error) {
-            this.notifications.append(new AlertView({
-                type: 'error',
-                message: error
-            }).render().$el);
+            this.printNotifications('error',error);
 
             this.xhrs.splice(this.xhrs.indexOf(xhr), 1);
             if (!this.xhrs.length) {
