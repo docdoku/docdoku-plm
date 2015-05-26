@@ -36,7 +36,7 @@ define([
             this.events['click .action-checkout'] = 'actionCheckout';
             this.events['click .action-undocheckout'] = 'actionUndoCheckout';
             this.events['notification:acknowledged'] = 'updateModificationNotifications';
-            this.events['file:uploaded'] = 'updateFileUploadView';
+            this.events['file:uploaded'] = 'updateConversionStatusView';
 
             this.tagsToRemove = [];
         },
@@ -246,6 +246,17 @@ define([
             }).render();
 
             this.$('#iteration-files').html(this.cadFileView.el);
+            if(this.editMode){
+                //create element for conversionStatusView
+                var cadFilesList = this.$('.file-list').first();
+                cadFilesList.after('<div class="conversion-status"></div>');
+                this.conversionStatusView = new ConversionStatusView({
+                    model:this.iteration,
+                    el: cadFilesList.next()
+                }).render();
+
+                this.conversionStatusView.render();
+            }
 
         },
 
@@ -261,16 +272,10 @@ define([
 
             this.$('#iteration-files').append(this.attachedFilesView.el);
 
-            if(this.editMode){
-                this.conversionStatusView = new ConversionStatusView({model:this.iteration}).render();
-                this.$('.file-list').append(this.conversionStatusView.el);
-                this.conversionStatusView.render();
-            }
-
         },
 
-        updateCadFileUploadView:function(){
-            this.$('.file-list').append(this.conversionStatusView.el);
+        updateConversionStatusView:function(){
+            console.log('mwaha');
             this.conversionStatusView.launch();
         },
 
