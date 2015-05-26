@@ -236,7 +236,7 @@ define([
 
         initCadFileUploadView: function () {
             this.cadFileView = new FileListView({
-                title:'CAD',
+                title: App.config.i18n.CAD_FILE,
                 baseName: this.iteration.getBaseName('nativecad'),
                 deleteBaseUrl: this.iteration.url(),
                 uploadBaseUrl: this.iteration.getNativeCadFileUploadBaseUrl(),
@@ -257,7 +257,7 @@ define([
 
         initAttachedFilesUploadView: function () {
             this.attachedFilesView = new FileListView({
-                title:'Attached files',
+                title: App.config.i18n.ATTACHED_FILES,
                 baseName: this.iteration.getBaseName('attachedfiles'),
                 deleteBaseUrl: this.iteration.url(),
                 uploadBaseUrl: this.iteration.getAttachedFilesUploadBaseUrl(),

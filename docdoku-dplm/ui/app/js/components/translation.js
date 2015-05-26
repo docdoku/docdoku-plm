@@ -178,7 +178,7 @@
                     SUCCESS:'Succès',
                     FAIL:'Echoué',
                     NO_CONVERSION:'Pas de conversion en cours',
-                    NO_ATTACHED_FILES:'Pas de fichiers attachés',
+                    NO_ATTACHED_FILES:'Pas de fichiers joints',
                     DOCUMENTS:'Documents',
                     NO_DOCUMENTS:'Aucun document',
                     UNKNOWN:'Inconnus',
