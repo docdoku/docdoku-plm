@@ -56,7 +56,7 @@ casper.test.begin('Document upload  file tests suite', 2, function documentUploa
      * Wait the modal tab
      */
     casper.then(function waitForDocumentModalTab(){
-        this.waitForSelector('.document-modal #upload-btn',function tabSelected() {
+        this.waitForSelector('.document-modal .upload-btn',function tabSelected() {
             this.test.assert(true,'File upload tab opened');
         },function fail(){
             this.capture('screenshot/documentUpload/waitForDocumentModalTab-error.png');
@@ -67,13 +67,13 @@ casper.test.begin('Document upload  file tests suite', 2, function documentUploa
      * Chose a file and upload
      */
     casper.then(function setFileAndUpload(){
-        this.fill('.document-modal #upload-form', {
+        this.fill('.document-modal .upload-form', {
             'upload': 'res/document-upload.txt'
         }, false);
 
         casper.waitFor(function check() {
             return this.evaluate(function() {
-                return document.querySelectorAll('.document-modal .attachedFiles ul#file-list li').length === 1;
+                return document.querySelectorAll('.document-modal .attachedFiles ul.file-list li').length === 1;
             });
         }, function then() {
             this.test.assert(true,'File has been uploaded to document');

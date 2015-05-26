@@ -55,7 +55,7 @@ casper.test.begin('Part upload native cad file tests suite', 3, function partUpl
      * Wait the modal tab
      */
     casper.then(function waitForPartModalTab(){
-        this.waitForSelector('#part-modal #upload-btn',function tabSelected() {
+        this.waitForSelector('#part-modal .upload-btn',function tabSelected() {
             this.test.assert(true,'Native cad file upload tab opened');
         },function fail(){
             this.capture('screenshot/partUpload/waitForPartModalTab-error.png');
@@ -67,13 +67,13 @@ casper.test.begin('Part upload native cad file tests suite', 3, function partUpl
      * Chose a file and upload
      */
     casper.then(function setFileAndUpload(){
-        this.fill('#part-modal #upload-form', {
+        this.fill('#part-modal .upload-form', {
             'upload': 'res/part-upload.obj'
         }, false);
 
         casper.waitFor(function check() {
             return this.evaluate(function() {
-                return document.querySelectorAll('#part-modal .attachedFiles ul#file-list li').length === 1;
+                return document.querySelectorAll('#part-modal .attachedFiles ul.file-list li').length === 1;
             });
         }, function then() {
             this.test.assert(true,'File has been uploaded to part');

@@ -22,11 +22,11 @@ div.attachedFiles {
 
     &.uploading {
 
-        input#upload-btn {
+        input.upload-btn {
             display: none;
         }
 
-        div#filedroparea {
+        div.filedroparea {
             display: none;
         }
     }
@@ -36,31 +36,25 @@ div.attachedFiles {
         margin: 20px 0 0 0;
     }
 
-    input#upload-btn {
-        height: 100%;
+
+
+    input.upload-btn {
+        cursor: pointer;
         position: absolute;
         left: 0;
         top: 0;
         width: 100%;
-        opacity: 0;
-    }
-
-    input#upload-btn {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 150px;
-        height: 28px;
+        height: 100%;
         line-height: normal;
         opacity: 0;
-        cursor: pointer;
     }
 
     span.droppable {
         margin: 0 0 0 18px;
     }
 
-    #filedroparea {
+    .filedroparea {
+
         position: relative;
         font-weight: bold;
         padding: 20px;
@@ -68,24 +62,20 @@ div.attachedFiles {
         color: #555;
         border: 2px dashed #555;
         border-radius: 7px;
-        cursor: default;
+
+        cursor: pointer;
     }
-    #filedroparea.hover {
+    .filedroparea.hover {
         color: #555;
         border-color: #9acd32;
         border-style: solid;
         box-shadow: inset 0 1px 4px #888;
     }
 
-    input#upload-btn {
-        position: absolute;
-        left: 20px;
-        top: 20px;
-        width: 235px;
-        height: 28px;
-        line-height: normal;
-        opacity: 0;
+    .filedroparea input {
+        cursor: pointer;
     }
+
 
     input[type="checkbox"].file-check {
         margin: 0 0 3px 0;
@@ -95,7 +85,7 @@ div.attachedFiles {
 
         margin: 4px;
 
-        ul#file-list {
+        ul.file-list {
             margin: 0;
         }
 

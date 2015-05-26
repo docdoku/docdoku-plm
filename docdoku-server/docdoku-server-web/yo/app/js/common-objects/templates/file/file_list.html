@@ -4,14 +4,14 @@
 <h4>{{title}}</h4>
 {{/title}}
 
-<ul id="file-list" class="file-list"></ul>
+<ul class="file-list"></ul>
 
 <div class="progress-bars"></div>
 
 {{#editMode}}
-<form enctype="multipart/form-data" id="upload-form">
-    <div id="filedroparea" class="droppable">
-        <input id="upload-btn" name="upload" type="file" class="input-xlarge droppable" {{#multiple}}multiple{{/multiple}}/>
+<form enctype="multipart/form-data" class="upload-form">
+    <div class="droppable filedroparea">
+        <input name="upload" type="file" class="input-xlarge droppable upload-btn" {{#multiple}}multiple{{/multiple}}/>
         <button class="btn btn-success droppable">{{#multiple}}{{i18n.SELECT_FILES}}{{/multiple}}{{^multiple}}{{i18n.SELECT_FILE}}{{/multiple}}</button>
         <span class="droppable">{{#multiple}}{{i18n.DROP_FILES_HERE}}{{/multiple}}{{^multiple}}{{i18n.DROP_FILE_HERE}}{{/multiple}}</span>
         <p class="upload-file-shortname"></p>
