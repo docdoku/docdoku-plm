@@ -64,7 +64,7 @@ public class UpdatePartIterationPSFilter extends PSFilter {
 
         // Return wip on updated part iteration
         if(part.getKey().equals(rootKey)){
-            return Arrays.asList(new PartIteration[]{partIteration});
+            return Arrays.asList(partIteration);
         }
 
         // Return wip and last

@@ -23,6 +23,8 @@ package com.docdoku.server.products;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.*;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
@@ -115,14 +117,24 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
         };
 
         // Visitor has finished, and should have thrown an exception if errors
-        ProductBaseline baseline = new ProductBaseline(user,configurationItem, name, pType , description);
+        ProductBaseline baseline = new ProductBaseline(user,configurationItem, name, pType, description);
         new PartCollectionDAO(em).createPartCollection(baseline.getPartCollection());
+        new DocumentCollectionDAO(em).createDocumentCollection(baseline.getDocumentCollection());
 
         baseline.getPartCollection().setCreationDate(new Date());
         baseline.getPartCollection().setAuthor(user);
 
+        baseline.getDocumentCollection().setCreationDate(new Date());
+        baseline.getDocumentCollection().setAuthor(user);
+
+
         for(PartIteration partIteration: filter.getRetainedPartIterations() ){
             baseline.addBaselinedPart(partIteration);
+            for (DocumentLink docLink :partIteration.getLinkedDocuments()){
+                DocumentIteration docI = docLink.getTargetDocument().getLastCheckedInIteration();
+                if(docI!=null)
+                    baseline.addBaselinedDocument(docI);
+            }
         }
 
         baseline.getSubstituteLinks().addAll(filter.getRetainedSubstituteLinks());

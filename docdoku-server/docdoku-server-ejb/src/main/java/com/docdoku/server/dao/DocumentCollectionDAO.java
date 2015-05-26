@@ -20,28 +20,28 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.configuration.PartCollection;
+import com.docdoku.core.configuration.DocumentCollection;
 
 import javax.persistence.EntityManager;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PartCollectionDAO {
+public class DocumentCollectionDAO {
 
     private EntityManager em;
 
-    private static Logger LOGGER = Logger.getLogger(PartCollectionDAO.class.getName());
+    private static Logger LOGGER = Logger.getLogger(DocumentCollectionDAO.class.getName());
 
-    public PartCollectionDAO(EntityManager pEM) {
+    public DocumentCollectionDAO(EntityManager pEM) {
         em = pEM;
     }
 
-    public void createPartCollection(PartCollection partCollection){
+    public void createDocumentCollection(DocumentCollection documentCollection){
         try {
-            em.persist(partCollection);
+            em.persist(documentCollection);
             em.flush();
         }catch (Exception e){
-            LOGGER.log(Level.SEVERE,"Fail to create a collection of parts",e);
+            LOGGER.log(Level.SEVERE,"Fail to create a collection of documents",e);
         }
     }
 }

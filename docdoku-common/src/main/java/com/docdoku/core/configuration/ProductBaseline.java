@@ -20,6 +20,7 @@
 package com.docdoku.core.configuration;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PathToPathLink;
@@ -159,6 +160,20 @@ public class ProductBaseline implements Serializable {
     public BaselinedPart getBaselinedPart(BaselinedPartKey baselinedPartKey){
         return partCollection.getBaselinedPart(baselinedPartKey);
     }
+
+
+    public Map<BaselinedDocumentKey, BaselinedDocument> getBaselinedDocuments() {
+        return documentCollection.getBaselinedDocuments();
+    }
+
+    public void removeAllBaselinedDocuments() {
+        documentCollection.removeAllBaselinedDocuments();
+    }
+
+    public void addBaselinedDocument(DocumentIteration targetDocument){
+        documentCollection.addBaselinedDocument(targetDocument);
+    }
+
 
     public String getName() {
         return name;
