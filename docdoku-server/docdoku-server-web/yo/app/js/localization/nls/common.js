@@ -221,7 +221,7 @@ define({
         INVERT:"Invert",
 		ISSUES: "Issues",
         IS_COMPONENT_OF:"Is component of :",
-        IS_SUBSTITUTE_OF:"Is substitute of :",
+        IS_SUBSTITUTE_IN:"Is substitute in :",
 		ITERATION_CHANGE: "Iteration change",
 		ITERATION: "Iteration",
 		ITERATION_NOTE: "Iteration note",
