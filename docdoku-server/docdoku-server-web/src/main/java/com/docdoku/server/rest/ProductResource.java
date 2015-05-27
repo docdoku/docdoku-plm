@@ -155,7 +155,7 @@ public class ProductResource {
     @GET
     @Path("{ciId}/filter")
     @Produces(MediaType.APPLICATION_JSON)
-    public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @DefaultValue("-1")@QueryParam("path") String path, @QueryParam("depth") Integer depth, @QueryParam("linkType") String linkType)
+    public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path, @QueryParam("depth") Integer depth, @QueryParam("linkType") String linkType)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 

@@ -98,7 +98,7 @@ define([
 
             var partCollection = Backbone.Collection.extend({
                 url: function () {
-                    return this.urlBase() + '/filter?configSpec=' + valueId + '&depth=10';
+                    return this.urlBase() + '/filter?configSpec=' + valueId + '&depth=10&path=-1';
                 },
 
                 urlBase: function () {
