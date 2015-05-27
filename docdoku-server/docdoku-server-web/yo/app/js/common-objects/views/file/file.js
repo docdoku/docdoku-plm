@@ -23,7 +23,11 @@ define([
 
         initialize: function () {
             this.editMode = this.options.editMode;
-            this.model.url = this.options.deleteBaseUrl + '/files/' + this.model.getSubType() + '/' + this.model.get('shortName');
+            this.model.url = this.options.deleteBaseUrl + '/files/';
+            if(this.model.getSubType()) {
+                this.model.url += this.model.getSubType() + '/'
+            }
+            this.model.url +=  this.model.get('shortName');
             this.fileUrl = this.options.uploadBaseUrl + this.model.get('shortName');
         },
 
@@ -71,7 +75,7 @@ define([
         validateName:function(){
 
             var _this = this;
-            var oldModel = _this.model.clone();
+            var oldName = _this.model.getShortName();
             var newName = this.fileNameInput.val();
 
             if( this.model.getShortName() !== newName){
@@ -84,9 +88,7 @@ define([
                     _this.$el.toggleClass('edition');
                 }).error(function(error){
 
-                    _this.model = oldModel.clone();
-                    _this.model.url = this.url;
-                    _this.model.rewriteUrl();
+                    _this.model.setShortName(oldName);
                     _this.render();
                     _this.$el.toggleClass('edition');
 
