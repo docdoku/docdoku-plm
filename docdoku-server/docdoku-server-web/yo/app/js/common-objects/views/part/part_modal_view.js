@@ -270,7 +270,6 @@ define([
         },
 
         updateConversionStatusView:function(){
-            console.log('mwaha');
             this.conversionStatusView.launch();
         },
 
