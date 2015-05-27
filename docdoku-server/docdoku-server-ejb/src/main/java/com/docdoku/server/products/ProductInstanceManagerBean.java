@@ -153,15 +153,21 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             ACL acl = aclFactory.createACLFromPermissions(workspaceId, userEntries, groupEntries);
             productInstanceMaster.setAcl(acl);
         }
+        Date now = new Date();
         ProductInstanceIteration productInstanceIteration = productInstanceMaster.createNextIteration();
         productInstanceIteration.setIterationNote("Initial");
         productInstanceIteration.setAuthor(user);
-        productInstanceIteration.setCreationDate(new Date());
+        productInstanceIteration.setCreationDate(now);
 
         PartCollection partCollection = new PartCollection();
         new PartCollectionDAO(em).createPartCollection(partCollection);
         partCollection.setAuthor(user);
-        partCollection.setCreationDate(new Date());
+        partCollection.setCreationDate(now);
+
+        DocumentCollection documentCollection = new DocumentCollection();
+        new DocumentCollectionDAO(em).createDocumentCollection(documentCollection);
+        documentCollection.setAuthor(user);
+        documentCollection.setCreationDate(now);
 
         ProductBaseline productBaseline = new ProductBaselineDAO(em).loadBaseline(baselineId);
         productInstanceIteration.setBasedOn(productBaseline);
@@ -174,7 +180,12 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             partCollection.addBaselinedPart(baselinedPart.getTargetPart());
         }
 
+        for (BaselinedDocument baselinedDocument : productBaseline.getBaselinedDocuments().values()) {
+            documentCollection.addBaselinedDocument(baselinedDocument.getTargetDocument());
+        }
+
         productInstanceIteration.setPartCollection(partCollection);
+        productInstanceIteration.setDocumentCollection(documentCollection);
 
         productInstanceIteration.setInstanceAttributes(attributes);
         DocumentLinkDAO linkDAO = new DocumentLinkDAO(userLocale, em);
@@ -279,19 +290,31 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
             nextIteration.setIterationNote(lastIteration.getIterationNote());
 
+            Date now = new Date();
+
             PartCollection partCollection = new PartCollection();
             new PartCollectionDAO(em).createPartCollection(partCollection);
             partCollection.setAuthor(user);
-            partCollection.setCreationDate(new Date());
+            partCollection.setCreationDate(now);
+
+            DocumentCollection documentCollection = new DocumentCollection();
+            new DocumentCollectionDAO(em).createDocumentCollection(documentCollection);
+            documentCollection.setAuthor(user);
+            documentCollection.setCreationDate(now);
 
             nextIteration.setAuthor(user);
-            nextIteration.setCreationDate(new Date());
+            nextIteration.setCreationDate(now);
 
             for (BaselinedPart baselinedPart : baseline.getBaselinedParts().values()) {
                 partCollection.addBaselinedPart(baselinedPart.getTargetPart());
             }
 
+            for (BaselinedDocument baselinedDocument : baseline.getBaselinedDocuments().values()) {
+                documentCollection.addBaselinedDocument(baselinedDocument.getTargetDocument());
+            }
+
             nextIteration.setPartCollection(partCollection);
+            nextIteration.setDocumentCollection(documentCollection);
 
             nextIteration.setBasedOn(baseline);
             nextIteration.setSubstituteLinks(new HashSet<>(baseline.getSubstituteLinks()));

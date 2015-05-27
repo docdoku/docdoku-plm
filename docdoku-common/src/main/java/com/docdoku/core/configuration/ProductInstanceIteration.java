@@ -67,6 +67,8 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
     private PartCollection partCollection;
 
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
+    private DocumentCollection documentCollection=new DocumentCollection();
 
     @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(name = "PRDINSTITERATION_BINRES",
@@ -217,6 +219,10 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
         this.partCollection = partCollection;
     }
 
+    public DocumentCollection getDocumentCollection() { return documentCollection; }
+
+    public void setDocumentCollection(DocumentCollection documentCollection) { this.documentCollection = documentCollection;}
+
     public void addFile(BinaryResource pBinaryResource) {
         attachedFiles.add(pBinaryResource);
     }
@@ -257,6 +263,14 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     }
     public BaselinedPart getBaselinedPart(BaselinedPartKey baselinedPartKey){
         return partCollection.getBaselinedPart(baselinedPartKey);
+    }
+
+    public Map<BaselinedDocumentKey, BaselinedDocument> getBaselinedDocuments() {
+        return documentCollection.getBaselinedDocuments();
+    }
+
+    public BaselinedDocument getBaselinedDocument(BaselinedDocumentKey baselinedDocumentKey){
+        return documentCollection.getBaselinedDocument(baselinedDocumentKey);
     }
 
     public ProductBaseline getBasedOn() {
