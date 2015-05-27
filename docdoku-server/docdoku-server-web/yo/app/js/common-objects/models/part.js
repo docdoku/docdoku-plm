@@ -156,7 +156,7 @@ define([
 
             hasLastIterationAttachedFiles: function () {
                 if (this.hasIterations()) {
-                    return this.getLastIteration().getAttachedFiles().length != 0;
+                    return this.getLastIteration().getAttachedFiles().length != 0 || this.getLastIteration().get('nativeCADFile');
                 }
                 return false;
             },
