@@ -78,7 +78,6 @@ define([
                 e.preventDefault();
                 return false;
             });
-            console.log(template);
 
         },
 
