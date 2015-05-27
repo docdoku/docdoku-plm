@@ -13,7 +13,7 @@
     {{/pending}}
 {{/status}}
 {{^status}}
-<i class="fa fa-refresh fa-spin" title="{{i18n.CONVERSION_PENDING}}"></i><b>{{i18n.CONVERSION_PENDING}} ...</b>
+<i class="fa fa-recycle fail" title="{{i18n.CONVERSION_FAILED}}"></i><b>{{i18n.CONVERSION_FAILED}} ...</b>
 {{/status}}
     {{#status}}
     {{^succeed}}
