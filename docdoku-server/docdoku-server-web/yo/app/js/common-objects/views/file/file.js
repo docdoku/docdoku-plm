@@ -73,31 +73,35 @@ define([
         },
 
         validateName:function(){
+            var newName = this.fileNameInput.val();
+            if (!newName.length) {
+                return;
+            }
 
             var _this = this;
             var oldName = _this.model.getShortName();
-            var newName = this.fileNameInput.val();
 
-            if( this.model.getShortName() !== newName){
+            if (this.model.getShortName() !== newName ) {
                 this.model.setShortName(newName);
-                this.model.save().success(function(){
+
+                this.model.save().success(function() {
                     _this.model.rewriteUrl();
                     _this.onModelChanged();
                     _this.trigger('clear');
                     _this.render();
                     _this.$el.toggleClass('edition');
-                }).error(function(error){
+
+                }).error(function(error) {
 
                     _this.model.setShortName(oldName);
                     _this.render();
                     _this.$el.toggleClass('edition');
 
                     var errorMessage = error ? error.responseText : _this.model;
-                    _this.trigger('notification','error',errorMessage);
-
-
+                    _this.trigger('notification','error', errorMessage);
                 });
-            }else{
+
+            } else {
                 this.$el.toggleClass('edition');
             }
 
