@@ -247,15 +247,10 @@ define([
 
             this.$('#iteration-files').html(this.cadFileView.el);
             if(this.editMode){
-                //create element for conversionStatusView
-                var cadFilesList = this.$('.file-list').first();
-                cadFilesList.after('<div class="conversion-status"></div>');
                 this.conversionStatusView = new ConversionStatusView({
-                    model:this.iteration,
-                    el: cadFilesList.next()
+                    model:this.iteration
                 }).render();
-
-                this.conversionStatusView.render();
+                this.$('.file-list').first().after(this.conversionStatusView.el);
             }
 
         },

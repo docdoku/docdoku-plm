@@ -6,6 +6,7 @@ define([
 ], function (Backbone,Mustache,template) {
     'use strict';
     var ConversionStatusView = Backbone.View.extend({
+        className:'conversion-status',
         hasNewFiles: false,
         events:{
             'click .reload':'render',
