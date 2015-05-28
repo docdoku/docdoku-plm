@@ -60,7 +60,7 @@ define([
 
             this.usedByPartViews = [];
             this.usedByDocumentViews = [];
-            this.usedByProductInstanceViews = [];
+
             this.documentsCollection.fetch({reset: true});
 
             this.initUsedByGroup();
@@ -71,17 +71,21 @@ define([
             this.documentsUL = this.$('#used-by-documents');
             this.partsUL = this.$('#used-by-parts');
             this.productInstancesUL = this.$('#used-by-product-instances');
+            this.productInstancesUL = this.$('#used-by-product-instances');
+            this.pathDataUL = this.$('#used-by-path-data');
         },
 
         addPartViews: function () {
             this.partsCollection.each(this.addPartView.bind(this));
         },
+
+
        addProductInstanceViews: function () {
             this.productInstancesCollection.each(this.addProductInstanceView.bind(this));
         },
-       /* addPathDataProductInstanceViews: function () {
+        addPathDataProductInstanceViews: function () {
             this.pathDataCollection.each(this.addPathDataProductInstanceView.bind(this));
-        },*/
+        },
 
         addDocumentViews: function () {
             this.documentsCollection.each(this.addDocumentView.bind(this));

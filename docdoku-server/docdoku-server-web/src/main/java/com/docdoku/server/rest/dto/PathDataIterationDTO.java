@@ -91,14 +91,6 @@ public class PathDataIterationDTO {
         this.instanceAttributes = instanceAttributes;
     }
 
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
     public int getPartMasterId() {
         return partMasterId;
     }
@@ -107,26 +99,11 @@ public class PathDataIterationDTO {
         this.partMasterId = partMasterId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        PathDataIterationDTO dto = (PathDataIterationDTO) o;
-
-        if (partMasterId != dto.partMasterId) return false;
-        if (!partsPath.equals(dto.partsPath)) return false;
-        if (path != null ? !path.equals(dto.path) : dto.path != null) return false;
-        if (!serialNumber.equals(dto.serialNumber)) return false;
-
-        return true;
+    public String getPath() {
+        return path;
     }
 
-    @Override
-    public int hashCode() {
-        int result = partMasterId;
-        result = 31 * result + (partsPath != null ? partsPath.hashCode() : 0);
-        result = 31 * result + (path != null ? path.hashCode() : 0);
-        return result;
+    public void setPath(String path) {
+        this.path = path;
     }
 }
