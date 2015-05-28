@@ -588,6 +588,7 @@ public class PartResource {
         attr.setName(dto.getName());
         attr.setValue(dto.getValue());
         attr.setLocked(dto.isLocked());
+        attr.setMandatory(dto.isMandatory());
         return attr;
     }
 
