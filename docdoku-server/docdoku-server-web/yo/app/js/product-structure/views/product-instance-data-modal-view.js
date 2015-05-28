@@ -22,8 +22,9 @@ define([
 
             events: {
                 'hidden': 'onHidden',
+                'submit #form-deliverable-data': 'onSave',
                 'click .cancel-button': 'closeModal',
-                'click .save-button': 'onSave',
+                'click .save-button': 'interceptSubmit',
                 'click .new-iteration': 'saveAndCreateNewIteration',
                 'click a#previous-iteration': 'onPreviousIteration',
                 'click a#next-iteration': 'onNextIteration'
@@ -203,9 +204,12 @@ define([
 
                 this.$('#tab-files').html(this.fileListView.$el);
             },
+            interceptSubmit:function(){
+                this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
+            },
 
-            onSave: function () {
-
+            onSave: function (e) {
+                if(this.isValid) {
                 if (!this.iteration) {
                     var self = this;
                     this.iterations = this.model.iterations;
@@ -242,6 +246,10 @@ define([
                 } else {
                     this.updateIteration(this.closeModal);
                 }
+                }
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
             },
 
             updateIteration: function (callback) {

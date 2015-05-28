@@ -14,7 +14,7 @@
             {{/iteration}}
         </ul>
 
-        <form id="form-{{view.cid}}" class="tab-content form-horizontal">
+        <form id="form-deliverable-data" class="tab-content form-horizontal">
             <div id="tab-main" class="tab-pane tab-main active">
                 <div class="path-description"></div>
                 <div>
@@ -54,5 +54,5 @@
     {{/iteration}}
 
     <button class="btn cancel-button">{{i18n.CANCEL}}</button>
-    {{#editMode}}<button class="btn btn-primary save-button">{{i18n.SAVE}}</button>{{/editMode}}
+    {{#editMode}}<button class="btn btn-primary save-button" form="form-deliverable-data">{{i18n.SAVE}}</button>{{/editMode}}
 </div>
