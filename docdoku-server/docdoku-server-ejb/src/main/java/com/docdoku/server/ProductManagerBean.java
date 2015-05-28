@@ -1602,7 +1602,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             instanceAttrs.add(pAttributeInstanceTemplates[i]);
             if (pAttributeInstanceTemplates[i] instanceof ListOfValuesAttributeTemplate) {
                 ListOfValuesAttributeTemplate lovAttr = (ListOfValuesAttributeTemplate) pAttributeInstanceTemplates[i];
-                ListOfValuesKey lovKey = new ListOfValuesKey(user.getWorkspaceId(), lovNames[i]);
+                ListOfValuesKey lovKey = new ListOfValuesKey(user.getWorkspaceId(), instanceLovNames[i]);
                 lovAttr.setLov(lovDAO.loadLOV(lovKey));
             }
         }
@@ -1619,7 +1619,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, String[] lovNames, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException, WorkflowModelNotFoundException, UserNotActiveException, ListOfValuesNotFoundException {
+    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, String[] lovNames, InstanceAttributeTemplate[] pAttributeInstanceTemplates, String[] instanceLovNames, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException, WorkflowModelNotFoundException, UserNotActiveException, ListOfValuesNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         Locale locale = new Locale(user.getLanguage());
 
@@ -1648,6 +1648,17 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
         template.setAttributeTemplates(attrs);
+
+        List<InstanceAttributeTemplate> instanceAttrs = new ArrayList<>();
+        for (int i = 0; i < pAttributeInstanceTemplates.length; i++) {
+            instanceAttrs.add(pAttributeInstanceTemplates[i]);
+            if (pAttributeInstanceTemplates[i] instanceof ListOfValuesAttributeTemplate) {
+                ListOfValuesAttributeTemplate lovAttr = (ListOfValuesAttributeTemplate) pAttributeInstanceTemplates[i];
+                ListOfValuesKey lovKey = new ListOfValuesKey(user.getWorkspaceId(), instanceLovNames[i]);
+                lovAttr.setLov(lovDAO.loadLOV(lovKey));
+            }
+        }
+        template.setAttributeInstanceTemplates(instanceAttrs);
 
         WorkflowModel workflowModel = null;
         if (pWorkflowModelId != null) {

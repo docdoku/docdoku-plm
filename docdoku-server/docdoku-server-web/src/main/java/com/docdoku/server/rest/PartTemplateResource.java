@@ -147,10 +147,18 @@ public class PartTemplateResource {
 
         List<InstanceAttributeTemplateDTO> attributeTemplates = partMsTemplateDTO.getAttributeTemplates();
         String[] lovNames=new String[attributeTemplates.size()];
-        for (int i=0;i<attributeTemplates.size();i++)
+        for (int i=0;i<attributeTemplates.size();i++) {
             lovNames[i]=attributeTemplates.get(i).getLovName();
+        }
 
-        PartMasterTemplate template = productService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames,  idGenerated, attributesLocked);
+
+        List<InstanceAttributeTemplateDTO> attributeInstanceTemplates = partMsTemplateDTO.getAttributeInstanceTemplates();
+        String[] instanceLovNames = new String[attributeInstanceTemplates.size()];
+        for (int i=0;i<attributeInstanceTemplates.size();i++) {
+            instanceLovNames[i] = attributeInstanceTemplates.get(i).getLovName();
+        }
+
+        PartMasterTemplate template = productService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, createInstanceAttributeTemplateFromDto(attributeInstanceTemplates) ,instanceLovNames,idGenerated, attributesLocked);
         return mapper.map(template, PartMasterTemplateDTO.class);
     }
 
