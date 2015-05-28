@@ -78,6 +78,7 @@ define([
                 editMode : true,
                 unfreezable: true
             });
+
             this.attributeTemplatesView.render();
             this.attributesView.render();
         },
@@ -112,8 +113,6 @@ define([
                 });
             });
 
-            this.attributesView.render();
-            this.attributeTemplatesView.render();
         },
 
 
