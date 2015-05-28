@@ -803,6 +803,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             if (pAttributeTemplates != null) {
+
+                LOVDAO lovDAO=new LOVDAO(locale,em);
+
+                List<InstanceAttributeTemplate> templateAttrs = new ArrayList<>();
+                for(int i=0;i<pAttributeTemplates.size();i++){
+                    templateAttrs.add(pAttributeTemplates.get(i));
+                    if(pAttributeTemplates.get(i) instanceof ListOfValuesAttributeTemplate){
+                        ListOfValuesAttributeTemplate lovAttr=(ListOfValuesAttributeTemplate)pAttributeTemplates.get(i);
+                        ListOfValuesKey lovKey = new ListOfValuesKey(user.getWorkspaceId(), lovNames[i]);
+                        lovAttr.setLov(lovDAO.loadLOV(lovKey));
+                    }
+                }
                 partIte.setInstanceAttributeTemplates(pAttributeTemplates);
             }
 
