@@ -422,7 +422,7 @@ public class ProductResource {
 
         if(configSpecType.startsWith("pi-")){
             fileExportEntity.setSerialNumber(configSpecType.substring(3));
-        }else if(configSpecType!="wip" && configSpecType!="latest" && configSpecType!="released"){
+        }else if(!configSpecType.equals("wip") && !configSpecType.equals("latest") && !configSpecType.equals("released")){
             try {
                 fileExportEntity.setBaselineId(Integer.parseInt(configSpecType));
             }catch(NumberFormatException e){
