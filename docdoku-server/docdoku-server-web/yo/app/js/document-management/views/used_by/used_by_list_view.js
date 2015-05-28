@@ -47,15 +47,7 @@ define([
                     //console.log('error getting used by list');
                 }
             });
-            this.linkedDocument.getUsedByPathDataPdInstances(this.linkedDocumentIterationId, {
-                success: function (path) {
-                    that.pathDataCollection = new PathDataList(path);
-                    that.addPathDataProductInstanceViews();
-                },
-                error: function () {
-                    //console.log('error getting used by list');
-                }
-            });
+
         },
 
         render: function () {
@@ -79,20 +71,14 @@ define([
             this.documentsUL = this.$('#used-by-documents');
             this.partsUL = this.$('#used-by-parts');
             this.productInstancesUL = this.$('#used-by-product-instances');
-            this.productInstancesUL = this.$('#used-by-product-instances');
-            this.pathDataUL = this.$('#used-by-path-data');
         },
 
         addPartViews: function () {
             this.partsCollection.each(this.addPartView.bind(this));
         },
 
-
        addProductInstanceViews: function () {
             this.productInstancesCollection.each(this.addProductInstanceView.bind(this));
-        },
-        addPathDataProductInstanceViews: function () {
-            this.pathDataCollection.each(this.addPathDataProductInstanceView.bind(this));
         },
 
         addDocumentViews: function () {

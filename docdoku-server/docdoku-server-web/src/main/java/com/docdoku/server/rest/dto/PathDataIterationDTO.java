@@ -91,14 +91,6 @@ public class PathDataIterationDTO {
         this.instanceAttributes = instanceAttributes;
     }
 
-    public int getPartMasterId() {
-        return partMasterId;
-    }
-
-    public void setPartMasterId(int partMasterId) {
-        this.partMasterId = partMasterId;
-    }
-
     public String getPath() {
         return path;
     }
@@ -107,7 +99,13 @@ public class PathDataIterationDTO {
         this.path = path;
     }
 
+    public int getPartMasterId() {
+        return partMasterId;
+    }
 
+    public void setPartMasterId(int partMasterId) {
+        this.partMasterId = partMasterId;
+    }
 
     @Override
     public boolean equals(Object o) {
