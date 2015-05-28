@@ -18,7 +18,7 @@ define([
 
         var ProductInstanceDataModalView = Backbone.View.extend({
 
-            className:'modal hide product-instance-data-modal in',
+            className: 'modal hide product-instance-data-modal in',
 
             events: {
                 'hidden': 'onHidden',
@@ -63,7 +63,7 @@ define([
             render: function () {
                 this.editMode = false;
                 var dataIteration = null;
-                if(this.iterations){
+                if (this.iterations) {
                     this.editMode = this.iteration.getIteration() === this.model.getIterations().size();
                     var hasNextIteration = this.iterations.hasNextIteration(this.iteration);
                     var hasPreviousIteration = this.iterations.hasPreviousIteration(this.iteration);
@@ -74,15 +74,15 @@ define([
                         hasNextIteration: hasNextIteration,
                         hasPreviousIteration: hasPreviousIteration,
                         i18n: App.config.i18n,
-                        editMode:this.editMode
+                        editMode: this.editMode
                     };
                 }
-                this.$el.html(Mustache.render(template, dataIteration||{editMode:true,i18n: App.config.i18n}));
+                this.$el.html(Mustache.render(template, dataIteration || {editMode: true, i18n: App.config.i18n}));
                 this.bindDOMElements();
                 this.buildTabs();
             },
 
-            bindDOMElements:function(){
+            bindDOMElements: function () {
                 this.$modal = this.$el;
                 this.$tabs = this.$('.nav-tabs li');
             },
@@ -93,7 +93,7 @@ define([
             activateTab: function (index) {
                 this.$tabs.eq(index).children().tab('show');
             },
-            initAndOpenModal:function(){
+            initAndOpenModal: function () {
 
                 var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/' + this.path;
                 var self = this;
@@ -155,7 +155,7 @@ define([
             buildAttributesTab: function () {
                 var self = this;
                 this.attributesView = new AttributesView({
-                    el:this.$('#pathDataAttributes')
+                    el: this.$('#pathDataAttributes')
                 });
                 this.attributesView.setEditMode(!this.iteration || this.iteration.getIteration() === this.model.getIterations().size());
                 this.attributesView.render();
@@ -174,7 +174,7 @@ define([
                 this.linkedDocuments = new LinkedDocumentCollection(this.iteration !== null ? this.iteration.getDocumentLinked() : []);
                 this.linkedDocumentsView = new LinkedDocumentsView({
                     editMode: this.editMode,
-                    commentEditable:true,
+                    commentEditable: true,
                     collection: this.linkedDocuments
                 });
                 this.linkedDocumentsView.render();
@@ -204,48 +204,48 @@ define([
 
                 this.$('#tab-files').html(this.fileListView.$el);
             },
-            interceptSubmit:function(){
+            interceptSubmit: function () {
                 this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
             },
 
             onSave: function (e) {
-                if(this.isValid) {
-                if (!this.iteration) {
-                    var self = this;
-                    this.iterations = this.model.iterations;
-                    this.iteration = new ProductInstancePathIterationDataModel(this.model.attributes);
-                    this.iterations.add(this.iteration);
-                    this.iteration.setIteration(this.iterations.size());
-                    this.iteration.setInstanceAttributes(this.attributesView.collection.toJSON());
-                    this.iteration.setIterationNote(this.$('.description-input').val());
+                if (this.isValid) {
+                    if (!this.iteration) {
+                        var self = this;
+                        this.iterations = this.model.iterations;
+                        this.iteration = new ProductInstancePathIterationDataModel(this.model.attributes);
+                        this.iterations.add(this.iteration);
+                        this.iteration.setIteration(this.iterations.size());
+                        this.iteration.setInstanceAttributes(this.attributesView.collection.toJSON());
+                        this.iteration.setIterationNote(this.$('.description-input').val());
 
-                    //POST
-                    var creationURL = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/' + this.iteration.getPath();
-                    $.ajax({
-                        type: 'POST',
-                        url: creationURL,
-                        data: JSON.stringify(this.iteration),
-                        contentType: 'application/json',
-                        success: function (data) {
-                            self.model = new ProductInstancePathMasterDataModel(data);
-                            self.iteration = self.model.getLastIteration();
-                            self.iterations = self.model.getIterations();
-                            self.iteration.setSerialNumber(self.serialNumber);
-                            self.iteration.setPath(self.path);
-                            self.iteration.setId(self.model.id);
-                            self.closeModal();
-                        },
-                        error: function (errorMessage) {
-                            self.$('#alerts').append(new AlertView({
-                                type: 'error',
-                                message: errorMessage
-                            }).render().$el);
-                        }
-                    });
+                        //POST
+                        var creationURL = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/' + this.iteration.getPath();
+                        $.ajax({
+                            type: 'POST',
+                            url: creationURL,
+                            data: JSON.stringify(this.iteration),
+                            contentType: 'application/json',
+                            success: function (data) {
+                                self.model = new ProductInstancePathMasterDataModel(data);
+                                self.iteration = self.model.getLastIteration();
+                                self.iterations = self.model.getIterations();
+                                self.iteration.setSerialNumber(self.serialNumber);
+                                self.iteration.setPath(self.path);
+                                self.iteration.setId(self.model.id);
+                                self.closeModal();
+                            },
+                            error: function (errorMessage) {
+                                self.$('#alerts').append(new AlertView({
+                                    type: 'error',
+                                    message: errorMessage
+                                }).render().$el);
+                            }
+                        });
 
-                } else {
-                    this.updateIteration(this.closeModal);
-                }
+                    } else {
+                        this.updateIteration(this.closeModal);
+                    }
                 }
                 e.preventDefault();
                 e.stopPropagation();
@@ -325,9 +325,9 @@ define([
                 this.updateIteration(this.createIteration);
             },
 
-            addPartAttributes:function(){
+            addPartAttributes: function () {
 
-                var attributesView = new AttributesView({el:this.$('#partAttributes')});
+                var attributesView = new AttributesView({el: this.$('#partAttributes')});
                 attributesView.setEditMode(false);
                 attributesView.render();
 
