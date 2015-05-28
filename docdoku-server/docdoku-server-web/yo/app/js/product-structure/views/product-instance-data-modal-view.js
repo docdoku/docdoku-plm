@@ -4,7 +4,7 @@ define([
         'mustache',
         'text!templates/product-instance-data-modal.html',
         'models/product_instance_path_data_master',
-        'models/product_instance_path_data_iteration',
+        'common-objects/models/product_instance_path_data_iteration',
         'common-objects/views/attributes/attributes',
         'common-objects/views/file/file_list',
         'common-objects/views/linked/linked_documents',

@@ -4,7 +4,7 @@ function (Backbone, ProductInstanceIteration) {
 	'use strict';
     var ProductInstanceIterations = Backbone.Collection.extend({
         model: ProductInstanceIteration,
-
+        className: 'ProductInstanceList',
         setMaster: function (master) {
             this.master = master;
         },

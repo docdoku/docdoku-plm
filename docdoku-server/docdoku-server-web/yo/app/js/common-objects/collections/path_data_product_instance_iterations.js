@@ -1,10 +1,10 @@
 /*global _,define*/
 define([
     'backbone',
-    'models/product_instance_path_data_iteration'
+    'common-objects/models/product_instance_path_data_iteration'
 ], function (Backbone, ProductInstanceIteration) {
     'use strict';
-    var ProductInstanceIterationPathList = Backbone.Collection.extend({
+        var ProductInstanceIterationPathList = Backbone.Collection.extend({
 
         model: ProductInstanceIteration,
 

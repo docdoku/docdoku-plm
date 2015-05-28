@@ -68,6 +68,7 @@ define([
             this.initAttributesView();
             this.initAttachedFileView();
             this.initLinkedDocumentsView();
+           // this.initUsedByListView();
             this.openModal();
             this.renderChoices();
 
@@ -169,6 +170,14 @@ define([
             this.$('#iteration-links').html(this.linkedDocumentsView.el);
         },
 
+        initUsedByListView: function () {
+            this.usedByListView = new UsedByListView({
+                linkedDocument: this.model
+            }).render();
+
+            /* Add the usedByListView to the tab */
+            this.$('#iteration-used-by').html(this.usedByListView.el);
+        },
         initAttributesView: function () {
 
             var attributes = new AttributeCollection(this.iteration.getInstanceAttributes());

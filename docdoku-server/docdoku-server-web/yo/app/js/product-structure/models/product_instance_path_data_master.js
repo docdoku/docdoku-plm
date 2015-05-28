@@ -1,6 +1,6 @@
 /*global define,_,App*/
 define(['backbone',
-    'collections/product_instance_iteration'
+    '../../common-objects/collections/path_data_product_instance_iterations'
 ], function (Backbone, ProductInstanceIterationPathList) {
 
     'use strict';

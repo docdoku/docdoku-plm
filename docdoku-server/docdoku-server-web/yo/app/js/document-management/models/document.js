@@ -343,6 +343,22 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
                 success: args.success,
                 error: args.error
             });
+        },
+        getUsedByProductInstances: function (iteration, args) {
+            $.ajax({
+                type: 'GET',
+                url: this.baseUrl() + '/' + iteration + '/inverse-product-instances-link',
+                success: args.success,
+                error: args.error
+            });
+        },
+        getUsedByPathDataPdInstances: function (iteration, args) {
+            $.ajax({
+                type: 'GET',
+                url: this.baseUrl() + '/' + iteration + '/inverse-path-data-link',
+                success: args.success,
+                error: args.error
+            });
         }
 
 	});

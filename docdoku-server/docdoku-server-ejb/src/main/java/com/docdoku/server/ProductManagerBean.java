@@ -2997,6 +2997,33 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
+    public List<ProductInstanceIteration> getInverseProductInstancesLink(DocumentRevisionKey docKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, PartIterationNotFoundException, PartRevisionNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(docKey.getWorkspaceId());
+
+        Locale locale = new Locale(user.getLanguage());
+
+        DocumentRevision documentRevision = new DocumentRevisionDAO(locale, em).loadDocR(docKey);
+
+        DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(locale,em);
+        List<ProductInstanceIteration> iterations = documentLinkDAO.getInverseProductInstanceIteration(documentRevision);
+        return iterations;
+    }
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public List<PathDataIteration> getInversePathDataLink(DocumentRevisionKey docKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, PartIterationNotFoundException, PartRevisionNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(docKey.getWorkspaceId());
+
+        Locale locale = new Locale(user.getLanguage());
+
+        DocumentRevision documentRevision = new DocumentRevisionDAO(locale, em).loadDocR(docKey);
+
+        DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(locale,em);
+        List<PathDataIteration> pathDataIterations = documentLinkDAO.getInversefindPathData(documentRevision);
+        return pathDataIterations;
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
     public PathToPathLink createPathToPathLink(String workspaceId, String configurationItemId, String type, String pathFrom, String pathTo, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PathToPathLinkAlreadyExistsException, CreationException, PathToPathCyclicException, PartUsageLinkNotFoundException, UserNotActiveException, NotAllowedException {
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
@@ -3045,6 +3072,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         Locale locale = new Locale(user.getLanguage());
         ConfigurationItem configurationItem = new ConfigurationItemDAO(locale, em).loadConfigurationItem(new ConfigurationItemKey(workspaceId, configurationItemId));
         return new PathToPathLinkDAO(locale, em).getPathToPathLinkFromSourceAndTarget(configurationItem, sourcePath, targetPath);
+    }
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public ProductInstanceMaster findProductByPathMaster(String workspaceId,PathDataMaster pathDataMaster) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        PathDataMasterDAO pathDataMasterDAO = new PathDataMasterDAO(em);
+        ProductInstanceMaster productInstanceMaster = pathDataMasterDAO.findByPathData(pathDataMaster);
+        return productInstanceMaster;
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
