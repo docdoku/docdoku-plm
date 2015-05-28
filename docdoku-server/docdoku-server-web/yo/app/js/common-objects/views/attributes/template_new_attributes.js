@@ -58,22 +58,18 @@ define([
                 el: '#items-' + this.cid,
                 collection: this.collection,
                 lovs:this.lovs,
-                editMode: this.editMode,
-                freezable: this.freezable,
-                attributesLocked: this.attributesLocked
+                editMode: this.editMode
             });
             this.attributesView = this.addSubView(
                 listViewAttributs
             );
             listViewAttributs.collectionReset();
 
-            var lockInput = this.$el.find('.lock input');
-
+            var lockInput = this.$el.find('.lock input')[0];
             if(lockInput){
                 lockInput.checked = this.attributesLocked;
             }
-
-            this.$el.toggleClass('attributes-locked', this.attributesLocked);
+            this.attributesView.setAttributesLocked(this.attributesLocked);
 
             this.attributesView.$el.sortable({
                 handle: '.sortable-handler',
@@ -100,7 +96,6 @@ define([
                     attribute.set('locked', false);
                     return attribute.set('mandatory', false);
                 });
-                this.$el.find('.attribute-locked').show();
                 this.$el.find('.attribute-locked input').prop('checked', false);
             } else {
                 _.map(this.collection.models, function (attribute) {
@@ -108,7 +103,6 @@ define([
                 });
             }
 
-            this.$el.toggleClass('attributes-locked', this.attributesLocked);
         },
 
         isAttributesLocked: function () {
