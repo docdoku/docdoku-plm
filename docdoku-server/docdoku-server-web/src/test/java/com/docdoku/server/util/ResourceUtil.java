@@ -55,6 +55,4 @@ public class ResourceUtil {
     public static final String TARGET_PART_STORAGE = System.getProperty("java.io.tmpdir")+"/com/docdoku/server/rest/part/uploaded/";
     public static final String SOURCE_PART_STORAGE = "com/docdoku/server/rest/part/toUpload/";
     public static String FILENAME_TARGET_PART ="new_part_file.txt";
-
-
 }
