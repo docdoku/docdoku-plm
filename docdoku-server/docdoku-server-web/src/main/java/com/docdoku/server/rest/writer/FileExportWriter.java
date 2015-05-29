@@ -71,6 +71,7 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
             context = new InitialContext();
             productService = (IProductManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductManagerBean");
             productInstanceService = (IProductInstanceManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductInstanceManagerBean");
+            productBaselineService= (IProductBaselineManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductBaselineManagerBean");
             dataManager = (IDataManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/DataManagerBean");
             mapper = DozerBeanMapperSingletonWrapper.getInstance();
         } catch (NamingException e) {
