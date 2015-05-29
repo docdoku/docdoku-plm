@@ -99,9 +99,13 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
             Map<String, Set<BinaryResource>> binariesInTree = productService.getBinariesInTree(fileExportEntity.getBaselineId(),fileExportEntity.getConfigurationItemKey().getWorkspace(),fileExportEntity.getConfigurationItemKey(),fileExportEntity.getPsFilter(),fileExportEntity.isExportNativeCADFile(),fileExportEntity.isExportDocumentLinks());
             Set<Map.Entry<String, Set<BinaryResource>>> entries = binariesInTree.entrySet();
             List<BinaryResource> baselinedSources = new ArrayList<>();
+            List<String> baselinedSourcesName = new ArrayList<>();
 
             if (fileExportEntity.isExportDocumentLinks() && fileExportEntity.getBaselineId()!= null){
                 baselinedSources = productService.getBinaryResourceFromBaseline(fileExportEntity.getBaselineId());
+                for (BinaryResource binary:baselinedSources){
+                    baselinedSourcesName.add(binary.getName());
+                }
                 String baselineName = productBaselineService.getBaseline(fileExportEntity.getBaselineId()).getName();
                 for (BinaryResource binaryResource:baselinedSources){
                     addToZipFile(binaryResource, baselineName, zs);
@@ -112,7 +116,7 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
                 String folderName = entry.getKey();
                 Set<BinaryResource> files = entry.getValue();
                 for(BinaryResource binaryResource:files){
-                    if (!baselinedSources.contains(binaryResource)){
+                    if (!baselinedSourcesName.contains(binaryResource.getName())){
                         try {
                             if(binaryResource.isNativeCADFile()){
                                 folderName = "CAD/"+folderName;
