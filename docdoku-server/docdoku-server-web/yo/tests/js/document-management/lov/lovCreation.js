@@ -86,6 +86,9 @@ casper.test.begin('LOV creation tests suite',4, function documentLOVCreationTest
 
     casper.then(function tryCreateLOV(){
         this.click('.btn-saveLovs');
+        this.waitWhileSelector('.modal', function() {
+            this.echo('modal closed');
+        });
     });
 
     /**
