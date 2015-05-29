@@ -107,6 +107,11 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
                     }
                 }
             }
+            if (fileExportEntity.getBaselineId()!= 0){
+               for (BinaryResource binaryResource:productService.getBinaryResourceFromBaseline(fileExportEntity.getBaselineId())){
+                   addToZipFile(binaryResource,fileExportEntity.getSerialNumber(),zs);
+               }
+            }
 
             if(fileExportEntity.getSerialNumber() != null){
                 addProductInstanceDataToZip(zs,fileExportEntity.getConfigurationItemKey(),fileExportEntity.getSerialNumber());

@@ -214,7 +214,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductInstanceMaster updateProductInstance(String workspaceId, int iteration, String iterationNote, ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, List<InstanceAttribute> attributes, DocumentRevisionKey[] links, String[] documentLinkComments) throws ProductInstanceMasterNotFoundException, UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ProductInstanceIterationNotFoundException, UserNotActiveException {
+    public ProductInstanceMaster updateProductInstance(String workspaceId, int iteration, String iterationNote, ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, List<InstanceAttribute> attributes, DocumentRevisionKey[] links, String[] documentLinkComments) throws ProductInstanceMasterNotFoundException, UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ProductInstanceIterationNotFoundException, UserNotActiveException, BaselineNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale userLocale = new Locale(user.getLanguage());
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocale, em);
@@ -250,6 +250,13 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
                     productInstanceIteration.getLinkedDocuments().add(newLink);
                     counter++;
                 }
+            }
+            ProductBaseline productBaseline = new ProductBaselineDAO(em).loadBaseline(baselineId);
+            for (BaselinedDocument baselinedDocument : productBaseline.getBaselinedDocuments().values()) {
+                if(!productBaseline.getDocumentCollection().hasBaselinedDocument(baselinedDocument.getTargetDocument().getDocumentRevisionKey())){
+                    productBaseline.getDocumentCollection().addBaselinedDocument(baselinedDocument.getTargetDocument());
+                }
+
             }
 
             return productInstanceMaster;
