@@ -52,7 +52,7 @@ public class InstanceTextAttribute extends InstanceAttribute{
     }
     @Override
     public boolean setValue(Object pValue) {
-        textValue=pValue + "";
+        textValue = pValue != null ? pValue + "" : "";
         return true;
     }
 
