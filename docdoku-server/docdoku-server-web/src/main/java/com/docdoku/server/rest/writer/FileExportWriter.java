@@ -152,12 +152,6 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
         ProductInstanceIteration lastIteration = productInstanceMaster.getLastIteration();
         Set<BinaryResource> attachedFiles = lastIteration.getAttachedFiles();
 
-        for (Map.Entry<BaselinedDocumentKey, BaselinedDocument> doc :lastIteration.getBaselinedDocuments().entrySet()){
-            for (BinaryResource binaryResource:doc.getValue().getTargetDocument().getAttachedFiles()){
-                attachedFiles.add(binaryResource);
-            }
-        }
-
         for(BinaryResource attachedFile : attachedFiles){
             addToZipFile(attachedFile,productInstanceMaster.getSerialNumber(),zs);
         }
