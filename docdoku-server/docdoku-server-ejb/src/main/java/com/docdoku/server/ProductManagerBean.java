@@ -2773,8 +2773,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(em);
         for (Map.Entry<BaselinedDocumentKey, BaselinedDocument> doc : productBaselineDAO.findBaselineById(baselineId).getBaselinedDocuments().entrySet()) {
-
-            binaryResources.addAll(doc.getValue().getTargetDocument().getAttachedFiles());
+            for (BinaryResource binary: doc.getValue().getTargetDocument().getAttachedFiles()){
+                if(!binaryResources.contains(binary)){
+                    binaryResources.add(binary);
+                }
+            }
         }
         return binaryResources;
     }
@@ -2837,6 +2840,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
                         if (nativeCADFile != null) {
                             binaryResources.add(nativeCADFile);
+
                         }
                     }
 
@@ -2845,7 +2849,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                             Set<DocumentLink> linkedDocuments = partIteration.getLinkedDocuments();
                             for (DocumentLink documentLink : linkedDocuments) {
                                 Set<BinaryResource> attachedFiles = documentLink.getTargetDocument().getLastIteration().getAttachedFiles();
-                                binaryResources.addAll(attachedFiles);
+
+                                for (BinaryResource binary:attachedFiles){
+                                    if (!binaryResources.contains(binary)){
+                                        binaryResources.add(binary);
+                                    }
+                                }
                             }
                         }
                     }
