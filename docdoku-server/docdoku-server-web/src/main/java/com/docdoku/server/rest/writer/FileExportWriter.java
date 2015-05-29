@@ -24,6 +24,7 @@ import com.docdoku.core.configuration.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.Tools;
@@ -60,6 +61,7 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
     private static Context context;
     private static IProductManagerLocal productService;
     private static IProductInstanceManagerLocal productInstanceService;
+    private static IProductBaselineManagerLocal productBaselineService;
     private static IDataManagerLocal dataManager;
     private static final Logger LOGGER = Logger.getLogger(InstanceBodyWriterTools.class.getName());
     private static Mapper mapper;
@@ -107,9 +109,10 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
                     }
                 }
             }
-            if (fileExportEntity.getBaselineId()!= 0){
-               for (BinaryResource binaryResource:productService.getBinaryResourceFromBaseline(fileExportEntity.getBaselineId())){
-                   addToZipFile(binaryResource,fileExportEntity.getSerialNumber(),zs);
+            if (fileExportEntity.getBaselineId()!= null){
+                String baselineName = productBaselineService.getBaseline(fileExportEntity.getBaselineId()).getName();
+                for (BinaryResource binaryResource:productService.getBinaryResourceFromBaseline(fileExportEntity.getBaselineId())){
+                   addToZipFile(binaryResource,baselineName,zs);
                }
             }
 
@@ -134,6 +137,8 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
         } catch (ProductInstanceMasterNotFoundException e) {
             e.printStackTrace();
         } catch (StorageException e) {
+            e.printStackTrace();
+        } catch (BaselineNotFoundException e) {
             e.printStackTrace();
         }
 
