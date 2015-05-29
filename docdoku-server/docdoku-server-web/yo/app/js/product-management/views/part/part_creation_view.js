@@ -66,11 +66,17 @@ define([
             this.templateCollection.fetch({reset: true});
         },
 
-        bindAttributesView: function () {
-
+        bindAttributesView: function (isAttributesLocked) {
+            //bindAttributesView can be called without arguments
+            // if it is, no templates has been choosen
+            // then attributesLocked is false
+            if(typeof(isAttributesLocked) ==='undefined') {
+                isAttributesLocked = false;
+            }
             this.attributesView = new AttributesView({
                 el: this.$('#attributes-list')
             });
+            this.attributesView.setAttributesLocked(isAttributesLocked);
 
             this.attributeTemplatesView =  new TemplateNewAttributesView({
                 el: this.$('#attribute-templates-list'),
@@ -90,7 +96,6 @@ define([
         addAttributes: function (template) {
             var that = this;
 
-            this.attributesView.setAttributesLocked(template.isAttributesLocked());
 
             _.each(template.get('attributeTemplates'), function (object) {
                 that.attributesView.collection.add({
@@ -214,12 +219,13 @@ define([
 
         onChangeTemplate: function () {
             this.resetMask();
-            this.bindAttributesView();
+
 
             var templateId = this.$inputPartTemplate.val();
 
             if (templateId) {
                 var template = this.templateCollection.get(templateId);
+                this.bindAttributesView(template.get('attributesLocked'));
 
                 if (template.get('mask')) {
                     this.setMask(template);
