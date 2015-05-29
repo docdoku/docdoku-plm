@@ -20,14 +20,14 @@
 package com.docdoku.server.rest.writer;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.configuration.ProductInstanceIteration;
-import com.docdoku.core.configuration.ProductInstanceMaster;
-import com.docdoku.core.configuration.ProductInstanceMasterKey;
+import com.docdoku.core.configuration.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.server.rest.Tools;
+import com.docdoku.server.rest.dto.baseline.BaselinedDocumentDTO;
 import com.docdoku.server.rest.util.FileExportEntity;
 import com.docdoku.server.rest.util.InstanceBodyWriterTools;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -44,6 +44,8 @@ import javax.ws.rs.ext.Provider;
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -91,7 +93,7 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
 
         try {
 
-            Map<String, Set<BinaryResource>> binariesInTree = productService.getBinariesInTree(fileExportEntity.getConfigurationItemKey().getWorkspace(),fileExportEntity.getConfigurationItemKey(),fileExportEntity.getPsFilter(),fileExportEntity.isExportNativeCADFile(),fileExportEntity.isExportDocumentLinks());
+            Map<String, Set<BinaryResource>> binariesInTree = productService.getBinariesInTree(fileExportEntity.getBaselineId(),fileExportEntity.getConfigurationItemKey().getWorkspace(),fileExportEntity.getConfigurationItemKey(),fileExportEntity.getPsFilter(),fileExportEntity.isExportNativeCADFile(),fileExportEntity.isExportDocumentLinks());
             Set<Map.Entry<String, Set<BinaryResource>>> entries = binariesInTree.entrySet();
 
             for(Map.Entry<String, Set<BinaryResource>> entry:entries){
@@ -138,6 +140,13 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
         ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, configurationItemKey));
         ProductInstanceIteration lastIteration = productInstanceMaster.getLastIteration();
         Set<BinaryResource> attachedFiles = lastIteration.getAttachedFiles();
+
+        for (Map.Entry<BaselinedDocumentKey, BaselinedDocument> doc :lastIteration.getBaselinedDocuments().entrySet()){
+            for (BinaryResource binaryResource:doc.getValue().getTargetDocument().getAttachedFiles()){
+                attachedFiles.add(binaryResource);
+            }
+        }
+
         for(BinaryResource attachedFile : attachedFiles){
             addToZipFile(attachedFile,productInstanceMaster.getSerialNumber(),zs);
         }

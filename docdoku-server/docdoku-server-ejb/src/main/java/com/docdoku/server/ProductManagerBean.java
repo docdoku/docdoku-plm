@@ -2768,7 +2768,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Map<String, Set<BinaryResource>> getBinariesInTree(String workspaceId, ConfigurationItemKey ciKey, PSFilter psFilter, boolean exportNativeCADFiles, boolean exportDocumentLinks) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
+    public Map<String, Set<BinaryResource>> getBinariesInTree(Integer baselineId,String workspaceId, ConfigurationItemKey ciKey, PSFilter psFilter, boolean exportNativeCADFiles, boolean exportDocumentLinks) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Map<String, Set<BinaryResource>> result = new HashMap<>();
@@ -2828,11 +2828,17 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     }
 
                     if (exportDocumentLinks) {
-                        Set<DocumentLink> linkedDocuments = partIteration.getLinkedDocuments();
-
-                        for (DocumentLink documentLink : linkedDocuments) {
-                            Set<BinaryResource> attachedFiles = documentLink.getTargetDocument().getLastIteration().getAttachedFiles();
-                            binaryResources.addAll(attachedFiles);
+                        if (baselineId == null) {
+                            Set<DocumentLink> linkedDocuments = partIteration.getLinkedDocuments();
+                            for (DocumentLink documentLink : linkedDocuments) {
+                                Set<BinaryResource> attachedFiles = documentLink.getTargetDocument().getLastIteration().getAttachedFiles();
+                                binaryResources.addAll(attachedFiles);
+                            }
+                        } else {
+                            ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(em);
+                            for (Map.Entry<BaselinedDocumentKey, BaselinedDocument> doc : productBaselineDAO.findBaselineById(baselineId).getBaselinedDocuments().entrySet()) {
+                                binaryResources.addAll(doc.getValue().getTargetDocument().getAttachedFiles());
+                            }
                         }
                     }
 
