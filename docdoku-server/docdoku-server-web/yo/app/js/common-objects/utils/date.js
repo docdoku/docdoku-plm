@@ -6,7 +6,7 @@ define([
     'use strict';
 
     console.log('Using timezone ' + App.config.timeZone + ' and locale ' + App.config.locale);
-
+    // calculating the offset so that it's not calculating again by momentjs
     moment.suppressDeprecationWarnings = true;
     moment.locale(App.config.locale);
 
@@ -19,7 +19,9 @@ define([
                 return '';
             }
             try {
-                return moment(timestamp).tz(App.config.timeZone).format(format);
+                // set the timezone to be the current one (problem with daylight saving time)
+                // and return the string with the format specified
+                return moment.utc(timestamp).zone(offset).format(format);
             } catch (error) {
                 console.error('Date.formatTimestamp(' + format + ', ' + timestamp + ')', error);
                 return timestamp;
@@ -27,6 +29,7 @@ define([
         },
 
         toUTCWithTimeZoneOffset: function (dateString) {
+            // get the right timestamp from the offset calculated previously
             var dateUTCWithOffset = moment.utc(dateString).toDate().getTime() + moffset;
             return moment(dateUTCWithOffset).utc().format('YYYY-MM-DDTHH:mm:ss');
         },
