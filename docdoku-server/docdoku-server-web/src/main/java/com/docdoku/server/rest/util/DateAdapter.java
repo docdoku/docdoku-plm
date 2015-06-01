@@ -17,7 +17,7 @@ public class DateAdapter extends XmlAdapter<String, Date> {
 
     public String marshal(Date date) throws Exception {
         if(date == null) {
-            return "";
+            return null;
         }
         SimpleDateFormat df =  new SimpleDateFormat(pattern);
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
