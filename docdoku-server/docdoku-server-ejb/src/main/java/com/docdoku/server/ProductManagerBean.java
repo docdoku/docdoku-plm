@@ -2876,6 +2876,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
+    public ProductBaseline loadProductBaselineForProductInstanceMaster(ConfigurationItemKey ciKey, String serialNumber) throws ProductInstanceMasterNotFoundException {
+        ProductBaseline res = new ProductBaselineDAO(em).findLastBaselineWithSerialNumber(ciKey, serialNumber);
+        return res;
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
     public Query loadQuery(String workspaceId, int queryId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         QueryDAO queryDAO = new QueryDAO(new Locale(user.getLanguage()), em);

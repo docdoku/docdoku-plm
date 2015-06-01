@@ -421,7 +421,10 @@ public class ProductResource {
         fileExportEntity.setExportDocumentLinks(exportDocumentLinks);
 
         if(configSpecType.startsWith("pi-")){
-            fileExportEntity.setSerialNumber(configSpecType.substring(3));
+            String serialNumber = configSpecType.substring(3);
+            fileExportEntity.setSerialNumber(serialNumber);
+            fileExportEntity.setBaselineId(productService.loadProductBaselineForProductInstanceMaster(ciKey, serialNumber).getId());
+
         }else if(!configSpecType.equals("wip") && !configSpecType.equals("latest") && !configSpecType.equals("released")){
             try {
                 fileExportEntity.setBaselineId(Integer.parseInt(configSpecType));
