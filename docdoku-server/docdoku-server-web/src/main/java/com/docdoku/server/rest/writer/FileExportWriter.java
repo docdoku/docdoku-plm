@@ -98,11 +98,10 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
 
             Map<String, Set<BinaryResource>> binariesInTree = productService.getBinariesInTree(fileExportEntity.getBaselineId(),fileExportEntity.getConfigurationItemKey().getWorkspace(),fileExportEntity.getConfigurationItemKey(),fileExportEntity.getPsFilter(),fileExportEntity.isExportNativeCADFile(),fileExportEntity.isExportDocumentLinks());
             Set<Map.Entry<String, Set<BinaryResource>>> entries = binariesInTree.entrySet();
-            List<BinaryResource> baselinedSources = new ArrayList<>();
             List<String> baselinedSourcesName = new ArrayList<>();
 
             if (fileExportEntity.isExportDocumentLinks() && fileExportEntity.getBaselineId()!= null){
-                baselinedSources = productService.getBinaryResourceFromBaseline(fileExportEntity.getBaselineId());
+                List<BinaryResource> baselinedSources = productService.getBinaryResourceFromBaseline(fileExportEntity.getBaselineId());
                 for (BinaryResource binary:baselinedSources){
                     baselinedSourcesName.add(binary.getName());
                 }
@@ -113,13 +112,16 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
             }
 
             for(Map.Entry<String, Set<BinaryResource>> entry:entries){
-                String folderName = entry.getKey();
+                String partNumberFolderName = entry.getKey();
+                String folderName;
                 Set<BinaryResource> files = entry.getValue();
                 for(BinaryResource binaryResource:files){
                     if (!baselinedSourcesName.contains(binaryResource.getName())){
                         try {
                             if(binaryResource.isNativeCADFile()){
-                                folderName = "CAD/"+folderName;
+                                folderName = partNumberFolderName + "/CAD";
+                            } else {
+                                folderName = partNumberFolderName;
                             }
                             addToZipFile(binaryResource, folderName,zs);
                         } catch (StorageException e) {
