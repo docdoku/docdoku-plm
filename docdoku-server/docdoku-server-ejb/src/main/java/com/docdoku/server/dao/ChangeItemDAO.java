@@ -29,6 +29,7 @@ import com.docdoku.core.exceptions.ChangeIssueNotFoundException;
 import com.docdoku.core.exceptions.ChangeOrderNotFoundException;
 import com.docdoku.core.exceptions.ChangeRequestNotFoundException;
 import com.docdoku.core.meta.Tag;
+import com.docdoku.core.product.PartRevisionKey;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -160,9 +161,35 @@ public class ChangeItemDAO {
                 .getResultList());
         return changeItems;
     }
+
+    public List<ChangeItem> findChangeItemByPart(PartRevisionKey partRevisionKey){
+        String workspaceId = partRevisionKey.getPartMaster().getWorkspace();
+        String id = partRevisionKey.getPartMasterNumber();
+        List<ChangeItem> changeItems = new ArrayList<>();
+        changeItems.addAll(em.createQuery("SELECT c FROM ChangeIssue c , PartIteration i WHERE i member of c.affectedParts AND i.partRevision.partMaster.workspace.id = :workspaceId AND i.partRevision.version = :version AND i.partRevision.partMasterNumber = :partMasterNumber", ChangeIssue.class)
+                .setParameter("workspaceId", workspaceId)
+                .setParameter("partMasterNumber", id)
+                .setParameter("version", partRevisionKey.getVersion())
+                .getResultList());
+        changeItems.addAll(em.createQuery("SELECT c FROM ChangeRequest c , PartIteration i WHERE i member of c.affectedParts AND i.partRevision.partMaster.workspace.id = :workspaceId AND i.partRevision.version = :version AND i.partRevision.partMasterNumber = :partMasterNumber", ChangeRequest.class)
+                .setParameter("workspaceId", workspaceId)
+                .setParameter("partMasterNumber", id)
+                .setParameter("version", partRevisionKey.getVersion())
+                .getResultList());
+        changeItems.addAll(em.createQuery("SELECT c FROM ChangeOrder c , PartIteration i WHERE i member of c.affectedParts AND i.partRevision.partMaster.workspace.id = :workspaceId AND i.partRevision.version = :version AND i.partRevision.partMasterNumber = :partMasterNumber", ChangeOrder.class)
+                .setParameter("workspaceId", workspaceId)
+                .setParameter("partMasterNumber", id)
+                .setParameter("version", partRevisionKey.getVersion())
+                .getResultList());
+        return changeItems;
+    }
     
     public boolean hasChangeItems(DocumentRevisionKey documentRevisionKey){
         return !findChangeItemByDoc(documentRevisionKey).isEmpty();
+    }
+
+    public boolean hasChangeItems(PartRevisionKey partRevisionKey){
+        return !findChangeItemByPart(partRevisionKey).isEmpty();
     }
 
 
