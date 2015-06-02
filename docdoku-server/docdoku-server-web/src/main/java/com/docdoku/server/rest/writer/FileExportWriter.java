@@ -96,7 +96,7 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
 
         try {
 
-            Map<String, Set<BinaryResource>> binariesInTree = productService.getBinariesInTree(fileExportEntity.getBaselineId(),fileExportEntity.getConfigurationItemKey().getWorkspace(),fileExportEntity.getConfigurationItemKey(),fileExportEntity.getPsFilter(),fileExportEntity.isExportNativeCADFile(),fileExportEntity.isExportDocumentLinks());
+            Map<String, Set<BinaryResource>> binariesInTree = productService.getBinariesInTree(fileExportEntity.getBaselineId(), fileExportEntity.getConfigurationItemKey().getWorkspace(), fileExportEntity.getConfigurationItemKey(), fileExportEntity.getPsFilter(), fileExportEntity.isExportNativeCADFile(), fileExportEntity.isExportDocumentLinks());
             Set<Map.Entry<String, Set<BinaryResource>>> entries = binariesInTree.entrySet();
             List<String> baselinedSourcesName = new ArrayList<>();
 
@@ -105,9 +105,8 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
                 for (BinaryResource binary:baselinedSources){
                     baselinedSourcesName.add(binary.getName());
                 }
-                String baselineName = productBaselineService.getBaseline(fileExportEntity.getBaselineId()).getName();
                 for (BinaryResource binaryResource:baselinedSources){
-                    addToZipFile(binaryResource, baselineName, zs);
+                    addToZipFile(binaryResource, "links", zs);
                 }
             }
 
@@ -119,7 +118,7 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
                     if (!baselinedSourcesName.contains(binaryResource.getName())){
                         try {
                             if(binaryResource.isNativeCADFile()){
-                                folderName = partNumberFolderName + "/CAD";
+                                folderName = partNumberFolderName + "/nativecad";
                             } else {
                                 folderName = partNumberFolderName;
                             }
@@ -132,7 +131,7 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
             }
 
 
-            if(fileExportEntity.getSerialNumber() != null){
+            if (fileExportEntity.getSerialNumber() != null) {
                 addProductInstanceDataToZip(zs,fileExportEntity.getConfigurationItemKey(),fileExportEntity.getSerialNumber());
             }
 
@@ -154,8 +153,6 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
             e.printStackTrace();
         } catch (StorageException e) {
             e.printStackTrace();
-        } catch (BaselineNotFoundException e) {
-            e.printStackTrace();
         }
 
         zs.close();
@@ -168,7 +165,7 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
         Set<BinaryResource> attachedFiles = lastIteration.getAttachedFiles();
 
         for(BinaryResource attachedFile : attachedFiles){
-            addToZipFile(attachedFile,productInstanceMaster.getSerialNumber(),zs);
+            addToZipFile(attachedFile, "attachedfiles", zs);
         }
     }
 

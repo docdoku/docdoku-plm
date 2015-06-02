@@ -2830,12 +2830,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 if (partIterations.size() != 0) {
 
                     PartIteration partIteration = partIterations.get(0);
-                    String partMasterNumber = partIteration.getPartNumber();
-                    Set<BinaryResource> binaryResources = result.get(partMasterNumber);
+                    String partFolderName = partIteration.toString();
+                    Set<BinaryResource> binaryResources = result.get(partFolderName);
 
                     if (binaryResources == null) {
                         binaryResources = new HashSet<>();
-                        result.put(partMasterNumber, binaryResources);
+                        result.put(partFolderName, binaryResources);
                     }
 
                     if (exportNativeCADFiles) {
@@ -2849,13 +2849,20 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
                     if (exportDocumentLinks) {
                         if (baselineId == null) {
+                            Set<BinaryResource> linkedBinaryResources = result.get("links");
+                            if (linkedBinaryResources == null) {
+                                linkedBinaryResources = new HashSet<>();
+                                result.put("links", linkedBinaryResources);
+                            }
+
                             Set<DocumentLink> linkedDocuments = partIteration.getLinkedDocuments();
+
                             for (DocumentLink documentLink : linkedDocuments) {
                                 Set<BinaryResource> attachedFiles = documentLink.getTargetDocument().getLastIteration().getAttachedFiles();
 
-                                for (BinaryResource binary:attachedFiles){
-                                    if (!binaryResources.contains(binary)){
-                                        binaryResources.add(binary);
+                                for (BinaryResource binary:attachedFiles) {
+                                    if (!linkedBinaryResources.contains(binary)) {
+                                        linkedBinaryResources.add(binary);
                                     }
                                 }
                             }
