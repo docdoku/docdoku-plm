@@ -38,7 +38,7 @@ define([
             var data = {
                 title: this.$inputMilestoneTitle.val(),
                 description: this.$inputMilestoneDescription.val(),
-                dueDate: date.formatLocalTime('YYYY-MM-DDTHH:mm:ss',this.$inputMilestoneDueDate.val())
+                dueDate: date.toUTCWithTimeZoneOffset(this.$inputMilestoneDueDate.val())
             };
 
             this.model.save(data, {
