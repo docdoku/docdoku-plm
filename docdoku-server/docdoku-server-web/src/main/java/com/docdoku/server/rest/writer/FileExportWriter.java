@@ -110,26 +110,29 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
                 }
             }
 
-            for(Map.Entry<String, Set<BinaryResource>> entry:entries){
+            for (Map.Entry<String, Set<BinaryResource>> entry:entries) {
                 String partNumberFolderName = entry.getKey();
                 String folderName;
                 Set<BinaryResource> files = entry.getValue();
-                for(BinaryResource binaryResource:files){
+
+                for(BinaryResource binaryResource : files) {
                     if (!baselinedSourcesName.contains(binaryResource.getName())){
                         try {
-                            if(binaryResource.isNativeCADFile()){
+                            if (binaryResource.isNativeCADFile()) {
                                 folderName = partNumberFolderName + "/nativecad";
+                            } else if (binaryResource.isAttachedFile()) {
+                                folderName = partNumberFolderName + "/attachedfiles";
                             } else {
                                 folderName = partNumberFolderName;
                             }
-                            addToZipFile(binaryResource, folderName,zs);
+                            addToZipFile(binaryResource, folderName, zs);
+
                         } catch (StorageException e) {
                             e.printStackTrace();
                         }
                     }
                 }
             }
-
 
             if (fileExportEntity.getSerialNumber() != null) {
                 addProductInstanceDataToZip(zs,fileExportEntity.getConfigurationItemKey(),fileExportEntity.getSerialNumber());

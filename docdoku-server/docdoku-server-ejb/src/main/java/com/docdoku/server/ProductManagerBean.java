@@ -2840,10 +2840,16 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
                     if (exportNativeCADFiles) {
                         BinaryResource nativeCADFile = partIteration.getNativeCADFile();
-
                         if (nativeCADFile != null) {
                             binaryResources.add(nativeCADFile);
+                        }
 
+                        if (exportDocumentLinks) {
+                            for (BinaryResource attachedFile : partIteration.getAttachedFiles()) {
+                                if (attachedFile != null) {
+                                    binaryResources.add(attachedFile);
+                                }
+                            }
                         }
                     }
 
