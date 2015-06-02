@@ -21,6 +21,7 @@ package com.docdoku.server.rest.writer;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.configuration.*;
+import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.services.IDataManagerLocal;
@@ -165,10 +166,15 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
     private void addProductInstanceDataToZip(ZipOutputStream zs, ConfigurationItemKey configurationItemKey, String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductInstanceMasterNotFoundException, IOException, StorageException {
         ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, configurationItemKey));
         ProductInstanceIteration lastIteration = productInstanceMaster.getLastIteration();
-        Set<BinaryResource> attachedFiles = lastIteration.getAttachedFiles();
 
-        for(BinaryResource attachedFile : attachedFiles){
+        for (BinaryResource attachedFile : lastIteration.getAttachedFiles()) {
             addToZipFile(attachedFile, "attachedfiles", zs);
+        }
+
+        for (DocumentLink docLink : lastIteration.getLinkedDocuments()) {
+            for (BinaryResource linkedFile : docLink.getTargetDocument().getLastIteration().getAttachedFiles()) {
+                addToZipFile(linkedFile, "links/" + docLink.getTargetDocument().getLastIteration().toString(), zs);
+            }
         }
     }
 
