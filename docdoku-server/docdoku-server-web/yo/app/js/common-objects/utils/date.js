@@ -28,6 +28,18 @@ define([
             }
         },
 
+        formatLocalTime: function(format, timestamp) {
+            if(!timestamp) {
+                return '';
+            }
+            try {
+                return moment(timestamp).format(format);
+            } catch(error) {
+                console.error('Date.formatTimestamp(' + format + ', ' + timestamp + ')', error);
+                return timestamp;
+            }
+        },
+
         toUTCWithTimeZoneOffset: function (dateString) {
             // get the right timestamp from the offset calculated previously
             var dateUTCWithOffset = moment.utc(dateString).toDate().getTime() + moffset;
