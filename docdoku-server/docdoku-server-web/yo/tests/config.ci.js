@@ -95,6 +95,7 @@ module.exports = {
         "js/document-management/lov/lovCreation.js",
 
         "js/common/attributes.js",
+        "js/common/attribute-template.js",
 
         // Deletions
         "js/document-management/tag/tagDeletion.js",
