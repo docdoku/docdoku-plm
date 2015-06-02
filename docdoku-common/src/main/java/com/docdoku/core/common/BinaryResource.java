@@ -101,10 +101,20 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
         return split[2];
     }
 
+    public static String parseVersion(String pFullName){
+        String ref = BinaryResource.parseOwnerRef(pFullName);
+        String[] split = ref.split("/");
+        return split[1];
+    }
+
     public static String parseId(String pFullName){
         String ref = BinaryResource.parseOwnerRef(pFullName);
         String[] split = ref.split("/");
         return split[0];
+    }
+
+    public static String getFolderName(String pFullName) {
+        return parseId(pFullName) + "-" + parseVersion(pFullName) + "-" + parseIteration(pFullName);
     }
 
     public String getNewFullName(String newName){
@@ -136,7 +146,7 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
         }
         
         int lastS = fullName.lastIndexOf('/');
-        String name = fullName.substring(lastS+1);
+        String name = fullName.substring(lastS + 1);
 
         if (isNativeCADFile()) {
             String[] parts = fullName.split("/");

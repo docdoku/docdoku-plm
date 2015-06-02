@@ -105,8 +105,8 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
                 for (BinaryResource binary:baselinedSources){
                     baselinedSourcesName.add(binary.getName());
                 }
-                for (BinaryResource binaryResource:baselinedSources){
-                    addToZipFile(binaryResource, "links", zs);
+                for (BinaryResource binaryResource : baselinedSources) {
+                    addToZipFile(binaryResource, "links/" + BinaryResource.getFolderName(binaryResource.getFullName()), zs);
                 }
             }
 

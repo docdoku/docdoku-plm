@@ -2849,15 +2849,16 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
                     if (exportDocumentLinks) {
                         if (baselineId == null) {
-                            Set<BinaryResource> linkedBinaryResources = result.get("links");
-                            if (linkedBinaryResources == null) {
-                                linkedBinaryResources = new HashSet<>();
-                                result.put("links", linkedBinaryResources);
-                            }
-
                             Set<DocumentLink> linkedDocuments = partIteration.getLinkedDocuments();
 
                             for (DocumentLink documentLink : linkedDocuments) {
+                                String linkedDocumentFolderName = "links/" + documentLink.getTargetDocument().getLastIteration().toString();
+                                Set<BinaryResource> linkedBinaryResources = result.get(linkedDocumentFolderName);
+                                if (linkedBinaryResources == null) {
+                                    linkedBinaryResources = new HashSet<>();
+                                    result.put(linkedDocumentFolderName, linkedBinaryResources);
+                                }
+
                                 Set<BinaryResource> attachedFiles = documentLink.getTargetDocument().getLastIteration().getAttachedFiles();
 
                                 for (BinaryResource binary:attachedFiles) {
