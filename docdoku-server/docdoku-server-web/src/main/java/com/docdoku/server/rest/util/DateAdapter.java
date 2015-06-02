@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 public class DateAdapter extends XmlAdapter<String, Date> {
 
     // the desired format
-    private static String pattern = "yyyy-MM-dd'T'hh:mm:ss";
+    private static String pattern = "yyyy-MM-dd'T'HH:mm:ss";
 
     public String marshal(Date date) throws Exception {
         if(date == null) {
@@ -26,6 +26,8 @@ public class DateAdapter extends XmlAdapter<String, Date> {
 
     public Date unmarshal(String dateString) throws Exception {
         //TODO: check if we have to specify UTC
-        return new SimpleDateFormat(pattern).parse(dateString);
+        SimpleDateFormat df =  new SimpleDateFormat(pattern);
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return df.parse(dateString);
     }
 }
