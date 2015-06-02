@@ -27,7 +27,7 @@ define([
         modelToJSON: function () {
             var data = this.model.toJSON();
             if (!_.isEmpty(data.value)) {
-                data.value = date.formatTimestamp(
+                data.value = date.formatLocalTime(
                     App.config.i18n._DATE_PICKER_DATE_FORMAT,
                     new Date(data.value)
                 );
@@ -39,7 +39,7 @@ define([
          * format date from html5 input to timestamp string
          */
         getValue: function (el) {
-            return date.toUTCWithTimeZoneOffset(el.val());
+            return date.formatLocalTime('YYYY-MM-DDTHH:mm:ss',el.val());
         },
 
         /**
