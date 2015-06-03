@@ -57,8 +57,8 @@ casper.test.begin('Milestone creation tests suite',4, function milestoneCreation
      */
     casper.then(function waitForMilestoneCreationModal(){
         this.waitForSelector('#milestone_creation_modal .modal-footer .btn-primary',function createMilestoneWithoutDate(){
-            this.click('#milestone_creation_modal .modal-footer .btn-primary');
             this.sendKeys('#milestone_creation_modal input#inputMilestoneTitle',changeItems.milestone1.title,{reset:true});
+            this.click('#milestone_creation_modal .modal-footer .btn-primary');
             this.test.assertExists('#milestone_creation_modal #inputMilestoneDueDate:invalid', 'Should not create a milestone without a date');
         },function fail() {
             this.capture('screenshot/milestoneCreation/waitForMilestoneCreationModal-error.png');
