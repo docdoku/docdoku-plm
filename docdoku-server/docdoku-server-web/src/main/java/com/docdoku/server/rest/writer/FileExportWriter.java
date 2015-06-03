@@ -101,13 +101,13 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
             Set<Map.Entry<String, Set<BinaryResource>>> entries = binariesInTree.entrySet();
             List<String> baselinedSourcesName = new ArrayList<>();
 
-            if (fileExportEntity.isExportDocumentLinks() && fileExportEntity.getBaselineId()!= null){
+            if (fileExportEntity.isExportDocumentLinks() && fileExportEntity.getBaselineId() !=  null) {
                 List<BinaryResource> baselinedSources = productService.getBinaryResourceFromBaseline(fileExportEntity.getBaselineId());
-                for (BinaryResource binary:baselinedSources){
-                    baselinedSourcesName.add(binary.getName());
-                }
+
                 for (BinaryResource binaryResource : baselinedSources) {
-                    addToZipFile(binaryResource, "links/" + BinaryResource.getFolderName(binaryResource.getFullName()), zs);
+                    String folderName = BinaryResource.getFolderName(binaryResource.getFullName());
+                    baselinedSourcesName.add(folderName);
+                    addToZipFile(binaryResource, "links/" + folderName, zs);
                 }
             }
 
@@ -116,27 +116,25 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
                 String folderName;
                 Set<BinaryResource> files = entry.getValue();
 
-                for(BinaryResource binaryResource : files) {
-                    if (!baselinedSourcesName.contains(binaryResource.getName())){
-                        try {
-                            if (binaryResource.isNativeCADFile()) {
-                                folderName = partNumberFolderName + "/nativecad";
-                            } else if (binaryResource.isAttachedFile()) {
-                                folderName = partNumberFolderName + "/attachedfiles";
-                            } else {
-                                folderName = partNumberFolderName;
-                            }
-                            addToZipFile(binaryResource, folderName, zs);
-
-                        } catch (StorageException e) {
-                            e.printStackTrace();
+                for (BinaryResource binaryResource : files) {
+                    try {
+                        if (binaryResource.isNativeCADFile()) {
+                            folderName = partNumberFolderName + "/nativecad";
+                        } else if (binaryResource.isAttachedFile()) {
+                            folderName = partNumberFolderName + "/attachedfiles";
+                        } else {
+                            folderName = partNumberFolderName;
                         }
+                        addToZipFile(binaryResource, folderName, zs);
+
+                    } catch (StorageException e) {
+                        e.printStackTrace();
                     }
                 }
             }
 
             if (fileExportEntity.getSerialNumber() != null) {
-                addProductInstanceDataToZip(zs,fileExportEntity.getConfigurationItemKey(),fileExportEntity.getSerialNumber());
+                addProductInstanceDataToZip(zs, fileExportEntity.getConfigurationItemKey(), fileExportEntity.getSerialNumber(), baselinedSourcesName);
             }
 
         } catch (UserNotFoundException e) {
@@ -163,7 +161,7 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
 
     }
 
-    private void addProductInstanceDataToZip(ZipOutputStream zs, ConfigurationItemKey configurationItemKey, String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductInstanceMasterNotFoundException, IOException, StorageException {
+    private void addProductInstanceDataToZip(ZipOutputStream zs, ConfigurationItemKey configurationItemKey, String serialNumber, List<String> baselinedSourcesName) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductInstanceMasterNotFoundException, IOException, StorageException {
         ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, configurationItemKey));
         ProductInstanceIteration lastIteration = productInstanceMaster.getLastIteration();
 
@@ -173,7 +171,11 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
 
         for (DocumentLink docLink : lastIteration.getLinkedDocuments()) {
             for (BinaryResource linkedFile : docLink.getTargetDocument().getLastIteration().getAttachedFiles()) {
-                addToZipFile(linkedFile, "links/" + docLink.getTargetDocument().getLastIteration().toString(), zs);
+                String folderName = docLink.getTargetDocument().getLastIteration().toString();
+
+                if (!baselinedSourcesName.contains(folderName)) {
+                    addToZipFile(linkedFile, "links/" + folderName, zs);
+                }
             }
         }
     }
