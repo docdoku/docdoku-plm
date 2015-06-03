@@ -22,7 +22,7 @@ casper.setFilter('page.confirm', function(msg) {
 casper.on('remote.alert', function(msg) {
     'use strict';
     this.log('Alert box: '+msg,'warning');
-    this.capture('screenshot/alert/'+Date.now());
+    this.capture('screenshot/alert/'+Date.now()+'.png');
     return true;
 });
 
