@@ -58,6 +58,7 @@
                     <li><a href="#tab-part-iteration" data-toggle="tab">#{i18nPart['tabs.iteration']}</a></li>
                     <li><a href="#tab-part-attributes" data-toggle="tab">#{i18nPart['tabs.attributes']}</a></li>
                     <li><a href="#tab-part-native-cad-file" data-toggle="tab">#{i18nPart['tabs.nativeCADFile']}</a></li>
+                    <li><a href="#tab-part-files" data-toggle="tab">#{i18nPart['tabs.files']}</a></li>
                     <li><a href="#tab-part-links" data-toggle="tab">#{i18nPart['tabs.links']}</a></li>
                     <li><a href="#tab-part-assembly" data-toggle="tab">#{i18nPart['tabs.assembly']}</a></li>
                 </ul>
@@ -244,6 +245,13 @@
                             </script>
 
                         </c:if>
+
+                    </div>
+
+                    <div id="tab-part-files" class="tab-pane">
+
+                        <h:panelGroup layout="block" id="files" styleClass="accordion"></h:panelGroup>
+                        <f:event type="preRenderView" listener="#{viewerBean.process}" />
 
                     </div>
 

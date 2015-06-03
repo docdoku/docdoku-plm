@@ -21,7 +21,7 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.IDocumentViewerManagerLocal;
+import com.docdoku.core.services.IFileViewerManagerLocal;
 import com.docdoku.server.viewers.DocumentViewer;
 import com.docdoku.server.viewers.ViewerUtils;
 import com.github.mustachejava.DefaultMustacheFactory;
@@ -40,7 +40,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Stateless(name="DocumentViewerBean")
-public class DocumentViewerBean implements IDocumentViewerManagerLocal {
+public class DocumentViewerBean implements IFileViewerManagerLocal {
 
     @EJB
     private IDataManagerLocal dataManager;

@@ -22,7 +22,8 @@ package com.docdoku.server.jsf.actions;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.services.IDocumentViewerManagerLocal;
+import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.services.IFileViewerManagerLocal;
 import com.docdoku.core.sharing.SharedEntity;
 
 import javax.ejb.EJB;
@@ -42,7 +43,7 @@ import java.util.Set;
 public class ViewerBean {
 
     @EJB
-    private IDocumentViewerManagerLocal documentViewerService;
+    private IFileViewerManagerLocal fileViewerService;
 
     public void process() {
 
@@ -57,26 +58,35 @@ public class ViewerBean {
             uuid = sharedEntity.getUuid();
         }
 
-        UIComponent filesContainer = currentInstance.getViewRoot().findComponent("files");
+        Set<BinaryResource> attachedFiles = null;
 
-        List<UIComponent> components = new ArrayList<UIComponent>();
-        Set<BinaryResource> attachedFiles = ((DocumentRevision)request.getAttribute("documentRevision")).getLastIteration().getAttachedFiles();
-        for (BinaryResource attachedFile : attachedFiles) {
-            String template = documentViewerService.getHtmlForViewer(attachedFile,uuid);
-
-            if (template != null && !template.isEmpty()) {
-                HtmlPanelGroup fileDiv = new HtmlPanelGroup();
-                fileDiv.setLayout("block");
-                fileDiv.setStyleClass("attached-file accordion-group");
-                UIOutput output = new UIOutput();
-                output.setValue(template);
-                fileDiv.getChildren().add(output);
-                components.add(fileDiv);
-            }
-
+        if (request.getAttribute("documentRevision") != null) {
+            attachedFiles = ((DocumentRevision)request.getAttribute("documentRevision")).getLastIteration().getAttachedFiles();
+        } else if (request.getAttribute("partRevision") != null) {
+            attachedFiles = ((PartRevision)request.getAttribute("partRevision")).getLastIteration().getAttachedFiles();
         }
 
-        filesContainer.getChildren().addAll(components);
+        if (attachedFiles != null) {
+            UIComponent filesContainer = currentInstance.getViewRoot().findComponent("files");
+            List<UIComponent> components = new ArrayList<UIComponent>();
+
+            for (BinaryResource attachedFile : attachedFiles) {
+                String template = fileViewerService.getHtmlForViewer(attachedFile,uuid);
+
+                if (template != null && !template.isEmpty()) {
+                    HtmlPanelGroup fileDiv = new HtmlPanelGroup();
+                    fileDiv.setLayout("block");
+                    fileDiv.setStyleClass("attached-file accordion-group");
+                    UIOutput output = new UIOutput();
+                    output.setValue(template);
+                    fileDiv.getChildren().add(output);
+                    components.add(fileDiv);
+                }
+
+            }
+
+            filesContainer.getChildren().addAll(components);
+        }
     }
 
 
