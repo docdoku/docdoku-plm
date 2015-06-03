@@ -4,7 +4,7 @@ define([
     'mustache',
     'common-objects/collections/part_collection',
     'common-objects/collections/path_data_product_instance_iterations',
-    'common-objects/collections/product_instance_iterations',
+    'common-objects/collections/product_instances',
     'collections/used_by_document',
     'views/used_by/used_by_list_item_view',
     'common-objects/views/part/used_by_list_item_view',
