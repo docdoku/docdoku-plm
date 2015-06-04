@@ -1,6 +1,6 @@
 /*global casper,urls,documents*/
 
-casper.test.begin('LOV deletion tests suite', 2, function documentLOVDeletionTestsSuite() {
+casper.test.begin('LOV deletion tests suite', 3, function documentLOVDeletionTestsSuite() {
 
     'use strict';
 
@@ -51,7 +51,7 @@ casper.test.begin('LOV deletion tests suite', 2, function documentLOVDeletionTes
         this.click('.deleteLovItem');
         this.click('.btn-saveLovs');
         this.waitWhileSelector('.modal', function() {
-            this.echo('modal closed');
+            this.test.assert(true,'modal closed');
         });
     });
 
