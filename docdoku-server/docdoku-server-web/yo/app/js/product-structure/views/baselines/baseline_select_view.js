@@ -121,6 +121,10 @@ define([
             return this.$selectConfSpec.val() === 'serial-number';
         },
 
+        isBaselineSelected:function(){
+            return this.$selectConfSpec.val() === 'baseline';
+        },
+
         changeLatest:function(){
             this.$selectBaselineSpec.hide();
             this.$selectProdInstSpec.hide();

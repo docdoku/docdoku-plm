@@ -26,11 +26,13 @@ import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartLink;
+import com.docdoku.core.product.PathToPathLink;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.PartMinimalDTO;
 import com.docdoku.server.rest.dto.PartMinimalListDTO;
+import com.docdoku.server.rest.dto.PathToPathLinkDTO;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -98,7 +100,7 @@ public class ProductBaselinesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ProductBaselineDTO createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, ProductBaselineDTO productBaselineDTO)
-            throws UserNotActiveException, EntityNotFoundException, NotAllowedException, AccessRightException, PartRevisionNotReleasedException, EntityConstraintException, CreationException {
+            throws UserNotActiveException, EntityNotFoundException, NotAllowedException, AccessRightException, PartRevisionNotReleasedException, EntityConstraintException, CreationException, PathToPathLinkAlreadyExistsException {
 
         String ciId = (pCiId != null) ? pCiId : productBaselineDTO.getConfigurationItemId();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
@@ -181,5 +183,31 @@ public class ProductBaselinesResource {
             baselinedPartDTOList.add(Tools.mapBaselinedPartToBaselinedPartDTO(baselinedPart));
         }
         return baselinedPartDTOList;
+    }
+
+    @GET
+    @Path("{baselineId}/path-to-path-links-types")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PathToPathLinkDTO> getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("baselineId") int baselineId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException {
+        List<String> pathToPathLinkTypes = productBaselineService.getPathToPathLinkTypes(workspaceId, configurationItemId, baselineId);
+        List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
+        for(String type : pathToPathLinkTypes){
+            PathToPathLinkDTO pathToPathLinkDTO = new PathToPathLinkDTO();
+            pathToPathLinkDTO.setType(type);
+            pathToPathLinkDTOs.add(pathToPathLinkDTO);
+        }
+        return pathToPathLinkDTOs;
+    }
+
+    @GET
+    @Path("{baselineId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PathToPathLinkDTO> getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("baselineId") int baselineId, @PathParam("sourcePath") String sourcePath, @PathParam("targetPath") String targetPath) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException {
+        List<PathToPathLink> pathToPathLinks = productBaselineService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, baselineId, sourcePath, targetPath);
+        List<PathToPathLinkDTO> dtos = new ArrayList<>();
+        for(PathToPathLink pathToPathLink : pathToPathLinks) {
+            dtos.add(mapper.map(pathToPathLink, PathToPathLinkDTO.class));
+        }
+        return dtos;
     }
 }

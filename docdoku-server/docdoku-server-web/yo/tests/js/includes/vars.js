@@ -151,6 +151,10 @@ var roles = {
     }
 };
 
+var p2pLinks = {
+    type:'FOO'
+};
+
 var workflows = {
     role1 : 'CasperJsRole1',
     role2 : 'CasperJsRole2',

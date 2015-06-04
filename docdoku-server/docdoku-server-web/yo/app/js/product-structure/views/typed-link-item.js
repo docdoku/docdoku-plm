@@ -19,7 +19,7 @@ define([
 
         initialize: function(){
             this.model = this.options.model;
-            this.isEditMode = this.model.isEditMode;
+            this.isCreationMode = this.model.isCreationMode;
             if(!this.model.pathToPath){
                 this.model.pathToPath = {
                     source: this.model.sourceModel.getEncodedPath(),
@@ -32,7 +32,8 @@ define([
 
             var data = {
                 i18n: App.config.i18n,
-                isEditMode : this.model.isEditMode,
+                isCreationMode : this.model.isCreationMode,
+                canSuppress : ['wip','latest','latest-released'].indexOf(App.config.configSpec)!==-1,
                 source : this.model.sourceModel,
                 target : this.model.targetModel,
                 availableType: this.model.availableType,
@@ -59,7 +60,7 @@ define([
         },
 
         onDeleteItem : function(){
-            if(this.model.isEditMode){
+            if(this.model.isCreationMode){
                 this.remove();
             }else{
                 var self = this;
@@ -104,7 +105,7 @@ define([
                 data : JSON.stringify(data),
                 success:function(pathToPathLink){
                     self.model.pathToPath.id = pathToPathLink.id;
-                    self.model.isEditMode = false;
+                    self.model.isCreationMode = false;
                     self.render();
                 },
                 error: function(errorMessage){

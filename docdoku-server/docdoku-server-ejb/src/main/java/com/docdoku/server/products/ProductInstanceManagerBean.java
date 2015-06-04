@@ -23,10 +23,15 @@ package com.docdoku.server.products;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.*;
-import com.docdoku.core.document.*;
+import com.docdoku.core.document.DocumentLink;
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.product.*;
+import com.docdoku.core.product.ConfigurationItem;
+import com.docdoku.core.product.ConfigurationItemKey;
+import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.PathToPathLink;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDataManagerLocal;
@@ -34,9 +39,7 @@ import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.util.NamingConvention;
-import com.docdoku.core.util.Tools;
 import com.docdoku.server.LogDocument;
-import com.docdoku.server.configuration.PSFilterVisitor;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.factory.ACLFactory;
 
@@ -345,61 +348,13 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
     }
 
     private void copyPathToPathLinks(User user, ProductInstanceIteration productInstanceIteration) throws PathToPathLinkAlreadyExistsException, CreationException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
-
-        ConfigurationItem configurationItem = productInstanceIteration.getBasedOn().getConfigurationItem();
-        PartLink rootPartUsageLink = productManager.getRootPartUsageLink(configurationItem.getKey());
-        PSFilter filter = productManager.getPSFilter(configurationItem.getKey(), "pi-" + productInstanceIteration.getSerialNumber());
-
-        List<PartLink> startPath = new ArrayList<>();
-        startPath.add(rootPartUsageLink);
-
-        List<String> visitedPaths = new ArrayList<>();
-
-        // Reset the list
-        productInstanceIteration.setPathToPathLinks(new ArrayList<>());
-
-        new PSFilterVisitor(em, user, filter, null, startPath, -1) {
-            @Override
-            public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations)  throws NotAllowedException{
-            }
-            @Override
-            public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
-            }
-
-            @Override
-            public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
-
-            }
-
-            @Override
-            public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
-            }
-
-            @Override
-            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
-
-            }
-
-            @Override
-            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
-                String encodedPath = Tools.getPathAsString(path);
-                visitedPaths.add(encodedPath);
-            }
-
-            @Override
-            public void onUnresolvedVersion(PartMaster partMaster) {
-
-            }
-        };
-
         PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(new Locale(user.getLanguage()), em);
-        List<PathToPathLink> links = pathToPathLinkDAO.getPathToPathLinkFromPathList(configurationItem,visitedPaths);
+        List<PathToPathLink> links = productInstanceIteration.getBasedOn().getPathToPathLinks();
         for(PathToPathLink link : links){
             PathToPathLink clone = link.clone();
             pathToPathLinkDAO.createPathToPathLink(clone);
             productInstanceIteration.addPathToPathLink(clone);
         }
-
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

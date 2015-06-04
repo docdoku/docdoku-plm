@@ -1,21 +1,22 @@
 <div class="error-div"></div>
 <div class="typed-link-content">
+    {{#canSuppress}}
     <button type="button" class="close delete-item">×</button>
+    {{/canSuppress}}
     <div class="link-source"><strong>{{i18n.PATH_TO_PATH_SOURCE}}</strong> : {{source.getName}} < {{source.getNumber}} > ({{source.getPartUsageLinkReferenceDescription}})</div>
 
-    {{#isEditMode}}
+    {{#isCreationMode}}
     <i class="fa fa-exchange invert-source-target" title="{{i18n.INVERT}}"></i>
-    {{/isEditMode}}
+    {{/isCreationMode}}
     <div class="link-target"><strong>{{i18n.PATH_TO_PATH_TARGET}}</strong> : {{target.getName}} < {{target.getNumber}} > ({{target.getPartUsageLinkReferenceDescription}})</div>
 
 
     <div class="link-type-block">
-        {{^isEditMode}}
+        {{^isCreationMode}}
         <strong>{{i18n.TYPE}}</strong> : {{type}}
-        {{/isEditMode}}
+        {{/isCreationMode}}
 
-        {{#isEditMode}}
-
+        {{#isCreationMode}}
         <strong>{{i18n.TYPE}}</strong> :
         <select class="type-select input-medium">
             <option value=""></option>
@@ -25,14 +26,14 @@
         </select>
         {{i18n.OR}}
         <input class="add-type-input input-medium" type="text" placeholder="{{i18n.NEW_LINK_TYPE}}">
-        {{/isEditMode}}
+        {{/isCreationMode}}
     </div>
 
     <div class="description-block">
-        <textarea class="path-to-path-description" placeholder="{{i18n.DESCRIPTION}}" {{^isEditMode}}disabled{{/isEditMode}}>{{description}}</textarea>
-        {{#isEditMode}}
+        <textarea class="path-to-path-description" placeholder="{{i18n.DESCRIPTION}}" {{^isCreationMode}}disabled{{/isCreationMode}}>{{description}}</textarea>
+        {{#isCreationMode}}
         <button class="btn btn-primary save-button">{{i18n.SAVE}}</button>
-        {{/isEditMode}}
+        {{/isCreationMode}}
     </div>
 </div>
 

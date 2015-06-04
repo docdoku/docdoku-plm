@@ -53,6 +53,7 @@ module.exports = {
 
         // Product and baseline creation
         "js/product-management/product/productCreation.js",
+        "js/product-management/pathToPathLink/pathToPathLinkCreation.js",
         "js/product-management/baseline/baselineCreation.js",
         "js/product-management/product-instance/productInstanceCreation.js",
         "js/product-management/template/partTemplateCreation.js",
