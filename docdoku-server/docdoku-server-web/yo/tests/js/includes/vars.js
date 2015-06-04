@@ -130,7 +130,9 @@ var products = {
 
 var productInstances = {
     productInstance1 : {
-        serialNumber:'CasperJsTestSerialNumber'
+        serialNumber:'CasperJsTestSerialNumber',
+        iterationNote: 'First Iteration Casper',
+        pathDataValue: 'CasperJsTestData'
     }
 };
 
@@ -194,6 +196,7 @@ var workflows = {
 var urls = {
 	productManagement : homeUrl+'product-management/#'+workspace,
     productStructure : homeUrl+'product-structure/#'+workspace+'/' + products.product1.number + '/config-spec/wip/bom',
+    productStructureForDeliverable : homeUrl+'product-structure/#'+workspace+'/' + products.product1.number + '/config-spec/pi-'+productInstances.productInstance1.serialNumber+'/bom',
 	documentManagement : homeUrl+'document-management/#'+workspace,
 	changeManagement : homeUrl+'change-management/#'+workspace,
     documentPermalink:homeUrl+'documents/'+workspace+'/'+documents.document1.number+'/A',
