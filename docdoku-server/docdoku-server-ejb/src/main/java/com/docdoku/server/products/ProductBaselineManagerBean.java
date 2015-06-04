@@ -142,7 +142,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
         baseline.getOptionalUsageLinks().addAll(filter.getRetainedOptionalUsageLinks());
 
         new ProductBaselineDAO(locale, em).createBaseline(baseline);
-        em.flush();
+
         copyPathToPathLinks(user, baseline);
 
         return baseline;

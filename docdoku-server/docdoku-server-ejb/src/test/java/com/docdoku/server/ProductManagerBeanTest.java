@@ -23,7 +23,6 @@ package com.docdoku.server;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.*;
@@ -32,14 +31,16 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.products.ProductBaselineManagerBean;
+import com.docdoku.server.util.CyclicAssemblyRule;
+import com.docdoku.server.util.FastTestCategory;
 import com.docdoku.server.util.ProductUtil;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
+import org.mockito.*;
 
 import javax.ejb.SessionContext;
 import javax.persistence.EntityManager;
@@ -65,7 +66,11 @@ public class ProductManagerBeanTest {
     TypedQuery<Tag> tagsQuery;
     @Mock
     ProductBaselineManagerBean productBaselineManager;
+    @Rule
+    public CyclicAssemblyRule cyclicAssemblyRule;
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private Account account;
     private Workspace workspace ;
@@ -272,5 +277,20 @@ public class ProductManagerBeanTest {
         PartRevision partRevisionResult = productManagerBean.saveTags(partRevisionKey,tags);
     }
 
+
+    @Category(FastTestCategory.class)
+    @Test
+    public void checkCyclicDetection() throws EntityConstraintException, PartMasterNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, NotAllowedException {
+
+        cyclicAssemblyRule = new CyclicAssemblyRule("user1");
+        Mockito.when(em.find(PartMaster.class, cyclicAssemblyRule.getP1().getKey())).thenReturn(cyclicAssemblyRule.getP1());
+        Mockito.when(em.find(PartMaster.class, cyclicAssemblyRule.getP2().getKey())).thenReturn(cyclicAssemblyRule.getP2());
+        Mockito.when(userManager.checkWorkspaceReadAccess(Matchers.anyString())).thenReturn(cyclicAssemblyRule.getUser());
+
+        thrown.expect(EntityConstraintException.class);
+
+        productManagerBean.checkCyclicAssemblyForPartIteration(cyclicAssemblyRule.getP1().getLastRevision().getLastIteration());
+
+    }
 
 }
