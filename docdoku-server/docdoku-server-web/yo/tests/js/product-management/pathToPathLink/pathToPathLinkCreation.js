@@ -1,6 +1,6 @@
 /*global casper,urls,products,homeUrl,workspace*/
 
-casper.test.begin(' creation tests suite', 8, function pathToPathLinkCreationTestsSuite(){
+casper.test.begin('Path to path link creation tests suite', 8, function pathToPathLinkCreationTestsSuite(){
 
     'use strict';
 
