@@ -101,7 +101,6 @@ casper.test.begin('Part creation tests suite', 6, function partCreationTestsSuit
      * Wait for the part to be created, will appears in the list
      */
     casper.then(function waitForPartToBeCreated(){
-        this.capture('screenshot/newPartNotFound.png');
         this.waitForSelector('#part_table .part_number span',function partHasBeenCreated(){
             this.test.assertSelectorHasText('#part_table tbody tr:first-child td.part_number span',products.part1.number);
             this.test.assertSelectorHasText('#part_table tbody tr:first-child td:nth-child(8)',products.part1.name);
