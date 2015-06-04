@@ -1,6 +1,6 @@
 /*global casper,urls,products*/
 
-casper.test.begin('Part creation tests suite', 4, function partCreationTestsSuite(){
+casper.test.begin('Part creation tests suite', 6, function partCreationTestsSuite(){
     'use strict';
 
     casper.open('');
@@ -57,12 +57,43 @@ casper.test.begin('Part creation tests suite', 4, function partCreationTestsSuit
 
     casper.then(function fillNewPartModalForm(){
         this.waitForSelector('#part_creation_modal input#inputPartNumber',function onNewPartFormReady(){
+            this.test.assertElementCount('#inputPartTemplate option',3,'template options are present');
+            this.evaluate(function() {
+                document.querySelector('#inputPartTemplate').selectedIndex = 2;
+                $('#inputPartTemplate').change();
+                return true;
+            });
             this.sendKeys('#part_creation_modal input#inputPartNumber', products.part1.number, {reset:true});
             this.sendKeys('#part_creation_modal input#inputPartName', products.part1.name, {reset:true});
-            this.click('#part_creation_modal .btn-primary');
         },function fail() {
             this.capture('screenshot/partCreation/onNewPartFormReady-error.png');
             this.test.assert(false,'New part form can not be found');
+        });
+    });
+
+
+    casper.then(function fillAttributeValue() {
+        var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
+        this.waitForSelector(attributesTabSelector, function () {
+
+            this.click(attributesTabSelector);
+            this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
+                this.test.assert(true, 'Attribute tab found');
+                this.waitForSelector('#attributes-list .list-item', function addAttr() {
+                    this.sendKeys('#attributes-list input[required].value', products.part1.attributeValue);
+                    this.click('#part_creation_modal .btn-primary');
+                }, function fail() {
+                    this.capture('screenshot/partCreation/listAttributeNotFound.png');
+                    this.test.assert(false, 'attributes list not found');
+                });
+
+            }, function fail() {
+                this.capture('screenshot/partCreation/attributeTabBecomeActive-error.png');
+                this.test.assert(false, 'Attribute tab not appearing');
+            });
+        }, function fail() {
+            this.capture('screenshot/partCreation/clickOnAttributeTab-error.png');
+            this.test.assert(false, 'Attribute tab cannot be found');
         });
     });
 
@@ -70,6 +101,7 @@ casper.test.begin('Part creation tests suite', 4, function partCreationTestsSuit
      * Wait for the part to be created, will appears in the list
      */
     casper.then(function waitForPartToBeCreated(){
+        this.capture('screenshot/newPartNotFound.png');
         this.waitForSelector('#part_table .part_number span',function partHasBeenCreated(){
             this.test.assertSelectorHasText('#part_table tbody tr:first-child td.part_number span',products.part1.number);
             this.test.assertSelectorHasText('#part_table tbody tr:first-child td:nth-child(8)',products.part1.name);

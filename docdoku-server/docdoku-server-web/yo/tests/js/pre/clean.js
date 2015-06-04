@@ -217,25 +217,21 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     });
 
     // delete all milestone
-    casper.then(function cleanUpMilestones() {
-       this.open(apiUrls.milestones, {method: 'GET'}).then(function (response) {
-           if(response.status === 200) {
-               if(response.data != null) {
-
-               require('utils').dump(response);
-               response.response.forEach(function(milestone) {
-                   this.open(apiUrls.milestones+'/'+milestone.id, {method: 'DELETE'}.then(function(deleteResponse) {
-                        if(deleteResponse === 200) {
-                            this.log('MileStone has been deleted', 'info');
-                        } else {
-                            this.log('Cannot delete milestone, reason : ' + helpers.findReasonInResponseHeaders(response.headers),
-                            'warning');
-                        }
-                   }));
-               });
-               }
-           }
-       });
+    casper.then(function cleanupWorkflows() {
+        var that = this;
+        this.open(apiUrls.milestones, {method: 'GET'}).then(function (response) {
+            if (response.status === 200) {
+                var milestones = JSON.parse(this.getPageContent());
+                milestones.forEach(function(milestone){
+                    that.log('Deleting milestone '+milestone.id,'info');
+                    that.open(apiUrls.milestones+'/'+milestone.id,{method: 'DELETE'}).then(function(){
+                        that.log('milestone '+milestone.id+' deleted','info');
+                    });
+                });
+            } else {
+                this.log('Cannot delete test milestone, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+            }
+        });
     });
 
     casper.run(function allDone(){
