@@ -1,6 +1,6 @@
 /*global casper,urls,products*/
 
-casper.test.begin('Parts  multiple checkout tests suite', 1, function partsMultipleCheckoutTestsSuite(){
+casper.test.begin('Parts  multiple checkout tests suite', 3, function partsMultipleCheckoutTestsSuite(){
     'use strict';
 
     casper.open('');
@@ -60,6 +60,7 @@ casper.test.begin('Parts  multiple checkout tests suite', 1, function partsMulti
      */
     casper.then(function waitForCheckoutButton(){
         this.waitForSelector('.actions .checkout',function clickOnCheckoutButton() {
+            this.test.assertSelectorHasText('.nav-checkedOut-number-item',0, 'checkout number at 0 in nav');
             this.click('.actions .checkout');
         },function fail() {
             this.capture('screenshot/partCheckout/waitForCheckoutButton-error.png');
@@ -73,6 +74,12 @@ casper.test.begin('Parts  multiple checkout tests suite', 1, function partsMulti
     casper.then(function waitForCheckoutButtonDisabled(){
         this.waitForSelector('.actions .checkout:disabled',function partIsCheckout() {
             this.test.assert(true,'Parts have been checkout');
+            var nbPart = this.evaluate(function() {
+                return document.querySelectorAll('i.fa.fa-pencil').length;
+            });
+            this.capture('screenshot/info/prout.png');
+            this.test.assertSelectorHasText('.nav-checkedOut-number-item',nbPart, 'checkout number updated ('+nbPart+' in nav)');
+
         },function fail() {
             this.capture('screenshot/baselineCreation/waitForCheckoutButtonDisabled-error.png');
             this.test.assert(false,'Parts have not been checkout');
