@@ -9,6 +9,7 @@ define([
     'use strict';
     var MilestoneCreationView = Backbone.View.extend({
         events: {
+            'click .modal-footer .btn-primary': 'interceptSubmit',
             'submit #milestone_creation_form': 'onSubmitForm',
             'hidden #milestone_creation_modal': 'onHidden',
             'shown #milestone_creation_modal': 'onShown'
@@ -33,19 +34,24 @@ define([
             this.$inputMilestoneDescription = this.$('#inputMilestoneDescription');
             this.$inputMilestoneDueDate = this.$('#inputMilestoneDueDate');
         },
+        interceptSubmit : function(){
+            this.isValid = ! this.$('#milestone_creation_form').invalidFormTabSwitcher();
+        },
 
         onSubmitForm: function (e) {
-            var data = {
-                title: this.$inputMilestoneTitle.val(),
-                description: this.$inputMilestoneDescription.val(),
-                dueDate: date.toUTCWithTimeZoneOffset(this.$inputMilestoneDueDate.val())
-            };
+            if(this.isValid) {
+                var data = {
+                    title: this.$inputMilestoneTitle.val(),
+                    description: this.$inputMilestoneDescription.val(),
+                    dueDate: date.toUTCWithTimeZoneOffset(this.$inputMilestoneDueDate.val())
+                };
 
-            this.model.save(data, {
-                success: this.onMilestoneCreated,
-                error: this.onError,
-                wait: true
-            });
+                this.model.save(data, {
+                    success: this.onMilestoneCreated,
+                    error: this.onError,
+                    wait: true
+                });
+            }
 
             e.preventDefault();
             e.stopPropagation();
