@@ -89,7 +89,7 @@ casper.test.begin('Product instance creation tests suite',19, function productIn
      * re-open the modal
      */
     casper.then(function reopenModal() {
-        this.waitWhileSelector('#product-instance-data-modal', function waitCloseModal() {
+        this.waitWhileSelector('.product-instance-data-modal', function waitCloseModal() {
             this.waitForSelector('#product_instance_btn', function openModal() {
                 this.click('#product_instance_btn');
                 this.test.assert(true, 'deliverable data button present');
