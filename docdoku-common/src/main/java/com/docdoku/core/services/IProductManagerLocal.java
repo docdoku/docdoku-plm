@@ -223,6 +223,7 @@ public interface IProductManagerLocal{
     Query loadQuery(String workspaceId,int queryId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 
     Map<String,Set<BinaryResource>> getBinariesInTree(Integer baselineId,String workspaceId, ConfigurationItemKey configurationItemKey, PSFilter psFilter, boolean exportNativeCADFiles, boolean exportDocumentLinks) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException;
+    ProductBaseline loadProductBaselineForProductInstanceMaster(ConfigurationItemKey ciKey, String serialNumber) throws ProductInstanceMasterNotFoundException;
     List<BinaryResource> getBinaryResourceFromBaseline(int baselineId);
 
     void deletePathToPathLink(String workspaceId, String configurationItemId, int pathToPathLinkId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PathToPathLinkNotFoundException;

@@ -1,6 +1,6 @@
 /*global casper,urls,products*/
 
-casper.test.begin('Part checkout tests suite', 1, function partCheckoutTestsSuite(){
+casper.test.begin('Part checkout tests suite', 3, function partCheckoutTestsSuite(){
     'use strict';
 
     casper.open('');
@@ -31,6 +31,7 @@ casper.test.begin('Part checkout tests suite', 1, function partCheckoutTestsSuit
     casper.then(function waitForPartTable(){
         this.waitForSelector('#part_table tbody tr:first-child  td:nth-child(2) input',function clickOnPartCheckbox() {
             this.click('#part_table tbody tr:first-child  td:nth-child(2) input');
+            this.test.assertSelectorHasText('.nav-checkedOut-number-item',0, 'checkout number at 0 in nav');
         },function fail(){
             this.capture('screenshot/partCheckout/waitForPartTable-error.png');
             this.test.assert(false,'Part can not be found');
@@ -55,6 +56,7 @@ casper.test.begin('Part checkout tests suite', 1, function partCheckoutTestsSuit
     casper.then(function waitForCheckoutButtonDisabled(){
         this.waitForSelector('.actions .checkout:disabled',function partIsCheckout() {
             this.test.assert(true,'Part has been checkout');
+            this.test.assertSelectorHasText('.nav-checkedOut-number-item',1, 'checkout number updated');
         },function fail() {
             this.capture('screenshot/baselineCreation/waitForCheckoutButtonDisabled-error.png');
             this.test.assert(false,'Part has not been checkout');

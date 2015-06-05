@@ -78,14 +78,30 @@ var products = {
         type : 'CasperJsTestPartType',
         mask:'FAX_***_##'
 	},
+    template2 : {
+        number : 'CasperJsTestPartTemplate2',
+        type : 'CasperJsTestPartType2',
+        attrInstance: 'CasperJsTestAttrInst',
+    },
 	part1 : {
 		number : '000-AAA-CasperJsTestPart',
 		name : 'CasperJsTestPart',
         iterationNote:'This is the first iteration of this part',
         sharedPassword:'azertyuiop',
         expireDate:tomorrowValue,
-        expireDate2:yesterdayValue
+        expireDate2:yesterdayValue,
+        attributeValue: 'CasperJs'
 	},
+    part2 : {
+        number : '000-AAA-CasperJsTestPart2',
+        name : 'CasperJsTestPart2',
+        iterationNote:'This is the first iteration of this part',
+        sharedPassword:'azertyuiop',
+        expireDate:tomorrowValue,
+        expireDate2:yesterdayValue,
+        attributeName1: 'CasperJsTestAttr',
+        attributeName2: 'CasperJsTestAttr-lock',
+    },
 	product1: {
 		number : '000-AAA-CasperJsTestProduct',
         description : 'CasperJsTestProduct'
@@ -114,7 +130,9 @@ var products = {
 
 var productInstances = {
     productInstance1 : {
-        serialNumber:'CasperJsTestSerialNumber'
+        serialNumber:'CasperJsTestSerialNumber',
+        iterationNote: 'First Iteration Casper',
+        pathDataValue: 'CasperJsTestData'
     }
 };
 
@@ -141,7 +159,7 @@ var changeItems = {
     },
     milestone1:{
         title:'CasperJsTestMilestone',
-        date:'31/12/2015'
+        date:'2015-12-12'
     }
 };
 
@@ -149,6 +167,10 @@ var roles = {
     role1:{
         name:'Lecteur'
     }
+};
+
+var p2pLinks = {
+    type:'FOO'
 };
 
 var workflows = {
@@ -174,6 +196,7 @@ var workflows = {
 var urls = {
 	productManagement : homeUrl+'product-management/#'+workspace,
     productStructure : homeUrl+'product-structure/#'+workspace+'/' + products.product1.number + '/config-spec/wip/bom',
+    productStructureForDeliverable : homeUrl+'product-structure/#'+workspace+'/' + products.product1.number + '/config-spec/pi-'+productInstances.productInstance1.serialNumber+'/bom',
 	documentManagement : homeUrl+'document-management/#'+workspace,
 	changeManagement : homeUrl+'change-management/#'+workspace,
     documentPermalink:homeUrl+'documents/'+workspace+'/'+documents.document1.number+'/A',
@@ -191,6 +214,7 @@ var apiUrls = {
 	userInfo : homeUrl+'api/workspaces/'+workspace+'/users/me',
 	deletePart : homeUrl+'api/workspaces/'+workspace+'/parts/'+products.part1.number+'-A',
     deletePartTemplate : homeUrl+'api/workspaces/'+workspace+'/part-templates/'+products.template1.number,
+    deletePartTemplate2 : homeUrl+'api/workspaces/'+workspace+'/part-templates/'+products.template2.number,
     deleteDocumentTemplate : homeUrl+'api/workspaces/'+workspace+'/document-templates/'+documents.lov.template.number,
     deleteLov1 : homeUrl+'api/workspaces/'+workspace+'/lov/'+documents.lov.itemName,
     deleteLov2 : homeUrl+'api/workspaces/'+workspace+'/lov/'+documents.lov.color.itemName,
@@ -203,5 +227,6 @@ var apiUrls = {
     deleteProductInstance : homeUrl+'api/workspaces/'+workspace+'/products/'+products.product1.number+'/product-instances/'+productInstances.productInstance1.serialNumber,
     getWorkflows : homeUrl+'api/workspaces/'+workspace+'/workflows',
     getRoles : homeUrl+'api/workspaces/'+workspace+'/roles',
-    getTags : homeUrl+'api/workspaces/'+workspace+'/tags'
+    getTags : homeUrl+'api/workspaces/'+workspace+'/tags',
+    milestones: homeUrl+'api/workspaces/'+workspace+'/changes/milestones',
 };

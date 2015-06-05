@@ -5,7 +5,9 @@
 <div class="modal-body">
     <div id="typed-link-alerts"></div>
     <div id="path-to-path-links"></div>
-    <button class="btn add-type-btn">{{i18n.ADD}}</button>
+    {{#canAdd}}
+        <button class="btn add-type-btn">{{i18n.ADD}}</button>
+    {{/canAdd}}
 </div>
 <div class="modal-footer">
     <button class="btn cancel-button">{{i18n.CLOSE}}</button>

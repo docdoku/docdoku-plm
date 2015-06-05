@@ -31,6 +31,10 @@ module.exports = {
         "js/change-management/role/roleCreation.js",
         "js/change-management/workflow/workflowCreation.js",
 
+        // Template
+        "js/product-management/template/partTemplateCreation.js",
+        "js/product-management/template/TemplateWithAttribute.js",
+
         // Part and assembly creation
         "js/product-management/part/partCreation.js",
         "js/product-management/part/showPartDetails.js",
@@ -53,9 +57,11 @@ module.exports = {
 
         // Product and baseline creation
         "js/product-management/product/productCreation.js",
+        "js/product-management/pathToPathLink/pathToPathLinkCreation.js",
         "js/product-management/baseline/baselineCreation.js",
         "js/product-management/product-instance/productInstanceCreation.js",
-        "js/product-management/template/partTemplateCreation.js",
+        "js/product-management/product-instance/productInstanceData.js",
+        "js/product-management/pathToPathLink/pathToPathLinkCheck.js",
 
         // Product structure
         "js/product-management/assembly/bomInspection.js",
@@ -94,6 +100,7 @@ module.exports = {
         "js/document-management/lov/lovCreation.js",
 
         "js/common/attributes.js",
+        "js/common/part-from-template.js",
 
         // Deletions
         "js/document-management/tag/tagDeletion.js",

@@ -25,10 +25,12 @@ define([
          * format date from attribute model (timestamp string) to html5 input date ('yyyy-mm-dd')
          */
         modelToJSON: function () {
+            var format = this.editMode && !this.model.get('locked') ? App.config.i18n._DATE_PICKER_DATE_FORMAT
+                : App.config.i18n._DATE_SHORT_FORMAT;
             var data = this.model.toJSON();
             if (!_.isEmpty(data.value)) {
-                data.value = date.formatTimestamp(
-                    App.config.i18n._DATE_PICKER_DATE_FORMAT,
+                data.value = date.formatLocalTime(
+                    format,
                     new Date(data.value)
                 );
             }
@@ -39,7 +41,7 @@ define([
          * format date from html5 input to timestamp string
          */
         getValue: function (el) {
-            return date.toUTCWithTimeZoneOffset(el.val());
+            return date.formatLocalTime('YYYY-MM-DDTHH:mm:ss',el.val());
         },
 
         /**

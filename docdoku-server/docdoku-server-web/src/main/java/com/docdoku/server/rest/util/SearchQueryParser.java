@@ -47,6 +47,8 @@ public class SearchQueryParser {
         String pType = null;
         Date pCreationDateFrom = null;
         Date pCreationDateTo = null;
+        Date pModificationDateFrom = null;
+        Date pModificationDateTo = null;
         List<DocumentSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<>();
         String[] pTags = null;
         String pContent = null;
@@ -75,16 +77,30 @@ public class SearchQueryParser {
                     case "type" :
                         pType = filter[1];
                         break;
-                    case "from" :
+                    case "createdFrom" :
                         try {
                             pCreationDateFrom =  simpleDateFormat.parse(filter[1]);
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
                         break;
-                    case "to" :
+                    case "createdTo" :
                         try {
                             pCreationDateTo =  simpleDateFormat.parse(filter[1]);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "modifiedFrom" :
+                        try {
+                            pModificationDateFrom =  simpleDateFormat.parse(filter[1]);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "modifiedTo" :
+                        try {
+                            pModificationDateTo =  simpleDateFormat.parse(filter[1]);
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
@@ -108,8 +124,9 @@ public class SearchQueryParser {
 
         DocumentSearchQuery.AbstractAttributeQuery[] pAttributesArray = pAttributes.toArray(new DocumentSearchQuery.AbstractAttributeQuery[pAttributes.size()]);
 
-        return  new DocumentSearchQuery(workspaceId, fullText, pDocMId, pTitle, pVersion, pAuthor,
-                pType, pCreationDateFrom, pCreationDateTo, pAttributesArray, pTags, pContent);
+        return  new DocumentSearchQuery(workspaceId, fullText, pDocMId, pTitle, pVersion, pAuthor, pType,
+                pCreationDateFrom, pCreationDateTo, pModificationDateFrom, pModificationDateTo,
+                pAttributesArray, pTags, pContent);
 
     }
     public static PartSearchQuery parsePartStringQuery(String workspaceId , String pQuery){
@@ -121,6 +138,8 @@ public class SearchQueryParser {
         String pType = null;
         Date pCreationDateFrom = null;
         Date pCreationDateTo = null;
+        Date pModificationDateFrom = null;
+        Date pModificationDateTo = null;
         List<PartSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<>();
         Boolean standardPart = null;
 
@@ -148,16 +167,30 @@ public class SearchQueryParser {
                     case "type" :
                         pType = filter[1];
                         break;
-                    case "from" :
+                    case "createdFrom" :
                         try {
                             pCreationDateFrom =  simpleDateFormat.parse(filter[1]);
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
                         break;
-                    case "to" :
+                    case "createdTo" :
                         try {
                             pCreationDateTo =  simpleDateFormat.parse(filter[1]);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "modifiedFrom" :
+                        try {
+                            pModificationDateFrom =  simpleDateFormat.parse(filter[1]);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "modifiedTo" :
+                        try {
+                            pModificationDateTo =  simpleDateFormat.parse(filter[1]);
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
@@ -174,8 +207,9 @@ public class SearchQueryParser {
 
         PartSearchQuery.AbstractAttributeQuery[] pAttributesArray = pAttributes.toArray(new PartSearchQuery.AbstractAttributeQuery[pAttributes.size()]);
 
-        return  new PartSearchQuery(workspaceId, fullText, pNumber, pName, pVersion, pAuthor,
-                pType, pCreationDateFrom, pCreationDateTo, pAttributesArray,standardPart);
+        return  new PartSearchQuery(workspaceId, fullText, pNumber, pName, pVersion, pAuthor, pType,
+                pCreationDateFrom, pCreationDateTo, pModificationDateFrom, pModificationDateTo,
+                pAttributesArray,standardPart);
 
     }
 

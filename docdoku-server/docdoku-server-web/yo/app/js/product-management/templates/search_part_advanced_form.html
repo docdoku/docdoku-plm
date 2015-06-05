@@ -61,7 +61,7 @@
                         <div class="controls">
                             <input type="text" id="search-version" class="input-medium">
 
-                            <p class="help-block">{{i18n.VERSION_HELP}}</p>
+                            <p class="help-block">{{i18n.PART_VERSION_HELP}}</p>
                         </div>
                     </div>
 
@@ -78,17 +78,27 @@
                     </div>
 
                     <div class="control-group creationDates">
-                        <label class="control-label" for="search-from">{{i18n.CREATION_DATE}}</label>
+                        <label class="control-label" for="search-creation-from">{{i18n.CREATION_DATE}}</label>
 
                         <div class="controls">
-                            <p>{{i18n.FROM}}</p> <input id="search-from" type="date"><br/>
-                            <p>{{i18n.TO}}</p> <input id="search-to" type="date">
+                            <p>{{i18n.FROM}}</p> <input id="search-creation-from" type="date"><br/>
+                            <p>{{i18n.TO}}</p> <input id="search-creation-to" type="date">
+                            <p class="help-block"> <i class="fa fa-clock-o">{{timeZone}}</i></p>
+                        </div>
+                    </div>
+
+                    <div class="control-group modificationDates">
+                        <label class="control-label" for="search-modification-from">{{i18n.MODIFICATION_DATE}}</label>
+
+                        <div class="controls">
+                            <p>{{i18n.FROM}}</p> <input id="search-modification-from" type="date"><br/>
+                            <p>{{i18n.TO}}</p> <input id="search-modification-to" type="date">
                             <p class="help-block"> <i class="fa fa-clock-o">{{timeZone}}</i></p>
                         </div>
                     </div>
 
                     <div class="control-group creationDates">
-                        <label class="control-label" for="search-from">{{i18n.STANDARD_PART}}</label>
+                        <label class="control-label">{{i18n.STANDARD_PART}}</label>
 
                         <div class="controls">
                             <input name="search-standardPart" type="radio" value="all" checked>

@@ -22,6 +22,7 @@ define([
             this.pathSelected = this.options.pathSelected;
             this.productId = this.options.productId;
             this.serialNumber = this.options.serialNumber;
+            this.baselineId = this.options.baselineId;
         },
 
         bindDOMElements:function(){
@@ -31,7 +32,8 @@ define([
         render: function () {
 
             this.$el.html(Mustache.render(template, {
-                i18n: App.config.i18n
+                i18n: App.config.i18n,
+                canAdd:['wip','latest','latest-released'].indexOf(App.config.configSpec)!==-1
             }));
 
             this.bindDOMElements();
@@ -44,10 +46,14 @@ define([
 
             var urlForAvailableType = '';
 
-            if(!this.serialNumber){
-                urlForAvailableType = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/path-to-path-links-types';
-            }else{
+            if(this.serialNumber) {
                 urlForAvailableType = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/product-instances/' + this.serialNumber + '/path-to-path-links-types';
+            }
+            else if(this.baselineId){
+                urlForAvailableType = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/baselines/' + this.baselineId + '/path-to-path-links-types';
+            }
+            else{
+                urlForAvailableType = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/path-to-path-links-types';
             }
 
             return urlForAvailableType;
@@ -56,10 +62,14 @@ define([
         getUrlForExistingTypedLink: function(){
             var urlForExistingTypedLink = '';
 
-            if(!this.serialNumber){
-                urlForExistingTypedLink = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/path-to-path-links/source/' + this.pathSelected[0].getEncodedPath() + '/target/' + this.pathSelected[1].getEncodedPath();
-            }else{
+            if(this.serialNumber){
                 urlForExistingTypedLink = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/product-instances/' + this.serialNumber + '/path-to-path-links/source/' + this.pathSelected[0].getEncodedPath() + '/target/' + this.pathSelected[1].getEncodedPath();
+            }
+            else if(this.baselineId){
+                urlForExistingTypedLink = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/baselines/' + this.baselineId + '/path-to-path-links/source/' + this.pathSelected[0].getEncodedPath() + '/target/' + this.pathSelected[1].getEncodedPath();
+            }
+            else{
+                urlForExistingTypedLink = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/path-to-path-links/source/' + this.pathSelected[0].getEncodedPath() + '/target/' + this.pathSelected[1].getEncodedPath();
             }
 
             return urlForExistingTypedLink;
@@ -70,9 +80,9 @@ define([
 
             var urlForAvailableType = this.getUrlForAvailableType();
 
-
             this.existingPathToPathLinkCollection = [];
             this.availableType = [];
+
             $.ajax({
                 type : 'GET',
                 url : urlForAvailableType,
@@ -105,7 +115,7 @@ define([
                             sourceModel : self.pathSelected[0].getEncodedPath() === pathToPathLinkDTO.sourcePath ? self.pathSelected[0] : self.pathSelected[1],
                             targetModel : self.pathSelected[1].getEncodedPath() === pathToPathLinkDTO.targetPath ? self.pathSelected[1] : self.pathSelected[0],
                             pathToPath : pathToPathLinkDTO,
-                            isEditMode : false,
+                            isCreationMode : false,
                             availableType : self.availableType,
                             productId : self.productId,
                             serialNumber : self.serialNumber
@@ -135,7 +145,7 @@ define([
                 model:{
                     sourceModel : this.pathSelected[0],
                     targetModel : this.pathSelected[1],
-                    isEditMode : true,
+                    isCreationMode : true,
                     availableType : this.availableType,
                     productId : this.productId,
                     serialNumber : this.serialNumber

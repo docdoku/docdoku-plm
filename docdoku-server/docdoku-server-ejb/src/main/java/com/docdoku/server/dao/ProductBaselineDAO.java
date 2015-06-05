@@ -20,10 +20,11 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.configuration.BaselinedPart;
-import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.configuration.*;
 import com.docdoku.core.exceptions.BaselineNotFoundException;
 import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.ProductInstanceMasterNotFoundException;
+import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartRevision;
 
 import javax.persistence.EntityManager;
@@ -113,7 +114,7 @@ public class ProductBaselineDAO {
     }
 
     public ProductBaseline findBaselineById(int baselineId) {
-        return em.find(ProductBaseline.class,baselineId);
+        return em.find(ProductBaseline.class, baselineId);
     }
 
     public List<BaselinedPart> findBaselinedPartWithReferenceLike(int collectionId, String q, int maxResults) throws BaselineNotFoundException {
@@ -123,4 +124,17 @@ public class ProductBaselineDAO {
                                                   .setMaxResults(maxResults)
                                                   .getResultList();
     }
+
+    public ProductBaseline findLastBaselineWithSerialNumber(ConfigurationItemKey ciKey, String serialNumber) throws ProductInstanceMasterNotFoundException {
+        ProductInstanceMasterKey pimk = new ProductInstanceMasterKey(serialNumber, ciKey);
+        ProductInstanceMaster productIM = new ProductInstanceMasterDAO(em).loadProductInstanceMaster(pimk);
+        ProductInstanceIteration productII = productIM.getLastIteration();
+
+        if (productII != null) {
+            return productII.getBasedOn();
+        }
+
+        return null;
+    }
+
 }

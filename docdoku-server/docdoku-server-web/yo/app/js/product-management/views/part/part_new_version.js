@@ -60,6 +60,7 @@ define([
 
         createNewVersionAction: function () {
             this.model.createNewVersion(this.textAreaNewVersionDescription.val(), this.workflowsView.selected(), this.workflowsMappingView.toList(), this.aclView.toList());
+            this.trigger('part:new-version');
             this.closeModalAction();
         },
 

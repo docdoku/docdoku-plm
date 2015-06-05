@@ -21,6 +21,7 @@ package com.docdoku.server.rest.writer;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.configuration.*;
+import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.services.IDataManagerLocal;
@@ -96,42 +97,44 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
 
         try {
 
-            Map<String, Set<BinaryResource>> binariesInTree = productService.getBinariesInTree(fileExportEntity.getBaselineId(),fileExportEntity.getConfigurationItemKey().getWorkspace(),fileExportEntity.getConfigurationItemKey(),fileExportEntity.getPsFilter(),fileExportEntity.isExportNativeCADFile(),fileExportEntity.isExportDocumentLinks());
+            Map<String, Set<BinaryResource>> binariesInTree = productService.getBinariesInTree(fileExportEntity.getBaselineId(), fileExportEntity.getConfigurationItemKey().getWorkspace(), fileExportEntity.getConfigurationItemKey(), fileExportEntity.getPsFilter(), fileExportEntity.isExportNativeCADFile(), fileExportEntity.isExportDocumentLinks());
             Set<Map.Entry<String, Set<BinaryResource>>> entries = binariesInTree.entrySet();
-            List<BinaryResource> baselinedSources = new ArrayList<>();
             List<String> baselinedSourcesName = new ArrayList<>();
 
-            if (fileExportEntity.isExportDocumentLinks() && fileExportEntity.getBaselineId()!= null){
-                baselinedSources = productService.getBinaryResourceFromBaseline(fileExportEntity.getBaselineId());
-                for (BinaryResource binary:baselinedSources){
-                    baselinedSourcesName.add(binary.getName());
-                }
-                String baselineName = productBaselineService.getBaseline(fileExportEntity.getBaselineId()).getName();
-                for (BinaryResource binaryResource:baselinedSources){
-                    addToZipFile(binaryResource, baselineName, zs);
+            if (fileExportEntity.isExportDocumentLinks() && fileExportEntity.getBaselineId() !=  null) {
+                List<BinaryResource> baselinedSources = productService.getBinaryResourceFromBaseline(fileExportEntity.getBaselineId());
+
+                for (BinaryResource binaryResource : baselinedSources) {
+                    String folderName = BinaryResource.getFolderName(binaryResource.getFullName());
+                    baselinedSourcesName.add(folderName);
+                    addToZipFile(binaryResource, "links/" + folderName, zs);
                 }
             }
 
-            for(Map.Entry<String, Set<BinaryResource>> entry:entries){
-                String folderName = entry.getKey();
+            for (Map.Entry<String, Set<BinaryResource>> entry:entries) {
+                String partNumberFolderName = entry.getKey();
+                String folderName;
                 Set<BinaryResource> files = entry.getValue();
-                for(BinaryResource binaryResource:files){
-                    if (!baselinedSourcesName.contains(binaryResource.getName())){
-                        try {
-                            if(binaryResource.isNativeCADFile()){
-                                folderName = "CAD/"+folderName;
-                            }
-                            addToZipFile(binaryResource, folderName,zs);
-                        } catch (StorageException e) {
-                            e.printStackTrace();
+
+                for (BinaryResource binaryResource : files) {
+                    try {
+                        if (binaryResource.isNativeCADFile()) {
+                            folderName = partNumberFolderName + "/nativecad";
+                        } else if (binaryResource.isAttachedFile()) {
+                            folderName = partNumberFolderName + "/attachedfiles";
+                        } else {
+                            folderName = partNumberFolderName;
                         }
+                        addToZipFile(binaryResource, folderName, zs);
+
+                    } catch (StorageException e) {
+                        e.printStackTrace();
                     }
                 }
             }
 
-
-            if(fileExportEntity.getSerialNumber() != null){
-                addProductInstanceDataToZip(zs,fileExportEntity.getConfigurationItemKey(),fileExportEntity.getSerialNumber());
+            if (fileExportEntity.getSerialNumber() != null) {
+                addProductInstanceDataToZip(zs, fileExportEntity.getConfigurationItemKey(), fileExportEntity.getSerialNumber(), baselinedSourcesName);
             }
 
         } catch (UserNotFoundException e) {
@@ -152,21 +155,28 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
             e.printStackTrace();
         } catch (StorageException e) {
             e.printStackTrace();
-        } catch (BaselineNotFoundException e) {
-            e.printStackTrace();
         }
 
         zs.close();
 
     }
 
-    private void addProductInstanceDataToZip(ZipOutputStream zs, ConfigurationItemKey configurationItemKey, String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductInstanceMasterNotFoundException, IOException, StorageException {
+    private void addProductInstanceDataToZip(ZipOutputStream zs, ConfigurationItemKey configurationItemKey, String serialNumber, List<String> baselinedSourcesName) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductInstanceMasterNotFoundException, IOException, StorageException {
         ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, configurationItemKey));
         ProductInstanceIteration lastIteration = productInstanceMaster.getLastIteration();
-        Set<BinaryResource> attachedFiles = lastIteration.getAttachedFiles();
 
-        for(BinaryResource attachedFile : attachedFiles){
-            addToZipFile(attachedFile,productInstanceMaster.getSerialNumber(),zs);
+        for (BinaryResource attachedFile : lastIteration.getAttachedFiles()) {
+            addToZipFile(attachedFile, "attachedfiles", zs);
+        }
+
+        for (DocumentLink docLink : lastIteration.getLinkedDocuments()) {
+            for (BinaryResource linkedFile : docLink.getTargetDocument().getLastIteration().getAttachedFiles()) {
+                String folderName = docLink.getTargetDocument().getLastIteration().toString();
+
+                if (!baselinedSourcesName.contains(folderName)) {
+                    addToZipFile(linkedFile, "links/" + folderName, zs);
+                }
+            }
         }
     }
 

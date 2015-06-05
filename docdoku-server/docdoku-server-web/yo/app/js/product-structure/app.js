@@ -191,7 +191,8 @@ define([
             var typedModal = new TypedLinkModalView({
                 pathSelected : this.pathSelected,
                 productId : App.config.productId,
-                serialNumber : App.baselineSelectView.isSerialNumberSelected() ? App.config.configSpec.substring(3) : null
+                serialNumber : App.baselineSelectView.isSerialNumberSelected() ? App.config.configSpec.substring(3) : null,
+                baselineId : App.baselineSelectView.isBaselineSelected() ? App.config.configSpec : null
             }).render();
             window.document.body.appendChild(typedModal.el);
             typedModal.openModal();

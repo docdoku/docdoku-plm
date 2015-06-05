@@ -310,6 +310,10 @@ public class ESSearcher {
                 ((BoolQueryBuilder) qr).should(
                         QueryBuilders.rangeQuery(ESMapper.CREATION_DATE_KEY).from(docQuery.getCreationDateFrom()).to(docQuery.getCreationDateTo()));
             }
+            if (docQuery.getModificationDateFrom() != null && docQuery.getModificationDateTo() != null) {
+                ((BoolQueryBuilder) qr).should(
+                        QueryBuilders.rangeQuery(ESMapper.MODIFICATION_DATE_KEY).from(docQuery.getModificationDateFrom()).to(docQuery.getModificationDateTo()));
+            }
             if (docQuery.getAttributes() != null) {
                 for (DocumentSearchQuery.AbstractAttributeQuery attr : docQuery.getAttributes()) {
                     if (attr instanceof DocumentSearchQuery.DateAttributeQuery) {
@@ -373,6 +377,9 @@ public class ESSearcher {
             if (partQuery.getCreationDateFrom() != null && partQuery.getCreationDateTo() != null) {
                 ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.CREATION_DATE_KEY).from(partQuery.getCreationDateFrom()).to(partQuery.getCreationDateTo()));
             }
+            if (partQuery.getModificationDateFrom() != null && partQuery.getModificationDateTo() != null) {
+                ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.MODIFICATION_DATE_KEY).from(partQuery.getModificationDateFrom()).to(partQuery.getModificationDateTo()));
+            }
             if (partQuery.getAttributes() != null) {
                 for (PartSearchQuery.AbstractAttributeQuery attr : partQuery.getAttributes()) {
                     if (attr instanceof PartSearchQuery.DateAttributeQuery) {
@@ -415,6 +422,9 @@ public class ESSearcher {
             }
             if (query.getCreationDateFrom() != null && query.getCreationDateTo() != null) {
                 ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.CREATION_DATE_KEY).from(query.getCreationDateFrom()).to(query.getCreationDateTo()));
+            }
+            if (query.getModificationDateFrom() != null && query.getModificationDateTo() != null) {
+                ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.MODIFICATION_DATE_KEY).from(query.getModificationDateFrom()).to(query.getModificationDateTo()));
             }
             if (query.getAttributes() != null) {
                 for (PartSearchQuery.AbstractAttributeQuery attr : query.getAttributes()) {

@@ -1,6 +1,6 @@
 /*global casper,urls,documents*/
 
-casper.test.begin('LOV creation tests suite',4, function documentLOVCreationTestsSuite(){
+casper.test.begin('LOV creation tests suite',5, function documentLOVCreationTestsSuite(){
 
     'use strict';
 
@@ -87,7 +87,7 @@ casper.test.begin('LOV creation tests suite',4, function documentLOVCreationTest
     casper.then(function tryCreateLOV(){
         this.click('.btn-saveLovs');
         this.waitWhileSelector('.modal', function() {
-            this.echo('modal closed');
+            this.test.assert(true,'modal closed');
         });
     });
 

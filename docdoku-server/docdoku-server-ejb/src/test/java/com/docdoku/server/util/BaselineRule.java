@@ -105,6 +105,69 @@ import java.util.List;
         return new BaselineStatement(statement,this.configurationItem);
     }
 
+    public PartLink getRootPartUsageLink() {
+       return new PartLink() {
+           @Override
+           public int getId() {
+               return 1;
+           }
+
+           @Override
+           public Character getCode() {
+               return '-';
+           }
+
+           @Override
+           public String getFullId() {
+               return "-1";
+           }
+
+           @Override
+           public double getAmount() {
+               return 1;
+           }
+
+           @Override
+           public String getUnit() {
+               return null;
+           }
+
+           @Override
+           public String getComment() {
+               return null;
+           }
+
+           @Override
+           public boolean isOptional() {
+               return false;
+           }
+
+           @Override
+           public PartMaster getComponent() {
+               return configurationItem.getDesignItem();
+           }
+
+           @Override
+           public List<PartSubstituteLink> getSubstitutes() {
+               return null;
+           }
+
+           @Override
+           public String getReferenceDescription() {
+               return null;
+           }
+
+           @Override
+           public List<CADInstance> getCadInstances() {
+               List<CADInstance> cads = new ArrayList<>();
+               CADInstance cad = new CADInstance(0d, 0d, 0d, 0d, 0d, 0d);
+               cad.setId(0);
+               cads.add(cad);
+               return cads;
+           }
+       };
+    }
+
     public class BaselineStatement extends Statement{
         private final Statement statement;
         public BaselineStatement(Statement s,ConfigurationItem configurationItem){

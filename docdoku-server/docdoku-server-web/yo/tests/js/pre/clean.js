@@ -175,6 +175,13 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
                 this.log('Cannot delete test part templates, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
             }
         });
+        this.open(apiUrls.deletePartTemplate2, {method: 'DELETE'}).then(function (response) {
+            if (response.status === 200) {
+                this.log('Test part templates2 has been deleted', 'info');
+            } else {
+                this.log('Cannot delete test part templates2, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+            }
+        });
     });
 
     // Part templates
@@ -205,6 +212,24 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
                 this.log('Lov has been deleted', 'info');
             } else {
                 this.log('Cannot delete lov, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+            }
+        });
+    });
+
+    // delete all milestone
+    casper.then(function cleanupWorkflows() {
+        var that = this;
+        this.open(apiUrls.milestones, {method: 'GET'}).then(function (response) {
+            if (response.status === 200) {
+                var milestones = JSON.parse(this.getPageContent());
+                milestones.forEach(function(milestone){
+                    that.log('Deleting milestone '+milestone.id,'info');
+                    that.open(apiUrls.milestones+'/'+milestone.id,{method: 'DELETE'}).then(function(){
+                        that.log('milestone '+milestone.id+' deleted','info');
+                    });
+                });
+            } else {
+                this.log('Cannot delete test milestone, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
             }
         });
     });

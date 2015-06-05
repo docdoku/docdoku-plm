@@ -434,7 +434,6 @@ define({
     _VALIDATION_PATTERN_NUMBER: "^\\-?\\d+(\\.\\d+)?(([eE]([-+])?)?\\d+)?$",
 	_VALIDATION_PATTERN_TIME: "\\d{2}:\\d{2}",
 	VALUE: "Value",
-	VERSION_HELP: "Version of the part",
 	VERSION: "Version",
 	VERSIONS: "Versions",
 	VIDEO_INVITATION_SENT: "Invitation has been sent to remote user, waiting for him/her to accept",

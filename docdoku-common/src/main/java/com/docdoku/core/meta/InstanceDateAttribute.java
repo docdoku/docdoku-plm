@@ -62,6 +62,7 @@ public class InstanceDateAttribute extends InstanceAttribute{
             return true;
         }else if(pValue instanceof String){
             try {
+                //TODO: could use DateAdpater instead
                 TimeZone tz = TimeZone.getTimeZone("UTC");
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 df.setTimeZone(tz);

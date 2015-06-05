@@ -33,6 +33,7 @@ import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductBaselineManagerWS;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.util.Tools;
 import com.docdoku.server.configuration.PSFilterVisitor;
 import com.docdoku.server.configuration.filter.LatestPSFilter;
 import com.docdoku.server.configuration.filter.ReleasedPSFilter;
@@ -66,7 +67,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductBaseline createBaseline(ConfigurationItemKey ciKey, String name, ProductBaseline.BaselineType pType, String description, List<PartIterationKey> partIterationKeys, List<String> substituteLinks, List<String> optionalUsageLinks) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PartRevisionNotReleasedException, PartIterationNotFoundException, UserNotActiveException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, CreationException {
+    public ProductBaseline createBaseline(ConfigurationItemKey ciKey, String name, ProductBaseline.BaselineType pType, String description, List<PartIterationKey> partIterationKeys, List<String> substituteLinks, List<String> optionalUsageLinks) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PartRevisionNotReleasedException, PartIterationNotFoundException, UserNotActiveException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, CreationException, BaselineNotFoundException, PathToPathLinkAlreadyExistsException {
 
         User user = userManager.checkWorkspaceWriteAccess(ciKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
@@ -142,7 +143,65 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
 
         new ProductBaselineDAO(locale, em).createBaseline(baseline);
 
+        copyPathToPathLinks(user, baseline);
+
         return baseline;
+    }
+
+    private void copyPathToPathLinks(User user, ProductBaseline baseline) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, BaselineNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, PathToPathLinkAlreadyExistsException, CreationException {
+        ConfigurationItem configurationItem = baseline.getConfigurationItem();
+        PartLink rootPartUsageLink = productManager.getRootPartUsageLink(configurationItem.getKey());
+        PSFilter filter = new ProductBaselineConfigSpec(baseline, user);
+
+        List<PartLink> startPath = new ArrayList<>();
+        startPath.add(rootPartUsageLink);
+
+        List<String> visitedPaths = new ArrayList<>();
+
+        // Reset the list
+        baseline.setPathToPathLinks(new ArrayList<>());
+
+        new PSFilterVisitor(em, user, filter, null, startPath, null) {
+            @Override
+            public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations)  throws NotAllowedException{
+            }
+            @Override
+            public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
+            }
+
+            @Override
+            public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
+
+            }
+
+            @Override
+            public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+            }
+
+            @Override
+            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+
+            }
+
+            @Override
+            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+                String encodedPath = Tools.getPathAsString(path);
+                visitedPaths.add(encodedPath);
+            }
+
+            @Override
+            public void onUnresolvedVersion(PartMaster partMaster) {
+
+            }
+        };
+
+        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(new Locale(user.getLanguage()), em);
+        List<PathToPathLink> links = pathToPathLinkDAO.getPathToPathLinkFromPathList(configurationItem,visitedPaths);
+        for(PathToPathLink link : links){
+            PathToPathLink clone = link.clone();
+            pathToPathLinkDAO.createPathToPathLink(clone);
+            baseline.addPathToPathLink(clone);
+        }
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -550,6 +609,30 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
         ProductBaseline baseline = productBaselineDAO.loadBaseline(baselineId);
         List<PartRevision> obsoletePartsInBaseline = productBaselineDAO.findObsoletePartsInBaseline(workspaceId, baseline);
         return obsoletePartsInBaseline;
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public List<PathToPathLink> getPathToPathLinkFromSourceAndTarget(String workspaceId, String configurationItemId, int baselineId, String sourcePath, String targetPath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        // Load the baseline
+        ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(locale, em);
+        ProductBaseline baseline = productBaselineDAO.loadBaseline(baselineId);
+        return new PathToPathLinkDAO(locale, em).getPathToPathLinkFromSourceAndTarget(baseline, sourcePath, targetPath);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public List<String> getPathToPathLinkTypes(String workspaceId, String configurationItemId, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
+
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        // Load the baseline
+        ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(locale, em);
+        ProductBaseline baseline = productBaselineDAO.loadBaseline(baselineId);
+
+        return new PathToPathLinkDAO(locale, em).getDistinctPathToPathLinkTypes(baseline);
     }
 
 }

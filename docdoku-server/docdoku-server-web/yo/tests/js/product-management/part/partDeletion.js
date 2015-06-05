@@ -1,6 +1,6 @@
 /*global casper,urls*/
 
-casper.test.begin('Part deletion tests suite', 1, function partDeletionTestsSuite(){
+casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuite(){
     'use strict';
 
     casper.open('');
@@ -40,13 +40,20 @@ casper.test.begin('Part deletion tests suite', 1, function partDeletionTestsSuit
     });
 
     casper.then(function clickOnDeletePartButton(){
-        this.click('.actions .delete');
-        // Confirm deletion
-        this.waitForSelector('.bootbox',function confirmPartDeletion(){
-            this.click('.bootbox .modal-footer .btn-primary');
-        },function fail() {
-            this.capture('screenshot/partDeletion/waitForDeletionConfirmationModal-error.png');
-            this.test.assert(false,'Part deletion confirmation modal can not be found');
+        this.click('.actions .checkout');
+        this.waitForSelector('.actions .checkout[disabled]', function then() {
+            this.test.assertSelectorHasText('.nav-checkedOut-number-item',1, 'checkout number updated');
+            this.click('.actions .delete');
+            // Confirm deletion
+            this.waitForSelector('.bootbox',function confirmPartDeletion(){
+                this.click('.bootbox .modal-footer .btn-primary');
+            },function fail() {
+                this.capture('screenshot/partDeletion/waitForDeletionConfirmationModal-error.png');
+                this.test.assert(false,'Part deletion confirmation modal can not be found');
+            });
+        }, function fail() {
+            this.capture('screenshot/partDeletion/waitForCheckoutToDisable.png');
+            this.test.assert(false, 'checkout button did not set to disabled');
         });
     });
 
@@ -57,6 +64,7 @@ casper.test.begin('Part deletion tests suite', 1, function partDeletionTestsSuit
             });
         }, function then() {
             this.test.assert(true,'Part has been deleted');
+            this.test.assertSelectorHasText('.nav-checkedOut-number-item',0, 'checkout number updated after deletion');
         }, function fail(){
             this.capture('screenshot/partDeletion/waitForPartDiseapear-error.png');
             this.test.assert(false,'Part has not been deleted');

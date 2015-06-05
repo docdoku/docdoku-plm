@@ -1,5 +1,6 @@
 package com.docdoku.server.dao;
 
+import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.configuration.ProductInstanceIteration;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.PathToPathLinkAlreadyExistsException;
@@ -67,6 +68,12 @@ public class PathToPathLinkDAO {
                 .getResultList();
     }
 
+    public List<String> getDistinctPathToPathLinkTypes(ProductBaseline productBaseline) {
+        return em.createNamedQuery("PathToPathLink.findPathToPathLinkTypesByProductBaseline",String.class)
+                .setParameter("productBaseline",productBaseline)
+                .getResultList();
+    }
+
     public List<String> getDistinctPathToPathLinkTypes(ConfigurationItem configurationItem) {
         return em.createNamedQuery("PathToPathLink.findPathToPathLinkTypesByProduct",String.class)
                 .setParameter("configurationItem",configurationItem)
@@ -115,6 +122,14 @@ public class PathToPathLinkDAO {
                 .setParameter("type", pathToPathLink.getType())
                 .getResultList();
 
+    }
+
+    public List<PathToPathLink> getPathToPathLinkFromSourceAndTarget(ProductBaseline baseline, String source, String target) {
+        return em.createNamedQuery("PathToPathLink.findPathToPathLinkBySourceAndTargetInBaseline", PathToPathLink.class)
+                .setParameter("baseline", baseline)
+                .setParameter("source",source)
+                .setParameter("target", target)
+                .getResultList();
     }
 
     public List<PathToPathLink> getPathToPathLinkFromSourceAndTarget(ProductInstanceIteration productInstanceIteration, String source, String target) {

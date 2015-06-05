@@ -1,6 +1,6 @@
 /*global casper,urls,products*/
 
-casper.test.begin('Part checkin tests suite', 1, function partCheckinTestsSuite(){
+casper.test.begin('Part checkin tests suite', 3, function partCheckinTestsSuite(){
     'use strict';
 
     casper.open('');
@@ -42,6 +42,7 @@ casper.test.begin('Part checkin tests suite', 1, function partCheckinTestsSuite(
      */
     casper.then(function waitForCheckinButton(){
         this.waitForSelector('.actions .checkin',function clickOnCheckinButton() {
+            this.test.assertSelectorHasText('.nav-checkedOut-number-item',1, 'checkout number at 1 in nav');
             this.click('.actions .checkin');
         },function fail() {
             this.capture('screenshot/partCheckin/waitForCheckinButton-error.png');
@@ -68,6 +69,7 @@ casper.test.begin('Part checkin tests suite', 1, function partCheckinTestsSuite(
     casper.then(function waitForCheckinButtonDisabled(){
         this.waitForSelector('.actions .checkin:disabled',function partIsCheckin() {
             this.test.assert(true,'Part has been checkin');
+            this.test.assertSelectorHasText('.nav-checkedOut-number-item',0, 'checkout number updated in nav');
         },function fail() {
             this.capture('screenshot/baselineCreation/waitForCheckinButtonDisabled-error.png');
             this.test.assert(false,'Part has not been checkin');

@@ -51,7 +51,7 @@ public class DocumentSearchCommand extends BaseCommandLine {
         IDocumentManagerWS documentS = ScriptingTools.createDocumentService(getServerURL(), user, password);
 
         DocumentRevision[] documentRevisions = documentS.searchDocumentRevisions(
-                new DocumentSearchQuery(workspace, searchValue, null, null, null, null, null, null, null, null, null, null)
+                new DocumentSearchQuery(workspace, searchValue, null, null, null, null, null, null, null, null, null, null, null, null)
         );
 
         output.printDocumentRevisions(documentRevisions);

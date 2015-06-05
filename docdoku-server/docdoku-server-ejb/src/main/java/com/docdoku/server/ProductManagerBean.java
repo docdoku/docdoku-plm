@@ -1952,7 +1952,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         if (productBaselineDAO.existBaselinedPart(partMaster.getWorkspaceId(), partMaster.getNumber())) {
             throw new EntityConstraintException(locale, "EntityConstraintException5");
         }
-
+        ChangeItemDAO changeItemDAO = new ChangeItemDAO(locale, em);
+        if(changeItemDAO.hasChangeItems(partRevisionKey)) {
+            throw new EntityConstraintException(locale, "EntityConstraintException21");
+        }
         // delete ElasticSearch Index for this revision iteration
         for (PartIteration partIteration : partR.getPartIterations()) {
             esIndexer.delete(partIteration);
@@ -2827,32 +2830,46 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 if (partIterations.size() != 0) {
 
                     PartIteration partIteration = partIterations.get(0);
-                    String partMasterNumber = partIteration.getPartNumber();
-                    Set<BinaryResource> binaryResources = result.get(partMasterNumber);
+                    String partFolderName = partIteration.toString();
+                    Set<BinaryResource> binaryResources = result.get(partFolderName);
 
                     if (binaryResources == null) {
                         binaryResources = new HashSet<>();
-                        result.put(partMasterNumber, binaryResources);
+                        result.put(partFolderName, binaryResources);
                     }
 
                     if (exportNativeCADFiles) {
                         BinaryResource nativeCADFile = partIteration.getNativeCADFile();
-
                         if (nativeCADFile != null) {
                             binaryResources.add(nativeCADFile);
+                        }
 
+                        if (exportDocumentLinks) {
+                            for (BinaryResource attachedFile : partIteration.getAttachedFiles()) {
+                                if (attachedFile != null) {
+                                    binaryResources.add(attachedFile);
+                                }
+                            }
                         }
                     }
 
                     if (exportDocumentLinks) {
                         if (baselineId == null) {
                             Set<DocumentLink> linkedDocuments = partIteration.getLinkedDocuments();
+
                             for (DocumentLink documentLink : linkedDocuments) {
+                                String linkedDocumentFolderName = "links/" + documentLink.getTargetDocument().getLastIteration().toString();
+                                Set<BinaryResource> linkedBinaryResources = result.get(linkedDocumentFolderName);
+                                if (linkedBinaryResources == null) {
+                                    linkedBinaryResources = new HashSet<>();
+                                    result.put(linkedDocumentFolderName, linkedBinaryResources);
+                                }
+
                                 Set<BinaryResource> attachedFiles = documentLink.getTargetDocument().getLastIteration().getAttachedFiles();
 
-                                for (BinaryResource binary:attachedFiles){
-                                    if (!binaryResources.contains(binary)){
-                                        binaryResources.add(binary);
+                                for (BinaryResource binary:attachedFiles) {
+                                    if (!linkedBinaryResources.contains(binary)) {
+                                        linkedBinaryResources.add(binary);
                                     }
                                 }
                             }
@@ -2869,6 +2886,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         };
 
         return result;
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public ProductBaseline loadProductBaselineForProductInstanceMaster(ConfigurationItemKey ciKey, String serialNumber) throws ProductInstanceMasterNotFoundException {
+        ProductBaseline res = new ProductBaselineDAO(em).findLastBaselineWithSerialNumber(ciKey, serialNumber);
+        return res;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

@@ -22,6 +22,6 @@ package com.docdoku.core.services;
 
 import com.docdoku.core.common.BinaryResource;
 
-public interface IDocumentViewerManagerLocal {
+public interface IFileViewerManagerLocal {
     String getHtmlForViewer(BinaryResource file, String uuid);
 }
