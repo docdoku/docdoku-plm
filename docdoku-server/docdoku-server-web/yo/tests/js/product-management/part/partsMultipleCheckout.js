@@ -77,7 +77,6 @@ casper.test.begin('Parts  multiple checkout tests suite', 3, function partsMulti
             var nbPart = this.evaluate(function() {
                 return document.querySelectorAll('i.fa.fa-pencil').length;
             });
-            this.capture('screenshot/info/prout.png');
             this.test.assertSelectorHasText('.nav-checkedOut-number-item',nbPart, 'checkout number updated ('+nbPart+' in nav)');
 
         },function fail() {
