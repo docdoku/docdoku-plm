@@ -106,7 +106,12 @@ casper.test.begin('Product instance creation tests suite',18, function productIn
             this.test.assertElementCount('ul.nav.nav-tabs li', 4, '2 tabs present in the modal');
             this.test.assertExists('.product-instance-data-modal div.path-description');
             this.test.assertExists('input.description-input[value="'+productInstances.productInstance1.iterationNote+'"]');
-            this.test.assertExists('#pathDataAttributes input.value[value="'+productInstances.productInstance1.pathDataValue+'"]');
+            //Wait for the input value to be injected, can take sometime.
+            this.waitForSelector('#pathDataAttributes input.value[value="'+productInstances.productInstance1.pathDataValue+'"]', function found() {
+                this.test.assert(true,'the input value is given to the view');
+            }, function fail() {
+                this.test.assert(false, 'the previously given value is not printed in the input');
+            });
         }, function fail() {
             this.capture('screenshot/product-instance/DeliverableDataModal-notFound.png');
             this.test.assert(false, 'deliverable data modal not found');

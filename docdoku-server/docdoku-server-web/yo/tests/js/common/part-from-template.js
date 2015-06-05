@@ -47,13 +47,19 @@ casper.test.begin('Part from template creation tests suite', 17, function partCr
             this.sendKeys('#part_creation_modal input#inputPartNumber', products.part2.number, {reset:true});
             this.sendKeys('#part_creation_modal input#inputPartName', products.part2.name, {reset:true});
 
-            this.test.assertElementCount('#inputPartTemplate option',3, 'there should be two template available');
-
-            this.evaluate(function() {
-                document.querySelector('#inputPartTemplate').selectedIndex = 1;
-                $('#inputPartTemplate').change();
-                return true;
+            //wait for the third option to be loaded, sometimes the modal is created, but the template
+            //are still to be injected.
+            this.waitForSelector('#inputPartTemplate option:nth-child(3)', function succeed() {
+                this.test.assert(true,'The template are loaded in the creation modal');
+                this.evaluate(function() {
+                    document.querySelector('#inputPartTemplate').selectedIndex = 1;
+                    $('#inputPartTemplate').change();
+                    return true;
+                });
+            }, function fail() {
+                this.test.assert(false, 'Could not load the template in the creation modal');
             });
+
         },function fail() {
             this.capture('screenshot/partCreation/onNewPartFormReady-error.png');
             this.test.assert(false,'New part form can not be found');
