@@ -50,6 +50,7 @@ public class ESMapper {
     public static final String AUTHOR_NAME_KEY ="name";
     public static final String AUTHOR_SEARCH_KEY =AUTHOR_KEY+"."+AUTHOR_LOGIN_KEY;
     public static final String CREATION_DATE_KEY ="creationDate";
+    public static final String MODIFICATION_DATE_KEY ="modificationDate";
     public static final String TYPE_KEY ="type";
 
 
@@ -101,6 +102,7 @@ public class ESMapper {
             }
             setField(tmp,TYPE_KEY, doc.getDocumentRevision().getDocumentMaster().getType(), 2f);
             setField(tmp,CREATION_DATE_KEY,doc.getDocumentRevision().getCreationDate(),0.4f);
+            setField(tmp,MODIFICATION_DATE_KEY,doc.getModificationDate(),0.4f);
             setField(tmp,"description",doc.getDocumentRevision().getDescription(),2f);
             setField(tmp,"revisionNote",doc.getRevisionNote(),0.5f);
             setField(tmp,"workflow",doc.getDocumentRevision().getWorkflow(),0.5f);
@@ -165,6 +167,7 @@ public class ESMapper {
             }
             setField(tmp,TYPE_KEY,part.getPartRevision().getPartMaster().getType(),2f);
             setField(tmp,CREATION_DATE_KEY,part.getCreationDate(),0.4f);
+            setField(tmp,MODIFICATION_DATE_KEY,part.getModificationDate(),0.4f);
             setField(tmp,"description",part.getPartRevision().getDescription(),2f);
             setField(tmp,"revisionNote",part.getIterationNote(),0.5f);
             setField(tmp,"workflow",part.getPartRevision().getWorkflow(),0.5f);

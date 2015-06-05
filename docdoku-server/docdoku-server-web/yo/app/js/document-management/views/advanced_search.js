@@ -119,8 +119,10 @@ define([
             this.$author = this.$('#search-author');
             this.$tags = this.$('#search-tags');
             this.$content = this.$('#search-content');
-            this.$from = this.$('#search-from');
-            this.$to = this.$('#search-to');
+            this.$createdFrom = this.$('#search-creation-from');
+            this.$createdTo = this.$('#search-creation-to');
+            this.$modifiedFrom = this.$('#search-modification-from');
+            this.$modifiedTo = this.$('#search-modification-to');
             this.$templatesId = this.$('#template-attributes-helper');
         },
 
@@ -144,8 +146,10 @@ define([
             var author = this.$author.val();
             var tags = this.$tags.val().replace(/ /g, '');
             var content = this.$content.val();
-            var from = this.$from.val();
-            var to = this.$to.val();
+            var createdFrom = this.$createdFrom.val();
+            var createdTo = this.$createdTo.val();
+            var modifiedFrom = this.$modifiedFrom.val();
+            var modifiedTo = this.$modifiedTo.val();
 
             var queryString = '';
 
@@ -170,11 +174,17 @@ define([
             if (content) {
                 queryString += '&content=' + content;
             }
-            if (from) {
-                queryString += '&from=' + date.toUTCWithTimeZoneOffset(from);
+            if (createdFrom) {
+                queryString += '&createdFrom=' + date.toUTCWithTimeZoneOffset(createdFrom);
             }
-            if (to) {
-                queryString += '&to=' + date.toUTCWithTimeZoneOffset(to);
+            if (createdTo) {
+                queryString += '&createdTo=' + date.toUTCWithTimeZoneOffset(createdTo);
+            }
+            if (modifiedFrom) {
+                queryString += '&modifiedFrom=' + date.toUTCWithTimeZoneOffset(modifiedFrom);
+            }
+            if (modifiedTo) {
+                queryString += '&modifiedTo=' + date.toUTCWithTimeZoneOffset(modifiedTo);
             }
 
             if (this.attributes.length) {

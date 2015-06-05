@@ -40,12 +40,14 @@ public class SearchQuery  implements Serializable {
     protected String type;
     protected Date creationDateFrom;
     protected Date creationDateTo;
+    protected Date modificationDateFrom;
+    protected Date modificationDateTo;
     protected AbstractAttributeQuery[] attributes;
 
     public SearchQuery(){
 
     }
-    public SearchQuery(String workspaceId, String fullText, String version, String author, String type, Date creationDateFrom, Date creationDateTo, AbstractAttributeQuery[] attributes) {
+    public SearchQuery(String workspaceId, String fullText, String version, String author, String type, Date creationDateFrom, Date creationDateTo, Date modificationDateFrom, Date modificationDateTo, AbstractAttributeQuery[] attributes) {
         this.workspaceId = workspaceId;
         this.fullText =fullText;
         this.version = version;
@@ -53,6 +55,8 @@ public class SearchQuery  implements Serializable {
         this.type = type;
         this.creationDateFrom = (creationDateFrom!=null) ? (Date) creationDateFrom.clone() : null;
         this.creationDateTo = (creationDateTo!=null) ? (Date) creationDateTo.clone() : null;
+        this.modificationDateFrom = (modificationDateFrom!=null) ? (Date) modificationDateFrom.clone() : null;
+        this.modificationDateTo = (modificationDateTo!=null) ? (Date) modificationDateTo.clone() : null;
         this.attributes = attributes;
     }
 
@@ -77,6 +81,12 @@ public class SearchQuery  implements Serializable {
     }
     public Date getCreationDateTo() {
         return (creationDateTo!=null) ? (Date) creationDateTo.clone() : null;
+    }
+    public Date getModificationDateFrom() {
+        return (modificationDateFrom!=null) ? (Date) modificationDateFrom.clone() : null;
+    }
+    public Date getModificationDateTo() {
+        return (modificationDateTo!=null) ? (Date) modificationDateTo.clone() : null;
     }
     public AbstractAttributeQuery[] getAttributes() {
         return attributes;
@@ -103,6 +113,12 @@ public class SearchQuery  implements Serializable {
     }
     public void setCreationDateTo(Date creationDateTo) {
         this.creationDateTo = (creationDateTo!=null) ? (Date) creationDateTo.clone() : null;
+    }
+    public void setModificationDateFrom(Date modificationDateFrom) {
+        this.modificationDateFrom = (modificationDateFrom!=null) ? (Date) modificationDateFrom.clone() : null;
+    }
+    public void setModificationDateTo(Date modificationDateTo) {
+        this.modificationDateTo = (modificationDateTo!=null) ? (Date) modificationDateTo.clone() : null;
     }
     public void setAttributes(AbstractAttributeQuery[] attributes) {
         this.attributes = attributes;

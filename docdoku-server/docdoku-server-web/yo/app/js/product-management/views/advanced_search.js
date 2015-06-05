@@ -119,8 +119,10 @@ define([
             this.$type = this.$('#search-type');
             this.$version = this.$('#search-version');
             this.$author = this.$('#search-author');
-            this.$from = this.$('#search-from');
-            this.$to = this.$('#search-to');
+            this.$createdFrom = this.$('#search-creation-from');
+            this.$createdTo = this.$('#search-creation-to');
+            this.$modifiedFrom = this.$('#search-modification-from');
+            this.$modifiedTo = this.$('#search-modification-to');
             this.$templatesId = this.$('#template-attributes-helper');
             this.$standardPart = this.$('input[name=search-standardPart]');
         },
@@ -143,8 +145,10 @@ define([
             var type = this.$type.val();
             var version = this.$version.val();
             var author = this.$author.val();
-            var from = this.$from.val();
-            var to = this.$to.val();
+            var createdFrom = this.$createdFrom.val();
+            var createdTo = this.$createdTo.val();
+            var modifiedFrom = this.$modifiedFrom.val();
+            var modifiedTo = this.$modifiedTo.val();
             var standardPart = this.$standardPart.filter(':checked').val() === 'all' ? null : this.$standardPart.filter(':checked').val();
 
             var queryString = '';
@@ -164,11 +168,17 @@ define([
             if (author) {
                 queryString += '&author=' + author;
             }
-            if (from) {
-                queryString += '&from=' + date.toUTCWithTimeZoneOffset(from);
+            if (createdFrom) {
+                queryString += '&createdFrom=' + date.toUTCWithTimeZoneOffset(createdFrom);
             }
-            if (to) {
-                queryString += '&to=' + date.toUTCWithTimeZoneOffset(to);
+            if (createdTo) {
+                queryString += '&createdTo=' + date.toUTCWithTimeZoneOffset(createdTo);
+            }
+            if (modifiedFrom) {
+                queryString += '&modifiedFrom=' + date.toUTCWithTimeZoneOffset(modifiedFrom);
+            }
+            if (modifiedTo) {
+                queryString += '&modifiedTo=' + date.toUTCWithTimeZoneOffset(modifiedTo);
             }
             if (standardPart) {
                 queryString += '&standardPart=' + standardPart;
