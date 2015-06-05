@@ -57,14 +57,20 @@ casper.test.begin('Part creation tests suite', 7, function partCreationTestsSuit
 
     casper.then(function fillNewPartModalForm(){
         this.waitForSelector('#part_creation_modal input#inputPartNumber',function onNewPartFormReady(){
-            this.test.assertElementCount('#inputPartTemplate option',3,'template options are present');
-            this.evaluate(function() {
-                document.querySelector('#inputPartTemplate').selectedIndex = 2;
-                $('#inputPartTemplate').change();
-                return true;
-            });
-            this.sendKeys('#part_creation_modal input#inputPartNumber', products.part1.number, {reset:true});
-            this.sendKeys('#part_creation_modal input#inputPartName', products.part1.name, {reset:true});
+            this.waitForSelector('#inputPartTemplate option:nth-child(3)', function injectTemplate() {
+                this.test.assertElementCount('#inputPartTemplate option',3,'template options are present');
+                this.evaluate(function() {
+                    document.querySelector('#inputPartTemplate').selectedIndex = 2;
+                    $('#inputPartTemplate').change();
+                    return true;
+                });
+                this.sendKeys('#part_creation_modal input#inputPartNumber', products.part1.number, {reset:true});
+                this.sendKeys('#part_creation_modal input#inputPartName', products.part1.name, {reset:true});
+            }, function fail() {
+                this.capture(false,'screenshot/partCreation/templatesNotInjected.png');
+                this.test.assert(false,'templates are not injected');
+            })
+
         },function fail() {
             this.capture('screenshot/partCreation/onNewPartFormReady-error.png');
             this.test.assert(false,'New part form can not be found');
