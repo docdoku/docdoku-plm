@@ -3,7 +3,7 @@
  */
 /*global casper,urls,products,productInstances*/
 
-casper.test.begin('Product instance creation tests suite',18, function productInstanceCreationTestsSuite() {
+casper.test.begin('Product instance creation tests suite',19, function productInstanceCreationTestsSuite() {
     'use strict';
 
     casper.open('');
@@ -38,6 +38,11 @@ casper.test.begin('Product instance creation tests suite',18, function productIn
         this.waitForSelector('#product_instance_btn', function openModal() {
             this.click('#product_instance_btn');
             this.test.assert(true, 'deliverable data button present');
+            this.waitForSelector('.product-instance-data-modal', function waitForModal() {
+                this.test.assert(true,'modal opened');
+            }, function fail() {
+                this.test.assert(false,'could not open modal');
+            })
         }, function fail() {
             this.capture('screenshot/product-instance/NoDeliverableButton.png');
             this.test.assert(false, 'deliverable data button not present');
