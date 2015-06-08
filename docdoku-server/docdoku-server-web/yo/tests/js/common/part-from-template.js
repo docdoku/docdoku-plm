@@ -1,7 +1,7 @@
 /**
  * Created by kelto on 02/06/15.
  */
-casper.test.begin('Part from template creation tests suite', 17, function partCreationTestsSuite(){
+casper.test.begin('Part from template creation tests suite', 18, function partCreationTestsSuite(){
     'use strict';
 
     casper.open('');
@@ -39,58 +39,54 @@ casper.test.begin('Part from template creation tests suite', 17, function partCr
     });
 
     /**
-     * Create a part with its partNumber and its partName and choose a template
+     * open new modal
      */
-
-    casper.then(function fillNewPartModalForm(){
+    casper.then(function openModal() {
         this.waitForSelector('#part_creation_modal input#inputPartNumber',function onNewPartFormReady(){
-            this.sendKeys('#part_creation_modal input#inputPartNumber', products.part2.number, {reset:true});
-            this.sendKeys('#part_creation_modal input#inputPartName', products.part2.name, {reset:true});
-
-            //wait for the third option to be loaded, sometimes the modal is created, but the template
-            //are still to be injected.
-            this.waitForSelector('#inputPartTemplate option:nth-child(3)', function succeed() {
-                this.test.assert(true,'The template are loaded in the creation modal');
-                this.evaluate(function() {
-                    document.querySelector('#inputPartTemplate').selectedIndex = 1;
-                    $('#inputPartTemplate').change();
-                    return true;
-                });
-            }, function fail() {
-                this.test.assert(false, 'Could not load the template in the creation modal');
-            });
-
+            this.test.assert(true, 'modal opened');
         },function fail() {
             this.capture('screenshot/partCreation/onNewPartFormReady-error.png');
             this.test.assert(false,'New part form can not be found');
         });
     });
 
+    casper.then(function selectTemplate() {
+        //wait for the third option to be loaded, sometimes the modal is created, but the template
+        //are still to be injected.
+        this.waitForSelector('#inputPartTemplate option:nth-child(3)', function succeed() {
+            this.test.assert(true,'The template are loaded in the creation modal');
+            this.evaluate(function() {
+                document.querySelector('#inputPartTemplate').selectedIndex = 1;
+                $('#inputPartTemplate').change();
+                return true;
+            });
+        }, function fail() {
+            this.test.assert(false, 'Could not load the template in the creation modal');
+        });
+    });
+    /**
+     * Create a part with its partNumber and its partName and choose a template
+     */
+    casper.then(function fillNewPartModalForm(){
+        this.sendKeys('#part_creation_modal input#inputPartNumber', products.part2.number, {reset:true});
+        this.sendKeys('#part_creation_modal input#inputPartName', products.part2.name, {reset:true});
+    });
+
+
     /**
      * Go to attribute template
      */
-    casper.then(function () {
-
-        var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
-        this.waitForSelector(attributesTabSelector, function () {
-
-            this.click(attributesTabSelector);
-            this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
-                this.test.assert(true, 'Attribute tab found');
-
-            }, function () {
-                this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
-                this.test.assert(false, 'Attribute tab not appearing');
-            });
+    casper.then(function goToAttributeTab() {
+        this.click('.nav.nav-tabs > li:nth-child(3) > a');
+        this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
+            this.test.assert(true, 'Attribute tab found');
         }, function () {
             this.capture('screenshot/attributes/clickOnAttributeTab-error.png');
             this.test.assert(false, 'Attribute tab cannot be found');
         });
-
     });
 
     casper.then(function countAttributeFromTemplate() {
-
         this.waitForSelector('#attributes-list .list-item', function() {
             this.test.assertElementCount('#attributes-list input.name[disabled=disabled]',2,
                 'The attributes name input should be disabled');
@@ -111,23 +107,14 @@ casper.test.begin('Part from template creation tests suite', 17, function partCr
      * Go to main tab
      */
     casper.then(function () {
+        this.click('.nav.nav-tabs > li:nth-child(1) > a');
+        this.waitForSelector('.nav.nav-tabs > li:nth-child(1).active', function () {
+            this.test.assert(true, 'Main tab found');
 
-        var attributesTabSelector = '.nav.nav-tabs > li:nth-child(1) > a';
-        this.waitForSelector(attributesTabSelector, function () {
-
-            this.click(attributesTabSelector);
-            this.waitForSelector('.nav.nav-tabs > li:nth-child(1).active', function () {
-                this.test.assert(true, 'Main tab found');
-
-            }, function () {
-                this.capture('screenshot/attributes/MainTabBecomeActive-error.png');
-                this.test.assert(false, 'Main tab not appearing');
-            });
         }, function () {
             this.capture('screenshot/attributes/clickOnMainTab-error.png');
-            this.test.assert(false, 'Main tab cannot be found');
+            this.test.assert(false, 'Main tab not appearing');
         });
-
     });
 
     /**
@@ -136,9 +123,7 @@ casper.test.begin('Part from template creation tests suite', 17, function partCr
 
     casper.then(function fillNewPartModalForm(){
         this.waitForSelector('#part_creation_modal input#inputPartNumber',function onNewPartFormReady(){
-
             this.test.assertElementCount('#inputPartTemplate option',3, 'there should be two template available');
-
             this.evaluate(function() {
                 document.querySelector('#inputPartTemplate').selectedIndex = 2;
                 $('#inputPartTemplate').change();
@@ -154,23 +139,14 @@ casper.test.begin('Part from template creation tests suite', 17, function partCr
      * Go to attribute template
      */
     casper.then(function () {
+        this.click('.nav.nav-tabs > li:nth-child(3) > a');
+        this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
+            this.test.assert(true, 'Attribute tab found');
 
-        var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
-        this.waitForSelector(attributesTabSelector, function () {
-
-            this.click(attributesTabSelector);
-            this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
-                this.test.assert(true, 'Attribute tab found');
-
-            }, function () {
-                this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
-                this.test.assert(false, 'Attribute tab not appearing');
-            });
         }, function () {
             this.capture('screenshot/attributes/clickOnAttributeTab-error.png');
-            this.test.assert(false, 'Attribute tab cannot be found');
+            this.test.assert(false, 'Attribute tab not appearing');
         });
-
     });
 
     /**

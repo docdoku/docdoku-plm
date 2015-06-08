@@ -3,7 +3,7 @@
  */
 /*global casper,urls,products,productInstances*/
 
-casper.test.begin('Product instance creation tests suite',19, function productInstanceCreationTestsSuite() {
+casper.test.begin('Product instance data path tests suite',19, function productInstanceDataPathTestsSuite() {
     'use strict';
 
     casper.open('');
@@ -32,39 +32,47 @@ casper.test.begin('Product instance creation tests suite',19, function productIn
     });
 
     /**
-     * Wait for the Deliverable Data button and open the modal
+     * Wait for the Deliverable Data button
      */
     casper.then(function openDataModal() {
         this.waitForSelector('#product_instance_btn', function openModal() {
             this.click('#product_instance_btn');
             this.test.assert(true, 'deliverable data button present');
-            this.waitForSelector('.product-instance-data-modal', function waitForModal() {
-                this.test.assert(true,'modal opened');
-            }, function fail() {
-                this.test.assert(false,'could not open modal');
-            })
+
         }, function fail() {
             this.capture('screenshot/product-instance/NoDeliverableButton.png');
             this.test.assert(false, 'deliverable data button not present');
         });
     });
 
+    casper.then(function openDataModal() {
+        this.waitForSelector('.product-instance-data-modal', function waitForModal() {
+            this.test.assert(true,'modal opened');
+        }, function fail() {
+            this.test.assert(false,'could not open modal');
+        });
+    });
+
     /**
-     * Count the attributes present in the modal
+     * Count the part attributes present in the modal
      */
-    casper.then(function assertAttributePresent() {
+    casper.then(function countPartAttribute() {
         this.waitForSelector('#partAttributes', function countAttributes() {
             this.test.assertElementCount('#partAttributes .list-item', 2, '2 parts attributes present');
         }, function fail() {
             this.capture('screenshot/product-instance/CouldNotLoadPartAttributes.png');
             this.test.assert(false, 'could not load the part attributes');
         });
+
+    });
+
+    casper.then(function countPathDataAttr() {
         this.waitForSelector('#pathDataAttributes', function countDataPath() {
             this.test.assertElementCount('#pathDataAttributes .list-item', 1, '1 data path attr present');
         }, function fail() {
             this.test.assert(false, 'could not load the data path attributes');
         });
-    });
+    })
 
     /**
      * Count tab present in the modal
@@ -86,20 +94,27 @@ casper.test.begin('Product instance creation tests suite',19, function productIn
     });
 
     /**
-     * re-open the modal
+     * close the modal
      */
     casper.then(function reopenModal() {
         this.waitWhileSelector('.product-instance-data-modal', function waitCloseModal() {
-            this.waitForSelector('#product_instance_btn', function openModal() {
-                this.click('#product_instance_btn');
-                this.test.assert(true, 'deliverable data button present');
-            }, function fail() {
-                this.capture('screenshot/product-instance/NoDeliverableButton.png');
-                this.test.assert(false, 'deliverable data button not present');
-            });
+            this.test.assert(true, 'modal closed');
         }, function fail() {
             this.capture('screenshot/product-instance/ModalNotClosing.png');
             this.test.assert(false, 'could not close the modal');
+        });
+    });
+
+    /**
+     * re-open the modal
+     */
+    casper.then(function reopenModal() {
+        this.waitForSelector('#product_instance_btn', function openModal() {
+            this.click('#product_instance_btn');
+            this.test.assert(true, 'deliverable data button present');
+        }, function fail() {
+            this.capture('screenshot/product-instance/NoDeliverableButton.png');
+            this.test.assert(false, 'deliverable data button not present');
         });
     });
 
@@ -111,12 +126,7 @@ casper.test.begin('Product instance creation tests suite',19, function productIn
             this.test.assertElementCount('ul.nav.nav-tabs li', 4, '2 tabs present in the modal');
             this.test.assertExists('.product-instance-data-modal div.path-description');
             this.test.assertExists('input.description-input[value="'+productInstances.productInstance1.iterationNote+'"]');
-            //Wait for the input value to be injected, can take sometime.
-            this.waitForSelector('#pathDataAttributes input.value[value="'+productInstances.productInstance1.pathDataValue+'"]', function found() {
-                this.test.assert(true,'the input value is given to the view');
-            }, function fail() {
-                this.test.assert(false, 'the previously given value is not printed in the input');
-            });
+
         }, function fail() {
             this.capture('screenshot/product-instance/DeliverableDataModal-notFound.png');
             this.test.assert(false, 'deliverable data modal not found');
@@ -124,18 +134,25 @@ casper.test.begin('Product instance creation tests suite',19, function productIn
 
     });
 
+    /**
+     * Test if the iteration note is present
+     */
+    casper.then(function assertIterationNote() {
+        //Wait for the input value to be injected, can take some time.
+        this.waitForSelector('#pathDataAttributes input.value[value="'+productInstances.productInstance1.pathDataValue+'"]', function found() {
+            this.test.assert(true,'the input value is given to the view');
+        }, function fail() {
+            this.test.assert(false, 'the previously given value is not printed in the input');
+        });
+    });
+
 
     /**
      * Go to the tab attributes
      */
     casper.then(function waitForModal() {
-        this.waitForSelector('.product-instance-data-modal', function waitModal() {
-            this.waitForSelector('#tab-attributes', function openAttributeTab() {
-                this.click('ul.nav.nav-tabs li:nth-child(2) a');
-                this.test.assert(true,'tab attribute loaded');
-            }, function fail() {
-                this.test.assert(false, 'could not load tab attribute');
-            });
+        this.waitForSelector('.product-instance-data-modal #tab-attributes', function waitModal() {
+            this.click('ul.nav.nav-tabs li:nth-child(2) a');
         }, function fail() {
             this.test.assert(false, 'could not open modal');
         });

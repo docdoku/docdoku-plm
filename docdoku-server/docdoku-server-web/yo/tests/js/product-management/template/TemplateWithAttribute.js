@@ -2,7 +2,7 @@
  * Created by kelto on 02/06/15.
  */
 
-casper.test.begin('Part template attributes tests suite', 16, function partTemplateCreationTestsSuite() {
+casper.test.begin('Part template attributes tests suite', 14, function partTemplateCreationTestsSuite() {
     'use strict';
 
     casper.open('');
@@ -37,85 +37,85 @@ casper.test.begin('Part template attributes tests suite', 16, function partTempl
         });
     });
 
+    /**
+     * open attribute tab
+     */
     casper.then(function () {
         var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
-        this.waitForSelector(attributesTabSelector, function () {
+        this.waitForSelector(attributesTabSelector, function openTab() {
             this.click(attributesTabSelector);
-            this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
-                var addAttributeButtonSelector = '.btn.add';
-                this.waitForSelector(addAttributeButtonSelector, function () {
-                    this.click(addAttributeButtonSelector);
-                }, function () {
-                    this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
-                    this.test.assert(false, 'Add attribute button not found');
-                });
-            }, function () {
-                this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
-                this.test.assert(false, 'Attribute tab not appearing');
-            });
-        }, function () {
+        }, function fail() {
             this.capture('screenshot/attributes/clickOnAttributeTab-error.png');
             this.test.assert(false, 'Attribute tab cannot be found');
         });
     });
 
     /**
-     * Test the lock/freeze/mandatory checkboxe
+     * wait for tab to be active
      */
-    casper.then(function testFreezeAttribute() {
+    casper.then(function assertTabActive() {
+        this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
+            this.test.assert(true, 'attributes tab active');
+        }, function () {
+            this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
+            this.test.assert(false, 'Attribute tab not appearing');
+        });
+    });
+
+    /**
+     * add new attributes
+     */
+    casper.then(function addNewAttributes() {
+        var addAttributeButtonSelector = '.btn.add';
+        this.waitForSelector(addAttributeButtonSelector, function () {
+            this.click(addAttributeButtonSelector);
+        }, function () {
+            this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
+            this.test.assert(false, 'Add attribute button not found');
+        });
+    });
+
+    /**
+     * Test the lock/freeze/mandatory checkbox present
+     */
+    casper.then(function testLockAttributePresent() {
         this.waitForSelector('.lock', function () {
             this.test.assert(true, 'lock checkbox present');
+            this.test.assertExists('.attribute-locked','attribute-locked present');
+            this.test.assertExists('.attribute-mandatory','attribute-mandatory present' )
         }, function fail() {
             this.capture('screenshot/attributes/all-lock-not-found.png');
             this.test.assert(false, 'the lock all checkbox should exist');
         });
-        //test that the attribute locked checkbox exist
-        this.waitForSelector('.attribute-locked', function () {
-            this.test.assert(true, 'attribute-locked present');
-        }, function fail() {
-            this.capture('screenshot/attributes/attribute-lock-not-found.png');
-            this.test.assert(false, 'checkbox attribute locked should exist');
-        });
-        this.waitForSelector('.attribute-mandatory', function () {
-            this.test.assert(true, 'attribute-mandatory present');
-        }, function fail() {
-            this.capture('screenshot/attributes/attribute-mandatory-not-found.png');
-            this.test.assert(false, 'checkbox attribute mandatory should exist');
-        });
+    });
 
-        this.waitForSelector('.lock', function () {
-            this.test.assert(true, 'lock checkbox present');
-            this.click('.lock');
-        }, function fail() {
-            this.test.assert(false, 'lock checkbox should exist');
-        });
-
-        this.waitWhileSelector('.attribute-locked', function () {
+    /**
+     * Clicking on freeze (.lock) should remove the attribute-locked checkbox
+     */
+    casper.then(function testAttrLockRemoved() {
+        this.click('.lock');
+        this.waitWhileSelector('.attribute-locked', function removingAttrLock() {
             this.test.assert(true, 'attribute-locked removed');
+            this.test.assertExists('.attribute-mandatory','attribute-mandatory present');
         }, function fail() {
+            this.capture('screenshot/attributes/AttributeLockNotRemoved.png');
             this.test.assert(false, 'attribute-locked should have been removed');
-        });
-        this.waitForSelector('.attribute-mandatory', function () {
-            this.test.assert(true, 'attribute-mandatory present');
-            this.click('.attribute-mandatory');
-            this.test.assertDoesntExist('.attribute-locked', 'checkbox attribute locked should not exist');
-        }, function fail() {
-            this.test.assert(false, 'attribute-mandatory should exist');
-        });
-
-        this.waitForSelector('.lock', function () {
-            this.test.assert(true, 'lock checkbox present');
-            this.click('.lock');
-            this.waitForSelector('.attribute-locked', function () {
-                this.test.assert(true, 'attribute-locked exist');
-            }, function fail() {
-                this.test.assert(false, 'attribute-locked should exist');
-            });
-        }, function fail() {
-            this.test.assert(false, 'lock checkbox should exist');
         });
 
     });
+
+    /**
+     * when freeze is not checked, the attribute-locked checkbox should appear
+     */
+    casper.then(function testAttrLockPresent() {
+        this.click('.lock');
+        this.waitForSelector('.attribute-locked', function () {
+            this.test.assert(true, 'attribute-locked exist');
+        }, function fail() {
+            this.test.assert(false, 'attribute-locked should exist');
+        });
+    });
+
     /**
      * Creation of a template with all attributes lock
      */
@@ -204,18 +204,12 @@ casper.test.begin('Part template attributes tests suite', 16, function partTempl
      * Go to the attributes tab
      */
     casper.then(function goToAttributesTab() {
-        var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
-        this.waitForSelector(attributesTabSelector, function () {
-            this.click(attributesTabSelector);
-            this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
-                this.test.assert(true, 'Attribute Tab active');
-            }, function fail() {
-                this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
-                this.test.assert(false, 'Attribute tab not appearing');
-            });
-        }, function () {
-            this.capture('screenshot/attributes/clickOnAttributeTab-error.png');
-            this.test.assert(false, 'Attribute tab cannot be found');
+        this.click('.nav.nav-tabs > li:nth-child(3) > a');
+        this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
+            this.test.assert(true, 'Attribute Tab active');
+        }, function fail() {
+            this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
+            this.test.assert(false, 'Attribute tab not appearing');
         });
     });
 
@@ -231,7 +225,7 @@ casper.test.begin('Part template attributes tests suite', 16, function partTempl
             this.capture('screenshot/attributes/addButtonNotAppearing.png');
             this.test.assert(false, 'Add attribute button not found');
         });
-    })
+    });
 
     /**
      * fill the attribute of the template

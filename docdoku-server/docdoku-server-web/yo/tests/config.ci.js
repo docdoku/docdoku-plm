@@ -60,11 +60,11 @@ module.exports = {
         "js/product-management/pathToPathLink/pathToPathLinkCreation.js",
         "js/product-management/baseline/baselineCreation.js",
         "js/product-management/product-instance/productInstanceCreation.js",
-        "js/product-management/product-instance/productInstanceData.js",
-        "js/product-management/pathToPathLink/pathToPathLinkCheck.js",
 
         // Product structure
         "js/product-management/assembly/bomInspection.js",
+        "js/product-management/product-instance/productInstanceData.js",
+        "js/product-management/pathToPathLink/pathToPathLinkCheck.js",
 
 
         // Documents tags

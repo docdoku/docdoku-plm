@@ -1,6 +1,6 @@
 /*global casper,urls,products*/
 
-casper.test.begin('Part creation tests suite', 7, function partCreationTestsSuite(){
+casper.test.begin('Part creation tests suite', 8, function partCreationTestsSuite(){
     'use strict';
 
     casper.open('');
@@ -52,24 +52,11 @@ casper.test.begin('Part creation tests suite', 7, function partCreationTestsSuit
 
 
     /**
-     * Create a part with its partNumber and its partName
+     * wait for the input to be loaded
      */
-
-    casper.then(function fillNewPartModalForm(){
+    casper.then(function waitForPartNumberInput(){
         this.waitForSelector('#part_creation_modal input#inputPartNumber',function onNewPartFormReady(){
-            this.waitForSelector('#inputPartTemplate option:nth-child(3)', function injectTemplate() {
-                this.test.assertElementCount('#inputPartTemplate option',3,'template options are present');
-                this.evaluate(function() {
-                    document.querySelector('#inputPartTemplate').selectedIndex = 2;
-                    $('#inputPartTemplate').change();
-                    return true;
-                });
-                this.sendKeys('#part_creation_modal input#inputPartNumber', products.part1.number, {reset:true});
-                this.sendKeys('#part_creation_modal input#inputPartName', products.part1.name, {reset:true});
-            }, function fail() {
-                this.capture(false,'screenshot/partCreation/templatesNotInjected.png');
-                this.test.assert(false,'templates are not injected');
-            })
+            this.test.assert(true, 'partNumber input loaded');
 
         },function fail() {
             this.capture('screenshot/partCreation/onNewPartFormReady-error.png');
@@ -77,29 +64,57 @@ casper.test.begin('Part creation tests suite', 7, function partCreationTestsSuit
         });
     });
 
+    /**
+     * Create a part with its partNumber and its partName
+     */
+    casper.then(function fillNewPartModalForm() {
+        this.waitForSelector('#inputPartTemplate option:nth-child(3)', function injectTemplate() {
+            this.test.assertElementCount('#inputPartTemplate option',3,'template options are present');
+            this.evaluate(function() {
+                document.querySelector('#inputPartTemplate').selectedIndex = 2;
+                $('#inputPartTemplate').change();
+                return true;
+            });
+            this.sendKeys('#part_creation_modal input#inputPartNumber', products.part1.number, {reset:true});
+            this.sendKeys('#part_creation_modal input#inputPartName', products.part1.name, {reset:true});
+        }, function fail() {
+            this.capture(false,'screenshot/partCreation/templatesNotInjected.png');
+            this.test.assert(false,'templates are not injected');
+        })
+    });
 
-    casper.then(function fillAttributeValue() {
+
+    casper.then(function openAttributesTab() {
         var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
         this.waitForSelector(attributesTabSelector, function () {
-
             this.click(attributesTabSelector);
-            this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
-                this.test.assert(true, 'Attribute tab found');
-                this.waitForSelector('#attributes-list .list-item', function addAttr() {
-                    this.sendKeys('#attributes-list input[required].value', products.part1.attributeValue);
-                    this.click('#part_creation_modal .btn-primary');
-                }, function fail() {
-                    this.capture('screenshot/partCreation/listAttributeNotFound.png');
-                    this.test.assert(false, 'attributes list not found');
-                });
-
-            }, function fail() {
-                this.capture('screenshot/partCreation/attributeTabBecomeActive-error.png');
-                this.test.assert(false, 'Attribute tab not appearing');
-            });
         }, function fail() {
             this.capture('screenshot/partCreation/clickOnAttributeTab-error.png');
             this.test.assert(false, 'Attribute tab cannot be found');
+        });
+    });
+
+    /**
+     * open attribute tab
+     */
+
+    casper.then(function assertAttributesTabActive() {
+        this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function openTab(){
+            this.test.assert(true, 'attribute tab open');
+        }, function fail() {
+            this.test.assert(false, 'could not set attribute tab to active');
+        });
+    });
+    /**
+     * send value to input attributes
+     */
+    casper.then(function fillAttributes() {
+        this.waitForSelector(' #attributes-list .list-item', function openTab() {
+            this.sendKeys('#attributes-list input[required].value', products.part1.attributeValue);
+            this.click('#part_creation_modal .btn-primary');
+        }, function fail() {
+            this.capture('screenshot/partCreation/listAttributeNotFound.png');
+            this.test.assert(false, 'attributes list not found');
         });
     });
 

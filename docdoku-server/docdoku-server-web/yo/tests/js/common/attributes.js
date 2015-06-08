@@ -25,28 +25,25 @@ casper.test.begin('Document creation with attributes', 2, function documentCreat
 
     });
 
+    casper.then(function openModal() {
+        var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
+        this.waitForSelector(attributesTabSelector, function () {
+            this.click(attributesTabSelector);
+
+        }, function () {
+            this.capture('screenshot/attributes/clickOnAttributeTab-error.png');
+            this.test.assert(false, 'Attribute tab cannot be found');
+        });
+    });
     /**
      * Add Attribute
      */
     casper.then(function () {
-        var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
-        this.waitForSelector(attributesTabSelector, function () {
-            this.click(attributesTabSelector);
-            this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
-                var addAttributeButtonSelector = '.btn.add';
-                this.waitForSelector(addAttributeButtonSelector, function () {
-                    this.click(addAttributeButtonSelector);
-                }, function () {
-                    this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
-                    this.test.assert(false, 'Add attribute button not found');
-                });
-            }, function () {
-                this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
-                this.test.assert(false, 'Attribute tab not appearing');
-            });
+        this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
+            this.click('.btn.add');
         }, function () {
-            this.capture('screenshot/attributes/clickOnAttributeTab-error.png');
-            this.test.assert(false, 'Attribute tab cannot be found');
+            this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
+            this.test.assert(false, 'Attribute tab not appearing');
         });
     });
 
@@ -94,28 +91,25 @@ casper.test.begin('Document creation with attributes', 2, function documentCreat
         });
     });
 
+    casper.then(function openModal() {
+        var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
+        this.waitForSelector(attributesTabSelector, function () {
+            this.click(attributesTabSelector);
+
+        }, function () {
+            this.capture('screenshot/attributes/clickOnAttributeTab-error.png');
+            this.test.assert(false, 'Attribute tab cannot be found');
+        });
+    });
     /**
      * Add Attribute
      */
     casper.then(function () {
-        var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
-        this.waitForSelector(attributesTabSelector, function () {
-            this.click(attributesTabSelector);
-            this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
-                var addAttributeButtonSelector = '.btn.add';
-                this.waitForSelector(addAttributeButtonSelector, function () {
-                    this.click(addAttributeButtonSelector);
-                }, function () {
-                    this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
-                    this.test.assert(false, 'Add attribute button not found');
-                });
-            }, function () {
-                this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
-                this.test.assert(false, 'Attribute tab not appearing');
-            });
+        this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
+            this.click('.btn.add');
         }, function () {
-            this.capture('screenshot/attributes/clickOnAttributeTab-error.png');
-            this.test.assert(false, 'Attribute tab cannot be found');
+            this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
+            this.test.assert(false, 'Attribute tab not appearing');
         });
     });
 
