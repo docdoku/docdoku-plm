@@ -106,4 +106,29 @@ public class PathDataIterationDTO {
     public void setPath(String path) {
         this.path = path;
     }
+
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PathDataIterationDTO dto = (PathDataIterationDTO) o;
+
+        if (partMasterId != dto.partMasterId) return false;
+        if (!partsPath.equals(dto.partsPath)) return false;
+        if (path != null ? !path.equals(dto.path) : dto.path != null) return false;
+        if (!serialNumber.equals(dto.serialNumber)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = partMasterId;
+        result = 31 * result + (partsPath != null ? partsPath.hashCode() : 0);
+        result = 31 * result + (path != null ? path.hashCode() : 0);
+        return result;
+    }
 }
