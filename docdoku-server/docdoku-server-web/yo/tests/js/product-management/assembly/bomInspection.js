@@ -70,8 +70,8 @@ casper.test.begin('Bom inspection tests suite',13, function bomInspectionTestsSu
      * */
 
      casper.then(function countBomTableRows(){
-         this.waitForSelector('#bom_table > tbody > tr', function rowsAvailable(){
-            this.test.assertElementCount('#bom_table > tbody > tr',4,'4 entries in the bom list');
+         this.waitForSelector('#bom_table > tbody > tr:nth-child(4)', function rowsAvailable(){
+            this.test.assert(true,'4 entries in the bom list');
         },function fail(){
             this.capture('screenshot/assembly/countBomTableRows-error.png');
             this.test.assert(false,'Bom list has not 4 entries in the list');
