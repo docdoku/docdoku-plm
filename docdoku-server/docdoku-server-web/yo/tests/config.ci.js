@@ -11,6 +11,8 @@ module.exports = {
     login: "test",
     pass: "testpassword",
     contextPath: "/",
+    waitOnRequest: true,
+    requestTimeOut: 1000,
     pre: [
         "js/pre/start.js"
     ],
