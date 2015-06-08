@@ -60,7 +60,7 @@ define([
 
             this.usedByPartViews = [];
             this.usedByDocumentViews = [];
-
+            this.usedByProductInstanceViews = [];
             this.documentsCollection.fetch({reset: true});
 
             this.initUsedByGroup();
