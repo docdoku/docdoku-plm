@@ -49,6 +49,7 @@ casper.test.begin('Product instance data path tests suite',19, function productI
         this.waitForSelector('.product-instance-data-modal', function waitForModal() {
             this.test.assert(true,'modal opened');
         }, function fail() {
+            this.capture('screenshot/product-instance/ModalNotFound.png');
             this.test.assert(false,'could not open modal');
         });
     });
