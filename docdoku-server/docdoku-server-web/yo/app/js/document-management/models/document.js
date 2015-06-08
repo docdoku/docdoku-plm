@@ -110,6 +110,9 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 				context: this,
 				type: 'PUT',
 				url: this.baseUrl() + '/checkout',
+                success: function () {
+                        this.fetch();
+                },
 				error: function (xhr) {
                     window.alert(xhr.responseText);
 				}
@@ -122,6 +125,9 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 				context: this,
 				type: 'PUT',
 				url: this.baseUrl() + '/undocheckout',
+                success: function () {
+                    this.fetch();
+                },
 				error: function (xhr) {
                     window.alert(xhr.responseText);
 				}
@@ -132,8 +138,11 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 			return $.ajax({
 				context: this,
 				type: 'PUT',
-				url: this.baseUrl() + '/checkin',
-				error: function (xhr) {
+				url: this.baseUrl() + '/checkin'
+                ,success: function () {
+                    this.fetch();
+                },
+                error: function (xhr) {
                     window.alert(xhr.responseText);
 				}
 			});
