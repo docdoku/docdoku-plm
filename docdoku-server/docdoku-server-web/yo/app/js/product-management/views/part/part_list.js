@@ -48,6 +48,7 @@ define([
                 _this.addPart(model);
             });
             this.dataTable();
+            this.onSelectionChanged();
         },
 
         addNewPart: function (model) {

@@ -329,11 +329,9 @@ define([
         },
 
         newVersion: function () {
-            this.partListView.getSelectedPartIndexes();
             var partNewVersionView = new PartNewVersionView({
                 model: this.partListView.getSelectedPart()
             }).render();
-            this.listenTo(partNewVersionView,'part:new-version', this.resetCollection);
             window.document.body.appendChild(partNewVersionView.el);
         },
 
