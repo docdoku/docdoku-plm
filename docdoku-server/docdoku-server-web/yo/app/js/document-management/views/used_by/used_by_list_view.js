@@ -47,7 +47,15 @@ define([
                     //console.log('error getting used by list');
                 }
             });
-
+            this.linkedDocument.getUsedByPathDataPdInstances(this.linkedDocumentIterationId, {
+                success: function (path) {
+                    that.pathDataCollection = new PathDataList(path);
+                    that.addPathDataProductInstanceViews();
+                },
+                error: function () {
+                    //console.log('error getting used by list');
+                }
+            });
         },
 
         render: function () {
