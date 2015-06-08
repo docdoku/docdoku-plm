@@ -131,6 +131,10 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
             this.capture('screenshot/attributes/addAttribute-error.png');
             this.test.assert(false, 'Attribute not appearing in the list');
         });
+
+    });
+
+    casper.then(function closeModal() {
         this.waitWhileSelector('#part_template_creation_modal', function() {
             this.test.assert(true, 'modal closed');
         }, function fail() {
@@ -139,20 +143,38 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
     });
 
     /**
-     * Check if the template has been created and if the attributes are saved
+     * Check if the template has been created and open the edit modal
      */
-    casper.then(function() {
+    casper.then(function openEditModal() {
         this.waitForSelector('#part_template_table tbody tr:first-child td.reference',function clickPartTemplateCreationButton() {
             this.click('#part_template_table tbody tr:first-child td.reference');
-            this.waitForSelector('#attributes-list', function() {
-                this.test.assertElementCount('#attributes-list .list-item.well', 2);
-            }, function fail() {
-                this.capture('screenshot/partTemplateCreation/waitForAttrTab-error.png');
-                this.test.assert(false, 'could not open modal for edition');
-            });
+
         },function fail(){
             this.capture('screenshot/partTemplateCreation/waitForPartTemplateCreationButton-error.png');
             this.test.assert(false,'Part template creation button can not be found');
+        });
+    });
+
+    /**
+     * open attribute tab
+     */
+    casper.then(function openAttrTab() {
+        var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
+        this.waitForSelector(attributesTabSelector, function openTab() {
+            this.click(attributesTabSelector);
+        }, function fail() {
+            this.capture('screenshot/attributes/clickOnAttributeTab-error.png');
+            this.test.assert(false, 'Attribute tab cannot be found');
+        });
+    });
+
+
+    casper.then(function() {
+        this.waitForSelector('#attributes-list .list-item.well:nth-child(2)', function() {
+            this.test.assertElementCount('#attributes-list .list-item.well', 2);
+        }, function fail() {
+            this.capture('screenshot/partTemplateCreation/waitForAttrTab-error.png');
+            this.test.assert(false, 'could not open modal for edition');
         });
     });
 
