@@ -41,6 +41,7 @@ import java.io.Serializable;
     @NamedQuery(name="DocumentLink.findProductInstanceIteration", query = "SELECT p FROM ProductInstanceIteration p JOIN p.linkedDocuments dl where dl.targetDocument = :documentRevision"),
     @NamedQuery(name="DocumentLink.findPathData", query = "SELECT p FROM PathDataIteration p JOIN p.linkedDocuments dl where dl.targetDocument = :documentRevision"),
     @NamedQuery(name="DocumentLink.findInverseDocumentLinks", query = "SELECT d FROM DocumentIteration d JOIN d.linkedDocuments dl where dl.targetDocument = :documentRevision"),
+    @NamedQuery(name="DocumentLink.findInverseDocumentLinks", query = "SELECT d FROM DocumentIteration d JOIN d.linkedDocuments dl where dl.targetDocument = :documentRevision"),
     @NamedQuery(name="DocumentLink.findInversePartLinks", query = "SELECT p FROM PartIteration p JOIN p.linkedDocuments dl where dl.targetDocument = :documentRevision")
 })
 public class DocumentLink implements Serializable, Cloneable{

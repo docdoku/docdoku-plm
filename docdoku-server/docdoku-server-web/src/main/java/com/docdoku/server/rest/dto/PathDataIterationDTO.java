@@ -25,6 +25,8 @@ import java.util.Set;
  * @author: Chadid Asmae
  */
 public class PathDataIterationDTO {
+    private String serialNumber;
+    private int partMasterId;
     private int iteration;
     private String noteIteration;
     private PartMinimalListDTO partsPath;
@@ -32,6 +34,14 @@ public class PathDataIterationDTO {
     private List<String> attachedFiles;
     private Set<DocumentRevisionDTO> linkedDocuments;
     private List<InstanceAttributeDTO> instanceAttributes;
+
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
 
     public int getIteration() {
         return iteration;
@@ -87,5 +97,36 @@ public class PathDataIterationDTO {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public int getPartMasterId() {
+        return partMasterId;
+    }
+
+    public void setPartMasterId(int partMasterId) {
+        this.partMasterId = partMasterId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PathDataIterationDTO dto = (PathDataIterationDTO) o;
+
+        if (partMasterId != dto.partMasterId) return false;
+        if (!partsPath.equals(dto.partsPath)) return false;
+        if (path != null ? !path.equals(dto.path) : dto.path != null) return false;
+        if (!serialNumber.equals(dto.serialNumber)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = partMasterId;
+        result = 31 * result + (partsPath != null ? partsPath.hashCode() : 0);
+        result = 31 * result + (path != null ? path.hashCode() : 0);
+        return result;
     }
 }

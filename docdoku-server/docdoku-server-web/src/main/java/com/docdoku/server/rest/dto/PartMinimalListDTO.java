@@ -44,4 +44,21 @@ public class PartMinimalListDTO implements Serializable {
     public void addPart(PartMinimalDTO part){
         parts.add(part);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PartMinimalListDTO that = (PartMinimalListDTO) o;
+
+        if (parts != null ? !parts.equals(that.parts) : that.parts != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return parts != null ? parts.hashCode() : 0;
+    }
 }

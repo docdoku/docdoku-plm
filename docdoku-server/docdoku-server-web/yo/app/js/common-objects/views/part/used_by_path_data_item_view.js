@@ -25,8 +25,8 @@ define([
 
             _.each(partsPath, function (part) {
                 var path = part.name ? part.name + ' < ' + part.number + ' >' : '< ' + part.number + ' >';
-                self.$('.path-description').prepend(path);
-                self.$('.path-description').prepend('<i class="fa fa-chevron-right">');
+                self.$('.path-description').append(path);
+                self.$('.path-description').append('<i class="fa fa-chevron-right">');
             });
 
             self.$('.fa.fa-chevron-right').last().remove();

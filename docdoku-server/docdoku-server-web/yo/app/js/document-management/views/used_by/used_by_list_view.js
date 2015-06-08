@@ -8,9 +8,9 @@ define([
     'collections/used_by_document',
     'views/used_by/used_by_list_item_view',
     'common-objects/views/part/used_by_list_item_view',
-    'common-objects/views/part/used_by_path_data_item_view',
+    'common-objects/views/part/used_by_pd_instance_group_list_view',
     'text!templates/used_by/used_by_list.html'
-], function (Backbone, Mustache, PartList,PathDataList,ProductInstanceList, UsedByDocumentList, UsedByListItemView,UsedByProductInstanceListItemView,UsedByPathDataItemView, template) {
+], function (Backbone, Mustache, PartList,PathDataList,ProductInstanceList, UsedByDocumentList, UsedByListItemView,UsedByProductInstanceListItemView, UsedByGroupListView,template) {
     'use strict';
     var UsedByListView = Backbone.View.extend({
 
@@ -47,15 +47,7 @@ define([
                     //console.log('error getting used by list');
                 }
             });
-            this.linkedDocument.getUsedByPathDataPdInstances(this.linkedDocumentIterationId, {
-                success: function (path) {
-                    that.pathDataCollection = new PathDataList(path);
-                    that.addPathDataProductInstanceViews();
-                },
-                error: function () {
-                    //console.log('error getting used by list');
-                }
-            });
+
         },
 
         render: function () {
@@ -69,10 +61,9 @@ define([
             this.usedByPartViews = [];
             this.usedByDocumentViews = [];
             this.usedByProductInstanceViews = [];
-            this.usedByPathDataProductInstanceViews = [];
-
             this.documentsCollection.fetch({reset: true});
 
+            this.initUsedByGroup();
             return this;
         },
 
@@ -80,7 +71,6 @@ define([
             this.documentsUL = this.$('#used-by-documents');
             this.partsUL = this.$('#used-by-parts');
             this.productInstancesUL = this.$('#used-by-product-instances');
-            this.pathDataUL = this.$('#used-by-path-data');
         },
 
         addPartViews: function () {
@@ -89,9 +79,9 @@ define([
        addProductInstanceViews: function () {
             this.productInstancesCollection.each(this.addProductInstanceView.bind(this));
         },
-        addPathDataProductInstanceViews: function () {
+       /* addPathDataProductInstanceViews: function () {
             this.pathDataCollection.each(this.addPathDataProductInstanceView.bind(this));
-        },
+        },*/
 
         addDocumentViews: function () {
             this.documentsCollection.each(this.addDocumentView.bind(this));
@@ -113,14 +103,7 @@ define([
             this.usedByProductInstanceViews.push(usedByView);
             this.productInstancesUL.append(usedByView.$el);
         },
-        addPathDataProductInstanceView: function (model) {
-            var usedByView = new UsedByPathDataItemView({
-                model: model
-            }).render();
 
-            this.usedByPathDataProductInstanceViews.push(usedByView);
-            this.pathDataUL.append(usedByView.$el);
-        },
 
         addDocumentView: function (model) {
             var usedByView = new UsedByListItemView({
@@ -129,6 +112,15 @@ define([
 
             this.usedByDocumentViews.push(usedByView);
             this.documentsUL.append(usedByView.$el);
+        },
+        initUsedByGroup:function(){
+            this.usedByGroupListView = new UsedByGroupListView({
+                linkedDocument: this.linkedDocument,
+                linkedDocumentId: this.linkedDocumentId
+            }).render();
+
+            /* Add the usedByGroupListView to the tab */
+            this.$('#used-by-group-list-view').html(this.usedByGroupListView.el);
         }
 
     });
