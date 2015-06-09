@@ -65,6 +65,7 @@ define([
                     var lovName = this.model.get('lovName');
                     if(!lovName){
                         if (this.editMode && !this.attributesLocked) {
+                            this.$el.find('select.type').parent().addClass('listOfValues');
                             this.$el.find('select.type').parent().html(App.config.i18n.LOV);
                         }else{
                             this.$('div.type').html(App.config.i18n.LOV);

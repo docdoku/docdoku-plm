@@ -1,11 +1,7 @@
-{{#frozenMode}}
-<i class="fa fa-bars sortable-handler"></i>
-{{^model.locked}}
+<i class="fa fa-bars sortable-handler" {{^frozenMode}}style="visibility: hidden"{{/frozenMode}}></i>
 <div class="controls">
-    <a class="fa fa-times"></a>
+    <a class="fa fa-times" {{#frozenMode}}{{#model.locked}}style="visibility: hidden"{{/model.locked}}{{/frozenMode}}{{^frozenMode}}style="visibility: hidden"{{/frozenMode}}></a>
 </div>
-{{/model.locked}}
-{{/frozenMode}}
 <div class="controls">
     <input type="text" class="input-xlarge name" placeholder="{{i18n.NAME}}" value="{{model.name}}" required
     {{^frozenMode}}disabled="disabled"{{/frozenMode}} {{#frozenMode}}{{#model.locked}}disabled="disabled"{{/model.locked}}{{/frozenMode}} />

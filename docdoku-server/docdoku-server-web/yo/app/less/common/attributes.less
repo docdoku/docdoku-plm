@@ -32,10 +32,17 @@
         > * {
             display: inline-block;
             vertical-align: middle;
-            margin: 0 3px;
-            > * {
+            margin: 0 2px;
+            > .value {
+                max-width: 153px;
+            }
+            > select {
                 width: auto;
-                max-width: 125px;
+                max-width: 134px;
+            }
+            > .name {
+                width: auto;
+                max-width: 109px;
             }
         }
         &.highlight{
@@ -66,17 +73,29 @@
     .controls {
         input[type="date"] {
             display: -webkit-inline-box;
-            max-width: 145px;
+            max-width: 153px;
         }
 
-        &.shift-margin{
-            margin-left: 8px;
+        &.shift-margin {
+            margin-left: 3px;
         }
+
         input[disabled="disabled"].input-xlarge.name {
-            margin-right: 15px;
-            max-width: 134px;
+            margin-right: 9px;
+            max-width: 120px;
             padding-left: 5px;
         }
+
+        select.lovItemValues {
+            max-width: 167px;
+            width: auto;
+        }
+
+    }
+
+    .controls.listOfValues {
+        width: 124px;
+        margin-left: 12px;
     }
 
     .attribute-link  {
@@ -84,12 +103,10 @@
     }
 
     div.type {
-        width: 74px;
+        width: 126px;
         max-width: 139px;
         text-transform: capitalize;
         margin: 0 1px 0 0;
-        padding-left: 20px;
-        margin-left: 20px;
     }
 
     input[disabled] {
