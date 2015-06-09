@@ -38,13 +38,17 @@ import com.docdoku.server.rest.interceptors.Compress;
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import javax.ws.rs.*;
+import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,6 +57,8 @@ import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Stateless
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
@@ -73,6 +79,9 @@ public class DocumentBinaryResource {
     @Resource
     private SessionContext ctx;
 
+    private static final ExecutorService UPLOADER_THREADS = Executors.newCachedThreadPool();
+
+
     public DocumentBinaryResource() {
     }
 
@@ -80,29 +89,37 @@ public class DocumentBinaryResource {
     @Path("/{iteration}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public Response uploadDocumentFiles(@Context HttpServletRequest request,
+    public void uploadDocumentFiles(@Context HttpServletRequest request,
+                                        @Suspended AsyncResponse ar,
                                         @PathParam("workspaceId") final String workspaceId,
                                         @PathParam("documentId") final String documentId,
                                         @PathParam("version") final String version,
                                         @PathParam("iteration") final int iteration)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException {
-        try {
-            String fileName=null;
-            DocumentIterationKey docPK = new DocumentIterationKey(workspaceId, documentId, version, iteration);
-            Collection<Part> formParts = request.getParts();
 
-            for(Part formPart : formParts){
-                fileName = uploadAFile(formPart,docPK);
+        UPLOADER_THREADS.execute(new Runnable(){
+            @Override
+            public void run() {
+            try {
+                String fileName = null;
+                DocumentIterationKey docPK = new DocumentIterationKey(workspaceId, documentId, version, iteration);
+                Collection<Part> formParts = request.getParts();
+
+                for (Part formPart : formParts) {
+                    fileName = uploadAFile(formPart, docPK);
+                }
+
+                if (formParts.size() == 1) {
+                    ar.resume(BinaryResourceUpload.tryToRespondCreated(request.getRequestURI() + URLEncoder.encode(fileName, "UTF-8")));
+                }
+                ar.resume(Response.ok().build());
+
+            } catch (IOException | ServletException | StorageException e) {
+                ar.resume(BinaryResourceUpload.uploadError(e));
+            } catch (EntityNotFoundException | NotAllowedException | CreationException | EntityAlreadyExistsException | UserNotActiveException | AccessRightException e) {
+                ar.resume(e);
             }
-
-            if(formParts.size()==1) {
-                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI()+ URLEncoder.encode(fileName, "UTF-8"));
-            }
-            return Response.ok().build();
-
-        } catch (IOException | ServletException | StorageException e) {
-            return BinaryResourceUpload.uploadError(e);
-        }
+        }});
     }
 
     private String uploadAFile(Part formPart,DocumentIterationKey docPK)

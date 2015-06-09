@@ -28,8 +28,8 @@ import javax.ws.rs.core.Application;
  * @author Florent Garin
  */
 
-@ApplicationPath("/api/")
-public class ApplicationConfig extends Application{
+//@ApplicationPath("/api/")
+public class ApplicationConfig /*extends Application*/{
     
     
 }

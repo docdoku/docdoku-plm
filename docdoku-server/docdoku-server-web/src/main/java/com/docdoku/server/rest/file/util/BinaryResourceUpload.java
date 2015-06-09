@@ -29,6 +29,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,7 +39,6 @@ import java.util.logging.Logger;
  */
 public class BinaryResourceUpload {
     private static final Logger LOGGER = Logger.getLogger(BinaryResourceUpload.class.getName());
-
 
     private BinaryResourceUpload(){
         super();
@@ -52,39 +53,11 @@ public class BinaryResourceUpload {
      */
     public static long uploadBinary(OutputStream outputStream, Part formPart)
             throws IOException {
-        InputStream inputStream = null;
-        long length = -1;
-        try {
-            inputStream = formPart.getInputStream();
-            length = ByteStreams.copy(inputStream, outputStream);
-        } finally {
-            closeInputStream(inputStream);
-            closeOutputStream(outputStream);
+        long length;
+        try(InputStream in = formPart.getInputStream();OutputStream out=outputStream) {
+            length = ByteStreams.copy(in, out);
         }
-
         return length;
-    }
-
-
-    private static void closeInputStream(InputStream inputStream){
-        if(inputStream!=null){
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE,"A inputStream can not be close",e);
-            }
-        }
-    }
-
-    private static void closeOutputStream(OutputStream outputStream){
-        if(outputStream!=null){
-            try {
-                outputStream.flush();
-                outputStream.close();
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "A outputStream can not be close", e);
-            }
-        }
     }
 
     /**
