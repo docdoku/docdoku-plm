@@ -1,6 +1,6 @@
 /*global casper,urls,workspace,documents*/
 
-casper.test.begin('Documents multiple checkout tests suite', 1, function documentMultipleCheckoutTestsSuite(){
+casper.test.begin('Documents multiple checkout tests suite', 2, function documentMultipleCheckoutTestsSuite(){
 
     'use strict';
 
@@ -91,6 +91,19 @@ casper.test.begin('Documents multiple checkout tests suite', 1, function documen
             this.test.assert(false,'Documents have not been checkout');
         });
     });
+
+    /**
+     * Wait for all button to be checkout
+     */
+    casper.then(function waitForDisplayCheckin() {
+        this.waitWhileSelector('tbody > tr > td.reference.doc-ref > a > i.fa.fa-eye', function() {
+            this.test.assert(true,'Document retrieved');
+        }, function fail() {
+            this.capture('screenshot/documentCheckin/waitForCheckinDocuments-error.png');
+            this.test.assert(false,'Document has not been checkin');
+        });
+    });
+
 
     casper.run(function allDone() {
         this.test.done();
