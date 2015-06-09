@@ -55,6 +55,9 @@ casper.on('remote.alert', function(msg) {
     'use strict';
     this.log('Alert box: '+msg,'warning');
     this.capture('screenshot/alert/'+Date.now()+'.png');
+    if(conf.debug) {
+        this.debugHTML();
+    }
     return true;
 });
 

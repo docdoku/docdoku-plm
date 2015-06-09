@@ -1,5 +1,8 @@
 /*global module*/
 module.exports = {
+    //if debug is at true
+    // will dump html on each remote.alert
+    debug: falseé,
     verbose: true,
     failFast:true,
     logLevel: "warning",
