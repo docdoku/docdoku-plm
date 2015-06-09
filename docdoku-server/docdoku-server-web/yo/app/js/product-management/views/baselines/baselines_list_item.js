@@ -22,12 +22,15 @@ define([
         },
 
         render: function () {
+
             this.$el.html(Mustache.render(template, {
+                i18n: App.config.i18n,
                 model: this.model,
                 bomUrl: this.model.getBomUrl(),
                 sceneUrl:this.model.getSceneUrl(),
                 zipUrl: this.model.getZipUrl(),
-                i18n: App.config.i18n
+                hasTypedLink: this.model.getTypedLink()
+
             }));
             this.$checkbox = this.$('input[type=checkbox]');
             this.bindUserPopover();

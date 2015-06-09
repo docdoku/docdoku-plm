@@ -11,6 +11,11 @@
     {{/model.isReleased}}
 </td>
 <td><a class="author-popover">{{model.getAuthor}}</a></td>
+<td>
+    {{#hasTypedLink}}<i class="fa fa-exchange"></i>{{/hasTypedLink}}
+    {{#hasBrokenLink}}<i class="fa fa-unlink broken-link"></i>{{/hasBrokenLink}}
+
+</td>
 <td><i class="fa fa-file-archive-o download-zip"></i></td>
 <td><a href="{{bomUrl}}" target="_blank" title="{{i18n.BOM_VIEW}}"><i class="fa fa-sitemap"></i></a></td>
 <td><a href="{{sceneUrl}}" target="_blank" title="{{i18n.VISUALIZE_PRODUCT}}"><i class="fa fa-video-camera"></i></a></td>

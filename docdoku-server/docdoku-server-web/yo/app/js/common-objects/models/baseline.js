@@ -57,6 +57,23 @@ define(['backbone'], function (Backbone) {
 
         hasObsoletePartRevisions:function(){
             return this.get('hasObsoletePartRevisions');
+        },
+
+        setTypedLink:function(links){
+            this.set('hasTypedLink', links.length != 0);
+        },
+        getTypedLink: function () {
+            var that = this;
+            var urlTypedLink = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + encodeURIComponent(this.getConfigurationItemId()) + '/baselines/' + encodeURIComponent(this.getId()) + '/path-to-path-links-types';
+
+                $.ajax({
+                type: 'GET',
+                url: urlTypedLink,
+                success: function (typedLinks) {
+                    return typedLinks.length != 0;
+                }
+            });
+
         }
 
     });

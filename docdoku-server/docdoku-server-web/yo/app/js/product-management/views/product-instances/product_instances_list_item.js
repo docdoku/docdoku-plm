@@ -27,7 +27,8 @@ define([
                 sceneUrl:this.model.getSceneUrl(),
                 zipUrl: this.model.getZipUrl(),
                 isReadOnly: this.model.isReadOnly(),
-                isFullAccess: this.model.isFullAccess()
+                isFullAccess: this.model.isFullAccess(),
+                hasTypedLink: this.model.getTypedLink()
             }));
             this.$checkbox = this.$('input[type=checkbox]');
             this.model.on('change', this.render, this);
