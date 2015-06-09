@@ -64,10 +64,26 @@ casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuit
             });
         }, function then() {
             this.test.assert(true,'Part has been deleted');
-            this.test.assertSelectorHasText('.nav-checkedOut-number-item',0, 'checkout number updated after deletion');
         }, function fail(){
             this.capture('screenshot/partDeletion/waitForPartDiseapear-error.png');
             this.test.assert(false,'Part has not been deleted');
+        });
+    });
+
+    casper.then(function waitForNavUpdate() {
+        this.waitFor(function check() {
+            return this.evaluate(function() {
+                return $('.nav-checkedOut-number-item').text() === "0";
+            });
+        }, function then() {
+            this.test.assert(true, 'Checkout nav number updated');
+        }, function fail() {
+            var value = this.evaluate(function() {
+                $('.nav-checkedOut-number-item').text()
+            });
+            this.log('value: '+value, 'warning');
+            this.capture('screenshot/partDeletion/waitForNavUpdateCount.png');
+            this.test.assert(false, 'Checkout nav number not updated');
         });
     });
 
