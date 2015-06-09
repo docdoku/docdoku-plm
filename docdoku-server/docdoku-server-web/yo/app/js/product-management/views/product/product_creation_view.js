@@ -27,8 +27,10 @@ define([
             return this;
         },
 
-        setRootPartNumber:function(partNumber){
-            this.$inputPartNumber.val(partNumber);
+        setRootPart:function(part){
+            this.$inputPartNumber.val(part.getNumber());
+            this.$inputPartName.val(part.getName());
+            this.$inputPart.val(part.getName() + ' < ' + part.getNumber() + ' >');
             return this;
         },
 
@@ -59,6 +61,7 @@ define([
                     });
                 },
                 updater: function(item) {
+                    debugger;
                     that.$inputPartName.val(map[item].partName);
                     that.$inputPartNumber.val(map[item].partNumber);
                     return item;
