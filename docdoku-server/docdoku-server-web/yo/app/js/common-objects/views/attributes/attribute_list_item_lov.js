@@ -35,7 +35,7 @@ define([
                 this.$('div.type').html(type);
             }
 
-            if(this.model.get('locked') === true){
+            if(this.model.get('locked') === true && !this.model.get('lovName')){
                 this.$el.find('div.type').html(App.config.i18n.LOV);
             }
 
