@@ -16,7 +16,11 @@ define([
             });
         },
         rendered: function () {
-            this.once('_ready', this.dataTable);
+            this.once('_ready', function() {
+                this.dataTable();
+                this.trigger('selectionChange')
+            });
+
         },
         redraw: function () {
             this.dataTable();

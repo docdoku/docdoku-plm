@@ -447,7 +447,7 @@ define([
                     message: App.config.i18n.PRODUCT_CREATED
                 }).render().$el);
             });
-            productCreationView.setRootPartNumber(this.partListView.getSelectedPart().getNumber())
+            productCreationView.setRootPart(this.partListView.getSelectedPart())
                 .openModal();
         },
         actionTags: function () {
