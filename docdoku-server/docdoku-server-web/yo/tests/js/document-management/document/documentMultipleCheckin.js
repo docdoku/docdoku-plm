@@ -1,6 +1,6 @@
 /*global casper,urls,workspace,documents*/
 
-casper.test.begin('Document checkin tests suite', 1, function documentCheckinTestsSuite(){
+casper.test.begin('Document checkin tests suite', 2, function documentCheckinTestsSuite(){
 
     'use strict';
 
@@ -99,6 +99,18 @@ casper.test.begin('Document checkin tests suite', 1, function documentCheckinTes
             this.test.assert(true,'Document has been checkin');
         },function fail() {
             this.capture('screenshot/documentCheckin/waitForCheckinButtonDisabled-error.png');
+            this.test.assert(false,'Document has not been checkin');
+        });
+    });
+
+    /**
+     * Wait for all button to be checkin
+     */
+    casper.then(function waitForDisplayCheckin() {
+        this.waitWhileSelector('tbody > tr > td.reference.doc-ref > a > i.fa.fa-pencil', function() {
+            this.test.assert(true,'Document retrieved');
+        }, function fail() {
+            this.capture('screenshot/documentCheckin/waitForCheckinDocuments-error.png');
             this.test.assert(false,'Document has not been checkin');
         });
     });
