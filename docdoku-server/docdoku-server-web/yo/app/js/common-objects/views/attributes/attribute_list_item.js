@@ -12,7 +12,7 @@ define([
 
         attributesLocked: false,
 
-        lovs:null,
+        lovs: null,
 
         setEditMode: function (editMode) {
             this.editMode = editMode;
@@ -20,15 +20,15 @@ define([
 
         initialize: function () {
             ListItemView.prototype.initialize.apply(this, arguments);
-            this.events[ 'change .type'] = 'typeChanged';
-            this.events[ 'change .name'] = 'updateName';
-            this.events[ 'change .value'] = 'updateValue';
-            this.events[ 'click .fa-times'] = 'removeAction';
+            this.events['change .type'] = 'typeChanged';
+            this.events['change .name'] = 'updateName';
+            this.events['change .value'] = 'updateValue';
+            this.events['click .fa-times'] = 'removeAction';
             this.events.drop = 'drop';
             this.lovs = this.options.lovs;
         },
 
-        drop: function(event, index) {
+        drop: function (event, index) {
             this.$el.trigger('update-sort', [this.model, index]);
         },
 
@@ -41,7 +41,7 @@ define([
                 this.$el.find('div.type').html(App.config.i18n[type]);
             }
 
-            if(this.model.get('locked') === true){
+            if (this.model.get('locked') === true) {
                 this.$el.find('div.type').html(App.config.i18n[type]);
             }
 
@@ -58,13 +58,13 @@ define([
         typeChanged: function (evt) {
             var type = evt.target.value;
 
-            if(type!== 'TEXT' && type!== 'NUMBER' && type!== 'BOOLEAN' && type!== 'DATE' && type!== 'URL'){
+            if (type !== 'TEXT' && type !== 'NUMBER' && type !== 'BOOLEAN' && type !== 'DATE' && type !== 'URL') {
                 this.model.set({
                     type: 'LOV',
                     lovName: type,
                     value: '' // TODO: Validate and convert if possible between types
                 });
-            }else{
+            } else {
                 this.model.set({
                     type: type,
                     value: '' // TODO: Validate and convert if possible between types
@@ -101,13 +101,22 @@ define([
             data.items = this.model.get('items');
             this.$el.html(Mustache.render(this.template, data, partials));
             this.rendered();
+            this.setVisibility(data.frozenMode);
             return this;
         },
 
         setAttributesLocked: function (attributesLocked) {
             this.attributesLocked = attributesLocked;
-        }
+        },
 
+        setVisibility: function (frozenMode) {
+            if (frozenMode) {
+                this.$el.find('i.fa-bars:first').addClass('invisible');
+                this.$el.find('a.fa-times:first').addClass('invisible');
+            } else if (this.model.get('locked')) {
+                this.$el.find('a.fa-times:first').addClass('invisible');
+            }
+        }
 
     });
 
