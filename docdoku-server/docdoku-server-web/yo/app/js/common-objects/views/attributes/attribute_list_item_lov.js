@@ -25,7 +25,7 @@ define([
             var type = this.model.get('type');
             var items = this.model.get('items');
             var typeCopy = type;
-            if(type === 'LOV'){
+            if (type === 'LOV') {
                 type = this.model.get('lovName');
             }
 
@@ -42,10 +42,9 @@ define([
             this.$el.addClass('well');
             this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
 
-
             var that = this;
-            if(!items){
-                if(typeCopy === 'LOV'){
+            if (!items) {
+                if (typeCopy === 'LOV') {
                     $.ajax({
                         type: 'GET',
                         url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/lov/' + type,
@@ -60,10 +59,10 @@ define([
                         }
                     });
                 }
-            }else{
-                if(typeCopy === 'LOV'){
+            } else {
+                if (typeCopy === 'LOV') {
                     var lovName = this.model.get('lovName');
-                    if(!lovName){
+                    if (!lovName) {
                         if (this.editMode && !this.attributesLocked) {
                             this.$el.find('select.type').parent().addClass('listOfValues');
                             this.$el.find('select.type').parent().html(App.config.i18n.LOV);
