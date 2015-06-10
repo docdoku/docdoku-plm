@@ -28,7 +28,6 @@ import org.mockito.*;
 import javax.ejb.SessionContext;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.Part;
-import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import java.io.File;
@@ -82,7 +81,6 @@ public class DocumentBinaryResourceTest {
     public void uploadDocumentFiles() throws Exception {
         //Given
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
-        AsyncResponse response = Mockito.mock(AsyncResponse.class);
         Collection<Part> filesParts = new ArrayList<Part>();
         filesParts.add(new PartImp(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1).getFile())));
 
@@ -98,12 +96,12 @@ public class DocumentBinaryResourceTest {
         Mockito.when(request.getRequestURI()).thenReturn(ResourceUtil.WORKSPACE_ID + "/documents/" + ResourceUtil.DOCUMENT_ID + "/" + ResourceUtil.FILENAME1);
 
         //When
-        documentBinaryResource.uploadDocumentFiles(request, response, ResourceUtil.WORKSPACE_ID, ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION);
+        Response response = documentBinaryResource.uploadDocumentFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION);
 
         //Then
-        //assertNotNull(response);
-        //assertEquals(response.getStatus(), 201);
-        //assertEquals(response.getStatusInfo(), Response.Status.CREATED);
+        assertNotNull(response);
+        assertEquals(response.getStatus(), 201);
+        assertEquals(response.getStatusInfo(), Response.Status.CREATED);
         
         //delete tem file
         uploadedFile1.deleteOnExit();
@@ -120,7 +118,6 @@ public class DocumentBinaryResourceTest {
 
         //Given
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
-        AsyncResponse response = Mockito.mock(AsyncResponse.class);
         Collection<Part> filesParts = new ArrayList<Part>();
         filesParts.add(new PartImp(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE).getFile() + ResourceUtil.FILENAME2)));
 
@@ -138,12 +135,12 @@ public class DocumentBinaryResourceTest {
 
 
         //When
-        documentBinaryResource.uploadDocumentFiles(request, response, ResourceUtil.WORKSPACE_ID, ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION);
+        Response response = documentBinaryResource.uploadDocumentFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION);
 
         //Then
-        //assertNotNull(response);
-        //assertEquals(response.getStatus(), 201);
-        //assertEquals(response.getStatusInfo(), Response.Status.CREATED);
+        assertNotNull(response);
+        assertEquals(response.getStatus(), 201);
+        assertEquals(response.getStatusInfo(), Response.Status.CREATED);
 
         //delete tem file
         uploadedFile1.deleteOnExit();
@@ -160,7 +157,6 @@ public class DocumentBinaryResourceTest {
 
         //Given
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
-        AsyncResponse response = Mockito.mock(AsyncResponse.class);
         Collection<Part> filesParts = new ArrayList<Part>();
         filesParts.add(new PartImp(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1).getFile())));
         filesParts.add(new PartImp(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE).getFile() + ResourceUtil.FILENAME2)));
@@ -181,12 +177,12 @@ public class DocumentBinaryResourceTest {
         Mockito.when(documentService.saveFileInDocument(Matchers.any(DocumentIterationKey.class), Matchers.anyString(), Matchers.anyInt())).thenReturn(binaryResource1, binaryResource1, binaryResource2, binaryResource2, binaryResource3, binaryResource3);
         Mockito.when(dataManager.getBinaryResourceOutputStream(Matchers.any(BinaryResource.class))).thenReturn(outputStream1, outputStream2, outputStream3);
         //When
-        documentBinaryResource.uploadDocumentFiles(request, response, ResourceUtil.WORKSPACE_ID, ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION);
+        Response response = documentBinaryResource.uploadDocumentFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION);
 
         //Then
-        //assertNotNull(response);
-        //assertEquals(response.getStatus(), 200);
-        //assertEquals(response.getStatusInfo(), Response.Status.OK);
+        assertNotNull(response);
+        assertEquals(response.getStatus(), 200);
+        assertEquals(response.getStatusInfo(), Response.Status.OK);
 
         //delete temp files
         uploadedFile1.deleteOnExit();

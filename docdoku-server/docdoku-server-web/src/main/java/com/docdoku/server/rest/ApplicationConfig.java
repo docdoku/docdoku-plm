@@ -27,7 +27,9 @@ import javax.ws.rs.core.Application;
  *
  * @author Florent Garin
  */
-
+//switched to web.xml definition because some
+//settings can only be made inside that file (async-supported).
+//Just keep this class in case of we want to revert...
 //@ApplicationPath("/api/")
 public class ApplicationConfig /*extends Application*/{
     
