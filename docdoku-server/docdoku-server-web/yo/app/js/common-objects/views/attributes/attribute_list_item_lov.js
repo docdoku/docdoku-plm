@@ -29,13 +29,13 @@ define([
                 type = this.model.get('lovName');
             }
 
-            if (this.editMode && !this.attributesLocked) {
+            if (this.editMode && !this.attributesLocked && this.model.get('locked') === false && this.model.get('mandatory') === false) {
                 this.$el.find('select.type').val(type);
-            }else{
+            } else {
                 this.$('div.type').html(type);
             }
 
-            if(this.model.get('locked') === true && !this.model.get('lovName')){
+            if (this.model.get('locked') === true && !type) {
                 this.$el.find('div.type').html(App.config.i18n.LOV);
             }
 
@@ -48,7 +48,7 @@ define([
                 if(typeCopy === 'LOV'){
                     $.ajax({
                         type: 'GET',
-                        url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/lov/'+type,
+                        url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/lov/' + type,
                         contentType: 'application/json; charset=utf-8',
                         success: function (data) {
                             var possibleValues = data.values;
@@ -67,11 +67,11 @@ define([
                         if (this.editMode && !this.attributesLocked) {
                             this.$el.find('select.type').parent().addClass('listOfValues');
                             this.$el.find('select.type').parent().html(App.config.i18n.LOV);
-                        }else{
+                        } else {
                             this.$('div.type').html(App.config.i18n.LOV);
                         }
 
-                        if(this.model.get('locked') === true){
+                        if (this.model.get('locked') === true) {
                             this.$el.find('div.type').html(App.config.i18n.LOV);
                         }
                     }
