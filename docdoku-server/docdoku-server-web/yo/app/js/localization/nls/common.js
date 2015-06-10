@@ -360,6 +360,7 @@ define({
 		PRIVATE_SHARE_TITLE: "Private share",
 		PRODUCT: "Product",
 		PRODUCT_ID: "Product Id",
+		PRODUCT_INSTANCE: "Deliverable",
 		PRODUCT_INSTANCES: "Deliverables",
         PRODUCT_INSTANCE_DATA : "Deliverable data",
         PRODUCT_INSTANCE_DATA_ATTRIBUTES : "Deliverable data attributes",

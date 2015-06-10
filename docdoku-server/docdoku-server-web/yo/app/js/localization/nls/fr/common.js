@@ -356,6 +356,7 @@ define({
 	PRIVATE_SHARE_TITLE: "Accès privé",
 	PRODUCT: "Produit",
 	PRODUCT_ID: "Référence",
+	PRODUCT_INSTANCE: "Exemplaire",
 	PRODUCT_INSTANCES: "Exemplaires",
     PRODUCT_INSTANCE_DATA : "Données de l'exemplaire",
     PRODUCT_INSTANCE_DATA_ATTRIBUTES : "Attributs des données dans l'exemplaire",
