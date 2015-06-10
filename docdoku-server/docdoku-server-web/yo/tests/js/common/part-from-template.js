@@ -94,9 +94,9 @@ casper.test.begin('Part from template creation tests suite', 18, function partCr
                 'The select type should not be present');
             this.test.assertElementCount('#attributes-list div.type',2,
                 'A div with the type of the attribute should be present');
-            this.test.assertElementCount('#attributes-list .fa.fa-bars.sortable-handler', 0,
+            this.test.assertElementCount('#attributes-list .fa.fa-bars.sortable-handler.invisible', 2,
             'there should be no sortable button');
-            this.test.assertElementCount('#attributes-list .fa.fa-times',0,
+            this.test.assertElementCount('#attributes-list .fa.fa-times.invisible',2,
             'there should be no delete button');
         }, function fail() {
             this.test.assert(false, 'list of attributes from template not present');
@@ -163,10 +163,12 @@ casper.test.begin('Part from template creation tests suite', 18, function partCr
                 'A div with the type of the attribute should be present');
             this.test.assertElementCount('#attributes-list input.value[required]',1,
                 'One input Value should be required (mandatory)');
-            this.test.assertElementCount('#attributes-list .fa.fa-bars.sortable-handler', 2,
+            this.test.assertElementCount('#attributes-list .fa.fa-bars.sortable-handler.invisible', 0,
                 'there should be sortable button');
-            this.test.assertElementCount('#attributes-list .fa.fa-times',1,
-                'there should be one delete button');
+            this.test.assertElementCount('#attributes-list .fa.fa-times.invisible',1,
+                'there should be one delete button invisible');
+            this.test.assertElementCount('#attributes-list .fa.fa-times',2,
+                'there should be two delete button');
         }, function fail() {
             this.test.assert(false, 'list of attributes from template not present');
         });
