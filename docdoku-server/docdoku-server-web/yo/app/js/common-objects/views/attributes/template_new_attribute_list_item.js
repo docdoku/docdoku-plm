@@ -39,6 +39,8 @@ define([
                 var lovNameSelected = this.model.get('lovName');
                 this.$('select.type:first').val(lovNameSelected);
             }
+
+            this.setVisibility();
         },
         removeAction: function () {
             this.model.destroy({
@@ -98,6 +100,13 @@ define([
                 attributesLocked: this.attributesLocked
             };
             this.render();
+        },
+
+        setVisibility: function () {
+            if (!this.editMode) {
+                this.$el.find('i.fa-bars:first').addClass('invisible');
+                this.$el.find('a.fa-times:first').addClass('invisible');
+            }
         },
 
         drop: function(event, index) {

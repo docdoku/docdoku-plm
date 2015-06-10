@@ -1,11 +1,9 @@
-{{#editMode}}
 <i class="fa fa-bars sortable-handler"></i>
 <div class="controls">
     <a class="fa fa-times"></a>
 </div>
-{{/editMode}}
 <div class="controls">
-    <input type="text" class="input-xlarge name" placeholder="{{i18n.NAME}}" value="{{model.name}}" required {{^editMode}}disabled{{/editMode}}/>
+    <input type="text" class="input-xlarge name" placeholder="{{i18n.NAME}}" value="{{model.name}}" required {{^editMode}}disabled="disabled"{{/editMode}}/>
 </div>
 <div class="controls">
     <select class="type" {{^editMode}}disabled{{/editMode}}>
