@@ -94,7 +94,7 @@ define([
             this.deleteSubViews();
             var partials = this.partials ? this.partials : null;
             var data = this.renderData();
-            data.frozenMode = this.editMode && !this.attributesLocked;
+            data.frozenMode = !this.editMode || this.attributesLocked;
             data.editMode = this.editMode;
             data.attribute = this.model.attributes;
             data.lovs = this.lovs;

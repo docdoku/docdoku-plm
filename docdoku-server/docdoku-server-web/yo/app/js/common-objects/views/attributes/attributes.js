@@ -45,7 +45,7 @@ define([
         render: function () {
             var data = {
                 view: this.viewToJSON(),
-                frozenMode: this.editMode && !this.attributesLocked,
+                frozenMode: !this.editMode || this.attributesLocked,
                 i18n: App.config.i18n
             };
             this.$el.html(Mustache.render(template, data));
