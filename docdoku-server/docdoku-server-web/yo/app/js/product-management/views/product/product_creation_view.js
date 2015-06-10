@@ -61,7 +61,6 @@ define([
                     });
                 },
                 updater: function(item) {
-                    debugger;
                     that.$inputPartName.val(map[item].partName);
                     that.$inputPartNumber.val(map[item].partNumber);
                     return item;
