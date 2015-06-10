@@ -50,7 +50,7 @@ public class InstanceURLAttribute extends InstanceAttribute {
     }
     @Override
     public boolean setValue(Object pValue) {
-        urlValue = pValue + "";
+        urlValue = pValue != null ? pValue + "" : "";
         return true;
     }
 
