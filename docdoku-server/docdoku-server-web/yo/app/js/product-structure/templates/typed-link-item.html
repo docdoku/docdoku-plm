@@ -3,21 +3,21 @@
     {{#canSuppress}}
     <button type="button" class="close delete-item">×</button>
     {{/canSuppress}}
-    <div class="link-source"><strong>{{i18n.PATH_TO_PATH_SOURCE}}</strong> : {{source.getName}} < {{source.getNumber}} > ({{source.getPartUsageLinkReferenceDescription}})</div>
+    <div class="link-source"><strong>{{i18n.PATH_TO_PATH_SOURCE}}</strong> {{source.getName}} < {{source.getNumber}} > ({{source.getPartUsageLinkReferenceDescription}})</div>
+
+    <div class="link-target"><strong>{{i18n.PATH_TO_PATH_TARGET}}</strong> {{target.getName}} < {{target.getNumber}} > ({{target.getPartUsageLinkReferenceDescription}})</div>
 
     {{#isCreationMode}}
-    <i class="fa fa-exchange invert-source-target" title="{{i18n.INVERT}}"></i>
+    <a class="invert-source-target">{{i18n.INVERT_SOURCE_DESTINATION}}</a>
     {{/isCreationMode}}
-    <div class="link-target"><strong>{{i18n.PATH_TO_PATH_TARGET}}</strong> : {{target.getName}} < {{target.getNumber}} > ({{target.getPartUsageLinkReferenceDescription}})</div>
-
 
     <div class="link-type-block">
         {{^isCreationMode}}
-        <strong>{{i18n.TYPE}}</strong> : {{type}}
+        <strong>{{i18n.TYPE}}</strong> {{type}}
         {{/isCreationMode}}
 
         {{#isCreationMode}}
-        <strong>{{i18n.TYPE}}</strong> :
+        <strong>{{i18n.TYPE}}</strong>
         <select class="type-select input-medium">
             <option value=""></option>
             {{#availableType}}
@@ -30,6 +30,7 @@
     </div>
 
     <div class="description-block">
+        <strong>{{i18n.DESCRIPTION}}</strong>
         <textarea class="path-to-path-description" placeholder="{{i18n.DESCRIPTION}}" {{^isCreationMode}}disabled{{/isCreationMode}}>{{description}}</textarea>
         {{#isCreationMode}}
         <button class="btn btn-primary save-button">{{i18n.SAVE}}</button>
