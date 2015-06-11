@@ -22,15 +22,15 @@ package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
 
-public class PathToPathLinkDTO implements Serializable{
+public class LightPathToPathLinkDTO implements Serializable{
 
     private Integer id;
     private String type;
-    private LightPartMasterDTO source;
-    private LightPartMasterDTO target;
+    private String sourcePath;
+    private String targetPath;
     private String description;
 
-    public PathToPathLinkDTO() {
+    public LightPathToPathLinkDTO() {
     }
 
     public String getType() {
@@ -41,20 +41,20 @@ public class PathToPathLinkDTO implements Serializable{
         this.type = type;
     }
 
-    public LightPartMasterDTO getSource() {
-        return source;
+    public String getSourcePath() {
+        return sourcePath;
     }
 
-    public void setSource(LightPartMasterDTO source) {
-        this.source = source;
+    public void setSourcePath(String sourcePath) {
+        this.sourcePath = sourcePath;
     }
 
-    public LightPartMasterDTO getTarget() {
-        return target;
+    public String getTargetPath() {
+        return targetPath;
     }
 
-    public void setTarget(LightPartMasterDTO target) {
-        this.target = target;
+    public void setTargetPath(String targetPath) {
+        this.targetPath = targetPath;
     }
 
     public String getDescription() {

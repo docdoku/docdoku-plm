@@ -32,7 +32,7 @@ import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.PartMinimalDTO;
 import com.docdoku.server.rest.dto.PartMinimalListDTO;
-import com.docdoku.server.rest.dto.PathToPathLinkDTO;
+import com.docdoku.server.rest.dto.LightPathToPathLinkDTO;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -191,11 +191,11 @@ public class ProductBaselinesResource {
     @GET
     @Path("{baselineId}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PathToPathLinkDTO> getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("baselineId") int baselineId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException {
+    public List<LightPathToPathLinkDTO> getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("baselineId") int baselineId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException {
         List<String> pathToPathLinkTypes = productBaselineService.getPathToPathLinkTypes(workspaceId, configurationItemId, baselineId);
-        List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
+        List<LightPathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
         for(String type : pathToPathLinkTypes){
-            PathToPathLinkDTO pathToPathLinkDTO = new PathToPathLinkDTO();
+            LightPathToPathLinkDTO pathToPathLinkDTO = new LightPathToPathLinkDTO();
             pathToPathLinkDTO.setType(type);
             pathToPathLinkDTOs.add(pathToPathLinkDTO);
         }
@@ -205,11 +205,11 @@ public class ProductBaselinesResource {
     @GET
     @Path("{baselineId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PathToPathLinkDTO> getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("baselineId") int baselineId, @PathParam("sourcePath") String sourcePath, @PathParam("targetPath") String targetPath) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException {
+    public List<LightPathToPathLinkDTO> getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("baselineId") int baselineId, @PathParam("sourcePath") String sourcePath, @PathParam("targetPath") String targetPath) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException {
         List<PathToPathLink> pathToPathLinks = productBaselineService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, baselineId, sourcePath, targetPath);
-        List<PathToPathLinkDTO> dtos = new ArrayList<>();
+        List<LightPathToPathLinkDTO> dtos = new ArrayList<>();
         for(PathToPathLink pathToPathLink : pathToPathLinks) {
-            dtos.add(mapper.map(pathToPathLink, PathToPathLinkDTO.class));
+            dtos.add(mapper.map(pathToPathLink, LightPathToPathLinkDTO.class));
         }
         return dtos;
     }

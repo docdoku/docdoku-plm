@@ -67,6 +67,11 @@ public class PathToPathLinkDAO {
                 .setParameter("productInstanceIteration",productInstanceIteration)
                 .getResultList();
     }
+    public List<PathToPathLink> getDistinctPathToPathLink(ProductInstanceIteration productInstanceIteration) {
+        return em.createNamedQuery("PathToPathLink.findPathToPathLinkLinkByProductInstanceIteration",PathToPathLink.class)
+                .setParameter("productInstanceIteration",productInstanceIteration)
+                .getResultList();
+    }
 
     public List<String> getDistinctPathToPathLinkTypes(ProductBaseline productBaseline) {
         return em.createNamedQuery("PathToPathLink.findPathToPathLinkTypesByProductBaseline",String.class)

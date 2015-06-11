@@ -443,9 +443,9 @@ public class ProductResource {
     @Path("{ciId}/path-to-path-links")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PathToPathLinkDTO createPathToPathLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, PathToPathLinkDTO pathToPathLinkDTO) throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathCyclicException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, NotAllowedException {
+    public LightPathToPathLinkDTO createPathToPathLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, LightPathToPathLinkDTO pathToPathLinkDTO) throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathCyclicException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, NotAllowedException {
         PathToPathLink pathToPathLink = productService.createPathToPathLink(workspaceId, configurationItemId, pathToPathLinkDTO.getType(), pathToPathLinkDTO.getSourcePath(), pathToPathLinkDTO.getTargetPath(), pathToPathLinkDTO.getDescription());
-        return mapper.map(pathToPathLink,PathToPathLinkDTO.class);
+        return mapper.map(pathToPathLink,LightPathToPathLinkDTO.class);
     }
 
     @DELETE
@@ -458,11 +458,11 @@ public class ProductResource {
     @GET
     @Path("{ciId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PathToPathLinkDTO> getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("sourcePath") String sourcePath, @PathParam("targetPath") String targetPath) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException {
+    public List<LightPathToPathLinkDTO> getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("sourcePath") String sourcePath, @PathParam("targetPath") String targetPath) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException {
         List<PathToPathLink> pathToPathLinks = productService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, sourcePath, targetPath);
-        List<PathToPathLinkDTO> dtos = new ArrayList<>();
+        List<LightPathToPathLinkDTO> dtos = new ArrayList<>();
         for(PathToPathLink pathToPathLink : pathToPathLinks) {
-            dtos.add(mapper.map(pathToPathLink, PathToPathLinkDTO.class));
+            dtos.add(mapper.map(pathToPathLink, LightPathToPathLinkDTO.class));
         }
         return dtos;
     }
@@ -470,11 +470,11 @@ public class ProductResource {
     @GET
     @Path("{ciId}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PathToPathLinkDTO> getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException {
+    public List<LightPathToPathLinkDTO> getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException {
         List<String> pathToPathLinkTypes = productService.getPathToPathLinkTypes(workspaceId, configurationItemId);
-        List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
+        List<LightPathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
         for(String type : pathToPathLinkTypes){
-            PathToPathLinkDTO pathToPathLinkDTO = new PathToPathLinkDTO();
+            LightPathToPathLinkDTO pathToPathLinkDTO = new LightPathToPathLinkDTO();
             pathToPathLinkDTO.setType(type);
             pathToPathLinkDTOs.add(pathToPathLinkDTO);
         }

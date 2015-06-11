@@ -33,6 +33,7 @@ import java.io.Serializable;
 @Entity
 @NamedQueries({
         @NamedQuery(name="PathToPathLink.findPathToPathLinkTypesByProductInstanceIteration", query="SELECT DISTINCT(p.type) FROM PathToPathLink p JOIN ProductInstanceIteration pi WHERE p member of pi.pathToPathLinks AND pi = :productInstanceIteration"),
+        @NamedQuery(name="PathToPathLink.findPathToPathLinkLinkByProductInstanceIteration", query="SELECT p FROM PathToPathLink p JOIN ProductInstanceIteration pi WHERE p member of pi.pathToPathLinks AND pi = :productInstanceIteration"),
         @NamedQuery(name="PathToPathLink.findPathToPathLinkTypesByProductBaseline", query="SELECT DISTINCT(p.type) FROM PathToPathLink p JOIN ProductBaseline pb WHERE p member of pb.pathToPathLinks AND pb = :productBaseline"),
         @NamedQuery(name="PathToPathLink.findPathToPathLinkTypesByProduct", query="SELECT DISTINCT(p.type) FROM PathToPathLink p JOIN ConfigurationItem ci WHERE p member of ci.pathToPathLinks AND ci = :configurationItem"),
         @NamedQuery(name="PathToPathLink.findNextPathToPathLinkInProduct", query="SELECT DISTINCT p FROM PathToPathLink p JOIN ConfigurationItem ci WHERE p member of ci.pathToPathLinks AND ci = :configurationItem AND p.sourcePath = :targetPath AND p.type = :type"),

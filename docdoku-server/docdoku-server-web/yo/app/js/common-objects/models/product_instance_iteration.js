@@ -87,6 +87,9 @@ define(['backbone'
         getlinkedDocuments: function () {
             return this.get('linkedDocuments');
         },
+        getTypedLinks: function () {
+            return this.get('typedLinks');
+        },
         getAttachedFiles: function () {
             return this.get('attachedFiles');
         },

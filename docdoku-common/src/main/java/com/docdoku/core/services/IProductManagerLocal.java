@@ -234,4 +234,7 @@ public interface IProductManagerLocal{
     List<PathToPathLink> getPathToPathLinkFromSourceAndTarget(String workspaceId, String configurationItemId, String sourcePath, String targetPath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException;
 
     ProductInstanceMaster findProductByPathMaster(String workspaceId,PathDataMaster pathDataMaster) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
-}
+
+    public PartMaster getPartMasterFromPath(String workspaceId,String configurationItemId, String partPath) throws ConfigurationItemNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException ;
+
+    }

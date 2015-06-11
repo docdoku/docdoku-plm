@@ -3081,6 +3081,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         ProductInstanceMaster productInstanceMaster = pathDataMasterDAO.findByPathData(pathDataMaster);
         return productInstanceMaster;
     }
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public PartMaster getPartMasterFromPath(String workspaceId,String configurationItemId, String partPath) throws ConfigurationItemNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException {
+
+        ConfigurationItem configurationItem = new ConfigurationItemDAO(em).loadConfigurationItem(new ConfigurationItemKey(workspaceId, configurationItemId));
+
+       List<PartLink> partLinks = this.decodePath(configurationItem.getKey(),partPath);
+        return partLinks.get(partLinks.size() - 1).getComponent();
+    }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override

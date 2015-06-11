@@ -556,6 +556,7 @@ define({
 		TRUE: "True",
 		TYPE: "Type",
         TYPED_LINK:"Typed link",
+        TYPED_LINKS:"Typed links",
         UDF_DEF:'Define function',
 		UNDO_CHECKOUT: "Cancel checkout",
 		UNDO_CHECKOUT_QUESTION: "Undo checkout?",

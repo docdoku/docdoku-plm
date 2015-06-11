@@ -11,7 +11,9 @@ define([
 
         events: {
             'click input[type=checkbox]': 'selectionChanged',
-            'click td.reference': 'openEditView'
+            'click td.reference': 'openEditView',
+            'click td.has-typed-link': 'openEditViewOnTypedLinkTab'
+
         },
 
         tagName: 'tr',
@@ -86,7 +88,19 @@ define([
                 view.render();
                 window.document.body.appendChild(view.el);
             });
+        },
+        openEditViewOnTypedLinkTab: function () {
+            var model = this.model;
+            model.fetch().success(function () {
+                var view = new ProductInstanceModalView({model: model});
+                window.document.body.appendChild(view.el);
+                view.render();
+                //view.openModal();
+                view.activeTypedLinkTab();
+
+            }.bind(this));
         }
+
     });
 
     return ProductInstancesListItemView;

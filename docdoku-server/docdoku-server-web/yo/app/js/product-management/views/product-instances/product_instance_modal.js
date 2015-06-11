@@ -13,8 +13,9 @@ define([
     'common-objects/views/linked/linked_documents',
     'common-objects/collections/file/attached_file_collection',
     'common-objects/views/alert',
-    'common-objects/collections/baselines'
-], function (Backbone, Mustache, template, choiceTemplate, BaselinedPartListView,date,AttributeCollection,ProductInstanceAttributeListView,FileListView,LinkedDocumentCollection,LinkedDocumentsView,AttachedFileCollection,AlertView,Baselines) {
+    'common-objects/collections/baselines',
+    'common-objects/views/typedLink/typed-link-item'
+], function (Backbone, Mustache, template, choiceTemplate, BaselinedPartListView,date,AttributeCollection,ProductInstanceAttributeListView,FileListView,LinkedDocumentCollection,LinkedDocumentsView,AttachedFileCollection,AlertView,Baselines,TypedLinkItemView) {
     'use strict';
     var ProductInstancesModalView = Backbone.View.extend({
         events: {
@@ -69,6 +70,7 @@ define([
             this.initAttachedFileView();
             this.initLinkedDocumentsView();
            // this.initUsedByListView();
+            this.getExistingPathToPath();
             this.openModal();
             this.renderChoices();
 
@@ -116,6 +118,7 @@ define([
         bindDomElements: function () {
             this.$notifications = this.$('.notifications');
             this.$modal = this.$('#product_instance_modal');
+            this.$tabs = this.$('.nav-tabs li');
             this.$inputIterationNote = this.$('#inputIterationNote');
             this.$baselinedPartListArea = this.$('.baselinedPartListArea');
             this.$authorLink = this.$('.author-popover');
@@ -191,6 +194,47 @@ define([
             this.attributesView.setEditMode(this.editMode);
 
             this.attributesView.render();
+        },
+
+
+        getExistingPathToPath: function(){
+
+            this.existingPathToPathLinkCollection = [];
+            this.availableType = [];
+            var self = this;
+            var urlForExistingTypedLink = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/product-instances/' + this.model.getSerialNumber() + '/path-to-path-details-links';
+            $.ajax({
+                type : 'GET',
+                url : urlForExistingTypedLink,
+                contentType: 'application/json',
+                success: function(pathToPathLinkDTOs){
+                    _.each(pathToPathLinkDTOs, function(pathToPathLinkDTO){
+                        self.existingPathToPathLinkCollection.push({
+                            source : pathToPathLinkDTO.source,
+                            target : pathToPathLinkDTO.target,
+                            pathToPath : pathToPathLinkDTO,
+                            productId : self.productId,
+                            serialNumber : self.model.getSerialNumber()
+                        });
+                    });
+
+                    _.each(self.existingPathToPathLinkCollection, function(pathToPathLink){
+                        var typeLinkItem = new TypedLinkItemView({model:pathToPathLink}).render();
+                        self.$('#path-to-path-links').append(typeLinkItem.el);
+
+                        typeLinkItem.on('remove', function(){
+                            self.existingPathToPathLinkCollection.splice(self.existingPathToPathLinkCollection.indexOf(pathToPathLink),1);
+                        });
+                    });
+
+                },
+                error: function(errorMessage){
+                    self.$('#typed-link-alerts').append(new AlertView({
+                        type: 'error',
+                        message: errorMessage.responseText
+                    }).render().$el);
+                }
+            });
         },
 
         initAttachedFileView:   function(){
@@ -322,7 +366,14 @@ define([
 
         onShown: function () {
             this.$modal.addClass('ready');
-        }
+        },
+        activateTab: function (index) {
+            this.$tabs.eq(index).children().tab('show');
+        },
+        activeTypedLinkTab: function(){
+        this.activateTab(7);
+    }
+
     });
     return ProductInstancesModalView;
 });

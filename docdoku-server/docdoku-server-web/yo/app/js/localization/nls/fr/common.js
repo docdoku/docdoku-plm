@@ -551,6 +551,7 @@ define({
 	TRUE: "Oui",
 	TYPE: "Type",
     TYPED_LINK:"Lien de chemin",
+    TYPED_LINKS:"Liens de chemin",
     UDF_DEF:'Fonction',
 	UNDO_CHECKOUT: "Annuler la réservation",
 	UNDO_CHECKOUT_QUESTION: "Annuler la réservation ?",
