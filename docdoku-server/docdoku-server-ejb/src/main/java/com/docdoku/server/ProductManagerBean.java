@@ -783,7 +783,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
                     if (i < pAttributes.size()) {
                         InstanceAttribute newAttr = pAttributes.get(i);
-                        if (currentAttr.getClass() != newAttr.getClass()) {
+                        if (currentAttr.getClass() != newAttr.getClass() || newAttr.getClass() == InstanceListOfValuesAttribute.class) {
                             partIte.getInstanceAttributes().set(i, newAttr);
                         } else {
                             partIte.getInstanceAttributes().get(i).setName(newAttr.getName());

@@ -1361,7 +1361,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
                     if (i < pAttributes.size()) {
                         InstanceAttribute newAttr = pAttributes.get(i);
-                        if (currentAttr.getClass() != newAttr.getClass()) {
+                        if (currentAttr.getClass() != newAttr.getClass() || newAttr.getClass() == InstanceListOfValuesAttribute.class) {
                             doc.getInstanceAttributes().set(i, newAttr);
                         } else {
                             doc.getInstanceAttributes().get(i).setName(newAttr.getName());
