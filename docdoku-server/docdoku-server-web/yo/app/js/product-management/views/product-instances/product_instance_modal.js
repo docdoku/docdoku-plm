@@ -15,7 +15,7 @@ define([
     'common-objects/views/alert',
     'common-objects/collections/baselines',
     'common-objects/views/typedLink/typed-link-item'
-], function (Backbone, Mustache, template, choiceTemplate, BaselinedPartListView,date,AttributeCollection,ProductInstanceAttributeListView,FileListView,LinkedDocumentCollection,LinkedDocumentsView,AttachedFileCollection,AlertView,Baselines,TypedLinkItemView) {
+], function (Backbone, Mustache, template, choiceTemplate, BaselinedPartListView, date, AttributeCollection, ProductInstanceAttributeListView, FileListView, LinkedDocumentCollection, LinkedDocumentsView, AttachedFileCollection, AlertView, Baselines, TypedLinkItemView) {
     'use strict';
     var ProductInstancesModalView = Backbone.View.extend({
         events: {
@@ -25,7 +25,7 @@ define([
             'shown #product_instance_modal': 'onShown',
             'click a#previous-iteration': 'onPreviousIteration',
             'click a#next-iteration': 'onNextIteration',
-            'close-modal-request':'closeModal',
+            'close-modal-request': 'closeModal',
             'click .btn-rebase': 'onRebase'
         },
 
@@ -50,7 +50,7 @@ define([
                 var hasNextIteration = this.iterations.hasNextIteration(this.iteration);
                 var hasPreviousIteration = this.iterations.hasPreviousIteration(this.iteration);
                 data.iteration = this.iteration.toJSON();
-                data.iteration.formattedCreationDate = date.formatTimestamp( App.config.i18n._DATE_FORMAT,data.iteration.creationDate);
+                data.iteration.formattedCreationDate = date.formatTimestamp(App.config.i18n._DATE_FORMAT, data.iteration.creationDate);
                 data.iteration.hasNextIteration = hasNextIteration;
                 data.iteration.hasPreviousIteration = hasPreviousIteration;
                 data.iteration.updateDate = date.formatTimestamp(
@@ -64,25 +64,26 @@ define([
             this.bindUserPopover();
             var that = this;
             this.iteration.initBaselinedParts(that,
-                {success: that.initBaselinedPartListView
+                {
+                    success: that.initBaselinedPartListView
                 });
             this.initAttributesView();
             this.initAttachedFileView();
             this.initLinkedDocumentsView();
-           // this.initUsedByListView();
+            // this.initUsedByListView();
             this.getExistingPathToPath();
             this.openModal();
             this.renderChoices();
 
             var self = this;
             this.collection = new Baselines({}, {productId: this.productId});
-            this.collection.fetch({reset:true}).success(function(){
+            this.collection.fetch({reset: true}).success(function () {
                 self.$('.rebase-baseline-select').html('');
-                _.each(self.collection.models, function(baseline){
-                    if(self.iteration.getBasedOnId() === baseline.getId()){
-                        self.$('.rebase-baseline-select').append('<option value="'+baseline.getId()+'" selected="selected">'+baseline.getName()+'</option>');
-                    }else{
-                        self.$('.rebase-baseline-select').append('<option value="'+baseline.getId()+'">'+baseline.getName()+'</option>');
+                _.each(self.collection.models, function (baseline) {
+                    if (self.iteration.getBasedOnId() === baseline.getId()) {
+                        self.$('.rebase-baseline-select').append('<option value="' + baseline.getId() + '" selected="selected">' + baseline.getName() + '</option>');
+                    } else {
+                        self.$('.rebase-baseline-select').append('<option value="' + baseline.getId() + '">' + baseline.getName() + '</option>');
                     }
 
                 });
@@ -129,42 +130,46 @@ define([
         },
 
         initBaselinedPartListView: function (view) {
-            view.baselinePartListView = new BaselinedPartListView({model: view.iteration, editMode:false}).render();
+            view.baselinePartListView = new BaselinedPartListView({model: view.iteration, editMode: false}).render();
             view.$baselinedPartListArea.html(view.baselinePartListView.$el);
             view.baselinePartListView.renderList();
             view.$baselinedPartListArea.html(view.baselinePartListView.$el);
         },
 
-        renderChoices:function(){
+        renderChoices: function () {
             var substitutes = this.iteration.getSubstitutesParts();
             var optionals = this.iteration.getOptionalsParts();
             this.$substitutesCount.text(substitutes.length);
             this.$optionalsCount.text(optionals.length);
 
-            _.each(substitutes,this.drawSubstitutesChoice.bind(this));
-            _.each(optionals,this.drawOptionalsChoice.bind(this));
+            _.each(substitutes, this.drawSubstitutesChoice.bind(this));
+            _.each(optionals, this.drawOptionalsChoice.bind(this));
         },
 
-        drawSubstitutesChoice:function(data){
-            this.$substitutes.append(Mustache.render(choiceTemplate, {i18n: App.config.i18n, data: {
-                parts:data.parts,
-                concernedPart:data.parts.pop()
-            }}));
+        drawSubstitutesChoice: function (data) {
+            this.$substitutes.append(Mustache.render(choiceTemplate, {
+                i18n: App.config.i18n, data: {
+                    parts: data.parts,
+                    concernedPart: data.parts.pop()
+                }
+            }));
             this.$substitutes.find('i.fa-chevron-right:last-child').remove();
         },
 
-        drawOptionalsChoice:function(data){
-            this.$optionals.append(Mustache.render(choiceTemplate, {i18n: App.config.i18n, data: {
-                parts:data.parts,
-                concernedPart:data.parts.pop()
-            }}));
+        drawOptionalsChoice: function (data) {
+            this.$optionals.append(Mustache.render(choiceTemplate, {
+                i18n: App.config.i18n, data: {
+                    parts: data.parts,
+                    concernedPart: data.parts.pop()
+                }
+            }));
             this.$optionals.find('i.fa-chevron-right:last-child').remove();
         },
 
         initLinkedDocumentsView: function () {
             this.linkedDocumentsView = new LinkedDocumentsView({
                 editMode: this.editMode,
-                commentEditable:true,
+                commentEditable: true,
                 documentIteration: this.iteration,
                 collection: new LinkedDocumentCollection(this.iteration.getlinkedDocuments())
             }).render();
@@ -197,38 +202,38 @@ define([
         },
 
 
-        getExistingPathToPath: function(){
+        getExistingPathToPath: function () {
 
             this.existingPathToPathLinkCollection = [];
             this.availableType = [];
             var self = this;
             var urlForExistingTypedLink = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/product-instances/' + this.model.getSerialNumber() + '/path-to-path-details-links';
             $.ajax({
-                type : 'GET',
-                url : urlForExistingTypedLink,
+                type: 'GET',
+                url: urlForExistingTypedLink,
                 contentType: 'application/json',
-                success: function(pathToPathLinkDTOs){
-                    _.each(pathToPathLinkDTOs, function(pathToPathLinkDTO){
+                success: function (pathToPathLinkDTOs) {
+                    _.each(pathToPathLinkDTOs, function (pathToPathLinkDTO) {
                         self.existingPathToPathLinkCollection.push({
-                            source : pathToPathLinkDTO.source,
-                            target : pathToPathLinkDTO.target,
-                            pathToPath : pathToPathLinkDTO,
-                            productId : self.productId,
-                            serialNumber : self.model.getSerialNumber()
+                            source: pathToPathLinkDTO.source,
+                            target: pathToPathLinkDTO.target,
+                            pathToPath: pathToPathLinkDTO,
+                            productId: self.productId,
+                            serialNumber: self.model.getSerialNumber()
                         });
                     });
 
-                    _.each(self.existingPathToPathLinkCollection, function(pathToPathLink){
-                        var typeLinkItem = new TypedLinkItemView({model:pathToPathLink}).render();
+                    _.each(self.existingPathToPathLinkCollection, function (pathToPathLink) {
+                        var typeLinkItem = new TypedLinkItemView({model: pathToPathLink}).render();
                         self.$('#path-to-path-links').append(typeLinkItem.el);
 
-                        typeLinkItem.on('remove', function(){
-                            self.existingPathToPathLinkCollection.splice(self.existingPathToPathLinkCollection.indexOf(pathToPathLink),1);
+                        typeLinkItem.on('remove', function () {
+                            self.existingPathToPathLinkCollection.splice(self.existingPathToPathLinkCollection.indexOf(pathToPathLink), 1);
                         });
                     });
 
                 },
-                error: function(errorMessage){
+                error: function (errorMessage) {
                     self.$('#typed-link-alerts').append(new AlertView({
                         type: 'error',
                         message: errorMessage.responseText
@@ -237,7 +242,7 @@ define([
             });
         },
 
-        initAttachedFileView:   function(){
+        initAttachedFileView: function () {
 
             var filesMapping = _.map(this.iteration.getAttachedFiles(), function (fullName) {
 
@@ -274,7 +279,7 @@ define([
             this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
         },
 
-        updateDataForm:function(){
+        updateDataForm: function () {
             this.iteration.setIterationNote(this.$inputIterationNote.val());
             this.iteration.setBaselinedParts(this.baselinePartListView.getBaselinedParts());
             this.iteration.setInstanceAttributes(this.attributesView.collection.toJSON());
@@ -303,7 +308,7 @@ define([
             return false;
         },
 
-        onRebase : function(){
+        onRebase: function () {
             var self = this;
             //save the previous iteration before create a new one
             this.updateDataForm();
@@ -321,11 +326,11 @@ define([
             var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/product-instances/' + this.model.getSerialNumber() + '/rebase';
             $.ajax({
                 type: 'PUT',
-                data : JSON.stringify({id : selectedBaselineId}),
-                contentType:'application/json',
-                url : url,
-                success: function(){
-                    self.model.fetch().success(function(){
+                data: JSON.stringify({id: selectedBaselineId}),
+                contentType: 'application/json',
+                url: url,
+                success: function () {
+                    self.model.fetch().success(function () {
                         self.initialize();
                         self.undelegateEvents();
                         self.closeModal();
@@ -334,7 +339,7 @@ define([
 
                     });
                 },
-                error : function(errorMessage){
+                error: function (errorMessage) {
                     self.$('#alerts').append(new AlertView({
                         type: 'error',
                         message: errorMessage
@@ -370,9 +375,9 @@ define([
         activateTab: function (index) {
             this.$tabs.eq(index).children().tab('show');
         },
-        activeTypedLinkTab: function(){
-        this.activateTab(7);
-    }
+        activeTypedLinkTab: function () {
+            this.activateTab(7);
+        }
 
     });
     return ProductInstancesModalView;

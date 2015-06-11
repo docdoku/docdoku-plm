@@ -12,7 +12,8 @@ define([
         events: {
             'click input[type=checkbox]': 'selectionChanged',
             'click td.reference': 'openDetailView',
-            'click a.product_id':'openProductDetailView'
+            'click a.product_id':'openProductDetailView',
+            'click td.has-typed-link':'openDetailViewOnTypedLinkTab'
         },
 
         tagName: 'tr',
@@ -80,6 +81,9 @@ define([
             new BaselineDetailView({model: this.model, isForBaseline: true}).render();
         },
 
+        openDetailViewOnTypedLinkTab:   function(){
+            new BaselineDetailView({model: this.model, isForBaseline: true}).render();
+        },
         openProductDetailView:function(e){
             var model = new ConfigurationItem();
             model.set('_id',this.model.getConfigurationItemId());

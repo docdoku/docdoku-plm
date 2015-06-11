@@ -4,8 +4,9 @@ define([
     'mustache',
     'text!templates/baselines/baseline_detail.html',
     'text!templates/configuration/configuration_choice.html',
-    'views/baselines/baselined_part_list'
-], function (Backbone, Mustache, template, choiceTemplate, BaselinePartListView) {
+    'views/baselines/baselined_part_list',
+    'common-objects/views/typedLink/typed-link-item'
+], function (Backbone, Mustache, template, choiceTemplate, BaselinePartListView,TypedLinkItemView) {
     'use strict';
     var BaselineDetailView = Backbone.View.extend({
 
@@ -24,6 +25,7 @@ define([
                 that.$el.html(Mustache.render(template, {i18n: App.config.i18n, model: that.model}));
                 that.bindDomElements();
                 that.initBaselinedPartListView();
+                that.initExistingPathToPathView();
                 that.renderChoices();
                 that.openModal();
             });
@@ -44,6 +46,7 @@ define([
         bindDomElements: function () {
             this.$notifications = this.$('.notifications');
             this.$modal = this.$('#baseline_detail_modal');
+            this.$tabs = this.$('.nav-tabs li');
             this.$baselinedPartListArea = this.$('.baselinedPartListArea');
             this.$substitutes = this.$('.substitutes-list');
             this.$substitutesCount = this.$('.substitutes-count');
@@ -75,6 +78,43 @@ define([
             }}));
             this.$optionals.find('i.fa-chevron-right:last-child').remove();
         },
+         initExistingPathToPathView : function() {
+
+             this.existingPathToPathLinkCollection = [];
+             this.availableType = [];
+             var self = this;
+             var urlForExistingTypedLink = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.model.getConfigurationItemId() + '/baselines/' + this.model.getId() + '/path-to-path-links-types-details';
+             $.ajax({
+                 type: 'GET',
+                 url: urlForExistingTypedLink,
+                 contentType: 'application/json',
+                 success: function (pathToPathLinkDTOs) {
+                     _.each(pathToPathLinkDTOs, function (pathToPathLinkDTO) {
+                         self.existingPathToPathLinkCollection.push({
+                             source: pathToPathLinkDTO.source,
+                             target: pathToPathLinkDTO.target,
+                             pathToPath: pathToPathLinkDTO,
+                             productId: self.productId,
+                             serialNumber: self.model.getConfigurationItemId()
+                         });
+                     });
+
+                     _.each(self.existingPathToPathLinkCollection, function (pathToPathLink) {
+                         var typeLinkItem = new TypedLinkItemView({model: pathToPathLink}).render();
+                         self.$('#path-to-path-links').append(typeLinkItem.el);
+
+                         typeLinkItem.on('remove', function () {
+                             self.existingPathToPathLinkCollection.splice(self.existingPathToPathLinkCollection.indexOf(pathToPathLink), 1);
+                         });
+                     });
+                 }, error: function (errorMessage) {
+                     self.$('#typed-link-alerts').append(new AlertView({
+                         type: 'error',
+                         message: errorMessage.responseText
+                     }).render().$el);
+                 }
+             });
+         },
 
         openModal: function () {
             this.$modal.modal('show');
@@ -86,6 +126,12 @@ define([
 
         onHidden: function () {
             this.remove();
+        },
+        activateTab: function (index) {
+            this.$tabs.eq(index).children().tab('show');
+        },
+        activeTypedLinkTab: function () {
+            this.activateTab(6);
         }
 
     });

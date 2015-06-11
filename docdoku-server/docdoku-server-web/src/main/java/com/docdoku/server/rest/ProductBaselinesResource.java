@@ -23,16 +23,11 @@ import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.product.ConfigurationItemKey;
-import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.product.PartLink;
-import com.docdoku.core.product.PathToPathLink;
+import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.server.rest.dto.PartMinimalDTO;
-import com.docdoku.server.rest.dto.PartMinimalListDTO;
-import com.docdoku.server.rest.dto.LightPathToPathLinkDTO;
+import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -198,6 +193,35 @@ public class ProductBaselinesResource {
             LightPathToPathLinkDTO pathToPathLinkDTO = new LightPathToPathLinkDTO();
             pathToPathLinkDTO.setType(type);
             pathToPathLinkDTOs.add(pathToPathLinkDTO);
+        }
+        return pathToPathLinkDTOs;
+    }
+
+    @GET
+    @Path("{baselineId}/path-to-path-links-types-details")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PathToPathLinkDTO> getPathToPathLinkTypesDetails(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("baselineId") int baselineId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, AccessRightException, ProductInstanceMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
+        List<PathToPathLink> pathToPathLinkTypes = productBaselineService.getPathToPathTypedLink(workspaceId, configurationItemId, baselineId);
+        List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
+
+        for (PathToPathLink pathToPathLink : pathToPathLinkTypes) {
+            PartMaster partMasterSource = productService.getPartMasterFromPath(workspaceId, configurationItemId, pathToPathLink.getSourcePath());
+            PartMaster partMasterTarget = productService.getPartMasterFromPath(workspaceId, configurationItemId, pathToPathLink.getTargetPath());
+
+            LightPartMasterDTO lightPartMasterDTOSource = new LightPartMasterDTO();
+            LightPartMasterDTO lightPartMasterDTOTarget = new LightPartMasterDTO();
+
+            lightPartMasterDTOSource.setPartName(partMasterSource.getName());
+            lightPartMasterDTOSource.setPartNumber(partMasterSource.getNumber());
+            lightPartMasterDTOTarget.setPartName(partMasterTarget.getName());
+            lightPartMasterDTOTarget.setPartNumber(partMasterTarget.getNumber());
+
+            PathToPathLinkDTO pathToPathLinkDTO = mapper.map(pathToPathLink, PathToPathLinkDTO.class);
+            pathToPathLinkDTO.setSource(lightPartMasterDTOSource);
+            pathToPathLinkDTO.setTarget(lightPartMasterDTOTarget);
+
+            pathToPathLinkDTOs.add(pathToPathLinkDTO);
+
         }
         return pathToPathLinkDTOs;
     }
