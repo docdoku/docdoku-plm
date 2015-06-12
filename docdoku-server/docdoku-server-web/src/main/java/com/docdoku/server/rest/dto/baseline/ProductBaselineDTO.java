@@ -21,7 +21,9 @@
 package com.docdoku.server.rest.dto.baseline;
 
 import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.product.PathToPathLink;
 import com.docdoku.server.rest.dto.PartMinimalListDTO;
+import com.docdoku.server.rest.dto.PathToPathLinkDTO;
 import com.docdoku.server.rest.dto.UserDTO;
 
 import java.util.Date;
@@ -40,6 +42,7 @@ public class ProductBaselineDTO extends BaselineDTO {
     private List<PartMinimalListDTO> optionalsParts;
     private UserDTO author;
     private boolean hasObsoletePartRevisions;
+    private List<PathToPathLinkDTO> typedLinks;
 
     public ProductBaselineDTO() {
     }
@@ -134,5 +137,13 @@ public class ProductBaselineDTO extends BaselineDTO {
 
     public void setHasObsoletePartRevisions(boolean hasObsoletePartRevisions) {
         this.hasObsoletePartRevisions = hasObsoletePartRevisions;
+    }
+
+    public List<PathToPathLinkDTO> getTypedLinks() {
+        return typedLinks;
+    }
+
+    public void setTypedLinks(List<PathToPathLinkDTO> typedLinks) {
+        this.typedLinks = typedLinks;
     }
 }

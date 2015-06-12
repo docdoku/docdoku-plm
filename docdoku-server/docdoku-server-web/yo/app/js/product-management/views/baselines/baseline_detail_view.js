@@ -21,14 +21,13 @@ define([
 
         render: function () {
             var that = this;
-            this.model.fetch().success(function () {
-                that.$el.html(Mustache.render(template, {i18n: App.config.i18n, model: that.model}));
-                that.bindDomElements();
-                that.initBaselinedPartListView();
-                that.initExistingPathToPathView();
-                that.renderChoices();
-                that.openModal();
-            });
+            that.$el.html(Mustache.render(template, {i18n: App.config.i18n, model: that.model}));
+            that.bindDomElements();
+            that.initBaselinedPartListView();
+            that.initExistingPathToPathView();
+            that.renderChoices();
+            that.openModal();
+
             window.document.body.appendChild(this.el);
             return this;
         },
@@ -81,39 +80,28 @@ define([
          initExistingPathToPathView : function() {
 
              this.existingPathToPathLinkCollection = [];
-             this.availableType = [];
              var self = this;
-             var urlForExistingTypedLink = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.model.getConfigurationItemId() + '/baselines/' + this.model.getId() + '/path-to-path-links-types-details';
-             $.ajax({
-                 type: 'GET',
-                 url: urlForExistingTypedLink,
-                 contentType: 'application/json',
-                 success: function (pathToPathLinkDTOs) {
-                     _.each(pathToPathLinkDTOs, function (pathToPathLinkDTO) {
-                         self.existingPathToPathLinkCollection.push({
-                             source: pathToPathLinkDTO.source,
-                             target: pathToPathLinkDTO.target,
-                             pathToPath: pathToPathLinkDTO,
-                             productId: self.productId,
-                             serialNumber: self.model.getConfigurationItemId()
-                         });
-                     });
 
-                     _.each(self.existingPathToPathLinkCollection, function (pathToPathLink) {
-                         var typeLinkItem = new TypedLinkItemView({model: pathToPathLink}).render();
-                         self.$('#path-to-path-links').append(typeLinkItem.el);
-
-                         typeLinkItem.on('remove', function () {
-                             self.existingPathToPathLinkCollection.splice(self.existingPathToPathLinkCollection.indexOf(pathToPathLink), 1);
-                         });
-                     });
-                 }, error: function (errorMessage) {
-                     self.$('#typed-link-alerts').append(new AlertView({
-                         type: 'error',
-                         message: errorMessage.responseText
-                     }).render().$el);
-                 }
+             _.each(self.model.getTypedLinks(), function (pathToPathLinkDTO) {
+                 self.existingPathToPathLinkCollection.push({
+                     source: pathToPathLinkDTO.source,
+                     target: pathToPathLinkDTO.target,
+                     pathToPath: pathToPathLinkDTO,
+                     productId: self.productId,
+                     serialNumber: self.model.getConfigurationItemId()
+                 });
              });
+
+             _.each(self.existingPathToPathLinkCollection, function (pathToPathLink) {
+                 var typeLinkItem = new TypedLinkItemView({model: pathToPathLink}).render();
+                 self.$('#path-to-path-links').append(typeLinkItem.el);
+
+                 typeLinkItem.on('remove', function () {
+                     self.existingPathToPathLinkCollection.splice(self.existingPathToPathLinkCollection.indexOf(pathToPathLink), 1);
+                 });
+             });
+
+
          },
 
         openModal: function () {
@@ -131,7 +119,7 @@ define([
             this.$tabs.eq(index).children().tab('show');
         },
         activeTypedLinkTab: function () {
-            this.activateTab(6);
+            this.activateTab(3);
         }
 
     });

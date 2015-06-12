@@ -29,8 +29,7 @@ define([
                 sceneUrl:this.model.getSceneUrl(),
                 zipUrl: this.model.getZipUrl(),
                 isReadOnly: this.model.isReadOnly(),
-                isFullAccess: this.model.isFullAccess(),
-                hasTypedLink: this.model.getTypedLink()
+                isFullAccess: this.model.isFullAccess()
             }));
             this.$checkbox = this.$('input[type=checkbox]');
             this.model.on('change', this.render, this);
@@ -95,7 +94,6 @@ define([
                 var view = new ProductInstanceModalView({model: model});
                 window.document.body.appendChild(view.el);
                 view.render();
-                //view.openModal();
                 view.activeTypedLinkTab();
 
             }.bind(this));

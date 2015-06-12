@@ -32,6 +32,7 @@ define([
         bindDomElements: function () {
             this.$notifications = this.$el.find('.notifications').first();
             this.$modal = this.$('#product_details_modal');
+            this.$tabs = this.$('.nav-tabs li');
             this.$tabBaselines = this.$('#tab-baselines');
         },
 
@@ -75,6 +76,12 @@ define([
 
         onHidden: function () {
             this.remove();
+        },
+        activateTab: function (index) {
+            this.$tabs.eq(index).children().tab('show');
+        },
+        activeTypedLinkTab: function () {
+            this.activateTab(2);
         }
 
     });

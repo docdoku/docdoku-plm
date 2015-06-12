@@ -80,7 +80,7 @@ public class ProductInstancesResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<ProductInstanceMasterDTO> getProductInstances(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
-            throws EntityNotFoundException, UserNotActiveException {
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
 
         List<ProductInstanceMaster> productInstanceMasterList;
         if(ciId != null) {
@@ -93,6 +93,7 @@ public class ProductInstancesResource {
         for(ProductInstanceMaster productInstanceMaster : productInstanceMasterList){
             ProductInstanceMasterDTO productInstanceMasterDTO = mapper.map(productInstanceMaster,ProductInstanceMasterDTO.class);
             productInstanceMasterDTO.setConfigurationItemId(productInstanceMaster.getInstanceOf().getId());
+            productInstanceMasterDTO.setTypedLinks(this.getTypedLinksForProductInstance(workspaceId,productInstanceMaster.getInstanceOf().getId(),productInstanceMasterDTO.getSerialNumber()));
             productInstanceMasterDTOList.add(productInstanceMasterDTO);
         }
         return productInstanceMasterDTOList;
@@ -600,34 +601,6 @@ public class ProductInstancesResource {
         return pathToPathLinkDTOs;
     }
 
-    @GET
-    @Path("{serialNumber}/path-to-path-details-links")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<PathToPathLinkDTO> getPathToPathLinksDetails(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
-        List<PathToPathLink> pathToPathLinkTypes = productInstanceService.getPathToPathLinks(workspaceId, configurationItemId, serialNumber);
-        List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
-
-        for (PathToPathLink pathToPathLink : pathToPathLinkTypes) {
-            PartMaster partMasterSource = productService.getPartMasterFromPath(workspaceId, configurationItemId, pathToPathLink.getSourcePath());
-            PartMaster partMasterTarget = productService.getPartMasterFromPath(workspaceId, configurationItemId, pathToPathLink.getTargetPath());
-
-            LightPartMasterDTO lightPartMasterDTOSource = new LightPartMasterDTO();
-            LightPartMasterDTO lightPartMasterDTOTarget = new LightPartMasterDTO();
-
-            lightPartMasterDTOSource.setPartName(partMasterSource.getName());
-            lightPartMasterDTOSource.setPartNumber(partMasterSource.getNumber());
-            lightPartMasterDTOTarget.setPartName(partMasterTarget.getName());
-            lightPartMasterDTOTarget.setPartNumber(partMasterTarget.getNumber());
-
-            PathToPathLinkDTO pathToPathLinkDTO = mapper.map(pathToPathLink, PathToPathLinkDTO.class);
-            pathToPathLinkDTO.setSource(lightPartMasterDTOSource);
-            pathToPathLinkDTO.setTarget(lightPartMasterDTOTarget);
-
-            pathToPathLinkDTOs.add(pathToPathLinkDTO);
-
-        }
-        return pathToPathLinkDTOs;
-    }
 
     @GET
     @Path("{serialNumber}/path-to-path-links/{pathToPathLinkId}")
@@ -668,6 +641,31 @@ public class ProductInstancesResource {
             data[i++] = new DocumentRevisionKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getVersion());
         }
         return data;
+    }
+    private List<PathToPathLinkDTO> getTypedLinksForProductInstance(String workspaceId,String configurationItemId,String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
+        List<PathToPathLink> pathToPathLinkTypes = productInstanceService.getPathToPathLinks(workspaceId, configurationItemId, serialNumber);
+        List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
+
+        for (PathToPathLink pathToPathLink : pathToPathLinkTypes) {
+            PartMaster partMasterSource = productService.getPartMasterFromPath(workspaceId, configurationItemId, pathToPathLink.getSourcePath());
+            PartMaster partMasterTarget = productService.getPartMasterFromPath(workspaceId, configurationItemId, pathToPathLink.getTargetPath());
+
+            LightPartMasterDTO lightPartMasterDTOSource = new LightPartMasterDTO();
+            LightPartMasterDTO lightPartMasterDTOTarget = new LightPartMasterDTO();
+
+            lightPartMasterDTOSource.setPartName(partMasterSource.getName());
+            lightPartMasterDTOSource.setPartNumber(partMasterSource.getNumber());
+            lightPartMasterDTOTarget.setPartName(partMasterTarget.getName());
+            lightPartMasterDTOTarget.setPartNumber(partMasterTarget.getNumber());
+
+            PathToPathLinkDTO pathToPathLinkDTO = mapper.map(pathToPathLink, PathToPathLinkDTO.class);
+            pathToPathLinkDTO.setSource(lightPartMasterDTOSource);
+            pathToPathLinkDTO.setTarget(lightPartMasterDTOTarget);
+
+            pathToPathLinkDTOs.add(pathToPathLinkDTO);
+
+        }
+        return pathToPathLinkDTOs;
     }
 
 }

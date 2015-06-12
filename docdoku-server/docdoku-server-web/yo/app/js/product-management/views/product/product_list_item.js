@@ -13,6 +13,7 @@ define([
         events: {
             'click input[type=checkbox]': 'selectionChanged',
             'click td.product_id': 'openDetailsView',
+            'click td.has-typed-link': 'openDetailsViewOnTypedLink',
             'click a.design_item': 'openPartView'
         },
 
@@ -23,6 +24,7 @@ define([
         },
 
         render: function () {
+
             this.$el.html(Mustache.render(template, {
                 model: this.model,
                 bomUrl: this.model.getBomUrl(),
@@ -77,6 +79,13 @@ define([
             var pdv = new ProductDetailsView({model: that.model});
             window.document.body.appendChild(pdv.render().el);
             pdv.openModal();
+        },
+        openDetailsViewOnTypedLink: function () {
+            var that = this;
+            var pdv = new ProductDetailsView({model: that.model});
+            window.document.body.appendChild(pdv.render().el);
+            pdv.openModal();
+            pdv.activeTypedLinkTab();
         },
 
         openPartView:function(){

@@ -60,6 +60,10 @@ define(['backbone'], function (Backbone) {
             return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + encodeURIComponent(this.getId()) + '/export-files?configSpecType=latest';
         },
 
+        hasTypedLink:function(){
+          return this.get("typedLinks").length > 0;
+        },
+
         createBaseline: function (baselineArgs, callbacks) {
             return $.ajax({
                 type: 'POST',

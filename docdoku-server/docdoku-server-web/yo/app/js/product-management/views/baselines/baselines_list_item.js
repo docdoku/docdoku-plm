@@ -29,9 +29,7 @@ define([
                 model: this.model,
                 bomUrl: this.model.getBomUrl(),
                 sceneUrl:this.model.getSceneUrl(),
-                zipUrl: this.model.getZipUrl(),
-                hasTypedLink: this.model.getTypedLink()
-
+                zipUrl: this.model.getZipUrl()
             }));
             this.$checkbox = this.$('input[type=checkbox]');
             this.bindUserPopover();
@@ -78,11 +76,19 @@ define([
         },
 
         openDetailView: function () {
-            new BaselineDetailView({model: this.model, isForBaseline: true}).render();
+            var model = this.model;
+            model.fetch().success(function () {
+            new BaselineDetailView({model: model, isForBaseline: true}).render();
+            });
         },
 
-        openDetailViewOnTypedLinkTab:   function(){
-            new BaselineDetailView({model: this.model, isForBaseline: true}).render();
+        openDetailViewOnTypedLinkTab: function () {
+            var model = this.model;
+            model.fetch().success(function () {
+                var baselineView = new BaselineDetailView({model: model}).render();
+                baselineView.activeTypedLinkTab();
+            }.bind(this));
+
         },
         openProductDetailView:function(e){
             var model = new ConfigurationItem();

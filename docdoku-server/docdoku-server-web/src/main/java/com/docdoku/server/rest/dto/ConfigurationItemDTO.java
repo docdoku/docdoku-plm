@@ -20,6 +20,7 @@
 package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  *
@@ -34,6 +35,7 @@ public class ConfigurationItemDTO implements Serializable {
     private String designItemName;
     private String designItemLatestVersion;
     private UserDTO author;
+    private List<PathToPathLinkDTO> typedLinks;
 
 
     public ConfigurationItemDTO() {
@@ -95,6 +97,14 @@ public class ConfigurationItemDTO implements Serializable {
 
     public void setDesignItemLatestVersion(String designItemLatestVersion) {
         this.designItemLatestVersion = designItemLatestVersion;
+    }
+
+    public List<PathToPathLinkDTO> getTypedLinks() {
+        return typedLinks;
+    }
+
+    public void setTypedLinks(List<PathToPathLinkDTO> typedLinks) {
+        this.typedLinks = typedLinks;
     }
 
     public UserDTO getAuthor() {

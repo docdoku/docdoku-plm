@@ -90,22 +90,10 @@ define(['backbone',
             return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + encodeURIComponent(this.getConfigurationItemId()) + '/export-files?configSpecType=pi-' + encodeURIComponent(this.getSerialNumber());
         },
         hasTypedLink:function(){
-            return this.get('hasTypedLink');
+            return this.get('typedLinks').length > 0;
         },
-        setTypedLink:function(links){
-            this.set('hasTypedLink', links.length != 0);
-        },
-        getTypedLink: function () {
-            var typedLinkUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + encodeURIComponent(this.getConfigurationItemId()) + '/product-instances/' + encodeURIComponent(this.getSerialNumber()) + '/path-to-path-links-types';
-            var that = this;
-            $.ajax({
-                type: 'GET',
-                url: typedLinkUrl,
-                success: function (typedLinks) {
-                    return that.setTypedLink(typedLinks);
-                }
-            });
-
+        getTypedLinks:function(){
+            return this.get('typedLinks');
         },
 
         hasACLForCurrentUser: function () {

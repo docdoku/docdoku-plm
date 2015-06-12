@@ -166,6 +166,12 @@ public class PathToPathLinkDAO {
                 .getResultList();
     }
 
+    public List<PathToPathLink> findPathToPathLinks(ConfigurationItem configurationItem) {
+        return em.createNamedQuery("PathToPathLink.findRootPathToPathLinkForGivenProduct", PathToPathLink.class)
+                .setParameter("configurationItem", configurationItem)
+                .getResultList();
+    }
+
     public List<PathToPathLink> findRootPathToPathLinks(ProductInstanceIteration productInstanceIteration, String type) {
         return em.createNamedQuery("PathToPathLink.findRootPathToPathLinkForGivenProductInstanceIterationAndType", PathToPathLink.class)
                 .setParameter("productInstanceIteration", productInstanceIteration)

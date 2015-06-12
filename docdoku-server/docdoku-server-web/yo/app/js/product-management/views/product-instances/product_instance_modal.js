@@ -207,39 +207,26 @@ define([
             this.existingPathToPathLinkCollection = [];
             this.availableType = [];
             var self = this;
-            var urlForExistingTypedLink = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/product-instances/' + this.model.getSerialNumber() + '/path-to-path-details-links';
-            $.ajax({
-                type: 'GET',
-                url: urlForExistingTypedLink,
-                contentType: 'application/json',
-                success: function (pathToPathLinkDTOs) {
-                    _.each(pathToPathLinkDTOs, function (pathToPathLinkDTO) {
-                        self.existingPathToPathLinkCollection.push({
-                            source: pathToPathLinkDTO.source,
-                            target: pathToPathLinkDTO.target,
-                            pathToPath: pathToPathLinkDTO,
-                            productId: self.productId,
-                            serialNumber: self.model.getSerialNumber()
-                        });
-                    });
-
-                    _.each(self.existingPathToPathLinkCollection, function (pathToPathLink) {
-                        var typeLinkItem = new TypedLinkItemView({model: pathToPathLink}).render();
-                        self.$('#path-to-path-links').append(typeLinkItem.el);
-
-                        typeLinkItem.on('remove', function () {
-                            self.existingPathToPathLinkCollection.splice(self.existingPathToPathLinkCollection.indexOf(pathToPathLink), 1);
-                        });
-                    });
-
-                },
-                error: function (errorMessage) {
-                    self.$('#typed-link-alerts').append(new AlertView({
-                        type: 'error',
-                        message: errorMessage.responseText
-                    }).render().$el);
-                }
+            _.each(self.model.getTypedLinks(), function (pathToPathLinkDTO) {
+                self.existingPathToPathLinkCollection.push({
+                    source: pathToPathLinkDTO.source,
+                    target: pathToPathLinkDTO.target,
+                    pathToPath: pathToPathLinkDTO,
+                    productId: self.productId,
+                    serialNumber: self.model.getSerialNumber()
+                });
             });
+
+            _.each(self.existingPathToPathLinkCollection, function (pathToPathLink) {
+                var typeLinkItem = new TypedLinkItemView({model: pathToPathLink}).render();
+                self.$('#path-to-path-links').append(typeLinkItem.el);
+
+                typeLinkItem.on('remove', function () {
+                    self.existingPathToPathLinkCollection.splice(self.existingPathToPathLinkCollection.indexOf(pathToPathLink), 1);
+                });
+            });
+
+
         },
 
         initAttachedFileView: function () {

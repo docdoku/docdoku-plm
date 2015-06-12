@@ -24,13 +24,13 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartLink;
+import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PathToPathLink;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.server.rest.dto.ACLDTO;
-import com.docdoku.server.rest.dto.PartMinimalDTO;
-import com.docdoku.server.rest.dto.PartMinimalListDTO;
+import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.baseline.ProductConfigurationDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -128,7 +128,6 @@ public class ProductConfigurationsResource {
 
         return productConfigurationDTO;
     }
-
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

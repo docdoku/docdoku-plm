@@ -71,7 +71,7 @@ public class ProductBaselinesResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<ProductBaselineDTO> getBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
-            throws UserNotActiveException, EntityNotFoundException {
+            throws UserNotActiveException, EntityNotFoundException, AccessRightException {
         List<ProductBaseline> productBaselines;
         if(ciId != null) {
             ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId, ciId);
@@ -85,6 +85,7 @@ public class ProductBaselinesResource {
             productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
             productBaselineDTO.setConfigurationItemLatestRevision(productBaseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
             productBaselineDTO.setHasObsoletePartRevisions(!productBaselineService.getObsoletePartRevisionsInBaseline(workspaceId, productBaseline.getId()).isEmpty());
+            productBaselineDTO.setTypedLinks(this.getTypedLinkForBaseline(workspaceId,productBaseline.getConfigurationItem().getId(),productBaselineDTO.getId()));
             baselinesDTO.add(productBaselineDTO);
 
         }
@@ -198,9 +199,19 @@ public class ProductBaselinesResource {
     }
 
     @GET
-    @Path("{baselineId}/path-to-path-links-types-details")
+    @Path("{baselineId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PathToPathLinkDTO> getPathToPathLinkTypesDetails(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("baselineId") int baselineId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, AccessRightException, ProductInstanceMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
+    public List<LightPathToPathLinkDTO> getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("baselineId") int baselineId, @PathParam("sourcePath") String sourcePath, @PathParam("targetPath") String targetPath) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException {
+        List<PathToPathLink> pathToPathLinks = productBaselineService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, baselineId, sourcePath, targetPath);
+        List<LightPathToPathLinkDTO> dtos = new ArrayList<>();
+        for(PathToPathLink pathToPathLink : pathToPathLinks) {
+            dtos.add(mapper.map(pathToPathLink, LightPathToPathLinkDTO.class));
+        }
+        return dtos;
+    }
+
+    private  List<PathToPathLinkDTO> getTypedLinkForBaseline(String workspaceId, String configurationItemId,int baselineId ) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, AccessRightException {
+
         List<PathToPathLink> pathToPathLinkTypes = productBaselineService.getPathToPathTypedLink(workspaceId, configurationItemId, baselineId);
         List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
 
@@ -224,17 +235,5 @@ public class ProductBaselinesResource {
 
         }
         return pathToPathLinkDTOs;
-    }
-
-    @GET
-    @Path("{baselineId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<LightPathToPathLinkDTO> getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("baselineId") int baselineId, @PathParam("sourcePath") String sourcePath, @PathParam("targetPath") String targetPath) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException {
-        List<PathToPathLink> pathToPathLinks = productBaselineService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, baselineId, sourcePath, targetPath);
-        List<LightPathToPathLinkDTO> dtos = new ArrayList<>();
-        for(PathToPathLink pathToPathLink : pathToPathLinks) {
-            dtos.add(mapper.map(pathToPathLink, LightPathToPathLinkDTO.class));
-        }
-        return dtos;
     }
 }
