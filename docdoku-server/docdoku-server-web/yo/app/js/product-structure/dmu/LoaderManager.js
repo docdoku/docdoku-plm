@@ -7,6 +7,7 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
         this.STLLoader = null;
         this.BinaryLoader = null;
         this.OBJLoader = null;
+        this.JSONLoader = null;
 
         _.extend(this, options);
 
@@ -158,6 +159,18 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
 
                 case 'js':
                 case 'json':
+                    if (this.JSONLoader === null) {
+                        this.JSONLoader = new THREE.JSONLoader();
+                    }
+
+                    this.JSONLoader.load(filename, function (geometry, materials) {
+                        var _material = new THREE.MeshFaceMaterial(materials);
+                        geometry.dynamic = false;
+                        callbacks.success(geometry, _material);
+                    }, texturePath+'/attachedfiles/');
+
+                    break;
+                    /*
                     if (this.BinaryLoader === null) {
                         this.BinaryLoader = new THREE.BinaryLoader();
                     }
@@ -169,6 +182,7 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                     }, texturePath);
 
                     break;
+                    */
 
                 default:
                     break;

@@ -375,7 +375,14 @@ define(['dmu/LoaderManager', 'async','backbone'],
 
                 _(loadCache).each(function (cache) {
                     cache.geometry.dispose();
-                    cache.material.dispose();
+                    if(cache.material.materials === 'undefined') {
+                        cache.material.dispose();
+                    } else {
+                        _(cache.material.materials).each(function (m) {
+                            m.dispose();
+                        });
+                    }
+
                 });
 
                 worker.postMessage({fn: 'clear', obj: null});
