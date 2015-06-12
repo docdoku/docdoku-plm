@@ -12,8 +12,16 @@
     <i class="fa fa-ban full-access" title="{{i18n.FULL_ACCESS}}"></i>
     {{/isFullAccess}}
 </td>
+<td class="has-path-data">
+    {{#model.hasPathData}}<i class="fa fa-database"></i>{{/model.hasPathData}}
+    {{#hasBrokenPathData}}<i class="fa fa-unlink broken-path-data"></i>{{/hasBrokenPathData}}
+</td>
 <td class="has-typed-link">
     {{#model.hasTypedLink}}<i class="fa fa-exchange"></i>{{/model.hasTypedLink}}
+<<<<<<< HEAD
+=======
+    {{#hasBrokenLink}}<i class="fa fa-unlink broken-link"></i>{{/hasBrokenLink}}
+>>>>>>> added path data column in product instances list
 </td>
 <td><i class="fa fa-file-archive-o download-zip"></i></td>
 <td><a href="{{bomUrl}}" target="_blank" title="{{i18n.BOM_VIEW}}"><i class="fa fa-sitemap"></i></a></td>
