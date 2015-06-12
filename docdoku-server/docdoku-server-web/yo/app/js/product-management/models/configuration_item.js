@@ -64,6 +64,10 @@ define(['backbone'], function (Backbone) {
           return this.get("typedLinks").length > 0;
         },
 
+        getTypedLinks:  function(){
+            return this.get("typedLinks");
+        },
+
         createBaseline: function (baselineArgs, callbacks) {
             return $.ajax({
                 type: 'POST',
