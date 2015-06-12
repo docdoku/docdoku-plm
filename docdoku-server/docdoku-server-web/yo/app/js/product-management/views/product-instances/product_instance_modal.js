@@ -364,6 +364,9 @@ define([
         },
         activeTypedLinkTab: function () {
             this.activateTab(7);
+        },
+        activePathDataTab: function () {
+            this.activateTab(8);
         }
 
     });
