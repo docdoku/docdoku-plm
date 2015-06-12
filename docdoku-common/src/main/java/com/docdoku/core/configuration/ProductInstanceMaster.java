@@ -46,7 +46,7 @@ import java.util.List;
 @Entity
 @NamedQueries({
         @NamedQuery(name="ProductInstanceMaster.findByConfigurationItemId", query="SELECT pim FROM ProductInstanceMaster pim WHERE pim.instanceOf.id = :ciId AND pim.instanceOf.workspace.id = :workspaceId"),
-        @NamedQuery(name="ProductInstanceMaster.findByPathData", query="SELECT pim FROM ProductInstanceMaster pim WHERE :pathDataList member of pim.pathDataList"),
+        @NamedQuery(name="ProductInstanceMaster.findByPathData", query="SELECT pim FROM ProductInstanceMaster pim WHERE :pathDataMasterList member of pim.pathDataMasterList"),
         @NamedQuery(name="ProductInstanceMaster.findByPart", query="SELECT DISTINCT pim FROM ProductInstanceMaster pim JOIN ProductBaseline pb JOIN BaselinedPart bp WHERE pim.instanceOf = pb.configurationItem AND pb.partCollection = bp.partCollection AND bp.targetPart.partRevision = :partRevision ORDER BY pb.configurationItem.id")
 })
 public class ProductInstanceMaster implements Serializable {
@@ -81,7 +81,7 @@ public class ProductInstanceMaster implements Serializable {
                     @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
                     @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
             })
-    private List<PathDataMaster> pathDataList =new ArrayList<>();
+    private List<PathDataMaster> pathDataMasterList =new ArrayList<>();
 
     public ProductInstanceMaster() {
     }
@@ -171,11 +171,11 @@ public class ProductInstanceMaster implements Serializable {
     }
 
     public List<PathDataMaster> getPathDataMasterList() {
-        return pathDataList;
+        return pathDataMasterList;
     }
 
     public void setPathDataMasterList(List<PathDataMaster> pathDataMasterList) {
-        this.pathDataList = pathDataMasterList;
+        this.pathDataMasterList = pathDataMasterList;
     }
 
     @Override

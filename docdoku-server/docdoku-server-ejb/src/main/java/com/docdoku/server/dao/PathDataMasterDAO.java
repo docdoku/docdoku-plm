@@ -79,7 +79,7 @@ public class PathDataMasterDAO {
     public ProductInstanceMaster findByPathData(PathDataMaster pathDataMaster){
         try {
             return em.createNamedQuery("ProductInstanceMaster.findByPathData", ProductInstanceMaster.class)
-                    .setParameter("pathDataList", pathDataMaster)
+                    .setParameter("pathDataMasterList", pathDataMaster)
                     .getSingleResult();
         }catch(NoResultException e){
             return null;

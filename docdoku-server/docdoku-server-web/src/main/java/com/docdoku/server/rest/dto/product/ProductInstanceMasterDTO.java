@@ -20,10 +20,9 @@
 
 package com.docdoku.server.rest.dto.product;
 
-import com.docdoku.core.product.PathToPathLink;
 import com.docdoku.server.rest.dto.ACLDTO;
+import com.docdoku.server.rest.dto.PathDataMasterDTO;
 import com.docdoku.server.rest.dto.PathToPathLinkDTO;
-import com.docdoku.server.rest.dto.baseline.BaselineDTO;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
@@ -40,6 +39,8 @@ public class ProductInstanceMasterDTO {
     private List<ProductInstanceIterationDTO> productInstanceIterations;
     private ACLDTO acl;
     private List<PathToPathLinkDTO> typedLinks;
+    private List<PathDataMasterDTO> pathDataMasterList;
+
     public ProductInstanceMasterDTO() {
     }
 
@@ -100,5 +101,11 @@ public class ProductInstanceMasterDTO {
         this.typedLinks = typedLinks;
     }
 
+    public List<PathDataMasterDTO> getPathDataMasterList() {
+        return pathDataMasterList;
+    }
 
+    public void setPathDataMasterList(List<PathDataMasterDTO> pathDataMasterList) {
+        this.pathDataMasterList = pathDataMasterList;
+    }
 }

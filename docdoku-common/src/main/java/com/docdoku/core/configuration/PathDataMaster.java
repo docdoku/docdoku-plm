@@ -33,8 +33,8 @@ import java.util.List;
 @Table(name="PATHDATAMASTER")
 @Entity
 @NamedQueries({
-        @NamedQuery(name= "pathDataMaster.findByPathIdAndProductInstanceMaster", query="SELECT p FROM PathDataMaster p JOIN ProductInstanceMaster l WHERE p member of l.pathDataList and p.id = :pathId and l = :productInstanceMaster"),
-        @NamedQuery(name= "pathDataMaster.findByPathAndProductInstanceMaster", query="SELECT p FROM PathDataMaster p JOIN ProductInstanceMaster l WHERE p member of l.pathDataList and p.path = :path and l = :productInstanceMaster")
+        @NamedQuery(name= "pathDataMaster.findByPathIdAndProductInstanceMaster", query="SELECT p FROM PathDataMaster p JOIN ProductInstanceMaster l WHERE p member of l.pathDataMasterList and p.id = :pathId and l = :productInstanceMaster"),
+        @NamedQuery(name= "pathDataMaster.findByPathAndProductInstanceMaster", query="SELECT p FROM PathDataMaster p JOIN ProductInstanceMaster l WHERE p member of l.pathDataMasterList and p.path = :path and l = :productInstanceMaster")
 })
 public class PathDataMaster implements Serializable{
 
