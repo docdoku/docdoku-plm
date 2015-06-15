@@ -25,7 +25,7 @@ import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.DocumentConfigSpec;
 import com.docdoku.core.configuration.PathDataIteration;
-import com.docdoku.core.configuration.ProductInstanceIteration;
+import com.docdoku.core.configuration.PathDataMaster;
 import com.docdoku.core.configuration.ProductInstanceMaster;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
@@ -47,7 +47,7 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
-import com.docdoku.server.rest.dto.product.ProductInstanceIterationDTO;
+import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -494,15 +494,15 @@ public class DocumentResource {
     @GET
     @Path("{iteration}/inverse-product-instances-link")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ProductInstanceIterationDTO> getInverseProductInstancesLinks(@PathParam("workspaceId") String workspaceId,
+    public List<ProductInstanceMasterDTO> getInverseProductInstancesLinks(@PathParam("workspaceId") String workspaceId,
                                                                              @PathParam("documentId") String documentId,
                                                                              @PathParam("documentVersion") String documentVersion,
                                                                              @QueryParam("configSpec") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentRevisionNotFoundException {
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
-        List<ProductInstanceIteration> productInstanceIterations = productService.getInverseProductInstancesLink(docKey);
-        Set<ProductInstanceIterationDTO> dtos = new HashSet<>();
-        for (ProductInstanceIteration productInstanceIteration : productInstanceIterations) {
-            dtos.add(mapper.map(productInstanceIteration, ProductInstanceIterationDTO.class));
+        Set<ProductInstanceMaster> productInstanceMasterList = productService.getInverseProductInstancesLink(docKey);
+        Set<ProductInstanceMasterDTO> dtos = new HashSet<>();
+        for (ProductInstanceMaster productInstanceMaster:productInstanceMasterList) {
+            dtos.add(mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class));
         }
         return new ArrayList<>(dtos);
     }
@@ -510,44 +510,27 @@ public class DocumentResource {
     @GET
     @Path("{iteration}/inverse-path-data-link")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PathDataIterationDTO> getInversePathDataLinks(@PathParam("workspaceId") String workspaceId,
-                                                              @PathParam("documentId") String documentId,
-                                                              @PathParam("documentVersion") String documentVersion,
-                                                              @QueryParam("configSpec") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentRevisionNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+    public List<PathDataMasterDTO> getInversePathDataLinks(@PathParam("workspaceId") String workspaceId,
+                                                           @PathParam("documentId") String documentId,
+                                                           @PathParam("documentVersion") String documentVersion,
+                                                           @QueryParam("configSpec") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentRevisionNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
-        List<PathDataIteration> pathDataIterations = productService.getInversePathDataLink(docKey);
-        Set<PathDataIterationDTO> dtos = new HashSet<>();
-        for (PathDataIteration pathData : pathDataIterations) {
-            PathDataIterationDTO dto = mapper.map(pathData, PathDataIterationDTO.class);
+        Set<PathDataMaster> pathDataMasters = productService.getInversePathDataLink(docKey);
 
-
-            ProductInstanceMaster productInstanceMaster = productService.findProductByPathMaster(workspaceId, pathData.getPathDataMaster());
-
-            List<PartLink> partLinks = productService.decodePath(productInstanceMaster.getInstanceOf().getKey(), pathData.getPathDataMaster().getPath());
+        Set<PathDataMasterDTO> dtos = new HashSet<>();
+        for (PathDataMaster pathDataMaster : pathDataMasters) {
+            PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
+            ProductInstanceMaster productInstanceMaster = productService.findProductByPathMaster(workspaceId, pathDataMaster);
+            List<PartLink> partLinks = productService.decodePath(productInstanceMaster.getInstanceOf().getKey(), pathDataMaster.getPath());
             PartMinimalListDTO partList = new PartMinimalListDTO();
-
             for (PartLink partLink : partLinks) {
                 partList.addPart(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
             }
             dto.setPartsPath(partList);
-            dto.setPath(pathData.getPathDataMaster().getPath());
             dto.setSerialNumber(productInstanceMaster.getSerialNumber());
-            dto.setPartMasterId(pathData.getPathDataMaster().getId());
             dtos.add(dto);
         }
-
-        Set<PathDataIterationDTO> pathDtos = new HashSet<>();
-        ArrayList<PathDataIterationDTO> resultDtos = new ArrayList<>();
-
-        for (PathDataIterationDTO dto : dtos) {
-            if (!pathDtos.contains(dto)) {
-                pathDtos.add(dto);
-                resultDtos.add(dto);
-            }
-        }
-
-
-        return resultDtos;
+        return new ArrayList<>(dtos);
     }
 
     private List<InstanceAttribute> createInstanceAttributes(List<InstanceAttributeDTO> dtos) {

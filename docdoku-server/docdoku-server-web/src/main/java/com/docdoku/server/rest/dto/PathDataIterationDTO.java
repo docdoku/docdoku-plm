@@ -26,7 +26,7 @@ import java.util.Set;
  */
 public class PathDataIterationDTO {
     private String serialNumber;
-    private int partMasterId;
+    private int pathDataMasterId;
     private int iteration;
     private String noteIteration;
     private PartMinimalListDTO partsPath;
@@ -99,12 +99,12 @@ public class PathDataIterationDTO {
         this.path = path;
     }
 
-    public int getPartMasterId() {
-        return partMasterId;
+    public int getPathDataMasterId() {
+        return pathDataMasterId;
     }
 
-    public void setPartMasterId(int partMasterId) {
-        this.partMasterId = partMasterId;
+    public void setPathDataMasterId(int pathDataMasterId) {
+        this.pathDataMasterId = pathDataMasterId;
     }
 
     @Override
@@ -114,19 +114,16 @@ public class PathDataIterationDTO {
 
         PathDataIterationDTO dto = (PathDataIterationDTO) o;
 
-        if (partMasterId != dto.partMasterId) return false;
-        if (!partsPath.equals(dto.partsPath)) return false;
-        if (path != null ? !path.equals(dto.path) : dto.path != null) return false;
-        if (!serialNumber.equals(dto.serialNumber)) return false;
+        if (iteration != dto.iteration) return false;
+        if (pathDataMasterId != dto.pathDataMasterId) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = partMasterId;
-        result = 31 * result + (partsPath != null ? partsPath.hashCode() : 0);
-        result = 31 * result + (path != null ? path.hashCode() : 0);
+        int result = pathDataMasterId;
+        result = 31 * result + iteration;
         return result;
     }
 }

@@ -28,6 +28,7 @@ public class PathDataMasterDTO implements Serializable {
 
     private Integer id;
     private String path;
+    private String serialNumber;
     private PartMinimalListDTO partsPath ;
     private List<PathDataIterationDTO> pathDataIterations = new ArrayList<PathDataIterationDTO>();
     private List<InstanceAttributeDTO> partAttributes;
@@ -91,5 +92,13 @@ public class PathDataMasterDTO implements Serializable {
 
     public void setPartAttributeTemplates(List<InstanceAttributeTemplateDTO> partAttributeTemplates) {
         this.partAttributeTemplates = partAttributeTemplates;
+    }
+
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
     }
 }

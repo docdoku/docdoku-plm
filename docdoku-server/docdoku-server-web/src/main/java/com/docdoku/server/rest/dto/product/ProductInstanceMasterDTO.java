@@ -99,4 +99,6 @@ public class ProductInstanceMasterDTO {
     public void setTypedLinks(List<PathToPathLinkDTO> typedLinks) {
         this.typedLinks = typedLinks;
     }
+
+
 }
