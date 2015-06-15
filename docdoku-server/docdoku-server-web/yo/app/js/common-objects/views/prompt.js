@@ -24,7 +24,8 @@ define([
                 question: this.question,
                 primaryButton: this.primaryButton,
                 cancelButton: this.cancelButton,
-                inputSpecified: this.inputSpecified
+                inputSpecified: this.inputSpecified,
+                defaultValue: this.defaultValue,
             }));
             this.bindDomElements();
             return this;
@@ -49,11 +50,12 @@ define([
             return false;
         },
 
-        setPromptOptions: function (title, question, primaryButton, cancelButton) {
+        setPromptOptions: function (title, question, primaryButton, cancelButton, defaultValue) {
             this.title = title;
             this.question = question;
             this.primaryButton = primaryButton;
             this.cancelButton = cancelButton;
+            this.defaultValue = defaultValue;
         },
 
         specifyInput: function(inputSpecified) {

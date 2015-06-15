@@ -38,17 +38,10 @@
             <input type="text" id="groupBy" class="group-by-input">
         </div>
 
-        <div class="query-save-block">
-            <span class="query-save-label">{{i18n.SAVE}}</span>
-            <div class="saveSwitch switch switch-small" data-on="success" data-off="danger">
-                <input type="checkbox">
-            </div>
-
-            <input type="text" class="query-name-input queryName input-xlarge" placeholder="{{i18n.QUERY_NAME}}" required>
-        </div>
     </div>
 
     <div class="query-actions-block">
+        <button type="button" class="btn btn-success save-button">{{i18n.SAVE}}</button>
         <button type="button" class="btn btn-warning reset-button">{{i18n.RESET}}</button>
         <button type="button" class="btn btn-primary search-button" data-loading-text="{{i18n.SEARCHING}}">{{i18n.SEARCH}}</button>
 

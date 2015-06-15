@@ -7,13 +7,15 @@ define([
     '../../utils/query-builder-options',
     'common-objects/views/alert',
     'collections/configuration_items',
-    'common-objects/collections/product_instances'
-], function (Backbone, Mustache, template,  selectize, queryBuilderOptions, AlertView, ConfigurationItemCollection, ProductInstances) {
+    'common-objects/collections/product_instances',
+    'common-objects/views/prompt'
+], function (Backbone, Mustache, template,  selectize, queryBuilderOptions, AlertView, ConfigurationItemCollection, ProductInstances, PromptView) {
     'use strict';
     var QueryBuilderView = Backbone.View.extend({
 
         events: {
             'click .search-button': 'onSearch',
+            'click .save-button': 'onSave',
             'change select.query-list':'onSelectQueryChange',
             'click .delete-selected-query':'deleteSelectedQuery',
             'click .reset-button' : 'onReset',
@@ -276,14 +278,6 @@ define([
             this.fetchQueries();
             this.initWhere();
 
-            this.$saveSwitch.bootstrapSwitch();
-            this.$saveSwitch.bootstrapSwitch('setState', false);
-            this.$inputName.toggle(false);
-            var $inputName = this.$inputName;
-            this.$saveSwitch.on('switch-change', function (event, state) {
-                $inputName.toggle(state.value);
-            });
-
             return this;
         },
 
@@ -407,8 +401,6 @@ define([
             this.$select = this.$('#select');
             this.$orderBy = this.$('#orderBy');
             this.$groupBy = this.$('#groupBy');
-            this.$saveSwitch = this.$('.saveSwitch.switch');
-            this.$inputName = this.$('.queryName');
             this.$selectQuery = this.$('select.query-list');
             this.$deleteQueryButton = this.$('.delete-selected-query');
             this.$exportQueryButton = this.$('.export-excel-button');
@@ -462,7 +454,6 @@ define([
         onReset: function(){
             this.clear();
             this.$where.queryBuilder('reset');
-            this.$saveSwitch.bootstrapSwitch('setState', false);
             this.$selectQuery.val('');
         },
 
@@ -476,6 +467,26 @@ define([
         },
 
         onSearch:function(){
+            this.doSearch();
+        },
+
+        onSave : function(){
+
+            var self = this;
+
+            var promptView = new PromptView();
+            promptView.setPromptOptions(App.config.i18n.SAVE, "", App.config.i18n.SAVE, App.config.i18n.CANCEL, this.$selectQuery.find('option:selected').text());
+            window.document.body.appendChild(promptView.render().el);
+            promptView.openModal();
+
+            this.listenTo(promptView, 'prompt-ok', function (args) {
+                var name = args[0];
+                self.doSearch(name);
+            });
+
+        },
+
+        doSearch : function(save){
             var self = this;
 
             var isValid = this.$where.queryBuilder('validate');
@@ -498,25 +509,23 @@ define([
                 var orderByList = this.$orderBy[0].selectize.getValue().length ? this.$orderBy[0].selectize.getValue().split(this.delimiter) : [];
                 var groupByList = this.$groupBy[0].selectize.getValue().length ? this.$groupBy[0].selectize.getValue().split(this.delimiter) : [];
 
-                var saveQuery = this.$saveSwitch.bootstrapSwitch('status');
-
-                if (saveQuery && this.$inputName.val().length === 0) {
-                    this.$inputName.focus();
-                    return;
-                }
-
                 var queryData = {
                     contexts:contextToSend,
                     selects: selectList,
                     orderByList: orderByList,
                     groupedByList: groupByList,
                     queryRule: rules,
-                    name: saveQuery ? this.$inputName.val() : ''
+                    name: save || ''
                 };
 
                 this.$searchButton.button('loading');
 
-                var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries?save=' + saveQuery;
+
+                var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries' ;
+
+                if(save){
+                    url+= '?save=true';
+                }
 
                 $.ajax({
                     type: 'POST',
@@ -544,6 +553,7 @@ define([
                 });
             }
         }
+
     });
 
 
