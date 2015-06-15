@@ -8,6 +8,12 @@
     {{value}}
     {{/isStringValue}}
 
+    {{#isLinkedDocuments}}
+    {{#value}}
+        <a target="_blank" class="linkedDocument" href="{{link}}">{{name}}</a>
+    {{/value}}
+    {{/isLinkedDocuments}}
+
     {{#isPartNumber}}
     <span class="part_number_value">{{value}}</span>
     {{/isPartNumber}}

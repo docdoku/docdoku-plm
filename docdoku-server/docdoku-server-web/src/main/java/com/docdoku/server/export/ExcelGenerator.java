@@ -21,6 +21,8 @@
 package com.docdoku.server.export;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentLink;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeDescriptor;
 import com.docdoku.core.meta.InstanceListOfValuesAttribute;
@@ -48,7 +50,7 @@ public class ExcelGenerator {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-    public File generateXLSResponse(QueryResult queryResult,Locale locale) {
+    public File generateXLSResponse(QueryResult queryResult, Locale locale, String baseURL) {
         LangHelper langHelper = new LangHelper(locale);
         File excelFile = new File("export_parts.xls");
         //Blank workbook
@@ -79,7 +81,7 @@ public class ExcelGenerator {
         int i = 1;
         for (QueryResultRow row : queryResult.getRows()) {
             i++;
-            data.put(i, createXLSRow(queryResult, row));
+            data.put(i, createXLSRow(queryResult, row, baseURL));
         }
 
         //Iterate over data and write to sheet
@@ -118,7 +120,7 @@ public class ExcelGenerator {
 
     }
 
-    private String[] createXLSRow(QueryResult queryResult, QueryResultRow row) {
+    private String[] createXLSRow(QueryResult queryResult, QueryResultRow row, String baseURL) {
 
         List<String> selects = queryResult.getQuery().getSelects();
         List<String> data = new ArrayList<>();
@@ -186,6 +188,19 @@ public class ExcelGenerator {
                 case QueryField.CTX_AMOUNT:
                     data.add(row.getAmount() + "");
                     break;
+                 case QueryField.PART_ITERATION_LINKED_DOCUMENTS:
+                     PartIteration lastCheckedInIteration = row.getPartRevision().getLastCheckedInIteration();
+                     StringBuilder sb = new StringBuilder();
+                     if(lastCheckedInIteration != null){
+                         Set<DocumentLink> linkedDocuments = lastCheckedInIteration.getLinkedDocuments();
+                         for(DocumentLink documentLink:linkedDocuments){
+                             DocumentRevision targetDocument = documentLink.getTargetDocument();
+                             sb.append(baseURL+"/documents/"+targetDocument.getWorkspaceId()+"/"+targetDocument.getId()+"/"+targetDocument.getVersion()+ " ");
+                         }
+                     }
+                     data.add(sb.toString());
+                    break;
+
                 default:
                     if (select.contains(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
                         String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());

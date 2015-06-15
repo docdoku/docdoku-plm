@@ -214,7 +214,14 @@ define(function () {
         ]
     });
 
-
+    filters.push({
+        id: 'pr.linkedDocuments',
+        label: App.config.i18n.LINKED_DOCUMENTS,
+        type: 'string',
+        operators: stringOperators,
+        optgroup:App.config.i18n.QUERY_GROUP_PART_REVISION,
+        realType:'linkedDocuments'
+    });
 
     var fields = [];
 

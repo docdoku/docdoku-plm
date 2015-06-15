@@ -268,6 +268,9 @@ public class QueryDAO {
             return getPredicate(pr.get(field),operator,PartRevision.RevisionStatus.valueOf(value),"");
         } else if(field.equals("tags")){
             return getTagsPredicate(value);
+        }else if(field.equals("linkedDocuments")){
+            // should be ignored, returning always true for the moment
+            return cb.and();
         }
         return getPredicate(pr.get(field), operator, value, type);
     }

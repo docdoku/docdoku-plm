@@ -50,8 +50,11 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import java.util.*;
 
@@ -193,12 +196,14 @@ public class PartsResource {
     @Path("queries/{queryId}/format/{export}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/vnd.ms-excel")
-    public Response exportCustomQuery(@PathParam("workspaceId") String workspaceId, @PathParam("queryId") String queryId, @PathParam("export") String exportType) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
+    public Response exportCustomQuery(@Context HttpServletRequest request, @PathParam("workspaceId") String workspaceId, @PathParam("queryId") String queryId, @PathParam("export") String exportType) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user != null?user.getLanguage():"en");
         Query query = productService.loadQuery(workspaceId, Integer.valueOf(queryId));
         QueryResult queryResult = getQueryResult(workspaceId, query, exportType);
-        return makeQueryResponse(queryResult,locale);
+        String url = request.getRequestURL().toString();
+        String baseURL = url.substring(0, url.length() - request.getRequestURI().length()) + request.getContextPath();
+        return makeQueryResponse(queryResult,locale, baseURL);
     }
 
 
@@ -214,11 +219,11 @@ public class PartsResource {
         return queryResult;
     }
 
-    public Response makeQueryResponse(QueryResult queryResult,Locale locale) {
+    public Response makeQueryResponse(QueryResult queryResult, Locale locale, String baseURL) {
         ExcelGenerator excelGenerator = new ExcelGenerator();
         String contentType = "application/vnd.ms-excel";
         String contentDisposition = "attachment; filename=export_parts.xls";
-        Response.ResponseBuilder responseBuilder = Response.ok((Object) excelGenerator.generateXLSResponse(queryResult,locale));
+        Response.ResponseBuilder responseBuilder = Response.ok((Object) excelGenerator.generateXLSResponse(queryResult,locale, baseURL));
         responseBuilder
                 .header("Content-Type", contentType)
                 .header("Content-Disposition", contentDisposition);

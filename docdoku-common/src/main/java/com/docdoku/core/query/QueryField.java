@@ -40,6 +40,7 @@ public class QueryField {
     public final static String PART_REVISION_CREATION_DATE = "pr.creationDate";
     public final static String PART_REVISION_LIFECYCLE_STATE = "pr.lifeCycleState";
     public final static String PART_REVISION_STATUS = "pr.status";
+    public final static String PART_ITERATION_LINKED_DOCUMENTS = "pr.linkedDocuments";
     public final static String PART_REVISION_ATTRIBUTES_PREFIX = "attr-";
 
     public final static String AUTHOR_LOGIN = "author.login";

@@ -238,6 +238,7 @@ define({
 	LEFT_CLICK: "clic gauche",
 	LIFECYCLE_STATE: "Etat du cycle de vie",
     LINK_DESCRIPTION: "Description du lien",
+    LINKED_DOCUMENTS: "Documents liés",
     LINKS: "Liens",
     LIST_LOV:"Ensemble des listes de valeurs",
     LOV:"Liste de valeurs",

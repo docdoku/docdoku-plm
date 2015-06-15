@@ -11,7 +11,6 @@ define([
     var PartGroupedByListItemView = Backbone.View.extend({
 
         events: {
-
         },
 
         tagName:'tr',
@@ -35,8 +34,9 @@ define([
 
                 var isDate = type === 'date';
                 var isPartNumber = type ==='partNumber';
+                var isLinkedDocuments = type ==='linkedDocuments';
 
-                var isStringValue = !isDate && !isPartNumber;
+                var isStringValue = !isDate && !isPartNumber && !isLinkedDocuments;
 
                 if(isDate) {
                     if (!value) {
@@ -50,10 +50,32 @@ define([
                     value = timestampFormated ? timestampFormated : "";
                 }
 
+                if(isLinkedDocuments){
+                    if (!value) {
+                        value = [];
+                    }
+                    else{
+                        var documents = value.split(',');
+                        documents.pop();
+                        var result = [];
+                        _.each(documents,function(document){
+                            var lastDash = document.lastIndexOf('-');
+                            var id = document.substr(0, lastDash);
+                            var version = document.substr(lastDash+1);
+                            result.push({
+                                link:'../documents/'+App.config.workspaceId+'/'+id+'/'+version,
+                                name:document
+                            });
+                        });
+                        value = result;
+                    }
+                }
+
                 var itemColumn = {
                     isDate : isDate,
                     isPartNumber : isPartNumber,
                     isStringValue : isStringValue,
+                    isLinkedDocuments : isLinkedDocuments,
                     value : value
                 };
                 itemOrdered.push(itemColumn);
@@ -70,7 +92,12 @@ define([
             return this;
         },
 
-        openModal:function(){
+        openModal:function(e){
+
+            if(e.target.className === 'linkedDocument'){
+                return;
+            }
+
             var model = new Part({partKey:this.item['pr.partKey']});
             model.fetch().success(function () {
                 var partModalView = new PartModalView({

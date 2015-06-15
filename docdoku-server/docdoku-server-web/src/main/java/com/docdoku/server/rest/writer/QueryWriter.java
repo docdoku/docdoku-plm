@@ -20,6 +20,8 @@
 package com.docdoku.server.rest.writer;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentLink;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeDescriptor;
 import com.docdoku.core.meta.InstanceListOfValuesAttribute;
@@ -47,10 +49,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 
 @Provider
@@ -78,7 +77,7 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
             generateCSVResponse(outputStream,queryResult);
 
         } else if(queryResult.getExportType().equals(QueryResult.ExportType.XLS)){
-            excelGenerator.generateXLSResponse(queryResult,new Locale(queryResult.getQuery().getAuthor().getLanguage()));
+            excelGenerator.generateXLSResponse(queryResult,new Locale(queryResult.getQuery().getAuthor().getLanguage()), "");
         }else{
             throw new IllegalArgumentException();
         }
@@ -287,6 +286,23 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
             if (selects.contains(QueryField.CTX_DEPTH)) {
                 jg.write(QueryField.CTX_DEPTH, row.getDepth());
+            }
+
+            if (selects.contains(QueryField.PART_ITERATION_LINKED_DOCUMENTS)) {
+                PartIteration lastIteration = part.getLastCheckedInIteration();
+                StringBuilder sb = new StringBuilder();
+
+                if(lastIteration != null){
+                    Set<DocumentLink> linkedDocuments = lastIteration.getLinkedDocuments();
+
+                    for(DocumentLink documentLink:linkedDocuments){
+                        DocumentRevision targetDocument = documentLink.getTargetDocument();
+                        sb.append(targetDocument.toString()+",");
+                    }
+                }
+
+                jg.write(QueryField.PART_ITERATION_LINKED_DOCUMENTS, sb.toString());
+
             }
 
             for (String attributeSelect : attributesSelect) {
