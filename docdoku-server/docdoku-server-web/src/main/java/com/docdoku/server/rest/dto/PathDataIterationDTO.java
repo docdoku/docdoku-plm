@@ -1,4 +1,4 @@
-package com.docdoku.server.rest.dto;/*
+/*
  * DocDoku, Professional Open Source
  * Copyright 2006 - 2015 DocDoku SARL
  *
@@ -18,11 +18,13 @@ package com.docdoku.server.rest.dto;/*
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+package com.docdoku.server.rest.dto;
+
 import java.util.List;
 import java.util.Set;
 
 /**
- * @author: Chadid Asmae
+ * @author Chadid Asmae
  */
 public class PathDataIterationDTO {
     private String serialNumber;

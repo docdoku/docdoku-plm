@@ -360,4 +360,25 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ProductInstanceIteration that = (ProductInstanceIteration) o;
+
+        if (iteration != that.iteration) return false;
+        if (productInstanceMaster != null ? !productInstanceMaster.equals(that.productInstanceMaster) : that.productInstanceMaster != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = productInstanceMaster != null ? productInstanceMaster.hashCode() : 0;
+        result = 31 * result + iteration;
+        return result;
+    }
 }

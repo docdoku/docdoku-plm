@@ -96,4 +96,21 @@ public class PathDataMaster implements Serializable{
             return this.pathDataIterations.get(index);
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PathDataMaster that = (PathDataMaster) o;
+
+        if (id != that.id) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
 }

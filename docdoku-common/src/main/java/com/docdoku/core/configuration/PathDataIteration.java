@@ -164,4 +164,25 @@ public class PathDataIteration implements Serializable, FileHolder {
     public void removeFile(BinaryResource file) {
         attachedFiles.remove(file);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PathDataIteration that = (PathDataIteration) o;
+
+        if (iteration != that.iteration) return false;
+        if (pathDataMaster != null ? !pathDataMaster.equals(that.pathDataMaster) : that.pathDataMaster != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = pathDataMaster != null ? pathDataMaster.hashCode() : 0;
+        result = 31 * result + iteration;
+        return result;
+    }
 }

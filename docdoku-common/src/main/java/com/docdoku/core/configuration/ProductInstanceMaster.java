@@ -177,4 +177,24 @@ public class ProductInstanceMaster implements Serializable {
     public void setPathDataMasterList(List<PathDataMaster> pathDataMasterList) {
         this.pathDataList = pathDataMasterList;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ProductInstanceMaster that = (ProductInstanceMaster) o;
+
+        if (instanceOf != null ? !instanceOf.equals(that.instanceOf) : that.instanceOf != null) return false;
+        if (serialNumber != null ? !serialNumber.equals(that.serialNumber) : that.serialNumber != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = serialNumber != null ? serialNumber.hashCode() : 0;
+        result = 31 * result + (instanceOf != null ? instanceOf.hashCode() : 0);
+        return result;
+    }
 }
