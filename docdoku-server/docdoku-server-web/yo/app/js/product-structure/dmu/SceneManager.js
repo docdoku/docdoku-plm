@@ -131,6 +131,10 @@ define([
             var ambient = new THREE.AmbientLight(App.SceneOptions.ambientLightColor);
             ambient.name='AmbientLight';
             _this.scene.add(ambient);
+            var hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.4 );
+            hemiLight.position.set( 0, 500, 0 );
+            _this.scene.add(hemiLight);
+
         }
         function initSelectionBox() {
             selectionBox = new THREE.BoxHelper();
