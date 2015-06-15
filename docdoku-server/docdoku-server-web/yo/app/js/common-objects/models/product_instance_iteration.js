@@ -88,7 +88,12 @@ define(['backbone'
             return this.get('linkedDocuments');
         },
         getTypedLinks: function () {
-            return this.get('typedLinks');
+            if(this.get("typedLinks")){
+                return this.get("typedLinks").length > 0;
+            }
+            else{
+                return false;
+            }
         },
         getAttachedFiles: function () {
             return this.get('attachedFiles');
