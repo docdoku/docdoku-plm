@@ -75,6 +75,18 @@ public class IFCFileConverterImpl implements CADConverter{
         String convertedFileName = tempDir.getAbsolutePath() + "/" + partToConvert.getKey()+".obj" ;
         String ifcConverter = CONF.getProperty("ifc_convert_path");
 
+        File executable = new File(ifcConverter);
+
+        if(!executable.exists()){
+            LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+ifcConverter+"\" is not available");
+            return null;
+        }
+
+        if(!executable.canExecute()){
+            LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+ifcConverter+"\" has no execution rights");
+            return null;
+        }
+
         Files.copy(new InputSupplier<InputStream>() {
             @Override
             public InputStream getInput() throws IOException {

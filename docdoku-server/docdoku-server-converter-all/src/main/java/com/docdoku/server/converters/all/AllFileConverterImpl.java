@@ -75,6 +75,18 @@ public class AllFileConverterImpl implements CADConverter{
         String convertedFileName = tempDir.getAbsolutePath() + "/" + partToConvert.getKey() ;
         String meshconvBinary = CONF.getProperty("meshconv_path");
 
+        File executable = new File(meshconvBinary);
+
+        if(!executable.exists()){
+            LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+meshconvBinary+"\" is not available");
+            return null;
+        }
+
+        if(!executable.canExecute()){
+            LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+meshconvBinary+"\" has no execution rights");
+            return null;
+        }
+
         Files.copy(new InputSupplier<InputStream>() {
             @Override
             public InputStream getInput() throws IOException {

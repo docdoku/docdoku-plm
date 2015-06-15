@@ -147,6 +147,18 @@ public class ConverterBean implements IConverterManagerLocal {
 
         String decimater = CONF.getProperty("decimater");
 
+        File executable = new File(decimater);
+
+        if(!executable.exists()){
+            LOGGER.log(Level.SEVERE, "Cannot decimate file \""+file.getName()+"\", decimater \""+decimater+"\" is not available");
+            return false;
+        }
+
+        if(!executable.canExecute()){
+            LOGGER.log(Level.SEVERE, "Cannot decimate file \""+file.getName()+"\", decimater \""+decimater+"\" has no execution rights");
+            return false;
+        }
+
         boolean decimateSucceed = false;
 
         try {

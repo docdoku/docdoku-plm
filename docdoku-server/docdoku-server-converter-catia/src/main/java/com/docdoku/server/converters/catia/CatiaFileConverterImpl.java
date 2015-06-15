@@ -74,6 +74,18 @@ public class CatiaFileConverterImpl implements CADConverter{
         File tmpDAEFile = new File(tempDir, woExName+".dae");
         String catPartConverter = CONF.getProperty("catPartConverter");
 
+        File executable = new File(catPartConverter);
+
+        if(!executable.exists()){
+            LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+catPartConverter+"\" is not available");
+            return null;
+        }
+
+        if(!executable.canExecute()){
+            LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+catPartConverter+"\" has no execution rights");
+            return null;
+        }
+
         Files.copy(new InputSupplier<InputStream>() {
             @Override
             public InputStream getInput() throws IOException {

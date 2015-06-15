@@ -71,6 +71,19 @@ public class DaeFileConverterImpl implements CADConverter{
 
         String assimp = CONF.getProperty("assimp");
 
+        File executable = new File(assimp);
+
+        if(!executable.exists()){
+            LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+assimp+"\" is not available");
+            return null;
+        }
+
+        if(!executable.canExecute()){
+            LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+assimp+"\" has no execution rights");
+            return null;
+        }
+
+
         File tmpCadFile = new File(tempDir, cadFile.getName().trim());
         Files.copy(new InputSupplier<InputStream>() {
             @Override

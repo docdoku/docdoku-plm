@@ -87,6 +87,18 @@ public class CatiaProductFileParserImpl implements CADConverter {
 
             String catProductReader = CONF.getProperty("catProductReader");
 
+            File executable = new File(catProductReader);
+
+            if(!executable.exists()){
+                LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+catProductReader+"\" is not available");
+                return null;
+            }
+
+            if(!executable.canExecute()){
+                LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+catProductReader+"\" has no execution rights");
+                return null;
+            }
+
             tmpCadFile = new File(tempDir, cadFile.getName());
 
             Files.copy(new InputSupplier<InputStream>() {
