@@ -16,6 +16,7 @@ module.exports = {
     contextPath: "/",
     waitOnRequest: true,
     requestTimeOut: 1000,
+    soundOnTestsEnd:false,
     pre: [
         "js/pre/start.js"
     ],

@@ -13,6 +13,8 @@ var exec = require('child_process').exec;
 var _ = require('underscore');
 var ci = require('./config.ci');
 var local = require('./config.local');
+var xml2js = require('xml2js');
+
 
 var conf = _.extend(ci, local);
 
@@ -38,9 +40,26 @@ sys.print('Running DocdokuPLM tests. Command : \n ' + casperCommand + '\n\n');
 
 var child = exec(casperCommand, {maxBuffer: 1024 * 1024}, function (error) {
     sys.print(error||'');
+    onTestOver();
 });
 
 child.stdout.on('data', sys.print);
 
 child.stderr.on('data', sys.print);
 
+function onTestOver(){
+    if(conf.soundOnTestsEnd){
+        var parser = new xml2js.Parser();
+        fs.readFile(__dirname + '/results.xml', function(err, data) {
+            parser.parseString(data, function (err, result) {
+                var suites = result.testsuites.testsuite;
+                var lastSuite = suites[suites.length-1];
+                if(lastSuite.$.failures){
+                    exec('cvlc --play-and-exit fail.wav');
+                }else {
+                    exec('cvlc --play-and-exit success.wav');
+                }
+            });
+        });
+    }
+}

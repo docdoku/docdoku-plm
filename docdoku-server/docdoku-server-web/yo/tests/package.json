@@ -4,7 +4,8 @@
   "version": "0.0.1",
   "dependencies": {},
   "devDependencies": {
-    "underscore": "^1.7.0"
+    "underscore": "^1.7.0",
+      "xml2js": "^0.4.9"
   },
   "scripts": {
     "start": "node run.js",
