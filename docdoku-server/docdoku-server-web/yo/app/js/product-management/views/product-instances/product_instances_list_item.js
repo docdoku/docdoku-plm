@@ -13,7 +13,7 @@ define([
             'click input[type=checkbox]': 'selectionChanged',
             'click td.reference': 'openEditView',
             'click td.has-typed-link i.fa-exchange': 'openEditViewOnTypedLinkTab',
-            'click td.has-path-data i.fa-database': 'openEditViewOnPathDataTab'
+            'click td.has-path-data i.fa-asterisk': 'openEditViewOnPathDataTab'
         },
 
         tagName: 'tr',

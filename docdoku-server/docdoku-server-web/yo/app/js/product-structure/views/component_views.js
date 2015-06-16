@@ -56,7 +56,7 @@ define([
             '<i class="fa fa-exclamation"></i>' +
         '<%}%>' +
         '<%if(hasPathData) {%> ' +
-            '<i class="fa fa-database" title="'+App.config.i18n.PRODUCT_INSTANCE_DATA+'"></i>' +
+            '<i class="fa fa-asterisk" title="'+App.config.i18n.PRODUCT_INSTANCE_DATA+'"></i>' +
         '<%}%>' +
         '<%if (partUsageLinkReferenceDescription) {%><span class="description"> <%= partUsageLinkReferenceDescription %> </span><%}%>'
     );
