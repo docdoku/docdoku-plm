@@ -49,7 +49,8 @@ import java.io.Serializable;
         @NamedQuery(name="PathToPathLink.findRootPathToPathLinkForGivenProductAndType", query="SELECT DISTINCT p FROM PathToPathLink p JOIN ConfigurationItem ci WHERE p member of ci.pathToPathLinks AND p.type = :type AND ci = :configurationItem AND p.sourcePath not in (SELECT _p.targetPath FROM PathToPathLink _p WHERE _p member of ci.pathToPathLinks AND _p.type = :type)"),
         @NamedQuery(name="PathToPathLink.findRootPathToPathLinkForGivenProduct", query="SELECT DISTINCT p FROM PathToPathLink p JOIN ConfigurationItem ci WHERE p member of ci.pathToPathLinks AND ci = :configurationItem AND p.sourcePath not in (SELECT _p.targetPath FROM PathToPathLink _p WHERE _p member of ci.pathToPathLinks )"),
         @NamedQuery(name="PathToPathLink.findPathToPathLinkByPathListInProduct", query="SELECT DISTINCT p FROM PathToPathLink p JOIN ConfigurationItem ci WHERE p member of ci.pathToPathLinks AND ci = :configurationItem AND p.sourcePath in :paths AND p.targetPath in :paths"),
-        @NamedQuery(name="PathToPathLink.findSourcesPathToPathLinkInProduct", query="SELECT DISTINCT p FROM PathToPathLink p JOIN ConfigurationItem ci WHERE p member of ci.pathToPathLinks AND ci = :configurationItem AND p.sourcePath = :source AND p.type = :type")
+        @NamedQuery(name="PathToPathLink.findSourcesPathToPathLinkInProduct", query="SELECT DISTINCT p FROM PathToPathLink p JOIN ConfigurationItem ci WHERE p member of ci.pathToPathLinks AND ci = :configurationItem AND p.sourcePath = :source AND p.type = :type"),
+        @NamedQuery(name="PathToPathLink.findLinksWherePartialPathIsPresent", query="SELECT p FROM PathToPathLink p JOIN ConfigurationItem ci WHERE p member of ci.pathToPathLinks AND p.targetPath LIKE :endOfChain OR p.targetPath LIKE :inChain OR p.sourcePath LIKE :endOfChain OR p.sourcePath LIKE :inChain")
 })
 public class PathToPathLink implements Serializable, Cloneable{
 

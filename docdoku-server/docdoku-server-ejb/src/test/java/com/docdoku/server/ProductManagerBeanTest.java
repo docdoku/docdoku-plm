@@ -29,6 +29,7 @@ import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.dao.PathToPathLinkDAO;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.products.ProductBaselineManagerBean;
 import com.docdoku.server.util.CyclicAssemblyRule;
@@ -68,6 +69,9 @@ public class ProductManagerBeanTest {
     ProductBaselineManagerBean productBaselineManager;
     @Rule
     public CyclicAssemblyRule cyclicAssemblyRule;
+
+    @Spy
+    private PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(Locale.getDefault(),em);
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -290,6 +294,31 @@ public class ProductManagerBeanTest {
         thrown.expect(EntityConstraintException.class);
 
         productManagerBean.checkCyclicAssemblyForPartIteration(cyclicAssemblyRule.getP1().getLastRevision().getLastIteration());
+
+    }
+
+
+    @Test
+    public void checkPathToPathUpgrade(){
+
+        String oldFullId = "u1058";
+        String newFullId = "u9999";
+
+        String path1 =  "-1-u1058-u1057";
+        String path2 =  "-1-u1058";
+        String path3 =  "-1-u1058000-u1057";
+
+        String expect1 =  "-1-u9999-u1057";
+        String expect2 =  "-1-u9999";
+        String expect3 =  "-1-u1058000-u1057";
+
+        String result1 = pathToPathLinkDAO.upgradePath(path1, oldFullId, newFullId);
+        String result2 = pathToPathLinkDAO.upgradePath(path2, oldFullId, newFullId);
+        String result3 = pathToPathLinkDAO.upgradePath(path3, oldFullId,newFullId);
+
+        Assert.assertEquals(expect1, result1);
+        Assert.assertEquals(expect2, result2);
+        Assert.assertEquals(expect3, result3);
 
     }
 

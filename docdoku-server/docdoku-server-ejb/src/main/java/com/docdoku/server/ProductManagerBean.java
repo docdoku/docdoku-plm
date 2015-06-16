@@ -342,9 +342,27 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             partR.setCheckOutDate(null);
             partR.setCheckOutUser(null);
 
+            // Remove path to path links impacted by this change
+            removeObsoletePathToPathLinksLinks(user, partIte);
+
             return partR;
         } else {
             throw new NotAllowedException(locale, "NotAllowedException19");
+        }
+    }
+
+    private void removeObsoletePathToPathLinksLinks(User user, PartIteration partIte) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+
+        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(new Locale(user.getLanguage()),em);
+        List<PartUsageLink> components = partIte.getComponents();
+        for(PartUsageLink partUsageLink:components){
+            String usageLinkId = partUsageLink.getFullId();
+            pathToPathLinkDAO.removePathToPathLinks(usageLinkId);
+            List<PartSubstituteLink> substitutes = partUsageLink.getSubstitutes();
+            for(PartSubstituteLink substituteLink:substitutes){
+                String substituteLinkId = substituteLink.getFullId();
+                pathToPathLinkDAO.removePathToPathLinks(substituteLinkId);
+            }
         }
     }
 
@@ -393,12 +411,17 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 newPartIteration.addAttachedFile(targetFile);
             }
 
-            List<PartUsageLink> components = new LinkedList<>();
+            List<PartUsageLink> newComponents = new LinkedList<>();
+            List<PartUsageLink> oldComponents = beforeLastPartIteration.getComponents();
             for (PartUsageLink usage : beforeLastPartIteration.getComponents()) {
                 PartUsageLink newUsage = usage.clone();
-                components.add(newUsage);
+                newComponents.add(newUsage);
             }
-            newPartIteration.setComponents(components);
+
+            PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
+            pathToPathLinkDAO.upgradePathToPathLinks(oldComponents,newComponents);
+
+            newPartIteration.setComponents(newComponents);
 
             for (Geometry sourceFile : beforeLastPartIteration.getGeometries()) {
                 String fileName = sourceFile.getName();
@@ -722,7 +745,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
 
             }
-            if (pUsageLinks != null) {
+            if (pUsageLinks != null && compareUsageLinks(partIte.getComponents(),pUsageLinks)) {
+
+                // Remove path to path links impacted by this change if any link change
+                removeObsoletePathToPathLinksLinks(user, partIte);
+
 
                 List<PartUsageLink> usageLinks = new LinkedList<>();
                 for (PartUsageLink usageLink : pUsageLinks) {
@@ -829,6 +856,74 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
     }
+
+    private boolean compareUsageLinks(List<PartUsageLink> a, List<PartUsageLink> b) {
+        // Loop array list, detect any difference and return true.
+
+        int sizeA = a.size();
+        int sizeB = b.size();
+
+        if(sizeA != sizeB){
+            return true;
+        }
+
+        for(int i = 0; i < sizeA; i++){
+
+            if(compareUsageLink(a.get(i), b.get(i))){
+                return true;
+            }
+
+            int sizeSubstitutesA = a.get(i).getSubstitutes().size();
+            int sizeSubstitutesB = b.get(i).getSubstitutes().size();
+
+            if(sizeSubstitutesA != sizeSubstitutesB){
+                return true;
+            }
+
+            for(int j = 0; j < sizeSubstitutesA; j++){
+                if(compareUsageLink(a.get(i).getSubstitutes().get(j), b.get(i).getSubstitutes().get(j))){
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
+    }
+
+    // returns true if any difference
+    private boolean compareUsageLink(PartLink a, PartLink b) {
+
+        boolean sameComponent = a.getComponent().equals(b.getComponent());
+        boolean sameAmount = a.getAmount() == b.getAmount();
+        boolean sameCode = a.getCode() == b.getCode();
+        boolean sameComment = a.getComment() == null ?  b.getComment() == null : a.getComment().equals(b.getComment());
+        boolean sameUnit = a.getUnit() == null ?  b.getUnit() == null : a.getUnit().equals(b.getUnit());
+        boolean sameReferenceDescription =  a.getReferenceDescription() == null ?  b.getReferenceDescription() == null : a.getReferenceDescription().equals(b.getReferenceDescription());
+        boolean sameOptional = a.isOptional() == b.isOptional();
+
+        int sizeA = a.getCadInstances().size();
+        int sizeB = b.getCadInstances().size();
+
+        if(sizeA != sizeB){
+            return true;
+        }
+
+        for(int i = 0 ; i < sizeA; i++){
+            if(compareCadInstance(a.getCadInstances().get(i),b.getCadInstances().get(i))){
+                return true;
+            }
+        }
+
+        return !sameComponent || !sameAmount || !sameCode || !sameComment || !sameUnit || !sameReferenceDescription || !sameOptional;
+
+    }
+
+    private boolean compareCadInstance(CADInstance a, CADInstance b) {
+        return a.getRx() != b.getRx() || a.getRy() != b.getRy() || a.getRz() != b.getRz()
+                || a.getTx() != b.getTx() || a.getTy() != b.getTy() || a.getTz() != b.getTz();
+    }
+
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
     @Override

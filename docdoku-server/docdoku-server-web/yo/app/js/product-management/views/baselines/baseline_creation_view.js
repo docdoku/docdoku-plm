@@ -118,7 +118,6 @@ define([
                     this.model.getLatestChoices().success(this.fillChoices).error(this.onRequestsError);
                 }
                 this.model.getConfigurations().success(this.fillConfigurations);
-                this.model.getTypedLink();
             }
         },
 

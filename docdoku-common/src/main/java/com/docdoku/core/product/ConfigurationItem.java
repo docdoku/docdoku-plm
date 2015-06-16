@@ -45,7 +45,8 @@ import java.util.List;
 @Table(name="CONFIGURATIONITEM")
 @NamedQueries({
         @NamedQuery(name="ConfigurationItem.getEffectivities",query="SELECT e FROM Effectivity e WHERE e.configurationItem = :configurationItem"),
-        @NamedQuery(name="ConfigurationItem.findByDesignItem",query="SELECT c FROM ConfigurationItem c WHERE c.designItem = :designItem")
+        @NamedQuery(name="ConfigurationItem.findByDesignItem",query="SELECT c FROM ConfigurationItem c WHERE c.designItem = :designItem"),
+        @NamedQuery(name="ConfigurationItem.findByPathToPathLink",query="SELECT c FROM ConfigurationItem c WHERE :pathToPathLink member of c.pathToPathLinks")
 })
 @javax.persistence.IdClass(com.docdoku.core.product.ConfigurationItemKey.class)
 @Entity

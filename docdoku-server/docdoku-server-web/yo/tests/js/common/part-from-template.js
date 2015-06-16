@@ -1,7 +1,7 @@
 /**
  * Created by kelto on 02/06/15.
  */
-casper.test.begin('Part from template creation tests suite', 18, function partCreationTestsSuite(){
+casper.test.begin('Part from template creation tests suite', 19, function partCreationTestsSuite(){
     'use strict';
 
     casper.open('');

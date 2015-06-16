@@ -6,6 +6,8 @@ import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.PathToPathLinkAlreadyExistsException;
 import com.docdoku.core.exceptions.PathToPathLinkNotFoundException;
 import com.docdoku.core.product.ConfigurationItem;
+import com.docdoku.core.product.PartLink;
+import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.product.PathToPathLink;
 
 import javax.persistence.EntityExistsException;
@@ -193,4 +195,66 @@ public class PathToPathLinkDAO {
                 .setParameter("source", source)
                 .getResultList();
     }
+
+    public List<PathToPathLink> getPathToPathLinksFromPartialPath(String usageLinkId){
+        return em.createNamedQuery("PathToPathLink.findLinksWherePartialPathIsPresent", PathToPathLink.class)
+                .setParameter("inChain", "%" + usageLinkId + "-%")
+                .setParameter("endOfChain", "%" + usageLinkId)
+                .getResultList();
+    }
+
+    public void removePathToPathLinks(String usageLinkId) {
+
+        List<PathToPathLink> pathToPathLinks = getPathToPathLinksFromPartialPath(usageLinkId);
+
+        for(PathToPathLink pathToPathLink:pathToPathLinks){
+
+            List<ConfigurationItem> configurationItems = em.createNamedQuery("ConfigurationItem.findByPathToPathLink", ConfigurationItem.class)
+                    .setParameter("pathToPathLink", pathToPathLink)
+                    .getResultList();
+
+            for(ConfigurationItem configurationItem:configurationItems){
+                configurationItem.removePathToPathLink(pathToPathLink);
+            }
+
+        }
+
+    }
+
+
+    public void upgradePathToPathLinks(List<PartUsageLink> oldComponents, List<PartUsageLink> newComponents) {
+        int size = oldComponents.size();
+        for(int i = 0; i < size; i++){
+            PartLink oldLink = oldComponents.get(i);
+            PartLink newLink = newComponents.get(i);
+            upgradePathToPathLink(oldLink,newLink);
+        }
+    }
+
+    private void upgradePathToPathLink(PartLink oldLink, PartLink newLink){
+
+        List<PathToPathLink> oldP2PLinks = getPathToPathLinksFromPartialPath(oldLink.getFullId());
+        String oldFullId = oldLink.getFullId();
+        String newFullId = newLink.getFullId();
+
+        for(PathToPathLink pathToPathLink:oldP2PLinks){
+            pathToPathLink.setSourcePath(upgradePath(pathToPathLink.getSourcePath(), oldFullId, newFullId));
+            pathToPathLink.setTargetPath(upgradePath(pathToPathLink.getTargetPath(), oldFullId, newFullId));
+        }
+
+        if(oldLink.getSubstitutes() != null){
+            int size = oldLink.getSubstitutes().size();
+            for(int i = 0; i < size; i++){
+                PartLink oldSubstituteLink = oldLink.getSubstitutes().get(i);
+                PartLink newSubstituteLink = newLink.getSubstitutes().get(i);
+                upgradePathToPathLink(oldSubstituteLink,newSubstituteLink);
+            }
+        }
+
+    }
+
+    public String upgradePath(String path, String oldFullId, String newFullId) {
+        return path.replaceAll("("+oldFullId+")(-|$)", newFullId + "$2");
+    }
+
 }
