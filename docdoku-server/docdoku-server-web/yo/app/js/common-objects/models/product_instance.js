@@ -105,6 +105,10 @@ define(['backbone',
             return this.get('pathDataMasterList');
         },
 
+        getUsedByPaths: function () {
+            return this.get('usedByPaths');
+        },
+
         hasACLForCurrentUser: function () {
             return this.getACLPermissionForCurrentUser() !== false;
         },

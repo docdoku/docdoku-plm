@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto.product;
 
 import com.docdoku.server.rest.dto.ACLDTO;
+import com.docdoku.server.rest.dto.PartMinimalListDTO;
 import com.docdoku.server.rest.dto.PathDataMasterDTO;
 import com.docdoku.server.rest.dto.PathToPathLinkDTO;
 
@@ -40,6 +41,7 @@ public class ProductInstanceMasterDTO {
     private ACLDTO acl;
     private List<PathToPathLinkDTO> typedLinks;
     private List<PathDataMasterDTO> pathDataMasterList;
+    private List<PartMinimalListDTO> usedByPaths;
 
     public ProductInstanceMasterDTO() {
     }
@@ -107,5 +109,13 @@ public class ProductInstanceMasterDTO {
 
     public void setPathDataMasterList(List<PathDataMasterDTO> pathDataMasterList) {
         this.pathDataMasterList = pathDataMasterList;
+    }
+
+    public List<PartMinimalListDTO> getUsedByPaths() {
+        return usedByPaths;
+    }
+
+    public void setUsedByPaths(List<PartMinimalListDTO> usedByPaths) {
+        this.usedByPaths = usedByPaths;
     }
 }

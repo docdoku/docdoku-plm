@@ -72,6 +72,7 @@ define([
             this.initLinkedDocumentsView();
             // this.initUsedByListView();
             this.getExistingPathToPath();
+            this.initPathDataView();
             this.openModal();
             this.renderChoices();
 
@@ -256,6 +257,23 @@ define([
             this.$('#tab-products-instances-files').append(this.fileListView.el);
 
 
+        },
+
+        initPathDataView: function () {
+            var self = this;
+            var partsPath = this.model.getUsedByPaths();
+
+            _.each(partsPath, function (parts) {
+
+                _.each(parts.parts, function (part) {
+                    var path = part.name ? part.name + ' < ' + part.number + ' >' : '< ' + part.number + ' >';
+                    self.$('#path-data-list').append(path);
+                    self.$('#path-data-list').append(' <i class="fa fa-chevron-right"></i> ');
+                });
+
+                self.$('.fa.fa-chevron-right').last().remove();
+                self.$('#path-data-list').append('<br/>');
+            });
         },
 
         bindUserPopover: function () {
