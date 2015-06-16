@@ -2,18 +2,18 @@
 
 var ci = require('../../config.ci');
 var local = require('../../config.local');
-var extend = function(destination, source)
-{
-    for (var property in source)
-    {
+var extend = function(destination, source){
+    for (var property in source){
         if (destination[property] && (typeof(destination[property]) == 'object')
-            && (destination[property].toString() == '[object Object]') && source[property])
+            && (destination[property].toString() == '[object Object]') && source[property]){
             extend(destination[property], source[property]);
-        else
+        }
+        else{
             destination[property] = source[property];
+        }
     }
     return destination;
-}
+};
 
 var conf = extend(ci, local);
 

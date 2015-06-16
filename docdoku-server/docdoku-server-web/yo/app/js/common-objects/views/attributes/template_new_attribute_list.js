@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,_*/
 define([
     'common-objects/views/components/list',
     'common-objects/views/attributes/template_new_attribute_list_item'

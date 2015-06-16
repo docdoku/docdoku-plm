@@ -81,7 +81,7 @@ var products = {
     template2 : {
         number : 'CasperJsTestPartTemplate2',
         type : 'CasperJsTestPartType2',
-        attrInstance: 'CasperJsTestAttrInst',
+        attrInstance: 'CasperJsTestAttrInst'
     },
 	part1 : {
 		number : '000-AAA-CasperJsTestPart',
@@ -100,7 +100,7 @@ var products = {
         expireDate:tomorrowValue,
         expireDate2:yesterdayValue,
         attributeName1: 'CasperJsTestAttr',
-        attributeName2: 'CasperJsTestAttr-lock',
+        attributeName2: 'CasperJsTestAttr-lock'
     },
 	product1: {
 		number : '000-AAA-CasperJsTestProduct',
@@ -228,5 +228,5 @@ var apiUrls = {
     getWorkflows : homeUrl+'api/workspaces/'+workspace+'/workflows',
     getRoles : homeUrl+'api/workspaces/'+workspace+'/roles',
     getTags : homeUrl+'api/workspaces/'+workspace+'/tags',
-    milestones: homeUrl+'api/workspaces/'+workspace+'/changes/milestones',
+    milestones: homeUrl+'api/workspaces/'+workspace+'/changes/milestones'
 };

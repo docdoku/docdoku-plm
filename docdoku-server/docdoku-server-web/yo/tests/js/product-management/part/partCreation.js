@@ -1,4 +1,4 @@
-/*global casper,urls,products*/
+/*global casper,urls,products,$*/
 
 casper.test.begin('Part creation tests suite', 8, function partCreationTestsSuite(){
     'use strict';
@@ -80,7 +80,7 @@ casper.test.begin('Part creation tests suite', 8, function partCreationTestsSuit
         }, function fail() {
             this.capture(false,'screenshot/partCreation/templatesNotInjected.png');
             this.test.assert(false,'templates are not injected');
-        })
+        });
     });
 
 

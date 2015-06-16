@@ -1,4 +1,4 @@
-/*global casper,urls,products,homeUrl,workspace*/
+/*global casper,urls,products,homeUrl,workspace,p2pLinks,$*/
 
 casper.test.begin('Path to path link check tests suite', 26, function pathToPathLinkCheckTestsSuite(){
 
@@ -135,8 +135,8 @@ casper.test.begin('Path to path link check tests suite', 26, function pathToPath
         casper.then(function checkExpandedNodes(){
             this.waitForSelector('#product_nav_list > ul > li > ul > li > ul > li > .hitarea',function checkExpandedNodes(){
                 this.test.assert(true,'Nodes should be expanded');
-                this.test.assertSelectorHasText('#product_nav_list > ul > li > ul > li > a > label',"  < 100-AAA-CasperJsAssemblyP1-A-2 > (1)  ",'Second node should be named "  < 100-AAA-CasperJsAssemblyP1-A-2 > (1)  "')
-                this.test.assertSelectorHasText('#product_nav_list > ul > li > ul > li > ul > li > a > label',"  < 200-AAA-CasperJsAssemblyP2-A-2 > (1)  ",'Second node should be named "  < 200-AAA-CasperJsAssemblyP2-A-2 > (1)  "')
+                this.test.assertSelectorHasText('#product_nav_list > ul > li > ul > li > a > label',"  < 100-AAA-CasperJsAssemblyP1-A-2 > (1)  ",'Second node should be named "  < 100-AAA-CasperJsAssemblyP1-A-2 > (1)  "');
+                this.test.assertSelectorHasText('#product_nav_list > ul > li > ul > li > ul > li > a > label',"  < 200-AAA-CasperJsAssemblyP2-A-2 > (1)  ",'Second node should be named "  < 200-AAA-CasperJsAssemblyP2-A-2 > (1)  "');
             });
         });
 

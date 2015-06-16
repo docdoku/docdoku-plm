@@ -25,7 +25,7 @@ define([
             this.editMode = this.options.editMode;
             this.model.url = this.options.deleteBaseUrl + '/files/';
             if(this.model.getSubType()) {
-                this.model.url += this.model.getSubType() + '/'
+                this.model.url += this.model.getSubType() + '/';
             }
             this.model.url +=  this.model.get('shortName');
             this.fileUrl = this.options.uploadBaseUrl + this.model.get('shortName');

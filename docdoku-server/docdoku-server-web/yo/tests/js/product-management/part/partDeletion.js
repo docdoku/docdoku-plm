@@ -1,4 +1,4 @@
-/*global casper,urls*/
+/*global casper,urls,$*/
 
 casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuite(){
     'use strict';

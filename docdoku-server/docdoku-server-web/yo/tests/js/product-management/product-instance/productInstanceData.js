@@ -74,7 +74,7 @@ casper.test.begin('Product instance data path tests suite',19, function productI
         }, function fail() {
             this.test.assert(false, 'could not load the data path attributes');
         });
-    })
+    });
 
     /**
      * Count tab present in the modal
@@ -181,8 +181,7 @@ casper.test.begin('Product instance data path tests suite',19, function productI
         }, function fail() {
             this.capture('screenshot/product-instance/DeliverableTabAttributes-NotFound.png');
             this.test.assert(false, 'could not load the attribute tab');
-        })
-
+        });
     });
 
     casper.run(function allDone() {

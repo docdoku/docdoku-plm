@@ -1,4 +1,4 @@
-/*global casper,urls,products,homeUrl,workspace*/
+/*global casper,urls,products,homeUrl,workspace,p2pLinks,$*/
 
 casper.test.begin('Path to path link creation tests suite', 8, function pathToPathLinkCreationTestsSuite(){
 

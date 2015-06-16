@@ -282,9 +282,9 @@ define([
             var done = 0;
             var onSuccess = function() {
                 if(++done === toBeDone) {
-                    _this.allCheckinDone()
+                    _this.allCheckinDone();
                 }
-            }
+            };
             bootbox.confirm(App.config.i18n.UNDO_CHECKOUT_QUESTION, function(result){
                 if(result){
                     _(_this.partListView.getSelectedParts()).each(function (view) {

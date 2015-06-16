@@ -1,4 +1,4 @@
-/*global require*/
+/*global require,__dirname*/
 /*
  * Node script wrapper to execute casper executable
  * execution : node run.js
@@ -40,14 +40,6 @@ sys.print('Running DocdokuPLM tests. Command : \n ' + casperCommand + '\n\n');
 
 var child = exec(casperCommand, {maxBuffer: 1024 * 1024}, function (error) {
     sys.print(error||'');
-    onTestOver();
-});
-
-child.stdout.on('data', sys.print);
-
-child.stderr.on('data', sys.print);
-
-function onTestOver(){
     if(conf.soundOnTestsEnd){
         var parser = new xml2js.Parser();
         fs.readFile(__dirname + '/results.xml', function(err, data) {
@@ -62,4 +54,8 @@ function onTestOver(){
             });
         });
     }
-}
+});
+
+child.stdout.on('data', sys.print);
+
+child.stderr.on('data', sys.print);

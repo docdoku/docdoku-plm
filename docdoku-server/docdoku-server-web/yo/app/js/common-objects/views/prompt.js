@@ -25,7 +25,7 @@ define([
                 primaryButton: this.primaryButton,
                 cancelButton: this.cancelButton,
                 inputSpecified: this.inputSpecified,
-                defaultValue: this.defaultValue,
+                defaultValue: this.defaultValue
             }));
             this.bindDomElements();
             return this;

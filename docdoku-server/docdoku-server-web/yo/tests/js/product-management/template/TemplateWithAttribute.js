@@ -1,6 +1,4 @@
-/**
- * Created by kelto on 02/06/15.
- */
+/*global casper,urls,products*/
 
 casper.test.begin('Part template attributes tests suite', 14, function partTemplateCreationTestsSuite() {
     'use strict';
