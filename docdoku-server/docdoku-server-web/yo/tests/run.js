@@ -54,7 +54,7 @@ function onTestOver(){
             parser.parseString(data, function (err, result) {
                 var suites = result.testsuites.testsuite;
                 var lastSuite = suites[suites.length-1];
-                if(lastSuite.$.failures){
+                if(lastSuite.$.failures !== '0'){
                     exec('cvlc --play-and-exit fail.wav');
                 }else {
                     exec('cvlc --play-and-exit success.wav');
