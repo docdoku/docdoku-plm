@@ -60,8 +60,8 @@ define(['backbone'], function (Backbone) {
         },
 
         hasTypedLink:function(){
-            if(this.get("typedLinks")){
-                return this.get("typedLinks").length > 0;
+            if(this.getTypedLinks()){
+                return this.getTypedLinks().length > 0;
             }
             else{
                 return false;

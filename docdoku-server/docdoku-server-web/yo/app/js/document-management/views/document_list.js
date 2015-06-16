@@ -18,7 +18,7 @@ define([
         rendered: function () {
             this.once('_ready', function() {
                 this.dataTable();
-                this.trigger('selectionChange')
+                this.trigger('selectionChange'); // TODO rename event name accordingly to patterns ('entity:verb')
             });
 
         },

@@ -111,7 +111,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 				type: 'PUT',
 				url: this.baseUrl() + '/checkout',
                 success: function () {
-                        this.fetch();
+                    this.fetch();
                 },
 				error: function (xhr) {
                     window.alert(xhr.responseText);
@@ -138,8 +138,8 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 			return $.ajax({
 				context: this,
 				type: 'PUT',
-				url: this.baseUrl() + '/checkin'
-                ,success: function () {
+				url: this.baseUrl() + '/checkin',
+                success: function () {
                     this.fetch();
                 },
                 error: function (xhr) {

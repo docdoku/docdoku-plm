@@ -289,11 +289,11 @@ define([
             this.$where.queryBuilder({
                 filters: this.queryBuilderFilters,
                 icons:{
-                    add_group : 'fa fa-plus-circle',
-                    remove_group : 'fa fa-times-circle',
-                    error : 'fa fa-exclamation',
-                    remove_rule : 'fa fa-remove',
-                    add_rule : 'fa fa-plus'
+                    'add_group' : 'fa fa-plus-circle',
+                    'remove_group' : 'fa fa-times-circle',
+                    'error' : 'fa fa-exclamation',
+                    'remove_rule' : 'fa fa-remove',
+                    'add_rule' : 'fa fa-plus'
                 }
             });
         },
@@ -475,7 +475,7 @@ define([
             var self = this;
 
             var promptView = new PromptView();
-            promptView.setPromptOptions(App.config.i18n.SAVE, "", App.config.i18n.SAVE, App.config.i18n.CANCEL, this.$selectQuery.find('option:selected').text());
+            promptView.setPromptOptions(App.config.i18n.SAVE, '', App.config.i18n.SAVE, App.config.i18n.CANCEL, this.$selectQuery.find('option:selected').text());
             window.document.body.appendChild(promptView.render().el);
             promptView.openModal();
 

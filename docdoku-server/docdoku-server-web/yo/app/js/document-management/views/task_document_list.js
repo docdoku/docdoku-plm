@@ -10,7 +10,7 @@ define([
     'text!templates/search_document_form.html',
     'text!templates/status_filter.html',
     'text!templates/task_document_list.html'
-], function (TaskDocumentList, ContentDocumentListView, deleteButton, checkoutButtonGroup, tagsButton, newVersionButton, aclButton, searchForm, status_filter, template) {
+], function (TaskDocumentList, ContentDocumentListView, deleteButton, checkoutButtonGroup, tagsButton, newVersionButton, aclButton, searchForm, statusFilter, template) {
 	'use strict';
 	var TaskDocumentListView = ContentDocumentListView.extend({
 
@@ -23,7 +23,7 @@ define([
             newVersionButton: newVersionButton,
             searchForm: searchForm,
             aclButton: aclButton,
-            status_filter: status_filter
+            statusFilter: statusFilter
         },
 
         collection: function () {

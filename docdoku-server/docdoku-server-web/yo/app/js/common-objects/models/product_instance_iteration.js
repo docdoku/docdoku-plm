@@ -88,8 +88,8 @@ define(['backbone'
             return this.get('linkedDocuments');
         },
         getTypedLinks: function () {
-            if(this.get("typedLinks")){
-                return this.get("typedLinks").length > 0;
+            if(this.get('typedLinks')){
+                return this.get('typedLinks').length > 0;
             }
             else{
                 return false;

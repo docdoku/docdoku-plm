@@ -44,34 +44,34 @@ define(['backbone'], function (Backbone) {
         },
 
         getBomUrl: function () {
-            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getId()) + '/config-spec/wip/bom' ;
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getId()) + '/config-spec/wip/bom';
         },
 
         getSceneUrl: function () {
-            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getId()) + '/config-spec/wip/scene' ;
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getId()) + '/config-spec/wip/scene';
         },
 
         getFrameUrl: function () {
-            return  App.config.contextPath + '/visualization/#' + App.config.workspaceId + '/' + this.getId() + '/0/10/1000/null/'+App.config.configSpec;
+            return App.config.contextPath + '/visualization/#' + App.config.workspaceId + '/' + this.getId() + '/0/10/1000/null/' + App.config.configSpec;
         },
 
 
-        getZipUrl:function (){
+        getZipUrl: function () {
             return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + encodeURIComponent(this.getId()) + '/export-files?configSpecType=latest';
         },
 
-        hasTypedLink:function(){
-          if(this.get("typedLinks")){
-              return this.get("typedLinks").length > 0;
-          }
-            else{
-              return false;
-          }
+        hasTypedLink: function () {
+            if (this.getTypedLinks()) {
+                return this.getTypedLinks().length > 0;
+            }
+            else {
+                return false;
+            }
 
         },
 
-        getTypedLinks:  function(){
-            return this.get("typedLinks");
+        getTypedLinks: function () {
+            return this.get('typedLinks');
         },
 
         createBaseline: function (baselineArgs, callbacks) {
@@ -94,19 +94,19 @@ define(['backbone'], function (Backbone) {
             });
         },
 
-        getConfigurations : function(){
+        getConfigurations: function () {
             return $.getJSON(this.urlRoot() + '/' + this.getId() + '/configurations');
         },
 
-        getReleasedChoices : function(){
+        getReleasedChoices: function () {
             return $.getJSON(this.urlRoot() + '/' + this.getId() + '/path-choices?type=RELEASED');
         },
 
-        getLatestChoices : function(){
+        getLatestChoices: function () {
             return $.getJSON(this.urlRoot() + '/' + this.getId() + '/path-choices?type=LATEST');
         },
 
-        getReleasedParts : function(){
+        getReleasedParts: function () {
             return $.getJSON(this.urlRoot() + '/' + this.getId() + '/versions-choices');
         },
 
@@ -117,13 +117,13 @@ define(['backbone'], function (Backbone) {
                 _this.deleteBaseline(baseline.getId(), {
                     success: function (data) {
                         toDelete--;
-                        if(toDelete===0 && callbacks && _.isFunction(callbacks.success)){
+                        if (toDelete === 0 && callbacks && _.isFunction(callbacks.success)) {
                             callbacks.success(data);
                         }
                     },
-                    error: function(err){
-                        if(callbacks && _.isFunction(callbacks.error)){
-                            callbacks.error(baseline,err);
+                    error: function (err) {
+                        if (callbacks && _.isFunction(callbacks.error)) {
+                            callbacks.error(baseline, err);
                         }
                     }
                 });
@@ -136,12 +136,12 @@ define(['backbone'], function (Backbone) {
                 async: false,
                 url: this.urlRoot() + '/' + this.getId() + '/baselines/' + baselineId,
                 contentType: 'application/json; charset=utf-8',
-                success: function(data) {
+                success: function (data) {
                     if (callbacks && _.isFunction(callbacks.success)) {
                         callbacks.success(data);
                     }
                 },
-                error: function(err) {
+                error: function (err) {
                     if (callbacks && _.isFunction(callbacks.error)) {
                         callbacks.error(err);
                     }
