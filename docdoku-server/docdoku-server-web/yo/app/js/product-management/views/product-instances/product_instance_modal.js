@@ -14,8 +14,9 @@ define([
     'common-objects/collections/file/attached_file_collection',
     'common-objects/views/alert',
     'common-objects/collections/baselines',
-    'common-objects/views/typedLink/typed-link-item'
-], function (Backbone, Mustache, template, choiceTemplate, BaselinedPartListView, date, AttributeCollection, ProductInstanceAttributeListView, FileListView, LinkedDocumentCollection, LinkedDocumentsView, AttachedFileCollection, AlertView, Baselines, TypedLinkItemView) {
+    'common-objects/views/typedLink/typed-link-item',
+    'views/product-instances/path_data_item'
+], function (Backbone, Mustache, template, choiceTemplate, BaselinedPartListView, date, AttributeCollection, ProductInstanceAttributeListView, FileListView, LinkedDocumentCollection, LinkedDocumentsView, AttachedFileCollection, AlertView, Baselines, TypedLinkItemView, PathDataItemView) {
     'use strict';
     var ProductInstancesModalView = Backbone.View.extend({
         events: {
@@ -261,18 +262,12 @@ define([
 
         initPathDataView: function () {
             var self = this;
+            var pathDataList = this.$('#path-data-list');
             var partsPath = this.model.getUsedByPaths();
 
             _.each(partsPath, function (parts) {
-
-                _.each(parts.parts, function (part) {
-                    var path = part.name ? part.name + ' < ' + part.number + ' >' : '< ' + part.number + ' >';
-                    self.$('#path-data-list').append(path);
-                    self.$('#path-data-list').append(' <i class="fa fa-chevron-right"></i> ');
-                });
-
-                self.$('.fa.fa-chevron-right').last().remove();
-                self.$('#path-data-list').append('<br/>');
+                var view = new PathDataItemView({model: parts.parts}).render();
+                pathDataList.append(view.$el);
             });
         },
 
