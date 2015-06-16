@@ -123,7 +123,7 @@ define(['backbone'], function (Backbone) {
                     },
                     error: function(err){
                         if(callbacks && _.isFunction(callbacks.error)){
-                            callbacks.error(err);
+                            callbacks.error(baseline,err);
                         }
                     }
                 });
