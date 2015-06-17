@@ -49,6 +49,9 @@ define([
                 });
             }
 
+            else{
+                _this.closeModal();
+            }
             e.preventDefault();
             e.stopPropagation();
             return false;
@@ -69,7 +72,8 @@ define([
                     target: pathToPathLinkDTO.target,
                     pathToPath: pathToPathLinkDTO,
                     productId: self.productId,
-                    serialNumber: self.model.getId()
+                    serialNumber: self.model.getId(),
+                    canSuppress:true
                 });
             });
 

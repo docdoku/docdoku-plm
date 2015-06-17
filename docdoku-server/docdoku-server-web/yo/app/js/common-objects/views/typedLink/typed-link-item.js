@@ -12,6 +12,7 @@ define([
         className:'well',
 
         events:{
+            'click .delete-item' : 'onDeleteItem'
         },
 
         initialize: function(){
@@ -24,17 +25,37 @@ define([
             var data = {
                 i18n: App.config.i18n,
                 isCreationMode : this.model.isCreationMode,
-                canSuppress : ['wip','latest','latest-released'].indexOf(App.config.configSpec)!==-1,
                 source : this.model.source,
                 target : this.model.target,
                 availableType: this.model.availableType,
                 description : this.model.pathToPath.description,
-                type : this.model.pathToPath.type
+                type : this.model.pathToPath.type,
+                canSuppress: this.model.canSuppress
             };
 
             this.$el.html(Mustache.render(template, data));
 
             return this;
+        },
+        onDeleteItem: function () {
+            if (this.model.canSuppress) {
+                var self = this;
+                var urlToDelete = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.model.serialNumber + '/path-to-path-links/' + this.model.pathToPath.id;
+                $.ajax({
+                    type: 'DELETE',
+                    url: urlToDelete,
+                    contentType: 'application/json',
+                    success: function () {
+                        self.remove();
+                    },
+                    error: function (errorMessage) {
+                        self.$('.error-div').append(new AlertView({
+                            type: 'error',
+                            message: errorMessage.responseText
+                        }).render().$el);
+                    }
+                });
+            }
         }
 
 

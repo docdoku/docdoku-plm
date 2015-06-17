@@ -90,15 +90,21 @@ define(['backbone',
             return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + encodeURIComponent(this.getConfigurationItemId()) + '/export-files?configSpecType=pi-' + encodeURIComponent(this.getSerialNumber());
         },
 
-        hasTypedLink:function(){
-            return this.get('typedLinks').length > 0;
+        hasTypedLink: function () {
+            if (this.getTypedLinks()) {
+                return true;
+            } else return false;
         },
-        getTypedLinks:function(){
+        getTypedLinks: function () {
             return this.get('typedLinks');
         },
 
         hasPathData: function () {
-            return this.getPathData().length;
+            if (this.getPathData()) {
+                return true;
+            }
+            else return false;
+
         },
 
         getPathData: function () {

@@ -1,6 +1,8 @@
 <div class="error-div"></div>
 <div class="typed-link-content">
-
+    {{#canSuppress}}
+    <button type="button" class="close delete-item">×</button>
+    {{/canSuppress}}
     <strong class="path-to-path-link">{{type}}</strong>: {{source.partName}} < {{source.partNumber}} >
      <i class="fa fa-long-arrow-right"></i>
     {{target.partName}} < {{target.partNumber}} >
