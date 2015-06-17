@@ -145,12 +145,14 @@ define([
 
         bomMode: function () {
             this.$contentContainer.attr('class', 'bom-mode');
+            this.$productMenu.attr('class', 'bom-mode');
             this.bomModeButton.addClass('active');
             this.sceneModeButton.removeClass('active');
         },
 
         sceneMode: function () {
             this.$contentContainer.attr('class', 'scene-mode');
+            this.$productMenu.attr('class', 'scene-mode');
             this.bomModeButton.removeClass('active');
             this.sceneModeButton.addClass('active');
             App.sceneManager.onContainerShown();
