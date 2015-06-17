@@ -1,4 +1,4 @@
-/*global casper,homeUrl*/
+/*global casper,homeUrl,require*/
 
 'use strict';
 
