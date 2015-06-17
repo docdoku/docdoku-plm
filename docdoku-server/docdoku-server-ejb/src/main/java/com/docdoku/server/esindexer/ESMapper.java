@@ -32,6 +32,7 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -77,62 +78,66 @@ public class ESMapper {
     }
 
     /**
-     * Convert a Document Iteration to a JSON Builder
+     * Convert a Document Revision to a JSON Builder
      * @param doc Document to pass to JSON
      * @param contentInputs Map of binary resources content
      * @return A JSON Builder to index
      */
-    protected static XContentBuilder documentIterationToJSON(DocumentIteration doc, Map<String,String> contentInputs){
+    protected static XContentBuilder documentRevisionToJSON(DocumentIteration doc, Map<String,String> contentInputs){
         try {
-            float nbIteration = doc.getDocumentRevision().getLastIteration().getIteration();                            // Calcul of the number of iteration
-            float seniority = nbIteration - doc.getIteration();                                                         // Calcul of iteration seniority
-            float coef = (seniority/nbIteration) * 15;                                                                  // Calcul of decrease factor
+
             XContentBuilder tmp = XContentFactory.jsonBuilder()
                     .startObject();
             setField(tmp,WORKSPACEID_KEY,doc.getWorkspaceId(), 0.6f);
             setField(tmp,"docMId",doc.getDocumentRevision().getDocumentMasterId(), 4.75f);
             setField(tmp,"title",doc.getDocumentRevision().getTitle(),5f);
             setField(tmp,VERSION_KEY,doc.getDocumentVersion(), 0.10f);
-            setField(tmp,"iteration",""+doc.getIteration(),0.10f);
-            if(doc.getAuthor() != null){
-                tmp.startObject(AUTHOR_KEY);
-                setField(tmp,AUTHOR_LOGIN_KEY,doc.getAuthor().getLogin(),0.6f);
-                setField(tmp,AUTHOR_NAME_KEY,doc.getAuthor().getName(),0.6f);
-                tmp.endObject();
-            }
-            setField(tmp,TYPE_KEY, doc.getDocumentRevision().getDocumentMaster().getType(), 2f);
-            setField(tmp,CREATION_DATE_KEY,doc.getDocumentRevision().getCreationDate(),0.4f);
-            setField(tmp,MODIFICATION_DATE_KEY,doc.getModificationDate(),0.4f);
-            setField(tmp,"description",doc.getDocumentRevision().getDescription(),2f);
-            setField(tmp,"revisionNote",doc.getRevisionNote(),0.5f);
-            setField(tmp,"workflow",doc.getDocumentRevision().getWorkflow(),0.5f);
-            setField(tmp,"folder",doc.getDocumentRevision().getLocation().getShortName(),0.5f);
-            if(!doc.getDocumentRevision().getTags().isEmpty()){
-                tmp.startArray("tags");
-                for(Tag tag:doc.getDocumentRevision().getTags()){
-                    tmp.value(tag.getLabel());
+            tmp.startArray("iterations");
+            for(DocumentIteration iteration : doc.getDocumentRevision().getDocumentIterations()) {
+                tmp.startObject();
+                setField(tmp, "iteration", "" + iteration.getIteration(), 0.10f);
+                if(doc.getAuthor() != null){
+                    tmp.startObject(AUTHOR_KEY);
+                    setField(tmp,AUTHOR_LOGIN_KEY,iteration.getAuthor().getLogin(),0.6f);
+                    setField(tmp,AUTHOR_NAME_KEY,iteration.getAuthor().getName(),0.6f);
+                    tmp.endObject();
                 }
-                tmp.endArray();
-            }
-            if(!doc.getInstanceAttributes().isEmpty()){
-                tmp.startObject("attributes");
-                Collection<InstanceAttribute> listAttr = doc.getInstanceAttributes();
-                for(InstanceAttribute attr:listAttr){
-                    setField(tmp,attr.getNameWithoutWhiteSpace(),""+attr.getValue(),0.6f);
+                setField(tmp,TYPE_KEY, iteration.getDocumentRevision().getDocumentMaster().getType(), 2f);
+                setField(tmp,CREATION_DATE_KEY,iteration.getDocumentRevision().getCreationDate(),0.4f);
+                setField(tmp,MODIFICATION_DATE_KEY,iteration.getModificationDate(),0.4f);
+                setField(tmp,"description",iteration.getDocumentRevision().getDescription(),2f);
+                setField(tmp,"revisionNote",iteration.getRevisionNote(),0.5f);
+                setField(tmp,"workflow",iteration.getDocumentRevision().getWorkflow(),0.5f);
+                setField(tmp,"folder",iteration.getDocumentRevision().getLocation().getShortName(),0.5f);
+                if(!iteration.getDocumentRevision().getTags().isEmpty()){
+                    tmp.startArray("tags");
+                    for(Tag tag:doc.getDocumentRevision().getTags()){
+                        tmp.value(tag.getLabel());
+                    }
+                    tmp.endArray();
                 }
-                tmp.endObject();
-            }
-            if(!doc.getAttachedFiles().isEmpty()){
-                tmp.startObject("files");
-                for(Map.Entry<String, String> contentInput : contentInputs.entrySet()) {
-                    tmp.startObject(contentInput.getKey());
-                    setField(tmp,AUTHOR_NAME_KEY,contentInput.getKey(),0.8f);
-                    setField(tmp, "content", contentInput.getValue(), 0.6f);
+                if(!iteration.getInstanceAttributes().isEmpty()){
+                    tmp.startObject("attributes");
+                    Collection<InstanceAttribute> listAttr = iteration.getInstanceAttributes();
+                    for(InstanceAttribute attr:listAttr){
+                        setField(tmp,attr.getNameWithoutWhiteSpace(),""+attr.getValue(),0.6f);
+                    }
+                    tmp.endObject();
+                }
+
+                if(!iteration.getAttachedFiles().isEmpty()){
+                    tmp.startObject("files");
+                    for(Map.Entry<String, String> contentInput : contentInputs.entrySet()) {
+                        tmp.startObject(contentInput.getKey());
+                        setField(tmp,AUTHOR_NAME_KEY,contentInput.getKey(),0.8f);
+                        setField(tmp, "content", contentInput.getValue(), 0.6f);
+                        tmp.endObject();
+                    }
                     tmp.endObject();
                 }
                 tmp.endObject();
             }
-            setField(tmp, "negative_boost_value", "", coef);                                                               // Set the decrease factor
+            tmp.endArray();
             tmp.endObject();
             return tmp;
         } catch (IOException e) {
@@ -141,52 +146,161 @@ public class ESMapper {
         }
     }
 
+
     /**
-     * Convert a Part Iteration to a JSON Builder
-     * @param part Part to pass to JSON
+     * Convert a Document Revision to a JSON Builder
+     * This will be used if and only if the DocumentRevision has not been indexed in elastic search.
+     * @param doc Document to pass to JSON
+     * @param contentInputs Map of binary resources content
      * @return A JSON Builder to index
      */
-    protected static XContentBuilder partIterationToJSON(PartIteration part) {
+    protected static Map<String, Object> docIterationMap(DocumentIteration doc, Map<String,String> contentInputs){
+        Map<String, Object> params = new HashMap<>();
+        setParam(params, WORKSPACEID_KEY, doc.getWorkspaceId(), 0.6f);
+        setParam(params, "docMId", doc.getDocumentRevision().getDocumentMasterId(), 4.75f);
+        setParam(params, "title", doc.getDocumentRevision().getTitle(), 5f);
+        setParam(params, VERSION_KEY, doc.getDocumentVersion(), 0.10f);
+        setParam(params, "iteration", "" + doc.getIteration(), 0.10f);
+        if(doc.getAuthor() != null){
+            Map<String, Object> authorParams = new HashMap<>();
+            params.put(AUTHOR_KEY,authorParams);
+            setParam(authorParams, AUTHOR_LOGIN_KEY, doc.getAuthor().getLogin(), 0.6f);
+            setParam(authorParams, AUTHOR_NAME_KEY, doc.getAuthor().getName(),0.6f);
+        }
+        setParam(params, TYPE_KEY, doc.getDocumentRevision().getDocumentMaster().getType(), 2f);
+        setParam(params, CREATION_DATE_KEY, doc.getDocumentRevision().getCreationDate(), 0.4f);
+        setParam(params, MODIFICATION_DATE_KEY, doc.getModificationDate(), 0.4f);
+        setParam(params, "description", doc.getDocumentRevision().getDescription(), 2f);
+        setParam(params, "revisionNote", doc.getRevisionNote(), 0.5f);
+        setParam(params, "workflow", doc.getDocumentRevision().getWorkflow(), 0.5f);
+        setParam(params, "folder", doc.getDocumentRevision().getLocation().getShortName(), 0.5f);
+        if(!doc.getDocumentRevision().getTags().isEmpty()){
+            params.put("tags",doc.getDocumentRevision().getTags().toArray());
+        }
+        if(!doc.getInstanceAttributes().isEmpty()){
+            Map<String,Object> attrParams = new HashMap<>();
+            params.put("attributes",attrParams);
+            Collection<InstanceAttribute> listAttr = doc.getInstanceAttributes();
+            for(InstanceAttribute attr:listAttr){
+                setParam(attrParams, attr.getNameWithoutWhiteSpace(), "" + attr.getValue(), 0.6f);
+            }
+        }
+        if(!doc.getAttachedFiles().isEmpty()){
+            Map<String,Object> filesParams = new HashMap<>();
+            params.put("files", filesParams);
+            for(Map.Entry<String, String> contentInput : contentInputs.entrySet()) {
+                Map<String,Object> map = new HashMap<>();
+                filesParams.put(contentInput.getKey(),map);
+                setParam(map, AUTHOR_NAME_KEY, contentInput.getKey(), 0.8f);
+                setParam(map, "content", contentInput.getValue(), 0.6f);
+            }
+        }
+
+        return params;
+
+    }
+
+    /**
+     * Create the Json for a new Part.
+     * This will be used if and only if the PartRevision has not been indexed in elastic search.
+     * @param part the PartIteration which was checkin
+     * @return The Json produced contains the PartRevision information and the information of all the iteration.
+     */
+    protected static XContentBuilder partRevisionToJson(PartIteration part) {
         try {
-            float nbIteration = part.getPartRevision().getLastIteration().getIteration();                               // Calcul of the number of iteration
-            float seniority = nbIteration - part.getIteration();                                                        // Calcul of iteration seniority
-            float coef = (seniority/nbIteration) * 15;                                                                  // Calcul of decrease factor
             XContentBuilder tmp = XContentFactory.jsonBuilder()
                     .startObject();
             setField(tmp,WORKSPACEID_KEY,part.getWorkspaceId(), 0.6f);
             setField(tmp,"partNumber",part.getPartNumber(), 4.75f);
             setField(tmp,"name",part.getPartRevision().getPartMaster().getName(), 5f);
-            setField(tmp,VERSION_KEY,part.getPartVersion(), 0.10f);
-            setField(tmp,"iteration",part.getIteration(), 0.10f);
-            setField(tmp,"standardPart",part.getPartRevision().getPartMaster().isStandardPart(), 0.05f);
-            if(part.getAuthor() != null){
-                tmp.startObject(AUTHOR_KEY);
-                setField(tmp,AUTHOR_LOGIN_KEY,part.getAuthor().getLogin(),0.6f);
-                setField(tmp,AUTHOR_NAME_KEY,part.getAuthor().getName(),0.6f);
-                tmp.endObject();
-            }
             setField(tmp,TYPE_KEY,part.getPartRevision().getPartMaster().getType(),2f);
-            setField(tmp,CREATION_DATE_KEY,part.getCreationDate(),0.4f);
-            setField(tmp,MODIFICATION_DATE_KEY,part.getModificationDate(),0.4f);
-            setField(tmp,"description",part.getPartRevision().getDescription(),2f);
-            setField(tmp,"revisionNote",part.getIterationNote(),0.5f);
-            setField(tmp,"workflow",part.getPartRevision().getWorkflow(),0.5f);
-            if(! part.getInstanceAttributes().isEmpty()){
-                tmp.startObject("attributes");
-                Collection<InstanceAttribute> listAttr = part.getInstanceAttributes();
-                for(InstanceAttribute attr:listAttr){
-                    setField(tmp,attr.getNameWithoutWhiteSpace(),""+attr.getValue(),0.6f);
+            setField(tmp,VERSION_KEY,part.getPartVersion(), 0.10f);
+            tmp.startArray("iterations");
+            for(PartIteration iteration: part.getPartRevision().getPartIterations()) {
+                tmp.startObject();
+
+                setField(tmp,"iteration",iteration.getIteration(), 0.10f);
+                setField(tmp,"standardPart",iteration.getPartRevision().getPartMaster().isStandardPart(), 0.05f);
+                if(iteration.getAuthor() != null){
+                    tmp.startObject(AUTHOR_KEY);
+                    setField(tmp,AUTHOR_LOGIN_KEY,iteration.getAuthor().getLogin(),0.6f);
+                    setField(tmp,AUTHOR_NAME_KEY,iteration.getAuthor().getName(),0.6f);
+                    tmp.endObject();
                 }
+                setField(tmp,CREATION_DATE_KEY,iteration.getCreationDate(),0.4f);
+                setField(tmp,MODIFICATION_DATE_KEY,iteration.getModificationDate(),0.4f);
+                setField(tmp,"description",iteration.getPartRevision().getDescription(),2f);
+                setField(tmp,"revisionNote",iteration.getIterationNote(),0.5f);
+                setField(tmp,"workflow",iteration.getPartRevision().getWorkflow(),0.5f);
+                if(! iteration.getInstanceAttributes().isEmpty()){
+                    tmp.startObject("attributes");
+                    Collection<InstanceAttribute> listAttr = iteration.getInstanceAttributes();
+                    for(InstanceAttribute attr:listAttr){
+                        setField(tmp,attr.getNameWithoutWhiteSpace(),""+attr.getValue(),0.6f);
+                    }
+                    tmp.endObject();
+                }
+
                 tmp.endObject();
+
             }
-            setField(tmp, "negative_boost_value", "", coef);                                                            // Set the decrease factor
+            tmp.endArray();
             tmp.endObject();
             return tmp;
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "The part " + part + " can't be indexed.",e);
+            LOGGER.log(Level.WARNING, "The part " + part + " can't be indexed.", e);
             return null;
         }
     }
+
+    /**
+     * Create a Map of all the data of an iteration.
+     * @param part PartIteration to be Mapped.
+     * @return The Map is well formatted to be used by an elasticsearch Script
+     */
+    protected static Map<String,Object> partIterationMap(PartIteration part) {
+        Map<String,Object> params = new HashMap<>();
+
+        setParam(params, WORKSPACEID_KEY, part.getWorkspaceId(), 0.6f);
+        setParam(params,VERSION_KEY,part.getPartVersion(),0.10f);
+        setParam(params, "iteration", part.getIteration(), 0.10f);
+        setParam(params, "standardPart", part.getPartRevision().getPartMaster().isStandardPart(), 0.05f);
+
+        if(part.getAuthor() != null){
+            // new Map equivalent of startObject of XContentBuilder.
+            Map<String, Object> authorParams = new HashMap<>();
+            params.put(AUTHOR_KEY,authorParams);
+            setParam(authorParams, AUTHOR_LOGIN_KEY, part.getAuthor().getLogin(), 0.6f);
+            setParam(authorParams, AUTHOR_NAME_KEY, part.getAuthor().getName(), 0.6f);
+        }
+
+        setParam(params, CREATION_DATE_KEY, part.getCreationDate(), 0.4f);
+        setParam(params, MODIFICATION_DATE_KEY, part.getModificationDate(), 0.4f);
+        setParam(params, "description", part.getPartRevision().getDescription(), 2f);
+        setParam(params, "revisionNote", part.getIterationNote(), 0.5f);
+        setParam(params, "workflow", part.getPartRevision().getWorkflow(), 0.5f);
+
+        if(! part.getInstanceAttributes().isEmpty()){
+            Collection<InstanceAttribute> listAttr = part.getInstanceAttributes();
+            Map<String,Object> attributesParams = new HashMap<>();
+            params.put("attributes",attributesParams);
+            for(InstanceAttribute attr:listAttr){
+                setParam(attributesParams, attr.getNameWithoutWhiteSpace(), "" + attr.getValue(), 0.6f);
+            }
+        }
+
+        return params;
+    }
+
+    private static void setParam(Map<String,Object> params,String name, Object value, float coef) {
+        if(value != null) {
+            Object array[] = new Object[2];
+            array[0] = value;
+            array[1] = coef;
+            params.put(name,array);
+        }
+    }
+
 
     private static XContentBuilder setField(XContentBuilder object, String field, String pValue, float coef ) throws IOException {
         String value = (pValue != null && !"".equals(pValue)) ? pValue : " ";

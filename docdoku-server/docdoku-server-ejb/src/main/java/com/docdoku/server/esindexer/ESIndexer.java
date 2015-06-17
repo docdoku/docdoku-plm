@@ -39,7 +39,7 @@ import org.elasticsearch.action.ActionRequestValidationException;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
-import org.elasticsearch.action.index.IndexRequestBuilder;
+import org.elasticsearch.action.update.UpdateRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -299,6 +299,9 @@ public class ESIndexer{
         }catch(ESIndexNamingException e){
             String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString(ES_INDEX_CREATION_ERROR_2);
             LOGGER.log(Level.WARNING, part + ES_INDEX_FAIL + logMessage + " " + workspaceId,e);
+        } catch (IOException e) {
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString(ES_INDEX_CREATION_ERROR_2);
+            LOGGER.log(Level.WARNING, part + ES_INDEX_FAIL + logMessage + " " + workspaceId, e);
         }
     }
 
@@ -402,7 +405,11 @@ public class ESIndexer{
         for(PartMaster partMaster : partMasterDAO.getAllByWorkspace(workspaceId)){
             for(PartRevision partRev : partMaster.getPartRevisions()){
                 for(PartIteration partIte : partRev.getPartIterations()){
-                    pBulkRequest.add(indexRequest(client, partIte));
+                    try {
+                        pBulkRequest.add(indexRequest(client, partIte));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -415,7 +422,7 @@ public class ESIndexer{
      * Get the Index request for a documentIteration in ElasticSearch Cluster
      * @param doc The document iteration to index
      */
-    private IndexRequestBuilder indexRequest(Client client, DocumentIteration doc) throws NoNodeAvailableException{
+    private UpdateRequestBuilder indexRequest(Client client, DocumentIteration doc) throws NoNodeAvailableException{
         Map<String,String> binaryList = new HashMap<>();
         for(BinaryResource bin : doc.getAttachedFiles()){
             try {
@@ -424,19 +431,28 @@ public class ESIndexer{
                 LOGGER.log(Level.FINEST, null,e);
             }
         }
-        XContentBuilder jsonDoc = ESMapper.documentIterationToJSON(doc, binaryList);
-        return client.prepareIndex(ESTools.formatIndexName(doc.getWorkspaceId()), "document", doc.getKey().toString())
-                         .setSource(jsonDoc);
+        XContentBuilder jsonDoc = ESMapper.documentRevisionToJSON(doc, binaryList);
+        Map<String,Object> params = ESMapper.docIterationMap(doc,binaryList);
+        return client.prepareUpdate(ESTools.formatIndexName(doc.getWorkspaceId()), "document", doc.getDocumentRevisionKey().toString())
+                .setScript("ctx._source.iterations += iteration")
+                .addScriptParam("iteration", params)
+                         .setUpsert(jsonDoc);
     }
 
     /**
      * Get the Index request for a partIteration in ElasticSearch Cluster
      * @param part The part iteration to index
      */
-    private IndexRequestBuilder indexRequest(Client client, PartIteration part) throws NoNodeAvailableException{
-        XContentBuilder jsonDoc = ESMapper.partIterationToJSON(part);
-        return client.prepareIndex(ESTools.formatIndexName(part.getWorkspaceId()), "part", part.getKey().toString())
-                     .setSource(jsonDoc);
+    private UpdateRequestBuilder indexRequest(Client client, PartIteration part) throws IOException {
+
+        XContentBuilder json = ESMapper.partRevisionToJson(part);
+        Map<String,Object> params = ESMapper.partIterationMap(part);
+        return client
+                .prepareUpdate(ESTools.formatIndexName(part.getWorkspaceId()),
+                        "part", part.getPartRevisionKey().toString())
+                .setScript("ctx._source.iterations += iteration")
+                .addScriptParam("iteration", params)
+                .setUpsert(json);
     }
 
     /**

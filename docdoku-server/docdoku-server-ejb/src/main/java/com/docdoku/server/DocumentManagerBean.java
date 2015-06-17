@@ -1017,9 +1017,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 gcmNotifier.sendIterationNotification(gcmAccounts, docR);
             }
 
-            for (DocumentIteration docIteration : docR.getDocumentIterations()) {
-                esIndexer.index(docIteration);                                                                          // Index all iterations in ElasticSearch (decrease old iteration boost factor)
-            }
+           esIndexer.index(lastIteration);
 
             return docR;
         } else {

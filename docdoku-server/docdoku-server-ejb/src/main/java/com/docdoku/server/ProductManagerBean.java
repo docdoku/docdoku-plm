@@ -498,9 +498,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             PartIteration lastIteration = partR.getLastIteration();
             lastIteration.setCheckInDate(new Date());
 
-            for (PartIteration partIteration : partR.getPartIterations()) {
-                esIndexer.index(partIteration);                                                                         // Index all iterations in ElasticSearch (decrease old iteration boost factor)
-            }
+            esIndexer.index(lastIteration);
+
             partIterationEvent.select(new AnnotationLiteral<CheckedIn>() {
             }).fire(new PartIterationChangeEvent(lastIteration));
             return partR;
