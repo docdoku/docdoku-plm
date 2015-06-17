@@ -3,13 +3,13 @@ define([
     'common-objects/views/attributes/attribute_list_item',
     'text!common-objects/templates/attributes/attribute_list_item.html',
     'text!common-objects/templates/attributes/attribute_list_item_lov.html'
-], function (AttributeListItemView, attribute_list_item, template) {
+], function (AttributeListItemView, attributeListItem, template) {
     'use strict';
     var AttributeListItemLOVView = AttributeListItemView.extend({
 
         template: template,
         partials: {
-            attribute_list_item: attribute_list_item
+            attributeListItem: attributeListItem
         },
 
         possibleValues : null,
@@ -54,8 +54,7 @@ define([
                             that.model.set('items', possibleValues);
                             that.addOptions(possibleValues);
                         },
-                        error: function (data) {
-
+                        error: function () {
                         }
                     });
                 }
@@ -100,7 +99,7 @@ define([
             this.updateValue();
         },
 
-        typeChanged: function(evt){
+        typeChanged: function(){
             this.model.set('items', null);
             AttributeListItemView.prototype.typeChanged.apply(this, arguments);
         },

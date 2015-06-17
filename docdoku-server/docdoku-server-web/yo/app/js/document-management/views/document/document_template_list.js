@@ -16,7 +16,7 @@ define([
             BaseView.prototype.initialize.apply(this, arguments);
             this.workflowsView = options.workflowsView;
             this.attributesView = options.attributesView;
-            this.events['change'] = 'changed';
+            this.events.change = 'changed';
         },
 
         collectionReset: function () {

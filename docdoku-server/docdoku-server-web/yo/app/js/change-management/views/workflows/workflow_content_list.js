@@ -135,7 +135,7 @@ define([
             this.$deleteButton.hide();
         },
 
-        onOneWorkflowSelected: function (workflow) {
+        onOneWorkflowSelected: function () {
             this.$aclButton.show();
             this.$deleteButton.show();
 

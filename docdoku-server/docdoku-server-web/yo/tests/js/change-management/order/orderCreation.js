@@ -1,6 +1,6 @@
 /*global casper,urls,workspace,changeItems*/
 
-casper.test.begin('Change order creation tests suite',3, function changeOrderCreationTestsSuite(){
+casper.test.begin('Change order creation tests suite', 3, function changeOrderCreationTestsSuite() {
 
     'use strict';
 
@@ -10,32 +10,32 @@ casper.test.begin('Change order creation tests suite',3, function changeOrderCre
      * Open change management URL
      * */
 
-    casper.then(function(){
+    casper.then(function () {
         this.open(urls.changeManagement);
     });
 
     /**
      * Open change orders nav
      */
-    casper.then(function waitForChangeOrdersNavLink(){
-        this.waitForSelector('a[href="#'+workspace+'/orders"]',function clickOnChangeOrderNavLink(){
-            this.click('a[href="#'+workspace+'/orders"]');
-        },function fail() {
+    casper.then(function waitForChangeOrdersNavLink() {
+        this.waitForSelector('a[href="#' + workspace + '/orders"]', function clickOnChangeOrderNavLink() {
+            this.click('a[href="#' + workspace + '/orders"]');
+        }, function fail() {
             this.capture('screenshot/orderCreation/waitForChangeOrdersNavLink-error.png');
-            this.test.assert(false,'Change order nav link can not be found');
+            this.test.assert(false, 'Change order nav link can not be found');
         });
     });
 
     /**
      * Open order creation modal
      */
-    casper.then(function openNewChangeOrderModal(){
+    casper.then(function openNewChangeOrderModal() {
         this.waitForSelector('.actions .new-order',
-            function clickOnChangeOrderCreationLink(){
+            function clickOnChangeOrderCreationLink() {
                 this.click('.actions .new-order');
-            },function fail(){
+            }, function fail() {
                 this.capture('screenshot/orderCreation/openNewChangeOrderModal-error.png');
-                this.test.assert(false,'New order button can not be found');
+                this.test.assert(false, 'New order button can not be found');
             }
         );
     });
@@ -44,50 +44,50 @@ casper.test.begin('Change order creation tests suite',3, function changeOrderCre
     /**
      * Try to create an order without a name
      */
-    casper.then(function waitForChangeOrderCreationModal(){
-        this.waitForSelector('#order_creation_modal .modal-footer .btn-primary',function createOrderWithoutName(){
+    casper.then(function waitForChangeOrderCreationModal() {
+        this.waitForSelector('#order_creation_modal .modal-footer .btn-primary', function createOrderWithoutName() {
             this.click('#order_creation_modal .modal-footer .btn-primary');
             this.test.assertExists('#order_creation_modal #inputOrderName:invalid', 'Should not create an order without a name');
-        },function fail() {
+        }, function fail() {
             this.capture('screenshot/orderCreation/waitForChangeOrderCreationModal-error.png');
-            this.test.assert(false,'Change order modal can not be found');
+            this.test.assert(false, 'Change order modal can not be found');
         });
     });
 
     /**
      * Fill the form and create the order
      */
-    casper.then(function fillAndSubmitChangeOrderCreationModal(){
-        this.waitForSelector('#order_creation_modal input#inputOrderName',function fillForm(){
-            this.sendKeys('#order_creation_modal input#inputOrderName',changeItems.changeOrder1.number,{reset:true});
+    casper.then(function fillAndSubmitChangeOrderCreationModal() {
+        this.waitForSelector('#order_creation_modal input#inputOrderName', function fillForm() {
+            this.sendKeys('#order_creation_modal input#inputOrderName', changeItems.changeOrder1.number, {reset: true});
             this.click('#order_creation_modal .modal-footer .btn-primary');
-        },function fail() {
+        }, function fail() {
             this.capture('screenshot/orderCreation/fillAndSubmitChangeOrderCreationModal-error.png');
-            this.test.assert(false,'Change order modal can not be found');
+            this.test.assert(false, 'Change order modal can not be found');
         });
     });
 
     /**
      * Wait for modal to close
      */
-    casper.then(function waitForChangeOrderCreationModalToBeClosed(){
-        this.waitWhileSelector('#order_creation_modal',function modalClosed(){
-            this.test.assert(true,'Modal is closed');
-        },function fail() {
+    casper.then(function waitForChangeOrderCreationModalToBeClosed() {
+        this.waitWhileSelector('#order_creation_modal', function modalClosed() {
+            this.test.assert(true, 'Modal is closed');
+        }, function fail() {
             this.capture('screenshot/orderCreation/checkForChangeOrderCreation-error.png');
-            this.test.assert(false,'Change order creation modal not closed');
+            this.test.assert(false, 'Change order creation modal not closed');
         });
     });
 
     /**
      * Verify the order is in the list
      */
-    casper.then(function checkOrderIsCreated(){
-        this.waitForSelector('#order_table tr td.reference',function modalClosed(){
-            this.test.assertSelectorHasText('#order_table tr td.reference',changeItems.changeOrder1.number);
-        },function fail() {
+    casper.then(function checkOrderIsCreated() {
+        this.waitForSelector('#order_table tr td.reference', function modalClosed() {
+            this.test.assertSelectorHasText('#order_table tr td.reference', changeItems.changeOrder1.number);
+        }, function fail() {
             this.capture('screenshot/orderCreation/checkForChangeOrderCreation-error.png');
-            this.test.assert(false,'Change order not in the list');
+            this.test.assert(false, 'Change order not in the list');
         });
     });
 

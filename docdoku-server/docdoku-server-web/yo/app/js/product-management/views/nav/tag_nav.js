@@ -14,7 +14,7 @@ define([
         el: '#tag-nav',
 
         events:{
-          'click .tag-toggle':'toggleCollapse'
+            'click .tag-toggle':'toggleCollapse'
         },
 
         collection : new TagCollection(),
@@ -25,7 +25,7 @@ define([
 
         initialize: function () {
             var that = this;
-            Backbone.Events.on("refreshTagNavViewCollection", function () {
+            Backbone.Events.on('refreshTagNavViewCollection', function () {
                 that.collection.fetch({reset: true});
             });
             this.collection.on('reset',this.onTagListReset.bind(this));

@@ -114,8 +114,8 @@ define([
         },
 
         collapseSubstituteTransformations: function () {
-            var isVisible = this.$(".data-sub-part").is(':visible');
-            this.$(".data-sub-part").toggle(!isVisible);
+            var isVisible = this.$('.data-sub-part').is(':visible');
+            this.$('.data-sub-part').toggle(!isVisible);
             this.$collapseButton.toggleClass('fa-angle-double-down', isVisible);
             this.$collapseButton.toggleClass('fa-angle-double-up', !isVisible);
         },
@@ -132,9 +132,9 @@ define([
             this.model.substitute.number = e.target.value;
         },
         changeSubstituteMeasureUnit: function (e) {
-            this.model.unit = (e.target.value == this.$defaultUnity ? '' : e.target.value);
+            this.model.unit = (e.target.value === this.$defaultUnity ? '' : e.target.value);
             this.$unitText.val(e.target.value);
-            if (e.target.value == this.$defaultUnity) {
+            if (e.target.value === this.$defaultUnity) {
                 this.model.amount = 1;
                 this.$amount.val(1);
             }
@@ -151,7 +151,7 @@ define([
         },
         checkIntegrity: function (unit) {
 
-            if (!unit || unit == this.$defaultUnity) {
+            if (!unit || unit === this.$defaultUnity) {
 
                 var amount = parseInt(this.model.amount, 10);
 
@@ -172,12 +172,10 @@ define([
                 this.$('.substitute .cadInstance:not(:first)').remove();
 
                 if (this.model.cadInstances.length > 1) {
-                    var firstElt = _.first(this.model.cadInstances);
                     var self = this;
                     _.each(this.model.cadInstances, function () {
                         self.model.cadInstances.pop();
                     });
-
                 }
 
             }
@@ -186,7 +184,7 @@ define([
         },
         disableEnableAmount: function (unit) {
 
-            if (!unit || unit == this.$defaultUnity) {
+            if (!unit || unit === this.$defaultUnity) {
 
                 this.$amount.attr('disabled', 'disabled');
                 this.$('.add-substitute-cadInstance').show();

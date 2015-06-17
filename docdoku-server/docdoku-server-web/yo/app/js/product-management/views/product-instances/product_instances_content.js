@@ -12,14 +12,14 @@ define([
     'text!common-objects/templates/buttons/ACL_button.html',
     'text!common-objects/templates/buttons/new_product_instance_button.html',
     'common-objects/views/alert'
-], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, BaselinesCollection, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton,aclButton,newProductInstanceButton, AlertView) {
+], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, BaselinesCollection, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton, aclButton, newProductInstanceButton, AlertView) {
     'use strict';
     var ProductInstancesContentView = Backbone.View.extend({
 
         partials: {
             deleteButton: deleteButton,
-            aclButton:  aclButton,
-            newProductInstanceButton:newProductInstanceButton
+            aclButton: aclButton,
+            newProductInstanceButton: newProductInstanceButton
         },
 
         events: {
@@ -48,16 +48,16 @@ define([
                 }
             });
 
-            var self = this ;
-            new BaselinesCollection({}, {productId: ""}).fetch({
+            var self = this;
+            new BaselinesCollection({}, {productId: ''}).fetch({
                 success: function (list) {
-                   if(!list.length){
-                       self.$notifications.append(new AlertView({
-                           type: 'info',
-                           message: App.config.i18n.CREATE_BASELINE_BEFORE_PRODUCT_INSTANCE
-                       }).render().$el);
+                    if (!list.length) {
+                        self.$notifications.append(new AlertView({
+                            type: 'info',
+                            message: App.config.i18n.CREATE_BASELINE_BEFORE_PRODUCT_INSTANCE
+                        }).render().$el);
 
-                   }
+                    }
                 }
             });
 
@@ -113,8 +113,8 @@ define([
             this.listView.deleteSelectedProductInstances();
         },
         editACLProductInstances: function () {
-                    this.listView.editSelectedProductInstanceACL();
-                },
+            this.listView.editSelectedProductInstanceACL();
+        },
 
         changeDeleteButtonDisplay: function (state) {
             this.deleteButton.toggle(state);
@@ -124,7 +124,7 @@ define([
             this.aclButton.toggle(state);
         },
 
-        onError:function(model, error){
+        onError: function (model, error) {
             var errorMessage = error ? error.responseText : model;
 
             this.$notifications.append(new AlertView({
@@ -133,7 +133,7 @@ define([
             }).render().$el);
         },
 
-        onWarning:function(model, error){
+        onWarning: function (model, error) {
             var errorMessage = error ? error.responseText : model;
 
             this.$notifications.append(new AlertView({

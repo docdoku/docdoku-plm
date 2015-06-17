@@ -149,7 +149,8 @@ define([
 
         drawSubstitutesChoice: function (data) {
             this.$substitutes.append(Mustache.render(choiceTemplate, {
-                i18n: App.config.i18n, data: {
+                i18n: App.config.i18n,
+                data: {
                     parts: data.parts,
                     concernedPart: data.parts.pop()
                 }
@@ -159,7 +160,8 @@ define([
 
         drawOptionalsChoice: function (data) {
             this.$optionals.append(Mustache.render(choiceTemplate, {
-                i18n: App.config.i18n, data: {
+                i18n: App.config.i18n,
+                data: {
                     parts: data.parts,
                     concernedPart: data.parts.pop()
                 }
@@ -252,7 +254,6 @@ define([
         },
 
         initPathDataView: function () {
-            var self = this;
             var pathDataList = this.$('#path-data-list');
             var partsPath = this.model.getUsedByPaths();
 

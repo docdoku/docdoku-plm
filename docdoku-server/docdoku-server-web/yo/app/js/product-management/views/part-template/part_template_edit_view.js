@@ -5,7 +5,7 @@ define([
     'models/part_template',
     'common-objects/views/file/file_list',
     'common-objects/views/attributes/template_new_attributes',
-    "common-objects/views/workflow/workflow_list",
+    'common-objects/views/workflow/workflow_list',
     'common-objects/views/alert'
 ], function (ModalView, template, PartTemplate, FileListView, TemplateNewAttributesView, WorkflowListView, AlertView) {
 	'use strict';
@@ -15,7 +15,7 @@ define([
 
         initialize: function () {
             ModalView.prototype.initialize.apply(this, arguments);
-            this.events["click .modal-footer .btn-primary"] = "interceptSubmit";
+            this.events['click .modal-footer .btn-primary'] = 'interceptSubmit';
             this.events['submit #part_template_creation_form'] = 'onSubmitForm';
         },
 

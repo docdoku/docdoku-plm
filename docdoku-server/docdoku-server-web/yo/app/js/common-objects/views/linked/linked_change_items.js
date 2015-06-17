@@ -1,13 +1,16 @@
 /*global define,App,_*/
 define([
     'backbone',
-    "mustache",
-    "common-objects/collections/linked/linked_change_item_collection",
-    "common-objects/views/linked/linked_change_item",
-    "text!common-objects/templates/linked/linked_change_items.html",
-    "common-objects/collections/linked/linked_document_collection",
-    "common-objects/collections/linked/linked_part_collection"
+    'mustache',
+    'common-objects/collections/linked/linked_change_item_collection',
+    'common-objects/views/linked/linked_change_item',
+    'text!common-objects/templates/linked/linked_change_items.html',
+    'common-objects/collections/linked/linked_document_collection',
+    'common-objects/collections/linked/linked_part_collection'
 ], function (Backbone, Mustache, LinkedChangeItemCollection, LinkedChangeItemView, template, LinkedDocumentCollection, LinkedPartCollection) {
+
+    'use strict';
+
     var LinkedRequestsView = Backbone.View.extend({
 
         tagName: 'div',
@@ -19,8 +22,8 @@ define([
             this.options.linkedPartsView = (this.options.linkedPartsView) ? this.options.linkedPartsView : null;
             this.options.linkedDocumentsView = (this.options.linkedDocumentsView) ? this.options.linkedDocumentsView : null;
             var self = this;
-            this.$el.on("remove", function () {
-                _(self._subViews).invoke("remove");
+            this.$el.on('remove', function () {
+                _(self._subViews).invoke('remove');
             });
         },
 
@@ -45,8 +48,8 @@ define([
         },
 
         bindDomElements: function () {
-            this.referenceInput = this.$(".linked-items-reference-typehead");
-            this.linksUL = this.$("#linked-items-" + this.cid);
+            this.referenceInput = this.$('.linked-items-reference-typehead');
+            this.linksUL = this.$('#linked-items-' + this.cid);
         },
 
         initialAddLinkView: function (linkedChangeItem) {
@@ -61,7 +64,7 @@ define([
         addLinkView: function (linkedChangeItem) {
             var alreadyExist = false;
             _.each(this._subViews, function (view) {
-                if (view.model.getId() == linkedChangeItem.getId()) {
+                if (view.model.getId() === linkedChangeItem.getId()) {
                     alreadyExist = true;
                 }
             });

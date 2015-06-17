@@ -59,7 +59,6 @@ define([
         },
 
         createNewVersionAction: function () {
-            var that = this;
             this.model.createNewVersion(this.textAreaNewVersionDescription.val(), this.workflowsView.selected(),
                 this.workflowsMappingView.toList(), this.aclView.toList());
             this.closeModalAction();

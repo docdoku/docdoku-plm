@@ -1,4 +1,4 @@
-/*global _,$,define,App*/
+/*global _,define,App*/
 define([
     'backbone',
     'mustache',
@@ -77,7 +77,7 @@ define([
             this.partsCollection.each(this.addPartView.bind(this));
         },
 
-       addProductInstanceViews: function () {
+        addProductInstanceViews: function () {
             this.productInstancesCollection.each(this.addProductInstanceView.bind(this));
         },
 

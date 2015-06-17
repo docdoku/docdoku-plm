@@ -79,7 +79,7 @@ casper.test.begin('Milestone creation tests suite', 5, function milestoneCreatio
                 this.test.assert(true, 'milestone created');
             }, function fail() {
                 this.capture('screenshot/milestoneCreation/WaitForInvalidInput.png');
-                this.test.assert(false,'input are still invalid after sending the data');
+                this.test.assert(false, 'input are still invalid after sending the data');
             });
         }, function fail() {
             this.capture('screenshot/milestoneCreation/fillAndSubmitMilestoneCreationModal-error.png');

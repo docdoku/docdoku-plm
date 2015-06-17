@@ -1,10 +1,10 @@
-/*global define,App,$*/
+/*global define,App*/
 define([
     'backbone',
     'mustache',
     'text!common-objects/templates/typedLink/typed-link-item.html',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, AlertView){
+], function (Backbone, Mustache, template,AlertView){
     'use strict';
 
     var TypedLinkItemView = Backbone.View.extend({

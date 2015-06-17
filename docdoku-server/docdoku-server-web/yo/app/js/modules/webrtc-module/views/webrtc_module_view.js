@@ -1,4 +1,4 @@
-/*global define,App,preferOpus,setDefaultCodec,removeCN,RTCSessionDescription,RTCIceCandidate,_*/
+/*global define,App,RTCSessionDescription,RTCIceCandidate,_*/
 define([
     'backbone',
     'modules/webrtc-module/adapters/attachMediaStream',
@@ -352,7 +352,7 @@ function (Backbone, attachMediaStream, RTCPeerConnection, getUserMedia, template
             App.mainChannel.sendJSON(sessionDescription);
         },
 
-        onWebRTCStatusChanged: function (status) {
+        onWebRTCStatusChanged: function () {
         },
 
         createPeerConnection: function () {
@@ -417,11 +417,11 @@ function (Backbone, attachMediaStream, RTCPeerConnection, getUserMedia, template
             }
         },
 
-        onSessionConnecting: function (message) {
+        onSessionConnecting: function () {
             this.setStatus(App.config.i18n.SESSION_CONNECTING);
         },
 
-        onSessionOpened: function (message) {
+        onSessionOpened: function () {
             this.setStatus(App.config.i18n.SESSION_OPENED);
             this.setState(CALL_STATE.RUNNING);
         },
@@ -433,7 +433,7 @@ function (Backbone, attachMediaStream, RTCPeerConnection, getUserMedia, template
             this.waitForRemoteVideo();
         },
 
-        onRemoteStreamRemoved: function (event) {
+        onRemoteStreamRemoved: function () {
             this.setStatus(App.config.i18n.REMOTE_STEAM_REMOVED);
         },
 

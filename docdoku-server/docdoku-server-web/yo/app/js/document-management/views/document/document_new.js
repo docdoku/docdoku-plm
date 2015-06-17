@@ -95,7 +95,7 @@ define([
             return false;
         },
 
-        success: function (model, response) {
+        success: function (model) {
             var that = this;
             model.getLastIteration().save({
                 instanceAttributes: this.attributesView.collection.toJSON()

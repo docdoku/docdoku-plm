@@ -107,7 +107,8 @@ define([
                                 },
                                 error:function(model,err){
                                     window.alert(err.responseText);
-                                }});
+                                }
+                            });
                         }
                     });
                 }

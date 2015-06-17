@@ -32,7 +32,7 @@ define([
             _.each(_.keys(itemsGroupBy).sort(), function(key){
                 groups[''+i] = {
                     key:''+i,
-                    name: key === "undefined" ? null : key,
+                    name: key === 'undefined' ? null : key,
                     items:itemsGroupBy[key]
                 };
                 i++;
@@ -70,7 +70,7 @@ define([
 
             return !this.groupedByList.length ? {'undefined':this.items} : _.groupBy(this.items,function(item){
 
-                var groupByStringToUse = "";
+                var groupByStringToUse = '';
                 _.each(self.groupedByList, function(groupByColumn){
                     groupByStringToUse = groupByStringToUse+' > '+item[groupByColumn];
                 });
@@ -89,8 +89,8 @@ define([
             var self = this;
             return !self.orderByList.length ? items : items.sort(function(item1, item2){
 
-                var item1String = "";
-                var item2String = "";
+                var item1String = '';
+                var item2String = '';
                 _.each(self.orderByList, function(orderByColumn){
                     item1String = item1String+'_'+item1[orderByColumn];
                     item2String = item2String+'_'+item2[orderByColumn];

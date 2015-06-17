@@ -1,6 +1,6 @@
-/*global casper,urls,workspace,products*/
+/*global casper,urls*/
 
-casper.test.begin('Expired private shared part tests suite',1, function expiredPrivateSharedPartTestsSuite(){
+casper.test.begin('Expired private shared part tests suite', 1, function expiredPrivateSharedPartTestsSuite() {
 
     'use strict';
 
@@ -10,7 +10,7 @@ casper.test.begin('Expired private shared part tests suite',1, function expiredP
      * Open part management URL
      * */
 
-    casper.then(function(){
+    casper.then(function () {
         this.open(urls.privatePartPermalinkExpired);
     });
 
@@ -18,12 +18,12 @@ casper.test.begin('Expired private shared part tests suite',1, function expiredP
      * Check we have the expired resource page
      */
 
-    casper.then(function checkForExpiredPage(){
-        this.waitForSelector('#page.expired-resource',function(){
-                this.test.assert(true,'Expired entity page displayed');
-        },function fail(){
+    casper.then(function checkForExpiredPage() {
+        this.waitForSelector('#page.expired-resource', function () {
+            this.test.assert(true, 'Expired entity page displayed');
+        }, function fail() {
             this.capture('screenshot/expiredSharedPart/checkForExpiredPage-error.png');
-            this.test.assert(false,'Expired shared entity page not displayed');
+            this.test.assert(false, 'Expired shared entity page not displayed');
         });
     });
 

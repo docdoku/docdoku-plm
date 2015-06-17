@@ -78,7 +78,7 @@ define([
         openDetailView: function () {
             var model = this.model;
             model.fetch().success(function () {
-            new BaselineDetailView({model: model, isForBaseline: true}).render();
+                new BaselineDetailView({model: model, isForBaseline: true}).render();
             });
         },
 
@@ -90,7 +90,7 @@ define([
             }.bind(this));
 
         },
-        openProductDetailView:function(e){
+        openProductDetailView:function(){
             var model = new ConfigurationItem();
             model.set('_id',this.model.getConfigurationItemId());
             model.fetch().success(function(){

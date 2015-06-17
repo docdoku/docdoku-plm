@@ -45,7 +45,7 @@ define([
             });
         },
 
-        openProductDetailView:function(e){
+        openProductDetailView:function(){
             var model = new ConfigurationItem();
             model.set('_id',this.model.getConfigurationItemId());
             model.fetch().success(function(){

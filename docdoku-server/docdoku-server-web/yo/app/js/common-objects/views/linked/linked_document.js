@@ -38,18 +38,18 @@ define([
         },
 
         showEditCommentField: function(){
-            this.$el.toggleClass("edition");
+            this.$el.toggleClass('edition');
         },
 
         deleteComment: function(){
-            this.$('input.commentInput')[0].value = "";
+            this.$('input.commentInput')[0].value = '';
         },
 
         validateComment:function(){
             var commentValue = this.$el.find('input.commentInput')[0].value;
             this.model.setDocumentLinkComment(commentValue);
             this.$('span.comment').html(commentValue);
-            this.$el.toggleClass("edition");
+            this.$el.toggleClass('edition');
         }
     });
     return LinkedDocumentView;

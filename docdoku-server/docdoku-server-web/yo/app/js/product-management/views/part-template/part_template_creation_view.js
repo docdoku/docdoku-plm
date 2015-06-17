@@ -5,7 +5,7 @@ define([
     'models/part_template',
     'common-objects/views/alert',
     'common-objects/views/attributes/template_new_attributes',
-    "common-objects/views/workflow/workflow_list"
+    'common-objects/views/workflow/workflow_list'
 ], function (ModalView, template, PartTemplate, AlertView, TemplateNewAttributesView, WorkflowListView) {
     'use strict';
     var PartTemplateCreationView = ModalView.extend({

@@ -169,11 +169,11 @@ define([
                                     _this.trigger('error',model,err);
                                     _this.onSelectionChanged();
                                 },
-                                wait: true});
+                                wait: true
+                            });
                         }
                     });
                 }
-
             });
         },
 
@@ -209,7 +209,7 @@ define([
             var errorMessage = model.responseText;
 
             // TODO : avoid global jquery calls. Please fix.
-            $("#acl_edit_modal").find('.notifications').first().append(new AlertView({
+            $('#acl_edit_modal').find('.notifications').first().append(new AlertView({
                 type: 'error',
                 message: errorMessage
             }).render().$el);

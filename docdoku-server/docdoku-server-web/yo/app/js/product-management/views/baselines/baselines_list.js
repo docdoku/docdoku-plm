@@ -152,10 +152,12 @@ define([
                                 success: function () {
                                     _this.removeBaseline(view.model);
                                     _this.onSelectionChanged();
-                                }, error: function (model, err) {
+                                },
+                                error: function (model, err) {
                                     _this.trigger('error',model,err);
                                     _this.onSelectionChanged();
-                                }});
+                                }
+                            });
                         }
                     });
                 }

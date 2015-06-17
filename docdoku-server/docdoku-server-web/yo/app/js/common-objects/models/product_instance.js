@@ -93,7 +93,9 @@ define(['backbone',
         hasTypedLink: function () {
             if (this.getTypedLinks()) {
                 return true;
-            } else return false;
+            } else {
+                return false;
+            }
         },
         getTypedLinks: function () {
             return this.get('typedLinks');
@@ -103,7 +105,9 @@ define(['backbone',
             if (this.getPathData()) {
                 return true;
             }
-            else return false;
+            else {
+                return false;
+            }
 
         },
 

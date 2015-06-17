@@ -1,6 +1,6 @@
 /*global casper,urls,workspace,documents*/
 
-casper.test.begin('Document creation tests suite',4, function documentsCreationTestsSuite(){
+casper.test.begin('Document creation tests suite', 4, function documentsCreationTestsSuite() {
 
     'use strict';
 
@@ -10,7 +10,7 @@ casper.test.begin('Document creation tests suite',4, function documentsCreationT
      * Open document management URL
      * */
 
-    casper.then(function(){
+    casper.then(function () {
         this.open(urls.documentManagement);
     });
 
@@ -18,12 +18,12 @@ casper.test.begin('Document creation tests suite',4, function documentsCreationT
      * Open folder nav
      */
 
-    casper.then(function waitForFolderNavLink(){
-        this.waitForSelector('a[href="#'+workspace+'/folders/'+documents.folder1+'"]',function(){
-            this.click('a[href="#'+workspace+'/folders/'+documents.folder1+'"]');
-        },function fail() {
+    casper.then(function waitForFolderNavLink() {
+        this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
+            this.click('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]');
+        }, function fail() {
             this.capture('screenshot/documentsCreation/waitForFolderNavLink-error.png');
-            this.test.assert(false,'Folder nav link can not be found');
+            this.test.assert(false, 'Folder nav link can not be found');
         });
     });
 
@@ -31,7 +31,7 @@ casper.test.begin('Document creation tests suite',4, function documentsCreationT
      * Open folder creation modal
      */
 
-    casper.then(function clickOnDocumentCreationLink(){
+    casper.then(function clickOnDocumentCreationLink() {
         this.click('.actions .new-document');
     });
 
@@ -39,13 +39,13 @@ casper.test.begin('Document creation tests suite',4, function documentsCreationT
      * Wait for modal
      */
 
-    casper.then(function waitForDocumentCreationModal(){
-        this.waitForSelector('.modal.document-modal.new-document',function(){
+    casper.then(function waitForDocumentCreationModal() {
+        this.waitForSelector('.modal.document-modal.new-document', function () {
             this.click('.modal.document-modal.new-document .btn.btn-primary');
             this.test.assertExists('.modal.document-modal.new-document input.reference:invalid', 'Should not create document without a reference');
-        },function fail() {
+        }, function fail() {
             this.capture('screenshot/documentsCreation/waitForDocumentCreationModal-error.png');
-            this.test.assert(false,'New document modal can not be found');
+            this.test.assert(false, 'New document modal can not be found');
         });
     });
 
@@ -53,13 +53,13 @@ casper.test.begin('Document creation tests suite',4, function documentsCreationT
      * Fill the form and create document
      */
 
-    casper.then(function fillAndSubmitDocumentCreationModal(){
-        this.waitForSelector('.modal.document-modal.new-document input.reference',function(){
-            this.sendKeys('.modal.document-modal.new-document input.reference',documents.document2.number);
+    casper.then(function fillAndSubmitDocumentCreationModal() {
+        this.waitForSelector('.modal.document-modal.new-document input.reference', function () {
+            this.sendKeys('.modal.document-modal.new-document input.reference', documents.document2.number);
             this.click('.modal.document-modal.new-document .btn.btn-primary');
-        },function fail() {
+        }, function fail() {
             this.capture('screenshot/documentsCreation/fillAndSubmitDocumentCreationModal-error.png');
-            this.test.assert(false,'New document form can not be found');
+            this.test.assert(false, 'New document form can not be found');
         });
     });
 
@@ -67,12 +67,12 @@ casper.test.begin('Document creation tests suite',4, function documentsCreationT
      * Check if document has been created
      */
 
-    casper.then(function checkForDocumentCreation(){
-        this.waitForSelector('#document-management-content table.dataTable tr:nth-child(2) td.reference a',function documentHasBeenCreated(){
-            this.test.assertSelectorHasText('#document-management-content table.dataTable tr:nth-child(2) td.reference a',documents.document2.number);
-        },function fail() {
+    casper.then(function checkForDocumentCreation() {
+        this.waitForSelector('#document-management-content table.dataTable tr:nth-child(2) td.reference a', function documentHasBeenCreated() {
+            this.test.assertSelectorHasText('#document-management-content table.dataTable tr:nth-child(2) td.reference a', documents.document2.number);
+        }, function fail() {
             this.capture('screenshot/documentsCreation/checkForDocumentCreation-error.png');
-            this.test.assert(false,'New document created can not be found');
+            this.test.assert(false, 'New document created can not be found');
         });
     });
 
@@ -80,12 +80,12 @@ casper.test.begin('Document creation tests suite',4, function documentsCreationT
      * Open folder nav
      */
 
-    casper.then(function waitForFolderNavLink(){
-        this.waitForSelector('a[href="#'+workspace+'/folders/'+documents.folder1+'"]',function(){
-            this.click('a[href="#'+workspace+'/folders/'+documents.folder1+'"]');
-        },function fail() {
+    casper.then(function waitForFolderNavLink() {
+        this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
+            this.click('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]');
+        }, function fail() {
             this.capture('screenshot/documentsCreation/waitForFolderNavLink-error.png');
-            this.test.assert(false,'Folder nav link can not be found');
+            this.test.assert(false, 'Folder nav link can not be found');
         });
     });
 
@@ -93,7 +93,7 @@ casper.test.begin('Document creation tests suite',4, function documentsCreationT
      * Open folder creation modal
      */
 
-    casper.then(function clickOnDocumentCreationLink(){
+    casper.then(function clickOnDocumentCreationLink() {
         this.click('.actions .new-document');
     });
 
@@ -101,13 +101,13 @@ casper.test.begin('Document creation tests suite',4, function documentsCreationT
      * Wait for modal
      */
 
-    casper.then(function waitForDocumentCreationModal(){
-        this.waitForSelector('.modal.document-modal.new-document',function(){
+    casper.then(function waitForDocumentCreationModal() {
+        this.waitForSelector('.modal.document-modal.new-document', function () {
             this.click('.modal.document-modal.new-document .btn.btn-primary');
             this.test.assertExists('.modal.document-modal.new-document input.reference:invalid', 'Should not create document without a reference');
-        },function fail() {
+        }, function fail() {
             this.capture('screenshot/documentsCreation/waitForDocumentCreationModal-error.png');
-            this.test.assert(false,'New document modal can not be found');
+            this.test.assert(false, 'New document modal can not be found');
         });
     });
 
@@ -115,13 +115,13 @@ casper.test.begin('Document creation tests suite',4, function documentsCreationT
      * Fill the form and create document
      */
 
-    casper.then(function fillAndSubmitDocumentCreationModal(){
-        this.waitForSelector('.modal.document-modal.new-document input.reference',function(){
-            this.sendKeys('.modal.document-modal.new-document input.reference',documents.document3.number);
+    casper.then(function fillAndSubmitDocumentCreationModal() {
+        this.waitForSelector('.modal.document-modal.new-document input.reference', function () {
+            this.sendKeys('.modal.document-modal.new-document input.reference', documents.document3.number);
             this.click('.modal.document-modal.new-document .btn.btn-primary');
-        },function fail() {
+        }, function fail() {
             this.capture('screenshot/documentsCreation/fillAndSubmitDocumentCreationModal-error.png');
-            this.test.assert(false,'New document form can not be found');
+            this.test.assert(false, 'New document form can not be found');
         });
     });
 
@@ -129,12 +129,12 @@ casper.test.begin('Document creation tests suite',4, function documentsCreationT
      * Check if document has been created
      */
 
-    casper.then(function checkForDocumentCreation(){
-        this.waitForSelector('#document-management-content table.dataTable tr:nth-child(3) td.reference a',function documentHasBeenCreated(){
-            this.test.assertSelectorHasText('#document-management-content table.dataTable tr:nth-child(3) td.reference a',documents.document3.number);
-        },function fail() {
+    casper.then(function checkForDocumentCreation() {
+        this.waitForSelector('#document-management-content table.dataTable tr:nth-child(3) td.reference a', function documentHasBeenCreated() {
+            this.test.assertSelectorHasText('#document-management-content table.dataTable tr:nth-child(3) td.reference a', documents.document3.number);
+        }, function fail() {
             this.capture('screenshot/documentsCreation/checkForDocumentCreation-error.png');
-            this.test.assert(false,'New document created can not be found');
+            this.test.assert(false, 'New document created can not be found');
         });
     });
 

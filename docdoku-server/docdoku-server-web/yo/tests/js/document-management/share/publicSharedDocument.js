@@ -1,6 +1,6 @@
-/*global casper,urls,workspace,documents*/
+/*global casper,urls,documents*/
 
-casper.test.begin('Public shared document tests suite',2, function publicSharedDocumentTestsSuite(){
+casper.test.begin('Public shared document tests suite', 2, function publicSharedDocumentTestsSuite() {
 
     'use strict';
 
@@ -10,7 +10,7 @@ casper.test.begin('Public shared document tests suite',2, function publicSharedD
      * Open document management URL
      * */
 
-    casper.then(function(){
+    casper.then(function () {
         this.open(urls.documentPermalink);
     });
 
@@ -18,25 +18,25 @@ casper.test.begin('Public shared document tests suite',2, function publicSharedD
      * Check for document title
      */
 
-    casper.then(function checkDocumentTitle(){
-        this.waitForSelector('#page > h3',function titleDisplayed(){
-            this.test.assertSelectorHasText('#page > h3',documents.document1.number+'-A');
-        },function fail() {
+    casper.then(function checkDocumentTitle() {
+        this.waitForSelector('#page > h3', function titleDisplayed() {
+            this.test.assertSelectorHasText('#page > h3', documents.document1.number + '-A');
+        }, function fail() {
             this.capture('screenshot/publicSharedDocument/checkDocumentTitle-error.png');
-            this.test.assert(false,'Title can not be found');
+            this.test.assert(false, 'Title can not be found');
         });
     });
 
     /**
      * Check for document iteration note
      */
-    casper.then(function checkIterationNote(){
+    casper.then(function checkIterationNote() {
         this.click('.nav-tabs a[href="#tab-document-iteration"]');
-        this.waitForSelector('#page > h3',function iterationNoteDisplayed(){
-            this.test.assertSelectorHasText('#tab-document-iteration > table > tbody > tr:nth-child(2) > td',documents.document1.iterationNote);
-        },function fail() {
+        this.waitForSelector('#page > h3', function iterationNoteDisplayed() {
+            this.test.assertSelectorHasText('#tab-document-iteration > table > tbody > tr:nth-child(2) > td', documents.document1.iterationNote);
+        }, function fail() {
             this.capture('screenshot/publicSharedDocument/checkIterationNote-error.png');
-            this.test.assert(false,'Iteration note can not be found');
+            this.test.assert(false, 'Iteration note can not be found');
         });
     });
 

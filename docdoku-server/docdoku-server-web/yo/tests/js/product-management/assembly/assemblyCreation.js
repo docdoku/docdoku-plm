@@ -1,6 +1,6 @@
 /*global casper,urls,products,homeUrl,workspace*/
 
-casper.test.begin('Assembly creation tests suite',13, function assemblyCreationTestsSuite(){
+casper.test.begin('Assembly creation tests suite', 13, function assemblyCreationTestsSuite() {
 
     'use strict';
 
@@ -10,57 +10,57 @@ casper.test.begin('Assembly creation tests suite',13, function assemblyCreationT
      * Open product management URL
      * */
 
-    casper.then(function(){
+    casper.then(function () {
         this.open(urls.productManagement);
     });
 
     /**
      * Go to part nav
      */
-    casper.then(function waitForPartNavLink(){
-        this.waitForSelector('#part-nav > .nav-list-entry > a',function clickPartNavLink() {
+    casper.then(function waitForPartNavLink() {
+        this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
-        },function fail(){
+        }, function fail() {
             this.capture('screenshot/assemblyCreation/waitForPartNavLink-error.png');
-            this.test.assert(false,'Part nav link can not be found');
+            this.test.assert(false, 'Part nav link can not be found');
         });
     });
 
     /**
      * Wait the part list
      */
-    casper.then(function waitForPartList(){
+    casper.then(function waitForPartList() {
         var link = '#part_table tbody tr:first-child td.part_number';
-        this.waitForSelector(link,function clickPartNavLink() {
+        this.waitForSelector(link, function clickPartNavLink() {
             this.click(link);
-        },function fail(){
+        }, function fail() {
             this.capture('screenshot/assemblyCreation/waitForPartList-error.png');
-            this.test.assert(false,'Part list can not be found');
+            this.test.assert(false, 'Part list can not be found');
         });
     });
 
     /**
      * Wait the modal
      */
-    casper.then(function waitForPartModal(){
+    casper.then(function waitForPartModal() {
         var modalTab = '#part-modal .tabs li a[href="#tab-part-sub-parts"]';
-        this.waitForSelector(modalTab,function modalOpened() {
+        this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
-        },function fail(){
+        }, function fail() {
             this.capture('screenshot/assemblyCreation/waitForPartModal-error.png');
-            this.test.assert(false,'Part modal can not be found');
+            this.test.assert(false, 'Part modal can not be found');
         });
     });
 
     /**
      * Wait the modal tab
      */
-    casper.then(function waitForPartModalTab(){
-        this.waitForSelector('#part-modal #existingParts',function tabSelected() {
-            this.test.assert(true,'Assembly tab opened');
-        },function fail(){
+    casper.then(function waitForPartModalTab() {
+        this.waitForSelector('#part-modal #existingParts', function tabSelected() {
+            this.test.assert(true, 'Assembly tab opened');
+        }, function fail() {
             this.capture('screenshot/assemblyCreation/waitForPartModalTab-error.png');
-            this.test.assert(false,'Part modal tab can not be found');
+            this.test.assert(false, 'Part modal tab can not be found');
         });
     });
 
@@ -70,25 +70,25 @@ casper.test.begin('Assembly creation tests suite',13, function assemblyCreationT
     var partNumbers = Object.keys(products.assembly.parts);
     var parts = products.assembly.parts;
 
-    partNumbers.forEach(function(partNumber){
-        casper.then(function createNewParts(){
+    partNumbers.forEach(function (partNumber) {
+        casper.then(function createNewParts() {
 
             this.click('#part-modal #createPart');
 
             var element = '#part-modal #iteration-components > div:last-child';
 
             // Expand view
-            this.click( element +' .collapse-subParts-cadInstances');
+            this.click(element + ' .collapse-subParts-cadInstances');
 
             // Fill coordinates
-            this.sendKeys( element +' input[name="number"]',partNumber,{reset:true});
-            this.sendKeys( element +' input[name="tx"]',parts[partNumber].tx.toString(),{reset:true});
-            this.sendKeys( element +' input[name="ty"]',parts[partNumber].ty.toString(),{reset:true});
-            this.sendKeys( element +' input[name="tz"]',parts[partNumber].tz.toString(),{reset:true});
-            this.sendKeys( element +' input[name="rx"]',parts[partNumber].rx.toString(),{reset:true});
-            this.sendKeys( element +' input[name="ry"]',parts[partNumber].ry.toString(),{reset:true});
-            this.sendKeys( element +' input[name="rz"]',parts[partNumber].rz.toString(),{reset:true});
-            this.test.assert(true,partNumber + ' created');
+            this.sendKeys(element + ' input[name="number"]', partNumber, {reset: true});
+            this.sendKeys(element + ' input[name="tx"]', parts[partNumber].tx.toString(), {reset: true});
+            this.sendKeys(element + ' input[name="ty"]', parts[partNumber].ty.toString(), {reset: true});
+            this.sendKeys(element + ' input[name="tz"]', parts[partNumber].tz.toString(), {reset: true});
+            this.sendKeys(element + ' input[name="rx"]', parts[partNumber].rx.toString(), {reset: true});
+            this.sendKeys(element + ' input[name="ry"]', parts[partNumber].ry.toString(), {reset: true});
+            this.sendKeys(element + ' input[name="rz"]', parts[partNumber].rz.toString(), {reset: true});
+            this.test.assert(true, partNumber + ' created');
 
         });
     });
@@ -96,36 +96,36 @@ casper.test.begin('Assembly creation tests suite',13, function assemblyCreationT
     /**
      * Save it
      */
-    casper.then(function saveParts(){
+    casper.then(function saveParts() {
         this.click('#part-modal #save-part');
     });
 
     /**
      * Wait for modal to be closed
      */
-    casper.then(function closePartsModal(){
-        this.waitWhileSelector('#part-modal',function modalClosed(){
+    casper.then(function closePartsModal() {
+        this.waitWhileSelector('#part-modal', function modalClosed() {
             this.test.assert(true, 'Modal has been closed');
-        },function fail(){
+        }, function fail() {
             this.capture('screenshot/assemblyCreation/waitModalToBeClosed-error.png');
-            this.test.assert(false,'Modal is still not closed');
+            this.test.assert(false, 'Modal is still not closed');
         });
     });
 
     /**
-    * Check that the list contains now 5 parts
-    */
+     * Check that the list contains now 5 parts
+     */
 
-    casper.then(function checkIfPartsInAssemblyAreCreated(){
+    casper.then(function checkIfPartsInAssemblyAreCreated() {
         casper.waitFor(function check() {
-            return this.evaluate(function() {
+            return this.evaluate(function () {
                 return document.querySelectorAll('#part_table tbody tr').length === 5;
             });
         }, function then() {
-            this.test.assert(true,'5 entries in the table');
-        }, function fail(){
+            this.test.assert(true, '5 entries in the table');
+        }, function fail() {
             this.capture('screenshot/assemblyCreation/checkIfPartsInAssemblyAreCreated-error.png');
-            this.test.assert(false,'There are not 5 entries in the table');
+            this.test.assert(false, 'There are not 5 entries in the table');
         });
     });
 
@@ -133,30 +133,30 @@ casper.test.begin('Assembly creation tests suite',13, function assemblyCreationT
      * Check if assembly / leaf icons are well set
      */
 
-    casper.then(function checkAssemblyIconsSet(){
+    casper.then(function checkAssemblyIconsSet() {
         this.waitForSelector('#part_table .fa.fa-cube', function check() {
-            this.test.assertElementCount('#part_table .fa.fa-cube',4,'found 4 leaf parts');
-            this.test.assertElementCount('#part_table .fa.fa-cubes',1,'found 1 assembly part');
+            this.test.assertElementCount('#part_table .fa.fa-cube', 4, 'found 4 leaf parts');
+            this.test.assertElementCount('#part_table .fa.fa-cubes', 1, 'found 1 assembly part');
         });
 
     });
 
     /**
-    * Checkin all parts
-    */
+     * Checkin all parts
+     */
 
-    partNumbers.forEach(function(partNumber){
-        casper.then(function checkoutPart(){
+    partNumbers.forEach(function (partNumber) {
+        casper.then(function checkoutPart() {
             // Run xhrs, more convenient here.
-            this.open( homeUrl+'api/workspaces/'+workspace+'/parts/'+partNumber+'-A/checkin',{method:'PUT'}).then(function(response){
-                this.test.assertEquals(response.status, 200 , 'Part ' + partNumber + ' should be checkin');
-            },function(){
-                this.test.assert(false , 'Part ' + partNumber + ' has not been checkin');
+            this.open(homeUrl + 'api/workspaces/' + workspace + '/parts/' + partNumber + '-A/checkin', {method: 'PUT'}).then(function (response) {
+                this.test.assertEquals(response.status, 200, 'Part ' + partNumber + ' should be checkin');
+            }, function () {
+                this.test.assert(false, 'Part ' + partNumber + ' has not been checkin');
             });
         });
     });
 
-    casper.run(function allDone(){
+    casper.run(function allDone() {
         this.test.done();
     });
 

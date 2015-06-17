@@ -5,7 +5,7 @@ define([
     'common-objects/models/task_model',
     'text!templates/workflows/task_model_editor.html'
 ], function (Backbone, Mustache, TaskModel, template) {
-	'use strict';
+    'use strict';
     var TaskModelEditorView = Backbone.View.extend({
 
         tagName: 'li',
@@ -31,7 +31,7 @@ define([
         initialize: function () {
             this.isNewRole = false;
             this.roles = this.options.roles;
-            this.roles.on('add',this.onRoleAdd,this);
+            this.roles.on('add', this.onRoleAdd, this);
             this.newRoles = this.options.newRoles;
 
             this.state = this.States.FOLD;
@@ -43,7 +43,12 @@ define([
         },
         render: function () {
             var _this = this;
-            this.template = Mustache.render(template, {cid: this.model.cid, task: this.model.attributes, roles: this.roles.pluck('name'), i18n: App.config.i18n});
+            this.template = Mustache.render(template, {
+                cid: this.model.cid,
+                task: this.model.attributes,
+                roles: this.roles.pluck('name'),
+                i18n: App.config.i18n
+            });
             this.$el.html(this.template);
             this.bindDomElements();
 
@@ -81,28 +86,28 @@ define([
                 instructions: this.textareaInstructions.val()
             });
         },
-        onRoleAdd: function(model){
-            this.roleSelect.append('<option value="'+model.getName()+'">'+model.getName()+'</option>');
+        onRoleAdd: function (model) {
+            this.roleSelect.append('<option value="' + model.getName() + '">' + model.getName() + '</option>');
         },
 
 
         deleteTaskAction: function () {
-        this.model.collection.remove(this.model);
-        this.unbindAllEvents();
-        this.remove();
-    },
+            this.model.collection.remove(this.model);
+            this.unbindAllEvents();
+            this.remove();
+        },
 
-        newRoleAction:function(){
+        newRoleAction: function () {
             this.roleInput.val('');
             this.taskContent.addClass('new-role');
             return false;
         },
-        addRoleAction:function(){
+        addRoleAction: function () {
             var roleName = this.roleInput.val();
-            if(roleName){
+            if (roleName) {
                 var selectedRole = this.roles.findWhere({name: roleName});
-                if(!selectedRole){
-                    selectedRole={
+                if (!selectedRole) {
+                    selectedRole = {
                         workspaceId: App.config.workspaceId,
                         name: roleName,
                         defaultUserMapped: null

@@ -6,8 +6,8 @@ define([
     'views/part-template/part_template_list_item',
     'common-objects/views/security/acl_edit',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, PartTemplateListItemView,ACLEditView,AlertView) {
-	'use strict';
+], function (Backbone, Mustache, template, PartTemplateListItemView, ACLEditView, AlertView) {
+    'use strict';
     var PartTemplateListView = Backbone.View.extend({
 
         events: {
@@ -31,9 +31,10 @@ define([
             var _this = this;
             this.collection.fetch({
                 reset: true,
-                error:function(err){
-                    _this.trigger('error',err);
-                }});
+                error: function (err) {
+                    _this.trigger('error', err);
+                }
+            });
             return this;
         },
         bindDomElements: function () {
@@ -139,8 +140,8 @@ define([
 
         deleteSelectedPartTemplates: function () {
             var _this = this;
-            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PART_TEMPLATE, function(result){
-                if(result){
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PART_TEMPLATE, function (result) {
+                if (result) {
                     _(_this.listItemViews).each(function (view) {
                         if (view.isChecked()) {
                             view.model.destroy({
@@ -148,10 +149,12 @@ define([
                                 success: function () {
                                     _this.removePartTemplate(view.model);
                                     _this.onSelectionChanged();
-                                }, error: function (model, err) {
-                                    _this.trigger('error',model,err);
+                                },
+                                error: function (model, err) {
+                                    _this.trigger('error', model, err);
                                     _this.onSelectionChanged();
-                                }});
+                                }
+                            });
                         }
                     });
                 }
@@ -187,7 +190,7 @@ define([
                         aclEditView.closeModal();
                     },
                     error: function (model, err) {
-                       _this.onError(model,err);
+                        _this.onError(model, err);
 
                     }
                 });
@@ -218,16 +221,16 @@ define([
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { 'bSortable': false, 'aTargets': [ 0, 6, 7 ] },
-                    { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [5] }
+                    {'bSortable': false, 'aTargets': [0, 6, 7]},
+                    {'sType': App.config.i18n.DATE_SORT, 'aTargets': [5]}
                 ]
             });
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
         },
         onError: function (model) {
             var errorMessage = model.responseText;
-
-            $("#acl_edit_modal").find('.notifications').first().append(new AlertView({
+            // TODO : refactor global jquery calls
+            $('#acl_edit_modal').find('.notifications').first().append(new AlertView({
                 type: 'error',
                 message: errorMessage
             }).render().$el);

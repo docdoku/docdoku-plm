@@ -61,13 +61,11 @@ define([
         },
 
         toPartTemplateEditModal: function () {
-            var that = this;
-            var partTemplateEditView = new PartTemplateEditView({model: that.model});
+            new PartTemplateEditView({model: this.model});
         },
 
         openPartTemplateModal: function () {
-            var that = this;
-            var partTemplateEditView = new PartTemplateEditView({model: that.model});
+            var partTemplateEditView = new PartTemplateEditView({model: this.model});
             partTemplateEditView.activateFileTab();
         }
 

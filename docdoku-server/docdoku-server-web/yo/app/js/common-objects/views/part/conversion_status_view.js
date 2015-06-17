@@ -1,4 +1,4 @@
-/*global _,define,App*/
+/*global define,App*/
 define([
     'backbone',
     'mustache',
@@ -29,7 +29,7 @@ define([
             }).error(function(){
                 self.render();
             });
-         setTimeout(function() {
+            setTimeout(function() {
                 self.render();
             }, 3000);
         }

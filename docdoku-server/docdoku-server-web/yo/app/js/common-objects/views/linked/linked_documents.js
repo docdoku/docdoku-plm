@@ -6,7 +6,7 @@ define([
     'common-objects/views/linked/linked_document',
     'text!common-objects/templates/linked/linked_items.html'
 ], function (Backbone, Mustache, LinkedDocumentCollection, LinkedDocumentView, template) {
-	'use strict';
+    'use strict';
     var LinkedDocumentsView = Backbone.View.extend({
 
         tagName: 'div',
@@ -24,12 +24,12 @@ define([
         render: function () {
             var self = this;
 
-            this.$el.html(Mustache.render(template,{
-                    i18n: App.config.i18n,
-                    editMode: this.options.editMode,
-                    commentEditable: this.options.commentEditable,
-                    label: App.config.i18n.ADD_DOCUMENT,
-                    view: this
+            this.$el.html(Mustache.render(template, {
+                i18n: App.config.i18n,
+                editMode: this.options.editMode,
+                commentEditable: this.options.commentEditable,
+                label: App.config.i18n.ADD_DOCUMENT,
+                view: this
             }));
 
             this.bindDomElements();
@@ -71,7 +71,7 @@ define([
                         self.searchResults = new LinkedDocumentCollection(data);
 
                         if (self.options.documentIteration && self.options.documentIteration.className === 'DocumentIteration') {
-                            data = _.reject(self.searchResults.models, function(linkedDocument) {
+                            data = _.reject(self.searchResults.models, function (linkedDocument) {
                                 return linkedDocument.getDocKey() === self.options.documentIteration.getDocKey();
                             }, self);
                             self.searchResults = new LinkedDocumentCollection(data);

@@ -1,6 +1,6 @@
-/*global casper,urls,workspace,documents*/
+/*global casper,urls*/
 
-casper.test.begin('Expired private shared document tests suite',1, function expiredPrivateSharedDocumentTestsSuite(){
+casper.test.begin('Expired private shared document tests suite', 1, function expiredPrivateSharedDocumentTestsSuite() {
 
     'use strict';
 
@@ -10,7 +10,7 @@ casper.test.begin('Expired private shared document tests suite',1, function expi
      * Open document management URL
      * */
 
-    casper.then(function(){
+    casper.then(function () {
         this.open(urls.privateDocumentPermalinkExpired);
     });
 
@@ -18,12 +18,12 @@ casper.test.begin('Expired private shared document tests suite',1, function expi
      * Check we have the expired resource page
      */
 
-    casper.then(function checkForExpiredPage(){
-        this.waitForSelector('#page.expired-resource',function(){
-            this.test.assert(true,'Expired entity page displayed');
-        },function fail(){
+    casper.then(function checkForExpiredPage() {
+        this.waitForSelector('#page.expired-resource', function () {
+            this.test.assert(true, 'Expired entity page displayed');
+        }, function fail() {
             this.capture('screenshot/expiredSharedDocument/checkForExpiredPage-error.png');
-            this.test.assert(false,'Expired shared entity page not displayed');
+            this.test.assert(false, 'Expired shared entity page not displayed');
         });
     });
 

@@ -1,4 +1,4 @@
-/*global casper,urls,documents*/
+/*global casper,urls*/
 
 casper.test.begin('Document creation with attributes', 2, function documentCreationWithAttributes() {
     'use strict';

@@ -2,9 +2,8 @@
 define([
     'backbone',
     'mustache',
-    'text!common-objects/templates/file/file.html',
-    'common-objects/views/alert'
-], function (Backbone, Mustache, template,AlertView) {
+    'text!common-objects/templates/file/file.html'
+], function (Backbone, Mustache, template) {
 	'use strict';
     var FileView = Backbone.View.extend({
 

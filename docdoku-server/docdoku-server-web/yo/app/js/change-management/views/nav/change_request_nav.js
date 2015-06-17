@@ -26,7 +26,7 @@ define([
             this.$el.find('.nav-list-entry').first().addClass('active');
         },
 
-        showContent: function (elementId) {
+        showContent: function () {
             this.setActive();
             this.cleanView();
             this.contentView = new ChangeRequestContentView().render();

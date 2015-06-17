@@ -1,4 +1,4 @@
-/*global casper,urls,documents*/
+/*global casper,urls*/
 
 casper.test.begin('LOV deletion tests suite', 3, function documentLOVDeletionTestsSuite() {
 
@@ -40,7 +40,7 @@ casper.test.begin('LOV deletion tests suite', 3, function documentLOVDeletionTes
 
     casper.then(function waitForLOVCreationModal() {
         this.waitForSelector('.list-lov', function checkLOVPersistence() {
-            this.test.assertExists('.lovItem', "One element should be in the list of LOV");
+            this.test.assertExists('.lovItem', 'One element should be in the list of LOV');
         });
     });
 
@@ -50,8 +50,8 @@ casper.test.begin('LOV deletion tests suite', 3, function documentLOVDeletionTes
     casper.then(function deleteItem() {
         this.click('.deleteLovItem');
         this.click('.btn-saveLovs');
-        this.waitWhileSelector('.modal', function() {
-            this.test.assert(true,'modal closed');
+        this.waitWhileSelector('.modal', function () {
+            this.test.assert(true, 'modal closed');
         });
     });
 
@@ -69,7 +69,7 @@ casper.test.begin('LOV deletion tests suite', 3, function documentLOVDeletionTes
      */
 
     casper.then(function waitForLOVCreationModal() {
-         this.waitForSelector('.list-lov', function checkDeletion() {
+        this.waitForSelector('.list-lov', function checkDeletion() {
             try {
                 this.test.assertDoesntExist('.lovItem', 'LOV deleted');
             } catch (e) {
@@ -78,9 +78,9 @@ casper.test.begin('LOV deletion tests suite', 3, function documentLOVDeletionTes
         });
     });
 
-casper.run(function allDone() {
-    this.test.done();
-});
+    casper.run(function allDone() {
+        this.test.done();
+    });
 });
 /**
  * Created by lebeaujulien on 12/03/15.

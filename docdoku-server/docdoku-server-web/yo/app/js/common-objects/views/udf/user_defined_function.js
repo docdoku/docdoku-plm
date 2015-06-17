@@ -39,7 +39,6 @@ define([
         fetchProducts: function () {
             var productList = this.$productList;
             var typeList = this.$typeList;
-            var valueList = this.$valueList;
             var _this = this;
             new ConfigurationItemCollection().fetch({success:function(products){
                 products.each(function(product){
@@ -59,12 +58,12 @@ define([
             valueList.empty();
 
             if (productId) {
-                if (typeId === "latest") {
+                if (typeId === 'latest') {
                     valueList.append('<option value="wip">'+App.config.i18n.HEAD_WIP+'</option>');
                     valueList.append('<option value="latest">'+App.config.i18n.HEAD_CHECKIN+'</option>');
                     valueList.append('<option value="latest-released">'+App.config.i18n.HEAD_RELEASED+'</option>');
 
-                } else if (typeId === "baseline") {
+                } else if (typeId === 'baseline') {
                     new Baselines({},{type:'product',productId:productId}).fetch({success:function(baselines) {
                         baselines.each(function(baseline){
                             valueList.append('<option value="'+baseline.getId()+'">'+baseline.getName()+'</option>');
@@ -96,7 +95,7 @@ define([
 
             runButton.html(App.config.i18n.LOADING +' ...').prop('disabled',true);
 
-            var partCollection = Backbone.Collection.extend({
+            var PartCollection = Backbone.Collection.extend({
                 url: function () {
                     return this.urlBase() + '/filter?configSpec=' + valueId + '&depth=10&path=-1';
                 },
@@ -106,7 +105,7 @@ define([
                 }
             });
 
-            new partCollection().fetch({
+            new PartCollection().fetch({
                 success:function(rootComponent){
                     _this.doUDF(rootComponent,function(){
                         runButton.html(App.config.i18n.RUN).prop('disabled',false);
@@ -147,6 +146,10 @@ define([
                         }
                     });
 
+                    function next(a){
+                        visit(a,fn);
+                    }
+
                     for(var i = 0 ; i < rootComponent.amount ; i++) {
 
                         if(rootComponent.components.length){
@@ -157,9 +160,7 @@ define([
 
                         memo = fn(rootComponent, memo);
 
-                        _.each(rootComponent.components,function(component){
-                            visit(component,fn);
-                        });
+                        _.each(rootComponent.components,next);
 
                     }
 
@@ -167,7 +168,7 @@ define([
 
                 visit(pRootComponent.first().attributes,reduceFunction);
 
-                if(typeof memo !== 'String'){
+                if(typeof memo !== 'string'){
                     try{
                         memo = JSON.stringify(memo);
                     }catch(e1){

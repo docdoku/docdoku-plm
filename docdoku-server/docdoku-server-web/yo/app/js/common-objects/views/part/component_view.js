@@ -46,8 +46,8 @@ define([
                 model: this.model.attributes,
                 i18n: App.config.i18n,
                 editMode: this.options.editMode,
-                isReleased:this.options.isReleased,
-                isCheckout:this.options.isCheckout
+                isReleased: this.options.isReleased,
+                isCheckout: this.options.isCheckout
             }));
 
             this.bindDomElements();
@@ -88,7 +88,7 @@ define([
                 self.addSubstitutePartsView(instance);
 
             });
-            if (this.model.get('substitutes').length == 0){
+            if (this.model.get('substitutes').length === 0) {
                 self.$('.substitute-count-text').text(App.config.i18n.PART_SUBSTITUTE);
 
             }
@@ -102,7 +102,11 @@ define([
 
         addCadInstanceView: function (instance) {
             var self = this;
-            var instanceView = new CadInstanceView({editMode: this.options.editMode, isReleased: this.options.isReleased,isCheckout:this.options.isCheckout});
+            var instanceView = new CadInstanceView({
+                editMode: this.options.editMode,
+                isReleased: this.options.isReleased,
+                isCheckout: this.options.isCheckout
+            });
             instanceView.setInstance(instance).render();
             self.$cadInstances.append(instanceView.$el);
             instanceView.on('instance:remove', function () {
@@ -113,7 +117,7 @@ define([
         },
         addSubstitutePartsView: function (model) {
             var self = this;
-            self.$('.substitute-count-text').text("");
+            self.$('.substitute-count-text').text('');
             var substitutePartView = new SubstitutePartView({
                 model: model,
                 editMode: this.options.editMode,
@@ -121,16 +125,17 @@ define([
                 removeSubHandler: function () {
                     self.model.attributes.substitutes = _(self.model.attributes.substitutes).without(model);
                     self.removeSubPart(model);
-                    var countText = (self.model.get('substitutes').length <= 1 ? App.config.i18n.PART_SUBSTITUTE :  App.config.i18n.PARTS_SUBSTITUTES);
+                    var countText = (self.model.get('substitutes').length <= 1 ? App.config.i18n.PART_SUBSTITUTE : App.config.i18n.PARTS_SUBSTITUTES);
                     self.$('.substitute-count').text(self.model.get('substitutes').length);
-                    self.$('.substitute-count-text').text(" "+ countText);
-                }}).render();
-            var countText = (self.model.get('substitutes').length <= 1 ? App.config.i18n.PART_SUBSTITUTE :  App.config.i18n.PARTS_SUBSTITUTES);
+                    self.$('.substitute-count-text').text(' ' + countText);
+                }
+            }).render();
+            var countText = (self.model.get('substitutes').length <= 1 ? App.config.i18n.PART_SUBSTITUTE : App.config.i18n.PARTS_SUBSTITUTES);
 
-            self.$('.substitute-count').text(self.model.get('substitutes').length + " " );
-            self.$('.substitute-count-text').text(" "+ countText);
+            self.$('.substitute-count').text(self.model.get('substitutes').length + ' ');
+            self.$('.substitute-count-text').text(' ' + countText);
             this.substitutePartViews.push(substitutePartView);
-            this.$(".substitute-parts").append(substitutePartView.$el);
+            this.$('.substitute-parts').append(substitutePartView.$el);
 
         },
 
@@ -191,12 +196,12 @@ define([
             this.model.set('optional', this.$isOptional.is(':checked'));
         },
         changeMeasureUnit: function (e) {
-            this.model.set('unit', (e.target.value == this.$defaultUnity ? '' : e.target.value));
+            this.model.set('unit', (e.target.value === this.$defaultUnity ? '' : e.target.value));
             this.$unitText.val(e.target.value);
             this.disableEnableAmount(e.target.value);
         },
         checkMeasureUnit: function () {
-            if (!this.$unitText.val()){
+            if (!this.$unitText.val()) {
                 this.$unitText.val(this.$defaultUnity);
                 this.disableEnableAmount(this.$defaultUnity);
                 this.checkIntegrity(this.$defaultUnity);
@@ -205,7 +210,7 @@ define([
         checkIntegrity: function (unit) {
 
             var totalCADInstances = this.$('.subParts-CADInstance>.cadInstances >.cadInstance').length;
-            if (!unit || unit == this.$defaultUnity) {
+            if (!unit || unit === this.$defaultUnity) {
 
                 if (parseInt(this.$amount.val(), 10) > totalCADInstances) {
                     var totalUnitToAdd = parseInt(this.$amount.val(), 10) - totalCADInstances;
@@ -217,11 +222,11 @@ define([
                 }
                 if (parseInt(this.$amount.val(), 10) < totalCADInstances) {
                     var totalToDelete = totalCADInstances - parseInt(this.$amount.val(), 10);
-                    this.$(".subParts-CADInstance>.cadInstances >.cadInstance").slice(-totalToDelete).remove();
+                    this.$('.subParts-CADInstance>.cadInstances >.cadInstance').slice(-totalToDelete).remove();
                 }
             } else {
                 if (totalCADInstances > 1) {
-                    this.$(".subParts-CADInstance>.cadInstances >.cadInstance:not(:first)").remove();
+                    this.$('.subParts-CADInstance>.cadInstances >.cadInstance:not(:first)').remove();
                     var self = this;
                     _.each(self.model.get('cadInstances'), function () {
                         self.model.get('cadInstances').pop();
@@ -232,8 +237,8 @@ define([
         },
         disableEnableAmount: function (unit) {
 
-            if (unit == "null" || unit == "" || unit == undefined || unit == this.$defaultUnity) {
-                this.$amount.val(parseInt(this.$amount.val(), 10) == 0 ? 1 : parseInt(this.$amount.val(), 10));
+            if (unit === 'null' || unit === '' || unit === undefined || unit === this.$defaultUnity) {
+                this.$amount.val(parseInt(this.$amount.val(), 10) === 0 ? 1 : parseInt(this.$amount.val(), 10));
                 this.$amount.attr('disabled', 'disabled');
                 this.$('.add-cadInstance').show();
                 if (this.$amount.val() > 1) {
@@ -252,22 +257,22 @@ define([
 
         selectPart: function (e) {
             // TODO : remove global jquery calls.
-            if (e.target.className.indexOf("component") != -1 || e.target.parentNode.className == "cadInstance" || e.target.parentNode.className == "cadInstances") {
+            if (e.target.className.indexOf('component') !== -1 || e.target.parentNode.className === 'cadInstance' || e.target.parentNode.className === 'cadInstances') {
                 this.options.undoSelect(this);
-                $('.component').toggleClass("selected-part", false);
+                $('.component').toggleClass('selected-part', false);
                 this.$selectPart = !this.$selectPart;
-                this.$('.component').toggleClass("selected-part", this.$selectPart);
-                $("#createPartMenu").toggleClass('hidden', this.$selectPart);
-                $("#createSubPartMenu").toggleClass('hidden', !this.$selectPart);
+                this.$('.component').toggleClass('selected-part', this.$selectPart);
+                $('#createPartMenu').toggleClass('hidden', this.$selectPart);
+                $('#createSubPartMenu').toggleClass('hidden', !this.$selectPart);
             }
 
         },
         undoSelectPart: function () {
             // TODO : remove global jquery calls.
-            $('.component').toggleClass("selected-part", false);
+            $('.component').toggleClass('selected-part', false);
             this.$selectPart = false;
-            $("#createPartMenu").toggleClass('hidden', this.$selectPart);
-            $("#createSubPartMenu").toggleClass('hidden', !this.$selectPart);
+            $('#createPartMenu').toggleClass('hidden', this.$selectPart);
+            $('#createSubPartMenu').toggleClass('hidden', !this.$selectPart);
         },
         isSelected: function () {
             return this.$selectPart;
@@ -278,7 +283,7 @@ define([
             var cadInstances = [];
             var amount = this.model.get('amount');
 
-            if (!unit || (unit == this.$defaultUnity) && amount > 1) {
+            if (!unit || (unit === this.$defaultUnity) && amount > 1) {
                 for (var i = 0; i < amount; i++) {
                     cadInstances.push({tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0});
                 }

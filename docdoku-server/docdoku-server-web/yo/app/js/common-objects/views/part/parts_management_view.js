@@ -29,7 +29,7 @@ define([
                         var partNumbers = [];
                         _(data).each(function (d) {
                             if ((!that.model.getNumber()) || (that.model.getNumber() !== d.partNumber)) {
-                                partNumbers.push(d.partName + " < "+d.partNumber+" >");
+                                partNumbers.push(d.partName + ' < ' + d.partNumber + ' >');
                             }
                         });
                         process(partNumbers);
@@ -39,8 +39,8 @@ define([
                     var existingPart = {
                         amount: 1,
                         component: {
-                            number: part.split("<")[1].replace('>','').trim(),
-                            name: part.split("<")[0].trim()
+                            number: part.split('<')[1].replace('>', '').trim(),
+                            name: part.split('<')[0].trim()
                         }
                     };
 
@@ -73,18 +73,23 @@ define([
             var that = this;
             this.iteration = this.model.getLastIteration();
             var componentView = new ComponentView({
-                model: model, editMode: this.options.editMode,isReleased:this.options.isReleased,isCheckout:this.options.isCheckout,
+                model: model,
+                editMode: this.options.editMode,
+                isReleased: this.options.isReleased,
+                isCheckout: this.options.isCheckout,
                 otherComponentViews: new Backbone.Collection(this.componentViews),
                 collection: new Backbone.Collection(this.iteration.getSubstituteParts()),
                 removeHandler: function () {
                     that.collection.remove(model);
-                },undoSelect: function(viewToSelect){
+                },
+                undoSelect: function (viewToSelect) {
                     _(that.componentViews).each(function (view) {
-                        if (viewToSelect != view){
+                        if (viewToSelect !== view) {
                             view.$selectPart = false;
                         }
                     });
-                }}).render();
+                }
+            }).render();
             this.componentViews.push(componentView);
             this.$el.append(componentView.$el);
         },
@@ -107,7 +112,7 @@ define([
                 {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0}
             ]);
             model.set('substitutes', []);
-            model.set('amount',1);
+            model.set('amount', 1);
             this.addView(model);
         },
 
@@ -154,7 +159,7 @@ define([
                         that.getSelectedComponent();
                         _(data).each(function (d) {
                             if ((!that.model.get('number')) || (that.model.get('number') !== d.partNumber)) {
-                                partNumbers.push(d.partName + " < "+d.partNumber+" >");
+                                partNumbers.push(d.partName + ' < ' + d.partNumber + ' >');
                             }
                         });
                         process(partNumbers);
@@ -165,9 +170,10 @@ define([
                         amount: 1,
                         unit: '',
                         substitute: {
-                            number: part.split("<")[1].replace('>','').trim(),
-                            name: part.split("<")[0].trim()
-                }, cadInstances: [
+                            number: part.split('<')[1].replace('>', '').trim(),
+                            name: part.split('<')[0].trim()
+                        },
+                        cadInstances: [
                             {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0}
                         ]
                     };

@@ -48,7 +48,7 @@ define([
             this.$el.find('.nav-list-entry').first().addClass('active');
         },
 
-        showContent: function (query) {
+        showContent: function () {
             this.setActive();
             this.cleanView();
             if(!this.partContentView){

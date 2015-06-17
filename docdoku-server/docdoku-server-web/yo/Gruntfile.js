@@ -476,8 +476,12 @@ module.exports = function (grunt) {
             all: {
                 src:[
                     'Gruntfile.js',
-                    '<%= yeoman.app %>/js/{,*/}/{,*/}*.js',
+                    '<%= yeoman.app %>/js/**/*.js',
+                    '<%= yeoman.tests %>/js/**/*.js',
                     '!<%= yeoman.app %>/js/lib/**',
+                    '!<%= yeoman.app %>/js/product-structure/dmu/utils/**',
+                    '!<%= yeoman.app %>/js/product-structure/dmu/loaders/**',
+                    '!<%= yeoman.app %>/js/product-structure/dmu/controls/**',
                     '!<%= yeoman.app %>/js/localization/**'
                 ]
             }

@@ -1,5 +1,5 @@
-/*global casper,urls,apiUrls*/
-casper.test.begin('Logout tests suite',1, function logoutTestsSuite(){
+/*global casper,urls*/
+casper.test.begin('Logout tests suite', 1, function logoutTestsSuite() {
 
     'use strict';
 
@@ -9,15 +9,15 @@ casper.test.begin('Logout tests suite',1, function logoutTestsSuite(){
      * Open document management URL
      * */
 
-     casper.then(function(){
+    casper.then(function () {
         this.open(urls.documentManagement);
-     });
+    });
 
     /**
      *  Wait for disconnect link, and click it
      */
-    casper.then(function(){
-        this.waitForSelector("#logout_link a", function onLogoutLinkReady() {
+    casper.then(function () {
+        this.waitForSelector('#logout_link a', function onLogoutLinkReady() {
             this.click('#logout_link a');
         });
     });
@@ -25,16 +25,16 @@ casper.test.begin('Logout tests suite',1, function logoutTestsSuite(){
     /**
      * Test to find the login form
      */
-    casper.then(function checkForLoginForm(){
-        this.waitForSelector('form[id="login_form"]',function loginFormFound(){
-            this.test.assert(true,'Login form found');
+    casper.then(function checkForLoginForm() {
+        this.waitForSelector('form[id="login_form"]', function loginFormFound() {
+            this.test.assert(true, 'Login form found');
         });
     });
 
     /**
      * Test session state
 
-    casper.then(function checkResource(){
+     casper.then(function checkResource(){
         console.log(apiUrls.userInfo)
         this.open(apiUrls.userInfo, {method: 'GET'}).then(function (response) {
             console.log(this.getPageContent())
@@ -42,7 +42,7 @@ casper.test.begin('Logout tests suite',1, function logoutTestsSuite(){
         });
     });
      */
-    casper.run(function() {
+    casper.run(function () {
         this.test.done();
     });
 });

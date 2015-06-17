@@ -23,7 +23,7 @@ define([
             'click button.delete': 'deletePartTemplate',
             'click .actions .edit-acl': 'onEditAcl',
             'click .actions .list-lov' : 'showLovs'
-    },
+        },
 
         initialize: function () {
             _.bindAll(this);

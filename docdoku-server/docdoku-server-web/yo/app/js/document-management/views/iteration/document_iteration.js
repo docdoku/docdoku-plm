@@ -27,7 +27,7 @@ define([
 
             this.events['click a#previous-iteration'] = 'onPreviousIteration';
             this.events['click a#next-iteration'] = 'onNextIteration';
-            this.events["click .modal-footer button.btn-primary"] = "interceptSubmit";
+            this.events['click .modal-footer button.btn-primary'] = 'interceptSubmit';
             this.events['submit form'] = 'onSubmitForm';
             this.events['click a.document-path'] = 'onFolderPathClicked';
             this.events['click .action-checkin'] = 'actionCheckin';
@@ -70,10 +70,9 @@ define([
         },
 
         activateTab: function (index) {
-
-           this.tabs.eq(index).children().tab('show');
+            this.tabs.eq(index).children().tab('show');
         },
-        activateFileTab: function(){
+        activateFileTab: function () {
             this.activateTab(3);
         },
         validation: function () {
@@ -170,13 +169,11 @@ define([
 
             this.tabs = this.$('.nav-tabs li');
 
-
-            this.attributesView =
-                this.addSubView(
-                    new DocumentAttributesView({
-                        el: '#iteration-additional-attributes-container'
-                    })
-                );
+            this.attributesView = this.addSubView(
+                new DocumentAttributesView({
+                    el: '#iteration-additional-attributes-container'
+                })
+            );
 
             this.attributesView.setAttributesLocked(this.model.isAttributesLocked());
 
@@ -186,7 +183,7 @@ define([
             var that = this;
 
             if (this.model.hasIterations()) {
-                if(this.iteration.getAttributes().length){
+                if (this.iteration.getAttributes().length) {
                     this.iteration.getAttributes().each(function (item) {
                         that.attributesView.addAndFillAttribute(item);
                     });
@@ -243,9 +240,11 @@ define([
                     revisionNote: this.$('#inputRevisionNote').val(),
                     instanceAttributes: this.attributesView.collection.toJSON(),
                     linkedDocuments: this.linkedDocumentsView.collection.toJSON()
-                }, {success: function () {
-                    _this.model.fetch();
-                }});
+                }, {
+                    success: function () {
+                        _this.model.fetch();
+                    }
+                });
 
                 /*There is a parsing problem at saving time*/
                 var files = this.iteration.get('attachedFiles');
@@ -342,7 +341,8 @@ define([
                     clicked: function () {
                         that.tagsToRemove.push(tagLabel);
                         tagView.$el.remove();
-                    }} :
+                    }
+                } :
                 {
                     model: new Tag({id: tagLabel, label: tagLabel}),
                     isAdded: true,

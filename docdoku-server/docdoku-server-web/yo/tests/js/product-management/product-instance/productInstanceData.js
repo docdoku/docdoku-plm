@@ -1,9 +1,6 @@
-/**
- * Created by kelto on 03/06/15.
- */
-/*global casper,urls,products,productInstances*/
+/*global casper,urls,productInstances*/
 
-casper.test.begin('Product instance data path tests suite',19, function productInstanceDataPathTestsSuite() {
+casper.test.begin('Product instance data path tests suite', 19, function productInstanceDataPathTestsSuite() {
     'use strict';
 
     casper.open('');
@@ -17,17 +14,16 @@ casper.test.begin('Product instance data path tests suite',19, function productI
     });
 
 
-
     /**
      * click on the checkbox from the bom
      */
     casper.then(function waitForBOM() {
         this.waitForSelector('.selectable-part-checkbox', function loadDataButton() {
             this.click('.selectable-part-checkbox');
-            this.test.assert(true,'click on product-instance checkbox');
+            this.test.assert(true, 'click on product-instance checkbox');
         }, function fail() {
             this.capture('screenshot/product-instance/FailToLoadDeliverable.png');
-            this.test.assert(false,'could not load deliverable');
+            this.test.assert(false, 'could not load deliverable');
         });
     });
 
@@ -48,10 +44,10 @@ casper.test.begin('Product instance data path tests suite',19, function productI
 
     casper.then(function openDataModal() {
         this.waitForSelector('.product-instance-data-modal', function waitForModal() {
-            this.test.assert(true,'modal opened');
+            this.test.assert(true, 'modal opened');
         }, function fail() {
             this.capture('screenshot/product-instance/ModalNotFound.png');
-            this.test.assert(false,'could not open modal');
+            this.test.assert(false, 'could not open modal');
         });
     });
 
@@ -124,10 +120,10 @@ casper.test.begin('Product instance data path tests suite',19, function productI
      * Now there should be 4 tab present and an iteration note.
      */
     casper.then(function countTab() {
-        this.waitForSelector('#tab-attributes', function waitForModal(){
+        this.waitForSelector('#tab-attributes', function waitForModal() {
             this.test.assertElementCount('ul.nav.nav-tabs li', 4, '2 tabs present in the modal');
             this.test.assertExists('.product-instance-data-modal div.path-description');
-            this.test.assertExists('input.description-input[value="'+productInstances.productInstance1.iterationNote+'"]');
+            this.test.assertExists('input.description-input[value="' + productInstances.productInstance1.iterationNote + '"]');
 
         }, function fail() {
             this.capture('screenshot/product-instance/DeliverableDataModal-notFound.png');
@@ -141,8 +137,8 @@ casper.test.begin('Product instance data path tests suite',19, function productI
      */
     casper.then(function assertIterationNote() {
         //Wait for the input value to be injected, can take some time.
-        this.waitForSelector('#pathDataAttributes input.value[value="'+productInstances.productInstance1.pathDataValue+'"]', function found() {
-            this.test.assert(true,'the input value is given to the view');
+        this.waitForSelector('#pathDataAttributes input.value[value="' + productInstances.productInstance1.pathDataValue + '"]', function found() {
+            this.test.assert(true, 'the input value is given to the view');
         }, function fail() {
             this.test.assert(false, 'the previously given value is not printed in the input');
         });
@@ -164,7 +160,7 @@ casper.test.begin('Product instance data path tests suite',19, function productI
      * Test the attributes
      */
     casper.then(function testDataAttributes() {
-        this.waitForSelector('ul.nav.nav-tabs li:nth-child(2).active', function() {
+        this.waitForSelector('ul.nav.nav-tabs li:nth-child(2).active', function () {
             this.test.assertElementCount('#partAttributes input.name[disabled]', 2,
                 'the two part attributes name should be disabled in partAttributes');
             this.test.assertDoesntExist('#partAttributes input.value',

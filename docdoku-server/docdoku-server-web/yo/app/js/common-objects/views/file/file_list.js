@@ -111,7 +111,7 @@ define([
         },
 
         clearNotifications: function() {
-            this.notifications.text("");
+            this.notifications.text('');
         },
 
         addSingleFile: function (attachedFile) {
@@ -259,8 +259,7 @@ define([
             return this;
         },
 
-        formSubmit:function(e){
-
+        formSubmit:function(){
             return false;
         },
 

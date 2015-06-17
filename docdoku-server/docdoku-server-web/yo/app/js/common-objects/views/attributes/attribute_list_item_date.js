@@ -4,14 +4,14 @@ define([
     'text!common-objects/templates/attributes/attribute_list_item.html',
     'text!common-objects/templates/attributes/attribute_list_item_date.html',
     'common-objects/utils/date'
-], function (AttributeListItemView, attribute_list_item, template, date) {
+], function (AttributeListItemView, attributeListItem, template, date) {
 	'use strict';
     var AttributeListItemDateView = AttributeListItemView.extend({
 
         template: template,
 
         partials: {
-            attribute_list_item: attribute_list_item
+            attributeListItem: attributeListItem
         },
 
         initialize: function () {

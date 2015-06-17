@@ -58,7 +58,7 @@ define(['backbone'], function (Backbone) {
             this.set('commentLink', comment);
         },
 
-        getDocumentLinkComment:function(comment){
+        getDocumentLinkComment:function(){
             return this.get('commentLink');
         }
     });

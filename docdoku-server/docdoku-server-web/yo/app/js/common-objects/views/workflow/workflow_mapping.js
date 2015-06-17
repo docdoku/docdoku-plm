@@ -1,4 +1,4 @@
-/*global define,App,_*/
+/*global define,_*/
 define([
     'common-objects/views/base',
     'common-objects/collections/users',

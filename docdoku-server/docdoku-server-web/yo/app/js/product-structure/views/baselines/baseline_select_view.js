@@ -101,7 +101,7 @@ define([
             }
         },
 
-        onTypeChanged:function(e){
+        onTypeChanged:function(){
             this.$selectConfSpec.show();
             App.config.linkType = null;
 

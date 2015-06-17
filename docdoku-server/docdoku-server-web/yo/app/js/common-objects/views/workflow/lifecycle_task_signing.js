@@ -1,25 +1,27 @@
 /*global define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!common-objects/templates/workflow/lifecycle_task_signing.html"
+    'mustache',
+    'text!common-objects/templates/workflow/lifecycle_task_signing.html'
 
 ], function (Backbone, Mustache, template) {
+
+    'use strict';
 
     var LifecycleTaskSigningView = Backbone.View.extend({
 
         tagName: 'div',
 
         events: {
-            "click .lifecycle-task-signing-link-a": "toggleSigningCanvas",
-            "click .lifecycle-task-signing-delete-a": "deleteSignature",
-            "mousedown .lifecycle-activities-canvas": "canvasMouseDown",
-            "mousemove .lifecycle-activities-canvas": "canvasMouseMove",
-            "mouseup .lifecycle-activities-canvas": "canvasMouseUp",
-            "mouseleave .lifecycle-activities-canvas": "canvasMouseLeave",
-            "click .cancel-signing": "cancelSigning",
-            "click .delete-signing": "clearBtnClicked",
-            "click .save-signing": "saveSigning"
+            'click .lifecycle-task-signing-link-a': 'toggleSigningCanvas',
+            'click .lifecycle-task-signing-delete-a': 'deleteSignature',
+            'mousedown .lifecycle-activities-canvas': 'canvasMouseDown',
+            'mousemove .lifecycle-activities-canvas': 'canvasMouseMove',
+            'mouseup .lifecycle-activities-canvas': 'canvasMouseUp',
+            'mouseleave .lifecycle-activities-canvas': 'canvasMouseLeave',
+            'click .cancel-signing': 'cancelSigning',
+            'click .delete-signing': 'clearBtnClicked',
+            'click .save-signing': 'saveSigning'
         },
 
         initialize: function () {
@@ -37,9 +39,9 @@ define([
         },
 
         bindDomElements: function () {
-            this.$signingLink = this.$(".lifecycle-task-signing-link");
-            this.$signingPopover = this.$(".lifecycle-task-signing-popover");
-            this.$signingImg = this.$(".lifecycle-task-signing-img");
+            this.$signingLink = this.$('.lifecycle-task-signing-link');
+            this.$signingPopover = this.$('.lifecycle-task-signing-popover');
+            this.$signingImg = this.$('.lifecycle-task-signing-img');
         },
 
         initCanvas: function () {
@@ -58,8 +60,8 @@ define([
         openSigningCanvas: function () {
             this.$signingPopover.show();
             this.$signingImg.hide();
-            this.canvas = this.$(".lifecycle-activities-canvas").get(0);
-            this.context = this.canvas.getContext("2d");
+            this.canvas = this.$('.lifecycle-activities-canvas').get(0);
+            this.context = this.canvas.getContext('2d');
             this.canvas.width = 200;
             this.canvas.height = 150;
         },
@@ -96,8 +98,8 @@ define([
         },
 
         redraw: function () {
-            this.context.strokeStyle = "#333333";
-            this.context.lineJoin = "round";
+            this.context.strokeStyle = '#333333';
+            this.context.lineJoin = 'round';
             this.context.lineWidth = 3;
 
             for (var i = 0; i < this.moves.length; i++) {

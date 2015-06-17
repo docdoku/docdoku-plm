@@ -207,13 +207,15 @@ define([
                                     _this.removePart(view.model);
                                     onRequestOver();
 
-                                }, error: function (model, err) {
+                                },
+                                error: function (model, err) {
                                     _this.trigger('error', model, err);
                                     //must be called, if not the ones which succeed
                                     //won't trigger the event while the part did change.
                                     Backbone.Events.trigger('part:iterationChange');
                                     _this.onSelectionChanged();
-                                }});
+                                }
+                            });
                         }
                     });
 

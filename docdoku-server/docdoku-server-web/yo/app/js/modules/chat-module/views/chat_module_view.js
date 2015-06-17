@@ -28,7 +28,7 @@ define(['backbone', 'modules/chat-module/views/chat_session_view'], function (Ba
             Backbone.Events.trigger('ChatSessionFocusRequired', csv);
         },
 
-        onChatStatusChanged: function (status) {
+        onChatStatusChanged: function () {
         },
 
         getChatSessionView: function (chatSessionArgs) {
@@ -94,7 +94,7 @@ define(['backbone', 'modules/chat-module/views/chat_session_view'], function (Ba
 
         onRemoveWebRTCInvitation: function (webRTCInvitation) {
             var csv = this.getChatSessionView(webRTCInvitation.message);
-            if (csv && csv.webRTCInvitation != null) {
+            if (csv && csv.webRTCInvitation !== null) {
                 clearTimeout(csv.webRTCInvitation.invitationTimeout);
                 csv.hideWebRTCInvitation();
             }

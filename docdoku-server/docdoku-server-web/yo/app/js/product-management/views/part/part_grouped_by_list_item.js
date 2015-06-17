@@ -40,14 +40,14 @@ define([
 
                 if(isDate) {
                     if (!value) {
-                        value = "";
+                        value = '';
                     }
                     var timestampFormated = Date.formatTimestamp(
                         App.config.i18n._DATE_FORMAT,
                         value
                     );
 
-                    value = timestampFormated ? timestampFormated : "";
+                    value = timestampFormated ? timestampFormated : '';
                 }
 
                 if(isLinkedDocuments){

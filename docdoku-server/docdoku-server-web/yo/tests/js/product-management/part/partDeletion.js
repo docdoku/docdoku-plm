@@ -1,6 +1,6 @@
 /*global casper,urls,$*/
 
-casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuite(){
+casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuite() {
     'use strict';
 
     casper.open('');
@@ -9,7 +9,7 @@ casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuit
      * Open product management URL
      * */
 
-    casper.then(function(){
+    casper.then(function () {
         this.open(urls.productManagement);
     });
 
@@ -17,12 +17,12 @@ casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuit
      * Go to part nav
      */
 
-    casper.then(function waitForPartNavLink(){
-        this.waitForSelector('#part-nav > .nav-list-entry > a',function clickPartNavLink() {
+    casper.then(function waitForPartNavLink() {
+        this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
-        },function fail() {
+        }, function fail() {
             this.capture('screenshot/partDeletion/waitForPartNavLink-error.png');
-            this.test.assert(false,'Part nav link can not be found');
+            this.test.assert(false, 'Part nav link can not be found');
         });
     });
 
@@ -30,26 +30,26 @@ casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuit
      * Test delete a part
      */
 
-    casper.then(function waitForPartInList(){
+    casper.then(function waitForPartInList() {
         this.waitForSelector('#part_table tbody tr:first-child td.part_number', function clickOnPartCheckbox() {
             this.click('#part_table tbody tr:first-child td:nth-child(2) input');
-        },function fail() {
+        }, function fail() {
             this.capture('screenshot/partDeletion/waitForPartInList-error.png');
-            this.test.assert(false,'Part to delete rows can not be found');
+            this.test.assert(false, 'Part to delete rows can not be found');
         });
     });
 
-    casper.then(function clickOnDeletePartButton(){
+    casper.then(function clickOnDeletePartButton() {
         this.click('.actions .checkout');
         this.waitForSelector('.actions .checkout[disabled]', function then() {
-            this.test.assertSelectorHasText('.nav-checkedOut-number-item',1, 'checkout number updated');
+            this.test.assertSelectorHasText('.nav-checkedOut-number-item', 1, 'checkout number updated');
             this.click('.actions .delete');
             // Confirm deletion
-            this.waitForSelector('.bootbox',function confirmPartDeletion(){
+            this.waitForSelector('.bootbox', function confirmPartDeletion() {
                 this.click('.bootbox .modal-footer .btn-primary');
-            },function fail() {
+            }, function fail() {
                 this.capture('screenshot/partDeletion/waitForDeletionConfirmationModal-error.png');
-                this.test.assert(false,'Part deletion confirmation modal can not be found');
+                this.test.assert(false, 'Part deletion confirmation modal can not be found');
             });
         }, function fail() {
             this.capture('screenshot/partDeletion/waitForCheckoutToDisable.png');
@@ -57,37 +57,37 @@ casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuit
         });
     });
 
-    casper.then(function waitForPartDiseapear(){
+    casper.then(function waitForPartDiseapear() {
         casper.waitFor(function check() {
-            return this.evaluate(function() {
+            return this.evaluate(function () {
                 return document.querySelectorAll('#part_table tbody tr').length === 4;
             });
         }, function then() {
-            this.test.assert(true,'Part has been deleted');
-        }, function fail(){
+            this.test.assert(true, 'Part has been deleted');
+        }, function fail() {
             this.capture('screenshot/partDeletion/waitForPartDiseapear-error.png');
-            this.test.assert(false,'Part has not been deleted');
+            this.test.assert(false, 'Part has not been deleted');
         });
     });
 
     casper.then(function waitForNavUpdate() {
         this.waitFor(function check() {
-            return this.evaluate(function() {
-                return $('.nav-checkedOut-number-item').text() === "0";
+            return this.evaluate(function () {
+                return $('.nav-checkedOut-number-item').text() === '0';
             });
         }, function then() {
             this.test.assert(true, 'Checkout nav number updated');
         }, function fail() {
-            var value = this.evaluate(function() {
-                $('.nav-checkedOut-number-item').text()
+            var value = this.evaluate(function () {
+                $('.nav-checkedOut-number-item').text();
             });
-            this.log('value: '+value, 'warning');
+            this.log('value: ' + value, 'warning');
             this.capture('screenshot/partDeletion/waitForNavUpdateCount.png');
             this.test.assert(false, 'Checkout nav number not updated');
         });
     });
 
-    casper.run(function() {
+    casper.run(function () {
         this.test.done();
     });
 

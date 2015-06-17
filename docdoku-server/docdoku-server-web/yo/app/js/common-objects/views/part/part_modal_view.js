@@ -30,7 +30,7 @@ define([
 
             this.events['click a#previous-iteration'] = 'onPreviousIteration';
             this.events['click a#next-iteration'] = 'onNextIteration';
-            this.events["click .modal-footer button.btn-primary"] = "interceptSubmit";
+            this.events['click .modal-footer button.btn-primary'] = 'interceptSubmit';
             this.events['submit #form-part'] = 'onSubmitForm';
             this.events['click .action-checkin'] = 'actionCheckin';
             this.events['click .action-checkout'] = 'actionCheckout';
@@ -338,7 +338,7 @@ define([
                     unread++;
                 }
             });
-            if (unread == 0) {
+            if (unread === 0) {
                 this.model.fetch();
                 Backbone.Events.trigger('part:saved');
             }
@@ -360,7 +360,9 @@ define([
                     clicked: function () {
                         that.tagsToRemove.push(tagLabel);
                         tagView.$el.remove();
-                    }} :
+                    }
+                }
+                    :
                 {
                     model: new Tag({id: tagLabel, label: tagLabel}),
                     isAdded: true,
