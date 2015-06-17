@@ -1,5 +1,7 @@
 /*global casper*/
 
+/*jshint -W098*/
+
 var domain = casper.cli.get('domain');
 var port = casper.cli.get('port');
 var workspace = casper.cli.get('workspace');

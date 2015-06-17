@@ -1,4 +1,5 @@
-// Returns the fail reason from response headers
+/*jshint -W098*/
+
 var helpers = {
     findReasonInResponseHeaders: function (headers) {
         'use strict';

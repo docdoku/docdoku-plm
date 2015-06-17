@@ -1,5 +1,5 @@
 /*global $,casper,urls,documents*/
-
+/*jshint -W040*/
 casper.test.begin('LOV creation and use in template', 5, function LOVTemplateCreationTestsSuite() {
     'use strict';
 
@@ -151,7 +151,7 @@ casper.test.begin('LOV creation and use in template', 5, function LOVTemplateCre
                     var selectValue = $(selector).val();
                     return selectValue === expectedValueForSelect;
                 }, selectSelector, expectedValue);
-                this.test.assertTrue(isValueOk, "Value of the type of the attribut should be " + expectedValue);
+                this.test.assertTrue(isValueOk, 'Value of the type of the attribut should be ' + expectedValue);
             }, cantFindElement.bind(this, attributViewSelector));
         }, cantFindElement.bind(this, templateAttributTabSelector));
     });

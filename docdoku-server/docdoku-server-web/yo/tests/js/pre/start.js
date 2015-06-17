@@ -6,8 +6,8 @@ var ci = require('../../config.ci');
 var local = require('../../config.local');
 var extend = function (destination, source) {
     for (var property in source) {
-        if (destination[property] && (typeof(destination[property]) === 'object')
-            && (destination[property].toString() === '[object Object]') && source[property]) {
+        if (destination[property] && (typeof(destination[property]) === 'object') &&
+            (destination[property].toString() === '[object Object]') && source[property]) {
             extend(destination[property], source[property]);
         }
         else {
