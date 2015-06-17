@@ -45,11 +45,12 @@ import java.util.logging.Logger;
 public class ESMapper {
     private static final Logger LOGGER = Logger.getLogger(ESTools.class.getName());
     public static final String WORKSPACEID_KEY ="workspaceId";
+    public static final String ITERATIONS_KEY = "iterations";
     public static final String VERSION_KEY ="version";
     public static final String AUTHOR_KEY ="author";
     public static final String AUTHOR_LOGIN_KEY ="login";
     public static final String AUTHOR_NAME_KEY ="name";
-    public static final String AUTHOR_SEARCH_KEY =AUTHOR_KEY+"."+AUTHOR_LOGIN_KEY;
+    public static final String AUTHOR_SEARCH_KEY =ITERATIONS_KEY+"."+AUTHOR_KEY+"."+AUTHOR_LOGIN_KEY;
     public static final String CREATION_DATE_KEY ="creationDate";
     public static final String MODIFICATION_DATE_KEY ="modificationDate";
     public static final String TYPE_KEY ="type";
@@ -92,7 +93,7 @@ public class ESMapper {
             setField(tmp,"docMId",doc.getDocumentRevision().getDocumentMasterId(), 4.75f);
             setField(tmp,"title",doc.getDocumentRevision().getTitle(),5f);
             setField(tmp,VERSION_KEY,doc.getDocumentVersion(), 0.10f);
-            tmp.startArray("iterations");
+            tmp.startArray(ITERATIONS_KEY);
             for(DocumentIteration iteration : doc.getDocumentRevision().getDocumentIterations()) {
                 tmp.startObject();
                 setField(tmp, "iteration", "" + iteration.getIteration(), 0.10f);
@@ -215,7 +216,7 @@ public class ESMapper {
             setField(tmp,"name",part.getPartRevision().getPartMaster().getName(), 5f);
             setField(tmp,TYPE_KEY,part.getPartRevision().getPartMaster().getType(),2f);
             setField(tmp,VERSION_KEY,part.getPartVersion(), 0.10f);
-            tmp.startArray("iterations");
+            tmp.startArray(ITERATIONS_KEY);
             for(PartIteration iteration: part.getPartRevision().getPartIterations()) {
                 tmp.startObject();
 
