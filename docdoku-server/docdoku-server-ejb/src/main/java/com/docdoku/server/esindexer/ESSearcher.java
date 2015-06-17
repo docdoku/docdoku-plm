@@ -55,9 +55,10 @@ import java.util.logging.Logger;
 
 /**
  * Search Method using ElasticSearch API.
+ *
  * @author Taylor LABEJOF
  */
-@Stateless(name="ESSearcher")
+@Stateless(name = "ESSearcher")
 public class ESSearcher {
     private static final String I18N_CONF = "com.docdoku.core.i18n.LocalStrings";
     private static final Logger LOGGER = Logger.getLogger(ESSearcher.class.getName());
@@ -94,7 +95,7 @@ public class ESSearcher {
             for (int i = 0; i < sr.getHits().getHits().length; i++) {
                 SearchHit hit = sr.getHits().getAt(i);
                 DocumentRevision docR = getDocumentRevision(hit);
-                if(docR != null && !listOfDocuments.contains(docR)){
+                if (docR != null && !listOfDocuments.contains(docR)) {
                     listOfDocuments.add(docR);
                 }
             }
@@ -127,7 +128,7 @@ public class ESSearcher {
             for (int i = 0; i < sr.getHits().getHits().length; i++) {
                 SearchHit hit = sr.getHits().getAt(i);
                 PartRevision partRevision = getPartRevision(hit);
-                if (partRevision!=null && !listOfParts.contains(partRevision)) {
+                if (partRevision != null && !listOfParts.contains(partRevision)) {
                     listOfParts.add(partRevision);
                 }
             }
@@ -165,7 +166,7 @@ public class ESSearcher {
             for (int i = 0; i < sr.getHits().getHits().length; i++) {
                 SearchHit hit = sr.getHits().getAt(i);
                 DocumentRevision docR = getDocumentRevision(hit);
-                if(docR != null && !ret.contains(docR)){
+                if (docR != null && !ret.contains(docR)) {
                     ret.add(docR);
                 }
             }
@@ -175,7 +176,7 @@ public class ESSearcher {
             for (int i = 0; i < sr.getHits().getHits().length; i++) {
                 SearchHit hit = sr.getHits().getAt(i);
                 PartRevision partRevision = getPartRevision(hit);
-                if (partRevision!=null && !ret.contains(partRevision)) {
+                if (partRevision != null && !ret.contains(partRevision)) {
                     ret.add(partRevision);
                 }
             }
@@ -213,7 +214,7 @@ public class ESSearcher {
                     for (int i = 0; i < sr.getHits().getHits().length; i++) {
                         SearchHit hit = sr.getHits().getAt(i);
                         DocumentRevision docR = getDocumentRevision(hit);
-                        if(docR != null && !listOfDocuments.contains(docR)){
+                        if (docR != null && !listOfDocuments.contains(docR)) {
                             listOfDocuments.add(docR);
                         }
                     }
@@ -253,7 +254,7 @@ public class ESSearcher {
                     for (int i = 0; i < sr.getHits().getHits().length; i++) {
                         SearchHit hit = sr.getHits().getAt(i);
                         PartRevision partRevision = getPartRevision(hit);
-                        if (partRevision!=null && !listOfParts.contains(partRevision)) {
+                        if (partRevision != null && !listOfParts.contains(partRevision)) {
                             listOfParts.add(partRevision);
                         }
                     }
@@ -281,7 +282,7 @@ public class ESSearcher {
             qr = QueryBuilders.disMaxQuery()                                                                            // TODO Cut the query and make a boolQuery() with all the words
                     .add(QueryBuilders.fuzzyLikeThisQuery()
                             .likeText(docQuery.getFullText()))
-                    .add(QueryBuilders.queryString("*"+docQuery.getFullText() + "*")
+                    .add(QueryBuilders.queryString("*" + docQuery.getFullText() + "*")
                             .boost(2.5f))
                     .tieBreaker(1.2f);
         } else {
@@ -347,7 +348,7 @@ public class ESSearcher {
             qr = QueryBuilders.disMaxQuery()
                     .add(QueryBuilders.fuzzyLikeThisQuery()
                             .likeText(partQuery.getFullText()))
-                    .add(QueryBuilders.queryString("*"+partQuery.getFullText() + "*")
+                    .add(QueryBuilders.queryString("*" + partQuery.getFullText() + "*")
                             .boost(2.5f))
                     .tieBreaker(1.2f);
         } else {
@@ -453,7 +454,7 @@ public class ESSearcher {
      * @param pQuery      Search criterion
      * @return the uniWorkspace Search Request
      */
-    private SearchRequestBuilder getSearchRequest(Client client, String workspaceId, String type, QueryBuilder pQuery){
+    private SearchRequestBuilder getSearchRequest(Client client, String workspaceId, String type, QueryBuilder pQuery) {
         return client.prepareSearch(workspaceId)
                 .setTypes(type)
                 .setSearchType(SearchType.QUERY_THEN_FETCH)
@@ -462,6 +463,7 @@ public class ESSearcher {
 
     /**
      * Get a document matching a search hit
+     *
      * @param hit The search hit provide by ElasticSearch
      */
     private DocumentRevision getDocumentRevision(SearchHit hit) {
@@ -478,6 +480,7 @@ public class ESSearcher {
 
     /**
      * Get a document matching a search hit
+     *
      * @param hit The search hit provide by ElasticSearch
      */
     private PartRevision getPartRevision(SearchHit hit) {
