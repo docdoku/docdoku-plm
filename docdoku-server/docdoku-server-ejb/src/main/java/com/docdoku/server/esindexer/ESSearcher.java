@@ -46,10 +46,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -124,19 +121,19 @@ public class ESSearcher {
             SearchRequestBuilder srb = getSearchRequest(client, ESTools.formatIndexName(partQuery.getWorkspaceId()), ESTYPE_PART, qr);
             SearchResponse sr = srb.execute().actionGet();
 
-            List<PartRevision> listOfParts = new ArrayList<>();
+            HashSet<PartRevision> setOfParts = new HashSet<>();
             for (int i = 0; i < sr.getHits().getHits().length; i++) {
                 SearchHit hit = sr.getHits().getAt(i);
                 PartRevision partRevision = getPartRevision(hit);
-                if (partRevision != null && !listOfParts.contains(partRevision)) {
-                    listOfParts.add(partRevision);
+                if (partRevision != null) {
+                    setOfParts.add(partRevision);
                 }
             }
 
             //Todo FilterConfigSpec
 
             client.close();
-            return listOfParts;
+            return new ArrayList<>(setOfParts);
         } catch (NoNodeAvailableException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_SEARCH_ERROR_1);
             LOGGER.log(Level.WARNING, logMessage, e);
