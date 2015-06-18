@@ -45,6 +45,7 @@ define(['dmu/LoaderManager', 'async','backbone'],
                 stats: function (stats) {
                     _this.workerStats = stats;
                 },
+
                 directives: function (directives) {
                     _this.aborted += _this.xhrQueue.tasks.length;
                     _this.xhrQueue.kill();
@@ -56,7 +57,8 @@ define(['dmu/LoaderManager', 'async','backbone'],
                             if (loadCache[instance.partIterationId + '-' + instance.qualityLoaded]) {
                                 if (loadCache[instance.partIterationId + '-' + instance.qualityLoaded].count === 1) {
                                     loadCache[instance.partIterationId + '-' + instance.qualityLoaded].geometry.dispose();
-                                    loadCache[instance.partIterationId + '-' + instance.qualityLoaded].material.dispose();
+                                    disposeMaterials(loadCache[instance.partIterationId + '-' + instance.qualityLoaded]
+                                        .material);
                                     loadCache[instance.partIterationId + '-' + instance.qualityLoaded] = null;
                                     delete loadCache[instance.partIterationId + '-' + instance.qualityLoaded];
                                 } else {
@@ -87,6 +89,22 @@ define(['dmu/LoaderManager', 'async','backbone'],
             }, false);
 
             /**
+             * Multiples type of materials possible
+             * Json Loader will use Array of Materials
+             * This function will dispose of the material if it's simple
+             * or dispose of the material array
+             */
+            function disposeMaterials(materials) {
+                if(materials.materials === 'undefined') {
+                    materials.dispose();
+                } else {
+                    _(materials.materials).each(function(m) {
+                        m.dispose();
+                    });
+                }
+            }
+
+            /**
              * Load process : xhr + store geometry and materials in array
              */
             function loadProcess(directive, callback) {
@@ -110,7 +128,8 @@ define(['dmu/LoaderManager', 'async','backbone'],
                     if (loadCache[instance.partIterationId + '-' + instance.qualityLoaded]) {
                         if (loadCache[instance.partIterationId + '-' + instance.qualityLoaded].count === 1) {
                             loadCache[instance.partIterationId + '-' + instance.qualityLoaded].geometry.dispose();
-                            loadCache[instance.partIterationId + '-' + instance.qualityLoaded].material.dispose();
+                            disposeMaterials(loadCache[instance.partIterationId + '-' + instance.qualityLoaded]
+                                .materiall);
                             loadCache[instance.partIterationId + '-' + instance.qualityLoaded] = null;
                             delete loadCache[instance.partIterationId + '-' + instance.qualityLoaded];
                         } else {
@@ -375,14 +394,7 @@ define(['dmu/LoaderManager', 'async','backbone'],
 
                 _(loadCache).each(function (cache) {
                     cache.geometry.dispose();
-                    if(cache.material.materials === 'undefined') {
-                        cache.material.dispose();
-                    } else {
-                        _(cache.material.materials).each(function (m) {
-                            m.dispose();
-                        });
-                    }
-
+                    disposeMaterials(cache.material);
                 });
 
                 worker.postMessage({fn: 'clear', obj: null});
