@@ -54,6 +54,8 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Date;
@@ -243,7 +245,16 @@ public class PartBinaryResource{
             fullName = workspaceId+"/parts/" + partNumber + "/" + version + "/" + iteration + "/";
         }
 
-        fullName += (subType!= null && !subType.isEmpty()) ? subType + "/" +fileName : fileName;
+        String decodedFileName = fileName;
+
+        try {
+            decodedFileName  = URLDecoder.decode(fileName, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.log(Level.SEVERE,"Cannot decode filename");
+            LOGGER.log(Level.FINER, null, e);
+        }
+
+        fullName += (subType!= null && !subType.isEmpty()) ? subType + "/" +decodedFileName : decodedFileName;
 
         return downloadPartFile(request,range,fullName,subType,type,output);
     }
