@@ -59,8 +59,8 @@ import java.util.logging.Logger;
 public class ESSearcher {
     private static final String I18N_CONF = "com.docdoku.core.i18n.LocalStrings";
     private static final Logger LOGGER = Logger.getLogger(ESSearcher.class.getName());
-    private static final String ESTYPE_DOCUMENT = "document";
-    private static final String ESTYPE_PART = "part";
+    private static final String ES_TYPE_DOCUMENT = "document";
+    private static final String ES_TYPE_PART = "part";
     private static final String ES_SEARCH_ERROR_1 = "ES_SearchError1";
     private static final String ES_SERVER_ERROR_1 = "IndexerServerException";
 
@@ -84,7 +84,7 @@ public class ESSearcher {
         try {
             Client client = ESTools.createClient();
             QueryBuilder qr = getQueryBuilder(docQuery);
-            SearchRequestBuilder srb = getSearchRequest(client, ESTools.formatIndexName(docQuery.getWorkspaceId()), ESTYPE_DOCUMENT, qr);
+            SearchRequestBuilder srb = getSearchRequest(client, ESTools.formatIndexName(docQuery.getWorkspaceId()), ES_TYPE_DOCUMENT, qr);
             SearchResponse sr = srb.execute().actionGet();
 
 
@@ -118,7 +118,7 @@ public class ESSearcher {
         try {
             Client client = ESTools.createClient();
             QueryBuilder qr = getQueryBuilder(partQuery);
-            SearchRequestBuilder srb = getSearchRequest(client, ESTools.formatIndexName(partQuery.getWorkspaceId()), ESTYPE_PART, qr);
+            SearchRequestBuilder srb = getSearchRequest(client, ESTools.formatIndexName(partQuery.getWorkspaceId()), ES_TYPE_PART, qr);
             SearchResponse sr = srb.execute().actionGet();
 
             HashSet<PartRevision> setOfParts = new HashSet<>();
@@ -153,8 +153,8 @@ public class ESSearcher {
             Client client = ESTools.createClient();
             QueryBuilder qr = getQueryBuilder(query);
             MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
-            srbm.add(getSearchRequest(client, ESTools.formatIndexName(query.getWorkspaceId()), ESTYPE_DOCUMENT, qr));
-            srbm.add(getSearchRequest(client, ESTools.formatIndexName(query.getWorkspaceId()), "part", qr));
+            srbm.add(getSearchRequest(client, ESTools.formatIndexName(query.getWorkspaceId()), ES_TYPE_DOCUMENT, qr));
+            srbm.add(getSearchRequest(client, ESTools.formatIndexName(query.getWorkspaceId()), ES_TYPE_PART, qr));
             MultiSearchResponse srm = srbm.execute().actionGet();
 
             List<Object> ret = new ArrayList<>();
@@ -199,7 +199,7 @@ public class ESSearcher {
             MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
             WorkspaceDAO wDAO = new WorkspaceDAO(em);
             for (Workspace w : wDAO.getAll()) {
-                srbm.add(getSearchRequest(client, ESTools.formatIndexName(w.getId()), ESTYPE_DOCUMENT, qr));
+                srbm.add(getSearchRequest(client, ESTools.formatIndexName(w.getId()), ES_TYPE_DOCUMENT, qr));
             }
             MultiSearchResponse srm = srbm.execute().actionGet();
 
@@ -239,7 +239,7 @@ public class ESSearcher {
             MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
             WorkspaceDAO wDAO = new WorkspaceDAO(em);
             for (Workspace w : wDAO.getAll()) {
-                srbm.add(getSearchRequest(client, ESTools.formatIndexName(w.getId()), "part", qr));
+                srbm.add(getSearchRequest(client, ESTools.formatIndexName(w.getId()), ES_TYPE_PART, qr));
             }
             MultiSearchResponse srm = srbm.execute().actionGet();
 
@@ -286,11 +286,11 @@ public class ESSearcher {
             qr = QueryBuilders.boolQuery();
             if (docQuery.getDocMId() != null) {
                 ((BoolQueryBuilder) qr).should(
-                        QueryBuilders.fuzzyLikeThisFieldQuery("docMId").likeText(docQuery.getDocMId()));
+                        QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.DOCUMENT_ID_KEY).likeText(docQuery.getDocMId()));
             }
             if (docQuery.getTitle() != null) {
                 ((BoolQueryBuilder) qr).should(
-                        QueryBuilders.fuzzyLikeThisFieldQuery("title").likeText(docQuery.getTitle()));
+                        QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.TITLE_KEY).likeText(docQuery.getTitle()));
             }
             if (docQuery.getVersion() != null) {
                 ((BoolQueryBuilder) qr).should(
@@ -328,7 +328,7 @@ public class ESSearcher {
                 }
             }
             if (docQuery.getContent() != null)
-                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery("files").likeText(docQuery.getContent()));
+                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.FILES_KEY).likeText(docQuery.getContent()));
         }
         return qr;
     }
@@ -351,10 +351,10 @@ public class ESSearcher {
         } else {
             qr = QueryBuilders.boolQuery();
             if (partQuery.getPartNumber() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery("partNumber").likeText(partQuery.getPartNumber()));
+                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.PART_NUMBER_KEY).likeText(partQuery.getPartNumber()));
             }
             if (partQuery.getName() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery("name").likeText(partQuery.getName()));
+                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.PART_NAME_KEY).likeText(partQuery.getName()));
             }
             if (partQuery.getVersion() != null) {
                 ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.VERSION_KEY).likeText(partQuery.getVersion()));
@@ -366,11 +366,8 @@ public class ESSearcher {
                 ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.TYPE_KEY).likeText(partQuery.getType()));
             }
             if (partQuery.isStandardPart() != null) {
-                if (partQuery.isStandardPart()) {
-                    ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery("standardPart").likeText("TRUE"));
-                } else {
-                    ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery("standardPart").likeText("FALSE"));
-                }
+                String text = partQuery.isStandardPart() ? "TRUE":"FALSE";
+                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.STANDARD_PART_KEY).likeText(text));
             }
             if (partQuery.getCreationDateFrom() != null && partQuery.getCreationDateTo() != null) {
                 ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.CREATION_DATE_KEY).from(partQuery.getCreationDateFrom()).to(partQuery.getCreationDateTo()));
