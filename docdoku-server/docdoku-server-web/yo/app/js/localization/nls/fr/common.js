@@ -259,7 +259,7 @@ define({
 	MARKERS_OPACITY: "Changer l'opacité des marqueurs",
 	MARKERS_SIZE_MAX: "Augmenter la taille des marqueurs",
 	MARKERS_SIZE_MIN: "Diminuer la taille des marqueurs",
-	MASK_HELP: "Définissez le format de la référence des documents/articles créés avec ce modèle.</br></br>En plus des caractères ordinaires, vous pouvez utiliser '#' pour tout nombre valide et '*' pour n'importe quel caractère.</br></br>Par exemple 'FAX_***_##' accepte 'FAX-AZE-12' comme entrée valide pour la référence.<br /><br /> Un masque sans le caractère '*' ou '#' ne sera utilisable qu'une fois",
+	MASK_HELP: "Définissez le format de la référence des documents/articles créés avec ce modèle.</br></br>En plus des caractères ordinaires, vous pouvez utiliser '#' pour tout chiffre valide et '*' pour n'importe quel caractère.</br></br>Par exemple 'FAX_***_##' accepte 'FAX-AZE-12' comme entrée valide pour la référence.<br /><br /> Un masque sans caractère '*' ou '#' ne sera utilisable qu'une fois",
 	MASK: "Masque",
 	MEASURE: "Mesure",
 	MILESTONE: "Jalon",
