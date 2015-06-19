@@ -34,8 +34,6 @@ casper.test.begin('Product instance data path tests suite', 19, function product
         this.waitForSelector('#product_instance_btn', function openModal() {
             this.click('#product_instance_btn');
             this.test.assert(true, 'deliverable data button present');
-            this.capture('screenshot/product-instance/deb.png');
-
         }, function fail() {
             this.capture('screenshot/product-instance/NoDeliverableButton.png');
             this.test.assert(false, 'deliverable data button not present');

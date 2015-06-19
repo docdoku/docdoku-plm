@@ -40,6 +40,14 @@ casper.test.begin('Used by tab tests suite', 2, function usedByTabTestsSuite() {
     casper.then(function waitForModalDisplay() {
         this.waitForSelector('#part-modal li a[href="#tab-iteration-used-by"]', function openUsedByTab() {
             this.click('#part-modal li a[href="#tab-iteration-used-by"]');
+        });
+    });
+
+    /**
+     * Wait for used by tab
+     */
+    casper.then(function waitForUsedByDisplay() {
+        this.waitForSelector('#used-by-group-list-view > div > div > div > div.group-title', function checkValues() {
             this.test.assertSelectorHasText('#used-by-group-list-view > div > div > div > div.group-title', '< '+products.product1.number+' >', 'Part must be present in product "< '+products.product1.number+' >"');
             this.test.assertSelectorHasText('#used-by-product-instances > li.used-by-item > div.reference', productInstances.productInstance1.serialNumber, 'Part must be present in product instance "'+productInstances.productInstance1.serialNumber+'"');
         });
