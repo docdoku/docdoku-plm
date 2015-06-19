@@ -33,6 +33,9 @@ module.exports = {
         "js/auth/login.js",
         "js/pre/clean.js",
 
+        // WSDL Check
+        "js/wsdl/wsdlCheck.js",
+
         // Workflow creation
         "js/change-management/role/roleCreation.js",
         "js/change-management/workflow/workflowCreation.js",

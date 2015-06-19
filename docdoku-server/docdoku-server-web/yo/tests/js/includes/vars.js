@@ -217,6 +217,17 @@ var urls = {
     productStructureForDeliverable: homeUrl + 'product-structure/#' + workspace + '/' + products.product1.number + '/config-spec/pi-' + productInstances.productInstance1.serialNumber + '/bom',
     documentManagement: homeUrl + 'document-management/#' + workspace,
     changeManagement: homeUrl + 'change-management/#' + workspace,
+
+    WSDL:[
+        homeUrl + 'services/product?wsdl',
+        homeUrl + 'services/document?wsdl',
+        homeUrl + 'services/lov?wsdl',
+        homeUrl + 'services/productBaseline?wsdl',
+        homeUrl + 'services/UploadDownload?wsdl',
+        homeUrl + 'services/user?wsdl',
+        homeUrl + 'services/workflow?wsdl'
+    ],
+
     documentPermalink: homeUrl + 'documents/' + workspace + '/' + documents.document1.number + '/A',
     partPermalink: homeUrl + 'parts/' + workspace + '/' + products.part1.number + '/A',
 
