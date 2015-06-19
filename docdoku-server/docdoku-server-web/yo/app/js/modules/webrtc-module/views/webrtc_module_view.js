@@ -10,8 +10,6 @@ define([
 function (Backbone, webRTCAdapter, template, ChannelMessagesType, CALL_STATE, REJECT_CALL_REASON) {
 	'use strict';
 
-    App.debug = true;
-
     var WebRTCModuleView = Backbone.View.extend({
 
         el: '#webrtc_module',

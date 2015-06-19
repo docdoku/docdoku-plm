@@ -157,7 +157,7 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
 
                     break;
 
-                case 'js':
+                // Used for json files only (no referenced buffers)
                 case 'json':
                     if (this.JSONLoader === null) {
                         this.JSONLoader = new THREE.JSONLoader();
@@ -170,7 +170,10 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                     }, texturePath+'/attachedfiles/');
 
                     break;
-                    /*
+
+                // Used for binary json files only (referenced buffers - bin file)
+                case 'js':
+
                     if (this.BinaryLoader === null) {
                         this.BinaryLoader = new THREE.BinaryLoader();
                     }
@@ -182,7 +185,7 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                     }, texturePath);
 
                     break;
-                    */
+
 
                 default:
                     break;
