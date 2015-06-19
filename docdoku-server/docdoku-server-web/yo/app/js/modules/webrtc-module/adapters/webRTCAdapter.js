@@ -1,4 +1,7 @@
-define(function(){
+/*global mozRTCPeerConnection,mozRTCSessionDescription,mozRTCIceCandidate,webkitRTCPeerConnection,MediaStreamTrack,Promise*/
+define(function () {
+
+    'use strict';
 
     var RTCPeerConnection = null;
     var getUserMedia = null;
@@ -16,8 +19,7 @@ define(function(){
 
 
     if (navigator.mozGetUserMedia) {
-        console.log("This appears to be Firefox");
-        webrtcDetectedBrowser = "firefox";
+        webrtcDetectedBrowser = 'firefox';
         webrtcDetectedVersion = parseInt(navigator.userAgent.match(/Firefox\/([0-9]+)\./)[1], 10);
         webrtcMinimumVersion = 31;
         RTCPeerConnection = function (pcConfig, pcConstraints) {
@@ -26,10 +28,10 @@ define(function(){
                     var newIceServers = [];
                     for (var i = 0; i < pcConfig.iceServers.length; i++) {
                         var server = pcConfig.iceServers[i];
-                        if (server.hasOwnProperty("urls")) {
+                        if (server.hasOwnProperty('urls')) {
                             for (var j = 0; j < server.urls.length; j++) {
                                 var newServer = {url: server.urls[j]};
-                                if (server.urls[j].indexOf("turn") === 0) {
+                                if (server.urls[j].indexOf('turn') === 0) {
                                     newServer.username = server.username;
                                     newServer.credential = server.credential;
                                 }
@@ -48,12 +50,12 @@ define(function(){
         window.RTCIceCandidate = mozRTCIceCandidate;
         getUserMedia = webrtcDetectedVersion < 38 ? function (c, onSuccess, onError) {
             var constraintsToFF37 = function (c) {
-                if (typeof c !== "object" || c.require) {
+                if (typeof c !== 'object' || c.require) {
                     return c;
                 }
                 var require = [];
                 Object.keys(c).forEach(function (key) {
-                    var r = c[key] = typeof c[key] === "object" ? c[key] : {ideal: c[key]};
+                    var r = c[key] = typeof c[key] === 'object' ? c[key] : {ideal: c[key]};
                     if (r.exact !== undefined) {
                         r.min = r.max = r.exact;
                         delete r.exact;
@@ -77,10 +79,8 @@ define(function(){
                 }
                 return c;
             };
-            console.log("spec: " + JSON.stringify(c));
             c.audio = constraintsToFF37(c.audio);
             c.video = constraintsToFF37(c.video);
-            console.log("ff37: " + JSON.stringify(c));
             return navigator.mozGetUserMedia(c, onSuccess, onError);
         } : navigator.mozGetUserMedia.bind(navigator);
         navigator.getUserMedia = getUserMedia;
@@ -89,11 +89,11 @@ define(function(){
         }
         navigator.mediaDevices.enumerateDevices = navigator.mediaDevices.enumerateDevices || function () {
             return new Promise(function (resolve) {
-                var infos = [{kind: "audioinput", deviceId: "default", label: "", groupId: ""}, {
-                    kind: "videoinput",
-                    deviceId: "default",
-                    label: "",
-                    groupId: ""
+                var infos = [{kind: 'audioinput', deviceId: 'default', label: '', groupId: ''}, {
+                    kind: 'videoinput',
+                    deviceId: 'default',
+                    label: '',
+                    groupId: ''
                 }];
                 resolve(infos);
             });
@@ -102,7 +102,7 @@ define(function(){
             var orgEnumerateDevices = navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices);
             navigator.mediaDevices.enumerateDevices = function () {
                 return orgEnumerateDevices().catch(function (e) {
-                    if (e.name === "NotFoundError") {
+                    if (e.name === 'NotFoundError') {
                         return [];
                     }
                     throw e;
@@ -110,17 +110,14 @@ define(function(){
             };
         }
         attachMediaStream = function (element, stream) {
-            console.log("Attaching media stream");
             element.mozSrcObject = stream;
         };
         reattachMediaStream = function (to, from) {
-            console.log("Reattaching media stream");
             to.mozSrcObject = from.mozSrcObject;
         };
     } else {
         if (navigator.webkitGetUserMedia) {
-            console.log("This appears to be Chrome");
-            webrtcDetectedBrowser = "chrome";
+            webrtcDetectedBrowser = 'chrome';
             webrtcDetectedVersion = parseInt(navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./)[2], 10);
             webrtcMinimumVersion = 38;
             RTCPeerConnection = function (pcConfig, pcConstraints) {
@@ -128,43 +125,43 @@ define(function(){
             };
             getUserMedia = function (c, onSuccess, onError) {
                 var constraintsToChrome = function (c) {
-                    if (typeof c !== "object" || c.mandatory || c.optional) {
+                    if (typeof c !== 'object' || c.mandatory || c.optional) {
                         return c;
                     }
                     var cc = {};
                     Object.keys(c).forEach(function (key) {
-                        if (key === "require" || key === "advanced") {
+                        if (key === 'require' || key === 'advanced') {
                             return;
                         }
-                        var r = typeof c[key] === "object" ? c[key] : {ideal: c[key]};
-                        if (r.exact !== undefined && typeof r.exact === "number") {
+                        var r = typeof c[key] === 'object' ? c[key] : {ideal: c[key]};
+                        if (r.exact !== undefined && typeof r.exact === 'number') {
                             r.min = r.max = r.exact;
                         }
                         var oldname = function (prefix, name) {
                             if (prefix) {
                                 return prefix + name.charAt(0).toUpperCase() + name.slice(1);
                             }
-                            return name === "deviceId" ? "sourceId" : name;
+                            return name === 'deviceId' ? 'sourceId' : name;
                         };
                         if (r.ideal !== undefined) {
                             cc.optional = cc.optional || [];
                             var oc = {};
-                            if (typeof r.ideal === "number") {
-                                oc[oldname("min", key)] = r.ideal;
+                            if (typeof r.ideal === 'number') {
+                                oc[oldname('min', key)] = r.ideal;
                                 cc.optional.push(oc);
                                 oc = {};
-                                oc[oldname("max", key)] = r.ideal;
+                                oc[oldname('max', key)] = r.ideal;
                                 cc.optional.push(oc);
                             } else {
-                                oc[oldname("", key)] = r.ideal;
+                                oc[oldname('', key)] = r.ideal;
                                 cc.optional.push(oc);
                             }
                         }
-                        if (r.exact !== undefined && typeof r.exact !== "number") {
+                        if (r.exact !== undefined && typeof r.exact !== 'number') {
                             cc.mandatory = cc.mandatory || {};
-                            cc.mandatory[oldname("", key)] = r.exact;
+                            cc.mandatory[oldname('', key)] = r.exact;
                         } else {
-                            ["min", "max"].forEach(function (mix) {
+                            ['min', 'max'].forEach(function (mix) {
                                 if (r[mix] !== undefined) {
                                     cc.mandatory = cc.mandatory || {};
                                     cc.mandatory[oldname(mix, key)] = r[mix];
@@ -177,24 +174,22 @@ define(function(){
                     }
                     return cc;
                 };
-                console.log("spec:   " + JSON.stringify(c));
                 c.audio = constraintsToChrome(c.audio);
                 c.video = constraintsToChrome(c.video);
-                console.log("chrome: " + JSON.stringify(c));
                 return navigator.webkitGetUserMedia(c, onSuccess, onError);
             };
             navigator.getUserMedia = getUserMedia;
             attachMediaStream = function (element, stream) {
-                if (typeof element.srcObject !== "undefined") {
+                if (typeof element.srcObject !== 'undefined') {
                     element.srcObject = stream;
                 } else {
-                    if (typeof element.mozSrcObject !== "undefined") {
+                    if (typeof element.mozSrcObject !== 'undefined') {
                         element.mozSrcObject = stream;
                     } else {
-                        if (typeof element.src !== "undefined") {
+                        if (typeof element.src !== 'undefined') {
                             element.src = URL.createObjectURL(stream);
                         } else {
-                            console.log("Error attaching stream to element.");
+                            console.error('Error attaching stream to element.');
                         }
                     }
                 }
@@ -204,16 +199,17 @@ define(function(){
             };
             if (!navigator.mediaDevices) {
                 navigator.mediaDevices = {
-                    getUserMedia: requestUserMedia, enumerateDevices: function () {
+                    getUserMedia: requestUserMedia,
+                    enumerateDevices: function () {
                         return new Promise(function (resolve) {
-                            var kinds = {audio: "audioinput", video: "videoinput"};
+                            var kinds = {audio: 'audioinput', video: 'videoinput'};
                             return MediaStreamTrack.getSources(function (devices) {
                                 resolve(devices.map(function (device) {
                                     return {
                                         label: device.label,
                                         kind: kinds[device.kind],
                                         deviceId: device.id,
-                                        groupId: ""
+                                        groupId: ''
                                     };
                                 }));
                             });
@@ -222,7 +218,7 @@ define(function(){
                 };
             }
         } else {
-            console.log("Browser does not appear to be WebRTC-capable");
+            console.error('Browser does not appear to be WebRTC-capable');
         }
     }
 
@@ -234,5 +230,5 @@ define(function(){
         webrtcDetectedBrowser: webrtcDetectedBrowser,
         webrtcDetectedVersion: webrtcDetectedVersion,
         webrtcMinimumVersion: webrtcMinimumVersion
-    }
+    };
 });
