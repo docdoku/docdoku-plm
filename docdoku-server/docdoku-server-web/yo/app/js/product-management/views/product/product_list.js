@@ -30,8 +30,8 @@ define([
             this.oTable=null;
             this.collection.fetch({
                 reset: true,
-                error:function(err){
-                    _this.trigger('error',err);
+                error:function(collection,err){
+                    _this.trigger('error', null, err);
                 }
             });
             return this;

@@ -100,7 +100,7 @@ public class ProductResource {
         for (int i = 0; i < cis.size(); i++) {
             ConfigurationItem ci = cis.get(i);
             dtos[i] = new ConfigurationItemDTO(mapper.map(ci.getAuthor(),UserDTO.class),ci.getId(), ci.getWorkspaceId(), ci.getDescription(), ci.getDesignItem().getNumber(),ci.getDesignItem().getName(), ci.getDesignItem().getLastRevision().getVersion());
-            dtos[i].setTypedLinks(this.getTypedLinkForConfigurationItem(workspaceId, ci.getId()));
+            dtos[i].setTypedLinks(getTypedLinkForConfigurationItem(workspaceId, ci.getId()));
         }
 
         return dtos;
