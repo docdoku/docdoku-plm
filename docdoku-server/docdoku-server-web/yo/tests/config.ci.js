@@ -71,7 +71,7 @@ module.exports = {
         "js/product-management/assembly/bomInspection.js",
         "js/product-management/product-instance/productInstanceData.js",
         "js/product-management/pathToPathLink/pathToPathLinkCheck.js",
-
+        "js/product-management/part/checkUsedByList.js",
 
         // Documents tags
         "js/document-management/tag/tagCreation.js",
