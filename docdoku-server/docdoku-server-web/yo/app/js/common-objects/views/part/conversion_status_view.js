@@ -16,6 +16,11 @@ define([
             var _this = this;
             this.model.getConversionStatus().success(function(status){
                 _this.$el.html(Mustache.render(template, {status:status,hasCadFile:_this.model.get('nativeCADFile') || _this.hasNewFiles,i18n:App.config.i18n}));
+                if(status && status.pending){
+                    setTimeout(function() {
+                        _this.render();
+                    }, 3000);
+                }
             }).error(function(){
                 _this.$el.html(Mustache.render(template, {status:null,hasCadFile:_this.model.get('nativeCADFile'),i18n:App.config.i18n}));
             });
@@ -24,6 +29,7 @@ define([
         launch:function(){
             this.hasNewFiles = true;
             var self = this;
+            this.$el.html(Mustache.render(template, {status:{pending:true},hasCadFile:this.model.get('nativeCADFile'),i18n:App.config.i18n}));
             this.model.launchConversion().success(function(){
                 self.render();
             }).error(function(){

@@ -16,10 +16,12 @@
 <i class="fa fa-recycle fail" title="{{i18n.CONVERSION_FAILED}}"></i><b>{{i18n.CONVERSION_FAILED}}</b>
 {{/status}}
     {{#status}}
-    {{^succeed}}
-    <span class="conversion-status-actions">
-            <a class="launch">{{i18n.RETRY}}</a>
-    </span>
-    {{/succeed}}
+        {{^pending}}
+            {{^succeed}}
+            <span class="conversion-status-actions">
+                    <a class="launch">{{i18n.RETRY}}</a>
+            </span>
+            {{/succeed}}
+        {{/pending}}
     {{/status}}
 {{/hasCadFile}}
