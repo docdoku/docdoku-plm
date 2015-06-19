@@ -13,7 +13,7 @@ define(['backbone'], function (Backbone) {
         },
 
         getMappedUser: function () {
-            return this.get('defaultUserMapped');
+            return this.get('defaultAssignee');
         },
 
         getMappedUserLogin: function () {

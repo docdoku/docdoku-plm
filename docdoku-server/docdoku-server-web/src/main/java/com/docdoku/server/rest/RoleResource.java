@@ -105,7 +105,7 @@ public class RoleResource {
     public Response createRole(RoleDTO roleDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, CreationException {
 
-        UserDTO userDTO = roleDTO.getDefaultUserMapped();
+        UserDTO userDTO = roleDTO.getDefaultAssignee();
         String userLogin = null;
         if(userDTO != null){
             userLogin = userDTO.getLogin();
@@ -129,7 +129,7 @@ public class RoleResource {
     public Response updateRole(@PathParam("roleName") String roleName, RoleDTO roleDTO)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
-        UserDTO userDTO = roleDTO.getDefaultUserMapped();
+        UserDTO userDTO = roleDTO.getDefaultAssignee();
         String userLogin = null;
         if(userDTO != null){
             userLogin = userDTO.getLogin();
@@ -161,7 +161,7 @@ public class RoleResource {
         RoleDTO roleDTO = mapper.map(role,RoleDTO.class);
         roleDTO.setWorkspaceId(role.getWorkspace().getId());
         if(role.getDefaultAssignee() != null){
-            roleDTO.setDefaultUserMapped(mapper.map(role.getDefaultAssignee(), UserDTO.class));
+            roleDTO.setDefaultAssignee(mapper.map(role.getDefaultAssignee(), UserDTO.class));
         }
         roleDTO.setId(role.getName());
 

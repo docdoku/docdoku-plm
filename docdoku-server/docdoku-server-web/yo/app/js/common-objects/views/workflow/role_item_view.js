@@ -17,8 +17,8 @@ function (Backbone, Mustache, template) {
         initialize: function () {
             _.bindAll(this);
 
-            if (!this.options.nullable && !this.model.get('defaultUserMapped')) {
-                this.model.set('defaultUserMapped', {login: this.options.userList.first().getLogin()});
+            if (!this.options.nullable && !this.model.get('defaultAssignee')) {
+                this.model.set('defaultAssignee', {login: this.options.userList.first().getLogin()});
             }
         },
 
@@ -64,7 +64,7 @@ function (Backbone, Mustache, template) {
             if (this.$select.val()) {
                 userDTO = {login: this.$select.val()};
             }
-            this.model.set({defaultUserMapped: userDTO});
+            this.model.set({defaultAssignee: userDTO});
         }
 
     });

@@ -110,7 +110,7 @@ define([
                     selectedRole = {
                         workspaceId: App.config.workspaceId,
                         name: roleName,
-                        defaultUserMapped: null
+                        defaultAssignee: null
                     };
                     this.newRoles.push(selectedRole);
                     this.roles.add(selectedRole);

@@ -68,7 +68,7 @@ define([
                 this.collection.add({
                     workspaceId: App.config.workspaceId,
                     name: this.$newRoleName.val(),
-                    defaultUserMapped: null
+                    defaultAssignee: null
                 });
                 this.resetNewRoleForm();
             }
