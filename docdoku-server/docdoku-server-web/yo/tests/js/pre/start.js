@@ -29,12 +29,15 @@ casper.options.viewportSize = {
 if (conf.waitOnRequest) {
     casper.options.onResourceRequested = function (casper, requestData) {
 
-        this.log('Waiting for AJAX request: ' + requestData.url, 'info');
-        casper.waitForResource(requestData.url, function () {
-            this.log('AJAX request returned: ' + requestData.url, 'info');
-        }, function () {
-            this.log('AJAX request didn\'t return after wait period: ' + requestData.url, 'warning');
-        }, conf.requestTimeOut);
+        // do not wait for fonts
+        if(requestData.url.indexOf('fonts') === -1 && requestData.url.indexOf('livereload.js') === -1) {
+            this.log('Waiting for AJAX request: ' + requestData.url, 'info');
+            casper.waitForResource(requestData.url, function () {
+                this.log('AJAX request returned: ' + requestData.url, 'info');
+            }, function () {
+                this.log('AJAX request didn\'t return after wait period: ' + requestData.url, 'warning');
+            }, conf.requestTimeOut);
+        }
 
     };
 
