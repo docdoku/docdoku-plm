@@ -856,7 +856,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                             if (newAttr == null
                                     || !newAttr.getName().equals(currentAttr.getName())
                                     || !newAttr.getClass().equals(currentAttr.getClass())) {
-                                //Attribut has been swapped with a new attributs or his type has changed
+                                // Attribute has been swapped with a new attributes or his type has changed
                                 throw new NotAllowedException(locale, "NotAllowedException45");
                             }
                         }

@@ -54,16 +54,16 @@ define([
         },
 
         displayAttribute: function(){
-            var listViewAttributs = new TemplateNewAttributeListView({
+            var listViewAttributes = new TemplateNewAttributeListView({
                 el: '#items-' + this.cid,
                 collection: this.collection,
                 lovs:this.lovs,
                 editMode: this.editMode
             });
             this.attributesView = this.addSubView(
-                listViewAttributs
+                listViewAttributes
             );
-            listViewAttributs.collectionReset();
+            listViewAttributes.collectionReset();
 
             var lockInput = this.$el.find('.lock input')[0];
             if(lockInput){
