@@ -46,6 +46,11 @@
         </init-param>
     </filter>
     <filter>
+        <filter-name>AuthMayFilter</filter-name>
+        <filter-class>com.docdoku.server.filters.AuthMayFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+    <filter>
         <filter-name>PermalinkFilter</filter-name>
         <filter-class>com.docdoku.server.filters.PermalinkFilter</filter-class>
         <async-supported>true</async-supported>
@@ -61,6 +66,10 @@
         <url-pattern>/change-management/*</url-pattern>
         <url-pattern>/visualization/*</url-pattern>
         <url-pattern>/home</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthMayFilter</filter-name>
+        <url-pattern>/faces/download.xhtml</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>PermalinkFilter</filter-name>

@@ -20,14 +20,18 @@
 package com.docdoku.server.jsf.actions;
 
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.exceptions.AccountAlreadyExistsException;
 import com.docdoku.core.exceptions.AccountNotFoundException;
+import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.services.IUserManagerLocal;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -58,6 +62,22 @@ public class AccountBean {
     private String organizationAdmin;
 
     public AccountBean() {
+    }
+
+    public String register() throws AccountAlreadyExistsException, CreationException, ServletException {
+
+        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
+
+        if(language == null || "".equals(language) || " ".equals(language)){
+            language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
+        }
+
+        userManager.createAccount(login, name, email, language, password, timeZone);
+        request.login(login, password);
+
+        HttpSession session = request.getSession();
+        session.setAttribute("remoteUser",login);
+        return request.getContextPath()+"/register.xhtml";
     }
 
     public String updateAccount() throws AccountNotFoundException {

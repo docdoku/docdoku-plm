@@ -21,10 +21,7 @@
 package com.docdoku.server.filters;
 
 import com.docdoku.core.common.Account;
-import com.docdoku.core.common.Organization;
-import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.AccountNotFoundException;
-import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.jsf.actions.AccountBean;
 
@@ -39,7 +36,6 @@ import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -79,34 +75,7 @@ public class AuthFilter implements Filter {
             redirectLogin(httpRequest,response);
         } else {
             try {
-                Account user = userManager.getAccount(remoteUser);
-                boolean isAdmin = userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID);
-                accountBean.setLogin(user.getLogin());
-                accountBean.setEmail(user.getEmail());
-                accountBean.setLanguage(user.getLanguage());
-                accountBean.setName(user.getName());
-                accountBean.setTimeZone(user.getTimeZone());
-                Organization organization = user.getOrganization();
-                if(organization!=null){
-                    accountBean.setOrganizationName(user.getOrganization().getName());
-                    accountBean.setOrganizationAdmin(organization.getOwner().getLogin());
-                }
-
-                accountBean.setSuperAdmin(isAdmin);
-
-                Map<String, Workspace> administeredWorkspaces = new HashMap<>();
-                for (Workspace wks : userManager.getAdministratedWorkspaces()) {
-                    administeredWorkspaces.put(wks.getId(), wks);
-                }
-                accountBean.setAdministeredWorkspaces(administeredWorkspaces);
-
-                if(!isAdmin){
-                    Set<Workspace> regularWorkspaces = new HashSet<>();
-                    Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
-                    regularWorkspaces.addAll(Arrays.asList(workspaces));
-                    regularWorkspaces.removeAll(administeredWorkspaces.values());
-                    accountBean.setRegularWorkspaces(regularWorkspaces);
-                }
+                FilterUtils.hookAccountBeanData(remoteUser,userManager,accountBean);
                 chain.doFilter(request, response);
             } catch (AccountNotFoundException e) {
                 LOGGER.log(Level.FINEST,null,e);

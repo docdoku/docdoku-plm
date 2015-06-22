@@ -23,17 +23,17 @@
             <h:form>
                 <fieldset>
                     <h:outputLabel value="#{i18nRegistration['section.userid']}*:" for="login"/>
-                    <h:inputText id="login" value="#{registrationBean.login}" size="20" maxlength="50"/>
+                    <h:inputText id="login" value="#{accountBean.login}" size="20" maxlength="50"/>
 
                     <h:outputLabel value="#{i18nRegistration['section.name']}*:" for="name"/>
-                    <h:inputText id="name" value="#{registrationBean.name}" size="20" maxlength="255"/>
+                    <h:inputText id="name" value="#{accountBean.name}" size="20" maxlength="255"/>
 
                     <h:outputLabel value="#{i18nRegistration['section.email']}*:" for="email"/>
-                    <h:inputText id="email" value="#{registrationBean.email}" size="20" maxlength="255"/>
+                    <h:inputText id="email" value="#{accountBean.email}" size="20" maxlength="255"/>
 
                     <h:outputLabel value="#{i18nRegistration['section.language']}*:" for="language"/>
-                    <h:selectOneMenu id="language" value="#{registrationBean.language}">
-                        <f:selectItem id="browser-language-item" itemLabel="#{i18nRegistration['section.language.browser']} : #{registrationBean.language}" itemValue="" />
+                    <h:selectOneMenu id="language" value="#{accountBean.language}">
+                        <f:selectItem id="browser-language-item" itemLabel="#{i18nRegistration['section.language.browser']} : #{accountBean.language}" itemValue="" />
                         <f:selectItem id="en-language-item" itemLabel="#{i18nRegistration['section.language.en']}" itemValue="en" />
                         <f:selectItem id="fr-language-item" itemLabel="#{i18nRegistration['section.language.fr']}" itemValue="fr" />
                     </h:selectOneMenu>
@@ -41,14 +41,14 @@
                     <br />
 
                     <h:outputLabel value="#{i18nRegistration['section.timeZone']}*:" for="timeZone"/>
-                    <h:selectOneMenu id="timeZone" value="#{registrationBean.timeZone}">
-                        <f:selectItems value="#{registrationBean.availableTimeZones}"/>
+                    <h:selectOneMenu id="timeZone" value="#{accountBean.timeZone}">
+                        <f:selectItems value="#{accountBean.availableTimeZones}"/>
                     </h:selectOneMenu>
 
                     <br />
 
                     <h:outputLabel value="#{i18nRegistration['section.password']}*:" for="password"/>
-                    <h:inputSecret label="#{i18nRegistration['section.password']}" binding="#{newPasswordInput}" id="password" value="#{registrationBean.password}" immediate="true" required="true" size="20" maxlength="50"/>
+                    <h:inputSecret label="#{i18nRegistration['section.password']}" binding="#{newPasswordInput}" id="password" value="#{accountBean.password}" immediate="true" required="true" size="20" maxlength="50"/>
 
                     <h:outputLabel value="#{i18nRegistration['section.confirmPassword']}*:" for="confirmPassword"/>
                     <h:inputSecret label="#{i18nRegistration['section.confirmPassword']}" binding="#{confirmPasswordInput}" id="confirmPassword" immediate="true" required="true" size="20" maxlength="50"/>
@@ -59,7 +59,7 @@
                         <f:attribute name="confirmPasswordInput" value="#{confirmPasswordInput}" />
                     </h:inputHidden>
                     <br/>
-                    <h:commandButton styleClass="btn" action="#{registrationBean.register}" value="#{i18nRegistration['section.signup']}" alt="#{i18nRegistration['section.signup']}"/>
+                    <h:commandButton styleClass="btn" action="#{accountBean.register}" value="#{i18nRegistration['section.signup']}" alt="#{i18nRegistration['section.signup']}"/>
 
                 </fieldset>
             </h:form>
