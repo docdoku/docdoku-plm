@@ -25,8 +25,6 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductInstanceMaster;
-import com.docdoku.core.document.DocumentIterationKey;
-import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
@@ -672,6 +670,7 @@ public class PartResource {
                 partUsageLink.setUnit(partUsageLinkDTO.getUnit());
                 partUsageLink.setOptional(partUsageLinkDTO.isOptional());
                 partUsageLink.setSubstitutes(partSubstituteLinks);
+                partUsageLink.setId(partUsageLinkDTO.getId());
                 components.add(partUsageLink);
             }
 

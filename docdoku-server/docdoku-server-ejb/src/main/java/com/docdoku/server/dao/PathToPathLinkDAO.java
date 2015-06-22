@@ -208,13 +208,14 @@ public class PathToPathLinkDAO {
         List<PathToPathLink> pathToPathLinks = getPathToPathLinksFromPartialPath(usageLinkId);
 
         for(PathToPathLink pathToPathLink:pathToPathLinks){
+            try{
+                ConfigurationItem configurationItem = em.createNamedQuery("ConfigurationItem.findByPathToPathLink", ConfigurationItem.class)
+                        .setParameter("pathToPathLink", pathToPathLink)
+                        .getSingleResult();
 
-            List<ConfigurationItem> configurationItems = em.createNamedQuery("ConfigurationItem.findByPathToPathLink", ConfigurationItem.class)
-                    .setParameter("pathToPathLink", pathToPathLink)
-                    .getResultList();
-
-            for(ConfigurationItem configurationItem:configurationItems){
                 configurationItem.removePathToPathLink(pathToPathLink);
+            } catch (NoResultException e){
+
             }
 
         }
@@ -253,8 +254,53 @@ public class PathToPathLinkDAO {
 
     }
 
+    public void cloneAndUpgradePathToPathLinks(List<PartUsageLink> oldComponents, List<PartUsageLink> newComponents) {
+        int size = oldComponents.size();
+        for(int i = 0; i < size; i++){
+            PartLink oldLink = oldComponents.get(i);
+            PartLink newLink = newComponents.get(i);
+            cloneAndUpgradePathToPathLink(oldLink, newLink);
+        }
+    }
+
+    private void cloneAndUpgradePathToPathLink(PartLink oldLink, PartLink newLink){
+
+        List<PathToPathLink> oldP2PLinks = getPathToPathLinksFromPartialPath(oldLink.getFullId());
+
+        String oldFullId = oldLink.getFullId();
+        String newFullId = newLink.getFullId();
+
+        for(PathToPathLink pathToPathLink:oldP2PLinks){
+
+            PathToPathLink clone = pathToPathLink.clone();
+            clone.setSourcePath(upgradePath(clone.getSourcePath(), oldFullId, newFullId));
+            clone.setTargetPath(upgradePath(clone.getTargetPath(), oldFullId, newFullId));
+
+            // Add in configuration item list
+            try {
+                ConfigurationItem configurationItem = em.createNamedQuery("ConfigurationItem.findByPathToPathLink", ConfigurationItem.class)
+                        .setParameter("pathToPathLink", pathToPathLink)
+                        .getSingleResult();
+                configurationItem.addPathToPathLink(clone);
+            }catch(NoResultException e){
+                // ?
+            }
+        }
+
+        if(oldLink.getSubstitutes() != null){
+            int size = oldLink.getSubstitutes().size();
+            for(int i = 0; i < size; i++){
+                PartLink oldSubstituteLink = oldLink.getSubstitutes().get(i);
+                PartLink newSubstituteLink = newLink.getSubstitutes().get(i);
+                cloneAndUpgradePathToPathLink(oldSubstituteLink, newSubstituteLink);
+            }
+        }
+
+    }
+
     public String upgradePath(String path, String oldFullId, String newFullId) {
         return path.replaceAll("("+oldFullId+")(-|$)", newFullId + "$2");
     }
+
 
 }

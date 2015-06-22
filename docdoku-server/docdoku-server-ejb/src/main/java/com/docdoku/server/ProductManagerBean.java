@@ -343,7 +343,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             partR.setCheckOutUser(null);
 
             // Remove path to path links impacted by this change
-            removeObsoletePathToPathLinksLinks(user, partIte);
+            removeObsoletePathToPathLinks(user, partIte);
 
             return partR;
         } else {
@@ -351,7 +351,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
-    private void removeObsoletePathToPathLinksLinks(User user, PartIteration partIte) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+    private void removeObsoletePathToPathLinks(User user, PartIteration partIte) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
 
         PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(new Locale(user.getLanguage()),em);
         List<PartUsageLink> components = partIte.getComponents();
@@ -411,17 +411,20 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 newPartIteration.addAttachedFile(targetFile);
             }
 
+            // Copy usage links
+            // Create new p2p links
+
             List<PartUsageLink> newComponents = new LinkedList<>();
             List<PartUsageLink> oldComponents = beforeLastPartIteration.getComponents();
-            for (PartUsageLink usage : beforeLastPartIteration.getComponents()) {
+            for (PartUsageLink usage : oldComponents) {
                 PartUsageLink newUsage = usage.clone();
                 newComponents.add(newUsage);
             }
 
-            PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
-            pathToPathLinkDAO.upgradePathToPathLinks(oldComponents,newComponents);
-
             newPartIteration.setComponents(newComponents);
+
+            PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
+            pathToPathLinkDAO.cloneAndUpgradePathToPathLinks(oldComponents, newComponents);
 
             for (Geometry sourceFile : beforeLastPartIteration.getGeometries()) {
                 String fileName = sourceFile.getName();
@@ -483,12 +486,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartRevisionDAO partRDAO = new PartRevisionDAO(locale, em);
         PartRevision partR = partRDAO.loadPartR(pPartRPK);
 
+
         //Check access rights on partR
         if (!hasPartRevisionWriteAccess(user, partR)) {
             throw new AccessRightException(locale, user);
         }
 
         if (isCheckoutByUser(user, partR)) {
+
+            PartIteration oldIteration = partR.getLastCheckedInIteration();
 
             checkCyclicAssemblyForPartIteration(partR.getLastIteration());
 
@@ -499,6 +505,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             lastIteration.setCheckInDate(new Date());
 
             esIndexer.index(lastIteration);
+
+            if(oldIteration != null){
+                removeObsoletePathToPathLinks(user,oldIteration);
+            }
 
             partIterationEvent.select(new AnnotationLiteral<CheckedIn>() {
             }).fire(new PartIterationChangeEvent(lastIteration));
@@ -709,7 +719,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, List<InstanceAttributeTemplate> pAttributeTemplates, DocumentRevisionKey[] pLinkKeys, String[] documentLinkComments, String[] lovNames)
-            throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException, EntityConstraintException, UserNotActiveException, ListOfValuesNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException, EntityConstraintException, UserNotActiveException, ListOfValuesNotFoundException, PartUsageLinkNotFoundException {
 
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
         Locale locale = new Locale(user.getLanguage());
@@ -744,27 +754,63 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
 
             }
-            if (pUsageLinks != null && compareUsageLinks(partIte.getComponents(),pUsageLinks)) {
+
+            if (pUsageLinks != null) {
 
                 // Remove path to path links impacted by this change if any link change
-                removeObsoletePathToPathLinksLinks(user, partIte);
+                // removeObsoletePathToPathLinks(user, partIte);
 
+                // Find part usage links with an id => update them
+                // Find Part usage without id => new Links
+                // Find part usage links with an id but no more in assembly => remove, break links
+
+                PartUsageLinkDAO partUsageLinkDAO = new PartUsageLinkDAO(locale,em);
+
+
+                // Copy current usage links and substitute for potential removal
+                List<PartUsageLink> linksToRemove = new ArrayList<>(partIte.getComponents());
+                List<PartSubstituteLink> subLinksToRemove = new ArrayList<>();
+                for(PartUsageLink partUsageLink: linksToRemove){
+                    subLinksToRemove.addAll(partUsageLink.getSubstitutes());
+                }
 
                 List<PartUsageLink> usageLinks = new LinkedList<>();
+
                 for (PartUsageLink usageLink : pUsageLinks) {
-                    PartUsageLink ul = new PartUsageLink();
+
+                    PartUsageLink ul;
+
+                    if(usageLink.getId() != 0){
+                        ul = partUsageLinkDAO.loadPartUsageLink(usageLink.getId());
+                        linksToRemove.remove(ul);
+                    }else{
+                        ul = new PartUsageLink();
+                    }
+
                     ul.setAmount(usageLink.getAmount());
                     ul.setOptional(usageLink.isOptional());
                     ul.setCadInstances(usageLink.getCadInstances());
                     ul.setComment(usageLink.getComment());
                     ul.setReferenceDescription(usageLink.getReferenceDescription());
                     ul.setUnit(usageLink.getUnit());
+
                     PartMaster pm = usageLink.getComponent();
                     PartMaster component = partMDAO.loadPartM(new PartMasterKey(pm.getWorkspaceId(), pm.getNumber()));
                     ul.setComponent(component);
+
                     List<PartSubstituteLink> substitutes = new LinkedList<>();
+
                     for (PartSubstituteLink substitute : usageLink.getSubstitutes()) {
-                        PartSubstituteLink sub = new PartSubstituteLink();
+
+                        PartSubstituteLink sub;
+
+                        if(substitute.getId() != 0){
+                            sub = partUsageLinkDAO.loadPartSubstituteLink(substitute.getId());
+                            subLinksToRemove.remove(sub);
+                        }else{
+                            sub = new PartSubstituteLink();
+                        }
+
                         sub.setAmount(substitute.getAmount());
                         sub.setUnit(substitute.getUnit());
                         sub.setCadInstances(substitute.getCadInstances());
@@ -780,14 +826,27 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
                 partIte.setComponents(usageLinks);
 
+
+                PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(new Locale(user.getLanguage()),em);
+
+                // Remove obsolete path to path links
+                for(PartUsageLink partUsageLink: linksToRemove){
+                    pathToPathLinkDAO.removePathToPathLinks(partUsageLink.getFullId());
+                }
+                for(PartSubstituteLink substituteLink: subLinksToRemove){
+                    pathToPathLinkDAO.removePathToPathLinks(substituteLink.getFullId());
+                }
+
                 checkCyclicAssemblyForPartIteration(partIte);
 
             }
+
+
             if (pAttributes != null) {
 
                 List<InstanceAttribute> currentAttrs = partIte.getInstanceAttributes();
                 if (partRev.isAttributesLocked()) {
-                    //Check attributs haven't changed
+                    //Check attributes haven't changed
                     if (currentAttrs.size() != pAttributes.size()) {
                         throw new NotAllowedException(locale, "NotAllowedException45");
                     } else {
@@ -855,74 +914,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
     }
-
-    private boolean compareUsageLinks(List<PartUsageLink> a, List<PartUsageLink> b) {
-        // Loop array list, detect any difference and return true.
-
-        int sizeA = a.size();
-        int sizeB = b.size();
-
-        if(sizeA != sizeB){
-            return true;
-        }
-
-        for(int i = 0; i < sizeA; i++){
-
-            if(compareUsageLink(a.get(i), b.get(i))){
-                return true;
-            }
-
-            int sizeSubstitutesA = a.get(i).getSubstitutes().size();
-            int sizeSubstitutesB = b.get(i).getSubstitutes().size();
-
-            if(sizeSubstitutesA != sizeSubstitutesB){
-                return true;
-            }
-
-            for(int j = 0; j < sizeSubstitutesA; j++){
-                if(compareUsageLink(a.get(i).getSubstitutes().get(j), b.get(i).getSubstitutes().get(j))){
-                    return true;
-                }
-            }
-
-        }
-
-        return false;
-    }
-
-    // returns true if any difference
-    private boolean compareUsageLink(PartLink a, PartLink b) {
-
-        boolean sameComponent = a.getComponent().equals(b.getComponent());
-        boolean sameAmount = a.getAmount() == b.getAmount();
-        boolean sameCode = a.getCode() == b.getCode();
-        boolean sameComment = a.getComment() == null ?  b.getComment() == null : a.getComment().equals(b.getComment());
-        boolean sameUnit = a.getUnit() == null ?  b.getUnit() == null : a.getUnit().equals(b.getUnit());
-        boolean sameReferenceDescription =  a.getReferenceDescription() == null ?  b.getReferenceDescription() == null : a.getReferenceDescription().equals(b.getReferenceDescription());
-        boolean sameOptional = a.isOptional() == b.isOptional();
-
-        int sizeA = a.getCadInstances().size();
-        int sizeB = b.getCadInstances().size();
-
-        if(sizeA != sizeB){
-            return true;
-        }
-
-        for(int i = 0 ; i < sizeA; i++){
-            if(compareCadInstance(a.getCadInstances().get(i),b.getCadInstances().get(i))){
-                return true;
-            }
-        }
-
-        return !sameComponent || !sameAmount || !sameCode || !sameComment || !sameUnit || !sameReferenceDescription || !sameOptional;
-
-    }
-
-    private boolean compareCadInstance(CADInstance a, CADInstance b) {
-        return a.getRx() != b.getRx() || a.getRy() != b.getRy() || a.getRz() != b.getRz()
-                || a.getTx() != b.getTx() || a.getTy() != b.getTy() || a.getTz() != b.getTz();
-    }
-
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
     @Override
