@@ -41,6 +41,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -105,13 +107,15 @@ public class WorkspaceMembershipResource {
     @GET
     @Path("usergroups/me")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceUserGroupMemberShipDTO[] getWorkspaceSpecificUserGroupMemberShips (@PathParam("workspaceId") String workspaceId)
+    public List<WorkspaceUserGroupMemberShipDTO> getWorkspaceSpecificUserGroupMemberShips (@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceSpecificUserGroupMemberships(workspaceId);
-        WorkspaceUserGroupMemberShipDTO[] workspaceUserGroupMemberShipDTO = new WorkspaceUserGroupMemberShipDTO[workspaceUserGroupMemberships.length];
+        List<WorkspaceUserGroupMemberShipDTO> workspaceUserGroupMemberShipDTO = new ArrayList<>();
         for(int i = 0 ; i< workspaceUserGroupMemberships.length ; i++){
-            workspaceUserGroupMemberShipDTO[i] = mapper.map(workspaceUserGroupMemberships[i],WorkspaceUserGroupMemberShipDTO.class);
+            if(workspaceUserGroupMemberships[i] != null){
+                workspaceUserGroupMemberShipDTO.add(mapper.map(workspaceUserGroupMemberships[i],WorkspaceUserGroupMemberShipDTO.class));
+            }
         }
         return workspaceUserGroupMemberShipDTO;
     }
