@@ -99,7 +99,6 @@ define([
             this.deleteSubViews();
             var partials = this.partials ? this.partials : null;
             var data = this.renderData();
-            debugger;
             data.availability = AttributeAccessibility.
                 getAvailability(this.editMode,this.attributesLocked,this.model.get('locked'), this.displayOnly);
             data.lovs = this.lovs;
@@ -111,17 +110,7 @@ define([
 
         setAttributesLocked: function (attributesLocked) {
             this.attributesLocked = attributesLocked;
-        },
-
-        setAvailable: function() {
-            var available = {
-                remove: true,
-                sortable: true,
-                name: true,
-                value: true
-            }
         }
-
     });
 
     return AttributeListItemView;

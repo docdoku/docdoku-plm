@@ -28,9 +28,7 @@ define([
         initialize: function () {
             ListView.prototype.initialize.apply(this, arguments);
             this.lovs = this.options.lovs;
-            debugger;
             this.displayOnly = this.options.displayOnly ? this.options.displayOnly : false;
-            debugger;
         },
 
         itemViewFactory: function (model) {
@@ -43,7 +41,6 @@ define([
                 type = 'LOV';
             }
             var Constructor = this.typeViewMapping[type];
-            debugger;
             var view = new Constructor({
                 model: model,
                 lovs:this.lovs.models,
