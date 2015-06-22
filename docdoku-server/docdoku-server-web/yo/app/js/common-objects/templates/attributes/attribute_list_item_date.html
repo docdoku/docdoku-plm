@@ -1,12 +1,14 @@
 {{> attributeListItem}}
 <div class="controls shift-margin">
-    {{#editMode}}
+    {{#availability.value}}
     <input type="date" class="input-xlarge value" value="{{model.value}}"
     {{#model.mandatory}}required{{/model.mandatory}}/>
-    {{#model.mandatory}}*{{/model.mandatory}}
-    {{/editMode}}
-    {{^editMode}}
+    {{#availability.displayRequired}}
+        {{#model.mandatory}}*{{/model.mandatory}}
+    {{/availability.displayRequired}}
+    {{/availability.value}}
+    {{^availability.value}}
     {{model.value}}
-    {{/editMode}}
+    {{/availability.value}}
     <i class="fa fa-clock-o" title="{{timeZone}}"></i>
 </div>

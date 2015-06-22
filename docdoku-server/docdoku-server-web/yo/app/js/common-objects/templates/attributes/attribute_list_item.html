@@ -1,18 +1,13 @@
-<i class="fa fa-bars sortable-handler"></i>
+<i class="fa fa-bars sortable-handler {{^availability.sortable}}invisible{{/availability.sortable}}"></i>
 <div class="controls">
-    <a class="fa fa-times"></a>
+    <a class="fa fa-times {{^availability.remove}}invisible{{/availability.remove}}"></a>
 </div>
 <div class="controls">
     <input type="text" class="input-xlarge name" placeholder="{{i18n.NAME}}" value="{{model.name}}" required
-    {{#frozenMode}}disabled="disabled"{{/frozenMode}} {{^frozenMode}}{{#model.locked}}disabled="disabled"{{/model.locked}}{{/frozenMode}} />
+    {{^availability.name}}disabled="disabled"{{/availability.name}} />
 </div>
 
-{{#model.locked}}
-<div class="controls type">
-</div>
-{{/model.locked}}
-{{^model.locked}}
-{{^frozenMode}}
+{{#availability.type}}
 <div class="controls">
     <select class="type">
         <option value="TEXT">{{i18n.TEXT}}</option>
@@ -27,9 +22,9 @@
         </optgroup>
     </select>
 </div>
-{{/frozenMode}}
-{{#frozenMode}}
+{{/availability.type}}
+{{^availability.type}}
 <div class="controls type">
 </div>
-{{/frozenMode}}
-{{/model.locked}}
+{{/availability.type}}
+

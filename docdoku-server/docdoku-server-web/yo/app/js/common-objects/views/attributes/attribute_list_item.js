@@ -1,8 +1,9 @@
 /*global define,App*/
 define([
     'mustache',
-    'common-objects/views/components/list_item'
-], function (Mustache, ListItemView) {
+    'common-objects/views/components/list_item',
+    'common-objects/utils/attribute_accessibility'
+], function (Mustache, ListItemView,AttributeAccessibility) {
     'use strict';
     var AttributeListItemView = ListItemView.extend({
 
@@ -11,6 +12,9 @@ define([
         editMode: true,
 
         attributesLocked: false,
+        // for attributes to be displayed but not saved
+        // actually used in the search form.
+        displayOnly: false,
 
         lovs: null,
 
@@ -26,6 +30,7 @@ define([
             this.events['click .fa-times'] = 'removeAction';
             this.events.drop = 'drop';
             this.lovs = this.options.lovs;
+            this.displayOnly = this.options.displayOnly;
         },
 
         drop: function (event, index) {
@@ -94,14 +99,13 @@ define([
             this.deleteSubViews();
             var partials = this.partials ? this.partials : null;
             var data = this.renderData();
-            data.frozenMode = !this.editMode || this.attributesLocked;
-            data.editMode = this.editMode;
-            data.attribute = this.model.attributes;
+            debugger;
+            data.availability = AttributeAccessibility.
+                getAvailability(this.editMode,this.attributesLocked,this.model.get('locked'), this.displayOnly);
             data.lovs = this.lovs;
             data.items = this.model.get('items');
             this.$el.html(Mustache.render(this.template, data, partials));
             this.rendered();
-            this.setVisibility(data.frozenMode);
             return this;
         },
 
@@ -109,12 +113,12 @@ define([
             this.attributesLocked = attributesLocked;
         },
 
-        setVisibility: function (frozenMode) {
-            if (frozenMode) {
-                this.$el.find('i.fa-bars:first').addClass('invisible');
-                this.$el.find('a.fa-times:first').addClass('invisible');
-            } else if (this.model.get('locked')) {
-                this.$el.find('a.fa-times:first').addClass('invisible');
+        setAvailable: function() {
+            var available = {
+                remove: true,
+                sortable: true,
+                name: true,
+                value: true
             }
         }
 

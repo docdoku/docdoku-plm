@@ -42,7 +42,8 @@ define([
             this.lovs.fetch().success(function(){
                 that.attributesView = new DocumentAttributeListView({
                     collection: that.attributes,
-                    lovs : that.lovs
+                    lovs : that.lovs,
+                    displayOnly: true
                 });
 
                 that.$('#attributes-list').html(that.attributesView.$el);
