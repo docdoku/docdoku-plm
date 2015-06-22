@@ -43,11 +43,14 @@ public class SearchQuery  implements Serializable {
     protected Date modificationDateFrom;
     protected Date modificationDateTo;
     protected AbstractAttributeQuery[] attributes;
+    protected String[] tags;
 
     public SearchQuery(){
 
     }
-    public SearchQuery(String workspaceId, String fullText, String version, String author, String type, Date creationDateFrom, Date creationDateTo, Date modificationDateFrom, Date modificationDateTo, AbstractAttributeQuery[] attributes) {
+    public SearchQuery(String workspaceId, String fullText, String version, String author, String type,
+                       Date creationDateFrom, Date creationDateTo, Date modificationDateFrom, Date modificationDateTo,
+                       AbstractAttributeQuery[] attributes, String[] tags) {
         this.workspaceId = workspaceId;
         this.fullText =fullText;
         this.version = version;
@@ -58,6 +61,7 @@ public class SearchQuery  implements Serializable {
         this.modificationDateFrom = (modificationDateFrom!=null) ? (Date) modificationDateFrom.clone() : null;
         this.modificationDateTo = (modificationDateTo!=null) ? (Date) modificationDateTo.clone() : null;
         this.attributes = attributes;
+        this.tags = tags;
     }
 
     // Getter
@@ -75,6 +79,9 @@ public class SearchQuery  implements Serializable {
     }
     public String getType() {
         return type;
+    }
+    public String[] getTags() {
+        return tags;
     }
     public Date getCreationDateFrom() {
         return (creationDateFrom!=null) ? (Date) creationDateFrom.clone() : null;
@@ -107,6 +114,9 @@ public class SearchQuery  implements Serializable {
     }
     public void setType(String type) {
         this.type = type;
+    }
+    public void setTags(String[] tags) {
+        this.tags = tags;
     }
     public void setCreationDateFrom(Date creationDateFrom) {
         this.creationDateFrom = (creationDateFrom!=null) ? (Date) creationDateFrom.clone() : null;

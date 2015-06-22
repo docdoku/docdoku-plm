@@ -141,6 +141,7 @@ public class SearchQueryParser {
         Date pModificationDateFrom = null;
         Date pModificationDateTo = null;
         List<PartSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<>();
+        String[] pTags = null;
         Boolean standardPart = null;
 
         String[] query = pQuery.split("&");
@@ -195,6 +196,9 @@ public class SearchQueryParser {
                             e.printStackTrace();
                         }
                         break;
+                    case "tags" :
+                        pTags = filter[1].split(",");
+                        break;
                     case "standardPart" :
                         standardPart = Boolean.valueOf(filter[1]);
                         break;
@@ -209,7 +213,7 @@ public class SearchQueryParser {
 
         return  new PartSearchQuery(workspaceId, fullText, pNumber, pName, pVersion, pAuthor, pType,
                 pCreationDateFrom, pCreationDateTo, pModificationDateFrom, pModificationDateTo,
-                pAttributesArray,standardPart);
+                pAttributesArray,pTags,standardPart);
 
     }
 

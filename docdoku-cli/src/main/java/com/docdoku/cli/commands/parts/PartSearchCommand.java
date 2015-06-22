@@ -52,7 +52,7 @@ public class PartSearchCommand extends BaseCommandLine {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
 
         List<PartRevision> partRevisions = productS.searchPartRevisions(
-                new PartSearchQuery(workspace, searchValue, null, null, null, null, null, null, null, null, null, null, null)
+                new PartSearchQuery(workspace, searchValue, null, null, null, null, null, null, null, null, null, null, null,null)
         );
 
         output.printPartRevisions(partRevisions);

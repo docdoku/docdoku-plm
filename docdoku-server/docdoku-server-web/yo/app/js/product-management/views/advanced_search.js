@@ -119,6 +119,7 @@ define([
             this.$type = this.$('#search-type');
             this.$version = this.$('#search-version');
             this.$author = this.$('#search-author');
+            this.$tags = this.$('#search-tags');
             this.$createdFrom = this.$('#search-creation-from');
             this.$createdTo = this.$('#search-creation-to');
             this.$modifiedFrom = this.$('#search-modification-from');
@@ -145,6 +146,7 @@ define([
             var type = this.$type.val();
             var version = this.$version.val();
             var author = this.$author.val();
+            var tags = this.$tags.val().replace(/ /g, '');
             var createdFrom = this.$createdFrom.val();
             var createdTo = this.$createdTo.val();
             var modifiedFrom = this.$modifiedFrom.val();
@@ -167,6 +169,9 @@ define([
             }
             if (author) {
                 queryString += '&author=' + author;
+            }
+            if (tags) {
+                queryString += '&tags=' + tags;
             }
             if (createdFrom) {
                 queryString += '&createdFrom=' + date.toUTCWithTimeZoneOffset(createdFrom);
