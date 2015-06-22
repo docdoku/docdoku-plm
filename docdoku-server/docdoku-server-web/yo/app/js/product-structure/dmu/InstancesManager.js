@@ -129,7 +129,7 @@ define(['dmu/LoaderManager', 'async','backbone'],
                         if (loadCache[instance.partIterationId + '-' + instance.qualityLoaded].count === 1) {
                             loadCache[instance.partIterationId + '-' + instance.qualityLoaded].geometry.dispose();
                             disposeMaterials(loadCache[instance.partIterationId + '-' + instance.qualityLoaded]
-                                .materiall);
+                                .material);
                             loadCache[instance.partIterationId + '-' + instance.qualityLoaded] = null;
                             delete loadCache[instance.partIterationId + '-' + instance.qualityLoaded];
                         } else {
