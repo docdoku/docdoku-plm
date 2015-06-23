@@ -305,9 +305,6 @@ public class ESIndexer {
         } catch (ESIndexNamingException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_INDEX_CREATION_ERROR_2);
             LOGGER.log(Level.WARNING, part + ES_INDEX_FAIL + logMessage + " " + workspaceId, e);
-        } catch (IOException e) {
-            String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_INDEX_CREATION_ERROR_2);
-            LOGGER.log(Level.WARNING, part + ES_INDEX_FAIL + logMessage + " " + workspaceId, e);
         }
     }
 
@@ -414,11 +411,7 @@ public class ESIndexer {
         for (PartMaster partMaster : partMasterDAO.getAllByWorkspace(workspaceId)) {
             for (PartRevision partRev : partMaster.getPartRevisions()) {
                 for (PartIteration partIte : partRev.getPartIterations()) {
-                    try {
-                        pBulkRequest.add(indexRequest(client, partIte));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    pBulkRequest.add(indexRequest(client, partIte));
                 }
             }
         }
@@ -453,7 +446,7 @@ public class ESIndexer {
      *
      * @param part The part iteration to index
      */
-    private UpdateRequestBuilder indexRequest(Client client, PartIteration part) throws IOException {
+    private UpdateRequestBuilder indexRequest(Client client, PartIteration part) {
 
         XContentBuilder json = ESMapper.partRevisionToJson(part);
         Map<String, Object> params = ESMapper.partIterationMap(part);
