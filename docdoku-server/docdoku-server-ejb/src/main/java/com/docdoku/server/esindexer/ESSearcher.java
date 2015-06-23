@@ -295,13 +295,14 @@ public class ESSearcher {
             if (docQuery.getContent() != null) {
                 ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.CONTENT_KEY).likeText(docQuery.getContent()));
             }
-            qr = addCommonQuery(docQuery,qr);
+            qr = addCommonQuery(docQuery, qr);
         }
         return qr;
     }
 
     /**
      * Add queries common to both part and doc.
+     *
      * @param searchQuery The search query wanted
      * @param qr The QueryBuilder initialized with the specific (doc/part) values
      * @return A query builder with the common query for part and doc
@@ -345,7 +346,7 @@ public class ESSearcher {
             }
         }
         if (searchQuery.getTags() != null) {
-            ((BoolQueryBuilder) qr).should(QueryBuilders.inQuery(ESMapper.TAGS_KEY,searchQuery.getTags()));
+            ((BoolQueryBuilder) qr).should(QueryBuilders.inQuery(ESMapper.TAGS_KEY, searchQuery.getTags()));
         }
         return qr;
     }
@@ -374,10 +375,10 @@ public class ESSearcher {
                 ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.PART_NAME_KEY).likeText(partQuery.getName()));
             }
             if (partQuery.isStandardPart() != null) {
-                String text = partQuery.isStandardPart() ? "TRUE":"FALSE";
+                String text = partQuery.isStandardPart() ? "TRUE" : "FALSE";
                 ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.STANDARD_PART_KEY).likeText(text));
             }
-            qr = addCommonQuery(partQuery,qr);
+            qr = addCommonQuery(partQuery, qr);
         }
         return qr;
     }
