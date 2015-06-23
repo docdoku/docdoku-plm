@@ -428,7 +428,7 @@ define({
     QUERY_GROUP_ATTRIBUTE_BOOLEAN:"Attributs de type booléen",
     QUERY_GROUP_CONTEXT:"Contexte",
     QUERY_NAME:"Nom de la requête",
-    QUERY_SEARCH:"Construire une requete",
+    QUERY_SEARCH:"Construire une requête",
     QUERY_SELECT:"Champs",
     QUERY_CONTEXT:"Contexte",
     QUERY_WHERE:"Critères",
