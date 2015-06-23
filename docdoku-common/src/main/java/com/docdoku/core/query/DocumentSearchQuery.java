@@ -33,7 +33,6 @@ import java.util.Date;
 public class DocumentSearchQuery extends SearchQuery implements Serializable{
     protected String docMId;
     protected String title;
-    private String[] tags;
     protected String content;
 
     public DocumentSearchQuery(){
