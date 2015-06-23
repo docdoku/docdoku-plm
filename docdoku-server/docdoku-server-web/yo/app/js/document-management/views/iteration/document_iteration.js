@@ -438,6 +438,7 @@ define([
                 this.iterations = this.model.getIterations();
                 this.render();
                 this.activateTab(1);
+                Backbone.Events.trigger('document:iterationChange');
             }.bind(this));
         },
 
