@@ -50,7 +50,11 @@ import java.io.Serializable;
         @NamedQuery(name="PathToPathLink.findRootPathToPathLinkForGivenProductAndType", query="SELECT DISTINCT p FROM ConfigurationItem ci JOIN ci.pathToPathLinks p WHERE p.type = :type AND ci = :configurationItem AND p.sourcePath not in (SELECT _p.targetPath FROM PathToPathLink _p WHERE _p member of ci.pathToPathLinks AND _p.type = :type)"),
         @NamedQuery(name="PathToPathLink.findPathToPathLinkByPathListInProduct", query="SELECT DISTINCT p FROM ConfigurationItem ci JOIN ci.pathToPathLinks p WHERE ci = :configurationItem AND p.sourcePath in :paths AND p.targetPath in :paths"),
         @NamedQuery(name="PathToPathLink.findSourcesPathToPathLinkInProduct", query="SELECT DISTINCT p FROM ConfigurationItem ci JOIN ci.pathToPathLinks p WHERE ci = :configurationItem AND p.sourcePath = :source AND p.type = :type"),
-        @NamedQuery(name="PathToPathLink.findLinksWherePartialPathIsPresent", query="SELECT DISTINCT p FROM PathToPathLink p WHERE p.targetPath LIKE :endOfChain OR p.targetPath LIKE :inChain OR p.sourcePath LIKE :endOfChain OR p.sourcePath LIKE :inChain")
+        @NamedQuery(name="PathToPathLink.findLinksWherePartialPathIsPresent", query="SELECT DISTINCT p FROM PathToPathLink p WHERE p.targetPath LIKE :endOfChain OR p.targetPath LIKE :inChain OR p.sourcePath LIKE :endOfChain OR p.sourcePath LIKE :inChain"),
+        @NamedQuery(name="PathToPathLink.isSourceInProductInstanceContext", query="SELECT p FROM PathToPathLink p JOIN ProductInstanceIteration pi WHERE pi = :productInstanceIteration AND p member of pi.pathToPathLinks AND p.sourcePath = :path"),
+        @NamedQuery(name="PathToPathLink.isTargetInProductInstanceContext", query="SELECT p FROM PathToPathLink p JOIN ProductInstanceIteration pi WHERE pi = :productInstanceIteration AND p member of pi.pathToPathLinks AND p.targetPath = :path"),
+        @NamedQuery(name="PathToPathLink.isSourceInConfigurationItemContext", query="SELECT p FROM PathToPathLink p JOIN ConfigurationItem ci WHERE ci = :configurationItem AND p member of ci.pathToPathLinks AND p.sourcePath = :path"),
+        @NamedQuery(name="PathToPathLink.isTargetInConfigurationItemContext", query="SELECT p FROM PathToPathLink p JOIN ConfigurationItem ci WHERE ci = :configurationItem AND p member of ci.pathToPathLinks AND p.targetPath = :path")
 })
 public class PathToPathLink implements Serializable, Cloneable{
 

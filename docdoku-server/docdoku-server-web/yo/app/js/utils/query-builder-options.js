@@ -282,6 +282,18 @@ define(function () {
         group: 'ctx'
     });
 
+    contextFields.push({
+        value: 'ctx.p2p.source',
+        name: App.config.i18n.LINKS  + ' ' +App.config.i18n.PATH_TO_PATH_SOURCE,
+        group: 'ctx'
+    });
+
+    contextFields.push({
+        value: 'ctx.p2p.target',
+        name: App.config.i18n.LINKS  + ' ' + App.config.i18n.PATH_TO_PATH_TARGET,
+        group: 'ctx'
+    });
+
     return {
         filters : filters,
         fields : fields,

@@ -50,5 +50,7 @@ public class QueryField {
     public final static String CTX_PRODUCT_ID = "ctx.productId";
     public final static String CTX_DEPTH = "ctx.depth";
     public final static String CTX_AMOUNT = "ctx.amount";
+    public final static String CTX_P2P_SOURCE = "ctx.p2p.source";
+    public final static String CTX_P2P_TARGET = "ctx.p2p.target";
 
 }

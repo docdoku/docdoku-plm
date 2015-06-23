@@ -321,4 +321,37 @@ public class PathToPathLinkDAO {
     }
 
 
+    public boolean isPathToPathLinkSourceInContext(ConfigurationItem configurationItem, ProductInstanceIteration productInstanceIteration, String path) {
+
+        if(productInstanceIteration != null){
+            return !em.createNamedQuery("PathToPathLink.isSourceInProductInstanceContext", PathToPathLink.class)
+                    .setParameter("productInstanceIteration", productInstanceIteration)
+                    .setParameter("path", path)
+                    .getResultList()
+                    .isEmpty();
+        }else{
+            return !em.createNamedQuery("PathToPathLink.isSourceInConfigurationItemContext", PathToPathLink.class)
+                    .setParameter("configurationItem", configurationItem)
+                    .setParameter("path", path)
+                    .getResultList()
+                    .isEmpty();
+        }
+
+    }
+
+    public boolean isPathToPathLinkTargetInContext(ConfigurationItem configurationItem, ProductInstanceIteration productInstanceIteration, String path) {
+        if(productInstanceIteration != null){
+            return !em.createNamedQuery("PathToPathLink.isTargetInProductInstanceContext", PathToPathLink.class)
+                    .setParameter("productInstanceIteration", productInstanceIteration)
+                    .setParameter("path", path)
+                    .getResultList()
+                    .isEmpty();
+        }else{
+            return !em.createNamedQuery("PathToPathLink.isTargetInConfigurationItemContext", PathToPathLink.class)
+                    .setParameter("configurationItem", configurationItem)
+                    .setParameter("path", path)
+                    .getResultList()
+                    .isEmpty();
+        }
+    }
 }

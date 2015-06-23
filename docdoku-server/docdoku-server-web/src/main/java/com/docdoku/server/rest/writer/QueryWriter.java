@@ -26,10 +26,12 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeDescriptor;
 import com.docdoku.core.meta.InstanceListOfValuesAttribute;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartLink;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryField;
 import com.docdoku.core.query.QueryResultRow;
+import com.docdoku.core.util.Tools;
 import com.docdoku.server.export.ExcelGenerator;
 import com.docdoku.server.rest.collections.QueryResult;
 import org.apache.commons.lang.StringUtils;
@@ -344,6 +346,24 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
             if (selects.contains(QueryField.CTX_AMOUNT)) {
                 String amount = row.getAmount()+"";
                 jg.write(QueryField.CTX_AMOUNT, amount);
+            }
+
+            if (selects.contains(QueryField.CTX_P2P_SOURCE)) {
+                StringBuilder sb = new StringBuilder();
+                List<List<PartLink>> paths = row.getSources();
+                for(List<PartLink> path:paths){
+                    sb.append(Tools.getPathAsString(path)+",");
+                }
+                jg.write(QueryField.CTX_P2P_SOURCE, sb.toString());
+            }
+
+            if (selects.contains(QueryField.CTX_P2P_TARGET)) {
+                StringBuilder sb = new StringBuilder();
+                List<List<PartLink>> paths = row.getTargets();
+                for(List<PartLink> path:paths){
+                    sb.append(Tools.getPathAsString(path)+",");
+                }
+                jg.write(QueryField.CTX_P2P_TARGET, sb.toString());
             }
 
             if(selects.contains(QueryField.PART_MASTER_IS_STANDARD)){

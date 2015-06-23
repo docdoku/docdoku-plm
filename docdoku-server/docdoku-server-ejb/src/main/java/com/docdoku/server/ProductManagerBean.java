@@ -3025,8 +3025,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         PSFilter filter = serialNumber != null ? getPSFilter(ciKey, "pi-" + serialNumber) : getPSFilter(ciKey, "latest");
 
+        ProductInstanceIteration productInstanceIteration = null;
+        if(serialNumber != null){
+            ProductInstanceMaster productIM = new ProductInstanceMasterDAO(em).loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, ciKey));
+            productInstanceIteration = productIM.getLastIteration();
+        }
+
         ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(ciKey);
         PartMaster root = ci.getDesignItem();
+
+        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale,em);
+
+        final ProductInstanceIteration finalProductInstanceIteration = productInstanceIteration;
 
         new PSFilterVisitor(em, user, filter, root, null, -1) {
             @Override
@@ -3069,6 +3079,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     row.setDepth(depth);
                     row.setContext(queryContext);
                     row.setAmount(totalAmount);
+
+                    if(pathToPathLinkDAO.isPathToPathLinkSourceInContext(ci, finalProductInstanceIteration, Tools.getPathAsString(path))){
+                        row.addSource(path);
+                    }
+
+                    if(pathToPathLinkDAO.isPathToPathLinkTargetInContext(ci, finalProductInstanceIteration, Tools.getPathAsString(path))){
+                        row.addTarget(path);
+                    }
+
                     rows.add(row);
                 }
             }
