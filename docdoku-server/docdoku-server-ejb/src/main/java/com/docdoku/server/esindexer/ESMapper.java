@@ -255,6 +255,13 @@ public class ESMapper {
                 setField(tmp, DESCRIPTION_KEY, iteration.getPartRevision().getDescription(), 2f);
                 setField(tmp, REVISION_NOTE_KEY, iteration.getIterationNote(), 0.5f);
                 setField(tmp, WORKFLOW_KEY, iteration.getPartRevision().getWorkflow(), 0.5f);
+                if (!iteration.getPartRevision().getTags().isEmpty()) {
+                    tmp.startArray(TAGS_KEY);
+                    for (Tag tag : iteration.getPartRevision().getTags()) {
+                        tmp.value(tag.getLabel());
+                    }
+                    tmp.endArray();
+                }
                 if (!iteration.getInstanceAttributes().isEmpty()) {
                     tmp.startObject(ATTRIBUTES_KEY);
                     Collection<InstanceAttribute> listAttr = iteration.getInstanceAttributes();
@@ -303,6 +310,14 @@ public class ESMapper {
         setParam(params, DESCRIPTION_KEY, part.getPartRevision().getDescription(), 2f);
         setParam(params, REVISION_NOTE_KEY, part.getIterationNote(), 0.5f);
         setParam(params, WORKFLOW_KEY, part.getPartRevision().getWorkflow(), 0.5f);
+
+        if (!part.getPartRevision().getTags().isEmpty()) {
+            List<String> labels = new ArrayList<>() ;
+            for (Tag tag : part.getPartRevision().getTags()) {
+                labels.add(tag.getLabel());
+            }
+            params.put(TAGS_KEY,labels);
+        }
 
         if (!part.getInstanceAttributes().isEmpty()) {
             Collection<InstanceAttribute> listAttr = part.getInstanceAttributes();

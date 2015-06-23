@@ -335,8 +335,13 @@ public class ESSearcher {
                     }
                 }
             }
-            if (docQuery.getContent() != null)
+            if (docQuery.getContent() != null) {
                 ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.CONTENT_KEY).likeText(docQuery.getContent()));
+            }
+
+            if (docQuery.getTags() != null) {
+                ((BoolQueryBuilder) qr).should(QueryBuilders.inQuery(ESMapper.TAGS_KEY,docQuery.getTags()));
+            }
         }
         return qr;
     }
@@ -403,6 +408,9 @@ public class ESSearcher {
                         ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(attr.getNameWithoutWhiteSpace()).likeText(((PartSearchQuery.URLAttributeQuery) attr).getUrlValue()));
                     }
                 }
+            }
+            if (partQuery.getTags() != null) {
+                ((BoolQueryBuilder) qr).should(QueryBuilders.inQuery(ESMapper.TAGS_KEY,partQuery.getTags()));
             }
         }
         return qr;
