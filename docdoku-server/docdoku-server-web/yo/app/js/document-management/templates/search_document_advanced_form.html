@@ -16,7 +16,10 @@
                     <a href="#tab-search-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a>
                 </li>
                 <li>
-                    <a href="#tab-search-advanced" data-toggle="tab">{{i18n.ADVANCED}}</a>
+                    <a href="#tab-search-tags" data-toggle="tab">{{i18n.TAGS}}</a>
+                </li>
+                <li>
+                    <a href="#tab-search-text" data-toggle="tab">{{i18n.CONTENT}}</a>
                 </li>
             </ul>
 
@@ -115,7 +118,7 @@
                         <div id="attributes-list" class="attributes-edit"></div>
                     </div>
 
-                    <div id="tab-search-advanced" class="ModalTabsPane tab-pane advanced ">
+                    <div id="tab-search-tags" class="ModalTabsPane tab-pane advanced ">
                         <div class="control-group">
                             <label class="control-label" for="search-tags">{{i18n.TAGS}}</label>
 
@@ -125,11 +128,14 @@
                                 <p class="help-block">{{i18n.TAGS_HELP}}</p>
                             </div>
                         </div>
+
+                    </div>
+                    <div id="tab-search-text" class="ModalTabsPane tab-pane advanced ">
                         <div class="control-group">
                             <label class="control-label" for="search-content">{{i18n.CONTENT}}</label>
 
                             <div class="controls">
-                                <input type="text" id="search-content" class="input-medium">
+                                <textarea id="search-content" class="input-medium"></textarea>
 
                                 <p class="help-block">{{i18n.CONTENT_HELP}}</p>
                             </div>
