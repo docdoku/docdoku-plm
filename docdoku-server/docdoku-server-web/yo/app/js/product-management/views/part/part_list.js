@@ -285,7 +285,7 @@ define([
         },
 
         areSelectedPartsCheckoutable: function () {
-            var isPartCheckout = true;
+            var isPartCheckout = this.getSelectedParts().length >0;
             _(this.getSelectedParts()).each(function (view) {
                 if (view.isReleased() || view.isCheckout() || view.isObsolete()) {
                     isPartCheckout = false;
@@ -295,7 +295,7 @@ define([
         },
 
         areSelectedPartsCheckedOut: function () {
-            var isPartCheckedOut = true;
+            var isPartCheckedOut = this.getSelectedParts().length >0;
             _(this.getSelectedParts()).each(function (view) {
                 if (!view.isCheckout()) {
                     isPartCheckedOut = false;
@@ -305,7 +305,7 @@ define([
         },
 
         areSelectedPartsAllNotCheckedOut: function () {
-            var isPartNotCheckedOut = true;
+            var isPartNotCheckedOut = this.getSelectedParts().length >0;
             _(this.getSelectedParts()).each(function (view) {
                 if (view.isCheckout() || view.isReleased() || view.isObsolete()) {
                     isPartNotCheckedOut = false;
@@ -315,7 +315,7 @@ define([
         },
 
         areSelectedPartsCheckedOutByConnectedUser: function () {
-            var isPartCheckedOutByConnectedUser = true;
+            var isPartCheckedOutByConnectedUser = this.getSelectedParts().length >0;
             _(this.getSelectedParts()).each(function (view) {
                 if (!view.isCheckoutByConnectedUser()) {
                     isPartCheckedOutByConnectedUser = false;
@@ -325,7 +325,7 @@ define([
         },
 
         haveMoreThanOneIteration: function () {
-            var hasMoreThanOneIteration = true;
+            var hasMoreThanOneIteration = this.getSelectedParts().length >0;
             _(this.getSelectedParts()).each(function (view) {
                 if (view.getLastIteration().get('iteration') <= 1) {
                     hasMoreThanOneIteration = false;
