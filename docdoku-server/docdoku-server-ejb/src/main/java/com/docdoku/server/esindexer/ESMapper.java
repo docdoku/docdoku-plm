@@ -68,7 +68,6 @@ public class ESMapper {
     public static final String STANDARD_PART_KEY = "standardPart";
 
 
-
     private ESMapper() {
         super();
     }
@@ -193,11 +192,11 @@ public class ESMapper {
         setParam(params, WORKFLOW_KEY, doc.getDocumentRevision().getWorkflow(), 0.5f);
         setParam(params, FOLDER_KEY, doc.getDocumentRevision().getLocation().getShortName(), 0.5f);
         if (!doc.getDocumentRevision().getTags().isEmpty()) {
-            List<String> labels = new ArrayList<>() ;
+            List<String> labels = new ArrayList<>();
             for (Tag tag : doc.getDocumentRevision().getTags()) {
                 labels.add(tag.getLabel());
             }
-            params.put(TAGS_KEY,labels);
+            params.put(TAGS_KEY, labels);
         }
         if (!doc.getInstanceAttributes().isEmpty()) {
             Map<String, Object> attrParams = new HashMap<>();
@@ -312,11 +311,11 @@ public class ESMapper {
         setParam(params, WORKFLOW_KEY, part.getPartRevision().getWorkflow(), 0.5f);
 
         if (!part.getPartRevision().getTags().isEmpty()) {
-            List<String> labels = new ArrayList<>() ;
+            List<String> labels = new ArrayList<>();
             for (Tag tag : part.getPartRevision().getTags()) {
                 labels.add(tag.getLabel());
             }
-            params.put(TAGS_KEY,labels);
+            params.put(TAGS_KEY, labels);
         }
 
         if (!part.getInstanceAttributes().isEmpty()) {
