@@ -336,7 +336,7 @@ public class ESSearcher {
                 }
             }
             if (docQuery.getContent() != null)
-                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.FILES_KEY).likeText(docQuery.getContent()));
+                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.CONTENT_KEY).likeText(docQuery.getContent()));
         }
         return qr;
     }
