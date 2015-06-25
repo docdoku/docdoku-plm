@@ -169,7 +169,7 @@ public class PathToPathLinkDAO {
     }
 
     public List<PathToPathLink> findPathToPathLinks(ConfigurationItem configurationItem) {
-        return em.createNamedQuery("PathToPathLink.findRootPathToPathLinkForGivenProduct", PathToPathLink.class)
+        return em.createNamedQuery("PathToPathLink.findPathToPathLinkForGivenProduct", PathToPathLink.class)
                 .setParameter("configurationItem", configurationItem)
                 .getResultList();
     }
