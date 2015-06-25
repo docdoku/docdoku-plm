@@ -45,11 +45,12 @@ public class DefaultAttributeTemplate extends InstanceAttributeTemplate {
     }
 
 
-    public DefaultAttributeTemplate.AttributeType getAttributeType() {
+    @Override
+    public AttributeType getAttributeType() {
         return attributeType;
     }
 
-    public void setAttributeType(DefaultAttributeTemplate.AttributeType attributeType) {
+    public void setAttributeType(AttributeType attributeType) {
         this.attributeType = attributeType;
     }
 

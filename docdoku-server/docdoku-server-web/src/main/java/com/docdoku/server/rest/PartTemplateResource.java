@@ -235,7 +235,7 @@ public class PartTemplateResource {
         InstanceAttributeTemplate data;
         if(dto.getLovName()==null || dto.getLovName().isEmpty()) {
             DefaultAttributeTemplate defaultIA = new DefaultAttributeTemplate();
-            defaultIA.setAttributeType(DefaultAttributeTemplate.AttributeType.valueOf(dto.getAttributeType().name()));
+            defaultIA.setAttributeType(InstanceAttributeTemplate.AttributeType.valueOf(dto.getAttributeType().name()));
             data=defaultIA;
         }
         else {

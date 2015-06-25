@@ -95,6 +95,8 @@ public abstract class InstanceAttributeTemplate implements Serializable, Cloneab
 
     public abstract InstanceAttribute createInstanceAttribute();
 
+    public abstract AttributeType getAttributeType();
+
     @Override
     public InstanceAttributeTemplate clone() {
         try {
