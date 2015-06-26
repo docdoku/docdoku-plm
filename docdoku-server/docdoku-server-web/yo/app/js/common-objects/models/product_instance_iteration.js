@@ -87,6 +87,7 @@ define(['backbone'
         getlinkedDocuments: function () {
             return this.get('linkedDocuments');
         },
+        //typedLinks always null ?
         getTypedLinks: function () {
             if(this.get('typedLinks')){
                 return this.get('typedLinks').length > 0;

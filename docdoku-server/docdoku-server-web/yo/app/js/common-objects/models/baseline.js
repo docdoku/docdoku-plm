@@ -48,10 +48,12 @@ define(['backbone'], function (Backbone) {
         },
 
         getSubstitutesParts:function(){
+            //can be null, and used as an array.
             return this.get('substitutesParts');
         },
 
         getOptionalsParts:function(){
+            //can be null, and used as an array.
             return this.get('optionalsParts');
         },
 
@@ -60,7 +62,12 @@ define(['backbone'], function (Backbone) {
         },
 
         hasTypedLink: function() {
-            return this.getTypedLinks().length;
+            if(this.getTypedLinks()) {
+                return this.getTypedLinks().length;
+            } else {
+                return false;
+            }
+
         },
         getTypedLinks: function () {
             return this.get('typedLinks');

@@ -71,7 +71,7 @@ define([
             this.initAttributesView();
             this.initAttachedFileView();
             this.initLinkedDocumentsView();
-            this.getExistingPathToPath();
+
             this.initPathDataView();
             this.openModal();
             this.renderChoices();
@@ -88,6 +88,9 @@ define([
                     }
 
                 });
+                // to get the Existing PathToPath, we need to have all the baseline.
+                // should be chanched, hack to make it work.
+                self.getExistingPathToPath();
             });
 
             date.dateHelper(this.$('.date-popover'));
@@ -195,14 +198,21 @@ define([
 
             this.attributesView.render();
         },
-
+        getIterationLinks: function() {
+            var that = this;
+            var baselineId = this.iteration.getBasedOnId();
+            var iterationBaseline = _.find(that.collection.models,function(baseline) {
+                return baseline.getId() === baselineId;
+            });
+            return iterationBaseline.getTypedLinks();
+        },
 
         getExistingPathToPath: function () {
 
             this.existingPathToPathLinkCollection = [];
             this.availableType = [];
             var self = this;
-            _.each(self.model.getTypedLinks(), function (pathToPathLinkDTO) {
+            _.each(self.getIterationLinks(), function (pathToPathLinkDTO) {
                 self.existingPathToPathLinkCollection.push({
                     source: pathToPathLinkDTO.source,
                     target: pathToPathLinkDTO.target,

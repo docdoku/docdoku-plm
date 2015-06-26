@@ -61,7 +61,12 @@ define(['backbone'], function (Backbone) {
         },
 
         hasTypedLink: function () {
-            return this.getTypedLinks().length;
+            if(this.getTypedLinks()) {
+                return this.getTypedLinks().length;
+            } else {
+                return false;
+            }
+
         },
 
         getTypedLinks: function () {
