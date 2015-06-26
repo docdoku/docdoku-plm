@@ -91,24 +91,15 @@ define(['backbone',
         },
 
         hasTypedLink: function () {
-            if (this.getTypedLinks()) {
-                return true;
-            } else {
-                return false;
-            }
+            this.getTypedLinks().length;
         },
+
         getTypedLinks: function () {
             return this.get('typedLinks');
         },
 
         hasPathData: function () {
-            if (this.getPathData()) {
-                return true;
-            }
-            else {
-                return false;
-            }
-
+            return this.getPathData().length;
         },
 
         getPathData: function () {
