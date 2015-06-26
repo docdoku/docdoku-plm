@@ -455,7 +455,7 @@ define([
                 this.render();
                 this.activateTab(1);
                 Backbone.Events.trigger('part:saved');
-                Backbone.Events.trigger('part:iterationChange')
+                Backbone.Events.trigger('part:iterationChange');
             }.bind(this));
 
         },
