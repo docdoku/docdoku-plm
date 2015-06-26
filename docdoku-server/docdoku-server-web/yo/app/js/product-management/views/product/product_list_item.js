@@ -77,15 +77,29 @@ define([
         openDetailsView: function () {
             var that = this;
             var pdv = new ProductDetailsView({model: that.model});
+            pdv.on('typedLink:remove', function() {
+                that.syncProduct();
+            });
             window.document.body.appendChild(pdv.render().el);
             pdv.openModal();
         },
         openDetailsViewOnTypedLink: function () {
             var that = this;
             var pdv = new ProductDetailsView({model: that.model});
+            pdv.on('typedLink:remove', function() {
+                that.syncProduct();
+            });
             window.document.body.appendChild(pdv.render().el);
             pdv.openModal();
             pdv.activeTypedLinkTab();
+        },
+
+        syncProduct: function() {
+            var that = this;
+            this.model.fetch().success(function() {
+                that.render();
+            }).error(function() {
+            });
         },
 
         openPartView:function(){

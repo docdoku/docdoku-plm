@@ -192,7 +192,11 @@ public class ProductResource {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         ConfigurationItem ci = productService.getConfigurationItem(ciKey);
 
-        return new ConfigurationItemDTO(mapper.map(ci.getAuthor(),UserDTO.class),ci.getId(), ci.getWorkspaceId(), ci.getDescription(), ci.getDesignItem().getNumber(),ci.getDesignItem().getName(), ci.getDesignItem().getLastRevision().getVersion());
+        ConfigurationItemDTO dto = new ConfigurationItemDTO(mapper.map(ci.getAuthor(),UserDTO.class),ci.getId(), ci.getWorkspaceId(),
+                ci.getDescription(), ci.getDesignItem().getNumber(),ci.getDesignItem().getName(),
+                ci.getDesignItem().getLastRevision().getVersion());
+        dto.setTypedLinks(getTypedLinkForConfigurationItem(workspaceId, ci.getId()));
+        return dto;
     }
 
     @DELETE

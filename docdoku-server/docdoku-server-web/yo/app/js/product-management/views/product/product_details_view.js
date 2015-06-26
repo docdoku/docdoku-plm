@@ -81,11 +81,11 @@ define([
                 var typeLinkItem = new TypedLinkItemView({model: pathToPathLink}).render();
                 self.$('#path-to-path-links').append(typeLinkItem.el);
 
-                typeLinkItem.on('remove', function () {
+                typeLinkItem.on('typedLink:remove', function () {
                     self.existingPathToPathLinkCollection.splice(self.existingPathToPathLinkCollection.indexOf(pathToPathLink), 1);
+                    self.trigger('typedLink:remove');
                 });
             });
-
 
         },
 

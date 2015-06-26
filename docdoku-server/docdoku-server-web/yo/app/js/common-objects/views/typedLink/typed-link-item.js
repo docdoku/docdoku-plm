@@ -46,6 +46,7 @@ define([
                     url: urlToDelete,
                     contentType: 'application/json',
                     success: function () {
+                        self.trigger('typedLink:remove');
                         self.remove();
                     },
                     error: function (errorMessage) {
