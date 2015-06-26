@@ -59,13 +59,8 @@ define(['backbone'], function (Backbone) {
             return this.get('hasObsoletePartRevisions');
         },
 
-        hasTypedLink:function(){
-            if(this.getTypedLinks()){
-                return this.getTypedLinks().length > 0;
-            }
-            else{
-                return false;
-            }
+        hasTypedLink: function() {
+            return this.getTypedLinks().length;
         },
         getTypedLinks: function () {
             return this.get('typedLinks');

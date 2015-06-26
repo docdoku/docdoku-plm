@@ -91,7 +91,7 @@ define(['backbone',
         },
 
         hasTypedLink: function () {
-            this.getTypedLinks().length;
+            return this.getTypedLinks().length;
         },
 
         getTypedLinks: function () {
