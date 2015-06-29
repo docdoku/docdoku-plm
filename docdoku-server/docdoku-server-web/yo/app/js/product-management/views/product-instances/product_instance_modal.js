@@ -204,7 +204,7 @@ define([
             var iterationBaseline = _.find(that.collection.models,function(baseline) {
                 return baseline.getId() === baselineId;
             });
-            return iterationBaseline.getTypedLinks();
+            return iterationBaseline.getPathToPathLinks();
         },
 
         getExistingPathToPath: function () {

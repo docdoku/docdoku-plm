@@ -61,16 +61,11 @@ define(['backbone'], function (Backbone) {
             return this.get('hasObsoletePartRevisions');
         },
 
-        hasTypedLink: function() {
-            if(this.getTypedLinks()) {
-                return this.getTypedLinks().length;
-            } else {
-                return false;
-            }
-
+        hasPathToPathLink: function() {
+            return this.getPathToPathLinks().length;
         },
-        getTypedLinks: function () {
-            return this.get('typedLinks');
+        getPathToPathLinks: function () {
+            return this.get('pathToPathLinks');
         }
 
     });

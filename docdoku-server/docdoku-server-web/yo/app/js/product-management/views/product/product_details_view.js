@@ -66,7 +66,7 @@ define([
             this.existingPathToPathLinkCollection = [];
             this.availableType = [];
             var self = this;
-            _.each(self.model.getTypedLinks(), function (pathToPathLinkDTO) {
+            _.each(self.model.getPathToPathLinks(), function (pathToPathLinkDTO) {
                 self.existingPathToPathLinkCollection.push({
                     source: pathToPathLinkDTO.source,
                     target: pathToPathLinkDTO.target,

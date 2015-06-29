@@ -90,12 +90,13 @@ define(['backbone',
             return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + encodeURIComponent(this.getConfigurationItemId()) + '/export-files?configSpecType=pi-' + encodeURIComponent(this.getSerialNumber());
         },
 
-        hasTypedLink: function () {
-            return this.getTypedLinks().length;
+        hasPathToPathLink: function () {
+            return this.getPathToPathLinks().length;
         },
 
-        getTypedLinks: function () {
-            return this.get('typedLinks');
+        getPathToPathLinks: function () {
+            //TypedLinks of a product_instance reference the typedLinks of the last iteration
+            return this.getLastIteration().getPathToPathLinks();
         },
 
         hasPathDataInLastIteration: function () {
