@@ -506,7 +506,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             esIndexer.index(lastIteration);
 
-            if(oldIteration != null){
+            if(oldIteration != null && oldIteration.getVersion().equals(partR.getVersion())){
                 removeObsoletePathToPathLinks(user,oldIteration);
             }
 
@@ -2116,13 +2116,19 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
             }
 
-            // copy components
-            List<PartUsageLink> components = new LinkedList<>();
+            // Copy usage links
+            // Create new p2p links
+
+            List<PartUsageLink> newComponents = new LinkedList<>();
+            List<PartUsageLink> oldComponents = lastPartI.getComponents();
             for (PartUsageLink usage : lastPartI.getComponents()) {
                 PartUsageLink newUsage = usage.clone();
-                components.add(newUsage);
+                newComponents.add(newUsage);
             }
-            firstPartI.setComponents(components);
+            firstPartI.setComponents(newComponents);
+
+            PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
+            pathToPathLinkDAO.cloneAndUpgradePathToPathLinks(oldComponents, newComponents);
 
             // copy geometries
             for (Geometry sourceFile : lastPartI.getGeometries()) {
