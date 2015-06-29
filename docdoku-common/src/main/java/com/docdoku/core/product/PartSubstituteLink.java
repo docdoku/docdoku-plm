@@ -34,6 +34,9 @@ import java.util.List;
  */
 @Table(name="PARTSUBSTITUTELINK")
 @Entity
+@NamedQueries({
+        @NamedQuery(name="PartSubstituteLink.findBySubstitute",query="SELECT u FROM PartSubstituteLink u WHERE u.substitute.number LIKE :partNumber AND u.substitute.workspace.id = :workspaceId"),
+})
 public class PartSubstituteLink implements Serializable, Cloneable, PartLink {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

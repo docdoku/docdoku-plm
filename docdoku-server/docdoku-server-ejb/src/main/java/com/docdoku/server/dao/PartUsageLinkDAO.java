@@ -86,6 +86,17 @@ public class PartUsageLinkDAO {
     public boolean hasPartUsages(String workspaceId, String partNumber){
         return !findPartUsages(workspaceId,partNumber).isEmpty();
     }
+
+    public List<PartSubstituteLink> findPartSubstitutes(String workspaceId, String partNumber) {
+        return em.createNamedQuery("PartSubstituteLink.findBySubstitute", PartSubstituteLink.class)
+                .setParameter("partNumber", partNumber)
+                .setParameter("workspaceId", workspaceId)
+                .getResultList();
+    }
+
+    public boolean hasPartSubstitutes(String workspaceId, String partNumber) {
+        return !findPartSubstitutes(workspaceId,partNumber).isEmpty();
+    }
     
     public PartUsageLink loadPartUsageLink(int pId) throws PartUsageLinkNotFoundException {
         PartUsageLink link = em.find(PartUsageLink.class, pId);

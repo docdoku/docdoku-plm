@@ -1971,6 +1971,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new EntityConstraintException(locale, "EntityConstraintException2");
         }
 
+        // check if this part is in a partSubstitute
+        if (partUsageLinkDAO.hasPartSubstitutes(partMasterKey.getWorkspace(), partMasterKey.getNumber())) {
+            throw new EntityConstraintException(locale, "EntityConstraintException22");
+        }
+
         // check if part is baselined
         if (productBaselineDAO.existBaselinedPart(partMasterKey.getWorkspace(), partMasterKey.getNumber())) {
             throw new EntityConstraintException(locale, "EntityConstraintException5");
@@ -2033,14 +2038,21 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new EntityConstraintException(locale, "EntityConstraintException2");
         }
 
+        // check if this part is in a partSubstitute
+        if (partUsageLinkDAO.hasPartSubstitutes(partMaster.getWorkspaceId(), partMaster.getNumber())) {
+            throw new EntityConstraintException(locale, "EntityConstraintException22");
+        }
+
         // check if part is baselined
         if (productBaselineDAO.existBaselinedPart(partMaster.getWorkspaceId(), partMaster.getNumber())) {
             throw new EntityConstraintException(locale, "EntityConstraintException5");
         }
+
         ChangeItemDAO changeItemDAO = new ChangeItemDAO(locale, em);
         if(changeItemDAO.hasChangeItems(partRevisionKey)) {
             throw new EntityConstraintException(locale, "EntityConstraintException21");
         }
+
         // delete ElasticSearch Index for this revision iteration
         for (PartIteration partIteration : partR.getPartIterations()) {
             esIndexer.delete(partIteration);
@@ -2056,8 +2068,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 LOGGER.log(Level.INFO, null, e);
             }
         }
+
         partRevisionEvent.select(new AnnotationLiteral<Removed>() {
         }).fire(new PartRevisionChangeEvent(partR));
+
         if (isLastRevision) {
             partMasterDAO.removePartM(partMaster);
         } else {
