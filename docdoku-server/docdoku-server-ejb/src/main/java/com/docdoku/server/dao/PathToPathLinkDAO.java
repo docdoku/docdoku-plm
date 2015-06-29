@@ -14,8 +14,10 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by morgan on 29/04/15.
@@ -256,23 +258,37 @@ public class PathToPathLinkDAO {
 
     public void cloneAndUpgradePathToPathLinks(List<PartUsageLink> oldComponents, List<PartUsageLink> newComponents) {
         int size = oldComponents.size();
+        //keep a track of p2p to create and add it to the configuration item only once
+        //at the end of the process in order to not create them twice
+        //Map<PathToPathLink,Map<PathToPathLink, ConfigurationItem>> is oldP2P => newP2P => the configuration item into
+        //which it has be added
+        Map<PathToPathLink,Map<PathToPathLink, ConfigurationItem>> modifiedP2P=new HashMap<>();
         for(int i = 0; i < size; i++){
             PartLink oldLink = oldComponents.get(i);
             PartLink newLink = newComponents.get(i);
-            cloneAndUpgradePathToPathLink(oldLink, newLink);
+            cloneAndUpgradePathToPathLink(oldLink, newLink, modifiedP2P);
+        }
+        //to the new p2p to their configuration item
+        for(Map<PathToPathLink, ConfigurationItem> p2pAndConfigItem:modifiedP2P.values()){
+            Map.Entry<PathToPathLink, ConfigurationItem> pair = p2pAndConfigItem.entrySet().iterator().next();
+            ConfigurationItem ci = pair.getValue();
+            ci.addPathToPathLink(pair.getKey());
         }
     }
 
-    private void cloneAndUpgradePathToPathLink(PartLink oldLink, PartLink newLink){
+    private void cloneAndUpgradePathToPathLink(PartLink oldLink, PartLink newLink, Map<PathToPathLink,Map<PathToPathLink, ConfigurationItem>> modifiedP2P){
 
         List<PathToPathLink> oldP2PLinks = getPathToPathLinksFromPartialPath(oldLink.getFullId());
 
         String oldFullId = oldLink.getFullId();
         String newFullId = newLink.getFullId();
-
+        PathToPathLink clone;
         for(PathToPathLink pathToPathLink:oldP2PLinks){
-
-            PathToPathLink clone = pathToPathLink.clone();
+            if(modifiedP2P.get(pathToPathLink) !=null){
+                clone = modifiedP2P.get(pathToPathLink).keySet().iterator().next();
+            }else{
+                clone = new PathToPathLink(pathToPathLink.getType(),pathToPathLink.getSourcePath(),pathToPathLink.getTargetPath(),pathToPathLink.getDescription());
+            }
             clone.setSourcePath(upgradePath(clone.getSourcePath(), oldFullId, newFullId));
             clone.setTargetPath(upgradePath(clone.getTargetPath(), oldFullId, newFullId));
 
@@ -281,7 +297,9 @@ public class PathToPathLinkDAO {
                 ConfigurationItem configurationItem = em.createNamedQuery("ConfigurationItem.findByPathToPathLink", ConfigurationItem.class)
                         .setParameter("pathToPathLink", pathToPathLink)
                         .getSingleResult();
-                configurationItem.addPathToPathLink(clone);
+                Map<PathToPathLink, ConfigurationItem> p2pToAdd = new HashMap<>();
+                p2pToAdd.put(clone,configurationItem);
+                modifiedP2P.put(pathToPathLink,p2pToAdd);
             }catch(NoResultException e){
                 // ?
             }
@@ -292,7 +310,7 @@ public class PathToPathLinkDAO {
             for(int i = 0; i < size; i++){
                 PartLink oldSubstituteLink = oldLink.getSubstitutes().get(i);
                 PartLink newSubstituteLink = newLink.getSubstitutes().get(i);
-                cloneAndUpgradePathToPathLink(oldSubstituteLink, newSubstituteLink);
+                cloneAndUpgradePathToPathLink(oldSubstituteLink, newSubstituteLink, modifiedP2P);
             }
         }
 

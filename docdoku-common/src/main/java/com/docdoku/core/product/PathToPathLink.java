@@ -50,7 +50,7 @@ import java.io.Serializable;
         @NamedQuery(name="PathToPathLink.findRootPathToPathLinkForGivenProductAndType", query="SELECT DISTINCT p FROM ConfigurationItem ci JOIN ci.pathToPathLinks p WHERE p.type = :type AND ci = :configurationItem AND p.sourcePath not in (SELECT _p.targetPath FROM PathToPathLink _p WHERE _p member of ci.pathToPathLinks AND _p.type = :type)"),
         @NamedQuery(name="PathToPathLink.findPathToPathLinkByPathListInProduct", query="SELECT DISTINCT p FROM ConfigurationItem ci JOIN ci.pathToPathLinks p WHERE ci = :configurationItem AND p.sourcePath in :paths AND p.targetPath in :paths"),
         @NamedQuery(name="PathToPathLink.findSourcesPathToPathLinkInProduct", query="SELECT DISTINCT p FROM ConfigurationItem ci JOIN ci.pathToPathLinks p WHERE ci = :configurationItem AND p.sourcePath = :source AND p.type = :type"),
-        @NamedQuery(name="PathToPathLink.findLinksWherePartialPathIsPresent", query="SELECT p FROM ConfigurationItem ci JOIN ci.pathToPathLinks p WHERE p.targetPath LIKE :endOfChain OR p.targetPath LIKE :inChain OR p.sourcePath LIKE :endOfChain OR p.sourcePath LIKE :inChain")
+        @NamedQuery(name="PathToPathLink.findLinksWherePartialPathIsPresent", query="SELECT DISTINCT p FROM PathToPathLink p WHERE p.targetPath LIKE :endOfChain OR p.targetPath LIKE :inChain OR p.sourcePath LIKE :endOfChain OR p.sourcePath LIKE :inChain")
 })
 public class PathToPathLink implements Serializable, Cloneable{
 
@@ -114,6 +114,23 @@ public class PathToPathLink implements Serializable, Cloneable{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PathToPathLink that = (PathToPathLink) o;
+
+        if (id != that.id) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 
     @Override
