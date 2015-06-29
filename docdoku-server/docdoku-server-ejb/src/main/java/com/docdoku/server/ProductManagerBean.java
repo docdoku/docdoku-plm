@@ -1434,6 +1434,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
 
+        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale, em);
+        List<ProductConfiguration> productConfigurations = productConfigurationDAO.getAllProductConfigurationsByConfigurationItem(configurationItemKey);
+
+        if (!productConfigurations.isEmpty()) {
+            throw new EntityConstraintException(locale, "EntityConstraintException23");
+        }
+
         ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(locale, em);
         List<ProductBaseline> productBaselines = productBaselineDAO.findBaselines(configurationItemKey.getId(), configurationItemKey.getWorkspace());
 
