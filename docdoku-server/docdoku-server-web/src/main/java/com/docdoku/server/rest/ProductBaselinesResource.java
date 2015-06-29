@@ -85,9 +85,7 @@ public class ProductBaselinesResource {
             productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
             productBaselineDTO.setConfigurationItemLatestRevision(productBaseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
             productBaselineDTO.setHasObsoletePartRevisions(!productBaselineService.getObsoletePartRevisionsInBaseline(workspaceId, productBaseline.getId()).isEmpty());
-            productBaselineDTO.setTypedLinks(this.getTypedLinkForBaseline(workspaceId,productBaseline.getConfigurationItem().getId(),productBaselineDTO.getId()));
             baselinesDTO.add(productBaselineDTO);
-
         }
         return baselinesDTO;
     }
@@ -208,32 +206,5 @@ public class ProductBaselinesResource {
             dtos.add(mapper.map(pathToPathLink, LightPathToPathLinkDTO.class));
         }
         return dtos;
-    }
-
-    private  List<PathToPathLinkDTO> getTypedLinkForBaseline(String workspaceId, String configurationItemId,int baselineId ) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, AccessRightException {
-
-        List<PathToPathLink> pathToPathLinkTypes = productBaselineService.getPathToPathTypedLink(workspaceId, configurationItemId, baselineId);
-        List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
-
-        for (PathToPathLink pathToPathLink : pathToPathLinkTypes) {
-            PartMaster partMasterSource = productService.getPartMasterFromPath(workspaceId, configurationItemId, pathToPathLink.getSourcePath());
-            PartMaster partMasterTarget = productService.getPartMasterFromPath(workspaceId, configurationItemId, pathToPathLink.getTargetPath());
-
-            LightPartMasterDTO lightPartMasterDTOSource = new LightPartMasterDTO();
-            LightPartMasterDTO lightPartMasterDTOTarget = new LightPartMasterDTO();
-
-            lightPartMasterDTOSource.setPartName(partMasterSource.getName());
-            lightPartMasterDTOSource.setPartNumber(partMasterSource.getNumber());
-            lightPartMasterDTOTarget.setPartName(partMasterTarget.getName());
-            lightPartMasterDTOTarget.setPartNumber(partMasterTarget.getNumber());
-
-            PathToPathLinkDTO pathToPathLinkDTO = mapper.map(pathToPathLink, PathToPathLinkDTO.class);
-            pathToPathLinkDTO.setSource(lightPartMasterDTOSource);
-            pathToPathLinkDTO.setTarget(lightPartMasterDTOTarget);
-
-            pathToPathLinkDTOs.add(pathToPathLinkDTO);
-
-        }
-        return pathToPathLinkDTOs;
     }
 }

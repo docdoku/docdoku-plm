@@ -43,6 +43,7 @@ public class ProductInstanceIterationDTO {
     private Date creationDate;
     private List<PartMinimalListDTO> substitutesParts;
     private List<PartMinimalListDTO> optionalsParts;
+    private List<PathToPathLinkDTO> pathToPathLinks;
 
     private BaselineDTO basedOn;
     private List<PathDataMasterDTO> pathDataMasterList;
@@ -199,11 +200,19 @@ public class ProductInstanceIterationDTO {
         this.creationDate = creationDate;
     }
 
+
     public List<PartMinimalListDTO> getUsedByPaths() {
         return usedByPaths;
     }
 
     public void setUsedByPaths(List<PartMinimalListDTO> usedByPaths) {
         this.usedByPaths = usedByPaths;
+    }
+
+    public List<PathToPathLinkDTO> getPathToPathLinks() {
+        return this.pathToPathLinks;
+    }
+    public void setPathToPathLinks(List<PathToPathLinkDTO> pathToPathLinks) {
+        this.pathToPathLinks = pathToPathLinks;
     }
 }

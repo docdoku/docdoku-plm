@@ -212,7 +212,7 @@ define([
             this.existingPathToPathLinkCollection = [];
             this.availableType = [];
             var self = this;
-            _.each(self.getIterationLinks(), function (pathToPathLinkDTO) {
+            _.each(this.iteration.getPathToPathLinks(), function (pathToPathLinkDTO) {
                 self.existingPathToPathLinkCollection.push({
                     source: pathToPathLinkDTO.source,
                     target: pathToPathLinkDTO.target,

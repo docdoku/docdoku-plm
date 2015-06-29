@@ -35,13 +35,14 @@ public class ConfigurationItemDTO implements Serializable {
     private String designItemName;
     private String designItemLatestVersion;
     private UserDTO author;
-    private List<PathToPathLinkDTO> typedLinks;
+    private List<PathToPathLinkDTO> pathToPathLinks;
 
 
     public ConfigurationItemDTO() {
     }
 
-    public ConfigurationItemDTO(UserDTO author,String id, String workspaceId, String description, String designItemNumber,String designItemName, String designItemLatestVersion) {
+    public ConfigurationItemDTO(UserDTO author,String id, String workspaceId, String description, String designItemNumber,
+                                String designItemName, String designItemLatestVersion) {
         this.id = id;
         this.author =author;
         this.workspaceId = workspaceId;
@@ -99,12 +100,12 @@ public class ConfigurationItemDTO implements Serializable {
         this.designItemLatestVersion = designItemLatestVersion;
     }
 
-    public List<PathToPathLinkDTO> getTypedLinks() {
-        return typedLinks;
+    public List<PathToPathLinkDTO> getPathToPathLinks() {
+        return pathToPathLinks;
     }
 
-    public void setTypedLinks(List<PathToPathLinkDTO> typedLinks) {
-        this.typedLinks = typedLinks;
+    public void setPathToPathLinks(List<PathToPathLinkDTO> pathToPathLinks) {
+        this.pathToPathLinks = pathToPathLinks;
     }
 
     public UserDTO getAuthor() {

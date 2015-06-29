@@ -41,7 +41,7 @@ public class ProductBaselineDTO extends BaselineDTO {
     private List<PartMinimalListDTO> optionalsParts;
     private UserDTO author;
     private boolean hasObsoletePartRevisions;
-    private List<PathToPathLinkDTO> typedLinks;
+    private List<PathToPathLinkDTO> PathToPathLinks;
 
     public ProductBaselineDTO() {
     }
@@ -138,11 +138,11 @@ public class ProductBaselineDTO extends BaselineDTO {
         this.hasObsoletePartRevisions = hasObsoletePartRevisions;
     }
 
-    public List<PathToPathLinkDTO> getTypedLinks() {
-        return typedLinks;
+    public List<PathToPathLinkDTO> getPathToPathLinks() {
+        return PathToPathLinks;
     }
 
-    public void setTypedLinks(List<PathToPathLinkDTO> typedLinks) {
-        this.typedLinks = typedLinks;
+    public void setPathToPathLinks(List<PathToPathLinkDTO> PathToPathLinks) {
+        this.PathToPathLinks = PathToPathLinks;
     }
 }

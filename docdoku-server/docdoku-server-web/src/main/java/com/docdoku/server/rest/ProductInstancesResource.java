@@ -96,11 +96,6 @@ public class ProductInstancesResource {
         for(ProductInstanceMaster productInstanceMaster : productInstanceMasterList){
             ProductInstanceMasterDTO productInstanceMasterDTO = mapper.map(productInstanceMaster,ProductInstanceMasterDTO.class);
             productInstanceMasterDTO.setConfigurationItemId(productInstanceMaster.getInstanceOf().getId());
-            try {
-                productInstanceMasterDTO.setTypedLinks(this.getTypedLinksForProductInstance(workspaceId,productInstanceMaster.getInstanceOf().getId(),productInstanceMasterDTO.getSerialNumber()));
-            } catch (AccessRightException e) {
-                LOGGER.log(Level.FINEST, null, e);
-            }
             productInstanceMasterDTOList.add(productInstanceMasterDTO);
         }
         return productInstanceMasterDTOList;
@@ -140,7 +135,7 @@ public class ProductInstancesResource {
                 documentLinkComments[i++] = comment;
             }
         }
-        ProductInstanceMaster productInstanceMaster = productInstanceService.createProductInstance(workspaceId,new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBaselineId(),userEntries,grpEntries,attributes, links, documentLinkComments);
+        ProductInstanceMaster productInstanceMaster = productInstanceService.createProductInstance(workspaceId, new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBaselineId(), userEntries, grpEntries, attributes, links, documentLinkComments);
 
         return mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
     }
@@ -192,13 +187,18 @@ public class ProductInstancesResource {
         ProductInstanceMasterDTO dto = mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
 
 
-        List<ProductInstanceIterationDTO> productInstanceIterations = dto.getProductInstanceIterations();
-
-        for(ProductInstanceIterationDTO productInstanceIterationDTO : productInstanceIterations){
+        List<ProductInstanceIterationDTO> productInstanceIterationsDTO = dto.getProductInstanceIterations();
+        List<ProductInstanceIteration> productInstanceIterations = productInstanceMaster.getProductInstanceIterations();
+        Iterator<ProductInstanceIteration> iterationIterator = productInstanceIterations.iterator();
+        for(ProductInstanceIterationDTO productInstanceIterationDTO : productInstanceIterationsDTO){
 
             List<PartMinimalListDTO> substitutesParts = new ArrayList<>();
             List<PartMinimalListDTO> optionalParts = new ArrayList<>();
-
+            try {
+                productInstanceIterationDTO.setPathToPathLinks(this.getTypedLinksForProductInstance(workspaceId,iterationIterator.next()));
+            } catch (AccessRightException e) {
+                e.printStackTrace();
+            }
             for(String path:productInstanceIterationDTO.getSubstituteLinks()){
                 PartMinimalListDTO partMinimalListDTO = new PartMinimalListDTO();
                 List<PartMinimalDTO> partDTOs = new ArrayList<>();
@@ -312,7 +312,7 @@ public class ProductInstancesResource {
             throws EntityNotFoundException, UserNotActiveException {
 
         ProductInstanceIteration productInstanceIteration = productInstanceService.getProductInstanceIteration(new ProductInstanceIterationKey(serialNumber, workspaceId, configurationItemId, iteration));
-        return mapper.map(productInstanceIteration,ProductInstanceIterationDTO.class);
+        return mapper.map(productInstanceIteration, ProductInstanceIterationDTO.class);
     }
 
     @GET
@@ -405,7 +405,7 @@ public class ProductInstancesResource {
                                                 FileDTO fileDTO) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, ProductInstanceMasterNotFoundException, AccessRightException, StorageException {
 
         String fullName = workspaceId + "/product-instances/" + serialNumber +"/pathdata/" + pathDataId + "/iterations/" + iteration + "/" + fileName;
-        BinaryResource binaryResource = productInstanceService.renameFileInPathData(workspaceId, configurationItemId, serialNumber, pathDataId,iteration, fullName, fileDTO.getShortName());
+        BinaryResource binaryResource = productInstanceService.renameFileInPathData(workspaceId, configurationItemId, serialNumber, pathDataId, iteration, fullName, fileDTO.getShortName());
         return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
     }
 
@@ -423,7 +423,7 @@ public class ProductInstancesResource {
 
         String fullName = workspaceId + "/product-instances/" + serialNumber +"/pathdata/" + pathDataId + "/iterations/" + iteration + "/" + fileName;
         ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
-        productInstanceService.removeFileFromPathData(workspaceId, configurationItemId, serialNumber, pathDataId,iteration, fullName,productInstanceMaster);
+        productInstanceService.removeFileFromPathData(workspaceId, configurationItemId, serialNumber, pathDataId, iteration, fullName, productInstanceMaster);
         return Response.ok().build();
     }
 
@@ -466,7 +466,6 @@ public class ProductInstancesResource {
 
 
         PathDataMaster pathDataMaster = productInstanceService.addNewPathDataIteration(workspaceId, configurationItemId, serialNumber, pathDataId, pathDataIterationCreationDTO.getPath(), attributes, pathDataIterationCreationDTO.getNoteIteration(), links, documentLinkComments);
-
         PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
@@ -661,13 +660,14 @@ public class ProductInstancesResource {
         }
         return data;
     }
-    private List<PathToPathLinkDTO> getTypedLinksForProductInstance(String workspaceId,String configurationItemId,String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
-        List<PathToPathLink> pathToPathLinkTypes = productInstanceService.getPathToPathLinks(workspaceId, configurationItemId, serialNumber);
+
+    private List<PathToPathLinkDTO> getTypedLinksForProductInstance(String workspaceId,ProductInstanceIteration productInstanceIteration) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
+        List<PathToPathLink> pathToPathLinkTypes = productInstanceIteration.getPathToPathLinks();
         List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
 
         for (PathToPathLink pathToPathLink : pathToPathLinkTypes) {
-            PartMaster partMasterSource = productService.getPartMasterFromPath(workspaceId, configurationItemId, pathToPathLink.getSourcePath());
-            PartMaster partMasterTarget = productService.getPartMasterFromPath(workspaceId, configurationItemId, pathToPathLink.getTargetPath());
+            PartMaster partMasterSource = productService.getPartMasterFromPath(workspaceId, productInstanceIteration.getConfigurationItemId(), pathToPathLink.getSourcePath());
+            PartMaster partMasterTarget = productService.getPartMasterFromPath(workspaceId, productInstanceIteration.getConfigurationItemId(), pathToPathLink.getTargetPath());
 
             LightPartMasterDTO lightPartMasterDTOSource = new LightPartMasterDTO();
             LightPartMasterDTO lightPartMasterDTOTarget = new LightPartMasterDTO();

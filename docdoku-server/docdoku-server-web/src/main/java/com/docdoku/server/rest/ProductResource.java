@@ -99,8 +99,9 @@ public class ProductResource {
 
         for (int i = 0; i < cis.size(); i++) {
             ConfigurationItem ci = cis.get(i);
-            dtos[i] = new ConfigurationItemDTO(mapper.map(ci.getAuthor(),UserDTO.class),ci.getId(), ci.getWorkspaceId(), ci.getDescription(), ci.getDesignItem().getNumber(),ci.getDesignItem().getName(), ci.getDesignItem().getLastRevision().getVersion());
-            dtos[i].setTypedLinks(getTypedLinkForConfigurationItem(workspaceId, ci.getId()));
+            dtos[i] = new ConfigurationItemDTO(mapper.map(ci.getAuthor(),UserDTO.class),ci.getId(), ci.getWorkspaceId(),
+                    ci.getDescription(), ci.getDesignItem().getNumber(),ci.getDesignItem().getName(), ci.getDesignItem().getLastRevision().getVersion());
+            dtos[i].setPathToPathLinks(this.getTypedLinkForConfigurationItem(workspaceId,ci));
         }
 
         return dtos;
@@ -195,7 +196,7 @@ public class ProductResource {
         ConfigurationItemDTO dto = new ConfigurationItemDTO(mapper.map(ci.getAuthor(),UserDTO.class),ci.getId(), ci.getWorkspaceId(),
                 ci.getDescription(), ci.getDesignItem().getNumber(),ci.getDesignItem().getName(),
                 ci.getDesignItem().getLastRevision().getVersion());
-        dto.setTypedLinks(getTypedLinkForConfigurationItem(workspaceId, ci.getId()));
+        dto.setPathToPathLinks(this.getTypedLinkForConfigurationItem(workspaceId,ci));
         return dto;
     }
 
@@ -611,13 +612,13 @@ public class ProductResource {
         return Tools.mapModificationNotificationsToModificationNotificationDTO(notifications);
     }
 
-    private  List<PathToPathLinkDTO> getTypedLinkForConfigurationItem(String workspaceId, String configurationItemId ) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
-        List<PathToPathLink> pathToPathLinkTypes = productService.getPathToPathLinks(workspaceId, configurationItemId);
+    private  List<PathToPathLinkDTO> getTypedLinkForConfigurationItem(String workspaceId, ConfigurationItem configurationItem ) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+        List<PathToPathLink> pathToPathLinkTypes = configurationItem.getPathToPathLinks();
         List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
 
         for (PathToPathLink pathToPathLink : pathToPathLinkTypes) {
-            PartMaster partMasterSource = productService.getPartMasterFromPath(workspaceId, configurationItemId, pathToPathLink.getSourcePath());
-            PartMaster partMasterTarget = productService.getPartMasterFromPath(workspaceId, configurationItemId, pathToPathLink.getTargetPath());
+            PartMaster partMasterSource = productService.getPartMasterFromPath(workspaceId, configurationItem.getId(), pathToPathLink.getSourcePath());
+            PartMaster partMasterTarget = productService.getPartMasterFromPath(workspaceId, configurationItem.getId(), pathToPathLink.getTargetPath());
 
             LightPartMasterDTO lightPartMasterDTOSource = new LightPartMasterDTO();
             LightPartMasterDTO lightPartMasterDTOTarget = new LightPartMasterDTO();
