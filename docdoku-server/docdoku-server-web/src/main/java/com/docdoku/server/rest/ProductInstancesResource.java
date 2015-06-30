@@ -80,7 +80,7 @@ public class ProductInstancesResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<ProductInstanceMasterDTO> getProductInstances(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+            throws EntityNotFoundException, UserNotActiveException {
 
         List<ProductInstanceMaster> productInstanceMasterList;
         if(ciId != null) {
@@ -93,7 +93,11 @@ public class ProductInstancesResource {
         for(ProductInstanceMaster productInstanceMaster : productInstanceMasterList){
             ProductInstanceMasterDTO productInstanceMasterDTO = mapper.map(productInstanceMaster,ProductInstanceMasterDTO.class);
             productInstanceMasterDTO.setConfigurationItemId(productInstanceMaster.getInstanceOf().getId());
-            productInstanceMasterDTO.setTypedLinks(this.getTypedLinksForProductInstance(workspaceId,productInstanceMaster.getInstanceOf().getId(),productInstanceMasterDTO.getSerialNumber()));
+            try {
+                productInstanceMasterDTO.setTypedLinks(this.getTypedLinksForProductInstance(workspaceId,productInstanceMaster.getInstanceOf().getId(),productInstanceMasterDTO.getSerialNumber()));
+            } catch (AccessRightException e) {
+                e.printStackTrace();
+            }
             productInstanceMasterDTOList.add(productInstanceMasterDTO);
         }
         return productInstanceMasterDTOList;
