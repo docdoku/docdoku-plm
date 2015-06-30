@@ -219,6 +219,7 @@ define([
                     that.hide();
                     that.model.trigger('change');
                     Backbone.Events.trigger('part:saved');
+                    Backbone.Events.trigger('part:iterationChange');
                 },
                 error: this.onError
             });
