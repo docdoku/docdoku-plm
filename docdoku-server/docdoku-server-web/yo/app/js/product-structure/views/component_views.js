@@ -212,8 +212,9 @@ define([
 			    }).show();
 		    });
 
-	    }
-        ,openPathDataModal : function () {
+	    },
+
+        openPathDataModal : function () {
             Backbone.Events.trigger('pathDataClicked',this.model);
         }
     });
