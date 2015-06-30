@@ -164,6 +164,7 @@ define([
             Backbone.Events.on('selection:reset', this.onResetSelection, this);
             Backbone.Events.on('part:saved', this.refreshTree, this);
             Backbone.Events.on('pathSelected', this.updateDisplayTypedLinkButton, this);
+            Backbone.Events.on('pathDataClicked', this.openPathDataModal, this);
         },
 
         updateDisplayTypedLinkButton: function(pathSelected){
@@ -276,6 +277,10 @@ define([
             });
             window.document.body.appendChild(productInstanceModal.el);
             productInstanceModal.initAndOpenModal();
+        },
+        openPathDataModal:function(pathSelected){
+            this.checkedComponent = pathSelected;
+            this.openProductInstanceModal();
         },
 
         fullScreenScene: function () {

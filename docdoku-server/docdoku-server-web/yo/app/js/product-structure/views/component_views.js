@@ -120,7 +120,8 @@ define([
             'click a': 'onComponentSelected',
             'change input.load-3D:first': 'onLoad3D',
             'change input.selectable-part-checkbox:first': 'selectPart',
-            'click .openModal:first': 'onEditPart'
+            'click .openModal:first': 'onEditPart',
+            'click .fa-asterisk:first': 'openPathDataModal'
         },
 
         initialize: function () {
@@ -212,6 +213,9 @@ define([
 		    });
 
 	    }
+        ,openPathDataModal : function () {
+            Backbone.Events.trigger('pathDataClicked',this.model);
+        }
     });
 
     ComponentViews.Assembly = Backbone.View.extend({
@@ -225,7 +229,8 @@ define([
             'click .openModal:first': 'onEditPart',
             'change input.load-3D:first': 'onLoad3D',
             'change input.selectable-part-checkbox:first': 'selectPart',
-            'click .hitarea:first': 'onToggleExpand'
+            'click .hitarea:first': 'onToggleExpand',
+            'click .fa-asterisk:first': 'openPathDataModal'
         },
 
         initialize: function () {
@@ -249,6 +254,9 @@ define([
             return false;
         },
 
+        openPathDataModal : function () {
+            Backbone.Events.trigger('pathDataClicked',this.model);
+        },
         onLoad3D: function (event) {
             if (event) {
                 if (event.target.checked) {
