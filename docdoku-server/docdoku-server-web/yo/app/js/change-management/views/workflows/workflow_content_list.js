@@ -91,6 +91,7 @@ define([
                             dataType: 'text',
                             success: function () {
                                 _this.listView.redraw();
+                                _this.onNoWorkflowSelected();
                             }
                         });
                     });
