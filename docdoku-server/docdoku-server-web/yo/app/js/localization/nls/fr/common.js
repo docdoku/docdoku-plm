@@ -90,7 +90,7 @@ define({
 	CONNECTING: "Connexion ...",
     CONTAINS_OBSOLETE_PARTS:"Contient des articles obsolètes",
 	CONTENT: "Contenu",
-	CONTENT_HELP: "Contenu du document",
+	CONTENT_HELP: "Contenu du ou des fichier(s)",
 	CONTROLS_SHORTCUTS: "Raccourcis clavier/souris",
 	COPY: "Copier",
     CONVERSION:"Conversion",

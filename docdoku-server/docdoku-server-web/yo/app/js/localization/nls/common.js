@@ -91,7 +91,7 @@ define({
 		CONNECTING: "Connecting...",
         CONTAINS_OBSOLETE_PARTS:"Contains obsolete parts",
 		CONTENT: "Content",
-		CONTENT_HELP: "Document content",
+        CONTENT_HELP: "File(s) content",
 		CONTROLS_SHORTCUTS: "Mouse/keyboard shortcuts",
         CONVERSION:"Conversion",
         CONVERSION_STATUS:"Conversion status",

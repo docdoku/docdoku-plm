@@ -78,7 +78,7 @@ define({
 	CONNECTED: "Connected",
 	CONNECTING: "Connecting...",
 	CONTENT: "Content",
-	CONTENT_HELP: "Document content",
+	CONTENT_HELP: "File(s) content",
 	CONTROLS_SHORTCUTS: "Mouse/keyboard shortcuts",
     CONVERSION:"Conversion",
     CONVERSION_STATUS:"Conversion status",
