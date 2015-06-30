@@ -198,14 +198,6 @@ define([
 
             this.attributesView.render();
         },
-        getIterationLinks: function() {
-            var that = this;
-            var baselineId = this.iteration.getBasedOnId();
-            var iterationBaseline = _.find(that.collection.models,function(baseline) {
-                return baseline.getId() === baselineId;
-            });
-            return iterationBaseline.getPathToPathLinks();
-        },
 
         getExistingPathToPath: function () {
 
