@@ -31,7 +31,13 @@ define([
                 isReadOnly: this.model.isReadOnly(),
                 isFullAccess: this.model.isFullAccess()
             }));
+
             this.$checkbox = this.$('input[type=checkbox]');
+            if (this.isChecked()) {
+                this.check();
+                this.trigger('selectionChanged', this);
+            }
+
             this.model.on('change', this.render, this);
             this.bindUserPopover();
             date.dateHelper(this.$('.date-popover'));
