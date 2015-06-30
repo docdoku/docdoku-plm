@@ -124,21 +124,18 @@ define([
 
         onNoProductInstanceSelected: function () {
             this.trigger('delete-button:display', false);
-            this.trigger('duplicate-button:display', false);
             this.trigger('acl-button:display', false);
 
         },
 
         onOneProductInstanceSelected: function () {
             this.trigger('delete-button:display', true);
-            this.trigger('duplicate-button:display', true);
             this.trigger('acl-button:display', true);
 
         },
 
         onSeveralProductInstancesSelected: function () {
             this.trigger('delete-button:display', true);
-            this.trigger('duplicate-button:display', false);
             this.trigger('acl-button:display', false);
         },
 
