@@ -37,7 +37,7 @@ import java.util.Date;
 @NamedQueries ({
     @NamedQuery(name="findLogByPartAndUserAndEvent", query="SELECT l FROM PartLog l WHERE l.userLogin = :userLogin AND l.partWorkspaceId = :partWorkspaceId AND l.partNumber = :partNumber AND l.partVersion = :partVersion AND l.partIteration = :partIteration AND l.event = :event ORDER BY l.logDate")
 })
-public class PartLog implements Serializable, Cloneable {
+public class PartLog implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

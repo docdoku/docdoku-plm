@@ -32,7 +32,7 @@ import java.util.*;
  */
 @Table(name="WORKFLOW")
 @javax.persistence.Entity
-public class Workflow implements Serializable, Cloneable {
+public class Workflow implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

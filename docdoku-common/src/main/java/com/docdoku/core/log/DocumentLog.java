@@ -36,7 +36,7 @@ import java.util.Date;
 @NamedQueries ({
     @NamedQuery(name="findLogByDocumentAndUserAndEvent", query="SELECT l FROM DocumentLog l WHERE l.userLogin = :userLogin AND l.documentWorkspaceId = :documentWorkspaceId AND l.documentId = :documentId AND l.documentVersion = :documentVersion AND l.documentIteration = :documentIteration AND l.event = :event ORDER BY l.logDate")
 })
-public class DocumentLog implements Serializable, Cloneable {
+public class DocumentLog implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

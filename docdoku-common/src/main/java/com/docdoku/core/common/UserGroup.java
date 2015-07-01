@@ -38,7 +38,7 @@ import java.util.Set;
 @NamedQueries({
         @NamedQuery(name="UserGroup.findUserGroups", query="SELECT u FROM UserGroup u WHERE :user member of u.users AND u.workspaceId = :workspaceId")
 })
-public class UserGroup implements Serializable, Cloneable {
+public class UserGroup implements Serializable {
 
     @Column(length=100)
     @javax.persistence.Id

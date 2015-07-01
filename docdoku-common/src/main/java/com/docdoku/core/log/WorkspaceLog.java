@@ -37,7 +37,7 @@ import java.util.Date;
 @NamedQueries ({
     @NamedQuery(name="findLogByWorkspaceAndUserAndEvent", query="SELECT l FROM WorkspaceLog l WHERE l.userLogin = :userLogin AND l.workspaceId = :workspaceId AND l.event = :event ORDER BY l.logDate")
 })
-public class WorkspaceLog implements Serializable, Cloneable {
+public class WorkspaceLog implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

@@ -51,7 +51,7 @@ import java.util.*;
         @NamedQuery(name="DocumentRevision.findByWorkspace.filterUserACLEntry", query="SELECT dr FROM DocumentRevision dr WHERE dr.documentMasterWorkspaceId = :workspaceId and (dr.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = dr.acl)) AND dr.location.completePath NOT LIKE :excludedFolders ORDER BY dr.documentMasterId ASC"),
         @NamedQuery(name="DocumentRevision.countByWorkspace.filterUserACLEntry", query="SELECT count(dr) FROM DocumentRevision dr WHERE dr.documentMasterWorkspaceId = :workspaceId and (dr.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = dr.acl)) AND dr.location.completePath NOT LIKE :excludedFolders")
 })
-public class DocumentRevision implements Serializable, Comparable<DocumentRevision>, Cloneable {
+public class DocumentRevision implements Serializable, Comparable<DocumentRevision> {
 
 
     @Id

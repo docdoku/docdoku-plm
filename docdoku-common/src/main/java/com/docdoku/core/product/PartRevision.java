@@ -48,7 +48,7 @@ import java.util.*;
         @NamedQuery(name="PartRevision.countByWorkspace", query="SELECT count(pr) FROM PartRevision pr WHERE pr.partMasterWorkspaceId = :workspaceId"),
         @NamedQuery(name="PartRevision.findByReferenceOrName", query="SELECT pr FROM PartRevision pr WHERE (pr.partMaster.number LIKE :partNumber OR pr.partMaster.name LIKE :partName) AND pr.partMaster.workspace.id = :workspaceId")
 })
-public class PartRevision implements Serializable, Comparable<PartRevision>, Cloneable {
+public class PartRevision implements Serializable, Comparable<PartRevision> {
 
 
     @Id

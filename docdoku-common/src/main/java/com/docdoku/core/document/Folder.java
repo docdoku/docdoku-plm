@@ -133,9 +133,13 @@ public class Folder implements Serializable, Comparable<Folder> {
         }
         
         Folder[] folders = new Folder[foldersStack.size()];
-        for (int i = 0; !foldersStack.empty(); i++) {
-            folders[i] = foldersStack.pop();
+
+        int i = 0;
+
+        while(!foldersStack.empty()){
+            folders[i++] = foldersStack.pop();
         }
+
         return folders;
     }
     
