@@ -202,7 +202,7 @@ public class FileStorageProvider implements StorageProvider {
 
     @Override
     public void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException {
-        if(workspaceId != null && !workspaceId.equals("")){
+        if(workspaceId != null && !workspaceId.isEmpty()){
             try{
                 File rootFolder = new File(new StringBuilder().append(vaultPath).append("/").append(workspaceId).toString());
                 if(rootFolder.exists()){

@@ -24,7 +24,6 @@ import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.services.IDocumentManagerLocal;
 
 import javax.ejb.EJB;
@@ -58,7 +57,7 @@ public class DocumentPermalinkServlet extends HttpServlet {
                 HttpServletRequest httpRequest = (HttpServletRequest) pRequest;
                 String requestURI = httpRequest.getRequestURI();
                 String[] pathInfos = Pattern.compile("/").split(requestURI);
-                int offset = httpRequest.getContextPath().equals("") ? 2 : 3;
+                int offset = httpRequest.getContextPath().isEmpty() ? 2 : 3;
 
                 String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
                 String documentMasterId = URLDecoder.decode(pathInfos[offset+1],"UTF-8");

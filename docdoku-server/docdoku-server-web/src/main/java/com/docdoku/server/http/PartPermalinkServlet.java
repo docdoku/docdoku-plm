@@ -57,7 +57,7 @@ public class PartPermalinkServlet extends HttpServlet {
             }else{
                 String requestURI = pRequest.getRequestURI();
                 String[] pathInfos = Pattern.compile("/").split(requestURI);
-                int offset = pRequest.getContextPath().equals("") ? 2 : 3;
+                int offset = pRequest.getContextPath().isEmpty() ? 2 : 3;
 
                 String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
                 String partNumber = URLDecoder.decode(pathInfos[offset+1],"UTF-8");

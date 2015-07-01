@@ -104,7 +104,7 @@ public class WorkspaceBean {
         Workspace workspace = adminState.getCurrentWorkspace();
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
 
-        if (adminState.getSelectedGroup() != null && !adminState.getSelectedGroup().equals("")) {
+        if (adminState.getSelectedGroup() != null && !adminState.getSelectedGroup().isEmpty()) {
             userManager.addUserInGroup(new UserGroupKey(workspace.getId(), adminState.getSelectedGroup()), loginToAdd);
             return request.getContextPath() + "/admin/workspace/manageUsersGroup.xhtml?group=" + adminState.getSelectedGroup();
         } else {
