@@ -31,6 +31,8 @@ public class QueryContext implements Serializable{
     @Id
     private int id;
 
+    private String workspaceId;
+
     private String serialNumber;
 
     private String configurationItemId;
@@ -75,5 +77,13 @@ public class QueryContext implements Serializable{
 
     public void setParentQuery(Query parentQuery) {
         this.parentQuery = parentQuery;
+    }
+
+    public String getWorkspaceId() {
+        return workspaceId;
+    }
+
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
     }
 }

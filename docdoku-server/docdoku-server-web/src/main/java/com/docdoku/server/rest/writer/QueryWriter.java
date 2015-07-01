@@ -20,8 +20,14 @@
 package com.docdoku.server.rest.writer;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.configuration.*;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.exceptions.ProductInstanceMasterNotFoundException;
+import com.docdoku.core.exceptions.UserNotActiveException;
+import com.docdoku.core.exceptions.UserNotFoundException;
+import com.docdoku.core.exceptions.WorkspaceNotFoundException;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeDescriptor;
 import com.docdoku.core.meta.InstanceListOfValuesAttribute;
@@ -31,7 +37,7 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryField;
 import com.docdoku.core.query.QueryResultRow;
-import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.export.ExcelGenerator;
 import com.docdoku.server.rest.collections.QueryResult;
@@ -67,13 +73,13 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
     private ExcelGenerator excelGenerator = new ExcelGenerator();
 
     private static Context context;
-    private static IProductManagerLocal productService;
+    private static IProductInstanceManagerLocal productInstanceService;
     private static final Logger LOGGER = Logger.getLogger(QueryWriter.class.getName());
 
     static {
         try {
             context = new InitialContext();
-            productService = (IProductManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductManagerBean");
+            productInstanceService = (IProductInstanceManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductInstanceManagerBean");
         } catch (NamingException e) {
             LOGGER.log(Level.WARNING, null, e);
         }
@@ -312,15 +318,44 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
             }
 
             if (selects.contains(QueryField.PART_ITERATION_LINKED_DOCUMENTS)) {
-                PartIteration lastIteration = part.getLastCheckedInIteration();
+
                 StringBuilder sb = new StringBuilder();
 
-                if(lastIteration != null){
-                    Set<DocumentLink> linkedDocuments = lastIteration.getLinkedDocuments();
+                if(null!= context && null != context.getSerialNumber()){
+                    try {
+                        ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(context.getSerialNumber(), context.getWorkspaceId(), context.getConfigurationItemId()));
+                        ProductInstanceIteration lastIteration = productInstanceMaster.getLastIteration();
+                        ProductBaseline basedOn = lastIteration.getBasedOn();
+                        PartCollection partCollection = basedOn.getPartCollection();
+                        BaselinedPart baselinedPart = partCollection.getBaselinedPart(new BaselinedPartKey(partCollection.getId(), context.getWorkspaceId(), part.getPartNumber()));
+                        PartIteration targetPart = baselinedPart.getTargetPart();
+                        Set<DocumentLink> linkedDocuments = targetPart.getLinkedDocuments();
+                        DocumentCollection documentCollection = basedOn.getDocumentCollection();
 
-                    for(DocumentLink documentLink:linkedDocuments){
-                        DocumentRevision targetDocument = documentLink.getTargetDocument();
-                        sb.append(targetDocument.toString()+",");
+                        for(DocumentLink documentLink:linkedDocuments){
+                            DocumentRevision targetDocument = documentLink.getTargetDocument();
+                            BaselinedDocument baselinedDocument = documentCollection.getBaselinedDocument(new BaselinedDocumentKey(documentCollection.getId(), context.getWorkspaceId(), targetDocument.getDocumentMasterId(), targetDocument.getVersion()));
+                            if(null != baselinedDocument) {
+                                DocumentIteration targetDocumentIteration = baselinedDocument.getTargetDocument();
+                                sb.append(targetDocumentIteration.toString() + ",");
+                            }
+                        }
+
+                    } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | ProductInstanceMasterNotFoundException e) {
+                        LOGGER.log(Level.FINEST,null,e);
+                    }
+                }else{
+                    PartIteration lastIteration = part.getLastCheckedInIteration();
+                    if(lastIteration != null){
+                        Set<DocumentLink> linkedDocuments = lastIteration.getLinkedDocuments();
+
+                        for(DocumentLink documentLink:linkedDocuments){
+                            DocumentRevision targetDocument = documentLink.getTargetDocument();
+                            DocumentIteration lastCheckedInIteration = targetDocument.getLastCheckedInIteration();
+                            if(lastCheckedInIteration != null){
+                                sb.append(lastCheckedInIteration.toString()+",");
+                            }
+                        }
                     }
                 }
 

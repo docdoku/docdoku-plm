@@ -504,7 +504,8 @@ define([
                     var productAndSerial = ctx.split('/');
                     contextToSend.push({
                         configurationItemId:productAndSerial[0],
-                        serialNumber:productAndSerial[1]
+                        serialNumber:productAndSerial[1],
+                        workspaceId:App.config.workspaceId
                     });
                 });
 

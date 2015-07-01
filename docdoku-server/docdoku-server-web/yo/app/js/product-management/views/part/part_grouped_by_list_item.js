@@ -60,12 +60,18 @@ define([
                         var result = [];
                         _.each(documents,function(document){
                             var lastDash = document.lastIndexOf('-');
-                            var id = document.substr(0, lastDash);
-                            var version = document.substr(lastDash+1);
+                            var idAndVersion = document.substr(0, lastDash);
+                            var iteration = document.substr(lastDash+1);
+
+                            lastDash = idAndVersion.lastIndexOf('-');
+                            var id = idAndVersion.substr(0, lastDash);
+                            var version = idAndVersion.substr(lastDash+1);
+
                             result.push({
                                 link:'../documents/'+App.config.workspaceId+'/'+id+'/'+version,
                                 name:document
                             });
+
                         });
                         value = result;
                     }

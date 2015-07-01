@@ -25,10 +25,19 @@ package com.docdoku.server.rest.dto;
  */
 public class QueryContextDTO {
 
+    private String workspaceId;
     private String serialNumber;
     private String configurationItemId;
 
     public QueryContextDTO() {
+    }
+
+    public String getWorkspaceId() {
+        return workspaceId;
+    }
+
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
     }
 
     public String getConfigurationItemId() {
