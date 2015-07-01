@@ -21,7 +21,6 @@
 package com.docdoku.server.rest.dto.baseline;
 
 import com.docdoku.core.configuration.ProductBaseline;
-import com.docdoku.core.product.PathToPathLink;
 import com.docdoku.server.rest.dto.PartMinimalListDTO;
 import com.docdoku.server.rest.dto.PathToPathLinkDTO;
 import com.docdoku.server.rest.dto.UserDTO;

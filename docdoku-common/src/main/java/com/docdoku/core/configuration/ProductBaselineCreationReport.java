@@ -22,7 +22,9 @@ package com.docdoku.core.configuration;
 import com.docdoku.core.product.PartRevision;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ProductBaselineCreationReport implements Serializable{
     ProductBaseline productBaseline;

@@ -23,14 +23,11 @@ package com.docdoku.server;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.server.storage.StorageProvider;
 import com.docdoku.server.storage.filesystem.FileStorageProvider;
-import org.junit.*;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Date;
 
 

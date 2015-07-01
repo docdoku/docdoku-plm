@@ -20,8 +20,6 @@
 
 package com.docdoku.server.rest.dto;
 
-import com.docdoku.core.security.ACL;
-
 import java.util.Date;
 import java.util.List;
 

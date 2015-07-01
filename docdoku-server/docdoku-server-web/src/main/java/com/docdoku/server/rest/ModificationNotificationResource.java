@@ -19,22 +19,22 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.exceptions.*;
-import com.docdoku.core.exceptions.NotAllowedException;
+import com.docdoku.core.exceptions.AccessRightException;
+import com.docdoku.core.exceptions.PartRevisionNotFoundException;
+import com.docdoku.core.exceptions.UserNotFoundException;
+import com.docdoku.core.exceptions.WorkspaceNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDocumentWorkflowManagerLocal;
-import com.docdoku.core.services.IPartWorkflowManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.workflow.ActivityKey;
-import com.docdoku.core.workflow.TaskKey;
 import com.docdoku.server.rest.dto.ModificationNotificationDTO;
-import com.docdoku.server.rest.dto.TaskProcessDTO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 

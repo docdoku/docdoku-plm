@@ -21,7 +21,6 @@ package com.docdoku.core.services;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.configuration.*;
-import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;

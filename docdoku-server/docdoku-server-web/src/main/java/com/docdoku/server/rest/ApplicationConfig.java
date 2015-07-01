@@ -20,9 +20,6 @@
 
 package com.docdoku.server.rest;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
 /**
  *
  * @author Florent Garin

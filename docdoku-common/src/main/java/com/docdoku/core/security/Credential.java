@@ -20,7 +20,6 @@
 
 package com.docdoku.core.security;
 
-import javax.persistence.Column;
 import javax.persistence.Table;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;

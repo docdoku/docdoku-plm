@@ -22,7 +22,6 @@ package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.exceptions.WorkflowNotFoundException;
 import com.docdoku.core.security.ACL;
 
 import javax.persistence.*;

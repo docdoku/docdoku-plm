@@ -24,9 +24,9 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.server.events.CheckedIn;
 import com.docdoku.server.events.PartIterationChangeEvent;
 import com.docdoku.server.events.PartRevisionChangeEvent;
-import com.docdoku.server.events.CheckedIn;
 import com.docdoku.server.events.Removed;
 
 import javax.ejb.EJB;

@@ -20,15 +20,12 @@ package com.docdoku.server.rest.file; /*
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.configuration.ProductInstanceIterationKey;
-import com.docdoku.core.configuration.ProductInstanceMaster;
-import com.docdoku.core.configuration.ProductInstanceMasterKey;
-import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.server.filters.GuestProxy;
-import com.docdoku.server.rest.dto.product.ProductInstanceIterationDTO;
 import com.docdoku.server.rest.exceptions.*;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;

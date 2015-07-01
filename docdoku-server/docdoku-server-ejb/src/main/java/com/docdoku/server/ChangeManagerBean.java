@@ -21,8 +21,6 @@ package com.docdoku.server;
 
 import com.docdoku.core.change.*;
 import com.docdoku.core.common.User;
-import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.UserKey;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
@@ -31,8 +29,6 @@ import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.security.ACL;
-import com.docdoku.core.security.ACLUserEntry;
-import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IChangeManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;

@@ -1,7 +1,5 @@
 package com.docdoku.server.util;
 
-import com.docdoku.core.util.Tools;
-
 import javax.servlet.http.Part;
 import java.io.File;
 import java.io.FileInputStream;

@@ -24,7 +24,6 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.DocumentConfigSpec;
-import com.docdoku.core.configuration.PathDataIteration;
 import com.docdoku.core.configuration.PathDataMaster;
 import com.docdoku.core.configuration.ProductInstanceMaster;
 import com.docdoku.core.document.DocumentIteration;

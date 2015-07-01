@@ -4,8 +4,10 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.product.*;
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IConverterManagerLocal;
 import com.docdoku.core.services.IDataManagerLocal;
@@ -16,12 +18,13 @@ import com.docdoku.server.filters.GuestProxy;
 import com.docdoku.server.rest.file.util.BinaryResourceBinaryStreamingOutput;
 import com.docdoku.server.util.PartImp;
 import com.docdoku.server.util.ResourceUtil;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
 
 import javax.ejb.SessionContext;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -38,9 +41,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class PartBinaryResourceTest {

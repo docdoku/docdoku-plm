@@ -20,13 +20,10 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.change.ModificationNotification;
-import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;

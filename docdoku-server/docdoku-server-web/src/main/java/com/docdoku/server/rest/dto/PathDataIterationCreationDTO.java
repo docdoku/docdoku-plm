@@ -18,8 +18,6 @@ package com.docdoku.server.rest.dto;/*
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import com.docdoku.core.document.DocumentRevision;
-
 import java.util.List;
 import java.util.Set;
 

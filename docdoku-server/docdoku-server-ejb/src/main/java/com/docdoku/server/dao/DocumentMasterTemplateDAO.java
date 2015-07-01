@@ -26,7 +26,10 @@ import com.docdoku.core.exceptions.DocumentMasterTemplateAlreadyExistsException;
 import com.docdoku.core.exceptions.DocumentMasterTemplateNotFoundException;
 import com.docdoku.core.meta.ListOfValuesKey;
 
-import javax.persistence.*;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Locale;
 

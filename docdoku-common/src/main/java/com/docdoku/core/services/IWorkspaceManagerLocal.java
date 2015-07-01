@@ -20,7 +20,7 @@
 
 package com.docdoku.core.services;
 
-import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.AccountNotFoundException;
 
 /**
  *

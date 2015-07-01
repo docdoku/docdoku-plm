@@ -20,12 +20,7 @@
 
 package com.docdoku.server.rest.dto.product;
 
-import com.docdoku.core.document.DocumentLink;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.security.ACL;
 import com.docdoku.server.rest.dto.ACLDTO;
-import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.docdoku.server.rest.dto.DocumentRevisionDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 

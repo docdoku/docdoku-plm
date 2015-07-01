@@ -21,7 +21,6 @@
 package com.docdoku.core.meta;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;

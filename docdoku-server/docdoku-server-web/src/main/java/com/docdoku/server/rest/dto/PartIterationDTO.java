@@ -19,8 +19,6 @@
  */
 package com.docdoku.server.rest.dto;
 
-import com.docdoku.core.document.DocumentRevision;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;

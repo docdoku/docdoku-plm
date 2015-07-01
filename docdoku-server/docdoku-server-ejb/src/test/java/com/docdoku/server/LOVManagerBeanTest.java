@@ -4,7 +4,6 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.CreationException;
-import com.docdoku.core.meta.ListOfValuesKey;
 import com.docdoku.core.meta.NameValuePair;
 import com.docdoku.core.services.IUserManagerLocal;
 import org.junit.Before;

@@ -19,7 +19,6 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.EntityNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;

@@ -7,24 +7,23 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.file.util.BinaryResourceBinaryStreamingOutput;
 import com.docdoku.server.util.PartImp;
 import com.docdoku.server.util.ResourceUtil;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.*;
 
-
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.Part;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-
 
 import static org.mockito.MockitoAnnotations.initMocks;
 

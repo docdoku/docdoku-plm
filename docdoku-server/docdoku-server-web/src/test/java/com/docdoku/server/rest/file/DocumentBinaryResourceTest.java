@@ -9,7 +9,6 @@ import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedDocument;
@@ -17,9 +16,6 @@ import com.docdoku.core.util.Tools;
 import com.docdoku.server.filters.GuestProxy;
 import com.docdoku.server.util.PartImp;
 import com.docdoku.server.util.ResourceUtil;
-
-
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -38,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

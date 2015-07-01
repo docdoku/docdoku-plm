@@ -20,13 +20,14 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.configuration.*;
+import com.docdoku.core.configuration.BaselinedPart;
+import com.docdoku.core.configuration.ProductInstanceIteration;
+import com.docdoku.core.configuration.ProductInstanceMaster;
+import com.docdoku.core.configuration.ProductInstanceMasterKey;
 import com.docdoku.core.exceptions.CreationException;
-import com.docdoku.core.exceptions.PartRevisionNotFoundException;
 import com.docdoku.core.exceptions.ProductInstanceAlreadyExistsException;
 import com.docdoku.core.exceptions.ProductInstanceMasterNotFoundException;
 import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartRevisionKey;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;

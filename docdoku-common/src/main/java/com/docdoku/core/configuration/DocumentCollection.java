@@ -21,8 +21,6 @@ package com.docdoku.core.configuration;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMasterKey;
-import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
 
 import javax.persistence.*;

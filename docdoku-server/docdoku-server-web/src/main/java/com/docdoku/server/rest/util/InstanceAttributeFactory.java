@@ -24,7 +24,6 @@ import com.docdoku.server.rest.dto.NameValuePairDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 

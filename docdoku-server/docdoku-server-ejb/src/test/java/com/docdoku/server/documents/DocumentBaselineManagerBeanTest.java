@@ -24,23 +24,21 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.DocumentBaseline;
-import com.docdoku.core.document.*;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.Folder;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.DataManagerBean;
-import com.docdoku.server.DocumentManagerBean;
-import com.docdoku.server.UserManagerBean;
-import com.docdoku.server.dao.ConfigurationItemDAO;
-import com.docdoku.server.dao.FolderDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
 import com.docdoku.server.util.DocumentUtil;
-import com.docdoku.server.util.ProductUtil;
-import org.apache.poi.ss.formula.functions.Match;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
@@ -48,9 +46,6 @@ import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.regex.Matcher;
-
-import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DocumentBaselineManagerBeanTest {

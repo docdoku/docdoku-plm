@@ -24,7 +24,9 @@ import com.docdoku.core.common.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Wraps data needed to perform a custom query on database

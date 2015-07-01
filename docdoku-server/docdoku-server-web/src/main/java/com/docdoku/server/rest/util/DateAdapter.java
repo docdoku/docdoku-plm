@@ -4,10 +4,10 @@ package com.docdoku.server.rest.util;
  * Created by kelto on 01/06/15.
  */
 
-import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 
 public class DateAdapter extends XmlAdapter<String, Date> {

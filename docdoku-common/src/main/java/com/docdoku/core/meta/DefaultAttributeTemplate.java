@@ -19,7 +19,8 @@
  */
 package com.docdoku.core.meta;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * A generic implementation of {@link InstanceAttributeTemplate} that can instantiate
