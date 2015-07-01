@@ -50,6 +50,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -68,6 +70,7 @@ public class ProductInstancesResource {
 
     private Mapper mapper;
 
+    private static final Logger LOGGER = Logger.getLogger(ProductInstancesResource.class.getName());
 
     public ProductInstancesResource() {
     }
@@ -96,7 +99,7 @@ public class ProductInstancesResource {
             try {
                 productInstanceMasterDTO.setTypedLinks(this.getTypedLinksForProductInstance(workspaceId,productInstanceMaster.getInstanceOf().getId(),productInstanceMasterDTO.getSerialNumber()));
             } catch (AccessRightException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.FINEST, null, e);
             }
             productInstanceMasterDTOList.add(productInstanceMasterDTO);
         }

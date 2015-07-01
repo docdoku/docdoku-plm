@@ -42,11 +42,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author: Chadid Asmae
  */
 public class ExcelGenerator {
+
+    private static final Logger LOGGER = Logger.getLogger(ExcelGenerator.class.getName());
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
@@ -114,7 +118,7 @@ public class ExcelGenerator {
             workbook.write(out);
             out.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.FINEST, null, e);
         }
         return excelFile;
 

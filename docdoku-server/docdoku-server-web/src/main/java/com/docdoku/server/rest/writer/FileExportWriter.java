@@ -20,7 +20,9 @@
 package com.docdoku.server.rest.writer;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.configuration.*;
+import com.docdoku.core.configuration.ProductInstanceIteration;
+import com.docdoku.core.configuration.ProductInstanceMaster;
+import com.docdoku.core.configuration.ProductInstanceMasterKey;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.ConfigurationItemKey;
@@ -28,12 +30,7 @@ import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.server.rest.Tools;
-import com.docdoku.server.rest.dto.baseline.BaselinedDocumentDTO;
 import com.docdoku.server.rest.util.FileExportEntity;
-import com.docdoku.server.rest.util.InstanceBodyWriterTools;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -43,7 +40,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -64,8 +63,7 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
     private static IProductInstanceManagerLocal productInstanceService;
     private static IProductBaselineManagerLocal productBaselineService;
     private static IDataManagerLocal dataManager;
-    private static final Logger LOGGER = Logger.getLogger(InstanceBodyWriterTools.class.getName());
-    private static Mapper mapper;
+    private static final Logger LOGGER = Logger.getLogger(FileExportWriter.class.getName());
 
     static {
         try {
@@ -74,7 +72,6 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
             productInstanceService = (IProductInstanceManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductInstanceManagerBean");
             productBaselineService= (IProductBaselineManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductBaselineManagerBean");
             dataManager = (IDataManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/DataManagerBean");
-            mapper = DozerBeanMapperSingletonWrapper.getInstance();
         } catch (NamingException e) {
             LOGGER.log(Level.WARNING, null, e);
         }
@@ -128,7 +125,7 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
                         addToZipFile(binaryResource, folderName, zs);
 
                     } catch (StorageException e) {
-                        e.printStackTrace();
+                        LOGGER.log(Level.FINEST, null, e);
                     }
                 }
             }
@@ -137,24 +134,10 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
                 addProductInstanceDataToZip(zs, fileExportEntity.getConfigurationItemKey(), fileExportEntity.getSerialNumber(), baselinedSourcesName);
             }
 
-        } catch (UserNotFoundException e) {
-            e.printStackTrace();
-        } catch (UserNotActiveException e) {
-            e.printStackTrace();
-        } catch (WorkspaceNotFoundException e) {
-            e.printStackTrace();
-        } catch (ConfigurationItemNotFoundException e) {
-            e.printStackTrace();
-        } catch (NotAllowedException e) {
-            e.printStackTrace();
-        } catch (EntityConstraintException e) {
-            e.printStackTrace();
-        } catch (PartMasterNotFoundException e) {
-            e.printStackTrace();
-        } catch (ProductInstanceMasterNotFoundException e) {
-            e.printStackTrace();
-        } catch (StorageException e) {
-            e.printStackTrace();
+        } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | ConfigurationItemNotFoundException |
+                NotAllowedException | EntityConstraintException | PartMasterNotFoundException | ProductInstanceMasterNotFoundException |
+                StorageException e) {
+            LOGGER.log(Level.FINEST, null, e);
         }
 
         zs.close();

@@ -37,6 +37,7 @@ public class SearchQueryParser {
         super();
     }
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private static final Logger LOGGER = Logger.getLogger(SearchQueryParser.class.getName());
 
     public static DocumentSearchQuery parseDocumentStringQuery(String workspaceId , String pQuery){
         String fullText = null;
@@ -81,28 +82,28 @@ public class SearchQueryParser {
                         try {
                             pCreationDateFrom =  simpleDateFormat.parse(filter[1]);
                         } catch (ParseException e) {
-                            e.printStackTrace();
+                            LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "createdTo" :
                         try {
                             pCreationDateTo =  simpleDateFormat.parse(filter[1]);
                         } catch (ParseException e) {
-                            e.printStackTrace();
+                            LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "modifiedFrom" :
                         try {
                             pModificationDateFrom =  simpleDateFormat.parse(filter[1]);
                         } catch (ParseException e) {
-                            e.printStackTrace();
+                            LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "modifiedTo" :
                         try {
                             pModificationDateTo =  simpleDateFormat.parse(filter[1]);
                         } catch (ParseException e) {
-                            e.printStackTrace();
+                            LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "tags" :
@@ -172,28 +173,28 @@ public class SearchQueryParser {
                         try {
                             pCreationDateFrom =  simpleDateFormat.parse(filter[1]);
                         } catch (ParseException e) {
-                            e.printStackTrace();
+                            LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "createdTo" :
                         try {
                             pCreationDateTo =  simpleDateFormat.parse(filter[1]);
                         } catch (ParseException e) {
-                            e.printStackTrace();
+                            LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "modifiedFrom" :
                         try {
                             pModificationDateFrom =  simpleDateFormat.parse(filter[1]);
                         } catch (ParseException e) {
-                            e.printStackTrace();
+                            LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "modifiedTo" :
                         try {
                             pModificationDateTo =  simpleDateFormat.parse(filter[1]);
                         } catch (ParseException e) {
-                            e.printStackTrace();
+                            LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "tags" :

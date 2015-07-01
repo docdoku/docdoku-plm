@@ -44,7 +44,6 @@ public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException>
 
         LOGGER.log(Level.SEVERE, e.getMessage());
         LOGGER.log(Level.FINE,null,e);
-        e.printStackTrace();
 
         Throwable cause = e;
         while(cause.getCause() != null) { cause = cause.getCause(); }

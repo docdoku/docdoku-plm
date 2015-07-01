@@ -100,9 +100,9 @@ public class InstanceBodyWriterTools {
             }
 
         } catch (PartMasterNotFoundException | PartUsageLinkNotFoundException | UserNotFoundException | WorkspaceNotFoundException | ConfigurationItemNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.FINEST, null, e);
         } catch (AccessRightException | EntityConstraintException | NotAllowedException | UserNotActiveException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.FINEST, null, e);
         }
 
     }
