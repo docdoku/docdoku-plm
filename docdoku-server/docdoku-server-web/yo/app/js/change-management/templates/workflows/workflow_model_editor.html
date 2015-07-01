@@ -1,6 +1,10 @@
 <div class="actions well">
-    <input id="workflow-name" type="text" autofocus placeholder="{{i18n.WORKFLOW_NAME_PLACEHOLDER}}"
+    {{#workflowId}}<input  id="workflow-name"type="text" placeholder="{{i18n.WORKFLOW_NAME_PLACEHOLDER}}"
            value="{{workflowId}}"  readonly/>
+    {{/workflowId}}
+    {{^workflowId}}<input id="workflow-name" type="text" autofocus placeholder="{{i18n.WORKFLOW_NAME_PLACEHOLDER}}"
+                          value="{{workflowId}}"  />
+    {{/workflowId}}
     <button id="cancel-workflow" class="btn">
         {{i18n.CANCEL}}
     </button>
