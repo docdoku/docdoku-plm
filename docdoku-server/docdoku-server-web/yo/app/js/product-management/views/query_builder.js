@@ -78,6 +78,9 @@ define([
             };
 
             $.getJSON(url,function(data){
+                data.sort(function(a,b){
+                    return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1;
+                });
                 data.map(fillOption);
             });
 
