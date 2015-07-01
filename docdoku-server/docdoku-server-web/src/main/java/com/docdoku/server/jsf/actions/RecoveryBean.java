@@ -49,16 +49,19 @@ public class RecoveryBean {
     }
 
     public String changePassword() throws PasswordRecoveryRequestNotFoundException {
-        if(passwordRRUuid==null)
-            passwordRRUuid="";
-        
-        userManager.recoverPassword(passwordRRUuid, newPassword);
+
+        String uuid = passwordRRUuid;
+
+        if(uuid == null){
+            uuid = "";
+        }
+
+        userManager.recoverPassword(uuid, newPassword);
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         return request.getContextPath() + "/recovery.xhtml";
     }
 
     public String sendRecoveryMessage() throws AccountNotFoundException {
-        //Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
         Account account = userManager.getAccount(login);
         PasswordRecoveryRequest passwdRR = userManager.createPasswordRecoveryRequest(account.getLogin());
         mailer.sendPasswordRecovery(account, passwdRR.getUuid());
