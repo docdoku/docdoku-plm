@@ -54,14 +54,14 @@ public class StepFileConverterImpl implements CADConverter{
             inputStream = StepFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES);
             CONF.load(inputStream);
         } catch (IOException e) {
-            Logger.getLogger(StepFileConverterImpl.class.getName()).log(Level.INFO, null, e);
+            LOGGER.log(Level.INFO, null, e);
         } finally {
             try{
                 if(inputStream!=null){
                     inputStream.close();
                 }
             }catch (IOException e){
-                Logger.getLogger(StepFileConverterImpl.class.getName()).log(Level.FINEST, null, e);
+                LOGGER.log(Level.FINEST, null, e);
             }
         }
     }

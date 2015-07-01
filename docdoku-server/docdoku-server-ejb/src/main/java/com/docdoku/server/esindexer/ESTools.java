@@ -73,14 +73,14 @@ public class ESTools {
             CONF.load(inputStream);
         } catch (IOException e) {
             String message = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString("ES_ConfWarning1");
-            Logger.getLogger(ESTools.class.getName()).log(Level.WARNING,message,e);
+            LOGGER.log(Level.WARNING, message, e);
         } finally {
             try{
                 if(inputStream!=null){
                     inputStream.close();
                 }
             }catch (IOException e){
-                Logger.getLogger(ESTools.class.getName()).log(Level.WARNING,null,e);
+                LOGGER.log(Level.WARNING,null,e);
             }
         }
     }

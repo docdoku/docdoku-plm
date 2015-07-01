@@ -28,14 +28,14 @@ import com.docdoku.core.exceptions.SharedEntityNotFoundException;
 import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IShareManagerLocal;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
 
-import javax.ejb.EJB;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -57,14 +57,18 @@ import java.util.regex.Pattern;
 
 public class PrivateShareServlet extends HttpServlet {
 
-    @EJB
-    private IDocumentManagerLocal documentService;
+    private static Context context;
+    private static IShareManagerLocal shareService;
+    private static final Logger LOGGER = Logger.getLogger(PrivateShareServlet.class.getName());
 
-    @EJB
-    private IProductManagerLocal productService;
-
-    @EJB
-    IShareManagerLocal shareService;
+    static {
+        try {
+            context = new InitialContext();
+            shareService = (IShareManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ShareManagerBean");
+        } catch (NamingException e) {
+            LOGGER.log(Level.WARNING, null, e);
+        }
+    }
 
     @Override
     protected void doPost(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
@@ -98,7 +102,7 @@ public class PrivateShareServlet extends HttpServlet {
             }
 
         } catch (Exception pEx) {
-            Logger.getLogger(PrivateShareServlet.class.getName()).log(Level.SEVERE, null, pEx);
+            LOGGER.log(Level.SEVERE, null, pEx);
             throw new ServletException("error while fetching your data.", pEx);
         }
 
@@ -140,7 +144,7 @@ public class PrivateShareServlet extends HttpServlet {
             }
 
         } catch (Exception pEx) {
-            Logger.getLogger(PrivateShareServlet.class.getName()).log(Level.SEVERE, null, pEx);
+            LOGGER.log(Level.SEVERE, null, pEx);
             throw new ServletException("error while processing the request.", pEx);
         }
     }

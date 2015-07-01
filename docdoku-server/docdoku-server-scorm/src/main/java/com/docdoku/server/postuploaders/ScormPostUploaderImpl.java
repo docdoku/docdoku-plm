@@ -40,13 +40,15 @@ public class ScormPostUploaderImpl implements DocumentPostUploader {
     @EJB
     private IDataManagerLocal dataManager;
 
+    private static final Logger LOGGER = Logger.getLogger(ScormPostUploaderImpl.class.getName());
+
     @Override
     public boolean canProcess(final BinaryResource binaryResource) {
         try {
             InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
             return ScormUtil.isScormArchive(binaryResource.getName(), binaryContentInputStream);
         } catch (StorageException e) {
-            Logger.getLogger(ScormPostUploaderImpl.class.getName()).log(Level.INFO, null, e);
+            LOGGER.log(Level.INFO, null, e);
             return false;
         }
     }
@@ -78,14 +80,14 @@ public class ScormPostUploaderImpl implements DocumentPostUploader {
                 }
             }
         } catch (Exception e) {
-            Logger.getLogger(ScormPostUploaderImpl.class.getName()).log(Level.INFO, null, e);
+            LOGGER.log(Level.INFO, null, e);
         } finally {
             try {
                 if (zipInputStream != null) {
                     zipInputStream.close();
                 }
             } catch (IOException e) {
-                Logger.getLogger(ScormPostUploaderImpl.class.getName()).log(Level.INFO, null, e);
+                LOGGER.log(Level.INFO, null, e);
             }
         }
     }

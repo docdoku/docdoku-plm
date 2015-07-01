@@ -26,7 +26,7 @@ import java.util.ResourceBundle;
 
 public class LangHelper {
 
-    private final static String BUNDLE_NAME = "com.docdoku.cli.i18n.LocalStrings";
+    private static final String BUNDLE_NAME = "com.docdoku.cli.i18n.LocalStrings";
 
     public static String getLocalizedMessage(String key, String userLogin) throws IOException {
         return getLocalizedMessage(key, new AccountsManager().getUserLocale(userLogin));

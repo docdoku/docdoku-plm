@@ -41,12 +41,14 @@ public class ScormViewerImpl implements DocumentViewer {
     @EJB
     private IDataManagerLocal dataManager;
 
+    private static final Logger LOGGER = Logger.getLogger(ScormViewerImpl.class.getName());
+
     @Override
     public boolean canRenderViewerTemplate(BinaryResource binaryResource) {
         try {
             return dataManager.exists(binaryResource, ScormUtil.getScormSubResourceVirtualPath(ScormUtil.IMS_MANIFEST));
         } catch (StorageException e) {
-            Logger.getLogger(ScormViewerImpl.class.getName()).log(Level.INFO, null, e);
+            LOGGER.log(Level.INFO, null, e);
             return false;
         }
     }

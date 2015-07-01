@@ -26,7 +26,7 @@ import java.util.ResourceBundle;
 
 public class LangHelper {
 
-    private final static String DEFAULT_BUNDLE_NAME = "com.docdoku.server.localization.LocalStrings";
+    private static final String DEFAULT_BUNDLE_NAME = "com.docdoku.server.localization.LocalStrings";
     private static ResourceBundle mResourceBundle;
 
 

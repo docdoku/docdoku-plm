@@ -33,7 +33,6 @@ import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
@@ -53,6 +52,8 @@ public class TitleBlockGenerator {
     private static final String TEMP_FILE_NAME = "output.pdf";
 
     private static final String BASE_NAME = "com.docdoku.server.viewers.localization.TitleBlockGenerator";
+
+    private static final Logger LOGGER = Logger.getLogger(TitleBlockGenerator.class.getName());
 
     private TitleBlockGenerator(){
 
@@ -90,7 +91,7 @@ public class TitleBlockGenerator {
             return new FileInputStream(tmpCopyFile);
         }
         catch (Exception e){
-            Logger.getLogger(TitleBlockGenerator.class.getName()).log(Level.INFO, null, e);
+            LOGGER.log(Level.INFO, null, e);
         }
 
         return null;

@@ -49,6 +49,8 @@ public class DocumentViewerBean implements IFileViewerManagerLocal {
     @Any
     private Instance<DocumentViewer> documentViewers;
 
+    private static final Logger LOGGER = Logger.getLogger(DocumentViewerBean.class.getName());
+
     @Override
     public String getHtmlForViewer(BinaryResource binaryResource, String uuid) {
         String template;
@@ -61,7 +63,7 @@ public class DocumentViewerBean implements IFileViewerManagerLocal {
                 template = getDefaultTemplate(binaryResource,uuid);
             }
         } catch (Exception e) {
-            Logger.getLogger(DocumentViewerBean.class.getName()).log(Level.INFO, null, e);
+            LOGGER.log(Level.INFO, null, e);
             template = new StringBuilder().append("<p>").append("Can't render ").append(binaryResource.getName()).append("</p>").toString();
         }
 

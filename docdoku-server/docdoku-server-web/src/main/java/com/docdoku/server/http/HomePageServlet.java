@@ -21,31 +21,41 @@
 package com.docdoku.server.http;
 
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.server.jsf.actions.AccountBean;
 
-import javax.ejb.EJB;
-import javax.inject.Inject;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(name = "HomePageServlet", urlPatterns = {"/home"})
 public class HomePageServlet extends HttpServlet {
 
-    @Inject
-    private AccountBean accountBean;
+    private static Context context;
+    private static IUserManagerLocal userManager;
+    private static final Logger LOGGER = Logger.getLogger(HomePageServlet.class.getName());
 
-    @EJB
-    private IUserManagerLocal userManager;
+    static {
+        try {
+            context = new InitialContext();
+            userManager = (IUserManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/UserManagerBean");
+        } catch (NamingException e) {
+            LOGGER.log(Level.WARNING, null, e);
+        }
+    }
 
     private void handleRequest(HttpServletRequest pRequest,
             HttpServletResponse pResponse)
             throws ServletException, IOException {
-        if(accountBean.isSuperAdmin()){
+        if(userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
             pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
         }else{
 

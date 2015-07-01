@@ -68,7 +68,9 @@ public class UploadDownloadService implements IUploadDownloadWS {
 
     @EJB
     private IDataManagerLocal dataManager;
-    
+
+    private static final Logger LOGGER = Logger.getLogger(UploadDownloadService.class.getName());
+
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @XmlMimeType("application/octet-stream")
     @Override
@@ -200,7 +202,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
                             }
                         };
         } catch (StorageException e) {
-            Logger.getLogger(UploadDownloadService.class.getName()).log(Level.INFO, null, e);
+            LOGGER.log(Level.INFO, null, e);
             return null;
         }
     }

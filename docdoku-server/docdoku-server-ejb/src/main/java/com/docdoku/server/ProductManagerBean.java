@@ -1566,7 +1566,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             try {
                 dataManager.deleteData(file);
             } catch (StorageException e) {
-                Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
+                LOGGER.log(Level.INFO, null, e);
             }
 
             if (pSubType != null && pSubType.equals("nativecad")) {

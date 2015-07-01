@@ -26,7 +26,9 @@ import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.services.IDocumentManagerLocal;
 
-import javax.ejb.EJB;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +37,8 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -43,8 +47,18 @@ import java.util.regex.Pattern;
 
 public class DocumentPermalinkServlet extends HttpServlet {
 
-    @EJB
-    private IDocumentManagerLocal documentService;
+    private static Context context;
+    private static IDocumentManagerLocal documentService;
+    private static final Logger LOGGER = Logger.getLogger(DocumentPermalinkServlet.class.getName());
+
+    static {
+        try {
+            context = new InitialContext();
+            documentService = (IDocumentManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/DocumentManagerBean");
+        } catch (NamingException e) {
+            LOGGER.log(Level.WARNING, null, e);
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {

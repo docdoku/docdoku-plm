@@ -64,14 +64,14 @@ public class CatiaProductFileParserImpl implements CADConverter {
             inputStream = CatiaProductFileParserImpl.class.getResourceAsStream(CONF_PROPERTIES);
             CONF.load(inputStream);
         } catch (IOException e) {
-            Logger.getLogger(CatiaProductFileParserImpl.class.getName()).log(Level.WARNING, null, e);
+            LOGGER.log(Level.WARNING, null, e);
         } finally {
             try{
                 if(inputStream!=null){
                     inputStream.close();
                 }
             }catch (IOException e){
-                Logger.getLogger(CatiaProductFileParserImpl.class.getName()).log(Level.FINEST,null,e);
+                LOGGER.log(Level.FINEST,null,e);
             }
         }
     }

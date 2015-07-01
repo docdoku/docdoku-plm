@@ -37,6 +37,7 @@ public class ScormResourceGetterImpl implements DocumentResourceGetter {
     @EJB
     private IDataManagerLocal dataManager;
 
+    private static final Logger LOGGER = Logger.getLogger(ScormResourceGetterImpl.class.getName());
 
     @Override
     public boolean canGetConvertedResource(String outputFormat, BinaryResource binaryResource) {
@@ -53,7 +54,7 @@ public class ScormResourceGetterImpl implements DocumentResourceGetter {
         try {
             return dataManager.exists(binaryResource, ScormUtil.getScormSubResourceVirtualPath(ScormUtil.IMS_MANIFEST));
         } catch (StorageException e) {
-            Logger.getLogger(ScormResourceGetterImpl.class.getName()).log(Level.INFO, null, e);
+            LOGGER.log(Level.INFO, null, e);
             return false;
         }
     }

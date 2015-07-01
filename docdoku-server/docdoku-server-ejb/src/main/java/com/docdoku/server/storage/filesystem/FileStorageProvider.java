@@ -39,6 +39,8 @@ public class FileStorageProvider implements StorageProvider {
 
     private final String vaultPath;
 
+    private static final Logger LOGGER = Logger.getLogger(FileStorageProvider.class.getName());
+
     public FileStorageProvider(String vaultPath) {
         this.vaultPath = vaultPath;
     }
@@ -178,7 +180,7 @@ public class FileStorageProvider implements StorageProvider {
             try {
                 FileUtils.copyDirectory(subResourceFolder, getSubResourceFolder(destination));
             } catch (IOException e) {
-                Logger.getLogger(FileStorageProvider.class.getName()).log(Level.WARNING, null, e);
+                LOGGER.log(Level.WARNING, null, e);
                 throw new StorageException("Can't copy subResourceFolder from " + source.getFullName() + " to " + destination.getFullName(), e);
             }
         }

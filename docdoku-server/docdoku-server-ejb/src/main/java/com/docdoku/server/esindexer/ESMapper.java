@@ -41,7 +41,7 @@ import java.util.logging.Logger;
  * @author Taylor LABEJOF
  */
 public class ESMapper {
-    private static final Logger LOGGER = Logger.getLogger(ESTools.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ESMapper.class.getName());
     public static final String WORKSPACE_ID_KEY = "workspaceId";
     public static final String ITERATIONS_KEY = "iterations";
     public static final String ITERATION_KEY = "iteration";

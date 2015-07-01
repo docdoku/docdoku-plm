@@ -31,7 +31,6 @@ import com.docdoku.core.services.IUserManagerWS;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
-import com.docdoku.server.events.PartRevisionChangeEvent;
 import com.docdoku.server.events.Read;
 import com.docdoku.server.events.WorkspaceAccessEvent;
 import com.docdoku.server.events.Write;
@@ -72,6 +71,8 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @Inject
     private Event<WorkspaceAccessEvent> workspaceAccessEvent;
+
+    private static final Logger LOGGER = Logger.getLogger(UserManagerBean.class.getName());
 
     @Override
     public Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountAlreadyExistsException, CreationException {
@@ -457,7 +458,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
                         try {
                             dataManager.deleteData(file);
                         } catch (StorageException e) {
-                            Logger.getLogger(UserManagerBean.class.getName()).log(Level.INFO, null, e);
+                            LOGGER.log(Level.INFO, null, e);
                         }
                     }
 

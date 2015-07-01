@@ -48,6 +48,8 @@ public class ScormManifestParser {
     private XMLStreamReader reader;
     private Map<String, ScormActivity> activitiesByIdentifierRef;
 
+    private static final Logger LOGGER = Logger.getLogger(ScormManifestParser.class.getName());
+
     public ScormManifestParser(InputStream manifestStream) {
         this.manifestStream = manifestStream;
         this.activitiesByIdentifierRef = new HashMap<>();
@@ -67,7 +69,7 @@ public class ScormManifestParser {
         try {
             this.manifestStream.close();
         } catch (IOException e) {
-            Logger.getLogger(ScormManifestParser.class.getName()).log(Level.INFO, null, e);
+            LOGGER.log(Level.INFO, null, e);
         }
 
         return scormOrganization;

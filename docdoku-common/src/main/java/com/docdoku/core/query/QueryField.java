@@ -27,30 +27,30 @@ package com.docdoku.core.query;
 
 public class QueryField {
 
-    public final static String PART_MASTER_NUMBER = "pm.number";
-    public final static String PART_MASTER_NAME = "pm.name";
-    public final static String PART_MASTER_TYPE = "pm.type";
-    public final static String PART_MASTER_IS_STANDARD = "pm.standardPart";
+    public static final String PART_MASTER_NUMBER = "pm.number";
+    public static final String PART_MASTER_NAME = "pm.name";
+    public static final String PART_MASTER_TYPE = "pm.type";
+    public static final String PART_MASTER_IS_STANDARD = "pm.standardPart";
 
-    public final static String PART_REVISION_PART_KEY = "pr.partKey";
-    public final static String PART_REVISION_VERSION = "pr.version";
-    public final static String PART_REVISION_MODIFICATION_DATE = "pr.modificationDate";
-    public final static String PART_REVISION_CHECKIN_DATE = "pr.checkinDate";
-    public final static String PART_REVISION_CHECKOUT_DATE = "pr.checkoutDate";
-    public final static String PART_REVISION_CREATION_DATE = "pr.creationDate";
-    public final static String PART_REVISION_LIFECYCLE_STATE = "pr.lifeCycleState";
-    public final static String PART_REVISION_STATUS = "pr.status";
-    public final static String PART_ITERATION_LINKED_DOCUMENTS = "pr.linkedDocuments";
-    public final static String PART_REVISION_ATTRIBUTES_PREFIX = "attr-";
+    public static final String PART_REVISION_PART_KEY = "pr.partKey";
+    public static final String PART_REVISION_VERSION = "pr.version";
+    public static final String PART_REVISION_MODIFICATION_DATE = "pr.modificationDate";
+    public static final String PART_REVISION_CHECKIN_DATE = "pr.checkinDate";
+    public static final String PART_REVISION_CHECKOUT_DATE = "pr.checkoutDate";
+    public static final String PART_REVISION_CREATION_DATE = "pr.creationDate";
+    public static final String PART_REVISION_LIFECYCLE_STATE = "pr.lifeCycleState";
+    public static final String PART_REVISION_STATUS = "pr.status";
+    public static final String PART_ITERATION_LINKED_DOCUMENTS = "pr.linkedDocuments";
+    public static final String PART_REVISION_ATTRIBUTES_PREFIX = "attr-";
 
-    public final static String AUTHOR_LOGIN = "author.login";
-    public final static String AUTHOR_NAME = "author.name";
+    public static final String AUTHOR_LOGIN = "author.login";
+    public static final String AUTHOR_NAME = "author.name";
 
-    public final static String CTX_SERIAL_NUMBER = "ctx.serialNumber";
-    public final static String CTX_PRODUCT_ID = "ctx.productId";
-    public final static String CTX_DEPTH = "ctx.depth";
-    public final static String CTX_AMOUNT = "ctx.amount";
-    public final static String CTX_P2P_SOURCE = "ctx.p2p.source";
-    public final static String CTX_P2P_TARGET = "ctx.p2p.target";
+    public static final String CTX_SERIAL_NUMBER = "ctx.serialNumber";
+    public static final String CTX_PRODUCT_ID = "ctx.productId";
+    public static final String CTX_DEPTH = "ctx.depth";
+    public static final String CTX_AMOUNT = "ctx.amount";
+    public static final String CTX_P2P_SOURCE = "ctx.p2p.source";
+    public static final String CTX_P2P_TARGET = "ctx.p2p.target";
 
 }

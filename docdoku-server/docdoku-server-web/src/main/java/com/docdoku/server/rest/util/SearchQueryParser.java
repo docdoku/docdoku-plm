@@ -244,7 +244,7 @@ public class SearchQueryParser {
                             DocumentSearchQuery.NumberAttributeQuery naq = new DocumentSearchQuery.NumberAttributeQuery(attribute[1], NumberFormat.getInstance().parse(attribute[2]).floatValue());
                             pAttributes.add(naq);
                         } catch (ParseException e) {
-                            Logger.getLogger(SearchQueryParser.class.getName()).log(Level.INFO, null, e);
+                            LOGGER.log(Level.INFO, null, e);
                         }
                         break;
                     default:
@@ -282,7 +282,7 @@ public class SearchQueryParser {
                             PartSearchQuery.NumberAttributeQuery naq = new PartSearchQuery.NumberAttributeQuery(attribute[1], NumberFormat.getInstance().parse(attribute[2]).floatValue());
                             pAttributes.add(naq);
                         } catch (ParseException e) {
-                            Logger.getLogger(SearchQueryParser.class.getName()).log(Level.INFO, null, e);
+                            LOGGER.log(Level.INFO, null, e);
                         }
                         break;
                     case "URL" :

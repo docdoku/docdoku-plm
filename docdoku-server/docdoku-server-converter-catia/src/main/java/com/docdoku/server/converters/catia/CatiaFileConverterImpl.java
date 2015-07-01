@@ -55,14 +55,14 @@ public class CatiaFileConverterImpl implements CADConverter{
             inputStream = CatiaFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES);
             CONF.load(inputStream);
         } catch (IOException e) {
-            Logger.getLogger(CatiaFileConverterImpl.class.getName()).log(Level.WARNING, null, e);
+            LOGGER.log(Level.WARNING, null, e);
         } finally {
             try{
                 if(inputStream!=null){
                     inputStream.close();
                 }
             }catch (IOException e){
-                Logger.getLogger(CatiaFileConverterImpl.class.getName()).log(Level.FINEST,null, e);
+                LOGGER.log(Level.FINEST,null, e);
             }
         }
     }
