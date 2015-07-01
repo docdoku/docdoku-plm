@@ -116,7 +116,7 @@ public class CatiaFileConverterImpl implements CADConverter{
         process.waitFor();
 
         // Convert to OBJ once converted to DAE
-        if (process.exitValue() == 0 & tmpDAEFile.exists() && tmpDAEFile.length() > 0 ){
+        if (process.exitValue() == 0 && tmpDAEFile.exists() && tmpDAEFile.length() > 0 ){
             String assimp = CONF.getProperty("assimp");
             String convertedFileName = FileIO.getFileNameWithoutExtension(tmpDAEFile.getAbsolutePath()) + ".obj";
             String[] argsOBJ = {assimp, "export", tmpDAEFile.getAbsolutePath(), convertedFileName};
