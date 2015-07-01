@@ -320,38 +320,32 @@ public class PathToPathLinkDAO {
         return path.replaceAll("("+oldFullId+")(-|$)", newFullId + "$2");
     }
 
-
-    public boolean isPathToPathLinkSourceInContext(ConfigurationItem configurationItem, ProductInstanceIteration productInstanceIteration, String path) {
-
+    public List<PathToPathLink> getPathToPathLinkSourceInContext(ConfigurationItem configurationItem, ProductInstanceIteration productInstanceIteration, String path){
         if(productInstanceIteration != null){
-            return !em.createNamedQuery("PathToPathLink.isSourceInProductInstanceContext", PathToPathLink.class)
+            return em.createNamedQuery("PathToPathLink.isSourceInProductInstanceContext", PathToPathLink.class)
                     .setParameter("productInstanceIteration", productInstanceIteration)
                     .setParameter("path", path)
-                    .getResultList()
-                    .isEmpty();
+                    .getResultList();
         }else{
-            return !em.createNamedQuery("PathToPathLink.isSourceInConfigurationItemContext", PathToPathLink.class)
+            return em.createNamedQuery("PathToPathLink.isSourceInConfigurationItemContext", PathToPathLink.class)
                     .setParameter("configurationItem", configurationItem)
                     .setParameter("path", path)
-                    .getResultList()
-                    .isEmpty();
+                    .getResultList();
         }
-
     }
 
-    public boolean isPathToPathLinkTargetInContext(ConfigurationItem configurationItem, ProductInstanceIteration productInstanceIteration, String path) {
+    public List<PathToPathLink> getPathToPathLinkTargetInContext(ConfigurationItem configurationItem, ProductInstanceIteration productInstanceIteration, String path){
         if(productInstanceIteration != null){
-            return !em.createNamedQuery("PathToPathLink.isTargetInProductInstanceContext", PathToPathLink.class)
+            return em.createNamedQuery("PathToPathLink.isTargetInProductInstanceContext", PathToPathLink.class)
                     .setParameter("productInstanceIteration", productInstanceIteration)
                     .setParameter("path", path)
-                    .getResultList()
-                    .isEmpty();
+                    .getResultList();
         }else{
-            return !em.createNamedQuery("PathToPathLink.isTargetInConfigurationItemContext", PathToPathLink.class)
+            return em.createNamedQuery("PathToPathLink.isTargetInConfigurationItemContext", PathToPathLink.class)
                     .setParameter("configurationItem", configurationItem)
                     .setParameter("path", path)
-                    .getResultList()
-                    .isEmpty();
+                    .getResultList();
         }
     }
+
 }

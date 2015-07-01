@@ -27,10 +27,12 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeDescriptor;
 import com.docdoku.core.meta.InstanceListOfValuesAttribute;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartLink;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryField;
 import com.docdoku.core.query.QueryResultRow;
+import com.docdoku.core.util.Tools;
 import com.docdoku.server.helpers.LangHelper;
 import com.docdoku.server.rest.collections.QueryResult;
 import org.apache.commons.lang.StringUtils;
@@ -203,6 +205,18 @@ public class ExcelGenerator {
                          }
                      }
                      data.add(sb.toString());
+                    break;
+
+                case QueryField.CTX_P2P_SOURCE:
+                    List<List<PartLink>> sources = row.getSources();
+                    String sourcePartLinksAsString = Tools.getPartLinksAsString(sources);
+                    data.add(sourcePartLinksAsString);
+                    break;
+
+                case QueryField.CTX_P2P_TARGET:
+                    List<List<PartLink>> targets = row.getTargets();
+                    String targetPartLinksAsString = Tools.getPartLinksAsString(targets);
+                    data.add(targetPartLinksAsString);
                     break;
 
                 default:

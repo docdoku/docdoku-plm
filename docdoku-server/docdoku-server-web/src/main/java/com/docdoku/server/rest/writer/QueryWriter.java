@@ -31,6 +31,7 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryField;
 import com.docdoku.core.query.QueryResultRow;
+import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.export.ExcelGenerator;
 import com.docdoku.server.rest.collections.QueryResult;
@@ -39,6 +40,9 @@ import org.apache.commons.lang.StringUtils;
 import javax.json.Json;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -52,6 +56,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 @Provider
@@ -59,6 +65,21 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private ExcelGenerator excelGenerator = new ExcelGenerator();
+
+    private static Context context;
+    private static IProductManagerLocal productService;
+    private static final Logger LOGGER = Logger.getLogger(QueryWriter.class.getName());
+
+    static {
+        try {
+            context = new InitialContext();
+            productService = (IProductManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductManagerBean");
+        } catch (NamingException e) {
+            LOGGER.log(Level.WARNING, null, e);
+        }
+    }
+
+
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return type.equals(QueryResult.class);
@@ -349,21 +370,15 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
             }
 
             if (selects.contains(QueryField.CTX_P2P_SOURCE)) {
-                StringBuilder sb = new StringBuilder();
-                List<List<PartLink>> paths = row.getSources();
-                for(List<PartLink> path:paths){
-                    sb.append(Tools.getPathAsString(path)+",");
-                }
-                jg.write(QueryField.CTX_P2P_SOURCE, sb.toString());
+                List<List<PartLink>> sources = row.getSources();
+                String partLinksAsString = Tools.getPartLinksAsString(sources);
+                jg.write(QueryField.CTX_P2P_SOURCE, partLinksAsString);
             }
 
             if (selects.contains(QueryField.CTX_P2P_TARGET)) {
-                StringBuilder sb = new StringBuilder();
-                List<List<PartLink>> paths = row.getTargets();
-                for(List<PartLink> path:paths){
-                    sb.append(Tools.getPathAsString(path)+",");
-                }
-                jg.write(QueryField.CTX_P2P_TARGET, sb.toString());
+                List<List<PartLink>> targets = row.getTargets();
+                String partLinksAsString = Tools.getPartLinksAsString(targets);
+                jg.write(QueryField.CTX_P2P_TARGET, partLinksAsString);
             }
 
             if(selects.contains(QueryField.PART_MASTER_IS_STANDARD)){
@@ -377,6 +392,7 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
         jg.writeEnd();
         jg.flush();
     }
+
 
     private void writeDate(JsonGenerator jg, String key, Date date) {
         if (date != null){

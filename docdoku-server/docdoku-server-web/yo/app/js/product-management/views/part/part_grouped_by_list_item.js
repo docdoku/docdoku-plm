@@ -76,8 +76,9 @@ define([
                     isPartNumber : isPartNumber,
                     isStringValue : isStringValue,
                     isLinkedDocuments : isLinkedDocuments,
-                    value : value
+                    value : isStringValue ? value.split("\n") : value
                 };
+
                 itemOrdered.push(itemColumn);
             });
 

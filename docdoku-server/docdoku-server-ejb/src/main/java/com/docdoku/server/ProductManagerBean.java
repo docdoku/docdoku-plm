@@ -3080,12 +3080,25 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     row.setContext(queryContext);
                     row.setAmount(totalAmount);
 
-                    if(pathToPathLinkDAO.isPathToPathLinkSourceInContext(ci, finalProductInstanceIteration, Tools.getPathAsString(path))){
-                        row.addSource(path);
+                    List<PathToPathLink> pathToPathLinkSourceInContext = pathToPathLinkDAO.getPathToPathLinkSourceInContext(ci, finalProductInstanceIteration, Tools.getPathAsString(path));
+                    for(PathToPathLink pathToPathLink:pathToPathLinkSourceInContext){
+                        try {
+                            List<PartLink> partLinks = decodePath(ciKey, pathToPathLink.getTargetPath());
+                            row.addSource(partLinks);
+                        } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | PartUsageLinkNotFoundException | ConfigurationItemNotFoundException e) {
+                            LOGGER.log(Level.FINEST, null, e);
+                        }
+
                     }
 
-                    if(pathToPathLinkDAO.isPathToPathLinkTargetInContext(ci, finalProductInstanceIteration, Tools.getPathAsString(path))){
-                        row.addTarget(path);
+                    List<PathToPathLink> pathToPathLinkTargetInContext = pathToPathLinkDAO.getPathToPathLinkTargetInContext(ci, finalProductInstanceIteration, Tools.getPathAsString(path));
+                    for(PathToPathLink pathToPathLink:pathToPathLinkTargetInContext){
+                        try {
+                            List<PartLink> partLinks = decodePath(ciKey, pathToPathLink.getSourcePath());
+                            row.addTarget(partLinks);
+                        } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | PartUsageLinkNotFoundException | ConfigurationItemNotFoundException e) {
+                            LOGGER.log(Level.FINEST, null, e);
+                        }
                     }
 
                     rows.add(row);

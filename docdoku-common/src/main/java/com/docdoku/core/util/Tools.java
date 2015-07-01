@@ -23,6 +23,7 @@ import com.docdoku.core.product.PartLink;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.TaskModel;
 import com.docdoku.core.workflow.WorkflowModel;
+import org.apache.commons.lang.StringUtils;
 
 import javax.swing.text.MaskFormatter;
 import java.text.Normalizer;
@@ -230,4 +231,28 @@ public class Tools {
         String s = sb.toString();
         return s.substring(0,s.length()-1);
     }
+
+
+    public static String getPartLinksAsString(List<List<PartLink>> links){
+        List<String> componentNumbers = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+
+        for(List<PartLink> linksList:links){
+
+            for(PartLink link:linksList) {
+                String linkAsString = link.getComponent().getName() + " < " + link.getComponent().getNumber() + " > ";
+                if(null != link.getReferenceDescription()){
+                    linkAsString += " ( " + link.getReferenceDescription() + " )";
+                }
+                componentNumbers.add(linkAsString);
+            }
+
+            String join = StringUtils.join(componentNumbers, " > ");
+            sb.append(join);
+            sb.append("\n");
+        }
+
+        return sb.toString();
+    }
+
 }

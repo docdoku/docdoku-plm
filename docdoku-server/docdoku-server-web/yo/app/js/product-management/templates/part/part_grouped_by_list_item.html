@@ -5,7 +5,9 @@
     {{/isDate}}
 
     {{#isStringValue}}
-    {{value}}
+    {{#value}}
+        {{.}}<br/>
+    {{/value}}
     {{/isStringValue}}
 
     {{#isLinkedDocuments}}
