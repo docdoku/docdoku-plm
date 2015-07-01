@@ -1144,8 +1144,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartIterationDAO partIterationDAO = new PartIterationDAO(locale, em);
         PartIteration partIteration = partIterationDAO.loadPartI(partIterationKey);
         ConversionDAO conversionDAO = new ConversionDAO(locale, em);
-        Conversion conversion = conversionDAO.findConversion(partIteration);
-        return conversion;
+        return conversionDAO.findConversion(partIteration);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -2712,7 +2711,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
         ConfigurationItem ci = new ConfigurationItemDAO(new Locale(user.getLanguage()), em).loadConfigurationItem(pKey);
 
-        PartLink rootUsageLink = new PartLink() {
+        return new PartLink() {
             @Override
             public int getId() {
                 return 1;
@@ -2773,7 +2772,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
         };
 
-        return rootUsageLink;
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
@@ -2867,8 +2865,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     public List<InstanceAttributeDescriptor> getInstanceAttributesInWorkspace(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         userManager.checkWorkspaceReadAccess(workspaceId);
         InstanceAttributeDAO instanceAttributeDAO = new InstanceAttributeDAO(em);
-        List<InstanceAttributeDescriptor> instanceAttributesInWorkspace = instanceAttributeDAO.getInstanceAttributesInWorkspace(workspaceId);
-        return instanceAttributesInWorkspace;
+        return instanceAttributeDAO.getInstanceAttributesInWorkspace(workspaceId);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -3002,9 +2999,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductBaseline loadProductBaselineForProductInstanceMaster(ConfigurationItemKey ciKey, String serialNumber) throws ProductInstanceMasterNotFoundException {
-        ProductBaseline res = new ProductBaselineDAO(em).findLastBaselineWithSerialNumber(ciKey, serialNumber);
-        return res;
+    public ProductBaseline loadProductBaselineForProductInstanceMaster(ConfigurationItemKey ciKey, String serialNumber) throws ProductInstanceMasterNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
+        return new ProductBaselineDAO(new Locale(user.getLanguage()),em).findLastBaselineWithSerialNumber(ciKey, serialNumber);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -3212,9 +3209,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     public ProductInstanceMaster findProductByPathMaster(String workspaceId,PathDataMaster pathDataMaster) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         PathDataMasterDAO pathDataMasterDAO = new PathDataMasterDAO(em);
-        ProductInstanceMaster productInstanceMaster = pathDataMasterDAO.findByPathData(pathDataMaster);
-        return productInstanceMaster;
+        return pathDataMasterDAO.findByPathData(pathDataMaster);
     }
+
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public PartMaster getPartMasterFromPath(String workspaceId,String configurationItemId, String partPath) throws ConfigurationItemNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException {

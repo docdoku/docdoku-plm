@@ -23,9 +23,11 @@ package com.docdoku.core.services;
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.*;
+import com.docdoku.core.configuration.PSFilter;
+import com.docdoku.core.configuration.PathDataMaster;
+import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.configuration.ProductInstanceMaster;
 import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeDescriptor;
@@ -225,7 +227,7 @@ public interface IProductManagerLocal{
     Query loadQuery(String workspaceId,int queryId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 
     Map<String,Set<BinaryResource>> getBinariesInTree(Integer baselineId,String workspaceId, ConfigurationItemKey configurationItemKey, PSFilter psFilter, boolean exportNativeCADFiles, boolean exportDocumentLinks) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException;
-    ProductBaseline loadProductBaselineForProductInstanceMaster(ConfigurationItemKey ciKey, String serialNumber) throws ProductInstanceMasterNotFoundException;
+    ProductBaseline loadProductBaselineForProductInstanceMaster(ConfigurationItemKey ciKey, String serialNumber) throws ProductInstanceMasterNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     List<BinaryResource> getBinaryResourceFromBaseline(int baselineId);
 
     void deletePathToPathLink(String workspaceId, String configurationItemId, int pathToPathLinkId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PathToPathLinkNotFoundException;
