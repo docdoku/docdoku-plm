@@ -55,7 +55,8 @@ public class LOVResource {
 
     private Mapper mapper;
 
-    public LOVResource(){}
+    public LOVResource(){
+    }
 
     @PostConstruct
     public void init() {

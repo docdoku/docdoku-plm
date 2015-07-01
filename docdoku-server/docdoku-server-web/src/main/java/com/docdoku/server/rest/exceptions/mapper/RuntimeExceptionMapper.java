@@ -46,7 +46,9 @@ public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException>
         LOGGER.log(Level.FINE,null,e);
 
         Throwable cause = e;
-        while(cause.getCause() != null) { cause = cause.getCause(); }
+        while(cause.getCause() != null) {
+            cause = cause.getCause();
+        }
 
         StackTraceElement[] stackTrace = cause.getStackTrace();
         StackTraceElement firstTraceElement = stackTrace[0];

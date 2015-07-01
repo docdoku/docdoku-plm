@@ -32,4 +32,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Qualifier
 @Target({METHOD, FIELD, PARAMETER, TYPE})
 @Retention(RUNTIME)
-public @interface Write {}
+public @interface Write {
+}

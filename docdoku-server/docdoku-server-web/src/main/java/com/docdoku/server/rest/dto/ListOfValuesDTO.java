@@ -37,7 +37,8 @@ public class ListOfValuesDTO implements Serializable {
 
     private boolean isDeletable = true;
 
-    public ListOfValuesDTO(){}
+    public ListOfValuesDTO(){
+    }
 
     public String getWorkspaceId() {
         return workspaceId;

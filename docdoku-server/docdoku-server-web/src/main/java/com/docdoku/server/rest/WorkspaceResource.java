@@ -123,10 +123,10 @@ public class WorkspaceResource {
         Workspace[] administratedWorkspaces = userManager.getAdministratedWorkspaces();
         Workspace[] allWorkspaces = userManager.getWorkspacesWhereCallerIsActive();
 
-        for(Workspace workspace:administratedWorkspaces){
+        for (Workspace workspace : administratedWorkspaces) {
             workspaceListDTO.addAdministratedWorkspaces(mapper.map(workspace, WorkspaceDTO.class));
         }
-        for(Workspace workspace:allWorkspaces){
+        for (Workspace workspace : allWorkspaces) {
             workspaceListDTO.addAllWorkspaces(mapper.map(workspace, WorkspaceDTO.class));
         }
         return workspaceListDTO;
@@ -137,7 +137,7 @@ public class WorkspaceResource {
     public List<WorkspaceDetailsDTO> getDetailedWorkspacesForConnectedUser() throws EntityNotFoundException {
         List<WorkspaceDetailsDTO> workspaceListDTO = new ArrayList<>();
 
-        for(Workspace workspace : userManager.getWorkspacesWhereCallerIsActive()){
+        for (Workspace workspace : userManager.getWorkspacesWhereCallerIsActive()) {
             workspaceListDTO.add(mapper.map(workspace, WorkspaceDetailsDTO.class));
         }
         return workspaceListDTO;
@@ -219,18 +219,22 @@ public class WorkspaceResource {
     }
 
     @Path("/{workspaceId}/changes")
-    public ChangeItemsResource changeItems(){
+    public ChangeItemsResource changeItems() {
         return changeItems;
     }
 
     @Path("/{workspaceId}/document-baselines")
-    public DocumentBaselinesResource documentBaselines(){
+    public DocumentBaselinesResource documentBaselines() {
         return documentBaselines;
     }
 
     @Path("/{workspaceId}/lov")
-    public LOVResource lov(){ return lov;}
+    public LOVResource lov() {
+        return lov;
+    }
 
     @Path("/{workspaceId}/attributes")
-    public AttributesResource attributes(){ return attributes;}
+    public AttributesResource attributes() {
+        return attributes;
+    }
 }

@@ -46,6 +46,8 @@ public class FileIO {
     private static final List<String> IMAGE_EXTENSIONS = Arrays.asList("jpg", "png", "gif", "psd", "jpeg", "psp", "tif");
     private static final List<String> ARCHIVE_EXTENSIONS = Arrays.asList("zip");
 
+    private static final Logger LOGGER = Logger.getLogger(FileIO.class.getName());
+
     private FileIO() {
     }
 
@@ -173,7 +175,7 @@ public class FileIO {
                 unzipEntry(zipfile, entry, outputDir);
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            LOGGER.log(Level.FINEST,null,e);
         }
     }
 
@@ -204,9 +206,13 @@ public class FileIO {
             zipfile = new ZipFile(archiveFile);
             exists = zipfile.getEntry(fileName) != null;
         }finally {
-            try{if(zipfile != null){
+            try{
+                if(zipfile != null){
                     zipfile.close();
-            }}catch (IOException ignored){}
+                }
+            }catch (IOException e){
+                LOGGER.log(Level.FINEST,null,e);
+            }
         }
         return exists;
     }
@@ -222,7 +228,7 @@ public class FileIO {
                 }
             }
         } catch (IOException e) {
-            Logger.getLogger(FileIO.class.getName()).log(Level.INFO, null, e);
+            LOGGER.log(Level.INFO, null, e);
         }
         return false;
     }

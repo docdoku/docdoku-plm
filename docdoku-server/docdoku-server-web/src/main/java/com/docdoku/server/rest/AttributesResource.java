@@ -54,7 +54,8 @@ public class AttributesResource {
 
     private Mapper mapper;
 
-    public AttributesResource(){}
+    public AttributesResource(){
+    }
 
     @PostConstruct
     public void init() {

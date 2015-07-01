@@ -30,32 +30,33 @@ import java.io.Serializable;
  *
  * @author Taylor LABEJOF
  * @version 2.0, 25/08/14
- * @since   V2.0
+ * @since V2.0
  */
 @Embeddable
-public class BaselinedDocumentKey implements Serializable{
+public class BaselinedDocumentKey implements Serializable {
     @Column(name = "DOCUMENTCOLLECTION_ID", nullable = false, insertable = false, updatable = false)
     private int documentCollectionId;
-    @Column(name = "TARGET_WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
-    private String targetDocumentWorkspaceId="";
-    @Column(name = "TARGET_DOCUMENTMASTER_ID", length=100, nullable = false, insertable = false, updatable = false)
-    private String targetDocumentId="";
-    @Column(name = "TARGET_DOCREVISION_VERSION", length=10, nullable = false, insertable = false, updatable = false)
-    private String targetDocumentVersion="";
+    @Column(name = "TARGET_WORKSPACE_ID", length = 100, nullable = false, insertable = false, updatable = false)
+    private String targetDocumentWorkspaceId = "";
+    @Column(name = "TARGET_DOCUMENTMASTER_ID", length = 100, nullable = false, insertable = false, updatable = false)
+    private String targetDocumentId = "";
+    @Column(name = "TARGET_DOCREVISION_VERSION", length = 10, nullable = false, insertable = false, updatable = false)
+    private String targetDocumentVersion = "";
 
-    public BaselinedDocumentKey(){
+    public BaselinedDocumentKey() {
     }
 
     public BaselinedDocumentKey(int documentCollectionId, String workspaceId, String documentMasterId, String targetDocumentVersion) {
         this.documentCollectionId = documentCollectionId;
         this.targetDocumentWorkspaceId = workspaceId;
         this.targetDocumentId = documentMasterId;
-        this.targetDocumentVersion=targetDocumentVersion;
+        this.targetDocumentVersion = targetDocumentVersion;
     }
 
     public int getDocumentCollectionId() {
         return documentCollectionId;
     }
+
     public void setDocumentCollectionId(int documentCollectionId) {
         this.documentCollectionId = documentCollectionId;
     }
@@ -63,6 +64,7 @@ public class BaselinedDocumentKey implements Serializable{
     public String getTargetDocumentWorkspaceId() {
         return targetDocumentWorkspaceId;
     }
+
     public void setTargetDocumentWorkspaceId(String targetDocumentWorkspaceId) {
         this.targetDocumentWorkspaceId = targetDocumentWorkspaceId;
     }
@@ -70,13 +72,18 @@ public class BaselinedDocumentKey implements Serializable{
     public String getTargetDocumentId() {
         return targetDocumentId;
     }
+
     public void setTargetDocumentId(String targetDocumentId) {
         this.targetDocumentId = targetDocumentId;
     }
 
-    public String getTargetDocumentVersion() { return targetDocumentVersion; }
+    public String getTargetDocumentVersion() {
+        return targetDocumentVersion;
+    }
 
-    public void setTargetDocumentVersion(String targetDocumentVersion) { this.targetDocumentVersion = targetDocumentVersion; }
+    public void setTargetDocumentVersion(String targetDocumentVersion) {
+        this.targetDocumentVersion = targetDocumentVersion;
+    }
 
 
     @Override

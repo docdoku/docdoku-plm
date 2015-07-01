@@ -75,6 +75,7 @@ public class PartDTO implements Serializable {
     public String getNumber() {
         return number;
     }
+
     public void setNumber(String number) {
         this.number = number;
     }
@@ -82,6 +83,7 @@ public class PartDTO implements Serializable {
     public String getVersion() {
         return version;
     }
+
     public void setVersion(String version) {
         this.version = version;
     }
@@ -97,35 +99,39 @@ public class PartDTO implements Serializable {
     public UserDTO getAuthor() {
         return author;
     }
+
     public void setAuthor(UserDTO author) {
         this.author = author;
     }
 
     public Date getCreationDate() {
-        return (creationDate!=null) ? (Date) creationDate.clone() : null;
+        return (creationDate != null) ? (Date) creationDate.clone() : null;
     }
+
     public void setCreationDate(Date creationDate) {
-        this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
+        this.creationDate = (creationDate != null) ? (Date) creationDate.clone() : null;
     }
 
     public Date getModificationDate() {
-        return (modificationDate!=null) ? (Date) modificationDate.clone() : null;
+        return (modificationDate != null) ? (Date) modificationDate.clone() : null;
     }
+
     public void setModificationDate(Date modificationDate) {
-        this.modificationDate = (modificationDate!=null) ? (Date) modificationDate.clone() : null;
+        this.modificationDate = (modificationDate != null) ? (Date) modificationDate.clone() : null;
     }
 
     public Date getCheckInDate() {
-        return (checkInDate!=null) ? (Date) checkInDate.clone() : null;
+        return (checkInDate != null) ? (Date) checkInDate.clone() : null;
     }
 
     public void setCheckInDate(Date checkInDate) {
-        this.checkInDate = (checkInDate!=null) ? (Date) checkInDate.clone() : null;
+        this.checkInDate = (checkInDate != null) ? (Date) checkInDate.clone() : null;
     }
 
     public String getDescription() {
         return description;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -133,6 +139,7 @@ public class PartDTO implements Serializable {
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -140,6 +147,7 @@ public class PartDTO implements Serializable {
     public boolean isStandardPart() {
         return standardPart;
     }
+
     public void setStandardPart(boolean standardPart) {
         this.standardPart = standardPart;
     }
@@ -147,30 +155,39 @@ public class PartDTO implements Serializable {
     public List<PartIterationDTO> getPartIterations() {
         return partIterations;
     }
+
     public void setPartIterations(List<PartIterationDTO> partIterations) {
         this.partIterations = partIterations;
     }
 
-    public List<ModificationNotificationDTO> getNotifications() {return notifications;}
-    public void setNotifications(List<ModificationNotificationDTO> notifications) {this.notifications = notifications;}
+    public List<ModificationNotificationDTO> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<ModificationNotificationDTO> notifications) {
+        this.notifications = notifications;
+    }
 
     public UserDTO getCheckOutUser() {
         return checkOutUser;
     }
+
     public void setCheckOutUser(UserDTO checkOutUser) {
         this.checkOutUser = checkOutUser;
     }
 
     public Date getCheckOutDate() {
-        return (checkOutDate!=null) ? (Date) checkOutDate.clone() : null;
+        return (checkOutDate != null) ? (Date) checkOutDate.clone() : null;
     }
+
     public void setCheckOutDate(Date checkOutDate) {
-        this.checkOutDate = (checkOutDate!=null) ? (Date) checkOutDate.clone() : null;
+        this.checkOutDate = (checkOutDate != null) ? (Date) checkOutDate.clone() : null;
     }
 
     public WorkflowDTO getWorkflow() {
         return workflow;
     }
+
     public void setWorkflow(WorkflowDTO workflow) {
         this.workflow = workflow;
     }
@@ -178,6 +195,7 @@ public class PartDTO implements Serializable {
     public String getPartKey() {
         return partKey;
     }
+
     public void setPartKey(String partKey) {
         this.partKey = partKey;
     }
@@ -185,6 +203,7 @@ public class PartDTO implements Serializable {
     public String getWorkspaceId() {
         return workspaceId;
     }
+
     public void setWorkspaceId(String workspaceId) {
         this.workspaceId = workspaceId;
     }
@@ -192,6 +211,7 @@ public class PartDTO implements Serializable {
     public String getLifeCycleState() {
         return lifeCycleState;
     }
+
     public void setLifeCycleState(String lifeCycleState) {
         this.lifeCycleState = lifeCycleState;
     }
@@ -199,6 +219,7 @@ public class PartDTO implements Serializable {
     public boolean isPublicShared() {
         return publicShared;
     }
+
     public void setPublicShared(boolean publicShared) {
         this.publicShared = publicShared;
     }
@@ -206,6 +227,7 @@ public class PartDTO implements Serializable {
     public ACLDTO getAcl() {
         return acl;
     }
+
     public void setAcl(ACLDTO acl) {
         this.acl = acl;
     }
@@ -213,6 +235,7 @@ public class PartDTO implements Serializable {
     public boolean isAttributesLocked() {
         return attributesLocked;
     }
+
     public void setAttributesLocked(boolean attributesLocked) {
         this.attributesLocked = attributesLocked;
     }
@@ -220,6 +243,7 @@ public class PartDTO implements Serializable {
     public PartRevision.RevisionStatus getStatus() {
         return status;
     }
+
     public void setStatus(PartRevision.RevisionStatus status) {
         this.status = status;
     }
@@ -227,6 +251,7 @@ public class PartDTO implements Serializable {
     public int getLastIterationNumber() {
         return lastIterationNumber;
     }
+
     public void setLastIterationNumber(int lastIterationNumber) {
         this.lastIterationNumber = lastIterationNumber;
     }

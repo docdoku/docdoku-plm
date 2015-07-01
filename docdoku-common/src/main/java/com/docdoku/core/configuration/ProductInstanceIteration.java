@@ -36,26 +36,26 @@ import java.util.*;
 /**
  * This class represents a state, identified by its iteration, of an instance of
  * a product {@link ProductInstanceMaster}.
- * 
+ *
  * @author Florent Garin
  * @version 2.0, 24/02/14
- * @since   V2.0
+ * @since V2.0
  */
-@Table(name="PRODUCTINSTANCEITERATION")
+@Table(name = "PRODUCTINSTANCEITERATION")
 @IdClass(com.docdoku.core.configuration.ProductInstanceIterationKey.class)
 @Entity
 @NamedQueries({
-        @NamedQuery(name="ProductInstanceIteration.findByProductBaseline",query="SELECT p FROM ProductInstanceIteration p WHERE p.basedOn = :productBaseline")
+        @NamedQuery(name = "ProductInstanceIteration.findByProductBaseline", query = "SELECT p FROM ProductInstanceIteration p WHERE p.basedOn = :productBaseline")
 })
 // ProductInstanceIteration.findByProductBaseline
 public class ProductInstanceIteration implements Serializable, FileHolder {
 
     @Id
-    @ManyToOne(optional=false, fetch=FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumns({
-            @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="SERIALNUMBER"),
-            @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
-            @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+            @JoinColumn(name = "PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName = "SERIALNUMBER"),
+            @JoinColumn(name = "CONFIGURATIONITEM_ID", referencedColumnName = "CONFIGURATIONITEM_ID"),
+            @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
     private ProductInstanceMaster productInstanceMaster;
 
@@ -64,11 +64,11 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
 
     private String iterationNote;
 
-    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private PartCollection partCollection;
 
-    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
-    private DocumentCollection documentCollection=new DocumentCollection();
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private DocumentCollection documentCollection = new DocumentCollection();
 
     @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(name = "PRDINSTITERATION_BINRES",
@@ -76,10 +76,10 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
                     @JoinColumn(name = "ATTACHEDFILE_FULLNAME", referencedColumnName = "FULLNAME")
             },
             joinColumns = {
-                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
-                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
-                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-                    @JoinColumn(name="ITERATION", referencedColumnName = "ITERATION")
+                    @JoinColumn(name = "PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName = "PRDINSTANCEMASTER_SERIALNUMBER"),
+                    @JoinColumn(name = "CONFIGURATIONITEM_ID", referencedColumnName = "CONFIGURATIONITEM_ID"),
+                    @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
+                    @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
             })
     private Set<BinaryResource> attachedFiles = new HashSet<>();
 
@@ -89,27 +89,26 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
                     @JoinColumn(name = "DOCUMENTLINK_ID", referencedColumnName = "ID")
             },
             joinColumns = {
-                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
-                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
-                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-                    @JoinColumn(name="ITERATION", referencedColumnName = "ITERATION")
+                    @JoinColumn(name = "PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName = "PRDINSTANCEMASTER_SERIALNUMBER"),
+                    @JoinColumn(name = "CONFIGURATIONITEM_ID", referencedColumnName = "CONFIGURATIONITEM_ID"),
+                    @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
+                    @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
             })
     private Set<DocumentLink> linkedDocuments = new HashSet<>();
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @OrderColumn(name="ATTRIBUTE_ORDER")
+    @OrderColumn(name = "ATTRIBUTE_ORDER")
     @JoinTable(name = "PRDINSTITERATION_ATTRIBUTE",
             inverseJoinColumns = {
                     @JoinColumn(name = "INSTANCEATTRIBUTE_ID", referencedColumnName = "ID")
             },
             joinColumns = {
-                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
-                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
-                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-                    @JoinColumn(name="ITERATION", referencedColumnName = "ITERATION")
+                    @JoinColumn(name = "PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName = "PRDINSTANCEMASTER_SERIALNUMBER"),
+                    @JoinColumn(name = "CONFIGURATIONITEM_ID", referencedColumnName = "CONFIGURATIONITEM_ID"),
+                    @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
+                    @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
             })
     private List<InstanceAttribute> instanceAttributes = new ArrayList<>();
-
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -122,37 +121,37 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
      * that have been included into the baseline.
      * Only selected substitute links are stored as part usage links are considered as the default
      * choices for baselines.
-     *
+     * <p>
      * Paths are strings made of ordered lists of usage link ids joined by "-".
      */
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "PRDINSTANCEITERATION_SUBLINK",
             joinColumns = {
-                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
-                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
-                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-                    @JoinColumn(name="ITERATION", referencedColumnName = "ITERATION")
+                    @JoinColumn(name = "PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName = "PRDINSTANCEMASTER_SERIALNUMBER"),
+                    @JoinColumn(name = "CONFIGURATIONITEM_ID", referencedColumnName = "CONFIGURATIONITEM_ID"),
+                    @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
+                    @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
             }
     )
-    private Set<String> substituteLinks=new HashSet<>();
+    private Set<String> substituteLinks = new HashSet<>();
 
     /**
      * Set of optional usage links (actually their path from the root node)
      * that have been included into the baseline.
-     *
+     * <p>
      * Paths are strings made of ordered lists of usage link ids joined by "-".
      */
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "PRDINSTANCEITERATION_OPTLINK",
             joinColumns = {
-                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
-                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
-                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-                    @JoinColumn(name="ITERATION", referencedColumnName = "ITERATION")
+                    @JoinColumn(name = "PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName = "PRDINSTANCEMASTER_SERIALNUMBER"),
+                    @JoinColumn(name = "CONFIGURATIONITEM_ID", referencedColumnName = "CONFIGURATIONITEM_ID"),
+                    @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
+                    @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
             }
     )
 
-    private Set<String> optionalUsageLinks=new HashSet<>();
+    private Set<String> optionalUsageLinks = new HashSet<>();
 
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -161,12 +160,12 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
                     @JoinColumn(name = "PATHTOPATHLINK_ID", referencedColumnName = "ID")
             },
             joinColumns = {
-                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
-                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
-                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-                    @JoinColumn(name="ITERATION", referencedColumnName = "ITERATION")
+                    @JoinColumn(name = "PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName = "PRDINSTANCEMASTER_SERIALNUMBER"),
+                    @JoinColumn(name = "CONFIGURATIONITEM_ID", referencedColumnName = "CONFIGURATIONITEM_ID"),
+                    @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
+                    @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
             })
-    private List<PathToPathLink> pathToPathLinks =new ArrayList<>();
+    private List<PathToPathLink> pathToPathLinks = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
@@ -190,17 +189,19 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     public ProductInstanceMaster getProductInstanceMaster() {
         return productInstanceMaster;
     }
+
     public void setProductInstanceMaster(ProductInstanceMaster productInstanceMaster) {
         this.productInstanceMaster = productInstanceMaster;
     }
 
-    public String getSerialNumber(){
+    public String getSerialNumber() {
         return this.productInstanceMaster.getSerialNumber();
     }
 
     public int getIteration() {
         return iteration;
     }
+
     public void setIteration(int iteration) {
         this.iteration = iteration;
     }
@@ -208,6 +209,7 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     public String getIterationNote() {
         return iterationNote;
     }
+
     public void setIterationNote(String iterationNote) {
         this.iterationNote = iterationNote;
     }
@@ -215,13 +217,18 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     public PartCollection getPartCollection() {
         return partCollection;
     }
+
     public void setPartCollection(PartCollection partCollection) {
         this.partCollection = partCollection;
     }
 
-    public DocumentCollection getDocumentCollection() { return documentCollection; }
+    public DocumentCollection getDocumentCollection() {
+        return documentCollection;
+    }
 
-    public void setDocumentCollection(DocumentCollection documentCollection) { this.documentCollection = documentCollection;}
+    public void setDocumentCollection(DocumentCollection documentCollection) {
+        this.documentCollection = documentCollection;
+    }
 
     public void addFile(BinaryResource pBinaryResource) {
         attachedFiles.add(pBinaryResource);
@@ -232,7 +239,7 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     }
 
     public void setLinkedDocuments(Set<DocumentLink> pLinkedDocuments) {
-        linkedDocuments=pLinkedDocuments;
+        linkedDocuments = pLinkedDocuments;
     }
 
     public List<InstanceAttribute> getInstanceAttributes() {
@@ -240,7 +247,7 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     }
 
     public void setInstanceAttributes(List<InstanceAttribute> pInstanceAttributes) {
-        instanceAttributes=pInstanceAttributes;
+        instanceAttributes = pInstanceAttributes;
     }
 
     public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
@@ -255,13 +262,16 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     public Map<BaselinedPartKey, BaselinedPart> getBaselinedParts() {
         return partCollection.getBaselinedParts();
     }
-    public void addBaselinedPart(PartIteration targetPart){
+
+    public void addBaselinedPart(PartIteration targetPart) {
         partCollection.addBaselinedPart(targetPart);
     }
-    public boolean hasBasedLinedPart(String targetPartWorkspaceId, String targetPartNumber){
+
+    public boolean hasBasedLinedPart(String targetPartWorkspaceId, String targetPartNumber) {
         return partCollection.hasBaselinedPart(new BaselinedPartKey(partCollection.getId(), targetPartWorkspaceId, targetPartNumber));
     }
-    public BaselinedPart getBaselinedPart(BaselinedPartKey baselinedPartKey){
+
+    public BaselinedPart getBaselinedPart(BaselinedPartKey baselinedPartKey) {
         return partCollection.getBaselinedPart(baselinedPartKey);
     }
 
@@ -269,7 +279,7 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
         return documentCollection.getBaselinedDocuments();
     }
 
-    public BaselinedDocument getBaselinedDocument(BaselinedDocumentKey baselinedDocumentKey){
+    public BaselinedDocument getBaselinedDocument(BaselinedDocumentKey baselinedDocumentKey) {
         return documentCollection.getBaselinedDocument(baselinedDocumentKey);
     }
 
@@ -281,20 +291,23 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
         this.basedOn = basedOn;
     }
 
-    public User getUpdateAuthor(){
+    public User getUpdateAuthor() {
         return this.getPartCollection().getAuthor();
     }
-    public String getUpdateAuthorName(){
+
+    public String getUpdateAuthorName() {
         User author = getUpdateAuthor();
-        if(author==null){
+        if (author == null) {
             return null;
         }
         return author.getName();
     }
-    public Date getUpdateDate(){
+
+    public Date getUpdateDate() {
         return this.getPartCollection().getCreationDate();
     }
-    public List<BaselinedPart> getBaselinedPartsList(){
+
+    public List<BaselinedPart> getBaselinedPartsList() {
         return new ArrayList<>(this.getBaselinedParts().values());
     }
 
@@ -313,19 +326,21 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     public void setOptionalUsageLinks(Set<String> optionalUsageLinks) {
         this.optionalUsageLinks = optionalUsageLinks;
     }
+
     public String getConfigurationItemId() {
         return this.productInstanceMaster.getInstanceOf().getId();
     }
 
 
-    public boolean hasSubstituteLink(String link){
+    public boolean hasSubstituteLink(String link) {
         return substituteLinks.contains(link);
     }
 
-    public boolean isLinkOptional(String link){
+    public boolean isLinkOptional(String link) {
         return optionalUsageLinks.contains(link);
     }
-    public boolean removeFile(BinaryResource pBinaryResource){
+
+    public boolean removeFile(BinaryResource pBinaryResource) {
         return attachedFiles.remove(pBinaryResource);
     }
 

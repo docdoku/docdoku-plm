@@ -36,32 +36,32 @@ import java.util.List;
  *
  * @author Florent Garin
  * @version 2.0, 15/05/13
- * @since   V2.0
+ * @since V2.0
  */
 
-@Table(name="BASELINEDPART")
+@Table(name = "BASELINEDPART")
 @Entity
 @NamedQueries({
-        @NamedQuery(name="BaselinedPart.existBaselinedPart", query="SELECT count(b) FROM BaselinedPart b WHERE b.baselinedPartKey.targetPartNumber = :partNumber AND b.baselinedPartKey.targetPartWorkspaceId = :workspaceId"),
-        @NamedQuery(name="BaselinedPart.findByReference", query="SELECT b FROM BaselinedPart b WHERE b.partCollection.id = :partCollection AND b.baselinedPartKey.targetPartNumber LIKE :id")
+        @NamedQuery(name = "BaselinedPart.existBaselinedPart", query = "SELECT count(b) FROM BaselinedPart b WHERE b.baselinedPartKey.targetPartNumber = :partNumber AND b.baselinedPartKey.targetPartWorkspaceId = :workspaceId"),
+        @NamedQuery(name = "BaselinedPart.findByReference", query = "SELECT b FROM BaselinedPart b WHERE b.partCollection.id = :partCollection AND b.baselinedPartKey.targetPartNumber LIKE :id")
 })
-public class BaselinedPart implements Serializable{
+public class BaselinedPart implements Serializable {
 
     @EmbeddedId
     private BaselinedPartKey baselinedPartKey;
 
     //@MapsId("partCollectionId")
-    @ManyToOne(optional=false, fetch=FetchType.EAGER)
-    @JoinColumn(name="PARTCOLLECTION_ID", referencedColumnName="ID")
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "PARTCOLLECTION_ID", referencedColumnName = "ID")
     private PartCollection partCollection;
 
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumns({
-            @JoinColumn(name="TARGET_ITERATION", referencedColumnName="ITERATION"),
-            @JoinColumn(name="TARGET_PARTMASTER_PARTNUMBER", referencedColumnName="PARTMASTER_PARTNUMBER"),
-            @JoinColumn(name="TARGET_PARTREVISION_VERSION", referencedColumnName="PARTREVISION_VERSION"),
-            @JoinColumn(name="TARGET_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+            @JoinColumn(name = "TARGET_ITERATION", referencedColumnName = "ITERATION"),
+            @JoinColumn(name = "TARGET_PARTMASTER_PARTNUMBER", referencedColumnName = "PARTMASTER_PARTNUMBER"),
+            @JoinColumn(name = "TARGET_PARTREVISION_VERSION", referencedColumnName = "PARTREVISION_VERSION"),
+            @JoinColumn(name = "TARGET_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
     private PartIteration targetPart;
 
@@ -69,18 +69,18 @@ public class BaselinedPart implements Serializable{
     @Column(name = "TARGET_ITERATION", nullable = false, insertable = false, updatable = false)
     private int targetPartIteration;
 
-    @Column(name = "TARGET_PARTREVISION_VERSION", length=10, nullable = false, insertable = false, updatable = false)
-    private String targetPartVersion="";
+    @Column(name = "TARGET_PARTREVISION_VERSION", length = 10, nullable = false, insertable = false, updatable = false)
+    private String targetPartVersion = "";
 
-    public BaselinedPart(){
+    public BaselinedPart() {
     }
 
     public BaselinedPart(PartCollection partCollection, PartIteration targetPart) {
         this.partCollection = partCollection;
         this.targetPart = targetPart;
-        this.baselinedPartKey=new BaselinedPartKey(partCollection.getId(), targetPart.getWorkspaceId(),targetPart.getPartNumber());
-        this.targetPartIteration=targetPart.getIteration();
-        this.targetPartVersion=targetPart.getVersion();
+        this.baselinedPartKey = new BaselinedPartKey(partCollection.getId(), targetPart.getWorkspaceId(), targetPart.getPartNumber());
+        this.targetPartIteration = targetPart.getIteration();
+        this.targetPartVersion = targetPart.getVersion();
     }
 
 
@@ -97,19 +97,31 @@ public class BaselinedPart implements Serializable{
         return targetPart;
     }
 
-    public String getTargetPartVersion() {return targetPartVersion;}
-    public void setTargetPartVersion(String targetPartVersion) {this.targetPartVersion = targetPartVersion;}
+    public String getTargetPartVersion() {
+        return targetPartVersion;
+    }
 
-    public String getTargetPartNumber() {return targetPart.getPartNumber();}
+    public void setTargetPartVersion(String targetPartVersion) {
+        this.targetPartVersion = targetPartVersion;
+    }
 
-    public int getTargetPartIteration() {return targetPartIteration;}
-    public void setTargetPartIteration(int targetPartIteration) {this.targetPartIteration = targetPartIteration;}
+    public String getTargetPartNumber() {
+        return targetPart.getPartNumber();
+    }
 
-    public List<PartIterationKey> getReleasedIterations(){
+    public int getTargetPartIteration() {
+        return targetPartIteration;
+    }
+
+    public void setTargetPartIteration(int targetPartIteration) {
+        this.targetPartIteration = targetPartIteration;
+    }
+
+    public List<PartIterationKey> getReleasedIterations() {
         List<PartIterationKey> partIterationKeyList = new ArrayList<>();
-        for(PartRevision partRevision: targetPart.getPartRevision().getPartMaster().getPartRevisions()){
-            if(partRevision.isReleased()){
-                PartIterationKey partIterationKey = new PartIterationKey(partRevision.getWorkspaceId(),partRevision.getPartNumber(),partRevision.getVersion(),partRevision.getLastIteration().getIteration());
+        for (PartRevision partRevision : targetPart.getPartRevision().getPartMaster().getPartRevisions()) {
+            if (partRevision.isReleased()) {
+                PartIterationKey partIterationKey = new PartIterationKey(partRevision.getWorkspaceId(), partRevision.getPartNumber(), partRevision.getVersion(), partRevision.getLastIteration().getIteration());
                 partIterationKeyList.add(partIterationKey);
             }
         }

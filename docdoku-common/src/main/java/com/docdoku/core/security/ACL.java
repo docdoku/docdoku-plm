@@ -58,7 +58,11 @@ public class ACL implements Serializable, Cloneable{
     @MapKey(name="principal")
     private Map<UserGroup,ACLUserGroupEntry> groupEntries=new HashMap<UserGroup,ACLUserGroupEntry>();
 
-    public enum Permission{FORBIDDEN, READ_ONLY, FULL_ACCESS}
+    public enum Permission{
+        FORBIDDEN,
+        READ_ONLY,
+        FULL_ACCESS
+    }
 
     private boolean enabled=true;
 

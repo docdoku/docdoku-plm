@@ -25,20 +25,20 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import java.io.Serializable;
 
 /**
- * Base class for all instance attributes.  
- * 
+ * Base class for all instance attributes.
+ *
  * @author Florent Garin
  * @version 1.0, 02/06/08
- * @since   V1.0
+ * @since V1.0
  */
 
-@Table(name="INSTANCEATTRIBUTE")
+@Table(name = "INSTANCEATTRIBUTE")
 @XmlSeeAlso({InstanceTextAttribute.class, InstanceNumberAttribute.class, InstanceDateAttribute.class, InstanceBooleanAttribute.class, InstanceURLAttribute.class, InstanceListOfValuesAttribute.class})
 @Inheritance()
 @Entity
 public abstract class InstanceAttribute implements Serializable, Cloneable {
 
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private int id;
 
@@ -63,7 +63,10 @@ public abstract class InstanceAttribute implements Serializable, Cloneable {
     public void setName(String name) {
         this.name = name;
     }
-    public String getNameWithoutWhiteSpace(){ return this.name.replaceAll(" ","_"); }
+
+    public String getNameWithoutWhiteSpace() {
+        return this.name.replaceAll(" ", "_");
+    }
 
     public boolean isMandatory() {
         return mandatory;
@@ -115,15 +118,17 @@ public abstract class InstanceAttribute implements Serializable, Cloneable {
     public void setId(int id) {
         this.id = id;
     }
+
     public int getId() {
         return id;
     }
 
     public abstract Object getValue();
+
     public abstract boolean setValue(Object pValue);
 
     public boolean isValueEquals(Object pValue) {
         Object value = getValue();
-        return value!=null && value.equals(pValue);
+        return value != null && value.equals(pValue);
     }
 }
