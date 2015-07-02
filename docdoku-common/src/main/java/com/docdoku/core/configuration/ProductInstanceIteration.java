@@ -378,14 +378,21 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o){
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()){
+            return false;
+        }
 
         ProductInstanceIteration that = (ProductInstanceIteration) o;
 
-        if (iteration != that.iteration) return false;
-        if (productInstanceMaster != null ? !productInstanceMaster.equals(that.productInstanceMaster) : that.productInstanceMaster != null)
+        if (iteration != that.iteration) {
             return false;
+        }
+        if (productInstanceMaster != null ? !productInstanceMaster.equals(that.productInstanceMaster) : that.productInstanceMaster != null) {
+            return false;
+        }
 
         return true;
     }

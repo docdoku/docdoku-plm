@@ -103,13 +103,18 @@ public class BaselinedDocument implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o){
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         BaselinedDocument that = (BaselinedDocument) o;
 
-        if (baselinedDocumentKey != null ? !baselinedDocumentKey.equals(that.baselinedDocumentKey) : that.baselinedDocumentKey != null)
+        if (baselinedDocumentKey != null ? !baselinedDocumentKey.equals(that.baselinedDocumentKey) : that.baselinedDocumentKey != null) {
             return false;
+        }
 
         return true;
     }

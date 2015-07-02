@@ -99,12 +99,18 @@ public class PathDataMaster implements Serializable{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o){
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         PathDataMaster that = (PathDataMaster) o;
 
-        if (id != that.id) return false;
+        if (id != that.id){
+            return false;
+        }
 
         return true;
     }

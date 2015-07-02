@@ -111,14 +111,21 @@ public class PathDataIterationDTO {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o){
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()){
+            return false;
+        }
 
         PathDataIterationDTO dto = (PathDataIterationDTO) o;
 
-        if (iteration != dto.iteration) return false;
-        if (pathDataMasterId != dto.pathDataMasterId) return false;
-
+        if (iteration != dto.iteration){
+            return false;
+        }
+        if (pathDataMasterId != dto.pathDataMasterId){
+            return false;
+        }
         return true;
     }
 

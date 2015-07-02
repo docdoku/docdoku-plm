@@ -59,13 +59,21 @@ public class PathDataIterationKey implements Serializable{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         PathDataIterationKey that = (PathDataIterationKey) o;
 
-        if (iteration != that.iteration) return false;
-        if (pathDataMaster != that.pathDataMaster) return false;
+        if (iteration != that.iteration) {
+            return false;
+        }
+        if (pathDataMaster != that.pathDataMaster) {
+            return false;
+        }
 
         return true;
     }

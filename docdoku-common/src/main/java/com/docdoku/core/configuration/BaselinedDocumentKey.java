@@ -88,19 +88,27 @@ public class BaselinedDocumentKey implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()){
+            return false;
+        }
 
         BaselinedDocumentKey that = (BaselinedDocumentKey) o;
 
-        if (documentCollectionId != that.documentCollectionId) return false;
-        if (targetDocumentId != null ? !targetDocumentId.equals(that.targetDocumentId) : that.targetDocumentId != null)
+        if (documentCollectionId != that.documentCollectionId){
             return false;
-        if (targetDocumentVersion != null ? !targetDocumentVersion.equals(that.targetDocumentVersion) : that.targetDocumentVersion != null)
+        }
+        if (targetDocumentId != null ? !targetDocumentId.equals(that.targetDocumentId) : that.targetDocumentId != null) {
             return false;
-        if (targetDocumentWorkspaceId != null ? !targetDocumentWorkspaceId.equals(that.targetDocumentWorkspaceId) : that.targetDocumentWorkspaceId != null)
+        }
+        if (targetDocumentVersion != null ? !targetDocumentVersion.equals(that.targetDocumentVersion) : that.targetDocumentVersion != null) {
             return false;
-
+        }
+        if (targetDocumentWorkspaceId != null ? !targetDocumentWorkspaceId.equals(that.targetDocumentWorkspaceId) : that.targetDocumentWorkspaceId != null) {
+            return false;
+        }
         return true;
     }
 

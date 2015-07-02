@@ -122,12 +122,18 @@ public class PathToPathLink implements Serializable, Cloneable{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o){
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()){
+            return false;
+        }
 
         PathToPathLink that = (PathToPathLink) o;
 
-        if (id != that.id) return false;
+        if (id != that.id){
+            return false;
+        }
 
         return true;
     }

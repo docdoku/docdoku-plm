@@ -180,13 +180,21 @@ public class ProductInstanceMaster implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()){
+            return false;
+        }
 
         ProductInstanceMaster that = (ProductInstanceMaster) o;
 
-        if (instanceOf != null ? !instanceOf.equals(that.instanceOf) : that.instanceOf != null) return false;
-        if (serialNumber != null ? !serialNumber.equals(that.serialNumber) : that.serialNumber != null) return false;
+        if (instanceOf != null ? !instanceOf.equals(that.instanceOf) : that.instanceOf != null){
+            return false;
+        }
+        if (serialNumber != null ? !serialNumber.equals(that.serialNumber) : that.serialNumber != null){
+            return false;
+        }
 
         return true;
     }

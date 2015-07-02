@@ -167,15 +167,21 @@ public class PathDataIteration implements Serializable, FileHolder {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o){
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         PathDataIteration that = (PathDataIteration) o;
 
-        if (iteration != that.iteration) return false;
-        if (pathDataMaster != null ? !pathDataMaster.equals(that.pathDataMaster) : that.pathDataMaster != null)
+        if (iteration != that.iteration) {
             return false;
-
+        }
+        if (pathDataMaster != null ? !pathDataMaster.equals(that.pathDataMaster) : that.pathDataMaster != null) {
+            return false;
+        }
         return true;
     }
 

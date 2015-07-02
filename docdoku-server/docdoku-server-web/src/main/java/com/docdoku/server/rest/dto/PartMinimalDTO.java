@@ -77,16 +77,30 @@ public class PartMinimalDTO implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o){
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()){
+            return false;
+        }
 
         PartMinimalDTO that = (PartMinimalDTO) o;
 
-        if (description != null ? !description.equals(that.description) : that.description != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (number != null ? !number.equals(that.number) : that.number != null) return false;
-        if (type != null ? !type.equals(that.type) : that.type != null) return false;
-        if (workspaceId != null ? !workspaceId.equals(that.workspaceId) : that.workspaceId != null) return false;
+        if (description != null ? !description.equals(that.description) : that.description != null){
+            return false;
+        }
+        if (name != null ? !name.equals(that.name) : that.name != null){
+            return false;
+        }
+        if (number != null ? !number.equals(that.number) : that.number != null){
+            return false;
+        }
+        if (type != null ? !type.equals(that.type) : that.type != null){
+            return false;
+        }
+        if (workspaceId != null ? !workspaceId.equals(that.workspaceId) : that.workspaceId != null){
+            return false;
+        }
 
         return true;
     }

@@ -266,13 +266,21 @@ public class PartDTO implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o){
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()){
+            return false;
+        }
 
         PartDTO partDTO = (PartDTO) o;
 
-        if (!number.equals(partDTO.number)) return false;
-        if (!version.equals(partDTO.version)) return false;
+        if (!number.equals(partDTO.number)){
+            return false;
+        }
+        if (!version.equals(partDTO.version)){
+            return false;
+        }
         return workspaceId.equals(partDTO.workspaceId);
 
     }
