@@ -853,6 +853,11 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
             PathDataMaster pathDataMaster = em.find(PathDataMaster.class, pathDataId);
 
+            //allowed on last iteration only
+            if (pathDataMaster.getPathDataIterations().size() != (iteration - 1)) {
+                throw new NotAllowedException(userLocale, "NotAllowedException55");
+            }
+
             PathDataIteration pathDataIteration = pathDataMaster.getPathDataIterations().get(iteration - 1);
 
             // This path data isn't owned by product master.
