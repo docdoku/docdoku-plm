@@ -705,30 +705,6 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public PathDataMaster getPathData(String workspaceId, String configurationItemId, String serialNumber, int pathDataId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
-        // TODO: determine when this method is being called
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        Locale locale = new Locale(user.getLanguage());
-
-        // Load the product instance
-        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
-        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
-
-        // Check the access to the product instance
-        checkProductInstanceReadAccess(workspaceId, prodInstM, user);
-
-        PathDataMaster pathDataMaster = em.find(PathDataMaster.class, pathDataId);
-
-        // This path data isn't owned by product master.
-        if (!prodInstM.getLastIteration().getPathDataMasterList().contains(pathDataMaster)) {
-            throw new NotAllowedException(locale, "NotAllowedException52");
-        }
-
-        return pathDataMaster;
-    }
-
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    @Override
     public PathDataMaster getPathDataByPath(String workspaceId, String configurationItemId, String serialNumber, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, ProductInstanceMasterNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());

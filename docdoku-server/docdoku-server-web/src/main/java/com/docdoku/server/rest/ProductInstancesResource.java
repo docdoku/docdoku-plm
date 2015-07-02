@@ -431,7 +431,6 @@ public class ProductInstancesResource {
     @Path("{serialNumber}/pathdata/{pathDataId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deletePathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathDataId") int pathDataId,@PathParam("iteration") int iteration) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
-        // TODO: determine when this WS is called
         productInstanceService.deletePathData(workspaceId,configurationItemId,serialNumber,pathDataId,iteration);
         return Response.ok().build();
     }
