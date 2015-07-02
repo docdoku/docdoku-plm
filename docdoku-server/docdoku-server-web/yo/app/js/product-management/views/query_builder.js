@@ -57,7 +57,8 @@ define([
                 }
             };
 
-            this.fetchAttributes();
+            this.fetchPartIterationsAttributes();
+            this.fetchPathDataAttributes();
             this.fetchTags();
         },
 
@@ -176,9 +177,9 @@ define([
             }
         },
 
-        fetchAttributes : function(){
+        fetchPartIterationsAttributes : function(){
             var self = this;
-            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/attributes';
+            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/attributes/part-iterations';
 
             $.ajax({
                 type: 'GET',
@@ -228,6 +229,69 @@ define([
                         self.selectizeAvailableOptions.push({
                             name:attribute.name,
                             value:'attr-'+attribute.type+'.'+attribute.name,
+                            group:'attr-'+attribute.type
+                        });
+
+                    });
+                },
+                error: function () {
+
+                }
+            });
+        },
+
+        fetchPathDataAttributes : function(){
+            var self = this;
+            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/attributes/path-data';
+
+            $.ajax({
+                type: 'GET',
+                url: url,
+                success: function (data) {
+                    _.each(data, function(attribute){
+
+                        var attributeType = queryBuilderOptions.types[attribute.type];
+                        var filter = {
+                            id: 'pd-attr-'+attribute.type+'.'+attribute.name,
+                            label: attribute.name,
+                            type: attributeType,
+                            realType: attributeType,
+                            optgroup: _.findWhere(queryBuilderOptions.groups, {id : 'pd-attr-'+attribute.type}).name
+                        };
+                        if(attributeType === 'date'){
+                            filter.operators = queryBuilderOptions.dateOperators;
+                        } else if (attributeType === 'string'){
+                            filter.operators = queryBuilderOptions.stringOperators;
+                        } else if (attributeType === 'lov'){
+                            filter.type = 'string';
+                            filter.operators = queryBuilderOptions.lovOperators;
+                            filter.input = 'select';
+                            var values = [];
+                            var index = 0;
+                            _.each(attribute.lovItems, function(item){
+                                var value = {};
+                                value[index] = item.name;
+                                values.push(value);
+                                index ++;
+                            });
+                            filter.values = values;
+                        } else if(attributeType === 'boolean'){
+                            filter.type = 'boolean';
+                            filter.operators = queryBuilderOptions.booleanOperators;
+                            filter.input = 'select';
+                            filter.values = [
+                                {'true' : App.config.i18n.TRUE},
+                                {'false' : App.config.i18n.FALSE}
+                            ];
+                        } else if(attributeType === 'double'){
+                            filter.operators = queryBuilderOptions.numberOperators;
+                        }
+
+                        self.queryBuilderFilters.push(filter);
+
+                        self.selectizeAvailableOptions.push({
+                            name:attribute.name,
+                            value:'pd-attr-'+attribute.type+'.'+attribute.name,
                             group:'attr-'+attribute.type
                         });
 

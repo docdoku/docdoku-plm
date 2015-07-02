@@ -56,9 +56,24 @@ public class InstanceAttributeDAO {
         }
     }
 
-    public List<InstanceAttributeDescriptor> getInstanceAttributesInWorkspace(String workspaceId){
+    public List<InstanceAttributeDescriptor> getPartIterationsInstanceAttributesInWorkspace(String workspaceId){
 
         List<InstanceAttribute> partsAttributesInWorkspace = em.createNamedQuery("PartIteration.findDistinctInstanceAttributes", InstanceAttribute.class)
+                .setParameter("workspaceId", workspaceId)
+                .getResultList();
+
+        Set<InstanceAttributeDescriptor> descriptors = new HashSet<>();
+
+        for(InstanceAttribute attribute: partsAttributesInWorkspace){
+            descriptors.add(new InstanceAttributeDescriptor(attribute));
+        }
+
+        return new ArrayList<>(descriptors);
+    }
+
+    public List<InstanceAttributeDescriptor> getPathDataInstanceAttributesInWorkspace(String workspaceId){
+
+        List<InstanceAttribute> partsAttributesInWorkspace = em.createNamedQuery("PathDataIteration.findDistinctInstanceAttributes", InstanceAttribute.class)
                 .setParameter("workspaceId", workspaceId)
                 .getResultList();
 

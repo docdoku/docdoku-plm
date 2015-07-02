@@ -35,6 +35,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -63,10 +64,24 @@ public class AttributesResource {
     }
 
     @GET
+    @Path("part-iterations")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<InstanceAttributeDescriptorDTO> getAttributes(@PathParam("workspaceId") String workspaceId)
+    public List<InstanceAttributeDescriptorDTO> getPartIterationsAttributes(@PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        List<InstanceAttributeDescriptor> attributes = productManager.getInstanceAttributesInWorkspace(workspaceId);
+        List<InstanceAttributeDescriptor> attributes = productManager.getPartIterationsInstanceAttributesInWorkspace(workspaceId);
+        List<InstanceAttributeDescriptorDTO> dtos = new ArrayList<>();
+        for (InstanceAttributeDescriptor descriptor:attributes){
+            dtos.add(mapper.map(descriptor,InstanceAttributeDescriptorDTO.class));
+        }
+        return dtos;
+    }
+
+    @GET
+    @Path("path-data")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<InstanceAttributeDescriptorDTO> getPathDataAttributes(@PathParam("workspaceId") String workspaceId)
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        List<InstanceAttributeDescriptor> attributes = productManager.getPathDataInstanceAttributesInWorkspace(workspaceId);
         List<InstanceAttributeDescriptorDTO> dtos = new ArrayList<>();
         for (InstanceAttributeDescriptor descriptor:attributes){
             dtos.add(mapper.map(descriptor,InstanceAttributeDescriptorDTO.class));

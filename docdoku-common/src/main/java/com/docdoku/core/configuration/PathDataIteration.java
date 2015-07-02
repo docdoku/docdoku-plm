@@ -36,6 +36,7 @@ import java.util.*;
 @Table(name="PATHDATAITERATION")
 @Entity
 @IdClass(PathDataIterationKey.class)
+@NamedQuery(name="PathDataIteration.findDistinctInstanceAttributes", query="SELECT DISTINCT i FROM InstanceAttribute i LEFT JOIN PathDataIteration pdi LEFT JOIN PathDataMaster pdm LEFT JOIN ProductInstanceIteration pi WHERE pdi member of pdm.pathDataIterations AND pdm member of pi.productInstanceMaster.pathDataMasterList AND  pi.productInstanceMaster.instanceOf.workspace.id = :workspaceId AND i member of pdi.instanceAttributes")
 public class PathDataIteration implements Serializable, FileHolder {
 
     @Id

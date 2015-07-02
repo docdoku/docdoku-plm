@@ -2876,10 +2876,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<InstanceAttributeDescriptor> getInstanceAttributesInWorkspace(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public List<InstanceAttributeDescriptor> getPartIterationsInstanceAttributesInWorkspace(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         userManager.checkWorkspaceReadAccess(workspaceId);
         InstanceAttributeDAO instanceAttributeDAO = new InstanceAttributeDAO(em);
-        return instanceAttributeDAO.getInstanceAttributesInWorkspace(workspaceId);
+        return instanceAttributeDAO.getPartIterationsInstanceAttributesInWorkspace(workspaceId);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public List<InstanceAttributeDescriptor> getPathDataInstanceAttributesInWorkspace(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        userManager.checkWorkspaceReadAccess(workspaceId);
+        InstanceAttributeDAO instanceAttributeDAO = new InstanceAttributeDAO(em);
+        return instanceAttributeDAO.getPathDataInstanceAttributesInWorkspace(workspaceId);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
