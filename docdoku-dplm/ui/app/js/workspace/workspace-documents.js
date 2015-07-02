@@ -26,10 +26,10 @@
             $scope.action = {
                 selected:
                     $routeParams.action==='folders'?0:
-                    $routeParams.action==='checkouted'?1:
+                    $routeParams.action==='checkedOut'?1:
                     0,
                 folders:0,
-                checkouted:1
+                checkedOut:1
             };
 
             $scope.folders = FolderService.folders;
@@ -53,8 +53,8 @@
                     .then(onListResults);
             };
 
-            var getCheckoutedDocumentsRevisions = function(){
-                return CliService.getCheckoutedDocumentsRevisions($scope.workspace, $filter('decodePath')($scope.path))
+            var getCheckedOutDocumentsRevisions = function(){
+                return CliService.getCheckedOutDocumentsRevisions($scope.workspace, $filter('decodePath')($scope.path))
                     .then(onListResults);
             };
            
@@ -106,8 +106,8 @@
 
                 }).then(getDocumentsRevisions);
 
-            } else if($routeParams.action === 'checkouted'){
-                getCheckoutedDocumentsRevisions();
+            } else if($routeParams.action === 'checkedOut'){
+                getCheckedOutDocumentsRevisions();
             }
         })
 

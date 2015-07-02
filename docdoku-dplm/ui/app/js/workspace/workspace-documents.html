@@ -2,8 +2,8 @@
     <div flex ng-class="{selected:action.selected == action.folders}">
         <a ng-href="#/workspace/{{workspace}}/documents/folders">{{'FOLDERS' | translate}}</a>
     </div>
-    <div flex ng-class="{selected:action.selected == action.checkouted}">
-        <a ng-href="#/workspace/{{workspace}}/documents/checkouted">{{'CHECKOUTED' | translate}}</a>
+    <div flex ng-class="{selected:action.selected == action.checkedOut}">
+        <a ng-href="#/workspace/{{workspace}}/documents/checkedOut">{{'CHECKED_OUT' | translate}}</a>
     </div>
 </div>
 
@@ -14,7 +14,7 @@
         <div ng-if="action.selected == action.folders">
             <folders></folders>
         </div>
-        <div ng-if="action.selected == action.checkouted && !loadingDocuments && documents.length">
+        <div ng-if="action.selected == action.checkedOut && !loadingDocuments && documents.length">
             <div class="row">
                 <label>{{'SAVE_TO' | translate}}</label>
                 <i class="fa fa-folder-open"></i>

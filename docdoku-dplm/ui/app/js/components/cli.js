@@ -440,7 +440,7 @@
                 return run(args);
             };
 
-            this.getCheckoutedDocumentsRevisions=function(workspace){
+            this.getCheckedOutDocumentsRevisions=function(workspace){
                 var args = [
                     'l', 'document',
                     '-F', 'json',

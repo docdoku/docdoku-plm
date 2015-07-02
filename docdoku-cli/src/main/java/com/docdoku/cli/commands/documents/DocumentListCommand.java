@@ -41,14 +41,14 @@ public class DocumentListCommand extends BaseCommandLine {
     @Option(name="-f", aliases = "--folder", usage="remote folder to list, default is workspace root folder")
     private String folder = null;
 
-    @Option(name="-c", aliases = "--checkouted", usage="list only checkouted files")
-    private boolean checkoutedDocsOnly = false;
+    @Option(name="-c", aliases = "--checkedOut", usage="list only checked out files")
+    private boolean checkedOutDocsOnly = false;
 
     @Override
     public void execImpl() throws Exception {
         IDocumentManagerWS documentS = ScriptingTools.createDocumentService(getServerURL(),user,password);
 
-        if(checkoutedDocsOnly){
+        if(checkedOutDocsOnly){
             DocumentRevision[] documentRevisions = documentS.getCheckedOutDocumentRevisions(workspace);
             output.printDocumentRevisions(documentRevisions);
         }else{

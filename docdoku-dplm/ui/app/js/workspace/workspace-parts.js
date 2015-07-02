@@ -16,9 +16,9 @@
 
             $scope.filters = {
                 checkoutable: true,
-                checkoutedByMe: true,
+                checkedOutByMe: true,
                 released: false,
-                checkouted: false,
+                checkedOut: false,
                 search:''
             };
 
@@ -120,11 +120,11 @@
                         return false;
                     }
 
-                    if (!filters.checkouted && part.checkoutUser && part.checkoutUser !== ConfigurationService.configuration.user) {
+                    if (!filters.checkedOut && part.checkoutUser && part.checkoutUser !== ConfigurationService.configuration.user) {
                         return false;
                     }
 
-                    if (!filters.checkoutedByMe && part.checkoutUser && part.checkoutUser === ConfigurationService.configuration.user) {
+                    if (!filters.checkedOutByMe && part.checkoutUser && part.checkoutUser === ConfigurationService.configuration.user) {
                         return false;
                     }
 
