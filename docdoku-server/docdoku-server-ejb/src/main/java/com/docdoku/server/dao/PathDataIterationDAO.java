@@ -49,39 +49,4 @@ public class PathDataIterationDAO {
         }
     }
 
-
-    public PathDataMaster findByPathAndProductInstance(String pathId, ProductInstanceMaster productInstanceMaster){
-        try {
-            return em.createNamedQuery("pathDataMaster.findByPathIdAndProductInstanceMaster", PathDataMaster.class)
-                    .setParameter("id", pathId)
-                    .setParameter("productInstanceMaster", productInstanceMaster)
-                    .getSingleResult();
-        }catch(NoResultException e){
-            return null;
-        }
-    }
-    public PathDataMaster findByPathIterationAndProductInstance(String id, ProductInstanceMaster productInstanceMaster){
-        try {
-            return em.createNamedQuery("pathDataMaster.findByPathIdAndProductInstanceMaster", PathDataMaster.class)
-                    .setParameter("id", id)
-                    .setParameter("productInstanceMaster", productInstanceMaster)
-                    .getSingleResult();
-        }catch(NoResultException e){
-            return null;
-        }
-    }
-    public ProductInstanceMaster findByPathData(PathDataMaster pathDataMaster){
-        try {
-            return em.createNamedQuery("ProductInstanceMaster.findByPathData", ProductInstanceMaster.class)
-                    .setParameter("pathData", pathDataMaster)
-                    .getSingleResult();
-        }catch(NoResultException e){
-            return null;
-        }
-    }
-
-    public void removePathData(PathDataMaster pathDataMaster) {
-        em.remove(pathDataMaster);
-        em.flush();
-    }
 }
