@@ -98,12 +98,12 @@ define(['backbone',
             return this.get('typedLinks');
         },
 
-        hasPathData: function () {
-            return this.getPathData().length;
-        },
-
         getUsedByPaths: function () {
             return this.get('usedByPaths');
+        },
+
+        hasPathDataInLastIteration: function () {
+            return this.getLastIteration().getPathData().length;
         },
 
         hasACLForCurrentUser: function () {

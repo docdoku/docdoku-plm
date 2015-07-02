@@ -97,6 +97,10 @@ define(['backbone'
             }
         },
 
+        hasPathData: function () {
+            return this.getPathData().length;
+        },
+
         getPathData: function () {
             return this.get('pathDataMasterList');
         },
