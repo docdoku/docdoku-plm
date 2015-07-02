@@ -46,6 +46,7 @@ public class ProductInstanceIterationDTO {
 
     private BaselineDTO basedOn;
     private List<PathDataMasterDTO> pathDataMasterList;
+    private List<PartMinimalListDTO> usedByPaths;
     private List<InstanceAttributeDTO> instanceAttributes = new ArrayList<>();
     private Set<DocumentRevisionDTO> linkedDocuments = new HashSet<>();
     private List<String> attachedFiles;
@@ -196,5 +197,13 @@ public class ProductInstanceIterationDTO {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public List<PartMinimalListDTO> getUsedByPaths() {
+        return usedByPaths;
+    }
+
+    public void setUsedByPaths(List<PartMinimalListDTO> usedByPaths) {
+        this.usedByPaths = usedByPaths;
     }
 }

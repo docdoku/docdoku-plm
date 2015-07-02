@@ -232,7 +232,7 @@ public class ProductInstancesResource {
                 partMinimalListDTO.setParts(partDTOs);
                 usedByPaths.add(partMinimalListDTO);
             }
-            dto.setUsedByPaths(usedByPaths);
+            productInstanceIterationDTO.setUsedByPaths(usedByPaths);
         }
 
         return dto;

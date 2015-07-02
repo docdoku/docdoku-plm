@@ -265,7 +265,7 @@ define([
 
         initPathDataView: function () {
             var pathDataList = this.$('#path-data-list');
-            var partsPath = this.model.getUsedByPaths();
+            var partsPath = this.iteration.getUsedByPaths();
 
             _.each(partsPath, function (parts) {
                 var view = new PathDataItemView({model: parts.parts}).render();

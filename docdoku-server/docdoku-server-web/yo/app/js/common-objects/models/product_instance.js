@@ -98,10 +98,6 @@ define(['backbone',
             return this.get('typedLinks');
         },
 
-        getUsedByPaths: function () {
-            return this.get('usedByPaths');
-        },
-
         hasPathDataInLastIteration: function () {
             return this.getLastIteration().getPathData().length;
         },
