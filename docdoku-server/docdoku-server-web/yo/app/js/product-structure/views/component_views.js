@@ -121,7 +121,7 @@ define([
             'change input.load-3D:first': 'onLoad3D',
             'change input.selectable-part-checkbox:first': 'selectPart',
             'click .openModal:first': 'onEditPart',
-            'click .fa-asterisk:first': 'openPathDataModal'
+            'click > .fa-asterisk': 'openPathDataModal'
         },
 
         initialize: function () {
@@ -231,7 +231,7 @@ define([
             'change input.load-3D:first': 'onLoad3D',
             'change input.selectable-part-checkbox:first': 'selectPart',
             'click .hitarea:first': 'onToggleExpand',
-            'click .fa-asterisk:first': 'openPathDataModal'
+            'click > .fa-asterisk': 'openPathDataModal'
         },
 
         initialize: function () {
