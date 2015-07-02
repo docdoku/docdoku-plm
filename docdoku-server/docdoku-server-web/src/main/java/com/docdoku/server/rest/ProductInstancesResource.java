@@ -437,10 +437,10 @@ public class ProductInstancesResource {
     }
 
     @POST
-    @Path("{serialNumber}/pathdata/{path}/{pathId}")
+    @Path("{serialNumber}/pathdata/{pathDataId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PathDataMasterDTO createPathDataIteration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber,@PathParam("pathId") int pathId,@PathParam("path") String path, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, FileAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, BaselineNotFoundException {
+    public PathDataMasterDTO addNewPathDataIteration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathDataId") int pathDataId, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, FileAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, BaselineNotFoundException {
 
         InstanceAttributeFactory factory = new InstanceAttributeFactory();
 
@@ -466,14 +466,14 @@ public class ProductInstancesResource {
         }
 
 
-        PathDataMaster pathDataMaster = productInstanceService.addPathData(workspaceId, configurationItemId, serialNumber, pathId,path, attributes, pathDataIterationCreationDTO.getNoteIteration(),links, documentLinkComments);
+        PathDataMaster pathDataMaster = productInstanceService.addNewPathDataIteration(workspaceId, configurationItemId, serialNumber, pathDataId, pathDataIterationCreationDTO.getPath(), attributes, pathDataIterationCreationDTO.getNoteIteration(), links, documentLinkComments);
 
         PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
         PartMinimalListDTO partList = new PartMinimalListDTO();
-        List<PartLink> partLinks = productService.decodePath(ciKey, path);
-        for(PartLink partLink : productService.decodePath(ciKey, path)){
+        List<PartLink> partLinks = productService.decodePath(ciKey, pathDataIterationCreationDTO.getPath());
+        for(PartLink partLink : productService.decodePath(ciKey, pathDataIterationCreationDTO.getPath())){
             partList.addPart(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
         }
         dto.setPartsPath(partList);
@@ -495,10 +495,10 @@ public class ProductInstancesResource {
     }
 
     @POST
-    @Path("{serialNumber}/pathdata/{path}")
+    @Path("{serialNumber}/pathdata/{path}/new")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PathDataMasterDTO createPathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber,@PathParam("path") String path, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, FileAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+    public PathDataMasterDTO createPathDataMaster(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber,@PathParam("path") String path, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, FileAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
 
         InstanceAttributeFactory factory = new InstanceAttributeFactory();
 
@@ -524,7 +524,7 @@ public class ProductInstancesResource {
         }
 
 
-        PathDataMaster pathDataMaster = productInstanceService.createPathData(workspaceId, configurationItemId, serialNumber, path, attributes, pathDataIterationCreationDTO.getNoteIteration());
+        PathDataMaster pathDataMaster = productInstanceService.createPathDataMaster(workspaceId, configurationItemId, serialNumber, path, attributes, pathDataIterationCreationDTO.getNoteIteration());
 
         PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
 

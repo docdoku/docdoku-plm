@@ -220,7 +220,7 @@ define([
                         this.iteration.setIterationNote(this.$('.description-input').val());
 
                         //POST
-                        var creationURL = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/' + this.iteration.getPath();
+                        var creationURL = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/' + this.iteration.getPath() + '/new';
                         $.ajax({
                             type: 'POST',
                             url: creationURL,
@@ -296,7 +296,7 @@ define([
                 });
 
                 //POST
-                var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/' + this.iteration.getPath() + '/' + this.iteration.getId();
+                var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/' + this.iteration.getId();
                 var self = this;
                 $.ajax({
                     type: 'POST',
