@@ -117,26 +117,32 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         new PSFilterVisitor(em, user, filter, ci.getDesignItem(), null, -1) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
+                // Unused here
             }
 
             @Override
             public void onUnresolvedVersion(PartMaster partMaster) throws NotAllowedException {
+                // Unused here
             }
 
             @Override
             public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) throws NotAllowedException {
+                // Unused here
             }
 
             @Override
             public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
+                // Unused here
             }
 
             @Override
             public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+                // Unused here
             }
 
             @Override
             public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+                // Unused here
             }
 
             @Override
@@ -2403,33 +2409,37 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PSFilterVisitor visitor = new PSFilterVisitor(em, user, filter, root, path, pDepth) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
+                // Unused here
             }
 
             @Override
             public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
+                // Unused here
             }
 
             @Override
             public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
-
+                // Unused here
             }
 
             @Override
             public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+                // Unused here
             }
 
             @Override
             public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
-
+                // Unused here
             }
 
             @Override
             public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
-
+                // Unused here
             }
 
             @Override
             public void onUnresolvedVersion(PartMaster partMaster) {
+                // Unused here
             }
         };
 
@@ -2789,34 +2799,37 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         new PSFilterVisitor(em, user, new UpdatePartIterationPSFilter(user, partIteration), partMaster, null, -1) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
+                // Unused here
             }
 
             @Override
             public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
+                // Unused here
             }
 
             @Override
             public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
-
+                // Unused here
             }
 
             @Override
             public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+                // Unused here
             }
 
             @Override
             public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
-
+                // Unused here
             }
 
             @Override
             public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
-
+                // Unused here
             }
 
             @Override
             public void onUnresolvedVersion(PartMaster partMaster) {
-
+                // Unused here
             }
         };
 
@@ -2911,24 +2924,27 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         new PSFilterVisitor(em, user, psFilter, root, null, -1) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
+                // Unused here
             }
 
             @Override
             public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
+                // Unused here
             }
 
             @Override
             public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
-
+                // Unused here
             }
 
             @Override
             public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+                // Unused here
             }
 
             @Override
             public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
-
+                // Unused here
             }
 
             @Override
@@ -2990,7 +3006,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             @Override
             public void onUnresolvedVersion(PartMaster partMaster) {
-
+                // Unused here
             }
         };
 
@@ -3041,24 +3057,27 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         new PSFilterVisitor(em, user, filter, root, null, -1) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
+                // Unused here
             }
 
             @Override
             public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
+                // Unused here
             }
 
             @Override
             public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
-
+                // Unused here
             }
 
             @Override
             public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+                // Unused here
             }
 
             @Override
             public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
-
+                // Unused here
             }
 
             @Override
@@ -3107,7 +3126,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             @Override
             public void onUnresolvedVersion(PartMaster partMaster) {
-
+                // Unused here
             }
         };
 

@@ -39,6 +39,7 @@ public class WebSessionListener implements HttpSessionListener {
     //Notification that a session was created.
     @Override
     public void sessionCreated(HttpSessionEvent httpSessionCreatedEvent) {
+        // Nothing to do
     }
 
     //Notification that a session is about to be invalidated.

@@ -105,14 +105,17 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
 
             @Override
             public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+                // Unused here
             }
 
             @Override
             public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+                // Unused here
             }
 
             @Override
             public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+                // Unused here
             }
 
         };
@@ -164,23 +167,26 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
         new PSFilterVisitor(em, user, filter, null, startPath, null) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations)  throws NotAllowedException{
+                // Unused here
             }
             @Override
             public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
+                // Unused here
             }
 
             @Override
             public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
-
+                // Unused here
             }
 
             @Override
             public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+                // Unused here
             }
 
             @Override
             public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
-
+                // Unused here
             }
 
             @Override
@@ -191,7 +197,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
 
             @Override
             public void onUnresolvedVersion(PartMaster partMaster) {
-
+                // Unused here
             }
         };
 
@@ -293,6 +299,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
 
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations)  throws NotAllowedException{
+                // Unused here
             }
 
             @Override
@@ -306,11 +313,12 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
 
             @Override
             public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
-
+                // Unused here
             }
 
             @Override
             public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+                // Unused here
             }
 
             @Override
@@ -324,11 +332,12 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
 
             @Override
             public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
-
+                // Unused here
             }
 
             @Override
             public void onUnresolvedVersion(PartMaster partMaster) {
+                // Unused here
             }
         };
 
@@ -357,30 +366,32 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
 
             @Override
             public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
+                // Unused here
             }
 
             @Override
             public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
-
+                // Unused here
             }
 
             @Override
             public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+                // Unused here
             }
 
             @Override
             public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
-
+                // Unused here
             }
 
             @Override
             public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
-
+                // Unused here
             }
 
             @Override
             public void onUnresolvedVersion(PartMaster partMaster) {
-
+                // Unused here
             }
         };
 
@@ -420,6 +431,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
         productConfigurationDAO.createProductConfiguration(productConfiguration);
         return productConfiguration;
     }
+
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public List<ProductConfiguration> getAllProductConfigurations(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {

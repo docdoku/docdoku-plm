@@ -29,9 +29,6 @@ import javax.websocket.EndpointConfig;
 
 public class StatusMessageEncoder implements Encoder.Text<StatusMessage> {
 
-
-
-
     @Override
     public String encode(StatusMessage statusMessage) throws EncodeException {
             return Json.createObjectBuilder()
@@ -43,11 +40,11 @@ public class StatusMessageEncoder implements Encoder.Text<StatusMessage> {
 
     @Override
     public void init(EndpointConfig endpointConfig) {
-
+        // Nothing to do
     }
 
     @Override
     public void destroy() {
-
+        // Nothing to do
     }
 }

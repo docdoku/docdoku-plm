@@ -153,6 +153,7 @@ public class AuthFilter implements Filter {
 
     @Override
     public void destroy() {
+        // Nothing to do
     }
 
     @Override

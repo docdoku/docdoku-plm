@@ -64,9 +64,11 @@ public class AuthMayFilter implements Filter {
 
     @Override
     public void destroy() {
+        // Nothing to do
     }
 
     @Override
     public void init(FilterConfig filterConfig) {
+        // Nothing to do
     }
 }

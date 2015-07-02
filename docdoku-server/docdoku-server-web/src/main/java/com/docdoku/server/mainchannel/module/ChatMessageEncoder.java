@@ -47,11 +47,11 @@ public class ChatMessageEncoder implements Encoder.Text<ChatMessage> {
 
     @Override
     public void init(EndpointConfig endpointConfig) {
-
+        // Nothing to do
     }
 
     @Override
     public void destroy() {
-
+        // Nothing to do
     }
 }

@@ -62,10 +62,12 @@ public class ComponentDTKSaxHandler extends DefaultHandler {
 
     @Override
     public void startDocument() throws SAXException {
+        // Nothing to do
     }
 
     @Override
     public void endDocument() throws SAXException {
+        // Nothing to do
     }
 
     @Override

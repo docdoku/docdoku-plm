@@ -149,12 +149,12 @@ public class PermalinkFilter implements Filter {
 
     @Override
     public void destroy() {
-
+        // Nothing to do
     }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
+        // Nothing to do
     }
 
 }

@@ -49,11 +49,11 @@ public class CollaborativeMessageEncoder implements Encoder.Text<CollaborativeMe
 
     @Override
     public void init(EndpointConfig endpointConfig) {
-
+        // Nothing to do
     }
 
     @Override
     public void destroy() {
-
+        // Nothing to do
     }
 }

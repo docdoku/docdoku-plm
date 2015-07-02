@@ -29,8 +29,6 @@ import javax.websocket.EndpointConfig;
 
 public class WebRTCMessageEncoder implements Encoder.Text<WebRTCMessage> {
 
-
-
     @Override
     public String encode(WebRTCMessage webRTCMessage) throws EncodeException {
         JsonObjectBuilder jsonObject = Json.createObjectBuilder();
@@ -71,11 +69,11 @@ public class WebRTCMessageEncoder implements Encoder.Text<WebRTCMessage> {
 
     @Override
     public void init(EndpointConfig endpointConfig) {
-
+        // Nothing to do
     }
 
     @Override
     public void destroy() {
-
+        // Nothing to do
     }
 }

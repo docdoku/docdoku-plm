@@ -110,11 +110,11 @@ public class MessageDecoder implements Decoder.Text<AbstractMessage>{
 
     @Override
     public void init(EndpointConfig endpointConfig) {
-
+        // Nothing to do
     }
 
     @Override
     public void destroy() {
-
+        // Nothing to do
     }
 }
