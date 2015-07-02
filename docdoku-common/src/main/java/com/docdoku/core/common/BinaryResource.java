@@ -132,12 +132,12 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
 
     public boolean isNativeCADFile(){
         String[] parts = fullName.split("/");
-        return (parts.length==7 && "nativecad".equals(parts[5]));
+        return parts.length==7 && "nativecad".equals(parts[5]);
     }
 
     public boolean isAttachedFile() {
         String[] parts = fullName.split("/");
-        return (parts.length==7 && "attachedfiles".equals(parts[5]));
+        return parts.length==7 && "attachedfiles".equals(parts[5]);
     }
 
     public BinaryResource getPrevious(){

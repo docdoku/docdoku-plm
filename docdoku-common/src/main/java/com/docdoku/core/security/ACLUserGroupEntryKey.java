@@ -70,7 +70,7 @@ public class ACLUserGroupEntryKey implements Serializable {
             return false;
         }
         ACLUserGroupEntryKey key = (ACLUserGroupEntryKey) pObj;
-        return ((key.acl==acl) && (key.principal.equals(principal)));
+        return key.acl==acl && key.principal.equals(principal);
     }
 
     @Override

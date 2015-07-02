@@ -80,7 +80,7 @@ public class WorkspaceUserGroupMembershipKey implements Serializable {
             return false;
         }
         WorkspaceUserGroupMembershipKey key = (WorkspaceUserGroupMembershipKey) pObj;
-        return ((key.workspaceId.equals(workspaceId)) && (key.memberWorkspaceId.equals(memberWorkspaceId)) && (key.memberId.equals(memberId)));
+        return key.workspaceId.equals(workspaceId) && key.memberWorkspaceId.equals(memberWorkspaceId) && key.memberId.equals(memberId);
     }
 
     @Override

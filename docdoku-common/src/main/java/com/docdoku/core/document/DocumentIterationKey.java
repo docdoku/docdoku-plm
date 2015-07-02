@@ -61,7 +61,7 @@ public class DocumentIterationKey implements Serializable {
         if (!(pObj instanceof DocumentIterationKey))
             return false;
         DocumentIterationKey key = (DocumentIterationKey) pObj;
-        return ((key.documentRevision.equals(documentRevision)) && (key.iteration==iteration));
+        return key.documentRevision.equals(documentRevision) && key.iteration==iteration;
     }
 
     @Override

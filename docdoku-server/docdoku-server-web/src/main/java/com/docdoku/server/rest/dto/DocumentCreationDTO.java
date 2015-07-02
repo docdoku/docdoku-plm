@@ -154,7 +154,7 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
             return false;
         }
         DocumentCreationDTO docM = (DocumentCreationDTO) pObj;
-        return ((docM.reference.equals(reference)) && (docM.workspaceId.equals(workspaceId)) && (docM.version.equals(version)));
+        return docM.reference.equals(reference) && docM.workspaceId.equals(workspaceId) && docM.version.equals(version);
 
     }
 

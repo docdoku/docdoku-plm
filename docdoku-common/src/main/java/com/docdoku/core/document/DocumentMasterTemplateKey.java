@@ -56,7 +56,7 @@ public class DocumentMasterTemplateKey implements Serializable {
             return false;
         }
         DocumentMasterTemplateKey key = (DocumentMasterTemplateKey) pObj;
-        return (key.id.equals(id) && (key.workspaceId.equals(workspaceId)));
+        return key.id.equals(id) && key.workspaceId.equals(workspaceId);
     }
     
     @Override

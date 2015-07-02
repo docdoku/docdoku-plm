@@ -73,7 +73,7 @@ public class PartMasterKey implements Serializable, Comparable<PartMasterKey>, C
             return false;
         }
         PartMasterKey key = (PartMasterKey) pObj;
-        return (key.number.equals(number) && (key.workspace.equals(workspace)));
+        return key.number.equals(number) && key.workspace.equals(workspace);
     }
 
     @Override

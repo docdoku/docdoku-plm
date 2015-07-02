@@ -265,7 +265,7 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
             return false;
         }
         PartMasterTemplate template = (PartMasterTemplate) pObj;
-        return ((template.id.equals(id)) && template.workspaceId.equals(workspaceId));
+        return template.id.equals(id) && template.workspaceId.equals(workspaceId);
     }
     
     @Override

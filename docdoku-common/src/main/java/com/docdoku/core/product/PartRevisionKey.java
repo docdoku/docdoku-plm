@@ -84,7 +84,7 @@ public class PartRevisionKey implements Serializable, Comparable<PartRevisionKey
             return false;
         }
         PartRevisionKey key = (PartRevisionKey) pObj;
-        return ((key.partMaster.equals(partMaster)) && (key.version.equals(version)));
+        return key.partMaster.equals(partMaster) && key.version.equals(version);
     }
 
     @Override

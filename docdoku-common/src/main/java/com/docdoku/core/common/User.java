@@ -133,7 +133,7 @@ public class User implements Serializable, Cloneable {
             return false;
         }
         User user = (User) pObj;
-        return ((user.login.equals(login)) && (user.workspaceId.equals(workspaceId)));
+        return user.login.equals(login) && user.workspaceId.equals(workspaceId);
     }
 
     @Override
