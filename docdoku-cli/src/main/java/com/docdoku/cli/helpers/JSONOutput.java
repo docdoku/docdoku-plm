@@ -41,8 +41,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class JSONOutput extends CliOutput {
+
+    private static final Logger LOGGER = Logger.getLogger(JSONOutput.class.getName());
 
     public JSONOutput() {
     }
@@ -53,6 +57,7 @@ public class JSONOutput extends CliOutput {
         try {
             jsonObj.put("error", e.getMessage());
         } catch (JSONException e1) {
+            LOGGER.log(Level.FINEST,null,e1);
         }
         System.err.println(jsonObj.toString());
     }
@@ -67,6 +72,7 @@ public class JSONOutput extends CliOutput {
             jsonObj.put("description", cl.getDescription());
             jsonObj.put("usage", o.toString());
         } catch (JSONException e) {
+            LOGGER.log(Level.FINEST,null,e);
         }
         System.out.println(jsonObj.toString());
     }
@@ -82,7 +88,7 @@ public class JSONOutput extends CliOutput {
         try {
             jsonObj.put("info", s);
         } catch (JSONException e1) {
-
+            LOGGER.log(Level.FINEST,null,e1);
         }
         System.out.println(jsonObj.toString());
     }
@@ -94,7 +100,7 @@ public class JSONOutput extends CliOutput {
             try {
                 wks.put(i, workspaces[i].getId());
             } catch (JSONException e) {
-
+                LOGGER.log(Level.FINEST,null,e);
             }
         }
         System.out.println(wks.toString());
@@ -106,7 +112,7 @@ public class JSONOutput extends CliOutput {
         try {
             jsonObject.put("count", partMastersCount);
         } catch (JSONException e) {
-
+            LOGGER.log(Level.FINEST,null,e);
         }
         System.out.println(jsonObject.toString());
     }
@@ -131,7 +137,7 @@ public class JSONOutput extends CliOutput {
                 baselineObject.put("configurationItem", productBaseline.getConfigurationItem().getId());
                 jsonArray.put(baselineObject);
             } catch (JSONException e) {
-
+                LOGGER.log(Level.FINEST,null,e);
             }
         }
         System.out.println(jsonArray.toString());
@@ -152,7 +158,7 @@ public class JSONOutput extends CliOutput {
                 revisions.put(getPartRevision(pr, lastModified));
             }
         } catch (JSONException e) {
-
+            LOGGER.log(Level.FINEST,null,e);
         }
 
         System.out.println(getPartRevision(pm.getLastRevision(), lastModified));
@@ -244,7 +250,7 @@ public class JSONOutput extends CliOutput {
                 }
 
             } catch (JSONException e) {
-
+                LOGGER.log(Level.FINEST,null,e);
             }
         }
 
@@ -287,7 +293,7 @@ public class JSONOutput extends CliOutput {
                 }
 
             } catch (JSONException e) {
-
+                LOGGER.log(Level.FINEST,null,e);
             }
         }
 

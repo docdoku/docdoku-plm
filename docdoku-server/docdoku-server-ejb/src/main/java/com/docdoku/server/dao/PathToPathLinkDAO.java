@@ -18,11 +18,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by morgan on 29/04/15.
  */
 public class PathToPathLinkDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(PathToPathLinkDAO.class.getName());
 
     private EntityManager em;
     private Locale mLocale;
@@ -44,8 +48,10 @@ public class PathToPathLinkDAO {
             em.persist(pathToPathLink);
             em.flush();
         } catch (EntityExistsException pEEEx) {
+            LOGGER.log(Level.FINEST,null,pEEEx);
             throw new PathToPathLinkAlreadyExistsException(mLocale, pathToPathLink);
         } catch (PersistenceException pPEx) {
+            LOGGER.log(Level.FINEST,null,pPEx);
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
             //thrown instead of EntityExistsException
@@ -217,7 +223,7 @@ public class PathToPathLinkDAO {
 
                 configurationItem.removePathToPathLink(pathToPathLink);
             } catch (NoResultException e){
-
+                // Nothing to remove, continue loop
             }
 
         }
@@ -301,7 +307,7 @@ public class PathToPathLinkDAO {
                 p2pToAdd.put(clone,configurationItem);
                 modifiedP2P.put(pathToPathLink,p2pToAdd);
             }catch(NoResultException e){
-                // ?
+                LOGGER.log(Level.FINEST,null,e);
             }
         }
 
