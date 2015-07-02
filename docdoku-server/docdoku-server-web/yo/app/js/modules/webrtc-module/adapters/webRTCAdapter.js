@@ -1,4 +1,4 @@
-/*global mozRTCPeerConnection,mozRTCSessionDescription,mozRTCIceCandidate,webkitRTCPeerConnection,MediaStreamTrack,Promise*/
+/*global define,mozRTCPeerConnection,mozRTCSessionDescription,mozRTCIceCandidate,webkitRTCPeerConnection,MediaStreamTrack,Promise*/
 define(function () {
 
     'use strict';

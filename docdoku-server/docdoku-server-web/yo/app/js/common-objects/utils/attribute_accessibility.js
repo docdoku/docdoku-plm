@@ -1,8 +1,7 @@
-/**
- * Created by kelto on 22/06/15.
- */
+/*global define*/
 
-define([], function () {
+define(function () {
+
     'use strict';
 
     return {
@@ -12,7 +11,7 @@ define([], function () {
             LOCKED: 1,
             DISPLAY_ONLY: 2,
             FROZEN: 3,
-            NO_EDIT: 4,
+            NO_EDIT: 4
         },
 
         /**
@@ -57,9 +56,9 @@ define([], function () {
                     proto.displayRequired = false;
                     break;
 
-                //Protoype is already in open mode
+                //Prototype is already in open mode
                 //no need to redefine.
-                default:
+                default: break;
             }
 
             return proto;

@@ -1,5 +1,6 @@
 /*global _,define,App*/
 define([
+    'backbone',
     'mustache',
     'common-objects/views/components/modal',
     'common-objects/views/file/file_list',
@@ -13,7 +14,7 @@ define([
     'text!templates/iteration/document_iteration.html',
     'common-objects/views/prompt',
     'common-objects/utils/date'
-], function (Mustache, ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, UsedByListView, Tag, TagView, LinkedDocumentCollection, template, PromptView, date) {
+], function (Backbone, Mustache, ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, UsedByListView, Tag, TagView, LinkedDocumentCollection, template, PromptView, date) {
     'use strict';
 
     var IterationView = ModalView.extend({
