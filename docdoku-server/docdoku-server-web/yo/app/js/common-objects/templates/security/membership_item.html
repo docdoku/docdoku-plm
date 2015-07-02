@@ -6,19 +6,19 @@
 
         <input id="{{radioName}}-FORBIDDEN" {{^editMode}}disabled="disabled"{{/editMode}} type="radio"
         name="{{radioName}}" value="FORBIDDEN" />
-        <label for="{{radioName}}-FORBIDDEN"><i title="{{i18n.FORBIDDEN}}" class="fa fa-ban"></i>
+        <label for="{{radioName}}-FORBIDDEN"><i title="{{i18n.FORBIDDEN}}" class="fa fa-key"></i>
             {{i18n.FORBIDDEN}}</label>
 
         <input id="{{radioName}}-READ_ONLY"
         {{^editMode}}{{^membership.isReadOnly}}disabled="disabled"{{/membership.isReadOnly}}{{/editMode}} type="radio"
         name="{{radioName}}" value="READ_ONLY" {{#membership.isReadOnly}} checked {{/membership.isReadOnly}} />
-        <label for="{{radioName}}-READ_ONLY"><i title="{{i18n.READ_ONLY}}" class="fa fa-ban"></i>
+        <label for="{{radioName}}-READ_ONLY"><i title="{{i18n.READ_ONLY}}" class="fa fa-key"></i>
             {{i18n.READ_ONLY}}</label>
 
         <input id="{{radioName}}-FULL_ACCESS"
         {{^editMode}}{{#membership.isReadOnly}}disabled="disabled"{{/membership.isReadOnly}}{{/editMode}} type="radio"
         name="{{radioName}}" value="FULL_ACCESS" {{^membership.isReadOnly}} checked {{/membership.isReadOnly}} />
-        <label for="{{radioName}}-FULL_ACCESS"><i title="{{i18n.FULL_ACCESS}}" class="fa fa-ban"></i>
+        <label for="{{radioName}}-FULL_ACCESS"><i title="{{i18n.FULL_ACCESS}}" class="fa fa-key"></i>
             {{i18n.FULL_ACCESS}}</label>
     </div>
 

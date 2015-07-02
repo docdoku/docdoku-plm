@@ -40,7 +40,7 @@ define([
         '<%}%>' +
         '</a>' +
         '<%if(isForbidden) {%> ' +
-            '<i class="fa fa-ban"></i>' +
+            '<i class="fa fa-key"></i>' +
         '<%} else if(isCheckoutByAnotherUser && isLastIteration) {%> ' +
             '<i class="fa openModal fa-lock"></i>' +
         '<%} else if(isCheckoutByConnectedUser && isLastIteration) {%> ' +
