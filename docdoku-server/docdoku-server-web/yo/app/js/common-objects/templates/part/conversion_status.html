@@ -9,19 +9,10 @@
         {{/succeed}}
         {{^succeed}}
             <i class="fa fa-recycle fail" title="{{i18n.CONVERSION_FAILED}}"></i><b>{{i18n.CONVERSION_FAILED}}</b>
-        {{/succeed}}
-    {{/pending}}
-{{/status}}
-{{^status}}
-<i class="fa fa-recycle fail" title="{{i18n.CONVERSION_FAILED}}"></i><b>{{i18n.CONVERSION_FAILED}}</b>
-{{/status}}
-    {{#status}}
-        {{^pending}}
-            {{^succeed}}
             <span class="conversion-status-actions">
                     <a class="launch">{{i18n.RETRY}}</a>
             </span>
-            {{/succeed}}
-        {{/pending}}
-    {{/status}}
+        {{/succeed}}
+    {{/pending}}
+{{/status}}
 {{/hasCadFile}}
