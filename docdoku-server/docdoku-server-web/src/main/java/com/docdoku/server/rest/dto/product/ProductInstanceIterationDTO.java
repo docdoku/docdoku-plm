@@ -20,10 +20,7 @@
 
 package com.docdoku.server.rest.dto.product;
 
-import com.docdoku.server.rest.dto.DocumentRevisionDTO;
-import com.docdoku.server.rest.dto.InstanceAttributeDTO;
-import com.docdoku.server.rest.dto.PartMinimalListDTO;
-import com.docdoku.server.rest.dto.UserDTO;
+import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.baseline.BaselineDTO;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 
