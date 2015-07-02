@@ -478,7 +478,6 @@ public class ProductInstancesResource {
         dto.setPartsPath(partList);
 
         List<InstanceAttributeDTO> attributesDTO = new ArrayList<>();
-        List<InstanceAttributeTemplateDTO> attributeTemplatesDTO = new ArrayList<>();
         PartLink partLink = partLinks.get(partLinks.size() - 1);
         PSFilter filter = productService.getPSFilter(ciKey,"pi-"+serialNumber);
         List<PartIteration> partIterations = filter.filter(partLink.getComponent());

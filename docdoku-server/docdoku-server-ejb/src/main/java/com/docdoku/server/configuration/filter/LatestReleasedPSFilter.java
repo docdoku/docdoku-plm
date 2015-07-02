@@ -62,7 +62,6 @@ public class LatestReleasedPSFilter extends PSFilter {
 
     @Override
     public List<PartIteration> filter(PartMaster part) {
-        List<PartIteration> partIterations = new ArrayList<>();
         PartRevision partRevision = part.getLastReleasedRevision();
         if(partRevision != null){
             return Arrays.asList(partRevision.getLastIteration());

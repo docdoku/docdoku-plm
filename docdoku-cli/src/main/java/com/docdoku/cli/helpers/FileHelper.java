@@ -251,7 +251,6 @@ public class FileHelper {
     }
 
     public void uploadNativeCADFile(URL serverURL, File cadFile, PartIterationKey partIPK) throws IOException, LoginException, NoSuchAlgorithmException {
-        String fileName = cadFile.getName();
         String digest = uploadFile(cadFile, FileHelper.getPartURLUpload(serverURL, partIPK));
 
         File path = cadFile.getParentFile();
@@ -331,7 +330,6 @@ public class FileHelper {
 
 
     public void uploadDocumentFile(URL serverURL, File file, DocumentIterationKey docIPK) throws IOException, LoginException, NoSuchAlgorithmException {
-        String fileName = file.getName();
         String digest = uploadFile(file, FileHelper.getDocumentURLUpload(serverURL, docIPK));
 
         File path = file.getParentFile();

@@ -59,7 +59,6 @@ public class PartMasterTemplateDAO {
     }
 
     public List<PartMasterTemplate> findAllPartMTemplates(String pWorkspaceId) {
-        PartMasterTemplate[] templates;
         Query query = em.createQuery("SELECT DISTINCT t FROM PartMasterTemplate t WHERE t.workspaceId = :workspaceId");
         return query.setParameter("workspaceId", pWorkspaceId).getResultList();
     }

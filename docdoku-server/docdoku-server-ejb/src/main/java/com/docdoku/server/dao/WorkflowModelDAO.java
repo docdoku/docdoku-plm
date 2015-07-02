@@ -66,7 +66,6 @@ public class WorkflowModelDAO {
     }
 
     public List<WorkflowModel> findAllWorkflowModels(String pWorkspaceId) {
-        WorkflowModel[] models;
         Query query = em.createQuery("SELECT DISTINCT w FROM WorkflowModel w WHERE w.workspaceId = :workspaceId");
         return query.setParameter("workspaceId", pWorkspaceId).getResultList();
     }

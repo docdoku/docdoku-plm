@@ -1223,7 +1223,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         Locale locale = new Locale(user.getLanguage());
         // Load the part template
         PartMasterTemplateKey pKey = new PartMasterTemplateKey(workspaceId, partTemplateId);
-        PartMasterTemplate partMaster = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em).loadPartMTemplate(pKey);
+        PartMasterTemplate partMaster = new PartMasterTemplateDAO(locale, em).loadPartMTemplate(pKey);
 
         // Check the access to the part template
         checkPartTemplateWriteAccess(partMaster, user);
@@ -2904,8 +2904,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         Locale locale = new Locale(user.getLanguage());
 
-        List<QueryResultRow> rows = new ArrayList<>();
-
         ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(ciKey);
         PartMaster root = ci.getDesignItem();
 
@@ -3242,7 +3240,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public ProductInstanceMaster findProductByPathMaster(String workspaceId,PathDataMaster pathDataMaster) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        PathDataMasterDAO pathDataMasterDAO = new PathDataMasterDAO(em);
+        PathDataMasterDAO pathDataMasterDAO = new PathDataMasterDAO(new Locale(user.getLanguage()),em);
         return pathDataMasterDAO.findByPathData(pathDataMaster);
     }
 

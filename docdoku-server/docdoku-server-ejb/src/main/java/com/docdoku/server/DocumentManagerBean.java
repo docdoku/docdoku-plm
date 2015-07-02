@@ -1105,42 +1105,41 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public void deleteDocumentRevision(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, ESServerException, EntityConstraintException {
 
         User user = checkDocumentRevisionWriteAccess(pDocRPK);
-        Locale userLocale = new Locale(user.getLanguage());
+        Locale locale = new Locale(user.getLanguage());
 
-        DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(userLocale, em);
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
-        DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(userLocale, em);
-        ProductInstanceIterationDAO productInstanceIterationDAO = new ProductInstanceIterationDAO(userLocale,em);
+        DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(locale, em);
+        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(locale, em);
+        DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(locale, em);
 
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
         if (isInAnotherUserHomeFolder(user, docR)) {
-            throw new NotAllowedException(userLocale, "NotAllowedException22");
+            throw new NotAllowedException(locale, "NotAllowedException22");
         }
 
-        BaselinedDocumentDAO baselinedDocumentDAO = new BaselinedDocumentDAO(userLocale, em);
+        BaselinedDocumentDAO baselinedDocumentDAO = new BaselinedDocumentDAO(locale, em);
         if (baselinedDocumentDAO.hasDocumentRevision(pDocRPK)) {
-            throw new EntityConstraintException(userLocale, "EntityConstraintException6");
+            throw new EntityConstraintException(locale, "EntityConstraintException6");
         }
 
         for (DocumentRevision documentRevision : docR.getDocumentMaster().getDocumentRevisions()) {
             if (!documentLinkDAO.getInverseDocumentsLinks(documentRevision).isEmpty()) {
-                throw new EntityConstraintException(userLocale, "EntityConstraintException17");
+                throw new EntityConstraintException(locale, "EntityConstraintException17");
             }
             if (!documentLinkDAO.getInversePartsLinks(documentRevision).isEmpty()) {
 
-                throw new EntityConstraintException(userLocale, "EntityConstraintException18");
+                throw new EntityConstraintException(locale, "EntityConstraintException18");
             }
             if(!documentLinkDAO.getInverseProductInstanceIteration(documentRevision).isEmpty()){
-                throw new EntityConstraintException(userLocale, "EntityConstraintException19");
+                throw new EntityConstraintException(locale, "EntityConstraintException19");
             }
             if(!documentLinkDAO.getInversefindPathData(documentRevision).isEmpty()){
-                throw new EntityConstraintException(userLocale, "EntityConstraintException20");
+                throw new EntityConstraintException(locale, "EntityConstraintException20");
             }
 
         }
-        ChangeItemDAO changeItemDAO = new ChangeItemDAO(userLocale, em);
+        ChangeItemDAO changeItemDAO = new ChangeItemDAO(locale, em);
         if (changeItemDAO.hasChangeItems(pDocRPK)) {
-            throw new EntityConstraintException(userLocale, "EntityConstraintException7");
+            throw new EntityConstraintException(locale, "EntityConstraintException7");
         }
 
         for (DocumentIteration doc : docR.getDocumentIterations()) {
