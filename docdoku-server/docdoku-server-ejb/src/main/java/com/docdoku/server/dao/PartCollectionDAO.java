@@ -30,7 +30,7 @@ public class PartCollectionDAO {
 
     private EntityManager em;
 
-    private static Logger LOGGER = Logger.getLogger(PartCollectionDAO.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PartCollectionDAO.class.getName());
 
     public PartCollectionDAO(EntityManager pEM) {
         em = pEM;

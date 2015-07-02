@@ -38,7 +38,7 @@ public class ProductInstanceIterationDAO {
     private EntityManager em;
     private Locale mLocale;
 
-    private static Logger LOGGER = Logger.getLogger(ProductInstanceIterationDAO.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ProductInstanceIterationDAO.class.getName());
 
     public ProductInstanceIterationDAO(EntityManager pEM) {
         em = pEM;

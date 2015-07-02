@@ -30,7 +30,7 @@ public class DocumentCollectionDAO {
 
     private EntityManager em;
 
-    private static Logger LOGGER = Logger.getLogger(DocumentCollectionDAO.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DocumentCollectionDAO.class.getName());
 
     public DocumentCollectionDAO(EntityManager pEM) {
         em = pEM;

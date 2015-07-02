@@ -33,7 +33,7 @@ public class PathDataMasterDAO {
 
     private EntityManager em;
 
-    private static Logger LOGGER = Logger.getLogger(PathDataMasterDAO.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PathDataMasterDAO.class.getName());
 
     public PathDataMasterDAO(EntityManager pEM) {
         em = pEM;

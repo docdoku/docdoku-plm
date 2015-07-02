@@ -34,7 +34,7 @@ public class PathDataIterationDAO {
 
     private EntityManager em;
 
-    private static Logger LOGGER = Logger.getLogger(PathDataIterationDAO.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PathDataIterationDAO.class.getName());
 
     public PathDataIterationDAO(EntityManager pEM) {
         em = pEM;

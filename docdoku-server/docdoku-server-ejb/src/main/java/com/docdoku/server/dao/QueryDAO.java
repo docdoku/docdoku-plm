@@ -54,7 +54,7 @@ public class QueryDAO {
     private Root<PartIteration> pi;
 
 
-    private static Logger LOGGER = Logger.getLogger(QueryDAO.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(QueryDAO.class.getName());
 
     public QueryDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
