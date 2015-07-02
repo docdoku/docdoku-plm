@@ -555,14 +555,20 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
         // Check the access to the product instance
         checkProductInstanceWriteAccess(workspaceId, prodInstM, user);
+
         PathDataMasterDAO pathDataMasterDAO = new PathDataMasterDAO(locale, em);
         PathDataMaster pathDataMaster = new PathDataMaster();
         pathDataMaster.setPath(path);
-        // Check if not already a path data for this configuration
 
-        for (PathDataMaster master : prodInstM.getPathDataMasterList()) {
+        ProductInstanceIteration prodInstI = prodInstM.getLastIteration();
+
+        // TODO: determine why we reload the pathDataMaster...
+        // TODO: is it really necessary?
+
+        // Check if not already a path data for this configuration
+        for (PathDataMaster master : prodInstI.getPathDataMasterList()) {
             if (master.getPath() != null && master.getPath().equals(path)) {
-                pathDataMaster = pathDataMasterDAO.findByPathIdAndProductInstance(pathId, prodInstM);
+                pathDataMaster = pathDataMasterDAO.findByPathIdAndProductInstanceIteration(pathId, prodInstI);
                 BinaryResourceDAO binDAO = new BinaryResourceDAO(locale, em);
                 Set<BinaryResource> sourceFiles = pathDataMaster.getLastIteration().getAttachedFiles();
                 Set<BinaryResource> targetFiles = new HashSet<BinaryResource>();;
@@ -611,7 +617,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         pathDataIterationDAO.createPathDataIteration(pathDataIteration);
 
 
-        prodInstM.getPathDataMasterList().add(pathDataMaster);
+        prodInstI.getPathDataMasterList().add(pathDataMaster);
 
 
         return pathDataMaster;
@@ -635,7 +641,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         PathDataIteration pathDataIteration = pathDataMaster.getPathDataIterations().get(iteration - 1);
 
         // This path data isn't owned by product master.
-        if (!prodInstM.getPathDataMasterList().contains(pathDataMaster)) {
+        if (!prodInstM.getLastIteration().getPathDataMasterList().contains(pathDataMaster)) {
             throw new NotAllowedException(locale, "NotAllowedException52");
         }
 
@@ -680,13 +686,14 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         PathDataMaster pathDataMaster = em.find(PathDataMaster.class, pathDataId);
         PathDataIteration pathDataIteration = pathDataMaster.getPathDataIterations().get(iteration - 1);
 
+        ProductInstanceIteration prodInstI = prodInstM.getLastIteration();
 
         // This path data isn't owned by product master.
-        if (!prodInstM.getPathDataMasterList().contains(pathDataMaster)) {
+        if (!prodInstI.getPathDataMasterList().contains(pathDataMaster)) {
             throw new NotAllowedException(locale, "NotAllowedException52");
         }
 
-        prodInstM.getPathDataMasterList().remove(pathDataMaster);
+        prodInstI.getPathDataMasterList().remove(pathDataMaster);
 
         for (BinaryResource file : pathDataIteration.getAttachedFiles()) {
             try {
@@ -702,6 +709,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public PathDataMaster getPathData(String workspaceId, String configurationItemId, String serialNumber, int pathDataId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
+        // TODO: determine when this method is being called
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
 
@@ -715,7 +723,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         PathDataMaster pathDataMaster = em.find(PathDataMaster.class, pathDataId);
 
         // This path data isn't owned by product master.
-        if (!prodInstM.getPathDataMasterList().contains(pathDataMaster)) {
+        if (!prodInstM.getLastIteration().getPathDataMasterList().contains(pathDataMaster)) {
             throw new NotAllowedException(locale, "NotAllowedException52");
         }
 
@@ -735,9 +743,10 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         // Check the access to the product instance
         checkProductInstanceReadAccess(workspaceId, prodInstM, user);
 
+        ProductInstanceIteration prodInstI = prodInstM.getLastIteration();
         PathDataMasterDAO pathDataMasterDAO = new PathDataMasterDAO(locale, em);
 
-        return pathDataMasterDAO.findByPathAndProductInstance(path, prodInstM);
+        return pathDataMasterDAO.findByPathAndProductInstanceIteration(path, prodInstI);
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -757,8 +766,9 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         // Load path data
         PathDataMaster pathDataMaster = em.find(PathDataMaster.class, pathDataId);
         PathDataIteration pathDataIteration = pathDataMaster.getPathDataIterations().get(iteration - 1);
+
         // This path data isn't owned by product master.
-        if (!prodInstM.getPathDataMasterList().contains(pathDataMaster)) {
+        if (!prodInstM.getLastIteration().getPathDataMasterList().contains(pathDataMaster)) {
             throw new NotAllowedException(locale, "NotAllowedException52");
         }
 
@@ -842,13 +852,11 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             checkProductInstanceWriteAccess(user.getWorkspaceId(), productInstanceMaster, user);
 
             PathDataMaster pathDataMaster = em.find(PathDataMaster.class, pathDataId);
+
             PathDataIteration pathDataIteration = pathDataMaster.getPathDataIterations().get(iteration - 1);
 
-            //TODO : allow only on last iteration
-
-
             // This path data isn't owned by product master.
-            if (!productInstanceMaster.getPathDataMasterList().contains(pathDataMaster)) {
+            if (!productInstanceMaster.getLastIteration().getPathDataMasterList().contains(pathDataMaster)) {
                 throw new NotAllowedException(userLocale, "NotAllowedException52");
             }
 
@@ -886,8 +894,9 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
         PathDataMaster pathDataMaster = em.find(PathDataMaster.class, pathDataId);
         PathDataIteration pathDataIteration = pathDataMaster.getPathDataIterations().get(iteration - 1);
+
         // This path data isn't owned by product master.
-        if (!productInstanceMaster.getPathDataMasterList().contains(pathDataMaster)) {
+        if (!productInstanceMaster.getLastIteration().getPathDataMasterList().contains(pathDataMaster)) {
             throw new NotAllowedException(userLocale, "NotAllowedException52");
         }
 
@@ -904,7 +913,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public BinaryResource saveFileInPathDataIteration(String workspaceId, String configurationItemId, String serialNumber, int path, int iteration, String fileName, int pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, AccessRightException, ProductInstanceMasterNotFoundException, FileAlreadyExistsException, CreationException {
-// Check the read access to the workspace
+        // Check the read access to the workspace
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
         checkNameFileValidity(fileName, locale);
@@ -915,14 +924,15 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         // Check the access to the product instance
         checkProductInstanceWriteAccess(workspaceId, prodInstM, user);
 
+        ProductInstanceIteration prodInstI = prodInstM.getLastIteration();
+
         // Load path data master
         PathDataMasterDAO pathDataMasterDAO = new PathDataMasterDAO(locale, em);
-
-        PathDataMaster pathDataMaster = pathDataMasterDAO.findByPathIdAndProductInstance(path, prodInstM);
+        PathDataMaster pathDataMaster = pathDataMasterDAO.findByPathIdAndProductInstanceIteration(path, prodInstI);
 
         PathDataIteration pathDataIteration = pathDataMaster.getPathDataIterations().get(iteration - 1);
         // This path data isn't owned by product master.
-        if (!prodInstM.getPathDataMasterList().contains(pathDataMaster)) {
+        if (!prodInstI.getPathDataMasterList().contains(pathDataMaster)) {
             throw new NotAllowedException(locale, "NotAllowedException52");
         }
 
@@ -963,9 +973,11 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         PathDataMaster pathDataMaster = new PathDataMaster();
         pathDataMaster.setPath(path);
         pathDataMasterDAO.createPathData(pathDataMaster);
-        // Check if not already a path data for this configuration
 
-        for (PathDataMaster master : prodInstM.getPathDataMasterList()) {
+        ProductInstanceIteration prodInstI = prodInstM.getLastIteration();
+
+        // Check if not already a path data for this configuration
+        for (PathDataMaster master : prodInstI.getPathDataMasterList()) {
             if (master.getPath()!= null && master.getPath().equals(path)) {
                 PathDataIteration pathDataIteration = pathDataMaster.createNextIteration();
                 pathDataIteration.setInstanceAttributes(attributes);
@@ -981,7 +993,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         pathDataIteration.setNoteIteration(noteIteration);
         PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(em);
         pathDataIterationDAO.createPathDataIteration(pathDataIteration);
-        prodInstM.getPathDataMasterList().add(pathDataMaster);
+        prodInstI.getPathDataMasterList().add(pathDataMaster);
         return pathDataMaster;
     }
 

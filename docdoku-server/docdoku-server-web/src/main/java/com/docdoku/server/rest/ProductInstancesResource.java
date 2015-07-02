@@ -220,20 +220,20 @@ public class ProductInstancesResource {
 
             productInstanceIterationDTO.setSubstitutesParts(substitutesParts);
             productInstanceIterationDTO.setOptionalsParts(optionalParts);
-        }
 
-        List<PartMinimalListDTO> usedByPaths = new ArrayList<>();
-        for (PathDataMaster pathDataMaster : productInstanceMaster.getPathDataMasterList()) {
-            PartMinimalListDTO partMinimalListDTO = new PartMinimalListDTO();
-            List<PartMinimalDTO> partDTOs = new ArrayList<>();
+            List<PartMinimalListDTO> usedByPaths = new ArrayList<>();
+            for (PathDataMasterDTO pathDataMasterDTO : productInstanceIterationDTO.getPathDataMasterList()) {
+                PartMinimalListDTO partMinimalListDTO = new PartMinimalListDTO();
+                List<PartMinimalDTO> partDTOs = new ArrayList<>();
 
-            for (PartLink partLink : productService.decodePath(ciKey, pathDataMaster.getPath())) {
-                partDTOs.add(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
+                for (PartLink partLink : productService.decodePath(ciKey, pathDataMasterDTO.getPath())) {
+                    partDTOs.add(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
+                }
+                partMinimalListDTO.setParts(partDTOs);
+                usedByPaths.add(partMinimalListDTO);
             }
-            partMinimalListDTO.setParts(partDTOs);
-            usedByPaths.add(partMinimalListDTO);
+            dto.setUsedByPaths(usedByPaths);
         }
-        dto.setUsedByPaths(usedByPaths);
 
         return dto;
     }
@@ -358,7 +358,7 @@ public class ProductInstancesResource {
     @Path("{serialNumber}/pathdata/{path}")
     @Produces(MediaType.APPLICATION_JSON)
     public PathDataMasterDTO getPathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, BaselineNotFoundException {
-        PathDataMaster pathDataMaster = productInstanceService.getPathDataByPath(workspaceId, configurationItemId, serialNumber,path);
+        PathDataMaster pathDataMaster = productInstanceService.getPathDataByPath(workspaceId, configurationItemId, serialNumber, path);
 
         PathDataMasterDTO dto = pathDataMaster == null ? new PathDataMasterDTO(path) : mapper.map(pathDataMaster, PathDataMasterDTO.class);
 
@@ -431,6 +431,7 @@ public class ProductInstancesResource {
     @Path("{serialNumber}/pathdata/{pathDataId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deletePathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathDataId") int pathDataId,@PathParam("iteration") int iteration) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
+        // TODO: determine when this WS is called
         productInstanceService.deletePathData(workspaceId,configurationItemId,serialNumber,pathDataId,iteration);
         return Response.ok().build();
     }

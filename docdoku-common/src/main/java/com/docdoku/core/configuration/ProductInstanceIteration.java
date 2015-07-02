@@ -110,11 +110,22 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
             })
     private List<InstanceAttribute> instanceAttributes = new ArrayList<>();
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PRODUCTBASELINE_ID", referencedColumnName = "ID")
     private ProductBaseline basedOn;
 
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "PRDINSTITERATION_PATHDATAMASTER",
+            inverseJoinColumns = {
+                    @JoinColumn(name = "PATHDATAMASTER_ID", referencedColumnName = "ID")
+            },
+            joinColumns = {
+                    @JoinColumn(name="PRDINSTANCEITERATION_ITERATION", referencedColumnName="ITERATION"),
+                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
+                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
+                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+            })
+    private List<PathDataMaster> pathDataMasterList = new ArrayList<>();
 
     /**
      * Set of substitute links (actually their path from the root node)
@@ -291,7 +302,15 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
         this.basedOn = basedOn;
     }
 
-    public User getUpdateAuthor() {
+    public List<PathDataMaster> getPathDataMasterList() {
+        return pathDataMasterList;
+    }
+
+    public void setPathDataMasterList(List<PathDataMaster> pathDataMasterList) {
+        this.pathDataMasterList = pathDataMasterList;
+    }
+
+    public User getUpdateAuthor(){
         return this.getPartCollection().getAuthor();
     }
 

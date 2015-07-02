@@ -48,6 +48,7 @@ public class ProductInstanceIterationDTO {
     private List<PartMinimalListDTO> optionalsParts;
 
     private BaselineDTO basedOn;
+    private List<PathDataMasterDTO> pathDataMasterList;
     private List<InstanceAttributeDTO> instanceAttributes = new ArrayList<>();
     private Set<DocumentRevisionDTO> linkedDocuments = new HashSet<>();
     private List<String> attachedFiles;
@@ -150,6 +151,14 @@ public class ProductInstanceIterationDTO {
 
     public void setBasedOn(BaselineDTO basedOn) {
         this.basedOn = basedOn;
+    }
+
+    public List<PathDataMasterDTO> getPathDataMasterList() {
+        return pathDataMasterList;
+    }
+
+    public void setPathDataMasterList(List<PathDataMasterDTO> pathDataMasterList) {
+        this.pathDataMasterList = pathDataMasterList;
     }
 
     public List<String> getSubstituteLinks() {

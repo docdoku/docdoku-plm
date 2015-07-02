@@ -45,8 +45,8 @@ import java.util.List;
 @IdClass(com.docdoku.core.configuration.ProductInstanceMasterKey.class)
 @Entity
 @NamedQueries({
+        @NamedQuery(name="ProductInstanceMaster.findByPathData", query="SELECT p.productInstanceMaster FROM ProductInstanceIteration p WHERE :pathDataMasterList member of p.pathDataMasterList"),
         @NamedQuery(name="ProductInstanceMaster.findByConfigurationItemId", query="SELECT pim FROM ProductInstanceMaster pim WHERE pim.instanceOf.id = :ciId AND pim.instanceOf.workspace.id = :workspaceId"),
-        @NamedQuery(name="ProductInstanceMaster.findByPathData", query="SELECT pim FROM ProductInstanceMaster pim WHERE :pathDataMasterList member of pim.pathDataMasterList"),
         @NamedQuery(name="ProductInstanceMaster.findByPart", query="SELECT DISTINCT pim FROM ProductInstanceMaster pim JOIN ProductBaseline pb JOIN BaselinedPart bp WHERE pim.instanceOf = pb.configurationItem AND pb.partCollection = bp.partCollection AND bp.targetPart.partRevision = :partRevision ORDER BY pb.configurationItem.id")
 })
 public class ProductInstanceMaster implements Serializable {
@@ -70,18 +70,6 @@ public class ProductInstanceMaster implements Serializable {
 
     @OneToOne(orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private ACL acl;
-
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "PRDINSTMASTER_PATHDATAMASTER",
-            inverseJoinColumns = {
-                    @JoinColumn(name = "PATHDATAMASTER_ID", referencedColumnName = "ID")
-            },
-            joinColumns = {
-                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="SERIALNUMBER"),
-                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
-                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-            })
-    private List<PathDataMaster> pathDataMasterList =new ArrayList<>();
 
     public ProductInstanceMaster() {
     }
@@ -168,14 +156,6 @@ public class ProductInstanceMaster implements Serializable {
 
     public void setProductInstanceIterations(List<ProductInstanceIteration> productInstanceIterations) {
         this.productInstanceIterations = productInstanceIterations;
-    }
-
-    public List<PathDataMaster> getPathDataMasterList() {
-        return pathDataMasterList;
-    }
-
-    public void setPathDataMasterList(List<PathDataMaster> pathDataMasterList) {
-        this.pathDataMasterList = pathDataMasterList;
     }
 
     @Override

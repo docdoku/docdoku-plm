@@ -21,6 +21,7 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.configuration.PathDataMaster;
+import com.docdoku.core.configuration.ProductInstanceIteration;
 import com.docdoku.core.configuration.ProductInstanceMaster;
 
 import javax.persistence.EntityManager;
@@ -53,23 +54,24 @@ public class PathDataMasterDAO {
     }
 
 
-    public PathDataMaster findByPathAndProductInstance(String path, ProductInstanceMaster productInstanceMaster){
+    public PathDataMaster findByPathAndProductInstanceIteration(String path, ProductInstanceIteration productInstanceIteration) {
         try {
-            return em.createNamedQuery("pathDataMaster.findByPathAndProductInstanceMaster", PathDataMaster.class)
+            return em.createNamedQuery("pathDataMaster.findByPathAndProductInstanceIteration", PathDataMaster.class)
                     .setParameter("path", path)
-                    .setParameter("productInstanceMaster", productInstanceMaster)
+                    .setParameter("productInstanceIteration", productInstanceIteration)
                     .getSingleResult();
-        }catch(NoResultException e){
+        } catch (NoResultException e) {
             return null;
         }
     }
-    public PathDataMaster findByPathIdAndProductInstance(int pathId, ProductInstanceMaster productInstanceMaster){
+
+    public PathDataMaster findByPathIdAndProductInstanceIteration(int pathId, ProductInstanceIteration productInstanceIteration) {
         try {
-            return em.createNamedQuery("pathDataMaster.findByPathIdAndProductInstanceMaster", PathDataMaster.class)
+            return em.createNamedQuery("pathDataMaster.findByPathIdAndProductInstanceIteration", PathDataMaster.class)
                     .setParameter("pathId", pathId)
-                    .setParameter("productInstanceMaster", productInstanceMaster)
+                    .setParameter("productInstanceIteration", productInstanceIteration)
                     .getSingleResult();
-        }catch(NoResultException e){
+        } catch (NoResultException e) {
             return null;
         }
     }
@@ -79,7 +81,7 @@ public class PathDataMasterDAO {
             return em.createNamedQuery("ProductInstanceMaster.findByPathData", ProductInstanceMaster.class)
                     .setParameter("pathDataMasterList", pathDataMaster)
                     .getSingleResult();
-        }catch(NoResultException e){
+        } catch(NoResultException e) {
             return null;
         }
     }

@@ -40,7 +40,6 @@ public class ProductInstanceMasterDTO {
     private List<ProductInstanceIterationDTO> productInstanceIterations;
     private ACLDTO acl;
     private List<PathToPathLinkDTO> typedLinks;
-    private List<PathDataMasterDTO> pathDataMasterList;
     private List<PartMinimalListDTO> usedByPaths;
 
     public ProductInstanceMasterDTO() {
@@ -101,14 +100,6 @@ public class ProductInstanceMasterDTO {
 
     public void setTypedLinks(List<PathToPathLinkDTO> typedLinks) {
         this.typedLinks = typedLinks;
-    }
-
-    public List<PathDataMasterDTO> getPathDataMasterList() {
-        return pathDataMasterList;
-    }
-
-    public void setPathDataMasterList(List<PathDataMasterDTO> pathDataMasterList) {
-        this.pathDataMasterList = pathDataMasterList;
     }
 
     public List<PartMinimalListDTO> getUsedByPaths() {
