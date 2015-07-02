@@ -70,15 +70,15 @@ public class TitleBlockGenerator {
             Document doc = new Document();
             PdfCopy copy = new PdfCopy(doc, new FileOutputStream(tmpCopyFile));
             doc.open();
-            PdfReader ReadInputPDF;
+            PdfReader pdfReader;
 
             int n;
 
             for (InputStream file : files) {
-                ReadInputPDF = new PdfReader(file);
-                n = ReadInputPDF.getNumberOfPages();
+                pdfReader = new PdfReader(file);
+                n = pdfReader.getNumberOfPages();
                 for (int page = 0; page < n; ) {
-                    copy.addPage(copy.getImportedPage(ReadInputPDF, ++page));
+                    copy.addPage(copy.getImportedPage(pdfReader, ++page));
                 }
             }
 

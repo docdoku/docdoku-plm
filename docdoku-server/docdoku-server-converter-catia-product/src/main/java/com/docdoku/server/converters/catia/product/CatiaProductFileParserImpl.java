@@ -107,7 +107,7 @@ public class CatiaProductFileParserImpl implements CADConverter {
                     try {
                         return dataManager.getBinaryResourceInputStream(cadFile);
                     } catch (StorageException e) {
-                        Logger.getLogger(CatiaProductFileParserImpl.class.getName()).log(Level.WARNING, null, e);
+                        LOGGER.log(Level.WARNING, null, e);
                         throw new IOException(e);
                     }
                 }
@@ -140,15 +140,15 @@ public class CatiaProductFileParserImpl implements CADConverter {
                         syncAssembly(handler.getComponent(), partToConvert);
 
                     } catch (ParserConfigurationException | SAXException | IOException e) {
-                        Logger.getLogger(CatiaProductFileParserImpl.class.getName()).log(Level.INFO, null, e);
+                        LOGGER.log(Level.INFO, null, e);
                     }
                 }
             }
 
         } catch (Exception e) {
-            Logger.getLogger(CatiaProductFileParserImpl.class.getName()).log(Level.INFO, null, e);
+            LOGGER.log(Level.INFO, null, e);
         } finally {
-            try{
+            try {
                 if(isr!=null){
                     isr.close();
                 }
@@ -202,27 +202,27 @@ public class CatiaProductFileParserImpl implements CADConverter {
         List<ComponentDTK> subComponentDtkList = root.getSubComponentDtkList();
         if (subComponentDtkList != null) {
 
-            for (ComponentDTK component_dtk : subComponentDtkList) {
+            for (ComponentDTK componentDTK : subComponentDtkList) {
 
-                if (component_dtk.isLinkable()) {
+                if (componentDTK.isLinkable()) {
 
-                    List<CADInstance> cadInstances = mapInstances.get(component_dtk.getName());
+                    List<CADInstance> cadInstances = mapInstances.get(componentDTK.getName());
 
                     if (cadInstances == null) {
                         cadInstances = new LinkedList<>();
-                        mapInstances.put(component_dtk.getName(),cadInstances);
+                        mapInstances.put(componentDTK.getName(),cadInstances);
                     }
 
-                    mapInstances.put(component_dtk.getName(),cadInstances);
+                    mapInstances.put(componentDTK.getName(),cadInstances);
 
-                    CADInstance instance = component_dtk.getPositioning().toCADInstance();
+                    CADInstance instance = componentDTK.getPositioning().toCADInstance();
 
                     if (instance != null) {
                         cadInstances.add(instance);
                     }
                 }
 
-                parseSubComponents(mapInstances, component_dtk);
+                parseSubComponents(mapInstances, componentDTK);
             }
         }
     }
