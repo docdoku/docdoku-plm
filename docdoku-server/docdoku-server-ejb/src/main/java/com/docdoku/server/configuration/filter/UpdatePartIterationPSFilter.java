@@ -67,14 +67,14 @@ public class UpdatePartIterationPSFilter extends PSFilter {
         // Return wip and last
         List<PartIteration> partIterations = new ArrayList<>();
         PartRevision partRevision = part.getLastRevision();
-        PartIteration partIteration = partRevision.getLastIteration();
+        PartIteration lastIteration = partRevision.getLastIteration();
         PartIteration lastCheckedInIteration = partRevision.getLastCheckedInIteration();
 
         if(partRevision.isCheckedOut() && lastCheckedInIteration != null){
             partIterations.add(lastCheckedInIteration);
         }
 
-        partIterations.add(partIteration);
+        partIterations.add(lastIteration);
         return partIterations;
     }
 

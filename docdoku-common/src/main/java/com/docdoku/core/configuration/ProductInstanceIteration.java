@@ -296,11 +296,11 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     }
 
     public String getUpdateAuthorName() {
-        User author = getUpdateAuthor();
-        if (author == null) {
+        User updateAuthor = getUpdateAuthor();
+        if (updateAuthor == null) {
             return null;
         }
-        return author.getName();
+        return updateAuthor.getName();
     }
 
     public Date getUpdateDate() {

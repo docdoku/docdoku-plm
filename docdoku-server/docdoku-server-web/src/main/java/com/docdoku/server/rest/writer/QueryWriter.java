@@ -131,17 +131,17 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
         PartRevision part  = row.getPartRevision();
 
-        QueryContext context = row.getContext();
+        QueryContext queryContext = row.getContext();
 
         for(String select : selects){
 
             switch (select){
                 case QueryField.CTX_PRODUCT_ID:
-                    String productId = context != null ? context.getConfigurationItemId() : "";
+                    String productId = queryContext != null ? queryContext.getConfigurationItemId() : "";
                     data.add(productId);
                     break;
                 case QueryField.CTX_SERIAL_NUMBER:
-                    String serialNumber = context != null ? context.getSerialNumber() : "";
+                    String serialNumber = queryContext != null ? queryContext.getSerialNumber() : "";
                     data.add(serialNumber!=null?serialNumber:"");
                     break;
                 case QueryField.PART_MASTER_NUMBER:
@@ -242,7 +242,7 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
         for (QueryResultRow row : queryResult.getRows()) {
 
-            QueryContext context = row.getContext();
+            QueryContext queryContext = row.getContext();
 
             PartRevision part = row.getPartRevision();
 
@@ -321,20 +321,20 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
                 StringBuilder sb = new StringBuilder();
 
-                if(null!= context && null != context.getSerialNumber()){
+                if(null!= queryContext && null != queryContext.getSerialNumber()){
                     try {
-                        ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(context.getSerialNumber(), context.getWorkspaceId(), context.getConfigurationItemId()));
+                        ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(queryContext.getSerialNumber(), queryContext.getWorkspaceId(), queryContext.getConfigurationItemId()));
                         ProductInstanceIteration lastIteration = productInstanceMaster.getLastIteration();
                         ProductBaseline basedOn = lastIteration.getBasedOn();
                         PartCollection partCollection = basedOn.getPartCollection();
-                        BaselinedPart baselinedPart = partCollection.getBaselinedPart(new BaselinedPartKey(partCollection.getId(), context.getWorkspaceId(), part.getPartNumber()));
+                        BaselinedPart baselinedPart = partCollection.getBaselinedPart(new BaselinedPartKey(partCollection.getId(), queryContext.getWorkspaceId(), part.getPartNumber()));
                         PartIteration targetPart = baselinedPart.getTargetPart();
                         Set<DocumentLink> linkedDocuments = targetPart.getLinkedDocuments();
                         DocumentCollection documentCollection = basedOn.getDocumentCollection();
 
                         for(DocumentLink documentLink:linkedDocuments){
                             DocumentRevision targetDocument = documentLink.getTargetDocument();
-                            BaselinedDocument baselinedDocument = documentCollection.getBaselinedDocument(new BaselinedDocumentKey(documentCollection.getId(), context.getWorkspaceId(), targetDocument.getDocumentMasterId(), targetDocument.getVersion()));
+                            BaselinedDocument baselinedDocument = documentCollection.getBaselinedDocument(new BaselinedDocumentKey(documentCollection.getId(), queryContext.getWorkspaceId(), targetDocument.getDocumentMasterId(), targetDocument.getVersion()));
                             if(null != baselinedDocument) {
                                 DocumentIteration targetDocumentIteration = baselinedDocument.getTargetDocument();
                                 sb.append(targetDocumentIteration.toString() + ",");
@@ -392,11 +392,11 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
             }
 
             if (selects.contains(QueryField.CTX_PRODUCT_ID)) {
-                String configurationItemId = context != null ? context.getConfigurationItemId() : "";
+                String configurationItemId = queryContext != null ? queryContext.getConfigurationItemId() : "";
                 jg.write(QueryField.CTX_PRODUCT_ID, configurationItemId);
             }
             if (selects.contains(QueryField.CTX_SERIAL_NUMBER)) {
-                String serialNumber = context != null ? context.getSerialNumber() : "";
+                String serialNumber = queryContext != null ? queryContext.getSerialNumber() : "";
                 jg.write(QueryField.CTX_SERIAL_NUMBER, serialNumber != null ? serialNumber : "");
             }
             if (selects.contains(QueryField.CTX_AMOUNT)) {

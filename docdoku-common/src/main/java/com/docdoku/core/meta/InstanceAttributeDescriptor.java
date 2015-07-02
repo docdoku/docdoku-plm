@@ -92,28 +92,28 @@ public class InstanceAttributeDescriptor implements Serializable {
     }
 
     public String getStringType(){
-        String type = "";
-        switch (this.type){
+        String typeAsString = "";
+        switch (type){
             case LOV:
-                type = "LOV";
+                typeAsString = "LOV";
                 break;
             case DATE:
-                type = "DATE";
+                typeAsString = "DATE";
                 break;
             case NUMBER:
-                type = "NUMBER";
+                typeAsString = "NUMBER";
                 break;
             case URL:
-                type = "URL";
+                typeAsString = "URL";
                 break;
             case BOOLEAN:
-                type = "BOOLEAN";
+                typeAsString = "BOOLEAN";
                 break;
             default :
-                type = "TEXT";
+                typeAsString = "TEXT";
                 break;
         }
-        return type;
+        return typeAsString;
     }
 
     @Override
