@@ -102,10 +102,6 @@ define(['backbone',
             return this.getPathData().length;
         },
 
-        getPathData: function () {
-            return this.get('pathDataMasterList');
-        },
-
         getUsedByPaths: function () {
             return this.get('usedByPaths');
         },

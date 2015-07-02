@@ -96,6 +96,11 @@ define(['backbone'
                 return false;
             }
         },
+
+        getPathData: function () {
+            return this.get('pathDataMasterList');
+        },
+
         getAttachedFiles: function () {
             return this.get('attachedFiles');
         },
