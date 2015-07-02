@@ -51,9 +51,6 @@ public class FolderResource {
     @EJB
     private DocumentsResource documentsResource;
 
-    @Context
-    private UriInfo context;
-
     public FolderResource() {
     }
 

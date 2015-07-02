@@ -32,7 +32,6 @@ import java.util.logging.Logger;
 public class PathDataMasterDAO {
 
     private EntityManager em;
-    private Locale mLocale;
 
     private static Logger LOGGER = Logger.getLogger(PathDataMasterDAO.class.getName());
 
@@ -42,7 +41,6 @@ public class PathDataMasterDAO {
 
     public PathDataMasterDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
-        mLocale = pLocale;
     }
 
     public void createPathData(PathDataMaster pathDataMaster){

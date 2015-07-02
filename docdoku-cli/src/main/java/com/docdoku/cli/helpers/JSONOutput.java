@@ -41,14 +41,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class JSONOutput extends CliOutput {
 
-    private Locale locale;
-
-    public JSONOutput(Locale pLocale) {
-        locale = pLocale;
+    public JSONOutput() {
     }
 
     @Override

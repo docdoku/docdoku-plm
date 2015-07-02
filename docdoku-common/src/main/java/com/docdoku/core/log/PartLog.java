@@ -56,6 +56,10 @@ public class PartLog implements Serializable {
     public PartLog() {
     }
 
+    public int getId() {
+        return id;
+    }
+
     public int getPartIteration() {
         return partIteration;
     }

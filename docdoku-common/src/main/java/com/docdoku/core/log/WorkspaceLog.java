@@ -53,7 +53,9 @@ public class WorkspaceLog implements Serializable {
     public WorkspaceLog() {
     }
 
-
+    public int getId() {
+        return id;
+    }
 
     public String getWorkspaceId() {
         return workspaceId;

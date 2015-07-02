@@ -43,10 +43,6 @@ public class PartSearchCommand extends BaseCommandLine {
     @Option(name = "-s", aliases = "--search", required = true, metaVar = "<search>", usage = "search string")
     protected String searchValue;
 
-    @Option(name = "-j", aliases = "--jsonparser", usage = "return the list of the parts in JSON format")
-    private boolean jsonParser;
-
-
     @Override
     public void execImpl() throws Exception {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);

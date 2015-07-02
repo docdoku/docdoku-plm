@@ -34,9 +34,7 @@ public class ComponentDTK {
     private Positioning positioning = null;
     private List<MetaData> metaDataList = null;
 
-    private static final String PROTOTYPE = "PrototypeComponentType";
     private static final String INSTANCE = "InstanceComponentType";
-    private static final String CATALOG = "CatalogComponentType";
 
     private List<ComponentDTK> subComponentDtkList = null;
 

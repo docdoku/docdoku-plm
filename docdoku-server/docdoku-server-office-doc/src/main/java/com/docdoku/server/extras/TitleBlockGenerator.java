@@ -41,7 +41,6 @@ import java.util.logging.Logger;
 public class TitleBlockGenerator {
 
     private static final Font BOLD_18 = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
-    private static final Font BOLD_16 = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD);
     private static final Font BOLD_12 = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
     private static final Font NORMAL_12 = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL);
 
@@ -56,7 +55,6 @@ public class TitleBlockGenerator {
     private static final Logger LOGGER = Logger.getLogger(TitleBlockGenerator.class.getName());
 
     private TitleBlockGenerator(){
-
     }
 
     /*

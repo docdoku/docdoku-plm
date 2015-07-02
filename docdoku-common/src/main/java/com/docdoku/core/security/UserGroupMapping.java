@@ -33,6 +33,7 @@ import javax.persistence.Table;
 @Table(name="USERGROUPMAPPING")
 @javax.persistence.Entity
 public class UserGroupMapping implements java.io.Serializable {
+
     @javax.persistence.Id
     private String login="";
     private String groupName;
@@ -51,5 +52,21 @@ public class UserGroupMapping implements java.io.Serializable {
     public UserGroupMapping(String pLogin, String pRole) {
         login=pLogin;
         groupName=pRole;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 }

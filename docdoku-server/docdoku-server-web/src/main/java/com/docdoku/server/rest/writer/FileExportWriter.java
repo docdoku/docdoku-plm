@@ -27,7 +27,6 @@ import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.util.FileExportEntity;
@@ -61,7 +60,6 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
     private static Context context;
     private static IProductManagerLocal productService;
     private static IProductInstanceManagerLocal productInstanceService;
-    private static IProductBaselineManagerLocal productBaselineService;
     private static IDataManagerLocal dataManager;
     private static final Logger LOGGER = Logger.getLogger(FileExportWriter.class.getName());
 
@@ -70,7 +68,6 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
             context = new InitialContext();
             productService = (IProductManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductManagerBean");
             productInstanceService = (IProductInstanceManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductInstanceManagerBean");
-            productBaselineService= (IProductBaselineManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductBaselineManagerBean");
             dataManager = (IDataManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/DataManagerBean");
         } catch (NamingException e) {
             LOGGER.log(Level.WARNING, null, e);

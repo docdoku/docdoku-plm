@@ -97,7 +97,6 @@ public class WorkspaceUserMembership implements Serializable {
         this.memberWorkspaceId=member.getWorkspaceId();
     }
 
-
     public String getMemberLogin() {
         return memberLogin;
     }
@@ -107,6 +106,7 @@ public class WorkspaceUserMembership implements Serializable {
         return member;
     }
 
-    
-
+    public String getMemberWorkspaceId() {
+        return memberWorkspaceId;
+    }
 }

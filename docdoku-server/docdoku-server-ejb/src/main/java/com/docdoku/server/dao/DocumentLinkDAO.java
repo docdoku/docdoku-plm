@@ -36,16 +36,9 @@ import java.util.Locale;
 public class DocumentLinkDAO {
 
     private EntityManager em;
-    private Locale mLocale;
 
     public DocumentLinkDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
-        mLocale = pLocale;
-    }
-
-    public DocumentLinkDAO(EntityManager pEM) {
-        em = pEM;
-        mLocale = Locale.getDefault();
     }
 
     public void removeLink(DocumentLink pLink){

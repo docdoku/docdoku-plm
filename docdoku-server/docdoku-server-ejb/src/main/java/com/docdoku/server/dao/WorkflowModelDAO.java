@@ -32,6 +32,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class WorkflowModelDAO {
@@ -76,8 +77,10 @@ public class WorkflowModelDAO {
             em.persist(pModel);
             em.flush();
         } catch (EntityExistsException pEEEx) {
+            LOGGER.log(Level.FINEST,null,pEEEx);
             throw new WorkflowModelAlreadyExistsException(mLocale, pModel);
         } catch (PersistenceException pPEx) {
+            LOGGER.log(Level.FINEST,null,pPEx);
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
             //thrown instead of EntityExistsException

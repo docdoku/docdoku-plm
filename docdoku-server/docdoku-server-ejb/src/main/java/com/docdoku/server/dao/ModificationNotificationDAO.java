@@ -25,23 +25,13 @@ import com.docdoku.core.product.PartRevisionKey;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.Locale;
-import java.util.logging.Logger;
 
 public class ModificationNotificationDAO {
-    private static final Logger LOGGER = Logger.getLogger(ModificationNotificationDAO.class.getName());
 
     private EntityManager em;
-    private Locale mLocale;
-
-    public ModificationNotificationDAO(Locale pLocale, EntityManager pEM) {
-        em = pEM;
-        mLocale = pLocale;
-    }
 
     public ModificationNotificationDAO(EntityManager pEM) {
         em = pEM;
-        mLocale = Locale.getDefault();
     }
 
     public void removeModificationNotifications(PartIterationKey pPartIPK){

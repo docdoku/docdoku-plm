@@ -36,7 +36,6 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.server.LogDocument;
@@ -60,16 +59,16 @@ import java.util.logging.Logger;
 @Local(IProductInstanceManagerLocal.class)
 @Stateless(name = "ProductInstanceManagerBean")
 public class ProductInstanceManagerBean implements IProductInstanceManagerLocal {
+
     @PersistenceContext
     private EntityManager em;
+
     @EJB
     private IUserManagerLocal userManager;
 
-    @EJB
-    private IProductManagerLocal productManager;
-
     @Resource
     private SessionContext ctx;
+
     @EJB
     private IDataManagerLocal dataManager;
 
@@ -596,7 +595,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
                 pathDataIteration.setNoteIteration(note);
                 pathDataIteration = createDocumentLink(locale, pathDataIteration, links, documentLinkComments);
                 pathDataIteration.setAttachedFiles(targetFiles);
-                PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(locale, em);
+                PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(em);
                 pathDataIterationDAO.createPathDataIteration(pathDataIteration);
 
                 return pathDataMaster;
@@ -607,7 +606,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         pathDataIteration.setInstanceAttributes(attributes);
         pathDataIteration.setNoteIteration(note);
         pathDataMasterDAO.createPathData(pathDataMaster);
-        PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(locale, em);
+        PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(em);
         pathDataIteration = this.createDocumentLink(locale, pathDataIteration, links, documentLinkComments);
         pathDataIterationDAO.createPathDataIteration(pathDataIteration);
 
@@ -971,7 +970,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
                 PathDataIteration pathDataIteration = pathDataMaster.createNextIteration();
                 pathDataIteration.setInstanceAttributes(attributes);
                 pathDataIteration.setNoteIteration(noteIteration);
-                PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(locale, em);
+                PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(em);
                 pathDataIterationDAO.createPathDataIteration(pathDataIteration);
 
                 return pathDataMaster;
@@ -980,7 +979,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         PathDataIteration pathDataIteration = pathDataMaster.createNextIteration();
         pathDataIteration.setInstanceAttributes(attributes);
         pathDataIteration.setNoteIteration(noteIteration);
-        PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(locale, em);
+        PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(em);
         pathDataIterationDAO.createPathDataIteration(pathDataIteration);
         prodInstM.getPathDataMasterList().add(pathDataMaster);
         return pathDataMaster;

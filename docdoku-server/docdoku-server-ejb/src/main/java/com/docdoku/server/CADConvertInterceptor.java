@@ -24,14 +24,10 @@ import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.IProductManagerLocal;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,16 +35,10 @@ import java.util.logging.Logger;
 @Interceptor
 public class CADConvertInterceptor {
 
-    @PersistenceContext
-    private EntityManager em;          
-    
     @EJB
     private IProductManagerLocal productService;
-    
-    @Resource
-    private SessionContext ejbCtx;
-    private static final Logger LOGGER = Logger.getLogger(CADConvertInterceptor.class.getName());
 
+    private static final Logger LOGGER = Logger.getLogger(CADConvertInterceptor.class.getName());
     
     @AroundInvoke
     public Object createConversion(InvocationContext ctx) throws Exception {

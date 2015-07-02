@@ -55,7 +55,7 @@ public abstract class CliOutput {
         }
         switch(format){
             case HUMAN: return new HumanOutput(pLocale);
-            case JSON: return new JSONOutput(pLocale);
+            case JSON: return new JSONOutput();
             default: return new HumanOutput(pLocale);
         }
     }

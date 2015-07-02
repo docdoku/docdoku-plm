@@ -26,20 +26,16 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.server.rest.dto.ACLDTO;
-import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.DozerConverter;
-import org.dozer.Mapper;
 
 import java.util.Map;
 
 
 public class AclDozerConverter extends DozerConverter<ACL, ACLDTO> {
 
-    private Mapper mapper;
 
     public AclDozerConverter() {
         super(ACL.class, ACLDTO.class);
-        mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
     @Override

@@ -42,10 +42,6 @@ public class DocumentSearchCommand extends BaseCommandLine {
     @Option(name = "-s", aliases = "--search", required = true, metaVar = "<search>", usage = "search string")
     protected String searchValue;
 
-    @Option(name = "-j", aliases = "--jsonparser", usage = "return the list of the documents in JSON format")
-    private boolean jsonParser;
-
-
     @Override
     public void execImpl() throws Exception {
         IDocumentManagerWS documentS = ScriptingTools.createDocumentService(getServerURL(), user, password);

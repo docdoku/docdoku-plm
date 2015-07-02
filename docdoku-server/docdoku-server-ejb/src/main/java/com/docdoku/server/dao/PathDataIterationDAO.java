@@ -33,17 +33,11 @@ import java.util.logging.Logger;
 public class PathDataIterationDAO {
 
     private EntityManager em;
-    private Locale mLocale;
 
     private static Logger LOGGER = Logger.getLogger(PathDataIterationDAO.class.getName());
 
     public PathDataIterationDAO(EntityManager pEM) {
         em = pEM;
-    }
-
-    public PathDataIterationDAO(Locale pLocale, EntityManager pEM) {
-        em = pEM;
-        mLocale = pLocale;
     }
 
     public void createPathDataIteration(PathDataIteration pathDataIteration){

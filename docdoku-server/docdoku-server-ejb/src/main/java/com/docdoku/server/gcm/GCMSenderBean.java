@@ -23,10 +23,8 @@ package com.docdoku.server.gcm;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.services.IGCMSenderLocal;
-import com.docdoku.core.services.IUserManagerLocal;
 
 import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.json.Json;
@@ -51,9 +49,6 @@ public class GCMSenderBean implements IGCMSenderLocal {
     private static final String CONF_PROPERTIES = "/com/docdoku/server/gcm/gcm.properties";
     private static final Properties CONF = new Properties();
     private static final Logger LOGGER = Logger.getLogger(GCMSenderBean.class.getName());
-
-    @EJB
-    private IUserManagerLocal userManager;
 
     static {
         InputStream inputStream = null;

@@ -24,7 +24,6 @@ import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.exceptions.ConvertedResourceException;
 import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.extras.TitleBlockGenerator;
@@ -41,9 +40,6 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
 
     @EJB
     private IDataManagerLocal dataManager;
-
-    @EJB
-    private IDocumentManagerLocal documentService;
 
     @EJB
     private FileConverter fileConverter;

@@ -42,9 +42,6 @@ public class UpdatePartIterationPSFilter extends PSFilter {
     private PartMasterKey rootKey;
     private PartIteration partIteration;
 
-    public UpdatePartIterationPSFilter() {
-    }
-
     public UpdatePartIterationPSFilter(User user, PartIteration partIteration) {
         this.user = user;
         this.partIteration = partIteration;

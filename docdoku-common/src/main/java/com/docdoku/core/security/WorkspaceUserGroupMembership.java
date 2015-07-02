@@ -101,5 +101,7 @@ public class WorkspaceUserGroupMembership implements Serializable {
         return memberId;
     }
 
-    
+    public String getMemberWorkspaceId() {
+        return memberWorkspaceId;
+    }
 }

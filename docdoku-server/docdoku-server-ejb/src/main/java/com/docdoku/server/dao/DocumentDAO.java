@@ -23,11 +23,9 @@ package com.docdoku.server.dao;
 import com.docdoku.core.document.DocumentIteration;
 
 import javax.persistence.EntityManager;
-import java.util.logging.Logger;
 
 
 public class DocumentDAO {
-    private static final Logger LOGGER = Logger.getLogger(DocumentDAO.class.getName());
 
     private final EntityManager em;
 

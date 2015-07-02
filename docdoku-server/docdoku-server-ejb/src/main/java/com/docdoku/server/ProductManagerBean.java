@@ -953,8 +953,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     public List<ModificationNotification> getModificationNotifications(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
         PartRevisionKey partRevisionKey = pPartIPK.getPartRevision();
         User user = checkPartRevisionReadAccess(partRevisionKey);
-        Locale locale = new Locale(user.getLanguage());
-        return new ModificationNotificationDAO(locale, em).getModificationNotifications(pPartIPK);
+        return new ModificationNotificationDAO(em).getModificationNotifications(pPartIPK);
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})

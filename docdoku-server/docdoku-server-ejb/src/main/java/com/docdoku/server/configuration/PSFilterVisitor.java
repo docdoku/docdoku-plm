@@ -32,12 +32,9 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 
 public abstract class PSFilterVisitor {
-
-    private static final Logger LOGGER = Logger.getLogger(PSFilterVisitor.class.getName());
 
     // Context
     private User user;
