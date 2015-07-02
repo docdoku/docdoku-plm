@@ -159,7 +159,7 @@ public class ProductConfigurationsResource {
     public Response updateConfigurationACL(@PathParam("workspaceId") String workspaceId,@PathParam("ciId") String pCiId, @PathParam("productConfigurationId") int productConfigurationId, ACLDTO acl) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, AccessRightException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,pCiId);
 
-        if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
+        if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
             Map<String,String> userEntries = new HashMap<>();
             Map<String,String> groupEntries = new HashMap<>();

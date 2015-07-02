@@ -2951,7 +2951,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 PartMaster part = parts.get(parts.size() - 1);
                 List<PartIteration> partIterations = psFilter.filter(part);
 
-                if (partIterations.size() != 0) {
+                if (!partIterations.isEmpty()) {
 
                     PartIteration partIteration = partIterations.get(0);
                     String partFolderName = partIteration.toString();
@@ -3091,7 +3091,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 int depth = parts.size();
                 PartMaster part = parts.get(parts.size() - 1);
                 List<PartIteration> partIterations = filter.filter(part);
-                if (partIterations.size() != 0) {
+                if (!partIterations.isEmpty()) {
                     PartRevision partRevision = partIterations.get(0).getPartRevision();
                     row.setPartRevision(partRevision);
                     row.setDepth(depth);

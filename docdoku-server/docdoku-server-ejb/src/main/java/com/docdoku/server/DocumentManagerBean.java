@@ -1063,7 +1063,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                     // Remove ElasticSearch Index for this DocumentIteration
                 }
                 DocumentMaster docM = docR.getDocumentMaster();
-                boolean noRevision = docM.getDocumentRevisions().size() == 0;
+                boolean noRevision = docM.getDocumentRevisions().isEmpty();
 
                 if (noRevision) {
                     mdocDAO.removeDocM(docM);

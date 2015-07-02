@@ -114,6 +114,6 @@ public class ConfigurationItemDAO {
     }
 
     public boolean isPartMasterLinkedToConfigurationItem(PartMaster partMaster){
-        return findConfigurationItemsByDesignItem(partMaster).size() > 0;
+        return !findConfigurationItemsByDesignItem(partMaster).isEmpty();
     }
 }

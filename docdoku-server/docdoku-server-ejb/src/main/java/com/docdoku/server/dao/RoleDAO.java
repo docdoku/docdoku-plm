@@ -90,10 +90,10 @@ public class RoleDAO {
     }
 
     public boolean isRoleInUseInWorkflowModel(Role role) {
-        return em.createNamedQuery("Role.findRolesInUseByRoleName")
+        return !em.createNamedQuery("Role.findRolesInUseByRoleName")
                  .setParameter("roleName", role.getName())
                  .setParameter("workspace", role.getWorkspace())
-                 .getResultList().size() > 0;
+                 .getResultList().isEmpty();
 
     }
 

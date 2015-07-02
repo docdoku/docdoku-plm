@@ -208,7 +208,7 @@ public class TitleBlockGenerator {
         addEmptyLine(preface,1);
 
         // Attributes
-        if(instanceAttributes.size() > 0){
+        if(!instanceAttributes.isEmpty()){
 
             // Table title
             preface.add(new Paragraph(bundle.getString("attributes"), BOLD_12));

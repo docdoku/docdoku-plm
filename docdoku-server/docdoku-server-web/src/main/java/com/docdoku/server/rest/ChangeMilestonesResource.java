@@ -159,7 +159,7 @@ public class ChangeMilestonesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("milestoneId") int milestoneId, ACLDTO acl)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
-        if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
+        if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
             Map<String,String> userEntries = new HashMap<>();
             Map<String,String> groupEntries = new HashMap<>();

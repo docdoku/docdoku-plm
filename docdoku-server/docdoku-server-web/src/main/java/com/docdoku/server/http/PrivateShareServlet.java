@@ -184,7 +184,7 @@ public class PrivateShareServlet extends HttpServlet {
             }
 
             String geometryFileURI = "";
-            if(partRevision.getLastIteration().getGeometries().size()>0){
+            if(!partRevision.getLastIteration().getGeometries().isEmpty()){
                 Geometry geometry = partRevision.getLastIteration().getSortedGeometries().get(0);
                 geometryFileURI ="/api/files/" + geometry.getFullName() + "/uuid/" + uuid;
             }

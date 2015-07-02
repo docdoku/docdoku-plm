@@ -153,7 +153,7 @@ public class DocumentTemplateResource {
     public Response updateDocMsTemplateACL(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, ACLDTO acl)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
-        if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
+        if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
             Map<String,String> userEntries = new HashMap<>();
             Map<String,String> groupEntries = new HashMap<>();

@@ -90,7 +90,7 @@ public class LOVManagerBean implements ILOVManagerLocal, ILOVManagerWS {
             throw new CreationException("LOVNameEmptyException");
         }
 
-        if (nameValuePairList == null || nameValuePairList.size() == 0){
+        if (nameValuePairList == null || nameValuePairList.isEmpty()){
             throw new CreationException("LOVPossibleValueException");
         }
 
@@ -147,7 +147,7 @@ public class LOVManagerBean implements ILOVManagerLocal, ILOVManagerWS {
         DocumentMasterTemplateDAO documentMasterTemplateDAO = new DocumentMasterTemplateDAO(em);
 
         List<DocumentMasterTemplate> documentsUsingLOV = documentMasterTemplateDAO.findAllDocMTemplatesFromLOV(lovKey);
-        if (documentsUsingLOV != null && documentsUsingLOV.size() > 0){
+        if (documentsUsingLOV != null && !documentsUsingLOV.isEmpty()){
             return true;
         }
 
@@ -158,7 +158,7 @@ public class LOVManagerBean implements ILOVManagerLocal, ILOVManagerWS {
         PartMasterTemplateDAO partMasterTemplateDAO = new PartMasterTemplateDAO(em);
 
         List<PartMasterTemplate> partsUsingLOV = partMasterTemplateDAO.findAllPartMTemplatesFromLOV(lovKey);
-        if (partsUsingLOV != null && partsUsingLOV.size() > 0){
+        if (partsUsingLOV != null && !partsUsingLOV.isEmpty()){
             return true;
         }
 
