@@ -135,14 +135,14 @@ public class PartBinaryResource{
         long length;
         String fileName = formPart.getSubmittedFileName();
         // Init the binary resource with a null length
-        if(subType!=null && subType.equals("nativecad")){
+        if(subType!=null && "nativecad".equals(subType)){
             binaryResource = productService.saveNativeCADInPartIteration(partPK, fileName, 0);
         }else{
             binaryResource = productService.saveFileInPartIteration(partPK, fileName, subType, 0);
         }
         OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
         length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
-        if(subType!=null && subType.equals("nativecad")){
+        if(subType!=null && "nativecad".equals(subType)){
             productService.saveNativeCADInPartIteration(partPK, fileName, length);
             tryToConvertCADFileToOBJ(partPK,binaryResource);
         }else{

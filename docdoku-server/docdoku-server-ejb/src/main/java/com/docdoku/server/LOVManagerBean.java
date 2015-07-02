@@ -86,7 +86,7 @@ public class LOVManagerBean implements ILOVManagerLocal, ILOVManagerWS {
         Locale locale = new Locale(user.getLanguage());
         LOVDAO lovDAO = new LOVDAO(locale, em);
 
-        if (name == null || name.trim().equalsIgnoreCase("")){
+        if (name == null || name.trim().isEmpty()){
             throw new CreationException("LOVNameEmptyException");
         }
 

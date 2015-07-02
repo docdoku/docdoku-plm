@@ -235,7 +235,7 @@ public class PartTemplateBinaryResourceTest {
         Assert.assertTrue(response.hasEntity());
         Assert.assertTrue(response.getEntity() instanceof BinaryResourceBinaryStreamingOutput);
         Assert.assertNotNull(response.getHeaders().getFirst("Content-Disposition"));
-        Assert.assertNotNull(response.getHeaders().getFirst("Content-Disposition").equals("attachement;filename=\""+ResourceUtil.TEST_PART_FILENAME1+"\""));
+        Assert.assertNotNull("attachement;filename=\""+ResourceUtil.TEST_PART_FILENAME1+"\"".equals(response.getHeaders().getFirst("Content-Disposition")));
 
         //delete temp file
         file.deleteOnExit();

@@ -264,11 +264,11 @@ public class QueryDAO {
     }
 
     private Predicate getPartRevisionPredicate(String field, String operator, String value, String type) {
-        if(field.equals("status")){
+        if("status".equals(field)){
             return getPredicate(pr.get(field),operator,PartRevision.RevisionStatus.valueOf(value),"");
-        } else if(field.equals("tags")){
+        } else if("tags".equals(field)){
             return getTagsPredicate(value);
-        }else if(field.equals("linkedDocuments")){
+        }else if("linkedDocuments".equals(field)){
             // should be ignored, returning always true for the moment
             return cb.and();
         }
@@ -378,30 +378,30 @@ public class QueryDAO {
             case "not_ends_with" : return cb.like(fieldExp, "%"+o).not();
 
             case "less":
-                if(type.equals("date")){
+                if("date".equals(type)){
                     return cb.lessThan(fieldExp,(Date)o);
-                } else if(type.equals("double")){
+                } else if("double".equals(type)){
                     return cb.lessThan(fieldExp,(Double)o);
                 }
                 break;
             case "less_or_equal":
-                if(type.equals("date")){
+                if("date".equals(type)){
                     return cb.lessThanOrEqualTo(fieldExp, (Date) o);
-                } else if(type.equals("double")){
+                } else if("double".equals(type)){
                     return cb.lessThanOrEqualTo(fieldExp, (Double) o);
                 }
                 break;
             case "greater":
-                if(type.equals("date")){
+                if("date".equals(type)){
                     return cb.greaterThan(fieldExp, (Date) o);
-                } else if(type.equals("double")){
+                } else if("double".equals(type)){
                     return cb.greaterThan(fieldExp, (Double) o);
                 }
                 break;
             case "greater_or_equal":
-                if(type.equals("date")){
+                if("date".equals(type)){
                     return cb.greaterThanOrEqualTo(fieldExp, (Date) o);
-                } else if(type.equals("double")){
+                } else if("double".equals(type)){
                     return cb.greaterThanOrEqualTo(fieldExp, (Double) o);
                 }
                 break;

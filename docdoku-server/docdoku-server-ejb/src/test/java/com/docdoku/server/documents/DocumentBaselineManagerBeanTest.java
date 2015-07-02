@@ -93,7 +93,7 @@ public class DocumentBaselineManagerBeanTest {
 
         //Then
         //TODO should test documentBaseline is null after code update
-        Assert.assertTrue(documentBaseline.getDescription().equals("description"));
+        Assert.assertTrue("description".equals(documentBaseline.getDescription()));
         Assert.assertTrue(documentBaseline.hasBasedLinedFolder(workspace.getId()));
         Assert.assertTrue(documentBaseline.getBaselinedFolders().size() == 1);
         Assert.assertTrue(documentBaseline.getWorkspace().getId().equals(workspace.getId()));

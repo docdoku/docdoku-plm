@@ -97,7 +97,7 @@ public class CollaborativeRoomTest {
         //Given
         CollaborativeRoom collaborativeRoom1 = Mockito.spy(new CollaborativeRoom(master));
         //Then
-        Assert.assertTrue(collaborativeRoom1.getLastMaster().equals("master1"));
+        Assert.assertTrue("master1".equals(collaborativeRoom1.getLastMaster()));
     }
 
     @Test

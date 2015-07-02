@@ -1490,7 +1490,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             dataManager.renameFile(file, pNewName);
 
-            if (pSubType != null && pSubType.equals("nativecad")) {
+            if (pSubType != null && "nativecad".equals(pSubType)) {
                 partIteration.setNativeCADFile(null);
             } else {
                 partIteration.removeAttachedFile(file);
@@ -1501,7 +1501,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             binDAO.createBinaryResource(newFile);
 
-            if (pSubType != null && pSubType.equals("nativecad")) {
+            if (pSubType != null && "nativecad".equals(pSubType)) {
                 partIteration.setNativeCADFile(newFile);
             } else {
                 partIteration.addAttachedFile(newFile);
@@ -1576,7 +1576,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 LOGGER.log(Level.INFO, null, e);
             }
 
-            if (pSubType != null && pSubType.equals("nativecad")) {
+            if (pSubType != null && "nativecad".equals(pSubType)) {
                 partIteration.setNativeCADFile(null);
             } else {
                 partIteration.removeAttachedFile(file);
@@ -2593,7 +2593,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartLink rootPartUsageLink = getRootPartUsageLink(ciKey);
         decodedPath.add(rootPartUsageLink);
 
-        if (path.equals("-1")) {
+        if ("-1".equals(path)) {
             return decodedPath;
         }
 

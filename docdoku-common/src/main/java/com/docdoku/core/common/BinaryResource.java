@@ -141,7 +141,8 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
     }
 
     public BinaryResource getPrevious(){
-        if(getOwnerType().equals("document-templates") || getOwnerType().equals("part-templates")) {
+        String ownerType = getOwnerType();
+        if("document-templates".equals(ownerType) || "part-templates".equals(ownerType)) {
             return null;
         }
         

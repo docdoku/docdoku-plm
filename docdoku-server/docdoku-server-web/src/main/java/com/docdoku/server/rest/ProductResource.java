@@ -431,7 +431,7 @@ public class ProductResource {
             fileExportEntity.setSerialNumber(serialNumber);
             fileExportEntity.setBaselineId(productService.loadProductBaselineForProductInstanceMaster(ciKey, serialNumber).getId());
 
-        }else if(!configSpecType.equals("wip") && !configSpecType.equals("latest") && !configSpecType.equals("released")){
+        }else if(!"wip".equals(configSpecType) && !"latest".equals(configSpecType) && !"released".equals(configSpecType)){
             try {
                 fileExportEntity.setBaselineId(Integer.parseInt(configSpecType));
             }catch(NumberFormatException e){
