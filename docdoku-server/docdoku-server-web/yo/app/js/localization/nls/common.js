@@ -431,6 +431,7 @@ define({
         QUERY_GROUP_ATTRIBUTE_DATE:"Date Attribute",
         QUERY_GROUP_ATTRIBUTE_BOOLEAN:"Boolean Attribute",
         QUERY_GROUP_CONTEXT:"Context",
+        QUERY_GROUP_PATH_DATA_ATTRIBUTES:"Deliverable attributes",
         QUERY_NAME:"Query name",
         QUERY_SEARCH:"Build a query",
         QUERY_SELECT:"Select",

@@ -245,12 +245,7 @@ define(function () {
         {id: 'attr-NUMBER', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_NUMBER},
         {id: 'attr-DATE', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_DATE},
         {id: 'attr-BOOLEAN', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_BOOLEAN},
-        {id: 'pd-attr-TEXT', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_STRING},
-        {id: 'pd-attr-URL', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_URL},
-        {id: 'pd-attr-LOV', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_LOV},
-        {id: 'pd-attr-NUMBER', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_NUMBER},
-        {id: 'pd-attr-DATE', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_DATE},
-        {id: 'pd-attr-BOOLEAN', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_BOOLEAN},
+        {id: 'pd-attrs', name: App.config.i18n.QUERY_GROUP_PATH_DATA_ATTRIBUTES},
         {id: 'ctx', name: App.config.i18n.QUERY_GROUP_CONTEXT}
     ];
 

@@ -427,6 +427,7 @@ define({
     QUERY_GROUP_ATTRIBUTE_DATE:"Attributs de type date",
     QUERY_GROUP_ATTRIBUTE_BOOLEAN:"Attributs de type booléen",
     QUERY_GROUP_CONTEXT:"Contexte",
+    QUERY_GROUP_PATH_DATA_ATTRIBUTES:"Attributs d'exemplaires",
     QUERY_NAME:"Nom de la requête",
     QUERY_SEARCH:"Construire une requête",
     QUERY_SELECT:"Champs",
