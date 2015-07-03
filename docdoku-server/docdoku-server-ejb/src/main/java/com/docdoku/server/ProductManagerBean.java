@@ -3058,6 +3058,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartMaster root = ci.getDesignItem();
 
         PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale,em);
+        PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(em);
 
         final ProductInstanceIteration finalProductInstanceIteration = productInstanceIteration;
 
@@ -3096,6 +3097,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                         totalAmount *= pl.getAmount();
                     }
                 }
+                String pathAsString = Tools.getPathAsString(path);
                 int depth = parts.size();
                 PartMaster part = parts.get(parts.size() - 1);
                 List<PartIteration> partIterations = filter.filter(part);
@@ -3106,7 +3108,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     row.setContext(queryContext);
                     row.setAmount(totalAmount);
 
-                    List<PathToPathLink> pathToPathLinkSourceInContext = pathToPathLinkDAO.getPathToPathLinkSourceInContext(ci, finalProductInstanceIteration, Tools.getPathAsString(path));
+                    List<PathToPathLink> pathToPathLinkSourceInContext = pathToPathLinkDAO.getPathToPathLinkSourceInContext(ci, finalProductInstanceIteration, pathAsString);
                     for(PathToPathLink pathToPathLink:pathToPathLinkSourceInContext){
                         try {
                             List<PartLink> partLinks = decodePath(ciKey, pathToPathLink.getTargetPath());
@@ -3117,7 +3119,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
                     }
 
-                    List<PathToPathLink> pathToPathLinkTargetInContext = pathToPathLinkDAO.getPathToPathLinkTargetInContext(ci, finalProductInstanceIteration, Tools.getPathAsString(path));
+                    List<PathToPathLink> pathToPathLinkTargetInContext = pathToPathLinkDAO.getPathToPathLinkTargetInContext(ci, finalProductInstanceIteration, pathAsString);
                     for(PathToPathLink pathToPathLink:pathToPathLinkTargetInContext){
                         try {
                             List<PartLink> partLinks = decodePath(ciKey, pathToPathLink.getSourcePath());
@@ -3125,6 +3127,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                         } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | PartUsageLinkNotFoundException | ConfigurationItemNotFoundException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
+                    }
+
+                    PathDataIteration pathDataIteration = pathDataIterationDAO.getLastPathDataIteration(pathAsString,finalProductInstanceIteration);
+
+                    if(null != pathDataIteration){
+                        row.setPathDataIteration(pathDataIteration);
                     }
 
                     rows.add(row);

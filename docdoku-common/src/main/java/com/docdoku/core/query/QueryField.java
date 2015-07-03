@@ -42,6 +42,7 @@ public class QueryField {
     public static final String PART_REVISION_STATUS = "pr.status";
     public static final String PART_ITERATION_LINKED_DOCUMENTS = "pr.linkedDocuments";
     public static final String PART_REVISION_ATTRIBUTES_PREFIX = "attr-";
+    public static final String PATH_DATA_ATTRIBUTES_PREFIX = "pd-attr-";
 
     public static final String AUTHOR_LOGIN = "author.login";
     public static final String AUTHOR_NAME = "author.name";

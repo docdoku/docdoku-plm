@@ -21,12 +21,10 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.configuration.PathDataIteration;
-import com.docdoku.core.configuration.PathDataMaster;
-import com.docdoku.core.configuration.ProductInstanceMaster;
+import com.docdoku.core.configuration.ProductInstanceIteration;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import java.util.Locale;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,6 +45,21 @@ public class PathDataIterationDAO {
         }catch (Exception e){
             LOGGER.log(Level.SEVERE,"Fail to create path data",e);
         }
+    }
+
+    public List<PathDataIteration> getPathDataIterations(String path, ProductInstanceIteration productInstanceIteration){
+        return em.createNamedQuery("PathDataIteration.findFromPathAndProductInstanceIteration",PathDataIteration.class)
+                .setParameter("path", path)
+                .setParameter("productInstanceIteration", productInstanceIteration)
+                .getResultList();
+    }
+
+    public PathDataIteration getLastPathDataIteration(String path, ProductInstanceIteration productInstanceIteration){
+        List<PathDataIteration> pathDataIterations = getPathDataIterations(path, productInstanceIteration);
+        if(pathDataIterations.isEmpty()){
+            return null;
+        }
+        return pathDataIterations.get(pathDataIterations.size()-1);
     }
 
 }

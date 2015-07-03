@@ -20,6 +20,7 @@
 
 package com.docdoku.core.query;
 
+import com.docdoku.core.configuration.PathDataIteration;
 import com.docdoku.core.product.PartLink;
 import com.docdoku.core.product.PartRevision;
 
@@ -36,6 +37,7 @@ public class QueryResultRow {
     private int depth;
     private List<List<PartLink>> sources = new ArrayList<>();
     private List<List<PartLink>> targets = new ArrayList<>();
+    private PathDataIteration pathDataIteration;
     private double[] results;
     private QueryContext context;
     private double amount;
@@ -116,5 +118,13 @@ public class QueryResultRow {
 
     public void addSource(List<PartLink> source){
         sources.add(source);
+    }
+
+    public PathDataIteration getPathDataIteration() {
+        return pathDataIteration;
+    }
+
+    public void setPathDataIteration(PathDataIteration pathDataIteration) {
+        this.pathDataIteration = pathDataIteration;
     }
 }

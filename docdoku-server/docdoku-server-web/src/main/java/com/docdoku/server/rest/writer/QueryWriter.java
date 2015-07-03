@@ -41,7 +41,6 @@ import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.export.ExcelGenerator;
 import com.docdoku.server.rest.collections.QueryResult;
-import org.apache.commons.lang.StringUtils;
 
 import javax.json.Json;
 import javax.json.JsonValue;
@@ -101,134 +100,14 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
         if(queryResult.getExportType().equals(QueryResult.ExportType.JSON)){
             generateJSONResponse(outputStream, queryResult);
-
-        } else if(queryResult.getExportType().equals(QueryResult.ExportType.CSV)){
-            generateCSVResponse(outputStream,queryResult);
-
-        } else if(queryResult.getExportType().equals(QueryResult.ExportType.XLS)){
-            excelGenerator.generateXLSResponse(queryResult,new Locale(queryResult.getQuery().getAuthor().getLanguage()), "");
-        }else{
+        }
+        else if(queryResult.getExportType().equals(QueryResult.ExportType.XLS)){
+            excelGenerator.generateXLSResponse(queryResult, new Locale(queryResult.getQuery().getAuthor().getLanguage()), "");
+        }
+        else{
             throw new IllegalArgumentException();
         }
 
-    }
-
-    private void generateCSVResponse(OutputStream o, QueryResult queryResult) throws IOException {
-        String header = StringUtils.join(queryResult.getQuery().getSelects(), "; ");
-        header += "\n";
-        o.write(header.getBytes());
-
-        for(QueryResultRow row : queryResult.getRows()){
-            writeCSVRow(row,o,queryResult);
-        }
-        o.flush();
-    }
-
-    private void writeCSVRow(QueryResultRow row, OutputStream o, QueryResult queryResult) throws IOException {
-
-        List<String> selects = queryResult.getQuery().getSelects();
-        List<String> data = new ArrayList<>();
-
-        PartRevision part  = row.getPartRevision();
-
-        QueryContext queryContext = row.getContext();
-
-        for(String select : selects){
-
-            switch (select){
-                case QueryField.CTX_PRODUCT_ID:
-                    String productId = queryContext != null ? queryContext.getConfigurationItemId() : "";
-                    data.add(productId);
-                    break;
-                case QueryField.CTX_SERIAL_NUMBER:
-                    String serialNumber = queryContext != null ? queryContext.getSerialNumber() : "";
-                    data.add(serialNumber!=null?serialNumber:"");
-                    break;
-                case QueryField.PART_MASTER_NUMBER:
-                    data.add(part.getPartNumber());
-                    break;
-                case QueryField.PART_MASTER_NAME:
-                    String sName = part.getPartName();
-                    data.add(sName != null ? sName : "");
-                    break;
-                case QueryField.PART_MASTER_TYPE:
-                    String sType = part.getType();
-                    data.add(sType != null ? sType : "");
-                    break;
-                case QueryField.PART_REVISION_MODIFICATION_DATE:
-                    PartIteration piLastIteration = part.getLastIteration();
-                    data.add((piLastIteration != null && piLastIteration.getModificationDate() != null) ? simpleDateFormat.format(piLastIteration.getModificationDate()) : "");
-                    break;
-                case QueryField.PART_REVISION_CREATION_DATE:
-                    data.add((part.getCreationDate() != null) ? simpleDateFormat.format(part.getCreationDate()) : "");
-                    break;
-                case QueryField.PART_REVISION_CHECKOUT_DATE:
-                    data.add((part.getCheckOutDate() != null) ? simpleDateFormat.format(part.getCheckOutDate()) : "");
-                    break;
-                case QueryField.PART_REVISION_CHECKIN_DATE:
-                    PartIteration lastCheckedPI = part.getLastCheckedInIteration();
-                    data.add((lastCheckedPI != null && lastCheckedPI.getCheckInDate() != null) ? simpleDateFormat.format(lastCheckedPI.getCheckInDate()) : "");
-                    break;
-                case QueryField.PART_REVISION_VERSION:
-                    data.add(part.getVersion() != null ? part.getVersion() : "");
-                    break;
-                case QueryField.PART_REVISION_LIFECYCLE_STATE:
-                    data.add(part.getLifeCycleState() != null ? part.getLifeCycleState() : "");
-                    break;
-                case QueryField.PART_REVISION_STATUS:
-                    data.add(part.getStatus().toString());
-                    break;
-                case QueryField.AUTHOR_LOGIN:
-                    User user = part.getAuthor();
-                    data.add(user.getLogin());
-                    break;
-                case QueryField.AUTHOR_NAME:
-                    User userAuthor = part.getAuthor();
-                    data.add(userAuthor.getName());
-                    break;
-                case QueryField.CTX_DEPTH:
-                    data.add(row.getDepth()+"");
-                    break;
-                case QueryField.CTX_AMOUNT:
-                    data.add(row.getAmount()+"");
-                    break;
-                case QueryField.PART_MASTER_IS_STANDARD:
-                    data.add(row.getPartRevision().getPartMaster().isStandardPart() ? "true" : "false");
-                    break;
-                default:
-                    if (select.contains(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)){
-                        String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());
-                        String attributeSelectName = select.substring(select.indexOf(".") + 1);
-                        String attributeValue = "";
-                        PartIteration pi = part.getLastIteration();
-                        if (pi != null) {
-                            List<InstanceAttribute> attributes = pi.getInstanceAttributes();
-                            if (attributes != null) {
-                                for (InstanceAttribute attribute : attributes) {
-                                    InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
-                                    if (attributeDescriptor.getName().equals(attributeSelectName)
-                                            && attributeDescriptor.getStringType().equals(attributeSelectType)) {
-
-                                        attributeValue = attribute.getValue() + "";
-                                        if (attribute instanceof InstanceListOfValuesAttribute) {
-                                            attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        data.add(attributeValue);
-                    } else {
-                        data.add("");
-                    }
-            }
-
-        }
-
-        String rowData = StringUtils.join(data, "; ");
-        rowData += "\n";
-        o.write(rowData.getBytes());
     }
 
     private void generateJSONResponse(OutputStream outputStream, QueryResult queryResult) throws UnsupportedEncodingException {
@@ -238,7 +117,8 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
         jg.writeStartArray();
 
         List<String> selects = queryResult.getQuery().getSelects();
-        List<String> attributesSelect = getSelectedAttributes(selects);
+        List<String> partIterationSelectedAttributes = getPartIterationSelectedAttributes(selects);
+        List<String> pathDataSelectedAttributes = getPathDataSelectedAttributes(selects);
 
         for (QueryResultRow row : queryResult.getRows()) {
 
@@ -363,10 +243,10 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
             }
 
-            for (String attributeSelect : attributesSelect) {
+            for (String attributeSelect : partIterationSelectedAttributes) {
 
                 String attributeSelectType = attributeSelect.substring(0, attributeSelect.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());
-                ;
+
                 String attributeSelectName = attributeSelect.substring(attributeSelect.indexOf(".") + 1);
 
                 String attributeValue = "";
@@ -374,6 +254,34 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
                 PartIteration pi = part.getLastIteration();
                 if (pi != null) {
                     List<InstanceAttribute> attributes = pi.getInstanceAttributes();
+                    if (attributes != null) {
+                        for (InstanceAttribute attribute : attributes) {
+                            InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
+                            if (attributeDescriptor.getName().equals(attributeSelectName)
+                                    && attributeDescriptor.getStringType().equals(attributeSelectType)) {
+
+                                attributeValue = attribute.getValue() + "";
+                                if (attribute instanceof InstanceListOfValuesAttribute) {
+                                    attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
+                                }
+                            }
+                        }
+                    }
+                    jg.write(attributeSelect, attributeValue);
+                }
+            }
+
+            for (String attributeSelect : pathDataSelectedAttributes) {
+
+                String attributeSelectType = attributeSelect.substring(0, attributeSelect.indexOf(".")).substring(QueryField.PATH_DATA_ATTRIBUTES_PREFIX.length());
+
+                String attributeSelectName = attributeSelect.substring(attributeSelect.indexOf(".") + 1);
+
+                String attributeValue = "";
+
+                PathDataIteration pdi = row.getPathDataIteration();
+                if (pdi != null) {
+                    List<InstanceAttribute> attributes = pdi.getInstanceAttributes();
                     if (attributes != null) {
                         for (InstanceAttribute attribute : attributes) {
                             InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
@@ -442,10 +350,20 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
         return date != null ? simpleDateFormat.format(date) : "";
     }
 
-    public List<String> getSelectedAttributes(List<String> selects) {
+    public List<String> getPartIterationSelectedAttributes(List<String> selects) {
         List<String> attributesSelect = new ArrayList<>();
         for(String select : selects){
             if (select.contains(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)){
+                attributesSelect.add(select);
+            }
+        }
+        return attributesSelect;
+    }
+
+    public List<String> getPathDataSelectedAttributes(List<String> selects) {
+        List<String> attributesSelect = new ArrayList<>();
+        for(String select : selects){
+            if (select.contains(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)){
                 attributesSelect.add(select);
             }
         }
