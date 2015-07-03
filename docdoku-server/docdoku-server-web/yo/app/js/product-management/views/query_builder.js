@@ -519,7 +519,7 @@ define([
             var rules = this.$where.queryBuilder('getRules');
             var selectsSize = this.$select[0].selectize.items.length;
 
-            if(isValid || !rules.condition && !rules.rules && selectsSize) {
+            if(selectsSize && (isValid || !rules.condition && !rules.rules)) {
 
                 var context = this.$context[0].selectize.getValue().length ? this.$context[0].selectize.getValue().split(this.delimiter) : [];
 
