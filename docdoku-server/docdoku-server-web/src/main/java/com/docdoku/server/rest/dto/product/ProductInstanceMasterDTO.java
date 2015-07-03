@@ -89,5 +89,4 @@ public class ProductInstanceMasterDTO {
         this.acl = acl;
     }
 
-    }
 }
