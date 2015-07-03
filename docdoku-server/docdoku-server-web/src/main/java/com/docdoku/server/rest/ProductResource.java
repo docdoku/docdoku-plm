@@ -90,8 +90,8 @@ public class ProductResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public ConfigurationItemDTO[] getRootProducts(@PathParam("workspaceId") String workspaceId)
-            throws EntityNotFoundException, UserNotActiveException {
+    public ConfigurationItemDTO[] getConfigurationItems(@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, NotAllowedException {
 
         String wksId = Tools.stripTrailingSlash(workspaceId);
         List<ConfigurationItem> cis = productService.getConfigurationItems(wksId);
@@ -102,6 +102,7 @@ public class ProductResource {
             dtos[i] = new ConfigurationItemDTO(mapper.map(ci.getAuthor(),UserDTO.class),ci.getId(), ci.getWorkspaceId(),
                     ci.getDescription(), ci.getDesignItem().getNumber(),ci.getDesignItem().getName(), ci.getDesignItem().getLastRevision().getVersion());
             dtos[i].setPathToPathLinks(this.getTypedLinkForConfigurationItem(workspaceId,ci));
+            dtos[i].setHasModificationNotification(productService.hasModificationNotification(ci.getKey()));
         }
 
         return dtos;

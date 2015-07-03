@@ -35,6 +35,7 @@ public class ConfigurationItemDTO implements Serializable {
     private String designItemName;
     private String designItemLatestVersion;
     private UserDTO author;
+    private boolean hasModificationNotification;
     private List<PathToPathLinkDTO> pathToPathLinks;
 
 
@@ -114,5 +115,13 @@ public class ConfigurationItemDTO implements Serializable {
 
     public void setAuthor(UserDTO author) {
         this.author = author;
+    }
+
+    public boolean isHasModificationNotification() {
+        return hasModificationNotification;
+    }
+
+    public void setHasModificationNotification(boolean hasModificationNotification) {
+        this.hasModificationNotification = hasModificationNotification;
     }
 }

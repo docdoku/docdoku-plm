@@ -2873,6 +2873,70 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return filter;
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public boolean hasModificationNotification(ConfigurationItemKey ciKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
+
+
+        User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
+        Locale locale = new Locale(user.getLanguage());
+        ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(locale,em);
+        ConfigurationItem configurationItem = configurationItemDAO.loadConfigurationItem(ciKey);
+
+        ModificationNotificationDAO modificationNotificationDAO = new ModificationNotificationDAO(em);
+
+        List<String> visitedPartNumbers = new ArrayList<>();
+        LatestPSFilter latestPSFilter = new LatestPSFilter(user, true);
+        final boolean[] hasModificationNotification = {false};
+
+        new PSFilterVisitor(em, user, latestPSFilter, configurationItem.getDesignItem(), null, -1) {
+            @Override
+            public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
+                // Unused here
+            }
+
+            @Override
+            public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
+                // Unused here
+            }
+
+            @Override
+            public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
+                // Unused here
+            }
+
+            @Override
+            public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+                // Unused here
+            }
+
+            @Override
+            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+                // Unused here
+            }
+
+            @Override
+            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+                PartMaster partMaster = parts.get(parts.size() - 1);
+                if (!visitedPartNumbers.contains(partMaster.getNumber()) && !hasModificationNotification[0]) {
+                    visitedPartNumbers.add(partMaster.getNumber());
+                    List<PartIteration> partIterations = latestPSFilter.filter(partMaster);
+                    PartIteration partIteration = partIterations.get(partIterations.size() - 1);
+                    if(modificationNotificationDAO.hasModificationNotifications(partIteration.getKey())){
+                        hasModificationNotification[0] = true;
+                    }
+                }
+            }
+
+            @Override
+            public void onUnresolvedVersion(PartMaster partMaster) {
+                // Unused here
+            }
+        };
+
+        return hasModificationNotification[0];
+    }
+
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
