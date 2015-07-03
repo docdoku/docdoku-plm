@@ -21,6 +21,7 @@
 package com.docdoku.server.export;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.configuration.PathDataIteration;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.meta.InstanceAttribute;
@@ -69,21 +70,26 @@ public class ExcelGenerator {
         String header = StringUtils.join(queryResult.getQuery().getSelects(), "; ");
         Map<Integer, String[]> data = new HashMap<>();
         String[] headerFormatted = new String[header.split(";").length];
-        int headerIndex =0;
-        String[] columns= header.split(";");
-        for(String column:columns){
-            String columnTranslated ="";
-             if(!column.isEmpty())
-             {   if (column.trim().contains("attr-")){
-                 columnTranslated = column.split("-")[1];
-                 columnTranslated = columnTranslated.substring(columnTranslated.indexOf(".") +1);
-             }else{
-                  columnTranslated = langHelper.getLocalizedMessage(column.trim(), locale);
-             }
-                 headerFormatted[headerIndex++]=  columnTranslated != null?columnTranslated:column;
-             }
+        int headerIndex = 0;
+        String[] columns = header.split(";");
+        for (String column : columns) {
+            String columnTranslated;
+            if (!column.isEmpty()) {
+                if (column.trim().startsWith(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
+                    columnTranslated = column.split("-")[1];
+                    columnTranslated = columnTranslated.substring(columnTranslated.indexOf(".") + 1);
+                }
+                else if (column.trim().startsWith(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)) {
+                    columnTranslated = column.split("-")[2];
+                    columnTranslated = columnTranslated.substring(columnTranslated.indexOf(".") + 1);
+                }
+                else {
+                    columnTranslated = langHelper.getLocalizedMessage(column.trim(), locale);
+                }
+                headerFormatted[headerIndex++] = columnTranslated != null ? columnTranslated : column;
+            }
         }
-        data.put(1,headerFormatted);
+        data.put(1, headerFormatted);
         int i = 1;
         for (QueryResultRow row : queryResult.getRows()) {
             i++;
@@ -194,17 +200,17 @@ public class ExcelGenerator {
                 case QueryField.CTX_AMOUNT:
                     data.add(row.getAmount() + "");
                     break;
-                 case QueryField.PART_ITERATION_LINKED_DOCUMENTS:
-                     PartIteration lastCheckedInIteration = row.getPartRevision().getLastCheckedInIteration();
-                     StringBuilder sb = new StringBuilder();
-                     if(lastCheckedInIteration != null){
-                         Set<DocumentLink> linkedDocuments = lastCheckedInIteration.getLinkedDocuments();
-                         for(DocumentLink documentLink:linkedDocuments){
-                             DocumentRevision targetDocument = documentLink.getTargetDocument();
-                             sb.append(baseURL+"/documents/"+targetDocument.getWorkspaceId()+"/"+targetDocument.getId()+"/"+targetDocument.getVersion()+ " ");
-                         }
-                     }
-                     data.add(sb.toString());
+                case QueryField.PART_ITERATION_LINKED_DOCUMENTS:
+                    PartIteration lastCheckedInIteration = row.getPartRevision().getLastCheckedInIteration();
+                    StringBuilder sb = new StringBuilder();
+                    if (lastCheckedInIteration != null) {
+                        Set<DocumentLink> linkedDocuments = lastCheckedInIteration.getLinkedDocuments();
+                        for (DocumentLink documentLink : linkedDocuments) {
+                            DocumentRevision targetDocument = documentLink.getTargetDocument();
+                            sb.append(baseURL + "/documents/" + targetDocument.getWorkspaceId() + "/" + targetDocument.getId() + "/" + targetDocument.getVersion() + " ");
+                        }
+                    }
+                    data.add(sb.toString());
                     break;
 
                 case QueryField.CTX_P2P_SOURCE:
@@ -220,13 +226,37 @@ public class ExcelGenerator {
                     break;
 
                 default:
-                    if (select.contains(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
+                    if (select.startsWith(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
                         String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());
                         String attributeSelectName = select.substring(select.indexOf(".") + 1);
                         String attributeValue = "";
                         PartIteration pi = part.getLastIteration();
                         if (pi != null) {
                             List<InstanceAttribute> attributes = pi.getInstanceAttributes();
+                            if (attributes != null) {
+                                for (InstanceAttribute attribute : attributes) {
+                                    InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
+                                    if (attributeDescriptor.getName().equals(attributeSelectName)
+                                            && attributeDescriptor.getStringType().equals(attributeSelectType)) {
+
+                                        attributeValue = attribute.getValue() + "";
+                                        if (attribute instanceof InstanceListOfValuesAttribute) {
+                                            attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        data.add(attributeValue);
+                    }
+                    if (select.startsWith(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)) {
+                        String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PATH_DATA_ATTRIBUTES_PREFIX.length());
+                        String attributeSelectName = select.substring(select.indexOf(".") + 1);
+                        String attributeValue = "";
+                        PathDataIteration pdi = row.getPathDataIteration();
+                        if (pdi != null) {
+                            List<InstanceAttribute> attributes = pdi.getInstanceAttributes();
                             if (attributes != null) {
                                 for (InstanceAttribute attribute : attributes) {
                                     InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
