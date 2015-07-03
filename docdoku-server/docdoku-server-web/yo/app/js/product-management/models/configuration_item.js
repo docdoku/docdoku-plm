@@ -20,6 +20,11 @@ define(['backbone'], function (Backbone) {
         getId: function () {
             return this.get('id');
         },
+
+        hasUnreadModificationNotifications: function () {
+            return this.get('hasModificationNotification');
+        },
+
         getAuthor: function () {
             return this.get('author').name;
         },
