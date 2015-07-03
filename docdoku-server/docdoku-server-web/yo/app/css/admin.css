@@ -6257,9 +6257,6 @@ body > form #header ul.breadcrumb-menu > li:first-child > a:before,
 body > form #header ul.breadcrumb-menu > li:last-child > a:after {
   display: none;
 }
-body > form #header ul.breadcrumb-menu > li .dropdown-menu > li {
-  text-transform: capitalize;
-}
 body > form #header ul.breadcrumb-menu > li .dropdown-menu > li.dropdown-section-title {
   padding-left: 8px;
 }
