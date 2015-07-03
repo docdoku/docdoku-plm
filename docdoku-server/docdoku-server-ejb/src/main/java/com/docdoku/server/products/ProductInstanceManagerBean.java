@@ -77,15 +77,47 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public List<ProductInstanceMaster> getProductInstanceMasters(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        userManager.checkWorkspaceReadAccess(workspaceId);
-        return new ProductInstanceMasterDAO(em).findProductInstanceMasters(workspaceId);
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
+        List<ProductInstanceMaster> productInstanceMasters = productInstanceMasterDAO.findProductInstanceMasters(workspaceId);
+
+        ListIterator<ProductInstanceMaster> ite = productInstanceMasters.listIterator();
+
+        while(ite.hasNext()){
+            ProductInstanceMaster next = ite.next();
+            try {
+                checkProductInstanceReadAccess(workspaceId, next, user);
+            } catch (AccessRightException e) {
+                ite.remove();
+            }
+        }
+
+        return productInstanceMasters;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public List<ProductInstanceMaster> getProductInstanceMasters(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
-        return new ProductInstanceMasterDAO(em).findProductInstanceMasters(configurationItemKey.getId(), configurationItemKey.getWorkspace());
+        User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
+        Locale locale = new Locale(user.getLanguage());
+
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
+        List<ProductInstanceMaster> productInstanceMasters = productInstanceMasterDAO.findProductInstanceMasters(configurationItemKey.getId(), configurationItemKey.getWorkspace());
+
+        ListIterator<ProductInstanceMaster> ite = productInstanceMasters.listIterator();
+
+        while(ite.hasNext()){
+            ProductInstanceMaster next = ite.next();
+            try {
+                checkProductInstanceReadAccess(configurationItemKey.getWorkspace(), next, user);
+            } catch (AccessRightException e) {
+                ite.remove();
+            }
+        }
+
+        return productInstanceMasters;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
