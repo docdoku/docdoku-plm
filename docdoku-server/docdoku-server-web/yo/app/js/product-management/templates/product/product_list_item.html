@@ -1,10 +1,10 @@
 <td><input type="checkbox"/></td>
+<td class="product_id">{{model.getId}}</td>
 <td class="modification_notification">
     {{#model.hasUnreadModificationNotifications}}
     <i class="fa fa-exclamation"></i>
     {{/model.hasUnreadModificationNotifications}}
 </td>
-<td class="product_id">{{model.getId}}</td>
 <td><a class="design_item">{{model.getDesignItemName}} < {{model.getDesignItemNumber}} > </a></td>
 <td><a class="author_login">{{model.getAuthor}}</a></td>
 <td class="has-typed-link">
