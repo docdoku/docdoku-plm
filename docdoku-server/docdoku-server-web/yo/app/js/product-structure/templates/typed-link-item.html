@@ -1,50 +1,65 @@
 <div class="error-div"></div>
-<div class="typed-link-content">
+<div class="typed-link-content form-horizontal">
     {{#canSuppress}}
     <button type="button" class="close delete-item">×</button>
     {{/canSuppress}}
-    <div class="link-source"><strong>{{i18n.PATH_TO_PATH_SOURCE}}</strong>
-        {{#sourceComponents}}
-            {{name}} < {{number}} > {{#referenceDescription}}({{.}}){{/referenceDescription}}
-            <i class="fa fa-long-arrow-right"></i>
-        {{/sourceComponents}}
+    <div class="control-group">
+        <label class="control-label">{{i18n.PATH_TO_PATH_SOURCE}}</label>
+
+        <div class="controls">
+            <span class="help-inline">
+                {{#sourceComponents}}
+                {{name}} < {{number}} > {{#referenceDescription}}({{.}}){{/referenceDescription}}
+                <i class="fa fa-long-arrow-right"></i>
+                {{/sourceComponents}}
+            </span>
+        </div>
     </div>
 
-    <div class="link-target"><strong>{{i18n.PATH_TO_PATH_TARGET}}</strong>
-        {{#targetComponents}}
-            {{name}} < {{number}} > {{#referenceDescription}}({{.}}){{/referenceDescription}}
-            <i class="fa fa-long-arrow-right"></i>
-        {{/targetComponents}}
+    <div class="control-group">
+        <label class="control-label">{{i18n.PATH_TO_PATH_TARGET}}</label>
+
+        <div class="controls">
+            <span class="help-inline">
+                {{#targetComponents}}
+                {{name}} < {{number}} > {{#referenceDescription}}({{.}}){{/referenceDescription}}
+                <i class="fa fa-long-arrow-right"></i>
+                {{/targetComponents}}
+            </span>
+        </div>
     </div>
 
     {{#isCreationMode}}
     <a class="invert-source-target">{{i18n.INVERT_SOURCE_DESTINATION}}</a>
     {{/isCreationMode}}
 
-    <div class="link-type-block">
-        {{^isCreationMode}}
-        <strong>{{i18n.TYPE}}</strong> {{type}}
-        {{/isCreationMode}}
+    <div class="control-group">
+        <label class="control-label">{{i18n.TYPE}}</label>
 
-        {{#isCreationMode}}
-        <strong>{{i18n.TYPE}}</strong>
-        <select class="type-select input-medium">
-            <option value=""></option>
-            {{#availableType}}
-            <option value="{{.}}">{{.}}</option>
-            {{/availableType}}
-        </select>
-        {{i18n.OR}}
-        <input class="add-type-input input-medium" type="text" placeholder="{{i18n.NEW_LINK_TYPE}}">
-        {{/isCreationMode}}
+        <div class="controls">
+            {{#isCreationMode}}
+            <select class="type-select input-medium">
+                <option value=""></option>
+                {{#availableType}}
+                <option value="{{.}}">{{.}}</option>
+                {{/availableType}}
+            </select>
+            {{i18n.OR}}
+            <input class="add-type-input input-medium" type="text" placeholder="{{i18n.NEW_LINK_TYPE}}">
+            {{/isCreationMode}}
+
+            {{^isCreationMode}}
+            <span class="help-inline">{{type}}</span>
+            {{/isCreationMode}}
+        </div>
     </div>
 
-    <div class="description-block">
-        <strong>{{i18n.DESCRIPTION}}</strong>
-        <textarea class="path-to-path-description" placeholder="{{i18n.DESCRIPTION}}" {{^isCreationMode}}disabled{{/isCreationMode}}>{{description}}</textarea>
-        {{#isCreationMode}}
-        <button class="btn btn-primary save-button">{{i18n.SAVE}}</button>
-        {{/isCreationMode}}
+    <div class="control-group">
+        <label class="control-label" for="typed-link-description">{{i18n.DESCRIPTION}}</label>
+
+        <div class="controls">
+            <textarea class="path-to-path-description" id="typed-link-description" placeholder="{{i18n.DESCRIPTION}}" {{^isCreationMode}}disabled{{/isCreationMode}}>{{description}}</textarea>
+        </div>
     </div>
 </div>
 
