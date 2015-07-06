@@ -4,11 +4,22 @@
 </div>
 <div class="modal-body">
     <div id="typed-link-alerts"></div>
-    <div id="path-to-path-links"></div>
-    {{#canAdd}}
-        <button class="btn add-type-btn">{{i18n.ADD}}</button>
-    {{/canAdd}}
+    {{#editionMode}}
+    <form id="typed-link-form">
+        {{/editionMode}}
+
+        <div id="path-to-path-links"></div>
+        {{#editionMode}}
+    </form>
+    <button class="btn add-type-btn">{{i18n.ADD}}</button>
+    {{/editionMode}}
 </div>
 <div class="modal-footer">
+    {{#editionMode}}
+    <a class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
+    <button type="submit" class="btn btn-primary save-button" form="typed-link-form">{{i18n.SAVE}}</button>
+    {{/editionMode}}
+    {{^editionMode}}
     <button class="btn cancel-button">{{i18n.CLOSE}}</button>
+    {{/editionMode}}
 </div>

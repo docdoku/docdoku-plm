@@ -13,13 +13,13 @@ define([
 
         events:{
             'click .invert-source-target' : 'onInvertSourceTarget',
-            'click .delete-item' : 'onDeleteItem',
-            'click .save-button': 'onSave'
+            'click .delete-item' : 'onDeleteItem'
         },
 
         initialize: function(){
             this.model = this.options.model;
             this.isCreationMode = this.model.isCreationMode;
+
             if(!this.model.pathToPath){
                 this.model.pathToPath = {
                     source: this.model.sourceModel.getEncodedPath(),
@@ -80,21 +80,29 @@ define([
                         self.remove();
                     },
                     error: function(errorMessage){
-                        self.$('.error-div').append(new AlertView({
-                            type: 'error',
-                            message: errorMessage.responseText
-                        }).render().$el);
+                        self.showNotification('error', errorMessage.responseText);
                     }
                 });
             }
         },
 
-        onSave: function(){
+        determineType: function () {
+            this.model.pathToPath.type = this.$('.type-select').val() !== ''? this.$('.type-select').val() : this.$('.add-type-input').val();
+            return this.model.pathToPath.type;
+        },
+
+        showNotification: function (type, message) {
+            this.$('.error-div').append(new AlertView({
+                type: type,
+                message: message
+            }).render().$el);
+        },
+
+        onSave: function (callback) {
 
             var self = this;
             var urlToPost = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.model.productId + '/path-to-path-links';
 
-            this.model.pathToPath.type = this.$('.type-select').val() !== ''? this.$('.type-select').val() : this.$('.add-type-input').val();
             this.model.pathToPath.description = this.$('.path-to-path-description').val();
 
             var data = {
@@ -113,13 +121,12 @@ define([
                 success:function(pathToPathLink){
                     self.model.pathToPath.id = pathToPathLink.id;
                     self.model.isCreationMode = false;
+                    self.isCreationMode = false;
                     self.render();
+                    callback();
                 },
                 error: function(errorMessage){
-                    self.$('.error-div').append(new AlertView({
-                        type: 'error',
-                        message: errorMessage.responseText
-                    }).render().$el);
+                    self.showNotification('error', errorMessage.responseText);
                 }
             });
 

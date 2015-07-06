@@ -2,10 +2,11 @@
 define([
     'backbone',
     'mustache',
+    'async',
     'text!templates/typed-link-modal.html',
     'views/typed-link-item',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, TypedLinkItemView, AlertView){
+], function (Backbone, Mustache, Async, template, TypedLinkItemView, AlertView){
     'use strict';
 
     var TypedLinkModalView = Backbone.View.extend({
@@ -15,6 +16,7 @@ define([
         events: {
             'hidden': 'onHidden',
             'click .add-type-btn': 'onAddTypedLink',
+            'submit form': 'onSaveTypedLinks',
             'click .cancel-button': 'closeModal'
         },
 
@@ -30,6 +32,7 @@ define([
         },
 
         render: function () {
+            this.typedLinkItemViews = [];
 
             var self = this;
 
@@ -45,7 +48,7 @@ define([
 
                     self.$el.html(Mustache.render(template, {
                         i18n: App.config.i18n,
-                        canAdd:['wip','latest','latest-released'].indexOf(App.config.configSpec)!==-1
+                        editionMode:['wip','latest','latest-released'].indexOf(App.config.configSpec)!==-1
                     }));
 
                     self.getExistingPathToPathAndType();
@@ -101,14 +104,14 @@ define([
         getExistingPathToPathAndType:function(){
             var self = this;
 
-            var urlForAvailableType = this.getUrlForAvailableType();
+            var urlForAvailableTypes = this.getUrlForAvailableType();
 
             this.existingPathToPathLinkCollection = [];
             this.availableType = [];
 
             $.ajax({
                 type : 'GET',
-                url : urlForAvailableType,
+                url : urlForAvailableTypes,
                 contentType: 'application/json',
                 success: function(pathToPathLinkDTOs){
                     _.each(pathToPathLinkDTOs, function(pathToPathLinkDTO){
@@ -150,10 +153,13 @@ define([
                     });
 
                     _.each(self.existingPathToPathLinkCollection, function(pathToPathLink){
-                        var typeLinkItem = new TypedLinkItemView({model:pathToPathLink}).render();
-                        self.$('#path-to-path-links').append(typeLinkItem.el);
-                        typeLinkItem.on('remove', function(){
+                        var typedLinkItemView = new TypedLinkItemView({model:pathToPathLink}).render();
+                        self.$('#path-to-path-links').append(typedLinkItemView.el);
+                        self.typedLinkItemViews.push(typedLinkItemView);
+
+                        typedLinkItemView.on('remove', function(){
                             self.existingPathToPathLinkCollection.splice(self.existingPathToPathLinkCollection.indexOf(pathToPathLink),1);
+                            self.typedLinkItemViews.without(typedLinkItemView);
                         });
                     });
 
@@ -163,6 +169,27 @@ define([
                         type: 'error',
                         message: errorMessage.responseText
                     }).render().$el);
+                }
+            });
+        },
+
+        onSaveTypedLinks: function() {
+            var _this = this;
+
+            Async.each(this.typedLinkItemViews, function(typedLinkItemView, callback) {
+                if (typedLinkItemView.isCreationMode) {
+                    if (!typedLinkItemView.determineType()) {
+                        typedLinkItemView.showNotification('error', 'You cannot create a link without a type');
+                    } else {
+                        typedLinkItemView.onSave(callback);
+                    }
+                } else {
+                    callback();
+                }
+
+            }, function(err) {
+                if (!err) {
+                    _this.closeModal();
                 }
             });
         },
@@ -180,7 +207,9 @@ define([
                     targetComponents:this.targetComponents
                 }
             }).render();
+
             this.$('#path-to-path-links').append(newTypedLinkItemView.el);
+            this.typedLinkItemViews.push(newTypedLinkItemView);
         },
 
 
