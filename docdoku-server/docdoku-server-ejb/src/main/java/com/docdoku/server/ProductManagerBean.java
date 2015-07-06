@@ -360,14 +360,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     }
 
     private void removeObsoletePathToPathLinks(User user, PartIteration partIte) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
-
-        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(new Locale(user.getLanguage()),em);
+        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(new Locale(user.getLanguage()), em);
         List<PartUsageLink> components = partIte.getComponents();
-        for(PartUsageLink partUsageLink:components){
+        for (PartUsageLink partUsageLink : components) {
             String usageLinkId = partUsageLink.getFullId();
             pathToPathLinkDAO.removePathToPathLinks(usageLinkId);
             List<PartSubstituteLink> substitutes = partUsageLink.getSubstitutes();
-            for(PartSubstituteLink substituteLink:substitutes){
+            for (PartSubstituteLink substituteLink : substitutes) {
                 String substituteLinkId = substituteLink.getFullId();
                 pathToPathLinkDAO.removePathToPathLinks(substituteLinkId);
             }
@@ -419,20 +418,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 newPartIteration.addAttachedFile(targetFile);
             }
 
-            // Copy usage links
-            // Create new p2p links
-
-            List<PartUsageLink> newComponents = new LinkedList<>();
-            List<PartUsageLink> oldComponents = beforeLastPartIteration.getComponents();
-            for (PartUsageLink usage : oldComponents) {
-                PartUsageLink newUsage = usage.clone();
-                newComponents.add(newUsage);
-            }
-
-            newPartIteration.setComponents(newComponents);
-
-            PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
-            pathToPathLinkDAO.cloneAndUpgradePathToPathLinks(oldComponents, newComponents);
+            newPartIteration.setComponents(new ArrayList<>(beforeLastPartIteration.getComponents()));
 
             for (Geometry sourceFile : beforeLastPartIteration.getGeometries()) {
                 String fileName = sourceFile.getName();
@@ -514,8 +500,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             esIndexer.index(lastIteration);
 
-            if(oldIteration != null && oldIteration.getVersion().equals(partR.getVersion())){
-                removeObsoletePathToPathLinks(user,oldIteration);
+            if (oldIteration != null && oldIteration.getVersion().equals(partR.getVersion())) {
+                removeObsoletePathToPathLinks(user, oldIteration);
             }
 
             partIterationEvent.select(new AnnotationLiteral<CheckedIn>() {
@@ -673,7 +659,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartIteration partI = partR.getIteration(pPartIPK.getIteration());
         if (isCheckoutByUser(user, partR) && partR.getLastIteration().equals(partI)) {
             BinaryResource binaryResource = null;
-            String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + partI.getIteration() + "/" + (subType != null ? subType+"/" : "" ) + pName;
+            String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + partI.getIteration() + "/" + (subType != null ? subType + "/" : "") + pName;
 
             for (BinaryResource bin : partI.getAttachedFiles()) {
                 if (bin.getFullName().equals(fullName)) {
@@ -740,11 +726,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new AccessRightException(locale, user);
         }
 
-        PartMasterDAO partMDAO = new PartMasterDAO(locale, em);
         DocumentLinkDAO linkDAO = new DocumentLinkDAO(locale, em);
         PartIteration partIte = partRev.getLastIteration();
 
         if (isCheckoutByUser(user, partRev) && partIte.getKey().equals(pKey)) {
+
+            // Update linked documents
+
             if (pLinkKeys != null) {
                 Set<DocumentLink> currentLinks = new HashSet<>(partIte.getLinkedDocuments());
 
@@ -763,92 +751,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             }
 
-            if (pUsageLinks != null) {
-
-                // Remove path to path links impacted by this change if any link change
-                // removeObsoletePathToPathLinks(user, partIte);
-
-                // Find part usage links with an id => update them
-                // Find Part usage without id => new Links
-                // Find part usage links with an id but no more in assembly => remove, break links
-
-                PartUsageLinkDAO partUsageLinkDAO = new PartUsageLinkDAO(locale,em);
-
-
-                // Copy current usage links and substitute for potential removal
-                List<PartUsageLink> linksToRemove = new ArrayList<>(partIte.getComponents());
-                List<PartSubstituteLink> subLinksToRemove = new ArrayList<>();
-                for(PartUsageLink partUsageLink: linksToRemove){
-                    subLinksToRemove.addAll(partUsageLink.getSubstitutes());
-                }
-
-                List<PartUsageLink> usageLinks = new LinkedList<>();
-
-                for (PartUsageLink usageLink : pUsageLinks) {
-
-                    PartUsageLink ul;
-
-                    if(usageLink.getId() != 0){
-                        ul = partUsageLinkDAO.loadPartUsageLink(usageLink.getId());
-                        linksToRemove.remove(ul);
-                    }else{
-                        ul = new PartUsageLink();
-                    }
-
-                    ul.setAmount(usageLink.getAmount());
-                    ul.setOptional(usageLink.isOptional());
-                    ul.setCadInstances(usageLink.getCadInstances());
-                    ul.setComment(usageLink.getComment());
-                    ul.setReferenceDescription(usageLink.getReferenceDescription());
-                    ul.setUnit(usageLink.getUnit());
-
-                    PartMaster pm = usageLink.getComponent();
-                    PartMaster component = partMDAO.loadPartM(new PartMasterKey(pm.getWorkspaceId(), pm.getNumber()));
-                    ul.setComponent(component);
-
-                    List<PartSubstituteLink> substitutes = new LinkedList<>();
-
-                    for (PartSubstituteLink substitute : usageLink.getSubstitutes()) {
-
-                        PartSubstituteLink sub;
-
-                        if(substitute.getId() != 0){
-                            sub = partUsageLinkDAO.loadPartSubstituteLink(substitute.getId());
-                            subLinksToRemove.remove(sub);
-                        }else{
-                            sub = new PartSubstituteLink();
-                        }
-
-                        sub.setAmount(substitute.getAmount());
-                        sub.setUnit(substitute.getUnit());
-                        sub.setCadInstances(substitute.getCadInstances());
-                        sub.setComment(substitute.getComment());
-                        sub.setReferenceDescription(substitute.getReferenceDescription());
-                        PartMaster pmSub = substitute.getSubstitute();
-                        sub.setSubstitute(partMDAO.loadPartM(new PartMasterKey(pmSub.getWorkspaceId(), pmSub.getNumber())));
-                        substitutes.add(sub);
-                    }
-                    ul.setSubstitutes(substitutes);
-                    usageLinks.add(ul);
-                }
-
-                partIte.setComponents(usageLinks);
-
-
-                PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(new Locale(user.getLanguage()),em);
-
-                // Remove obsolete path to path links
-                for(PartUsageLink partUsageLink: linksToRemove){
-                    pathToPathLinkDAO.removePathToPathLinks(partUsageLink.getFullId());
-                }
-                for(PartSubstituteLink substituteLink: subLinksToRemove){
-                    pathToPathLinkDAO.removePathToPathLinks(substituteLink.getFullId());
-                }
-
-                checkCyclicAssemblyForPartIteration(partIte);
-
-            }
-
+            // Update attributes
 
             if (pAttributes != null) {
 
@@ -895,15 +798,17 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
             }
 
+            // Update attribute templates
+
             if (pAttributeTemplates != null) {
 
-                LOVDAO lovDAO=new LOVDAO(locale,em);
+                LOVDAO lovDAO = new LOVDAO(locale, em);
 
                 List<InstanceAttributeTemplate> templateAttrs = new ArrayList<>();
-                for(int i=0;i<pAttributeTemplates.size();i++){
+                for (int i = 0; i < pAttributeTemplates.size(); i++) {
                     templateAttrs.add(pAttributeTemplates.get(i));
-                    if(pAttributeTemplates.get(i) instanceof ListOfValuesAttributeTemplate){
-                        ListOfValuesAttributeTemplate lovAttr=(ListOfValuesAttributeTemplate)pAttributeTemplates.get(i);
+                    if (pAttributeTemplates.get(i) instanceof ListOfValuesAttributeTemplate) {
+                        ListOfValuesAttributeTemplate lovAttr = (ListOfValuesAttributeTemplate) pAttributeTemplates.get(i);
                         ListOfValuesKey lovKey = new ListOfValuesKey(user.getWorkspaceId(), lovNames[i]);
                         lovAttr.setLov(lovDAO.loadLOV(lovKey));
                     }
@@ -911,16 +816,146 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 partIte.setInstanceAttributeTemplates(pAttributeTemplates);
             }
 
+            // Update structure
+            if (pUsageLinks != null) {
+
+                List<PartUsageLink> links = new ArrayList<>();
+                for (PartUsageLink usageLink : pUsageLinks) {
+                    PartUsageLink partUsageLink = updatePartLink(user, usageLink, partIte);
+                    links.add(partUsageLink);
+                }
+                partIte.setComponents(links);
+
+                checkCyclicAssemblyForPartIteration(partIte);
+
+            }
+
+            // Set note and date
+
             partIte.setIterationNote(pIterationNote);
-            Date now = new Date();
-            partIte.setModificationDate(now);
+            partIte.setModificationDate(new Date());
             partIte.setSource(source);
-            return partRev;
 
         } else {
             throw new NotAllowedException(locale, "NotAllowedException25");
         }
 
+        return partRev;
+
+    }
+
+    private PartUsageLink updatePartLink(User user, PartUsageLink partUsageLink, PartIteration partIte) throws PartUsageLinkNotFoundException {
+        int id = partUsageLink.getId();
+        PartUsageLink partLink;
+        if (id != 0) {
+
+            PartUsageLinkDAO partUsageLinkDAO = new PartUsageLinkDAO(new Locale(user.getLanguage()), em);
+            PartUsageLink existingLink = partUsageLinkDAO.loadPartUsageLink(id);
+
+            // Recreate if link has change
+            if (compareUsageLink(existingLink, partUsageLink)) {
+                partLink = createNewPartLink(partUsageLink, partIte);
+                dropPartLink(user, existingLink, partIte);
+            }else{
+                partLink = existingLink;
+            }
+
+        } else {
+            partLink = createNewPartLink(partUsageLink, partIte);
+        }
+        return partLink;
+    }
+
+    private PartUsageLink createNewPartLink(PartUsageLink partUsageLink, PartIteration partIte) throws PartUsageLinkNotFoundException {
+
+        PartUsageLink newLink = new PartUsageLink();
+
+        newLink.setAmount(partUsageLink.getAmount());
+        newLink.setOptional(partUsageLink.isOptional());
+        newLink.setCadInstances(partUsageLink.getCadInstances());
+        newLink.setComment(partUsageLink.getComment());
+        newLink.setReferenceDescription(partUsageLink.getReferenceDescription());
+        newLink.setUnit(partUsageLink.getUnit());
+        newLink.setComponent(partUsageLink.getComponent());
+
+        List<PartSubstituteLink> substitutes = new ArrayList<>();
+
+        for (PartSubstituteLink partSubstituteLink : partUsageLink.getSubstitutes()) {
+            PartSubstituteLink newSubstituteLink = new PartSubstituteLink();
+            newSubstituteLink.setAmount(partSubstituteLink.getAmount());
+            newSubstituteLink.setCadInstances(partSubstituteLink.getCadInstances());
+            newSubstituteLink.setComment(partSubstituteLink.getComment());
+            newSubstituteLink.setReferenceDescription(partSubstituteLink.getReferenceDescription());
+            newSubstituteLink.setUnit(partSubstituteLink.getUnit());
+            newSubstituteLink.setSubstitute(partSubstituteLink.getSubstitute());
+            substitutes.add(newSubstituteLink);
+        }
+
+        newLink.setSubstitutes(substitutes);
+
+        em.persist(newLink);
+
+        return newLink;
+    }
+
+    private void dropPartLink(User user, PartUsageLink partUsageLink, PartIteration partIte) {
+        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(new Locale(user.getLanguage()), em);
+        PartIterationDAO partIterationDAO = new PartIterationDAO(new Locale(user.getLanguage()), em);
+        pathToPathLinkDAO.removePathToPathLinks(partUsageLink.getFullId());
+        for (PartSubstituteLink partSubstituteLink : partUsageLink.getSubstitutes()) {
+            pathToPathLinkDAO.removePathToPathLinks(partSubstituteLink.getFullId());
+        }
+        if(!partIterationDAO.partLinkIsUsedInPreviousIteration(partUsageLink,partIte)){
+            em.remove(partUsageLink);
+        }
+    }
+
+    private boolean compareUsageLink(PartLink a, PartLink b) {
+
+        boolean sameComponent = a.getComponent().equals(b.getComponent());
+        boolean sameAmount = a.getAmount() == b.getAmount();
+        boolean sameCode = a.getCode() == b.getCode();
+        boolean sameComment = a.getComment() == null ? b.getComment() == null : a.getComment().equals(b.getComment());
+        boolean sameUnit = a.getUnit() == null ? b.getUnit() == null : a.getUnit().equals(b.getUnit());
+        boolean sameReferenceDescription = a.getReferenceDescription() == null ? b.getReferenceDescription() == null : a.getReferenceDescription().equals(b.getReferenceDescription());
+        boolean sameOptional = a.isOptional() == b.isOptional();
+
+        int sizeA = a.getCadInstances().size();
+        int sizeB = b.getCadInstances().size();
+
+        if (sizeA != sizeB) {
+            return true;
+        }
+
+        for (int i = 0; i < sizeA; i++) {
+            if (compareCadInstance(a.getCadInstances().get(i), b.getCadInstances().get(i))) {
+                return true;
+            }
+        }
+
+        if(a.getSubstitutes() != null && b.getSubstitutes() != null) {
+            int sizeSubstitutesA = a.getSubstitutes().size();
+            int sizeSubstitutesB = b.getSubstitutes().size();
+
+            if (sizeSubstitutesA != sizeSubstitutesB) {
+                return true;
+            }
+
+            for (int j = 0; j < sizeSubstitutesA; j++) {
+                if (compareUsageLink(a.getSubstitutes().get(j), b.getSubstitutes().get(j))) {
+                    return true;
+                }
+            }
+        }
+
+        return !sameComponent || !sameAmount || !sameCode || !sameComment || !sameUnit || !sameReferenceDescription || !sameOptional;
+
+    }
+
+
+    private boolean compareCadInstance(CADInstance a, CADInstance b) {
+        return a.getRx() != b.getRx() || a.getRy() != b.getRy() || a.getRz() != b.getRz()
+                || a.getTx() != b.getTx() || a.getTy() != b.getTy() || a.getTz() != b.getTz();
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
@@ -1562,10 +1597,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
 
-        PartIteration partIteration = new PartIterationDAO(new Locale(user.getLanguage()),em).loadPartI(pPartIPK);
+        PartIteration partIteration = new PartIterationDAO(new Locale(user.getLanguage()), em).loadPartI(pPartIPK);
         PartRevision partR = partIteration.getPartRevision();
 
-        if (isCheckoutByUser(user,partR) && partR.getLastIteration().equals(partIteration)) {
+        if (isCheckoutByUser(user, partR) && partR.getLastIteration().equals(partIteration)) {
 
             BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
             BinaryResource file = binDAO.loadBinaryResource(pName);
@@ -1912,7 +1947,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public List<PartRevision> getPartRevisions(String pWorkspaceId, int start, int pMaxResults) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        List<PartRevision> partRevisions = null;
+        List<PartRevision> partRevisions;
 
         if (pMaxResults == 0) {
             partRevisions = new PartRevisionDAO(new Locale(user.getLanguage()), em).getAllPartRevisions(pWorkspaceId);
@@ -2062,7 +2097,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
         ChangeItemDAO changeItemDAO = new ChangeItemDAO(locale, em);
-        if(changeItemDAO.hasChangeItems(partRevisionKey)) {
+        if (changeItemDAO.hasChangeItems(partRevisionKey)) {
             throw new EntityConstraintException(locale, "EntityConstraintException21");
         }
 
@@ -2880,7 +2915,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
-        ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(locale,em);
+        ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(locale, em);
         ConfigurationItem configurationItem = configurationItemDAO.loadConfigurationItem(ciKey);
 
         ModificationNotificationDAO modificationNotificationDAO = new ModificationNotificationDAO(em);
@@ -2922,7 +2957,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     visitedPartNumbers.add(partMaster.getNumber());
                     List<PartIteration> partIterations = latestPSFilter.filter(partMaster);
                     PartIteration partIteration = partIterations.get(partIterations.size() - 1);
-                    if(modificationNotificationDAO.hasModificationNotifications(partIteration.getKey())){
+                    if (modificationNotificationDAO.hasModificationNotifications(partIteration.getKey())) {
                         hasModificationNotification[0] = true;
                     }
                 }
@@ -2966,22 +3001,23 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public  List<BinaryResource> getBinaryResourceFromBaseline(int baselineId) {
+    public List<BinaryResource> getBinaryResourceFromBaseline(int baselineId) {
         List<BinaryResource> binaryResources = new ArrayList<>();
 
         ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(em);
         for (Map.Entry<BaselinedDocumentKey, BaselinedDocument> doc : productBaselineDAO.findBaselineById(baselineId).getBaselinedDocuments().entrySet()) {
-            for (BinaryResource binary: doc.getValue().getTargetDocument().getAttachedFiles()){
-                if(!binaryResources.contains(binary)){
+            for (BinaryResource binary : doc.getValue().getTargetDocument().getAttachedFiles()) {
+                if (!binaryResources.contains(binary)) {
                     binaryResources.add(binary);
                 }
             }
         }
         return binaryResources;
     }
+
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Map<String, Set<BinaryResource>> getBinariesInTree(Integer baselineId,String workspaceId, ConfigurationItemKey ciKey, PSFilter psFilter, boolean exportNativeCADFiles, boolean exportDocumentLinks) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
+    public Map<String, Set<BinaryResource>> getBinariesInTree(Integer baselineId, String workspaceId, ConfigurationItemKey ciKey, PSFilter psFilter, boolean exportNativeCADFiles, boolean exportDocumentLinks) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Map<String, Set<BinaryResource>> result = new HashMap<>();
@@ -3063,7 +3099,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
                                 Set<BinaryResource> attachedFiles = documentLink.getTargetDocument().getLastIteration().getAttachedFiles();
 
-                                for (BinaryResource binary:attachedFiles) {
+                                for (BinaryResource binary : attachedFiles) {
                                     if (!linkedBinaryResources.contains(binary)) {
                                         linkedBinaryResources.add(binary);
                                     }
@@ -3088,7 +3124,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public ProductBaseline loadProductBaselineForProductInstanceMaster(ConfigurationItemKey ciKey, String serialNumber) throws ProductInstanceMasterNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
-        return new ProductBaselineDAO(new Locale(user.getLanguage()),em).findLastBaselineWithSerialNumber(ciKey, serialNumber);
+        return new ProductBaselineDAO(new Locale(user.getLanguage()), em).findLastBaselineWithSerialNumber(ciKey, serialNumber);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -3113,7 +3149,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PSFilter filter = serialNumber != null ? getPSFilter(ciKey, "pi-" + serialNumber) : getPSFilter(ciKey, "latest");
 
         ProductInstanceIteration productInstanceIteration = null;
-        if(serialNumber != null){
+        if (serialNumber != null) {
             ProductInstanceMaster productIM = new ProductInstanceMasterDAO(em).loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, ciKey));
             productInstanceIteration = productIM.getLastIteration();
         }
@@ -3121,7 +3157,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(ciKey);
         PartMaster root = ci.getDesignItem();
 
-        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale,em);
+        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
         PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(em);
 
         final ProductInstanceIteration finalProductInstanceIteration = productInstanceIteration;
@@ -3173,7 +3209,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     row.setAmount(totalAmount);
 
                     List<PathToPathLink> pathToPathLinkSourceInContext = pathToPathLinkDAO.getPathToPathLinkSourceInContext(ci, finalProductInstanceIteration, pathAsString);
-                    for(PathToPathLink pathToPathLink:pathToPathLinkSourceInContext){
+                    for (PathToPathLink pathToPathLink : pathToPathLinkSourceInContext) {
                         try {
                             List<PartLink> partLinks = decodePath(ciKey, pathToPathLink.getTargetPath());
                             row.addSource(partLinks);
@@ -3184,7 +3220,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     }
 
                     List<PathToPathLink> pathToPathLinkTargetInContext = pathToPathLinkDAO.getPathToPathLinkTargetInContext(ci, finalProductInstanceIteration, pathAsString);
-                    for(PathToPathLink pathToPathLink:pathToPathLinkTargetInContext){
+                    for (PathToPathLink pathToPathLink : pathToPathLinkTargetInContext) {
                         try {
                             List<PartLink> partLinks = decodePath(ciKey, pathToPathLink.getSourcePath());
                             row.addTarget(partLinks);
@@ -3193,9 +3229,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                         }
                     }
 
-                    PathDataIteration pathDataIteration = pathDataIterationDAO.getLastPathDataIteration(pathAsString,finalProductInstanceIteration);
+                    PathDataIteration pathDataIteration = pathDataIterationDAO.getLastPathDataIteration(pathAsString, finalProductInstanceIteration);
 
-                    if(null != pathDataIteration){
+                    if (null != pathDataIteration) {
                         row.setPathDataIteration(pathDataIteration);
                     }
 
@@ -3243,15 +3279,16 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         DocumentRevision documentRevision = new DocumentRevisionDAO(locale, em).loadDocR(docKey);
 
-        DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(locale,em);
+        DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(locale, em);
         List<ProductInstanceIteration> iterations = documentLinkDAO.getInverseProductInstanceIteration(documentRevision);
         Set<ProductInstanceMaster> productInstanceMasterSet = new HashSet<>();
-        for (ProductInstanceIteration productInstanceIteration:iterations){
+        for (ProductInstanceIteration productInstanceIteration : iterations) {
             productInstanceMasterSet.add(productInstanceIteration.getProductInstanceMaster());
 
         }
         return productInstanceMasterSet;
     }
+
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public Set<PathDataMaster> getInversePathDataLink(DocumentRevisionKey docKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, PartIterationNotFoundException, PartRevisionNotFoundException {
@@ -3261,10 +3298,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         DocumentRevision documentRevision = new DocumentRevisionDAO(locale, em).loadDocR(docKey);
 
-        DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(locale,em);
+        DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(locale, em);
         List<PathDataIteration> pathDataIterations = documentLinkDAO.getInversefindPathData(documentRevision);
         Set<PathDataMaster> productInstanceMasterSet = new HashSet<>();
-        for (PathDataIteration pathDataIteration :pathDataIterations){
+        for (PathDataIteration pathDataIteration : pathDataIterations) {
             productInstanceMasterSet.add(pathDataIteration.getPathDataMaster());
 
         }
@@ -3336,17 +3373,17 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public ProductInstanceMaster findProductByPathMaster(String workspaceId,PathDataMaster pathDataMaster) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public ProductInstanceMaster findProductByPathMaster(String workspaceId, PathDataMaster pathDataMaster) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        PathDataMasterDAO pathDataMasterDAO = new PathDataMasterDAO(new Locale(user.getLanguage()),em);
+        PathDataMasterDAO pathDataMasterDAO = new PathDataMasterDAO(new Locale(user.getLanguage()), em);
         return pathDataMasterDAO.findByPathData(pathDataMaster);
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public PartMaster getPartMasterFromPath(String workspaceId,String configurationItemId, String partPath) throws ConfigurationItemNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException {
+    public PartMaster getPartMasterFromPath(String workspaceId, String configurationItemId, String partPath) throws ConfigurationItemNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException {
         ConfigurationItem configurationItem = new ConfigurationItemDAO(em).loadConfigurationItem(new ConfigurationItemKey(workspaceId, configurationItemId));
-        List<PartLink> partLinks = decodePath(configurationItem.getKey(),partPath);
+        List<PartLink> partLinks = decodePath(configurationItem.getKey(), partPath);
         return partLinks.get(partLinks.size() - 1).getComponent();
     }
 

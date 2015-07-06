@@ -58,7 +58,7 @@ casper.test.begin('Path to path link check tests suite', 26, function pathToPath
      */
     casper.then(function openCreationModal() {
         this.click('#typed_link_btn');
-        this.waitForSelector('.modal.typed-link-modal', function modalIsDisplayed() {
+        this.waitForSelector('.modal.typed-link-modal #path-to-path-links > .well', function modalIsDisplayed() {
             this.test.assertElementCount('#path-to-path-links > .well', 1, 'One path to path link should be present');
         });
     });

@@ -150,7 +150,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     private List<InstanceAttributeTemplate> instanceAttributeTemplates=new ArrayList<>();
 
     @OrderColumn(name="COMPONENT_ORDER")
-    @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @OneToMany(fetch=FetchType.LAZY)
     @JoinTable(name="PARTITERATION_PARTUSAGELINK",
     inverseJoinColumns={
         @JoinColumn(name="COMPONENT_ID", referencedColumnName="ID")

@@ -207,4 +207,8 @@ public class PartUsageLink implements Serializable, Cloneable, PartLink {
 
         return clone;
     }
+
+    public void addSubstitute(PartSubstituteLink partSubstituteLink) {
+        substitutes.add(partSubstituteLink);
+    }
 }

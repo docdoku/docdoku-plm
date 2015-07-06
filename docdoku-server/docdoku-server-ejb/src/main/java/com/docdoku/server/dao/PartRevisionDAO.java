@@ -25,9 +25,7 @@ import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.PartRevisionAlreadyExistsException;
 import com.docdoku.core.exceptions.PartRevisionNotFoundException;
 import com.docdoku.core.meta.Tag;
-import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartRevisionKey;
+import com.docdoku.core.product.*;
 import com.docdoku.core.query.SearchQuery;
 
 import javax.persistence.EntityExistsException;
@@ -73,6 +71,11 @@ public class PartRevisionDAO {
         new SharedEntityDAO(em).deleteSharesForPart(pPartR);
         new WorkflowDAO(em).removeWorkflowConstraints(pPartR);
         new ConversionDAO(em).removePartRevisionConversions(pPartR);
+        for(PartIteration partIteration:pPartR.getPartIterations()){
+            for(PartUsageLink partUsageLink:partIteration.getComponents()){
+                em.remove(partUsageLink);
+            }
+        }
         em.remove(pPartR);
     }
 
