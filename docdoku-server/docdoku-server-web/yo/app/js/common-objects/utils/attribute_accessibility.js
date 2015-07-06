@@ -58,7 +58,7 @@ define(function () {
 
                 //Prototype is already in open mode
                 //no need to redefine.
-                default: break;
+                default:
             }
 
             return proto;

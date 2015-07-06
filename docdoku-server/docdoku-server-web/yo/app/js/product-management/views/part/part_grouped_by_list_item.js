@@ -61,7 +61,6 @@ define([
                         _.each(documents,function(document){
                             var lastDash = document.lastIndexOf('-');
                             var idAndVersion = document.substr(0, lastDash);
-                            var iteration = document.substr(lastDash+1);
 
                             lastDash = idAndVersion.lastIndexOf('-');
                             var id = idAndVersion.substr(0, lastDash);
@@ -82,7 +81,7 @@ define([
                     isPartNumber : isPartNumber,
                     isStringValue : isStringValue,
                     isLinkedDocuments : isLinkedDocuments,
-                    value : isStringValue ? value.split("\n") : value
+                    value : isStringValue ? value.split('\n') : value
                 };
 
                 itemOrdered.push(itemColumn);
