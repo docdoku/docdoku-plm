@@ -18,7 +18,7 @@ define([
 
         initialize: function(){
             this.model = this.options.model;
-            this.isCreationMode = this.model.isCreationMode;
+            this.creationMode = this.model.creationMode;
 
             if(!this.model.pathToPath){
                 this.model.pathToPath = {
@@ -32,7 +32,7 @@ define([
 
             var data = {
                 i18n: App.config.i18n,
-                isCreationMode : this.model.isCreationMode,
+                creationMode : this.model.creationMode,
                 canSuppress : ['wip','latest','latest-released'].indexOf(App.config.configSpec)!==-1,
                 source : this.model.sourceModel,
                 target : this.model.targetModel,
@@ -67,7 +67,7 @@ define([
         },
 
         onDeleteItem : function(){
-            if(this.model.isCreationMode){
+            if(this.model.creationMode){
                 this.remove();
             }else{
                 var self = this;
@@ -120,8 +120,8 @@ define([
                 data : JSON.stringify(data),
                 success:function(pathToPathLink){
                     self.model.pathToPath.id = pathToPathLink.id;
-                    self.model.isCreationMode = false;
-                    self.isCreationMode = false;
+                    self.model.creationMode = false;
+                    self.creationMode = false;
                     self.render();
                     callback();
                 },

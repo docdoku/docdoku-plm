@@ -143,7 +143,7 @@ define([
                             sourceModel : self.pathSelected[0].getEncodedPath() === pathToPathLinkDTO.sourcePath ? self.pathSelected[0] : self.pathSelected[1],
                             targetModel : self.pathSelected[1].getEncodedPath() === pathToPathLinkDTO.targetPath ? self.pathSelected[1] : self.pathSelected[0],
                             pathToPath : pathToPathLinkDTO,
-                            isCreationMode : false,
+                            creationMode : false,
                             availableType : self.availableType,
                             productId : self.productId,
                             serialNumber : self.serialNumber,
@@ -177,7 +177,7 @@ define([
             var _this = this;
 
             Async.each(this.typedLinkItemViews, function(typedLinkItemView, callback) {
-                if (typedLinkItemView.isCreationMode) {
+                if (typedLinkItemView.creationMode) {
                     if (!typedLinkItemView.determineType()) {
                         typedLinkItemView.showNotification('error', 'You cannot create a link without a type');
                     } else {
@@ -199,7 +199,7 @@ define([
                 model:{
                     sourceModel : this.pathSelected[0],
                     targetModel : this.pathSelected[1],
-                    isCreationMode : true,
+                    creationMode : true,
                     availableType : this.availableType,
                     productId : this.productId,
                     serialNumber : this.serialNumber,

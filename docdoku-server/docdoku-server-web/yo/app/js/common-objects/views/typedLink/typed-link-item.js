@@ -25,7 +25,7 @@ define([
             console.log(this.model)
             var data = {
                 i18n: App.config.i18n,
-                isCreationMode : this.model.isCreationMode,
+                creationMode : this.model.creationMode,
                 sourceComponents : this.model.pathToPath.sourceComponents,
                 targetComponents : this.model.pathToPath.targetComponents,
                 availableType: this.model.availableType,
