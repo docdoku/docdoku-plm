@@ -77,7 +77,7 @@ casper.test.begin('Product creation tests suite', 3, function productCreationTes
         this.click('#product_creation_modal .btn-primary');
         this.waitForSelector('#product_table .product_id', function productHasBeenCreated() {
             this.test.assertSelectorHasText('#product_table tbody tr:first-child td.product_id', products.product1.number);
-            this.test.assertSelectorHasText('#product_table tbody tr:first-child td:nth-child(3)', products.part1.number);
+            this.test.assertSelectorHasText('#product_table tbody tr:first-child td:nth-child(4)', products.part1.number);
         }, function fail() {
             this.capture('screenshot/productCreation/waitForProductToBeCreated-error.png');
             this.test.assert(false, 'New product created can not be found');
