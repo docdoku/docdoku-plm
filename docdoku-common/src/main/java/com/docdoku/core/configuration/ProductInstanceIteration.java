@@ -114,7 +114,7 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     private ProductBaseline basedOn;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "PRDINSTITERATION_PATHDATAMASTER",
+    @JoinTable(name = "PRDINSTITERATION_PATHDATAMSTR",
             inverseJoinColumns = {
                     @JoinColumn(name = "PATHDATAMASTER_ID", referencedColumnName = "ID")
             },
