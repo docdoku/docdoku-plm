@@ -24,6 +24,9 @@ import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.query.SearchQuery;
 
+import javax.ws.rs.core.MultivaluedMap;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -138,7 +141,7 @@ public class SearchQueryParser {
 
     }
 
-    public static PartSearchQuery parsePartStringQuery(String workspaceId , String pQuery){
+    public static PartSearchQuery parsePartStringQuery(String workspaceId , MultivaluedMap<String,String> query){
         String fullText = null;
         String pNumber = null;
         String pName = null;
@@ -153,66 +156,70 @@ public class SearchQueryParser {
         String[] pTags = null;
         Boolean standardPart = null;
 
-        String[] query = pQuery.split("&");
-
-        for(String filters : query){
-            String[] filter = filters.split("=");
-            if(filter.length == 2){
-                switch (filter[0]){
+        for(String filter : query.keySet()){
+            List<String> values = query.get(filter);
+            if(values.size() == 1) {
+                String value = null;
+                try {
+                    value = URLDecoder.decode(values.get(0), "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                switch (filter) {
                     case "q" :
-                        fullText = filter[1];
+                        fullText = value;
                         break;
-                    case "number" :
-                        pNumber = filter[1];
+                    case "number":
+                        pNumber = value;
                         break;
                     case "name" :
-                        pName = filter[1];
+                        pName = value;
                         break;
                     case "version" :
-                        pVersion = filter[1];
+                        pVersion = value;
                         break;
                     case "author" :
-                        pAuthor = filter[1];
+                        pAuthor = value;
                         break;
                     case "type" :
-                        pType = filter[1];
+                        pType = value;
                         break;
                     case "createdFrom" :
                         try {
-                            pCreationDateFrom =  SIMPLE_DATE_FORMAT.parse(filter[1]);
+                            pCreationDateFrom =  SIMPLE_DATE_FORMAT.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "createdTo" :
                         try {
-                            pCreationDateTo =  SIMPLE_DATE_FORMAT.parse(filter[1]);
+                            pCreationDateTo =  SIMPLE_DATE_FORMAT.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "modifiedFrom" :
                         try {
-                            pModificationDateFrom =  SIMPLE_DATE_FORMAT.parse(filter[1]);
+                            pModificationDateFrom =  SIMPLE_DATE_FORMAT.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "modifiedTo" :
                         try {
-                            pModificationDateTo =  SIMPLE_DATE_FORMAT.parse(filter[1]);
+                            pModificationDateTo =  SIMPLE_DATE_FORMAT.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "tags" :
-                        pTags = filter[1].split(",");
+                        pTags = value.split(",");
                         break;
                     case "standardPart" :
-                        standardPart = Boolean.valueOf(filter[1]);
+                        standardPart = Boolean.valueOf(value);
                         break;
-                    case "attributes" :
-                        pAttributes = parseAttributeStringQuery(filter[1]);
+                    case "attributes":
+                        pAttributes = parseAttributeStringQuery(value);
                         break;
                 }
             }

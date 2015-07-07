@@ -52,9 +52,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 import java.util.*;
 
 @Stateless
@@ -138,12 +136,12 @@ public class PartsResource {
     }
 
     @GET
-    @Path("search/{query : .+}")
+    @Path("search")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PartDTO> searchPartRevisions(@PathParam("workspaceId") String workspaceId, @PathParam("query") @Encoded String pStringQuery)
+    public List<PartDTO> searchPartRevisions(@Context UriInfo uri,@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, ESServerException, UserNotActiveException, AccessRightException {
 
-        PartSearchQuery partSearchQuery = SearchQueryParser.parsePartStringQuery(workspaceId, pStringQuery);
+        PartSearchQuery partSearchQuery = SearchQueryParser.parsePartStringQuery(workspaceId, uri.getQueryParameters());
 
         List<PartRevision> partRevisions = productService.searchPartRevisions(partSearchQuery);
         List<PartDTO> partDTOs = new ArrayList<>();

@@ -157,7 +157,7 @@ define([
             var queryString = '';
 
             if (number) {
-                queryString += 'number=' + number;
+                queryString += '&number=' + number;
             }
             if (name) {
                 queryString += '&name=' + name;
@@ -202,7 +202,8 @@ define([
                 // remove last '+'
                 queryString = queryString.substr(0, queryString.length - 1);
             }
-
+            //replace first occurence of & to ?
+            queryString = queryString.replace('&','?');
             return queryString;
 
         }
