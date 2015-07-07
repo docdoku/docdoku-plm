@@ -156,11 +156,6 @@ define([
                         var typedLinkItemView = new TypedLinkItemView({model:pathToPathLink}).render();
                         self.$('#path-to-path-links').append(typedLinkItemView.el);
                         self.typedLinkItemViews.push(typedLinkItemView);
-
-                        typedLinkItemView.on('remove', function(){
-                            self.existingPathToPathLinkCollection.splice(self.existingPathToPathLinkCollection.indexOf(pathToPathLink),1);
-                            self.typedLinkItemViews.without(typedLinkItemView);
-                        });
                     });
 
                 },
@@ -177,12 +172,21 @@ define([
             var _this = this;
 
             Async.each(this.typedLinkItemViews, function(typedLinkItemView, callback) {
+
                 if (typedLinkItemView.creationMode) {
-                    if (!typedLinkItemView.determineType()) {
-                        typedLinkItemView.showNotification('error', 'You cannot create a link without a type');
-                    } else {
+                    if (typedLinkItemView.deleted) {
+                        callback();
+
+                    } else if (typedLinkItemView.determineType()) {
                         typedLinkItemView.onSave(callback);
+
+                    } else {
+                        typedLinkItemView.showNotification('error', 'You cannot create a link without a type');
                     }
+
+                } else if (typedLinkItemView.deleted) {
+                    typedLinkItemView.onDelete(callback);
+
                 } else {
                     callback();
                 }

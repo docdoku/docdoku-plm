@@ -19,6 +19,7 @@ define([
         initialize: function(){
             this.model = this.options.model;
             this.creationMode = this.model.creationMode;
+            this.deleted = false;
 
             if(!this.model.pathToPath){
                 this.model.pathToPath = {
@@ -66,36 +67,27 @@ define([
             this.render();
         },
 
-        onDeleteItem : function(){
-            if(this.model.creationMode){
-                this.remove();
-            }else{
-                var self = this;
-                var urlToDelete = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.model.productId + '/path-to-path-links/' + this.model.pathToPath.id;
-                $.ajax({
-                    type: 'DELETE',
-                    url: urlToDelete,
-                    contentType: 'application/json',
-                    success:function(){
-                        self.remove();
-                    },
-                    error: function(errorMessage){
-                        self.showNotification('error', errorMessage.responseText);
-                    }
-                });
-            }
+        onDeleteItem : function() {
+            this.remove();
+            this.deleted = true;
         },
 
-        determineType: function () {
-            this.model.pathToPath.type = this.$('.type-select').val() !== ''? this.$('.type-select').val() : this.$('.add-type-input').val();
-            return this.model.pathToPath.type;
-        },
+        onDelete : function (callback) {
+            var self = this;
+            var urlToDelete = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.model.productId + '/path-to-path-links/' + this.model.pathToPath.id;
 
-        showNotification: function (type, message) {
-            this.$('.error-div').append(new AlertView({
-                type: type,
-                message: message
-            }).render().$el);
+            $.ajax({
+                type: 'DELETE',
+                url: urlToDelete,
+                contentType: 'application/json',
+                success: function() {
+                    self.remove();
+                    callback();
+                },
+                error: function(errorMessage) {
+                    self.showNotification('error', errorMessage.responseText);
+                }
+            });
         },
 
         onSave: function (callback) {
@@ -118,18 +110,30 @@ define([
                 dataType:'json',
                 contentType: 'application/json',
                 data : JSON.stringify(data),
-                success:function(pathToPathLink){
+                success: function(pathToPathLink) {
                     self.model.pathToPath.id = pathToPathLink.id;
                     self.model.creationMode = false;
                     self.creationMode = false;
                     self.render();
                     callback();
                 },
-                error: function(errorMessage){
+                error: function(errorMessage) {
                     self.showNotification('error', errorMessage.responseText);
                 }
             });
 
+        },
+
+        determineType: function () {
+            this.model.pathToPath.type = this.$('.type-select').val() !== ''? this.$('.type-select').val() : this.$('.add-type-input').val();
+            return this.model.pathToPath.type;
+        },
+
+        showNotification: function (type, message) {
+            this.$('.error-div').append(new AlertView({
+                type: type,
+                message: message
+            }).render().$el);
         }
 
     });
