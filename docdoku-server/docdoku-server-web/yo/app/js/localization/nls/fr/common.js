@@ -554,7 +554,6 @@ define({
 	TRANSFORM_CONTROLS: "Transformation",
 	TRUE: "Oui",
 	TYPE: "Type",
-    TYPED_LINK:"Lien typé",
     TYPED_LINKS:"Liens typés",
     UDF_DEF:'Fonction',
 	UNDO_CHECKOUT: "Annuler la réservation",
