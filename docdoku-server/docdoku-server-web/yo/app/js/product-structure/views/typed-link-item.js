@@ -13,7 +13,9 @@ define([
 
         events:{
             'click .invert-source-target' : 'onInvertSourceTarget',
-            'click .delete-item' : 'onDeleteItem'
+            'click .delete-item' : 'onDeleteItem',
+            'change select.type-select': 'onSelectType',
+            'focus input.add-type-input': 'onInputType'
         },
 
         initialize: function(){
@@ -68,9 +70,17 @@ define([
             this.render();
         },
 
-        onDeleteItem : function() {
+        onDeleteItem: function() {
             this.remove();
             this.deleted = true;
+        },
+
+        onSelectType: function () {
+            this.$('.add-type-input').val("");
+        },
+
+        onInputType: function () {
+            this.$('.type-select').val("");
         },
 
         save: function (callback) {
@@ -136,6 +146,7 @@ define([
                 success: function(pathToPathLink) {
                     self.model.pathToPath.id = pathToPathLink.id;
                     self.model.creationMode = false;
+                    self.creationMode = false;
                     self.render();
                     callback();
                 },
