@@ -138,9 +138,9 @@ public class PartsResource {
     }
 
     @GET
-    @Path("search/{query}")
+    @Path("search/{query : .+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PartDTO> searchPartRevisions(@PathParam("workspaceId") String workspaceId, @PathParam("query") String pStringQuery)
+    public List<PartDTO> searchPartRevisions(@PathParam("workspaceId") String workspaceId, @PathParam("query") @Encoded String pStringQuery)
             throws EntityNotFoundException, ESServerException, UserNotActiveException, AccessRightException {
 
         PartSearchQuery partSearchQuery = SearchQueryParser.parsePartStringQuery(workspaceId, pStringQuery);

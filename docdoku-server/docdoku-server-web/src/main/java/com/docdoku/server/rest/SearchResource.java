@@ -49,7 +49,7 @@ public class SearchResource {
     public SearchResource() {
     }
 
-    @Path("{query}/documents/")
+    @Path("{query : .+}/documents/")
     public DocumentsResource getDocumentsResource() {
         return documentsResource;
     }

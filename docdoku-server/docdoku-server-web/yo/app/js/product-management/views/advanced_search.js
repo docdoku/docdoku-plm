@@ -107,7 +107,7 @@ define([
         onSubmitForm: function () {
             var queryString = this.constructQueryString();
             if (queryString) {
-                App.router.navigate(App.config.workspaceId + '/parts-search/' + queryString, {trigger: true});
+                App.router.navigate(App.config.workspaceId + '/parts-search/' + encodeURIComponent(queryString), {trigger: true});
                 this.closeModal();
             }
             return false;
@@ -196,7 +196,7 @@ define([
                     var type = attribute.get('type');
                     var name = attribute.get('name');
                     var value = attribute.get('value');
-                    value = type === 'BOOLEAN' ? (value ? '1' : '0') : value;
+                    value = type === 'BOOLEAN' ? (value ? 'true' : 'false') : value;
                     queryString += type + ':' + name + ':' + value + ';';
                 });
                 // remove last '+'

@@ -331,17 +331,17 @@ public class ESSearcher {
             ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.MODIFICATION_DATE_KEY).to(searchQuery.getModificationDateTo()));
         }
         if (searchQuery.getAttributes() != null) {
-            for (PartSearchQuery.AbstractAttributeQuery attr : searchQuery.getAttributes()) {
-                if (attr instanceof PartSearchQuery.DateAttributeQuery) {
-                    ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(attr.getNameWithoutWhiteSpace()).from(((PartSearchQuery.DateAttributeQuery) attr).getFromDate()).to(((PartSearchQuery.DateAttributeQuery) attr).getToDate()));
-                } else if (attr instanceof PartSearchQuery.TextAttributeQuery) {
-                    ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(attr.getNameWithoutWhiteSpace()).likeText(((PartSearchQuery.TextAttributeQuery) attr).getTextValue()));
-                } else if (attr instanceof PartSearchQuery.NumberAttributeQuery) {
-                    ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(attr.getNameWithoutWhiteSpace()).likeText("" + ((PartSearchQuery.NumberAttributeQuery) attr).getNumberValue()));
-                } else if (attr instanceof PartSearchQuery.BooleanAttributeQuery) {
-                    ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(attr.getNameWithoutWhiteSpace()).likeText("" + ((PartSearchQuery.BooleanAttributeQuery) attr).isBooleanValue()));
-                } else if (attr instanceof PartSearchQuery.URLAttributeQuery) {
-                    ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(attr.getNameWithoutWhiteSpace()).likeText(((PartSearchQuery.URLAttributeQuery) attr).getUrlValue()));
+            for (SearchQuery.AbstractAttributeQuery attr : searchQuery.getAttributes()) {
+                if (attr instanceof SearchQuery.DateAttributeQuery) {
+                    ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(attr.getNameWithoutWhiteSpace()).from(((SearchQuery.DateAttributeQuery) attr).getFromDate()).to(((SearchQuery.DateAttributeQuery) attr).getToDate()));
+                } else if (attr instanceof SearchQuery.TextAttributeQuery) {
+                    ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), ((SearchQuery.TextAttributeQuery) attr).getTextValue()));
+                } else if (attr instanceof SearchQuery.NumberAttributeQuery) {
+                    ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), "" + ((SearchQuery.NumberAttributeQuery) attr).getNumberValue()));
+                } else if (attr instanceof SearchQuery.BooleanAttributeQuery) {
+                    ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), "" + ((SearchQuery.BooleanAttributeQuery) attr).isBooleanValue()));
+                } else if (attr instanceof SearchQuery.URLAttributeQuery) {
+                    ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), ((SearchQuery.URLAttributeQuery) attr).getUrlValue()));
                 }
             }
         }
@@ -405,29 +405,29 @@ public class ESSearcher {
                 ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.TYPE_KEY).likeText(query.getType()));
             }
             if (query.getCreationDateFrom() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.CREATION_DATE_KEY).from(query.getCreationDateFrom()));
+                ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.CREATION_DATE_KEY).from(query.getCreationDateFrom().getTime()));
             }
             if (query.getCreationDateTo() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.CREATION_DATE_KEY).to(query.getCreationDateTo()));
+                ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.CREATION_DATE_KEY).to(query.getCreationDateTo().getTime()));
             }
             if (query.getModificationDateFrom() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.MODIFICATION_DATE_KEY).from(query.getModificationDateFrom()));
+                ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.MODIFICATION_DATE_KEY).from(query.getModificationDateFrom().getTime()));
             }
             if (query.getModificationDateTo() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.MODIFICATION_DATE_KEY).to(query.getModificationDateTo()));
+                ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.MODIFICATION_DATE_KEY).to(query.getModificationDateTo().getTime()));
             }
             if (query.getAttributes() != null) {
-                for (PartSearchQuery.AbstractAttributeQuery attr : query.getAttributes()) {
-                    if (attr instanceof PartSearchQuery.DateAttributeQuery) {
-                        ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(attr.getNameWithoutWhiteSpace()).from(((PartSearchQuery.DateAttributeQuery) attr).getFromDate()).to(((PartSearchQuery.DateAttributeQuery) attr).getToDate()));
-                    } else if (attr instanceof PartSearchQuery.TextAttributeQuery) {
-                        ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(attr.getNameWithoutWhiteSpace()).likeText(((PartSearchQuery.TextAttributeQuery) attr).getTextValue()));
-                    } else if (attr instanceof PartSearchQuery.NumberAttributeQuery) {
-                        ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(attr.getNameWithoutWhiteSpace()).likeText("" + ((PartSearchQuery.NumberAttributeQuery) attr).getNumberValue()));
-                    } else if (attr instanceof PartSearchQuery.BooleanAttributeQuery) {
-                        ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(attr.getNameWithoutWhiteSpace()).likeText("" + ((PartSearchQuery.BooleanAttributeQuery) attr).isBooleanValue()));
-                    } else if (attr instanceof PartSearchQuery.URLAttributeQuery) {
-                        ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(attr.getNameWithoutWhiteSpace()).likeText(((PartSearchQuery.URLAttributeQuery) attr).getUrlValue()));
+                for (SearchQuery.AbstractAttributeQuery attr : query.getAttributes()) {
+                    if (attr instanceof SearchQuery.DateAttributeQuery) {
+                        ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), ((SearchQuery.DateAttributeQuery) attr).getFromDate().getTime()));
+                    } else if (attr instanceof SearchQuery.TextAttributeQuery) {
+                        ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), ((SearchQuery.TextAttributeQuery) attr).getTextValue()));
+                    } else if (attr instanceof SearchQuery.NumberAttributeQuery) {
+                        ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), "" + ((SearchQuery.NumberAttributeQuery) attr).getNumberValue()));
+                    } else if (attr instanceof SearchQuery.BooleanAttributeQuery) {
+                        ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), "" + ((SearchQuery.BooleanAttributeQuery) attr).isBooleanValue()));
+                    } else if (attr instanceof SearchQuery.URLAttributeQuery) {
+                        ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), ((SearchQuery.URLAttributeQuery) attr).getUrlValue()));
                     }
                 }
             }

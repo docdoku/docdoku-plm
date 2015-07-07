@@ -22,6 +22,7 @@ package com.docdoku.server.rest.util;
 
 import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.query.PartSearchQuery;
+import com.docdoku.core.query.SearchQuery;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -33,11 +34,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SearchQueryParser {
+
     private SearchQueryParser(){
         super();
     }
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private static final Logger LOGGER = Logger.getLogger(SearchQueryParser.class.getName());
+    private static final String ATTRIBUTES_DELIMITER = ";";
+    private static final String ATTRIBUTES_SPLITTER = ":";
+    private static final String FILTERS_DELIMITER = "=";
+    private static final String QUERY_DELIMITER = "&";
 
     public static DocumentSearchQuery parseDocumentStringQuery(String workspaceId , String pQuery){
         String fullText = null;
@@ -54,10 +60,10 @@ public class SearchQueryParser {
         String[] pTags = null;
         String pContent = null;
 
-        String[] query = pQuery.split("&");
+        String[] query = pQuery.split(QUERY_DELIMITER);
 
         for(String filters : query){
-            String[] filter = filters.split("=");
+            String[] filter = filters.split(FILTERS_DELIMITER);
             if(filter.length == 2){
                 switch (filter[0]){
                     case "q" :
@@ -113,7 +119,7 @@ public class SearchQueryParser {
                         pContent = filter[1];
                         break;
                     case "attributes" :
-                        pAttributes = parseDocumentAttributeStringQuery(filter[1]);
+                        pAttributes = parseAttributeStringQuery(filter[1]);
                         break;
                     default:
                         break;
@@ -130,6 +136,7 @@ public class SearchQueryParser {
                 pAttributesArray, pTags, pContent);
 
     }
+
     public static PartSearchQuery parsePartStringQuery(String workspaceId , String pQuery){
         String fullText = null;
         String pNumber = null;
@@ -204,7 +211,7 @@ public class SearchQueryParser {
                         standardPart = Boolean.valueOf(filter[1]);
                         break;
                     case "attributes" :
-                        pAttributes = parsePartAttributeStringQuery(filter[1]);
+                        pAttributes = parseAttributeStringQuery(filter[1]);
                         break;
                 }
             }
@@ -218,81 +225,55 @@ public class SearchQueryParser {
 
     }
 
-    private static List<DocumentSearchQuery.AbstractAttributeQuery> parseDocumentAttributeStringQuery(String attributeQuery){
-        List<DocumentSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<>();
-        String[] attributesString = attributeQuery.split(";");
-        for(String attributeString : attributesString){
-            String[] attribute = attributeString.split(":");
-            if(attribute.length == 3){
-                switch(attribute[0]){
-                    case "BOOLEAN" :
-                        DocumentSearchQuery.BooleanAttributeQuery baq = new DocumentSearchQuery.BooleanAttributeQuery(attribute[1],Boolean.valueOf(attribute[2]));
-                        pAttributes.add(baq);
-                        break;
-                    case "DATE" :
-                        DocumentSearchQuery.DateAttributeQuery daq = new DocumentSearchQuery.DateAttributeQuery();
-                        daq.setName(attribute[1]);
-                        daq.setFromDate(new Date(Long.valueOf(attribute[2])));
-                        pAttributes.add(daq);
-                        break;
-                    case "TEXT" :
-                        DocumentSearchQuery.TextAttributeQuery taq = new DocumentSearchQuery.TextAttributeQuery(attribute[1],attribute[2]);
-                        pAttributes.add(taq);
-                        break;
-                    case "NUMBER" :
-                        try {
-                            DocumentSearchQuery.NumberAttributeQuery naq = new DocumentSearchQuery.NumberAttributeQuery(attribute[1], NumberFormat.getInstance().parse(attribute[2]).floatValue());
-                            pAttributes.add(naq);
-                        } catch (ParseException e) {
-                            LOGGER.log(Level.INFO, null, e);
-                        }
-                        break;
-                    default:
-                        break;
+    private static List<SearchQuery.AbstractAttributeQuery> parseAttributeStringQuery(String attributeQuery){
+        List<SearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<>();
+        String[] attributesString = attributeQuery.split(ATTRIBUTES_DELIMITER);
 
-                }
-            }
-        }
-        return  pAttributes;
-    }
-
-    private static List<PartSearchQuery.AbstractAttributeQuery> parsePartAttributeStringQuery(String attributeQuery){
-        List<PartSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<>();
-        String[] attributesString = attributeQuery.split(";");
         for(String attributeString : attributesString){
-            String[] attribute = attributeString.split(":");
-            if(attribute.length == 3){
-                switch(attribute[0]){
-                    case "BOOLEAN" :
-                        PartSearchQuery.BooleanAttributeQuery baq = new PartSearchQuery.BooleanAttributeQuery(attribute[1],Boolean.valueOf(attribute[2]));
-                        pAttributes.add(baq);
-                        break;
-                    case "DATE" :
-                        PartSearchQuery.DateAttributeQuery daq = new PartSearchQuery.DateAttributeQuery();
-                        daq.setName(attribute[1]);
-                        daq.setFromDate(new Date(Long.valueOf(attribute[2])));
+
+            int firstColon = attributeString.indexOf(ATTRIBUTES_SPLITTER);
+            String attributeType = attributeString.substring(0,firstColon);
+            attributeString = attributeString.substring(firstColon+1);
+
+            int secondColon = attributeString.indexOf(ATTRIBUTES_SPLITTER);
+            String attributeName = attributeString.substring(0,secondColon);
+            String attributeValue = attributeString.substring(secondColon+1);
+
+            switch(attributeType){
+                case "BOOLEAN" :
+                    SearchQuery.BooleanAttributeQuery baq = new SearchQuery.BooleanAttributeQuery(attributeName,Boolean.valueOf(attributeValue));
+                    pAttributes.add(baq);
+                    break;
+                case "DATE" :
+                    SearchQuery.DateAttributeQuery daq = new SearchQuery.DateAttributeQuery();
+                    daq.setName(attributeName);
+                    try {
+                        daq.setFromDate(simpleDateFormat.parse(attributeValue));
                         pAttributes.add(daq);
-                        break;
-                    case "TEXT" :
-                        PartSearchQuery.TextAttributeQuery taq = new PartSearchQuery.TextAttributeQuery(attribute[1],attribute[2]);
-                        pAttributes.add(taq);
-                        break;
-                    case "NUMBER" :
-                        try {
-                            PartSearchQuery.NumberAttributeQuery naq = new PartSearchQuery.NumberAttributeQuery(attribute[1], NumberFormat.getInstance().parse(attribute[2]).floatValue());
-                            pAttributes.add(naq);
-                        } catch (ParseException e) {
-                            LOGGER.log(Level.INFO, null, e);
-                        }
-                        break;
-                    case "URL" :
-                        PartSearchQuery.URLAttributeQuery uaq = new PartSearchQuery.URLAttributeQuery(attribute[0],attribute[1]);
-                        pAttributes.add(uaq);
-                        break;
-                    default :
-                        break;
-                }
+                    } catch (ParseException e) {
+                        LOGGER.log(Level.FINEST,null,e);
+                    }
+                    break;
+                case "TEXT" :
+                    SearchQuery.TextAttributeQuery taq = new SearchQuery.TextAttributeQuery(attributeName,attributeValue);
+                    pAttributes.add(taq);
+                    break;
+                case "NUMBER" :
+                    try {
+                        SearchQuery.NumberAttributeQuery naq = new SearchQuery.NumberAttributeQuery(attributeName, NumberFormat.getInstance().parse(attributeValue).floatValue());
+                        pAttributes.add(naq);
+                    } catch (ParseException e) {
+                        LOGGER.log(Level.INFO, null, e);
+                    }
+                    break;
+                case "URL" :
+                    SearchQuery.URLAttributeQuery uaq = new SearchQuery.URLAttributeQuery(attributeName,attributeValue);
+                    pAttributes.add(uaq);
+                    break;
+                default :
+                    break;
             }
+
         }
         return  pAttributes;
     }
