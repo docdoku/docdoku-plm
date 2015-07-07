@@ -22,11 +22,12 @@ define([
 
         render: function () {
 
+            console.log(this.model)
             var data = {
                 i18n: App.config.i18n,
                 isCreationMode : this.model.isCreationMode,
-                source : this.model.source,
-                target : this.model.target,
+                sourceComponents : this.model.pathToPath.sourceComponents,
+                targetComponents : this.model.pathToPath.targetComponents,
                 availableType: this.model.availableType,
                 description : this.model.pathToPath.description,
                 type : this.model.pathToPath.type,
@@ -34,6 +35,8 @@ define([
             };
 
             this.$el.html(Mustache.render(template, data));
+            this.$('.link-source .fa-long-arrow-right').last().remove();
+            this.$('.link-target .fa-long-arrow-right').last().remove();
 
             return this;
         },

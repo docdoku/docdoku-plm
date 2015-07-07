@@ -3,9 +3,21 @@
     {{#canSuppress}}
     <button type="button" class="close delete-item">×</button>
     {{/canSuppress}}
-    <strong class="path-to-path-link">{{type}}</strong>: {{source.partName}} < {{source.partNumber}} >
-     <i class="fa fa-long-arrow-right"></i>
-    {{target.partName}} < {{target.partNumber}} >
+    <strong class="path-to-path-link">{{type}}</strong> :
+    <div class="link-source"><strong>{{i18n.PATH_TO_PATH_SOURCE}}</strong> :
+        {{#sourceComponents}}
+        {{name}} < {{number}} > {{#referenceDescription}}({{.}}){{/referenceDescription}}
+        <i class="fa fa-long-arrow-right"></i>
+        {{/sourceComponents}}
+    </div>
+
+    <div class="link-target"><strong>{{i18n.PATH_TO_PATH_TARGET}}</strong> :
+        {{#targetComponents}}
+        {{name}} < {{number}} > {{#referenceDescription}}({{.}}){{/referenceDescription}}
+        <i class="fa fa-long-arrow-right"></i>
+        {{/targetComponents}}
+    </div>
+
 </div>
 </div>
 

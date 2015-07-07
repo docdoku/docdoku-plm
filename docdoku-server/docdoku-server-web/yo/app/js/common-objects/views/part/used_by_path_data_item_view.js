@@ -15,24 +15,23 @@ define([
         },
 
         render: function () {
+
             var data = {
                 i18n: App.config.i18n,
                 model: this.model
             };
+
             this.$el.html(Mustache.render(template, data));
-            var self = this;
+
             var partsPath = this.model.getPartsPath();
+            var $pathDescription = this.$('.path-description');
 
             _.each(partsPath, function (part) {
                 var path = part.name ? part.name + ' < ' + part.number + ' >' : '< ' + part.number + ' >';
-                self.$('.path-description').append(path);
-                self.$('.path-description').append(' ');
-                self.$('.path-description').append('<i class="fa fa-chevron-right">');
-                self.$('.path-description').append(' ');
+                $pathDescription.append(path + ' <i class="fa fa-long-arrow-right"> ');
             });
 
-            self.$('.fa.fa-chevron-right').last().remove();
-
+            this.$('.fa.fa-long-arrow-right').last().remove();
 
             return this;
         }

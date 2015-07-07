@@ -41,7 +41,7 @@ define([
             this.choice = this.$nominalLink.val();
             this.defaultChoice = this.choice;
 
-            this.$('.fa-chevron-right').last().remove();
+            this.$('.fa-long-arrow-right').last().remove();
 
             if(this.options.removable){
                 this.$el.toggleClass('not-retained', !this.model.retained);

@@ -163,8 +163,8 @@ define([
             Backbone.Events.on('mesh:selected', this.onMeshSelected, this);
             Backbone.Events.on('selection:reset', this.onResetSelection, this);
             Backbone.Events.on('part:saved', this.refreshTree, this);
-            Backbone.Events.on('pathSelected', this.updateDisplayTypedLinkButton, this);
-            Backbone.Events.on('pathDataClicked', this.openPathDataModal, this);
+            Backbone.Events.on('path:selected', this.updateDisplayTypedLinkButton, this);
+            Backbone.Events.on('path-data:clicked', this.openPathDataModal, this);
         },
 
         updateDisplayTypedLinkButton: function(pathSelected){
@@ -270,7 +270,6 @@ define([
         },
 
         openProductInstanceModal:function(){
-
             var productInstanceModal = new ProductInstanceDataModalView({
                 serialNumber: App.config.configSpec.substr(3),
                 path : this.checkedComponent.getEncodedPath()
@@ -278,6 +277,7 @@ define([
             window.document.body.appendChild(productInstanceModal.el);
             productInstanceModal.initAndOpenModal();
         },
+
         openPathDataModal:function(pathSelected){
             this.checkedComponent = pathSelected;
             this.openProductInstanceModal();

@@ -38,10 +38,14 @@ define([
                 target : this.model.targetModel,
                 availableType: this.model.availableType,
                 description : this.model.pathToPath.description,
-                type : this.model.pathToPath.type
+                type : this.model.pathToPath.type,
+                sourceComponents:this.model.sourceComponents,
+                targetComponents:this.model.targetComponents
             };
 
             this.$el.html(Mustache.render(template, data));
+            this.$('.link-source i:last-of-type').remove();
+            this.$('.link-target i:last-of-type').remove();
             this.bindDOMElements();
 
             return this;
@@ -56,6 +60,9 @@ define([
             this.model.targetModel = copy;
             this.model.pathToPath.source = this.model.sourceModel.getEncodedPath();
             this.model.pathToPath.target = this.model.targetModel.getEncodedPath();
+            var copyComponents = this.model.sourceComponents;
+            this.model.sourceComponents = this.model.targetComponents;
+            this.model.targetComponents = copyComponents;
             this.render();
         },
 

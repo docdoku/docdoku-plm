@@ -131,7 +131,7 @@ public class ProductBaselinesResource {
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         ProductBaseline productBaseline = productBaselineService.getBaseline(baselineId);
         ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline,ProductBaselineDTO.class);
-        productBaselineDTO.setPathToPathLinks(this.getTypedLinkForBaseline(workspaceId,productBaseline));
+        productBaselineDTO.setPathToPathLinks(getTypedLinkForBaseline(productBaseline));
         productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
         productBaselineDTO.setConfigurationItemLatestRevision(productBaseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
 
@@ -200,36 +200,60 @@ public class ProductBaselinesResource {
     @GET
     @Path("{baselineId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<LightPathToPathLinkDTO> getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("baselineId") int baselineId, @PathParam("sourcePath") String sourcePath, @PathParam("targetPath") String targetPath) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException {
-        List<PathToPathLink> pathToPathLinks = productBaselineService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, baselineId, sourcePath, targetPath);
-        List<LightPathToPathLinkDTO> dtos = new ArrayList<>();
+    public List<PathToPathLinkDTO> getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("baselineId") int baselineId, @PathParam("sourcePath") String sourcePathAsString, @PathParam("targetPath") String targetPathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+        List<PathToPathLink> pathToPathLinks = productBaselineService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, baselineId, sourcePathAsString, targetPathAsString);
+        List<PathToPathLinkDTO> dtos = new ArrayList<>();
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
+
         for(PathToPathLink pathToPathLink : pathToPathLinks) {
-            dtos.add(mapper.map(pathToPathLink, LightPathToPathLinkDTO.class));
+            PathToPathLinkDTO pathToPathLinkDTO = mapper.map(pathToPathLink, PathToPathLinkDTO.class);
+            List<LightPartLinkDTO> sourceLightPartLinkDTOs = new ArrayList<>();
+
+            List<PartLink> sourcePath = productService.decodePath(ciKey, pathToPathLink.getSourcePath());
+            List<PartLink> targetPath = productService.decodePath(ciKey, pathToPathLink.getTargetPath());
+
+            for(PartLink partLink : sourcePath){
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+                sourceLightPartLinkDTOs.add(lightPartLinkDTO);
+            }
+
+            List<LightPartLinkDTO> targetLightPartLinkDTOs = new ArrayList<>();
+            for(PartLink partLink : targetPath){
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+                targetLightPartLinkDTOs.add(lightPartLinkDTO);
+            }
+
+            pathToPathLinkDTO.setSourceComponents(sourceLightPartLinkDTOs);
+            pathToPathLinkDTO.setTargetComponents(targetLightPartLinkDTOs);
+            dtos.add(pathToPathLinkDTO);
         }
         return dtos;
     }
 
-    private  List<PathToPathLinkDTO> getTypedLinkForBaseline(String workspaceId, ProductBaseline productBaseline) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, AccessRightException {
+    private  List<PathToPathLinkDTO> getTypedLinkForBaseline(ProductBaseline productBaseline) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, AccessRightException {
 
         List<PathToPathLink> pathToPathLinkTypes = productBaseline.getPathToPathLinks();
         List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
 
         for (PathToPathLink pathToPathLink : pathToPathLinkTypes) {
-            PartMaster partMasterSource = productService.getPartMasterFromPath(workspaceId, productBaseline.getConfigurationItem().getId(), pathToPathLink.getSourcePath());
-            PartMaster partMasterTarget = productService.getPartMasterFromPath(workspaceId, productBaseline.getConfigurationItem().getId(), pathToPathLink.getTargetPath());
-
-            LightPartMasterDTO lightPartMasterDTOSource = new LightPartMasterDTO();
-            LightPartMasterDTO lightPartMasterDTOTarget = new LightPartMasterDTO();
-
-            lightPartMasterDTOSource.setPartName(partMasterSource.getName());
-            lightPartMasterDTOSource.setPartNumber(partMasterSource.getNumber());
-            lightPartMasterDTOTarget.setPartName(partMasterTarget.getName());
-            lightPartMasterDTOTarget.setPartNumber(partMasterTarget.getNumber());
-
             PathToPathLinkDTO pathToPathLinkDTO = mapper.map(pathToPathLink, PathToPathLinkDTO.class);
-            pathToPathLinkDTO.setSource(lightPartMasterDTOSource);
-            pathToPathLinkDTO.setTarget(lightPartMasterDTOTarget);
+            List<PartLink> sourcePath = productService.decodePath(productBaseline.getConfigurationItem().getKey(), pathToPathLink.getSourcePath());
+            List<PartLink> targetPath = productService.decodePath(productBaseline.getConfigurationItem().getKey(),pathToPathLink.getTargetPath());
 
+            List<LightPartLinkDTO> sourceLightPartLinkDTOs = new ArrayList<>();
+            for(PartLink partLink : sourcePath){
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+                sourceLightPartLinkDTOs.add(lightPartLinkDTO);
+            }
+
+            List<LightPartLinkDTO> targetLightPartLinkDTOs = new ArrayList<>();
+            for(PartLink partLink : targetPath){
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+                targetLightPartLinkDTOs.add(lightPartLinkDTO);
+            }
+
+            pathToPathLinkDTO.setSourceComponents(sourceLightPartLinkDTOs);
+            pathToPathLinkDTO.setTargetComponents(targetLightPartLinkDTOs);
             pathToPathLinkDTOs.add(pathToPathLinkDTO);
 
         }

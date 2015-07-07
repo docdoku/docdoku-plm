@@ -21,13 +21,14 @@
 package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class PathToPathLinkDTO implements Serializable{
 
     private Integer id;
     private String type;
-    private LightPartMasterDTO source;
-    private LightPartMasterDTO target;
+    private List<LightPartLinkDTO> sourceComponents;
+    private List<LightPartLinkDTO> targetComponents;
     private String description;
 
     public PathToPathLinkDTO() {
@@ -41,20 +42,20 @@ public class PathToPathLinkDTO implements Serializable{
         this.type = type;
     }
 
-    public LightPartMasterDTO getSource() {
-        return source;
+    public List<LightPartLinkDTO> getSourceComponents() {
+        return sourceComponents;
     }
 
-    public void setSource(LightPartMasterDTO source) {
-        this.source = source;
+    public void setSourceComponents(List<LightPartLinkDTO> sourceComponents) {
+        this.sourceComponents = sourceComponents;
     }
 
-    public LightPartMasterDTO getTarget() {
-        return target;
+    public List<LightPartLinkDTO> getTargetComponents() {
+        return targetComponents;
     }
 
-    public void setTarget(LightPartMasterDTO target) {
-        this.target = target;
+    public void setTargetComponents(List<LightPartLinkDTO> targetComponents) {
+        this.targetComponents = targetComponents;
     }
 
     public String getDescription() {

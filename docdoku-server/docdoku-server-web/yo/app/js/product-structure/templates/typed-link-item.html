@@ -3,9 +3,19 @@
     {{#canSuppress}}
     <button type="button" class="close delete-item">×</button>
     {{/canSuppress}}
-    <div class="link-source"><strong>{{i18n.PATH_TO_PATH_SOURCE}}</strong> {{source.getName}} < {{source.getNumber}} > {{#source.getPartUsageLinkReferenceDescription}}({{source.getPartUsageLinkReferenceDescription}}){{/source.getPartUsageLinkReferenceDescription}}</div>
+    <div class="link-source"><strong>{{i18n.PATH_TO_PATH_SOURCE}}</strong>
+        {{#sourceComponents}}
+            {{name}} < {{number}} > {{#referenceDescription}}({{.}}){{/referenceDescription}}
+            <i class="fa fa-long-arrow-right"></i>
+        {{/sourceComponents}}
+    </div>
 
-    <div class="link-target"><strong>{{i18n.PATH_TO_PATH_TARGET}}</strong> {{target.getName}} < {{target.getNumber}} > {{#target.getPartUsageLinkReferenceDescription}}({{target.getPartUsageLinkReferenceDescription}}){{/target.getPartUsageLinkReferenceDescription}}</div>
+    <div class="link-target"><strong>{{i18n.PATH_TO_PATH_TARGET}}</strong>
+        {{#targetComponents}}
+            {{name}} < {{number}} > {{#referenceDescription}}({{.}}){{/referenceDescription}}
+            <i class="fa fa-long-arrow-right"></i>
+        {{/targetComponents}}
+    </div>
 
     {{#isCreationMode}}
     <a class="invert-source-target">{{i18n.INVERT_SOURCE_DESTINATION}}</a>

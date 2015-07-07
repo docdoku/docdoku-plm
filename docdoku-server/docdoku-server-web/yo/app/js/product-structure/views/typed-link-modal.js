@@ -31,15 +31,38 @@ define([
 
         render: function () {
 
-            this.$el.html(Mustache.render(template, {
-                i18n: App.config.i18n,
-                canAdd:['wip','latest','latest-released'].indexOf(App.config.configSpec)!==-1
-            }));
+            var self = this;
+
+            var sourcePath = this.pathSelected[0].getEncodedPath();
+            var targetPath = this.pathSelected[1].getEncodedPath();
+            var getComponents = this.getComponents.bind(this);
+
+            getComponents(sourcePath,function(sourceComponents){
+                getComponents(targetPath,function(targetComponents){
+
+                    self.sourceComponents = sourceComponents;
+                    self.targetComponents = targetComponents;
+
+                    self.$el.html(Mustache.render(template, {
+                        i18n: App.config.i18n,
+                        canAdd:['wip','latest','latest-released'].indexOf(App.config.configSpec)!==-1
+                    }));
+
+                    self.getExistingPathToPathAndType();
+
+                });
+            });
 
             this.bindDOMElements();
-            this.getExistingPathToPathAndType();
-
             return this;
+        },
+
+        getComponents:function(path,next){
+            $.ajax(this.getUrlForComponents(path),{success:next});
+        },
+
+        getUrlForComponents : function(path){
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/decode-path/' + path;
         },
 
         getUrlForAvailableType: function(){
@@ -105,11 +128,13 @@ define([
         getExistingPathToPath: function(){
             var self = this;
             var urlForExistingTypedLink = this.getUrlForExistingTypedLink();
+            console.log(urlForExistingTypedLink)
             $.ajax({
                 type : 'GET',
                 url : urlForExistingTypedLink,
                 contentType: 'application/json',
                 success: function(pathToPathLinkDTOs){
+
                     _.each(pathToPathLinkDTOs, function(pathToPathLinkDTO){
                         self.existingPathToPathLinkCollection.push({
                             sourceModel : self.pathSelected[0].getEncodedPath() === pathToPathLinkDTO.sourcePath ? self.pathSelected[0] : self.pathSelected[1],
@@ -118,7 +143,9 @@ define([
                             isCreationMode : false,
                             availableType : self.availableType,
                             productId : self.productId,
-                            serialNumber : self.serialNumber
+                            serialNumber : self.serialNumber,
+                            sourceComponents:pathToPathLinkDTO.sourceComponents,
+                            targetComponents:pathToPathLinkDTO.targetComponents
                         });
                     });
 
@@ -148,12 +175,12 @@ define([
                     isCreationMode : true,
                     availableType : this.availableType,
                     productId : this.productId,
-                    serialNumber : this.serialNumber
+                    serialNumber : this.serialNumber,
+                    sourceComponents:this.sourceComponents,
+                    targetComponents:this.targetComponents
                 }
             }).render();
-
-            var self = this;
-            self.$('#path-to-path-links').append(newTypedLinkItemView.el);
+            this.$('#path-to-path-links').append(newTypedLinkItemView.el);
         },
 
 

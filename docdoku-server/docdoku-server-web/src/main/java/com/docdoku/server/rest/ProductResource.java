@@ -101,7 +101,7 @@ public class ProductResource {
             ConfigurationItem ci = cis.get(i);
             dtos[i] = new ConfigurationItemDTO(mapper.map(ci.getAuthor(),UserDTO.class),ci.getId(), ci.getWorkspaceId(),
                     ci.getDescription(), ci.getDesignItem().getNumber(),ci.getDesignItem().getName(), ci.getDesignItem().getLastRevision().getVersion());
-            dtos[i].setPathToPathLinks(this.getTypedLinkForConfigurationItem(workspaceId,ci));
+            dtos[i].setPathToPathLinks(getTypedLinkForConfigurationItem(ci));
             dtos[i].setHasModificationNotification(productService.hasModificationNotification(ci.getKey()));
         }
 
@@ -197,7 +197,7 @@ public class ProductResource {
         ConfigurationItemDTO dto = new ConfigurationItemDTO(mapper.map(ci.getAuthor(),UserDTO.class),ci.getId(), ci.getWorkspaceId(),
                 ci.getDescription(), ci.getDesignItem().getNumber(),ci.getDesignItem().getName(),
                 ci.getDesignItem().getLastRevision().getVersion());
-        dto.setPathToPathLinks(this.getTypedLinkForConfigurationItem(workspaceId,ci));
+        dto.setPathToPathLinks(getTypedLinkForConfigurationItem(ci));
         return dto;
     }
 
@@ -466,12 +466,35 @@ public class ProductResource {
     @GET
     @Path("{ciId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<LightPathToPathLinkDTO> getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("sourcePath") String sourcePath, @PathParam("targetPath") String targetPath) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException {
-        List<PathToPathLink> pathToPathLinks = productService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, sourcePath, targetPath);
-        List<LightPathToPathLinkDTO> dtos = new ArrayList<>();
+    public List<PathToPathLinkDTO> getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("sourcePath") String sourcePathAsString, @PathParam("targetPath") String targetPathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+        List<PathToPathLink> pathToPathLinks = productService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, sourcePathAsString, targetPathAsString);
+        List<PathToPathLinkDTO> dtos = new ArrayList<>();
+
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
+
         for(PathToPathLink pathToPathLink : pathToPathLinks) {
-            dtos.add(mapper.map(pathToPathLink, LightPathToPathLinkDTO.class));
+            PathToPathLinkDTO pathToPathLinkDTO = mapper.map(pathToPathLink, PathToPathLinkDTO.class);
+            List<LightPartLinkDTO> sourceLightPartLinkDTOs = new ArrayList<>();
+
+            List<PartLink> sourcePath = productService.decodePath(ciKey, pathToPathLink.getSourcePath());
+            List<PartLink> targetPath = productService.decodePath(ciKey, pathToPathLink.getTargetPath());
+
+            for(PartLink partLink : sourcePath){
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+                sourceLightPartLinkDTOs.add(lightPartLinkDTO);
+            }
+
+            List<LightPartLinkDTO> targetLightPartLinkDTOs = new ArrayList<>();
+            for(PartLink partLink : targetPath){
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+                targetLightPartLinkDTOs.add(lightPartLinkDTO);
+            }
+
+            pathToPathLinkDTO.setSourceComponents(sourceLightPartLinkDTOs);
+            pathToPathLinkDTO.setTargetComponents(targetLightPartLinkDTOs);
+            dtos.add(pathToPathLinkDTO);
         }
+
         return dtos;
     }
 
@@ -488,7 +511,19 @@ public class ProductResource {
         }
         return pathToPathLinkDTOs;
     }
-
+    @GET
+    @Path("{ciId}/decode-path/{path}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<LightPartLinkDTO> decodePath(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("path") String pathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
+        List<PartLink> partLinks = productService.decodePath(ciKey, pathAsString);
+        List<LightPartLinkDTO> lightPartLinkDTOs = new ArrayList<>();
+        for(PartLink partLink : partLinks){
+            LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+            lightPartLinkDTOs.add(lightPartLinkDTO);
+        }
+        return lightPartLinkDTOs;
+    }
 
     /**
      * Because some AS (like Glassfish) forbids the use of CacheControl
@@ -613,28 +648,30 @@ public class ProductResource {
         return Tools.mapModificationNotificationsToModificationNotificationDTO(notifications);
     }
 
-    private  List<PathToPathLinkDTO> getTypedLinkForConfigurationItem(String workspaceId, ConfigurationItem configurationItem ) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+    private  List<PathToPathLinkDTO> getTypedLinkForConfigurationItem(ConfigurationItem configurationItem ) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
         List<PathToPathLink> pathToPathLinkTypes = configurationItem.getPathToPathLinks();
         List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
 
         for (PathToPathLink pathToPathLink : pathToPathLinkTypes) {
-            PartMaster partMasterSource = productService.getPartMasterFromPath(workspaceId, configurationItem.getId(), pathToPathLink.getSourcePath());
-            PartMaster partMasterTarget = productService.getPartMasterFromPath(workspaceId, configurationItem.getId(), pathToPathLink.getTargetPath());
-
-            LightPartMasterDTO lightPartMasterDTOSource = new LightPartMasterDTO();
-            LightPartMasterDTO lightPartMasterDTOTarget = new LightPartMasterDTO();
-
-            lightPartMasterDTOSource.setPartName(partMasterSource.getName());
-            lightPartMasterDTOSource.setPartNumber(partMasterSource.getNumber());
-            lightPartMasterDTOTarget.setPartName(partMasterTarget.getName());
-            lightPartMasterDTOTarget.setPartNumber(partMasterTarget.getNumber());
-
             PathToPathLinkDTO pathToPathLinkDTO = mapper.map(pathToPathLink, PathToPathLinkDTO.class);
-            pathToPathLinkDTO.setSource(lightPartMasterDTOSource);
-            pathToPathLinkDTO.setTarget(lightPartMasterDTOTarget);
+            List<PartLink> sourcePath = productService.decodePath(configurationItem.getKey(),pathToPathLink.getSourcePath());
+            List<PartLink> targetPath = productService.decodePath(configurationItem.getKey(),pathToPathLink.getTargetPath());
 
+            List<LightPartLinkDTO> sourceLightPartLinkDTOs = new ArrayList<>();
+            for(PartLink partLink : sourcePath){
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+                sourceLightPartLinkDTOs.add(lightPartLinkDTO);
+            }
+
+            List<LightPartLinkDTO> targetLightPartLinkDTOs = new ArrayList<>();
+            for(PartLink partLink : targetPath){
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+                targetLightPartLinkDTOs.add(lightPartLinkDTO);
+            }
+
+            pathToPathLinkDTO.setSourceComponents(sourceLightPartLinkDTOs);
+            pathToPathLinkDTO.setTargetComponents(targetLightPartLinkDTOs);
             pathToPathLinkDTOs.add(pathToPathLinkDTO);
-
         }
         return pathToPathLinkDTOs;
     }

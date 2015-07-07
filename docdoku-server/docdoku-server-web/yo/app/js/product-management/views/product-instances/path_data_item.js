@@ -17,12 +17,12 @@ define([
             for (var i=0; i<this.model.length; i++) {
                 var part = this.model[i];
                 path += part.name ? part.name + ' < ' + part.number + ' >' : '< ' + part.number + ' >';
-                path += ' <i class="fa fa-chevron-right"></i> ';
+                path += ' <i class="fa fa-long-arrow-right"></i> ';
             }
 
             this.$el.html(template);
             this.$('div.well').first().append(path);
-            this.$('.fa.fa-chevron-right').last().remove();
+            this.$('.fa.fa-long-arrow-right').last().remove();
             return this;
         }
 

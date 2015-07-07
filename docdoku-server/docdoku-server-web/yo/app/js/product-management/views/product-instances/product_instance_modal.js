@@ -158,7 +158,7 @@ define([
                     concernedPart: data.parts.pop()
                 }
             }));
-            this.$substitutes.find('i.fa-chevron-right:last-child').remove();
+            this.$substitutes.find('i.fa-long-arrow-right:last-child').remove();
         },
 
         drawOptionalsChoice: function (data) {
@@ -169,7 +169,7 @@ define([
                     concernedPart: data.parts.pop()
                 }
             }));
-            this.$optionals.find('i.fa-chevron-right:last-child').remove();
+            this.$optionals.find('i.fa-long-arrow-right:last-child').remove();
         },
 
         initLinkedDocumentsView: function () {

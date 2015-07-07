@@ -14,7 +14,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
             'load:root': 'onProductTitleClicked',
             'click .fa-refresh': 'refreshProductView',
             'click .fa-comment': 'toggleComment',
-            'checkboxSelected': 'onCheckboxSelected'
+            'checkbox:selected': 'onCheckboxSelected'
         },
 
         checkedPath : [],
@@ -25,7 +25,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
             }else{
                 this.checkedPath.splice(this.checkedPath.indexOf(model), 1);
             }
-            Backbone.Events.trigger('pathSelected', this.checkedPath);
+            Backbone.Events.trigger('path:selected', this.checkedPath);
         },
 
         setSelectedComponent: function (component) {
@@ -206,7 +206,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
 
         refreshAll: function () {
             this.checkedPath = [];
-            Backbone.Events.trigger('pathSelected', this.checkedPath);
+            Backbone.Events.trigger('path:selected', this.checkedPath);
             this.rootCollection.path = App.config.linkType ? null : '-1';
             this.componentViews.fetchAll();
             this.onProductTitleClicked();

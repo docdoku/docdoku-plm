@@ -138,7 +138,7 @@ define([
         },
 
         selectPart:function(e){
-            this.$el.trigger('checkboxSelected', [e.target.checked,this.model]);
+            this.$el.trigger('checkbox:selected', [e.target.checked,this.model]);
             e.preventDefault();
             e.stopPropagation();
             return false;
@@ -215,7 +215,7 @@ define([
 	    },
 
         openPathDataModal : function () {
-            Backbone.Events.trigger('pathDataClicked',this.model);
+            Backbone.Events.trigger('path-data:clicked',this.model);
         }
     });
 
@@ -249,14 +249,14 @@ define([
         },
 
         selectPart:function(e){
-            this.$el.trigger('checkboxSelected', [e.target.checked,this.model]);
+            this.$el.trigger('checkbox:selected', [e.target.checked,this.model]);
             e.preventDefault();
             e.stopPropagation();
             return false;
         },
 
         openPathDataModal : function () {
-            Backbone.Events.trigger('pathDataClicked',this.model);
+            Backbone.Events.trigger('path-data:clicked',this.model);
         },
         onLoad3D: function (event) {
             if (event) {
