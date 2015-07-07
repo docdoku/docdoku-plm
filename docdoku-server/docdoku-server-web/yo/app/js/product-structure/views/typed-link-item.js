@@ -34,6 +34,7 @@ define([
             var data = {
                 i18n: App.config.i18n,
                 creationMode : this.model.creationMode,
+                editionMode : this.model.editionMode,
                 canSuppress : ['wip','latest','latest-released'].indexOf(App.config.configSpec)!==-1,
                 source : this.model.sourceModel,
                 target : this.model.targetModel,
@@ -72,6 +73,29 @@ define([
             this.deleted = true;
         },
 
+        save: function (callback) {
+            if (this.deleted) {
+                if (this.creationMode) {
+                    callback();
+                } else {
+                    this.onDelete(callback);
+                }
+
+            } else if (this.model.editionMode && !this.creationMode) {
+                this.onPut(callback);
+
+            } else if (this.creationMode) {
+                if (this.determineType()) {
+                    this.onPost(callback);
+                } else {
+                    this.showNotification('error', App.config.i18n.YOU_CANNOT_CREATE_LINK_WITHOUT_TYPE);
+                }
+
+            } else {
+                callback();
+            }
+        },
+
         onDelete : function (callback) {
             var self = this;
             var urlToDelete = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.model.productId + '/path-to-path-links/' + this.model.pathToPath.id;
@@ -90,8 +114,7 @@ define([
             });
         },
 
-        onSave: function (callback) {
-
+        onPost: function (callback) {
             var self = this;
             var urlToPost = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.model.productId + '/path-to-path-links';
 
@@ -113,7 +136,6 @@ define([
                 success: function(pathToPathLink) {
                     self.model.pathToPath.id = pathToPathLink.id;
                     self.model.creationMode = false;
-                    self.creationMode = false;
                     self.render();
                     callback();
                 },
@@ -122,6 +144,41 @@ define([
                 }
             });
 
+        },
+
+        onPut: function (callback) {
+            var description = this.$('.path-to-path-description').val();
+
+            if (description !== this.model.pathToPath.description) {
+                this.model.pathToPath.description = description;
+                var self = this;
+                var urlToPut = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.model.productId + '/path-to-path-links/' + this.model.pathToPath.id;
+
+                var data = {
+                    sourcePath : this.model.pathToPath.source,
+                    targetPath : this.model.pathToPath.target,
+                    type : this.model.pathToPath.type,
+                    description : this.model.pathToPath.description
+                };
+
+                $.ajax({
+                    type: 'PUT',
+                    url: urlToPut,
+                    dataType:'json',
+                    contentType: 'application/json',
+                    data : JSON.stringify(data),
+                    success: function(pathToPathLink) {
+                        self.model.creationMode = false;
+                        callback();
+                    },
+                    error: function(errorMessage) {
+                        self.showNotification('error', errorMessage.responseText);
+                    }
+                });
+
+            } else {
+                callback();
+            }
         },
 
         determineType: function () {

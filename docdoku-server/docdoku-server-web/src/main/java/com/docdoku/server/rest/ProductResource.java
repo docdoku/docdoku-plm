@@ -453,7 +453,17 @@ public class ProductResource {
     @Produces(MediaType.APPLICATION_JSON)
     public LightPathToPathLinkDTO createPathToPathLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, LightPathToPathLinkDTO pathToPathLinkDTO) throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathCyclicException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, NotAllowedException {
         PathToPathLink pathToPathLink = productService.createPathToPathLink(workspaceId, configurationItemId, pathToPathLinkDTO.getType(), pathToPathLinkDTO.getSourcePath(), pathToPathLinkDTO.getTargetPath(), pathToPathLinkDTO.getDescription());
-        return mapper.map(pathToPathLink,LightPathToPathLinkDTO.class);
+        return mapper.map(pathToPathLink, LightPathToPathLinkDTO.class);
+    }
+
+    @PUT
+    @Path("{ciId}/path-to-path-links/{pathToPathLinkId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public LightPathToPathLinkDTO updatePathToPathLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathToPathLinkId") int pathToPathLinkId, LightPathToPathLinkDTO pathToPathLinkDTO)
+            throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathCyclicException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, NotAllowedException, PathToPathLinkNotFoundException {
+        PathToPathLink pathToPathLink = productService.updatePathToPathLink(workspaceId, configurationItemId, pathToPathLinkId, pathToPathLinkDTO.getDescription());
+        return mapper.map(pathToPathLink, LightPathToPathLinkDTO.class);
     }
 
     @DELETE

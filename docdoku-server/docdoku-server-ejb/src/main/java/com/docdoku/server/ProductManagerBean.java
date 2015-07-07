@@ -3344,6 +3344,24 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
+    public PathToPathLink updatePathToPathLink(String workspaceId, String configurationItemId, int pathToPathLinkId, String description)
+            throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, UserNotActiveException, NotAllowedException, PathToPathLinkNotFoundException {
+
+        User user = userManager.checkWorkspaceWriteAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+
+        // Load the product
+        ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(new ConfigurationItemKey(workspaceId, configurationItemId));
+
+        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
+        PathToPathLink pathToPathLink = pathToPathLinkDAO.loadPathToPathLink(pathToPathLinkId);
+        pathToPathLink.setDescription(description);
+
+        return pathToPathLink;
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
     public List<String> getPathToPathLinkTypes(String workspaceId, String configurationItemId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());

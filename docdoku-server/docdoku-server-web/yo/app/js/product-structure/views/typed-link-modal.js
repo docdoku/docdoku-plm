@@ -144,6 +144,7 @@ define([
                             targetModel : self.pathSelected[1].getEncodedPath() === pathToPathLinkDTO.targetPath ? self.pathSelected[1] : self.pathSelected[0],
                             pathToPath : pathToPathLinkDTO,
                             creationMode : false,
+                            editionMode : !self.baselineId && !self.serialNumber,
                             availableType : self.availableType,
                             productId : self.productId,
                             serialNumber : self.serialNumber,
@@ -173,23 +174,7 @@ define([
 
             Async.each(this.typedLinkItemViews, function(typedLinkItemView, callback) {
 
-                if (typedLinkItemView.creationMode) {
-                    if (typedLinkItemView.deleted) {
-                        callback();
-
-                    } else if (typedLinkItemView.determineType()) {
-                        typedLinkItemView.onSave(callback);
-
-                    } else {
-                        typedLinkItemView.showNotification('error', App.config.i18n.YOU_CANNOT_CREATE_LINK_WITHOUT_TYPE);
-                    }
-
-                } else if (typedLinkItemView.deleted) {
-                    typedLinkItemView.onDelete(callback);
-
-                } else {
-                    callback();
-                }
+                typedLinkItemView.save(callback);
 
             }, function(err) {
                 if (!err) {
@@ -204,6 +189,7 @@ define([
                     sourceModel : this.pathSelected[0],
                     targetModel : this.pathSelected[1],
                     creationMode : true,
+                    editionMode : true,
                     availableType : this.availableType,
                     productId : this.productId,
                     serialNumber : this.serialNumber,
