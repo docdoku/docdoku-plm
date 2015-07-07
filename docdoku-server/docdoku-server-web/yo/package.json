@@ -37,7 +37,7 @@
   "scripts": {
     "prestart": "npm install;bower install",
     "start": "grunt deploy",
-	"clean": "npm install; grunt clean:dist;",
-	"deploy": "npm install;bower install;grunt deploy"
+	"clean": "npm install; grunt clean:dist",
+	"deploy": "npm install; bower install; grunt deploy"
   }
 }
