@@ -333,15 +333,25 @@ public class ESSearcher {
         if (searchQuery.getAttributes() != null) {
             for (SearchQuery.AbstractAttributeQuery attr : searchQuery.getAttributes()) {
                 if (attr instanceof SearchQuery.DateAttributeQuery) {
-                    ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(attr.getNameWithoutWhiteSpace()).from(((SearchQuery.DateAttributeQuery) attr).getFromDate()).to(((SearchQuery.DateAttributeQuery) attr).getToDate()));
+                    QueryBuilder b = QueryBuilders.boolQuery().must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_NAME,attr.getNameWithoutWhiteSpace()))
+                            .must(QueryBuilders.rangeQuery(ESMapper.ATTRIBUTE_VALUE).from(((SearchQuery.DateAttributeQuery) attr).getFromDate()).to(((SearchQuery.DateAttributeQuery) attr).getToDate()));
+                    ((BoolQueryBuilder) qr).should(b);
                 } else if (attr instanceof SearchQuery.TextAttributeQuery) {
-                    ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), ((SearchQuery.TextAttributeQuery) attr).getTextValue()));
+                    QueryBuilder b = QueryBuilders.boolQuery().must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_NAME, attr.getNameWithoutWhiteSpace()))
+                        .must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_VALUE, ((SearchQuery.TextAttributeQuery) attr).getTextValue()));
+                    ((BoolQueryBuilder) qr).should(b);
                 } else if (attr instanceof SearchQuery.NumberAttributeQuery) {
-                    ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), "" + ((SearchQuery.NumberAttributeQuery) attr).getNumberValue()));
+                    QueryBuilder b = QueryBuilders.boolQuery().must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_NAME,attr.getNameWithoutWhiteSpace()))
+                            .must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_VALUE, "" + ((SearchQuery.NumberAttributeQuery) attr).getNumberValue()));
+                    ((BoolQueryBuilder) qr).should(b);
                 } else if (attr instanceof SearchQuery.BooleanAttributeQuery) {
-                    ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), "" + ((SearchQuery.BooleanAttributeQuery) attr).isBooleanValue()));
+                    QueryBuilder b = QueryBuilders.boolQuery().must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_NAME,attr.getNameWithoutWhiteSpace()))
+                            .must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_VALUE,  "" + ((SearchQuery.BooleanAttributeQuery) attr).isBooleanValue()));
+                    ((BoolQueryBuilder) qr).should(b);
                 } else if (attr instanceof SearchQuery.URLAttributeQuery) {
-                    ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), ((SearchQuery.URLAttributeQuery) attr).getUrlValue()));
+                    QueryBuilder b = QueryBuilders.boolQuery().must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_NAME,attr.getNameWithoutWhiteSpace()))
+                            .must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_VALUE,((SearchQuery.URLAttributeQuery) attr).getUrlValue()));
+                    ((BoolQueryBuilder) qr).should(b);
                 }
             }
         }

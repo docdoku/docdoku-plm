@@ -63,6 +63,8 @@ public class ESMapper {
     public static final String FOLDER_KEY = "folder";
     public static final String TAGS_KEY = "tags";
     public static final String ATTRIBUTES_KEY = "attributes";
+    public static final String ATTRIBUTE_NAME = "attr_name";
+    public static final String ATTRIBUTE_VALUE = "attr_value";
     public static final String FILES_KEY = "files";
     public static final String CONTENT_KEY = "content";
     public static final String STANDARD_PART_KEY = "standardPart";
@@ -262,12 +264,15 @@ public class ESMapper {
                     tmp.endArray();
                 }
                 if (!iteration.getInstanceAttributes().isEmpty()) {
-                    tmp.startObject(ATTRIBUTES_KEY);
                     Collection<InstanceAttribute> listAttr = iteration.getInstanceAttributes();
+                    tmp.startArray(ATTRIBUTES_KEY);
                     for (InstanceAttribute attr : listAttr) {
-                        setField(tmp, attr.getNameWithoutWhiteSpace(), "" + attr.getValue(), 0.6f);
+                        tmp.startObject();
+                        setField(tmp,ATTRIBUTE_NAME,attr.getNameWithoutWhiteSpace(),0.6f);
+                        setField(tmp,ATTRIBUTE_VALUE,""+attr.getValue(),0.6f);
+                        tmp.endObject();
                     }
-                    tmp.endObject();
+                    tmp.endArray();
                 }
 
                 tmp.endObject();
@@ -320,10 +325,12 @@ public class ESMapper {
 
         if (!part.getInstanceAttributes().isEmpty()) {
             Collection<InstanceAttribute> listAttr = part.getInstanceAttributes();
-            Map<String, Object> attributesParams = new HashMap<>();
-            params.put(ATTRIBUTES_KEY, attributesParams);
+            List<Map<String,Object>> listAttributes = new ArrayList<>();
+            params.put(ATTRIBUTES_KEY, listAttributes);
             for (InstanceAttribute attr : listAttr) {
-                setParam(attributesParams, attr.getNameWithoutWhiteSpace(), "" + attr.getValue(), 0.6f);
+                Map<String,Object> attributesParams = new HashMap<>();
+                setParam(attributesParams, ATTRIBUTE_NAME, attr.getNameWithoutWhiteSpace(), 0.6f);
+                setParam(attributesParams, ATTRIBUTE_VALUE, "" + attr.getValue(), 0.6f);
             }
         }
 

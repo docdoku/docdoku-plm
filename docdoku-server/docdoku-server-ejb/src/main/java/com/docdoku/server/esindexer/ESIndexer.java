@@ -44,6 +44,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.indices.IndexAlreadyExistsException;
 import org.elasticsearch.indices.InvalidIndexNameException;
 
@@ -127,6 +128,7 @@ public class ESIndexer {
                             .put("number_of_shards", CONF.getProperty("number_of_shards"))
                             .put("number_of_replicas", CONF.getProperty("number_of_replicas"))
                             .put("auto_expand_replicas", CONF.getProperty("auto_expand_replicas")))
+                    .addMapping("part",this.partMapping())
                     .execute().actionGet();
         } catch (IndexAlreadyExistsException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString("ES_IndexCreationError1");
@@ -136,7 +138,32 @@ public class ESIndexer {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_INDEX_CREATION_ERROR_2);
             LOGGER.log(Level.INFO, logMessage + " " + pIndex, e);
             throw new ESIndexNamingException(Locale.getDefault());
+        } catch(IOException e) {
+            LOGGER.log(Level.ALL,"Error on mapping creation" + pIndex,e);
         }
+    }
+
+    private XContentBuilder partMapping() throws IOException {
+        XContentBuilder tmp = XContentFactory.jsonBuilder().startObject();
+        tmp.startObject("part")
+                .startObject("properties")
+                .startObject(ESMapper.ITERATIONS_KEY)
+                .startObject("properties")
+                .startObject(ESMapper.ATTRIBUTES_KEY)
+                .startObject("properties");
+        //map the attributes values as non analyzed, string will not be decomposed
+        tmp.startObject(ESMapper.ATTRIBUTE_VALUE);
+        tmp.field("type","string");
+        tmp.field("index", "not_analyzed");
+        tmp.endObject();
+        tmp.endObject();
+        tmp.endObject();
+        tmp.endObject();
+        tmp.endObject();
+        tmp.endObject();
+        tmp.endObject();
+        tmp.endObject();
+        return tmp;
     }
 
     private void tryCreateIndex(String pIndex, Client pClient) throws ESIndexNamingException {
