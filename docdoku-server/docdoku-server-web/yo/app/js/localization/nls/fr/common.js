@@ -606,5 +606,6 @@ define({
 	WORKSPACE: "Espace de travail",
 	WORKSPACES_ADMINISTRATION: 'Administration des espaces de travail',
 	WORKSPACES: "Workspaces",
+    YOU_CANNOT_CREATE_LINK_WITHOUT_TYPE: "Vous ne pouvez pas créer un lien sans type",
 	YOU_HAVE_BEEN_KICKED:"Vous avez été exclu de la salle collaborative"
 });

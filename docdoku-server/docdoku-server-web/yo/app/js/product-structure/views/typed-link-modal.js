@@ -181,7 +181,7 @@ define([
                         typedLinkItemView.onSave(callback);
 
                     } else {
-                        typedLinkItemView.showNotification('error', 'You cannot create a link without a type');
+                        typedLinkItemView.showNotification('error', App.config.i18n.YOU_CANNOT_CREATE_LINK_WITHOUT_TYPE);
                     }
 
                 } else if (typedLinkItemView.deleted) {

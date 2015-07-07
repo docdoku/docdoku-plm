@@ -611,6 +611,7 @@ define({
 		WORKSPACES_ADMINISTRATION: 'Workspaces administration',
 		WORKSPACES: "Workspaces",
 		WORKSPACE: "Workspace",
+        YOU_CANNOT_CREATE_LINK_WITHOUT_TYPE: "You cannot create a link without a type",
 		YOU_HAVE_BEEN_KICKED:"You have been kicked from the collaborative room"
 	},
 	'es': true,
