@@ -201,6 +201,7 @@ define([
         },
 
         finished: function () {
+            this.$el.find('.progress.progress-striped').remove();
             this.gotoIdleState();
         },
 
