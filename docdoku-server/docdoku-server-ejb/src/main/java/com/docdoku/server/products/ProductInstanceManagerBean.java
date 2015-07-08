@@ -28,17 +28,17 @@ import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.product.ConfigurationItem;
-import com.docdoku.core.product.ConfigurationItemKey;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PathToPathLink;
+import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.util.NamingConvention;
+import com.docdoku.core.util.Tools;
 import com.docdoku.server.LogDocument;
+import com.docdoku.server.configuration.PSFilterVisitor;
+import com.docdoku.server.configuration.spec.ProductBaselineConfigSpec;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.factory.ACLFactory;
 
@@ -369,12 +369,139 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             nextIteration.setLinkedDocuments(newLinks);
 
             copyPathToPathLinks(user, nextIteration);
+            copyPathDataMasterList(workspaceId, user, lastIteration, nextIteration);
 
         } else {
             throw new NotAllowedException(userLocale, "NotAllowedException53");
         }
 
         return productInstanceMaster;
+
+    }
+
+    private void copyPathDataMasterList(String workspaceId, User user, ProductInstanceIteration lastIteration, ProductInstanceIteration nextIteration) throws NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
+
+        List<PathDataMaster> pathDataMasterList = new ArrayList<>();
+        ProductBaseline productBaseline = nextIteration.getBasedOn();
+        PartMaster partMaster = productBaseline.getConfigurationItem().getDesignItem();
+        String serialNumber = lastIteration.getSerialNumber();
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
+
+        PSFilter filter = new ProductBaselineConfigSpec(productBaseline,user);
+
+        new PSFilterVisitor(em, user, filter, partMaster, null, -1) {
+            @Override
+            public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
+                // Unused here
+            }
+
+            @Override
+            public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
+                // Unused here
+            }
+
+            @Override
+            public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
+                // Unused here
+            }
+
+            @Override
+            public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+                // Unused here
+            }
+
+            @Override
+            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+                // Unused here
+            }
+
+            @Override
+            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+                // Find pathData in previous iteration which is on this path. Copy it.
+                String pathAsString = Tools.getPathAsString(path);
+                for(PathDataMaster pathDataMaster:lastIteration.getPathDataMasterList()){
+                    if(pathAsString.equals(pathDataMaster.getPath())){
+                          pathDataMasterList.add(clonePathDataMaster(pathDataMaster));
+                    }
+                }
+            }
+
+            private PathDataMaster clonePathDataMaster(PathDataMaster pathDataMaster) {
+                PathDataMaster clone = new PathDataMaster();
+
+                // Need to persist and flush to get an id
+                em.persist(clone);
+                em.flush();
+
+                clone.setPath(pathDataMaster.getPath());
+
+                List<PathDataIteration> pathDataIterations = new ArrayList<>();
+                for(PathDataIteration pathDataIteration:pathDataMaster.getPathDataIterations()){
+                    PathDataIteration clonedIteration = clonePathDataIteration(workspaceId, clone, pathDataIteration);
+                    pathDataIterations.add(clonedIteration);
+                }
+                clone.setPathDataIterations(pathDataIterations);
+
+                return clone;
+            }
+
+            private PathDataIteration clonePathDataIteration(String workspaceId, PathDataMaster newPathDataMaster, PathDataIteration pathDataIteration) {
+                PathDataIteration clone = new PathDataIteration();
+
+                clone.setPathDataMaster(newPathDataMaster);
+                clone.setDateIteration(pathDataIteration.getDateIteration());
+                clone.setIteration(pathDataIteration.getIteration());
+                clone.setNoteIteration(pathDataIteration.getNoteIteration());
+
+                // Attributes
+                List<InstanceAttribute> clonedAttributes = new ArrayList<>();
+                for(InstanceAttribute attribute : pathDataIteration.getInstanceAttributes()){
+                    InstanceAttribute clonedAttribute = attribute.clone();
+                    clonedAttributes.add(clonedAttribute);
+                }
+                clone.setInstanceAttributes(clonedAttributes);
+
+                // Attached files
+                for (BinaryResource sourceFile : pathDataIteration.getAttachedFiles()) {
+                    String fileName = sourceFile.getName();
+                    long length = sourceFile.getContentLength();
+                    Date lastModified = sourceFile.getLastModified();
+                    String fullName = workspaceId + "/product-instances/" + serialNumber + "/pathdata/" + newPathDataMaster.getId() + "/iterations/" + pathDataIteration.getIteration() + '/' + fileName;
+                    BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
+                    try {
+                        copyBinary(sourceFile,targetFile);
+                        clone.getAttachedFiles().add(targetFile);
+                    } catch (FileAlreadyExistsException | CreationException e) {
+                        LOGGER.log(Level.FINEST,null,e);
+                    }
+                }
+
+                // Linked documents
+                Set<DocumentLink> newLinks = new HashSet<>();
+                for(DocumentLink documentLink:pathDataIteration.getLinkedDocuments()){
+                    newLinks.add(documentLink.clone());
+                }
+                clone.setLinkedDocuments(newLinks);
+
+                return clone;
+            }
+
+            private void copyBinary(BinaryResource sourceFile, BinaryResource targetFile) throws FileAlreadyExistsException, CreationException {
+                binDAO.createBinaryResource(targetFile);
+                try {
+                    dataManager.copyData(sourceFile, targetFile);
+                } catch (StorageException e) {
+                    LOGGER.log(Level.INFO, null, e);
+                }
+            }
+
+            @Override
+            public void onUnresolvedVersion(PartMaster partMaster) {
+                // Unused here
+            }
+        };
+
+        nextIteration.setPathDataMasterList(pathDataMasterList);
 
     }
 
@@ -597,7 +724,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
                 pathDataMaster = pathDataMasterDAO.findByPathIdAndProductInstanceIteration(pathDataId, prodInstI);
                 BinaryResourceDAO binDAO = new BinaryResourceDAO(locale, em);
                 Set<BinaryResource> sourceFiles = pathDataMaster.getLastIteration().getAttachedFiles();
-                Set<BinaryResource> targetFiles = new HashSet<BinaryResource>();;
+                Set<BinaryResource> targetFiles = new HashSet<>();
 
                 if (pathDataMaster.getLastIteration() != null) {
                     int iteration = pathDataMaster.getLastIteration().getIteration() + 1;
