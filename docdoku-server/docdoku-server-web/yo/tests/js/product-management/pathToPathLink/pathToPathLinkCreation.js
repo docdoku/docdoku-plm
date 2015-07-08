@@ -79,17 +79,16 @@ casper.test.begin('Path to path link creation tests suite', 8, function pathToPa
             this.click('.modal.typed-link-modal .btn.add-type-btn');
             this.test.assertElementCount('#path-to-path-links > .well', 1, 'One path to path link has been added');
             this.sendKeys('#path-to-path-links > .well:first-child .add-type-input', p2pLinks.type, {reset: true});
-            this.click('#path-to-path-links > .well:first-child .save-button');
+            this.click('.modal.typed-link-modal div.modal-footer > button.save-button');
         });
     });
 
     /**
-     * Wait for save button to disappear
+     * Wait for modal to disappear
      */
     casper.then(function waitForLinkToBeCreated() {
-        this.waitWhileSelector('#path-to-path-links > .well:first-child .save-button', function waitForLinkToBeCreated() {
-            this.test.assert(true, 'Save button has disappear');
-            this.click('.modal.typed-link-modal .modal-footer .cancel-button');
+        this.waitWhileSelector('.modal.typed-link-modal', function waitForLinkToBeCreated() {
+            this.test.assert(true, 'Typed link modal has disappear');
         });
     });
 

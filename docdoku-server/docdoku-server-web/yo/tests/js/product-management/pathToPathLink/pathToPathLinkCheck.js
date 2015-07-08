@@ -69,7 +69,7 @@ casper.test.begin('Path to path link check tests suite', 26, function pathToPath
     casper.then(function verifyWeCanAddPathToPathLink() {
         this.waitForSelector('.modal.typed-link-modal .btn.add-type-btn', function verifyWeCanAddPathToPathLink() {
             this.test.assert(true, 'We should be able to add new links');
-            this.click('.modal.typed-link-modal .modal-footer .cancel-button');
+            this.click('.modal.typed-link-modal .modal-footer button.cancel-button');
         });
     });
 
