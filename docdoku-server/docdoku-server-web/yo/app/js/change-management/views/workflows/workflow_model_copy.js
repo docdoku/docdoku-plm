@@ -64,7 +64,6 @@ define([
         },
 
         onHidden:function(){
-            console.log('hidden')
             this.remove();
         },
 

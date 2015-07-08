@@ -41,12 +41,12 @@ casper.test.begin('Workflow duplication tests suite', 6, function workflowDuplic
     });
 
     /**
-    * Wait for workflow editor
-    * */
+     * Wait for workflow editor
+     * */
 
-     casper.then(function waitForWorkflowEditor() {
+    casper.then(function waitForWorkflowEditor() {
         this.waitForSelector('#workflow-editor', function workflowEditorDisplayed() {
-            this.test.assert(true,'Workflow editor opened');
+            this.test.assert(true, 'Workflow editor opened');
         }, function fail() {
             this.capture('screenshot/workflowDuplication/waitForWorkflowEditor-error.png');
             this.test.assert(false, 'Workflow editor not displayed');
@@ -71,7 +71,7 @@ casper.test.begin('Workflow duplication tests suite', 6, function workflowDuplic
      * */
     casper.then(function waitForDuplicationModal() {
         this.waitForSelector('#modal-copy-workflow.in', function duplicationModalDisplayed() {
-            this.test.assert(true,'Workflow duplication modal displayed');
+            this.test.assert(true, 'Workflow duplication modal displayed');
         }, function fail() {
             this.capture('screenshot/workflowDuplication/waitForDuplicationModal-error.png');
             this.test.assert(false, 'Workflow duplicate modal not displayed');
@@ -83,8 +83,8 @@ casper.test.begin('Workflow duplication tests suite', 6, function workflowDuplic
      * */
     casper.then(function waitForWorkflowNameToBeFilled() {
         this.waitWhileSelector('#workflow-copy-name:invalid', function workflowNameFilled() {
-            this.test.assertSelectorExist('#workflow-copy-name[value="'+workflows.workflow1.name+'"]','Input should contain '+workflows.workflow1.name);
-            this.sendKeys('#workflow-copy-name',workflows.workflow2.name, {reset:true});
+            this.test.assertSelectorExist('#workflow-copy-name[value="' + workflows.workflow1.name + '"]', 'Input should contain ' + workflows.workflow1.name);
+            this.sendKeys('#workflow-copy-name', workflows.workflow2.name, {reset: true});
             this.click('#save-copy-workflow-btn');
         }, function fail() {
             this.capture('screenshot/workflowDuplication/waitForWorkflowNameToBeFilled-error.png');
@@ -98,7 +98,7 @@ casper.test.begin('Workflow duplication tests suite', 6, function workflowDuplic
 
     casper.then(function waitForDuplicationModalToDisappear() {
         this.waitWhileSelector('#modal-copy-workflow', function duplicationModalHidden() {
-            this.test.assert(true,'Duplication modal disappeared');
+            this.test.assert(true, 'Duplication modal disappeared');
         }, function fail() {
             this.capture('screenshot/workflowDuplication/waitForDuplicationModalToDisappear-error.png');
             this.test.assert(false, 'Workflow duplicate modal did not disappear');
@@ -111,7 +111,7 @@ casper.test.begin('Workflow duplication tests suite', 6, function workflowDuplic
 
     casper.then(function waitForWorkflowEditorToDisappear() {
         this.waitWhileSelector('#workflow-editor', function workflowEditorHidden() {
-            this.test.assert(true,'Workflow editor disappeared');
+            this.test.assert(true, 'Workflow editor disappeared');
         }, function fail() {
             this.capture('screenshot/workflowDuplication/waitForWorkflowEditorToDisappear-error.png');
             this.test.assert(false, 'Workflow editor did not disappear');
@@ -119,8 +119,8 @@ casper.test.begin('Workflow duplication tests suite', 6, function workflowDuplic
     });
 
     /**
-    * Check that we have two lines in the workflow table
-    * */
+     * Check that we have two lines in the workflow table
+     * */
 
     casper.then(function checkForNewWorkflowCreated() {
         this.waitForSelector('.workflow-table', function workflowTableDisplayed() {

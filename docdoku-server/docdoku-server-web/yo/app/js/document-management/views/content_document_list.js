@@ -343,9 +343,11 @@ define([
 
             var newVersionView = new DocumentNewVersionView({
                 model: documentChecked
-            }).render();
+            });
 
-            window.document.body.appendChild(newVersionView.el);
+            window.document.body.appendChild(newVersionView.render().el);
+
+            newVersionView.openModal();
 
             return false;
 

@@ -12,14 +12,15 @@ define([
 
     var DocumentsNewVersionView = Backbone.View.extend({
 
-        id: 'new-version-modal',
-
-        className: 'modal hide fade',
-
         events: {
             'click #create-new-version-btn': 'createNewVersionAction',
             'click #cancel-new-version-btn': 'closeModalAction',
-            'click a.close': 'closeModalAction'
+            'click a.close': 'closeModalAction',
+            'hidden #new-version-modal':'onHidden'
+        },
+
+        initialize:function(){
+            _.bindAll(this);
         },
 
         render: function () {
@@ -27,8 +28,6 @@ define([
             this.template = Mustache.render(template, {i18n: App.config.i18n, document: this.model.attributes});
 
             this.$el.html(this.template);
-
-            this.$el.modal('show');
 
             this.bindDomElements();
 
@@ -56,6 +55,7 @@ define([
             this.newVersionWorkflowDiv = this.$('#new-version-workflow');
             this.inputNewVersionTitle = this.$('#new-version-title');
             this.textAreaNewVersionDescription = this.$('#new-version-description');
+            this.$modal = this.$('#new-version-modal');
         },
 
         createNewVersionAction: function () {
@@ -63,8 +63,15 @@ define([
             this.closeModalAction();
         },
 
+        openModal:function(){
+            this.$modal.modal('show');
+        },
+
         closeModalAction: function () {
-            this.$el.modal('hide');
+            this.$modal.modal('hide');
+        },
+
+        onHidden:function(){
             this.remove();
         }
 

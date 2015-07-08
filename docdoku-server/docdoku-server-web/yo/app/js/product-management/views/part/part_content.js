@@ -331,8 +331,9 @@ define([
         newVersion: function () {
             var partNewVersionView = new PartNewVersionView({
                 model: this.partListView.getSelectedPart()
-            }).render();
-            window.document.body.appendChild(partNewVersionView.el);
+            });
+            window.document.body.appendChild(partNewVersionView.render().el);
+            partNewVersionView.openModal();
         },
 
         releasePart: function () {
