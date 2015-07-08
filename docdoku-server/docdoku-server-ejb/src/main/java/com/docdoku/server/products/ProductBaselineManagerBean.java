@@ -656,4 +656,45 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
         return new PathToPathLinkDAO(locale, em).getDistinctPathToPathLinkTypes(baseline);
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public List<PathToPathLink> getPathToPathTypedLink(String workspaceId, String configurationItemId, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
+
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        // Load the baseline
+        ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(locale, em);
+        ProductBaseline baseline = productBaselineDAO.loadBaseline(baselineId);
+
+        return new PathToPathLinkDAO(locale, em).getDistinctPathToPathLinks(baseline);
+    }
+
+    @Override
+    public List<DocumentIteration> getDocumentLinksAsDocumentIterations(String workspaceId, String configurationItemId, int baselineId, PartIterationKey partIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, PartIterationNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+
+        PartIterationDAO partIterationDAO = new PartIterationDAO(locale,em);
+        PartIteration partIteration = partIterationDAO.loadPartI(partIterationKey);
+
+        // Load the baseline
+        ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(locale, em);
+        ProductBaseline baseline = productBaselineDAO.loadBaseline(baselineId);
+        DocumentCollection documentCollection = baseline.getDocumentCollection();
+        Map<BaselinedDocumentKey, BaselinedDocument> baselinedDocuments = documentCollection.getBaselinedDocuments();
+        List<DocumentIteration> documentIterations = new ArrayList<>();
+
+        for(Map.Entry<BaselinedDocumentKey, BaselinedDocument> map : baselinedDocuments.entrySet()){
+            BaselinedDocument baselinedDocument = map.getValue();
+            DocumentIteration targetDocument = baselinedDocument.getTargetDocument();
+            for(DocumentLink documentLink : partIteration.getLinkedDocuments() ){
+                if(documentLink.getTargetDocument().getKey().equals(targetDocument.getDocumentRevisionKey())){
+                    documentIterations.add(targetDocument);
+                }
+            }
+        }
+
+        return documentIterations;
+    }
+
 }
