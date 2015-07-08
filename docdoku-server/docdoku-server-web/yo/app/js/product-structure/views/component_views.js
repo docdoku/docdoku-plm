@@ -206,9 +206,12 @@ define([
 
 	    onEditPart: function () {
 		    var model = new Part({partKey: this.model.getNumber() + '-' + this.model.getVersion()});
+            var iteration = this.model.getIteration();
+
 		    model.fetch().success(function () {
 			    new PartModalView({
-				    model: model
+				    model: model,
+                    iteration: iteration
 			    }).show();
 		    });
 
@@ -383,9 +386,12 @@ define([
 
 	    onEditPart: function () {
 		    var model = new Part({partKey: this.model.getNumber() + '-' + this.model.getVersion()});
+            var iteration = this.model.getIteration();
+
 		    model.fetch().success(function () {
 			    new PartModalView({
-				    model: model
+				    model: model,
+                    iteration: iteration
 			    }).show();
 		    });
 
