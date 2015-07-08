@@ -29,11 +29,11 @@ casper.test.begin('Workflow Deletion tests suite', 2, function workflowDeletionT
     /**
      * Select the first workflow by its checkbox
      */
-    casper.then(function clickOnWorkflowCheckbox() {
-        this.waitForSelector('.workflow-table tbody tr:first-child td:first-child input', function tableDisplayed() {
-            this.click('.workflow-table tbody tr:first-child td:first-child input');
+    casper.then(function clickOnAllWorkflowsCheckbox() {
+        this.waitForSelector('.workflow-table thead tr:first-child th:first-child input', function tableDisplayed() {
+            this.click('.workflow-table thead tr:first-child th:first-child input');
         }, function fail() {
-            this.capture('screenshot/workflowDeletion/clickOnWorkflowCheckbox-error.png');
+            this.capture('screenshot/workflowDeletion/clickOnAllWorkflowsCheckbox-error.png');
             this.test.assert(false, 'Workflow table can not be found');
         });
     });
@@ -66,9 +66,9 @@ casper.test.begin('Workflow Deletion tests suite', 2, function workflowDeletionT
     /**
      * Check if the workflow has disappeared
      */
-    casper.then(function checkForWorkflowDeleted() {
+    casper.then(function checkForWorkflowsDeleted() {
         this.waitWhileSelector('.workflow-table tbody tr:first-child td:first-child input', function workflowListEmpty() {
-            this.test.assert(true, 'Workflow deleted');
+            this.test.assert(true, 'Workflows deleted');
         }, function fail() {
             this.capture('screenshot/workflowDeletion/checkForWorkflowDeleted-error.png');
             this.test.assert(false, 'The workflow list is not empty');

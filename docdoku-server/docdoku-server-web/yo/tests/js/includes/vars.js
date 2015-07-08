@@ -208,6 +208,9 @@ var workflows = {
                 }
             }
         }
+    },
+    workflow2: {
+        name: 'CasperJsTestWorkflow2'
     }
 };
 

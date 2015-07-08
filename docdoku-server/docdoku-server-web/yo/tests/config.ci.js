@@ -39,6 +39,7 @@ module.exports = {
         // Workflow creation
         "js/change-management/role/roleCreation.js",
         "js/change-management/workflow/workflowCreation.js",
+        "js/change-management/workflow/workflowDuplication.js",
 
         // Template
         "js/product-management/template/partTemplateCreation.js",

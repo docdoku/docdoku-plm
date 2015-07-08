@@ -8,34 +8,26 @@ define([
 	'use strict';
     var WorkflowModelCopyView = Backbone.View.extend({
 
-        id: 'modal-copy-workflow',
-        className: 'modal hide fade',
-
         events: {
             'click #save-copy-workflow-btn': 'saveCopyAction',
             'click #cancel-copy-workflow-btn': 'closeModalAction',
-            'click a.close': 'closeModalAction'
+            'click a.close': 'closeModalAction',
+            'hidden #modal-copy-workflow': 'onHidden'
         },
 
         initialize: function () {
-
+            _.bindAll(this);
         },
 
         render: function () {
-
-            this.template = Mustache.render(template, {i18n: App.config.i18n, workflow: this.model.attributes});
-
-            this.$el.html(this.template);
-
-            this.$el.modal('show');
-
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, workflow: this.model.attributes}));
             this.bindDomElements();
-
             return this;
         },
 
         bindDomElements: function () {
             this.inputWorkflowCopyName = this.$('#workflow-copy-name');
+            this.$modal = this.$('#modal-copy-workflow');
         },
 
         saveCopyAction: function () {
@@ -63,8 +55,16 @@ define([
             }
         },
 
+        openModal: function () {
+            this.$modal.modal('show');
+        },
+
         closeModalAction: function () {
-            this.$el.modal('hide');
+            this.$modal.modal('hide');
+        },
+
+        onHidden:function(){
+            console.log('hidden')
             this.remove();
         },
 
