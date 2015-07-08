@@ -2956,9 +2956,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 if (!visitedPartNumbers.contains(partMaster.getNumber()) && !hasModificationNotification[0]) {
                     visitedPartNumbers.add(partMaster.getNumber());
                     List<PartIteration> partIterations = latestPSFilter.filter(partMaster);
-                    PartIteration partIteration = partIterations.get(partIterations.size() - 1);
-                    if (modificationNotificationDAO.hasModificationNotifications(partIteration.getKey())) {
-                        hasModificationNotification[0] = true;
+                    // As we use a latest checked-in filter, partIterations array can be empty
+                    if(!partIterations.isEmpty()){
+                        PartIteration partIteration = partIterations.get(partIterations.size() - 1);
+                        if (modificationNotificationDAO.hasModificationNotifications(partIteration.getKey())) {
+                            hasModificationNotification[0] = true;
+                        }
                     }
                 }
             }
