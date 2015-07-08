@@ -48,8 +48,8 @@ define([
             };
 
             this.$el.html(Mustache.render(template, data));
-            this.$('.link-source i:last-of-type').remove();
-            this.$('.link-target i:last-of-type').remove();
+            this.$('.link-source .fa-long-arrow-right').last().remove();
+            this.$('.link-target .fa-long-arrow-right').last().remove();
             this.bindDOMElements();
 
             return this;
@@ -76,11 +76,11 @@ define([
         },
 
         onSelectType: function () {
-            this.$('.add-type-input').val("");
+            this.$('.add-type-input').val('');
         },
 
         onInputType: function () {
-            this.$('.type-select').val("");
+            this.$('.type-select').val('');
         },
 
         save: function (callback) {
@@ -178,7 +178,7 @@ define([
                     dataType:'json',
                     contentType: 'application/json',
                     data : JSON.stringify(data),
-                    success: function(pathToPathLink) {
+                    success: function() {
                         self.model.creationMode = false;
                         callback();
                     },

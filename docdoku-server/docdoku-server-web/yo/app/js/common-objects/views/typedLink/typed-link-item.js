@@ -22,7 +22,6 @@ define([
 
         render: function () {
 
-            console.log(this.model)
             var data = {
                 i18n: App.config.i18n,
                 creationMode : this.model.creationMode,

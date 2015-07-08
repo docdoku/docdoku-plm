@@ -131,7 +131,6 @@ define([
         getExistingPathToPath: function(){
             var self = this;
             var urlForExistingTypedLink = this.getUrlForExistingTypedLink();
-            console.log(urlForExistingTypedLink)
             $.ajax({
                 type : 'GET',
                 url : urlForExistingTypedLink,
