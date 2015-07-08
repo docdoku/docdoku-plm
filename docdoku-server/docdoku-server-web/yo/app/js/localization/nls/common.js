@@ -355,6 +355,8 @@ define({
 		PATH: "Folder",
         PATH_TO_PATH_SOURCE: "Source",
         PATH_TO_PATH_TARGET: "Target",
+        PATH_TO_PATH_SOURCE_LINK: "Source links",
+        PATH_TO_PATH_TARGET_LINK: "Target links",
 		PENDING: "Absent participant",
 		PERMALINK: "Permalink",
         POSSIBLE_VALUE: "possible values",

@@ -285,13 +285,13 @@ define(function () {
 
     contextFields.push({
         value: 'ctx.p2p.source',
-        name: App.config.i18n.LINKS  + ' ' +App.config.i18n.PATH_TO_PATH_SOURCE,
+        name: App.config.i18n.PATH_TO_PATH_SOURCE_LINK,
         group: 'ctx'
     });
 
     contextFields.push({
         value: 'ctx.p2p.target',
-        name: App.config.i18n.LINKS  + ' ' + App.config.i18n.PATH_TO_PATH_TARGET,
+        name: App.config.i18n.PATH_TO_PATH_TARGET_LINK,
         group: 'ctx'
     });
 

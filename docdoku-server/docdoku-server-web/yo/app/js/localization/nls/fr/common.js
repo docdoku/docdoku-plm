@@ -351,6 +351,8 @@ define({
 	PATH: "Dossier",
     PATH_TO_PATH_SOURCE: "Source",
     PATH_TO_PATH_TARGET: "Destination",
+    PATH_TO_PATH_SOURCE_LINK: "Liens source",
+    PATH_TO_PATH_TARGET_LINK: "Liens destination",
 	PENDING: "Participant absent",
 	PERMALINK: "Permalien",
     POSSIBLE_VALUE: "valeurs possibles",
