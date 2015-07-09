@@ -37,9 +37,7 @@ import com.docdoku.server.dao.WorkspaceDAO;
 import org.elasticsearch.action.search.*;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchHit;
 
 import javax.ejb.Stateless;
@@ -223,6 +221,12 @@ public class ESSearcher {
         }
     }
 
+    private QueryBuilder getFullTextQuery(SearchQuery query) {
+        // TODO Cut the query and make a boolQuery() with all the words
+        QueryBuilder fullTextQuery = QueryBuilders.fuzzyQuery("_all",query.getFullText());
+        return fullTextQuery;
+    }
+
     /**
      * Return a ElasticSearch Query for DocumentSearch
      *
@@ -230,91 +234,72 @@ public class ESSearcher {
      * @return a ElasticSearch.QueryBuilder
      */
     private QueryBuilder getQueryBuilder(DocumentSearchQuery docQuery) {
-        QueryBuilder qr;
+        ESQueryBuilder queryBuilder = new ESQueryBuilder();
+
         if (docQuery.getFullText() != null) {
-            qr = QueryBuilders.disMaxQuery()                                                                            // TODO Cut the query and make a boolQuery() with all the words
-                    .add(QueryBuilders.fuzzyLikeThisQuery()
-                            .likeText(docQuery.getFullText()))
-                    .add(QueryBuilders.queryString("*" + docQuery.getFullText() + "*")
-                            .boost(2.5f))
-                    .tieBreaker(1.2f);
+            QueryBuilder query = getFullTextQuery(docQuery);
+            queryBuilder.should(query);
         } else {
-            qr = QueryBuilders.boolQuery();
             if (docQuery.getDocMId() != null) {
-                ((BoolQueryBuilder) qr).should(
-                        QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.DOCUMENT_ID_KEY).likeText(docQuery.getDocMId()));
+                queryBuilder.should(QueryBuilders.fuzzyQuery(ESMapper.DOCUMENT_ID_KEY, docQuery.getDocMId()));
             }
             if (docQuery.getTitle() != null) {
-                ((BoolQueryBuilder) qr).should(
-                        QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.TITLE_KEY).likeText(docQuery.getTitle()));
+               queryBuilder.should(QueryBuilders.fuzzyQuery(ESMapper.TITLE_KEY, docQuery.getTitle()));
             }
             if (docQuery.getContent() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.CONTENT_KEY).likeText(docQuery.getContent()));
+                queryBuilder.should(QueryBuilders.matchQuery(ESMapper.CONTENT_KEY, docQuery.getContent()));
             }
-            qr = addCommonQuery(docQuery, qr);
+            addCommonQuery(queryBuilder,docQuery);
         }
-        return qr;
+        return queryBuilder.getFilteredQuery();
     }
 
     /**
      * Add queries common to both part and doc.
      *
      * @param searchQuery The search query wanted
-     * @param qr The QueryBuilder initialized with the specific (doc/part) values
-     * @return A query builder with the common query for part and doc
+     * @param queryBuilder The QueryBuilder initialized with the specific (doc/part) values
      */
-    private QueryBuilder addCommonQuery(SearchQuery searchQuery, QueryBuilder qr) {
+    private void addCommonQuery(ESQueryBuilder queryBuilder, SearchQuery searchQuery) {
+
         if (searchQuery.getVersion() != null) {
-            ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.VERSION_KEY).likeText(searchQuery.getVersion()));
+            queryBuilder.should(FilterBuilders.termFilter(ESMapper.VERSION_KEY, searchQuery.getVersion()));
         }
         if (searchQuery.getAuthor() != null) {
-            ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.AUTHOR_SEARCH_KEY).likeText(searchQuery.getAuthor()));
+            queryBuilder.should(QueryBuilders.fuzzyQuery(ESMapper.AUTHOR_SEARCH_KEY, searchQuery.getAuthor()));
         }
         if (searchQuery.getType() != null) {
-            ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.TYPE_KEY).likeText(searchQuery.getType()));
+            queryBuilder.should(QueryBuilders.fuzzyQuery(ESMapper.TYPE_KEY, searchQuery.getType()));
         }
 
         if (searchQuery.getCreationDateFrom() != null) {
-            ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.CREATION_DATE_KEY).from(searchQuery.getCreationDateFrom()));
+            queryBuilder.should((FilterBuilders.rangeFilter(ESMapper.CREATION_DATE_KEY).from(searchQuery.getCreationDateFrom())));
         }
         if (searchQuery.getCreationDateTo() != null) {
-            ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.CREATION_DATE_KEY).to(searchQuery.getCreationDateTo()));
+            queryBuilder.should(FilterBuilders.rangeFilter(ESMapper.CREATION_DATE_KEY).to(searchQuery.getCreationDateTo()));
         }
         if (searchQuery.getModificationDateFrom() != null) {
-            ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.MODIFICATION_DATE_KEY).from(searchQuery.getModificationDateFrom()));
+            queryBuilder.should(FilterBuilders.rangeFilter(ESMapper.MODIFICATION_DATE_KEY).from(searchQuery.getModificationDateFrom()));
         }
         if (searchQuery.getModificationDateTo() != null) {
-            ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.MODIFICATION_DATE_KEY).to(searchQuery.getModificationDateTo()));
+            queryBuilder.should(FilterBuilders.rangeFilter(ESMapper.MODIFICATION_DATE_KEY).to(searchQuery.getModificationDateTo()));
         }
         if (searchQuery.getAttributes() != null) {
             for (SearchQuery.AbstractAttributeQuery attr : searchQuery.getAttributes()) {
-                if (attr instanceof SearchQuery.DateAttributeQuery) {
-                    QueryBuilder b = QueryBuilders.boolQuery().must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_NAME,attr.getNameWithoutWhiteSpace()))
-                            .must(QueryBuilders.rangeQuery(ESMapper.ATTRIBUTE_VALUE).from(((SearchQuery.DateAttributeQuery) attr).getFromDate()).to(((SearchQuery.DateAttributeQuery) attr).getToDate()));
-                    ((BoolQueryBuilder) qr).should(b);
-                } else if (attr instanceof SearchQuery.TextAttributeQuery) {
-                    QueryBuilder b = QueryBuilders.boolQuery().must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_NAME, attr.getNameWithoutWhiteSpace()))
-                        .must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_VALUE, ((SearchQuery.TextAttributeQuery) attr).getTextValue()));
-                    ((BoolQueryBuilder) qr).should(b);
-                } else if (attr instanceof SearchQuery.NumberAttributeQuery) {
-                    QueryBuilder b = QueryBuilders.boolQuery().must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_NAME,attr.getNameWithoutWhiteSpace()))
-                            .must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_VALUE, "" + ((SearchQuery.NumberAttributeQuery) attr).getNumberValue()));
-                    ((BoolQueryBuilder) qr).should(b);
-                } else if (attr instanceof SearchQuery.BooleanAttributeQuery) {
-                    QueryBuilder b = QueryBuilders.boolQuery().must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_NAME,attr.getNameWithoutWhiteSpace()))
-                            .must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_VALUE,  "" + ((SearchQuery.BooleanAttributeQuery) attr).isBooleanValue()));
-                    ((BoolQueryBuilder) qr).should(b);
-                } else if (attr instanceof SearchQuery.URLAttributeQuery) {
-                    QueryBuilder b = QueryBuilders.boolQuery().must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_NAME,attr.getNameWithoutWhiteSpace()))
-                            .must(QueryBuilders.termQuery(ESMapper.ATTRIBUTE_VALUE,((SearchQuery.URLAttributeQuery) attr).getUrlValue()));
-                    ((BoolQueryBuilder) qr).should(b);
+                BoolFilterBuilder b = FilterBuilders.boolFilter();
+                b.must(FilterBuilders.termFilter(ESMapper.ATTR_NESTED_PATH+ "." + ESMapper.ATTRIBUTE_NAME, attr.getNameWithoutWhiteSpace()));
+
+                if(attr.hasValue()) {
+                    b.must(FilterBuilders.termFilter(ESMapper.ATTR_NESTED_PATH + "." + ESMapper.ATTRIBUTE_VALUE, attr.toString()));
                 }
+
+                NestedFilterBuilder nested = FilterBuilders.nestedFilter(ESMapper.ATTR_NESTED_PATH, b);
+                queryBuilder.should(nested);
             }
         }
         if (searchQuery.getTags() != null) {
-            ((BoolQueryBuilder) qr).should(QueryBuilders.inQuery(ESMapper.TAGS_KEY, searchQuery.getTags()));
+            queryBuilder.should(FilterBuilders.inFilter(ESMapper.TAGS_KEY, searchQuery.getTags()));
         }
-        return qr;
     }
 
     /**
@@ -324,81 +309,25 @@ public class ESSearcher {
      * @return a ElasticSearch.QueryBuilder
      */
     private QueryBuilder getQueryBuilder(PartSearchQuery partQuery) {
-        QueryBuilder qr;
-        if (partQuery.getFullText() != null) {                                                                          // TODO Cut the query and make a boolQuery() with all the words
-            qr = QueryBuilders.disMaxQuery()
-                    .add(QueryBuilders.fuzzyLikeThisQuery()
-                            .likeText(partQuery.getFullText()))
-                    .add(QueryBuilders.queryString("*" + partQuery.getFullText() + "*")
-                            .boost(2.5f))
-                    .tieBreaker(1.2f);
+        ESQueryBuilder queryBuilder = new ESQueryBuilder();
+        if (partQuery.getFullText() != null) {
+            QueryBuilder query = getFullTextQuery(partQuery);
+            queryBuilder.should(query);
         } else {
-            qr = QueryBuilders.boolQuery();
             if (partQuery.getPartNumber() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.PART_NUMBER_KEY).likeText(partQuery.getPartNumber()));
+                queryBuilder.should(QueryBuilders.fuzzyQuery(ESMapper.PART_NUMBER_KEY, partQuery.getPartNumber()));
             }
             if (partQuery.getName() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.PART_NAME_KEY).likeText(partQuery.getName()));
+                queryBuilder.should(QueryBuilders.fuzzyQuery(ESMapper.PART_NAME_KEY, partQuery.getName()));
             }
             if (partQuery.isStandardPart() != null) {
                 String text = partQuery.isStandardPart() ? "TRUE" : "FALSE";
-                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.STANDARD_PART_KEY).likeText(text));
+                queryBuilder.should(FilterBuilders.termFilter(ESMapper.STANDARD_PART_KEY, text));
             }
-            qr = addCommonQuery(partQuery, qr);
+            addCommonQuery(queryBuilder,partQuery);
         }
-        return qr;
-    }
 
-    /**
-     * Return a ElasticSearch Query for a document or a part research
-     *
-     * @param query SearchQuery wanted
-     * @return a ElasticSearch.QueryBuilder
-     */
-    private QueryBuilder getQueryBuilder(SearchQuery query) {
-        QueryBuilder qr;
-        if (query.getFullText() != null) {
-            qr = QueryBuilders.fuzzyLikeThisQuery().likeText(query.getFullText());
-        } else {
-            qr = QueryBuilders.boolQuery();
-            if (query.getVersion() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.VERSION_KEY).likeText(query.getVersion()));
-            }
-            if (query.getAuthor() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.AUTHOR_SEARCH_KEY).likeText(query.getAuthor()));
-            }
-            if (query.getType() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.TYPE_KEY).likeText(query.getType()));
-            }
-            if (query.getCreationDateFrom() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.CREATION_DATE_KEY).from(query.getCreationDateFrom().getTime()));
-            }
-            if (query.getCreationDateTo() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.CREATION_DATE_KEY).to(query.getCreationDateTo().getTime()));
-            }
-            if (query.getModificationDateFrom() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.MODIFICATION_DATE_KEY).from(query.getModificationDateFrom().getTime()));
-            }
-            if (query.getModificationDateTo() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.rangeQuery(ESMapper.MODIFICATION_DATE_KEY).to(query.getModificationDateTo().getTime()));
-            }
-            if (query.getAttributes() != null) {
-                for (SearchQuery.AbstractAttributeQuery attr : query.getAttributes()) {
-                    if (attr instanceof SearchQuery.DateAttributeQuery) {
-                        ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), ((SearchQuery.DateAttributeQuery) attr).getFromDate().getTime()));
-                    } else if (attr instanceof SearchQuery.TextAttributeQuery) {
-                        ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), ((SearchQuery.TextAttributeQuery) attr).getTextValue()));
-                    } else if (attr instanceof SearchQuery.NumberAttributeQuery) {
-                        ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), "" + ((SearchQuery.NumberAttributeQuery) attr).getNumberValue()));
-                    } else if (attr instanceof SearchQuery.BooleanAttributeQuery) {
-                        ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), "" + ((SearchQuery.BooleanAttributeQuery) attr).isBooleanValue()));
-                    } else if (attr instanceof SearchQuery.URLAttributeQuery) {
-                        ((BoolQueryBuilder) qr).should(QueryBuilders.termQuery(attr.getNameWithoutWhiteSpace(), ((SearchQuery.URLAttributeQuery) attr).getUrlValue()));
-                    }
-                }
-            }
-        }
-        return qr;
+        return queryBuilder.getFilteredQuery();
     }
 
     /**
