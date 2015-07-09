@@ -10,23 +10,27 @@ define([
     'text!common-objects/templates/buttons/delete_button.html',
     'text!common-objects/templates/buttons/snap_button.html',
     'text!common-objects/templates/buttons/new_product_instance_button.html',
+    'text!common-objects/templates/buttons/udf_button.html',
     'common-objects/views/alert',
     'views/baselines/baseline_creation_view',
-    'views/product-instances/product_instances_creation'
-], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection,ConfigurationItem, template, BaselinesListView, deleteButton, snapButton,newProductInstanceButton, AlertView, BaselineCreationView, ProductInstanceCreationView) {
+    'views/product-instances/product_instances_creation',
+    'common-objects/views/udf/user_defined_function'
+], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection,ConfigurationItem, template, BaselinesListView, deleteButton, snapButton, newProductInstanceButton, udfButton, AlertView, BaselineCreationView, ProductInstanceCreationView, UserDefinedFunctionView) {
 	'use strict';
 
     var BaselinesContentView = Backbone.View.extend({
         partials: {
             deleteButton: deleteButton,
             snapButton:snapButton,
-            newProductInstanceButton:newProductInstanceButton
+            newProductInstanceButton:newProductInstanceButton,
+            udfButton: udfButton
         },
 
         events: {
             'click button.delete': 'deleteBaseline',
             'click button.new-baseline': 'createBaseline',
-            'click button.new-product-instance': 'newProductInstance'
+            'click button.new-product-instance': 'newProductInstance',
+            'click button.udf': 'openUdfView'
         },
 
         initialize: function () {
@@ -155,7 +159,16 @@ define([
                 type: 'info',
                 message: message
             }).render().$el);
+        },
+
+        openUdfView:function(){
+            var view = new UserDefinedFunctionView();
+            view.render();
+            view.setBaselineMode();
+            document.body.appendChild(view.el);
+            view.openModal();
         }
+
     });
 
     return BaselinesContentView;

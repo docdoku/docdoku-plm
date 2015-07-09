@@ -37,20 +37,26 @@ define([
             return this;
         },
 
+        setBaselineMode:function(){
+            this.$typeList.val('baseline');
+        },
+
         fetchProducts: function () {
             var productList = this.$productList;
             var typeList = this.$typeList;
             var _this = this;
+
+            typeList.append('<option value="latest">'+App.config.i18n.LATEST_SHORT+'</option>');
+            typeList.append('<option value="baseline">'+App.config.i18n.BASELINE+'</option>');
+
             new ConfigurationItemCollection().fetch({success:function(products){
                 products.each(function(product){
                     productList.append('<option value="'+product.getId()+'">'+product.getId()+'</option>');
-                    typeList.empty();
-                    typeList.append('<option value="latest">'+App.config.i18n.LATEST_SHORT+'</option>');
-                    typeList.append('<option value="baseline">'+App.config.i18n.BASELINE+'</option>');
                 });
                 _this.fetchValues();
                 _this.fetchAttributes();
             }});
+
         },
 
         fetchValues: function () {
