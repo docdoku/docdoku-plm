@@ -32,7 +32,7 @@ define({
 		ATTACHED_FILES: "Attached files",
 		ATTRIBUTES: "Attributes",
 		AUTHOR: "Author",
-        AUTHOR_LOGIN: "Auhtor's login",
+        AUTHOR_LOGIN: "Author's login",
         AUTHOR_NAME: "Author's name",
 		AUTHOR_DOCUMENT_HELP: "Author of the document, or user having worked on the document",
 		AUTHOR_PART_HELP: "Author of the part, or user having worked on the part",
