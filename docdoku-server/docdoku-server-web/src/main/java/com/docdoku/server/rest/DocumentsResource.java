@@ -45,8 +45,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -101,9 +100,6 @@ public class DocumentsResource {
         if(checkoutUser != null){
             return getDocumentsCheckedOutByUser(workspaceId);
         }
-        if(query != null){
-            return getDocumentsWithSearchQuery(workspaceId, query, configSpecType);
-        }
         if(tagId != null){
             return getDocumentsWithGivenTagIdAndWorkspaceId(workspaceId, tagId, configSpecType);
         }
@@ -114,6 +110,35 @@ public class DocumentsResource {
             return getDocumentsWithGivenFolderIdAndWorkspaceId(workspaceId,folderId, configSpecType);
         }
         return getDocumentsInWorkspace(workspaceId, start, configSpecType);
+    }
+
+    @GET
+    @Path("search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public DocumentRevisionDTO[] searchDocumentRevision(@Context UriInfo uri, @PathParam("workspaceId") String workspaceId) throws EntityNotFoundException, UserNotActiveException, ESServerException {
+        MultivaluedMap<String,String> params = uri.getQueryParameters();
+        String configSpecType = params.containsKey("configSpec") ? params.get("configSpec").get(0) : null;
+
+        DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseDocumentStringQuery(workspaceId,params);
+
+        DocumentRevision[] docRs;
+        if(configSpecType==null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
+            docRs = documentService.searchDocumentRevisions(documentSearchQuery);
+        }else{
+            DocumentConfigSpec configSpec = getConfigSpec(workspaceId,configSpecType);
+            docRs = documentConfigSpecService.searchFilteredDocuments(workspaceId,configSpec,documentSearchQuery);
+        }
+        DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
+
+        for (int i = 0; i < docRs.length; i++) {
+            docRsDTOs[i] = mapper.map(docRs[i], DocumentRevisionDTO.class);
+            docRsDTOs[i].setPath(docRs[i].getLocation().getCompletePath());
+            docRsDTOs[i] = Tools.createLightDocumentRevisionDTO(docRsDTOs[i]);
+            docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docRs[i]));
+            docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docRs[i]));
+        }
+
+        return docRsDTOs;
     }
 
     @GET
@@ -253,29 +278,6 @@ public class DocumentsResource {
         return docRsDTOs.toArray(new DocumentRevisionDTO[docRsDTOs.size()]);
     }
 
-    private DocumentRevisionDTO[] getDocumentsWithSearchQuery(String workspaceId, String pStringQuery, String configSpecType)
-            throws EntityNotFoundException, ESServerException, UserNotActiveException {
-
-        DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseDocumentStringQuery(workspaceId, pStringQuery);
-        DocumentRevision[] docRs;
-        if(configSpecType==null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
-            docRs = documentService.searchDocumentRevisions(documentSearchQuery);
-        }else{
-            DocumentConfigSpec configSpec = getConfigSpec(workspaceId,configSpecType);
-            docRs = documentConfigSpecService.searchFilteredDocuments(workspaceId,configSpec,documentSearchQuery);
-        }
-        DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
-
-        for (int i = 0; i < docRs.length; i++) {
-            docRsDTOs[i] = mapper.map(docRs[i], DocumentRevisionDTO.class);
-            docRsDTOs[i].setPath(docRs[i].getLocation().getCompletePath());
-            docRsDTOs[i] = Tools.createLightDocumentRevisionDTO(docRsDTOs[i]);
-            docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docRs[i]));
-            docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docRs[i]));
-        }
-
-        return docRsDTOs;
-    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
