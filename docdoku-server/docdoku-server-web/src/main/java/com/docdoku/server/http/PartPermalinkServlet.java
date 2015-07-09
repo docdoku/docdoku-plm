@@ -29,7 +29,6 @@ import com.docdoku.core.services.IProductManagerLocal;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -38,8 +37,6 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -47,19 +44,6 @@ import java.util.regex.Pattern;
  */
 
 public class PartPermalinkServlet extends HttpServlet {
-
-    private static Context context;
-    private static IProductManagerLocal productService;
-    private static final Logger LOGGER = Logger.getLogger(PartPermalinkServlet.class.getName());
-
-    static {
-        try {
-            context = new InitialContext();
-            productService = (IProductManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductManagerBean");
-        } catch (NamingException e) {
-            LOGGER.log(Level.WARNING, null, e);
-        }
-    }
 
     @Override
     protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
@@ -69,6 +53,10 @@ public class PartPermalinkServlet extends HttpServlet {
                 PartRevision partRevision = (PartRevision) pRequest.getAttribute("publicPartRevision");
                 handleSuccess(pRequest,pResponse,partRevision);
             }else{
+
+                Context context = new InitialContext();
+                IProductManagerLocal productService = (IProductManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductManagerBean");
+
                 String requestURI = pRequest.getRequestURI();
                 String[] pathInfos = Pattern.compile("/").split(requestURI);
                 int offset = pRequest.getContextPath().isEmpty() ? 2 : 3;
@@ -80,6 +68,7 @@ public class PartPermalinkServlet extends HttpServlet {
                 PartRevisionKey partRevisionKey  = new PartRevisionKey(workspaceId,partNumber,partVersion);
                 PartRevision partRevision = productService.getPartRevision(partRevisionKey);
                 handleSuccess(pRequest,pResponse,partRevision);
+
             }
         } catch (Exception pEx) {
             throw new ServletException("Error while fetching your part.", pEx);

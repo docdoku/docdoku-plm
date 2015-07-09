@@ -28,7 +28,6 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -37,8 +36,6 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -47,31 +44,22 @@ import java.util.regex.Pattern;
 
 public class DocumentPermalinkServlet extends HttpServlet {
 
-    private static Context context;
-    private static IDocumentManagerLocal documentService;
-    private static final Logger LOGGER = Logger.getLogger(DocumentPermalinkServlet.class.getName());
-
-    static {
-        try {
-            context = new InitialContext();
-            documentService = (IDocumentManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/DocumentManagerBean");
-        } catch (NamingException e) {
-            LOGGER.log(Level.WARNING, null, e);
-        }
-    }
-
     @Override
     protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
 
         try {
+
+            Context context = new InitialContext();
+            IDocumentManagerLocal documentService = (IDocumentManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/DocumentManagerBean");
+
             if(pRequest.getAttribute("publicDocumentRevision") != null){
                 DocumentRevision documentRevision = (DocumentRevision) pRequest.getAttribute("publicDocumentRevision");
                 handleSuccess(pRequest,pResponse,documentRevision);
             }else{
-                HttpServletRequest httpRequest = (HttpServletRequest) pRequest;
-                String requestURI = httpRequest.getRequestURI();
+
+                String requestURI = pRequest.getRequestURI();
                 String[] pathInfos = Pattern.compile("/").split(requestURI);
-                int offset = httpRequest.getContextPath().isEmpty() ? 2 : 3;
+                int offset = pRequest.getContextPath().isEmpty() ? 2 : 3;
 
                 String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
                 String documentMasterId = URLDecoder.decode(pathInfos[offset+1],"UTF-8");

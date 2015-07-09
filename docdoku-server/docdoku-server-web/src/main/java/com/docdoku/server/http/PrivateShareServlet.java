@@ -35,7 +35,6 @@ import com.docdoku.core.sharing.SharedPart;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -57,18 +56,7 @@ import java.util.regex.Pattern;
 
 public class PrivateShareServlet extends HttpServlet {
 
-    private static Context context;
-    private static IShareManagerLocal shareService;
     private static final Logger LOGGER = Logger.getLogger(PrivateShareServlet.class.getName());
-
-    static {
-        try {
-            context = new InitialContext();
-            shareService = (IShareManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ShareManagerBean");
-        } catch (NamingException e) {
-            LOGGER.log(Level.WARNING, null, e);
-        }
-    }
 
     @Override
     protected void doPost(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
@@ -78,6 +66,9 @@ public class PrivateShareServlet extends HttpServlet {
         String uuid = URLDecoder.decode(pathInfos[offset], "UTF-8");
 
         try{
+
+            Context context = new InitialContext();
+            IShareManagerLocal shareService = (IShareManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ShareManagerBean");
 
             SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
 
@@ -118,6 +109,9 @@ public class PrivateShareServlet extends HttpServlet {
             String uuid = URLDecoder.decode(pathInfos[offset], "UTF-8");
 
             try{
+
+                Context context = new InitialContext();
+                IShareManagerLocal shareService = (IShareManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ShareManagerBean");
 
                 SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
 

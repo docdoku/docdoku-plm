@@ -29,37 +29,19 @@ import com.docdoku.core.workflow.TaskKey;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class VoteServlet extends HttpServlet {
-
-    private static Context context;
-    private static IDocumentWorkflowManagerLocal documentWorkflowService;
-    private static IPartWorkflowManagerLocal partWorkflowService;
-    private static final Logger LOGGER = Logger.getLogger(VoteServlet.class.getName());
 
     private static final String APPROVE = "Approve";
     private static final String REJECT = "Reject";
     private static final String URL_SUFIXE_APPROVE = "/faces/taskApproved.xhtml";
     private static final String URL_SUFIXE_REJECT = "/faces/taskRejected.xhtml";
     private static final String ENTITY_ATTRIBUTE = "entity";
-
-    static {
-        try {
-            context = new InitialContext();
-            documentWorkflowService = (IDocumentWorkflowManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/DocumentWorkflowManagerBean");
-            partWorkflowService = (IPartWorkflowManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/PartWorkflowManagerBean");
-        } catch (NamingException e) {
-            LOGGER.log(Level.WARNING, null, e);
-        }
-    }
 
     @Override
     protected void doGet(HttpServletRequest pRequest,
@@ -78,7 +60,13 @@ public class VoteServlet extends HttpServlet {
         String entityType = pRequest.getParameter("entityType");
 
         try {
+
+            Context context = new InitialContext();
+
             if("parts".equals(entityType)){
+
+                IPartWorkflowManagerLocal  partWorkflowService = (IPartWorkflowManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/PartWorkflowManagerBean");
+
                 if (APPROVE.equals(action)) {
                     PartRevision partRevision = partWorkflowService.approveTaskOnPart(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
                     pRequest.setAttribute(ENTITY_ATTRIBUTE, partRevision);
@@ -90,6 +78,9 @@ public class VoteServlet extends HttpServlet {
                 }
 
             }else if("documents".equals(entityType)){
+
+                IDocumentWorkflowManagerLocal documentWorkflowService = (IDocumentWorkflowManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/DocumentWorkflowManagerBean");
+
                 if (APPROVE.equals(action)) {
                     DocumentRevision documentRevision = documentWorkflowService.approveTaskOnDocument(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
                     pRequest.setAttribute(ENTITY_ATTRIBUTE, documentRevision);
