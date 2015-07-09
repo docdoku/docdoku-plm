@@ -74,6 +74,8 @@ define([
 
         onSubmitForm: function (e) {
 
+            this.$notifications.empty();
+
             if(this.isValid){
                 this.model = new ConfigurationItem({
                     id: this.$inputProductId.val(),
