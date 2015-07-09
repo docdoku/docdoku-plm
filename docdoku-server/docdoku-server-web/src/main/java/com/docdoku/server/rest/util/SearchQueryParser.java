@@ -49,7 +49,7 @@ public class SearchQueryParser {
     private static final String FILTERS_DELIMITER = "=";
     private static final String QUERY_DELIMITER = "&";
 
-    public static DocumentSearchQuery parseDocumentStringQuery(String workspaceId , String pQuery){
+    public static DocumentSearchQuery parseDocumentStringQuery(String workspaceId , MultivaluedMap<String,String> query){
         String fullText = null;
         String pDocMId = null;
         String pTitle = null;
@@ -64,66 +64,66 @@ public class SearchQueryParser {
         String[] pTags = null;
         String pContent = null;
 
-        String[] query = pQuery.split(QUERY_DELIMITER);
 
-        for(String filters : query){
-            String[] filter = filters.split(FILTERS_DELIMITER);
-            if(filter.length == 2){
-                switch (filter[0]){
+        for(String filter : query.keySet()){
+            List<String> values = query.get(filter);
+            if(values.size() == 1){
+                String value = values.get(0);
+                switch (filter){
                     case "q" :
-                        fullText = filter[1];
+                        fullText = value;
                         break;
                     case "id" :
-                        pDocMId = filter[1];
+                        pDocMId = value;
                         break;
                     case "title" :
-                        pTitle = filter[1];
+                        pTitle = value;
                         break;
                     case "version" :
-                        pVersion = filter[1];
+                        pVersion = value;
                         break;
                     case "author" :
-                        pAuthor = filter[1];
+                        pAuthor = value;
                         break;
                     case "type" :
-                        pType = filter[1];
+                        pType = value;
                         break;
                     case "createdFrom" :
                         try {
-                            pCreationDateFrom =  SIMPLE_DATE_FORMAT.parse(filter[1]);
+                            pCreationDateFrom =  SIMPLE_DATE_FORMAT.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "createdTo" :
                         try {
-                            pCreationDateTo =  SIMPLE_DATE_FORMAT.parse(filter[1]);
+                            pCreationDateTo =  SIMPLE_DATE_FORMAT.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "modifiedFrom" :
                         try {
-                            pModificationDateFrom =  SIMPLE_DATE_FORMAT.parse(filter[1]);
+                            pModificationDateFrom =  SIMPLE_DATE_FORMAT.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "modifiedTo" :
                         try {
-                            pModificationDateTo =  SIMPLE_DATE_FORMAT.parse(filter[1]);
+                            pModificationDateTo =  SIMPLE_DATE_FORMAT.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "tags" :
-                        pTags = filter[1].split(",");
+                        pTags = value.split(",");
                         break;
                     case "content" :
-                        pContent = filter[1];
+                        pContent = value;
                         break;
                     case "attributes" :
-                        pAttributes = parseAttributeStringQuery(filter[1]);
+                        pAttributes = parseAttributeStringQuery(value);
                         break;
                     default:
                         break;
