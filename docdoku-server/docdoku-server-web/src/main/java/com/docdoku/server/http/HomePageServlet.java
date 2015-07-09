@@ -33,9 +33,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(name = "HomePageServlet", urlPatterns = {"/home"})
 public class HomePageServlet extends HttpServlet {
+
+    private static final Logger LOGGER = Logger.getLogger(HomePageServlet.class.getName());
 
     private void handleRequest(HttpServletRequest pRequest,
             HttpServletResponse pResponse)
@@ -63,7 +67,7 @@ public class HomePageServlet extends HttpServlet {
 
             }
         } catch (NamingException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.FINEST,null,e);
         }
 
     }
