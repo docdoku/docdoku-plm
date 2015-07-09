@@ -138,6 +138,8 @@ public class ExcelGenerator {
         List<String> data = new ArrayList<>();
 
         PartRevision part = row.getPartRevision();
+        PartIteration lastCheckedInIteration = part.getLastCheckedInIteration();
+        PartIteration lastIteration = part.getLastIteration();
 
         QueryContext context = row.getContext();
 
@@ -164,8 +166,7 @@ public class ExcelGenerator {
                     data.add(sType != null ? sType : "");
                     break;
                 case QueryField.PART_REVISION_MODIFICATION_DATE:
-                    PartIteration piLastIteration = part.getLastIteration();
-                    data.add((piLastIteration != null && piLastIteration.getModificationDate() != null) ? simpleDateFormat.format(piLastIteration.getModificationDate()) : "");
+                    data.add((lastIteration != null && lastIteration.getModificationDate() != null) ? simpleDateFormat.format(lastIteration.getModificationDate()) : "");
                     break;
                 case QueryField.PART_REVISION_CREATION_DATE:
                     data.add((part.getCreationDate() != null) ? simpleDateFormat.format(part.getCreationDate()) : "");
@@ -174,8 +175,7 @@ public class ExcelGenerator {
                     data.add((part.getCheckOutDate() != null) ? simpleDateFormat.format(part.getCheckOutDate()) : "");
                     break;
                 case QueryField.PART_REVISION_CHECKIN_DATE:
-                    PartIteration lastCheckedPI = part.getLastCheckedInIteration();
-                    data.add((lastCheckedPI != null && lastCheckedPI.getCheckInDate() != null) ? simpleDateFormat.format(lastCheckedPI.getCheckInDate()) : "");
+                    data.add((lastCheckedInIteration != null && lastCheckedInIteration.getCheckInDate() != null) ? simpleDateFormat.format(lastCheckedInIteration.getCheckInDate()) : "");
                     break;
                 case QueryField.PART_REVISION_VERSION:
                     data.add(part.getVersion() != null ? part.getVersion() : "");
@@ -201,7 +201,6 @@ public class ExcelGenerator {
                     data.add(row.getAmount() + "");
                     break;
                 case QueryField.PART_ITERATION_LINKED_DOCUMENTS:
-                    PartIteration lastCheckedInIteration = row.getPartRevision().getLastCheckedInIteration();
                     StringBuilder sb = new StringBuilder();
                     if (lastCheckedInIteration != null) {
                         Set<DocumentLink> linkedDocuments = lastCheckedInIteration.getLinkedDocuments();
@@ -230,9 +229,8 @@ public class ExcelGenerator {
                         String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());
                         String attributeSelectName = select.substring(select.indexOf(".") + 1);
                         String attributeValue = "";
-                        PartIteration pi = part.getLastIteration();
-                        if (pi != null) {
-                            List<InstanceAttribute> attributes = pi.getInstanceAttributes();
+                        if (lastIteration != null) {
+                            List<InstanceAttribute> attributes = lastIteration.getInstanceAttributes();
                             if (attributes != null) {
                                 for (InstanceAttribute attribute : attributes) {
                                     InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);

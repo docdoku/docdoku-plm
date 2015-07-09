@@ -282,19 +282,13 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     }
     public DocumentIteration getLastCheckedInIteration() {
         int index;
-        if(this.isCheckedOut()){
+        if(isCheckedOut()){
             index = documentIterations.size()-2;
         }else{
             index = documentIterations.size()-1;
         }
         if(index < 0) {
-            List<DocumentRevision> documentRevisions = this.getDocumentMaster().getDocumentRevisions();
-            int position = documentRevisions.indexOf(this);
-            if (position > 0 ) {
-                return documentRevisions.get(position - 1).getLastCheckedInIteration();
-            }else{
-                return null;
-            }
+           return null;
         }else {
             return documentIterations.get(index);
         }

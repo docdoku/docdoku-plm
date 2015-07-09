@@ -20,6 +20,7 @@
 package com.docdoku.server.rest.file;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
@@ -242,11 +243,11 @@ public class DocumentBinaryResource {
 
         String shareEntityWorkspaceId = sharedEntity.getWorkspace().getId();
         DocumentRevision documentRevision = ((SharedDocument) sharedEntity).getDocumentRevision();
-
+        DocumentIteration lastCheckedInIteration = documentRevision.getLastCheckedInIteration();
         if(!shareEntityWorkspaceId.equals(workspaceId) ||
                 !documentRevision.getDocumentMasterId().equals(documentId) ||
                 !documentRevision.getVersion().equals(version) ||
-                documentRevision.getLastCheckedInIteration().getIteration() < iteration){
+                (null != lastCheckedInIteration && lastCheckedInIteration.getIteration() < iteration)){
             throw new UnmatchingUuidException();
         }
     }

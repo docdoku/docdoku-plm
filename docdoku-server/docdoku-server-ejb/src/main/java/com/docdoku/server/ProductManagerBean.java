@@ -494,7 +494,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         if (isCheckoutByUser(user, partR)) {
 
-            PartIteration oldIteration = partR.getLastCheckedInIteration();
+            PartIteration lastCheckedInIteration = partR.getLastCheckedInIteration();
 
             checkCyclicAssemblyForPartIteration(partR.getLastIteration());
 
@@ -506,8 +506,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             esIndexer.index(lastIteration);
 
-            if (oldIteration != null && oldIteration.getVersion().equals(partR.getVersion())) {
-                removeObsoletePathToPathLinks(user, oldIteration);
+            if (lastCheckedInIteration != null) {
+                removeObsoletePathToPathLinks(user, lastCheckedInIteration);
             }
 
             partIterationEvent.select(new AnnotationLiteral<CheckedIn>() {

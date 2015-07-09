@@ -22,6 +22,7 @@ package com.docdoku.server.rest.file;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
+import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.UserGroupMapping;
@@ -320,11 +321,11 @@ public class PartBinaryResource{
 
         String shareEntityWorkspaceId = sharedEntity.getWorkspace().getId();
         PartRevision partRevision = ((SharedPart) sharedEntity).getPartRevision();
-
+        PartIteration lastCheckedInIteration = partRevision.getLastCheckedInIteration();
         if(!shareEntityWorkspaceId.equals(workspaceId) ||
                 !partRevision.getPartMasterNumber().equals(partNumber) ||
                 !partRevision.getVersion().equals(version) ||
-                partRevision.getLastCheckedInIteration().getIteration() < iteration){
+                (null != lastCheckedInIteration && lastCheckedInIteration.getIteration() < iteration)){
             throw new UnmatchingUuidException();
         }
     }

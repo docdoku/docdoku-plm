@@ -125,6 +125,7 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
             QueryContext queryContext = row.getContext();
 
             PartRevision part = row.getPartRevision();
+            PartIteration lastCheckedInIteration = part.getLastCheckedInIteration();
 
             jg.writeStartObject();
 
@@ -164,7 +165,6 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
             }
 
             if (selects.contains(QueryField.PART_REVISION_CHECKIN_DATE)) {
-                PartIteration lastCheckedInIteration = part.getLastCheckedInIteration();
                 writeDate(jg, QueryField.PART_REVISION_CHECKIN_DATE, lastCheckedInIteration != null ? lastCheckedInIteration.getCheckInDate() : null);
             }
 
@@ -225,15 +225,14 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
                         LOGGER.log(Level.FINEST,null,e);
                     }
                 }else{
-                    PartIteration lastIteration = part.getLastCheckedInIteration();
-                    if(lastIteration != null){
-                        Set<DocumentLink> linkedDocuments = lastIteration.getLinkedDocuments();
+                    if(lastCheckedInIteration != null){
+                        Set<DocumentLink> linkedDocuments = lastCheckedInIteration.getLinkedDocuments();
 
                         for(DocumentLink documentLink:linkedDocuments){
                             DocumentRevision targetDocument = documentLink.getTargetDocument();
-                            DocumentIteration lastCheckedInIteration = targetDocument.getLastCheckedInIteration();
-                            if(lastCheckedInIteration != null){
-                                sb.append(lastCheckedInIteration.toString()+",");
+                            DocumentIteration targetDocumentLastCheckedInIteration = targetDocument.getLastCheckedInIteration();
+                            if(targetDocumentLastCheckedInIteration != null){
+                                sb.append(targetDocumentLastCheckedInIteration.toString()+",");
                             }
                         }
                     }

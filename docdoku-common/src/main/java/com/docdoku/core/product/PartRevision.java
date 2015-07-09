@@ -312,19 +312,13 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
 
     public PartIteration getLastCheckedInIteration() {
         int index;
-        if(this.isCheckedOut()){
+        if(isCheckedOut()){
             index = partIterations.size()-2;
         }else{
             index = partIterations.size()-1;
         }
         if(index < 0) {
-            List<PartRevision> partRevisions = this.getPartMaster().getPartRevisions();
-            int position = partRevisions.indexOf(this);
-            if (position > 0 ) {
-                return partRevisions.get(position - 1).getLastCheckedInIteration();
-            }else{
-                return null;
-            }
+           return null;
         }else {
             return partIterations.get(index);
         }
