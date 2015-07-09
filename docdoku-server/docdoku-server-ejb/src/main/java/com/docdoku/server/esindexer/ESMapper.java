@@ -68,6 +68,9 @@ public class ESMapper {
     public static final String FILES_KEY = "files";
     public static final String CONTENT_KEY = "content";
     public static final String STANDARD_PART_KEY = "standardPart";
+    public static final String PART_TYPE = "part";
+    public static final String DOCUMENT_TYPE = "document" ;
+    public static final String ATTR_NESTED_PATH = ITERATIONS_KEY +"."+ ATTRIBUTES_KEY;
 
 
     private ESMapper() {
@@ -135,12 +138,15 @@ public class ESMapper {
                     tmp.endArray();
                 }
                 if (!iteration.getInstanceAttributes().isEmpty()) {
-                    tmp.startObject(ATTRIBUTES_KEY);
                     Collection<InstanceAttribute> listAttr = iteration.getInstanceAttributes();
+                    tmp.startArray(ATTRIBUTES_KEY);
                     for (InstanceAttribute attr : listAttr) {
-                        setField(tmp, attr.getNameWithoutWhiteSpace(), "" + attr.getValue(), 0.6f);
+                        tmp.startObject();
+                        setField(tmp,ATTRIBUTE_NAME,attr.getNameWithoutWhiteSpace(),0.6f);
+                        setField(tmp,ATTRIBUTE_VALUE,""+attr.getValue(),0.6f);
+                        tmp.endObject();
                     }
-                    tmp.endObject();
+                    tmp.endArray();
                 }
 
                 if (!iteration.getAttachedFiles().isEmpty()) {
@@ -201,11 +207,13 @@ public class ESMapper {
             params.put(TAGS_KEY, labels);
         }
         if (!doc.getInstanceAttributes().isEmpty()) {
-            Map<String, Object> attrParams = new HashMap<>();
-            params.put(ATTRIBUTES_KEY, attrParams);
             Collection<InstanceAttribute> listAttr = doc.getInstanceAttributes();
+            List<Map<String,Object>> listAttributes = new ArrayList<>();
+            params.put(ATTRIBUTES_KEY, listAttributes);
             for (InstanceAttribute attr : listAttr) {
-                setParam(attrParams, attr.getNameWithoutWhiteSpace(), "" + attr.getValue(), 0.6f);
+                Map<String,Object> attributesParams = new HashMap<>();
+                setParam(attributesParams, ATTRIBUTE_NAME, attr.getNameWithoutWhiteSpace(), 0.6f);
+                setParam(attributesParams, ATTRIBUTE_VALUE, "" + attr.getValue(), 0.6f);
             }
         }
         if (!doc.getAttachedFiles().isEmpty()) {
@@ -228,9 +236,10 @@ public class ESMapper {
      * This will be used if and only if the PartRevision has not been indexed in elastic search.
      *
      * @param part the PartIteration which was checkin.
+     * @param binaryList
      * @return The Json produced contains the PartRevision information and the information of all the iteration.
      */
-    protected static XContentBuilder partRevisionToJson(PartIteration part) {
+    protected static XContentBuilder partRevisionToJson(PartIteration part, Map<String, String> binaryList) {
         try {
             XContentBuilder tmp = XContentFactory.jsonBuilder()
                     .startObject();
@@ -275,6 +284,17 @@ public class ESMapper {
                     tmp.endArray();
                 }
 
+                if (!iteration.getAttachedFiles().isEmpty()) {
+                    tmp.startObject(FILES_KEY);
+                    for (Map.Entry<String, String> contentInput : binaryList.entrySet()) {
+                        tmp.startObject(contentInput.getKey());
+                        setField(tmp, AUTHOR_NAME_KEY, contentInput.getKey(), 0.8f);
+                        setField(tmp, CONTENT_KEY, contentInput.getValue(), 0.6f);
+                        tmp.endObject();
+                    }
+                    tmp.endObject();
+                }
+
                 tmp.endObject();
 
             }
@@ -291,9 +311,10 @@ public class ESMapper {
      * Create a Map of all the data of an iteration.
      *
      * @param part PartIteration to be Mapped.
+     * @param binaryList
      * @return The Map is well formatted to be used by an elasticsearch Script
      */
-    protected static Map<String, Object> partIterationMap(PartIteration part) {
+    protected static Map<String, Object> partIterationMap(PartIteration part, Map<String, String> binaryList) {
         Map<String, Object> params = new HashMap<>();
 
         setParam(params, WORKSPACE_ID_KEY, part.getWorkspaceId(), 0.6f);
@@ -331,6 +352,17 @@ public class ESMapper {
                 Map<String,Object> attributesParams = new HashMap<>();
                 setParam(attributesParams, ATTRIBUTE_NAME, attr.getNameWithoutWhiteSpace(), 0.6f);
                 setParam(attributesParams, ATTRIBUTE_VALUE, "" + attr.getValue(), 0.6f);
+            }
+        }
+
+        if (!part.getAttachedFiles().isEmpty()) {
+            Map<String, Object> filesParams = new HashMap<>();
+            params.put(FILES_KEY, filesParams);
+            for (Map.Entry<String, String> contentInput : binaryList.entrySet()) {
+                Map<String, Object> map = new HashMap<>();
+                filesParams.put(contentInput.getKey(), map);
+                setParam(map, AUTHOR_NAME_KEY, contentInput.getKey(), 0.8f);
+                setParam(map, CONTENT_KEY, contentInput.getValue(), 0.6f);
             }
         }
 
