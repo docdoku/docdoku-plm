@@ -411,7 +411,7 @@ define([
 
         onQuickSearch: function (e) {
             if (e.target.children[1].value) {
-                App.router.navigate(App.config.workspaceId + '/parts-search/q=' + e.target.children[1].value, {trigger: true});
+                App.router.navigate(App.config.workspaceId + '/parts-search/?q=' + e.target.children[1].value, {trigger: true});
             }
             e.preventDefault();
             return false;
