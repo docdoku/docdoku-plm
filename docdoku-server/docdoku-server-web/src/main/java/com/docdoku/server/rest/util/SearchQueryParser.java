@@ -256,7 +256,7 @@ public class SearchQueryParser {
                     SearchQuery.DateAttributeQuery daq = new SearchQuery.DateAttributeQuery();
                     daq.setName(attributeName);
                     try {
-                        daq.setFromDate(SIMPLE_DATE_FORMAT.parse(attributeValue));
+                        daq.setDate(SIMPLE_DATE_FORMAT.parse(attributeValue));
                         pAttributes.add(daq);
                     } catch (ParseException e) {
                         LOGGER.log(Level.FINEST,null,e);

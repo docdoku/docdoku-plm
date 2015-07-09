@@ -154,6 +154,8 @@ public class SearchQuery  implements Serializable {
             this.name=name;
         }
         public abstract boolean attributeMatches(InstanceAttribute attr);
+        public abstract boolean hasValue();
+        public abstract String toString();
     }
 
     public static class TextAttributeQuery extends AbstractAttributeQuery{
@@ -175,13 +177,23 @@ public class SearchQuery  implements Serializable {
         public boolean attributeMatches(InstanceAttribute attr){
             return attr.isValueEquals(textValue);
         }
+
+        @Override
+        public boolean hasValue() {
+            return !textValue.isEmpty();
+        }
+
+        @Override
+        public String toString() {
+            return textValue;
+        }
     }
     public static class NumberAttributeQuery extends AbstractAttributeQuery{
-        private float numberValue;
+        private Float numberValue;
         public NumberAttributeQuery(){
 
         }
-        public NumberAttributeQuery(String name, float value){
+        public NumberAttributeQuery(String name, Float value){
             super(name);
             this.numberValue=value;
         }
@@ -194,6 +206,16 @@ public class SearchQuery  implements Serializable {
         @Override
         public boolean attributeMatches(InstanceAttribute attr){
             return attr.isValueEquals(numberValue);
+        }
+
+        @Override
+        public boolean hasValue() {
+            return numberValue != null;
+        }
+
+        @Override
+        public String toString() {
+            return numberValue.toString();
         }
     }
     public static class BooleanAttributeQuery extends AbstractAttributeQuery{
@@ -214,6 +236,17 @@ public class SearchQuery  implements Serializable {
         @Override
         public boolean attributeMatches(InstanceAttribute attr){
             return attr.isValueEquals(booleanValue);
+        }
+
+        @Override
+        public boolean hasValue() {
+            //by default boolean attribute must have a value
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return ""+booleanValue;
         }
     }
     public static class URLAttributeQuery extends AbstractAttributeQuery{
@@ -236,40 +269,53 @@ public class SearchQuery  implements Serializable {
         public boolean attributeMatches(InstanceAttribute attr){
             return attr.isValueEquals(urlValue);
         }
+
+        @Override
+        public boolean hasValue() {
+            return !urlValue.isEmpty();
+        }
+
+        @Override
+        public String toString() {
+            return urlValue;
+        }
     }
     public static class DateAttributeQuery extends AbstractAttributeQuery{
-        private Date fromDate;
-        private Date toDate;
+        private Date date;
         public DateAttributeQuery(){
 
         }
-        public DateAttributeQuery(String name, Date fromDate, Date toDate){
+        public DateAttributeQuery(String name, Date date){
             super(name);
-            this.fromDate=fromDate;
-            this.toDate=toDate;
+            this.date = date;
         }
-        public Date getFromDate() {
-            return (fromDate!=null) ? (Date) fromDate.clone() : null;
+        public Date getDate() {
+            return (date !=null) ? (Date) date.clone() : null;
         }
-        public void setFromDate(Date fromDate) {
-            this.fromDate = (fromDate!=null) ? (Date) fromDate.clone() : null;
+        public void setDate(Date date) {
+            this.date = (date !=null) ? (Date) date.clone() : null;
         }
-        public Date getToDate() {
-            return toDate;
-        }
-        public void setToDate(Date toDate) {
-            this.toDate = toDate;
-        }
+
         @Override
         public boolean attributeMatches(InstanceAttribute attr) {
             if (attr instanceof InstanceDateAttribute) {
                 InstanceDateAttribute dateAttr = (InstanceDateAttribute) attr;
                 Date dateValue = dateAttr.getDateValue();
-                if(toDate !=null && fromDate !=null) {
-                    return !(dateValue.after(toDate) || dateValue.before(fromDate));
+                if( date !=null) {
+                    return  dateValue.equals(date);
                 }
             }
             return false;
+        }
+
+        @Override
+        public boolean hasValue() {
+            return date != null;
+        }
+
+        @Override
+        public String toString() {
+            return date.toString();
         }
     }
 }
