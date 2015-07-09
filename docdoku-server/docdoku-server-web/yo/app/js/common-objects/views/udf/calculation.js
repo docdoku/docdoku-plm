@@ -12,7 +12,7 @@ define([
         className:'calculation',
 
         events:{
-            'click .remove':'remove'
+            'click .remove':'onRemove'
         },
 
         initialise:function(){
@@ -87,6 +87,11 @@ define([
             this.$assembliesVisited.text(this.visitedAssemblies);
             this.$instancesVisited.text(this.visitedInstances);
             this.$result.show();
+        },
+
+        onRemove:function(){
+            this.trigger('removed');
+            this.remove();
         }
 
     });

@@ -97,9 +97,17 @@ define([
             this.$calculations.append(calculationView.$el);
             this.calculationViews.push(calculationView);
 
-            calculationView.on('remove',function(){
+            calculationView.on('removed',function(){
+
                 _this.calculationViews.splice(_this.calculationViews.indexOf(calculationView),1);
+
+                if(!_this.calculationViews.length){
+                    _this.$runButton.hide();
+                }
+
             });
+
+            this.$runButton.show();
 
         },
 
