@@ -22,6 +22,7 @@ package com.docdoku.server;
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.*;
 import com.docdoku.core.configuration.*;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
@@ -3112,25 +3113,32 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                         }
                     }
 
-                    if (exportDocumentLinks) {
-                        if (baselineId == null) {
-                            Set<DocumentLink> linkedDocuments = partIteration.getLinkedDocuments();
+                    if (exportDocumentLinks && baselineId == null) {
+                        Set<DocumentLink> linkedDocuments = partIteration.getLinkedDocuments();
 
-                            for (DocumentLink documentLink : linkedDocuments) {
-                                String linkedDocumentFolderName = "links/" + documentLink.getTargetDocument().getLastIteration().toString();
+                        for (DocumentLink documentLink : linkedDocuments) {
+
+                            DocumentIteration lastCheckedInIteration = documentLink.getTargetDocument().getLastCheckedInIteration();
+
+                            if(null != lastCheckedInIteration){
+
+                                String linkedDocumentFolderName = "links/" + lastCheckedInIteration.toString();
+
                                 Set<BinaryResource> linkedBinaryResources = result.get(linkedDocumentFolderName);
+
                                 if (linkedBinaryResources == null) {
                                     linkedBinaryResources = new HashSet<>();
                                     result.put(linkedDocumentFolderName, linkedBinaryResources);
                                 }
 
-                                Set<BinaryResource> attachedFiles = documentLink.getTargetDocument().getLastIteration().getAttachedFiles();
+                                Set<BinaryResource> attachedFiles = lastCheckedInIteration.getAttachedFiles();
 
                                 for (BinaryResource binary : attachedFiles) {
                                     if (!linkedBinaryResources.contains(binary)) {
                                         linkedBinaryResources.add(binary);
                                     }
                                 }
+
                             }
                         }
                     }
