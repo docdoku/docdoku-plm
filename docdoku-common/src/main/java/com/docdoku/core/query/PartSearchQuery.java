@@ -40,9 +40,9 @@ public class PartSearchQuery extends SearchQuery implements Serializable{
     }
     public PartSearchQuery(String workspaceId, String fullText, String partNumber, String name, String version,
                            String author, String type, Date creationDateFrom, Date creationDateTo, Date modificationDateFrom,
-                           Date modificationDateTo, SearchQuery.AbstractAttributeQuery[] attributes,String[] tags, Boolean standardPart){
+                           Date modificationDateTo, SearchQuery.AbstractAttributeQuery[] attributes,String[] tags, Boolean standardPart, String content){
         super(workspaceId,fullText,version,author,type,creationDateFrom,creationDateTo,modificationDateFrom,
-                modificationDateTo,attributes,tags);
+                modificationDateTo,attributes,tags,content);
         this.partNumber=partNumber;
         this.name=name;
         this.standardPart=standardPart;

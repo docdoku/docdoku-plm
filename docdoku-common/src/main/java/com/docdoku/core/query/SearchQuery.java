@@ -44,13 +44,14 @@ public class SearchQuery  implements Serializable {
     protected Date modificationDateTo;
     protected AbstractAttributeQuery[] attributes;
     protected String[] tags;
+    protected String content;
 
     public SearchQuery(){
 
     }
     public SearchQuery(String workspaceId, String fullText, String version, String author, String type,
                        Date creationDateFrom, Date creationDateTo, Date modificationDateFrom, Date modificationDateTo,
-                       AbstractAttributeQuery[] attributes, String[] tags) {
+                       AbstractAttributeQuery[] attributes, String[] tags, String content) {
         this.workspaceId = workspaceId;
         this.fullText =fullText;
         this.version = version;
@@ -62,6 +63,7 @@ public class SearchQuery  implements Serializable {
         this.modificationDateTo = (modificationDateTo!=null) ? (Date) modificationDateTo.clone() : null;
         this.attributes = attributes;
         this.tags = tags;
+        this.content = content;
     }
 
     // Getter
@@ -98,6 +100,7 @@ public class SearchQuery  implements Serializable {
     public AbstractAttributeQuery[] getAttributes() {
         return attributes;
     }
+    public String getContent() { return content; }
 
     //Setter
     public void setWorkspaceId(String workspaceId) {
@@ -133,6 +136,7 @@ public class SearchQuery  implements Serializable {
     public void setAttributes(AbstractAttributeQuery[] attributes) {
         this.attributes = attributes;
     }
+    public void setContent(String content) { this.content = content; }
 
     @XmlSeeAlso({TextAttributeQuery.class, NumberAttributeQuery.class, DateAttributeQuery.class, BooleanAttributeQuery.class, URLAttributeQuery.class})
     public static abstract class AbstractAttributeQuery implements Serializable{
