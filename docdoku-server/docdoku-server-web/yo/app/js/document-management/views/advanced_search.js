@@ -155,7 +155,7 @@ define([
             var queryString = '';
 
             if (id) {
-                queryString += 'id=' + id;
+                queryString += '&id=' + id;
             }
             if (title) {
                 queryString += '&title=' + title;
