@@ -60,11 +60,20 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deleteWorkflowModel(WorkflowModelKey pKey) throws WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, UserNotFoundException, UserNotActiveException {
+    public void deleteWorkflowModel(WorkflowModelKey pKey) throws WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, UserNotFoundException, UserNotActiveException, EntityConstraintException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
+        Locale locale = new Locale(user.getLanguage());
+        WorkflowModelDAO workflowModelDAO = new WorkflowModelDAO(locale, em);
 
-        WorkflowModelDAO workflowModelDAO = new WorkflowModelDAO(new Locale(user.getLanguage()), em);
         WorkflowModel workflowModel = workflowModelDAO.loadWorkflowModel(pKey);
+
+        if(workflowModelDAO.isInUseInDocumentMasterTemplate(workflowModel)){
+            throw new EntityConstraintException(locale,"EntityConstraintException24");
+        }
+
+        if(workflowModelDAO.isInUseInPartMasterTemplate(workflowModel)){
+            throw new EntityConstraintException(locale,"EntityConstraintException25");
+        }
 
         checkWorkflowWriteAccess(workflowModel,user);
 

@@ -94,7 +94,7 @@ public class WorkflowResource {
     @DELETE
     @Path("{workflowModelId}")
     public Response delWorkflowModel(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId)
-            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException, EntityConstraintException {
         workflowService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
         return Response.status(Response.Status.OK).build();
     }

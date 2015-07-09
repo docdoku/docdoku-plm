@@ -88,11 +88,13 @@ define([
 
                     _this.listView.eachChecked(function (view) {
                         view.model.destroy({
+                            wait:true,
                             dataType: 'text',
                             success: function () {
                                 _this.listView.redraw();
                                 _this.onNoWorkflowSelected();
-                            }
+                            },
+                            error:_this.onError.bind(_this)
                         });
                     });
                 }
@@ -147,13 +149,14 @@ define([
         },
         onEditAcl: function () {
 
+            var self = this;
+
             var workflowSelected;
 
             this.listView.eachChecked(function (view) {
                 workflowSelected = view.model;
-
             });
-            var self = this;
+
             var aclEditView = new ACLEditView({
                 editMode: true,
                 acl: workflowSelected.get('acl')
@@ -182,7 +185,7 @@ define([
 
             return false;
         },
-        onError:function(model, error){
+        onError:function(error,model){
             var errorMessage = error ? model.responseText : error;
             this.$notifications.append(new AlertView({
                 type: 'error',

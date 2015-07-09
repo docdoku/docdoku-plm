@@ -19,9 +19,11 @@
  */
 package com.docdoku.server.dao;
 
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.WorkflowModelAlreadyExistsException;
 import com.docdoku.core.exceptions.WorkflowModelNotFoundException;
+import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.WorkflowModelKey;
@@ -95,5 +97,19 @@ public class WorkflowModelDAO {
         } else {
             return model;
         }
+    }
+
+    public boolean isInUseInDocumentMasterTemplate(WorkflowModel workflowModel) {
+        return !em.createNamedQuery("DocumentMasterTemplate.findWhereWorkflowModel", DocumentMasterTemplate.class)
+                .setParameter("workflowModel",workflowModel)
+                .getResultList()
+                .isEmpty();
+    }
+
+    public boolean isInUseInPartMasterTemplate(WorkflowModel workflowModel) {
+        return !em.createNamedQuery("PartMasterTemplate.findWhereWorkflowModel", PartMasterTemplate.class)
+                .setParameter("workflowModel",workflowModel)
+                .getResultList()
+                .isEmpty();
     }
 }
