@@ -32,40 +32,14 @@
             </div>
 
             <div class="control-group">
-                <label class="control-label">{{i18n.INIT_VALUE}} (memo)</label>
+                <label class="control-label">{{i18n.CALCULATIONS}}</label>
                 <div class="controls">
-                    <span class="help-inline">
-                        <textarea class="user-defined-init">return 0;</textarea>
-                    </span>
+                    <div class="calculations"></div>
+                    <button type="button" class="btn btn-info add-calculation">{{i18n.ADD_CALCULATION}}</button>
+                    <button class="btn btn-primary run-udf" aria-hidden="true">{{i18n.RUN}}</button>
                 </div>
             </div>
 
-            <div class="control-group">
-                <label class="control-label">{{i18n.UDF_DEF}}</label>
-                <div class="controls">
-                    <span class="help-inline">
-                          <textarea class="user-defined-function-def">return memo + (part.attrs.weight || 0);</textarea>
-                    </span>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label"></label>
-                <div class="controls">
-                    <span class="help-inline">
-                         <button class="btn btn-primary run-udf" aria-hidden="true">{{i18n.RUN}}</button>
-                    </span>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label"></label>
-                <div class="controls">
-                    <span class="help-inline udf-result">
-
-                    </span>
-                </div>
-            </div>
 
         </form>
     </div>
