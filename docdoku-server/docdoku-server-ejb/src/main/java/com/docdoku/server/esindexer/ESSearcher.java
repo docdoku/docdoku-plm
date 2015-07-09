@@ -223,7 +223,11 @@ public class ESSearcher {
 
     private QueryBuilder getFullTextQuery(SearchQuery query) {
         // TODO Cut the query and make a boolQuery() with all the words
-        QueryBuilder fullTextQuery = QueryBuilders.fuzzyQuery("_all",query.getFullText());
+        QueryBuilder fullTextQuery = QueryBuilders.disMaxQuery()
+                .add(QueryBuilders.fuzzyQuery("_all", query.getFullText()))
+                .add(QueryBuilders.queryString(query.getFullText())
+                        .boost(2.5f))
+                .tieBreaker(1.2f);
         return fullTextQuery;
     }
 
