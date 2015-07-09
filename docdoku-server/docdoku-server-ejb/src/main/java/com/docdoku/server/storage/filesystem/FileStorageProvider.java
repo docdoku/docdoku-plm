@@ -61,9 +61,12 @@ public class FileStorageProvider implements StorageProvider {
         File file = new File(getVirtualPath(pBinaryResource));
         if (file.exists()) {
             try {
-                new BufferedInputStream(new FileInputStream(file));
+                FileInputStream fileInputStream = new FileInputStream(file);
+                fileInputStream.close();
                 return file;
             } catch (java.io.FileNotFoundException e) {
+                throw new StorageException(e.getMessage(), e);
+            } catch (IOException e) {
                 throw new StorageException(e.getMessage(), e);
             }
         } else {

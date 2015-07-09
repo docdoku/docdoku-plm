@@ -114,7 +114,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(new Locale(user.getLanguage()), em);
         ConfigurationItem ci = configurationItemDAO.loadConfigurationItem(pKey);
 
-        new PSFilterVisitor(em, user, filter, ci.getDesignItem(), null, -1) {
+        PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em, user, filter) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
                 // Unused here
@@ -156,6 +156,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
         };
+
+        psFilterVisitor.visit(ci.getDesignItem(), -1);
 
         return usagePaths;
     }
@@ -2447,14 +2449,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
 
-        PartMaster root = null;
 
-        if (path == null) {
-            ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(ciKey);
-            root = ci.getDesignItem();
-        }
-
-        PSFilterVisitor visitor = new PSFilterVisitor(em, user, filter, root, path, pDepth) {
+        PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em, user, filter) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
                 // Unused here
@@ -2491,7 +2487,17 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
         };
 
-        return visitor.getComponent();
+        PartMaster root = null;
+
+        if (path == null) {
+            ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(ciKey);
+            root = ci.getDesignItem();
+            psFilterVisitor.visit(root, pDepth);
+        }else{
+            psFilterVisitor.visit(path, pDepth);
+        }
+
+        return psFilterVisitor.getComponent();
 
     }
 
@@ -2844,7 +2850,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(workspace.getId());
 
         // Navigate the WIP
-        new PSFilterVisitor(em, user, new UpdatePartIterationPSFilter(user, partIteration), partMaster, null, -1) {
+        PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em, user, new UpdatePartIterationPSFilter(user, partIteration)) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
                 // Unused here
@@ -2880,6 +2886,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 // Unused here
             }
         };
+
+        psFilterVisitor.visit(partMaster, -1);
 
     }
 
@@ -2938,7 +2946,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         LatestPSFilter latestPSFilter = new LatestPSFilter(user, true);
         final boolean[] hasModificationNotification = {false};
 
-        new PSFilterVisitor(em, user, latestPSFilter, configurationItem.getDesignItem(), null, -1) {
+        PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em, user, latestPSFilter) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
                 // Unused here
@@ -2971,7 +2979,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     visitedPartNumbers.add(partMaster.getNumber());
                     List<PartIteration> partIterations = latestPSFilter.filter(partMaster);
                     // As we use a latest checked-in filter, partIterations array can be empty
-                    if(!partIterations.isEmpty()){
+                    if (!partIterations.isEmpty()) {
                         PartIteration partIteration = partIterations.get(partIterations.size() - 1);
                         if (modificationNotificationDAO.hasModificationNotifications(partIteration.getKey())) {
                             hasModificationNotification[0] = true;
@@ -2985,6 +2993,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 // Unused here
             }
         };
+
+        psFilterVisitor.visit(configurationItem.getDesignItem(), -1);
 
         return hasModificationNotification[0];
     }
@@ -3045,7 +3055,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartMaster root = ci.getDesignItem();
 
 
-        new PSFilterVisitor(em, user, psFilter, root, null, -1) {
+        PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em, user, psFilter) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
                 // Unused here
@@ -3134,6 +3144,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
         };
 
+        psFilterVisitor.visit(root, -1);
+
         return result;
     }
 
@@ -3179,7 +3191,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         final ProductInstanceIteration finalProductInstanceIteration = productInstanceIteration;
 
-        new PSFilterVisitor(em, user, filter, root, null, -1) {
+        PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em, user, filter) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
                 // Unused here
@@ -3261,6 +3273,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 // Unused here
             }
         };
+
+        psFilterVisitor.visit(root, -1);
 
         return rows;
     }

@@ -47,7 +47,7 @@ public abstract class PSFilterVisitor {
 
     private String workspaceId;
 
-    public PSFilterVisitor(EntityManager pEm, User pUser, PSFilter pFilter, PartMaster pNodeFrom, List<PartLink> pStartingPath, Integer pDepth)
+    public PSFilterVisitor(EntityManager pEm, User pUser, PSFilter pFilter)
             throws PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
 
         filter = pFilter;
@@ -57,14 +57,22 @@ public abstract class PSFilterVisitor {
         locale = new Locale(user.getLanguage());
         partMasterDAO = new PartMasterDAO(locale, em);
 
+    }
+
+    public void visit(PartMaster pNodeFrom, Integer pDepth) throws PartMasterNotFoundException, EntityConstraintException, NotAllowedException {
         if(pNodeFrom != null){
             startVisit(pNodeFrom,pDepth);
-        }else if(pStartingPath != null){
+        }else{
+            throw new IllegalArgumentException("Provide either a node from which starting visit or a resolved part links list");
+        }
+    }
+
+    public void visit(List<PartLink> pStartingPath, Integer pDepth) throws PartMasterNotFoundException, EntityConstraintException, NotAllowedException {
+        if(pStartingPath != null){
             startVisit(pStartingPath,pDepth);
         }else{
             throw new IllegalArgumentException("Provide either a node from which starting visit or a resolved part links list");
         }
-
     }
 
     private void startVisit(List<PartLink> pStartingPath, Integer pDepth) throws NotAllowedException, EntityConstraintException, PartMasterNotFoundException {

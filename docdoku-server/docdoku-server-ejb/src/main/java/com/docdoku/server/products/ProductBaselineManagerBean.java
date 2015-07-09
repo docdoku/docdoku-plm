@@ -82,25 +82,25 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
 
         ProductBaselineCreationConfigSpec filter = new ProductBaselineCreationConfigSpec(user,pType,partIterations,substituteLinks,optionalUsageLinks);
 
-        new PSFilterVisitor(em, user, filter, configurationItem.getDesignItem(), null, -1) {
+        PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em, user, filter) {
             @Override
-            public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException{
-                throw new NotAllowedException(locale,"NotAllowedException48");
+            public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
+                throw new NotAllowedException(locale, "NotAllowedException48");
             }
 
             @Override
             public void onUnresolvedVersion(PartMaster partMaster) throws NotAllowedException {
-                throw new NotAllowedException(locale,"NotAllowedException49");
+                throw new NotAllowedException(locale, "NotAllowedException49");
             }
 
             @Override
             public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) throws NotAllowedException {
-                throw new NotAllowedException(locale,"NotAllowedException50");
+                throw new NotAllowedException(locale, "NotAllowedException50");
             }
 
             @Override
             public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
-                throw new NotAllowedException(locale,"NotAllowedException51");
+                throw new NotAllowedException(locale, "NotAllowedException51");
             }
 
             @Override
@@ -119,6 +119,8 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
             }
 
         };
+
+        psFilterVisitor.visit(configurationItem.getDesignItem(), -1);
 
         // Visitor has finished, and should have thrown an exception if errors
         ProductBaseline baseline = new ProductBaseline(user,configurationItem, name, pType, description);
@@ -164,11 +166,12 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
         // Reset the list
         baseline.setPathToPathLinks(new ArrayList<>());
 
-        new PSFilterVisitor(em, user, filter, null, startPath, null) {
+        PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em, user, filter) {
             @Override
-            public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations)  throws NotAllowedException{
+            public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
                 // Unused here
             }
+
             @Override
             public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
                 // Unused here
@@ -200,6 +203,8 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
                 // Unused here
             }
         };
+
+        psFilterVisitor.visit(startPath, null);
 
         PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(new Locale(user.getLanguage()), em);
         List<PathToPathLink> links = pathToPathLinkDAO.getPathToPathLinkFromPathList(configurationItem,visitedPaths);
@@ -295,10 +300,10 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
 
         List<PathChoice> choices = new ArrayList<>();
 
-        new PSFilterVisitor(em, user, filter, configurationItem.getDesignItem(), null, -1) {
+        PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em, user, filter) {
 
             @Override
-            public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations)  throws NotAllowedException{
+            public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
                 // Unused here
             }
 
@@ -341,6 +346,8 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
             }
         };
 
+        psFilterVisitor.visit(configurationItem.getDesignItem(), -1);
+
         return choices;
     }
 
@@ -358,7 +365,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
 
         PSFilter filter = new ReleasedPSFilter(user, true);
 
-        new PSFilterVisitor(em, user, filter, configurationItem.getDesignItem(), null, -1) {
+        PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em, user, filter) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
                 parts.addAll(partIterations);
@@ -394,6 +401,8 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
                 // Unused here
             }
         };
+
+        psFilterVisitor.visit(configurationItem.getDesignItem(), -1);
 
         return new ArrayList<>(parts);
     }

@@ -389,7 +389,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
         PSFilter filter = new ProductBaselineConfigSpec(productBaseline,user);
 
-        new PSFilterVisitor(em, user, filter, partMaster, null, -1) {
+        PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em, user, filter) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
                 // Unused here
@@ -419,9 +419,9 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
                 // Find pathData in previous iteration which is on this path. Copy it.
                 String pathAsString = Tools.getPathAsString(path);
-                for(PathDataMaster pathDataMaster:lastIteration.getPathDataMasterList()){
-                    if(pathAsString.equals(pathDataMaster.getPath())){
-                          pathDataMasterList.add(clonePathDataMaster(pathDataMaster));
+                for (PathDataMaster pathDataMaster : lastIteration.getPathDataMasterList()) {
+                    if (pathAsString.equals(pathDataMaster.getPath())) {
+                        pathDataMasterList.add(clonePathDataMaster(pathDataMaster));
                     }
                 }
             }
@@ -436,7 +436,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
                 clone.setPath(pathDataMaster.getPath());
 
                 List<PathDataIteration> pathDataIterations = new ArrayList<>();
-                for(PathDataIteration pathDataIteration:pathDataMaster.getPathDataIterations()){
+                for (PathDataIteration pathDataIteration : pathDataMaster.getPathDataIterations()) {
                     PathDataIteration clonedIteration = clonePathDataIteration(workspaceId, clone, pathDataIteration);
                     pathDataIterations.add(clonedIteration);
                 }
@@ -455,7 +455,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
                 // Attributes
                 List<InstanceAttribute> clonedAttributes = new ArrayList<>();
-                for(InstanceAttribute attribute : pathDataIteration.getInstanceAttributes()){
+                for (InstanceAttribute attribute : pathDataIteration.getInstanceAttributes()) {
                     InstanceAttribute clonedAttribute = attribute.clone();
                     clonedAttributes.add(clonedAttribute);
                 }
@@ -469,16 +469,16 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
                     String fullName = workspaceId + "/product-instances/" + serialNumber + "/pathdata/" + newPathDataMaster.getId() + "/iterations/" + pathDataIteration.getIteration() + '/' + fileName;
                     BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
                     try {
-                        copyBinary(sourceFile,targetFile);
+                        copyBinary(sourceFile, targetFile);
                         clone.getAttachedFiles().add(targetFile);
                     } catch (FileAlreadyExistsException | CreationException e) {
-                        LOGGER.log(Level.FINEST,null,e);
+                        LOGGER.log(Level.FINEST, null, e);
                     }
                 }
 
                 // Linked documents
                 Set<DocumentLink> newLinks = new HashSet<>();
-                for(DocumentLink documentLink:pathDataIteration.getLinkedDocuments()){
+                for (DocumentLink documentLink : pathDataIteration.getLinkedDocuments()) {
                     newLinks.add(documentLink.clone());
                 }
                 clone.setLinkedDocuments(newLinks);
@@ -500,6 +500,8 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
                 // Unused here
             }
         };
+
+        psFilterVisitor.visit(partMaster, -1);
 
         nextIteration.setPathDataMasterList(pathDataMasterList);
 
