@@ -38,7 +38,8 @@ public class SearchQueryParser {
     private SearchQueryParser(){
         super();
     }
-    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private static final Logger LOGGER = Logger.getLogger(SearchQueryParser.class.getName());
     private static final String ATTRIBUTES_DELIMITER = ";";
     private static final String ATTRIBUTES_SPLITTER = ":";
@@ -86,28 +87,28 @@ public class SearchQueryParser {
                         break;
                     case "createdFrom" :
                         try {
-                            pCreationDateFrom =  simpleDateFormat.parse(filter[1]);
+                            pCreationDateFrom =  SIMPLE_DATE_FORMAT.parse(filter[1]);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "createdTo" :
                         try {
-                            pCreationDateTo =  simpleDateFormat.parse(filter[1]);
+                            pCreationDateTo =  SIMPLE_DATE_FORMAT.parse(filter[1]);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "modifiedFrom" :
                         try {
-                            pModificationDateFrom =  simpleDateFormat.parse(filter[1]);
+                            pModificationDateFrom =  SIMPLE_DATE_FORMAT.parse(filter[1]);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "modifiedTo" :
                         try {
-                            pModificationDateTo =  simpleDateFormat.parse(filter[1]);
+                            pModificationDateTo =  SIMPLE_DATE_FORMAT.parse(filter[1]);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
@@ -178,28 +179,28 @@ public class SearchQueryParser {
                         break;
                     case "createdFrom" :
                         try {
-                            pCreationDateFrom =  simpleDateFormat.parse(filter[1]);
+                            pCreationDateFrom =  SIMPLE_DATE_FORMAT.parse(filter[1]);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "createdTo" :
                         try {
-                            pCreationDateTo =  simpleDateFormat.parse(filter[1]);
+                            pCreationDateTo =  SIMPLE_DATE_FORMAT.parse(filter[1]);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "modifiedFrom" :
                         try {
-                            pModificationDateFrom =  simpleDateFormat.parse(filter[1]);
+                            pModificationDateFrom =  SIMPLE_DATE_FORMAT.parse(filter[1]);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "modifiedTo" :
                         try {
-                            pModificationDateTo =  simpleDateFormat.parse(filter[1]);
+                            pModificationDateTo =  SIMPLE_DATE_FORMAT.parse(filter[1]);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
@@ -248,7 +249,7 @@ public class SearchQueryParser {
                     SearchQuery.DateAttributeQuery daq = new SearchQuery.DateAttributeQuery();
                     daq.setName(attributeName);
                     try {
-                        daq.setFromDate(simpleDateFormat.parse(attributeValue));
+                        daq.setFromDate(SIMPLE_DATE_FORMAT.parse(attributeValue));
                         pAttributes.add(daq);
                     } catch (ParseException e) {
                         LOGGER.log(Level.FINEST,null,e);
