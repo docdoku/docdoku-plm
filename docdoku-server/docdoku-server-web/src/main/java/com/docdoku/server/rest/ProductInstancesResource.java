@@ -50,6 +50,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -194,9 +195,9 @@ public class ProductInstancesResource {
             List<PartMinimalListDTO> substitutesParts = new ArrayList<>();
             List<PartMinimalListDTO> optionalParts = new ArrayList<>();
             try {
-                productInstanceIterationDTO.setPathToPathLinks(this.getTypedLinksForProductInstance(iterationIterator.next()));
+                productInstanceIterationDTO.setPathToPathLinks(getTypedLinksForProductInstance(iterationIterator.next()));
             } catch (AccessRightException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.FINEST, null, e);
             }
             for(String path:productInstanceIterationDTO.getSubstituteLinks()){
                 PartMinimalListDTO partMinimalListDTO = new PartMinimalListDTO();
