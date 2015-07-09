@@ -117,6 +117,14 @@ public class Workflow implements Serializable {
         }
     }
 
+    public Collection<Task> getTasks(){
+        Collection<Task> tasks = new ArrayList<>();
+        for(Activity activity:activities){
+            tasks.addAll(activity.getTasks());
+        }
+        return tasks;
+    }
+
     public int numberOfSteps() {
         return activities.size();
     }

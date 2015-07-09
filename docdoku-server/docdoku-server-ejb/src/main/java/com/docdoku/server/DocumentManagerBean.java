@@ -705,6 +705,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             Workflow workflow = workflowModel.createWorkflow(roleUserMap);
             docR.setWorkflow(workflow);
 
+            for(Task task : workflow.getTasks()){
+                if(null == task.getWorker()){
+                    throw new NotAllowedException(locale,"NotAllowedException56");
+                }
+            }
+
             Collection<Task> runningTasks = workflow.getRunningTasks();
             for (Task runningTask : runningTasks) {
                 runningTask.start();
@@ -1391,19 +1397,19 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public DocumentRevision[] createDocumentRevision(DocumentRevisionKey pOriginalDocRPK, String pTitle, String pDescription, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String, String> roleMappings) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, NotAllowedException, DocumentRevisionAlreadyExistsException, CreationException, WorkflowModelNotFoundException, RoleNotFoundException, DocumentRevisionNotFoundException, FileAlreadyExistsException {
         User user = userManager.checkWorkspaceWriteAccess(pOriginalDocRPK.getDocumentMaster().getWorkspace());
-        Locale userLocale = new Locale(user.getLanguage());
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
+        Locale locale = new Locale(user.getLanguage());
+        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(locale, em);
         DocumentRevision originalDocR = docRDAO.loadDocR(pOriginalDocRPK);
         DocumentMaster docM = originalDocR.getDocumentMaster();
         Folder folder = originalDocR.getLocation();
         checkFolderWritingRight(user, folder);
 
         if (originalDocR.isCheckedOut()) {
-            throw new NotAllowedException(userLocale, "NotAllowedException26");
+            throw new NotAllowedException(locale, "NotAllowedException26");
         }
 
         if (originalDocR.getNumberOfIterations() == 0) {
-            throw new NotAllowedException(userLocale, "NotAllowedException27");
+            throw new NotAllowedException(locale, "NotAllowedException27");
         }
 
         DocumentRevision docR = docM.createNextRevision(user);
@@ -1413,7 +1419,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentIteration lastDoc = originalDocR.getLastIteration();
         DocumentIteration firstIte = docR.createNextIteration(user);
         if (lastDoc != null) {
-            BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
+            BinaryResourceDAO binDAO = new BinaryResourceDAO(locale, em);
             for (BinaryResource sourceFile : lastDoc.getAttachedFiles()) {
                 String fileName = sourceFile.getName();
                 long length = sourceFile.getContentLength();
@@ -1446,8 +1452,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         if (pWorkflowModelId != null) {
 
-            UserDAO userDAO = new UserDAO(userLocale, em);
-            RoleDAO roleDAO = new RoleDAO(userLocale, em);
+            UserDAO userDAO = new UserDAO(locale, em);
+            RoleDAO roleDAO = new RoleDAO(locale, em);
 
             Map<Role, User> roleUserMap = new HashMap<>();
 
@@ -1460,9 +1466,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 roleUserMap.put(role, worker);
             }
 
-            WorkflowModel workflowModel = new WorkflowModelDAO(userLocale, em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
+            WorkflowModel workflowModel = new WorkflowModelDAO(locale, em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
             Workflow workflow = workflowModel.createWorkflow(roleUserMap);
             docR.setWorkflow(workflow);
+
+            for(Task task : workflow.getTasks()){
+                if(null == task.getWorker()){
+                    throw new NotAllowedException(locale,"NotAllowedException56");
+                }
+            }
 
             Collection<Task> runningTasks = workflow.getRunningTasks();
             for (Task runningTask : runningTasks) {
@@ -1470,6 +1482,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
             mailer.sendApproval(runningTasks, docR);
         }
+
         docR.setTitle(pTitle);
         docR.setDescription(pDescription);
         Map<String, String> userEntries = new HashMap<>();

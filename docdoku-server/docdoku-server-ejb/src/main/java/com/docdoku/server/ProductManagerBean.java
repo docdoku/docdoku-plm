@@ -224,6 +224,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             Workflow workflow = workflowModel.createWorkflow(roleUserMap);
             newRevision.setWorkflow(workflow);
 
+            for(Task task : workflow.getTasks()){
+                if(null == task.getWorker()){
+                    throw new NotAllowedException(locale,"NotAllowedException56");
+                }
+            }
+
             Collection<Task> runningTasks = workflow.getRunningTasks();
             for (Task runningTask : runningTasks) {
                 runningTask.start();
@@ -2263,10 +2269,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             Workflow workflow = workflowModel.createWorkflow(roleUserMap);
             partR.setWorkflow(workflow);
 
+            for(Task task : workflow.getTasks()){
+                if(null == task.getWorker()){
+                    throw new NotAllowedException(locale,"NotAllowedException56");
+                }
+            }
+
             Collection<Task> runningTasks = workflow.getRunningTasks();
+
             for (Task runningTask : runningTasks) {
                 runningTask.start();
             }
+
             mailer.sendApproval(runningTasks, partR);
         }
 
