@@ -155,6 +155,7 @@ public class SearchQueryParser {
         List<PartSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<>();
         String[] pTags = null;
         Boolean standardPart = null;
+        String content = null;
 
         for(String filter : query.keySet()){
             List<String> values = query.get(filter);
@@ -218,6 +219,9 @@ public class SearchQueryParser {
                     case "standardPart" :
                         standardPart = Boolean.valueOf(value);
                         break;
+                    case "content":
+                        content = value;
+                        break;
                     case "attributes":
                         pAttributes = parseAttributeStringQuery(value);
                         break;
@@ -229,7 +233,7 @@ public class SearchQueryParser {
 
         return  new PartSearchQuery(workspaceId, fullText, pNumber, pName, pVersion, pAuthor, pType,
                 pCreationDateFrom, pCreationDateTo, pModificationDateFrom, pModificationDateTo,
-                pAttributesArray,pTags,standardPart);
+                pAttributesArray,pTags,standardPart,content);
 
     }
 

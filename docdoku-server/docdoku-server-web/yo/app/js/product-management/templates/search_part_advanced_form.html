@@ -20,6 +20,9 @@
                 <li>
                     <a href="#tab-search-tags" data-toggle="tab">{{i18n.TAGS}}</a>
                 </li>
+                <li>
+                    <a href="#tab-search-text" data-toggle="tab">{{i18n.CONTENT}}</a>
+                </li>
             </ul>
 
             <form id="advanced_search_form" class="form-horizontal tab-content">
@@ -136,6 +139,18 @@
                             <input type="text" id="search-tags" class="input-medium">
 
                             <p class="help-block">{{i18n.TAGS_HELP}}</p>
+                        </div>
+                    </div>
+
+                </div>
+                <div id="tab-search-text" class="ModalTabsPane tab-pane advanced ">
+                    <div class="control-group">
+                        <label class="control-label" for="search-content">{{i18n.CONTENT}}</label>
+
+                        <div class="controls">
+                            <textarea id="search-content" class="input-medium"></textarea>
+
+                            <p class="help-block">{{i18n.CONTENT_HELP}}</p>
                         </div>
                     </div>
 

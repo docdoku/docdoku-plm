@@ -127,6 +127,7 @@ define([
             this.$modifiedTo = this.$('#search-modification-to');
             this.$templatesId = this.$('#template-attributes-helper');
             this.$standardPart = this.$('input[name=search-standardPart]');
+            this.$content = this.$('#search-content');
         },
 
         changeAttributes: function (e) {
@@ -153,6 +154,7 @@ define([
             var modifiedFrom = this.$modifiedFrom.val();
             var modifiedTo = this.$modifiedTo.val();
             var standardPart = this.$standardPart.filter(':checked').val() === 'all' ? null : this.$standardPart.filter(':checked').val();
+            var content = this.$content.val();
 
             var queryString = '';
 
@@ -188,6 +190,9 @@ define([
             }
             if (standardPart) {
                 queryString += '&standardPart=' + standardPart;
+            }
+            if (content) {
+                queryString += '&content=' + content;
             }
 
             if (this.attributes.length) {

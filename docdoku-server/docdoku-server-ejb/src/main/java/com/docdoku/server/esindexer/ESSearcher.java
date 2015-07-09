@@ -246,9 +246,6 @@ public class ESSearcher {
             if (docQuery.getTitle() != null) {
                queryBuilder.should(QueryBuilders.fuzzyQuery(ESMapper.TITLE_KEY, docQuery.getTitle()));
             }
-            if (docQuery.getContent() != null) {
-                queryBuilder.should(QueryBuilders.matchQuery(ESMapper.CONTENT_KEY, docQuery.getContent()));
-            }
             addCommonQuery(queryBuilder,docQuery);
         }
         return queryBuilder.getFilteredQuery();
@@ -283,6 +280,9 @@ public class ESSearcher {
         }
         if (searchQuery.getModificationDateTo() != null) {
             queryBuilder.should(FilterBuilders.rangeFilter(ESMapper.MODIFICATION_DATE_KEY).to(searchQuery.getModificationDateTo()));
+        }
+        if (searchQuery.getContent() != null) {
+            queryBuilder.should(QueryBuilders.matchQuery(ESMapper.CONTENT_KEY, searchQuery.getContent()));
         }
         if (searchQuery.getAttributes() != null) {
             for (SearchQuery.AbstractAttributeQuery attr : searchQuery.getAttributes()) {
