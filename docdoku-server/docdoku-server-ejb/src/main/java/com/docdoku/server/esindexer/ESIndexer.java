@@ -128,7 +128,9 @@ public class ESIndexer {
                             .put("number_of_shards", CONF.getProperty("number_of_shards"))
                             .put("number_of_replicas", CONF.getProperty("number_of_replicas"))
                             .put("auto_expand_replicas", CONF.getProperty("auto_expand_replicas")))
-                    .addMapping("part",this.partMapping())
+                    .addMapping(ESMapper.PART_TYPE,this.partMapping())
+                    .addMapping(ESMapper.DOCUMENT_TYPE, this.docMapping())
+                    .setSource(defaultMapping())
                     .execute().actionGet();
         } catch (IndexAlreadyExistsException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString("ES_IndexCreationError1");
@@ -145,11 +147,67 @@ public class ESIndexer {
 
     private XContentBuilder partMapping() throws IOException {
         XContentBuilder tmp = XContentFactory.jsonBuilder().startObject();
-        tmp.startObject("part")
-                .startObject("properties")
+        tmp.startObject(ESMapper.PART_TYPE);
+        tmp = commonMapping(tmp);
+        tmp.endObject();
+        tmp.endObject();
+        return tmp;
+    }
+
+    private XContentBuilder defaultMapping() throws IOException {
+        XContentBuilder tmp = XContentFactory.jsonBuilder().startObject();
+        tmp.startObject("mappings");
+        tmp.startObject("_default_");
+            tmp.startObject("_all");
+                tmp.field("enabled","true");
+            tmp.endObject();
+            tmp.startArray("dynamic_templates");
+                tmp.startObject();
+                    //All field with the name content should be analyzed for full text search
+                    tmp.startObject("content_string");
+                        tmp.field("match","content");
+                        tmp.field("match_mapping_type","string");
+                        tmp.startObject("mapping");
+                            tmp.field("type","string");
+                            tmp.field("index","analyzed");
+                        tmp.endObject();
+                    tmp.endObject();
+                tmp.endObject();
+                tmp.startObject();
+                    //set by default all the field as not_analyzed.
+                    // data won't be flatten, term filter/query will be possible.
+                    tmp.startObject("default_string");
+                        tmp.field("match","*");
+                        tmp.field("match_mapping_type","string");
+                        tmp.startObject("mapping");
+                            tmp.field("type","string");
+                            tmp.field("index","not_analyzed");
+                        tmp.endObject();
+                    tmp.endObject();
+                tmp.endObject();
+            tmp.endArray();
+        tmp.endObject();
+
+        tmp.endObject();
+        tmp.endObject();
+        return tmp;
+    }
+
+    private XContentBuilder docMapping() throws IOException {
+        XContentBuilder tmp = XContentFactory.jsonBuilder().startObject();
+        tmp.startObject(ESMapper.DOCUMENT_TYPE);
+        tmp = commonMapping(tmp);
+        tmp.endObject();
+        tmp.endObject();
+        return tmp;
+    }
+
+    private XContentBuilder commonMapping(XContentBuilder tmp) throws IOException {
+        tmp.startObject("properties")
                 .startObject(ESMapper.ITERATIONS_KEY)
                 .startObject("properties")
                 .startObject(ESMapper.ATTRIBUTES_KEY)
+                .field("type","nested")
                 .startObject("properties");
         //map the attributes values as non analyzed, string will not be decomposed
         tmp.startObject(ESMapper.ATTRIBUTE_VALUE);
@@ -161,8 +219,7 @@ public class ESIndexer {
         tmp.endObject();
         tmp.endObject();
         tmp.endObject();
-        tmp.endObject();
-        tmp.endObject();
+
         return tmp;
     }
 
@@ -462,7 +519,7 @@ public class ESIndexer {
         }
         XContentBuilder jsonDoc = ESMapper.documentRevisionToJSON(doc, binaryList);
         Map<String, Object> params = ESMapper.docIterationMap(doc, binaryList);
-        return client.prepareUpdate(ESTools.formatIndexName(doc.getWorkspaceId()), "document", doc.getDocumentRevisionKey().toString())
+        return client.prepareUpdate(ESTools.formatIndexName(doc.getWorkspaceId()), ESMapper.DOCUMENT_TYPE, doc.getDocumentRevisionKey().toString())
                 .setScript("ctx._source.iterations += iteration")
                 .addScriptParam("iteration", params)
                 .setUpsert(jsonDoc);
@@ -474,12 +531,19 @@ public class ESIndexer {
      * @param part The part iteration to index
      */
     private UpdateRequestBuilder indexRequest(Client client, PartIteration part) {
-
-        XContentBuilder json = ESMapper.partRevisionToJson(part);
-        Map<String, Object> params = ESMapper.partIterationMap(part);
+        Map<String, String> binaryList = new HashMap<>();
+        for(BinaryResource bin : part.getAttachedFiles()) {
+            try {
+                binaryList.put(bin.getName(),ESTools.streamToString(bin.getFullName(), dataManager.getBinaryResourceInputStream(bin)));
+            } catch (StorageException e) {
+                LOGGER.log(Level.FINEST, null, e);
+            }
+        }
+        XContentBuilder json = ESMapper.partRevisionToJson(part, binaryList);
+        Map<String, Object> params = ESMapper.partIterationMap(part, binaryList);
         return client
                 .prepareUpdate(ESTools.formatIndexName(part.getWorkspaceId()),
-                        "part", part.getPartRevisionKey().toString())
+                        ESMapper.PART_TYPE, part.getPartRevisionKey().toString())
                 .setScript("ctx._source.iterations += iteration")
                 .addScriptParam("iteration", params)
                 .setUpsert(json);
@@ -491,7 +555,7 @@ public class ESIndexer {
      * @param doc The document iteration to delete
      */
     private DeleteRequestBuilder deleteRequest(Client client, DocumentIteration doc) throws NoNodeAvailableException {
-        return client.prepareDelete(ESTools.formatIndexName(doc.getWorkspaceId()), "document", doc.getKey().toString());
+        return client.prepareDelete(ESTools.formatIndexName(doc.getWorkspaceId()), ESMapper.DOCUMENT_TYPE, doc.getKey().toString());
     }
 
     /**
@@ -500,6 +564,6 @@ public class ESIndexer {
      * @param part The part iteration to delete
      */
     private DeleteRequestBuilder deleteRequest(Client client, PartIteration part) throws NoNodeAvailableException {
-        return client.prepareDelete(ESTools.formatIndexName(part.getWorkspaceId()), "part", part.getKey().toString());
+        return client.prepareDelete(ESTools.formatIndexName(part.getWorkspaceId()), ESMapper.PART_TYPE, part.getKey().toString());
     }
 }
