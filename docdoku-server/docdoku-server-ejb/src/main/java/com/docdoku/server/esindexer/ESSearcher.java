@@ -143,50 +143,6 @@ public class ESSearcher {
     }
 
     /**
-     * Search a DocdokuPLM item
-     *
-     * @param query The search query
-     * @return List of object matching the search query
-     */
-    public List<Object> search(SearchQuery query) throws ESServerException {
-        try {
-            Client client = ESTools.createClient();
-            QueryBuilder qr = getQueryBuilder(query);
-            MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
-            srbm.add(getSearchRequest(client, ESTools.formatIndexName(query.getWorkspaceId()), ES_TYPE_DOCUMENT, qr));
-            srbm.add(getSearchRequest(client, ESTools.formatIndexName(query.getWorkspaceId()), ES_TYPE_PART, qr));
-            MultiSearchResponse srm = srbm.execute().actionGet();
-
-            List<Object> ret = new ArrayList<>();
-            MultiSearchResponse.Item sri = srm.getResponses()[0];
-            SearchResponse sr = sri.getResponse();
-            for (int i = 0; i < sr.getHits().getHits().length; i++) {
-                SearchHit hit = sr.getHits().getAt(i);
-                DocumentRevision docR = getDocumentRevision(hit);
-                if (docR != null && !ret.contains(docR)) {
-                    ret.add(docR);
-                }
-            }
-
-            sri = srm.getResponses()[1];
-            sr = sri.getResponse();
-            for (int i = 0; i < sr.getHits().getHits().length; i++) {
-                SearchHit hit = sr.getHits().getAt(i);
-                PartRevision partRevision = getPartRevision(hit);
-                if (partRevision != null && !ret.contains(partRevision)) {
-                    ret.add(partRevision);
-                }
-            }
-            client.close();
-            return ret;
-        } catch (NoNodeAvailableException e) {
-            String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_SEARCH_ERROR_1);
-            LOGGER.log(Level.WARNING, logMessage, e);
-            throw new ESServerException(Locale.getDefault(), ES_SERVER_ERROR_1);
-        }
-    }
-
-    /**
      * Search a document in all Workspace
      *
      * @param docQuery DocumentSearchQuery
