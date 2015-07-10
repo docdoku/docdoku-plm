@@ -29,7 +29,7 @@ define([
         },
 
         onChange:function(){
-          this.trigger('instance:change');
+            this.trigger('instance:change');
         },
 
         render: function () {
