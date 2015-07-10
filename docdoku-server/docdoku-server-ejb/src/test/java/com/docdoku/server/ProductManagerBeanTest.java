@@ -29,6 +29,7 @@ import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.dao.PartUsageLinkDAO;
 import com.docdoku.server.dao.PathToPathLinkDAO;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.products.ProductBaselineManagerBean;
@@ -69,9 +70,14 @@ public class ProductManagerBeanTest {
     ProductBaselineManagerBean productBaselineManager;
     @Rule
     public CyclicAssemblyRule cyclicAssemblyRule;
+    @Mock
+    private TypedQuery<PartUsageLink> partUsageLinkTypedQuery;
 
     @Spy
     private PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(Locale.getDefault(),em);
+
+    @Spy
+    private PartUsageLinkDAO partUsageLinkDAO = new PartUsageLinkDAO(Locale.getDefault(),em);
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -84,8 +90,6 @@ public class ProductManagerBeanTest {
     private PartMasterTemplate partMasterTemplate;
     private PartIteration partIteration;
     private PartRevision partRevision;
-
-
 
 
     @Before
@@ -124,6 +128,7 @@ public class ProductManagerBeanTest {
         Mockito.when(userManager.checkWorkspaceWriteAccess(workspace.getId())).thenReturn(user);
         Mockito.when(em.find(PartRevision.class, null)).thenReturn(partRevision);
         Mockito.when(em.find(PartRevision.class, partRevisionKey)).thenReturn(partRevision);
+        Mockito.when(em.createNamedQuery("PartUsageLink.findOrphans", PartUsageLink.class)).thenReturn(partUsageLinkTypedQuery);
 
         //PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys
         ArrayList<PartUsageLink> partUsageLinks = new ArrayList<>();
@@ -177,6 +182,7 @@ public class ProductManagerBeanTest {
         Mockito.when(userManager.checkWorkspaceWriteAccess(workspace.getId())).thenReturn(user);
         Mockito.when(em.find(PartRevision.class, null)).thenReturn(partRevision);
         Mockito.when(em.find(PartRevision.class, partRevisionKey)).thenReturn(partRevision);
+        Mockito.when(em.createNamedQuery("PartUsageLink.findOrphans", PartUsageLink.class)).thenReturn(partUsageLinkTypedQuery);
 
         //PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys
         ArrayList<PartUsageLink> partUsageLinks = new ArrayList<>();
