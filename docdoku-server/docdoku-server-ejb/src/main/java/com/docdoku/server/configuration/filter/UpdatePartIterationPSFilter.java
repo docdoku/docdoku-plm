@@ -34,6 +34,7 @@ import java.util.List;
  * @author Morgan Guimard
  *
  * Check for cyclic assembly after part iteration update : must check on the wip and on the latest.
+ * We also need to walk every substitute branches.
  *
  */
 public class UpdatePartIterationPSFilter extends PSFilter {

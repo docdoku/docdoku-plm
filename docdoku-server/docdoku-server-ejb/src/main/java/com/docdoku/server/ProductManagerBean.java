@@ -2826,7 +2826,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PSFilter getPSFilter(ConfigurationItemKey ciKey, String filterType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException {
+    public PSFilter getPSFilter(ConfigurationItemKey ciKey, String filterType, boolean diverge) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
 
@@ -2840,16 +2840,16 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             case "wip":
             case "undefined":
-                filter = new WIPPSFilter(user);
+                filter = new WIPPSFilter(user, diverge);
                 break;
             case "latest":
-                filter = new LatestPSFilter(user);
+                filter = new LatestPSFilter(user, diverge);
                 break;
             case "released":
-                filter = new ReleasedPSFilter(user);
+                filter = new ReleasedPSFilter(user, diverge);
                 break;
             case "latest-released":
-                filter = new LatestReleasedPSFilter(user);
+                filter = new LatestReleasedPSFilter(user, diverge);
                 break;
             default:
                 if (filterType.startsWith("pi-")) {
@@ -3115,7 +3115,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         List<QueryResultRow> rows = new ArrayList<>();
 
-        PSFilter filter = serialNumber != null ? getPSFilter(ciKey, "pi-" + serialNumber) : getPSFilter(ciKey, "latest");
+        PSFilter filter = serialNumber != null ? getPSFilter(ciKey, "pi-" + serialNumber, false) : getPSFilter(ciKey, "latest", false);
 
         ProductInstanceIteration productInstanceIteration = null;
         if (serialNumber != null) {

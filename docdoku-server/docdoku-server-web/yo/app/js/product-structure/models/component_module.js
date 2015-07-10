@@ -173,16 +173,26 @@ define(['backbone', 'common-objects/utils/date'],
             },
 
             getUrlForBom: function () {
+
+                var url;
+
                 if (this.isAssembly()) {
-                    return App.config.contextPath +
+                    url = App.config.contextPath +
                         '/api/workspaces/' +
                         App.config.workspaceId +
                         '/products/' + App.config.productId +
                         '/bom?configSpec=' + App.config.configSpec +
                         '&path=' + this.getEncodedPath();
+
+                    if(App.config.diverge) {
+                        url += '&diverge=true';
+                    }
+
                 } else {
-                    return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getNumber() + '-' + this.getVersion();
+                    url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getNumber() + '-' + this.getVersion();
                 }
+
+                return url;
             },
 
             getRootUrlForBom: function () {
@@ -218,6 +228,10 @@ define(['backbone', 'common-objects/utils/date'],
 
                 if(App.config.linkType){
                     url += '&linkType='+App.config.linkType;
+                }
+
+                if(App.config.diverge) {
+                    url += '&diverge=true';
                 }
 
                 return url;

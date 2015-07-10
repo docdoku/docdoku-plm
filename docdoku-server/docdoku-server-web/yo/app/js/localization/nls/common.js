@@ -532,6 +532,7 @@ define({
         SHOW_ALL: "Show all",
         SHOW_BY_PAGE: "Show by page",
 		SHOW_EDITED_MESHES: "Highlight edited meshes",
+        SHOW_SUBSTITUTES:"Show substitutes",
 		SIGN_TASK: "Signing up",
         SINGLE_FILE_RESTRICTION:"Only one file is allowed",
 		SPACE: "space",

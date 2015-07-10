@@ -267,10 +267,17 @@ define(['dmu/LoaderManager', 'async','backbone'],
             }
 
 	        function loadPath(path, callback) {
+
+                var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
+                    App.config.productId + '/instances' +
+                    '?configSpec='+App.config.configSpec+'&path='+path+ '&timestamp=' + getTimestamp();
+
+                if(App.config.diverge){
+                    url += '&diverge=true';
+                }
+
 		        $.ajax({
-			        url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
-				         App.config.productId + '/instances' +
-				         '?configSpec='+App.config.configSpec+'&path='+path+ '&timestamp=' + getTimestamp(),
+			        url: url,
 			        type: 'GET',
 			        success:function(instances){
 				        onSuccessLoadPath(instances);
@@ -282,9 +289,16 @@ define(['dmu/LoaderManager', 'async','backbone'],
 	        }
 
             function loadPaths(paths, callback) {
+
+                var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
+                    App.config.productId + '/instances';
+
+                if(App.config.diverge){
+                    url += '&diverge=true';
+                }
+
                 $.ajax({
-	                url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
-		                 App.config.productId + '/instances',
+	                url: url,
 	                type:'POST',
 	                contentType: 'application/json',
 	                dataType: 'json',
@@ -301,11 +315,19 @@ define(['dmu/LoaderManager', 'async','backbone'],
                 });
 
             }
+
 	        function unLoadPath(path, callback) {
+
+                var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
+                    App.config.productId + '/instances' +
+                    '?configSpec=' + App.config.configSpec+'&path='+path+ '&timestamp=' + getTimestamp();
+
+                if(App.config.diverge){
+                    url += '&diverge=true';
+                }
+
 		        $.ajax({
-			        url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
-				         App.config.productId + '/instances' +
-				         '?configSpec=' + App.config.configSpec+'&path='+path+ '&timestamp=' + getTimestamp(),
+			        url: url,
 			        type: 'GET',
 			        success: function (instances) {
 				        _.each(instances, function (instance) {

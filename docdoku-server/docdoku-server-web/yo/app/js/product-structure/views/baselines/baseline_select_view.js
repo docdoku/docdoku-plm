@@ -31,6 +31,7 @@ define([
 
 		render:function(){
 
+            var _this = this;
 			this.$el.html(Mustache.render(template, {i18n:App.config.i18n}));
 			this.bindDomElements();
 
@@ -43,6 +44,14 @@ define([
             if(_.contains(this.availableFilters,App.config.configSpec)){
                 this.$selectLatestFilter.val(App.config.configSpec);
             }
+
+            this.$divergeSwitch.bootstrapSwitch();
+            this.$divergeSwitch.bootstrapSwitch('setState', false);
+
+            this.$divergeSwitch.on('switch-change', function(){
+                App.config.diverge = !App.config.diverge;
+                _this.trigger('config_spec:changed', App.config.configSpec);
+            });
 
             this.fetchPathToPathLinkTypes();
 
@@ -57,7 +66,10 @@ define([
 			this.$selectBaselineSpec = this.$('#baseline_selector_list');
 			this.$selectProdInstSpec = this.$('#product_instance_selector_list');
 			this.$selectPathToPathLink = this.$('#path_to_path_link_selector_list');
-		},
+            this.$divergeSwitch = this.$('.diverge-switch');
+            this.$divergeSwitchContainer = this.$('#diverge-selector');
+
+        },
 
 		onBaselineCollectionReset:function(){
 
@@ -77,6 +89,7 @@ define([
                 this.$selectProdInstSpec.hide();
                 this.$selectLatestFilter.hide();
                 this.$selectBaselineSpec.val(selected.getId()).show();
+                this.$divergeSwitchContainer.hide();
                 this.setDescription(selected.getIterationNote());
             }
 		},
@@ -96,6 +109,7 @@ define([
                 this.$selectConfSpec.val('serial-number');
                 this.$selectBaselineSpec.hide();
                 this.$selectLatestFilter.hide();
+                this.$divergeSwitchContainer.hide();
                 this.$selectProdInstSpec.val('pi-'+selected.getSerialNumber()).show();
                 this.setDescription('');
             }
@@ -129,6 +143,7 @@ define([
             this.$selectBaselineSpec.hide();
             this.$selectProdInstSpec.hide();
             this.$selectLatestFilter.show();
+            this.$divergeSwitchContainer.show();
             this.trigger('config_spec:changed', this.$selectLatestFilter.val());
             this.setDescription('');
         },
@@ -137,6 +152,7 @@ define([
             this.$selectProdInstSpec.hide();
             this.$selectLatestFilter.hide();
             this.$selectBaselineSpec.show();
+            this.$divergeSwitchContainer.hide();
             this.trigger('config_spec:changed', this.$selectBaselineSpec.val());
             var baseline = this.baselineCollection.findWhere({id:parseInt(this.$selectBaselineSpec.val(),10)});
             this.setDescription(baseline ? baseline.getIterationNote() : '');
@@ -146,6 +162,7 @@ define([
             this.$selectBaselineSpec.hide();
             this.$selectLatestFilter.hide();
             this.$selectProdInstSpec.show();
+            this.$divergeSwitchContainer.hide();
             this.trigger('config_spec:changed', this.$selectProdInstSpec.val());
             this.setDescription('');
         },

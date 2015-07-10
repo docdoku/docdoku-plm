@@ -131,11 +131,11 @@ public class ProductResource {
     @GET
     @Path("{ciId}/bom")
     @Produces(MediaType.APPLICATION_JSON)
-    public PartDTO[] filterPart(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path)
+    public PartDTO[] filterPart(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path, @QueryParam("diverge") boolean diverge)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter filter = productService.getPSFilter(ciKey, configSpecType);
+        PSFilter filter = productService.getPSFilter(ciKey, configSpecType, diverge);
         List<PartLink> decodedPath = productService.decodePath(ciKey, path);
         Component component = productService.filterProductStructure(ciKey, filter, decodedPath, 1);
 
@@ -160,11 +160,11 @@ public class ProductResource {
     @GET
     @Path("{ciId}/filter")
     @Produces(MediaType.APPLICATION_JSON)
-    public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path, @QueryParam("depth") Integer depth, @QueryParam("linkType") String linkType)
+    public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path, @QueryParam("depth") Integer depth, @QueryParam("linkType") String linkType, @QueryParam("diverge") boolean diverge)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
-        PSFilter filter = productService.getPSFilter(ciKey, configSpecType);
+        PSFilter filter = productService.getPSFilter(ciKey, configSpecType, diverge);
 
         Component component;
         String serialNumber = null;
@@ -216,11 +216,11 @@ public class ProductResource {
     @GET
     @Path("{ciId}/paths")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PathDTO> searchPaths(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("partNumber") String partNumber, @QueryParam("configSpec") String configSpecType)
+    public List<PathDTO> searchPaths(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("partNumber") String partNumber, @QueryParam("configSpec") String configSpecType, @QueryParam("diverge") boolean diverge)
             throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, NotAllowedException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter filter = productService.getPSFilter(ciKey, configSpecType);
+        PSFilter filter = productService.getPSFilter(ciKey, configSpecType, diverge);
         List<PartLink[]> usagePaths = productService.findPartUsages(ciKey, filter,partNumber);
 
         List<PathDTO> pathsDTO = new ArrayList<>();
@@ -304,7 +304,7 @@ public class ProductResource {
     @GET
     @Path("{ciId}/instances")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getInstances(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path)
+    public Response getInstances(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path, @QueryParam("diverge") boolean diverge)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
         Response.ResponseBuilder rb = fakeSimilarBehavior(request);
         if (rb != null) {
@@ -314,7 +314,7 @@ public class ProductResource {
             //this request is resources consuming so we cache the response for 30 minutes
             cc.setMaxAge(60 * 15);
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-            PSFilter filter = productService.getPSFilter(ciKey, configSpecType);
+            PSFilter filter = productService.getPSFilter(ciKey, configSpecType, diverge);
             List<PartLink> decodedPath = productService.decodePath(ciKey,path);
 
             List<List<PartLink>> paths = new ArrayList<>();
@@ -333,7 +333,7 @@ public class ProductResource {
     @Path("{ciId}/instances")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getInstancesByMultiplePath(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, PathListDTO pathsDTO)
+    public Response getInstancesByMultiplePath(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("diverge") boolean diverge, PathListDTO pathsDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         Response.ResponseBuilder rb = fakeSimilarBehavior(request);
@@ -346,7 +346,7 @@ public class ProductResource {
 
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
-            PSFilter filter = productService.getPSFilter(ciKey, pathsDTO.getConfigSpec());
+            PSFilter filter = productService.getPSFilter(ciKey, pathsDTO.getConfigSpec(), diverge);
 
             List<List<PartLink>> paths = new ArrayList<>();
 
@@ -421,7 +421,7 @@ public class ProductResource {
 
         FileExportEntity fileExportEntity = new FileExportEntity();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter psFilter = productService.getPSFilter(ciKey,configSpecType);
+        PSFilter psFilter = productService.getPSFilter(ciKey,configSpecType, false);
 
         fileExportEntity.setPsFilter(psFilter);
         fileExportEntity.setConfigurationItemKey(ciKey);

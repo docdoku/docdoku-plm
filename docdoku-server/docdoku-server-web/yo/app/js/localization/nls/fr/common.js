@@ -527,6 +527,7 @@ define({
     SHOW_ALL: "Tout voir",
     SHOW_BY_PAGE: "Voir par page",
 	SHOW_EDITED_MESHES: "Surligner les objets modifiés",
+    SHOW_SUBSTITUTES:"Afficher les variantes",
 	SIGN_TASK: "Signature",
     SINGLE_FILE_RESTRICTION:"Seulement un fichier est autorisé.",
 	SPACE: "espace",
