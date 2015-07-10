@@ -102,7 +102,8 @@ public class ProductResource {
             dtos[i] = new ConfigurationItemDTO(mapper.map(ci.getAuthor(),UserDTO.class),ci.getId(), ci.getWorkspaceId(),
                     ci.getDescription(), ci.getDesignItem().getNumber(),ci.getDesignItem().getName(), ci.getDesignItem().getLastRevision().getVersion());
             dtos[i].setPathToPathLinks(getTypedLinkForConfigurationItem(ci));
-            dtos[i].setHasModificationNotification(productService.hasModificationNotification(ci.getKey()));
+            // TODO : find a better way to detect modification notifications on products. Too heavy for big structures.
+            //dtos[i].setHasModificationNotification(productService.hasModificationNotification(ci.getKey()));
         }
 
         return dtos;

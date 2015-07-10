@@ -51,7 +51,7 @@ public class ProductBaselineDTO extends BaselineDTO {
         this.author  = author;
     }
 
-    public ProductBaselineDTO(UserDTO user,int id, String name, String description, Date creationDate, String configurationItemId, ProductBaseline.BaselineType type, List<BaselinedPartDTO> baselinedParts, List<String> substituteLinks, List<String> optionalUsageLinks) {
+    public ProductBaselineDTO(UserDTO author, int id, String name, String description, Date creationDate, String configurationItemId, ProductBaseline.BaselineType type, List<BaselinedPartDTO> baselinedParts, List<String> substituteLinks, List<String> optionalUsageLinks) {
         super(id, name, description, creationDate);
         this.author = author;
         this.configurationItemId = configurationItemId;
