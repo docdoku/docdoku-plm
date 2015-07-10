@@ -27,6 +27,7 @@ import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.configuration.PathDataMaster;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.configuration.ProductInstanceMaster;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
@@ -244,4 +245,7 @@ public interface IProductManagerLocal{
     List<PathToPathLink> getPathToPathLinks(String workspaceId, String configurationItemId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException;
 
     boolean hasModificationNotification(ConfigurationItemKey key) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException;
+
+    List<DocumentIteration> getDocumentLinksAsDocumentIterations(String workspaceId, String configurationItemId, String configSpec, PartIterationKey partIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, PartIterationNotFoundException, ProductInstanceMasterNotFoundException;
+
 }

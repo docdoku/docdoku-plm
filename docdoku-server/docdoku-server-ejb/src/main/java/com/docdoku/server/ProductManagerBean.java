@@ -2932,7 +2932,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return hasModificationNotification[0];
     }
 
-
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public List<InstanceAttributeDescriptor> getPartIterationsInstanceAttributesInWorkspace(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
@@ -3403,6 +3402,49 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         ci.removePathToPathLink(pathToPathLink);
         pathToPathLinkDAO.removePathToPathLink(pathToPathLink);
 
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public List<DocumentIteration> getDocumentLinksAsDocumentIterations(String workspaceId, String configurationItemId, String configSpec, PartIterationKey partIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, PartIterationNotFoundException, ProductInstanceMasterNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+
+        PartIterationDAO partIterationDAO = new PartIterationDAO(locale,em);
+        PartIteration partIteration = partIterationDAO.loadPartI(partIterationKey);
+
+        if(null == configSpec){
+            throw new IllegalArgumentException("Config spec cannot be null");
+        }
+
+        ProductBaseline baseline;
+
+        if (configSpec.startsWith("pi-")) {
+            String serialNumber = configSpec.substring(3);
+            ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale,em);
+            ProductInstanceMaster productInstanceMaster = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+            baseline = productInstanceMaster.getLastIteration().getBasedOn();
+        } else {
+            int baselineId = Integer.parseInt(configSpec);
+            ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(locale, em);
+            baseline = productBaselineDAO.loadBaseline(baselineId);
+        }
+
+        DocumentCollection documentCollection = baseline.getDocumentCollection();
+        Map<BaselinedDocumentKey, BaselinedDocument> baselinedDocuments = documentCollection.getBaselinedDocuments();
+        List<DocumentIteration> documentIterations = new ArrayList<>();
+
+        for(Map.Entry<BaselinedDocumentKey, BaselinedDocument> map : baselinedDocuments.entrySet()){
+            BaselinedDocument baselinedDocument = map.getValue();
+            DocumentIteration targetDocument = baselinedDocument.getTargetDocument();
+            for(DocumentLink documentLink : partIteration.getLinkedDocuments() ){
+                if(documentLink.getTargetDocument().getKey().equals(targetDocument.getDocumentRevisionKey())){
+                    documentIterations.add(targetDocument);
+                }
+            }
+        }
+
+        return documentIterations;
     }
 
     private void checkCyclicPathToPathLink(ConfigurationItem ci, PathToPathLink startLink, User user, List<PathToPathLink> visitedLinks) throws PathToPathCyclicException {
