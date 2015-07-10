@@ -36,7 +36,8 @@ import java.util.List;
 @Entity
 @NamedQueries({
     @NamedQuery(name="PartUsageLink.findByComponent",query="SELECT u FROM PartUsageLink u WHERE u.component.number LIKE :partNumber AND u.component.workspace.id = :workspaceId"),
-    @NamedQuery(name="PartUsageLink.getPartOwner",query="SELECT p FROM PartIteration p WHERE :usage MEMBER OF p.components")
+    @NamedQuery(name="PartUsageLink.getPartOwner",query="SELECT p FROM PartIteration p WHERE :usage MEMBER OF p.components"),
+    @NamedQuery(name="PartUsageLink.findOrphans",query="SELECT p FROM PartUsageLink p WHERE NOT EXISTS (SELECT pi FROM PartIteration pi WHERE p member of pi.components) ")
 })
 public class PartUsageLink implements Serializable, Cloneable, PartLink {
 

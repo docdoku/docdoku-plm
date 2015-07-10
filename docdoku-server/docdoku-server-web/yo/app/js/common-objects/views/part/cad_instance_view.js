@@ -16,7 +16,7 @@ define([
             'change input[name=rx]': 'changeRX',
             'change input[name=ry]': 'changeRY',
             'change input[name=rz]': 'changeRZ',
-            'change select[name=position]': 'changePosition',
+            'change input':'onChange',
             'click .remove-cadInstance': 'removeCadInstance'
         },
 
@@ -28,8 +28,13 @@ define([
             return this;
         },
 
+        onChange:function(){
+          this.trigger('instance:change');
+        },
+
         render: function () {
-            this.$el.html(Mustache.render(template, {editMode:this.options.editMode,isReleased:this.options.isReleased,isCheckout:this.options.isCheckout,instance: this.instance, i18n: App.config.i18n}));
+            var disabled = this.options.isReleased || !this.options.isCheckout ? 'disabled':'';
+            this.$el.html(Mustache.render(template, {canRemove:this.options.editMode,disabled:disabled,instance: this.instance, i18n: App.config.i18n}));
             return this;
         },
 

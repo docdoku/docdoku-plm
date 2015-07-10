@@ -116,4 +116,17 @@ public class PartUsageLinkDAO {
         }
     }
 
+    public void removeOrphanPartLinks() {
+        List<PartUsageLink> partUsageLinks = em.createNamedQuery("PartUsageLink.findOrphans", PartUsageLink.class).getResultList();
+
+        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(mLocale, em);
+
+        for(PartUsageLink partUsageLink:partUsageLinks){
+            pathToPathLinkDAO.removePathToPathLinks(partUsageLink.getFullId());
+            for (PartSubstituteLink partSubstituteLink : partUsageLink.getSubstitutes()) {
+                pathToPathLinkDAO.removePathToPathLinks(partSubstituteLink.getFullId());
+            }
+            em.remove(partUsageLink);
+        }
+    }
 }

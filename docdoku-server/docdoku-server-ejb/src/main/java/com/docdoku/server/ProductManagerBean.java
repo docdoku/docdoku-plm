@@ -830,11 +830,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
                 List<PartUsageLink> links = new ArrayList<>();
                 for (PartUsageLink usageLink : pUsageLinks) {
-                    PartUsageLink partUsageLink = updatePartLink(user, usageLink, partIte);
+                    PartUsageLink partUsageLink = findOrCreatePartLink(user, usageLink, partIte);
                     links.add(partUsageLink);
                 }
                 partIte.setComponents(links);
 
+                PartUsageLinkDAO partUsageLinkDAO = new PartUsageLinkDAO(new Locale(user.getLanguage()), em);
+                partUsageLinkDAO.removeOrphanPartLinks();
                 checkCyclicAssemblyForPartIteration(partIte);
 
             }
@@ -853,22 +855,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
-    private PartUsageLink updatePartLink(User user, PartUsageLink partUsageLink, PartIteration partIte) throws PartUsageLinkNotFoundException {
+    private PartUsageLink findOrCreatePartLink(User user, PartUsageLink partUsageLink, PartIteration partIte) throws PartUsageLinkNotFoundException {
         int id = partUsageLink.getId();
         PartUsageLink partLink;
         if (id != 0) {
-
             PartUsageLinkDAO partUsageLinkDAO = new PartUsageLinkDAO(new Locale(user.getLanguage()), em);
-            PartUsageLink existingLink = partUsageLinkDAO.loadPartUsageLink(id);
-
-            // Recreate if link has change
-            if (compareUsageLink(existingLink, partUsageLink)) {
-                partLink = createNewPartLink(partUsageLink, partIte);
-                dropPartLink(user, existingLink, partIte);
-            }else{
-                partLink = existingLink;
-            }
-
+            partLink = partUsageLinkDAO.loadPartUsageLink(id);
         } else {
             partLink = createNewPartLink(partUsageLink, partIte);
         }
@@ -905,66 +897,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         em.persist(newLink);
 
         return newLink;
-    }
-
-    private void dropPartLink(User user, PartUsageLink partUsageLink, PartIteration partIte) {
-        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(new Locale(user.getLanguage()), em);
-        PartIterationDAO partIterationDAO = new PartIterationDAO(new Locale(user.getLanguage()), em);
-        pathToPathLinkDAO.removePathToPathLinks(partUsageLink.getFullId());
-        for (PartSubstituteLink partSubstituteLink : partUsageLink.getSubstitutes()) {
-            pathToPathLinkDAO.removePathToPathLinks(partSubstituteLink.getFullId());
-        }
-        if(!partIterationDAO.partLinkIsUsedInPreviousIteration(partUsageLink,partIte)){
-            em.remove(partUsageLink);
-        }
-    }
-
-    private boolean compareUsageLink(PartLink a, PartLink b) {
-
-        boolean sameComponent = a.getComponent().equals(b.getComponent());
-        boolean sameAmount = a.getAmount() == b.getAmount();
-        boolean sameCode = a.getCode() == b.getCode();
-        boolean sameComment = a.getComment() == null ? b.getComment() == null : a.getComment().equals(b.getComment());
-        boolean sameUnit = a.getUnit() == null ? b.getUnit() == null : a.getUnit().equals(b.getUnit());
-        boolean sameReferenceDescription = a.getReferenceDescription() == null ? b.getReferenceDescription() == null : a.getReferenceDescription().equals(b.getReferenceDescription());
-        boolean sameOptional = a.isOptional() == b.isOptional();
-
-        int sizeA = a.getCadInstances().size();
-        int sizeB = b.getCadInstances().size();
-
-        if (sizeA != sizeB) {
-            return true;
-        }
-
-        for (int i = 0; i < sizeA; i++) {
-            if (compareCadInstance(a.getCadInstances().get(i), b.getCadInstances().get(i))) {
-                return true;
-            }
-        }
-
-        if(a.getSubstitutes() != null && b.getSubstitutes() != null) {
-            int sizeSubstitutesA = a.getSubstitutes().size();
-            int sizeSubstitutesB = b.getSubstitutes().size();
-
-            if (sizeSubstitutesA != sizeSubstitutesB) {
-                return true;
-            }
-
-            for (int j = 0; j < sizeSubstitutesA; j++) {
-                if (compareUsageLink(a.getSubstitutes().get(j), b.getSubstitutes().get(j))) {
-                    return true;
-                }
-            }
-        }
-
-        return !sameComponent || !sameAmount || !sameCode || !sameComment || !sameUnit || !sameReferenceDescription || !sameOptional;
-
-    }
-
-
-    private boolean compareCadInstance(CADInstance a, CADInstance b) {
-        return a.getRx() != b.getRx() || a.getRy() != b.getRy() || a.getRz() != b.getRz()
-                || a.getTx() != b.getTx() || a.getTy() != b.getTy() || a.getTz() != b.getTz();
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})

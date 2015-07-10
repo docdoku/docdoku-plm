@@ -5,7 +5,9 @@ define([
     'text!common-objects/templates/part/substitute_part_view.html',
     'common-objects/views/part/cad_instance_view'
 ], function (Backbone, Mustache, template, CadInstanceView) {
+
     'use strict';
+
     var SubstituteView = Backbone.View.extend({
 
         events: {
@@ -22,13 +24,8 @@ define([
             'click .collapse-substitute-cadInstance': 'collapseSubstituteTransformations'
         },
 
-
-        initialize: function () {
-
-        },
-
-
         render: function () {
+
             this.$el.html(Mustache.render(template, {
 
                 model: this.model,
@@ -37,10 +34,9 @@ define([
                 isCheckout:this.model.isCheckout
             }));
 
-
             this.bindDomElements();
             this.initSubstituteUnitAmount();
-            //init the amount first then instanciate the CAD instances
+            //init the amount first then instantiate the CAD instances
             this.initSubstituteCadInstanceViews();
 
             return this;
@@ -53,7 +49,6 @@ define([
             this.$unitText = this.$('input[name=substitute-newUnit]');
             this.$defaultUnity = this.$unitText.attr('default-substitute-unity');
             this.$collapseButton = this.$('.collapse-substitute-cadInstance');
-
         },
 
         initSubstituteCadInstanceViews: function () {
@@ -71,7 +66,6 @@ define([
             this.$unitText.val(unit ? unit : this.$defaultUnity);
             this.$amount.val(this.model.amount);
             this.disableEnableAmount(unit);
-
         },
 
         addCadInstanceView: function (instance) {
@@ -82,17 +76,22 @@ define([
             substituteCADInstanceView.on('instance:remove', function () {
                 self.onRemoveCadInstance(instance);
             });
+            substituteCADInstanceView.on('instance:change',function(){
+                self.trigger('substitute:change');
+            });
         },
 
         removeCadInstance: function () {
             this.onRemoveCadInstance(_(this.model.cadInstances).last());
             this.$cadInstances.find('.cadInstance :last').remove();
         },
+
         onRemove: function () {
             if (this.options.removeSubHandler && this.options.editMode) {
                 this.options.removeSubHandler();
             }
         },
+
         onRemoveCadInstance: function (instance) {
             this.model.cadInstances = _(this.model.cadInstances).without(instance);
             this.$amount.val(parseInt(this.$amount.val(), 10) - 1);
@@ -100,6 +99,7 @@ define([
             if (this.$amount.val() <= 1) {
                 this.$('.decrease-substitute-cadInstance').hide();
             }
+            this.trigger('substitute:change');
         },
 
         addCadInstance: function () {
@@ -111,6 +111,7 @@ define([
             if (this.$amount.val() > 1) {
                 this.$('.decrease-substitute-cadInstance').show();
             }
+            this.trigger('substitute:change');
         },
 
         collapseSubstituteTransformations: function () {
@@ -119,18 +120,27 @@ define([
             this.$collapseButton.toggleClass('fa-angle-double-down', isVisible);
             this.$collapseButton.toggleClass('fa-angle-double-up', !isVisible);
         },
+
         changeSubstituteAmount: function (e) {
             this.model.amount = e.target.value;
+            this.trigger('substitute:change');
         },
+
         changeSubstituteReferenceDescription: function (e) {
             this.model.referenceDescription = e.target.value;
+            this.trigger('substitute:change');
         },
+
         changeSubstituteName: function (e) {
             this.model.substitute.name = e.target.value;
+            this.trigger('substitute:change');
         },
+
         changeSubstituteNumber: function (e) {
             this.model.substitute.number = e.target.value;
+            this.trigger('substitute:change');
         },
+
         changeSubstituteMeasureUnit: function (e) {
             this.model.unit = (e.target.value === this.$defaultUnity ? '' : e.target.value);
             this.$unitText.val(e.target.value);
@@ -140,15 +150,17 @@ define([
             }
             this.disableEnableAmount(e.target.value);
             this.checkIntegrity(e.target.value);
+            this.trigger('substitute:change');
         },
+
         checkSubstituteMeasureUnit: function () {
             if (!this.$unitText.val()){
                 this.$unitText.val(this.$defaultUnity);
                 this.disableEnableAmount(this.$defaultUnity);
                 this.checkIntegrity(this.$defaultUnity);
             }
-
         },
+
         checkIntegrity: function (unit) {
 
             if (!unit || unit === this.$defaultUnity) {
@@ -180,26 +192,28 @@ define([
 
             }
 
-
         },
+
         disableEnableAmount: function (unit) {
 
             if (!unit || unit === this.$defaultUnity) {
 
                 this.$amount.attr('disabled', 'disabled');
                 this.$('.add-substitute-cadInstance').show();
+
                 if (this.$amount.val() > 1) {
                     this.$('.decrease-substitute-cadInstance').show();
                 }
-            }
-            else {
+
+            } else {
+
                 this.$amount.removeAttr('disabled');
                 this.$('.add-substitute-cadInstance').hide();
                 this.$('.decrease-substitute-cadInstance').hide();
+
             }
 
         }
-
 
     });
 
