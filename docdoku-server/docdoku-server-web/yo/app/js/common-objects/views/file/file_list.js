@@ -207,6 +207,8 @@ define([
 
         cancelButtonClicked: function () {
             _.invoke(this.xhrs,'abort');
+            //empty the array
+            this.xhrs.length = 0;
             this.finished();
         },
 
