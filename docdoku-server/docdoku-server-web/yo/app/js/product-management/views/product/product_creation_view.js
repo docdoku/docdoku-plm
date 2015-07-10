@@ -85,6 +85,11 @@ define([
                     designItemName: this.$inputPartName.val()
                 });
 
+                if (!this.model.getDesignItemNumber()) {
+                    this.onError(App.config.i18n.PART_NOT_FOUND);
+                    return false;
+                }
+
                 this.model.save({}, {
                     wait: true,
                     success: this.onProductCreated,

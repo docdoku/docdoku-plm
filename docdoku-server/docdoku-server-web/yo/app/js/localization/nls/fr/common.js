@@ -341,6 +341,7 @@ define({
     PART_ATTRIBUTES_TEMPLATES: "Modèles d'attributs associés à l'article",
 	PARTICIPANT: "Participant",
 	PART_NAME: "Nom",
+    PART_NOT_FOUND: "L'article de tête n'a pas été trouvé",
 	PART_NUMBER_HELP: "Numéro de l'article",
 	PART_NUMBER: "Numéro",
 	PARTS: "Articles",

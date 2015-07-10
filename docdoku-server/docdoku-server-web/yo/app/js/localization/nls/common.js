@@ -345,6 +345,7 @@ define({
 		PARTICIPANT: "Participant",
         PART_DESCRIPTION:"Description",
 		PART_NAME: "Part Name",
+        PART_NOT_FOUND: "The root part has not been found",
 		PART_NUMBER_HELP: "Number of the part",
 		PART_NUMBER: "Part Number",
 		PARTS: "Parts",
