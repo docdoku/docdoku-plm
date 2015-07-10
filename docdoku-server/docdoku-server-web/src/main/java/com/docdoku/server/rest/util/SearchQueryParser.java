@@ -68,7 +68,12 @@ public class SearchQueryParser {
         for(String filter : query.keySet()){
             List<String> values = query.get(filter);
             if(values.size() == 1){
-                String value = values.get(0);
+                String value = null;
+                try {
+                    value = URLDecoder.decode(values.get(0), "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
                 switch (filter){
                     case "q" :
                         fullText = value;
