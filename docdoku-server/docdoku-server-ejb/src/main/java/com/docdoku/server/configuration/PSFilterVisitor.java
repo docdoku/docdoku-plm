@@ -44,6 +44,7 @@ public abstract class PSFilterVisitor {
     private PartMasterDAO partMasterDAO;
     private Component component;
     private int stopAtDepth = -1;
+    private boolean stopped = false;
 
     private String workspaceId;
 
@@ -73,6 +74,10 @@ public abstract class PSFilterVisitor {
         }else{
             throw new IllegalArgumentException("Provide either a node from which starting visit or a resolved part links list");
         }
+    }
+
+    public void stop(){
+        stopped = true;
     }
 
     private void startVisit(List<PartLink> pStartingPath, Integer pDepth) throws NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
@@ -167,9 +172,15 @@ public abstract class PSFilterVisitor {
 
     private List<Component> visit(Component currentComponent, List<PartIteration> pCurrentPathPartIterations, List<PartMaster> pCurrentPathParts, List<PartLink> pCurrentPath) throws PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
 
+        List<Component> components = new ArrayList<>();
+
+        if(stopped){
+            return components;
+        }
+
         onPathWalk(new ArrayList<>(pCurrentPath), new ArrayList<>(pCurrentPathParts));
 
-        List<Component> components = new ArrayList<>();
+
 
         // Current depth
         int depth = pCurrentPathParts.size() - 1;
