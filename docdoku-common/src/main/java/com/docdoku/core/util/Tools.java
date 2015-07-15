@@ -229,11 +229,18 @@ public class Tools {
         }
 
         String s = sb.toString();
-        return s.substring(0,s.length()-1);
+        return s.substring(0, s.length() - 1);
     }
 
+    public static String getPartLinksAsHumanString(List<List<PartLink>> links){
+        return getPartLinkAsString(links, " -> ");
+    }
 
-    public static String getPartLinksAsString(List<List<PartLink>> links){
+    public static String getPartLinksAsExcelString(List<List<PartLink>> links){
+        return getPartLinkAsString(links, " - ");
+    }
+
+    private static String getPartLinkAsString(List<List<PartLink>> links, String joinWith) {
         List<String> componentNumbers = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
@@ -247,7 +254,7 @@ public class Tools {
                 componentNumbers.add(linkAsString);
             }
 
-            String join = StringUtils.join(componentNumbers, " > ");
+            String join = StringUtils.join(componentNumbers, joinWith);
             sb.append(join);
             sb.append("\n");
         }

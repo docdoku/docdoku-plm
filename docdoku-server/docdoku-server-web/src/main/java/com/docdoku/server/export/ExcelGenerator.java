@@ -214,13 +214,13 @@ public class ExcelGenerator {
 
                 case QueryField.CTX_P2P_SOURCE:
                     List<List<PartLink>> sources = row.getSources();
-                    String sourcePartLinksAsString = Tools.getPartLinksAsString(sources);
+                    String sourcePartLinksAsString = Tools.getPartLinksAsExcelString(sources);
                     data.add(sourcePartLinksAsString);
                     break;
 
                 case QueryField.CTX_P2P_TARGET:
                     List<List<PartLink>> targets = row.getTargets();
-                    String targetPartLinksAsString = Tools.getPartLinksAsString(targets);
+                    String targetPartLinksAsString = Tools.getPartLinksAsExcelString(targets);
                     data.add(targetPartLinksAsString);
                     break;
 
