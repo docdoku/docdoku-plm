@@ -482,9 +482,7 @@ public class ESIndexer {
         DocumentMasterDAO docMasterDAO = new DocumentMasterDAO(em);
         for (DocumentMaster docM : docMasterDAO.getAllByWorkspace(workspaceId)) {
             for (DocumentRevision docR : docM.getDocumentRevisions()) {
-                for (DocumentIteration docI : docR.getDocumentIterations()) {
-                    pBulkRequest.add(indexRequest(client, docI));
-                }
+                pBulkRequest.add(indexRequest(client, docR.getLastIteration()));
             }
         }
         return pBulkRequest;
@@ -494,9 +492,7 @@ public class ESIndexer {
         PartMasterDAO partMasterDAO = new PartMasterDAO(em);
         for (PartMaster partMaster : partMasterDAO.getAllByWorkspace(workspaceId)) {
             for (PartRevision partRev : partMaster.getPartRevisions()) {
-                for (PartIteration partIte : partRev.getPartIterations()) {
-                    pBulkRequest.add(indexRequest(client, partIte));
-                }
+                pBulkRequest.add(indexRequest(client, partRev.getLastIteration()));
             }
         }
         return pBulkRequest;
