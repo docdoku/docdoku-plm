@@ -41,6 +41,7 @@ import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
 import com.docdoku.server.factory.ACLFactory;
+import com.docdoku.server.validation.AttributesConsistencyUtils;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -1340,47 +1341,13 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
             if (pAttributes != null) {
                 List<InstanceAttribute> currentAttrs = new ArrayList<>(doc.getInstanceAttributes());
-                if (docR.isAttributesLocked()) {
-                    //Check attributes haven't changed
-                    if (currentAttrs.size() != pAttributes.size()) {
-                        throw new NotAllowedException(userLocale, "NotAllowedException44");
-                    } else {
-                        for (int i = 0; i < currentAttrs.size(); i++) {
-                            InstanceAttribute currentAttr = currentAttrs.get(i);
-                            InstanceAttribute newAttr = pAttributes.get(i);
-                            if (newAttr == null
-                                    || !newAttr.getName().equals(currentAttr.getName())
-                                    || !newAttr.getClass().equals(currentAttr.getClass())) {
-                                //Attribute has been swapped with a new attribute or his type has changed
-                                throw new NotAllowedException(userLocale, "NotAllowedException44");
-                            }
-                        }
-                    }
+                boolean valid = AttributesConsistencyUtils.hasValidChange(pAttributes,docR.isAttributesLocked(),currentAttrs);
+                if(!valid) {
+                    throw new NotAllowedException(userLocale, "NotAllowedException44");
                 }
-
-                for (int i = 0; i < currentAttrs.size(); i++) {
-                    InstanceAttribute currentAttr = currentAttrs.get(i);
-
-                    if (i < pAttributes.size()) {
-                        InstanceAttribute newAttr = pAttributes.get(i);
-                        if (currentAttr.getClass() != newAttr.getClass() || newAttr.getClass() == InstanceListOfValuesAttribute.class) {
-                            doc.getInstanceAttributes().set(i, newAttr);
-                        } else {
-                            doc.getInstanceAttributes().get(i).setName(newAttr.getName());
-                            doc.getInstanceAttributes().get(i).setValue(newAttr.getValue());
-                            doc.getInstanceAttributes().get(i).setMandatory(newAttr.isMandatory());
-                            doc.getInstanceAttributes().get(i).setLocked(newAttr.isLocked());
-                        }
-                    } else {
-                        //no more attribute to add remove all of them still end of iteration
-                        doc.getInstanceAttributes().remove(doc.getInstanceAttributes().size() - 1);
-                    }
-                }
-                for (int i = currentAttrs.size(); i < pAttributes.size(); i++) {
-                    InstanceAttribute newAttr = pAttributes.get(i);
-                    doc.getInstanceAttributes().add(newAttr);
-                }
+                AttributesConsistencyUtils.updateAttributes(pAttributes,currentAttrs);
             }
+
             doc.setRevisionNote(pRevisionNote);
             Date now = new Date();
             doc.setModificationDate(now);

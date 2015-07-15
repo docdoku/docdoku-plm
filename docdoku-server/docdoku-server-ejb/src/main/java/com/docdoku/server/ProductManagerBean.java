@@ -52,6 +52,7 @@ import com.docdoku.server.events.PartIterationChangeEvent;
 import com.docdoku.server.events.PartRevisionChangeEvent;
 import com.docdoku.server.events.Removed;
 import com.docdoku.server.factory.ACLFactory;
+import com.docdoku.server.validation.AttributesConsistencyUtils;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -759,50 +760,17 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             // Update attributes
 
-            if (pAttributes != null) {
 
-                List<InstanceAttribute> currentAttrs = partIte.getInstanceAttributes();
-                if (partRev.isAttributesLocked()) {
-                    //Check attributes haven't changed
-                    if (currentAttrs.size() != pAttributes.size()) {
-                        throw new NotAllowedException(locale, "NotAllowedException45");
-                    } else {
-                        for (int i = 0; i < currentAttrs.size(); i++) {
-                            InstanceAttribute currentAttr = currentAttrs.get(i);
-                            InstanceAttribute newAttr = pAttributes.get(i);
-                            if (newAttr == null
-                                    || !newAttr.getName().equals(currentAttr.getName())
-                                    || !newAttr.getClass().equals(currentAttr.getClass())) {
-                                // Attribute has been swapped with a new attributes or his type has changed
-                                throw new NotAllowedException(locale, "NotAllowedException45");
-                            }
-                        }
-                    }
+            //should move that
+            if(pAttributes != null) {
+                List<InstanceAttribute> currentAttrs = partRev.getLastIteration().getInstanceAttributes();
+                boolean valid = AttributesConsistencyUtils.hasValidChange(pAttributes,partRev.isAttributesLocked(),currentAttrs);
+                if(!valid) {
+                    throw new NotAllowedException(locale, "NotAllowedException45");
                 }
-
-                for (int i = 0; i < currentAttrs.size(); i++) {
-                    InstanceAttribute currentAttr = currentAttrs.get(i);
-
-                    if (i < pAttributes.size()) {
-                        InstanceAttribute newAttr = pAttributes.get(i);
-                        if (currentAttr.getClass() != newAttr.getClass() || newAttr.getClass() == InstanceListOfValuesAttribute.class) {
-                            partIte.getInstanceAttributes().set(i, newAttr);
-                        } else {
-                            partIte.getInstanceAttributes().get(i).setName(newAttr.getName());
-                            partIte.getInstanceAttributes().get(i).setValue(newAttr.getValue());
-                            partIte.getInstanceAttributes().get(i).setMandatory(newAttr.isMandatory());
-                            partIte.getInstanceAttributes().get(i).setLocked(newAttr.isLocked());
-                        }
-                    } else {
-                        //no more attribute to add remove all of them still end of iteration
-                        partIte.getInstanceAttributes().remove(partIte.getInstanceAttributes().size() - 1);
-                    }
-                }
-                for (int i = currentAttrs.size(); i < pAttributes.size(); i++) {
-                    InstanceAttribute newAttr = pAttributes.get(i);
-                    partIte.getInstanceAttributes().add(newAttr);
-                }
+                AttributesConsistencyUtils.updateAttributes(pAttributes,currentAttrs);
             }
+
 
             // Update attribute templates
 
