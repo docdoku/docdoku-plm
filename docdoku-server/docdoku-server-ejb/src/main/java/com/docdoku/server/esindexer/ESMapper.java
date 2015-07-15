@@ -113,6 +113,8 @@ public class ESMapper {
             setField(tmp, DOCUMENT_ID_KEY, doc.getDocumentRevision().getDocumentMasterId(), 4.75f);
             setField(tmp, TITLE_KEY, doc.getDocumentRevision().getTitle(), 5f);
             setField(tmp, VERSION_KEY, doc.getDocumentVersion(), 0.10f);
+            setField(tmp, TYPE_KEY, doc.getDocumentRevision().getDocumentMaster().getType(), 2f);
+            setField(tmp, DESCRIPTION_KEY, doc.getDocumentRevision().getDescription(), 2f);
             tmp.startArray(ITERATIONS_KEY);
             for (DocumentIteration iteration : doc.getDocumentRevision().getDocumentIterations()) {
                 tmp.startObject();
@@ -123,10 +125,8 @@ public class ESMapper {
                     setField(tmp, AUTHOR_NAME_KEY, iteration.getAuthor().getName(), 0.6f);
                     tmp.endObject();
                 }
-                setField(tmp, TYPE_KEY, iteration.getDocumentRevision().getDocumentMaster().getType(), 2f);
                 setField(tmp, CREATION_DATE_KEY, iteration.getDocumentRevision().getCreationDate(), 0.4f);
                 setField(tmp, MODIFICATION_DATE_KEY, iteration.getModificationDate(), 0.4f);
-                setField(tmp, DESCRIPTION_KEY, iteration.getDocumentRevision().getDescription(), 2f);
                 setField(tmp, REVISION_NOTE_KEY, iteration.getRevisionNote(), 0.5f);
                 setField(tmp, WORKFLOW_KEY, iteration.getDocumentRevision().getWorkflow(), 0.5f);
                 setField(tmp, FOLDER_KEY, iteration.getDocumentRevision().getLocation().getShortName(), 0.5f);
@@ -192,10 +192,8 @@ public class ESMapper {
             setParam(authorParams, AUTHOR_LOGIN_KEY, doc.getAuthor().getLogin(), 0.6f);
             setParam(authorParams, AUTHOR_NAME_KEY, doc.getAuthor().getName(), 0.6f);
         }
-        setParam(params, TYPE_KEY, doc.getDocumentRevision().getDocumentMaster().getType(), 2f);
         setParam(params, CREATION_DATE_KEY, doc.getDocumentRevision().getCreationDate(), 0.4f);
         setParam(params, MODIFICATION_DATE_KEY, doc.getModificationDate(), 0.4f);
-        setParam(params, DESCRIPTION_KEY, doc.getDocumentRevision().getDescription(), 2f);
         setParam(params, REVISION_NOTE_KEY, doc.getRevisionNote(), 0.5f);
         setParam(params, WORKFLOW_KEY, doc.getDocumentRevision().getWorkflow(), 0.5f);
         setParam(params, FOLDER_KEY, doc.getDocumentRevision().getLocation().getShortName(), 0.5f);
@@ -248,6 +246,7 @@ public class ESMapper {
             setField(tmp, PART_NAME_KEY, part.getPartRevision().getPartMaster().getName(), 5f);
             setField(tmp, TYPE_KEY, part.getPartRevision().getPartMaster().getType(), 2f);
             setField(tmp, VERSION_KEY, part.getPartVersion(), 0.10f);
+            setField(tmp, DESCRIPTION_KEY, part.getPartRevision().getDescription(), 2f);
             tmp.startArray(ITERATIONS_KEY);
             for (PartIteration iteration : part.getPartRevision().getPartIterations()) {
                 tmp.startObject();
@@ -262,7 +261,6 @@ public class ESMapper {
                 }
                 setField(tmp, CREATION_DATE_KEY, iteration.getCreationDate(), 0.4f);
                 setField(tmp, MODIFICATION_DATE_KEY, iteration.getModificationDate(), 0.4f);
-                setField(tmp, DESCRIPTION_KEY, iteration.getPartRevision().getDescription(), 2f);
                 setField(tmp, REVISION_NOTE_KEY, iteration.getIterationNote(), 0.5f);
                 setField(tmp, WORKFLOW_KEY, iteration.getPartRevision().getWorkflow(), 0.5f);
                 if (!iteration.getPartRevision().getTags().isEmpty()) {
@@ -332,7 +330,6 @@ public class ESMapper {
 
         setParam(params, CREATION_DATE_KEY, part.getCreationDate(), 0.4f);
         setParam(params, MODIFICATION_DATE_KEY, part.getModificationDate(), 0.4f);
-        setParam(params, DESCRIPTION_KEY, part.getPartRevision().getDescription(), 2f);
         setParam(params, REVISION_NOTE_KEY, part.getIterationNote(), 0.5f);
         setParam(params, WORKFLOW_KEY, part.getPartRevision().getWorkflow(), 0.5f);
 
