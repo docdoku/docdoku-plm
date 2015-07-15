@@ -257,6 +257,7 @@ public class Tools {
             String join = StringUtils.join(componentNumbers, joinWith);
             sb.append(join);
             sb.append("\n");
+            componentNumbers.clear();
         }
 
         return sb.toString();
