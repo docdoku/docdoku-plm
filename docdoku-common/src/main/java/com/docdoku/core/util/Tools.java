@@ -30,6 +30,7 @@ import java.text.Normalizer;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -232,30 +233,31 @@ public class Tools {
         return s.substring(0, s.length() - 1);
     }
 
-    public static String getPartLinksAsHumanString(List<List<PartLink>> links){
+    public static String getPartLinksAsHumanString(Map<String, List<PartLink>> links){
         return getPartLinkAsString(links, " -> ");
     }
 
-    public static String getPartLinksAsExcelString(List<List<PartLink>> links){
+    public static String getPartLinksAsExcelString(Map<String, List<PartLink>> links){
         return getPartLinkAsString(links, " - ");
     }
 
-    private static String getPartLinkAsString(List<List<PartLink>> links, String joinWith) {
+    private static String getPartLinkAsString(Map<String, List<PartLink>> links, String joinWith) {
         List<String> componentNumbers = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
-        for(List<PartLink> linksList:links){
+        for (String type : links.keySet()) {
+            List<PartLink> linksList = links.get(type);
 
-            for(PartLink link:linksList) {
+            for (PartLink link:linksList) {
                 String linkAsString = link.getComponent().getName() + " < " + link.getComponent().getNumber() + " > ";
-                if(null != link.getReferenceDescription()){
+                if (null != link.getReferenceDescription()) {
                     linkAsString += " ( " + link.getReferenceDescription() + " )";
                 }
                 componentNumbers.add(linkAsString);
             }
 
             String join = StringUtils.join(componentNumbers, joinWith);
-            sb.append(join);
+            sb.append(type + ": " + join);
             sb.append("\n");
             componentNumbers.clear();
         }

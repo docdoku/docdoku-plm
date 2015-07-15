@@ -24,8 +24,9 @@ import com.docdoku.core.configuration.PathDataIteration;
 import com.docdoku.core.product.PartLink;
 import com.docdoku.core.product.PartRevision;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by morgan on 21/04/15.
@@ -35,8 +36,8 @@ public class QueryResultRow {
 
     private PartRevision partRevision;
     private int depth;
-    private List<List<PartLink>> sources = new ArrayList<>();
-    private List<List<PartLink>> targets = new ArrayList<>();
+    private Map<String, List<PartLink>> sources = new HashMap<>();
+    private Map<String, List<PartLink>> targets = new HashMap<>();
     private PathDataIteration pathDataIteration;
     private double[] results;
     private QueryContext context;
@@ -96,28 +97,28 @@ public class QueryResultRow {
         this.amount = amount;
     }
 
-    public List<List<PartLink>> getSources() {
+    public Map<String, List<PartLink>> getSources() {
         return sources;
     }
 
-    public void setSources(List<List<PartLink>> sources) {
+    public void setSources(Map<String, List<PartLink>> sources) {
         this.sources = sources;
     }
 
-    public List<List<PartLink>> getTargets() {
+    public Map<String, List<PartLink>> getTargets() {
         return targets;
     }
 
-    public void setTargets(List<List<PartLink>> targets) {
+    public void setTargets(Map<String, List<PartLink>> targets) {
         this.targets = targets;
     }
 
-    public void addTarget(List<PartLink> target){
-        targets.add(target);
+    public void addTarget(String type, List<PartLink> target) {
+        targets.put(type, target);
     }
 
-    public void addSource(List<PartLink> source){
-        sources.add(source);
+    public void addSource(String type, List<PartLink> source) {
+        sources.put(type, source);
     }
 
     public PathDataIteration getPathDataIteration() {

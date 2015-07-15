@@ -312,13 +312,13 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
             }
 
             if (selects.contains(QueryField.CTX_P2P_SOURCE)) {
-                List<List<PartLink>> sources = row.getSources();
+                Map<String, List<PartLink>> sources = row.getSources();
                 String partLinksAsString = Tools.getPartLinksAsHumanString(sources);
                 jg.write(QueryField.CTX_P2P_SOURCE, partLinksAsString);
             }
 
             if (selects.contains(QueryField.CTX_P2P_TARGET)) {
-                List<List<PartLink>> targets = row.getTargets();
+                Map<String, List<PartLink>> targets = row.getTargets();
                 String partLinksAsString = Tools.getPartLinksAsHumanString(targets);
                 jg.write(QueryField.CTX_P2P_TARGET, partLinksAsString);
             }

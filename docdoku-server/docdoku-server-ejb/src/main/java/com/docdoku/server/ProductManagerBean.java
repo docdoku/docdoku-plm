@@ -3181,7 +3181,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     for (PathToPathLink pathToPathLink : pathToPathLinkSourceInContext) {
                         try {
                             List<PartLink> partLinks = decodePath(ciKey, pathToPathLink.getTargetPath());
-                            row.addSource(partLinks);
+                            row.addSource(pathToPathLink.getType(), partLinks);
                         } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | PartUsageLinkNotFoundException | ConfigurationItemNotFoundException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
@@ -3192,7 +3192,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     for (PathToPathLink pathToPathLink : pathToPathLinkTargetInContext) {
                         try {
                             List<PartLink> partLinks = decodePath(ciKey, pathToPathLink.getSourcePath());
-                            row.addTarget(partLinks);
+                            row.addTarget(pathToPathLink.getType(), partLinks);
                         } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | PartUsageLinkNotFoundException | ConfigurationItemNotFoundException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
