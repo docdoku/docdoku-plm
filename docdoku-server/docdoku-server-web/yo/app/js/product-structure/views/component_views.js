@@ -211,7 +211,9 @@ define([
 		    model.fetch().success(function () {
 			    new PartModalView({
 				    model: model,
-                    iteration: iteration
+                    iteration: iteration,
+                    productId: App.config.productId,
+                    configSpec: ['wip','latest','latest-released'].indexOf(App.config.configSpec)===-1 ? App.config.configSpec : null
 			    }).show();
 		    });
 
@@ -387,11 +389,13 @@ define([
 	    onEditPart: function () {
 		    var model = new Part({partKey: this.model.getNumber() + '-' + this.model.getVersion()});
             var iteration = this.model.getIteration();
-
+            console.log(App.config.configSpec);
 		    model.fetch().success(function () {
 			    new PartModalView({
 				    model: model,
-                    iteration: iteration
+                    iteration: iteration,
+                    productId: App.config.productId,
+                    configSpec: ['wip','latest','latest-released'].indexOf(App.config.configSpec)===-1 ? App.config.configSpec : null
 			    }).show();
 		    });
 

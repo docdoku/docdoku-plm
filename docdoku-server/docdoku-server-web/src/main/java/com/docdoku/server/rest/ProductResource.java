@@ -551,6 +551,7 @@ public class ProductResource {
             documentIterationDTO.setDocumentRevisionVersion(documentIteration.getDocumentVersion());
             documentIterationDTO.setDocumentTitle(documentIteration.getDocumentTitle());
             documentIterationDTO.setIteration(documentIteration.getIteration());
+            documentIterationDTO.setWorkspaceId(documentIteration.getWorkspaceId());
             dtos.add(documentIterationDTO);
         }
         return dtos;

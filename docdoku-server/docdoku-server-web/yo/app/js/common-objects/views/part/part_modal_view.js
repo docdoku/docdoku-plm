@@ -13,18 +13,21 @@ define([
     'common-objects/views/part/used_by_view',
     'common-objects/views/alert',
     'common-objects/collections/linked/linked_document_collection',
+    'common-objects/collections/linked/linked_document_iteration_collection',
     'common-objects/views/workflow/lifecycle',
     'common-objects/views/part/conversion_status_view',
     'common-objects/utils/date',
     'common-objects/views/tags/tag',
     'common-objects/models/tag'
-], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, TemplateNewAttributesView, PartsManagementView, ModificationNotificationGroupListView, LinkedDocumentsView, UsedByView, AlertView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
+], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, TemplateNewAttributesView, PartsManagementView, ModificationNotificationGroupListView, LinkedDocumentsView, UsedByView, AlertView, LinkedDocumentCollection, LinkedDocumentIterationCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
     'use strict';
     var PartModalView = ModalView.extend({
 
         initialize: function () {
             this.iterations = this.model.getIterations();
             this.iteration = this.options.iteration ? this.iterations.get(this.options.iteration) : this.model.getLastIteration();
+            this.productId = this.options.productId;
+            this.configSpec = this.options.configSpec;
 
             ModalView.prototype.initialize.apply(this, arguments);
 
@@ -136,11 +139,8 @@ define([
             if (this.iteration) {
                 this.initCadFileUploadView();
                 this.initAttachedFilesUploadView();
-
                 this.initAttributesView();
-
                 this.initPartsManagementView();
-
                 this.initLinkedDocumentsView();
                 this.initUsedByView();
                 this.initLifeCycleView();
@@ -286,11 +286,46 @@ define([
         },
 
         initLinkedDocumentsView: function () {
+            if (this.configSpec) {
+                var self = this;
+                $.ajax({
+                    type:'GET',
+                    url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/document-links/' + this.iteration.getReference() + '/' + this.configSpec,
+                    contentType:'application/json',
+
+                    success:function(linkedDocuments) {
+                        self.iteration.setLinkedDocuments(linkedDocuments);
+                        self.displayLinkedDocumentIterationsView();
+                    },
+
+                    error: function() {
+                        self.displayLinkedDocumentsView();
+                    }
+                });
+
+            } else {
+                this.displayLinkedDocumentsView();
+            }
+        },
+
+        displayLinkedDocumentsView: function () {
             this.linkedDocumentsView = new LinkedDocumentsView({
                 editMode: this.editMode,
                 commentEditable:true,
                 documentIteration: this.iteration,
                 collection: new LinkedDocumentCollection(this.iteration.getLinkedDocuments())
+            }).render();
+
+            /* Add the documentLinksView to the tab */
+            this.$('#iteration-links').html(this.linkedDocumentsView.el);
+        },
+
+        displayLinkedDocumentIterationsView: function () {
+            this.linkedDocumentsView = new LinkedDocumentsView({
+                editMode: this.editMode,
+                commentEditable:true,
+                documentIteration: this.iteration,
+                collection: new LinkedDocumentIterationCollection(this.iteration.getLinkedDocuments())
             }).render();
 
             /* Add the documentLinksView to the tab */

@@ -108,6 +108,10 @@ define([
             return this.get('linkedDocuments');
         },
 
+        setLinkedDocuments: function (linkedDocuments) {
+            this.set('linkedDocuments', linkedDocuments);
+        },
+
         getLifeCycleState: function () {
             return this.get('lifeCycleState');
         },
