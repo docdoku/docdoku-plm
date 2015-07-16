@@ -81,8 +81,10 @@ define([
         },
 
         render: function () {
+            this.isQueryBuilderDisplayed = false;
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
             this.bindDomElements();
+
             //always show tag button
             this.tagsButton.show();
 
@@ -479,15 +481,18 @@ define([
             });
         },
 
-        toggleQueryBuilder:function(){
-            this.$el.toggleClass('displayQueryBuilder');
-            this.$('.display-query-builder-button').toggleClass('fa-angle-double-down');
-            this.$('.display-query-builder-button').toggleClass('fa-angle-double-up');
-            if(this.$el.hasClass('displayQueryBuilder')){
-                this.queryBuilder.render();
-            }else{
+        toggleQueryBuilder:function() {
+            this.$el.toggleClass('displayQueryBuilder', !this.isQueryBuilderDisplayed);
+            this.$('.display-query-builder-button').toggleClass('fa-angle-double-down', this.isQueryBuilderDisplayed);
+            this.$('.display-query-builder-button').toggleClass('fa-angle-double-up', !this.isQueryBuilderDisplayed);
+
+            if (this.isQueryBuilderDisplayed) {
                 this.queryBuilder.destroy();
+            } else {
+                this.queryBuilder.render();
             }
+
+            this.isQueryBuilderDisplayed = !this.isQueryBuilderDisplayed;
         },
 
         destroy:function(){
