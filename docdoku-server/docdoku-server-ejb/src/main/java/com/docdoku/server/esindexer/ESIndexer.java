@@ -165,7 +165,7 @@ public class ESIndexer {
                 tmp.startObject();
                     //All field with the name content should be analyzed for full text search
                     tmp.startObject("content_string");
-                        tmp.field("match","content");
+                        tmp.field("match",ESMapper.CONTENT_KEY);
                         tmp.field("match_mapping_type","string");
                         tmp.startObject("mapping");
                             tmp.field("type","string");
