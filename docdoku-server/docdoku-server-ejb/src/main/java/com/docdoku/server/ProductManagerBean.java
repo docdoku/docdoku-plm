@@ -22,10 +22,7 @@ package com.docdoku.server;
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.*;
 import com.docdoku.core.configuration.*;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentLink;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.document.DocumentRevisionKey;
+import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
@@ -3406,7 +3403,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public List<DocumentIteration> getDocumentLinksAsDocumentIterations(String workspaceId, String configurationItemId, String configSpec, PartIterationKey partIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, PartIterationNotFoundException, ProductInstanceMasterNotFoundException {
+    public List<DocumentIterationLink> getDocumentLinksAsDocumentIterations(String workspaceId, String configurationItemId, String configSpec, PartIterationKey partIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, PartIterationNotFoundException, ProductInstanceMasterNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
 
@@ -3432,19 +3429,19 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         DocumentCollection documentCollection = baseline.getDocumentCollection();
         Map<BaselinedDocumentKey, BaselinedDocument> baselinedDocuments = documentCollection.getBaselinedDocuments();
-        List<DocumentIteration> documentIterations = new ArrayList<>();
+        List<DocumentIterationLink> documentIterationLinks = new ArrayList<>();
 
         for(Map.Entry<BaselinedDocumentKey, BaselinedDocument> map : baselinedDocuments.entrySet()){
             BaselinedDocument baselinedDocument = map.getValue();
             DocumentIteration targetDocument = baselinedDocument.getTargetDocument();
             for(DocumentLink documentLink : partIteration.getLinkedDocuments() ){
                 if(documentLink.getTargetDocument().getKey().equals(targetDocument.getDocumentRevisionKey())){
-                    documentIterations.add(targetDocument);
+                    documentIterationLinks.add(new DocumentIterationLink(documentLink,targetDocument));
                 }
             }
         }
 
-        return documentIterations;
+        return documentIterationLinks;
     }
 
     private void checkCyclicPathToPathLink(ConfigurationItem ci, PathToPathLink startLink, User user, List<PathToPathLink> visitedLinks) throws PathToPathCyclicException {
