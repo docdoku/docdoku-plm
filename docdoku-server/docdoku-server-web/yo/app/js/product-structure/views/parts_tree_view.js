@@ -13,7 +13,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
             'click #product_title .product_title': 'onProductTitleClicked',
             'load:root': 'onProductTitleClicked',
             'click .fa-refresh': 'refreshProductView',
-            'click .fa-comment': 'toggleComment',
+            'click .fa-quote-right': 'toggleComment',
             'checkbox:selected': 'onCheckboxSelected'
         },
 
