@@ -656,4 +656,17 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
         return new PathToPathLinkDAO(locale, em).getDistinctPathToPathLinkTypes(baseline);
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public List<PathToPathLink> getPathToPathTypedLink(String workspaceId, String configurationItemId, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
+
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        // Load the baseline
+        ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(locale, em);
+        ProductBaseline baseline = productBaselineDAO.loadBaseline(baselineId);
+
+        return new PathToPathLinkDAO(locale, em).getDistinctPathToPathLinks(baseline);
+    }
+
 }

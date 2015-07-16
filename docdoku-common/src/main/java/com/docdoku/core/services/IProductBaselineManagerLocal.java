@@ -20,6 +20,7 @@
 package com.docdoku.core.services;
 
 import com.docdoku.core.configuration.*;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
@@ -61,4 +62,5 @@ public interface IProductBaselineManagerLocal {
 
     List<String> getPathToPathLinkTypes(String workspaceId, String configurationItemId, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException;
 
+    List<PathToPathLink> getPathToPathTypedLink(String workspaceId, String configurationItemId, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, BaselineNotFoundException;
 }

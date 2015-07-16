@@ -23,7 +23,10 @@ import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.product.*;
+import com.docdoku.core.product.ConfigurationItemKey;
+import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartLink;
+import com.docdoku.core.product.PathToPathLink;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
@@ -131,7 +134,7 @@ public class ProductBaselinesResource {
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         ProductBaseline productBaseline = productBaselineService.getBaseline(baselineId);
         ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline,ProductBaselineDTO.class);
-        productBaselineDTO.setPathToPathLinks(getPathToPathLinksForGivenBaseline(productBaseline));
+        productBaselineDTO.setPathToPathLinks(getTypedLinkForBaseline(productBaseline));
         productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
         productBaselineDTO.setConfigurationItemLatestRevision(productBaseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
 
@@ -230,7 +233,7 @@ public class ProductBaselinesResource {
         return dtos;
     }
 
-    private  List<PathToPathLinkDTO> getPathToPathLinksForGivenBaseline(ProductBaseline productBaseline) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, AccessRightException {
+    private  List<PathToPathLinkDTO> getTypedLinkForBaseline(ProductBaseline productBaseline) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, AccessRightException {
 
         List<PathToPathLink> pathToPathLinkTypes = productBaseline.getPathToPathLinks();
         List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();

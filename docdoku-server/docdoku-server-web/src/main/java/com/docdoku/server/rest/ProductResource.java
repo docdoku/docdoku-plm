@@ -24,6 +24,9 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.configuration.PathChoice;
 import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentIterationLink;
+import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttribute;
@@ -534,6 +537,33 @@ public class ProductResource {
             lightPartLinkDTOs.add(lightPartLinkDTO);
         }
         return lightPartLinkDTOs;
+    }
+
+    @GET
+    @Path("{ciId}/document-links/{partNumber: [^/].*}-{partVersion:[A-Z]+}-{partIteration:[0-9]+}/{configSpec}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<DocumentIterationLinkDTO> getDocumentLinksForGivenPartIteration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, @PathParam("configSpec") String configSpec) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, PartIterationNotFoundException {
+
+        List<DocumentIterationLinkDTO> dtos = new ArrayList<>();
+        PartIterationKey partIterationKey = new PartIterationKey(workspaceId,partNumber,partVersion,partIteration);
+        List<DocumentIterationLink> documentIterationLinkList = productService.getDocumentLinksAsDocumentIterations(workspaceId, configurationItemId, configSpec, partIterationKey);
+        for(DocumentIterationLink documentIterationLink :documentIterationLinkList){
+
+            DocumentIteration documentIteration = documentIterationLink.getDocumentIteration();
+            DocumentLink documentLink = documentIterationLink.getDocumentLink();
+
+            DocumentIterationLinkDTO documentIterationLinkDTO = new DocumentIterationLinkDTO();
+            documentIterationLinkDTO.setDocumentMasterId(documentIteration.getId());
+            documentIterationLinkDTO.setDocumentRevisionVersion(documentIteration.getDocumentVersion());
+            documentIterationLinkDTO.setDocumentTitle(documentIteration.getDocumentTitle());
+            documentIterationLinkDTO.setIteration(documentIteration.getIteration());
+            documentIterationLinkDTO.setWorkspaceId(documentIteration.getWorkspaceId());
+            documentIterationLinkDTO.setCommentLink(documentLink.getComment());
+
+            dtos.add(documentIterationLinkDTO);
+
+        }
+        return dtos;
     }
 
     /**
