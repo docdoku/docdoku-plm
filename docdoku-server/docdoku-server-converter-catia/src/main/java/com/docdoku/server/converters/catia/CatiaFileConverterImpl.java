@@ -24,7 +24,6 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
@@ -33,6 +32,7 @@ import javax.ejb.EJB;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -69,9 +69,8 @@ public class CatiaFileConverterImpl implements CADConverter{
 
     @Override
     public File convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
-        String woExName = FileIO.getFileNameWithoutExtension(cadFile.getName());
         File tmpCadFile = new File(tempDir, cadFile.getName());
-        File tmpDAEFile = new File(tempDir, woExName+".dae");
+        File tmpDAEFile = new File(tempDir, UUID.randomUUID()+".dae");
         String catPartConverter = CONF.getProperty("catPartConverter");
 
         File executable = new File(catPartConverter);
@@ -118,7 +117,7 @@ public class CatiaFileConverterImpl implements CADConverter{
         // Convert to OBJ once converted to DAE
         if (process.exitValue() == 0 && tmpDAEFile.exists() && tmpDAEFile.length() > 0 ){
             String assimp = CONF.getProperty("assimp");
-            String convertedFileName = FileIO.getFileNameWithoutExtension(tmpDAEFile.getAbsolutePath()) + ".obj";
+            String convertedFileName = tempDir.getAbsolutePath() + "/" + UUID.randomUUID() + ".obj";
             String[] argsOBJ = {assimp, "export", tmpDAEFile.getAbsolutePath(), convertedFileName};
             pb = new ProcessBuilder(argsOBJ);
             Process proc = pb.start();

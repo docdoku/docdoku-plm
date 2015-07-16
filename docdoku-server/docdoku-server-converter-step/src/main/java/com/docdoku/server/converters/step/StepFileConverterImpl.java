@@ -33,6 +33,7 @@ import javax.ejb.EJB;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -71,7 +72,7 @@ public class StepFileConverterImpl implements CADConverter{
 
         String extension = FileIO.getExtension(cadFile.getName());
         File tmpCadFile = new File(tempDir, partToConvert.getKey() + "." + extension);
-        File tmpOBJFile = new File(tempDir.getAbsolutePath() + "/" + partToConvert.getKey() + ".obj");
+        File tmpOBJFile = new File(tempDir.getAbsolutePath() + "/" + UUID.randomUUID() + ".obj");
 
         String pythonInterpreter = CONF.getProperty("pythonInterpreter");
         String freeCadLibPath = CONF.getProperty("freeCadLibPath");

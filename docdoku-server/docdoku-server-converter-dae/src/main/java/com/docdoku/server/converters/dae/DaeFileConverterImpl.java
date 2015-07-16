@@ -24,7 +24,6 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
@@ -35,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -97,7 +97,7 @@ public class DaeFileConverterImpl implements CADConverter{
             }
         }, tmpCadFile);
 
-        String convertedFileName = FileIO.getFileNameWithoutExtension(tmpCadFile.getAbsolutePath()) + ".obj";
+        String convertedFileName = tempDir.getAbsolutePath() + "/" + UUID.randomUUID() + ".obj";
 
         String[] args = {assimp, "export", tmpCadFile.getAbsolutePath(), convertedFileName};
         ProcessBuilder pb = new ProcessBuilder(args);

@@ -27,6 +27,7 @@ import com.docdoku.core.services.IConverterManagerLocal;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.util.FileIO;
+import com.docdoku.core.util.Tools;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.GeometryParser;
 import com.docdoku.server.dao.PartIterationDAO;
@@ -181,7 +182,7 @@ public class ConverterBean implements IConverterManagerLocal {
             proc.waitFor();
 
             if (proc.exitValue() == 0) {
-                String baseName = tempDir.getAbsolutePath() + "/" + FileIO.getFileNameWithoutExtension(file.getName());
+                String baseName = Tools.unAccent(tempDir.getAbsolutePath() + "/" + FileIO.getFileNameWithoutExtension(file.getName()));
                 saveFile(pPartIPK, 0, new File(baseName + "100.obj"), box);
                 saveFile(pPartIPK, 1, new File(baseName + "60.obj"), box);
                 saveFile(pPartIPK, 2, new File(baseName + "20.obj"), box);

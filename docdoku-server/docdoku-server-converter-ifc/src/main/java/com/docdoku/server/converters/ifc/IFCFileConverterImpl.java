@@ -33,6 +33,7 @@ import javax.ejb.EJB;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -72,7 +73,7 @@ public class IFCFileConverterImpl implements CADConverter{
 
         String extension = FileIO.getExtension(cadFile.getName());
         File tmpCadFile = new File(tempDir, partToConvert.getKey() + "." + extension);
-        String convertedFileName = tempDir.getAbsolutePath() + "/" + partToConvert.getKey()+".obj" ;
+        String convertedFileName = tempDir.getAbsolutePath() + "/" + UUID.randomUUID()+".obj" ;
         String ifcConverter = CONF.getProperty("ifc_convert_path");
 
         File executable = new File(ifcConverter);
