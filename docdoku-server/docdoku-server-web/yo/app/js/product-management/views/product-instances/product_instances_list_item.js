@@ -12,7 +12,7 @@ define([
         events: {
             'click input[type=checkbox]': 'selectionChanged',
             'click td.reference': 'openEditView',
-            'click td.has-typed-link i.fa-exchange': 'openEditViewOnTypedLinkTab',
+            'click td.has-path-to-path-link i.fa-exchange': 'openEditViewOnPathToPathLinkTab',
             'click td.has-path-data i.fa-asterisk': 'openEditViewOnPathDataTab'
         },
 
@@ -95,13 +95,13 @@ define([
             });
         },
 
-        openEditViewOnTypedLinkTab: function () {
+        openEditViewOnPathToPathLinkTab: function () {
             var model = this.model;
             model.fetch().success(function () {
                 var view = new ProductInstanceModalView({model: model});
                 window.document.body.appendChild(view.el);
                 view.render();
-                view.activeTypedLinkTab();
+                view.activePathToPathLinkTab();
 
             }.bind(this));
         },

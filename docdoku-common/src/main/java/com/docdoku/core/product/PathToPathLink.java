@@ -34,9 +34,9 @@ import java.io.Serializable;
 @NamedQueries({
         @NamedQuery(name="PathToPathLink.findPathToPathLinkForGivenProduct", query="SELECT DISTINCT p FROM ConfigurationItem ci JOIN ci.pathToPathLinks p WHERE ci = :configurationItem"),
         @NamedQuery(name="PathToPathLink.findPathToPathLinkTypesByProductInstanceIteration", query="SELECT DISTINCT(p.type) FROM ProductInstanceIteration pi JOIN pi.pathToPathLinks p WHERE pi = :productInstanceIteration"),
-        @NamedQuery(name="PathToPathLink.findPathToPathTypedLinkByProductInstanceIteration", query="SELECT DISTINCT p FROM ProductInstanceIteration pi JOIN pi.pathToPathLinks p WHERE pi = :productInstanceIteration"),
+        @NamedQuery(name="PathToPathLink.findPathToPathLinkByProductInstanceIteration", query="SELECT DISTINCT p FROM ProductInstanceIteration pi JOIN pi.pathToPathLinks p WHERE pi = :productInstanceIteration"),
         @NamedQuery(name="PathToPathLink.findPathToPathLinkTypesByProductBaseline", query="SELECT DISTINCT(p.type) FROM ProductBaseline pb JOIN pb.pathToPathLinks p WHERE pb = :productBaseline"),
-        @NamedQuery(name="PathToPathLink.findPathToPathTypedLinkByProductBaseline", query="SELECT DISTINCT p FROM ProductBaseline pb JOIN pb.pathToPathLinks p WHERE pb = :productBaseline"),
+        @NamedQuery(name="PathToPathLink.findPathToPathLinkByProductBaseline", query="SELECT DISTINCT p FROM ProductBaseline pb JOIN pb.pathToPathLinks p WHERE pb = :productBaseline"),
         @NamedQuery(name="PathToPathLink.findPathToPathLinkTypesByProduct", query="SELECT DISTINCT(p.type) FROM ConfigurationItem ci JOIN ci.pathToPathLinks p WHERE ci = :configurationItem"),
         @NamedQuery(name="PathToPathLink.findNextPathToPathLinkInProduct", query="SELECT DISTINCT p FROM ConfigurationItem ci JOIN ci.pathToPathLinks p WHERE ci = :configurationItem AND p.sourcePath = :targetPath AND p.type = :type"),
         @NamedQuery(name="PathToPathLink.findNextPathToPathLinkInProductInstanceIteration", query="SELECT DISTINCT p FROM ProductInstanceIteration pi JOIN pi.pathToPathLinks p WHERE pi = :productInstanceIteration AND p.sourcePath = :targetPath AND p.type = :type"),

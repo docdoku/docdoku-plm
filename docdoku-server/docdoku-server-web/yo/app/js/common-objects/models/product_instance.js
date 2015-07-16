@@ -95,7 +95,7 @@ define(['backbone',
         },
 
         getPathToPathLinks: function () {
-            //TypedLinks of a product_instance reference the typedLinks of the last iteration
+            //PathToPathLinks of a product_instance reference the pathToPathLinks of the last iteration
             return this.getLastIteration().getPathToPathLinks();
         },
 

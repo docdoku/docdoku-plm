@@ -5,10 +5,12 @@ define([
     'text!templates/product/product_details.html',
     'views/baselines/baseline_list',
     'views/baselines/baseline_detail_view',
-    'common-objects/views/typedLink/typed-link-item',
+    'common-objects/views/pathToPathLink/path-to-path-link-item',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, BaselineListView, BaselineDetailView,TypedLinkItemView, AlertView) {
+], function (Backbone, Mustache, template, BaselineListView, BaselineDetailView, PathToPathLinkItemView, AlertView) {
+
     'use strict';
+
     var ProductDetailsView = Backbone.View.extend({
 
         events: {
@@ -27,7 +29,7 @@ define([
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n, model: this.model}));
             this.bindDomElements();
             this.initBaselinesView();
-            this.initTypedLinksView();
+            this.initPathToPathLinksView();
             return this;
         },
 
@@ -61,7 +63,8 @@ define([
             this.baselineListView = new BaselineListView({}, {productId: this.model.getId()}).render();
             this.$tabBaselines.append(this.baselineListView.$el);
         },
-        initTypedLinksView: function () {
+
+        initPathToPathLinksView: function () {
 
             this.existingPathToPathLinkCollection = [];
             this.availableType = [];
@@ -78,17 +81,16 @@ define([
             });
 
             _.each(self.existingPathToPathLinkCollection, function (pathToPathLink) {
-                var typeLinkItem = new TypedLinkItemView({model: pathToPathLink}).render();
-                self.$('#path-to-path-links').append(typeLinkItem.el);
+                var pathToPathLinkItem = new PathToPathLinkItemView({model: pathToPathLink}).render();
+                self.$('#path-to-path-links').append(pathToPathLinkItem.el);
 
-                typeLinkItem.on('typedLink:remove', function () {
+                pathToPathLinkItem.on('pathToPathLink:remove', function () {
                     self.existingPathToPathLinkCollection.splice(self.existingPathToPathLinkCollection.indexOf(pathToPathLink), 1);
-                    self.trigger('typedLink:remove');
+                    self.trigger('pathToPathLink:remove');
                 });
             });
 
         },
-
 
         onError: function (model, error) {
             var errorMessage = error ? error.responseText : model;
@@ -110,10 +112,12 @@ define([
         onHidden: function () {
             this.remove();
         },
+
         activateTab: function (index) {
             this.$tabs.eq(index).children().tab('show');
         },
-        activeTypedLinkTab: function () {
+
+        activePathToPathLinkTab: function () {
             this.activateTab(2);
         }
 

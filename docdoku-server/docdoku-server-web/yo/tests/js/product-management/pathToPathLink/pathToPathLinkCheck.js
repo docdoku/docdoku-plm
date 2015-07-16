@@ -57,8 +57,8 @@ casper.test.begin('Path to path link check tests suite', 26, function pathToPath
      * Click on typed link creation button and check if created link is present
      */
     casper.then(function openCreationModal() {
-        this.click('#typed_link_btn');
-        this.waitForSelector('.modal.typed-link-modal #path-to-path-links > .well', function modalIsDisplayed() {
+        this.click('#path_to_path_link_btn');
+        this.waitForSelector('.modal.path-to-path-link-modal #path-to-path-links > .well', function modalIsDisplayed() {
             this.test.assertElementCount('#path-to-path-links > .well', 1, 'One path to path link should be present');
         });
     });
@@ -67,9 +67,9 @@ casper.test.begin('Path to path link check tests suite', 26, function pathToPath
      * Assert that we can add some new links in wip mode, then close modal
      */
     casper.then(function verifyWeCanAddPathToPathLink() {
-        this.waitForSelector('.modal.typed-link-modal .btn.add-type-btn', function verifyWeCanAddPathToPathLink() {
+        this.waitForSelector('.modal.path-to-path-link-modal .btn.add-path-to-path-link-btn', function verifyWeCanAddPathToPathLink() {
             this.test.assert(true, 'We should be able to add new links');
-            this.click('.modal.typed-link-modal .modal-footer button.cancel-button');
+            this.click('.modal.path-to-path-link-modal .modal-footer button.cancel-button');
         });
     });
 
@@ -77,7 +77,7 @@ casper.test.begin('Path to path link check tests suite', 26, function pathToPath
      * Wait for the modal to be closed
      */
     casper.then(function waitModalToBeClosed() {
-        this.waitWhileSelector('.modal.typed-link-modal', function waitModalToBeClosed() {
+        this.waitWhileSelector('.modal.path-to-path-link-modal', function waitModalToBeClosed() {
             this.test.assert(true, 'Modal should be closed');
         });
     });

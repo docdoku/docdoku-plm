@@ -14,9 +14,9 @@ define([
     'common-objects/collections/file/attached_file_collection',
     'common-objects/views/alert',
     'common-objects/collections/baselines',
-    'common-objects/views/typedLink/typed-link-item',
+    'common-objects/views/pathToPathLink/path-to-path-link-item',
     'views/product-instances/path_data_item'
-], function (Backbone, Mustache, template, choiceTemplate, BaselinedPartListView, date, AttributeCollection, ProductInstanceAttributeListView, FileListView, LinkedDocumentCollection, LinkedDocumentsView, AttachedFileCollection, AlertView, Baselines, TypedLinkItemView, PathDataItemView) {
+], function (Backbone, Mustache, template, choiceTemplate, BaselinedPartListView, date, AttributeCollection, ProductInstanceAttributeListView, FileListView, LinkedDocumentCollection, LinkedDocumentsView, AttachedFileCollection, AlertView, Baselines, PathToPathLinkItemView, PathDataItemView) {
     'use strict';
     var ProductInstancesModalView = Backbone.View.extend({
         events: {
@@ -215,10 +215,10 @@ define([
             });
 
             _.each(self.existingPathToPathLinkCollection, function (pathToPathLink) {
-                var typeLinkItem = new TypedLinkItemView({model: pathToPathLink}).render();
-                self.$('#path-to-path-links').append(typeLinkItem.el);
+                var pathToPathLinkItem = new PathToPathLinkItemView({model: pathToPathLink}).render();
+                self.$('#path-to-path-links').append(pathToPathLinkItem.el);
 
-                typeLinkItem.on('remove', function () {
+                pathToPathLinkItem.on('remove', function () {
                     self.existingPathToPathLinkCollection.splice(self.existingPathToPathLinkCollection.indexOf(pathToPathLink), 1);
                 });
             });
@@ -366,12 +366,15 @@ define([
         onShown: function () {
             this.$modal.addClass('ready');
         },
+
         activateTab: function (index) {
             this.$tabs.eq(index).children().tab('show');
         },
-        activeTypedLinkTab: function () {
+
+        activePathToPathLinkTab: function () {
             this.activateTab(7);
         },
+
         activePathDataTab: function () {
             this.activateTab(8);
         }

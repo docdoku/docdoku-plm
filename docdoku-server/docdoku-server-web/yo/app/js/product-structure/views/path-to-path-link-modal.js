@@ -3,20 +3,20 @@ define([
     'backbone',
     'mustache',
     'async',
-    'text!templates/typed-link-modal.html',
-    'views/typed-link-item',
+    'text!templates/path-to-path-link-modal.html',
+    'views/path-to-path-link-item',
     'common-objects/views/alert'
-], function (Backbone, Mustache, Async, template, TypedLinkItemView, AlertView){
+], function (Backbone, Mustache, Async, template, PathToPathLinkItemView, AlertView){
     'use strict';
 
-    var TypedLinkModalView = Backbone.View.extend({
+    var PathToPathLinkModalView = Backbone.View.extend({
 
-        className:'modal hide typed-link-modal',
+        className:'modal hide path-to-path-link-modal',
 
         events: {
             'hidden': 'onHidden',
-            'click .add-type-btn': 'onAddTypedLink',
-            'submit form': 'onSaveTypedLinks',
+            'click .add-path-to-path-link-btn': 'onAddPathToPathLink',
+            'submit form': 'onSavePathToPathLinks',
             'click .cancel-button': 'closeModal'
         },
 
@@ -32,7 +32,7 @@ define([
         },
 
         render: function () {
-            this.typedLinkItemViews = [];
+            this.pathToPathLinkItemViews = [];
 
             var self = this;
 
@@ -70,35 +70,35 @@ define([
 
         getUrlForAvailableType: function(){
 
-            var urlForAvailableType = '';
+            var url = '';
 
             if(this.serialNumber) {
-                urlForAvailableType = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/product-instances/' + this.serialNumber + '/path-to-path-links-types';
+                url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/product-instances/' + this.serialNumber + '/path-to-path-links-types';
             }
             else if(this.baselineId){
-                urlForAvailableType = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/baselines/' + this.baselineId + '/path-to-path-links-types';
+                url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/baselines/' + this.baselineId + '/path-to-path-links-types';
             }
             else{
-                urlForAvailableType = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/path-to-path-links-types';
+                url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/path-to-path-links-types';
             }
 
-            return urlForAvailableType;
+            return url;
         },
 
-        getUrlForExistingTypedLink: function(){
-            var urlForExistingTypedLink = '';
+        getUrlForExistingPathToPathLink: function(){
+            var url = '';
 
             if(this.serialNumber){
-                urlForExistingTypedLink = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/product-instances/' + this.serialNumber + '/path-to-path-links/source/' + this.pathSelected[0].getEncodedPath() + '/target/' + this.pathSelected[1].getEncodedPath();
+                url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/product-instances/' + this.serialNumber + '/path-to-path-links/source/' + this.pathSelected[0].getEncodedPath() + '/target/' + this.pathSelected[1].getEncodedPath();
             }
             else if(this.baselineId){
-                urlForExistingTypedLink = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/baselines/' + this.baselineId + '/path-to-path-links/source/' + this.pathSelected[0].getEncodedPath() + '/target/' + this.pathSelected[1].getEncodedPath();
+                url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/baselines/' + this.baselineId + '/path-to-path-links/source/' + this.pathSelected[0].getEncodedPath() + '/target/' + this.pathSelected[1].getEncodedPath();
             }
             else{
-                urlForExistingTypedLink = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/path-to-path-links/source/' + this.pathSelected[0].getEncodedPath() + '/target/' + this.pathSelected[1].getEncodedPath();
+                url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/path-to-path-links/source/' + this.pathSelected[0].getEncodedPath() + '/target/' + this.pathSelected[1].getEncodedPath();
             }
 
-            return urlForExistingTypedLink;
+            return url;
         },
 
         getExistingPathToPathAndType:function(){
@@ -120,7 +120,7 @@ define([
                     self.getExistingPathToPath();
                 },
                 error: function(errorMessage){
-                    self.$('#typed-link-alerts').append(new AlertView({
+                    self.$('#path-to-path-link-alerts').append(new AlertView({
                         type: 'error',
                         message: errorMessage.responseText
                     }).render().$el);
@@ -130,10 +130,10 @@ define([
 
         getExistingPathToPath: function(){
             var self = this;
-            var urlForExistingTypedLink = this.getUrlForExistingTypedLink();
+            var url = this.getUrlForExistingPathToPathLink();
             $.ajax({
                 type : 'GET',
-                url : urlForExistingTypedLink,
+                url : url,
                 contentType: 'application/json',
                 success: function(pathToPathLinkDTOs){
 
@@ -153,14 +153,14 @@ define([
                     });
 
                     _.each(self.existingPathToPathLinkCollection, function(pathToPathLink){
-                        var typedLinkItemView = new TypedLinkItemView({model:pathToPathLink}).render();
-                        self.$('#path-to-path-links').append(typedLinkItemView.el);
-                        self.typedLinkItemViews.push(typedLinkItemView);
+                        var pathToPathLinkItemView = new PathToPathLinkItemView({model:pathToPathLink}).render();
+                        self.$('#path-to-path-links').append(pathToPathLinkItemView.el);
+                        self.pathToPathLinkItemViews.push(pathToPathLinkItemView);
                     });
 
                 },
                 error: function(errorMessage){
-                    self.$('#typed-link-alerts').append(new AlertView({
+                    self.$('#path-to-path-link-alerts').append(new AlertView({
                         type: 'error',
                         message: errorMessage.responseText
                     }).render().$el);
@@ -168,22 +168,24 @@ define([
             });
         },
 
-        onSaveTypedLinks: function() {
+        onSavePathToPathLinks: function(e) {
             var _this = this;
 
-            Async.each(this.typedLinkItemViews, function(typedLinkItemView, callback) {
+            Async.each(this.pathToPathLinkItemViews, function(pathToPathLinkItemView, callback) {
 
-                typedLinkItemView.save(callback);
+                pathToPathLinkItemView.save(callback);
 
             }, function(err) {
                 if (!err) {
                     _this.closeModal();
                 }
             });
+            e.preventDefault();
+            return false;
         },
 
-        onAddTypedLink: function(){
-            var newTypedLinkItemView = new TypedLinkItemView({
+        onAddPathToPathLink: function(){
+            var newPathToPathLinkItemView = new PathToPathLinkItemView({
                 model:{
                     sourceModel : this.pathSelected[0],
                     targetModel : this.pathSelected[1],
@@ -197,8 +199,8 @@ define([
                 }
             }).render();
 
-            this.$('#path-to-path-links').append(newTypedLinkItemView.el);
-            this.typedLinkItemViews.push(newTypedLinkItemView);
+            this.$('#path-to-path-links').append(newPathToPathLinkItemView.el);
+            this.pathToPathLinkItemViews.push(newPathToPathLinkItemView);
         },
 
 
@@ -217,5 +219,5 @@ define([
 
     });
 
-    return TypedLinkModalView;
+    return PathToPathLinkModalView;
 });

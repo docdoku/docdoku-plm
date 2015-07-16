@@ -101,7 +101,7 @@ public class ProductResource {
             ConfigurationItem ci = cis.get(i);
             dtos[i] = new ConfigurationItemDTO(mapper.map(ci.getAuthor(),UserDTO.class),ci.getId(), ci.getWorkspaceId(),
                     ci.getDescription(), ci.getDesignItem().getNumber(),ci.getDesignItem().getName(), ci.getDesignItem().getLastRevision().getVersion());
-            dtos[i].setPathToPathLinks(getTypedLinkForConfigurationItem(ci));
+            dtos[i].setPathToPathLinks(getPathToPathLinksForGivenConfigurationItem(ci));
             // TODO : find a better way to detect modification notifications on products. Too heavy for big structures.
             //dtos[i].setHasModificationNotification(productService.hasModificationNotification(ci.getKey()));
         }
@@ -198,7 +198,7 @@ public class ProductResource {
         ConfigurationItemDTO dto = new ConfigurationItemDTO(mapper.map(ci.getAuthor(),UserDTO.class),ci.getId(), ci.getWorkspaceId(),
                 ci.getDescription(), ci.getDesignItem().getNumber(),ci.getDesignItem().getName(),
                 ci.getDesignItem().getLastRevision().getVersion());
-        dto.setPathToPathLinks(getTypedLinkForConfigurationItem(ci));
+        dto.setPathToPathLinks(getPathToPathLinksForGivenConfigurationItem(ci));
         return dto;
     }
 
@@ -659,7 +659,7 @@ public class ProductResource {
         return Tools.mapModificationNotificationsToModificationNotificationDTO(notifications);
     }
 
-    private  List<PathToPathLinkDTO> getTypedLinkForConfigurationItem(ConfigurationItem configurationItem ) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+    private  List<PathToPathLinkDTO> getPathToPathLinksForGivenConfigurationItem(ConfigurationItem configurationItem) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
         List<PathToPathLink> pathToPathLinkTypes = configurationItem.getPathToPathLinks();
         List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
 

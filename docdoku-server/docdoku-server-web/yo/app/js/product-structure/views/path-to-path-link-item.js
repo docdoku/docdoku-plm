@@ -2,12 +2,12 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/typed-link-item.html',
+    'text!templates/path-to-path-link-item.html',
     'common-objects/views/alert'
 ], function (Backbone, Mustache, template, AlertView){
     'use strict';
 
-    var TypedLinkItemView = Backbone.View.extend({
+    var PathToPathLinkItemView = Backbone.View.extend({
 
         className:'well',
 
@@ -206,5 +206,5 @@ define([
 
     });
 
-    return TypedLinkItemView;
+    return PathToPathLinkItemView;
 });

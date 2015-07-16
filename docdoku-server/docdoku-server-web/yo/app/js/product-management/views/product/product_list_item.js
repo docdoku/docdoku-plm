@@ -13,7 +13,7 @@ define([
         events: {
             'click input[type=checkbox]': 'selectionChanged',
             'click td.product_id': 'openDetailsView',
-            'click td.has-typed-link': 'openDetailsViewOnTypedLink',
+            'click td.has-path-to-path-link': 'openDetailsViewOnPathToPathLink',
             'click a.design_item': 'openPartView'
         },
 
@@ -77,21 +77,22 @@ define([
         openDetailsView: function () {
             var that = this;
             var pdv = new ProductDetailsView({model: that.model});
-            pdv.on('typedLink:remove', function() {
+            pdv.on('pathToPathLink:remove', function() {
                 that.syncProduct();
             });
             window.document.body.appendChild(pdv.render().el);
             pdv.openModal();
         },
-        openDetailsViewOnTypedLink: function () {
+
+        openDetailsViewOnPathToPathLink: function () {
             var that = this;
             var pdv = new ProductDetailsView({model: that.model});
-            pdv.on('typedLink:remove', function() {
+            pdv.on('pathToPathLink:remove', function() {
                 that.syncProduct();
             });
             window.document.body.appendChild(pdv.render().el);
             pdv.openModal();
-            pdv.activeTypedLinkTab();
+            pdv.activePathToPathLinkTab();
         },
 
         syncProduct: function() {

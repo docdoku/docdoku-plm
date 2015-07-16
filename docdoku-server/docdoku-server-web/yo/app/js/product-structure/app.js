@@ -25,9 +25,11 @@ define([
     'text!templates/content.html',
     'common-objects/models/part',
     'views/product-instance-data-modal-view',
-    'views/typed-link-modal'
-], function (Backbone, Mustache, SearchView, PartsTreeView, BomView, CollaborativeView, PartMetadataView, PartInstanceView, ExportSceneModalView, ControlNavigationView, ControlModesView, ControlTransformView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlClippingView, ControlExplodeView, ControlMeasureView, BaselineSelectView, SceneManager, CollaborativeController, InstancesManager, template, Part, ProductInstanceDataModalView, TypedLinkModalView) {
+    'views/path-to-path-link-modal'
+], function (Backbone, Mustache, SearchView, PartsTreeView, BomView, CollaborativeView, PartMetadataView, PartInstanceView, ExportSceneModalView, ControlNavigationView, ControlModesView, ControlTransformView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlClippingView, ControlExplodeView, ControlMeasureView, BaselineSelectView, SceneManager, CollaborativeController, InstancesManager, template, Part, ProductInstanceDataModalView, PathToPathLinkModalView) {
+
     'use strict';
+
     var AppView = Backbone.View.extend({
         el: '#content',
 
@@ -37,7 +39,7 @@ define([
             'click #export_scene_btn': 'exportScene',
             'click #fullscreen_scene_btn': 'fullScreenScene',
             'click #product_instance_btn': 'openProductInstanceModal',
-            'click #typed_link_btn' : 'openTypedLinkModal'
+            'click #path_to_path_link_btn' : 'openPathToPathLinkModal'
         },
 
         inBomMode: false,
@@ -80,7 +82,7 @@ define([
             App.$ControlsContainer.append(new ControlLayersView().render().$el);
             App.$ControlsContainer.append(new ControlMeasureView().render().$el);
 
-            this.typedLinkButton.hide();
+            this.pathToPathLinkButton.hide();
             this.productInstanceModalButton.hide();
             try {
                 App.sceneManager.init();
@@ -119,7 +121,7 @@ define([
             this.bomModeButton = this.$('#bom_view_btn');
             this.exportSceneButton = this.$('#export_scene_btn');
             this.productInstanceModalButton = this.$('#product_instance_btn');
-            this.typedLinkButton = this.$('#typed_link_btn');
+            this.pathToPathLinkButton = this.$('#path_to_path_link_btn');
             this.bomControls = this.$('.bom-controls');
             this.dmuControls = this.$('.dmu-controls');
             App.$ControlsContainer = this.$('#side_controls_container');
@@ -163,16 +165,16 @@ define([
             Backbone.Events.on('mesh:selected', this.onMeshSelected, this);
             Backbone.Events.on('selection:reset', this.onResetSelection, this);
             Backbone.Events.on('part:saved', this.refreshTree, this);
-            Backbone.Events.on('path:selected', this.updateDisplayTypedLinkButton, this);
+            Backbone.Events.on('path:selected', this.updateDisplayPathToPathLinkButton, this);
             Backbone.Events.on('path-data:clicked', this.openPathDataModal, this);
         },
 
-        updateDisplayTypedLinkButton: function(pathSelected){
+        updateDisplayPathToPathLinkButton: function(pathSelected){
             this.pathSelected = pathSelected;
             if (pathSelected.length === 2) {
-                this.typedLinkButton.show();
+                this.pathToPathLinkButton.show();
             } else {
-                this.typedLinkButton.hide();
+                this.pathToPathLinkButton.hide();
             }
 
 
@@ -190,15 +192,15 @@ define([
             }
         },
 
-        openTypedLinkModal:function(){
-            var typedModal = new TypedLinkModalView({
+        openPathToPathLinkModal:function(){
+            var pathToPathLinkdModal = new PathToPathLinkModalView({
                 pathSelected : this.pathSelected,
                 productId : App.config.productId,
                 serialNumber : App.baselineSelectView.isSerialNumberSelected() ? App.config.configSpec.substring(3) : null,
                 baselineId : App.baselineSelectView.isBaselineSelected() ? App.config.configSpec : null
             }).render();
-            window.document.body.appendChild(typedModal.el);
-            typedModal.openModal();
+            window.document.body.appendChild(pathToPathLinkdModal.el);
+            pathToPathLinkdModal.openModal();
         },
 
         updateBom: function (showRoot) {

@@ -13,7 +13,7 @@ define([
             'click input[type=checkbox]': 'selectionChanged',
             'click td.reference': 'openDetailView',
             'click a.product_id':'openProductDetailView',
-            'click td.has-typed-link':'openDetailViewOnTypedLinkTab'
+            'click td.has-path-to-path-link':'openDetailViewOnPathToPathLinkTab'
         },
 
         tagName: 'tr',
@@ -82,14 +82,15 @@ define([
             });
         },
 
-        openDetailViewOnTypedLinkTab: function () {
+        openDetailViewOnPathToPathLinkTab: function () {
             var model = this.model;
             model.fetch().success(function () {
                 var baselineView = new BaselineDetailView({model: model}).render();
-                baselineView.activeTypedLinkTab();
+                baselineView.activePathToPathLinkTab();
             }.bind(this));
 
         },
+
         openProductDetailView:function(){
             var model = new ConfigurationItem();
             model.set('_id',this.model.getConfigurationItemId());

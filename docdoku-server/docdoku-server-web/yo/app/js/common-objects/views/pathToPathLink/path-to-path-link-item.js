@@ -2,12 +2,12 @@
 define([
     'backbone',
     'mustache',
-    'text!common-objects/templates/typedLink/typed-link-item.html',
+    'text!common-objects/templates/pathToPathLink/path-to-path-link-item.html',
     'common-objects/views/alert'
 ], function (Backbone, Mustache, template,AlertView){
     'use strict';
 
-    var TypedLinkItemView = Backbone.View.extend({
+    var PathToPathLinkItemView = Backbone.View.extend({
 
         className:'well',
 
@@ -48,7 +48,7 @@ define([
                     url: urlToDelete,
                     contentType: 'application/json',
                     success: function () {
-                        self.trigger('typedLink:remove');
+                        self.trigger('pathToPathLink:remove');
                         self.remove();
                     },
                     error: function (errorMessage) {
@@ -65,5 +65,5 @@ define([
 
     });
 
-    return TypedLinkItemView;
+    return PathToPathLinkItemView;
 });

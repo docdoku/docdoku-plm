@@ -195,7 +195,7 @@ public class ProductInstancesResource {
             List<PartMinimalListDTO> substitutesParts = new ArrayList<>();
             List<PartMinimalListDTO> optionalParts = new ArrayList<>();
             try {
-                productInstanceIterationDTO.setPathToPathLinks(getTypedLinksForProductInstance(iterationIterator.next()));
+                productInstanceIterationDTO.setPathToPathLinks(getPathToPathLinksForGivenProductInstance(iterationIterator.next()));
             } catch (AccessRightException e) {
                 LOGGER.log(Level.FINEST, null, e);
             }
@@ -683,7 +683,7 @@ public class ProductInstancesResource {
         return data;
     }
 
-    private List<PathToPathLinkDTO> getTypedLinksForProductInstance(ProductInstanceIteration productInstanceIteration) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
+    private List<PathToPathLinkDTO> getPathToPathLinksForGivenProductInstance(ProductInstanceIteration productInstanceIteration) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
         List<PathToPathLink> pathToPathLinkTypes = productInstanceIteration.getPathToPathLinks();
         List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
 

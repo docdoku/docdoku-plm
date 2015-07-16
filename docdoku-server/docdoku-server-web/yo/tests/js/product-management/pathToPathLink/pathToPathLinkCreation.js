@@ -48,7 +48,7 @@ casper.test.begin('Path to path link creation tests suite', 8, function pathToPa
             this.click('#product_nav_list > ul > li > ul > li:first-child > .selectable-part-checkbox');
 
             var isHidden = this.evaluate(function () {
-                return $('#typed_link_btn:hidden').length > 0;
+                return $('#path_to_path_link_btn:hidden').length > 0;
             });
 
             this.test.assert(isHidden, 'Path to path link creation button should not be visible');
@@ -58,7 +58,7 @@ casper.test.begin('Path to path link creation tests suite', 8, function pathToPa
             this.test.assertElementCount('#product_nav_list > ul > li > ul > li > .selectable-part-checkbox:checked', 2, 'Two checkbox should be selected');
 
             var isVisible = this.evaluate(function () {
-                return $('#typed_link_btn:visible').length > 0;
+                return $('#path_to_path_link_btn:visible').length > 0;
             });
 
             this.test.assert(isVisible, 'Path to path link creation button should not be visible');
@@ -73,13 +73,13 @@ casper.test.begin('Path to path link creation tests suite', 8, function pathToPa
      * Click on typed link creation button
      */
     casper.then(function openCreationModal() {
-        this.click('#typed_link_btn');
-        this.waitForSelector('.modal.typed-link-modal', function modalIsDisplayed() {
+        this.click('#path_to_path_link_btn');
+        this.waitForSelector('.modal.path-to-path-link-modal', function modalIsDisplayed() {
             this.test.assert(true, 'Path to path link modal is displayed');
-            this.click('.modal.typed-link-modal .btn.add-type-btn');
+            this.click('.modal.path-to-path-link-modal .btn.add-path-to-path-link-btn');
             this.test.assertElementCount('#path-to-path-links > .well', 1, 'One path to path link has been added');
             this.sendKeys('#path-to-path-links > .well:first-child .add-type-input', p2pLinks.type, {reset: true});
-            this.click('.modal.typed-link-modal div.modal-footer > button.save-button');
+            this.click('.modal.path-to-path-link-modal div.modal-footer > button.save-button');
         });
     });
 
@@ -87,7 +87,7 @@ casper.test.begin('Path to path link creation tests suite', 8, function pathToPa
      * Wait for modal to disappear
      */
     casper.then(function waitForLinkToBeCreated() {
-        this.waitWhileSelector('.modal.typed-link-modal', function waitForLinkToBeCreated() {
+        this.waitWhileSelector('.modal.path-to-path-link-modal', function waitForLinkToBeCreated() {
             this.test.assert(true, 'Typed link modal has disappear');
         });
     });

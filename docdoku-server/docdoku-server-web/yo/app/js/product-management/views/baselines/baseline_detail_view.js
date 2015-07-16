@@ -5,8 +5,8 @@ define([
     'text!templates/baselines/baseline_detail.html',
     'text!templates/configuration/configuration_choice.html',
     'views/baselines/baselined_part_list',
-    'common-objects/views/typedLink/typed-link-item'
-], function (Backbone, Mustache, template, choiceTemplate, BaselinePartListView, TypedLinkItemView) {
+    'common-objects/views/pathToPathLink/path-to-path-link-item'
+], function (Backbone, Mustache, template, choiceTemplate, BaselinePartListView, PathToPathLinkItemView) {
     'use strict';
     var BaselineDetailView = Backbone.View.extend({
 
@@ -83,6 +83,7 @@ define([
             }));
             this.$optionals.find('i.fa-long-arrow-right:last-child').remove();
         },
+
         initExistingPathToPathView: function () {
 
             this.existingPathToPathLinkCollection = [];
@@ -99,10 +100,10 @@ define([
             });
 
             _.each(self.existingPathToPathLinkCollection, function (pathToPathLink) {
-                var typeLinkItem = new TypedLinkItemView({model: pathToPathLink}).render();
-                self.$('#path-to-path-links').append(typeLinkItem.el);
+                var pathToPathLinkItem = new PathToPathLinkItemView({model: pathToPathLink}).render();
+                self.$('#path-to-path-links').append(pathToPathLinkItem.el);
 
-                typeLinkItem.on('remove', function () {
+                pathToPathLinkItem.on('remove', function () {
                     self.existingPathToPathLinkCollection.splice(self.existingPathToPathLinkCollection.indexOf(pathToPathLink), 1);
                 });
             });
@@ -121,10 +122,12 @@ define([
         onHidden: function () {
             this.remove();
         },
+
         activateTab: function (index) {
             this.$tabs.eq(index).children().tab('show');
         },
-        activeTypedLinkTab: function () {
+
+        activePathToPathLinkTab: function () {
             this.activateTab(3);
         }
 
