@@ -75,7 +75,7 @@ public class ConfigurationItem implements Serializable {
     })
     private PartMaster designItem;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumns({
             @JoinColumn(name = "AUTHOR_LOGIN", referencedColumnName = "LOGIN"),
             @JoinColumn(name = "AUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")

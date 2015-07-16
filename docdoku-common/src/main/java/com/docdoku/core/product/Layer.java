@@ -49,7 +49,7 @@ public class Layer implements Serializable{
     @Id
     private int id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
         @JoinColumn(name = "AUTHOR_LOGIN", referencedColumnName = "LOGIN"),
         @JoinColumn(name = "AUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")

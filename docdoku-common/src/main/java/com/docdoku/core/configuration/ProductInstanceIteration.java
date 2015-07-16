@@ -109,7 +109,7 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
             })
     private List<InstanceAttribute> instanceAttributes = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional=false, fetch = FetchType.LAZY)
     @JoinColumn(name = "PRODUCTBASELINE_ID", referencedColumnName = "ID")
     private ProductBaseline basedOn;
 
@@ -177,7 +177,7 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
             })
     private List<PathToPathLink> pathToPathLinks = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumns({
             @JoinColumn(name = "AUTHOR_LOGIN", referencedColumnName = "LOGIN"),
             @JoinColumn(name = "AUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")

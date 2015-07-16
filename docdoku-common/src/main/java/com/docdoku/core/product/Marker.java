@@ -67,7 +67,7 @@ public class Marker implements Serializable{
     private Set<PartMaster> relatedParts = new HashSet<PartMaster>();
     
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
         @JoinColumn(name = "AUTHOR_LOGIN", referencedColumnName = "LOGIN"),
         @JoinColumn(name = "AUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")

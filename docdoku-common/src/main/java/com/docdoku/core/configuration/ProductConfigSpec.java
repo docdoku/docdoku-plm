@@ -51,14 +51,14 @@ public abstract class ProductConfigSpec extends PSFilter implements Serializable
     public final List<PartLink> filter(List<PartLink> path) {
         PartLink partLink = filterPartLink(path);
         if(partLink != null){
-            return Arrays.asList(new PartLink[]{partLink});
+            return Arrays.asList(partLink);
         }
         return new ArrayList<>();
     }
     public final List<PartIteration> filter(PartMaster partMaster) {
         PartIteration partIteration = filterPartIteration(partMaster);
         if(partIteration != null){
-            return Arrays.asList(new PartIteration[]{partIteration});
+            return Arrays.asList(partIteration);
         }
         return new ArrayList<>();
     }

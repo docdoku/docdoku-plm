@@ -47,7 +47,7 @@ public class BaselinedFolder implements Serializable, Comparable<BaselinedFolder
     @EmbeddedId
     private BaselinedFolderKey baselinedFolderKey;
 
-    @ManyToOne( optional=false, fetch=FetchType.EAGER)
+    @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumn(name="FOLDERCOLLECTION_ID", referencedColumnName="ID")
     private FolderCollection folderCollection;
 
