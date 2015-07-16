@@ -225,6 +225,7 @@ define({
 	ISSUES: "Anomalies",
     IS_COMPONENT_OF:"Est un composant de :",
     IS_SUBSTITUTE_IN:"Est une variante dans :",
+    IS_SUBSTITUTE: "Est une variante",
 	ITERATION_CHANGE: "Changement d'iteration",
 	ITERATION: "Itération",
 	ITERATION_NOTE: "Note d'itération",

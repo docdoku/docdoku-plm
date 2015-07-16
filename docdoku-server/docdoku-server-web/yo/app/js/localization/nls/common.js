@@ -225,6 +225,7 @@ define({
 		ISSUES: "Issues",
         IS_COMPONENT_OF:"Is component of :",
         IS_SUBSTITUTE_IN:"Is substitute in :",
+        IS_SUBSTITUTE: "Is substitute",
 		ITERATION_CHANGE: "Iteration change",
 		ITERATION: "Iteration",
 		ITERATION_NOTE: "Iteration note",

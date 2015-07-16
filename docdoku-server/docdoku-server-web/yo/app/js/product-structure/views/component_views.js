@@ -25,7 +25,7 @@ define([
         '<%}%>' +
             '<a><label class="checkbox <%if(isNode) {%>isNode<%}%>">' +
         '<%if(isSubstitute) {%> ' +
-            '<i class="fa fa-arrows-h" title="'+App.config.i18n.PART_SUBSTITUTE+'"></i>' +
+            '<i class="fa fa-arrows-h" title="'+App.config.i18n.IS_SUBSTITUTE+'"></i>' +
         '<%}%>' +
         '<%if(hasSubstitutes) {%> ' +
             '<i class="fa fa-random" title="'+App.config.i18n.HAS_SUBSTITUTES+'"></i>' +
