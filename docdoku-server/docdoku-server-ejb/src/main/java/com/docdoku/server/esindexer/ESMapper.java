@@ -150,14 +150,14 @@ public class ESMapper {
                 }
 
                 if (!iteration.getAttachedFiles().isEmpty()) {
-                    tmp.startObject(FILES_KEY);
+                    tmp.startArray(FILES_KEY);
                     for (Map.Entry<String, String> contentInput : contentInputs.entrySet()) {
-                        tmp.startObject(contentInput.getKey());
+                        tmp.startObject();
                         setField(tmp, AUTHOR_NAME_KEY, contentInput.getKey(), 0.8f);
                         setField(tmp, CONTENT_KEY, contentInput.getValue(), 0.6f);
                         tmp.endObject();
                     }
-                    tmp.endObject();
+                    tmp.endArray();
                 }
                 tmp.endObject();
             }
@@ -215,11 +215,11 @@ public class ESMapper {
             }
         }
         if (!doc.getAttachedFiles().isEmpty()) {
-            Map<String, Object> filesParams = new HashMap<>();
+            List<Map<String,Object>> filesParams = new ArrayList<>();
             params.put(FILES_KEY, filesParams);
             for (Map.Entry<String, String> contentInput : contentInputs.entrySet()) {
                 Map<String, Object> map = new HashMap<>();
-                filesParams.put(contentInput.getKey(), map);
+                filesParams.add(map);
                 setParam(map, AUTHOR_NAME_KEY, contentInput.getKey(), 0.8f);
                 setParam(map, CONTENT_KEY, contentInput.getValue(), 0.6f);
             }
@@ -283,14 +283,14 @@ public class ESMapper {
                 }
 
                 if (!iteration.getAttachedFiles().isEmpty()) {
-                    tmp.startObject(FILES_KEY);
+                    tmp.startArray(FILES_KEY);
                     for (Map.Entry<String, String> contentInput : binaryList.entrySet()) {
-                        tmp.startObject(contentInput.getKey());
+                        tmp.startObject();
                         setField(tmp, AUTHOR_NAME_KEY, contentInput.getKey(), 0.8f);
                         setField(tmp, CONTENT_KEY, contentInput.getValue(), 0.6f);
                         tmp.endObject();
                     }
-                    tmp.endObject();
+                    tmp.endArray();
                 }
 
                 tmp.endObject();
@@ -353,11 +353,11 @@ public class ESMapper {
         }
 
         if (!part.getAttachedFiles().isEmpty()) {
-            Map<String, Object> filesParams = new HashMap<>();
+            List<Map<String,Object>> filesParams = new ArrayList<>();
             params.put(FILES_KEY, filesParams);
             for (Map.Entry<String, String> contentInput : binaryList.entrySet()) {
                 Map<String, Object> map = new HashMap<>();
-                filesParams.put(contentInput.getKey(), map);
+                filesParams.add(map);
                 setParam(map, AUTHOR_NAME_KEY, contentInput.getKey(), 0.8f);
                 setParam(map, CONTENT_KEY, contentInput.getValue(), 0.6f);
             }
