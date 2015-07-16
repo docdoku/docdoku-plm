@@ -89,12 +89,6 @@ public class PathToPathLinkDAO {
                 .getResultList();
     }
 
-    public List<PathToPathLink> getDistinctPathToPathLinks(ProductBaseline productBaseline) {
-        return em.createNamedQuery("PathToPathLink.findPathToPathLinkByProductBaseline",PathToPathLink.class)
-                .setParameter("productBaseline",productBaseline)
-                .getResultList();
-    }
-
     public List<String> getDistinctPathToPathLinkTypes(ConfigurationItem configurationItem) {
         return em.createNamedQuery("PathToPathLink.findPathToPathLinkTypesByProduct",String.class)
                 .setParameter("configurationItem",configurationItem)
@@ -114,35 +108,12 @@ public class PathToPathLinkDAO {
         }
     }
 
-    public PathToPathLink getSamePathToPathLink(ProductInstanceIteration productInstanceIteration, PathToPathLink pathToPathLink){
-        try {
-            return em.createNamedQuery("PathToPathLink.findSamePathToPathLinkInProductInstanceIteration", PathToPathLink.class)
-                    .setParameter("productInstanceIteration", productInstanceIteration)
-                    .setParameter("targetPath", pathToPathLink.getTargetPath())
-                    .setParameter("sourcePath", pathToPathLink.getSourcePath())
-                    .setParameter("type", pathToPathLink.getType())
-                    .getSingleResult();
-        }catch(NoResultException e){
-            return null;
-        }
-    }
-
     public List<PathToPathLink> getNextPathToPathLinkInProduct(ConfigurationItem configurationItem, PathToPathLink pathToPathLink){
         return em.createNamedQuery("PathToPathLink.findNextPathToPathLinkInProduct", PathToPathLink.class)
                 .setParameter("configurationItem", configurationItem)
                 .setParameter("targetPath", pathToPathLink.getTargetPath())
                 .setParameter("type", pathToPathLink.getType())
                 .getResultList();
-    }
-
-    public List<PathToPathLink> getNextPathToPathLinkInProductInstance(ProductInstanceIteration productInstanceIteration, PathToPathLink pathToPathLink){
-
-        return em.createNamedQuery("PathToPathLink.findNextPathToPathLinkInProductInstanceIteration", PathToPathLink.class)
-                .setParameter("productInstanceIteration", productInstanceIteration)
-                .setParameter("targetPath", pathToPathLink.getTargetPath())
-                .setParameter("type", pathToPathLink.getType())
-                .getResultList();
-
     }
 
     public List<PathToPathLink> getPathToPathLinkFromSourceAndTarget(ProductBaseline baseline, String source, String target) {
@@ -173,12 +144,6 @@ public class PathToPathLinkDAO {
         return em.createNamedQuery("PathToPathLink.findRootPathToPathLinkForGivenProductAndType", PathToPathLink.class)
                 .setParameter("configurationItem", configurationItem)
                 .setParameter("type", type)
-                .getResultList();
-    }
-
-    public List<PathToPathLink> findPathToPathLinks(ConfigurationItem configurationItem) {
-        return em.createNamedQuery("PathToPathLink.findPathToPathLinkForGivenProduct", PathToPathLink.class)
-                .setParameter("configurationItem", configurationItem)
                 .getResultList();
     }
 
@@ -228,16 +193,6 @@ public class PathToPathLinkDAO {
 
         }
 
-    }
-
-
-    public void upgradePathToPathLinks(List<PartUsageLink> oldComponents, List<PartUsageLink> newComponents) {
-        int size = oldComponents.size();
-        for(int i = 0; i < size; i++){
-            PartLink oldLink = oldComponents.get(i);
-            PartLink newLink = newComponents.get(i);
-            upgradePathToPathLink(oldLink,newLink);
-        }
     }
 
     private void upgradePathToPathLink(PartLink oldLink, PartLink newLink){
