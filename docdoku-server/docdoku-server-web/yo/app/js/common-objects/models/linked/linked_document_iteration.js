@@ -30,6 +30,10 @@ define(['backbone'], function (Backbone) {
             return this.get('iteration');
         },
 
+        getDocumentLinkComment:function(){
+            return this.get('commentLink');
+        },
+
         getDocKey: function () {
             return this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion() + '-' + this.getIteration();
         },
@@ -52,15 +56,8 @@ define(['backbone'], function (Backbone) {
                 '/' +
                 this.getDocumentRevisionVersion()
             );
-        },
-
-        setDocumentLinkComment:function(comment){
-            this.set('commentLink', comment);
-        },
-
-        getDocumentLinkComment:function(){
-            return this.get('commentLink');
         }
+
     });
     return linkedDocumentIteration;
 });
