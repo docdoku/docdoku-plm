@@ -116,12 +116,10 @@ public class PrivateShareServlet extends HttpServlet {
                 SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
 
                 // check if expire
-                if(sharedEntity.getExpireDate() != null){
-                    if(sharedEntity.getExpireDate().getTime() < new Date().getTime()){
-                        shareService.deleteSharedEntityIfExpired(sharedEntity);
-                        pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/sharedEntityExpired.xhtml").forward(pRequest, pResponse);
-                        return;
-                    }
+                if(sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()){
+                    shareService.deleteSharedEntityIfExpired(sharedEntity);
+                    pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/sharedEntityExpired.xhtml").forward(pRequest, pResponse);
+                    return;
                 }
 
                 // check if password protected -> should come from the doPost

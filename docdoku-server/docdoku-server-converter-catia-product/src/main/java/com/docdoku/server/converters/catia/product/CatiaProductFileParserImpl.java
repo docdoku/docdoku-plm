@@ -127,23 +127,22 @@ public class CatiaProductFileParserImpl implements CADConverter {
 
             int exitCode = process.exitValue();
 
-            if (exitCode == 0) {
-                if (tmpXMLFile.exists() && tmpXMLFile.length() > 0) {
+            if (exitCode == 0 && tmpXMLFile.exists() && tmpXMLFile.length() > 0) {
 
-                    try {
+                try {
 
-                        SAXParserFactory factory = SAXParserFactory.newInstance();
-                        SAXParser saxParser = factory.newSAXParser();
-                        ComponentDTKSaxHandler handler = new ComponentDTKSaxHandler();
-                        saxParser.parse(tmpXMLFile, handler);
+                    SAXParserFactory factory = SAXParserFactory.newInstance();
+                    SAXParser saxParser = factory.newSAXParser();
+                    ComponentDTKSaxHandler handler = new ComponentDTKSaxHandler();
+                    saxParser.parse(tmpXMLFile, handler);
 
-                        syncAssembly(handler.getComponent(), partToConvert);
+                    syncAssembly(handler.getComponent(), partToConvert);
 
-                    } catch (ParserConfigurationException | SAXException | IOException e) {
-                        LOGGER.log(Level.INFO, null, e);
-                    }
+                } catch (ParserConfigurationException | SAXException | IOException e) {
+                    LOGGER.log(Level.INFO, null, e);
                 }
             }
+
 
         } catch (Exception e) {
             LOGGER.log(Level.INFO, null, e);

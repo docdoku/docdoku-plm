@@ -92,10 +92,8 @@ public class ACL implements Serializable, Cloneable{
             return !userAccess.getPermission().equals(Permission.FORBIDDEN);
         else{
             for(Map.Entry<UserGroup, ACLUserGroupEntry> entry:groupEntries.entrySet()){
-                if(entry.getKey().isMember(user)) {
-                    if (!entry.getValue().getPermission().equals(Permission.FORBIDDEN)) {
-                        return true;
-                    }
+                if(entry.getKey().isMember(user) && !entry.getValue().getPermission().equals(Permission.FORBIDDEN)) {
+                    return true;
                 }
             }
         }
@@ -108,10 +106,8 @@ public class ACL implements Serializable, Cloneable{
             return userAccess.getPermission().equals(Permission.FULL_ACCESS);
         else{
             for(Map.Entry<UserGroup, ACLUserGroupEntry> entry:groupEntries.entrySet()){
-                if(entry.getKey().isMember(user)) {
-                    if (entry.getValue().getPermission().equals(Permission.FULL_ACCESS)) {
-                        return true;
-                    }
+                if(entry.getKey().isMember(user) && entry.getValue().getPermission().equals(Permission.FULL_ACCESS)) {
+                    return true;
                 }
             }
         }

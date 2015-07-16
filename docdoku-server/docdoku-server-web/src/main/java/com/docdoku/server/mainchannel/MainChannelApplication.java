@@ -315,27 +315,20 @@ public class MainChannelApplication {
         // webRTC P2P signaling messages
         // These messages are forwarded to the remote peer(s) in the room
         Room room = Room.getByKeyName(webRTC.getRoomKey());
-        if (room != null) {
-            if (room.hasUser(callerLogin)) {
-                // forward the message to the other peer
-                Session otherSession = room.getOtherUserSession(session);
+        if (room != null && room.hasUser(callerLogin)) {
+            // forward the message to the other peer
+            Session otherSession = room.getOtherUserSession(session);
 
-                // on bye message, remove the user from the room
-                if (ChannelMessagesType.WEBRTC_BYE.equals(webRTC.getType())) {
-                    room.removeUserSession(session);
-                }
+            // on bye message, remove the user from the room
+            if (ChannelMessagesType.WEBRTC_BYE.equals(webRTC.getType())) {
+                room.removeUserSession(session);
+            }
 
-                if (otherSession != null) {
-                    MainChannelDispatcher.send(otherSession, webRTC);
-                } //else {
-                // tell the user the room is empty ?
-                //}
-            } //else {
-            // tell the user he's not in the room ?
-            //}
-        } //else {
-        // tell the user the room doesn't exists ?
-        //}
+            if (otherSession != null) {
+                MainChannelDispatcher.send(otherSession, webRTC);
+            }
+        }
+
     }
 
     private void process(Session session, StatusMessage status) {
