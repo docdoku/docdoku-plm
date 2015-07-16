@@ -50,9 +50,7 @@ public class ImageViewerImpl implements DocumentViewer {
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
 
-        String html = ViewerUtils.getViewerTemplate(dataManager, imageResource, uuid, templateWriter.toString());
-
-        return html;
+        return ViewerUtils.getViewerTemplate(dataManager, imageResource, uuid, templateWriter.toString());
     }
 
 }
