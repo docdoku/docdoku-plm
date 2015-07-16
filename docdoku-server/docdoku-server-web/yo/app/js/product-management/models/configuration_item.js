@@ -25,8 +25,12 @@ define(['backbone'], function (Backbone) {
             return this.get('hasModificationNotification');
         },
 
-        getAuthor: function () {
+        getAuthorName: function () {
             return this.get('author').name;
+        },
+
+        getAuthorLogin: function () {
+            return this.get('author').login;
         },
 
         getDesignItemNumber: function () {

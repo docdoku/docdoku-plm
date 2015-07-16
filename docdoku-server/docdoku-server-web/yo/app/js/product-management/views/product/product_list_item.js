@@ -52,6 +52,8 @@ define([
                 return false;
             });
 
+            this.$('.author-popover').userPopover(this.model.getAuthorLogin(), this.model.getId(), 'left');
+
             return this;
         },
 
