@@ -3288,12 +3288,24 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         // Load the product
         ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(new ConfigurationItemKey(workspaceId, configurationItemId));
 
-        // Decode the paths to insure path validity
-        decodePath(ci.getKey(), pathFrom);
-        decodePath(ci.getKey(), pathTo);
-
         if (type == null || type.isEmpty()) {
             throw new NotAllowedException(locale, "NotAllowedException54");
+        }
+
+        if(pathFrom != null && pathTo != null && pathFrom.equals(pathTo)){
+            throw new NotAllowedException(locale, "NotAllowedException57");
+        }
+
+        // Decode the paths to insure path validity
+        List<PartLink> sourceLinks = decodePath(ci.getKey(), pathFrom);
+        List<PartLink> targetLinks = decodePath(ci.getKey(), pathTo);
+
+        // Check for substitute linking
+        PartLink sourceLink = sourceLinks.get(sourceLinks.size() - 1);
+        PartLink targetLink = targetLinks.get(targetLinks.size() - 1);
+
+        if(sourceLink.getSubstitutes() != null && sourceLink.getSubstitutes().contains(targetLink) || targetLink.getSubstitutes() != null && targetLink.getSubstitutes().contains(sourceLink)){
+            throw new NotAllowedException(locale, "NotAllowedException58");
         }
 
         PathToPathLink pathToPathLink = new PathToPathLink(type, pathFrom, pathTo, description);
