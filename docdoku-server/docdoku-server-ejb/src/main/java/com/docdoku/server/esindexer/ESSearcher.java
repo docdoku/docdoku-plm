@@ -240,13 +240,13 @@ public class ESSearcher {
 
         if (docQuery.getFullText() != null) {
             QueryBuilder query = getFullTextQuery(docQuery);
-            queryBuilder.should(query);
+            queryBuilder.add(query);
         } else {
             if (docQuery.getDocMId() != null) {
-                queryBuilder.should(QueryBuilders.fuzzyQuery(ESMapper.DOCUMENT_ID_KEY, docQuery.getDocMId()));
+                queryBuilder.add(QueryBuilders.fuzzyQuery(ESMapper.DOCUMENT_ID_KEY, docQuery.getDocMId()));
             }
             if (docQuery.getTitle() != null) {
-               queryBuilder.should(QueryBuilders.fuzzyQuery(ESMapper.TITLE_KEY, docQuery.getTitle()));
+               queryBuilder.add(QueryBuilders.fuzzyQuery(ESMapper.TITLE_KEY, docQuery.getTitle()));
             }
             addCommonQuery(queryBuilder,docQuery);
         }
@@ -262,29 +262,29 @@ public class ESSearcher {
     private void addCommonQuery(ESQueryBuilder queryBuilder, SearchQuery searchQuery) {
 
         if (searchQuery.getVersion() != null) {
-            queryBuilder.should(FilterBuilders.termFilter(ESMapper.VERSION_KEY, searchQuery.getVersion()));
+            queryBuilder.add(FilterBuilders.termFilter(ESMapper.VERSION_KEY, searchQuery.getVersion()));
         }
         if (searchQuery.getAuthor() != null) {
-            queryBuilder.should(QueryBuilders.fuzzyQuery(ESMapper.AUTHOR_SEARCH_KEY, searchQuery.getAuthor()));
+            queryBuilder.add(QueryBuilders.fuzzyQuery(ESMapper.AUTHOR_SEARCH_KEY, searchQuery.getAuthor()));
         }
         if (searchQuery.getType() != null) {
-            queryBuilder.should(QueryBuilders.fuzzyQuery(ESMapper.TYPE_KEY, searchQuery.getType()));
+            queryBuilder.add(QueryBuilders.fuzzyQuery(ESMapper.TYPE_KEY, searchQuery.getType()));
         }
 
         if (searchQuery.getCreationDateFrom() != null) {
-            queryBuilder.should((FilterBuilders.rangeFilter(ESMapper.CREATION_DATE_KEY).from(searchQuery.getCreationDateFrom())));
+            queryBuilder.add((FilterBuilders.rangeFilter(ESMapper.CREATION_DATE_KEY).from(searchQuery.getCreationDateFrom())));
         }
         if (searchQuery.getCreationDateTo() != null) {
-            queryBuilder.should(FilterBuilders.rangeFilter(ESMapper.CREATION_DATE_KEY).to(searchQuery.getCreationDateTo()));
+            queryBuilder.add(FilterBuilders.rangeFilter(ESMapper.CREATION_DATE_KEY).to(searchQuery.getCreationDateTo()));
         }
         if (searchQuery.getModificationDateFrom() != null) {
-            queryBuilder.should(FilterBuilders.rangeFilter(ESMapper.MODIFICATION_DATE_KEY).from(searchQuery.getModificationDateFrom()));
+            queryBuilder.add(FilterBuilders.rangeFilter(ESMapper.MODIFICATION_DATE_KEY).from(searchQuery.getModificationDateFrom()));
         }
         if (searchQuery.getModificationDateTo() != null) {
-            queryBuilder.should(FilterBuilders.rangeFilter(ESMapper.MODIFICATION_DATE_KEY).to(searchQuery.getModificationDateTo()));
+            queryBuilder.add(FilterBuilders.rangeFilter(ESMapper.MODIFICATION_DATE_KEY).to(searchQuery.getModificationDateTo()));
         }
         if (searchQuery.getContent() != null) {
-            queryBuilder.should(QueryBuilders.matchQuery(ESMapper.CONTENT_KEY, searchQuery.getContent()));
+            queryBuilder.add(QueryBuilders.matchQuery(ESMapper.CONTENT_KEY, searchQuery.getContent()));
         }
         if (searchQuery.getAttributes() != null) {
             for (SearchQuery.AbstractAttributeQuery attr : searchQuery.getAttributes()) {
@@ -296,11 +296,11 @@ public class ESSearcher {
                 }
 
                 NestedFilterBuilder nested = FilterBuilders.nestedFilter(ESMapper.ATTR_NESTED_PATH, b);
-                queryBuilder.should(nested);
+                queryBuilder.add(nested);
             }
         }
         if (searchQuery.getTags() != null) {
-            queryBuilder.should(FilterBuilders.inFilter(ESMapper.TAGS_KEY, searchQuery.getTags()));
+            queryBuilder.add(FilterBuilders.inFilter(ESMapper.TAGS_KEY, searchQuery.getTags()));
         }
     }
 
@@ -314,17 +314,17 @@ public class ESSearcher {
         ESQueryBuilder queryBuilder = new ESQueryBuilder();
         if (partQuery.getFullText() != null) {
             QueryBuilder query = getFullTextQuery(partQuery);
-            queryBuilder.should(query);
+            queryBuilder.add(query);
         } else {
             if (partQuery.getPartNumber() != null) {
-                queryBuilder.should(QueryBuilders.fuzzyQuery(ESMapper.PART_NUMBER_KEY, partQuery.getPartNumber()));
+                queryBuilder.add(QueryBuilders.fuzzyQuery(ESMapper.PART_NUMBER_KEY, partQuery.getPartNumber()));
             }
             if (partQuery.getName() != null) {
-                queryBuilder.should(QueryBuilders.fuzzyQuery(ESMapper.PART_NAME_KEY, partQuery.getName()));
+                queryBuilder.add(QueryBuilders.fuzzyQuery(ESMapper.PART_NAME_KEY, partQuery.getName()));
             }
             if (partQuery.isStandardPart() != null) {
                 String text = partQuery.isStandardPart() ? "TRUE" : "FALSE";
-                queryBuilder.should(FilterBuilders.termFilter(ESMapper.STANDARD_PART_KEY, text));
+                queryBuilder.add(FilterBuilders.termFilter(ESMapper.STANDARD_PART_KEY, text));
             }
             addCommonQuery(queryBuilder,partQuery);
         }

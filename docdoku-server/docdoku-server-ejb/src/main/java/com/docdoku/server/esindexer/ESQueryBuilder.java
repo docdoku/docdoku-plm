@@ -18,11 +18,11 @@ public class ESQueryBuilder {
         this.queries = new ArrayList<>();
     }
 
-    public void should(QueryBuilder query) {
+    public void add(QueryBuilder query) {
         this.queries.add(query);
     }
 
-    public void should(FilterBuilder filter) {
+    public void add(FilterBuilder filter) {
         this.filters.add(filter);
     }
 
@@ -35,7 +35,7 @@ public class ESQueryBuilder {
         if(this.queries.size() > 0) {
             BoolQueryBuilder bqr = QueryBuilders.boolQuery();
             for(QueryBuilder qr : this.queries) {
-                bqr.should(qr);
+                bqr.must(qr);
             }
             query = bqr;
         } else {
@@ -53,7 +53,7 @@ public class ESQueryBuilder {
             filter = null;
         } else {
             FilterBuilder array[] = this.filters.toArray(new FilterBuilder[this.filters.size()]);
-            filter = FilterBuilders.boolFilter().should(array);
+            filter = FilterBuilders.boolFilter().must(array);
         }
         return filter;
     }
