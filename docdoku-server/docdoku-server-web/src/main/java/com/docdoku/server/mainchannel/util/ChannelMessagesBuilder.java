@@ -24,6 +24,9 @@ import javax.json.Json;
 
 public class ChannelMessagesBuilder {
 
+    private ChannelMessagesBuilder() {
+    }
+
     // Peer declaration
     public static String buildWelcomeMessage(String userLogin) {
         return Json.createObjectBuilder()

@@ -33,6 +33,9 @@ import java.util.*;
 
 public class FilterUtils {
 
+    private FilterUtils() {
+    }
+
     public static void hookAccountBeanData(String remoteUser, IUserManagerLocal userManager, AccountBean accountBean) throws AccountNotFoundException {
 
         Account user = userManager.getAccount(remoteUser);

@@ -22,6 +22,8 @@ package com.docdoku.server.mainchannel.util;
 
 public class ChannelMessagesType {
 
+    private ChannelMessagesType() {
+    }
 
     public static final String USER_STATUS = "USER_STATUS";
 

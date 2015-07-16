@@ -54,4 +54,6 @@ public class QueryField {
     public static final String CTX_P2P_SOURCE = "ctx.p2p.source";
     public static final String CTX_P2P_TARGET = "ctx.p2p.target";
 
+    private QueryField() {
+    }
 }
