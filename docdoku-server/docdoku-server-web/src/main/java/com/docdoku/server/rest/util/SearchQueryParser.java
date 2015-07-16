@@ -169,7 +169,7 @@ public class SearchQueryParser {
                 try {
                     value = URLDecoder.decode(values.get(0), "UTF-8");
                 } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    LOGGER.log(Level.FINEST,null,e);
                 }
                 switch (filter) {
                     case "q" :
