@@ -15,7 +15,8 @@ define([
 			'change #latest_selector_list' : 'changeLatest',
 			'change #baseline_selector_list' : 'changeBaseline',
 			'change #product_instance_selector_list' : 'changeInstance',
-			'change #path_to_path_link_selector_list' : 'changePathToPathLink'
+			'change #path_to_path_link_selector_list' : 'changePathToPathLink',
+            'click .toggle_substitutes': 'toggleSubstitutes'
 		},
 
         availableFilters:['wip','latest','latest-released'],
@@ -27,6 +28,7 @@ define([
             this.listenToOnce(this.baselineCollection,'reset',this.onBaselineCollectionReset);
             this.productInstanceCollection = new ProductInstances({},{productId : App.config.productId});
             this.listenToOnce(this.productInstanceCollection,'reset',this.onProductInstanceCollectionReset);
+            this.showSubstitutes = true;
 		},
 
 		render:function(){
@@ -45,14 +47,6 @@ define([
                 this.$selectLatestFilter.val(App.config.configSpec);
             }
 
-            this.$divergeSwitch.bootstrapSwitch();
-            this.$divergeSwitch.bootstrapSwitch('setState', false);
-
-            this.$divergeSwitch.on('switch-change', function(){
-                App.config.diverge = !App.config.diverge;
-                _this.trigger('config_spec:changed', App.config.configSpec);
-            });
-
             this.fetchPathToPathLinkTypes();
 
 			return this ;
@@ -66,9 +60,8 @@ define([
 			this.$selectBaselineSpec = this.$('#baseline_selector_list');
 			this.$selectProdInstSpec = this.$('#product_instance_selector_list');
 			this.$selectPathToPathLink = this.$('#path_to_path_link_selector_list');
-            this.$divergeSwitch = this.$('.diverge-switch');
             this.$divergeSwitchContainer = this.$('#diverge-selector');
-
+            this.$toggleSubstitutes = this.$('.toggle_substitutes');
         },
 
 		onBaselineCollectionReset:function(){
@@ -214,7 +207,21 @@ define([
                     this.$selectConfSpec.val('baseline');
                 }
             }
+        },
+
+        toggleSubstitutes: function () {
+            if (this.showSubstitutes) {
+                this.$toggleSubstitutes.html(App.config.i18n.HIDE_SUBSTITUTES);
+            } else {
+                this.$toggleSubstitutes.html(App.config.i18n.SHOW_SUBSTITUTES);
+            }
+
+            this.showSubstitutes = !this.showSubstitutes;
+
+            App.config.diverge = !App.config.diverge;
+            this.trigger('config_spec:changed', App.config.configSpec);
         }
+
 	});
 
 	return BaselineSelectView;

@@ -210,6 +210,7 @@ define({
         HEAD_CHECKIN:"Latest checked in",
         HEAD_RELEASED:"Latest released",
         HEAD_WIP:"Work in progress",
+        HIDE_SUBSTITUTES:"Hide substitutes",
         HOME_PAGE: "Home",
         HOURS: "h",
 		HISTORY: "History",
