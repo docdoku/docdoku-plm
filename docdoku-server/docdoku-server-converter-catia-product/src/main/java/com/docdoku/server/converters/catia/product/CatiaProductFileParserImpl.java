@@ -121,7 +121,11 @@ public class CatiaProductFileParserImpl implements CADConverter {
             isr = new InputStreamReader(process.getInputStream());
             br = new BufferedReader(isr);
 
-            while ((br.readLine()) != null);
+            String line;
+            StringBuilder output = new StringBuilder();
+            while ((line = br.readLine()) != null){
+                output.append(line).append("\n");
+            }
 
             process.waitFor();
 
@@ -141,6 +145,8 @@ public class CatiaProductFileParserImpl implements CADConverter {
                 } catch (ParserConfigurationException | SAXException | IOException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
+            }else {
+                LOGGER.log(Level.SEVERE, "Cannot parse catia file: " + tmpCadFile.getAbsolutePath(), output.toString());
             }
 
 
