@@ -101,7 +101,7 @@ define([
             var closureType = this.$closureTypeInput.val();
             var signature = this.lifecycleTaskSigningView.signature;
 
-            var dto = JSON.stringify({
+            var data = JSON.stringify({
                 comment: closureComment,
                 signature: signature
             });
@@ -112,7 +112,7 @@ define([
                     context: this,
                     type: 'POST',
                     url: processUrl + '&action=approve',
-                    data: dto,
+                    data: data,
                     contentType: 'application/json;charset=UTF-8',
                     success: function () {
                         this.task.closureDate = Date.now();
@@ -132,7 +132,7 @@ define([
                     context: this,
                     type: 'POST',
                     url: processUrl + '&action=reject',
-                    data: dto,
+                    data: data,
                     contentType: 'application/json;charset=UTF-8',
                     success: function () {
                         this.task.closureDate = Date.now();

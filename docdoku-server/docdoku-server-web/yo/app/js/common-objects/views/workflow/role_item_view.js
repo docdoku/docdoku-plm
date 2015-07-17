@@ -60,11 +60,11 @@ function (Backbone, Mustache, template) {
         },
 
         changeModel: function () {
-            var userDTO;
+            var user;
             if (this.$select.val()) {
-                userDTO = {login: this.$select.val()};
+                user = {login: this.$select.val()};
             }
-            this.model.set({defaultAssignee: userDTO});
+            this.model.set({defaultAssignee: user});
         }
 
     });

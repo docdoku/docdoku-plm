@@ -29,8 +29,8 @@ define([
                 context :this,
                 type:'GET',
                 url:App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/documents/countCheckedOut'
-            }).success(function(countDto){
-                var numberOfItem = countDto.count;
+            }).success(function(data){
+                var numberOfItem = data.count;
                 var badge = that.$('.badge.nav-checkedOut-number-item');
                 badge.html(numberOfItem);
                 if(numberOfItem === 0){

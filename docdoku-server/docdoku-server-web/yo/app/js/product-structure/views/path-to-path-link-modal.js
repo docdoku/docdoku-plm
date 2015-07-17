@@ -113,9 +113,9 @@ define([
                 type : 'GET',
                 url : urlForAvailableTypes,
                 contentType: 'application/json',
-                success: function(pathToPathLinkDTOs){
-                    _.each(pathToPathLinkDTOs, function(pathToPathLinkDTO){
-                        self.availableType.push(pathToPathLinkDTO.type);
+                success: function(pathToPathLinks){
+                    _.each(pathToPathLinks, function(pathToPathLink){
+                        self.availableType.push(pathToPathLink.type);
                     });
                     self.getExistingPathToPath();
                 },
@@ -135,20 +135,20 @@ define([
                 type : 'GET',
                 url : url,
                 contentType: 'application/json',
-                success: function(pathToPathLinkDTOs){
+                success: function(pathToPathLinks){
 
-                    _.each(pathToPathLinkDTOs, function(pathToPathLinkDTO){
+                    _.each(pathToPathLinks, function(pathToPathLink){
                         self.existingPathToPathLinkCollection.push({
-                            sourceModel : self.pathSelected[0].getEncodedPath() === pathToPathLinkDTO.sourcePath ? self.pathSelected[0] : self.pathSelected[1],
-                            targetModel : self.pathSelected[1].getEncodedPath() === pathToPathLinkDTO.targetPath ? self.pathSelected[1] : self.pathSelected[0],
-                            pathToPath : pathToPathLinkDTO,
+                            sourceModel : self.pathSelected[0].getEncodedPath() === pathToPathLink.sourcePath ? self.pathSelected[0] : self.pathSelected[1],
+                            targetModel : self.pathSelected[1].getEncodedPath() === pathToPathLink.targetPath ? self.pathSelected[1] : self.pathSelected[0],
+                            pathToPath : pathToPathLink,
                             creationMode : false,
                             editionMode : !self.baselineId && !self.serialNumber,
                             availableType : self.availableType,
                             productId : self.productId,
                             serialNumber : self.serialNumber,
-                            sourceComponents:pathToPathLinkDTO.sourceComponents,
-                            targetComponents:pathToPathLinkDTO.targetComponents
+                            sourceComponents:pathToPathLink.sourceComponents,
+                            targetComponents:pathToPathLink.targetComponents
                         });
                     });
 

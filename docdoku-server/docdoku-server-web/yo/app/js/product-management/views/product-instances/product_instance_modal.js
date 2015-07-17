@@ -190,11 +190,11 @@ define([
             this.existingPathToPathLinkCollection = [];
             this.availableType = [];
             var self = this;
-            _.each(this.iteration.getPathToPathLinks(), function (pathToPathLinkDTO) {
+            _.each(this.iteration.getPathToPathLinks(), function (pathToPathLink) {
                 self.existingPathToPathLinkCollection.push({
-                    source: pathToPathLinkDTO.source,
-                    target: pathToPathLinkDTO.target,
-                    pathToPath: pathToPathLinkDTO,
+                    source: pathToPathLink.source,
+                    target: pathToPathLink.target,
+                    pathToPath: pathToPathLink,
                     productId: self.productId,
                     serialNumber: self.model.getSerialNumber()
                 });

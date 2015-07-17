@@ -170,37 +170,39 @@ define([
         },
 
         updateDisplayPathToPathLinkButton: function(pathSelected){
+
             this.pathSelected = pathSelected;
+
             if (pathSelected.length === 2) {
                 this.pathToPathLinkButton.show();
             } else {
                 this.pathToPathLinkButton.hide();
             }
 
-
             if(App.baselineSelectView.isSerialNumberSelected()){
                 if (pathSelected.length === 1) {
                     this.productInstanceModalButton.show();
                     this.checkedComponent = pathSelected[0];
-                }else{
+                } else {
                     this.productInstanceModalButton.hide();
                     this.checkedComponent = null;
                 }
-            }else{
+            } else {
                 this.productInstanceModalButton.hide();
                 this.checkedComponent = null;
             }
+
         },
 
         openPathToPathLinkModal:function(){
-            var pathToPathLinkdModal = new PathToPathLinkModalView({
+            var pathToPathLinkModal = new PathToPathLinkModalView({
                 pathSelected : this.pathSelected,
                 productId : App.config.productId,
                 serialNumber : App.baselineSelectView.isSerialNumberSelected() ? App.config.configSpec.substring(3) : null,
                 baselineId : App.baselineSelectView.isBaselineSelected() ? App.config.configSpec : null
             }).render();
-            window.document.body.appendChild(pathToPathLinkdModal.el);
-            pathToPathLinkdModal.openModal();
+            window.document.body.appendChild(pathToPathLinkModal.el);
+            pathToPathLinkModal.openModal();
         },
 
         updateBom: function (showRoot) {

@@ -74,19 +74,19 @@ define([
 
             if (this.useACL) {
 
-                var dto = {};
-                dto.userEntries = {};
-                dto.groupEntries = {};
+                var data = {};
+                data.userEntries = {};
+                data.groupEntries = {};
 
-                dto.userEntries.entry = [];
-                dto.groupEntries.entry = [];
+                data.userEntries.entry = [];
+                data.groupEntries.entry = [];
                 this.userMemberships.each(function (userMembership) {
-                    dto.userEntries.entry.push({key: userMembership.key(), value: userMembership.getPermission()});
+                    data.userEntries.entry.push({key: userMembership.key(), value: userMembership.getPermission()});
                 });
                 this.userGroupMemberships.each(function (userGroupMembership) {
-                    dto.groupEntries.entry.push({key: userGroupMembership.key(), value: userGroupMembership.getPermission()});
+                    data.groupEntries.entry.push({key: userGroupMembership.key(), value: userGroupMembership.getPermission()});
                 });
-                return dto;
+                return data;
 
             }
 
