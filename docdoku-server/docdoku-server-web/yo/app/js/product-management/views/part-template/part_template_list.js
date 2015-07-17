@@ -189,9 +189,8 @@ define([
                         templateSelected.set('acl', acl);
                         aclEditView.closeModal();
                     },
-                    error: function (model, err) {
-                        _this.onError(model, err);
-
+                    error: function(error){
+                        aclEditView.onError(error);
                     }
                 });
             });
@@ -226,14 +225,6 @@ define([
                 ]
             });
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
-        },
-        onError: function (model) {
-            var errorMessage = model.responseText;
-            // TODO : refactor global jquery calls
-            $('#acl_edit_modal').find('.notifications').first().append(new AlertView({
-                type: 'error',
-                message: errorMessage
-            }).render().$el);
         }
 
     });

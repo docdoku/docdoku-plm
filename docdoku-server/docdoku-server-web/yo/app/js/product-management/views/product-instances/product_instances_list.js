@@ -6,8 +6,8 @@ define([
     'views/product-instances/product_instances_list_item',
     'common-objects/views/security/acl_edit',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, ProductInstancesListItemView,ACLEditView,AlertView) {
-	'use strict';
+], function (Backbone, Mustache, template, ProductInstancesListItemView, ACLEditView, AlertView) {
+    'use strict';
     var ProductInstancesListView = Backbone.View.extend({
 
         events: {
@@ -151,8 +151,8 @@ define([
 
         deleteSelectedProductInstances: function () {
             var _this = this;
-            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PRODUCT_INSTANCE, function(result){
-                if(result){
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PRODUCT_INSTANCE, function (result) {
+                if (result) {
                     _(_this.listItemViews).each(function (view) {
                         if (view.isChecked()) {
                             view.model.id = view.model.getSerialNumber();
@@ -163,7 +163,7 @@ define([
                                     _this.onSelectionChanged();
                                 },
                                 error: function (model, err) {
-                                    _this.trigger('error',model,err);
+                                    _this.trigger('error', model, err);
                                     _this.onSelectionChanged();
                                 },
                                 wait: true
@@ -196,21 +196,12 @@ define([
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { 'bSortable': false, 'aTargets': [0,6,7,8,9,10,11] }
+                    {'bSortable': false, 'aTargets': [0, 6, 7, 8, 9, 10, 11]}
                 ]
             });
             this.$el.find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
         },
 
-        onError: function (model) {
-            var errorMessage = model.responseText;
-
-            // TODO : avoid global jquery calls. Please fix.
-            $('#acl_edit_modal').find('.notifications').first().append(new AlertView({
-                type: 'error',
-                message: errorMessage
-            }).render().$el);
-        },
         editSelectedProductInstanceACL: function () {
             var templateSelected;
             var _this = this;
@@ -239,9 +230,8 @@ define([
                         templateSelected.set('acl', acl);
                         aclEditView.closeModal();
                     },
-                    error: function (model, err) {
-                        _this.onError(model,err);
-
+                    error: function(error){
+                        aclEditView.onError(error);
                     }
                 });
             });

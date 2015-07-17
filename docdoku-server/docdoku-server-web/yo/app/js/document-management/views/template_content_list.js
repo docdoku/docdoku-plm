@@ -105,7 +105,9 @@ define([
                         aclEditView.closeModal();
                         self.listView.redraw();
                     },
-                    error: self.onError
+                    error: function(error){
+                        aclEditView.onError(error);
+                    }
                 });
             });
 
@@ -139,16 +141,6 @@ define([
 
             return false;
         },
-        onError: function (model) {
-            var errorMessage = model.responseText;
-            // TODO : remove global jquery calls.
-            $('#acl_edit_modal').find('.notifications').first().append(new AlertView({
-                type: 'error',
-                message: errorMessage
-            }).render().$el);
-            this.collection.fetch();
-        },
-
         showLovs: function () {
             var lovmodal = new LOVModalView({});
             window.document.body.appendChild(lovmodal.render().el);

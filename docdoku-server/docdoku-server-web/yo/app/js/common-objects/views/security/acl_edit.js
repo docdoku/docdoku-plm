@@ -46,7 +46,7 @@ define([
             this.$userGroupsAcls = this.$('#groups-acl-entries');
             this.$usingAcl = this.$('.using-acl');
             this.$aclSwitch = this.$('.acl-switch');
-            this.$notifications =this.$('#acl_edit_modal .notifications');
+            this.$notifications = this.$('.notifications');
         },
 
         render: function () {
@@ -170,11 +170,13 @@ define([
             e.stopPropagation();
             return false;
         },
-        onError:function(model, error){
-            var errorMessage = error ? model.responseText : error;
-            var alertView =new AlertView({type: 'error',message: errorMessage}).render();
+
+        onError:function(error){
+            var errorMessage = error ? error.responseText : error;
+            var alertView = new AlertView({type: 'error',message: errorMessage}).render();
             this.$notifications.append(alertView.$el);
         },
+
         onRemove: function () {
             this.remove();
         }
