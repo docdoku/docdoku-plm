@@ -203,10 +203,6 @@ define([
             _.each(self.existingPathToPathLinkCollection, function (pathToPathLink) {
                 var pathToPathLinkItem = new PathToPathLinkItemView({model: pathToPathLink}).render();
                 self.$('#path-to-path-links').append(pathToPathLinkItem.el);
-
-                pathToPathLinkItem.on('remove', function () {
-                    self.existingPathToPathLinkCollection.splice(self.existingPathToPathLinkCollection.indexOf(pathToPathLink), 1);
-                });
             });
 
 
