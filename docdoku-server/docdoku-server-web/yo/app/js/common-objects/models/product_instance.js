@@ -58,6 +58,15 @@ define(['backbone',
         getUpdateAuthorName: function () {
             return this.getLastIteration().getUpdateAuthorName();
         },
+        getCreationDate: function () {
+            return this.getIterations().at(0).getCreationDate();
+        },
+        getFormattedCreationDate: function () {
+            return date.formatTimestamp(
+                App.config.i18n._DATE_FORMAT,
+                this.getCreationDate()
+            );
+        },
         getInstanceAttributes:  function(){
             return this.get('instanceAttributes');
         },

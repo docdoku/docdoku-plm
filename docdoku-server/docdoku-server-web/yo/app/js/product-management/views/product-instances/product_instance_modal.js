@@ -43,7 +43,8 @@ define([
             var data = {
                 i18n: App.config.i18n,
                 model: this.iteration,
-                editMode: this.editMode
+                editMode: this.editMode,
+                creationDate: this.model.getFormattedCreationDate()
             };
 
             if (this.model.hasIterations()) {

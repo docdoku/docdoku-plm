@@ -59,6 +59,9 @@ define(['backbone'
         getUpdateAuthorName: function () {
             return this.get('updateAuthorName');
         },
+        getCreationDate: function() {
+            return this.get('creationDate');
+        },
         getModificationDate: function () {
             return this.get('modificationDate');
         },
