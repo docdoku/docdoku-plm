@@ -261,7 +261,6 @@ define([
 
         updateDataForm: function () {
             this.iteration.setIterationNote(this.$inputIterationNote.val());
-            this.iteration.setBaselinedParts(this.baselinePartListView.getBaselinedParts());
             this.iteration.setInstanceAttributes(this.attributesView.collection.toJSON());
             this.iteration.setLinkedDocuments(this.linkedDocumentsView.collection.toJSON());
             var files = this.iteration.get('attachedFiles');
