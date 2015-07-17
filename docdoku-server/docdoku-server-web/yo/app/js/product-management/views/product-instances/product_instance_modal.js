@@ -4,7 +4,6 @@ define([
     'mustache',
     'text!templates/product-instances/product_instance_modal.html',
     'text!templates/configuration/configuration_choice.html',
-    'views/baselines/baselined_part_list',
     'common-objects/utils/date',
     'common-objects/collections/attribute_collection',
     'common-objects/views/attributes/attributes',
@@ -16,7 +15,7 @@ define([
     'common-objects/collections/baselines',
     'common-objects/views/pathToPathLink/path-to-path-link-item',
     'views/product-instances/path_data_item'
-], function (Backbone, Mustache, template, choiceTemplate, BaselinedPartListView, date, AttributeCollection, ProductInstanceAttributeListView, FileListView, LinkedDocumentCollection, LinkedDocumentsView, AttachedFileCollection, AlertView, Baselines, PathToPathLinkItemView, PathDataItemView) {
+], function (Backbone, Mustache, template, choiceTemplate, date, AttributeCollection, ProductInstanceAttributeListView, FileListView, LinkedDocumentCollection, LinkedDocumentsView, AttachedFileCollection, AlertView, Baselines, PathToPathLinkItemView, PathDataItemView) {
     'use strict';
     var ProductInstancesModalView = Backbone.View.extend({
         events: {
@@ -63,11 +62,6 @@ define([
             this.$el.html(Mustache.render(template, data));
             this.bindDomElements();
             this.bindUserPopover();
-            var that = this;
-            this.iteration.initBaselinedParts(that,
-                {
-                    success: that.initBaselinedPartListView
-                });
             this.initAttributesView();
             this.initAttachedFileView();
             this.initLinkedDocumentsView();
@@ -125,19 +119,11 @@ define([
             this.$modal = this.$('#product_instance_modal');
             this.$tabs = this.$('.nav-tabs li');
             this.$inputIterationNote = this.$('#inputIterationNote');
-            this.$baselinedPartListArea = this.$('.baselinedPartListArea');
             this.$authorLink = this.$('.author-popover');
             this.$substitutes = this.$('.substitutes-list');
             this.$substitutesCount = this.$('.substitutes-count');
             this.$optionals = this.$('.optionals-list');
             this.$optionalsCount = this.$('.optionals-count');
-        },
-
-        initBaselinedPartListView: function (view) {
-            view.baselinePartListView = new BaselinedPartListView({model: view.iteration, editMode: false}).render();
-            view.$baselinedPartListArea.html(view.baselinePartListView.$el);
-            view.baselinePartListView.renderList();
-            view.$baselinedPartListArea.html(view.baselinePartListView.$el);
         },
 
         renderChoices: function () {

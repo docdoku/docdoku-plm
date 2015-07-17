@@ -4,9 +4,8 @@ define([
     'mustache',
     'text!templates/baselines/baseline_detail.html',
     'text!templates/configuration/configuration_choice.html',
-    'views/baselines/baselined_part_list',
     'common-objects/views/pathToPathLink/path-to-path-link-item'
-], function (Backbone, Mustache, template, choiceTemplate, BaselinePartListView, PathToPathLinkItemView) {
+], function (Backbone, Mustache, template, choiceTemplate, PathToPathLinkItemView) {
     'use strict';
     var BaselineDetailView = Backbone.View.extend({
 
@@ -23,7 +22,6 @@ define([
             var that = this;
             that.$el.html(Mustache.render(template, {i18n: App.config.i18n, model: that.model}));
             that.bindDomElements();
-            that.initBaselinedPartListView();
             that.initExistingPathToPathView();
             that.renderChoices();
             that.openModal();
@@ -46,20 +44,10 @@ define([
             this.$notifications = this.$('.notifications');
             this.$modal = this.$('#baseline_detail_modal');
             this.$tabs = this.$('.nav-tabs li');
-            this.$baselinedPartListArea = this.$('.baselinedPartListArea');
             this.$substitutes = this.$('.substitutes-list');
             this.$substitutesCount = this.$('.substitutes-count');
             this.$optionals = this.$('.optionals-list');
             this.$optionalsCount = this.$('.optionals-count');
-        },
-
-        initBaselinedPartListView: function () {
-            this.baselinePartListView = new BaselinePartListView({
-                model: this.model,
-                editMode: false
-            }).render();
-            this.baselinePartListView.renderList();
-            this.$baselinedPartListArea.html(this.baselinePartListView.$el);
         },
 
         drawSubstitutesChoice: function (data) {
