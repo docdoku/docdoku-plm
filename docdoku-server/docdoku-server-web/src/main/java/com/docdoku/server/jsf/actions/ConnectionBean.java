@@ -28,7 +28,6 @@ import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -46,9 +45,6 @@ public class ConnectionBean {
     
     @EJB
     private IUserManagerLocal userManager;
-
-    @Inject
-    private AccountBean accountBean;
 
     private String login;
     private String password;
