@@ -186,25 +186,15 @@ define([
         },
 
         getExistingPathToPath: function () {
-
-            this.existingPathToPathLinkCollection = [];
-            this.availableType = [];
             var self = this;
             _.each(this.iteration.getPathToPathLinks(), function (pathToPathLink) {
-                self.existingPathToPathLinkCollection.push({
-                    source: pathToPathLink.source,
-                    target: pathToPathLink.target,
+                var pathToPathLinkItem = new PathToPathLinkItemView({model: {
                     pathToPath: pathToPathLink,
-                    productId: self.productId,
-                    serialNumber: self.model.getSerialNumber()
-                });
-            });
-
-            _.each(self.existingPathToPathLinkCollection, function (pathToPathLink) {
-                var pathToPathLinkItem = new PathToPathLinkItemView({model: pathToPathLink}).render();
+                    serialNumber: self.model.getSerialNumber(),
+                    productId: self.productId
+                }}).render();
                 self.$('#path-to-path-links').append(pathToPathLinkItem.el);
             });
-
 
         },
 
