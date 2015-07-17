@@ -1,4 +1,4 @@
-/*global casper,urls,products*/
+/*global casper,urls,products,$*/
 casper.test.begin('Part from template creation tests suite', 19, function partCreationTestsSuite() {
     'use strict';
 

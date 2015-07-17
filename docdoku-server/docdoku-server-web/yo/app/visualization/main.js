@@ -3,7 +3,7 @@ var App = {
     debug: false,
 
 	config:{
-		workspaceId: /^#([^/]+)/.exec(window.location.hash)[1] || null,
+		workspaceId: /^#([^\/]+)/.exec(window.location.hash)[1] || null,
 		productId: window.location.hash.split('/')[1] || null,
 		login: '',
 		groups: [],

@@ -1,7 +1,7 @@
 /*global _,$,define,App,THREE,Worker*/
-define(['dmu/LoaderManager', 'async','backbone'],
+define(['dmu/LoaderManager', 'async', 'backbone'],
     function (LoaderManager, async, Backbone) {
-	    'use strict';
+        'use strict';
         /**
          *  This class handles instances management.
          *
@@ -16,12 +16,29 @@ define(['dmu/LoaderManager', 'async','backbone'],
          *   - show/hide instances and update instances quality
          *
          * */
+
+        /**
+         * Multiples type of materials possible
+         * Json Loader will use Array of Materials
+         * This function will dispose of the material if it's simple
+         * or dispose of the material array
+         */
+        function disposeMaterials(materials) {
+            if (!materials.materials) {
+                materials.dispose();
+            } else {
+                _(materials.materials).each(function (m) {
+                    m.dispose();
+                });
+            }
+        }
+
         var InstancesManager = function () {
             var _this = this;
 
             var timestamp = Date.now();
 
-            Backbone.Events.on('part:saved',function(){
+            Backbone.Events.on('part:saved', function () {
                 timestamp = Date.now();
             }, this);
 
@@ -39,7 +56,7 @@ define(['dmu/LoaderManager', 'async','backbone'],
             var timer = null;
             var evalRunning = false;
 
-	        var worker = new Worker(App.config.contextPath + '/js/product-structure/workers/InstancesWorker.js');
+            var worker = new Worker(App.config.contextPath + '/js/product-structure/workers/InstancesWorker.js');
 
             var workerMessages = {
                 stats: function (stats) {
@@ -66,7 +83,10 @@ define(['dmu/LoaderManager', 'async','backbone'],
                                 }
                             }
                             instance.qualityLoaded = undefined;
-                            worker.postMessage({fn: 'setQuality', obj: {id: instance.id, quality: instance.qualityLoaded}});
+                            worker.postMessage({
+                                fn: 'setQuality',
+                                obj: {id: instance.id, quality: instance.qualityLoaded}
+                            });
                         } else {
                             instance.directiveQuality = directive.quality;
                             _this.xhrQueue.push(directive);
@@ -84,25 +104,10 @@ define(['dmu/LoaderManager', 'async','backbone'],
                 if (typeof  workerMessages[message.data.fn] === 'function') {
                     workerMessages[message.data.fn](message.data.obj);
                 } else {
-                    App.log('%c Unrecognized command  : \n\t'+message.data,'IM');
+                    App.log('%c Unrecognized command  : \n\t' + message.data, 'IM');
                 }
             }, false);
 
-            /**
-             * Multiples type of materials possible
-             * Json Loader will use Array of Materials
-             * This function will dispose of the material if it's simple
-             * or dispose of the material array
-             */
-            function disposeMaterials(materials) {
-                if(!materials.materials) {
-                    materials.dispose();
-                } else {
-                    _(materials.materials).each(function(m) {
-                        m.dispose();
-                    });
-                }
-            }
 
             /**
              * Load process : xhr + store geometry and materials in array
@@ -166,7 +171,7 @@ define(['dmu/LoaderManager', 'async','backbone'],
                 }
 
                 // Else : load the instance
-                var quality = App.config.contextPath+'/'+instance.files[directive.quality].fullName;
+                var quality = App.config.contextPath + '/' + instance.files[directive.quality].fullName;
 
                 var texturePath = quality.substring(0, quality.lastIndexOf('/'));
                 loaderManager.parseFile(quality, texturePath, {
@@ -177,7 +182,11 @@ define(['dmu/LoaderManager', 'async','backbone'],
                         } else {
                             geometry.computeFaceNormals();
                             //geometry.computeVertexNormals();
-                            loadCache[instance.partIterationId + '-' + directive.quality] = {count: 1, geometry: geometry, material: material};
+                            loadCache[instance.partIterationId + '-' + directive.quality] = {
+                                count: 1,
+                                geometry: geometry,
+                                material: material
+                            };
                         }
 
                         _this.xhrsDone++;
@@ -213,30 +222,32 @@ define(['dmu/LoaderManager', 'async','backbone'],
                 evalRunning = true;
                 var sceneContext = App.sceneManager.getControlsContext();
                 App.log('%c Updating worker', 'IM');
-                worker.postMessage({fn: 'context', obj: {
-                    camera: sceneContext.camPos,
-                    target: sceneContext.target || {},
-                    WorkerManagedValues: App.WorkerManagedValues,
-                    debug: App.debug
-                }});
+                worker.postMessage({
+                    fn: 'context', obj: {
+                        camera: sceneContext.camPos,
+                        target: sceneContext.target || {},
+                        WorkerManagedValues: App.WorkerManagedValues,
+                        debug: App.debug
+                    }
+                });
 
-                if(App.router){
+                if (App.router) {
                     App.router.updateRoute(sceneContext);
                 }
             }
 
-	        function onSuccessLoadPath(instances){
-		        _.each(instances, function (instance) {
-			        if (instancesIndexed[instance.id]) {
-				        worker.postMessage({fn: 'check', obj: instance.id});
-			        } else {
+            function onSuccessLoadPath(instances) {
+                _.each(instances, function (instance) {
+                    if (instancesIndexed[instance.id]) {
+                        worker.postMessage({fn: 'check', obj: instance.id});
+                    } else {
 
-				        instancesIndexed[instance.id] = instance;
-				        instance.matrix = adaptMatrix(instance.matrix);
+                        instancesIndexed[instance.id] = instance;
+                        instance.matrix = adaptMatrix(instance.matrix);
 
-                        var min =  new THREE.Vector3(instance.xMin,instance.yMin,instance.zMin);
-                        var max = new THREE.Vector3(instance.xMax,instance.yMax,instance.zMax);
-                        var box = new THREE.Box3(min,max).applyMatrix4(instance.matrix);
+                        var min = new THREE.Vector3(instance.xMin, instance.yMin, instance.zMin);
+                        var max = new THREE.Vector3(instance.xMax, instance.yMax, instance.zMax);
+                        var box = new THREE.Box3(min, max).applyMatrix4(instance.matrix);
 
                         var cog = box.center();
 
@@ -244,132 +255,132 @@ define(['dmu/LoaderManager', 'async','backbone'],
                         var radius = box.size().length() || 0.01;
 
                         worker.postMessage({
-					        fn: 'addInstance',
-					        obj: {
-                                instanceRow:instance,
-						        id: instance.id,
-						        box: box,
-						        cog: cog,
+                            fn: 'addInstance',
+                            obj: {
+                                instanceRow: instance,
+                                id: instance.id,
+                                box: box,
+                                cog: cog,
                                 radius: radius,
-						        qualities: instance.qualities,
-						        checked: true
-					        }
-				        });
-			        }
-		        });
+                                qualities: instance.qualities,
+                                checked: true
+                            }
+                        });
+                    }
+                });
 
-		        _this.planNewEval();
-		        loaderIndicator.hide();
-	        }
+                _this.planNewEval();
+                loaderIndicator.hide();
+            }
 
-            function getTimestamp(){
+            function getTimestamp() {
                 return timestamp || Date.now();
             }
 
-	        function loadPath(path, callback) {
+            function loadPath(path, callback) {
 
                 var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
                     App.config.productId + '/instances' +
-                    '?configSpec='+App.config.configSpec+'&path='+path+ '&timestamp=' + getTimestamp();
+                    '?configSpec=' + App.config.configSpec + '&path=' + path + '&timestamp=' + getTimestamp();
 
-                if(App.config.diverge){
+                if (App.config.diverge) {
                     url += '&diverge=true';
                 }
 
-		        $.ajax({
-			        url: url,
-			        type: 'GET',
-			        success:function(instances){
-				        onSuccessLoadPath(instances);
-				        if(callback){
-					        callback(instances);
-				        }
-			        }
-		        });
-	        }
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function (instances) {
+                        onSuccessLoadPath(instances);
+                        if (callback) {
+                            callback(instances);
+                        }
+                    }
+                });
+            }
 
             function loadPaths(paths, callback) {
 
                 var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
                     App.config.productId + '/instances';
 
-                if(App.config.diverge){
+                if (App.config.diverge) {
                     url += '&diverge=true';
                 }
 
                 $.ajax({
-	                url: url,
-	                type:'POST',
-	                contentType: 'application/json',
-	                dataType: 'json',
-	                data: JSON.stringify({
-		                configSpec: App.config.configSpec,
-		                paths: paths
-	                }),
-	                success:function(instances){
-		                onSuccessLoadPath(instances);
-		                if(callback){
-			                callback(instances);
-		                }
-	                }
+                    url: url,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        configSpec: App.config.configSpec,
+                        paths: paths
+                    }),
+                    success: function (instances) {
+                        onSuccessLoadPath(instances);
+                        if (callback) {
+                            callback(instances);
+                        }
+                    }
                 });
 
             }
 
-	        function unLoadPath(path, callback) {
+            function unLoadPath(path, callback) {
 
                 var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
                     App.config.productId + '/instances' +
-                    '?configSpec=' + App.config.configSpec+'&path='+path+ '&timestamp=' + getTimestamp();
+                    '?configSpec=' + App.config.configSpec + '&path=' + path + '&timestamp=' + getTimestamp();
 
-                if(App.config.diverge){
+                if (App.config.diverge) {
                     url += '&diverge=true';
                 }
 
-		        $.ajax({
-			        url: url,
-			        type: 'GET',
-			        success: function (instances) {
-				        _.each(instances, function (instance) {
-					        worker.postMessage({fn: 'unCheck', obj: instance.id});
-				        });
-				        _this.planNewEval();
-				        callback();
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function (instances) {
+                        _.each(instances, function (instance) {
+                            worker.postMessage({fn: 'unCheck', obj: instance.id});
+                        });
+                        _this.planNewEval();
+                        callback();
                     }
                 });
-	        }
+            }
 
             this.loadQueue = async.queue(function (directive, callback) {
                 if (directive.process === 'load') {
-	                loadPaths(directive.paths, callback);
-                } else if (directive.process === 'loadOne'){
-	                loadPath(directive.path, callback);
+                    loadPaths(directive.paths, callback);
+                } else if (directive.process === 'loadOne') {
+                    loadPath(directive.path, callback);
                 } else {
                     unLoadPath(directive.path, callback);
                 }
             }, 1);
 
             this.loadQueue.drain = function () {
-                App.log('Load Queue %c All paths have been processed','IM');
+                App.log('Load Queue %c All paths have been processed', 'IM');
             };
             this.loadQueue.empty = function () {
-                App.log('Load Queue %c  Empty Queue','IM');
+                App.log('Load Queue %c  Empty Queue', 'IM');
             };
             this.loadQueue.saturated = function () {
-                App.log('Load Queue %c Saturated Queue','IM');
+                App.log('Load Queue %c Saturated Queue', 'IM');
             };
 
 
             this.xhrQueue = async.queue(loadProcess, 4);
 
             this.xhrQueue.drain = function () {
-                App.log('XHR Queue %c All items have been processed','IM');
+                App.log('XHR Queue %c All items have been processed', 'IM');
             };
             this.xhrQueue.empty = function () {
-                App.log('XHR Queue %c Empty Queue','IM');
+                App.log('XHR Queue %c Empty Queue', 'IM');
             };
             this.xhrQueue.saturated = function () {
-                App.log('XHR Queue %c Saturated Queue','IM');
+                App.log('XHR Queue %c Saturated Queue', 'IM');
             };
 
             this.getLoadedGeometries = function (n) {
@@ -379,35 +390,35 @@ define(['dmu/LoaderManager', 'async','backbone'],
             this.loadComponent = function (component) {
                 loaderIndicator.show();
                 var path = component.getEncodedPath();
-                if(path){
+                if (path) {
                     _this.loadQueue.push({'process': 'loadOne', 'path': [component.getEncodedPath()]});
                 }
             };
-	        this.loadComponentsByPaths = function(paths){
-		        loaderIndicator.show();
-		        var directive = {
-			        process: 'load',
-			        paths: []
-		        };
-		        _.each(paths,function(path){
-			        directive.paths.push(path);
-		        });
-		        _this.loadQueue.push(directive);
-	        };
+            this.loadComponentsByPaths = function (paths) {
+                loaderIndicator.show();
+                var directive = {
+                    process: 'load',
+                    paths: []
+                };
+                _.each(paths, function (path) {
+                    directive.paths.push(path);
+                });
+                _this.loadQueue.push(directive);
+            };
             this.unLoadComponent = function (component) {
                 var path = component.getEncodedPath();
-                if(path){
+                if (path) {
                     _this.loadQueue.push({'process': 'unload', 'path': component.getEncodedPath()});
                 }
             };
-	        this.unLoadComponentsByPaths = function (pathsToUnload) {
-		        _(pathsToUnload).each(function(path){
-			        _this.loadQueue.push({'process': 'unload', 'path': path});
-		        });
-	        };
+            this.unLoadComponentsByPaths = function (pathsToUnload) {
+                _(pathsToUnload).each(function (path) {
+                    _this.loadQueue.push({'process': 'unload', 'path': path});
+                });
+            };
 
             this.clear = function () {
-                App.log('%c Clearing Scene','IM');
+                App.log('%c Clearing Scene', 'IM');
 
                 _this.xhrQueue.kill();
                 _this.loadQueue.kill();

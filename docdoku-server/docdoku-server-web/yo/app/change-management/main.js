@@ -1,5 +1,5 @@
 /*global _,require,window*/
-var workspace = /^#([^/]+)/.exec(window.location.hash);
+var workspace = /^#([^\/]+)/.exec(window.location.hash);
 if(!workspace){
     location.href = '../faces/admin/workspace/workspacesMenu.xhtml';
     throw new Error('Cannot parse workspace in url');

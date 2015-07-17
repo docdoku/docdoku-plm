@@ -16,6 +16,43 @@ function (Backbone, webRTCAdapter, template, ChannelMessagesType, CALL_STATE, RE
         return (result && result.length === 2) ? result[1] : null;
     }
 
+    // Strip CN from sdp before CN constraints is ready.
+    function removeCN(sdpLines, mLineIndex) {
+        var mLineElements = sdpLines[mLineIndex].split(' ');
+        // Scan from end for the convenience of removing an item.
+        for (var i = sdpLines.length - 1; i >= 0; i--) {
+            var payload = extractSdp(sdpLines[i], /a=rtpmap:(\d+) CN\/\d+/i);
+            if (payload) {
+                var cnPos = mLineElements.indexOf(payload);
+                if (cnPos !== -1) {
+                    // Remove CN payload from m line.
+                    mLineElements.splice(cnPos, 1);
+                }
+                // Remove CN line in sdp
+                sdpLines.splice(i, 1);
+            }
+        }
+
+        sdpLines[mLineIndex] = mLineElements.join(' ');
+        return sdpLines;
+    }
+
+    // Set the selected codec to the first in m line.
+    function setDefaultCodec(mLine, payload) {
+        var elements = mLine.split(' ');
+        var newLine = [];
+        var index = 0;
+        for (var i = 0; i < elements.length; i++) {
+            if (index === 3) { // Format of media starts from the fourth.
+                newLine[index++] = payload; // Put target payload to the first.
+            }
+            if (elements[i] !== payload) {
+                newLine[index++] = elements[i];
+            }
+        }
+        return newLine.join(' ');
+    }
+
     // Set Opus as the default audio codec if it's present.
     function preferOpus(sdp) {
         var sdpLines = sdp.split('\r\n');
@@ -51,42 +88,7 @@ function (Backbone, webRTCAdapter, template, ChannelMessagesType, CALL_STATE, RE
     }
 
 
-    // Set the selected codec to the first in m line.
-    function setDefaultCodec(mLine, payload) {
-        var elements = mLine.split(' ');
-        var newLine = [];
-        var index = 0;
-        for (var i = 0; i < elements.length; i++) {
-            if (index === 3) { // Format of media starts from the fourth.
-                newLine[index++] = payload; // Put target payload to the first.
-            }
-            if (elements[i] !== payload) {
-                newLine[index++] = elements[i];
-            }
-        }
-        return newLine.join(' ');
-    }
 
-    // Strip CN from sdp before CN constraints is ready.
-    function removeCN(sdpLines, mLineIndex) {
-        var mLineElements = sdpLines[mLineIndex].split(' ');
-        // Scan from end for the convenience of removing an item.
-        for (var i = sdpLines.length - 1; i >= 0; i--) {
-            var payload = extractSdp(sdpLines[i], /a=rtpmap:(\d+) CN\/\d+/i);
-            if (payload) {
-                var cnPos = mLineElements.indexOf(payload);
-                if (cnPos !== -1) {
-                    // Remove CN payload from m line.
-                    mLineElements.splice(cnPos, 1);
-                }
-                // Remove CN line in sdp
-                sdpLines.splice(i, 1);
-            }
-        }
-
-        sdpLines[mLineIndex] = mLineElements.join(' ');
-        return sdpLines;
-    }
 
     var WebRTCModuleView = Backbone.View.extend({
 

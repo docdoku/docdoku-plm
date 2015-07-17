@@ -74,7 +74,7 @@ casper.test.begin('Path to path link creation tests suite', 8, function pathToPa
      */
     casper.then(function openCreationModal() {
         this.click('#path_to_path_link_btn');
-        this.waitForSelector('.modal.path-to-path-link-modal', function modalIsDisplayed() {
+        this.waitForSelector('.modal.path-to-path-link-modal .btn.add-path-to-path-link-btn', function modalIsDisplayed() {
             this.test.assert(true, 'Path to path link modal is displayed');
             this.click('.modal.path-to-path-link-modal .btn.add-path-to-path-link-btn');
             this.test.assertElementCount('#path-to-path-links > .well', 1, 'One path to path link has been added');
