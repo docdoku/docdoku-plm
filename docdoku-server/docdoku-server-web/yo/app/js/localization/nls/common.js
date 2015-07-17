@@ -583,7 +583,6 @@ define({
 		UNIT: "each",
         UPDATE_ACL_ERROR:"An error occurred while updating acl",
 		UPDATE_AUTHOR: "Update author",
-		UPDATE_DATE: "Update date",
 		URL: "URL",
 		USE_ACL: "Use ACL ?",
         USER_DEFINED_FUNCTION:"User defined function",

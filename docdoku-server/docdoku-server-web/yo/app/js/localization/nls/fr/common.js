@@ -578,7 +578,6 @@ define({
 	UNIT: "unité",
     UPDATE_ACL_ERROR:"Une erreur s'est produite pendant la mise à jour des droits",
 	UPDATE_AUTHOR: "Auteur de la mise à jour",
-	UPDATE_DATE: "Date de la mise à jour",
 	URL: "URL",
 	USE_ACL: "Utiliser les ACL (droits) ?",
     USER_DEFINED_FUNCTION:'Fonction utilisateur',
