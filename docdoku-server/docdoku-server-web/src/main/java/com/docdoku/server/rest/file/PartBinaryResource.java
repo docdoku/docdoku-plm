@@ -37,6 +37,7 @@ import com.docdoku.server.rest.exceptions.*;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
+import com.google.common.collect.Iterables;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -82,45 +83,74 @@ public class PartBinaryResource{
     private SessionContext ctx;
 
     private static final Logger LOGGER = Logger.getLogger(PartBinaryResource.class.getName());
+    private static final String NATIVE_CAD_SUBTYPE = "nativecad";
+    private static final String ATTACHED_FILES_SUBTYPE = "attachedfiles";
+    private static final String UTF8_ENCODING = "UTF-8";
 
     public PartBinaryResource() {
     }
 
     @POST
-    @Path("/{iteration}")
+    @Path("/{iteration}/"+NATIVE_CAD_SUBTYPE)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public Response uploadDirectPartFiles(@Context HttpServletRequest request,
-                                          @PathParam("workspaceId") final String workspaceId,
-                                          @PathParam("partNumber") final String partNumber,
-                                          @PathParam("version") final String version,
-                                          @PathParam("iteration") final int iteration)
-            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException{
-        return uploadPartFiles(request,workspaceId,partNumber,version,iteration,null);
-    }
-
-    @POST
-    @Path("/{iteration}/{subType}")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public Response uploadPartFiles(@Context HttpServletRequest request,
+    public Response uploadNativeCADFile(@Context HttpServletRequest request,
                                     @PathParam("workspaceId") final String workspaceId,
                                     @PathParam("partNumber") final String partNumber,
                                     @PathParam("version") final String version,
-                                    @PathParam("iteration") final int iteration,
-                                    @PathParam("subType") final String subType)
+                                    @PathParam("iteration") final int iteration)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException {
         try {
-            String fileName=null;
+
+            PartIterationKey partPK = new PartIterationKey(workspaceId, partNumber, version, iteration);
+            Collection<Part> parts = request.getParts();
+
+            if(parts.isEmpty() || parts.size() > 1){
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+
+            Part part = parts.iterator().next();
+            String fileName = part.getSubmittedFileName();
+            BinaryResource binaryResource = productService.saveNativeCADInPartIteration(partPK, fileName, 0);
+            OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
+            long length = BinaryResourceUpload.uploadBinary(outputStream, part);
+            productService.saveNativeCADInPartIteration(partPK, fileName, length);
+            tryToConvertCADFileToOBJ(partPK,binaryResource);
+
+            return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI() +  URLEncoder.encode(fileName, UTF8_ENCODING));
+
+        } catch (IOException | ServletException | StorageException e) {
+            return BinaryResourceUpload.uploadError(e);
+        }
+    }
+
+    @POST
+    @Path("/{iteration}/"+ATTACHED_FILES_SUBTYPE)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    public Response uploadAttachedFiles(@Context HttpServletRequest request,
+                                    @PathParam("workspaceId") final String workspaceId,
+                                    @PathParam("partNumber") final String partNumber,
+                                    @PathParam("version") final String version,
+                                    @PathParam("iteration") final int iteration)
+            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException {
+        try {
+
             PartIterationKey partPK = new PartIterationKey(workspaceId, partNumber, version, iteration);
             Collection<Part> formParts = request.getParts();
 
+            String fileName = null;
+
             for(Part formPart : formParts){
-                fileName = uploadAFile(formPart,partPK, subType);
+                fileName = formPart.getSubmittedFileName();
+                BinaryResource binaryResource = productService.saveFileInPartIteration(partPK, fileName, ATTACHED_FILES_SUBTYPE, 0);
+                OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
+                long length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
+                productService.saveFileInPartIteration(partPK, fileName, ATTACHED_FILES_SUBTYPE, length);
             }
 
             if(formParts.size()==1) {
-                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI() +  URLEncoder.encode(fileName, "UTF-8"));
+                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI() +  URLEncoder.encode(fileName, UTF8_ENCODING));
             }
 
             return Response.ok().build();
@@ -128,28 +158,6 @@ public class PartBinaryResource{
         } catch (IOException | ServletException | StorageException e) {
             return BinaryResourceUpload.uploadError(e);
         }
-    }
-
-    private String uploadAFile(Part formPart, PartIterationKey partPK, String subType)
-            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, CreationException, NotAllowedException, StorageException, IOException {
-        BinaryResource binaryResource;
-        long length;
-        String fileName = formPart.getSubmittedFileName();
-        // Init the binary resource with a null length
-        if(subType!=null && "nativecad".equals(subType)){
-            binaryResource = productService.saveNativeCADInPartIteration(partPK, fileName, 0);
-        }else{
-            binaryResource = productService.saveFileInPartIteration(partPK, fileName, subType, 0);
-        }
-        OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
-        length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
-        if(subType!=null && "nativecad".equals(subType)){
-            productService.saveNativeCADInPartIteration(partPK, fileName, length);
-            tryToConvertCADFileToOBJ(partPK,binaryResource);
-        }else{
-            productService.saveFileInPartIteration(partPK, fileName, subType, length);
-        }
-        return fileName;
     }
 
     // Split on several methods because of Path conflict when we use regex
@@ -249,7 +257,7 @@ public class PartBinaryResource{
         String decodedFileName = fileName;
 
         try {
-            decodedFileName  = URLDecoder.decode(fileName, "UTF-8");
+            decodedFileName  = URLDecoder.decode(fileName, UTF8_ENCODING);
         } catch (UnsupportedEncodingException e) {
             LOGGER.log(Level.SEVERE,"Cannot decode filename");
             LOGGER.log(Level.FINER, null, e);

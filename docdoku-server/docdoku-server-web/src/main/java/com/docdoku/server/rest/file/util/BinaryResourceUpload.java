@@ -46,8 +46,8 @@ public class BinaryResourceUpload {
     /**
      * Upload a form file in a specific output
      * @param outputStream BinaryResource output stream (in server vault repository)
-     * @param formPart The formulaire part list
-     * @return The lenght of the file uploaded
+     * @param formPart The form part list
+     * @return The length of the file uploaded
      */
     public static long uploadBinary(OutputStream outputStream, Part formPart)
             throws IOException {
@@ -60,7 +60,7 @@ public class BinaryResourceUpload {
 
     /**
      * Log error & return a 500 error.
-     * @param e The catched exception which cause the error.
+     * @param e The exception which cause the error.
      * @return A 500 error.
      */
     public static Response uploadError(Exception e){

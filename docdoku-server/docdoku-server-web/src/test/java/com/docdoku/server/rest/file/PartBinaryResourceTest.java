@@ -87,8 +87,8 @@ public class PartBinaryResourceTest {
         Mockito.when(productService.saveFileInPartIteration(Matchers.any(PartIterationKey.class), Matchers.anyString(), Matchers.anyString(), Matchers.anyInt())).thenReturn(binaryResource);
         Mockito.when(dataManager.getBinaryResourceOutputStream(binaryResource)).thenReturn(outputStream);
 
-        //Whenb n
-        Response response = partBinaryResource.uploadPartFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION, null);
+        //When
+        Response response = partBinaryResource.uploadAttachedFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION);
         //Then
         assertNotNull(response);
         assertEquals(response.getStatus(), 201);
@@ -118,7 +118,7 @@ public class PartBinaryResourceTest {
         Mockito.when(dataManager.getBinaryResourceOutputStream(binaryResource)).thenReturn(outputStream);
 
         //When
-        Response response = partBinaryResource.uploadPartFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION, ResourceUtil.SUBTYPE);
+        Response response = partBinaryResource.uploadNativeCADFile(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION);
         //Then
         assertNotNull(response);
         assertEquals(response.getStatus(), 201);
@@ -152,7 +152,7 @@ public class PartBinaryResourceTest {
         Mockito.when(dataManager.getBinaryResourceOutputStream(binaryResource)).thenReturn(outputStream);
 
         //When
-        Response response = partBinaryResource.uploadPartFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION, null);
+        Response response = partBinaryResource.uploadAttachedFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION);
         //Then
         assertNotNull(response);
         assertEquals(response.getStatus(), 201);
@@ -196,7 +196,7 @@ public class PartBinaryResourceTest {
         Mockito.when(dataManager.getBinaryResourceOutputStream(Mockito.any(BinaryResource.class))).thenReturn(outputStream1, outputStream2, outputStream3);
 
         //When
-        Response response = partBinaryResource.uploadPartFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION, null);
+        Response response = partBinaryResource.uploadAttachedFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION);
         //Then
         assertNotNull(response);
         assertEquals(response.getStatus(), 200);
