@@ -270,24 +270,21 @@ define([
         },
 
         selectPart: function (e) {
-            // TODO : remove global jquery calls.
             if (e.target.className.indexOf('component') !== -1 || e.target.parentNode.className === 'cadInstance' || e.target.parentNode.className === 'cadInstances') {
                 this.options.undoSelect(this);
-                $('.component').toggleClass('selected-part', false);
+                this.$('.component').toggleClass('selected-part', false);
                 this.$selectPart = !this.$selectPart;
                 this.$('.component').toggleClass('selected-part', this.$selectPart);
-                $('#createPartMenu').toggleClass('hidden', this.$selectPart);
-                $('#createSubPartMenu').toggleClass('hidden', !this.$selectPart);
+                this.$('.create-part-menu').toggleClass('hidden', this.$selectPart);
+                this.$('.create-sub-part-menu').toggleClass('hidden', !this.$selectPart);
             }
-
         },
 
         undoSelectPart: function () {
-            // TODO : remove global jquery calls.
-            $('.component').toggleClass('selected-part', false);
+            this.$('.component').toggleClass('selected-part', false);
             this.$selectPart = false;
-            $('#createPartMenu').toggleClass('hidden', this.$selectPart);
-            $('#createSubPartMenu').toggleClass('hidden', !this.$selectPart);
+            this.$('.create-part-menu').toggleClass('hidden', this.$selectPart);
+            this.$('.create-sub-part-menu').toggleClass('hidden', !this.$selectPart);
         },
 
         isSelected: function () {
