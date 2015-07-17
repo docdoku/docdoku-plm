@@ -187,6 +187,9 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date modificationDate;
+
     public ProductInstanceIteration() {
     }
 
@@ -321,8 +324,11 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
         return updateAuthor.getName();
     }
 
-    public Date getUpdateDate() {
-        return this.getPartCollection().getCreationDate();
+    public Date getModificationDate() {
+        return (modificationDate!=null) ? (Date) modificationDate.clone() : null;
+    }
+    public void setModificationDate(Date modificationDate) {
+        this.modificationDate = (modificationDate!=null) ? (Date) modificationDate.clone() : null;
     }
 
     public List<BaselinedPart> getBaselinedPartsList() {

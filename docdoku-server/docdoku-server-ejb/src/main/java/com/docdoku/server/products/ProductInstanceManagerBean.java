@@ -192,6 +192,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         productInstanceIteration.setIterationNote("Initial");
         productInstanceIteration.setAuthor(user);
         productInstanceIteration.setCreationDate(now);
+        productInstanceIteration.setModificationDate(now);
 
         PartCollection partCollection = new PartCollection();
         new PartCollectionDAO(em).createPartCollection(partCollection);
@@ -266,7 +267,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             productInstanceIteration.setInstanceAttributes(attributes);
             productInstanceIteration.setSubstituteLinks(new HashSet<>(lastIteration.getSubstituteLinks()));
             productInstanceIteration.setOptionalUsageLinks(new HashSet<>(lastIteration.getOptionalUsageLinks()));
-
+            productInstanceIteration.setModificationDate(new Date());
             DocumentLinkDAO linkDAO = new DocumentLinkDAO(userLocale, em);
             if (links != null) {
 

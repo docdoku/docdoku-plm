@@ -53,18 +53,18 @@ define(['backbone',
             return !this.getIterations().isEmpty();
         },
         getUpdateAuthor: function () {
-            return this.get('updateAuthor');
+            return this.getLastIteration().getUpdateAuthor();
         },
         getUpdateAuthorName: function () {
-            return this.get('updateAuthorName');
+            return this.getLastIteration().getUpdateAuthorName();
         },
         getInstanceAttributes:  function(){
             return this.get('instanceAttributes');
         },
-        getUpdateDate: function () {
+        getModificationDate: function () {
             return date.formatTimestamp(
                 App.config.i18n._DATE_FORMAT,
-                this.get('updateDate')
+                this.getLastIteration().getModificationDate()
             );
         },
         updateACL: function (args) {

@@ -121,31 +121,6 @@ public class ProductInstanceMaster implements Serializable {
             return productInstanceIterations.get(index);
     }
 
-    public User getUpdateAuthor(){
-        ProductInstanceIteration productInstanceIteration = getLastIteration();
-        if(productInstanceIteration==null){
-            return null;
-        }
-        return getLastIteration().getUpdateAuthor();
-    }
-
-    public String getUpdateAuthorName(){
-        User author = getUpdateAuthor();
-        if(author==null){
-            return null;
-        }
-        return author.getName();
-    }
-
-    public Date getUpdateDate(){
-        ProductInstanceIteration productInstanceIteration = getLastIteration();
-        if(productInstanceIteration==null){
-            return null;
-        }else{
-            return getLastIteration().getUpdateDate();
-        }
-    }
-
     public ACL getAcl() {
         return acl;
     }

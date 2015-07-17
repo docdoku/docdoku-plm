@@ -35,7 +35,7 @@ public class ProductInstanceIterationDTO {
     private String configurationItemId;
     private String updateAuthor;
     private String updateAuthorName;
-    private Date updateDate;
+    private Date modificationDate;
     private List<BaselinedPartDTO> baselinedParts;
     private List<String> substituteLinks;
     private List<String> optionalUsageLinks;
@@ -97,11 +97,11 @@ public class ProductInstanceIterationDTO {
         this.updateAuthorName = updateAuthorName;
     }
 
-    public Date getUpdateDate() {
-        return updateDate;
+    public Date getModificationDate() {
+        return modificationDate;
     }
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
+    public void setModificationDate(Date modificationDate) {
+        this.modificationDate = modificationDate;
     }
 
     public List<BaselinedPartDTO> getBaselinedParts() {

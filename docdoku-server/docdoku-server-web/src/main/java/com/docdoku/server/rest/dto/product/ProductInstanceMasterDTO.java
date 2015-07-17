@@ -31,9 +31,6 @@ public class ProductInstanceMasterDTO {
 
     private String serialNumber;
     private String configurationItemId;
-    private String updateAuthor;
-    private String updateAuthorName;
-    private Date updateDate;
     private List<ProductInstanceIterationDTO> productInstanceIterations;
     private ACLDTO acl;
 
@@ -52,27 +49,6 @@ public class ProductInstanceMasterDTO {
     }
     public void setConfigurationItemId(String configurationItemId) {
         this.configurationItemId = configurationItemId;
-    }
-
-    public String getUpdateAuthor() {
-        return updateAuthor;
-    }
-    public void setUpdateAuthor(String updateAuthor) {
-        this.updateAuthor = updateAuthor;
-    }
-
-    public String getUpdateAuthorName() {
-        return updateAuthorName;
-    }
-    public void setUpdateAuthorName(String updateAuthorName) {
-        this.updateAuthorName = updateAuthorName;
-    }
-
-    public Date getUpdateDate() {
-        return updateDate;
-    }
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
     }
 
     public List<ProductInstanceIterationDTO> getProductInstanceIterations() {
