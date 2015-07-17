@@ -353,11 +353,11 @@ define([
         },
 
         activePathToPathLinkTab: function () {
-            this.activateTab(7);
+            this.activateTab(6);
         },
 
         activePathDataTab: function () {
-            this.activateTab(8);
+            this.activateTab(7);
         }
 
     });

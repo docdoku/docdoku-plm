@@ -116,7 +116,7 @@ define([
         },
 
         activePathToPathLinkTab: function () {
-            this.activateTab(3);
+            this.activateTab(2);
         }
 
     });
