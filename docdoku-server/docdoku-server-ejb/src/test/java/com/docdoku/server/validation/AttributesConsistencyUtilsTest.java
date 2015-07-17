@@ -98,12 +98,4 @@ public class AttributesConsistencyUtilsTest extends TestCase {
         Assert.assertEquals("Wrong result from hasValidChange", expect, AttributesConsistencyUtils.hasValidChange(pAttributes, isAttributesLocked, currentAttrs));
     }
 
-    @Test
-    public void testUpdateAttributes() throws Exception {
-        if(AttributesConsistencyUtils.hasValidChange(pAttributes,isAttributesLocked,currentAttrs)){
-            AttributesConsistencyUtils.updateAttributes(pAttributes,currentAttrs);
-            Assert.assertEquals(expect,currentAttrs.equals(pAttributes));
-        }
-
-    }
 }

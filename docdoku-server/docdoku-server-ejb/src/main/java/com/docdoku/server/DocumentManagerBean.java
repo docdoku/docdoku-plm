@@ -1345,7 +1345,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 if(!valid) {
                     throw new NotAllowedException(userLocale, "NotAllowedException59");
                 }
-                AttributesConsistencyUtils.updateAttributes(pAttributes,currentAttrs);
+                doc.setInstanceAttributes(pAttributes);
             }
 
             doc.setRevisionNote(pRevisionNote);

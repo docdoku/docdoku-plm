@@ -768,7 +768,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 if(!valid) {
                     throw new NotAllowedException(locale, "NotAllowedException59");
                 }
-                AttributesConsistencyUtils.updateAttributes(pAttributes,currentAttrs);
+                partRev.getLastIteration().setInstanceAttributes(pAttributes);
             }
 
 

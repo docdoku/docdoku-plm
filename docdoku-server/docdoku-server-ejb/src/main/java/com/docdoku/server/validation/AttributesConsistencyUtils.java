@@ -100,30 +100,4 @@ public class AttributesConsistencyUtils {
         return map;
     }
 
-
-    public static void updateAttributes(List<InstanceAttribute> pAttributes, List<InstanceAttribute> currentAttrs)  {
-
-        for (int i = 0; i < currentAttrs.size(); i++) {
-            InstanceAttribute currentAttr = currentAttrs.get(i);
-
-            if (i < pAttributes.size()) {
-                InstanceAttribute newAttr = pAttributes.get(i);
-                if (currentAttr.getClass() != newAttr.getClass() || newAttr.getClass() == InstanceListOfValuesAttribute.class) {
-                    currentAttrs.set(i, newAttr);
-                } else {
-                    currentAttrs.get(i).setName(newAttr.getName());
-                    currentAttrs.get(i).setValue(newAttr.getValue());
-                    currentAttrs.get(i).setMandatory(newAttr.isMandatory());
-                    currentAttrs.get(i).setLocked(newAttr.isLocked());
-                }
-            } else {
-                //no more attribute to add remove all of them till end of iteration
-                currentAttrs.remove(pAttributes.size() - 1);
-            }
-        }
-        for (int i = currentAttrs.size(); i < pAttributes.size(); i++) {
-            InstanceAttribute newAttr = pAttributes.get(i);
-            currentAttrs.add(newAttr);
-        }
-    }
 }
