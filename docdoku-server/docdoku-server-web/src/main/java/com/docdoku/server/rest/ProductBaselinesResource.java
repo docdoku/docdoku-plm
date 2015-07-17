@@ -138,9 +138,6 @@ public class ProductBaselinesResource {
         productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
         productBaselineDTO.setConfigurationItemLatestRevision(productBaseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
 
-        // TODO: is the following line really really useful?
-        productBaselineDTO.setBaselinedParts(Tools.mapBaselinedPartsToBaselinedPartDTO(productBaseline));
-
         ConfigurationItemKey ciKey = productBaseline.getConfigurationItem().getKey();
 
         List<PartMinimalListDTO> substitutesParts = new ArrayList<>();

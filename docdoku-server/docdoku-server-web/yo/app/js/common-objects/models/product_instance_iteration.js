@@ -13,19 +13,6 @@ define(['backbone'
             attachedFiles: [],
             instanceAttributes: []
         },
-        initBaselinedParts: function (context, callbacks) {
-            this.setConfigurationItemId(context.model.attributes.configurationItemId);
-            var that = this;
-            $.ajax({
-                context: context,
-                type: 'GET',
-                url: this.url() + '/baselined-parts',
-                success: function (baselinedParts) {
-                    that.setBaselinedParts(baselinedParts);
-                    callbacks.success(this);
-                }
-            });
-        },
 
         urlRoot: function () {
             if (this.getConfigurationItemId) {
@@ -127,26 +114,6 @@ define(['backbone'
 
         setLinkedDocuments: function (linkedDocuments) {
             this.set('linkedDocuments', linkedDocuments);
-        },
-        getBaselinePartsWithReference: function (ref, callback) {
-            var baselinedParts = null;
-            $.ajax({
-                type: 'GET',
-                url: this.url() + '/baselined-parts?q=' + ref,
-                contentType: 'application/json; charset=utf-8',
-                success: function (data) {
-                    baselinedParts = data;
-                    if (callback && callback.success) {
-                        callback.success(data);
-                    }
-                },
-                error: function (data) {
-                    if (callback && callback.error) {
-                        callback.error(data);
-                    }
-                }
-            });
-            return baselinedParts;
         }
     });
 

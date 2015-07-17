@@ -212,16 +212,6 @@ public class Tools {
         return partIterationDTO;
     }
 
-    public static List<BaselinedPartDTO> mapBaselinedPartsToBaselinedPartDTO(Collection<BaselinedPart> baselinedParts){
-        List<BaselinedPartDTO> baselinedPartDTOs = new ArrayList<>();
-        for(BaselinedPart baselinedPart : baselinedParts){
-            baselinedPartDTOs.add(mapBaselinedPartToBaselinedPartDTO(baselinedPart));
-        }
-        return baselinedPartDTOs;
-    }
-    public static List<BaselinedPartDTO> mapBaselinedPartsToBaselinedPartDTO(ProductBaseline productBaseline){
-        return mapBaselinedPartsToBaselinedPartDTO(productBaseline.getBaselinedParts().values());
-    }
     public static BaselinedPartDTO mapBaselinedPartToBaselinedPartDTO(BaselinedPart baselinedPart){
         return new BaselinedPartDTO(baselinedPart.getTargetPart());
     }
