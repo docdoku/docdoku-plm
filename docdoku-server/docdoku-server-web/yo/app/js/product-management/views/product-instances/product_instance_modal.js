@@ -51,6 +51,7 @@ define([
                 var hasPreviousIteration = this.iterations.hasPreviousIteration(this.iteration);
                 data.iteration = this.iteration.toJSON();
                 data.iteration.formattedCreationDate = date.formatTimestamp(App.config.i18n._DATE_FORMAT, data.iteration.creationDate);
+                data.iteration.formattedModificationDate = date.formatTimestamp(App.config.i18n._DATE_FORMAT, data.iteration.modificationDate);
                 data.iteration.hasNextIteration = hasNextIteration;
                 data.iteration.hasPreviousIteration = hasPreviousIteration;
                 data.iteration.updateDate = date.formatTimestamp(

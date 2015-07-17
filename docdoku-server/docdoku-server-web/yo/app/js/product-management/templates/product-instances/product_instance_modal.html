@@ -62,25 +62,32 @@
                     </div>
 
                     <div class="control-group">
-                        <label class="control-label" for="inputIterationNote">{{i18n.BASELINE}}</label>
+                        <label class="control-label" for="selectNewIterationBaseline">{{i18n.BASELINE}}</label>
                         <div class="controls">
-                            <select class="rebase-baseline-select">
+                            <select id="selectNewIterationBaseline" class="rebase-baseline-select">
                             </select>
                             <button type="button" class="btn btn-warning btn-rebase">{{i18n.REBASE}}</button>
                         </div>
                     </div>
 
                     <div class="control-group">
-                        <label class="control-label" for="inputIterationNote">{{i18n.AUTHOR}}</label>
+                        <label class="control-label">{{i18n.AUTHOR}}</label>
                         <div class="controls">
                            <a class="author-popover">{{iteration.author.name}}</a>
                         </div>
                     </div>
 
                     <div class="control-group">
-                        <label class="control-label" for="inputIterationNote">{{i18n.CREATION_DATE}}</label>
+                        <label class="control-label">{{i18n.CREATION_DATE}}</label>
                         <div class="controls">
                             <a class="date-popover">{{iteration.formattedCreationDate}}</a>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">{{i18n.MODIFICATION_DATE}}</label>
+                        <div class="controls">
+                            <a class="date-popover">{{iteration.formattedModificationDate}}</a>
                         </div>
                     </div>
 
