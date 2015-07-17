@@ -346,6 +346,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
             nextIteration.setAuthor(user);
             nextIteration.setCreationDate(now);
+            nextIteration.setModificationDate(now);
 
             for (BaselinedPart baselinedPart : baseline.getBaselinedParts().values()) {
                 partCollection.addBaselinedPart(baselinedPart.getTargetPart());
