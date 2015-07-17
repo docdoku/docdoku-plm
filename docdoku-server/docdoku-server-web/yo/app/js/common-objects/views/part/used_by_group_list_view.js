@@ -21,9 +21,6 @@ define([
             this.options.linkedPart.getUsedByProductInstances({
                 success: function (productInstancesArray) {
                     that.groupCollection(productInstancesArray);
-                },
-                error: function () {
-                    //console.log('error getting used by list');
                 }
             });
 

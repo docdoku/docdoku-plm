@@ -134,7 +134,7 @@ public class ProductBaselinesResource {
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         ProductBaseline productBaseline = productBaselineService.getBaseline(baselineId);
         ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline,ProductBaselineDTO.class);
-        productBaselineDTO.setPathToPathLinks(getTypedLinkForBaseline(productBaseline));
+        productBaselineDTO.setPathToPathLinks(getPathToPathLinksForGivenBaseline(productBaseline));
         productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
         productBaselineDTO.setConfigurationItemLatestRevision(productBaseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
 
@@ -233,7 +233,7 @@ public class ProductBaselinesResource {
         return dtos;
     }
 
-    private  List<PathToPathLinkDTO> getTypedLinkForBaseline(ProductBaseline productBaseline) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, AccessRightException {
+    private  List<PathToPathLinkDTO> getPathToPathLinksForGivenBaseline(ProductBaseline productBaseline) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, AccessRightException {
 
         List<PathToPathLink> pathToPathLinkTypes = productBaseline.getPathToPathLinks();
         List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();

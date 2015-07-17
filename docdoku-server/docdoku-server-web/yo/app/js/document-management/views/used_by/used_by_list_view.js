@@ -33,18 +33,12 @@ define([
                 success: function (parts) {
                     that.partsCollection = new PartList(parts);
                     that.addPartViews();
-                },
-                error: function () {
-                    //console.log('error getting used by list');
                 }
             });
             this.linkedDocument.getUsedByProductInstances(this.linkedDocumentIterationId, {
                 success: function (productInstanceIterations) {
                     that.productInstancesCollection = new ProductInstanceList(productInstanceIterations);
                     that.addProductInstanceViews();
-                },
-                error: function () {
-                    //console.log('error getting used by list');
                 }
             });
 

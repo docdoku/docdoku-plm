@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global define,App,_*/
 define([
     'backbone',
     'mustache',
@@ -74,12 +74,8 @@ define([
             var visitedNodes = this.visitedAssemblies + this.visitedInstances;
 
             if(visitedNodes){
-                var operator = this.getOperator();
-                switch(operator){
-                    case 'AVG':
-                        this.memo = this.memo / visitedNodes;
-                        break;
-                    default:
+                if(this.getOperator() === 'AVG'){
+                    this.memo = this.memo / visitedNodes;
                 }
             }
 

@@ -389,7 +389,7 @@ define([
 	    onEditPart: function () {
 		    var model = new Part({partKey: this.model.getNumber() + '-' + this.model.getVersion()});
             var iteration = this.model.getIteration();
-            console.log(App.config.configSpec);
+
 		    model.fetch().success(function () {
 			    new PartModalView({
 				    model: model,

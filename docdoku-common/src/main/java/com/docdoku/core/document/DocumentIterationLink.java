@@ -22,7 +22,7 @@ package com.docdoku.core.document;
 
 import java.io.Serializable;
 
-public class DocumentIterationLink implements Serializable, Cloneable{
+public class DocumentIterationLink implements Serializable {
     private DocumentLink documentLink;
     private DocumentIteration documentIteration;
 
