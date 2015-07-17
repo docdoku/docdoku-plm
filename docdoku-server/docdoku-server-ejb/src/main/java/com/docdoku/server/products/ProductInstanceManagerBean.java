@@ -41,6 +41,7 @@ import com.docdoku.server.configuration.PSFilterVisitor;
 import com.docdoku.server.configuration.spec.ProductBaselineConfigSpec;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.factory.ACLFactory;
+import com.docdoku.server.validation.AttributesConsistencyUtils;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -787,6 +788,11 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             throw new NotAllowedException(locale, "NotAllowedException52");
         }
 
+        ;
+        boolean valid = AttributesConsistencyUtils.hasValidChange(attributes,false,pathDataIteration.getInstanceAttributes());
+        if(!valid) {
+            throw new RuntimeException("Attributes are not valid");
+        }
         pathDataIteration.setInstanceAttributes(attributes);
         pathDataIteration.setNoteIteration(note);
 
