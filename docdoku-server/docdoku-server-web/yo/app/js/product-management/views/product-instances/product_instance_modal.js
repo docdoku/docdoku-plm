@@ -302,6 +302,7 @@ define([
                         self.closeModal();
                         self.delegateEvents();
                         self.render();
+                        self.activateTab(1);
 
                     });
                 },
