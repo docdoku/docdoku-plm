@@ -2238,6 +2238,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         partR.setCheckOutUser(user);
         partR.setCheckOutDate(now);
         firstPartI.setCreationDate(now);
+        firstPartI.setModificationDate(now);
 
         partRevisionDAO.createPartR(partR);
 

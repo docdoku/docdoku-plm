@@ -1512,6 +1512,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         docR.setCheckOutUser(user);
         docR.setCheckOutDate(now);
         firstIte.setCreationDate(now);
+        firstIte.setModificationDate(now);
 
         docRDAO.createDocR(docR);
         return new DocumentRevision[]{originalDocR, docR};
