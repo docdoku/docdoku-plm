@@ -28,6 +28,7 @@ import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +47,9 @@ public class ConnectionBean {
     @EJB
     private IUserManagerLocal userManager;
 
+    @Inject
+    private AccountBean accountBean;
+
     private String login;
     private String password;
 
@@ -63,7 +67,7 @@ public class ConnectionBean {
         }
     }
 
-    public String logOut() throws ServletException, IOException {
+    public void logOut() throws ServletException, IOException {
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
         HttpServletRequest request = (HttpServletRequest) (ec.getRequest());
         request.logout();
@@ -71,7 +75,7 @@ public class ConnectionBean {
         HttpSession newSession = request.getSession(true);
         newSession.setAttribute("hasFail", false);
         newSession.setAttribute("hasLogout", true);
-        return "/login.xhtml";
+        ec.redirect(request.getContextPath() + "/faces/login.xhtml");
     }
 
     public void logIn() throws ServletException, AccountNotFoundException, IOException {

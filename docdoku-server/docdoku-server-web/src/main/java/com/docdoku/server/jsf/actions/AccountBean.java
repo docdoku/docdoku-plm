@@ -188,10 +188,7 @@ public class AccountBean {
     }
 
     public Locale getLocale() {
-        if(locale != null){
-            return locale;
-        }
-        return Locale.getDefault();
+        return locale;
     }
 
     public String addTimeZone(Date date){

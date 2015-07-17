@@ -5,8 +5,11 @@
       xmlns:em="http://java.sun.com/jsf/composite/default"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-        >
-<f:view locale="#{accountBean.getLocale()}" />
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<c:if test="#{not empty accountBean.getLocale()}">
+    <f:view locale="#{accountBean.getLocale()}" />
+</c:if>
 
 <f:loadBundle var="i18nTemplate" basename="com.docdoku.server.localization.header_footer_resource"/>
 <h:head>
