@@ -39,6 +39,7 @@ define([
             }
 
             this.model.on('change', this.render, this);
+            this.model.on('sync', this.render, this);
             this.bindUserPopover();
             date.dateHelper(this.$('.date-popover'));
             this.trigger('rendered', this);
