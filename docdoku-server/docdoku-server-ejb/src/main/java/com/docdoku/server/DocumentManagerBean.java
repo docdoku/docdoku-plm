@@ -1343,7 +1343,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 List<InstanceAttribute> currentAttrs = doc.getInstanceAttributes();
                 boolean valid = AttributesConsistencyUtils.hasValidChange(pAttributes,docR.isAttributesLocked(),currentAttrs);
                 if(!valid) {
-                    throw new NotAllowedException(userLocale, "NotAllowedException44");
+                    throw new NotAllowedException(userLocale, "NotAllowedException59");
                 }
                 AttributesConsistencyUtils.updateAttributes(pAttributes,currentAttrs);
             }

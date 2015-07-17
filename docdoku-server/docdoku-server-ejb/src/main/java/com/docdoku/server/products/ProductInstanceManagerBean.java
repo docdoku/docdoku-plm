@@ -791,7 +791,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         ;
         boolean valid = AttributesConsistencyUtils.hasValidChange(attributes,false,pathDataIteration.getInstanceAttributes());
         if(!valid) {
-            throw new RuntimeException("Attributes are not valid");
+            throw new NotAllowedException(locale, "NotAllowedException59");
         }
         pathDataIteration.setInstanceAttributes(attributes);
         pathDataIteration.setNoteIteration(note);

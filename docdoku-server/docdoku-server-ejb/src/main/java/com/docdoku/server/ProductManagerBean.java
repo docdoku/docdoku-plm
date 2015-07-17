@@ -766,7 +766,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 List<InstanceAttribute> currentAttrs = partRev.getLastIteration().getInstanceAttributes();
                 boolean valid = AttributesConsistencyUtils.hasValidChange(pAttributes,partRev.isAttributesLocked(),currentAttrs);
                 if(!valid) {
-                    throw new NotAllowedException(locale, "NotAllowedException45");
+                    throw new NotAllowedException(locale, "NotAllowedException59");
                 }
                 AttributesConsistencyUtils.updateAttributes(pAttributes,currentAttrs);
             }
