@@ -41,7 +41,6 @@ public class ComponentDTO implements Serializable{
     private boolean standardPart;
     private boolean assembly;
     private boolean substitute;
-    private boolean hasSubstitutes;
     private String partUsageLinkId;
     private String partUsageLinkReferenceDescription;
     private List<ComponentDTO> components;
@@ -57,6 +56,8 @@ public class ComponentDTO implements Serializable{
     private int lastIterationNumber;
     @XmlElement(nillable = true)
     private boolean accessDeny;
+    @XmlElement(nillable = true)
+    private List<String> substituteIds;
     private List<ModificationNotificationDTO> notifications;
     private boolean hasPathData;
     private boolean isVirtual;
@@ -247,14 +248,6 @@ public class ComponentDTO implements Serializable{
         this.optional = optional;
     }
 
-    public boolean isHasSubstitutes() {
-        return hasSubstitutes;
-    }
-
-    public void setHasSubstitutes(boolean hasSubstitutes) {
-        this.hasSubstitutes = hasSubstitutes;
-    }
-
     public boolean isHasPathData() {
         return hasPathData;
     }
@@ -277,5 +270,13 @@ public class ComponentDTO implements Serializable{
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public List<String> getSubstituteIds() {
+        return substituteIds;
+    }
+
+    public void setSubstituteIds(List<String> substituteIds) {
+        this.substituteIds = substituteIds;
     }
 }

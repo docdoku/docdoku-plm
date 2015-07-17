@@ -174,7 +174,11 @@ define([
             this.pathSelected = pathSelected;
 
             if (pathSelected.length === 2) {
-                this.pathToPathLinkButton.show();
+                if(pathSelected[0].isSubstituteOf(pathSelected[1]) || pathSelected[1].isSubstituteOf(pathSelected[0])){
+                    this.pathToPathLinkButton.hide();
+                }else{
+                    this.pathToPathLinkButton.show();
+                }
             } else {
                 this.pathToPathLinkButton.hide();
             }

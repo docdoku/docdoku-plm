@@ -147,7 +147,35 @@ define(['backbone', 'common-objects/utils/date'],
             },
 
             hasSubstitutes : function(){
-                return this.get('hasSubstitutes');
+                return this.get('substituteIds');
+            },
+
+            getSubstituteIds : function(){
+                return this.get('substituteIds');
+            },
+
+            isSubstituteOf:function(otherComponent){
+                if(!this.hasSubstitutes()){
+                    return false;
+                }
+                if(!this.isOnSameBasePath(otherComponent)){
+                    return false;
+                }
+                return this.getSubstituteIds().indexOf(otherComponent.getPartUsageLinkId()) !== -1;
+            },
+
+            getBasePath:function(){
+                var path = this.getPath();
+                var lastDash = path.lastIndexOf('-');
+                if(lastDash !== -1){
+                    return path.substr(0,lastDash);
+                }else{
+                    return path;
+                }
+            },
+
+            isOnSameBasePath:function(otherComponent){
+                return this.getBasePath() === otherComponent.getBasePath();
             },
 
             hasPathData : function(){

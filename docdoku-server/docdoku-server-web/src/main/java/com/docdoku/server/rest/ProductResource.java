@@ -617,9 +617,11 @@ public class ProductResource {
 
         List<PartSubstituteLink> substitutes = usageLink.getSubstitutes();
         if(substitutes != null){
-            dto.setHasSubstitutes(!substitutes.isEmpty());
-        }else{
-            dto.setHasSubstitutes(false);
+            List<String> substituteIds = new ArrayList<>();
+            for(PartSubstituteLink substituteLink:substitutes){
+                substituteIds.add(substituteLink.getFullId());
+            }
+            dto.setSubstituteIds(substituteIds);
         }
 
         List<InstanceAttributeDTO> lstAttributes = new ArrayList<>();
