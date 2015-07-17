@@ -223,7 +223,8 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
                 var sceneContext = App.sceneManager.getControlsContext();
                 App.log('%c Updating worker', 'IM');
                 worker.postMessage({
-                    fn: 'context', obj: {
+                    fn: 'context',
+                    obj: {
                         camera: sceneContext.camPos,
                         target: sceneContext.target || {},
                         WorkerManagedValues: App.WorkerManagedValues,

@@ -4,9 +4,8 @@ define([
     'mustache',
     'text!templates/product-instances/product_instances_list.html',
     'views/product-instances/product_instances_list_item',
-    'common-objects/views/security/acl_edit',
-    'common-objects/views/alert'
-], function (Backbone, Mustache, template, ProductInstancesListItemView, ACLEditView, AlertView) {
+    'common-objects/views/security/acl_edit'
+], function (Backbone, Mustache, template, ProductInstancesListItemView, ACLEditView) {
     'use strict';
     var ProductInstancesListView = Backbone.View.extend({
 

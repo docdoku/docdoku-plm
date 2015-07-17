@@ -1,12 +1,11 @@
-/*global _,$,define,App,bootbox*/
+/*global _,define,App,bootbox*/
 define([
     'backbone',
     'mustache',
     'text!templates/part-template/part_template_list.html',
     'views/part-template/part_template_list_item',
-    'common-objects/views/security/acl_edit',
-    'common-objects/views/alert'
-], function (Backbone, Mustache, template, PartTemplateListItemView, ACLEditView, AlertView) {
+    'common-objects/views/security/acl_edit'
+], function (Backbone, Mustache, template, PartTemplateListItemView, ACLEditView) {
     'use strict';
     var PartTemplateListView = Backbone.View.extend({
 
