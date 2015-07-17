@@ -20,6 +20,7 @@ define([
                 model: this.model
             };
 
+            debugger
             this.$el.html(Mustache.render(template, data));
             return this;
         }
