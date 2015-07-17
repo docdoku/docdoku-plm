@@ -138,7 +138,7 @@ define({
     DELETE_QUERY_QUESTION: "Supprimer la requête",
     DESCRIPTION: "Description",
 	DEVICE_ERROR: "Imposible de se connecter à votre matériel audio/vidéo. Veillez à activer le WebRTC pour votre navigateur, et de vérifier les exceptions.",
-    DISPLAY_COMMENTS: "Afficher/Masquer les commentaires",
+    DISPLAY_COMMENTS: "Afficher/Masquer les descriptions",
 	DOCUMENT: "Document",
 	DOCUMENT_S_DESCRIPTION: "Description du document",
 	DOCUMENTS: 'Documents',
