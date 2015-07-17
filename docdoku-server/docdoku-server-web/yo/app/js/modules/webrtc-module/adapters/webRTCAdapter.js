@@ -187,7 +187,7 @@ define(function () {
                         element.mozSrcObject = stream;
                     } else {
                         if (typeof element.src !== 'undefined') {
-                            element.src = URL.createObjectURL(stream);
+                            element.src = window.URL.createObjectURL(stream);
                         } else {
                             console.error('Error attaching stream to element.');
                         }
