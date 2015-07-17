@@ -117,8 +117,8 @@ public class AttributesConsistencyUtils {
                     currentAttrs.get(i).setLocked(newAttr.isLocked());
                 }
             } else {
-                //no more attribute to add remove all of them still end of iteration
-                currentAttrs.remove(currentAttrs.size() - 1);
+                //no more attribute to add remove all of them till end of iteration
+                currentAttrs.remove(pAttributes.size() - 1);
             }
         }
         for (int i = currentAttrs.size(); i < pAttributes.size(); i++) {
