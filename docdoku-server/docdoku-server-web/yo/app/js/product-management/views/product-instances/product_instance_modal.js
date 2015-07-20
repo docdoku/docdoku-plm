@@ -109,11 +109,16 @@ define([
         },
 
         switchIteration: function (iteration) {
+            var index = this.getActiveTabIndex();
             this.iteration = iteration;
             this.undelegateEvents();
             this.closeModal();
             this.delegateEvents();
             this.render();
+            this.activateTab(index);
+        },
+        getActiveTabIndex: function () {
+            return this.$tabs.filter('.active').index();
         },
 
         bindDomElements: function () {
