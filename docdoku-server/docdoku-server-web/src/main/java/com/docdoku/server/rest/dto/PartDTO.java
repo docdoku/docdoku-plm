@@ -61,6 +61,10 @@ public class PartDTO implements Serializable {
     int lastIterationNumber;
     private String[] tags;
     private List<ModificationNotificationDTO> notifications;
+    private Date obsoleteDate;
+    private String obsoleteAuthor;
+    private Date releaseDate;
+    private String releaseAuthor;
 
     public PartDTO() {
     }
@@ -291,5 +295,37 @@ public class PartDTO implements Serializable {
         result = 31 * result + version.hashCode();
         result = 31 * result + workspaceId.hashCode();
         return result;
+    }
+
+    public void setObsoleteDate(Date obsoleteDate) {
+        this.obsoleteDate = obsoleteDate;
+    }
+
+    public void setObsoleteAuthor(String obsoleteAuthor) {
+        this.obsoleteAuthor = obsoleteAuthor;
+    }
+
+    public void setReleaseDate(Date releasedDate) {
+        this.releaseDate = releasedDate;
+    }
+
+    public void setReleaseAuthor(String releasedAuthor) {
+        this.releaseAuthor = releasedAuthor;
+    }
+
+    public Date getObsoleteDate() {
+        return obsoleteDate;
+    }
+
+    public String getObsoleteAuthor() {
+        return obsoleteAuthor;
+    }
+
+    public Date getReleaseDate() {
+        return releaseDate;
+    }
+
+    public String getReleaseAuthor() {
+        return releaseAuthor;
     }
 }

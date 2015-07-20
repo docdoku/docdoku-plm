@@ -76,6 +76,28 @@ define([
                 return this.get('status') === 'OBSOLETE';
             },
 
+            getObsoleteDate: function() {
+                return Date.formatTimestamp(
+                    App.config.i18n._DATE_FORMAT,
+                    this.get('obsoleteDate')
+                );
+            },
+
+            getObsoleteAuthor: function() {
+                return this.get('obsoleteAuthor');
+            },
+
+            getReleaseDate: function() {
+                return Date.formatTimestamp(
+                    App.config.i18n._DATE_FORMAT,
+                    this.get('releaseDate')
+                );
+            },
+
+            getReleaseAuthor: function() {
+                return this.get('releaseAuthor');
+            },
+
             getFormattedCheckoutDate: function () {
                 return Date.formatTimestamp(
                     App.config.i18n._DATE_FORMAT,

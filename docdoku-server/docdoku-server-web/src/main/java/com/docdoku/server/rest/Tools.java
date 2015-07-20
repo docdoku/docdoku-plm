@@ -153,6 +153,10 @@ public class Tools {
         partDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
         partDTO.setName(partRevision.getPartMaster().getName());
         partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
+        partDTO.setObsoleteDate(partRevision.getObseleteDate());
+        partDTO.setObsoleteAuthor(partRevision.getObsoleteAuthor());
+        partDTO.setReleaseDate(partRevision.getReleaseDate());
+        partDTO.setReleaseAuthor(partRevision.getReleaseAuthor());
 
         List<PartIterationDTO> partIterationDTOs = new ArrayList<>();
         for(PartIteration partIteration : partRevision.getPartIterations()){
