@@ -1300,7 +1300,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new NotAllowedException(locale, "NotAllowedException38");
         }
 
-        partRevision.release();
+        partRevision.release(user);
         return partRevision;
     }
 
@@ -1317,7 +1317,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new NotAllowedException(locale, "NotAllowedException36");
         }
 
-        partRevision.markAsObsolete();
+        partRevision.markAsObsolete(user);
         return partRevision;
     }
 
