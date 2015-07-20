@@ -162,7 +162,7 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
                             @JoinColumn(name="RELEASED_USER_WORKSPACE", referencedColumnName = "WORKSPACE_ID")
                     })
     })
-    private StatusChange releasedStatusChange;
+    private StatusChange releaseStatusChange;
 
     @Embedded
     @AttributeOverrides({
@@ -458,7 +458,7 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
             StatusChange statusChange = new StatusChange();
             statusChange.setStatusChangeAuthor(user);
             statusChange.setStatusModificationDate(new Date());
-            this.setReleasedStatusChange(statusChange);
+            this.setReleaseStatusChange(statusChange);
             return true;
         }else{
             return false;
@@ -494,12 +494,27 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
         this.obsoleteStatusChange = statusChange;
     }
 
-    public StatusChange getReleasedStatusChange() {
-        return releasedStatusChange;
+    public StatusChange getReleaseStatusChange() {
+        return releaseStatusChange;
     }
 
-    public void setReleasedStatusChange(StatusChange statusChange) {
-        this.releasedStatusChange = statusChange;
+    public void setReleaseStatusChange(StatusChange statusChange) {
+        this.releaseStatusChange = statusChange;
+    }
+
+    public String getObsoleteAuthor() {
+        return obsoleteStatusChange == null ? null : obsoleteStatusChange.getStatusChangeAuthor().getLogin();
+    }
+
+    public Date getObseleteDate() {
+        return obsoleteStatusChange == null ? null : obsoleteStatusChange.getStatusModificationDate();
+    }
+    public String getReleaseAuthor() {
+        return releaseStatusChange == null ? null : releaseStatusChange.getStatusChangeAuthor().getLogin();
+    }
+
+    public Date getReleaseDate() {
+        return releaseStatusChange == null ? null : releaseStatusChange.getStatusModificationDate();
     }
 
     @Override
