@@ -16,7 +16,7 @@ define([
 
         'use strict';
 
-        var ProductInstanceDataModalView = Backbone.View.extend({
+        var PathDataModalView = Backbone.View.extend({
 
             className: 'modal hide product-instance-data-modal in',
 
@@ -355,6 +355,6 @@ define([
 
         });
 
-        return ProductInstanceDataModalView;
+        return PathDataModalView;
     }
 );

@@ -4,7 +4,7 @@ define([
     'mustache',
     'text!templates/baselines/baseline_detail.html',
     'text!common-objects/templates/path/path.html',
-    'common-objects/views/pathToPathLink/path-to-path-link-item'
+    'common-objects/views/pathToPathLink/path_to_path_link_item'
 ], function (Backbone, Mustache, template, pathTemplate, PathToPathLinkItemView) {
     'use strict';
     var BaselineDetailView = Backbone.View.extend({

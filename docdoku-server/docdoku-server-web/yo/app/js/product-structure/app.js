@@ -24,9 +24,9 @@ define([
     'dmu/InstancesManager',
     'text!templates/content.html',
     'common-objects/models/part',
-    'views/product-instance-data-modal-view',
-    'views/path-to-path-link-modal'
-], function (Backbone, Mustache, SearchView, PartsTreeView, BomView, CollaborativeView, PartMetadataView, PartInstanceView, ExportSceneModalView, ControlNavigationView, ControlModesView, ControlTransformView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlClippingView, ControlExplodeView, ControlMeasureView, BaselineSelectView, SceneManager, CollaborativeController, InstancesManager, template, Part, ProductInstanceDataModalView, PathToPathLinkModalView) {
+    'views/path_data_modal',
+    'views/path_to_path_link_modal'
+], function (Backbone, Mustache, SearchView, PartsTreeView, BomView, CollaborativeView, PartMetadataView, PartInstanceView, ExportSceneModalView, ControlNavigationView, ControlModesView, ControlTransformView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlClippingView, ControlExplodeView, ControlMeasureView, BaselineSelectView, SceneManager, CollaborativeController, InstancesManager, template, Part, PathDataModalView, PathToPathLinkModalView) {
 
     'use strict';
 
@@ -38,7 +38,7 @@ define([
             'click #bom_view_btn': 'bomButton',
             'click #export_scene_btn': 'exportScene',
             'click #fullscreen_scene_btn': 'fullScreenScene',
-            'click #product_instance_btn': 'openProductInstanceModal',
+            'click #path_data_btn': 'openPathDataModal',
             'click #path_to_path_link_btn' : 'openPathToPathLinkModal'
         },
 
@@ -83,7 +83,7 @@ define([
             App.$ControlsContainer.append(new ControlMeasureView().render().$el);
 
             this.pathToPathLinkButton.hide();
-            this.productInstanceModalButton.hide();
+            this.pathDataModalButton.hide();
             try {
                 App.sceneManager.init();
                 this.bindDatGUIControls();
@@ -120,7 +120,7 @@ define([
             this.sceneModeButton = this.$('#scene_view_btn');
             this.bomModeButton = this.$('#bom_view_btn');
             this.exportSceneButton = this.$('#export_scene_btn');
-            this.productInstanceModalButton = this.$('#product_instance_btn');
+            this.pathDataModalButton = this.$('#path_data_btn');
             this.pathToPathLinkButton = this.$('#path_to_path_link_btn');
             this.bomControls = this.$('.bom-controls');
             this.dmuControls = this.$('.dmu-controls');
@@ -166,7 +166,7 @@ define([
             Backbone.Events.on('selection:reset', this.onResetSelection, this);
             Backbone.Events.on('part:saved', this.refreshTree, this);
             Backbone.Events.on('path:selected', this.updateDisplayPathToPathLinkButton, this);
-            Backbone.Events.on('path-data:clicked', this.openPathDataModal, this);
+            Backbone.Events.on('path-data:clicked', this.onPathDataClicked, this);
         },
 
         updateDisplayPathToPathLinkButton: function(pathSelected){
@@ -185,14 +185,14 @@ define([
 
             if(App.baselineSelectView.isSerialNumberSelected()){
                 if (pathSelected.length === 1) {
-                    this.productInstanceModalButton.show();
+                    this.pathDataModalButton.show();
                     this.checkedComponent = pathSelected[0];
                 } else {
-                    this.productInstanceModalButton.hide();
+                    this.pathDataModalButton.hide();
                     this.checkedComponent = null;
                 }
             } else {
-                this.productInstanceModalButton.hide();
+                this.pathDataModalButton.hide();
                 this.checkedComponent = null;
             }
 
@@ -277,18 +277,18 @@ define([
             esmv.openModal();
         },
 
-        openProductInstanceModal:function(){
-            var productInstanceModal = new ProductInstanceDataModalView({
+        openPathDataModal:function(){
+            var pathDataModal = new PathDataModalView({
                 serialNumber: App.config.configSpec.substr(3),
                 path : this.checkedComponent.getEncodedPath()
             });
-            window.document.body.appendChild(productInstanceModal.el);
-            productInstanceModal.initAndOpenModal();
+            window.document.body.appendChild(pathDataModal.el);
+            pathDataModal.initAndOpenModal();
         },
 
-        openPathDataModal:function(pathSelected){
+        onPathDataClicked:function(pathSelected){
             this.checkedComponent = pathSelected;
-            this.openProductInstanceModal();
+            this.openPathDataModal();
         },
 
         fullScreenScene: function () {

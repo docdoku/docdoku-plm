@@ -3,8 +3,8 @@ define([
     'backbone',
     'mustache',
     'async',
-    'text!templates/path-to-path-link-modal.html',
-    'views/path-to-path-link-item',
+    'text!templates/path_to_path_link_modal.html',
+    'views/path_to_path_link_item',
     'common-objects/views/alert'
 ], function (Backbone, Mustache, Async, template, PathToPathLinkItemView, AlertView){
     'use strict';

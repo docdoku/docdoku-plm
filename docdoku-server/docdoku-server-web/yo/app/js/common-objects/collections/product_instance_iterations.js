@@ -1,16 +1,21 @@
 /*global _,define*/
 define(['backbone', 'common-objects/models/product_instance_iteration'],
 function (Backbone, ProductInstanceIteration) {
+
 	'use strict';
+
     var ProductInstanceIterations = Backbone.Collection.extend({
+
         model: ProductInstanceIteration,
-        className: 'ProductInstanceList',
-        setMaster: function (master) {
-            this.master = master;
+
+        className: 'ProductInstanceIterations',
+
+        setProductInstanceMaster: function (productInstanceMaster) {
+            this.productInstanceMaster = productInstanceMaster;
         },
 
         url: function () {
-            return this.master.url() + '/iterations';
+            return this.productInstanceMaster.url() + '/iterations';
         },
 
         next: function (iteration) {

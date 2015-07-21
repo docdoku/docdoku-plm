@@ -2,7 +2,7 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/path-to-path-link-item.html',
+    'text!templates/path_to_path_link_item.html',
     'common-objects/views/alert'
 ], function (Backbone, Mustache, template, AlertView){
     'use strict';

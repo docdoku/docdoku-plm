@@ -3,9 +3,8 @@ define([
     'backbone',
     'mustache',
     'common-objects/views/part/used_by_pd_instance_list_view',
-    'common-objects/models/product_instance_path_data_iteration',
     'common-objects/collections/path_data_iterations'
-], function (Backbone, Mustache, UsedByListView, ProductInstancePath, PathDataIterations) {
+], function (Backbone, Mustache, UsedByListView, PathDataIterations) {
     'use strict';
     var UsedByGroupListView = Backbone.View.extend({
 

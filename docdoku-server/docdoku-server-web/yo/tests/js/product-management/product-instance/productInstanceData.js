@@ -31,8 +31,8 @@ casper.test.begin('Product instance data path tests suite', 19, function product
      * Wait for the Deliverable Data button
      */
     casper.then(function openDataModal() {
-        this.waitForSelector('#product_instance_btn', function openModal() {
-            this.click('#product_instance_btn');
+        this.waitForSelector('#path_data_btn', function openModal() {
+            this.click('#path_data_btn');
             this.test.assert(true, 'deliverable data button present');
         }, function fail() {
             this.capture('screenshot/product-instance/NoDeliverableButton.png');
@@ -105,8 +105,8 @@ casper.test.begin('Product instance data path tests suite', 19, function product
      * re-open the modal
      */
     casper.then(function reopenModal() {
-        this.waitForSelector('#product_instance_btn', function openModal() {
-            this.click('#product_instance_btn');
+        this.waitForSelector('#path_data_btn', function openModal() {
+            this.click('#path_data_btn');
             this.test.assert(true, 'deliverable data button present');
         }, function fail() {
             this.capture('screenshot/product-instance/NoDeliverableButton.png');

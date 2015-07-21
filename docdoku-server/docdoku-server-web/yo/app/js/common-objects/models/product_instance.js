@@ -23,7 +23,7 @@ define(['backbone',
         parse: function (data) {
             if (data) {
                 this.iterations = new ProductInstanceList(data.productInstanceIterations);
-                this.iterations.setMaster(this);
+                this.iterations.setProductInstanceMaster(this);
                 delete data.productInstanceIterations;
                 return data;
             }

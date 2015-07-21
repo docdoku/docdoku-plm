@@ -5,7 +5,7 @@ define([
     'text!templates/product/product_details.html',
     'views/baselines/baseline_list',
     'views/baselines/baseline_detail_view',
-    'common-objects/views/pathToPathLink/path-to-path-link-item',
+    'common-objects/views/pathToPathLink/path_to_path_link_item',
     'common-objects/views/alert'
 ], function (Backbone, Mustache, template, BaselineListView, BaselineDetailView, PathToPathLinkItemView, AlertView) {
 

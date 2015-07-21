@@ -13,7 +13,7 @@ define([
     'common-objects/collections/file/attached_file_collection',
     'common-objects/views/alert',
     'common-objects/collections/baselines',
-    'common-objects/views/pathToPathLink/path-to-path-link-item'
+    'common-objects/views/pathToPathLink/path_to_path_link_item'
 ], function (Backbone, Mustache, template, pathTemplate, date, AttributeCollection, ProductInstanceAttributeListView, FileListView, LinkedDocumentCollection, LinkedDocumentsView, AttachedFileCollection, AlertView, Baselines, PathToPathLinkItemView) {
     'use strict';
     var ProductInstancesModalView = Backbone.View.extend({
