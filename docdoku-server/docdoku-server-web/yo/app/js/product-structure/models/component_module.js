@@ -147,7 +147,8 @@ define(['backbone', 'common-objects/utils/date'],
             },
 
             hasSubstitutes : function(){
-                return this.get('substituteIds');
+                var substitutesIds = this.getSubstituteIds();
+                return substitutesIds && substitutesIds.length;
             },
 
             getSubstituteIds : function(){
