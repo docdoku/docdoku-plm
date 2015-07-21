@@ -3,9 +3,9 @@ define([
     'backbone',
     'mustache',
     'text!templates/configuration/configuration_details.html',
-    'text!templates/configuration/configuration_choice.html',
+    'text!common-objects/templates/path/path.html',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, choiceTemplate, AlertView) {
+], function (Backbone, Mustache, template, pathTemplate, AlertView) {
     'use strict';
     var ConfigurationDetailsView = Backbone.View.extend({
 
@@ -35,12 +35,12 @@ define([
         },
 
         drawSubstitutesChoice:function(data){
-            this.$substitutes.append(Mustache.render(choiceTemplate, {i18n: App.config.i18n, partLinks: data.partLinks}));
+            this.$substitutes.append(Mustache.render(pathTemplate, {i18n: App.config.i18n, partLinks: data.partLinks}));
             this.$substitutes.find('.well i.fa-long-arrow-right').last().remove();
         },
 
         drawOptionalsChoice:function(data){
-            this.$optionals.append(Mustache.render(choiceTemplate, {i18n: App.config.i18n, partLinks: data.partLinks}));
+            this.$optionals.append(Mustache.render(pathTemplate, {i18n: App.config.i18n, partLinks: data.partLinks}));
             this.$optionals.find('.well i.fa-long-arrow-right').last().remove();
         },
 

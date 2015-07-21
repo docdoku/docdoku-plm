@@ -3,7 +3,7 @@ define([
     'backbone',
     'mustache',
     'text!templates/product-instances/product_instance_modal.html',
-    'text!templates/configuration/configuration_choice.html',
+    'text!common-objects/templates/path/path.html',
     'common-objects/utils/date',
     'common-objects/collections/attribute_collection',
     'common-objects/views/attributes/attributes',
@@ -13,9 +13,8 @@ define([
     'common-objects/collections/file/attached_file_collection',
     'common-objects/views/alert',
     'common-objects/collections/baselines',
-    'common-objects/views/pathToPathLink/path-to-path-link-item',
-    'views/product-instances/path_data_item'
-], function (Backbone, Mustache, template, choiceTemplate, date, AttributeCollection, ProductInstanceAttributeListView, FileListView, LinkedDocumentCollection, LinkedDocumentsView, AttachedFileCollection, AlertView, Baselines, PathToPathLinkItemView, PathDataItemView) {
+    'common-objects/views/pathToPathLink/path-to-path-link-item'
+], function (Backbone, Mustache, template, pathTemplate, date, AttributeCollection, ProductInstanceAttributeListView, FileListView, LinkedDocumentCollection, LinkedDocumentsView, AttachedFileCollection, AlertView, Baselines, PathToPathLinkItemView) {
     'use strict';
     var ProductInstancesModalView = Backbone.View.extend({
         events: {
@@ -85,7 +84,7 @@ define([
 
                 });
                 // to get the Existing PathToPath, we need to have all the baseline.
-                // should be chanched, hack to make it work.
+                // should be changed, hack to make it work.
                 self.getExistingPathToPath();
             });
 
@@ -144,7 +143,7 @@ define([
         },
 
         drawSubstitutesChoice: function (data) {
-            this.$substitutes.append(Mustache.render(choiceTemplate, {
+            this.$substitutes.append(Mustache.render(pathTemplate, {
                 i18n: App.config.i18n,
                 partLinks:data.partLinks
             }));
@@ -152,7 +151,7 @@ define([
         },
 
         drawOptionalsChoice: function (data) {
-            this.$optionals.append(Mustache.render(choiceTemplate, {
+            this.$optionals.append(Mustache.render(pathTemplate, {
                 i18n: App.config.i18n,
                 partLinks:data.partLinks
             }));
@@ -230,12 +229,16 @@ define([
 
         initPathDataView: function () {
             var pathDataList = this.$('#path-data-list');
-            var partsPath = this.iteration.getUsedByPaths();
+            var paths = this.iteration.getPathDataPaths();
 
-            _.each(partsPath, function (parts) {
-                var view = new PathDataItemView({model: parts.parts}).render();
-                pathDataList.append(view.$el);
+            _.each(paths, function (path) {
+                pathDataList.append(Mustache.render(pathTemplate, {
+                    i18n: App.config.i18n,
+                    partLinks:path.partLinks
+                }));
+                pathDataList.find('.well i.fa-long-arrow-right').last().remove();
             });
+
         },
 
         bindUserPopover: function () {

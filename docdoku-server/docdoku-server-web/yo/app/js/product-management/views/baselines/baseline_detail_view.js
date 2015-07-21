@@ -3,9 +3,9 @@ define([
     'backbone',
     'mustache',
     'text!templates/baselines/baseline_detail.html',
-    'text!templates/configuration/configuration_choice.html',
+    'text!common-objects/templates/path/path.html',
     'common-objects/views/pathToPathLink/path-to-path-link-item'
-], function (Backbone, Mustache, template, choiceTemplate, PathToPathLinkItemView) {
+], function (Backbone, Mustache, template, pathTemplate, PathToPathLinkItemView) {
     'use strict';
     var BaselineDetailView = Backbone.View.extend({
 
@@ -51,7 +51,7 @@ define([
         },
 
         drawSubstitutesChoice: function (data) {
-            this.$substitutes.append(Mustache.render(choiceTemplate, {
+            this.$substitutes.append(Mustache.render(pathTemplate, {
                 i18n: App.config.i18n,
                 partLinks:data.partLinks
             }));
@@ -59,7 +59,7 @@ define([
         },
 
         drawOptionalsChoice: function (data) {
-            this.$optionals.append(Mustache.render(choiceTemplate, {
+            this.$optionals.append(Mustache.render(pathTemplate, {
                 i18n: App.config.i18n,
                 partLinks:data.partLinks
             }));

@@ -216,18 +216,15 @@ public class ProductInstancesResource {
             productInstanceIterationDTO.setSubstitutesParts(substitutesParts);
             productInstanceIterationDTO.setOptionalsParts(optionalParts);
 
-            List<PartMinimalListDTO> usedByPaths = new ArrayList<>();
+            List<LightPartLinkListDTO> pathDataPaths = new ArrayList<>();
             for (PathDataMasterDTO pathDataMasterDTO : productInstanceIterationDTO.getPathDataMasterList()) {
-                PartMinimalListDTO partMinimalListDTO = new PartMinimalListDTO();
-                List<PartMinimalDTO> partDTOs = new ArrayList<>();
-
+                LightPartLinkListDTO lightPartLinkListDTO = new LightPartLinkListDTO();
                 for (PartLink partLink : productService.decodePath(ciKey, pathDataMasterDTO.getPath())) {
-                    partDTOs.add(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
+                    lightPartLinkListDTO.getPartLinks().add(new LightPartLinkDTO(partLink));
                 }
-                partMinimalListDTO.setParts(partDTOs);
-                usedByPaths.add(partMinimalListDTO);
+                pathDataPaths.add(lightPartLinkListDTO);
             }
-            productInstanceIterationDTO.setUsedByPaths(usedByPaths);
+            productInstanceIterationDTO.setPathDataPaths(pathDataPaths);
         }
 
         return dto;
