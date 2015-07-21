@@ -3,14 +3,13 @@ define([
     'backbone',
     'mustache',
     'common-objects/collections/part_collection',
-    'common-objects/collections/path_data_product_instance_iterations',
     'common-objects/collections/product_instances',
     'collections/used_by_document',
     'views/used_by/used_by_list_item_view',
     'common-objects/views/part/used_by_list_item_view',
     'common-objects/views/part/used_by_pd_instance_group_list_view',
     'text!templates/used_by/used_by_list.html'
-], function (Backbone, Mustache, PartList,PathDataList,ProductInstanceList, UsedByDocumentList, UsedByListItemView,UsedByProductInstanceListItemView, UsedByGroupListView,template) {
+], function (Backbone, Mustache, PartList, ProductInstanceList, UsedByDocumentList, UsedByListItemView,UsedByProductInstanceListItemView, UsedByGroupListView,template) {
     'use strict';
     var UsedByListView = Backbone.View.extend({
 

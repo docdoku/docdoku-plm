@@ -1,11 +1,11 @@
 /*global define,_,App*/
 define(['backbone',
-    '../../common-objects/collections/path_data_product_instance_iterations'
-], function (Backbone, ProductInstanceIterationPathList) {
+    'common-objects/collections/path_data_iterations'
+], function (Backbone, PathDataIterations) {
 
     'use strict';
 
-    var ProductInstancePathMasterDataModel = Backbone.Model.extend({
+    var PathDataMaster = Backbone.Model.extend({
 
         defaults: {
             pathDataIterations: []
@@ -14,8 +14,8 @@ define(['backbone',
         initialize: function (data) {
             this.path = data.path; // ? data.path : '-1';
             this.serialNumber = data.serialNumber;
-            this.iterations = new ProductInstanceIterationPathList(data.pathDataIterations);
-            this.iterations.setProductInstance(this);
+            this.iterations = new PathDataIterations(data.pathDataIterations);
+            this.iterations.setPathDataMaster(this);
             this.iteration = this.getLastIteration();
             _.bindAll(this);
         },
@@ -81,7 +81,7 @@ define(['backbone',
 
 
     });
-    return ProductInstancePathMasterDataModel;
+    return PathDataMaster;
 
 });
 

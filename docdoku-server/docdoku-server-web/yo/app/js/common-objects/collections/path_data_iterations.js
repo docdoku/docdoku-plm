@@ -2,24 +2,23 @@
 define([
     'backbone',
     'common-objects/models/product_instance_path_data_iteration'
-], function (Backbone, ProductInstanceIteration) {
+], function (Backbone, PathDataIteration) {
     'use strict';
-    var ProductInstanceIterationPathList = Backbone.Collection.extend({
+    var PathDataIterations = Backbone.Collection.extend({
 
-        model: ProductInstanceIteration,
+        model: PathDataIteration,
 
-        className: 'ProductInstanceIterationPathList',
+        className: 'PathDataIterations',
 
         initialize: function () {
         },
 
-
-        setProductInstance: function (productInstance) {
-            this.ProductInstanceIteration = productInstance;
+        setPathDataMaster: function (pathDataMaster) {
+            this.pathDataMaster = pathDataMaster;
         },
 
         url: function () {
-            return this.ProductInstanceIteration.url() + '/iterations';
+            return this.pathDataMaster.url() + '/iterations';
         },
 
         next: function (iteration) {
@@ -47,5 +46,6 @@ define([
 
     });
 
-    return ProductInstanceIterationPathList;
+    return PathDataIterations;
+
 });

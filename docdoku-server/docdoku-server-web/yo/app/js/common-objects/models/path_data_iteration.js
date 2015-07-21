@@ -3,7 +3,7 @@ define(['backbone'], function (Backbone) {
 
     'use strict';
 
-    var ProductInstancePathIterationDataModel = Backbone.Model.extend({
+    var PathDataIteration = Backbone.Model.extend({
 
 
         initialize: function () {
@@ -97,7 +97,7 @@ define(['backbone'], function (Backbone) {
 
     });
 
-    return ProductInstancePathIterationDataModel;
+    return PathDataIteration;
 
 });
 

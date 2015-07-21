@@ -4,8 +4,8 @@ define([
     'mustache',
     'common-objects/views/part/used_by_pd_instance_list_view',
     'common-objects/models/product_instance_path_data_iteration',
-    'common-objects/collections/path_data_product_instance_iterations'
-], function (Backbone, Mustache, UsedByListView, ProductInstancePath, ProductInstancePathCollection) {
+    'common-objects/collections/path_data_iterations'
+], function (Backbone, Mustache, UsedByListView, ProductInstancePath, PathDataIterations) {
     'use strict';
     var UsedByGroupListView = Backbone.View.extend({
 
@@ -41,7 +41,7 @@ define([
 
         addListView: function (key) {
             var usedByView = new UsedByListView({
-                collection: new ProductInstancePathCollection(this.groupedMap[key])
+                collection: new PathDataIterations(this.groupedMap[key])
             }).render();
 
             this.usedByViews.push(usedByView);

@@ -3,8 +3,8 @@ define([
         'backbone',
         'mustache',
         'text!templates/product-instance-data-modal.html',
-        'models/product_instance_path_data_master',
-        'common-objects/models/product_instance_path_data_iteration',
+        'models/path_data_master',
+        'common-objects/models/path_data_iteration',
         'common-objects/views/attributes/attributes',
         'common-objects/views/file/file_list',
         'common-objects/views/linked/linked_documents',
@@ -12,7 +12,7 @@ define([
         'common-objects/collections/file/attached_file_collection',
         'common-objects/models/attribute',
         'common-objects/views/alert'
-    ], function (Backbone, Mustache, template, ProductInstancePathMasterDataModel, ProductInstancePathIterationDataModel, AttributesView, FileListView, LinkedDocumentsView, LinkedDocumentCollection, AttachedFileCollection, Attribute, AlertView) {
+    ], function (Backbone, Mustache, template, PathDataMaster, PathDataIteration, AttributesView, FileListView, LinkedDocumentsView, LinkedDocumentCollection, AttachedFileCollection, Attribute, AlertView) {
 
         'use strict';
 
@@ -106,7 +106,7 @@ define([
                         data.serialNumber = self.serialNumber;
                         data.path = self.path;
                         self.pathDataId = data.id;
-                        self.model = new ProductInstancePathMasterDataModel(data);
+                        self.model = new PathDataMaster(data);
 
                         if (self.isNew) {
                             self.$('.delete-button').hide();
@@ -211,7 +211,7 @@ define([
                     if (!this.iteration) {
                         var self = this;
                         this.iterations = this.model.iterations;
-                        this.iteration = new ProductInstancePathIterationDataModel(this.model.attributes);
+                        this.iteration = new PathDataIteration(this.model.attributes);
                         this.iterations.add(this.iteration);
                         this.iteration.setIteration(this.iterations.size());
                         this.iteration.setInstanceAttributes(this.attributesView.collection.toJSON());
@@ -225,7 +225,7 @@ define([
                             data: JSON.stringify(this.iteration),
                             contentType: 'application/json',
                             success: function (data) {
-                                self.model = new ProductInstancePathMasterDataModel(data);
+                                self.model = new PathDataMaster(data);
                                 self.iteration = self.model.getLastIteration();
                                 self.iterations = self.model.getIterations();
                                 self.iteration.setSerialNumber(self.serialNumber);
@@ -283,7 +283,7 @@ define([
 
             createIteration: function () {
                 this.lasIteration = this.model.getLastIteration();
-                this.iteration = new ProductInstancePathIterationDataModel(this.model.attributes);
+                this.iteration = new PathDataIteration(this.model.attributes);
                 this.iterations.add(this.iteration);
                 this.iteration.setIteration(this.iterations.size());
                 this.iteration.setInstanceAttributes(this.lasIteration.getInstanceAttributes());
@@ -302,7 +302,7 @@ define([
                     data: JSON.stringify(this.iteration),
                     contentType: 'application/json',
                     success: function (data) {
-                        self.model = new ProductInstancePathMasterDataModel(data);
+                        self.model = new PathDataMaster(data);
                         self.iteration = self.model.getLastIteration();
                         self.iterations = self.model.getIterations();
                         self.iteration.setSerialNumber(self.serialNumber);
