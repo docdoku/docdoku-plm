@@ -51,10 +51,10 @@
                     <h:outputLabel style="display: inline;" value="#{i18nAccountEdition['section.change_password']}" for="changePassword"/>
 
                     <h:outputLabel value="#{i18nAccountEdition['section.password']}*:" for="password"/>
-                    <h:inputSecret label="#{i18nAccountEdition['section.password']}" binding="#{newPasswordInput}" id="password" value="#{accountBean.password}" immediate="true" required="true" size="20" maxlength="50"/>
+                    <h:inputSecret label="#{i18nAccountEdition['section.password']}" binding="#{newPasswordInput}" id="password" value="#{accountBean.password}" immediate="true" required="true" size="20" maxlength="50" disabled="true"/>
 
                     <h:outputLabel value="#{i18nAccountEdition['section.confirmPassword']}*:" for="confirmPassword"/>
-                    <h:inputSecret label="#{i18nAccountEdition['section.confirmPassword']}" binding="#{confirmPasswordInput}" id="confirmPassword" immediate="true" required="true" size="20" maxlength="50"/>
+                    <h:inputSecret label="#{i18nAccountEdition['section.confirmPassword']}" binding="#{confirmPasswordInput}" id="confirmPassword" immediate="true" required="true" size="20" maxlength="50" disabled="true"/>
 
                     <h:inputHidden value="true">
                         <f:validator validatorId="samePasswordValidator" />
