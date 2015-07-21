@@ -17,7 +17,7 @@ define([
             'change input[type=radio]': 'changeChoice',
             'change .baseline-choice-optional': 'changeOptional',
             'change .choice-retain': 'toggleRetain',
-            'click .model-ref':'openPartView'
+            'click [data-part-key]':'openPartView'
         },
 
         template: Mustache.parse(template),
@@ -54,13 +54,9 @@ define([
                 return null;
             }
             if(this.optional){
-                return {optional:true,path:this.model.getPath()};
+                return {optional:true,path:this.model.getResolvedPathAsString()+'-'+this.defaultChoice};
             }
-
-            var paths = this.model.getPaths();
-            paths.pop();
-            paths.push(this.choice);
-            return {path:paths.join('-')};
+            return {path:this.model.getResolvedPathAsString()+'-'+this.choice};
         },
         changeChoice:function(e){
             this.choice = e.target.value;

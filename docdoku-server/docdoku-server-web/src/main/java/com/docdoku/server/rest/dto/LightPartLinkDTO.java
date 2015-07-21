@@ -27,6 +27,7 @@ public class LightPartLinkDTO {
     private String number;
     private String name;
     private String referenceDescription;
+    private String fullId;
 
     public LightPartLinkDTO() {
     }
@@ -35,6 +36,7 @@ public class LightPartLinkDTO {
         number = partLink.getComponent().getNumber();
         name = partLink.getComponent().getName();
         referenceDescription = partLink.getReferenceDescription();
+        fullId = partLink.getFullId();
     }
 
     public String getNumber() {
@@ -59,5 +61,13 @@ public class LightPartLinkDTO {
 
     public void setReferenceDescription(String referenceDescription) {
         this.referenceDescription = referenceDescription;
+    }
+
+    public String getFullId() {
+        return fullId;
+    }
+
+    public void setFullId(String fullId) {
+        this.fullId = fullId;
     }
 }

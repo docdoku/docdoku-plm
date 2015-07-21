@@ -3,39 +3,35 @@
 define(['backbone'], function (Backbone) {
 
     var PathChoice = Backbone.Model.extend({
+
         initialize: function () {
             _.bindAll(this);
         },
 
-        getPartRevisionsKeys: function () {
-            return this.get('partRevisionsKeys');
-        },
-
-        getPaths: function () {
-            return this.get('paths');
-        },
-
-        getPath:function(){
-            return this.get('paths').join('-');
-        },
-
-        getPathWithoutLast:function(){
-            var paths  = this.getPaths().slice();
-            paths.pop();
-            return paths.join('-');
+        getResolvedPath:function(){
+            return this.get('resolvedPath');
         },
 
         getPartUsageLink: function () {
             return this.get('partUsageLink');
         },
 
-        getPartUsageLinkPath: function () {
-            return this.getPath()+'-'+this.getPartUsageLinkId();
+        getPartUsageLinkId: function () {
+            return this.get('partUsageLink').fullId;
         },
 
-        getPartUsageLinkId: function () {
-            return this.getPartUsageLink().fullId;
+        getResolvedPathAsString:function(){
+            return this.getResolvedPath().map(function(resolvedPath){
+                return resolvedPath.partLink.fullId
+            }).join('-');
+        },
+
+        getKey:function(){
+            return this.getResolvedPath().map(function(resolvedPath){
+                return resolvedPath.partIteration.number + '-' + resolvedPath.partIteration.version;
+            }).join('-');
         }
+
     });
 
     return PathChoice;

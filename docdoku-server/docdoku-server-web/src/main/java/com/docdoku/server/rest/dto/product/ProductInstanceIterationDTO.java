@@ -41,8 +41,8 @@ public class ProductInstanceIterationDTO {
     private List<String> optionalUsageLinks;
     private UserDTO author;
     private Date creationDate;
-    private List<PartMinimalListDTO> substitutesParts;
-    private List<PartMinimalListDTO> optionalsParts;
+    private List<LightPartLinkListDTO> substitutesParts;
+    private List<LightPartLinkListDTO> optionalsParts;
     private List<PathToPathLinkDTO> pathToPathLinks;
 
     private BaselineDTO basedOn;
@@ -168,19 +168,19 @@ public class ProductInstanceIterationDTO {
         this.substituteLinks = substituteLinks;
     }
 
-    public List<PartMinimalListDTO> getSubstitutesParts() {
+    public List<LightPartLinkListDTO> getSubstitutesParts() {
         return substitutesParts;
     }
 
-    public void setSubstitutesParts(List<PartMinimalListDTO> substitutesParts) {
+    public void setSubstitutesParts(List<LightPartLinkListDTO> substitutesParts) {
         this.substitutesParts = substitutesParts;
     }
 
-    public List<PartMinimalListDTO> getOptionalsParts() {
+    public List<LightPartLinkListDTO> getOptionalsParts() {
         return optionalsParts;
     }
 
-    public void setOptionalsParts(List<PartMinimalListDTO> optionalsParts) {
+    public void setOptionalsParts(List<LightPartLinkListDTO> optionalsParts) {
         this.optionalsParts = optionalsParts;
     }
 

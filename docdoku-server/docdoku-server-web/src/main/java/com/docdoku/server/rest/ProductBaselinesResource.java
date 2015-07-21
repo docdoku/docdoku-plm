@@ -140,26 +140,22 @@ public class ProductBaselinesResource {
 
         ConfigurationItemKey ciKey = productBaseline.getConfigurationItem().getKey();
 
-        List<PartMinimalListDTO> substitutesParts = new ArrayList<>();
-        List<PartMinimalListDTO> optionalParts = new ArrayList<>();
+        List<LightPartLinkListDTO> substitutesParts = new ArrayList<>();
+        List<LightPartLinkListDTO> optionalParts = new ArrayList<>();
 
         for(String path:productBaseline.getSubstituteLinks()){
-            PartMinimalListDTO partMinimalListDTO = new PartMinimalListDTO();
-            List<PartMinimalDTO> partDTOs = new ArrayList<>();
+            LightPartLinkListDTO lightPartLinkListDTO = new LightPartLinkListDTO();
             for(PartLink partLink : productService.decodePath(ciKey, path)){
-                partDTOs.add(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
+                lightPartLinkListDTO.getPartLinks().add(new LightPartLinkDTO(partLink));
             }
-            partMinimalListDTO.setParts(partDTOs);
-            substitutesParts.add(partMinimalListDTO);
+            substitutesParts.add(lightPartLinkListDTO);
         }
         for(String path:productBaseline.getOptionalUsageLinks()){
-            PartMinimalListDTO partMinimalListDTO = new PartMinimalListDTO();
-            List<PartMinimalDTO> partDTOs = new ArrayList<>();
+            LightPartLinkListDTO lightPartLinkListDTO = new LightPartLinkListDTO();
             for(PartLink partLink : productService.decodePath(ciKey, path)){
-                partDTOs.add(mapper.map(partLink.getComponent(),PartMinimalDTO.class));
+                lightPartLinkListDTO.getPartLinks().add(new LightPartLinkDTO(partLink));
             }
-            partMinimalListDTO.setParts(partDTOs);
-            optionalParts.add(partMinimalListDTO);
+            optionalParts.add(lightPartLinkListDTO);
         }
 
         productBaselineDTO.setSubstitutesParts(substitutesParts);

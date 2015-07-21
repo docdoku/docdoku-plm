@@ -18,40 +18,27 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.core.configuration;
-
-import com.docdoku.core.product.PartLink;
+package com.docdoku.server.rest.dto;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PathChoice {
+public class LightPartLinkListDTO {
 
-    private List<ResolvedPartLink> resolvedPath = new ArrayList();
-    private PartLink partUsageLink;
+    private List<LightPartLinkDTO> partLinks = new ArrayList<>();
 
-    public PathChoice() {
+    public LightPartLinkListDTO() {
     }
 
-    public PathChoice(List<ResolvedPartLink> resolvedPath, PartLink partUsageLink) {
-        this.resolvedPath = resolvedPath;
-        this.partUsageLink = partUsageLink;
+    public LightPartLinkListDTO(List<LightPartLinkDTO> partLinks) {
+        this.partLinks = partLinks;
     }
 
-    public List<ResolvedPartLink> getResolvedPath() {
-        return resolvedPath;
+    public List<LightPartLinkDTO> getPartLinks() {
+        return partLinks;
     }
 
-    public void setResolvedPath(List<ResolvedPartLink> resolvedPath) {
-        this.resolvedPath = resolvedPath;
+    public void setPartLinks(List<LightPartLinkDTO> partLinks) {
+        this.partLinks = partLinks;
     }
-
-    public PartLink getPartUsageLink() {
-        return partUsageLink;
-    }
-
-    public void setPartUsageLink(PartLink partUsageLink) {
-        this.partUsageLink = partUsageLink;
-    }
-
 }

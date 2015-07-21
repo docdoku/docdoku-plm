@@ -15,7 +15,7 @@ define([
         events: {
             'change input[type=radio]': 'changeChoice',
             'click .release': 'releasePart',
-            'click .model-ref':'toPartModal'
+            'click [data-part-key]':'toPartModal'
         },
 
         template: Mustache.parse(template),

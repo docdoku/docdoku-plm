@@ -21,7 +21,7 @@
 package com.docdoku.server.rest.dto.baseline;
 
 import com.docdoku.server.rest.dto.ACLDTO;
-import com.docdoku.server.rest.dto.PartMinimalListDTO;
+import com.docdoku.server.rest.dto.LightPartLinkListDTO;
 import com.docdoku.server.rest.dto.UserDTO;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -40,8 +40,8 @@ public class ProductConfigurationDTO{
     private Date creationDate;
     private UserDTO author;
 
-    private List<PartMinimalListDTO> substitutesParts;
-    private List<PartMinimalListDTO> optionalsParts;
+    private List<LightPartLinkListDTO> substitutesParts;
+    private List<LightPartLinkListDTO> optionalsParts;
 
     private ACLDTO acl;
 
@@ -112,27 +112,27 @@ public class ProductConfigurationDTO{
         this.acl = acl;
     }
 
-    public List<PartMinimalListDTO> getSubstitutesParts() {
-        return substitutesParts;
-    }
-
-    public void setSubstitutesParts(List<PartMinimalListDTO> substitutesParts) {
-        this.substitutesParts = substitutesParts;
-    }
-
-    public List<PartMinimalListDTO> getOptionalsParts() {
-        return optionalsParts;
-    }
-
-    public void setOptionalsParts(List<PartMinimalListDTO> optionalsParts) {
-        this.optionalsParts = optionalsParts;
-    }
-
     public UserDTO getAuthor() {
         return author;
     }
 
     public void setAuthor(UserDTO author) {
         this.author = author;
+    }
+
+    public List<LightPartLinkListDTO> getSubstitutesParts() {
+        return substitutesParts;
+    }
+
+    public void setSubstitutesParts(List<LightPartLinkListDTO> substitutesParts) {
+        this.substitutesParts = substitutesParts;
+    }
+
+    public List<LightPartLinkListDTO> getOptionalsParts() {
+        return optionalsParts;
+    }
+
+    public void setOptionalsParts(List<LightPartLinkListDTO> optionalsParts) {
+        this.optionalsParts = optionalsParts;
     }
 }

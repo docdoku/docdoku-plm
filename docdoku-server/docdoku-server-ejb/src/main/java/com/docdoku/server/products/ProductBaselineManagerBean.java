@@ -309,11 +309,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
 
             @Override
             public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
-                List<PartRevision> partRevisions = new ArrayList<>();
-                for (PartIteration partIteration : pCurrentPathPartIterations) {
-                    partRevisions.add(partIteration.getPartRevision());
-                }
-                choices.add(new PathChoice(partRevisions, pCurrentPath));
+                addPartChoice(pCurrentPath, pCurrentPathPartIterations);
             }
 
             @Override
@@ -328,11 +324,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
 
             @Override
             public void onOptionalPath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
-                List<PartRevision> partRevisions = new ArrayList<>();
-                for (PartIteration partIteration : pCurrentPathPartIterations) {
-                    partRevisions.add(partIteration.getPartRevision());
-                }
-                choices.add(new PathChoice(partRevisions, pCurrentPath));
+                addPartChoice(pCurrentPath, pCurrentPathPartIterations);
             }
 
             @Override
@@ -344,6 +336,15 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
             public void onUnresolvedVersion(PartMaster partMaster) {
                 // Unused here
             }
+
+            private void addPartChoice(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
+                List<ResolvedPartLink> resolvedPath = new ArrayList<>();
+                for(int i = 0; i < pCurrentPathPartIterations.size(); i++){
+                    resolvedPath.add(new ResolvedPartLink(pCurrentPathPartIterations.get(i),pCurrentPath.get(i)));
+                }
+                choices.add(new PathChoice(resolvedPath, pCurrentPath.get(pCurrentPath.size()-1)));
+            }
+
         };
 
         psFilterVisitor.visit(configurationItem.getDesignItem(), -1);

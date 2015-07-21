@@ -29,8 +29,8 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.ACLDTO;
-import com.docdoku.server.rest.dto.PartMinimalDTO;
-import com.docdoku.server.rest.dto.PartMinimalListDTO;
+import com.docdoku.server.rest.dto.LightPartLinkDTO;
+import com.docdoku.server.rest.dto.LightPartLinkListDTO;
 import com.docdoku.server.rest.dto.baseline.ProductConfigurationDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -101,26 +101,23 @@ public class ProductConfigurationsResource {
         ProductConfigurationDTO productConfigurationDTO = mapper.map(productConfiguration, ProductConfigurationDTO.class);
         productConfigurationDTO.setConfigurationItemId(productConfiguration.getConfigurationItem().getId());
 
-        List<PartMinimalListDTO> substitutesParts = new ArrayList<>();
-        List<PartMinimalListDTO> optionalParts = new ArrayList<>();
+        List<LightPartLinkListDTO> substitutesParts = new ArrayList<>();
+        List<LightPartLinkListDTO> optionalParts = new ArrayList<>();
 
         for(String path:productConfiguration.getSubstituteLinks()){
-            PartMinimalListDTO partMinimalListDTO = new PartMinimalListDTO();
-            List<PartMinimalDTO> partDTOs = new ArrayList<>();
+            LightPartLinkListDTO partDTOs = new LightPartLinkListDTO();
             for(PartLink partLink : productService.decodePath(ciKey, path)){
-                partDTOs.add(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
+                partDTOs.getPartLinks().add(new LightPartLinkDTO(partLink));
             }
-            partMinimalListDTO.setParts(partDTOs);
-            substitutesParts.add(partMinimalListDTO);
+            substitutesParts.add(partDTOs);
         }
+
         for(String path:productConfiguration.getOptionalUsageLinks()){
-            PartMinimalListDTO partMinimalListDTO = new PartMinimalListDTO();
-            List<PartMinimalDTO> partDTOs = new ArrayList<>();
+            LightPartLinkListDTO partDTOs = new LightPartLinkListDTO();
             for(PartLink partLink : productService.decodePath(ciKey, path)){
-                partDTOs.add(mapper.map(partLink.getComponent(),PartMinimalDTO.class));
+                partDTOs.getPartLinks().add(new LightPartLinkDTO(partLink));
             }
-            partMinimalListDTO.setParts(partDTOs);
-            optionalParts.add(partMinimalListDTO);
+            optionalParts.add(partDTOs);
         }
 
         productConfigurationDTO.setSubstitutesParts(substitutesParts);

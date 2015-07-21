@@ -191,30 +191,26 @@ public class ProductInstancesResource {
         Iterator<ProductInstanceIteration> iterationIterator = productInstanceIterations.iterator();
         for(ProductInstanceIterationDTO productInstanceIterationDTO : productInstanceIterationsDTO){
 
-            List<PartMinimalListDTO> substitutesParts = new ArrayList<>();
-            List<PartMinimalListDTO> optionalParts = new ArrayList<>();
+            List<LightPartLinkListDTO> substitutesParts = new ArrayList<>();
+            List<LightPartLinkListDTO> optionalParts = new ArrayList<>();
             try {
                 productInstanceIterationDTO.setPathToPathLinks(getPathToPathLinksForGivenProductInstance(iterationIterator.next()));
             } catch (AccessRightException e) {
                 LOGGER.log(Level.FINEST, null, e);
             }
             for(String path:productInstanceIterationDTO.getSubstituteLinks()){
-                PartMinimalListDTO partMinimalListDTO = new PartMinimalListDTO();
-                List<PartMinimalDTO> partDTOs = new ArrayList<>();
+                LightPartLinkListDTO lightPartLinkDTO = new LightPartLinkListDTO();
                 for(PartLink partLink : productService.decodePath(ciKey, path)){
-                    partDTOs.add(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
+                    lightPartLinkDTO.getPartLinks().add(new LightPartLinkDTO(partLink));
                 }
-                partMinimalListDTO.setParts(partDTOs);
-                substitutesParts.add(partMinimalListDTO);
+                substitutesParts.add(lightPartLinkDTO);
             }
             for(String path:productInstanceIterationDTO.getOptionalUsageLinks()){
-                PartMinimalListDTO partMinimalListDTO = new PartMinimalListDTO();
-                List<PartMinimalDTO> partDTOs = new ArrayList<>();
+                LightPartLinkListDTO lightPartLinkDTO = new LightPartLinkListDTO();
                 for(PartLink partLink : productService.decodePath(ciKey, path)){
-                    partDTOs.add(mapper.map(partLink.getComponent(),PartMinimalDTO.class));
+                    lightPartLinkDTO.getPartLinks().add(new LightPartLinkDTO(partLink));
                 }
-                partMinimalListDTO.setParts(partDTOs);
-                optionalParts.add(partMinimalListDTO);
+                optionalParts.add(lightPartLinkDTO);
             }
 
             productInstanceIterationDTO.setSubstitutesParts(substitutesParts);

@@ -21,7 +21,7 @@
 package com.docdoku.server.rest.dto.baseline;
 
 import com.docdoku.core.configuration.ProductBaseline;
-import com.docdoku.server.rest.dto.PartMinimalListDTO;
+import com.docdoku.server.rest.dto.LightPartLinkListDTO;
 import com.docdoku.server.rest.dto.PathToPathLinkDTO;
 import com.docdoku.server.rest.dto.UserDTO;
 
@@ -37,8 +37,8 @@ public class ProductBaselineDTO extends BaselineDTO {
     private List<String> substituteLinks;
     private List<String> optionalUsageLinks;
 
-    private List<PartMinimalListDTO> substitutesParts;
-    private List<PartMinimalListDTO> optionalsParts;
+    private List<LightPartLinkListDTO> substitutesParts;
+    private List<LightPartLinkListDTO> optionalsParts;
     private UserDTO author;
     private boolean hasObsoletePartRevisions;
     private List<PathToPathLinkDTO> pathToPathLinks;
@@ -106,19 +106,19 @@ public class ProductBaselineDTO extends BaselineDTO {
         this.configurationItemLatestRevision = configurationItemLatestRevision;
     }
 
-    public List<PartMinimalListDTO> getSubstitutesParts() {
+    public List<LightPartLinkListDTO> getSubstitutesParts() {
         return substitutesParts;
     }
 
-    public void setSubstitutesParts(List<PartMinimalListDTO> substitutesParts) {
+    public void setSubstitutesParts(List<LightPartLinkListDTO> substitutesParts) {
         this.substitutesParts = substitutesParts;
     }
 
-    public List<PartMinimalListDTO> getOptionalsParts() {
+    public List<LightPartLinkListDTO> getOptionalsParts() {
         return optionalsParts;
     }
 
-    public void setOptionalsParts(List<PartMinimalListDTO> optionalsParts) {
+    public void setOptionalsParts(List<LightPartLinkListDTO> optionalsParts) {
         this.optionalsParts = optionalsParts;
     }
 

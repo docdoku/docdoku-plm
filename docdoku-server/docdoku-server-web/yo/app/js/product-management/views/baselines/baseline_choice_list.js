@@ -37,15 +37,20 @@ define([
 
         renderList:function(choices){
             this.clear();
-            this.choices  = choices;
-            this.choices.sort(function(a,b){
-                return a.partRevisionsKeys.join() < b.partRevisionsKeys.join() ? -1:1;
+
+            this.choices  = choices.map(function(choice){
+                return new PathChoice(choice);
             });
+
+            this.choices.sort(function(a,b){
+                return a.getKey() < b.getKey() ? -1:1;
+            });
+
             _.each(this.choices,this.addChoiceItemView,this);
         },
 
         addChoiceItemView:function(choice){
-            var view = new BaselineChoiceItemView({model:new PathChoice(choice), removable:this.options.removableItems}).render();
+            var view = new BaselineChoiceItemView({model:choice, removable:this.options.removableItems}).render();
             this.choicesViews.push(view);
             this.$list.append(view.$el);
         },

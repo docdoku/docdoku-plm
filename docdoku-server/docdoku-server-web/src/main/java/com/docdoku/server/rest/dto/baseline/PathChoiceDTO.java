@@ -21,8 +21,7 @@
 package com.docdoku.server.rest.dto.baseline;
 
 import com.docdoku.core.configuration.PathChoice;
-import com.docdoku.core.product.PartLink;
-import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.configuration.ResolvedPartLink;
 import com.docdoku.server.rest.dto.PartUsageLinkDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -32,38 +31,27 @@ import java.util.List;
 
 public class PathChoiceDTO {
 
-    private List<String> partRevisionsKeys = new ArrayList<>();
-    private List<String> paths = new ArrayList<>();
+    private List<ResolvedPartLinkDTO> resolvedPath = new ArrayList();
     private PartUsageLinkDTO partUsageLink;
 
     public PathChoiceDTO() {
     }
 
     public PathChoiceDTO(PathChoice choice) {
-        for(PartRevision partRevision:choice.getPartRevisions()){
-            partRevisionsKeys.add(partRevision.getPartMasterNumber()+"-"+partRevision.getVersion());
+        for(ResolvedPartLink resolvedPartLink:choice.getResolvedPath()){
+            resolvedPath.add(new ResolvedPartLinkDTO(resolvedPartLink));
         }
-        for(PartLink link:choice.getPaths()){
-            paths.add(link.getFullId());
-        }
+
         Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
         partUsageLink = mapper.map(choice.getPartUsageLink(),PartUsageLinkDTO.class);
     }
 
-    public List<String> getPartRevisionsKeys() {
-        return partRevisionsKeys;
+    public List<ResolvedPartLinkDTO> getResolvedPath() {
+        return resolvedPath;
     }
 
-    public void setPartRevisionsKeys(List<String> partRevisionsKeys) {
-        this.partRevisionsKeys = partRevisionsKeys;
-    }
-
-    public List<String> getPaths() {
-        return paths;
-    }
-
-    public void setPaths(List<String> paths) {
-        this.paths = paths;
+    public void setResolvedPath(List<ResolvedPartLinkDTO> resolvedPath) {
+        this.resolvedPath = resolvedPath;
     }
 
     public PartUsageLinkDTO getPartUsageLink() {
@@ -73,5 +61,4 @@ public class PathChoiceDTO {
     public void setPartUsageLink(PartUsageLinkDTO partUsageLink) {
         this.partUsageLink = partUsageLink;
     }
-    
 }

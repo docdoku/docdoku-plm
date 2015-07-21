@@ -1,16 +1,5 @@
-<div class="control-group">
-    <div class="control-label">
-        {{#data.parts}}
-         {{name}} < {{number}} >  <i class="fa fa-long-arrow-right"></i>
-        {{/data.parts}}
-
-    </div>
-
-    <div class="controls">
-        <ul class="baseline-choice-item">
-            <li>
-                <div class="radio"> {{data.concernedPart.name}} < {{data.concernedPart.number}} > </div>
-            </li>
-        </ul>
-    </div>
+<div class="well">
+    {{#partLinks}}
+     {{name}} < {{number}} > {{#referenceDescription}}({{.}}){{/referenceDescription}} <i class="fa fa-long-arrow-right"></i>
+    {{/partLinks}}
 </div>

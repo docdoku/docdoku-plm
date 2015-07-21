@@ -1,5 +1,10 @@
 <label class="control-label" >
-    {{#model.getPartRevisionsKeys}}<a data-part-key="{{.}}" class="model-ref">{{.}}</a>  <i class="fa fa-long-arrow-right"></i> {{/model.getPartRevisionsKeys}}
+    {{#model.getResolvedPath}}
+        <a data-part-key="{{partIteration.number}}-{{partIteration.version}}">
+            {{partIteration.name}} < {{partIteration.number}}-{{partIteration.version}}-{{partIteration.iteration}} > {{#partLink.referenceDescription}}({{.}}){{/partLink.referenceDescription}}
+        </a>
+        <i class="fa fa-long-arrow-right"></i>
+    {{/model.getResolvedPath}}
 </label>
 <div class="controls">
     <ul class="baseline-choice-item">
@@ -7,7 +12,7 @@
 
             <li class="part-link">
                 <label class="radio">
-                    <input class="nominal-link" type="radio" name="path-selector-{{model.getPartUsageLinkPath}}" data-path="{{model.getPathWithoutLast}}-{{fullId}}" value="{{fullId}}"/>
+                    <input class="nominal-link" type="radio" name="path-selector-{{model.getResolvedPathAsString}}-{{model.getPartUsageLinkId}}" data-path="{{model.getResolvedPathAsString}}-{{model.getPartUsageLinkId}}" value="{{fullId}}"/>
                     {{component.name}} < {{component.number}} >
                 </label>
                 <span class="baseline-choice-details">{{referenceDescription}} {{comment}} - {{amount}} {{#unit}}{{.}}{{/unit}} {{^unit}}{{i18n.UNIT}}(s){{/unit}} </span>
@@ -16,7 +21,7 @@
                 <li class="part-link substitute">
                     {{#substitute}}
                     <label class="radio">
-                        <input type="radio" name="path-selector-{{model.getPartUsageLinkPath}}" data-path="{{model.getPathWithoutLast}}-{{fullId}}" value="{{fullId}}"/>
+                        <input type="radio" name="path-selector-{{model.getResolvedPathAsString}}-{{model.getPartUsageLinkId}}" data-path="{{model.getResolvedPathAsString}}-{{fullId}}" value="{{fullId}}"/>
                         {{name}} < {{number}} >
                     </label>
                     {{/substitute}}
@@ -26,7 +31,7 @@
             {{/substitutes}}
         {{#optional}}
         <li>
-            <label class="radio" data-path="{{model.getPathWithoutLast}}-{{fullId}}"><input type="checkbox" class="baseline-choice-optional"/> {{i18n.OPTIONAL_REMOVE}}</label>
+            <label class="radio" data-path="{{model.getResolvedPathAsString}}-{{model.getPartUsageLinkId}}"><input type="checkbox" class="baseline-choice-optional"/> {{i18n.OPTIONAL_REMOVE}}</label>
         </li>
         {{/optional}}
         {{/model.getPartUsageLink}}

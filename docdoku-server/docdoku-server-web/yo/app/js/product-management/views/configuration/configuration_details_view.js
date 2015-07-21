@@ -35,19 +35,13 @@ define([
         },
 
         drawSubstitutesChoice:function(data){
-            this.$substitutes.append(Mustache.render(choiceTemplate, {i18n: App.config.i18n, data: {
-                parts:data.parts,
-                concernedPart:data.parts.pop()
-            }}));
-            this.$substitutes.find('i.fa-long-arrow-right:last-child').remove();
+            this.$substitutes.append(Mustache.render(choiceTemplate, {i18n: App.config.i18n, partLinks: data.partLinks}));
+            this.$substitutes.find('.well i.fa-long-arrow-right').last().remove();
         },
 
         drawOptionalsChoice:function(data){
-            this.$optionals.append(Mustache.render(choiceTemplate, {i18n: App.config.i18n, data: {
-                parts:data.parts,
-                concernedPart:data.parts.pop()
-            }}));
-            this.$optionals.find('i.fa-long-arrow-right:last-child').remove();
+            this.$optionals.append(Mustache.render(choiceTemplate, {i18n: App.config.i18n, partLinks: data.partLinks}));
+            this.$optionals.find('.well i.fa-long-arrow-right').last().remove();
         },
 
         bindDomElements: function () {
