@@ -82,7 +82,7 @@ define([
                 this.$selectLatestFilter.hide();
                 this.$selectBaselineSpec.val(selected.getId()).show();
                 this.$divergeSwitchContainer.hide();
-                this.setDescription(selected.getIterationNote());
+                this.setDescription(selected.getDescription());
             }
 		},
 
@@ -147,7 +147,7 @@ define([
             this.$divergeSwitchContainer.hide();
             this.trigger('config_spec:changed', this.$selectBaselineSpec.val());
             var baseline = this.baselineCollection.findWhere({id:parseInt(this.$selectBaselineSpec.val(),10)});
-            this.setDescription(baseline ? baseline.getIterationNote() : '');
+            this.setDescription(baseline ? baseline.getDescription() : '');
         },
 
         changeInstance:function(){

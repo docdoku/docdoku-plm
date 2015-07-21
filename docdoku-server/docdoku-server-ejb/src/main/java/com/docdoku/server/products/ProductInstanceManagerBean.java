@@ -436,7 +436,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
                 clone.setPathDataMaster(newPathDataMaster);
                 clone.setDateIteration(pathDataIteration.getDateIteration());
                 clone.setIteration(pathDataIteration.getIteration());
-                clone.setNoteIteration(pathDataIteration.getNoteIteration());
+                clone.setIterationNote(pathDataIteration.getIterationNote());
 
                 // Attributes
                 List<InstanceAttribute> clonedAttributes = new ArrayList<>();
@@ -738,7 +738,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
                 PathDataIteration pathDataIteration = pathDataMaster.createNextIteration();
                 pathDataIteration.setInstanceAttributes(attributes);
-                pathDataIteration.setNoteIteration(note);
+                pathDataIteration.setIterationNote(note);
                 pathDataIteration = createDocumentLink(locale, pathDataIteration, links, documentLinkComments);
                 pathDataIteration.setAttachedFiles(targetFiles);
                 PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(em);
@@ -755,7 +755,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
         PathDataIteration pathDataIteration = pathDataMaster.createNextIteration();
         pathDataIteration.setInstanceAttributes(attributes);
-        pathDataIteration.setNoteIteration(note);
+        pathDataIteration.setIterationNote(note);
         pathDataMasterDAO.createPathData(pathDataMaster);
         PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(em);
         pathDataIteration = this.createDocumentLink(locale, pathDataIteration, links, documentLinkComments);
@@ -794,7 +794,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             throw new NotAllowedException(locale, "NotAllowedException59");
         }
         pathDataIteration.setInstanceAttributes(attributes);
-        pathDataIteration.setNoteIteration(note);
+        pathDataIteration.setIterationNote(note);
 
         // Set links
         DocumentLinkDAO linkDAO = new DocumentLinkDAO(locale, em);
@@ -1088,7 +1088,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public PathDataMaster createPathDataMaster(String workspaceId, String configurationItemId, String serialNumber, String path, List<InstanceAttribute> attributes, String noteIteration) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException {
+    public PathDataMaster createPathDataMaster(String workspaceId, String configurationItemId, String serialNumber, String path, List<InstanceAttribute> attributes, String iterationNote) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
 
@@ -1112,7 +1112,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             if (master.getPath()!= null && master.getPath().equals(path)) {
                 PathDataIteration pathDataIteration = pathDataMaster.createNextIteration();
                 pathDataIteration.setInstanceAttributes(attributes);
-                pathDataIteration.setNoteIteration(noteIteration);
+                pathDataIteration.setIterationNote(iterationNote);
                 PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(em);
                 pathDataIterationDAO.createPathDataIteration(pathDataIteration);
 
@@ -1121,7 +1121,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         }
         PathDataIteration pathDataIteration = pathDataMaster.createNextIteration();
         pathDataIteration.setInstanceAttributes(attributes);
-        pathDataIteration.setNoteIteration(noteIteration);
+        pathDataIteration.setIterationNote(iterationNote);
         PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(em);
         pathDataIterationDAO.createPathDataIteration(pathDataIteration);
         prodInstI.getPathDataMasterList().add(pathDataMaster);

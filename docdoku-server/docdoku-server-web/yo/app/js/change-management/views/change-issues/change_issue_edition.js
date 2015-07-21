@@ -134,7 +134,7 @@ function (Backbone, Mustache, template, UserList, Tag, TagView, LinkedDocumentsV
         initValue: function () {
             this.$inputIssueName.val(this.model.getName());
             this.$inputIssueInitiator.val(this.model.getInitiator());
-            this.$inputIssueDescription.val(this.model.getIterationNote());
+            this.$inputIssueDescription.val(this.model.getDescription());
         },
 
         onSubmitForm: function (e) {

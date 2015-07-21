@@ -162,7 +162,7 @@ function (Backbone, Mustache, template, ChangeOrderModel, UserList, MilestoneLis
 
         initValue: function () {
             this.$inputOrderName.val(this.model.getName());
-            this.$inputOrderDescription.val(this.model.getIterationNote());
+            this.$inputOrderDescription.val(this.model.getDescription());
         },
 
         onSubmitForm: function (e) {

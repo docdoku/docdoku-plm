@@ -54,7 +54,7 @@ public class PathDataIteration implements Serializable, FileHolder {
     private int iteration;
 
     @Lob
-    private String noteIteration;
+    private String iterationNote;
 
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date  dateIteration;
@@ -112,10 +112,6 @@ public class PathDataIteration implements Serializable, FileHolder {
         this.pathDataMaster = pathDataMaster;
     }
 
-    public String getNoteIteration() {
-        return noteIteration;
-    }
-
     public int getIteration() {
         return iteration;
     }
@@ -140,16 +136,20 @@ public class PathDataIteration implements Serializable, FileHolder {
         this.linkedDocuments = linkedDocuments;
     }
 
-    public void setNoteIteration(String noteIteration) {
-        this.noteIteration = noteIteration;
-    }
-
     public List<InstanceAttribute> getInstanceAttributes() {
         return instanceAttributes;
     }
 
     public void setInstanceAttributes(List<InstanceAttribute> instanceAttributes) {
         this.instanceAttributes = instanceAttributes;
+    }
+
+    public String getIterationNote() {
+        return iterationNote;
+    }
+
+    public void setIterationNote(String iterationNote) {
+        this.iterationNote = iterationNote;
     }
 
     @Override

@@ -59,11 +59,11 @@ define(['backbone'], function (Backbone) {
         },
 
         getIterationNote: function () {
-            return this.get('noteIteration');
+            return this.get('iterationNote');
         },
 
-        setIterationNote: function (noteIteration) {
-            this.set('noteIteration', noteIteration);
+        setIterationNote: function (iterationNote) {
+            this.set('iterationNote', iterationNote);
         },
 
         setIteration: function (iteration) {

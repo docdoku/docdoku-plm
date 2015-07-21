@@ -28,7 +28,7 @@ public class PathDataIterationCreationDTO {
     private int id;
     private String path;
     private int iteration;
-    private String noteIteration;
+    private String iterationNote;
     private PartMinimalListDTO partsPath;
     private List<String> attachedFiles;
     private Set<DocumentRevisionDTO> linkedDocuments;
@@ -65,12 +65,12 @@ public class PathDataIterationCreationDTO {
         this.iteration = iteration;
     }
 
-    public String getNoteIteration() {
-        return noteIteration;
+    public String getIterationNote() {
+        return iterationNote;
     }
 
-    public void setNoteIteration(String noteIteration) {
-        this.noteIteration = noteIteration;
+    public void setIterationNote(String iterationNote) {
+        this.iterationNote = iterationNote;
     }
 
     public PartMinimalListDTO getPartsPath() {

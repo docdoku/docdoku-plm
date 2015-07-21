@@ -30,7 +30,7 @@ public class PathDataIterationDTO {
     private String serialNumber;
     private int pathDataMasterId;
     private int iteration;
-    private String noteIteration;
+    private String iterationNote;
     private PartMinimalListDTO partsPath;
     private String path;
     private List<String> attachedFiles;
@@ -53,12 +53,12 @@ public class PathDataIterationDTO {
         this.iteration = iteration;
     }
 
-    public String getNoteIteration() {
-        return noteIteration;
+    public String getIterationNote() {
+        return iterationNote;
     }
 
-    public void setNoteIteration(String noteIteration) {
-        this.noteIteration = noteIteration;
+    public void setIterationNote(String iterationNote) {
+        this.iterationNote = iterationNote;
     }
 
     public PartMinimalListDTO getPartsPath() {

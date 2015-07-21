@@ -33,7 +33,6 @@ import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.baseline.BaselineDTO;
-import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceCreationDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceIterationDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
@@ -448,7 +447,7 @@ public class ProductInstancesResource {
         }
 
 
-        PathDataMaster pathDataMaster = productInstanceService.addNewPathDataIteration(workspaceId, configurationItemId, serialNumber, pathDataId, pathDataIterationCreationDTO.getPath(), attributes, pathDataIterationCreationDTO.getNoteIteration(), links, documentLinkComments);
+        PathDataMaster pathDataMaster = productInstanceService.addNewPathDataIteration(workspaceId, configurationItemId, serialNumber, pathDataId, pathDataIterationCreationDTO.getPath(), attributes, pathDataIterationCreationDTO.getIterationNote(), links, documentLinkComments);
         PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
@@ -505,7 +504,7 @@ public class ProductInstancesResource {
         }
 
 
-        PathDataMaster pathDataMaster = productInstanceService.createPathDataMaster(workspaceId, configurationItemId, serialNumber, path, attributes, pathDataIterationCreationDTO.getNoteIteration());
+        PathDataMaster pathDataMaster = productInstanceService.createPathDataMaster(workspaceId, configurationItemId, serialNumber, path, attributes, pathDataIterationCreationDTO.getIterationNote());
 
         PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
 
@@ -549,7 +548,7 @@ public class ProductInstancesResource {
             }
         }
 
-        PathDataMaster pathDataMaster = productInstanceService.updatePathData(workspaceId, configurationItemId, serialNumber, pathDataIterationCreationDTO.getId(),iteration, attributes, pathDataIterationCreationDTO.getNoteIteration(), links, documentLinkComments);
+        PathDataMaster pathDataMaster = productInstanceService.updatePathData(workspaceId, configurationItemId, serialNumber, pathDataIterationCreationDTO.getId(),iteration, attributes, pathDataIterationCreationDTO.getIterationNote(), links, documentLinkComments);
 
 
         PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);

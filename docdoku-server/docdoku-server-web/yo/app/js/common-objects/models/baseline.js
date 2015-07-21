@@ -15,7 +15,7 @@ define(['backbone'], function (Backbone) {
             return this.get('name');
         },
 
-        getIterationNote:function(){
+        getDescription:function(){
             return this.get('description');
         },
 
