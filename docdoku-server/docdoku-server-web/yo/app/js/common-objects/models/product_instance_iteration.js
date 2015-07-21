@@ -89,8 +89,8 @@ define(['backbone'
             return this.get('pathDataMasterList');
         },
 
-        getUsedByPaths: function () {
-            return this.get('usedByPaths');
+        getPathDataPaths: function () {
+            return this.get('pathDataPaths');
         },
 
         getAttachedFiles: function () {
