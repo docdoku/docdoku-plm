@@ -21,7 +21,7 @@
             {{^hasOneIteration}}
                 <a target="_blank" href="{{permalink}}">
             {{/hasOneIteration}}
-                    {{part.getName}} < {{part.getNumber}} >
+                    {{part.getName}} < {{part.getNumber}}-{{part.getVersion}} >
                     {{#part.isObsolete}}({{i18n.OBSOLETE}}){{/part.isObsolete}}{{#part.isReleased}}({{i18n.RELEASED}}){{/part.isReleased}}{{#part.isCheckoutByConnectedUser}}({{i18n.IN_PROGRESS}}){{/part.isCheckoutByConnectedUser}}
             {{^hasOneIteration}}
                 </a>
