@@ -22,7 +22,7 @@ define(['backbone'], function (Backbone) {
 
         getResolvedPathAsString:function(){
             return this.getResolvedPath().map(function(resolvedPath){
-                return resolvedPath.partLink.fullId
+                return resolvedPath.partLink.fullId;
             }).join('-');
         },
 

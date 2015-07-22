@@ -12,7 +12,7 @@ define(['backbone',
         },
 
         initialize: function (data) {
-            this.path = data.path; // ? data.path : '-1';
+            this.path = data.path;
             this.serialNumber = data.serialNumber;
             this.iterations = new PathDataIterations(data.pathDataIterations);
             this.iterations.setPathDataMaster(this);
@@ -26,8 +26,8 @@ define(['backbone',
 
         parse: function (data) {
             if (data) {
-                this.iterations = new ProductInstanceIterationPathList(data.pathDataIterations);
-                this.iterations.setProductInstance(this);
+                this.iterations = new PathDataIterations(data.pathDataIterations);
+                this.iterations.setPathDataMaster(this);
                 delete data.pathDataIterations;
                 return data;
             }
