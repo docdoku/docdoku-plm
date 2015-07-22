@@ -151,6 +151,13 @@ define([
                     subview.trigger('activities-order:changed');
                 });
             });
+
+            _this.listenTo(activityModel, 'destroy', function () {
+                _this.subviews = _(_this.subviews).without(activityModelEditorView);
+                _.each(_this.subviews, function (subview) {
+                    subview.trigger('activities:removed');
+                });
+            });
         },
 
         activityPositionChanged: function (oldPosition, newPosition) {

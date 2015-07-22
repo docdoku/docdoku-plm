@@ -40,6 +40,7 @@ define([
             this.model.attributes.taskModels.bind('remove', this.removeOneTask, this);
 
             this.on('activities-order:changed', this.populateRelaunchActivitySelector);
+            this.on('activities:removed', this.populateRelaunchActivitySelector);
 
         },
         render: function () {
@@ -147,6 +148,7 @@ define([
             this.model.collection.remove(this.model);
             this.unbindAllEvents();
             this.remove();
+            this.model.destroy();
         },
 
         tasksToCompleteChanged: function () {
@@ -192,7 +194,9 @@ define([
             this.model.collection.each(function (activity) {
                 var activityIndex = activity.collection.indexOf(activity);
                 if (activityIndex < modelIndex) {
-                    that.relaunchActivitySelector.append('<option value="' + activityIndex + '">' + activity.get('lifeCycleState') + '</option>');
+                    if(activity.get('lifeCycleState')){
+                        that.relaunchActivitySelector.append('<option value="' + activityIndex + '">' + activity.get('lifeCycleState') + '</option>');
+                    }
                     stepCount++;
                 }
             });
