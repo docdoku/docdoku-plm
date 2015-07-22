@@ -31,7 +31,7 @@ public class PathDataIterationDTO {
     private int pathDataMasterId;
     private int iteration;
     private String iterationNote;
-    private PartMinimalListDTO partsPath;
+    private LightPartLinkListDTO partLinksList;
     private String path;
     private List<String> attachedFiles;
     private Set<DocumentRevisionDTO> linkedDocuments;
@@ -61,12 +61,12 @@ public class PathDataIterationDTO {
         this.iterationNote = iterationNote;
     }
 
-    public PartMinimalListDTO getPartsPath() {
-        return partsPath;
+    public LightPartLinkListDTO getPartLinksList() {
+        return partLinksList;
     }
 
-    public void setPartsPath(PartMinimalListDTO partsPath) {
-        this.partsPath = partsPath;
+    public void setPartLinksList(LightPartLinkListDTO partLinksList) {
+        this.partLinksList = partLinksList;
     }
 
     public List<String> getAttachedFiles() {

@@ -59,8 +59,8 @@ define(['backbone',
             return this.get('path');
         },
 
-        getPartsPath: function () {
-            return this.get('partsPath').parts;
+        getPartLinks: function () {
+            return this.get('partLinksList').partLinks;
         },
 
         setPath: function (path) {

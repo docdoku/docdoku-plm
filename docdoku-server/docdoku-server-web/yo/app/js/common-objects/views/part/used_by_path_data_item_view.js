@@ -23,12 +23,14 @@ define([
 
             this.$el.html(Mustache.render(template, data));
 
-            var partsPath = this.model.getPartsPath();
+            var partLinks = this.model.getPartLinks();
             var $pathDescription = this.$('.path-description');
-
-            _.each(partsPath, function (part) {
-                var path = part.name ? part.name + ' < ' + part.number + ' >' : '< ' + part.number + ' >';
-                $pathDescription.append(path + ' <i class="fa fa-long-arrow-right"> ');
+            _.each(partLinks, function (partLink) {
+                var text =  partLink.name + ' < ' + partLink.number + ' >';
+                if(partLink.referenceDescription){
+                    text+=' ('+partLink.referenceDescription+')';
+                }
+                $pathDescription.append(text + ' <i class="fa fa-long-arrow-right"> ');
             });
 
             this.$('.fa.fa-long-arrow-right').last().remove();

@@ -338,12 +338,13 @@ public class ProductInstancesResource {
         PathDataMasterDTO dto = pathDataMaster == null ? new PathDataMasterDTO(path) : mapper.map(pathDataMaster, PathDataMasterDTO.class);
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
-        PartMinimalListDTO partList = new PartMinimalListDTO();
+
+        LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
         List<PartLink> partLinks = productService.decodePath(ciKey, path);
         for(PartLink partLink : partLinks){
-            partList.addPart(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
+            partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink));
         }
-        dto.setPartsPath(partList);
+        dto.setPartLinksList(partLinksList);
 
         List<InstanceAttributeDTO> attributesDTO = new ArrayList<>();
         List<InstanceAttributeTemplateDTO> attributeTemplatesDTO = new ArrayList<>();
@@ -444,12 +445,13 @@ public class ProductInstancesResource {
         PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
-        PartMinimalListDTO partList = new PartMinimalListDTO();
+
+        LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
         List<PartLink> partLinks = productService.decodePath(ciKey, pathDataIterationCreationDTO.getPath());
-        for(PartLink partLink : productService.decodePath(ciKey, pathDataIterationCreationDTO.getPath())){
-            partList.addPart(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
+        for(PartLink partLink : partLinks){
+            partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink));
         }
-        dto.setPartsPath(partList);
+        dto.setPartLinksList(partLinksList);
 
         List<InstanceAttributeDTO> attributesDTO = new ArrayList<>();
         PartLink partLink = partLinks.get(partLinks.size() - 1);
@@ -480,33 +482,19 @@ public class ProductInstancesResource {
         if (instanceAttributes != null) {
             attributes = factory.createInstanceAttributes(instanceAttributes);
         }
-        Set<DocumentRevisionDTO> linkedDocs = pathDataIterationCreationDTO.getLinkedDocuments();
-        DocumentRevisionKey[] links = null;
-        String[] documentLinkComments = null;
-        if (linkedDocs != null) {
-            documentLinkComments = new String[linkedDocs.size()];
-            links = createDocumentRevisionKeys(linkedDocs);
-            int i = 0;
-            for (DocumentRevisionDTO docRevisionForLink : linkedDocs){
-                String comment = docRevisionForLink.getCommentLink();
-                if (comment == null){
-                    comment = "";
-                }
-                documentLinkComments[i++] = comment;
-            }
-        }
-
 
         PathDataMaster pathDataMaster = productInstanceService.createPathDataMaster(workspaceId, configurationItemId, serialNumber, path, attributes, pathDataIterationCreationDTO.getIterationNote());
 
         PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
-        PartMinimalListDTO partList = new PartMinimalListDTO();
-        for(PartLink partLink : productService.decodePath(ciKey, path)){
-            partList.addPart(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
+
+        LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
+        List<PartLink> partLinks = productService.decodePath(ciKey, path);
+        for(PartLink partLink : partLinks){
+            partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink));
         }
-        dto.setPartsPath(partList);
+        dto.setPartLinksList(partLinksList);
 
         return dto;
     }
@@ -547,11 +535,13 @@ public class ProductInstancesResource {
         PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
-        PartMinimalListDTO partList = new PartMinimalListDTO();
-        for(PartLink partLink : productService.decodePath(ciKey, dto.getPath())){
-            partList.addPart(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
+
+        LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
+        List<PartLink> partLinks = productService.decodePath(ciKey, dto.getPath());
+        for(PartLink partLink : partLinks){
+            partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink));
         }
-        dto.setPartsPath(partList);
+        dto.setPartLinksList(partLinksList);
 
         return dto;
     }

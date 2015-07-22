@@ -38,10 +38,6 @@ define(['backbone'], function (Backbone) {
             this.set('path', path);
         },
 
-        getPartsPath: function(){
-            return this.get('partsPath').parts;
-        },
-
         getDescription: function(){
             return this.get('description');
         },

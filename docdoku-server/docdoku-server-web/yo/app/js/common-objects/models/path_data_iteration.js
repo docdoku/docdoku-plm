@@ -54,8 +54,8 @@ define(['backbone'], function (Backbone) {
             return this.get('serialNumber');
         },
 
-        getPartsPath: function () {
-            return this.get('partsPath').parts;
+        getPartLinks: function () {
+            return this.get('partLinksList').partLinks;
         },
 
         getIterationNote: function () {

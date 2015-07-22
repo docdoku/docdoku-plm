@@ -520,12 +520,14 @@ public class DocumentResource {
         for (PathDataMaster pathDataMaster : pathDataMasters) {
             PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
             ProductInstanceMaster productInstanceMaster = productService.findProductByPathMaster(workspaceId, pathDataMaster);
+
+            LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
             List<PartLink> partLinks = productService.decodePath(productInstanceMaster.getInstanceOf().getKey(), pathDataMaster.getPath());
-            PartMinimalListDTO partList = new PartMinimalListDTO();
-            for (PartLink partLink : partLinks) {
-                partList.addPart(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
+            for(PartLink partLink : partLinks){
+                partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink));
             }
-            dto.setPartsPath(partList);
+            dto.setPartLinksList(partLinksList);
+
             dto.setSerialNumber(productInstanceMaster.getSerialNumber());
             dtos.add(dto);
         }

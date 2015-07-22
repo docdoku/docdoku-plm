@@ -25,11 +25,11 @@ import java.util.Set;
  * @author: Chadid Asmae
  */
 public class PathDataIterationCreationDTO {
+
     private int id;
     private String path;
     private int iteration;
     private String iterationNote;
-    private PartMinimalListDTO partsPath;
     private List<String> attachedFiles;
     private Set<DocumentRevisionDTO> linkedDocuments;
     private List<InstanceAttributeDTO> instanceAttributes;
@@ -71,14 +71,6 @@ public class PathDataIterationCreationDTO {
 
     public void setIterationNote(String iterationNote) {
         this.iterationNote = iterationNote;
-    }
-
-    public PartMinimalListDTO getPartsPath() {
-        return partsPath;
-    }
-
-    public void setPartsPath(PartMinimalListDTO partsPath) {
-        this.partsPath = partsPath;
     }
 
     public List<String> getAttachedFiles() {
