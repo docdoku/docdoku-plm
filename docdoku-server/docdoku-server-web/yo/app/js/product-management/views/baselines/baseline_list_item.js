@@ -41,7 +41,10 @@ define([
         },
 
         openBaselineDetailView :function(){
-            new BaselineDetailView({model: this.model}, {productId: this.model.getConfigurationItemId()}).render();
+            var model = this.model;
+            model.fetch().success(function(){
+                new BaselineDetailView({model: model}, {productId: model.getConfigurationItemId()}).render();
+            });
         }
 
     });
