@@ -36,6 +36,9 @@ module.exports = {
         // WSDL Check
         "js/wsdl/wsdlCheck.js",
 
+        // Content Type check
+        "js/content-type/contentTypeCheck.js",
+
         // Workflow creation
         "js/change-management/role/roleCreation.js",
         "js/change-management/workflow/workflowCreation.js",

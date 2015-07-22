@@ -220,6 +220,7 @@ var urls = {
     productStructureForDeliverable: homeUrl + 'product-structure/#' + workspace + '/' + products.product1.number + '/config-spec/pi-' + productInstances.productInstance1.serialNumber + '/bom',
     documentManagement: homeUrl + 'document-management/#' + workspace,
     changeManagement: homeUrl + 'change-management/#' + workspace,
+    workspaceAdministration:homeUrl+'faces/admin/workspace/workspacesMenu.xhtml',
 
     WSDL:[
         homeUrl + 'services/product?wsdl',
