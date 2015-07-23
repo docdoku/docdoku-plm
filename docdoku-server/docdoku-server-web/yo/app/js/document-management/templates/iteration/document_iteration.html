@@ -16,6 +16,8 @@
                 <a target="_blank" href="{{permalink}}">
             {{/hasIterations}}
                     {{docRevision.title}} < {{docRevision.id}} >
+                    {{#isCheckoutByConnectedUser}}({{i18n.IN_PROGRESS}}){{/isCheckoutByConnectedUser}}
+                    {{#isLocked}}({{i18n.LOCKED}}){{/isLocked}}
             {{#hasIterations}}
                 </a>
             {{/hasIterations}}

@@ -66,6 +66,10 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 			return this.isCheckout() ? this.getCheckoutUser().login === App.config.login : false;
 		},
 
+        isLocked:function(){
+            return this.isCheckout() && !this.isCheckoutByConnectedUser();
+        },
+
 		getUrl: function () {
 			return this.url();
 		},
@@ -361,7 +365,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
             });
         }
 
-	});
+    });
 
 	return Document;
 

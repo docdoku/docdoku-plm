@@ -248,6 +248,7 @@ define({
         LINKS: "Links",
         LOADING:'Loading',
 		LOCK_ATTRIBUTES: "Freeze attributes structure",
+        LOCKED:"Locked",
 		LOGOUT: 'Logout',
 		LOOK_AT: "Look at",
 		MANAGE_PRODUCT: "Products management",

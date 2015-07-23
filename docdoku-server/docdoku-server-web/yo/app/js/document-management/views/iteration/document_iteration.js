@@ -100,6 +100,7 @@ define([
 
             var data = {
                 isCheckoutByConnectedUser: this.model.isCheckoutByConnectedUser(),
+                isLocked: this.model.isLocked(),
                 isCheckout: this.model.isCheckout(),
                 editMode: editMode,
                 docRevision: this.model.toJSON(),

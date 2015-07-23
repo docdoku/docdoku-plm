@@ -250,6 +250,7 @@ define({
     LOADING:'Chargement',
     LOCK:"Verrouiller",
 	LOCK_ATTRIBUTES: "Geler la structure des attributs",
+	LOCKED: "Verrouillé",
 	LOGOUT: 'Se déconnecter',
 	LOOK_AT: "Regarder",
 	MANAGE_PRODUCT: "Gestion des produits",
