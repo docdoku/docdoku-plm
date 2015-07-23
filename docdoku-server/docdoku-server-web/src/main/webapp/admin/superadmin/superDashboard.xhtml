@@ -66,11 +66,11 @@
         <script type="text/javascript">
 
             // Values from bean
-            var diskUsage = JSON.parse('#{superAdminStateBean.diskSpaceUsageStats}');
-            var usersStats = JSON.parse('#{superAdminStateBean.usersStats}');
-            var docsStats = JSON.parse('#{superAdminStateBean.docsStats}');
-            var productsStats = JSON.parse('#{superAdminStateBean.productsStats}');
-            var partsStats = JSON.parse('#{superAdminStateBean.partsStats}');
+            var diskUsage = #{superAdminStateBean.diskSpaceUsageStats};
+            var usersStats = #{superAdminStateBean.usersStats};
+            var docsStats = #{superAdminStateBean.docsStats};
+            var productsStats = #{superAdminStateBean.productsStats};
+            var partsStats = #{superAdminStateBean.partsStats};
 
             // Charts
             // ----------------------- DISK USAGE

@@ -87,15 +87,15 @@
         <script type="text/javascript">
 
             // Values from bean
-            var diskUsage = JSON.parse('#{adminStateBean.diskSpaceUsageStats}');
+            var diskUsage = #{adminStateBean.diskSpaceUsageStats};
             var usersCount = parseInt('#{adminStateBean.usersCount}');
             var documentsCount = parseInt('#{adminStateBean.documentsCount}');
             var productsCount = parseInt('#{adminStateBean.productsCount}');
             var partsCount = parseInt('#{adminStateBean.partsCount}');
-            var cod = JSON.parse('#{adminStateBean.checkedOutDocumentsStats}');
-            var cop = JSON.parse('#{adminStateBean.checkedOutPartsStats}');
-            var usersInWorkspace = JSON.parse('#{adminStateBean.usersInWorkspace}');
-            var usersStats = JSON.parse('#{adminStateBean.usersStats}');
+            var cod = #{adminStateBean.checkedOutDocumentsStats};
+            var cop = #{adminStateBean.checkedOutPartsStats};
+            var usersInWorkspace = #{adminStateBean.usersInWorkspace};
+            var usersStats = #{adminStateBean.usersStats};
 
             // Charts
             // ----------------------- DISK USAGE
