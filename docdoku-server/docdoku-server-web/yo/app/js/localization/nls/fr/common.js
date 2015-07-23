@@ -458,6 +458,7 @@ define({
     QUERY_DEPTH:"Profondeur",
 	READ_ONLY: "Lecture seule",
     REBASE: "Rebaser",
+    REBASE_SUCCESS: "L'exemplaire a bien été rebasé",
 	REFERENCE_HELP: "ID du document",
 	REFERENCE: "Référence",
 	REFERENCES: "Objets",

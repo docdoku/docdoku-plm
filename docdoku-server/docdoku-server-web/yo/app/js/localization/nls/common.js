@@ -462,6 +462,7 @@ define({
         QUERY_DEPTH:"Depth",
 		READ_ONLY: "Read only",
         REBASE: "Rebase",
+        REBASE_SUCCESS: "The deliverable has been rebased",
 		REFERENCE_HELP: "Document ID",
 		REFERENCE: "ID",
 		REFERENCES: "Objects",

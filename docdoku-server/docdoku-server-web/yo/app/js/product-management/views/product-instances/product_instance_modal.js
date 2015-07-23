@@ -306,7 +306,7 @@ define([
                         self.delegateEvents();
                         self.render();
                         self.activateTab(1);
-
+                        self.onRebaseSuccess();
                     });
                 },
                 error: function (errorMessage) {
@@ -317,6 +317,13 @@ define([
                 }
             });
 
+        },
+
+        onRebaseSuccess:function(){
+            this.$notifications.append(new AlertView({
+                type: 'success',
+                message: App.config.i18n.REBASE_SUCCESS
+            }).render().$el);
         },
 
         onError: function (model, error) {
