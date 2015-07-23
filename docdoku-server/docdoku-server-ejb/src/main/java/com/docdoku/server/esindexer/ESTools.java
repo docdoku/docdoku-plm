@@ -27,9 +27,17 @@ import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.xmlbeans.XmlException;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
@@ -46,10 +54,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.Scanner;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -162,7 +167,8 @@ public class ESTools {
                     strRet = new Scanner(inputStream,"UTF-8").useDelimiter("\\A").next();
                     break;
                 case ".xls":                                                                                            //MSExcelExtractor Document
-                    strRet = microsoftExelDocumentToString(inputStream);
+                case ".xlsx":                                                                                            //MSExcelExtractor Document
+                    strRet = microsoftExcelDocumentToString(inputStream);
                     break;
                 case ".pdf":                                                                                            // PDF Document
                     strRet = pdfDocumentToString(inputStream, fullName);
@@ -176,7 +182,7 @@ public class ESTools {
                 default:
                     break;
             }
-        } catch (ParserConfigurationException |SAXException|IOException ex) {
+        } catch (Exception ex) {
             LOGGER.log(Level.WARNING, "The file " + fullName + " can't be indexed.",ex);
         }
         return strRet;
@@ -238,10 +244,33 @@ public class ESTools {
         return strRet;
     }
 
-    private static String microsoftExelDocumentToString(InputStream inputStream) throws IOException {
-        POIFSFileSystem excelStream = new POIFSFileSystem(inputStream);
-        ExcelExtractor excelExtractor= new ExcelExtractor(excelStream);
-        return excelExtractor.getText();
+    private static String microsoftExcelDocumentToString(InputStream inputStream) throws IOException, OpenXML4JException, XmlException {
+        StringBuilder sb = new StringBuilder();
+        if(POIFSFileSystem.hasPOIFSHeader(inputStream)){ // Before 2007 format files
+            POIFSFileSystem excelStream = new POIFSFileSystem(inputStream);
+            ExcelExtractor excelExtractor= new ExcelExtractor(excelStream);
+            sb.append(excelExtractor.getText());
+        }else{ // New format
+            XSSFWorkbook workBook = new XSSFWorkbook(inputStream);
+            int numberOfSheets = workBook.getNumberOfSheets();
+            for(int i = 0; i < numberOfSheets; i++){
+                XSSFSheet sheet = workBook.getSheetAt(0);
+                Iterator<Row> rowIterator = sheet.rowIterator();
+                while(rowIterator.hasNext()) {
+                    XSSFRow row = (XSSFRow) rowIterator.next();
+                    Iterator<Cell> cellIterator = row.cellIterator();
+                    while (cellIterator.hasNext()) {
+                        XSSFCell cell = (XSSFCell) cellIterator.next();
+                        sb.append(cell.toString());
+                        sb.append(" ");
+                    }
+                    sb.append("\n");
+                }
+                sb.append("\n");
+            }
+
+        }
+        return sb.toString();
     }
 
     private static String pdfDocumentToString(InputStream inputStream, String fullName) throws IOException {
