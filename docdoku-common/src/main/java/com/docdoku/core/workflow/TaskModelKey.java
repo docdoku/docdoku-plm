@@ -31,16 +31,16 @@ public class TaskModelKey implements Serializable {
 
     private String workspaceId;
     private String workflowModelId;
-    private int activityModelStep;
+    private int activityModelId;
     private int num;
     
     public TaskModelKey() {
     }
     
-    public TaskModelKey(String pWorkspaceId, String pWorkflowModelId, int pActivityModelStep, int pNum) {
+    public TaskModelKey(String pWorkspaceId, String pWorkflowModelId, int pActivityModelId, int pNum) {
         workspaceId=pWorkspaceId;
         workflowModelId=pWorkflowModelId;
-        activityModelStep=pActivityModelStep;
+        activityModelId=pActivityModelId;
         num=pNum;
     }
     
@@ -49,7 +49,7 @@ public class TaskModelKey implements Serializable {
         int hash = 1;
         hash = 31 * hash + workspaceId.hashCode();
         hash = 31 * hash + workflowModelId.hashCode();
-        hash = 31 * hash + activityModelStep;
+        hash = 31 * hash + activityModelId;
         hash = 31 * hash + num;
         return hash;
     }
@@ -65,17 +65,13 @@ public class TaskModelKey implements Serializable {
         TaskModelKey key = (TaskModelKey) pObj;
         return key.workspaceId.equals(workspaceId) &&
                key.workflowModelId.equals(workflowModelId) &&
-               key.activityModelStep==activityModelStep &&
+               key.activityModelId==activityModelId &&
                key.num==num;
     }
     
     @Override
     public String toString() {
-        return workspaceId + "-" + workflowModelId + "-" + activityModelStep + "-" + num;
-    }
-
-    public int getActivityModelStep() {
-        return activityModelStep;
+        return workspaceId + "-" + workflowModelId + "-" + activityModelId + "-" + num;
     }
 
     public String getWorkflowModelId() {
@@ -84,10 +80,6 @@ public class TaskModelKey implements Serializable {
 
     public String getWorkspaceId() {
         return workspaceId;
-    }
-
-    public void setActivityModelStep(int activityModelStep) {
-        this.activityModelStep = activityModelStep;
     }
 
     public void setWorkflowModelId(String pWorkflowModelId) {
@@ -103,5 +95,13 @@ public class TaskModelKey implements Serializable {
     }
     public void setNum(int num) {
         this.num = num;
+    }
+
+    public int getActivityModelId() {
+        return activityModelId;
+    }
+
+    public void setActivityModelId(int activityModelId) {
+        this.activityModelId = activityModelId;
     }
 }

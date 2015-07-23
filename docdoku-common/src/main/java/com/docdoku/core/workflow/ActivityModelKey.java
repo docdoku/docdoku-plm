@@ -30,26 +30,26 @@ public class ActivityModelKey implements Serializable {
     
     private String workspaceId;
     private String workflowModelId;
-    private int step;
+    private int id;
     
     public ActivityModelKey() {
     }
     
-    public ActivityModelKey(String pWorkspaceId, String pWorkflowModelId, int pStep) {
+    public ActivityModelKey(String pWorkspaceId, String pWorkflowModelId, int pActivityModelId) {
         workspaceId=pWorkspaceId;
         workflowModelId=pWorkflowModelId;
-        step=pStep;
+        id=pActivityModelId;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 1;
         hash = 31 * hash + workspaceId.hashCode();
         hash = 31 * hash + workflowModelId.hashCode();
-        hash = 31 * hash + step;
+        hash = 31 * hash + id;
         return hash;
     }
-    
+
     @Override
     public boolean equals(Object pObj) {
         if (this == pObj) {
@@ -61,12 +61,12 @@ public class ActivityModelKey implements Serializable {
         ActivityModelKey key = (ActivityModelKey) pObj;
         return key.workflowModelId.equals(workflowModelId) &&
                key.workspaceId.equals(workspaceId) &&
-               key.step==step;
+               key.id==id;
     }
     
     @Override
     public String toString() {
-        return workspaceId + "-" + workflowModelId + "-" + step;
+        return workspaceId + "-" + workflowModelId + "-" + id;
     }
     
     public String getWorkspaceId() {
@@ -84,12 +84,12 @@ public class ActivityModelKey implements Serializable {
     public void setWorkflowModelId(String pWorkflowModelId) {
         workflowModelId = pWorkflowModelId;
     }
-    
-    public int getStep(){
-        return step;
+
+    public int getId() {
+        return id;
     }
-    
-    public void setStep(int pStep){
-        step=pStep;
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

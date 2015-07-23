@@ -44,6 +44,9 @@ import java.util.Map;
 @Entity
 public abstract class ActivityModel implements Serializable, Cloneable {
 
+    @javax.persistence.Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumns({
@@ -55,8 +58,7 @@ public abstract class ActivityModel implements Serializable, Cloneable {
     @OneToMany(mappedBy = "activityModel", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @OrderBy("num")
     protected List<TaskModel> taskModels=new LinkedList<>();
-    
-    @javax.persistence.Id
+
     protected int step;
     
     @javax.persistence.Column(name = "WORKFLOWMODEL_ID", length=100, nullable = false, insertable = false, updatable = false)
@@ -71,12 +73,12 @@ public abstract class ActivityModel implements Serializable, Cloneable {
     @JoinTable (
             name="ACTIVITYMODEL_RELAUNCH",
             joinColumns={
-                    @JoinColumn(name="ACTIVITYMODEL_STEP", referencedColumnName="STEP"),
+                    @JoinColumn(name="ACTIVITYMODEL_ID", referencedColumnName="ID"),
                     @JoinColumn(name="WORKFLOWMODEL_ID", referencedColumnName="WORKFLOWMODEL_ID"),
                     @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
             },
             inverseJoinColumns={
-                    @JoinColumn(name="RELAUNCHACTIVITYMODEL_STEP", referencedColumnName="STEP"),
+                    @JoinColumn(name="RELAUNCHACTIVITYMODEL_ID", referencedColumnName="ID"),
                     @JoinColumn(name="RELAUNCHWORKFLOWMODEL_ID", referencedColumnName="WORKFLOWMODEL_ID"),
                     @JoinColumn(name="RELAUNCHWORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
             }
@@ -107,7 +109,7 @@ public abstract class ActivityModel implements Serializable, Cloneable {
         ActivityModelKey key = new ActivityModelKey();
         key.setWorkspaceId(workspaceId);
         key.setWorkflowModelId(workflowModelId);
-        key.setStep(step);
+        key.setId(id);
         return key;
 
     }
@@ -123,7 +125,14 @@ public abstract class ActivityModel implements Serializable, Cloneable {
         return lifeCycleState;
     }
 
-    
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void setTaskModels(List<TaskModel> taskModels) {
         this.taskModels = taskModels;
     }
