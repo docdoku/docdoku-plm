@@ -1,4 +1,4 @@
-/*global casper,urls*/
+/*global casper,urls,homeUrl*/
 
 casper.test.begin('Content type check tests suite', 6, function contentTypeCheckTestsSuite() {
 
