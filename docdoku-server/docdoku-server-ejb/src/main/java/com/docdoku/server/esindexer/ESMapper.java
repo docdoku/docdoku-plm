@@ -210,6 +210,7 @@ public class ESMapper {
             params.put(ATTRIBUTES_KEY, listAttributes);
             for (InstanceAttribute attr : listAttr) {
                 Map<String,Object> attributesParams = new HashMap<>();
+                listAttributes.add(attributesParams);
                 setParam(attributesParams, ATTRIBUTE_NAME, attr.getNameWithoutWhiteSpace(), 0.6f);
                 setParam(attributesParams, ATTRIBUTE_VALUE, "" + attr.getValue(), 0.6f);
             }
@@ -347,6 +348,7 @@ public class ESMapper {
             params.put(ATTRIBUTES_KEY, listAttributes);
             for (InstanceAttribute attr : listAttr) {
                 Map<String,Object> attributesParams = new HashMap<>();
+                listAttributes.add(attributesParams);
                 setParam(attributesParams, ATTRIBUTE_NAME, attr.getNameWithoutWhiteSpace(), 0.6f);
                 setParam(attributesParams, ATTRIBUTE_VALUE, "" + attr.getValue(), 0.6f);
             }
