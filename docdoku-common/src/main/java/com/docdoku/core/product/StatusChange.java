@@ -13,7 +13,7 @@ import java.util.Date;
 public class StatusChange implements Serializable{
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumns({
             @JoinColumn(name="USER_LOGIN", referencedColumnName = "LOGIN"),
             @JoinColumn(name="USER_WORKSPACE",referencedColumnName = "WORKSPACE_ID")})

@@ -31,7 +31,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * @author: Chadid Asmae
+ * @author Chadid Asmae
  */
 @Table(name="PATHDATAITERATION")
 @Entity

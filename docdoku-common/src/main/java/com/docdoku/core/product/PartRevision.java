@@ -153,7 +153,6 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
                     name="statusModificationDate",
                     column=@Column(name="RELEASED_DATE"))
     })
-
     @AssociationOverrides({
             @AssociationOverride(
                     name="statusChangeAuthor",
@@ -170,7 +169,6 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
                     name="statusModificationDate",
                     column=@Column(name="OBSOLETE_DATE"))
     })
-
     @AssociationOverrides({
             @AssociationOverride(
                     name="statusChangeAuthor",
