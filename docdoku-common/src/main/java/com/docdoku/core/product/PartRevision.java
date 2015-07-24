@@ -168,15 +168,15 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
     @AttributeOverrides({
             @AttributeOverride(
                     name="statusModificationDate",
-                    column=@Column(name="OBSELETE_DATE"))
+                    column=@Column(name="OBSOLETE_DATE"))
     })
 
     @AssociationOverrides({
             @AssociationOverride(
                     name="statusChangeAuthor",
                     joinColumns={
-                            @JoinColumn(name="OBSELETE_USER_LOGIN", referencedColumnName = "LOGIN"),
-                            @JoinColumn(name="OBSELETE_USER_WORKSPACE", referencedColumnName = "WORKSPACE_ID")
+                            @JoinColumn(name="OBSOLETE_USER_LOGIN", referencedColumnName = "LOGIN"),
+                            @JoinColumn(name="OBSOLETE_USER_WORKSPACE", referencedColumnName = "WORKSPACE_ID")
                     })
     })
     private StatusChange obsoleteStatusChange;
