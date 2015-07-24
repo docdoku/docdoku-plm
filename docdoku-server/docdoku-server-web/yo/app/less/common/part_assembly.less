@@ -1,0 +1,248 @@
+#iteration-components {
+
+    min-height: 250px;
+
+    input#create-part-revision-as-part-usage-link,
+    input#create-part-revision-as-part-substitute-link {
+        float: left;
+    }
+
+    input#part-usage-link-type-ahead,
+    input#part-substitute-link-type-ahead {
+        float: right;
+    }
+
+    .create-part-usage-link-menu{
+        display: block;
+    }
+    .create-part-substitute-link-menu{
+        display: none;
+    }
+    &.component-selected{
+        .create-part-usage-link-menu{
+            display: none;
+        }
+        .create-part-substitute-link-menu{
+            display: block;
+        }
+    }
+
+    .components{
+        margin-top: 20px;
+    }
+
+    .component {
+
+        border: 2px solid transparent;
+        border-radius:2px;
+        position: relative;
+        float: left;
+        padding: 9px;
+        width: 95%;
+        margin-bottom: 4px;
+
+        &.part-substitute-link {
+            width: 86%;
+            display: inline-block;
+            border: 1px dashed #a1a0a0;
+            background-color: rgba(237, 237, 237, 0.61);
+            margin: 0 22px;
+        }
+
+        &:hover {
+            background-color: rgba(193, 193, 193, 0.61);
+            cursor: pointer;
+        }
+
+        &.selected {
+            opacity: 1;
+            background-color: rgba(193, 193, 193, 0.61);
+            border: 2px dashed #ACACAC;
+            box-shadow: none;
+        }
+
+        a.part-substitute-links-count{
+            display:table;
+            margin: 8px 0 0 22px;
+        }
+
+        a.remove, a.removeSub {
+
+            margin: 5px;
+            float: left;
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 18px;
+            color: #000000;
+            text-shadow: 0 1px 0 #ffffff;
+            opacity: 0.2;
+
+            &:hover {
+                text-decoration: none;
+                color: #F00;
+                opacity: 1;
+                cursor: hand;
+            }
+        }
+
+        input {
+
+            &[name="number"] {
+                width: 160px;
+            }
+
+            &[name="name"] {
+                width: 160px;
+            }
+
+            &[name="amount"] {
+                margin-top: 8px;
+                width: 61px;
+            }
+
+            &[name="reference-description"] {
+                margin: 8px 0 0 22px;
+                width: 160px;
+            }
+
+            &[name="optional" ] {
+                margin: -1px 10px 0 5px;
+            }
+
+        }
+
+        .selectize-control{
+            display: inline-block;
+            margin-bottom: 0;
+            vertical-align: middle;
+            width: 61px;
+            margin-top: 14px;
+            >div{
+                padding: 4px;
+            }
+           .selectize-input:after{
+                right: 6px;
+            }
+        }
+
+        label {
+            &[name="optional"] {
+                display: inline;
+                vertical-align: middle;
+                padding-right: 15px;
+            }
+        }
+
+        >.toggle-cad-instances {
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0.5;
+            position: absolute;
+            bottom: 8px;
+            right: 12px;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+
+        .add-cad-instance, .remove-cad-instance {
+            margin: 0 0 0 10px;
+            opacity: 0.4;
+            &:hover {
+                cursor: pointer;
+                opacity: 1;
+            }
+        }
+
+        &.cad-instances-opened{
+            >.cad-instances{
+                display: inline-table;
+            }
+            >.toggle-cad-instances{
+                transform: rotate(180deg);
+            }
+        }
+
+        >.part-substitute-links{
+            display: none;
+        }
+
+        &.substitutes-opened{
+            >.part-substitute-links{
+                display: block;
+            }
+        }
+
+        >.cad-instances {
+
+            margin: 10px 0 0 21px;
+            clear: both;
+            display: none;
+
+            .cad-instance {
+                cursor: pointer;
+                h5 {
+                    font-weight: normal;
+                    cursor: not-allowed;
+                }
+                float: left;
+                clear: both;
+                .coord-group {
+                    float: left;
+                    width: 45%;
+                    input.coord {
+                        width: 22%;
+                    }
+                    select {
+                        width: 90%;
+                    }
+                    .delete-cad-instance {
+                        margin-top: 42px;
+                        float: left;
+                        cursor: pointer;
+                        opacity: 0.5;
+                        &:hover {
+                            opacity: 1;
+                        }
+                    }
+                }
+                .coord-group-remove {
+                    width: 10%;
+                    margin-top: 4px;
+                }
+
+                &:only-child {
+                    .delete-cad-instance {
+                        display: none;
+                    }
+                }
+            }
+        }
+
+    }
+
+    .tooltip {
+        position: relative;
+        color: rgba(0, 0, 0, 0.4);
+        margin-right: 5px;
+        font-size: 14px;
+        text-decoration: none;
+        opacity: 1;
+    }
+
+    .tooltip:hover:after {
+        background: #333;
+        background: rgba(0, 0, 0, .8);
+        border-radius: 5px;
+        bottom: 26px;
+        color: #fff;
+        content: attr(data-tooltip);
+        left: 20%;
+        padding: 5px 15px;
+        position: absolute;
+        z-index: 98;
+        width: 220px;
+    }
+
+}

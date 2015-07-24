@@ -43,7 +43,7 @@ casper.test.begin('Assembly creation tests suite', 13, function assemblyCreation
      * Wait the modal
      */
     casper.then(function waitForPartModal() {
-        var modalTab = '#part-modal .tabs li a[href="#tab-part-sub-parts"]';
+        var modalTab = '#part-modal .tabs li a[href="#tab-assembly"]';
         this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
@@ -56,7 +56,7 @@ casper.test.begin('Assembly creation tests suite', 13, function assemblyCreation
      * Wait the modal tab
      */
     casper.then(function waitForPartModalTab() {
-        this.waitForSelector('#part-modal #existingParts', function tabSelected() {
+        this.waitForSelector('#part-modal #tab-assembly .components', function tabSelected() {
             this.test.assert(true, 'Assembly tab opened');
         }, function fail() {
             this.capture('screenshot/assemblyCreation/waitForPartModalTab-error.png');
@@ -73,12 +73,12 @@ casper.test.begin('Assembly creation tests suite', 13, function assemblyCreation
     partNumbers.forEach(function (partNumber) {
         casper.then(function createNewParts() {
 
-            this.click('#part-modal #createPart');
+            this.click('#part-modal #create-part-revision-as-part-usage-link');
 
-            var element = '#part-modal #iteration-components > div:last-child';
+            var element = '#part-modal #tab-assembly .components .component:last-child';
 
             // Expand view
-            this.click(element + ' .collapse-subParts-cadInstances');
+            this.click(element + ' .toggle-cad-instances');
 
             // Fill coordinates
             this.sendKeys(element + ' input[name="number"]', partNumber, {reset: true});

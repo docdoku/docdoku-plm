@@ -7,7 +7,7 @@ define([
     'text!common-objects/templates/part/part_modal.html',
     'common-objects/views/attributes/attributes',
     'common-objects/views/attributes/template_new_attributes',
-    'common-objects/views/part/parts_management_view',
+    'common-objects/views/part/part_assembly_view',
     'common-objects/views/part/modification_notification_group_list_view',
     'common-objects/views/linked/linked_documents',
     'common-objects/views/part/used_by_view',
@@ -19,11 +19,14 @@ define([
     'common-objects/utils/date',
     'common-objects/views/tags/tag',
     'common-objects/models/tag'
-], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, TemplateNewAttributesView, PartsManagementView, ModificationNotificationGroupListView, LinkedDocumentsView, UsedByView, AlertView, LinkedDocumentCollection, LinkedDocumentIterationCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
+], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, TemplateNewAttributesView, PartAssemblyView, ModificationNotificationGroupListView, LinkedDocumentsView, UsedByView, AlertView, LinkedDocumentCollection, LinkedDocumentIterationCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
+
     'use strict';
+
     var PartModalView = ModalView.extend({
 
         initialize: function () {
+
             this.iterations = this.model.getIterations();
             this.iteration = this.options.iteration ? this.iterations.get(this.options.iteration) : this.model.getLastIteration();
             this.productId = this.options.productId;
@@ -140,7 +143,7 @@ define([
                 this.initCadFileUploadView();
                 this.initAttachedFilesUploadView();
                 this.initAttributesView();
-                this.initPartsManagementView();
+                this.initPartAssemblyView();
                 this.initLinkedDocumentsView();
                 this.initUsedByView();
                 this.initLifeCycleView();
@@ -203,10 +206,12 @@ define([
             } else {
                 this.iteration.set('nativeCADFile', '');
             }
+
             var that = this;
+
             this.iteration.save({
                 iterationNote: this.$inputIterationNote.val(),
-                components: this.partsManagementView.collection.toJSON(),
+                components: this.partAssemblyView.collection.toJSON(),
                 instanceAttributes: this.attributesView.collection.toJSON(),
                 instanceAttributeTemplates: this.attributeTemplatesView.collection.toJSON(),
                 linkedDocuments: this.linkedDocumentsView.collection.toJSON()
@@ -274,13 +279,11 @@ define([
             this.conversionStatusView.launch();
         },
 
-        initPartsManagementView: function () {
-            this.partsManagementView = new PartsManagementView({
+        initPartAssemblyView: function () {
+            this.partAssemblyView = new PartAssemblyView({
                 el: '#iteration-components',
                 collection: new Backbone.Collection(this.iteration.getComponents()),
                 editMode: this.editMode,
-                isReleased:this.isReleased,
-                isCheckout: this.isCheckout,
                 model: this.model
             }).render();
         },
@@ -449,7 +452,7 @@ define([
             var that = this;
             this.iteration.save({
                     iterationNote: this.$inputIterationNote.val() || null,
-                    components: this.partsManagementView.collection.toJSON(),
+                    components: this.partAssemblyView.collection.toJSON(),
                     instanceAttributes: this.attributesView.collection.toJSON(),
                     instanceAttributeTemplates: this.attributeTemplatesView.collection.toJSON(),
                     linkedDocuments: this.linkedDocumentsView.collection.toJSON()

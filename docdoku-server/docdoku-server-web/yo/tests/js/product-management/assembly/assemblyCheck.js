@@ -43,7 +43,7 @@ casper.test.begin('Assembly check tests suite', 29, function assemblyCheckTestsS
      * Wait the modal
      */
     casper.then(function waitForPartModal() {
-        var modalTab = '#part-modal .tabs li a[href="#tab-part-sub-parts"]';
+        var modalTab = '#part-modal .tabs li a[href="#tab-assembly"]';
         this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
@@ -77,15 +77,17 @@ casper.test.begin('Assembly check tests suite', 29, function assemblyCheckTestsS
     partNumbers.forEach(function (partNumber) {
         casper.then(function checkUsageLink() {
 
-            this.test.assertExists('.component[data-part-number="' + partNumber + '"]', 'Part ' + partNumber + ' is in the assembly');
+            var element = '.component input[name="number"][value="' + partNumber + '"]';
 
-            this.test.assertExists('.component[data-part-number="' + partNumber + '"] .coord[name="tx"][value="' + parts[partNumber].tx + '"]', 'Tx OK');
-            this.test.assertExists('.component[data-part-number="' + partNumber + '"] .coord[name="ty"][value="' + parts[partNumber].ty + '"]', 'Ty OK');
-            this.test.assertExists('.component[data-part-number="' + partNumber + '"] .coord[name="tz"][value="' + parts[partNumber].tz + '"]', 'Tz OK');
+            this.test.assertExists(element, 'Part ' + partNumber + ' is in the assembly');
 
-            this.test.assertExists('.component[data-part-number="' + partNumber + '"] .coord[name="rx"][value="' + parts[partNumber].rx + '"]', 'Rx OK');
-            this.test.assertExists('.component[data-part-number="' + partNumber + '"] .coord[name="ry"][value="' + parts[partNumber].ry + '"]', 'Ry OK');
-            this.test.assertExists('.component[data-part-number="' + partNumber + '"] .coord[name="rz"][value="' + parts[partNumber].rz + '"]', 'Rz OK');
+            this.test.assertExists(element + ' ~ .cad-instances .cad-instance .coord-group .coord[name="tx"][value="' + parts[partNumber].tx + '"]', 'Tx OK');
+            this.test.assertExists(element + ' ~ .cad-instances .cad-instance .coord-group .coord[name="ty"][value="' + parts[partNumber].ty + '"]', 'Ty OK');
+            this.test.assertExists(element + ' ~ .cad-instances .cad-instance .coord-group .coord[name="tz"][value="' + parts[partNumber].tz + '"]', 'Tz OK');
+
+            this.test.assertExists(element + ' ~ .cad-instances .cad-instance .coord-group .coord[name="rx"][value="' + parts[partNumber].rx + '"]', 'Rx OK');
+            this.test.assertExists(element + ' ~ .cad-instances .cad-instance .coord-group .coord[name="ry"][value="' + parts[partNumber].ry + '"]', 'Ry OK');
+            this.test.assertExists(element + ' ~ .cad-instances .cad-instance .coord-group .coord[name="rz"][value="' + parts[partNumber].rz + '"]', 'Rz OK');
 
         });
     });
