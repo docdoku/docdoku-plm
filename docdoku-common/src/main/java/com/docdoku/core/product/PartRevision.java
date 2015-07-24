@@ -145,6 +145,42 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
 
     private RevisionStatus status=RevisionStatus.WIP;
 
+
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(
+                    name="statusModificationDate",
+                    column=@Column(name="RELEASED_DATE"))
+    })
+
+    @AssociationOverrides({
+            @AssociationOverride(
+                    name="statusChangeAuthor",
+                    joinColumns={
+                            @JoinColumn(name="RELEASED_USER_LOGIN", referencedColumnName = "LOGIN"),
+                            @JoinColumn(name="RELEASED_USER_WORKSPACE", referencedColumnName = "WORKSPACE_ID")
+                    })
+    })
+    private StatusChange releaseStatusChange;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(
+                    name="statusModificationDate",
+                    column=@Column(name="OBSOLETE_DATE"))
+    })
+
+    @AssociationOverrides({
+            @AssociationOverride(
+                    name="statusChangeAuthor",
+                    joinColumns={
+                            @JoinColumn(name="OBSOLETE_USER_LOGIN", referencedColumnName = "LOGIN"),
+                            @JoinColumn(name="OBSOLETE_USER_WORKSPACE", referencedColumnName = "WORKSPACE_ID")
+                    })
+    })
+    private StatusChange obsoleteStatusChange;
+
     public enum RevisionStatus {
         WIP, RELEASED, OBSOLETE
     }
@@ -416,32 +452,69 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
     public boolean isObsolete(){
         return status==RevisionStatus.OBSOLETE;
     }
-    public boolean release(){
+    public boolean release(User user){
         if(this.status==RevisionStatus.WIP){
             this.status=RevisionStatus.RELEASED;
+            StatusChange statusChange = new StatusChange();
+            statusChange.setStatusChangeAuthor(user);
+            statusChange.setStatusModificationDate(new Date());
+            this.setReleaseStatusChange(statusChange);
             return true;
         }else{
             return false;
         }
 
     }
-    public boolean markAsObsolete(){
+    public boolean markAsObsolete(User user){
         if(this.status==RevisionStatus.RELEASED){
             this.status=RevisionStatus.OBSOLETE;
+            StatusChange statusChange = new StatusChange();
+            statusChange.setStatusChangeAuthor(user);
+            statusChange.setStatusModificationDate(new Date());
+            this.setObsoleteStatusChange(statusChange);
             return true;
         }else{
             return false;
         }
 
     }
-
-
 
     public boolean isAttributesLocked(){
         if (this.partMaster != null){
             return this.partMaster.isAttributesLocked();
         }
         return false;
+    }
+
+    public StatusChange getObsoleteStatusChange() {
+        return obsoleteStatusChange;
+    }
+
+    public void setObsoleteStatusChange(StatusChange statusChange) {
+        this.obsoleteStatusChange = statusChange;
+    }
+
+    public StatusChange getReleaseStatusChange() {
+        return releaseStatusChange;
+    }
+
+    public void setReleaseStatusChange(StatusChange statusChange) {
+        this.releaseStatusChange = statusChange;
+    }
+
+    public String getObsoleteAuthor() {
+        return obsoleteStatusChange == null ? null : obsoleteStatusChange.getStatusChangeAuthor().getLogin();
+    }
+
+    public Date getObseleteDate() {
+        return obsoleteStatusChange == null ? null : obsoleteStatusChange.getStatusModificationDate();
+    }
+    public String getReleaseAuthor() {
+        return releaseStatusChange == null ? null : releaseStatusChange.getStatusChangeAuthor().getLogin();
+    }
+
+    public Date getReleaseDate() {
+        return releaseStatusChange == null ? null : releaseStatusChange.getStatusModificationDate();
     }
 
     @Override

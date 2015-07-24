@@ -141,6 +141,30 @@
                                 <ul class="help-inline master-tags-list unstyled"></ul>
                             </div>
                         </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.RELEASE_AUTHOR}}</label>
+                            <div class="controls">
+                                <span class="help-inline"><a class="author-popover">{{part.getReleaseAuthor}}</a></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.RELEASE_DATE}}</label>
+                            <div class="controls">
+                                <span class="help-inline"><a class="date-popover">{{part.getReleaseDate}}</a></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.OBSOLETE_AUTHOR}}</label>
+                            <div class="controls">
+                                <span class="help-inline"><a class="author-popover">{{part.getObsoleteAuthor}}</a></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.OBSOLETE_DATE}}</label>
+                            <div class="controls">
+                                <span class="help-inline"><a class="date-popover">{{part.getObsoleteDate}}</a></span>
+                            </div>
+                        </div>
                     </div>
 
                     {{#hasIterations}}
