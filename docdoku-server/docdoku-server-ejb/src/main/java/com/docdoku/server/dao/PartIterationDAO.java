@@ -21,6 +21,7 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.exceptions.PartIterationNotFoundException;
+import com.docdoku.core.meta.ListOfValuesKey;
 import com.docdoku.core.product.*;
 
 import javax.persistence.EntityManager;
@@ -100,5 +101,10 @@ public class PartIterationDAO {
     }
 
 
-
+    public List<PartIteration> findAllPartIterationFromLOV(ListOfValuesKey lovKey) {
+        return em.createNamedQuery("PartIteration.findWhereLOV", PartIteration.class)
+                .setParameter("lovName", lovKey.getName())
+                .setParameter("workspace_id", lovKey.getWorkspaceId())
+                .getResultList();
+    }
 }

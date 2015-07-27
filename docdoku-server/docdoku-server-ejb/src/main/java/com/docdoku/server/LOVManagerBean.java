@@ -26,15 +26,13 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.ListOfValues;
 import com.docdoku.core.meta.ListOfValuesKey;
 import com.docdoku.core.meta.NameValuePair;
+import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ILOVManagerLocal;
 import com.docdoku.core.services.ILOVManagerWS;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.server.dao.DocumentMasterTemplateDAO;
-import com.docdoku.server.dao.LOVDAO;
-import com.docdoku.server.dao.PartMasterTemplateDAO;
-import com.docdoku.server.dao.WorkspaceDAO;
+import com.docdoku.server.dao.*;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -111,11 +109,11 @@ public class LOVManagerBean implements ILOVManagerLocal, ILOVManagerWS {
         Locale locale = new Locale(user.getLanguage());
         LOVDAO lovDAO = new LOVDAO(locale,em);
 
-        if (this.isLovUsedInDocument(lovKey)){
+        if (this.isLovUsedInDocumentMasterTemplate(lovKey)){
             throw new EntityConstraintException(locale,"EntityConstraintException14");
         }
 
-        if (this.isLovUsedInPart(lovKey)){
+        if (this.isLovUsedInPartMasterTemplate(lovKey)){
             throw new EntityConstraintException(locale,"EntityConstraintException15");
         }
 
@@ -140,10 +138,10 @@ public class LOVManagerBean implements ILOVManagerLocal, ILOVManagerWS {
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public boolean isLOVDeletable(ListOfValuesKey lovKey){
-        return !this.isLovUsedInDocument(lovKey) && !this.isLovUsedInPart(lovKey);
+        return !isLovUsedInDocumentMasterTemplate(lovKey) && !isLovUsedInPartMasterTemplate(lovKey) && !isLovUsedInPartIterationInstanceAttributeTemplates(lovKey);
     }
 
-    private boolean isLovUsedInDocument(ListOfValuesKey lovKey){
+    private boolean isLovUsedInDocumentMasterTemplate(ListOfValuesKey lovKey){
         DocumentMasterTemplateDAO documentMasterTemplateDAO = new DocumentMasterTemplateDAO(em);
 
         List<DocumentMasterTemplate> documentsUsingLOV = documentMasterTemplateDAO.findAllDocMTemplatesFromLOV(lovKey);
@@ -154,7 +152,7 @@ public class LOVManagerBean implements ILOVManagerLocal, ILOVManagerWS {
         return false;
     }
 
-    private boolean isLovUsedInPart(ListOfValuesKey lovKey){
+    private boolean isLovUsedInPartMasterTemplate(ListOfValuesKey lovKey){
         PartMasterTemplateDAO partMasterTemplateDAO = new PartMasterTemplateDAO(em);
 
         List<PartMasterTemplate> partsUsingLOV = partMasterTemplateDAO.findAllPartMTemplatesFromLOV(lovKey);
@@ -165,5 +163,15 @@ public class LOVManagerBean implements ILOVManagerLocal, ILOVManagerWS {
         return false;
     }
 
+    private boolean isLovUsedInPartIterationInstanceAttributeTemplates(ListOfValuesKey lovKey){
+        PartIterationDAO partIterationDAO = new PartIterationDAO(em);
+
+        List<PartIteration> partsUsingLOV = partIterationDAO.findAllPartIterationFromLOV(lovKey);
+        if (partsUsingLOV != null && !partsUsingLOV.isEmpty()){
+            return true;
+        }
+
+        return false;
+    }
 
 }
