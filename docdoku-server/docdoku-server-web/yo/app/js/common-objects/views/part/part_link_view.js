@@ -15,7 +15,7 @@ define([
             'change >input[name=reference-description]': 'changeReferenceDescription',
             'change >input[name=number]': 'changeNumber',
             'change >input[name=name]': 'changeName',
-            'change >input[name=optional]': 'changeIsOptional',
+            'change >label>input[name=optional]': 'changeIsOptional',
             'change >input[name=unit]': 'changeUnit',
             'click >.add-cad-instance': 'onAddCadInstance',
             'click >.remove-cad-instance': 'onRemoveCadInstance',
@@ -37,7 +37,7 @@ define([
             this.component = this.getComponent();
 
             var disabled = this.options.editMode ? '':'disabled';
-            var optionalChecked = this.options.optional ? 'checked':'';
+            var optionalChecked = this.model.get('optional') ? 'checked':'';
             var componentDisabled = this.component.number ? 'disabled':'';
 
             this.$el.html(Mustache.render(template, {
@@ -57,7 +57,7 @@ define([
             this.$('>[name=unit]').selectize({
                 create: true,
                 onChange:this.changeUnit.bind(this)
-            })[0].selectize.setValue(this.model.get('unit'));
+            })[0].selectize.setValue(this.model.get('unit'), true);
 
             this.updateCadInstancesCount();
             this.updateAmountField();
@@ -70,6 +70,7 @@ define([
         },
 
         onModelChanged:function(){
+            console.log('changed')
             this.model.set('id',0,{silent:true});
         },
 
@@ -161,7 +162,7 @@ define([
         },
 
         removeAllCadInstances:function(){
-            this.model.set('substitutes',[]);
+            this.model.set('cadInstances',[]);
             this.$('>.cad-instances .cad-instance').remove();
         },
 
