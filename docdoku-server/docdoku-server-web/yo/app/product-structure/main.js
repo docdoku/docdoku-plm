@@ -101,7 +101,8 @@ require.config({
         stlloader:{deps:['threecore'],exports:'THREE'},
         objloader:{deps:['threecore'],exports:'THREE'},
         buffergeometryutils:{deps:['threecore'],exports:'THREE'},
-        typeface : { deps: ['threecore'], exports: 'window' }
+        typeface : { deps: ['threecore'], exports: 'window' },
+        selectize: { deps: ['jquery'], exports: 'jQuery' }
     },
     paths: {
         jquery: '../../bower_components/jquery/jquery',
@@ -143,7 +144,8 @@ require.config({
         objloader:'dmu/loaders/OBJLoader',
         buffergeometryutils: 'dmu/utils/BufferGeometryUtils',
         stats:'dmu/utils/Stats',
-        typeface:'../lib/helvetiker_regular.typeface'
+        typeface:'../lib/helvetiker_regular.typeface',
+        selectize: '../../bower_components/selectize/dist/js/standalone/selectize'
     },
 
     deps:[
@@ -173,7 +175,8 @@ require.config({
         'dat',
         'tween',
         'inputValidity',
-        'typeface'
+        'typeface',
+        'selectize'
     ],
     config: {
         i18n: {
