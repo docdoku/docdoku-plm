@@ -70,7 +70,6 @@ define([
         },
 
         onModelChanged:function(){
-            console.log('changed')
             this.model.set('id',0,{silent:true});
         },
 
