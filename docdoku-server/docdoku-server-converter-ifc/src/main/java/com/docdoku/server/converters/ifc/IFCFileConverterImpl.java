@@ -100,7 +100,7 @@ public class IFCFileConverterImpl implements CADConverter{
             }
         }, tmpCadFile);
 
-        String[] args = {ifcConverter, tmpCadFile.getAbsolutePath(), convertedFileName};
+        String[] args = {ifcConverter, "--sew-shells", tmpCadFile.getAbsolutePath(), convertedFileName};
         ProcessBuilder pb = new ProcessBuilder(args);
         Process proc = pb.start();
 
