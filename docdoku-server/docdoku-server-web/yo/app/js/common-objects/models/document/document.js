@@ -1,5 +1,9 @@
 /*global $,_,define,App,window*/
-define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-checker'], function (Backbone, DocumentIterationList, ACLChecker) {
+define([
+    'backbone',
+    'common-objects/collections/document_iteration',
+    'common-objects/utils/acl-checker'
+], function (Backbone, DocumentIterationList, ACLChecker) {
 	'use strict';
 	var Document = Backbone.Model.extend({
 
@@ -16,7 +20,11 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 
 		url: function () {
 			if (this.getId()) {
-				return this.baseUrl() + '?configSpec=' + App.config.configSpec;
+                if (App.config.configSpec) {
+                    return this.baseUrl() + '?configSpec=' + App.config.configSpec;
+                } else {
+                    return this.baseUrl();
+                }
 			}
 			return this.urlRoot();
 		},

@@ -1,7 +1,7 @@
 /*global define,App*/
 define([
     'backbone',
-    'models/document'
+    'common-objects/models/document/document'
 ], function (Backbone,Document) {
 	'use strict';
     var CheckedoutDocumentList = Backbone.Collection.extend({
@@ -13,7 +13,7 @@ define([
         url: function () {
             return  App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/documents/checkedout';
         }
-        
+
     });
 
     return CheckedoutDocumentList;

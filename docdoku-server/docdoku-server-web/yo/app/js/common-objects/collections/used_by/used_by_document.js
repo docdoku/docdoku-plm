@@ -1,7 +1,7 @@
 /*global define*/
 define([
     'backbone',
-    'models/document'
+    'common-objects/models/document/document'
 ], function (Backbone, Document) {
     'use strict';
     var UsedByDocumentList = Backbone.Collection.extend({

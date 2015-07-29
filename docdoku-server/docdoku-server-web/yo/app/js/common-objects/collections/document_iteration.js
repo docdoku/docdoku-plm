@@ -1,7 +1,7 @@
 /*global _,define,App*/
 define([
     'backbone',
-    'models/document_iteration'
+    'common-objects/models/document/document_iteration'
 ], function (Backbone,DocumentIteration) {
     'use strict';
     var DocumentIterationList = Backbone.Collection.extend({

@@ -3,7 +3,7 @@ define([
     'backbone',
     'common-objects/utils/date',
     'common-objects/views/documents/checkbox_list_item',
-    'views/iteration/document_iteration',
+    'common-objects/views/document/document_iteration',
     'text!templates/document_list_item.html',
     'common-objects/views/share/share_entity'
 ], function (Backbone, date, CheckboxListItemView, IterationView, template, ShareView) {

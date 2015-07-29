@@ -7,11 +7,11 @@ define([
     'common-objects/views/attributes/attributes',
     'common-objects/views/workflow/lifecycle',
     'common-objects/views/linked/linked_documents',
-    'views/used_by/used_by_list_view',
+    'common-objects/views/used_by/used_by_list_view',
     'common-objects/models/tag',
     'common-objects/views/tags/tag',
     'common-objects/collections/linked/linked_document_collection',
-    'text!templates/iteration/document_iteration.html',
+    'text!common-objects/templates/document/document_iteration.html',
     'common-objects/views/prompt',
     'common-objects/utils/date'
 ], function (Backbone, Mustache, ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, UsedByListView, Tag, TagView, LinkedDocumentCollection, template, PromptView, date) {
@@ -34,7 +34,7 @@ define([
             this.events['click .action-checkin'] = 'actionCheckin';
             this.events['click .action-checkout'] = 'actionCheckout';
             this.events['click .action-undocheckout'] = 'actionUndoCheckout';
-
+            this.events['close-modal-request'] = 'closeModal';
 
             this.tagsToRemove = [];
 
@@ -44,6 +44,7 @@ define([
 
         bindDom: function () {
             this.revisionNote = this.$('#inputRevisionNote');
+            this.$modal = this.$('#product_details_modal');
         },
         onPreviousIteration: function () {
             if (this.iterations.hasPreviousIteration(this.iteration)) {
@@ -442,6 +443,10 @@ define([
                 this.activateTab(1);
                 Backbone.Events.trigger('document:iterationChange');
             }.bind(this));
+        },
+
+        closeModal: function () {
+            this.hide();
         },
 
 

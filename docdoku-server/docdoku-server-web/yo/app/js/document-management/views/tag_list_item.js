@@ -3,7 +3,7 @@ define([
     'common-objects/views/components/list_item',
     'views/tag_document_list',
     'text!templates/tag_list_item.html',
-    'models/document'
+    'common-objects/models/document/document'
 ], function (ListItemView, TagDocumentListView, template, Document) {
     'use strict';
     var TagListItemView = ListItemView.extend({

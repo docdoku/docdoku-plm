@@ -3,7 +3,7 @@ define([
     'backbone',
     'mustache',
     'require',
-    'models/document',
+    'common-objects/models/document/document',
     'models/folder',
     'collections/folder',
     'common-objects/views/components/list_item',

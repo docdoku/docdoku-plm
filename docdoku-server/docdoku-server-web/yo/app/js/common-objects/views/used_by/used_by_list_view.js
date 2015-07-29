@@ -4,11 +4,11 @@ define([
     'mustache',
     'common-objects/collections/part_collection',
     'common-objects/collections/product_instances',
-    'collections/used_by_document',
-    'views/used_by/used_by_list_item_view',
+    'common-objects/collections/used_by/used_by_document',
+    'common-objects/views/used_by/used_by_list_item_view',
     'common-objects/views/part/used_by_list_item_view',
     'common-objects/views/part/used_by_pd_instance_group_list_view',
-    'text!templates/used_by/used_by_list.html'
+    'text!common-objects/templates/document/used_by_list.html'
 ], function (Backbone, Mustache, PartList, ProductInstanceList, UsedByDocumentList, UsedByListItemView,UsedByProductInstanceListItemView, UsedByGroupListView,template) {
     'use strict';
     var UsedByListView = Backbone.View.extend({

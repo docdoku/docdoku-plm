@@ -43,6 +43,7 @@ define([
             this.events['click .action-undocheckout'] = 'actionUndoCheckout';
             this.events['notification:acknowledged'] = 'updateModificationNotifications';
             this.events['file:uploaded'] = 'updateConversionStatusView';
+            this.events['close-modal-request'] = 'closeModal';
 
             this.tagsToRemove = [];
         },
@@ -506,6 +507,10 @@ define([
                 type: 'error',
                 message: errorMessage
             }).render().$el);
+        },
+
+        closeModal: function () {
+            this.hide();
         }
 
     });
