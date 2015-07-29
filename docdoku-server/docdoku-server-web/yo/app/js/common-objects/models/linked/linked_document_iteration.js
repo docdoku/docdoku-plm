@@ -43,19 +43,6 @@ define(['backbone'], function (Backbone) {
                 return this.getDocumentRevisionTitle() + ' < ' + this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion() + '-' + this.getIteration() + ' >';
             }
             return '< ' + this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion() + '-' + this.getIteration() + ' >';
-        },
-
-        getDocumentMasterPermalink: function () {
-            return encodeURI(
-                window.location.origin +
-                App.config.contextPath +
-                '/documents/' +
-                this.getWorkspace() +
-                '/' +
-                this.getDocumentMasterId() +
-                '/' +
-                this.getDocumentRevisionVersion()
-            );
         }
 
     });

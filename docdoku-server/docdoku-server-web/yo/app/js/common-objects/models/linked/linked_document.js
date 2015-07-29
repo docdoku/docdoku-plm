@@ -41,19 +41,6 @@ define(['backbone'], function (Backbone) {
             return '< ' + this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion() + ' >';
         },
 
-        getDocumentMasterPermalink: function () {
-            return encodeURI(
-                    window.location.origin +
-                    App.config.contextPath +
-                    '/documents/' +
-                    this.getWorkspace() +
-                    '/' +
-                    this.getDocumentMasterId() +
-                    '/' +
-                    this.getDocumentRevisionVersion()
-            );
-        },
-
         setDocumentLinkComment:function(comment){
             this.set('commentLink', comment);
         },
