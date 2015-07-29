@@ -80,7 +80,7 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
         },
 
         parseFile: function (filename, texturePath, callbacks) {
-            var material;
+            var defaultMaterial;
             var extension = filename.substr(filename.lastIndexOf('.') + 1).toLowerCase();
 
             switch (extension) {
@@ -91,10 +91,10 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                         this.OBJLoader = new THREE.OBJLoader();
                     }
 
-                    material = new THREE.MeshPhongMaterial({  transparent: true, color: new THREE.Color(0xbbbbbb) });
-                    material.side = THREE.doubleSided;
+                    this.OBJLoader.load(filename, texturePath+'/attachedfiles/', function ( object, hasMaterial ) {
 
-                    this.OBJLoader.load(filename, function ( object ) {
+                        defaultMaterial = new THREE.MeshPhongMaterial({  transparent: true, color: new THREE.Color(0xbbbbbb) });
+                        defaultMaterial.side = THREE.doubleSided;
 
                         var geometries = [], combined = new THREE.Geometry();
                         getMeshGeometries(object, geometries);
@@ -109,7 +109,7 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
 
                         combined.computeBoundingSphere();
 
-                        callbacks.success(combined, material);
+                        callbacks.success(combined, hasMaterial ? null:defaultMaterial);
 
                     }, function onProgress(){},  function onError(){});
 
@@ -117,7 +117,7 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                     break;
 
                 case 'dae':
-                    material = new THREE.MeshPhongMaterial({ transparent: true, color: new THREE.Color(0xbbbbbb) });
+                    defaultMaterial = new THREE.MeshPhongMaterial({ transparent: true, color: new THREE.Color(0xbbbbbb) });
 
                     if (this.ColladaLoader === null) {
                         this.ColladaLoader = new THREE.ColladaLoader();
@@ -138,7 +138,7 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
 
                         combined.computeBoundingSphere();
 
-                        callbacks.success(combined, material);
+                        callbacks.success(combined, defaultMaterial);
 
                     });
 
@@ -149,10 +149,10 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                         this.STLLoader = new THREE.STLLoader();
                     }
 
-                    material = new THREE.MeshPhongMaterial({ transparent: true, color: new THREE.Color(0xbbbbbb) });
+                    defaultMaterial = new THREE.MeshPhongMaterial({ transparent: true, color: new THREE.Color(0xbbbbbb) });
 
                     this.STLLoader.load(filename, function(geometry){
-                        callbacks.success(geometry, material);
+                        callbacks.success(geometry, defaultMaterial);
                     });
 
                     break;

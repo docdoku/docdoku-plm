@@ -26,6 +26,7 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.utils.ConversionResult;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
@@ -68,7 +69,7 @@ public class StepFileConverterImpl implements CADConverter{
     }
 
     @Override
-    public File convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
+    public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
 
         String extension = FileIO.getExtension(cadFile.getName());
         File tmpCadFile = new File(tempDir, partToConvert.getKey() + "." + extension);
@@ -112,7 +113,7 @@ public class StepFileConverterImpl implements CADConverter{
         closeStream(br);
 
         if(p.exitValue() == 0){
-            return tmpOBJFile;
+            return new ConversionResult(tmpOBJFile);
         }
 
         LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), output.toString());

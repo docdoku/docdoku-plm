@@ -59,6 +59,7 @@
                   <include>org.ow2.docdoku:docdoku-server-converter-step</include>
                   <include>org.ow2.docdoku:docdoku-server-converter-dae</include>
                   <include>org.ow2.docdoku:docdoku-server-converter-all</include>
+                  <include>org.ow2.docdoku:docdoku-server-converter-obj</include>
                   <include>org.ow2.docdoku:docdoku-server-converter-ifc</include>
                   <include>org.ow2.docdoku:docdoku-server-converter-catia</include>
                   <include>org.ow2.docdoku:docdoku-server-converter-catia-product</include>
@@ -116,6 +117,13 @@
     <dependency>
       <groupId>org.ow2.docdoku</groupId>
       <artifactId>docdoku-server-converter-all</artifactId>
+      <version>2.0-SNAPSHOT</version>
+      <type>pom</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ow2.docdoku</groupId>
+      <artifactId>docdoku-server-converter-obj</artifactId>
       <version>2.0-SNAPSHOT</version>
       <type>pom</type>
       <scope>compile</scope>

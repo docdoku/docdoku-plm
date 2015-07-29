@@ -24,12 +24,14 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
          * or dispose of the material array
          */
         function disposeMaterials(materials) {
-            if (!materials.materials) {
-                materials.dispose();
-            } else {
-                _(materials.materials).each(function (m) {
-                    m.dispose();
-                });
+            if(materials){
+                if (!materials.materials) {
+                    materials.dispose();
+                } else {
+                    _(materials.materials).each(function (m) {
+                        m.dispose();
+                    });
+                }
             }
         }
 

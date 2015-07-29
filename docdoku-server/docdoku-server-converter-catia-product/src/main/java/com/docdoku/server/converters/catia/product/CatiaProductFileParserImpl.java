@@ -31,6 +31,7 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.catia.product.parser.ComponentDTK;
 import com.docdoku.server.converters.catia.product.parser.ComponentDTKSaxHandler;
+import com.docdoku.server.converters.utils.ConversionResult;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 import org.xml.sax.SAXException;
@@ -77,7 +78,7 @@ public class CatiaProductFileParserImpl implements CADConverter {
     }
 
     @Override
-    public File convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
+    public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
 
         File tmpCadFile;
         File tmpXMLFile = new File(tempDir, cadFile.getName() + "_dtk.xml");

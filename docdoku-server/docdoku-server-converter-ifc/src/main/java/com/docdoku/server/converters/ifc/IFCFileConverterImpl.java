@@ -26,14 +26,13 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.utils.ConversionResult;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
 import javax.ejb.EJB;
 import java.io.*;
-import java.util.Arrays;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -69,11 +68,14 @@ public class IFCFileConverterImpl implements CADConverter{
 
 
     @Override
-    public File convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
+    public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
 
+
+        UUID uuid = UUID.randomUUID();
         String extension = FileIO.getExtension(cadFile.getName());
         File tmpCadFile = new File(tempDir, partToConvert.getKey() + "." + extension);
-        String convertedFileName = tempDir.getAbsolutePath() + "/" + UUID.randomUUID()+".obj" ;
+        String convertedFileName = tempDir.getAbsolutePath() + "/" + uuid + ".obj" ;
+        String convertedMtl = tempDir.getAbsolutePath() + "/" + uuid + ".mtl" ;
         String ifcConverter = CONF.getProperty("ifc_convert_path");
 
         File executable = new File(ifcConverter);
@@ -117,7 +119,9 @@ public class IFCFileConverterImpl implements CADConverter{
         proc.waitFor();
 
         if(proc.exitValue() == 0){
-            return new File(convertedFileName);
+            List<File> materials = new ArrayList<>();
+            materials.add(new File(convertedMtl));
+            return new ConversionResult(new File(convertedFileName), materials);
         }
 
         LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), output.toString());

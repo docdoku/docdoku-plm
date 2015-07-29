@@ -26,6 +26,7 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.utils.ConversionResult;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
@@ -69,7 +70,7 @@ public class AllFileConverterImpl implements CADConverter{
 
 
     @Override
-    public File convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
+    public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
 
         String extension = FileIO.getExtension(cadFile.getName());
         File tmpCadFile = new File(tempDir, partToConvert.getKey() + "." + extension);
@@ -117,7 +118,7 @@ public class AllFileConverterImpl implements CADConverter{
         proc.waitFor();
 
         if(proc.exitValue() == 0){
-            return new File(convertedFileName + ".obj");
+            return new ConversionResult(new File(convertedFileName + ".obj"));
         }
 
         LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), output.toString());
@@ -126,8 +127,7 @@ public class AllFileConverterImpl implements CADConverter{
 
     @Override
     public boolean canConvertToOBJ(String cadFileExtension) {
-        // Also convert obj files, makes them smaller
-        return Arrays.asList("dxf","obj","off","ply","stl","3ds","wrl").contains(cadFileExtension);
+        return Arrays.asList("dxf","off","ply","stl","3ds","wrl").contains(cadFileExtension);
     }
 
 }

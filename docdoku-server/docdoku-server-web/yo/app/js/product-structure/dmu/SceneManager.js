@@ -418,7 +418,7 @@ define([
          * Meshes
          */
         function createMeshFromLoadedStuff(stuff, matrix) {
-            var mesh = new THREE.Mesh(stuff.geometry, stuff.materials);
+            var mesh = stuff.materials ? new THREE.Mesh(stuff.geometry, stuff.materials) :  new THREE.Mesh(stuff.geometry);
             mesh.uuid = stuff.id;
             mesh.partIterationId = stuff.partIterationId;
             mesh.path = stuff.path;

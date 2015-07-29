@@ -25,6 +25,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.utils.ConversionResult;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
@@ -68,7 +69,7 @@ public class CatiaFileConverterImpl implements CADConverter{
     }
 
     @Override
-    public File convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
+    public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
         File tmpCadFile = new File(tempDir, cadFile.getName());
         File tmpDAEFile = new File(tempDir, UUID.randomUUID()+".dae");
         String catPartConverter = CONF.getProperty("catPartConverter");
@@ -134,7 +135,7 @@ public class CatiaFileConverterImpl implements CADConverter{
             proc.waitFor();
 
             if (proc.exitValue() == 0) {
-                return new File(convertedFileName);
+                return new ConversionResult( new File(convertedFileName));
             }else {
                 LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), output.toString());
             }

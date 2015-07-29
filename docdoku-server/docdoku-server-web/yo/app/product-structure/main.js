@@ -100,6 +100,7 @@ require.config({
         colladaloader:{deps:['threecore'],exports:'THREE'},
         stlloader:{deps:['threecore'],exports:'THREE'},
         objloader:{deps:['threecore'],exports:'THREE'},
+        mtlloader:{deps:['threecore'],exports:'THREE'},
         buffergeometryutils:{deps:['threecore'],exports:'THREE'},
         typeface : { deps: ['threecore'], exports: 'window' },
         selectize: { deps: ['jquery'], exports: 'jQuery' }
@@ -142,6 +143,7 @@ require.config({
         colladaloader:'dmu/loaders/ColladaLoader',
         stlloader:'dmu/loaders/STLLoader',
         objloader:'dmu/loaders/OBJLoader',
+        mtlloader:'dmu/loaders/MTLLoader',
         buffergeometryutils: 'dmu/utils/BufferGeometryUtils',
         stats:'dmu/utils/Stats',
         typeface:'../lib/helvetiker_regular.typeface',
@@ -170,6 +172,7 @@ require.config({
         'colladaloader',
         'stlloader',
         'objloader',
+        'mtlloader',
         'buffergeometryutils',
         'stats',
         'dat',

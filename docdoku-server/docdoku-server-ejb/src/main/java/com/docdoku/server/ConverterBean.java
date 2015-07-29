@@ -29,6 +29,7 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.utils.ConversionResult;
 import com.docdoku.server.converters.utils.GeometryParser;
 import com.docdoku.server.dao.PartIterationDAO;
 import com.google.common.io.Files;
@@ -42,6 +43,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.*;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -115,23 +117,32 @@ public class ConverterBean implements IConverterManagerLocal {
 
             PartIterationDAO partIDAO = new PartIterationDAO(em);
             PartIteration  partI = partIDAO.loadPartI(pPartIPK);
-            File convertedFile = selectedConverter.convert(partI, cadBinaryResource, tempDir);
+            ConversionResult conversionResult = selectedConverter.convert(partI, cadBinaryResource, tempDir);
 
-            if (convertedFile != null) {
+            if (conversionResult != null && conversionResult.getConvertedFile() != null) {
+
+                File convertedFile = conversionResult.getConvertedFile();
 
                 double[] box = GeometryParser.calculateBox(convertedFile);
 
-                succeed = decimate(pPartIPK, convertedFile, tempDir, box);
+                //succeed = decimate(pPartIPK, convertedFile, tempDir, box);
 
                 // Copy the converted file if decimation failed, ignore decimated files
                 if(!succeed){
-                    saveFile(pPartIPK, 0, convertedFile, box);
+                    saveGeometryFile(pPartIPK, 0, convertedFile, box);
                     succeed = true;
                 }
 
             }else{
                 LOGGER.log(Level.WARNING, "Cannot convert " + cadBinaryResource.getName());
             }
+
+            List<File> materials = conversionResult.getMaterials();
+
+            for(File material:materials){
+                saveAttachedFile(pPartIPK,material);
+            }
+
 
         } else {
             LOGGER.log(Level.WARNING, "No CAD converter able to handle " + cadBinaryResource.getName());
@@ -183,9 +194,9 @@ public class ConverterBean implements IConverterManagerLocal {
 
             if (proc.exitValue() == 0) {
                 String baseName = Tools.unAccent(tempDir.getAbsolutePath() + "/" + FileIO.getFileNameWithoutExtension(file.getName()));
-                saveFile(pPartIPK, 0, new File(baseName + "100.obj"), box);
-                saveFile(pPartIPK, 1, new File(baseName + "60.obj"), box);
-                saveFile(pPartIPK, 2, new File(baseName + "20.obj"), box);
+                saveGeometryFile(pPartIPK, 0, new File(baseName + "100.obj"), box);
+                saveGeometryFile(pPartIPK, 1, new File(baseName + "60.obj"), box);
+                saveGeometryFile(pPartIPK, 2, new File(baseName + "20.obj"), box);
                 decimateSucceed = true;
             } else {
                 LOGGER.log(Level.SEVERE, "Decimation failed with code = " + proc.exitValue(), output.toString());
@@ -198,7 +209,7 @@ public class ConverterBean implements IConverterManagerLocal {
         return decimateSucceed;
     }
 
-    private void saveFile(PartIterationKey partIPK, int quality, File file, double[] box) {
+    private void saveGeometryFile(PartIterationKey partIPK, int quality, File file, double[] box) {
 
         if(!file.exists()){
             return;
@@ -213,6 +224,33 @@ public class ConverterBean implements IConverterManagerLocal {
             LOGGER.log(Level.INFO, "Decimation and save done");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Cannot save geometry to part iteration", e);
+        } finally {
+            try {
+                if(os != null){
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE,null, e);
+            }
+        }
+    }
+
+    private void saveAttachedFile(PartIterationKey partIPK, File file) {
+
+        if(!file.exists()){
+            return;
+        }
+
+        OutputStream os = null;
+
+        try {
+            BinaryResource binaryResource = productService.saveFileInPartIteration(partIPK, file.getName(), "attachedfiles" ,file.length());
+            os = dataManager.getBinaryResourceOutputStream(binaryResource);
+            Files.copy(file, os);
+            LOGGER.log(Level.INFO, "Attached file copied");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Cannot save attached file to part iteration", e);
         } finally {
             try {
                 if(os != null){

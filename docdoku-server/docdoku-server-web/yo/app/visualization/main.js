@@ -77,6 +77,7 @@ require.config({
         colladaloader: {deps: ['threecore'], exports: 'THREE'},
         stlloader: {deps: ['threecore'], exports: 'THREE'},
         objloader: {deps: ['threecore'], exports: 'THREE'},
+        mtlloader:{deps:['threecore'],exports:'THREE'},
         buffergeometryutils: {deps: ['threecore'], exports: 'THREE'}
     },
     paths: {
@@ -105,6 +106,7 @@ require.config({
         buffergeometryutils: 'dmu/utils/BufferGeometryUtils',
         stlloader: 'dmu/loaders/STLLoader',
         objloader: 'dmu/loaders/OBJLoader',
+        mtlloader: 'dmu/loaders/MTLLoader',
         stats:'dmu/utils/Stats',
         utilsprototype:'../utils/utils.prototype'
     },
@@ -118,6 +120,7 @@ require.config({
         'colladaloader',
         'stlloader',
         'objloader',
+        'mtlloader',
         'buffergeometryutils',
         'stats',
         'dat',

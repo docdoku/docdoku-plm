@@ -73,7 +73,7 @@ define(function () {
         }
 
         function onParseSuccess(geometry, material) {
-            var mesh = new THREE.Mesh(geometry, material || new THREE.MeshPhongMaterial({ transparent: true, color: new THREE.Color(0xbbbbbb) }));
+            var mesh = material ? new THREE.Mesh(geometry, material) : new THREE.Mesh(geometry);
             scene.add(mesh);
             centerOn(mesh);
         }
@@ -133,8 +133,9 @@ define(function () {
 
                 var material = new THREE.MeshPhongMaterial({  transparent: true, color: new THREE.Color(0xbbbbbb) });
                 material.side = THREE.doubleSided;
+                var texturePath = filename.substring(0, filename.lastIndexOf('/'));
 
-                OBJLoader.load(filename, function ( object ) {
+                OBJLoader.load(filename, texturePath, function ( object, hasMaterial ) {
 
                     var geometries = [], combined = new THREE.Geometry();
                     getMeshGeometries(object, geometries);
@@ -148,7 +149,7 @@ define(function () {
                     combined.mergeVertices();
 
                     combined.computeBoundingSphere();
-                    onParseSuccess(combined, material);
+                    onParseSuccess(combined, hasMaterial ? null : material);
 
                 }, function onProgress(){},  function onError(){});
 
