@@ -3,9 +3,8 @@ define([
     'backbone',
     'mustache',
     'text!common-objects/templates/linked/linked_document.html',
-    'common-objects/views/document/document_iteration',
     'common-objects/models/document/document'
-], function (Backbone, Mustache, template, IterationView, Document) {
+], function (Backbone, Mustache, template, Document) {
     'use strict';
 	var LinkedDocumentView = Backbone.View.extend({
 
@@ -67,10 +66,13 @@ define([
             });
 
             document.fetch().success(function () {
-                var view = new IterationView({
-                    model: document
+                require(['common-objects/views/document/document_iteration'], function (IterationView) {
+                    var view = new IterationView({
+                        model: document
+                    });
+                    view.show();
                 });
-                view.show();
+
             });
         }
 
