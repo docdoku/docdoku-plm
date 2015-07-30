@@ -94,7 +94,8 @@ var products = {
         sharedPassword: 'azertyuiop',
         expireDate: tomorrowValue,
         expireDate2: yesterdayValue,
-        attributeValue: 'CasperJs'
+        attributeValue: 'CasperJs',
+        documentLink: '000-AAA-CasperJsTestDocument'
     },
     part2: {
         number: '000-AAA-CasperJsTestPart2',

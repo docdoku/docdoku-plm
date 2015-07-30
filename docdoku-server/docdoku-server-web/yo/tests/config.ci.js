@@ -92,8 +92,6 @@ module.exports = {
         "js/document-management/document/documentCreation.js",
         "js/document-management/document/documentsCreation.js",
         "js/document-management/document/documentUploadFile.js",
-        "js/document-management/document/documentAddLink.js",
-        "js/document-management/document/documentClickLink.js",
         "js/document-management/document/documentMultipleCheckin.js",
         "js/document-management/document/documentMultipleCheckout.js",
         "js/document-management/document/documentMultipleUndoCheckout.js",
@@ -116,6 +114,12 @@ module.exports = {
 
         "js/common/attributes.js",
         "js/common/part-from-template.js",
+
+        // Document link
+        "js/document-management/document/documentAddLink.js",
+        "js/document-management/document/documentClickLink.js",
+        "js/product-management/part/partAddLink.js",
+        "js/product-management/part/partClickLink.js",
 
         // Deletions
         "js/document-management/tag/tagDeletion.js",
