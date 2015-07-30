@@ -100,7 +100,9 @@ public class SearchQuery  implements Serializable {
     public AbstractAttributeQuery[] getAttributes() {
         return attributes;
     }
-    public String getContent() { return content; }
+    public String getContent() {
+        return content;
+    }
 
     //Setter
     public void setWorkspaceId(String workspaceId) {
@@ -136,7 +138,9 @@ public class SearchQuery  implements Serializable {
     public void setAttributes(AbstractAttributeQuery[] attributes) {
         this.attributes = attributes;
     }
-    public void setContent(String content) { this.content = content; }
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     @XmlSeeAlso({TextAttributeQuery.class, NumberAttributeQuery.class, DateAttributeQuery.class, BooleanAttributeQuery.class, URLAttributeQuery.class})
     public static abstract class AbstractAttributeQuery implements Serializable{
