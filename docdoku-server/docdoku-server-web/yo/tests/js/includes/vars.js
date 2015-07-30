@@ -10,8 +10,8 @@ var pass = casper.cli.get('pass');
 var contextPath = casper.cli.get('contextPath');
 var protocol = casper.cli.get('protocol');
 
-var baseUrl = protocol + '://' + domain + ':' + port;
-var homeUrl = baseUrl + contextPath;
+var defaultUrl = protocol + '://' + domain + ':' + port;
+var homeUrl = defaultUrl + contextPath;
 
 function twoDigit(n) {
     'use strict';

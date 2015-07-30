@@ -62,7 +62,7 @@ define([
 
         openDocumentDetailView: function () {
             var document = new Document({
-                id: this.model.get("documentMasterId") + "-" + this.model.get("version")
+                id: this.model.get('documentMasterId') + '-' + this.model.get('version')
             });
 
             document.fetch().success(function () {
