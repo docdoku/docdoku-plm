@@ -788,7 +788,6 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             throw new NotAllowedException(locale, "NotAllowedException52");
         }
 
-        ;
         boolean valid = AttributesConsistencyUtils.hasValidChange(attributes,false,pathDataIteration.getInstanceAttributes());
         if(!valid) {
             throw new NotAllowedException(locale, "NotAllowedException59");
