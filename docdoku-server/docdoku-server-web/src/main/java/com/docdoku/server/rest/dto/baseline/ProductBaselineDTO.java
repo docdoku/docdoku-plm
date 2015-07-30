@@ -142,7 +142,7 @@ public class ProductBaselineDTO extends BaselineDTO {
         return pathToPathLinks;
     }
 
-    public void setPathToPathLinks(List<PathToPathLinkDTO> PathToPathLinks) {
-        this.pathToPathLinks = PathToPathLinks;
+    public void setPathToPathLinks(List<PathToPathLinkDTO> pathToPathLinks) {
+        this.pathToPathLinks = pathToPathLinks;
     }
 }
