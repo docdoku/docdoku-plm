@@ -80,7 +80,7 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
         },
 
         parseFile: function (filename, texturePath, callbacks) {
-            var defaultMaterial;
+
             var extension = filename.substr(filename.lastIndexOf('.') + 1).toLowerCase();
 
             switch (extension) {
@@ -91,33 +91,14 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                         this.OBJLoader = new THREE.OBJLoader();
                     }
 
-                    this.OBJLoader.load(filename, texturePath+'/attachedfiles/', function ( object, hasMaterial ) {
-
-                        defaultMaterial = new THREE.MeshPhongMaterial({  transparent: true, color: new THREE.Color(0xbbbbbb) });
-                        defaultMaterial.side = THREE.doubleSided;
-
-                        var geometries = [], combined = new THREE.Geometry();
-                        getMeshGeometries(object, geometries);
-
-                        // Merge all sub meshes into one
-                        _.each(geometries, function (geometry) {
-                            combined.merge(geometry);
-                        });
-
-                        combined.dynamic = false;
-                        combined.mergeVertices();
-
-                        combined.computeBoundingSphere();
-
-                        callbacks.success(combined, hasMaterial ? null:defaultMaterial);
-
-                    }, function onProgress(){},  function onError(){});
+                    this.OBJLoader.load(filename, texturePath+'/attachedfiles/', function ( object ) {
+                        callbacks.success(object);
+                    });
 
 
                     break;
 
                 case 'dae':
-                    defaultMaterial = new THREE.MeshPhongMaterial({ transparent: true, color: new THREE.Color(0xbbbbbb) });
 
                     if (this.ColladaLoader === null) {
                         this.ColladaLoader = new THREE.ColladaLoader();
@@ -137,8 +118,9 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                         combined.mergeVertices();
 
                         combined.computeBoundingSphere();
-
-                        callbacks.success(combined, defaultMaterial);
+                        var object = new THREE.Object3D();
+                        object.add(new THREE.Mesh(combined));
+                        callbacks.success(object);
 
                     });
 
@@ -149,10 +131,10 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                         this.STLLoader = new THREE.STLLoader();
                     }
 
-                    defaultMaterial = new THREE.MeshPhongMaterial({ transparent: true, color: new THREE.Color(0xbbbbbb) });
-
                     this.STLLoader.load(filename, function(geometry){
-                        callbacks.success(geometry, defaultMaterial);
+                        var object = new THREE.Object3D();
+                        object.add(new THREE.Mesh(geometry));
+                        callbacks.success(object);
                     });
 
                     break;
@@ -166,7 +148,11 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                     this.JSONLoader.load(filename, function (geometry, materials) {
                         var _material = new THREE.MeshFaceMaterial(materials);
                         geometry.dynamic = false;
-                        callbacks.success(geometry, _material);
+
+                        var object = new THREE.Object3D();
+                        object.add(new THREE.Mesh(geometry,_material));
+                        callbacks.success(object);
+
                     }, texturePath+'/attachedfiles/');
 
                     break;
@@ -181,7 +167,9 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                     this.BinaryLoader.load(filename, function (geometry, materials) {
                         var _material = new THREE.MeshPhongMaterial({color: materials[0].color, overdraw: true });
                         geometry.dynamic = false;
-                        callbacks.success(geometry, _material);
+                        var object = new THREE.Object3D();
+                        object.add(new THREE.Mesh(geometry,_material));
+                        callbacks.success(object);
                     }, texturePath);
 
                     break;

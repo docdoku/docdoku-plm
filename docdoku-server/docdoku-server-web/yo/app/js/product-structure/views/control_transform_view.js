@@ -18,16 +18,16 @@ define(
             },
 
             initialize: function () {
-                this.mesh = undefined;
+                this.object = undefined;
             },
 
-            setMesh: function (mesh) {
+            setObject: function (object) {
                 if (App.sceneManager.transformControlsEnabled()) {
-                    App.sceneManager.deleteTransformControls(this.mesh);
-                    App.sceneManager.setTransformControls(mesh);
+                    App.sceneManager.deleteTransformControls(this.object);
+                    App.sceneManager.setTransformControls(object);
                 }
                 this.$('button').removeAttr('disabled');
-                this.mesh = mesh;
+                this.object = object;
                 return this;
             },
 
@@ -37,14 +37,14 @@ define(
                 if (App.sceneManager.transformControlsEnabled()) {
                     var mode = App.sceneManager.getTransformControlsMode();
                     this.$('button#' + mode).addClass('active');
-                } // A mesh is selected
-                else if (!this.mesh) {
+                }
+                else if (!this.object) {
                     this.$('button').attr('disabled', 'disabled');
                 }
             },
 
             render: function () {
-                this.$el.html(Mustache.render(template, {mesh: this.mesh, i18n: App.config.i18n}));
+                this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
                 this.reset();
                 return this;
             },
@@ -55,12 +55,12 @@ define(
                 if (modeSelected === App.sceneManager.getTransformControlsMode()) {
                     App.sceneManager.leaveTransformMode();
                 } else {
-                    App.sceneManager.setTransformControls(this.mesh, modeSelected);
+                    App.sceneManager.setTransformControls(this.object, modeSelected);
                 }
             },
 
             cancelTransformation: function () {
-                App.sceneManager.cancelTransformation(this.mesh);
+                App.sceneManager.cancelTransformation(this.object);
             }
 
         });

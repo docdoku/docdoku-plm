@@ -72,10 +72,9 @@ define(function () {
             }
         }
 
-        function onParseSuccess(geometry, material) {
-            var mesh = material ? new THREE.Mesh(geometry, material) : new THREE.Mesh(geometry);
-            scene.add(mesh);
-            centerOn(mesh);
+        function onParseSuccess(object) {
+            scene.add(object);
+            centerOn(object.children[0]);
         }
 
         switch (extension) {
@@ -99,7 +98,7 @@ define(function () {
 
                     combined.computeBoundingSphere();
 
-                    onParseSuccess(combined, null);
+                    onParseSuccess(new THREE.Mesh(combined), null);
 
                 });
 
@@ -109,7 +108,7 @@ define(function () {
                 var stlLoader = new THREE.STLLoader();
 
                 stlLoader.load(filename, function(geometry){
-                    onParseSuccess(geometry, null);
+                    onParseSuccess(new THREE.Mesh(geometry), null);
                 });
 
                 break;
@@ -122,7 +121,7 @@ define(function () {
                 binaryLoader.load(filename, function (geometry, materials) {
                     var _material = new THREE.MeshPhongMaterial({color: materials[0].color, overdraw: true });
                     geometry.dynamic = false;
-                    onParseSuccess(geometry, _material);
+                    onParseSuccess(new THREE.Mesh(geometry, _material));
                 }, texturePath);
 
                 break;
@@ -131,28 +130,11 @@ define(function () {
 
                 var OBJLoader = new THREE.OBJLoader();
 
-                var material = new THREE.MeshPhongMaterial({  transparent: true, color: new THREE.Color(0xbbbbbb) });
-                material.side = THREE.doubleSided;
                 var texturePath = filename.substring(0, filename.lastIndexOf('/'));
 
-                OBJLoader.load(filename, texturePath, function ( object, hasMaterial ) {
-
-                    var geometries = [], combined = new THREE.Geometry();
-                    getMeshGeometries(object, geometries);
-
-                    // Merge all sub meshes into one
-                    _.each(geometries, function (geometry) {
-                        THREE.GeometryUtils.merge(combined, geometry);
-                    });
-
-                    combined.dynamic = false;
-                    combined.mergeVertices();
-
-                    combined.computeBoundingSphere();
-                    onParseSuccess(combined, hasMaterial ? null : material);
-
-                }, function onProgress(){},  function onError(){});
-
+                OBJLoader.load(filename, texturePath + '/attachedfiles/' , function ( object ) {
+                    onParseSuccess(object);
+                });
 
                 break;
 

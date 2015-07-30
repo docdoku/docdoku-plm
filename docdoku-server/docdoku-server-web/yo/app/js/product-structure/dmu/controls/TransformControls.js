@@ -932,7 +932,7 @@
 
             }
 
-            App.collaborativeController.sendEditedMeshes();
+            App.collaborativeController.sendEditedObjects();
 
             scope.update();
             scope.dispatchEvent(changeEvent);

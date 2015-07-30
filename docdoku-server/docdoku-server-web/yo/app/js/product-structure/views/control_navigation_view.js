@@ -6,6 +6,7 @@ define([
 ], function (Backbone, Mustache, template) {
     'use strict';
     var ControlNavigationView = Backbone.View.extend({
+
         className: 'side_control_group',
 
         events: {
@@ -14,10 +15,10 @@ define([
             'click button#reset_camera': 'resetCamera'
         },
 
-        setMesh: function (mesh) {
+        setObject: function (object) {
             this.$('button#look_at').removeAttr('disabled');
             this.$('button#fly_to').removeAttr('disabled');
-            this.mesh = mesh;
+            this.object = object;
         },
 
         reset: function () {
@@ -26,22 +27,23 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {mesh: this.mesh, i18n: App.config.i18n}));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.reset();
             return this;
         },
 
         flyTo: function () {
-            App.sceneManager.flyTo(this.mesh);
+            App.sceneManager.flyTo(this.object);
         },
 
         lookAt: function () {
-            App.sceneManager.lookAt(this.mesh);
+            App.sceneManager.lookAt(this.object);
         },
 
         resetCamera: function () {
             App.sceneManager.resetCameraPlace();
         }
+
     });
 
     return ControlNavigationView;

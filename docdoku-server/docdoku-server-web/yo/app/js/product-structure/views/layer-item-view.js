@@ -77,7 +77,7 @@ define([
             this.model.destroy({
                 dataType: 'text', // server doesn't send a json hash in the response body
                 success: function () {
-                    App.collaborativeController.sendLayersRefresh('remove layer');
+                    App.collaborativeController.sendLayersRefresh('layer:remove');
                 }
             });
             if (collection.length === 0) {

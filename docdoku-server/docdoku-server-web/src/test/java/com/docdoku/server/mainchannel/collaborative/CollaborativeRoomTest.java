@@ -185,7 +185,7 @@ public class CollaborativeRoomTest {
                 "            \"z\":0.07787502335635015\n" +
                 "         },\n" +
                 "         \"layers\":\"create layer\",\n" +
-                "         \"colourEditedMeshes\":true,\n" +
+                "         \"colourEditedObjects\":true,\n" +
                 "         \"clipping\":\"1\",\n" +
                 "         \"explode\":\"3\",\n" +
                 "         \"smartPath\":[  \n" +

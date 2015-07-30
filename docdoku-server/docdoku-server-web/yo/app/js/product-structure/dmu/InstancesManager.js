@@ -1,11 +1,13 @@
 /*global _,$,define,App,THREE,Worker*/
 define(['dmu/LoaderManager', 'async', 'backbone'],
     function (LoaderManager, async, Backbone) {
+
         'use strict';
+
         /**
          *  This class handles instances management.
          *
-         *  Dialog to sceneManager  : add and remove meshes
+         *  Dialog to sceneManager  : add and remove objects
          *  Dialog from sceneManager  : init and update camera and frustum
          *
          *  Dialog with worker :
@@ -17,25 +19,8 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
          *
          * */
 
-        /**
-         * Multiples type of materials possible
-         * Json Loader will use Array of Materials
-         * This function will dispose of the material if it's simple
-         * or dispose of the material array
-         */
-        function disposeMaterials(materials) {
-            if(materials){
-                if (!materials.materials) {
-                    materials.dispose();
-                } else {
-                    _(materials.materials).each(function (m) {
-                        m.dispose();
-                    });
-                }
-            }
-        }
-
         var InstancesManager = function () {
+
             var _this = this;
 
             var timestamp = Date.now();
@@ -51,8 +36,7 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
             this.xhrsDone = 0;
 
             var instancesIndexed = {};
-            var loadCache = {};
-            var loadedInstances = [];                                                                                   // Store all loaded geometries and materials
+            var loadedInstances = [];
             var loaderManager = new LoaderManager({progressBar: true});
             var loaderIndicator = $('#product_title').find('img.loader');
             var timer = null;
@@ -72,18 +56,7 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
                     _(directives).each(function (directive) {
                         var instance = _this.getInstance(directive.id);
                         if (directive.nowait && directive.quality === undefined) {
-                            App.sceneManager.removeMeshById(directive.id);
-                            if (loadCache[instance.partIterationId + '-' + instance.qualityLoaded]) {
-                                if (loadCache[instance.partIterationId + '-' + instance.qualityLoaded].count === 1) {
-                                    loadCache[instance.partIterationId + '-' + instance.qualityLoaded].geometry.dispose();
-                                    disposeMaterials(loadCache[instance.partIterationId + '-' + instance.qualityLoaded]
-                                        .material);
-                                    loadCache[instance.partIterationId + '-' + instance.qualityLoaded] = null;
-                                    delete loadCache[instance.partIterationId + '-' + instance.qualityLoaded];
-                                } else {
-                                    loadCache[instance.partIterationId + '-' + instance.qualityLoaded].count--;
-                                }
-                            }
+                            App.sceneManager.removeObjectById(directive.id);
                             instance.qualityLoaded = undefined;
                             worker.postMessage({
                                 fn: 'setQuality',
@@ -111,11 +84,10 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
             }, false);
 
 
-            /**
-             * Load process : xhr + store geometry and materials in array
-             */
             function loadProcess(directive, callback) {
+
                 var instance = _this.getInstance(directive.id);
+
                 if (!instance) {
                     setTimeout(callback, 0);
                     return;
@@ -123,26 +95,15 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
 
                 if (directive.quality === undefined) {
 
-                    // don't unload edited meshes
-                    if (App.sceneManager.editedMeshes.indexOf(instance.id) !== -1) {
+                    // don't unload edited objects
+                    if (App.sceneManager.editedObjects.indexOf(instance.id) !== -1) {
                         _this.aborted++;
                         worker.postMessage({fn: 'setQuality', obj: {id: instance.id, quality: instance.qualityLoaded}});
                         setTimeout(callback, 0);
                         return;
                     }
 
-                    App.sceneManager.removeMeshById(instance.id);
-                    if (loadCache[instance.partIterationId + '-' + instance.qualityLoaded]) {
-                        if (loadCache[instance.partIterationId + '-' + instance.qualityLoaded].count === 1) {
-                            loadCache[instance.partIterationId + '-' + instance.qualityLoaded].geometry.dispose();
-                            disposeMaterials(loadCache[instance.partIterationId + '-' + instance.qualityLoaded]
-                                .material);
-                            loadCache[instance.partIterationId + '-' + instance.qualityLoaded] = null;
-                            delete loadCache[instance.partIterationId + '-' + instance.qualityLoaded];
-                        } else {
-                            loadCache[instance.partIterationId + '-' + instance.qualityLoaded].count--;
-                        }
-                    }
+                    App.sceneManager.removeObjectById(instance.id);
                     instance.qualityLoaded = undefined;
                     worker.postMessage({fn: 'setQuality', obj: {id: instance.id, quality: instance.qualityLoaded}});
                     setTimeout(callback, 0);
@@ -155,41 +116,12 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
                     return;
                 }
 
-                // Check if not available in memory
-                if (loadCache[instance.partIterationId + '-' + directive.quality]) {
-                    loadCache[instance.partIterationId + '-' + directive.quality].count++;
-                    loadedInstances.push({
-                        id: directive.id,
-                        partIterationId: instance.partIterationId,
-                        path: instance.path,
-                        quality: directive.quality,
-                        geometry: loadCache[instance.partIterationId + '-' + directive.quality].geometry,
-                        materials: loadCache[instance.partIterationId + '-' + directive.quality].material
-                    });
-                    instance.qualityLoaded = directive.quality;
-                    worker.postMessage({fn: 'setQuality', obj: {id: instance.id, quality: instance.qualityLoaded}});
-                    setTimeout(callback, 0);
-                    return;
-                }
-
-                // Else : load the instance
+                // Load the instance
                 var quality = App.config.contextPath + '/' + instance.files[directive.quality].fullName;
 
                 var texturePath = quality.substring(0, quality.lastIndexOf('/'));
                 loaderManager.parseFile(quality, texturePath, {
-                    success: function (geometry, material) {
-
-                        if (loadCache[instance.partIterationId + '-' + directive.quality]) {
-                            loadCache[instance.partIterationId + '-' + directive.quality].count++;
-                        } else {
-                            geometry.computeFaceNormals();
-                            //geometry.computeVertexNormals();
-                            loadCache[instance.partIterationId + '-' + directive.quality] = {
-                                count: 1,
-                                geometry: geometry,
-                                material: material
-                            };
-                        }
+                    success: function (object3d) {
 
                         _this.xhrsDone++;
 
@@ -198,8 +130,7 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
                             partIterationId: instance.partIterationId,
                             path: instance.path,
                             quality: directive.quality,
-                            geometry: loadCache[instance.partIterationId + '-' + directive.quality].geometry,
-                            materials: loadCache[instance.partIterationId + '-' + directive.quality].material
+                            object3d: object3d
                         });
 
                         instance.qualityLoaded = directive.quality;
@@ -256,6 +187,7 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
 
                         // Allow parts that don't have box to be displayed
                         var radius = box.size().length() || 0.01;
+
 
                         worker.postMessage({
                             fn: 'addInstance',
@@ -397,6 +329,7 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
                     _this.loadQueue.push({'process': 'loadOne', 'path': [component.getEncodedPath()]});
                 }
             };
+
             this.loadComponentsByPaths = function (paths) {
                 loaderIndicator.show();
                 var directive = {
@@ -408,12 +341,14 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
                 });
                 _this.loadQueue.push(directive);
             };
+
             this.unLoadComponent = function (component) {
                 var path = component.getEncodedPath();
                 if (path) {
                     _this.loadQueue.push({'process': 'unload', 'path': component.getEncodedPath()});
                 }
             };
+
             this.unLoadComponentsByPaths = function (pathsToUnload) {
                 _(pathsToUnload).each(function (path) {
                     _this.loadQueue.push({'process': 'unload', 'path': path});
@@ -426,17 +361,11 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
                 _this.xhrQueue.kill();
                 _this.loadQueue.kill();
 
-                _(_(instancesIndexed).pluck('id')).map(App.sceneManager.removeMeshById);
-
-                _(loadCache).each(function (cache) {
-                    cache.geometry.dispose();
-                    disposeMaterials(cache.material);
-                });
+                _(_(instancesIndexed).pluck('id')).map(App.sceneManager.removeObjectById);
 
                 worker.postMessage({fn: 'clear', obj: null});
 
                 instancesIndexed = {};
-                loadCache = {};
                 loadedInstances = [];
             };
 
@@ -452,6 +381,7 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
             this.getInstance = function (instanceId) {
                 return instancesIndexed[instanceId];
             };
+
         };
 
         return InstancesManager;

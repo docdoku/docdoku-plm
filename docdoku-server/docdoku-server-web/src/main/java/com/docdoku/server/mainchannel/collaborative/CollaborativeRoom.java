@@ -177,8 +177,8 @@ public class CollaborativeRoom {
     public void saveCommand(JsonObject command) {
         final String cameraInfosField = "cameraInfos";
         final String smartPath = "smartPath";
-        final String editedMeshes = "editedMeshes";
-        final String colourEditedMeshes = "colourEditedMeshes";
+        final String editedObjects = "editedObjects";
+        final String colourEditedMeshes = "colourEditedObjects";
         final String explode = "explode";
         final String clipping = "clipping";
         final String measures = "measures";
@@ -189,8 +189,8 @@ public class CollaborativeRoom {
             JsonValue path = command.getJsonArray(smartPath);
             path = ((JsonArray) path).isEmpty() ? JsonValue.NULL : path;
             saveJsonCommands.add(smartPath, path);
-        } else if (command.containsKey(editedMeshes)) {
-            saveJsonCommands.add(editedMeshes,command.getJsonArray(editedMeshes));
+        } else if (command.containsKey(editedObjects)) {
+            saveJsonCommands.add(editedObjects,command.getJsonArray(editedObjects));
         } else if (command.containsKey(colourEditedMeshes)) {
             saveJsonCommands.add(colourEditedMeshes,command.getBoolean(colourEditedMeshes));
         } else if (command.containsKey(explode)) {

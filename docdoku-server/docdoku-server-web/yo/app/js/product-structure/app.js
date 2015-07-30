@@ -162,7 +162,7 @@ define([
 
         listenEvents: function () {
             App.baselineSelectView.on('config_spec:changed', this.onConfigSpecChange, this);
-            Backbone.Events.on('mesh:selected', this.onMeshSelected, this);
+            Backbone.Events.on('object:selected', this.onObjectSelected, this);
             Backbone.Events.on('selection:reset', this.onResetSelection, this);
             Backbone.Events.on('part:saved', this.refreshTree, this);
             Backbone.Events.on('path:selected', this.updateDisplayPathToPathLinkButton, this);
@@ -329,18 +329,18 @@ define([
             this.updateBom();
         },
 
-        onMeshSelected: function (mesh) {
-            var partKey = mesh.partIterationId.substr(0, mesh.partIterationId.lastIndexOf('-'));
+        onObjectSelected: function (object) {
+
+            var partKey = object.partIterationId.substr(0, object.partIterationId.lastIndexOf('-'));
             var part = new Part({partKey: partKey});
 
             part.fetch({
                 success: function () {
                     // Search the part in the tree
-                    App.searchView.trigger('instance:selected', mesh.path);
-                    App.controlNavigationView.setMesh(mesh);
-                    App.controlTransformView.setMesh(mesh).render();
+                    App.searchView.trigger('instance:selected', object.path);
+                    App.controlNavigationView.setObject(object);
+                    App.controlTransformView.setObject(object).render();
                     App.partMetadataView.setModel(part).render();
-
                 }
             });
 
@@ -350,7 +350,7 @@ define([
             App.searchView.trigger('selection:reset');
             App.partMetadataView.reset();
             App.controlNavigationView.reset();
-            App.controlTransformView.mesh = undefined;
+            App.controlTransformView.object = undefined;
             App.controlTransformView.reset();
             this.exportSceneButton.hide();
         },

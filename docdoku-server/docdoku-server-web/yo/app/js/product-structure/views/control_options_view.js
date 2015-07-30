@@ -34,9 +34,9 @@ define([
             var showEditedMeshes = this.$('#show_edited_meshes');
             showEditedMeshes.toggleClass('active');
             if (showEditedMeshes.hasClass('active')) {
-                App.sceneManager.colourEditedMeshes();
+                App.sceneManager.colourEditedObjects();
             } else {
-                App.sceneManager.cancelColourEditedMeshes();
+                App.sceneManager.cancelColourEditedObjects();
             }
         }
 

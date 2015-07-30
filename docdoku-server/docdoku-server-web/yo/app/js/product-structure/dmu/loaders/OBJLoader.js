@@ -36,22 +36,20 @@ THREE.OBJLoader.prototype = {
 
                     var materialsCreator = materials;
                     materialsCreator.preload();
-                    object.traverse( function ( object ) {
+                    object.traverse( function ( o ) {
+                        if ( o instanceof THREE.Mesh ) {
+                            if ( o.material.name ) {
+                                console.log(o.material.name)
+                                var material = materialsCreator.create( o.material.name );
 
-                        if ( object instanceof THREE.Mesh ) {
-
-                            if ( object.material.name ) {
-
-                                var material = materialsCreator.create( object.material.name );
-
-                                if ( material ) object.material = material;
+                                if ( material ) o.material = material;
 
                             }
                         }
 
                     });
 
-                    onLoad(object,true);
+                    onLoad(object);
                 });
             }
 

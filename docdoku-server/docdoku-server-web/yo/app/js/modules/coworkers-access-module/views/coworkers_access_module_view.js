@@ -38,7 +38,8 @@ define([
                 }
             });
 
-            Backbone.Events.on('EnableCollaborativeInvite', this.collaborativeInvite, this);
+            Backbone.Events.on('collaboration:invite', this.collaborativeInvite, this);
+
             return this;
         },
 
