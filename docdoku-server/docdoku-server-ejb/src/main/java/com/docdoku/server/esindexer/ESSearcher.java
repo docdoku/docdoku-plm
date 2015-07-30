@@ -272,7 +272,7 @@ public class ESSearcher {
         }
 
         if (searchQuery.getCreationDateFrom() != null) {
-            queryBuilder.add((FilterBuilders.rangeFilter(ESMapper.CREATION_DATE_KEY).from(searchQuery.getCreationDateFrom())));
+            queryBuilder.add(FilterBuilders.rangeFilter(ESMapper.CREATION_DATE_KEY).from(searchQuery.getCreationDateFrom()));
         }
         if (searchQuery.getCreationDateTo() != null) {
             queryBuilder.add(FilterBuilders.rangeFilter(ESMapper.CREATION_DATE_KEY).to(searchQuery.getCreationDateTo()));
