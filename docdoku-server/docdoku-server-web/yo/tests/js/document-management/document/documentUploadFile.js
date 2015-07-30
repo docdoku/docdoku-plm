@@ -5,7 +5,7 @@ casper.test.begin('Document upload  file tests suite', 2, function documentUploa
     casper.open('');
 
     /**
-     * Open product management URL
+     * Open document management URL
      * */
 
     casper.then(function () {
@@ -64,7 +64,7 @@ casper.test.begin('Document upload  file tests suite', 2, function documentUploa
         });
     });
     /**
-     * Chose a file and upload
+     * Choose a file and upload
      */
     casper.then(function setFileAndUpload() {
         this.fill('.document-modal .upload-form', {
