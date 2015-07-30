@@ -78,7 +78,7 @@ casper.test.begin('Part creation tests suite', 8, function partCreationTestsSuit
             this.sendKeys('#part_creation_modal input#inputPartNumber', products.part1.number, {reset: true});
             this.sendKeys('#part_creation_modal input#inputPartName', products.part1.name, {reset: true});
         }, function fail() {
-            this.capture(false, 'screenshot/partCreation/templatesNotInjected.png');
+            this.capture('screenshot/partCreation/templatesNotInjected.png');
             this.test.assert(false, 'templates are not injected');
         });
     });
