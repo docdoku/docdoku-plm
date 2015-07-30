@@ -1,4 +1,4 @@
-/*global _,define,App*/
+/*global _,define*/
 define(['backbone'], function (Backbone) {
     'use strict';
     var linkedDocumentIteration = Backbone.Model.extend({

@@ -1,4 +1,4 @@
-/*global casper,urls,workspace,products*/
+/*global casper,urls,products*/
 casper.test.begin('Part add link tests suite', 2, function partAddLinkTestsSuite() {
     'use strict';
 
