@@ -384,9 +384,9 @@ define([
                         if (child instanceof THREE.Mesh) {
                             meshes.push(child);
                         }
-                    })
+                    });
                 }
-            })
+            });
             return meshes;
         }
 
@@ -958,8 +958,6 @@ define([
 
             if (!state) {
                 measureTool.callbacks.onCancelled();
-                //_this.clearMeasures();
-                //_this.reDraw();
             }
         };
 
@@ -989,7 +987,7 @@ define([
         this.colourEditedObjects = function () {
             editedObjectsColoured = true;
             _.each(_this.editedObjects, function (uuid) {
-                setEditedMaterials(objects[uuid])
+                setEditedMaterials(objects[uuid]);
             });
             App.collaborativeController.sendColourEditedObjects();
             _this.reDraw();

@@ -26,6 +26,7 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
+import com.docdoku.server.converters.utils.ConverterUtils;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
@@ -33,9 +34,7 @@ import javax.ejb.EJB;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -98,17 +97,29 @@ public class DaeFileConverterImpl implements CADConverter{
             }
         }, tmpCadFile);
 
-        String convertedFileName = tempDir.getAbsolutePath() + "/" + UUID.randomUUID() + ".obj";
+        UUID uuid = UUID.randomUUID();
+        String convertedFileName = tempDir.getAbsolutePath() + "/" + uuid + ".obj";
+        String convertedMtlFileName = tempDir.getAbsolutePath() + "/" + uuid + ".obj.mtl";
 
         String[] args = {assimp, "export", tmpCadFile.getAbsolutePath(), convertedFileName};
         ProcessBuilder pb = new ProcessBuilder(args);
-        Process proc = pb.start();
+        Process process = pb.start();
 
-        proc.waitFor();
+        // Read buffers
+        String stdOutput = ConverterUtils.getOutput(process.getInputStream());
+        String errorOutput = ConverterUtils.getOutput(process.getErrorStream());
 
-        if (proc.exitValue() == 0) {
-            return new ConversionResult(new File(convertedFileName));
+        LOGGER.info(stdOutput);
+
+        process.waitFor();
+
+        if (process.exitValue() == 0) {
+            List<File> materials = new ArrayList<>();
+            materials.add(new File(convertedMtlFileName));
+            return new ConversionResult(new File(convertedFileName),materials);
         }
+
+        LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), errorOutput);
 
         return null;
 
@@ -116,7 +127,7 @@ public class DaeFileConverterImpl implements CADConverter{
 
     @Override
     public boolean canConvertToOBJ(String cadFileExtension) {
-        return Arrays.asList("dae","lwo","x","ac","cob","scn","ms3d").contains(cadFileExtension);
+        return Arrays.asList("dxf","stl","dae","lwo","x","ac","cob","scn","ms3d").contains(cadFileExtension);
     }
 
 }

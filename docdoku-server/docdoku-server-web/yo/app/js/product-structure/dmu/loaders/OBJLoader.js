@@ -39,7 +39,7 @@ THREE.OBJLoader.prototype = {
                     object.traverse( function ( o ) {
                         if ( o instanceof THREE.Mesh ) {
                             if ( o.material.name ) {
-                                console.log(o.material.name)
+
                                 var material = materialsCreator.create( o.material.name );
 
                                 if ( material ) o.material = material;

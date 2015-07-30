@@ -32,6 +32,7 @@ import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.catia.product.parser.ComponentDTK;
 import com.docdoku.server.converters.catia.product.parser.ComponentDTKSaxHandler;
 import com.docdoku.server.converters.utils.ConversionResult;
+import com.docdoku.server.converters.utils.ConverterUtils;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 import org.xml.sax.SAXException;
@@ -82,92 +83,66 @@ public class CatiaProductFileParserImpl implements CADConverter {
 
         File tmpCadFile;
         File tmpXMLFile = new File(tempDir, cadFile.getName() + "_dtk.xml");
-        InputStreamReader isr = null;
-        BufferedReader br = null;
-        try {
 
-            String catProductReader = CONF.getProperty("catProductReader");
+        String catProductReader = CONF.getProperty("catProductReader");
 
-            File executable = new File(catProductReader);
+        File executable = new File(catProductReader);
 
-            if(!executable.exists()){
-                LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+catProductReader+"\" is not available");
-                return null;
-            }
+        if(!executable.exists()){
+            LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+catProductReader+"\" is not available");
+            return null;
+        }
 
-            if(!executable.canExecute()){
-                LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+catProductReader+"\" has no execution rights");
-                return null;
-            }
+        if(!executable.canExecute()){
+            LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+catProductReader+"\" has no execution rights");
+            return null;
+        }
 
-            tmpCadFile = new File(tempDir, cadFile.getName());
+        tmpCadFile = new File(tempDir, cadFile.getName());
 
-            Files.copy(new InputSupplier<InputStream>() {
-                @Override
-                public InputStream getInput() throws IOException {
-                    try {
-                        return dataManager.getBinaryResourceInputStream(cadFile);
-                    } catch (StorageException e) {
-                        LOGGER.log(Level.WARNING, null, e);
-                        throw new IOException(e);
-                    }
-                }
-            }, tmpCadFile);
-
-            String[] args = {"sh", catProductReader, tmpCadFile.getAbsolutePath()};
-
-            ProcessBuilder pb = new ProcessBuilder(args);
-            Process process = pb.start();
-
-            isr = new InputStreamReader(process.getInputStream());
-            br = new BufferedReader(isr);
-
-            String line;
-            StringBuilder output = new StringBuilder();
-            while ((line = br.readLine()) != null){
-                output.append(line).append("\n");
-            }
-
-            process.waitFor();
-
-            int exitCode = process.exitValue();
-
-            if (exitCode == 0 && tmpXMLFile.exists() && tmpXMLFile.length() > 0) {
-
+        Files.copy(new InputSupplier<InputStream>() {
+            @Override
+            public InputStream getInput() throws IOException {
                 try {
-
-                    SAXParserFactory factory = SAXParserFactory.newInstance();
-                    SAXParser saxParser = factory.newSAXParser();
-                    ComponentDTKSaxHandler handler = new ComponentDTKSaxHandler();
-                    saxParser.parse(tmpXMLFile, handler);
-
-                    syncAssembly(handler.getComponent(), partToConvert);
-
-                } catch (ParserConfigurationException | SAXException | IOException e) {
-                    LOGGER.log(Level.INFO, null, e);
+                    return dataManager.getBinaryResourceInputStream(cadFile);
+                } catch (StorageException e) {
+                    LOGGER.log(Level.WARNING, null, e);
+                    throw new IOException(e);
                 }
-            }else {
-                LOGGER.log(Level.SEVERE, "Cannot parse catia file: " + tmpCadFile.getAbsolutePath(), output.toString());
             }
+        }, tmpCadFile);
 
+        String[] args = {"sh", catProductReader, tmpCadFile.getAbsolutePath()};
 
-        } catch (Exception e) {
-            LOGGER.log(Level.INFO, null, e);
-        } finally {
+        ProcessBuilder pb = new ProcessBuilder(args);
+        Process process = pb.start();
+
+        // Read buffers
+        String stdOutput = ConverterUtils.getOutput(process.getInputStream());
+        String errorOutput = ConverterUtils.getOutput(process.getErrorStream());
+
+        LOGGER.info(stdOutput);
+
+        process.waitFor();
+
+        int exitCode = process.exitValue();
+
+        if (exitCode == 0 && tmpXMLFile.exists() && tmpXMLFile.length() > 0) {
+
             try {
-                if(isr!=null){
-                    isr.close();
-                }
-            }catch (IOException e){
-                LOGGER.log(Level.FINEST,null,e);
+
+                SAXParserFactory factory = SAXParserFactory.newInstance();
+                SAXParser saxParser = factory.newSAXParser();
+                ComponentDTKSaxHandler handler = new ComponentDTKSaxHandler();
+                saxParser.parse(tmpXMLFile, handler);
+
+                syncAssembly(handler.getComponent(), partToConvert);
+
+            } catch (ParserConfigurationException | SAXException | IOException e) {
+                LOGGER.log(Level.INFO, null, e);
             }
-            try{
-                if(br!=null){
-                    br.close();
-                }
-            }catch (IOException e){
-                LOGGER.log(Level.FINEST,null,e);
-            }
+        }else {
+            LOGGER.log(Level.SEVERE, "Cannot parse catia product file: " + tmpCadFile.getAbsolutePath(), errorOutput);
         }
 
         return null;

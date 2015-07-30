@@ -21,6 +21,7 @@
 package com.docdoku.server.converters.obj;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.server.converters.CADConverter;
@@ -33,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -46,14 +48,21 @@ public class ObjFileConverterImpl implements CADConverter{
 
     @Override
     public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir)  throws Exception{
-        InputStream is = dataManager.getBinaryResourceInputStream(cadFile);
+
         File tmpCadFile = new File(tempDir, partToConvert.getKey() + ".obj" );
+
         Files.copy(new InputSupplier<InputStream>() {
             @Override
             public InputStream getInput() throws IOException {
-                return is;
+                try {
+                    return dataManager.getBinaryResourceInputStream(cadFile);
+                } catch (StorageException e) {
+                    LOGGER.log(Level.WARNING, null, e);
+                    throw new IOException(e);
+                }
             }
         }, tmpCadFile);
+
         return new ConversionResult(tmpCadFile);
     }
 

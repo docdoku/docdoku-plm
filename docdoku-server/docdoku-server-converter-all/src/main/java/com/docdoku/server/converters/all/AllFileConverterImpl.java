@@ -27,14 +27,15 @@ import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
+import com.docdoku.server.converters.utils.ConverterUtils;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
 import javax.ejb.EJB;
-import java.io.*;
-import java.util.Arrays;
-import java.util.Properties;
-import java.util.UUID;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -72,20 +73,21 @@ public class AllFileConverterImpl implements CADConverter{
     @Override
     public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
 
+        UUID uuid = UUID.randomUUID();
         String extension = FileIO.getExtension(cadFile.getName());
         File tmpCadFile = new File(tempDir, partToConvert.getKey() + "." + extension);
-        String convertedFileName = tempDir.getAbsolutePath() + "/" + UUID.randomUUID();
-        String meshconvBinary = CONF.getProperty("meshconv_path");
+        String convertedFileName = tempDir.getAbsolutePath() + "/" + uuid ;
+        String meshConvBinary = CONF.getProperty("meshconv_path");
 
-        File executable = new File(meshconvBinary);
+        File executable = new File(meshConvBinary);
 
         if(!executable.exists()){
-            LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+meshconvBinary+"\" is not available");
+            LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+meshConvBinary+"\" is not available");
             return null;
         }
 
         if(!executable.canExecute()){
-            LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+meshconvBinary+"\" has no execution rights");
+            LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+meshConvBinary+"\" has no execution rights");
             return null;
         }
 
@@ -101,19 +103,15 @@ public class AllFileConverterImpl implements CADConverter{
             }
         }, tmpCadFile);
 
-        String[] args = {meshconvBinary, tmpCadFile.getAbsolutePath(), "-c" , "obj", "-o", convertedFileName};
+        String[] args = {meshConvBinary, tmpCadFile.getAbsolutePath(), "-c" , "obj", "-o", convertedFileName};
         ProcessBuilder pb = new ProcessBuilder(args);
         Process proc = pb.start();
 
-        StringBuilder output = new StringBuilder();
-        String line;
-        // Read buffer
-        InputStreamReader isr = new InputStreamReader(proc.getInputStream(),"UTF-8");
-        BufferedReader br = new BufferedReader(isr);
-        while ((line = br.readLine()) != null){
-            output.append(line).append("\n");
-        }
-        br.close();
+        // Read buffers
+        String stdOutput = ConverterUtils.getOutput(proc.getInputStream());
+        String errorOutput = ConverterUtils.getOutput(proc.getErrorStream());
+
+        LOGGER.info(stdOutput);
 
         proc.waitFor();
 
@@ -121,13 +119,14 @@ public class AllFileConverterImpl implements CADConverter{
             return new ConversionResult(new File(convertedFileName + ".obj"));
         }
 
-        LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), output.toString());
+        LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), errorOutput);
+
         return null;
     }
 
     @Override
     public boolean canConvertToOBJ(String cadFileExtension) {
-        return Arrays.asList("dxf","off","ply","stl","3ds","wrl").contains(cadFileExtension);
+        return Arrays.asList("off","ply","3ds","wrl").contains(cadFileExtension);
     }
 
 }

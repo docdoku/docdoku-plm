@@ -27,6 +27,7 @@ import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
+import com.docdoku.server.converters.utils.ConverterUtils;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
@@ -95,28 +96,21 @@ public class StepFileConverterImpl implements CADConverter{
         String[] args = {pythonInterpreter, scriptToOBJ.getAbsolutePath(), "-l" , freeCadLibPath, "-i", tmpCadFile.getAbsolutePath(), "-o", tmpOBJFile.getAbsolutePath()};
         ProcessBuilder pb = new ProcessBuilder(args);
 
-        Process p = pb.start();
+        Process process = pb.start();
 
-        StringBuilder output = new StringBuilder();
-        String line;
+        // Read buffers
+        String stdOutput = ConverterUtils.getOutput(process.getInputStream());
+        String errorOutput = ConverterUtils.getOutput(process.getErrorStream());
 
-        InputStreamReader isr = new InputStreamReader(p.getInputStream(),"UTF-8");
-        BufferedReader br = new BufferedReader(isr);
+        LOGGER.info(stdOutput);
 
-        while ((line=br.readLine()) != null){
-            output.append(line).append("\n");
-        }
+        process.waitFor();
 
-        p.waitFor();
-
-        closeStream(isr);
-        closeStream(br);
-
-        if(p.exitValue() == 0){
+        if(process.exitValue() == 0){
             return new ConversionResult(tmpOBJFile);
         }
 
-        LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), output.toString());
+        LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), errorOutput);
         return null;
     }
 
@@ -125,14 +119,4 @@ public class StepFileConverterImpl implements CADConverter{
         return Arrays.asList("stp", "step", "igs", "iges").contains(cadFileExtension);
     }
 
-
-    private void closeStream(Closeable stream) {
-        try{
-            if(stream!=null){
-                stream.close();
-            }
-        }catch (IOException e){
-            LOGGER.log(Level.FINEST, null, e);
-        }
-    }
 }

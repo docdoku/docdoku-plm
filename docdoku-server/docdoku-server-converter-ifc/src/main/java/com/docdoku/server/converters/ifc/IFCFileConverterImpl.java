@@ -27,11 +27,14 @@ import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
+import com.docdoku.server.converters.utils.ConverterUtils;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
 import javax.ejb.EJB;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -104,27 +107,23 @@ public class IFCFileConverterImpl implements CADConverter{
 
         String[] args = {ifcConverter, "--sew-shells", tmpCadFile.getAbsolutePath(), convertedFileName};
         ProcessBuilder pb = new ProcessBuilder(args);
-        Process proc = pb.start();
+        Process process = pb.start();
 
-        StringBuilder output = new StringBuilder();
-        String line;
-        // Read buffer
-        InputStreamReader isr = new InputStreamReader(proc.getInputStream(),"UTF-8");
-        BufferedReader br = new BufferedReader(isr);
-        while ((line = br.readLine()) != null){
-            output.append(line).append("\n");
-        }
-        br.close();
+        // Read buffers
+        String stdOutput = ConverterUtils.getOutput(process.getInputStream());
+        String errorOutput = ConverterUtils.getOutput(process.getErrorStream());
 
-        proc.waitFor();
+        LOGGER.info(stdOutput);
 
-        if(proc.exitValue() == 0){
+        process.waitFor();
+
+        if(process.exitValue() == 0){
             List<File> materials = new ArrayList<>();
             materials.add(new File(convertedMtl));
             return new ConversionResult(new File(convertedFileName), materials);
         }
 
-        LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), output.toString());
+        LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), errorOutput);
         return null;
     }
 
