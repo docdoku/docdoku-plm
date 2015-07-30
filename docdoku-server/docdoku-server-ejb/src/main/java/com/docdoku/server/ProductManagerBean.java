@@ -893,7 +893,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public List<ModificationNotification> getModificationNotifications(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
         PartRevisionKey partRevisionKey = pPartIPK.getPartRevision();
-        User user = checkPartRevisionReadAccess(partRevisionKey);
+        checkPartRevisionReadAccess(partRevisionKey);
         return new ModificationNotificationDAO(em).getModificationNotifications(pPartIPK);
     }
 
@@ -3303,6 +3303,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
         PathToPathLink pathToPathLink = pathToPathLinkDAO.loadPathToPathLink(pathToPathLinkId);
+
+        if(!ci.getPathToPathLinks().contains(pathToPathLink)){
+            throw new NotAllowedException(locale, "NotAllowedException60");
+        }
+
         pathToPathLink.setDescription(description);
 
         return pathToPathLink;
