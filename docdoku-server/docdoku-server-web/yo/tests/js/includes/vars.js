@@ -10,7 +10,8 @@ var pass = casper.cli.get('pass');
 var contextPath = casper.cli.get('contextPath');
 var protocol = casper.cli.get('protocol');
 
-var homeUrl = protocol + '://' + domain + ':' + port + contextPath;
+var baseUrl = protocol + '://' + domain + ':' + port;
+var homeUrl = baseUrl + contextPath;
 
 function twoDigit(n) {
     'use strict';
@@ -32,7 +33,8 @@ var documents = {
         iterationNote: 'This is the first iteration of this document',
         sharedPassword: 'azertyuiop',
         expireDate: tomorrowValue,
-        expireDate2: yesterdayValue
+        expireDate2: yesterdayValue,
+        documentLink: '100-AAA-CasperJsTestDocument'
     },
     document2: {
         number: '100-AAA-CasperJsTestDocument',
