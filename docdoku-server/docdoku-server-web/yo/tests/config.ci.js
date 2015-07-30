@@ -44,7 +44,32 @@ module.exports = {
         "js/change-management/workflow/workflowCreation.js",
         "js/change-management/workflow/workflowDuplication.js",
 
-        // Template
+        // Documents tags
+        "js/document-management/tag/tagCreation.js",
+        "js/document-management/tag/tagList.js",
+
+        // Document templates
+        "js/document-management/template/templateCreation.js",
+
+        // Folder and document creation
+        "js/document-management/folder/folderCreation.js",
+        "js/document-management/document/documentCreation.js",
+        "js/document-management/document/documentsCreation.js",
+        "js/document-management/document/documentUploadFile.js",
+        "js/document-management/document/documentMultipleCheckin.js",
+        "js/document-management/document/documentMultipleCheckout.js",
+        "js/document-management/document/documentAddLink.js",
+        "js/document-management/document/documentClickLink.js",
+        "js/document-management/document/documentMultipleUndoCheckout.js",
+
+        // Document sharing
+        "js/document-management/share/sharedDocumentCreation.js",
+        "js/document-management/share/publicSharedDocument.js",
+        "js/document-management/share/privateSharedDocument.js",
+        "js/document-management/share/expiredSharedDocument.js",
+
+
+        // Part templates
         "js/product-management/template/partTemplateCreation.js",
         "js/product-management/template/TemplateWithAttribute.js",
 
@@ -52,6 +77,8 @@ module.exports = {
         "js/product-management/part/partCreation.js",
         "js/product-management/part/showPartDetails.js",
         "js/product-management/part/partUploadNativeCadFile.js",
+        "js/product-management/part/partAddLink.js",
+        "js/product-management/part/partClickLink.js",
         "js/product-management/part/partCheckin.js",
         "js/product-management/part/partCheckout.js",
         "js/product-management/assembly/assemblyCreation.js",
@@ -80,29 +107,6 @@ module.exports = {
         "js/product-management/pathToPathLink/pathToPathLinkCheck.js",
         "js/product-management/part/checkUsedByList.js",
 
-        // Documents tags
-        "js/document-management/tag/tagCreation.js",
-        "js/document-management/tag/tagList.js",
-
-        // Document templates
-        "js/document-management/template/templateCreation.js",
-
-        // Folder and document creation
-        "js/document-management/folder/folderCreation.js",
-        "js/document-management/document/documentCreation.js",
-        "js/document-management/document/documentsCreation.js",
-        "js/document-management/document/documentUploadFile.js",
-        "js/document-management/document/documentMultipleCheckin.js",
-        "js/document-management/document/documentMultipleCheckout.js",
-        "js/document-management/document/documentMultipleUndoCheckout.js",
-
-
-        // Document sharing
-        "js/document-management/share/sharedDocumentCreation.js",
-        "js/document-management/share/publicSharedDocument.js",
-        "js/document-management/share/privateSharedDocument.js",
-        "js/document-management/share/expiredSharedDocument.js",
-
         // Change items creation
         "js/change-management/issue/issueCreation.js",
         "js/change-management/request/requestCreation.js",
@@ -115,13 +119,14 @@ module.exports = {
         "js/common/attributes.js",
         "js/common/part-from-template.js",
 
-        // Document link
-        "js/document-management/document/documentAddLink.js",
-        "js/document-management/document/documentClickLink.js",
-        "js/product-management/part/partAddLink.js",
-        "js/product-management/part/partClickLink.js",
-
         // Deletions
+        "js/product-management/product-instance/productInstanceDeletion.js",
+        "js/product-management/baseline/baselineDeletion.js",
+        "js/product-management/product/productDeletion.js",
+        "js/product-management/part/partDeletion.js",
+        "js/product-management/template/partTemplateDeletion.js",
+        "js/document-management/lov/lovDeletion.js",
+
         "js/document-management/tag/tagDeletion.js",
         "js/document-management/document/documentDeletion.js",
         "js/document-management/document/documentMultipleDeletion.js",
@@ -133,13 +138,6 @@ module.exports = {
         "js/change-management/milestone/milestoneDeletion.js",
         "js/change-management/order/orderDeletion.js",
         "js/change-management/request/requestDeletion.js",
-
-        "js/product-management/product-instance/productInstanceDeletion.js",
-        "js/product-management/baseline/baselineDeletion.js",
-        "js/product-management/product/productDeletion.js",
-        "js/product-management/part/partDeletion.js",
-        "js/product-management/template/partTemplateDeletion.js",
-        "js/document-management/lov/lovDeletion.js",
 
         //Create a document template with a LOV attribute, needs an empty list of documents template, and an empty list of LOV
         "js/document-management/lov/lovInTemplateCreation.js"
