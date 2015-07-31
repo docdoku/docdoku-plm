@@ -1183,7 +1183,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartRevision saveTags(PartRevisionKey revisionKey, String[] pTags) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, TagException {
+    public PartRevision saveTags(PartRevisionKey revisionKey, String[] pTags) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
 
         User user = checkPartRevisionWriteAccess(revisionKey);
 
@@ -1222,8 +1222,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 esIndexer.index(partIteration);
             }
         } else {
-            // TODO WTF
-            throw new TagException("null tag");
+            throw new IllegalArgumentException("pTags argument must not be null");
         }
 
 

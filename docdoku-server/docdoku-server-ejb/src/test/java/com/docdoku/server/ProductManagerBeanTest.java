@@ -220,7 +220,7 @@ public class ProductManagerBeanTest {
      * @throws AccessRightException
      */
     @Test
-    public void addTagToPartWithNoTags() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, TagException {
+    public void addTagToPartWithNoTags() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
 
 
         PartRevisionKey partRevisionKey = partRevision.getKey();
@@ -273,8 +273,8 @@ public class ProductManagerBeanTest {
 
     }
 
-    @Test(expected = TagException.class)
-    public void addNullTagToOnePart() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, TagException {
+    @Test(expected = IllegalArgumentException.class)
+    public void addNullTagToOnePart() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
         String[] tags = null;
         partRevision.setTags(null);
         PartRevisionKey partRevisionKey = partRevision.getKey();
@@ -282,7 +282,7 @@ public class ProductManagerBeanTest {
         Mockito.when(userManager.checkWorkspaceReadAccess(ProductUtil.WORKSPACE_ID)).thenReturn(user);
         Mockito.when(userManager.checkWorkspaceWriteAccess(ProductUtil.WORKSPACE_ID)).thenReturn(user);
         Mockito.when(em.find(PartRevision.class, partRevisionKey)).thenReturn(partRevision);
-        PartRevision partRevisionResult = productManagerBean.saveTags(partRevisionKey,tags);
+        productManagerBean.saveTags(partRevisionKey,tags);
     }
 
     @Test

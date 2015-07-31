@@ -490,7 +490,7 @@ public class PartResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public PartRevisionDTO savePartTags(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, List<TagDTO> tagDtos)
-            throws EntityNotFoundException, NotAllowedException, ESServerException, AccessRightException, UserNotActiveException, TagException {
+            throws EntityNotFoundException, NotAllowedException, ESServerException, AccessRightException, UserNotActiveException {
 
 
         String[] tagLabels = new String[tagDtos.size()];
@@ -511,7 +511,7 @@ public class PartResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addPartTag(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, List<TagDTO> tagDtos)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, ESServerException, TagException {
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, ESServerException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
         PartRevision partRevision = productService.getPartRevision(revisionKey);
