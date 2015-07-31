@@ -538,6 +538,83 @@ public class PartResource {
         return Response.ok().build();
     }
 
+
+
+    public List<PartUsageLink> createComponents(String workspaceId, List<PartUsageLinkDTO> pComponents)
+            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException, UserNotActiveException {
+
+        List<PartUsageLink> components = new ArrayList<>();
+        for (PartUsageLinkDTO partUsageLinkDTO : pComponents) {
+
+            PartMaster component = findOrCreatePartMaster(workspaceId, partUsageLinkDTO.getComponent());
+
+            if (component != null) {
+                PartUsageLink partUsageLink = new PartUsageLink();
+
+                List<CADInstance> cadInstances = new ArrayList<>();
+                List<PartSubstituteLink> partSubstituteLinks = new ArrayList<>();
+
+                if (partUsageLinkDTO.getCadInstances() != null) {
+                    for (CADInstanceDTO cadInstanceDTO : partUsageLinkDTO.getCadInstances()) {
+                        cadInstances.add(mapper.map(cadInstanceDTO, CADInstance.class));
+                    }
+                } else if (partUsageLinkDTO.getUnit() == null || partUsageLinkDTO.getUnit().isEmpty()) {
+                    for (double i = 0; i < partUsageLinkDTO.getAmount(); i++) {
+                        cadInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
+                    }
+                } else {
+                    cadInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
+                }
+                for (PartSubstituteLinkDTO substituteLinkDTO : partUsageLinkDTO.getSubstitutes()) {
+                    PartMaster substitute = findOrCreatePartMaster(workspaceId, substituteLinkDTO.getSubstitute());
+                    if (substitute != null) {
+                        PartSubstituteLink partSubstituteLink = mapper.map(substituteLinkDTO, PartSubstituteLink.class);
+                        List<CADInstance> subCADInstances = new ArrayList<>();
+                        if (substituteLinkDTO.getCadInstances() != null) {
+                            for (CADInstanceDTO cadInstanceDTO : substituteLinkDTO.getCadInstances()) {
+                                subCADInstances.add(mapper.map(cadInstanceDTO, CADInstance.class));
+                            }
+                        } else if (substituteLinkDTO.getUnit() == null || substituteLinkDTO.getUnit().isEmpty()) {
+                            for (double i = 0; i <substituteLinkDTO.getAmount() ; i++) {
+                                subCADInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
+                            }
+                        } else {
+                            subCADInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
+                        }
+                        partSubstituteLink.setCadInstances(subCADInstances);
+                        partSubstituteLink.setSubstitute(substitute);
+                        partSubstituteLinks.add(partSubstituteLink);
+                    }
+                }
+                partUsageLink.setComponent(component);
+                partUsageLink.setAmount(partUsageLinkDTO.getAmount());
+                partUsageLink.setComment(partUsageLinkDTO.getComment());
+                partUsageLink.setReferenceDescription(partUsageLinkDTO.getReferenceDescription());
+                partUsageLink.setCadInstances(cadInstances);
+                partUsageLink.setUnit(partUsageLinkDTO.getUnit());
+                partUsageLink.setOptional(partUsageLinkDTO.isOptional());
+                partUsageLink.setSubstitutes(partSubstituteLinks);
+                partUsageLink.setId(partUsageLinkDTO.getId());
+                components.add(partUsageLink);
+            }
+
+        }
+
+        return components;
+
+    }
+
+    public PartMaster findOrCreatePartMaster(String workspaceId, ComponentDTO componentDTO)
+            throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, UserNotActiveException, AccessRightException, CreationException {
+        String componentNumber = componentDTO.getNumber();
+        PartMasterKey partMasterKey = new PartMasterKey(workspaceId, componentNumber);
+        if (productService.partMasterExists(partMasterKey)) {
+            return new PartMaster(userManager.getWorkspace(workspaceId), componentNumber);
+        } else {
+            return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.isStandardPart(), null, componentDTO.getDescription(), null, null, null, null);
+        }
+    }
+
     private List<InstanceAttribute> createInstanceAttributes(List<InstanceAttributeDTO> dtos) {
         if (dtos == null) {
             return new ArrayList<>();
@@ -614,81 +691,6 @@ public class PartResource {
         data.setMandatory(dto.isMandatory());
         data.setLocked(dto.isLocked());
         return data;
-    }
-
-    public List<PartUsageLink> createComponents(String workspaceId, List<PartUsageLinkDTO> pComponents)
-            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException, UserNotActiveException {
-
-        List<PartUsageLink> components = new ArrayList<>();
-        for (PartUsageLinkDTO partUsageLinkDTO : pComponents) {
-
-            PartMaster component = findOrCreatePartMaster(workspaceId, partUsageLinkDTO.getComponent());
-
-            if (component != null) {
-                PartUsageLink partUsageLink = new PartUsageLink();
-
-                List<CADInstance> cadInstances = new ArrayList<>();
-                List<PartSubstituteLink> partSubstituteLinks = new ArrayList<>();
-
-                if (partUsageLinkDTO.getCadInstances() != null) {
-                    for (CADInstanceDTO cadInstanceDTO : partUsageLinkDTO.getCadInstances()) {
-                        cadInstances.add(mapper.map(cadInstanceDTO, CADInstance.class));
-                    }
-                } else if (partUsageLinkDTO.getUnit() == null || partUsageLinkDTO.getUnit().isEmpty()) {
-                    for (double i = 0; i < partUsageLinkDTO.getAmount(); i++) {
-                        cadInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
-                    }
-                } else {
-                    cadInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
-                }
-                for (PartSubstituteLinkDTO substituteLinkDTO : partUsageLinkDTO.getSubstitutes()) {
-                    PartMaster substitute = findOrCreatePartMaster(workspaceId, substituteLinkDTO.getSubstitute());
-                    if (substitute != null) {
-                        PartSubstituteLink partSubstituteLink = mapper.map(substituteLinkDTO, PartSubstituteLink.class);
-                        List<CADInstance> subCADInstances = new ArrayList<>();
-                        if (substituteLinkDTO.getCadInstances() != null) {
-                            for (CADInstanceDTO cadInstanceDTO : substituteLinkDTO.getCadInstances()) {
-                                subCADInstances.add(mapper.map(cadInstanceDTO, CADInstance.class));
-                            }
-                        } else if (substituteLinkDTO.getUnit() == null || substituteLinkDTO.getUnit().isEmpty()) {
-                            for (double i = 0; i <substituteLinkDTO.getAmount() ; i++) {
-                                subCADInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
-                            }
-                        } else {
-                            subCADInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
-                        }
-                        partSubstituteLink.setCadInstances(subCADInstances);
-                        partSubstituteLink.setSubstitute(substitute);
-                        partSubstituteLinks.add(partSubstituteLink);
-                    }
-                }
-                partUsageLink.setComponent(component);
-                partUsageLink.setAmount(partUsageLinkDTO.getAmount());
-                partUsageLink.setComment(partUsageLinkDTO.getComment());
-                partUsageLink.setReferenceDescription(partUsageLinkDTO.getReferenceDescription());
-                partUsageLink.setCadInstances(cadInstances);
-                partUsageLink.setUnit(partUsageLinkDTO.getUnit());
-                partUsageLink.setOptional(partUsageLinkDTO.isOptional());
-                partUsageLink.setSubstitutes(partSubstituteLinks);
-                partUsageLink.setId(partUsageLinkDTO.getId());
-                components.add(partUsageLink);
-            }
-
-        }
-
-        return components;
-
-    }
-
-    public PartMaster findOrCreatePartMaster(String workspaceId, ComponentDTO componentDTO)
-            throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, UserNotActiveException, AccessRightException, CreationException {
-        String componentNumber = componentDTO.getNumber();
-        PartMasterKey partMasterKey = new PartMasterKey(workspaceId, componentNumber);
-        if (productService.partMasterExists(partMasterKey)) {
-            return new PartMaster(userManager.getWorkspace(workspaceId), componentNumber);
-        } else {
-            return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.isStandardPart(), null, componentDTO.getDescription(), null, null, null, null);
-        }
     }
 
     private DocumentRevisionKey[] createDocumentRevisionKey(List<DocumentRevisionDTO> dtos) {

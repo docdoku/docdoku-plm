@@ -37,7 +37,6 @@ import com.docdoku.server.rest.exceptions.*;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
-import com.google.common.collect.Iterables;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;

@@ -19,14 +19,12 @@
  */
 package com.docdoku.core.configuration;
 
-import com.docdoku.core.common.User;
 import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.security.ACL;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**

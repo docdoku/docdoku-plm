@@ -27,14 +27,6 @@ import java.io.Serializable;
  */
 public class RoleDTO implements Serializable {
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     private String id;
     private String name;
     private String workspaceId;
@@ -45,6 +37,14 @@ public class RoleDTO implements Serializable {
 
     public RoleDTO(String name){
         this.name=name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {

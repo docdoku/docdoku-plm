@@ -38,10 +38,6 @@ import java.util.logging.Logger;
 
 public class SearchQueryParser {
 
-    private SearchQueryParser(){
-        super();
-    }
-
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private static final Logger LOGGER = Logger.getLogger(SearchQueryParser.class.getName());
     private static final String ATTRIBUTES_DELIMITER = ";";
@@ -294,4 +290,9 @@ public class SearchQueryParser {
         }
         return  pAttributes;
     }
+
+    private SearchQueryParser(){
+        super();
+    }
+
 }

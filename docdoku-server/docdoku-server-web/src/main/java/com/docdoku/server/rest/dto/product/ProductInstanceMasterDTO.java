@@ -23,7 +23,6 @@ package com.docdoku.server.rest.dto.product;
 import com.docdoku.server.rest.dto.ACLDTO;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Date;
 import java.util.List;
 
 @XmlRootElement

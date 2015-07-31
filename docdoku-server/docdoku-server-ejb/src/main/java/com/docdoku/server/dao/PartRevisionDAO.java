@@ -26,23 +26,18 @@ import com.docdoku.core.exceptions.PartRevisionAlreadyExistsException;
 import com.docdoku.core.exceptions.PartRevisionNotFoundException;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.*;
-import com.docdoku.core.query.SearchQuery;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 
 public class PartRevisionDAO {
 
     private EntityManager em;
     private Locale mLocale;
-    private static final int MAX_RESULTS = 500;
 
     public PartRevisionDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;

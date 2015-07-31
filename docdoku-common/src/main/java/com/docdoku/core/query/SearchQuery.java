@@ -135,6 +135,7 @@ public class SearchQuery  implements Serializable {
     public void setModificationDateTo(Date modificationDateTo) {
         this.modificationDateTo = (modificationDateTo!=null) ? (Date) modificationDateTo.clone() : null;
     }
+
     public void setAttributes(AbstractAttributeQuery[] attributes) {
         this.attributes = attributes;
     }

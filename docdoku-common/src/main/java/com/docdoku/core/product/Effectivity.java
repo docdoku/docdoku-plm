@@ -68,14 +68,12 @@ public abstract class Effectivity implements Serializable {
     public Effectivity() {
     }
 
-    public int getId() {
-        return id;
-    }
-    
-     
-
     public Effectivity(String pName) {
         name = pName;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
