@@ -182,11 +182,11 @@ public class WorkflowModel implements Serializable, Cloneable {
     }
 
     public void setCreationDate(Date pCreationDate) {
-        creationDate = (pCreationDate!=null) ? (Date) pCreationDate : null;
+        creationDate = pCreationDate;
     }
 
     public Date getCreationDate() {
-        return (creationDate!=null) ? (Date) creationDate : null;
+        return  creationDate;
     }
 
     public void setWorkspace(Workspace pWorkspace){

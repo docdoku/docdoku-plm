@@ -143,7 +143,7 @@ public class SearchQuery  implements Serializable {
     }
 
     @XmlSeeAlso({TextAttributeQuery.class, NumberAttributeQuery.class, DateAttributeQuery.class, BooleanAttributeQuery.class, URLAttributeQuery.class})
-    public static abstract class AbstractAttributeQuery implements Serializable{
+    public abstract static class AbstractAttributeQuery implements Serializable{
         protected String name;
 
         public String getName() {
