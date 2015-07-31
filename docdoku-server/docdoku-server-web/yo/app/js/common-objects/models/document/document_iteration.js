@@ -8,6 +8,8 @@ define([
 	'use strict';
 	var DocumentIteration = Backbone.Model.extend({
 
+        idAttribute: 'iteration',
+
 		url: function () {
 			if (this.getIteration()) {
                 if (App.config.documentConfigSpec) {

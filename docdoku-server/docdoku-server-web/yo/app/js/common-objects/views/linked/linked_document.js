@@ -65,10 +65,13 @@ define([
                 id: this.model.get('documentMasterId') + '-' + this.model.get('version')
             });
 
+            var self = this;
+
             document.fetch().success(function () {
                 require(['common-objects/views/document/document_iteration'], function (IterationView) {
                     var view = new IterationView({
-                        model: document
+                        model: document,
+                        iteration: self.model.getIteration ? self.model.getIteration() : undefined
                     });
                     view.show();
                 });

@@ -21,8 +21,8 @@ define([
 
         initialize: function () {
 
-            this.iteration = this.model.getLastIteration();
             this.iterations = this.model.getIterations();
+            this.iteration = this.options.iteration ? this.iterations.get(this.options.iteration) : this.model.getLastIteration();
 
             ModalView.prototype.initialize.apply(this, arguments);
 
