@@ -245,7 +245,7 @@ module.exports = function (grunt) {
                     '<%= yeoman.app %>/document-management/main.css': '<%= yeoman.app %>/less/document-management/style.less',
                     '<%= yeoman.app %>/product-management/main.css': '<%= yeoman.app %>/less/product-management/style.less',
                     '<%= yeoman.app %>/product-structure/main.css': '<%= yeoman.app %>/less/product-structure/style.less',
-                    '<%= yeoman.app %>/visualization/main.css': '<%= yeoman.app %>/less/product-structure/styleFrame.less',
+                    '<%= yeoman.app %>/visualization/main.css': '<%= yeoman.app %>/less/product-structure/style_frame.less',
                     '<%= yeoman.app %>/change-management/main.css': '<%= yeoman.app %>/less/change-management/style.less'
                 }
             }
