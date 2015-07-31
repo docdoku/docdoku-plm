@@ -477,15 +477,15 @@ public class DocumentResource {
     @GET
     @Path("{iteration}/inverse-part-link")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PartDTO> getInversePartsLinks(@PathParam("workspaceId") String workspaceId,
+    public List<PartRevisionDTO> getInversePartsLinks(@PathParam("workspaceId") String workspaceId,
                                               @PathParam("documentId") String documentId,
                                               @PathParam("documentVersion") String documentVersion,
                                               @QueryParam("configSpec") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentRevisionNotFoundException {
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
         List<PartIteration> parts = productService.getInversePartsLink(docKey);
-        Set<PartDTO> dtos = new HashSet<>();
+        Set<PartRevisionDTO> dtos = new HashSet<>();
         for (PartIteration part : parts) {
-            dtos.add(new PartDTO(workspaceId, part.getNumber(), part.getPartName(), part.getVersion()));
+            dtos.add(new PartRevisionDTO(workspaceId, part.getNumber(), part.getPartName(), part.getVersion()));
         }
         return new ArrayList<>(dtos);
     }

@@ -26,7 +26,6 @@ import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.configuration.BaselinedFolder;
 import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.configuration.DocumentBaseline;
-import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
@@ -143,47 +142,47 @@ public class Tools {
         return dto;
     }
 
-    public static PartDTO mapPartRevisionToPartDTO(PartRevision partRevision){
+    public static PartRevisionDTO mapPartRevisionToPartDTO(PartRevision partRevision){
 
         Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
 
-        PartDTO partDTO = mapper.map(partRevision,PartDTO.class);
+        PartRevisionDTO partRevisionDTO = mapper.map(partRevision,PartRevisionDTO.class);
 
-        partDTO.setNumber(partRevision.getPartNumber());
-        partDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
-        partDTO.setName(partRevision.getPartMaster().getName());
-        partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
-        partDTO.setObsoleteDate(partRevision.getObseleteDate());
-        partDTO.setObsoleteAuthor(partRevision.getObsoleteAuthor());
-        partDTO.setReleaseDate(partRevision.getReleaseDate());
-        partDTO.setReleaseAuthor(partRevision.getReleaseAuthor());
+        partRevisionDTO.setNumber(partRevision.getPartNumber());
+        partRevisionDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
+        partRevisionDTO.setName(partRevision.getPartMaster().getName());
+        partRevisionDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
+        partRevisionDTO.setObsoleteDate(partRevision.getObseleteDate());
+        partRevisionDTO.setObsoleteAuthor(partRevision.getObsoleteAuthor());
+        partRevisionDTO.setReleaseDate(partRevision.getReleaseDate());
+        partRevisionDTO.setReleaseAuthor(partRevision.getReleaseAuthor());
 
         List<PartIterationDTO> partIterationDTOs = new ArrayList<>();
         for(PartIteration partIteration : partRevision.getPartIterations()){
             partIterationDTOs.add(mapPartIterationToPartIterationDTO(partIteration));
         }
-        partDTO.setPartIterations(partIterationDTOs);
+        partRevisionDTO.setPartIterations(partIterationDTOs);
 
         if(partRevision.isCheckedOut()){
-            partDTO.setCheckOutDate(partRevision.getCheckOutDate());
+            partRevisionDTO.setCheckOutDate(partRevision.getCheckOutDate());
             UserDTO checkoutUserDTO = mapper.map(partRevision.getCheckOutUser(),UserDTO.class);
-            partDTO.setCheckOutUser(checkoutUserDTO);
+            partRevisionDTO.setCheckOutUser(checkoutUserDTO);
         }
 
         if(partRevision.hasWorkflow()){
-            partDTO.setLifeCycleState(partRevision.getWorkflow().getLifeCycleState());
-            partDTO.setWorkflow(mapper.map(partRevision.getWorkflow(),WorkflowDTO.class));
+            partRevisionDTO.setLifeCycleState(partRevision.getWorkflow().getLifeCycleState());
+            partRevisionDTO.setWorkflow(mapper.map(partRevision.getWorkflow(),WorkflowDTO.class));
         }
 
         ACL acl = partRevision.getACL();
         if(acl != null){
-            partDTO.setAcl(Tools.mapACLtoACLDTO(acl));
+            partRevisionDTO.setAcl(Tools.mapACLtoACLDTO(acl));
         }else{
-            partDTO.setAcl(null);
+            partRevisionDTO.setAcl(null);
         }
 
 
-        return partDTO;
+        return partRevisionDTO;
     }
 
     public static PartIterationDTO mapPartIterationToPartIterationDTO(PartIteration partIteration){

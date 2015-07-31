@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.List;
 
 @XmlRootElement
-public class PartDTO implements Serializable {
+public class PartRevisionDTO implements Serializable {
 
     private String partKey;
     private String number;
@@ -66,10 +66,10 @@ public class PartDTO implements Serializable {
     private Date releaseDate;
     private String releaseAuthor;
 
-    public PartDTO() {
+    public PartRevisionDTO() {
     }
 
-    public PartDTO(String workspaceId, String number, String name, String version) {
+    public PartRevisionDTO(String workspaceId, String number, String name, String version) {
         this.number = number;
         this.name = name;
         this.version = version;
@@ -277,15 +277,15 @@ public class PartDTO implements Serializable {
             return false;
         }
 
-        PartDTO partDTO = (PartDTO) o;
+        PartRevisionDTO partRevisionDTO = (PartRevisionDTO) o;
 
-        if (!number.equals(partDTO.number)){
+        if (!number.equals(partRevisionDTO.number)){
             return false;
         }
-        if (!version.equals(partDTO.version)){
+        if (!version.equals(partRevisionDTO.version)){
             return false;
         }
-        return workspaceId.equals(partDTO.workspaceId);
+        return workspaceId.equals(partRevisionDTO.workspaceId);
 
     }
 

@@ -134,7 +134,7 @@ public class ProductResource {
     @GET
     @Path("{ciId}/bom")
     @Produces(MediaType.APPLICATION_JSON)
-    public PartDTO[] filterPart(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path, @QueryParam("diverge") boolean diverge)
+    public PartRevisionDTO[] filterPart(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path, @QueryParam("diverge") boolean diverge)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
@@ -143,11 +143,11 @@ public class ProductResource {
         Component component = productService.filterProductStructure(ciKey, filter, decodedPath, 1);
 
         List<Component> components = component.getComponents();
-        PartDTO[] partsDTO = new PartDTO[components.size()];
+        PartRevisionDTO[] partsDTO = new PartRevisionDTO[components.size()];
 
         for (int i = 0; i < components.size(); i++) {
             PartRevision lastRevision = components.get(i).getPartMaster().getLastRevision();
-            partsDTO[i] = mapper.map(lastRevision, PartDTO.class);
+            partsDTO[i] = mapper.map(lastRevision, PartRevisionDTO.class);
             partsDTO[i].setNumber(lastRevision.getPartNumber());
             partsDTO[i].setPartKey(lastRevision.getPartNumber() + "-" + lastRevision.getVersion());
             partsDTO[i].setName(lastRevision.getPartMaster().getName());
@@ -374,13 +374,13 @@ public class ProductResource {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
         PartRevision partRevision = productService.getLastReleasePartRevision(ciKey);
-        PartDTO partDTO = mapper.map(partRevision,PartDTO.class);
-        partDTO.setNumber(partRevision.getPartNumber());
-        partDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
-        partDTO.setName(partRevision.getPartMaster().getName());
-        partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
+        PartRevisionDTO partRevisionDTO = mapper.map(partRevision,PartRevisionDTO.class);
+        partRevisionDTO.setNumber(partRevision.getPartNumber());
+        partRevisionDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
+        partRevisionDTO.setName(partRevision.getPartMaster().getName());
+        partRevisionDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
 
-        return Response.ok(partDTO).build();
+        return Response.ok(partRevisionDTO).build();
     }
 
     @Path("configurations")
