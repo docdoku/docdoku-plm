@@ -1,12 +1,12 @@
 /*global define*/
 define([
     'backbone',
-    'common-objects/models/document/document'
-], function (Backbone, Document) {
+    'common-objects/models/document/document_revision'
+], function (Backbone, DocumentRevision) {
     'use strict';
     var UsedByDocumentList = Backbone.Collection.extend({
 
-        model: Document,
+        model: DocumentRevision,
 
         setLinkedDocumentIterationId: function (linkedDocumentIterationId) {
             this.linkedDocumentIterationId = linkedDocumentIterationId;

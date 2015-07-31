@@ -3,8 +3,8 @@ define([
     'common-objects/views/components/list_item',
     'views/tag_document_list',
     'text!templates/tag_list_item.html',
-    'common-objects/models/document/document'
-], function (ListItemView, TagDocumentListView, template, Document) {
+    'common-objects/models/document/document_revision'
+], function (ListItemView, TagDocumentListView, template, DocumentRevision) {
     'use strict';
     var TagListItemView = ListItemView.extend({
 
@@ -79,9 +79,9 @@ define([
 
         tagDocument : function(e) {
             var that = this;
-            var document = new Document(JSON.parse(e.dataTransfer.getData('document:text/plain')));
+            var documentRevision = new DocumentRevision(JSON.parse(e.dataTransfer.getData('document:text/plain')));
 
-            document.addTags([this.model]).success(function () {
+            documentRevision.addTags([this.model]).success(function () {
                 that.tagDiv.removeClass('move-doc-into');
                 that.tagDiv.highlightEffect();
             }).error(function () {

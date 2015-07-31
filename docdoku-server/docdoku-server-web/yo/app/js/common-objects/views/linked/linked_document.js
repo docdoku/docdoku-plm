@@ -3,8 +3,8 @@ define([
     'backbone',
     'mustache',
     'text!common-objects/templates/linked/linked_document.html',
-    'common-objects/models/document/document'
-], function (Backbone, Mustache, template, Document) {
+    'common-objects/models/document/document_revision'
+], function (Backbone, Mustache, template, DocumentRevision) {
     'use strict';
 	var LinkedDocumentView = Backbone.View.extend({
 
@@ -61,16 +61,16 @@ define([
         },
 
         openDocumentDetailView: function () {
-            var document = new Document({
+            var documentRevision = new DocumentRevision({
                 id: this.model.get('documentMasterId') + '-' + this.model.get('version')
             });
 
             var self = this;
 
-            document.fetch().success(function () {
+            documentRevision.fetch().success(function () {
                 require(['common-objects/views/document/document_iteration'], function (IterationView) {
                     var view = new IterationView({
-                        model: document,
+                        model: documentRevision,
                         iteration: self.model.getIteration ? self.model.getIteration() : undefined
                     });
                     view.show();

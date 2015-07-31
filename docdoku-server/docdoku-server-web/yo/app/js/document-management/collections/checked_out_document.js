@@ -1,12 +1,12 @@
 /*global define,App*/
 define([
     'backbone',
-    'common-objects/models/document/document'
-], function (Backbone,Document) {
+    'common-objects/models/document/document_revision'
+], function (Backbone, DocumentRevision) {
 	'use strict';
     var TagDocumentList = Backbone.Collection.extend({
 
-        model: Document,
+        model: DocumentRevision,
 
         className: 'CheckedOutDocumentList',
 
@@ -15,8 +15,8 @@ define([
             return baseUrl + '/' + App.config.login + '/documents';
         },
 
-        comparator: function (document) {
-            return document.get('id');
+        comparator: function (documentRevision) {
+            return documentRevision.get('id');
         }
 
     });

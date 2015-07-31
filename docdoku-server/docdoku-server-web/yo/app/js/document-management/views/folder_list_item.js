@@ -3,7 +3,7 @@ define([
     'backbone',
     'mustache',
     'require',
-    'common-objects/models/document/document',
+    'common-objects/models/document/document_revision',
     'models/folder',
     'collections/folder',
     'common-objects/views/components/list_item',
@@ -12,7 +12,7 @@ define([
     'views/folder_new',
     'views/folder_edit',
     'text!templates/folder_list_item.html'
-], function (Backbone,Mustache, require, Document, Folder, FolderList, ListItemView, FolderListView, FolderDocumentListView, FolderNewView, FolderEditView, template) {
+], function (Backbone,Mustache, require, DocumentRevision, Folder, FolderList, ListItemView, FolderListView, FolderDocumentListView, FolderNewView, FolderEditView, template) {
     'use strict';
 	var FolderListItemView = ListItemView.extend({
 
@@ -285,13 +285,13 @@ define([
         moveDocument: function(e){
 
             var that = this;
-            var document = new Document(JSON.parse(e.dataTransfer.getData('document:text/plain')));
+            var documentRevision = new DocumentRevision(JSON.parse(e.dataTransfer.getData('document:text/plain')));
 
-            var path = document.getWorkspace();
+            var path = documentRevision.getWorkspace();
             if (this.model) {
                 path = this.model.getPath() + '/' + this.model.getName();
             }
-            document.moveInto(path, function () {
+            documentRevision.moveInto(path, function () {
                 Backbone.Events.trigger('document-moved');
                 that.folderDiv.removeClass('move-doc-into');
                 that.folderDiv.highlightEffect();

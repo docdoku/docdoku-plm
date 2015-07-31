@@ -5,7 +5,7 @@ define([
     'common-objects/utils/acl-checker'
 ], function (Backbone, DocumentIterationList, ACLChecker) {
 	'use strict';
-	var Document = Backbone.Model.extend({
+	var DocumentRevision = Backbone.Model.extend({
 
 		urlRoot: function () {
 			if (this.isNew()) {
@@ -375,6 +375,6 @@ define([
 
     });
 
-	return Document;
+	return DocumentRevision;
 
 });
