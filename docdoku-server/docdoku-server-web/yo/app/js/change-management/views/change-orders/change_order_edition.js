@@ -20,7 +20,8 @@ function (Backbone, Mustache, template, ChangeOrderModel, UserList, MilestoneLis
     var ChangeOrderEditionView = Backbone.View.extend({
         events: {
             'submit #order_edition_form': 'onSubmitForm',
-            'hidden #order_edition_modal': 'onHidden'
+            'hidden #order_edition_modal': 'onHidden',
+            'close-modal-request':'closeModal'
         },
 
 

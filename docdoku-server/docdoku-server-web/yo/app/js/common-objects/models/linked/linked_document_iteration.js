@@ -18,12 +18,12 @@ define(['backbone'], function (Backbone) {
             return this.get('documentMasterId');
         },
 
-        getDocumentRevisionTitle: function () {
-            return this.get('documentTitle');
+        getTitle: function () {
+            return this.get('title');
         },
 
-        getDocumentRevisionVersion: function () {
-            return this.get('documentRevisionVersion');
+        getVersion: function () {
+            return this.get('version');
         },
 
         getIteration: function () {
@@ -35,14 +35,14 @@ define(['backbone'], function (Backbone) {
         },
 
         getDocKey: function () {
-            return this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion() + '-' + this.getIteration();
+            return this.getDocumentMasterId() + '-' + this.getVersion() + '-' + this.getIteration();
         },
 
         getDisplayDocKey: function () {
-            if (this.getDocumentRevisionTitle()) {
-                return this.getDocumentRevisionTitle() + ' < ' + this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion() + '-' + this.getIteration() + ' >';
+            if (this.getTitle()) {
+                return this.getTitle() + ' < ' + this.getDocumentMasterId() + '-' + this.getVersion() + '-' + this.getIteration() + ' >';
             }
-            return '< ' + this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion() + '-' + this.getIteration() + ' >';
+            return '< ' + this.getDocumentMasterId() + '-' + this.getVersion() + '-' + this.getIteration() + ' >';
         }
 
     });

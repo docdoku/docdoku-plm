@@ -105,10 +105,10 @@ public class TitleBlockGenerator {
 
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
 
-        String title = docI.getId() + "-" + docI.getDocumentVersion();
+        String title = docI.getId() + "-" + docI.getVersion();
         String subject = docI.getDocumentRevision().getTitle();
         String authorName = docI.getAuthor().getName();
-        String version = docI.getDocumentVersion();
+        String version = docI.getVersion();
         SimpleDateFormat simpleFormat = new SimpleDateFormat(bundle.getString("date.format"));
         String creationDate = simpleFormat.format(docI.getDocumentRevision().getCreationDate());
         String iterationDate = simpleFormat.format(docI.getCreationDate());

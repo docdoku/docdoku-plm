@@ -469,7 +469,7 @@ public class DocumentResource {
         List<DocumentIteration> documents = documentService.getInverseDocumentsLink(docKey);
         Set<DocumentRevisionDTO> dtos = new HashSet<>();
         for (DocumentIteration doc : documents) {
-            dtos.add(new DocumentRevisionDTO(doc.getWorkspaceId(), doc.getDocumentMasterId(), doc.getDocumentTitle(), doc.getDocumentVersion()));
+            dtos.add(new DocumentRevisionDTO(doc.getWorkspaceId(), doc.getDocumentMasterId(), doc.getTitle(), doc.getVersion()));
         }
         return new ArrayList<>(dtos);
     }

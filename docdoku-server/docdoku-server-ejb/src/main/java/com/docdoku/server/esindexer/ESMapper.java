@@ -111,8 +111,8 @@ public class ESMapper {
                     .startObject();
             setField(tmp, WORKSPACE_ID_KEY, doc.getWorkspaceId(), 0.6f);
             setField(tmp, DOCUMENT_ID_KEY, doc.getDocumentRevision().getDocumentMasterId(), 4.75f);
-            setField(tmp, TITLE_KEY, doc.getDocumentRevision().getTitle(), 5f);
-            setField(tmp, VERSION_KEY, doc.getDocumentVersion(), 0.10f);
+            setField(tmp, TITLE_KEY, doc.getTitle(), 5f);
+            setField(tmp, VERSION_KEY, doc.getVersion(), 0.10f);
             setField(tmp, TYPE_KEY, doc.getDocumentRevision().getDocumentMaster().getType(), 2f);
             setField(tmp, DESCRIPTION_KEY, doc.getDocumentRevision().getDescription(), 2f);
             tmp.startArray(ITERATIONS_KEY);
@@ -183,8 +183,8 @@ public class ESMapper {
         Map<String, Object> params = new HashMap<>();
         setParam(params, WORKSPACE_ID_KEY, doc.getWorkspaceId(), 0.6f);
         setParam(params, DOCUMENT_ID_KEY, doc.getDocumentRevision().getDocumentMasterId(), 4.75f);
-        setParam(params, TITLE_KEY, doc.getDocumentRevision().getTitle(), 5f);
-        setParam(params, VERSION_KEY, doc.getDocumentVersion(), 0.10f);
+        setParam(params, TITLE_KEY, doc.getTitle(), 5f);
+        setParam(params, VERSION_KEY, doc.getVersion(), 0.10f);
         setParam(params, ITERATION_KEY, "" + doc.getIteration(), 0.10f);
         if (doc.getAuthor() != null) {
             Map<String, Object> authorParams = new HashMap<>();

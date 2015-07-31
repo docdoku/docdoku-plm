@@ -24,6 +24,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserKey;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.PartIteration;
@@ -150,23 +151,12 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeIssue saveChangeIssueAffectedDocuments(String pWorkspaceId, int pId, DocumentIterationKey[] pAffectedDocuments) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException {
+    public ChangeIssue saveChangeIssueAffectedDocuments(String pWorkspaceId, int pId, DocumentIterationKey[] pAffectedDocuments) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Locale userLocale = new Locale(user.getLanguage());                                                             // Load the user Locale
-        ChangeIssue changeIssue = new ChangeItemDAO(userLocale, em).loadChangeIssue(pId);                                // Load the Change-Issue
-        checkChangeItemWriteAccess(changeIssue, user);                                                                   // Check the write access to the Change-Issue
-
-        Set<DocumentIteration> documentIterations = new HashSet<>();
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
-        for (DocumentIterationKey docKey : pAffectedDocuments) {
-            try {
-                documentIterations.add(docRDAO.loadDocR(docKey.getDocumentRevision()).getIteration(docKey.getIteration()));// Add the document iteration to the Change-Issue
-            } catch (DocumentRevisionNotFoundException e) {
-                LOGGER.log(Level.SEVERE, null, e);
-            }
-        }
-
-        changeIssue.setAffectedDocuments(documentIterations);                                                           // Update the Change-Issue's affected documents list
+        ChangeIssue changeIssue = new ChangeItemDAO(userLocale, em).loadChangeIssue(pId);                               // Load the Change-Issue
+        checkChangeItemWriteAccess(changeIssue, user);                                                                  // Check the write access to the Change-Issue
+        changeIssue.setAffectedDocuments(getDocumentIterations(pAffectedDocuments,userLocale));                         // Update the Change-Issue's affected documents list
         return changeIssue;
     }
 
@@ -333,22 +323,12 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeRequest saveChangeRequestAffectedDocuments(String pWorkspaceId, int pId, DocumentIterationKey[] pAffectedDocuments) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException {
+    public ChangeRequest saveChangeRequestAffectedDocuments(String pWorkspaceId, int pId, DocumentIterationKey[] pAffectedDocuments) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Locale userLocale = new Locale(user.getLanguage());                                                             // Load the user Locale
-        ChangeRequest changeRequest = new ChangeItemDAO(userLocale, em).loadChangeRequest(pId);                          // Load the Change-Request
-        checkChangeItemWriteAccess(changeRequest, user);                                                                 // Check the write access to the Change-Request
-
-        Set<DocumentIteration> documentIterations = new HashSet<>();
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
-        for (DocumentIterationKey docKey : pAffectedDocuments) {
-            try {
-                documentIterations.add(docRDAO.loadDocR(docKey.getDocumentRevision()).getIteration(docKey.getIteration()));// Add the document iteration to the Change-Request
-            } catch (DocumentRevisionNotFoundException e) {
-                LOGGER.log(Level.SEVERE, null, e);
-            }
-        }
-        changeRequest.setAffectedDocuments(documentIterations);
+        ChangeRequest changeRequest = new ChangeItemDAO(userLocale, em).loadChangeRequest(pId);                         // Load the Change-Request
+        checkChangeItemWriteAccess(changeRequest, user);                                                                // Check the write access to the Change-Request
+        changeRequest.setAffectedDocuments(getDocumentIterations(pAffectedDocuments,userLocale));
         return changeRequest;
     }
 
@@ -507,22 +487,12 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeOrder saveChangeOrderAffectedDocuments(String pWorkspaceId, int pId, DocumentIterationKey[] pAffectedDocuments) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException {
+    public ChangeOrder saveChangeOrderAffectedDocuments(String pWorkspaceId, int pId, DocumentIterationKey[] pAffectedDocuments) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Locale userLocale = new Locale(user.getLanguage());                                                             // Load the user Locale
         ChangeOrder changeOrder = new ChangeItemDAO(userLocale, em).loadChangeOrder(pId);                                // Load the Change-Order
         checkChangeItemWriteAccess(changeOrder, user);                                                                   // Check the write access to the Change-Order
-
-        Set<DocumentIteration> documentIterations = new HashSet<>();
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
-        for (DocumentIterationKey docKey : pAffectedDocuments) {
-            try {
-                documentIterations.add(docRDAO.loadDocR(docKey.getDocumentRevision()).getIteration(docKey.getIteration()));// Add the document iteration to the Change-Order
-            } catch (DocumentRevisionNotFoundException e) {
-                LOGGER.log(Level.SEVERE, null, e);
-            }
-        }
-        changeOrder.setAffectedDocuments(documentIterations);
+        changeOrder.setAffectedDocuments(getDocumentIterations(pAffectedDocuments,userLocale));
         return changeOrder;
     }
 
@@ -971,6 +941,29 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         }
         changeOrder.setAddressedChangeRequests(visibleChangeRequests);
         return changeOrder;
+    }
+
+    private Set<DocumentIteration> getDocumentIterations(DocumentIterationKey[] pAffectedDocuments, Locale userLocale) throws DocumentRevisionNotFoundException {
+
+        Set<DocumentIteration> documentIterations = new HashSet<>();
+        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(userLocale, em);
+
+        for (DocumentIterationKey docKey : pAffectedDocuments) {
+
+            DocumentRevision documentRevision = documentRevisionDAO.loadDocR(docKey.getDocumentRevision());
+            DocumentIteration iteration;
+
+            if(docKey.getIteration() > 0){
+                iteration = documentRevision.getIteration(docKey.getIteration());
+            }else{
+                iteration = documentRevision.getLastCheckedInIteration();
+            }
+
+            if(iteration != null){
+                documentIterations.add(iteration);
+            }
+        }
+        return documentIterations;
     }
 
 }

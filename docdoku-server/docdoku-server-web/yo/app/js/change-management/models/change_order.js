@@ -20,7 +20,7 @@ define([
             $.ajax({
                 context: this,
                 type: 'PUT',
-                url: this.url() + '/affectedRequests',
+                url: this.url() + '/affected-requests',
                 data: JSON.stringify(requests),
                 contentType: 'application/json; charset=utf-8',
                 success: function () {

@@ -18,7 +18,8 @@ define([
         events: {
             'click .modal-footer .btn-primary': 'interceptSubmit',
             'submit #request_creation_form': 'onSubmitForm',
-            'hidden #request_creation_modal': 'onHidden'
+            'hidden #request_creation_modal': 'onHidden',
+            'close-modal-request':'closeModal'
         },
 
         initialize: function () {

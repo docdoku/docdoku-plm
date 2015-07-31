@@ -72,12 +72,16 @@ define([
 			return  this.get('documentMasterId');
 		},
 
-		getDocumentRevisionVersion: function () {
-			return  this.get('documentRevisionVersion');
+		getVersion: function () {
+			return  this.get('version');
+		},
+
+        getTitle: function () {
+			return  this.get('title');
 		},
 
 		getDocKey: function () {
-			return this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion();
+			return this.getDocumentMasterId() + '-' + this.getVersion();
 		},
 
 		getLinkedDocuments: function () {
@@ -94,7 +98,7 @@ define([
 		},
 
 		getBaseName: function () {
-			return this.getWorkspace() + '/documents/' + this.getDocumentMasterId() + '/' + this.getDocumentRevisionVersion() + '/' + this.getIteration();
+			return this.getWorkspace() + '/documents/' + this.getDocumentMasterId() + '/' + this.getVersion() + '/' + this.getIteration();
 		},
 
         getUsedByDocuments: function () {

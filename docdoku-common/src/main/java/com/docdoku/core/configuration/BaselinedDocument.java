@@ -64,7 +64,7 @@ public class BaselinedDocument implements Serializable {
     public BaselinedDocument(DocumentCollection documentCollection, DocumentIteration targetDocument) {
         this.documentCollection = documentCollection;
         this.targetDocument = targetDocument;
-        this.baselinedDocumentKey = new BaselinedDocumentKey(documentCollection.getId(), targetDocument.getWorkspaceId(), targetDocument.getDocumentMasterId(), targetDocument.getDocumentVersion());
+        this.baselinedDocumentKey = new BaselinedDocumentKey(documentCollection.getId(), targetDocument.getWorkspaceId(), targetDocument.getDocumentMasterId(), targetDocument.getVersion());
         this.targetDocumentIteration = targetDocument.getIteration();
     }
 
@@ -90,7 +90,7 @@ public class BaselinedDocument implements Serializable {
     }
 
     public String getTargetDocumentVersion() {
-        return targetDocument.getDocumentVersion();
+        return targetDocument.getVersion();
     }
 
     public int getTargetDocumentIteration() {

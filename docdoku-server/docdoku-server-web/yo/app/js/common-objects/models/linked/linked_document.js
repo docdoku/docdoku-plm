@@ -22,23 +22,23 @@ define(['backbone'], function (Backbone) {
             return this.get('documentMasterId');
         },
 
-        getDocumentRevisionTitle: function () {
+        getTitle: function () {
             return this.get('title');
         },
 
-        getDocumentRevisionVersion: function () {
+        getVersion: function () {
             return this.get('version');
         },
 
         getDocKey: function () {
-            return this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion();
+            return this.getDocumentMasterId() + '-' + this.getVersion();
         },
 
         getDisplayDocKey: function () {
-            if (this.getDocumentRevisionTitle()) {
-                return this.getDocumentRevisionTitle() + ' < ' + this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion() + ' >';
+            if (this.getTitle()) {
+                return this.getTitle() + ' < ' + this.getDocumentMasterId() + '-' + this.getVersion() + ' >';
             }
-            return '< ' + this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion() + ' >';
+            return '< ' + this.getDocumentMasterId() + '-' + this.getVersion() + ' >';
         },
 
         setDocumentLinkComment:function(comment){

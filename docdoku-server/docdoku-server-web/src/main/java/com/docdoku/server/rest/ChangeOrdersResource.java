@@ -188,7 +188,7 @@ public class ChangeOrdersResource {
     }
 
     @PUT
-    @Path("{orderId}/affectedDocuments")
+    @Path("{orderId}/affected-documents")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ChangeItemDTO saveAffectedDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<DocumentIterationDTO> documentLinkDtos)
@@ -205,7 +205,7 @@ public class ChangeOrdersResource {
     }
 
     @PUT
-    @Path("{orderId}/affectedParts")
+    @Path("{orderId}/affected-parts")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ChangeItemDTO saveAffectedParts(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<PartIterationDTO> partLinkDtos)
@@ -222,7 +222,7 @@ public class ChangeOrdersResource {
     }
 
     @PUT
-    @Path("{orderId}/affectedRequests")
+    @Path("{orderId}/affected-requests")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ChangeItemDTO saveAffectedRequests(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<ChangeRequestDTO> changeRequestDTOs)
@@ -274,7 +274,7 @@ public class ChangeOrdersResource {
         DocumentIterationKey[] data = new DocumentIterationKey[dtos.size()];
         int i = 0;
         for (DocumentIterationDTO dto : dtos) {
-            data[i++] = new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getDocumentRevisionVersion(), dto.getIteration());
+            data[i++] = new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getVersion(), dto.getIteration());
         }
 
         return data;

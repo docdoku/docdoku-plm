@@ -65,7 +65,7 @@ public class ActivityCheckerInterceptor {
                 setParameter("userLogin", user.getLogin()).
                 setParameter("documentWorkspaceId", doc.getWorkspaceId()).
                 setParameter("documentId", doc.getId()).
-                setParameter("documentVersion", doc.getDocumentVersion()).
+                setParameter("documentVersion", doc.getVersion()).
                 setParameter("documentIteration", doc.getIteration()).
                 setParameter("event", "DOWNLOAD").
                 getResultList().isEmpty()) {

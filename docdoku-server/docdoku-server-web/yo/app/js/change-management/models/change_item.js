@@ -129,7 +129,7 @@ define([
             $.ajax({
                 context: this,
                 type: 'PUT',
-                url: this.url() + '/affectedDocuments',
+                url: this.url() + '/affected-documents',
                 data: JSON.stringify(documents),
                 contentType: 'application/json; charset=utf-8',
                 success: function () {
@@ -144,7 +144,7 @@ define([
             $.ajax({
                 context: this,
                 type: 'PUT',
-                url: this.url() + '/affectedParts',
+                url: this.url() + '/affected-parts',
                 data: JSON.stringify(parts),
                 contentType: 'application/json; charset=utf-8',
                 success: function () {

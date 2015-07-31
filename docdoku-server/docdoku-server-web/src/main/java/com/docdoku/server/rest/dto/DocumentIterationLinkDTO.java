@@ -25,9 +25,9 @@ public class DocumentIterationLinkDTO implements Serializable {
 
     private String workspaceId;
     private String documentMasterId;
-    private String documentRevisionVersion;
+    private String version;
     private int iteration;
-    private String documentTitle;
+    private String title;
     private String commentLink;
 
     public DocumentIterationLinkDTO() {
@@ -49,14 +49,6 @@ public class DocumentIterationLinkDTO implements Serializable {
         this.documentMasterId = documentMasterId;
     }
 
-    public String getDocumentRevisionVersion() {
-        return documentRevisionVersion;
-    }
-
-    public void setDocumentRevisionVersion(String documentRevisionVersion) {
-        this.documentRevisionVersion = documentRevisionVersion;
-    }
-
     public int getIteration() {
         return iteration;
     }
@@ -73,11 +65,19 @@ public class DocumentIterationLinkDTO implements Serializable {
         this.commentLink = commentLink;
     }
 
-    public String getDocumentTitle() {
-        return documentTitle;
+    public String getVersion() {
+        return version;
     }
 
-    public void setDocumentTitle(String documentTitle) {
-        this.documentTitle = documentTitle;
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

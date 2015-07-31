@@ -146,16 +146,12 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         return documentRevision==null?"":documentRevision.getId();
     }
 
-    public String getDocumentVersion() {
+    public String getVersion() {
         return documentRevision==null?"":documentRevision.getVersion();
     }
 
     public String getDocumentMasterId() {
         return getId();
-    }
-
-    public String getDocumentRevisionVersion(){
-        return getDocumentVersion();
     }
 
     public int getIteration() {
@@ -252,7 +248,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         instanceAttributes=pInstanceAttributes;
     }
 
-    public String getDocumentTitle() {
+    public String getTitle() {
         return documentRevision==null ? "" : this.documentRevision.getTitle();
     }
 
@@ -266,7 +262,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         int hash = 1;
         hash = 31 * hash + getWorkspaceId().hashCode();
         hash = 31 * hash + getId().hashCode();
-        hash = 31 * hash + getDocumentVersion().hashCode();
+        hash = 31 * hash + getVersion().hashCode();
         hash = 31 * hash + iteration;
         return hash;
     }
@@ -282,7 +278,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         DocumentIteration docI = (DocumentIteration) pObj;
         return docI.getId().equals(getId()) &&
                 docI.getWorkspaceId().equals(getWorkspaceId()) &&
-                docI.getDocumentVersion().equals(getDocumentVersion()) &&
+                docI.getVersion().equals(getVersion()) &&
                 docI.iteration==iteration;
     }
 
@@ -300,7 +296,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         if (docmIdComp != 0) {
             return docmIdComp;
         }
-        int docmVersionComp = getDocumentVersion().compareTo(pDoc.getDocumentVersion());
+        int docmVersionComp = getVersion().compareTo(pDoc.getVersion());
         if (docmVersionComp != 0) {
             return docmVersionComp;
         } else {

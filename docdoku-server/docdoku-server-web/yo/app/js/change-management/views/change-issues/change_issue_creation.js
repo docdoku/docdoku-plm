@@ -16,7 +16,8 @@ function (Backbone, Mustache, template, ChangeIssueModel, UserList, LinkedDocume
         events: {
             'click .modal-footer .btn-primary': 'interceptSubmit',
             'submit #issue_creation_form': 'onSubmitForm',
-            'hidden #issue_creation_modal': 'onHidden'
+            'hidden #issue_creation_modal': 'onHidden',
+            'close-modal-request':'closeModal'
         },
 
         initialize: function () {

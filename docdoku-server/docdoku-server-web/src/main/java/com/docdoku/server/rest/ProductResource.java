@@ -554,8 +554,8 @@ public class ProductResource {
 
             DocumentIterationLinkDTO documentIterationLinkDTO = new DocumentIterationLinkDTO();
             documentIterationLinkDTO.setDocumentMasterId(documentIteration.getId());
-            documentIterationLinkDTO.setDocumentRevisionVersion(documentIteration.getDocumentVersion());
-            documentIterationLinkDTO.setDocumentTitle(documentIteration.getDocumentTitle());
+            documentIterationLinkDTO.setVersion(documentIteration.getVersion());
+            documentIterationLinkDTO.setTitle(documentIteration.getTitle());
             documentIterationLinkDTO.setIteration(documentIteration.getIteration());
             documentIterationLinkDTO.setWorkspaceId(documentIteration.getWorkspaceId());
             documentIterationLinkDTO.setCommentLink(documentLink.getComment());

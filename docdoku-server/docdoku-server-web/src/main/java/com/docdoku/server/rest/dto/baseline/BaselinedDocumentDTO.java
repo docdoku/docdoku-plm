@@ -33,7 +33,7 @@ public class BaselinedDocumentDTO {
 
     public BaselinedDocumentDTO(DocumentIteration partIteration){
         this.documentId = partIteration.getDocumentMasterId();
-        this.version = partIteration.getDocumentVersion();
+        this.version = partIteration.getVersion();
         this.iteration = partIteration.getIteration();
     }
 

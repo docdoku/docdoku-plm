@@ -20,7 +20,8 @@ define([
         var ChangeRequestEditionView = Backbone.View.extend({
             events: {
                 'submit #request_edition_form': 'onSubmitForm',
-                'hidden #request_edition_modal': 'onHidden'
+                'hidden #request_edition_modal': 'onHidden',
+                'close-modal-request':'closeModal'
             },
 
 

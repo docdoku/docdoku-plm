@@ -33,12 +33,12 @@ public class DocumentIterationDTO implements Serializable {
     private String workspaceId;
     private String id;
     private String documentMasterId;
-    private String documentRevisionVersion;
+    private String version;
     private int iteration;
     private Date creationDate;
     private Date modificationDate;
     private Date checkInDate;
-    private String documentTitle;
+    private String title;
     private UserDTO author;
     @XmlElement(nillable = true)
     private String revisionNote;
@@ -49,10 +49,10 @@ public class DocumentIterationDTO implements Serializable {
     public DocumentIterationDTO() {
     }
 
-    public DocumentIterationDTO(String pWorkspaceId, String pDocumentMasterId, String pDocumentRevisionVersion, int pIteration) {
+    public DocumentIterationDTO(String pWorkspaceId, String pDocumentMasterId, String pVersion, int pIteration) {
         workspaceId = pWorkspaceId;
         documentMasterId = pDocumentMasterId;
-        documentRevisionVersion = pDocumentRevisionVersion;
+        version = pVersion;
         iteration = pIteration;
     }
 
@@ -61,7 +61,7 @@ public class DocumentIterationDTO implements Serializable {
     }
 
     public String getId() {
-        return documentMasterId+"-"+documentRevisionVersion+"-"+iteration;
+        return documentMasterId+"-"+version+"-"+iteration;
     }
 
     public void setId(String id) {
@@ -130,7 +130,7 @@ public class DocumentIterationDTO implements Serializable {
 
     @Override
     public String toString() {
-        return workspaceId + "-" + documentMasterId + "-" + documentRevisionVersion + "-" + iteration;
+        return workspaceId + "-" + documentMasterId + "-" + version + "-" + iteration;
     }
 
     public String getWorkspaceId() {
@@ -149,14 +149,6 @@ public class DocumentIterationDTO implements Serializable {
         documentMasterId = pDocumentMasterId;
     }
 
-    public String getDocumentRevisionVersion() {
-        return documentRevisionVersion;
-    }
-
-    public void setDocumentRevisionVersion(String pDocumentRevisionVersion) {
-        this.documentRevisionVersion = pDocumentRevisionVersion;
-    }
-
     public int getIteration() {
         return iteration;
     }
@@ -166,15 +158,22 @@ public class DocumentIterationDTO implements Serializable {
     }
 
     public DocumentRevisionDTO getDocumentRevision() {
-        return new DocumentRevisionDTO(workspaceId, id+"-"+documentRevisionVersion, documentRevisionVersion);
+        return new DocumentRevisionDTO(workspaceId, id+"-"+version, version);
     }
 
-    public String getDocumentTitle() {
-        return documentTitle;
+    public String getVersion() {
+        return version;
     }
 
-    public void setDocumentTitle(String documentTitle) {
-        this.documentTitle = documentTitle;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }

@@ -16,7 +16,8 @@ function (Backbone, Mustache, template, UserList, Tag, TagView, LinkedDocumentsV
     var ChangeIssueEditionView = Backbone.View.extend({
         events: {
             'submit #issue_edition_form': 'onSubmitForm',
-            'hidden #issue_edition_modal': 'onHidden'
+            'hidden #issue_edition_modal': 'onHidden',
+            'close-modal-request':'closeModal'
         },
 
         initialize: function () {
