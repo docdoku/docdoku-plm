@@ -71,7 +71,7 @@ module.exports = {
 
         // Part templates
         "js/product-management/template/partTemplateCreation.js",
-        "js/product-management/template/TemplateWithAttribute.js",
+        "js/product-management/template/templateWithAttribute.js",
 
         // Part and assembly creation
         "js/product-management/part/partCreation.js",
@@ -117,7 +117,7 @@ module.exports = {
         "js/document-management/lov/lovCreation.js",
 
         "js/common/attributes.js",
-        "js/common/part-from-template.js",
+        "js/common/partFromTemplate.js",
 
         // Deletions
         "js/product-management/product-instance/productInstanceDeletion.js",
