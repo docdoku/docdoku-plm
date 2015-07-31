@@ -1,4 +1,4 @@
-package com.docdoku.server.util; /*
+/*
  * DocDoku, Professional Open Source
  * Copyright 2006 - 2015 DocDoku SARL
  *
@@ -18,10 +18,13 @@ package com.docdoku.server.util; /*
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+package com.docdoku.server.util;
+
 /*
  *
  * @author Asmae CHADID on 09/03/15.
  */
+
 public class DocumentUtil {
 
     public static final String WORKSPACE_ID="TestWorkspace";

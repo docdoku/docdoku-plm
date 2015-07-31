@@ -1,4 +1,4 @@
-package com.docdoku.server.rest.util; /*
+/*
  * DocDoku, Professional Open Source
  * Copyright 2006 - 2015 DocDoku SARL
  *
@@ -17,6 +17,8 @@ package com.docdoku.server.rest.util; /*
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+package com.docdoku.server.rest.util;
 
 import com.docdoku.core.meta.*;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;

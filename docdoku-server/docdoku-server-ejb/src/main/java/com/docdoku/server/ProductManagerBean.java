@@ -1222,6 +1222,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 esIndexer.index(partIteration);
             }
         } else {
+            // TODO WTF
             throw new TagException("null tag");
         }
 

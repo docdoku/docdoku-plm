@@ -34,13 +34,11 @@ import com.docdoku.server.dao.PathToPathLinkDAO;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.products.ProductBaselineManagerBean;
 import com.docdoku.server.util.CyclicAssemblyRule;
-import com.docdoku.server.util.FastTestCategory;
 import com.docdoku.server.util.ProductUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 import org.mockito.*;
 
@@ -287,8 +285,6 @@ public class ProductManagerBeanTest {
         PartRevision partRevisionResult = productManagerBean.saveTags(partRevisionKey,tags);
     }
 
-
-    @Category(FastTestCategory.class)
     @Test
     public void checkCyclicDetection() throws EntityConstraintException, PartMasterNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, NotAllowedException {
 

@@ -32,12 +32,10 @@ import com.docdoku.server.UserManagerBean;
 import com.docdoku.server.dao.ConfigurationItemDAO;
 import com.docdoku.server.dao.PartIterationDAO;
 import com.docdoku.server.util.BaselineRule;
-import com.docdoku.server.util.FastTestCategory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -97,7 +95,6 @@ public class ProductBaselineManagerBeanTest {
     /**
      * test the creation of Released baseline
      */
-    @Category(FastTestCategory.class)
     @Test
     public void createReleasedBaseline() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, UserNotActiveException, PartIterationNotFoundException, PartRevisionNotReleasedException, EntityConstraintException, PartMasterNotFoundException, CreationException, BaselineNotFoundException, PathToPathLinkAlreadyExistsException {
 
@@ -128,7 +125,6 @@ public class ProductBaselineManagerBeanTest {
      *
      * @throws Exception PartRevisionNotReleasedException
      */
-    @Category(FastTestCategory.class)
     @Test
     public void createReleasedBaselineUsingPartNotReleased() throws Exception{
 
@@ -147,7 +143,6 @@ public class ProductBaselineManagerBeanTest {
     /**
      * test the creation of latest baseline
      */
-    @Category(FastTestCategory.class)
     @Test
     public void createLatestBaseline() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, EntityConstraintException, UserNotActiveException, NotAllowedException, PartIterationNotFoundException, PartRevisionNotReleasedException, PartMasterNotFoundException, CreationException, BaselineNotFoundException, PathToPathLinkAlreadyExistsException {
 
@@ -183,7 +178,6 @@ public class ProductBaselineManagerBeanTest {
      * @throws PartIterationNotFoundException
      * @throws com.docdoku.core.exceptions.PartRevisionNotReleasedException
      */
-    @Category(FastTestCategory.class)
     @Test
     public void createLatestBaselineWithCheckedPart() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, UserNotActiveException, PartIterationNotFoundException, PartRevisionNotReleasedException, EntityConstraintException, PartMasterNotFoundException, CreationException, BaselineNotFoundException, PathToPathLinkAlreadyExistsException {
 
