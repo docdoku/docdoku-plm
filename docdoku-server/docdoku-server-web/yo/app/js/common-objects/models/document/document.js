@@ -20,8 +20,8 @@ define([
 
 		url: function () {
 			if (this.getId()) {
-                if (App.config.configSpec) {
-                    return this.baseUrl() + '?configSpec=' + App.config.configSpec;
+                if (App.config.documentConfigSpec) {
+                    return this.baseUrl() + '?configSpec=' + App.config.documentConfigSpec;
                 } else {
                     return this.baseUrl();
                 }

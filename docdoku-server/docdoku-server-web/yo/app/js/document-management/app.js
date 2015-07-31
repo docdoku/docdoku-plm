@@ -17,7 +17,7 @@ define([
         },
 
         initialize: function () {
-	        App.config.configSpec = 'latest';
+	        App.config.documentConfigSpec = 'latest';
             this.model = new Workspace({id: App.config.workspaceId});
         },
 
@@ -55,7 +55,7 @@ define([
 		},
 
 	    isReadOnly:function(){
-			return App.config.configSpec!=='latest';
+			return App.config.documentConfigSpec!=='latest';
 	    }
     });
 

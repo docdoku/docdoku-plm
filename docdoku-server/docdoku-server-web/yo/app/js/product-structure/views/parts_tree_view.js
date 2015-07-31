@@ -212,7 +212,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
             this.onProductTitleClicked();
             App.instancesManager.clear();
             App.collaborativeController.sendSmartPath(App.partsTreeView.getSmartPath());
-            App.collaborativeController.sendConfigSpec(App.config.configSpec);
+            App.collaborativeController.sendConfigSpec(App.config.productConfigSpec);
         },
 
         toggleComment:function(){

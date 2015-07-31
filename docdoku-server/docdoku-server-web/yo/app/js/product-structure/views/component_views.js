@@ -213,7 +213,7 @@ define([
 				    model: model,
                     iteration: iteration,
                     productId: App.config.productId,
-                    configSpec: ['wip','latest','latest-released'].indexOf(App.config.configSpec)===-1 ? App.config.configSpec : null
+                    productConfigSpec: ['wip','latest','latest-released'].indexOf(App.config.productConfigSpec)===-1 ? App.config.productConfigSpec : null
 			    }).show();
 		    });
 
@@ -395,7 +395,7 @@ define([
 				    model: model,
                     iteration: iteration,
                     productId: App.config.productId,
-                    configSpec: ['wip','latest','latest-released'].indexOf(App.config.configSpec)===-1 ? App.config.configSpec : null
+                    productConfigSpec: ['wip','latest','latest-released'].indexOf(App.config.productConfigSpec)===-1 ? App.config.productConfigSpec : null
 			    }).show();
 		    });
 

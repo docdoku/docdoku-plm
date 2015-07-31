@@ -42,8 +42,8 @@ define([
 			this.baselineCollection.fetch({reset:true});
             this.productInstanceCollection.fetch({reset:true});
 
-            if(_.contains(this.availableFilters,App.config.configSpec)){
-                this.$selectLatestFilter.val(App.config.configSpec);
+            if(_.contains(this.availableFilters,App.config.productConfigSpec)){
+                this.$selectLatestFilter.val(App.config.productConfigSpec);
             }
 
             this.fetchPathToPathLinkTypes();
@@ -69,7 +69,7 @@ define([
 
             this.baselineCollection.each(function(baseline){
                 this.$selectBaselineSpec.append('<option value="'+baseline.getId()+'">'+baseline.getName()+'</option>');
-                if(App.config.configSpec === ''+baseline.getId()){
+                if(App.config.productConfigSpec === ''+baseline.getId()){
                     selected = baseline;
                 }
             },this);
@@ -90,7 +90,7 @@ define([
             var selected;
             this.productInstanceCollection.each(function(productInstance){
                 this.$selectProdInstSpec.append('<option value="pi-'+productInstance.getSerialNumber()+'">'+productInstance.getSerialNumber()+'</option>');
-                if(App.config.configSpec === 'pi-' + productInstance.getSerialNumber()){
+                if(App.config.productConfigSpec === 'pi-' + productInstance.getSerialNumber()){
                     selected = productInstance;
                 }
             },this);
@@ -181,7 +181,7 @@ define([
 
         changePathToPathLink:function(e){
             App.config.linkType = e.target.value;
-            this.trigger('config_spec:changed', App.config.configSpec);
+            this.trigger('config_spec:changed', App.config.productConfigSpec);
         },
 
         setDescription:function(desc){
@@ -189,18 +189,18 @@ define([
         },
 
         refresh:function(){
-            var selectedConfigSpecOption = this.$('option[value="'+App.config.configSpec+'"]');
+            var selectedConfigSpecOption = this.$('option[value="'+App.config.productConfigSpec+'"]');
 
             if(selectedConfigSpecOption){
                 this.$selectBaselineSpec.hide();
                 this.$selectLatestFilter.hide();
                 this.$selectProdInstSpec.hide();
 
-                selectedConfigSpecOption.parent().val(App.config.configSpec).show();
+                selectedConfigSpecOption.parent().val(App.config.productConfigSpec).show();
 
-                if(_.contains(this.availableFilters,App.config.configSpec)){
+                if(_.contains(this.availableFilters,App.config.productConfigSpec)){
                     this.$selectConfSpec.val('latest-filters');
-                }else if(App.config.configSpec.match(/^pi-/)){
+                }else if(App.config.productConfigSpec.match(/^pi-/)){
                     this.$selectConfSpec.val('serial-number');
                 }else{
                     this.$selectConfSpec.val('baseline');
@@ -218,7 +218,7 @@ define([
             this.showSubstitutes = !this.showSubstitutes;
 
             App.config.diverge = !App.config.diverge;
-            this.trigger('config_spec:changed', App.config.configSpec);
+            this.trigger('config_spec:changed', App.config.productConfigSpec);
         }
 
 	});

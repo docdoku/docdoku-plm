@@ -202,8 +202,8 @@ define([
             var pathToPathLinkModal = new PathToPathLinkModalView({
                 pathSelected : this.pathSelected,
                 productId : App.config.productId,
-                serialNumber : App.baselineSelectView.isSerialNumberSelected() ? App.config.configSpec.substring(3) : null,
-                baselineId : App.baselineSelectView.isBaselineSelected() ? App.config.configSpec : null
+                serialNumber : App.baselineSelectView.isSerialNumberSelected() ? App.config.productConfigSpec.substring(3) : null,
+                baselineId : App.baselineSelectView.isBaselineSelected() ? App.config.productConfigSpec : null
             }).render();
             window.document.body.appendChild(pathToPathLinkModal.el);
             pathToPathLinkModal.openModal();
@@ -218,11 +218,11 @@ define([
         },
 
         sceneButton: function () {
-            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.configSpec + '/scene', {trigger: true});
+            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.productConfigSpec + '/scene', {trigger: true});
         },
 
         bomButton: function () {
-            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.configSpec + '/bom', {trigger: true});
+            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.productConfigSpec + '/bom', {trigger: true});
         },
 
         setSpectatorView: function () {
@@ -269,7 +269,7 @@ define([
                 iframeSrc += '/-1';
             }
 
-            iframeSrc += '/' + App.config.configSpec;
+            iframeSrc += '/' + App.config.productConfigSpec;
 
             // Open modal
             var esmv = new ExportSceneModalView({iframeSrc: iframeSrc});
@@ -279,7 +279,7 @@ define([
 
         openPathDataModal:function(){
             var pathDataModal = new PathDataModalView({
-                serialNumber: App.config.configSpec.substr(3),
+                serialNumber: App.config.productConfigSpec.substr(3),
                 path : this.checkedComponent.getEncodedPath()
             });
             window.document.body.appendChild(pathDataModal.el);
@@ -315,12 +315,12 @@ define([
         },
 
         setConfigSpec: function (configSpec) {
-            App.config.configSpec = configSpec || App.config.configSpec;
+            App.config.productConfigSpec = configSpec || App.config.productConfigSpec;
 
             if(App.collaborativeView.roomKey){
-                App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.configSpec + '/room/' + App.collaborativeView.roomKey, {trigger: false});
+                App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.productConfigSpec + '/room/' + App.collaborativeView.roomKey, {trigger: false});
             }else{
-                App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.configSpec + '/bom', {trigger: false});
+                App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.productConfigSpec + '/bom', {trigger: false});
             }
 
             App.sceneManager.clear();

@@ -23,7 +23,7 @@ function (Backbone, singletonDecorator) {
         },
 
         scene:function(workspaceId, productId, configSpecType, camera, target, up){
-            App.config.configSpec = configSpecType;
+            App.config.productConfigSpec = configSpecType;
             App.appView.sceneMode();
             if (camera && target && up) {
                 var c = camera.split(';');
@@ -38,7 +38,7 @@ function (Backbone, singletonDecorator) {
         },
 
         bom:function(workspaceId, productId, configSpecType){
-            App.config.configSpec = configSpecType;
+            App.config.productConfigSpec = configSpecType;
             App.appView.bomMode();
             App.appView.once('app:ready',function() {
                 App.partsTreeView.$el.trigger('load:root');
@@ -46,7 +46,7 @@ function (Backbone, singletonDecorator) {
         },
 
         joinCollaborative: function (workspaceId, productId, configSpecType,  key) {
-            App.config.configSpec = configSpecType;
+            App.config.productConfigSpec = configSpecType;
             App.appView.sceneMode();
             if (!App.collaborativeView.isMaster) {
                 App.appView.once('app:ready',function(){
@@ -66,7 +66,7 @@ function (Backbone, singletonDecorator) {
 
                 this.navigate(
                     App.config.workspaceId + '/' + App.config.productId+
-                    '/config-spec/' + App.config.configSpec +
+                    '/config-spec/' + App.config.productConfigSpec +
                     '/scene/camera/' +
                     c[0].toFixed(positionPrecision) + ';' +
                     c[1].toFixed(positionPrecision) + ';' +

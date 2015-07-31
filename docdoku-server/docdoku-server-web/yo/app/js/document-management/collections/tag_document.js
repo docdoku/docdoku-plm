@@ -12,7 +12,7 @@ define([
 
         url: function () {
             var tagsUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/tags';
-            return tagsUrl + '/' + encodeURIComponent(this.parent.get('label')) + '/documents?configSpec='+App.config.configSpec;
+            return tagsUrl + '/' + encodeURIComponent(this.parent.get('label')) + '/documents?configSpec='+App.config.documentConfigSpec;
         },
 
         comparator: function (document) {

@@ -216,7 +216,7 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
 
                 var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
                     App.config.productId + '/instances' +
-                    '?configSpec=' + App.config.configSpec + '&path=' + path + '&timestamp=' + getTimestamp();
+                    '?configSpec=' + App.config.productConfigSpec + '&path=' + path + '&timestamp=' + getTimestamp();
 
                 if (App.config.diverge) {
                     url += '&diverge=true';
@@ -249,7 +249,7 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
                     contentType: 'application/json',
                     dataType: 'json',
                     data: JSON.stringify({
-                        configSpec: App.config.configSpec,
+                        configSpec: App.config.productConfigSpec,
                         paths: paths
                     }),
                     success: function (instances) {
@@ -266,7 +266,7 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
 
                 var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
                     App.config.productId + '/instances' +
-                    '?configSpec=' + App.config.configSpec + '&path=' + path + '&timestamp=' + getTimestamp();
+                    '?configSpec=' + App.config.productConfigSpec + '&path=' + path + '&timestamp=' + getTimestamp();
 
                 if (App.config.diverge) {
                     url += '&diverge=true';

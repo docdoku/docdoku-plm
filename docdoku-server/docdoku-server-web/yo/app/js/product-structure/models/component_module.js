@@ -194,7 +194,7 @@ define(['backbone', 'common-objects/utils/date'],
             },
 
             getInstancesUrl: function () {
-                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/instances?configSpec=' + App.config.configSpec + '&path=' + this.getEncodedPath();
+                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/instances?configSpec=' + App.config.productConfigSpec + '&path=' + this.getEncodedPath();
             },
 
             getEncodedPath : function(){
@@ -210,7 +210,7 @@ define(['backbone', 'common-objects/utils/date'],
                         '/api/workspaces/' +
                         App.config.workspaceId +
                         '/products/' + App.config.productId +
-                        '/bom?configSpec=' + App.config.configSpec +
+                        '/bom?configSpec=' + App.config.productConfigSpec +
                         '&path=' + this.getEncodedPath();
 
                     if(App.config.diverge) {
@@ -249,7 +249,7 @@ define(['backbone', 'common-objects/utils/date'],
             url: function () {
                 var path = this.path;
 
-                var url = this.urlBase() + '/filter?configSpec=' + App.config.configSpec + '&depth=1';
+                var url = this.urlBase() + '/filter?configSpec=' + App.config.productConfigSpec + '&depth=1';
 
                 if(path){
                     url+= '&path=' + path;

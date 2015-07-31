@@ -37,7 +37,7 @@ define([
                 i18n: App.config.i18n,
                 creationMode : this.model.creationMode,
                 editionMode : this.model.editionMode,
-                canSuppress : ['wip','latest','latest-released'].indexOf(App.config.configSpec)!==-1,
+                canSuppress : ['wip','latest','latest-released'].indexOf(App.config.productConfigSpec)!==-1,
                 source : this.model.sourceModel,
                 target : this.model.targetModel,
                 availableType: this.model.availableType,

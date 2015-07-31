@@ -61,7 +61,7 @@ define(['backbone'], function (Backbone) {
         },
 
         getFrameUrl: function () {
-            return App.config.contextPath + '/visualization/#' + App.config.workspaceId + '/' + this.getId() + '/0/10/1000/null/' + App.config.configSpec;
+            return App.config.contextPath + '/visualization/#' + App.config.workspaceId + '/' + this.getId() + '/0/10/1000/null/' + App.config.productConfigSpec;
         },
 
 

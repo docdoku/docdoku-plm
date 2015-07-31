@@ -65,7 +65,7 @@ define([
                     type: ChannelMessagesType.COLLABORATIVE_INVITE,
                     key: this.roomKey,
                     messageBroadcast: {
-                        url: '#' + App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.configSpec,
+                        url: '#' + App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.productConfigSpec,
                         context: App.config.workspaceId
                     },
                     remoteUser: user
@@ -140,7 +140,7 @@ define([
             App.collaborativeController.sendColourEditedObjects();
             App.collaborativeController.sendExplodeValue(App.$ControlsContainer.find('#slider-explode').val());
 
-            window.location.hash = [App.config.workspaceId , App.config.productId, 'config-spec', App.config.configSpec, 'room', this.roomKey].join('/');
+            window.location.hash = [App.config.workspaceId , App.config.productId, 'config-spec', App.config.productConfigSpec, 'room', this.roomKey].join('/');
 
             this.invite();
         },

@@ -39,7 +39,7 @@ define([
 			this.$menu = this.$('.ConfigSpecSelector-menu');
 			this.$newBaselineBtn = this.$('.btn.newBaseline');
 			this.$deleteBaselineBtn = this.$('.btn.deleteBaseline');
-			if(App.config.configSpec==='latest' || App.config.configSpec==='released'){
+			if(App.config.documentConfigSpec==='latest' || App.config.documentConfigSpec==='released'){
 				this.$deleteBaselineBtn.attr('disabled', 'disabled');
 				this.$deleteBaselineBtn.hide();
 			}
@@ -68,8 +68,8 @@ define([
                     that.$select.append('<option value="'+baseline.getId()+'">'+baseline.getName()+'</option>');
                 });
             }
-            if(App.config.configSpec){
-                this.$select.val(App.config.configSpec);
+            if(App.config.documentConfigSpec){
+                this.$select.val(App.config.documentConfigSpec);
             }
 		},
 

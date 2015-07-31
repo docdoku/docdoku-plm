@@ -16,7 +16,7 @@ define([
 
         url: function () {
             var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId;
-            return baseUrl +  '/documents/search?configSpec='+App.config.configSpec+ '&'+this.query ;
+            return baseUrl +  '/documents/search?configSpec='+App.config.documentConfigSpec+ '&'+this.query ;
         }
     });
 

@@ -15,7 +15,7 @@ define([
         },
 
         url: function () {
-            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/paths?configSpec='+App.config.configSpec+'&partNumber=' + encodeURIComponent(this.searchString);
+            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/paths?configSpec='+App.config.productConfigSpecType+'&partNumber=' + encodeURIComponent(this.searchString);
 
             if(App.config.diverge){
                 url += '&diverge=true';

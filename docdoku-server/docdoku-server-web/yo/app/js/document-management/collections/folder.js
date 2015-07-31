@@ -15,14 +15,14 @@ define([
         url: function () {
             var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/folders';
             if (this.parent) {
-                return baseUrl + '/' + this.parent.get('id') + '/folders?configSpec='+App.config.configSpec;
+                return baseUrl + '/' + this.parent.get('id') + '/folders?configSpec='+App.config.documentConfigSpec;
             } else {
-                return  baseUrl+'?configSpec='+App.config.configSpec;
+                return  baseUrl+'?configSpec='+App.config.documentConfigSpec;
             }
         },
 
         parse: function (data) {
-            if (!this.parent && App.config.configSpec === 'latest') {
+            if (!this.parent && App.config.documentConfigSpec === 'latest') {
                 // inject the user home folder
                 data.unshift({
                     id: App.config.workspaceId + ':~' + App.config.login,

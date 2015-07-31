@@ -162,7 +162,7 @@ define([
                 );
             }
 
-            if (App.config.configSpec !== 'latest') {
+            if (App.config.documentConfigSpec !== 'latest') {
                 data.isForBaseline = true;
             }
 

@@ -30,7 +30,7 @@ define([
             this.iterations = this.model.getIterations();
             this.iteration = this.options.iteration ? this.iterations.get(this.options.iteration) : this.model.getLastIteration();
             this.productId = this.options.productId;
-            this.configSpec = this.options.configSpec;
+            this.productConfigSpec = this.options.productConfigSpec;
 
             ModalView.prototype.initialize.apply(this, arguments);
 
@@ -290,11 +290,11 @@ define([
         },
 
         initLinkedDocumentsView: function () {
-            if (this.configSpec) {
+            if (this.productConfigSpec) {
                 var self = this;
                 $.ajax({
                     type:'GET',
-                    url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/document-links/' + this.iteration.getReference() + '/' + this.configSpec,
+                    url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/document-links/' + this.iteration.getReference() + '/' + this.productConfigSpec,
                     contentType:'application/json',
 
                     success:function(linkedDocuments) {

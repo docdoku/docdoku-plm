@@ -10,7 +10,11 @@ define([
 
 		url: function () {
 			if (this.getIteration()) {
-				return this.baseUrl() + '?configSpec=' + App.config.configSpec;
+                if (App.config.documentConfigSpec) {
+                    return this.baseUrl()+ '?configSpec='+App.config.documentConfigSpec;
+                } else {
+                    return this.baseUrl();
+                }
 			}
 			return this.collection.baseUrl();
 		},

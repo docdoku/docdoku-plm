@@ -48,7 +48,7 @@ define([
 
                     self.$el.html(Mustache.render(template, {
                         i18n: App.config.i18n,
-                        editionMode:['wip','latest','latest-released'].indexOf(App.config.configSpec)!==-1
+                        editionMode:['wip','latest','latest-released'].indexOf(App.config.productConfigSpec)!==-1
                     }));
 
                     self.getExistingPathToPathAndType();

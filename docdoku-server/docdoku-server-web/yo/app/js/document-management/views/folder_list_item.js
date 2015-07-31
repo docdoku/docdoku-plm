@@ -134,7 +134,7 @@ define([
         },
         navigate: function () {
             var path = this.modelPath ? '/' + encodeURIComponent(this.modelPath) : '';
-            App.router.navigate(App.config.workspaceId + '/configspec/' + App.config.configSpec + '/folders' + path, {trigger: false});
+            App.router.navigate(App.config.workspaceId + '/configspec/' + App.config.documentConfigSpec + '/folders' + path, {trigger: false});
         },
 
         toggle: function () {

@@ -150,7 +150,7 @@ define([
             }
         };
         this.sendConfigSpec = function (value) {
-            value = (value) ? value : App.config.configSpec;
+            value = (value) ? value : App.config.productConfigSpec;
             if (App.collaborativeView && App.collaborativeView.isMaster) {
                 App.mainChannel.sendJSON({
                     type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
