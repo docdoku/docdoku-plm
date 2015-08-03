@@ -345,7 +345,7 @@ define({
 		ORDERS: "Orders",
 		OTHERS: 'Others',
         PATH_TO_PATH_LINKS:"Typed links",
-		PARALLEL_ACTIVITY: "In parallel, require ",
+		PARALLEL_ACTIVITY: "In parallel, requires ",
         PART_ATTRIBUTES: "Part attributes",
         PART_ATTRIBUTES_TEMPLATES: "Templates of part attributes",
 		PARTICIPANT: "Participant",

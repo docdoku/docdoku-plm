@@ -285,7 +285,6 @@ define({
 	ORDERS_NUMBER: "Number of orders",
 	ORDERS: "Orders",
 	OTHERS: 'Others',
-	PARALLEL_ACTIVITY: "In parallel, require ",
 	PARTICIPANT: "Participant",
 	PART_NAME_HELP: "partName",
 	PART_NAME: "Part Name",
