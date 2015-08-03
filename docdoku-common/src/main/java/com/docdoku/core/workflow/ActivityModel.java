@@ -38,7 +38,6 @@ import java.util.Map;
  * @since   V1.0
  */
 @Table(name="ACTIVITYMODEL")
-@javax.persistence.IdClass(com.docdoku.core.workflow.ActivityModelKey.class)
 @XmlSeeAlso({SerialActivityModel.class, ParallelActivityModel.class})
 @Inheritance()
 @Entity
@@ -60,27 +59,15 @@ public abstract class ActivityModel implements Serializable, Cloneable {
     protected List<TaskModel> taskModels=new LinkedList<>();
 
     protected int step;
-    
-    @javax.persistence.Column(name = "WORKFLOWMODEL_ID", length=100, nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
-    private String workflowModelId="";
-    
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
-    private String workspaceId="";
 
     @ManyToOne(optional = true,fetch=FetchType.EAGER)
     @JoinTable (
             name="ACTIVITYMODEL_RELAUNCH",
             joinColumns={
-                    @JoinColumn(name="ACTIVITYMODEL_ID", referencedColumnName="ID"),
-                    @JoinColumn(name="WORKFLOWMODEL_ID", referencedColumnName="WORKFLOWMODEL_ID"),
-                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+                    @JoinColumn(name="ACTIVITYMODEL_ID", referencedColumnName="ID")
             },
             inverseJoinColumns={
-                    @JoinColumn(name="RELAUNCHACTIVITYMODEL_ID", referencedColumnName="ID"),
-                    @JoinColumn(name="RELAUNCHWORKFLOWMODEL_ID", referencedColumnName="WORKFLOWMODEL_ID"),
-                    @JoinColumn(name="RELAUNCHWORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+                    @JoinColumn(name="RELAUNCHACTIVITYMODEL_ID", referencedColumnName="ID")
             }
     )
     private ActivityModel relaunchActivity;
@@ -101,18 +88,8 @@ public abstract class ActivityModel implements Serializable, Cloneable {
     
     public void setWorkflowModel(WorkflowModel pWorkflowModel){
         workflowModel=pWorkflowModel;
-        workflowModelId=workflowModel.getId();
-        workspaceId=workflowModel.getWorkspaceId();
     }
 
-    public ActivityModelKey getKey(){
-        ActivityModelKey key = new ActivityModelKey();
-        key.setWorkspaceId(workspaceId);
-        key.setWorkflowModelId(workflowModelId);
-        key.setId(id);
-        return key;
-
-    }
     public int getStep(){
         return step;
     }
@@ -137,13 +114,6 @@ public abstract class ActivityModel implements Serializable, Cloneable {
         this.taskModels = taskModels;
     }
 
-    public String getWorkspaceId() {
-        return workspaceId;
-    }
-
-    public String getWorkflowModelId() {
-        return workflowModelId;
-    }
 
     @XmlTransient
     public WorkflowModel getWorkflowModel() {

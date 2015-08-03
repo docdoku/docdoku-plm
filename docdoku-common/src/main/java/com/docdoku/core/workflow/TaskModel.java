@@ -47,26 +47,16 @@ public class TaskModel implements Serializable, Cloneable {
     
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumns({
-        @JoinColumn(name="ACTIVITYMODEL_ID", referencedColumnName="ID"),
-        @JoinColumn(name="WORKFLOWMODEL_ID", referencedColumnName="WORKFLOWMODEL_ID"),
-        @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+        @JoinColumn(name="ACTIVITYMODEL_ID", referencedColumnName="ID")
     })
     private ActivityModel activityModel;
     
     @Id
     private int num;
     
-    @javax.persistence.Column(name = "ACTIVITYMODEL_ID", nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
+    @Column(name = "ACTIVITYMODEL_ID", nullable = false, insertable = false, updatable = false)
+    @Id
     private int activityModelId;
-    
-    @javax.persistence.Column(name = "WORKFLOWMODEL_ID", length=100, nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
-    private String workflowModelId="";
-    
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
-    private String workspaceId="";
     
     @Lob
     private String instructions;
@@ -139,23 +129,10 @@ public class TaskModel implements Serializable, Cloneable {
         return activityModel;
     }
 
-
-    public String getWorkflowModelId() {
-        return workflowModelId;
-    }
-
-    public String getWorkspaceId() {
-        return workspaceId;
-    }
-
     public void setActivityModel(ActivityModel activityModel) {
         this.activityModel = activityModel;
         activityModelId=activityModel.getId();
-        workflowModelId=activityModel.getWorkflowModelId();
-        workspaceId=activityModel.getWorkspaceId();
     }
-
-
     
     public int getNum() {
         return num;
@@ -168,8 +145,6 @@ public class TaskModel implements Serializable, Cloneable {
         @Override
     public int hashCode() {
         int hash = 1;
-        hash = 31 * hash + workspaceId.hashCode();
-        hash = 31 * hash + workflowModelId.hashCode();
         hash = 31 * hash + activityModelId;
         hash = 31 * hash + num;
         return hash;
@@ -184,15 +159,13 @@ public class TaskModel implements Serializable, Cloneable {
             return false;
         }
         TaskModel model = (TaskModel) pObj;
-        return model.workspaceId.equals(workspaceId) &&
-               model.workflowModelId.equals(workflowModelId) &&
-               model.activityModelId==activityModelId &&
+        return model.activityModelId==activityModelId &&
                model.num==num;
     }
     
     @Override
     public String toString() {
-        return workspaceId + "-" + workflowModelId + "-" + activityModelId + "-" + num;
+        return activityModelId + "-" + num;
     }
     
 

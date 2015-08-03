@@ -27,19 +27,14 @@ import java.io.Serializable;
  * @author Florent Garin
  */
 public class TaskModelKey implements Serializable {
-    
 
-    private String workspaceId;
-    private String workflowModelId;
     private int activityModelId;
     private int num;
     
     public TaskModelKey() {
     }
     
-    public TaskModelKey(String pWorkspaceId, String pWorkflowModelId, int pActivityModelId, int pNum) {
-        workspaceId=pWorkspaceId;
-        workflowModelId=pWorkflowModelId;
+    public TaskModelKey(int pActivityModelId, int pNum) {
         activityModelId=pActivityModelId;
         num=pNum;
     }
@@ -47,8 +42,6 @@ public class TaskModelKey implements Serializable {
     @Override
     public int hashCode() {
         int hash = 1;
-        hash = 31 * hash + workspaceId.hashCode();
-        hash = 31 * hash + workflowModelId.hashCode();
         hash = 31 * hash + activityModelId;
         hash = 31 * hash + num;
         return hash;
@@ -63,31 +56,13 @@ public class TaskModelKey implements Serializable {
             return false;
         }
         TaskModelKey key = (TaskModelKey) pObj;
-        return key.workspaceId.equals(workspaceId) &&
-               key.workflowModelId.equals(workflowModelId) &&
-               key.activityModelId==activityModelId &&
+        return key.activityModelId==activityModelId &&
                key.num==num;
     }
     
     @Override
     public String toString() {
-        return workspaceId + "-" + workflowModelId + "-" + activityModelId + "-" + num;
-    }
-
-    public String getWorkflowModelId() {
-        return workflowModelId;
-    }
-
-    public String getWorkspaceId() {
-        return workspaceId;
-    }
-
-    public void setWorkflowModelId(String pWorkflowModelId) {
-        this.workflowModelId = pWorkflowModelId;
-    }
-
-    public void setWorkspaceId(String pWorkspaceId) {
-        this.workspaceId = pWorkspaceId;
+        return activityModelId + "-" + num;
     }
 
     public int getNum() {
