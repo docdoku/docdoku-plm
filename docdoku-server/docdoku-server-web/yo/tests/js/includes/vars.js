@@ -53,6 +53,10 @@ var documents = {
         expireDate: tomorrowValue,
         expireDate2: yesterdayValue
     },
+    documentWithWorkflow: {
+        number: '300-AAA-CasperJsTestDocument',
+        iterationNote: 'This is a document with a workflow'
+    },
     tags: {
         tag1: 'Foo',
         tag2: 'Bar'
