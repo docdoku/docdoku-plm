@@ -24,7 +24,10 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartLink;
 
 /**
- * Created by morgan on 21/07/15.
+ *
+ * @author Morgan Guimard
+ * @version 2.0, 07/21/15
+ * @since 2.0
  */
 public class ResolvedPartLink {
 

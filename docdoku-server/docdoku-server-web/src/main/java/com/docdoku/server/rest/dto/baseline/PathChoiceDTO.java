@@ -31,7 +31,7 @@ import java.util.List;
 
 public class PathChoiceDTO {
 
-    private List<ResolvedPartLinkDTO> resolvedPath = new ArrayList();
+    private List<ResolvedPartLinkDTO> resolvedPath = new ArrayList<>();
     private PartUsageLinkDTO partUsageLink;
 
     public PathChoiceDTO() {

@@ -27,7 +27,7 @@ import java.util.List;
 
 public class PathChoice {
 
-    private List<ResolvedPartLink> resolvedPath = new ArrayList();
+    private List<ResolvedPartLink> resolvedPath = new ArrayList<>();
     private PartLink partUsageLink;
 
     public PathChoice() {

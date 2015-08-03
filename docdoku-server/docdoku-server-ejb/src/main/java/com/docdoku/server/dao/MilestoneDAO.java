@@ -63,7 +63,7 @@ public class MilestoneDAO {
     }
 
     public Milestone loadMilestone(String pTitle, String pWorkspace) throws MilestoneNotFoundException {
-        Milestone milestone = (Milestone) em.createNamedQuery("Milestone.findMilestonesByTitleAndWorkspace")
+        Milestone milestone = em.createNamedQuery("Milestone.findMilestonesByTitleAndWorkspace", Milestone.class)
                 .setParameter("title", pTitle)
                 .setParameter("workspaceId", pWorkspace)
                 .getSingleResult();
@@ -94,7 +94,7 @@ public class MilestoneDAO {
 
     public List<ChangeRequest> getAllRequests(int pId,String pWorkspace){
         try{
-            return em.createNamedQuery("ChangeRequest.getRequestByMilestonesAndWorkspace")
+            return em.createNamedQuery("ChangeRequest.getRequestByMilestonesAndWorkspace",ChangeRequest.class)
                     .setParameter("milestoneId", pId)
                     .setParameter("workspaceId", pWorkspace)
                     .getResultList();
@@ -105,7 +105,7 @@ public class MilestoneDAO {
 
     public List<ChangeOrder> getAllOrders(int pId,String pWorkspace){
         try{
-            return em.createNamedQuery("ChangeOrder.getOrderByMilestonesAndWorkspace")
+            return em.createNamedQuery("ChangeOrder.getOrderByMilestonesAndWorkspace",ChangeOrder.class)
                     .setParameter("milestoneId", pId)
                     .setParameter("workspaceId", pWorkspace)
                     .getResultList();
