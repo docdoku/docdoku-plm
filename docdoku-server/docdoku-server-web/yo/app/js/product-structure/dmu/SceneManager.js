@@ -494,6 +494,33 @@ define([
             _this.reDraw();
         }
 
+        function saveMaterials(object){
+            _.each(object.children,function(o){
+                if(o instanceof THREE.Mesh){
+                    o.initialMaterial = o.material;
+                    saveMaterials(o);
+                }
+            });
+        }
+
+        function setEditedMaterials(object){
+            _.each(object.children,function(o){
+                if(o instanceof THREE.Mesh){
+                    o.material = materialEditedObject;
+                    setEditedMaterials(o);
+                }
+            });
+        }
+
+        function restoreInitialMaterials(object){
+            _.each(object.children,function(o){
+                if(o instanceof THREE.Mesh){
+                    o.material = o.initialMaterial;
+                    restoreInitialMaterials(o);
+                }
+            });
+        }
+
         function processLoadedStuff() {
 
             var loadedStuff = App.instancesManager.getLoadedGeometries(10);
@@ -569,33 +596,6 @@ define([
 
                 }
                 _this.reDraw();
-            });
-        }
-
-        function saveMaterials(object){
-            _.each(object.children,function(o){
-                if(o instanceof THREE.Mesh){
-                    o.initialMaterial = o.material;
-                    saveMaterials(o);
-                }
-            });
-        }
-
-        function setEditedMaterials(object){
-            _.each(object.children,function(o){
-                if(o instanceof THREE.Mesh){
-                    o.material = materialEditedObject;
-                    setEditedMaterials(o);
-                }
-            });
-        }
-
-        function restoreInitialMaterials(object){
-            _.each(object.children,function(o){
-                if(o instanceof THREE.Mesh){
-                    o.material = o.initialMaterial;
-                    restoreInitialMaterials(o);
-                }
             });
         }
 
