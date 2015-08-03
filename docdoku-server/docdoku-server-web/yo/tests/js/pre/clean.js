@@ -61,7 +61,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     // Documents
     casper.then(function cleanupDocuments() {
         var that = this;
-        that.log('Deleting documents èèèèèèèèèèèèèèèèèèèèèèèèèèè', 'info');
+        that.log('Deleting documents', 'info');
         this.open(apiUrls.getDocuments, {method: 'GET'}).then(function (response) {
             that.log(response);
             if (response.status === 200) {
