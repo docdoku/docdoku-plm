@@ -43,11 +43,11 @@ casper.test.begin('Document creation from template tests suite', 2, function doc
         this.waitForSelector('.modal.document-modal.new-document', function () {
 
             this.evaluate(function () {
-                 document.querySelector('.modal.document-modal.new-document .template-selector').selectedIndex = 1;
-                 $('.modal.document-modal.new-document .template-selector').change();
-                 return true;
-             });
-            this.sendKeys('.modal.document-modal.new-document input.reference','000');
+                document.querySelector('.modal.document-modal.new-document .template-selector').selectedIndex = 1;
+                $('.modal.document-modal.new-document .template-selector').change();
+                return true;
+            });
+            this.sendKeys('.modal.document-modal.new-document input.reference', '000');
             this.click('.modal.document-modal.new-document .btn.btn-primary');
         }, function fail() {
             this.capture('screenshot/documentCreationFromTemplate/waitForDocumentCreationModal-error.png');
@@ -60,9 +60,9 @@ casper.test.begin('Document creation from template tests suite', 2, function doc
      */
 
     casper.then(function checkForDocumentCreation() {
-        this.waitForSelector('#document-management-content table.dataTable tr[title="'+documents.template1.maskGenerated+'"] td.reference', function documentHasBeenCreated() {
-            this.test.assertSelectorHasText('#document-management-content table.dataTable tr[title="'+documents.template1.maskGenerated+'"] td.reference a', documents.template1.maskGenerated);
-            this.test.assertSelectorHasText('#document-management-content table.dataTable tr[title="'+documents.template1.maskGenerated+'"] td.type', documents.template1.type);
+        this.waitForSelector('#document-management-content table.dataTable tr[title="' + documents.template1.maskGenerated + '"] td.reference', function documentHasBeenCreated() {
+            this.test.assertSelectorHasText('#document-management-content table.dataTable tr[title="' + documents.template1.maskGenerated + '"] td.reference a', documents.template1.maskGenerated);
+            this.test.assertSelectorHasText('#document-management-content table.dataTable tr[title="' + documents.template1.maskGenerated + '"] td.type', documents.template1.type);
         }, function fail() {
             this.capture('screenshot/documentCreationFromTemplate/checkForDocumentCreation-error.png');
             this.test.assert(false, 'New document created can not be found');
