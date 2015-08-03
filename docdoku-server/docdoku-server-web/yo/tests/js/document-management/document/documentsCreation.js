@@ -1,6 +1,6 @@
 /*global casper,urls,workspace,documents*/
 
-casper.test.begin('Document creation tests suite', 4, function documentsCreationTestsSuite() {
+casper.test.begin('Documents creation tests suite', 4, function documentsCreationTestsSuite() {
 
     'use strict';
 
@@ -68,8 +68,8 @@ casper.test.begin('Document creation tests suite', 4, function documentsCreation
      */
 
     casper.then(function checkForDocumentCreation() {
-        this.waitForSelector('#document-management-content table.dataTable tr:nth-child(2) td.reference a', function documentHasBeenCreated() {
-            this.test.assertSelectorHasText('#document-management-content table.dataTable tr:nth-child(2) td.reference a', documents.document2.number);
+        this.waitForSelector('#document-management-content table.dataTable tr[title="'+documents.document2.number+'"] td.reference a', function documentHasBeenCreated() {
+            this.test.assertSelectorHasText('#document-management-content table.dataTable tr[title="'+documents.document2.number+'"] td.reference a', documents.document2.number);
         }, function fail() {
             this.capture('screenshot/documentsCreation/checkForDocumentCreation-error.png');
             this.test.assert(false, 'New document created can not be found');
@@ -130,8 +130,8 @@ casper.test.begin('Document creation tests suite', 4, function documentsCreation
      */
 
     casper.then(function checkForDocumentCreation() {
-        this.waitForSelector('#document-management-content table.dataTable tr:nth-child(3) td.reference a', function documentHasBeenCreated() {
-            this.test.assertSelectorHasText('#document-management-content table.dataTable tr:nth-child(3) td.reference a', documents.document3.number);
+        this.waitForSelector('#document-management-content table.dataTable tr[title="'+documents.document3.number+'"] td.reference a', function documentHasBeenCreated() {
+            this.test.assertSelectorHasText('#document-management-content table.dataTable tr[title="'+documents.document3.number+'"] td.reference a', documents.document3.number);
         }, function fail() {
             this.capture('screenshot/documentsCreation/checkForDocumentCreation-error.png');
             this.test.assert(false, 'New document created can not be found');

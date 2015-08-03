@@ -68,8 +68,8 @@ casper.test.begin('Document creation tests suite', 2, function documentCreationT
      */
 
     casper.then(function checkForDocumentCreation() {
-        this.waitForSelector('#document-management-content table.dataTable tr td.reference', function documentHasBeenCreated() {
-            this.test.assertSelectorHasText('#document-management-content table.dataTable tr td.reference a', documents.document1.number);
+        this.waitForSelector('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference', function documentHasBeenCreated() {
+            this.test.assertSelectorHasText('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference a', documents.document1.number);
         }, function fail() {
             this.capture('screenshot/documentCreation/checkForDocumentCreation-error.png');
             this.test.assert(false, 'New document created can not be found');

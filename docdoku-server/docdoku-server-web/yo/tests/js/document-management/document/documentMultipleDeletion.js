@@ -27,30 +27,15 @@ casper.test.begin('Document deletion tests suite', 1, function documentMultipleD
     });
 
     /**
-     * Wait for document2 to be displayed in list
+     * Select all documents with checkbox
      */
-
-    casper.then(function waitForDocument2Displayed() {
-        this.waitForSelector('#document-management-content table.dataTable tr:first-child td.reference', function documentIsDisplayed() {
-            this.click('#document-management-content table.dataTable tr:first-child td:nth-child(2) input[type=checkbox]');
-
+    casper.then(function waitForDocumentTable() {
+        var checkbox = '#document-management-content table.dataTable thead tr th input[type="checkbox"]';
+        this.waitForSelector(checkbox, function clickOnDocumentCheckbox() {
+            this.click(checkbox);
         }, function fail() {
-            this.capture('screenshot/documentMultipleDeletion/waitForDocumentDisplayed-error.png');
-            this.test.assert(false, 'Document to delete rows can not be found');
-        });
-    });
-
-    /**
-     * Wait for document3 to be displayed in list
-     */
-
-    casper.then(function waitForDocument3Displayed() {
-        this.waitForSelector('#document-management-content table.dataTable tr:nth-child(2) td.reference', function documentIsDisplayed() {
-            this.click('#document-management-content table.dataTable tr:nth-child(2) td:nth-child(2) input[type=checkbox]');
-
-        }, function fail() {
-            this.capture('screenshot/documentMultipleDeletion/waitForDocumentDisplayed-error.png');
-            this.test.assert(false, 'Document to delete rows can not be found');
+            this.capture('screenshot/documentMultipleDeletion/waitForDocumentTable-error.png');
+            this.test.assert(false, 'Document can not be found');
         });
     });
 
@@ -88,7 +73,7 @@ casper.test.begin('Document deletion tests suite', 1, function documentMultipleD
      */
 
     casper.then(function waitForDocumentsDeletion() {
-        this.waitWhileSelector('#document-management-content table.dataTable tr td.reference', function documentDeleted() {
+        this.waitWhileSelector('#document-management-content table.dataTable tbody tr td.reference', function documentDeleted() {
             this.test.assert(true, 'Documents have been deleted');
 
         }, function fail() {

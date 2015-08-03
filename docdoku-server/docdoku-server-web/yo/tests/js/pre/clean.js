@@ -41,7 +41,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     });
 
     // Tags
-    casper.then(function cleanupWorkflows() {
+    casper.then(function cleanupTags() {
         var that = this;
         this.open(apiUrls.getTags, {method: 'GET'}).then(function (response) {
             if (response.status === 200) {
@@ -58,31 +58,21 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
         });
     });
 
-    // Documents
-    casper.then(function cleanupDocument1() {
-        this.open(apiUrls.deleteDocument1, {method: 'DELETE'}).then(function (response) {
+    casper.then(function cleanupDocuments() {
+        var that = this;
+        that.log('Deleting documents èèèèèèèèèèèèèèèèèèèèèèèèèèè', 'info');
+        this.open(apiUrls.getDocuments, {method: 'GET'}).then(function (response) {
+            that.log(response);
             if (response.status === 200) {
-                this.log('Test document1 has been deleted', 'info');
+                var documents = JSON.parse(this.getPageContent());
+                documents.forEach(function (document) {
+                    that.log('Deleting document' + document.id, 'info');
+                    that.open(apiUrls.getDocuments + '/' + document.id, {method: 'DELETE'}).then(function () {
+                        that.log('Document ' + document.id + ' deleted', 'info');
+                    });
+                });
             } else {
-                this.log('Cannot delete test document1, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
-            }
-        });
-    });
-    casper.then(function cleanupDocument2() {
-        this.open(apiUrls.deleteDocument2, {method: 'DELETE'}).then(function (response) {
-            if (response.status === 200) {
-                this.log('Test document2 has been deleted', 'info');
-            } else {
-                this.log('Cannot delete test document2, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
-            }
-        });
-    });
-    casper.then(function cleanupDocument3() {
-        this.open(apiUrls.deleteDocument3, {method: 'DELETE'}).then(function (response) {
-            if (response.status === 200) {
-                this.log('Test document3 has been deleted', 'info');
-            } else {
-                this.log('Cannot delete test document3, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+                this.log('Cannot delete test documents, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
             }
         });
     });

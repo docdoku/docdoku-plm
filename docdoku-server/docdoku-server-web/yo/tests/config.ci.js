@@ -53,6 +53,7 @@ module.exports = {
 
         // Folder and document creation
         "js/document-management/folder/folderCreation.js",
+        "js/document-management/document/documentCreationFromTemplate.js",
         "js/document-management/document/documentCreation.js",
         "js/document-management/document/documentsCreation.js",
         "js/document-management/document/documentUploadFile.js",

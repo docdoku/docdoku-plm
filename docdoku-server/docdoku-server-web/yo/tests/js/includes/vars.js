@@ -25,7 +25,10 @@ var yesterdayValue = yesterday.getFullYear() + '-' + twoDigit(yesterday.getMonth
 
 var documents = {
     template1: {
-        number: 'CasperJsTestDocumentTemplate'
+        number: 'CasperJsTestDocumentTemplate',
+        type: 'CasperJsTestDocumentTemplateType',
+        mask: 'MASK-###',
+        maskGenerated:'MASK-000'
     },
     folder1: 'CasperJsTestFolder',
     document1: {
@@ -264,5 +267,6 @@ var apiUrls = {
     getWorkflows: homeUrl + 'api/workspaces/' + workspace + '/workflows',
     getRoles: homeUrl + 'api/workspaces/' + workspace + '/roles',
     getTags: homeUrl + 'api/workspaces/' + workspace + '/tags',
+    getDocuments: homeUrl + 'api/workspaces/' + workspace + '/documents',
     milestones: homeUrl + 'api/workspaces/' + workspace + '/changes/milestones'
 };

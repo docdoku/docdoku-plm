@@ -69,9 +69,7 @@ casper.test.begin('Part add link tests suite', 2, function partClickLinkTestsSui
      */
     casper.then(function waitForLinkedDocumentDisplay() {
         this.waitForSelector('#iteration-links > .linked-items-view > ul.linked-items > li:first-child', function linkDocumentDisplayed() {
-            this.capture('screenshot/partClickLink/step1.png');
             this.click('#iteration-links > .linked-items-view > ul.linked-items > li:first-child > a.reference');
-            this.capture('screenshot/partClickLink/step2.png');
         }, function fail() {
             this.capture('screenshot/partClickLink/waitForLinkedDocumentDisplay-error.png');
             this.test.assert(false, 'Linked document can not be found');
@@ -86,7 +84,6 @@ casper.test.begin('Part add link tests suite', 2, function partClickLinkTestsSui
 
         this.waitForSelector(modalTitle, function linkedModalOpened() {
             this.test.assert(true, 'Linked document modal opened');
-            this.capture('screenshot/partClickLink/step3.png');
         }, function fail() {
             this.capture('screenshot/partClickLink/waitForLinkedDocumentModal-error.png');
             this.test.assert(false, 'Linked document modal can not be found');

@@ -1,6 +1,6 @@
 /*global casper,urls,documents*/
 
-casper.test.begin('Document template creation tests suite', 2, function documentTemplateCreationTestsSuite() {
+casper.test.begin('Document template creation tests suite', 4, function documentTemplateCreationTestsSuite() {
 
     'use strict';
 
@@ -52,6 +52,9 @@ casper.test.begin('Document template creation tests suite', 2, function document
     casper.then(function fillAndSubmitTemplateCreationModal() {
         this.waitForSelector('.modal.new-template input.reference', function () {
             this.sendKeys('.modal.new-template input.reference', documents.template1.number);
+            this.sendKeys('.modal.new-template input.type', documents.template1.type);
+            this.sendKeys('.modal.new-template input.mask', documents.template1.mask);
+            this.click('.modal.new-template input.id-generated');
             this.click('.modal.new-template .btn.btn-primary');
         });
     });
@@ -63,6 +66,8 @@ casper.test.begin('Document template creation tests suite', 2, function document
     casper.then(function checkIfTemplateHasBeenCreated() {
         this.waitForSelector('#document-management-content table.dataTable tr td.reference', function templateHasBeenCreated() {
             this.test.assertSelectorHasText('#document-management-content table.dataTable tr td.reference', documents.template1.number);
+            this.test.assertSelectorHasText('#document-management-content table.dataTable tr td.type', documents.template1.type);
+            this.test.assertSelectorHasText('#document-management-content table.dataTable tr td.mask', documents.template1.mask);
         });
     });
 

@@ -1,8 +1,8 @@
 <div class="control-group">
-    <label class="control-label" for="input-{{view.cid}}">{{i18n.TEMPLATE}}</label>
+    <label class="control-label" for="select-{{view.cid}}">{{i18n.TEMPLATE}}</label>
 
     <div class="controls">
-        <select class="input-xlarge" id="select-{{view.cid}}">
+        <select class="input-xlarge template-selector" id="select-{{view.cid}}">
             {{#collection}}
             <option value="{{id}}">{{id}}</option>
             {{/collection}}

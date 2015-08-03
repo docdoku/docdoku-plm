@@ -83,6 +83,8 @@ define([
 
             date.dateHelper(this.$('.date-popover'));
 
+            this.$el.attr('title',this.model.getReference());
+
         },
 
         dragStart: function (e) {
