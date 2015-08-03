@@ -19,9 +19,8 @@ define([
             'mousemove .lifecycle-activities-canvas': 'canvasMouseMove',
             'mouseup .lifecycle-activities-canvas': 'canvasMouseUp',
             'mouseleave .lifecycle-activities-canvas': 'canvasMouseLeave',
-            'click .cancel-signing': 'cancelSigning',
-            'click .delete-signing': 'clearBtnClicked',
-            'click .save-signing': 'saveSigning'
+            'click i.save-signing': 'saveSigning',
+            'click i.clear-signing': 'clearClicked'
         },
 
         initialize: function () {
@@ -39,9 +38,10 @@ define([
         },
 
         bindDomElements: function () {
-            this.$signingLink = this.$('.lifecycle-task-signing-link');
             this.$signingPopover = this.$('.lifecycle-task-signing-popover');
             this.$signingImg = this.$('.lifecycle-task-signing-img');
+            this.$saveSigning = this.$('i.save-signing');
+            this.$clearSigning = this.$('i.clear-signing');
         },
 
         initCanvas: function () {
@@ -58,6 +58,8 @@ define([
         },
 
         openSigningCanvas: function () {
+            this.$saveSigning.show();
+            this.$clearSigning.show();
             this.$signingPopover.show();
             this.$signingImg.hide();
             this.canvas = this.$('.lifecycle-activities-canvas').get(0);
@@ -67,6 +69,8 @@ define([
         },
 
         closeSigningCanvas: function () {
+            this.$saveSigning.hide();
+            this.$clearSigning.hide();
             this.$signingPopover.hide();
             this.$signingImg.show();
         },
@@ -115,13 +119,7 @@ define([
             }
         },
 
-        cancelSigning: function (e) {
-            e.stopPropagation();
-            e.preventDefault();
-            this.toggleSigningCanvas();
-        },
-
-        clearBtnClicked: function (e) {
+        clearClicked: function (e) {
             e.stopPropagation();
             e.preventDefault();
             this.clearSigning();
