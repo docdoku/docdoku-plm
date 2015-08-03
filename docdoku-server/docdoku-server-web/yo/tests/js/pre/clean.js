@@ -58,6 +58,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
         });
     });
 
+    // Documents
     casper.then(function cleanupDocuments() {
         var that = this;
         that.log('Deleting documents èèèèèèèèèèèèèèèèèèèèèèèèèèè', 'info');
@@ -207,7 +208,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     });
 
     // delete all milestone
-    casper.then(function cleanupWorkflows() {
+    casper.then(function cleanupMilestones() {
         var that = this;
         this.open(apiUrls.milestones, {method: 'GET'}).then(function (response) {
             if (response.status === 200) {
@@ -220,6 +221,24 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
                 });
             } else {
                 this.log('Cannot delete test milestone, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+            }
+        });
+    });
+
+    // Queries
+    casper.then(function cleanupQueries() {
+        var that = this;
+        this.open(apiUrls.queries, {method: 'GET'}).then(function (response) {
+            if (response.status === 200) {
+                var queries = JSON.parse(this.getPageContent());
+                queries.forEach(function (query) {
+                    that.log('Deleting query ' + query.id, 'info');
+                    that.open(apiUrls.queries + '/' + query.id, {method: 'DELETE'}).then(function () {
+                        that.log('Query ' + query.id + ' deleted', 'info');
+                    });
+                });
+            } else {
+                this.log('Cannot delete test queries, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
             }
         });
     });

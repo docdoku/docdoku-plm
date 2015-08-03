@@ -55,7 +55,6 @@ casper.test.begin('Product instance creation tests suite', 3, function productIn
     casper.then(function tryToCreateProductInstanceWithoutSerialNumber() {
         this.click('#product_instance_creation_modal .modal-footer .btn.btn-primary');
         this.test.assertExists('#product_instance_creation_modal #inputSerialNumber:invalid', 'Should not create a product instance without the name');
-
     });
 
     /**

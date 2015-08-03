@@ -1,6 +1,6 @@
 /*global casper,urls,workspace,documents*/
 
-casper.test.begin('Document deletion tests suite', 1, function documentMultipleDeletionTestsSuite() {
+casper.test.begin('Document multiple deletion tests suite', 1, function documentMultipleDeletionTestsSuite() {
     'use strict';
 
     casper.open('');

@@ -272,5 +272,6 @@ var apiUrls = {
     getRoles: homeUrl + 'api/workspaces/' + workspace + '/roles',
     getTags: homeUrl + 'api/workspaces/' + workspace + '/tags',
     getDocuments: homeUrl + 'api/workspaces/' + workspace + '/documents',
-    milestones: homeUrl + 'api/workspaces/' + workspace + '/changes/milestones'
+    milestones: homeUrl + 'api/workspaces/' + workspace + '/changes/milestones',
+    queries: homeUrl + 'api/workspaces/' + workspace + '/parts/queries'
 };

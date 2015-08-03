@@ -46,8 +46,7 @@ casper.test.begin('Login tests suite', 2, function loginTestsSuite() {
      */
     casper.then(function checkSessionState() {
         this.open(apiUrls.userInfo).then(function (response) {
-            this.log('response.status: ' + response.status, 'warning');
-            this.test.assert(response.status === 200, 'User "' + login + '" should log in');
+            this.test.assertEqual(response.status, 200, 'User "' + login + '" should log in');
         });
     });
 
