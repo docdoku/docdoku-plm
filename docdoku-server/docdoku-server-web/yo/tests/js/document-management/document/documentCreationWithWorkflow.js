@@ -1,6 +1,6 @@
 /*global casper,urls,workspace,documents, workflows*/
 
-casper.test.begin('Document creation with workflow tests suite', 3, function documentCreationWithWorkflowTestsSuite() {
+casper.test.begin('Document creation with workflow tests suite', 7, function documentCreationWithWorkflowTestsSuite() {
 
     'use strict';
 
@@ -72,6 +72,123 @@ casper.test.begin('Document creation with workflow tests suite', 3, function doc
             this.test.assert(false, 'New document created can not be found');
         });
     });
+
+    /***
+     * Open the document modal
+     */
+    casper.then(function openCreatedDocument() {
+        this.click('#document-management-content table.dataTable tr[title="' + documents.documentWithWorkflow.number + '"] td.reference');
+        var modalTab = '.document-modal .tabs li a[href="#tab-iteration-files"]';
+        this.waitForSelector(modalTab, function modalOpened() {
+            this.click(modalTab);
+        }, function fail() {
+            this.capture('screenshot/documentCreationWithWorkflow/openCreatedDocument-error.png');
+            this.test.assert(false, 'Document modal can not be found');
+        });
+    });
+
+
+    /**
+     * Wait the modal tab
+     */
+    casper.then(function waitForDocumentModalTab() {
+        this.waitForSelector('.document-modal .upload-btn', function tabSelected() {
+            this.test.assert(true, 'File upload tab opened');
+        }, function fail() {
+            this.capture('screenshot/documentCreationWithWorkflow/waitForDocumentModalTab-error.png');
+            this.test.assert(false, 'Document modal tab can not be found');
+        });
+    });
+
+    /**
+     * Choose a file and upload
+     */
+
+    casper.then(function setFileAndUpload() {
+        this.fill('.document-modal .upload-form', {
+            'upload': 'res/document-upload.txt'
+        }, false);
+
+        casper.waitFor(function check() {
+            return this.evaluate(function () {
+                return document.querySelectorAll('.document-modal .attachedFiles ul.file-list li').length === 1;
+            });
+        }, function then() {
+            this.test.assert(true, 'File has been uploaded to document');
+        }, function fail() {
+            this.capture('screenshot/documentCreationWithWorkflow/setFileAndUpload-error.png');
+            this.test.assert(false, 'Cannot upload the file');
+        });
+
+    });
+
+    /**
+     * Checkin file
+     */
+    casper.then(function openIterationTab() {
+        var modalTab = '.document-modal .tabs li a[href="#tab-iteration-iteration"]';
+        this.waitForSelector(modalTab, function tabOpened() {
+            this.click(modalTab);
+        }, function fail() {
+            this.capture('screenshot/documentCreationWithWorkflow/openIterationTab-error.png');
+            this.test.assert(false, 'Iteration tab can not be found');
+        });
+    });
+
+    /**
+     * Checkin file
+     */
+    casper.then(function checkinDocument() {
+        var checkinButton = '#tab-iteration-iteration .action-checkin';
+        this.waitForSelector(checkinButton, function buttonFound() {
+            this.click(checkinButton);
+        }, function fail() {
+            this.capture('screenshot/documentCreationWithWorkflow/checkinDocument-error.png');
+            this.test.assert(false, 'Checkin button can not be found');
+        });
+    });
+
+    /**
+     * Checkin file
+     */
+    casper.then(function documentCheckedIn() {
+        var checkoutButton = '#tab-iteration-iteration .action-checkout';
+        this.waitForSelector(checkoutButton, function buttonFound() {
+            this.test.assert(true, 'File has been checked in');
+        }, function fail() {
+            this.capture('screenshot/documentCreationWithWorkflow/documentCheckedIn-error.png');
+            this.test.assert(false, 'Checkout button can not be found');
+        });
+    });
+
+    /**
+     * Download file
+     */
+    casper.then(function openFileTab() {
+        var modalTab = '.document-modal .tabs li a[href="#tab-iteration-files"]';
+        this.waitForSelector(modalTab, function modalOpened() {
+            this.click(modalTab);
+        }, function fail() {
+            this.capture('screenshot/openFileTab/downloadDocumentFile-error.png');
+            this.test.assert(false, 'Modal tab can not be found');
+        });
+    });
+
+    /**
+     * Download file
+     */
+    casper.then(function downloadDocumentFile() {
+        var modalTab = '.document-modal .tabs li a[href="#tab-iteration-files"]';
+        this.waitForSelector(modalTab, function modalOpened() {
+            var fileLink = '#iteration-files > div > ul > li > a[href="/api/files/'+workspace+'/documents/'+documents.documentWithWorkflow.number +'/A/1/document-upload.txt"]';
+            this.test.assertSelectorExist(fileLink, 'A link should be present to download the document');
+            this.click(fileLink);
+        }, function fail() {
+            this.capture('screenshot/documentCreationWithWorkflow/downloadDocumentFile-error.png');
+            this.test.assert(false, 'Document file can not be found');
+        });
+    });
+
 
     casper.run(function allDone() {
         this.test.done();
