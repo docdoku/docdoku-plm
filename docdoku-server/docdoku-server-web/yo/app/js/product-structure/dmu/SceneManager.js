@@ -736,7 +736,7 @@ define([
          * */
         //Main UI loop
         function animate() {
-            requestAnimationFrame(animate, null);
+            requestAnimationFrame(animate);
             // Update controls
             controlsObject.update(clock.getDelta());
 

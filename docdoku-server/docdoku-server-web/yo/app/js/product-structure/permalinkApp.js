@@ -74,7 +74,7 @@ define(function () {
         }
 
         function animate() {
-            requestAnimationFrame(animate, null);
+            requestAnimationFrame(animate);
             control.update();
             render();
         }
@@ -124,8 +124,9 @@ define(function () {
                     combined.mergeVertices();
 
                     combined.computeBoundingSphere();
-
-                    onParseSuccess(new THREE.Mesh(combined), null);
+                    var object = new THREE.Object3D();
+                    object.add(new THREE.Mesh(combined,null));
+                    onParseSuccess(object);
 
                 });
 
@@ -135,7 +136,9 @@ define(function () {
                 var stlLoader = new THREE.STLLoader();
 
                 stlLoader.load(filename, function (geometry) {
-                    onParseSuccess(new THREE.Mesh(geometry), null);
+                    var object = new THREE.Object3D();
+                    object.add(new THREE.Mesh(geometry,null));
+                    onParseSuccess(object);
                 });
 
                 break;
@@ -148,7 +151,9 @@ define(function () {
                 binaryLoader.load(filename, function (geometry, materials) {
                     var _material = new THREE.MeshPhongMaterial({color: materials[0].color, overdraw: true});
                     geometry.dynamic = false;
-                    onParseSuccess(new THREE.Mesh(geometry, _material));
+                    var object = new THREE.Object3D();
+                    object.add(new THREE.Mesh(geometry,_material));
+                    onParseSuccess(object);
                 }, texturePath);
 
                 break;
