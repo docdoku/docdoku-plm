@@ -39,8 +39,10 @@ casper.test.begin('LOV deletion tests suite', 3, function documentLOVDeletionTes
      */
 
     casper.then(function waitForLOVCreationModal() {
-        this.waitForSelector('.list-lov', function checkLOVPersistence() {
-            this.test.assertExists('.lovItem', 'One element should be in the list of LOV');
+        this.waitForSelector('.modal.list_lov .lovItem', function checkLOVPersistence() {
+            this.test.assertElementCount('.lovItem', 1, 'One element should be in the list of LOV');
+        }, function(){
+            this.capture('screenshot/lovDeletion/waitForLOVCreationModal-error.png');
         });
     });
 
@@ -69,12 +71,8 @@ casper.test.begin('LOV deletion tests suite', 3, function documentLOVDeletionTes
      */
 
     casper.then(function waitForLOVCreationModal() {
-        this.waitForSelector('.list-lov', function checkDeletion() {
-            try {
-                this.test.assertDoesntExist('.lovItem', 'LOV deleted');
-            } catch (e) {
-                this.test.assert(false, 'love still there');
-            }
+        this.waitForSelector('.modal.list_lov .list_of_lov', function checkDeletion() {
+            this.test.assertDoesntExist('.lovItem', 'LOV should be deleted');
         });
     });
 

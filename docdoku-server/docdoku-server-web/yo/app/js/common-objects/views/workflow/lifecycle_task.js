@@ -16,7 +16,7 @@ define([
             'click i.toggle-comment': 'toggleComment',
             'click i.approve-task': 'approveTaskButtonClicked',
             'click i.reject-task': 'rejectTaskButtonClicked',
-            'submit .closure-comment form': 'submitClosure',
+            'submit .closure-comment-form': 'submitClosure',
             'click .closure-comment .cancel': 'cancelClosure'
         },
 

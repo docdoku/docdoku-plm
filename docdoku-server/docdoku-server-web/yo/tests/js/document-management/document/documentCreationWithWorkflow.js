@@ -1,6 +1,6 @@
 /*global casper,urls,workspace,documents, workflows*/
 
-casper.test.begin('Document creation with workflow tests suite', 7, function documentCreationWithWorkflowTestsSuite() {
+casper.test.begin('Document creation with workflow tests suite', 9, function documentCreationWithWorkflowTestsSuite() {
 
     'use strict';
 
@@ -169,7 +169,7 @@ casper.test.begin('Document creation with workflow tests suite', 7, function doc
         this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
-            this.capture('screenshot/openFileTab/downloadDocumentFile-error.png');
+            this.capture('screenshot/documentCreationWithWorkflow/openFileTab-error.png');
             this.test.assert(false, 'Modal tab can not be found');
         });
     });
@@ -185,10 +185,55 @@ casper.test.begin('Document creation with workflow tests suite', 7, function doc
             this.click(fileLink);
         }, function fail() {
             this.capture('screenshot/documentCreationWithWorkflow/downloadDocumentFile-error.png');
-            this.test.assert(false, 'Document file can not be found');
+            this.test.assert(false, 'Document file tab can not be found');
         });
     });
 
+    /**
+     * Open Lifecycle tab and approve task
+     */
+
+    casper.then(function openLifecycleTab() {
+        var modalTab = '.document-modal .tabs li a[href="#tab-iteration-lifecycle"]';
+        var activityElement = '#lifecycle-activities-wrapper #lifecycle-activities .activity.in_progress';
+        this.waitForSelector(modalTab, function modalOpened() {
+            this.click(modalTab);
+            this.test.assertSelectorExist(activityElement, 'An activity should be present and marked in_progress');
+            this.click(activityElement+' .approve-task');
+            this.click(activityElement+' .closure-comment-form > div.task-buttons > input');
+        }, function fail() {
+            this.capture('screenshot/documentCreationWithWorkflow/openLifecycleTab-error.png');
+            this.test.assert(false, 'Lifecycle tab can not be found');
+        });
+    });
+
+    /**
+     * Wait for activity being completed
+     */
+
+    casper.then(function waitTaskBeingCompleted() {
+        var activityElement = '#lifecycle-activities-wrapper #lifecycle-activities .activity.complete';
+        this.waitForSelector(activityElement, function taskCompleted() {
+            this.test.assert(true, 'An activity should be present and marked as completed');
+        }, function fail() {
+            this.capture('screenshot/documentCreationWithWorkflow/waitTaskBeingCompleted-error.png');
+            this.test.assert(false, 'Task has not been completed');
+        });
+    });
+
+    /**
+     * Checkout again the document (compliant with next steps)
+     */
+    casper.then(function checkoutDocument() {
+        this.click('.document-modal .tabs li a[href="#tab-iteration-iteration"]');
+        var checkoutButton = '#tab-iteration-iteration .action-checkout';
+        this.waitForSelector(checkoutButton, function buttonFound() {
+            this.click(checkoutButton);
+        }, function fail() {
+            this.capture('screenshot/documentCreationWithWorkflow/checkoutDocument-error.png');
+            this.test.assert(false, 'Checkout button can not be found');
+        });
+    });
 
     casper.run(function allDone() {
         this.test.done();

@@ -1,4 +1,4 @@
-/*global casper,urls,workspace,documents, workflows*/
+/*global casper,urls,workspace,documents*/
 
 casper.test.begin('Document approve task tests suite', 7, function documentApproveTaskTestsSuite() {
 

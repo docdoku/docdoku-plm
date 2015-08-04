@@ -14,7 +14,9 @@ var _ = require('underscore');
 var ci = require('./config.ci');
 var local = require('./config.local');
 var xml2js = require('xml2js');
+var del = require('del');
 
+del.sync(['screenshot/**']);
 
 var conf = _.extend(ci, local);
 
