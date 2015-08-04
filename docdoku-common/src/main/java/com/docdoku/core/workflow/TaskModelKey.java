@@ -28,21 +28,21 @@ import java.io.Serializable;
  */
 public class TaskModelKey implements Serializable {
 
-    private int activityModelId;
+    private int activityModel;
     private int num;
     
     public TaskModelKey() {
     }
     
     public TaskModelKey(int pActivityModelId, int pNum) {
-        activityModelId=pActivityModelId;
+        activityModel =pActivityModelId;
         num=pNum;
     }
     
     @Override
     public int hashCode() {
         int hash = 1;
-        hash = 31 * hash + activityModelId;
+        hash = 31 * hash + activityModel;
         hash = 31 * hash + num;
         return hash;
     }
@@ -56,13 +56,13 @@ public class TaskModelKey implements Serializable {
             return false;
         }
         TaskModelKey key = (TaskModelKey) pObj;
-        return key.activityModelId==activityModelId &&
+        return key.activityModel == activityModel &&
                key.num==num;
     }
     
     @Override
     public String toString() {
-        return activityModelId + "-" + num;
+        return activityModel + "-" + num;
     }
 
     public int getNum() {
@@ -72,11 +72,11 @@ public class TaskModelKey implements Serializable {
         this.num = num;
     }
 
-    public int getActivityModelId() {
-        return activityModelId;
+    public int getActivityModel() {
+        return activityModel;
     }
 
-    public void setActivityModelId(int activityModelId) {
-        this.activityModelId = activityModelId;
+    public void setActivityModel(int activityModel) {
+        this.activityModel = activityModel;
     }
 }

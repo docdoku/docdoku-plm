@@ -24,7 +24,7 @@ import com.docdoku.core.common.User;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +50,7 @@ public class SerialActivityModel extends ActivityModel {
     }
 
     public SerialActivityModel(WorkflowModel pWorkflowModel, String pLifeCycleState) {
-        this(pWorkflowModel, 0,  new ArrayList<TaskModel>(), pLifeCycleState);
+        this(pWorkflowModel, 0,  new LinkedList<>(), pLifeCycleState);
     }
         
     @Override

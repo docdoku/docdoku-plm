@@ -24,13 +24,15 @@ import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.WorkflowModelAlreadyExistsException;
 import com.docdoku.core.exceptions.WorkflowModelNotFoundException;
 import com.docdoku.core.product.PartMasterTemplate;
+import com.docdoku.core.util.Tools;
+import com.docdoku.core.workflow.ActivityModel;
+import com.docdoku.core.workflow.TaskModel;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.WorkflowModelKey;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -60,20 +62,35 @@ public class WorkflowModelDAO {
 
     public void removeWorkflowModel(WorkflowModelKey pKey) throws WorkflowModelNotFoundException {
         WorkflowModel model = loadWorkflowModel(pKey);
-        removeAllActivityModels(pKey);
+        for(ActivityModel activity:model.getActivityModels()){
+            activity.setRelaunchActivity(null);
+        }
+        em.flush();
         em.remove(model);
     }
 
     public List<WorkflowModel> findAllWorkflowModels(String pWorkspaceId) {
-        Query query = em.createQuery("SELECT DISTINCT w FROM WorkflowModel w WHERE w.workspaceId = :workspaceId");
+        TypedQuery<WorkflowModel> query = em.createQuery("SELECT DISTINCT w FROM WorkflowModel w WHERE w.workspaceId = :workspaceId",WorkflowModel.class);
         return query.setParameter("workspaceId", pWorkspaceId).getResultList();
     }
 
     public void createWorkflowModel(WorkflowModel pModel) throws WorkflowModelAlreadyExistsException, CreationException {
         try {
             //the EntityExistsException is thrown only when flush occurs
+            //Because ActivityModel has a generated id which is part of the TaskModel's PK
+            //we force generated it to avoid cache issue with the TaskModel.
+            List<ActivityModel> activityModels = pModel.getActivityModels();
+            List<List<TaskModel>> taskModels=new LinkedList<>();
+            for(ActivityModel activityModel:activityModels){
+                taskModels.add(activityModel.getTaskModels());
+                activityModel.setTaskModels(new ArrayList<>());
+            }
             em.persist(pModel);
             em.flush();
+            int i=0;
+            for(ActivityModel activityModel:activityModels){
+                activityModel.setTaskModels(taskModels.get(i++));
+            }
         } catch (EntityExistsException pEEEx) {
             LOGGER.log(Level.FINEST,null,pEEEx);
             throw new WorkflowModelAlreadyExistsException(mLocale, pModel);

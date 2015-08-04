@@ -24,7 +24,7 @@ import com.docdoku.core.common.User;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +52,7 @@ public class ParallelActivityModel extends ActivityModel {
     }
     
     public ParallelActivityModel(WorkflowModel pWorkflowModel, String pLifeCycleState, int pTasksToComplete) {
-        this(pWorkflowModel, 0,  new ArrayList<TaskModel>(), pLifeCycleState,pTasksToComplete);      
+        this(pWorkflowModel, 0,  new LinkedList<>(), pLifeCycleState,pTasksToComplete);
     }
 
  

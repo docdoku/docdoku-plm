@@ -109,25 +109,16 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         WorkflowModelDAO workflowModelDAO = new WorkflowModelDAO(userLocale, em);
 
         workflowModelDAO.removeAllActivityModels(workflowModelKey);
-        //What's following is a little bit border
-        //as we remove and recreate entities with the same PK
-        //on the same transaction.
-        //JPA does not like very much that, hence we take precautions
 
         WorkflowModel workflowModel = workflowModelDAO.loadWorkflowModel(workflowModelKey);
         checkWorkflowWriteAccess(workflowModel,user);
 
         checkWorkflowValidity(workflowModelKey.getWorkspaceId(), workflowModelKey.getId(), userLocale, pActivityModels);
         workflowModel.setFinalLifeCycleState(pFinalLifeCycleState);
-        List<ActivityModel> activityModels = new ArrayList<>();
+        List<ActivityModel> activityModels = new LinkedList<>();
         Collections.addAll(activityModels, pActivityModels);
         workflowModel.setActivityModels(activityModels);
         Tools.resetParentReferences(workflowModel);
-
-        for(ActivityModel activityModel:activityModels) {
-            em.persist(activityModel);
-        }
-
         return workflowModel;
     }
 

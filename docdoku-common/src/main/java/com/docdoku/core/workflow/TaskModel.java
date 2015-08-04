@@ -44,7 +44,8 @@ import java.util.Map;
 })
 @Entity
 public class TaskModel implements Serializable, Cloneable {
-    
+
+    @Id
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumns({
         @JoinColumn(name="ACTIVITYMODEL_ID", referencedColumnName="ID")
@@ -53,11 +54,7 @@ public class TaskModel implements Serializable, Cloneable {
     
     @Id
     private int num;
-    
-    @Column(name = "ACTIVITYMODEL_ID", nullable = false, insertable = false, updatable = false)
-    @Id
-    private int activityModelId;
-    
+
     @Lob
     private String instructions;
     private String title;
@@ -129,9 +126,9 @@ public class TaskModel implements Serializable, Cloneable {
         return activityModel;
     }
 
+
     public void setActivityModel(ActivityModel activityModel) {
         this.activityModel = activityModel;
-        activityModelId=activityModel.getId();
     }
     
     public int getNum() {
@@ -142,10 +139,14 @@ public class TaskModel implements Serializable, Cloneable {
         this.num = num;
     }
 
-        @Override
+    public int getActivityModelId(){
+        return activityModel==null?0:activityModel.getId();
+    }
+
+    @Override
     public int hashCode() {
         int hash = 1;
-        hash = 31 * hash + activityModelId;
+        hash = 31 * hash + getActivityModelId();
         hash = 31 * hash + num;
         return hash;
     }
@@ -159,13 +160,13 @@ public class TaskModel implements Serializable, Cloneable {
             return false;
         }
         TaskModel model = (TaskModel) pObj;
-        return model.activityModelId==activityModelId &&
+        return model.getActivityModelId()==getActivityModelId() &&
                model.num==num;
     }
     
     @Override
     public String toString() {
-        return activityModelId + "-" + num;
+        return getActivityModelId() + "-" + num;
     }
     
 

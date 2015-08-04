@@ -80,11 +80,11 @@ public class WorkflowModel implements Serializable, Cloneable {
     }
 
     public WorkflowModel(Workspace pWorkspace, String pId, User pAuthor, String pFinalLifeCycleState) {
-        this(pWorkspace,pId,pAuthor,pFinalLifeCycleState,new ArrayList<ActivityModel>());
+        this(pWorkspace,pId,pAuthor,pFinalLifeCycleState,new LinkedList<>());
     }
 
     public WorkflowModel(Workspace pWorkspace, String pId, User pAuthor, String pFinalLifeCycleState, ActivityModel[] pActivityModels) {
-        this(pWorkspace, pId, pAuthor, pFinalLifeCycleState,new ArrayList<>(Arrays.asList(pActivityModels)));
+        this(pWorkspace, pId, pAuthor, pFinalLifeCycleState,new LinkedList<>(Arrays.asList(pActivityModels)));
     }
     public WorkflowModel(Workspace pWorkspace, String pId, User pAuthor, String pFinalLifeCycleState, List<ActivityModel> pActivityModels) {
         id=pId;
