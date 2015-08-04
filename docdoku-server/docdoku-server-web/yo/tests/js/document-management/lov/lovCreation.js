@@ -105,8 +105,10 @@ casper.test.begin('LOV creation tests suite', 5, function documentLOVCreationTes
      */
 
     casper.then(function waitForLOVCreationModal() {
-        this.waitForSelector('.list-lov', function checkLOVPersistence() {
-            this.test.assertExists('.lovItem', 'One element should be in the list of LOV');
+        this.waitForSelector('.modal.list_lov .list_of_lov .lovItem', function checkLOVPersistence() {
+            this.test.assertElementCount('.list_of_lov .lovItem', 1, 'One element should be in the list of LOV');
+        }, function(){
+            this.capture('screenshot/lovCreation/waitForLOVCreationModal-error.png');
         });
     });
 
