@@ -25,12 +25,12 @@
                 <fieldset id="admin">
                     <span id="id">#{i18nWorkspaceEdition['section.id']} #{adminStateBean.selectedWorkspace}</span><br/>
                     
-                    <h:outputLabel value="#{i18nWorkspaceEdition['section.admin']}:" for="admin"/>
+                    <h:outputLabel value="#{i18nWorkspaceEdition['section.admin']}" for="admin"/>
                     <h:selectOneMenu label="#{i18nWorkspaceEdition['section.admin']}" required="true" id="admin" value="#{workspaceBean.workspaceAdmin}">               
                         <f:selectItems value="#{adminStateBean.users}" var="u" itemLabel="#{u.name}" itemValue="#{u.login}" />
                     </h:selectOneMenu> 
                     
-                    <h:outputLabel value="#{i18nWorkspaceEdition['section.description']}:" for="description"/>
+                    <h:outputLabel value="#{i18nWorkspaceEdition['section.description']}" for="description"/>
                     <h:inputTextarea value="#{workspaceBean.workspaceDescription}" id="description" cols="40" rows="4"/>
 
                     <br/>
