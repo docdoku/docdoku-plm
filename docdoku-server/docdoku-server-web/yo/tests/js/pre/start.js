@@ -46,7 +46,7 @@ if (conf.waitOnRequest) {
 // Wait actions
 casper.options.waitTimeout = 10 * 1000; // 10 sec
 // Global test duration
-casper.options.timeout = 20 * 60 * 1000; // 15 min
+casper.options.timeout = conf.globalTimeout * 60 * 1000;
 
 casper.start();
 
