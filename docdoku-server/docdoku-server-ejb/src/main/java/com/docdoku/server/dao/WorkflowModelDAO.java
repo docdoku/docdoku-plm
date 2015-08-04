@@ -24,7 +24,6 @@ import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.WorkflowModelAlreadyExistsException;
 import com.docdoku.core.exceptions.WorkflowModelNotFoundException;
 import com.docdoku.core.product.PartMasterTemplate;
-import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.WorkflowModelKey;
 
@@ -61,10 +60,7 @@ public class WorkflowModelDAO {
 
     public void removeWorkflowModel(WorkflowModelKey pKey) throws WorkflowModelNotFoundException {
         WorkflowModel model = loadWorkflowModel(pKey);
-        for(ActivityModel activity:model.getActivityModels()){
-            activity.setRelaunchActivity(null);
-        }
-        em.flush();
+        removeAllActivityModels(pKey);
         em.remove(model);
     }
 
