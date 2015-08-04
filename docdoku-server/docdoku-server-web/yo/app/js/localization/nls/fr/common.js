@@ -492,7 +492,7 @@ define({
     REQUIRED_FIELD:"Veuillez renseigner ce champ",
     RESET: "Remise à zero",
     RESET_CAMERA: "Repositionner la caméra",
-    RESULT:'Resultat',
+    RESULT:'Résultat',
     RETAIN: "Retenir",
     RETRY: "Re-essayer",
     REVISION_DATE: "Date de révision",
