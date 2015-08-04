@@ -126,7 +126,7 @@ public class AllFileConverterImpl implements CADConverter{
 
     @Override
     public boolean canConvertToOBJ(String cadFileExtension) {
-        return Arrays.asList("off","ply","3ds","wrl").contains(cadFileExtension);
+        return Arrays.asList("stl","off","ply","3ds","wrl").contains(cadFileExtension);
     }
 
 }
