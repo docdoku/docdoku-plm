@@ -801,7 +801,7 @@ define([
             }
 
             var boundingBox = mesh.geometry.boundingBox;
-            var cog = boundingBox.center().clone().applyMatrix4(mesh.matrix);
+            var cog = boundingBox.center().clone().applyMatrix4(object.matrix);
             var size = boundingBox.size();
             var radius = Math.max(size.x, size.y, size.z);
             var camera = _this.cameraObject;
@@ -812,9 +812,10 @@ define([
             cameraAnimation(cog, 2000, endCamPos);
         };
 
-        this.lookAt = function (mesh) {
+        this.lookAt = function (object) {
+            var mesh = object.children[0];
             var boundingBox = mesh.geometry.boundingBox;
-            var cog = boundingBox.center().clone().applyMatrix4(mesh.matrix);
+            var cog = boundingBox.center().clone().applyMatrix4(object.matrix);
             cameraAnimation(cog, 2000);
         };
 
