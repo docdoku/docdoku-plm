@@ -5,7 +5,6 @@
   "version": "1.1.0",
   "devDependencies": {
     "connect-livereload": "~0.3.2",
-    "del": "^1.2.0",
     "grunt": "~0.4.1",
     "grunt-bower-requirejs": "~0.8.4",
     "grunt-connect-proxy": "~0.1.11",
