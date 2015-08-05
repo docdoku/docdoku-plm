@@ -1,4 +1,4 @@
-/*global define,App,dat*/
+/*global define,App,dat,$*/
 define([
     'backbone',
     'mustache',
@@ -84,6 +84,8 @@ define([
 
             this.pathToPathLinkButton.hide();
             this.pathDataModalButton.hide();
+
+            this.initDebugShortcut();
             try {
                 App.sceneManager.init();
                 this.bindDatGUIControls();
@@ -95,6 +97,24 @@ define([
 
             return this;
         },
+
+        initDebugShortcut:function(){
+            var k = [191,68,69, 66, 85, 71], // :debug
+                n = 0;
+            $(document).keydown(function (e) {
+                if (e.keyCode === k[n++]) {
+                    if (n === k.length) {
+                        App.setDebug(!App.debug);
+                        n = 0;
+                        return false;
+                    }
+                }
+                else {
+                    n = 0;
+                }
+            });
+        },
+
         initModules:function(){
 
             App.searchView = new SearchView().render();
