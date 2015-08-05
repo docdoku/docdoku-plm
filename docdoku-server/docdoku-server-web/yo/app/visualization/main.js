@@ -30,8 +30,9 @@ var App = {
         cameraFar: 5E4,
         defaultCameraPosition: {x: -1000, y: 800, z: 1100},
         defaultTargetPosition: {x: 0, y: 0, z: 0},
-        ambientLightColor:0x101030,
-        cameraLightColor:0xbcbcbc,
+        ambientLightColor:0xffffff,
+        cameraLight1Color:0xbcbcbc,
+        cameraLight2Color:0xffffff,
         transformControls:false
     }
 

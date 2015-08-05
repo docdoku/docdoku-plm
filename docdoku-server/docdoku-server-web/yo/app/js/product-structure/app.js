@@ -399,9 +399,13 @@ define([
             ambientLightColorController.onChange(App.sceneManager.updateAmbientLight);
             valuesControllers.push(ambientLightColorController);
 
-            var cameraLightColorController = gui.addColor(App.SceneOptions, 'cameraLightColor');
-            cameraLightColorController.onChange(App.sceneManager.updateCameraLight);
-            valuesControllers.push(cameraLightColorController);
+            var cameraLight1ColorController = gui.addColor(App.SceneOptions, 'cameraLight1Color');
+            cameraLight1ColorController.onChange(App.sceneManager.updateCameraLight1);
+            valuesControllers.push(cameraLight1ColorController);
+
+            var cameraLight2ColorController = gui.addColor(App.SceneOptions, 'cameraLight2Color');
+            cameraLight2ColorController.onChange(App.sceneManager.updateCameraLight2);
+            valuesControllers.push(cameraLight2ColorController);
 
             return this;
         },

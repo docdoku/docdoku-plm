@@ -38,6 +38,7 @@ THREE.OBJLoader.prototype = {
                     materialsCreator.preload();
                     object.traverse( function ( o ) {
                         if ( o instanceof THREE.Mesh ) {
+
                             if ( o.material.name ) {
 
                                 var material = materialsCreator.create( o.material.name );

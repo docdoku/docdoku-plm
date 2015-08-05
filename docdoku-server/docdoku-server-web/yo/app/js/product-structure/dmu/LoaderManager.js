@@ -16,6 +16,25 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
         }
     };
 
+    var defaultMaterial = new THREE.MeshLambertMaterial({color:new THREE.Color(0x62697B)});
+
+    function setShadows(object){
+        object.traverse( function ( o ) {
+            if ( o instanceof THREE.Mesh) {
+                o.castShadow = true;
+                o.receiveShadow = true;
+            }
+        });
+    }
+
+    function updateMaterial(object){
+        object.traverse( function ( o ) {
+            if ( o instanceof THREE.Mesh && !o.material.name) {
+                o.material = defaultMaterial;
+            }
+        });
+    }
+
     /*
      * Parse all meshes geometries in collada object given by COlladaLoader
      * */
@@ -79,7 +98,10 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
             };
         },
 
+
+
         parseFile: function (filename, texturePath, callbacks) {
+
 
             var extension = filename.substr(filename.lastIndexOf('.') + 1).toLowerCase();
 
@@ -92,6 +114,8 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                     }
 
                     this.OBJLoader.load(filename, texturePath+'/attachedfiles/', function ( object ) {
+                        setShadows(object);
+                        updateMaterial(object);
                         callbacks.success(object);
                     });
 
@@ -120,6 +144,8 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                         combined.computeBoundingSphere();
                         var object = new THREE.Object3D();
                         object.add(new THREE.Mesh(combined));
+                        setShadows(object);
+                        updateMaterial(object);
                         callbacks.success(object);
 
                     });
@@ -134,6 +160,8 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                     this.STLLoader.load(filename, function(geometry){
                         var object = new THREE.Object3D();
                         object.add(new THREE.Mesh(geometry));
+                        setShadows(object);
+                        updateMaterial(object);
                         callbacks.success(object);
                     });
 
@@ -146,13 +174,11 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                     }
 
                     this.JSONLoader.load(filename, function (geometry, materials) {
-                        var _material = new THREE.MeshFaceMaterial(materials);
                         geometry.dynamic = false;
-
                         var object = new THREE.Object3D();
-                        object.add(new THREE.Mesh(geometry,_material));
+                        object.add(new THREE.Mesh(geometry,new THREE.MeshFaceMaterial(materials)));
+                        setShadows(object);
                         callbacks.success(object);
-
                     }, texturePath+'/attachedfiles/');
 
                     break;
@@ -169,6 +195,7 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                         geometry.dynamic = false;
                         var object = new THREE.Object3D();
                         object.add(new THREE.Mesh(geometry,_material));
+                        setShadows(object);
                         callbacks.success(object);
                     }, texturePath);
 

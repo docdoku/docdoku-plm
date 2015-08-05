@@ -132,15 +132,6 @@ define([
             _this.grid = new THREE.Line(geometry, material, THREE.LinePieces);
         }
 
-        function initAmbientLight() {
-            var ambient = new THREE.AmbientLight(App.SceneOptions.ambientLightColor);
-            ambient.name = 'AmbientLight';
-            _this.scene.add(ambient);
-            var hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.4);
-            hemiLight.position.set(0, 500, 0);
-            _this.scene.add(hemiLight);
-
-        }
 
         function initSelectionBox() {
             selectionBox = new THREE.BoxHelper();
@@ -152,11 +143,42 @@ define([
         }
 
         function addLightsToCamera(camera) {
-            var dirLight = new THREE.DirectionalLight(App.SceneOptions.cameraLightColor);
-            dirLight.position.set(200, 200, 1000).normalize();
-            dirLight.name = 'CameraLight';
-            camera.add(dirLight);
-            camera.add(dirLight.target);
+
+            var dirLight1 = new THREE.DirectionalLight(App.SceneOptions.cameraLight1Color);
+            dirLight1.position.set(200, 200, 1000).normalize();
+            dirLight1.name = 'CameraLight1';
+            camera.add(dirLight1);
+            camera.add(dirLight1.target);
+
+            var dirLight2 = new THREE.DirectionalLight( App.SceneOptions.cameraLight2Color, 1 );
+            dirLight2.color.setHSL( 0.1, 1, 0.95 );
+            dirLight2.position.set( -1, 1.75, 1 );
+            dirLight2.position.multiplyScalar( 50 );
+            dirLight2.name='CameraLight2';
+            camera.add( dirLight2 );
+
+            dirLight2.castShadow = true;
+
+            dirLight2.shadowMapWidth = 2048;
+            dirLight2.shadowMapHeight = 2048;
+
+            var d = 50;
+
+            dirLight2.shadowCameraLeft = -d;
+            dirLight2.shadowCameraRight = d;
+            dirLight2.shadowCameraTop = d;
+            dirLight2.shadowCameraBottom = -d;
+
+            dirLight2.shadowCameraFar = 3500;
+            dirLight2.shadowBias = -0.0001;
+            dirLight2.shadowDarkness = 0.35;
+
+            var hemiLight = new THREE.HemisphereLight( App.SceneOptions.ambientLightColor, App.SceneOptions.ambientLightColor, 0.6 );
+            hemiLight.color.setHSL( 0.6, 1, 0.6 );
+            hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+            hemiLight.position.set( 0, 0, 500 );
+            hemiLight.name='AmbientLight';
+            camera.add( hemiLight );
         }
 
         function handleResize() {
@@ -773,7 +795,6 @@ define([
             initAxes();
             initGrid();
             initSelectionBox();
-            initAmbientLight();
             initRenderer();
             initStats();
             window.addEventListener('resize', handleResize, false);
@@ -1186,12 +1207,17 @@ define([
         };
 
         this.updateAmbientLight = function (color) {
-            _this.scene.getObjectByName('AmbientLight').color.set(color);
+            _this.cameraObject.getObjectByName('AmbientLight').color.set(color);
             _this.reDraw();
         };
 
-        this.updateCameraLight = function (color) {
-            _this.cameraObject.getObjectByName('CameraLight').color.set(color);
+        this.updateCameraLight1 = function (color) {
+            _this.cameraObject.getObjectByName('CameraLight1').color.set(color);
+            _this.reDraw();
+        };
+
+        this.updateCameraLight2 = function (color) {
+            _this.cameraObject.getObjectByName('CameraLight2').color.set(color);
             _this.reDraw();
         };
 
