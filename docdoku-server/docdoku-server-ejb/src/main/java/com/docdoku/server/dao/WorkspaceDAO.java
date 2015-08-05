@@ -31,6 +31,8 @@ import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartSubstituteLink;
+import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.workflow.WorkflowModel;
 
@@ -38,9 +40,7 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class WorkspaceDAO {
 
@@ -223,9 +223,20 @@ public class WorkspaceDAO {
         }
         for (PartIteration p: partsIteration) {
             p.setLinkedDocuments(new HashSet<DocumentLink>());
+            for (PartUsageLink pul: p.getComponents()) {
+                pul.setSubstitutes(new LinkedList<PartSubstituteLink>());
+            }
+            p.setComponents(new LinkedList<PartUsageLink>());
         }
         em.flush();
 
+        // Clear all part substitute links
+        em.createQuery("DELETE FROM PartSubstituteLink psl WHERE psl.substitute.workspace = :workspace")
+                .setParameter("workspace", workspace).executeUpdate();
+
+        // Clear all part usage links
+        em.createQuery("DELETE FROM PartUsageLink pul WHERE pul.component.workspace = :workspace")
+                .setParameter("workspace", workspace).executeUpdate();
 
         // Remove parents
         List<DocumentMaster> documentsMaster =
@@ -269,6 +280,12 @@ public class WorkspaceDAO {
                 .setParameter("workspace",workspace).executeUpdate();
         // Roles
         em.createQuery("DELETE FROM Role r where r.workspace = :workspace")
+                .setParameter("workspace",workspace).executeUpdate();
+
+        // LOV
+        em.createQuery("DELETE FROM ListOfValuesAttributeTemplate lovat where lovat.lov.workspace = :workspace")
+                .setParameter("workspace",workspace).executeUpdate();
+        em.createQuery("DELETE FROM ListOfValues lov where lov.workspace = :workspace")
                 .setParameter("workspace",workspace).executeUpdate();
 
 
