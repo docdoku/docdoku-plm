@@ -116,7 +116,10 @@ define([
                 }
             }).success(function () {
                 this.set('ackComment', data.ackComment);
-                this.set('ackDate', (new Date()).toString());
+                var now = new Date;
+                var now_utc = new Date(now.getUTCFullYear(),now.getUTCMonth(), now.getUTCDate() ,
+                    now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
+                this.set('ackDate', (now_utc).toString());
                 this.set('acknowledged', true);
             });
         }
