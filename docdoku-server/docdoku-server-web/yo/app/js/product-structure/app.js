@@ -99,7 +99,7 @@ define([
         },
 
         initDebugShortcut:function(){
-            var k = [191,68,69, 66, 85, 71], // :debug
+            var k = [191,68,69, 66, 85, 71], // :debug or /debug on macosx
                 n = 0;
             $(document).keydown(function (e) {
                 if (e.keyCode === k[n++]) {
