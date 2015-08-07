@@ -38,6 +38,7 @@ import org.elasticsearch.action.search.*;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.index.query.*;
+import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.search.SearchHit;
 
 import javax.ejb.Stateless;
@@ -60,7 +61,9 @@ public class ESSearcher {
     private static final String ES_TYPE_DOCUMENT = "document";
     private static final String ES_TYPE_PART = "part";
     private static final String ES_SEARCH_ERROR_1 = "ES_SearchError1";
+    private static final String ES_SEARCH_ERROR_2 = "ES_SearchError2";
     private static final String ES_SERVER_ERROR_1 = "IndexerServerException";
+    private static final String ES_SERVER_ERROR_2 ="MissingIndexException";
 
     @PersistenceContext
     private EntityManager em;
@@ -103,6 +106,10 @@ public class ESSearcher {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_SEARCH_ERROR_1);
             LOGGER.log(Level.WARNING, logMessage, e);
             throw new ESServerException(Locale.getDefault(), ES_SERVER_ERROR_1);
+        } catch (IndexMissingException e) {
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString(ES_SEARCH_ERROR_2);
+            LOGGER.log(Level.WARNING,logMessage,e);
+            throw new ESServerException(Locale.getDefault(),ES_SERVER_ERROR_2);
         }
     }
 
@@ -136,6 +143,10 @@ public class ESSearcher {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_SEARCH_ERROR_1);
             LOGGER.log(Level.WARNING, logMessage, e);
             throw new ESServerException(Locale.getDefault(), ES_SERVER_ERROR_1);
+        } catch (IndexMissingException e) {
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString(ES_SEARCH_ERROR_2);
+            LOGGER.log(Level.WARNING,logMessage,e);
+            throw new ESServerException(Locale.getDefault(),ES_SERVER_ERROR_2);
         }
 
     }
