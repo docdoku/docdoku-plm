@@ -27,7 +27,7 @@ define([
 
             _.each(this.headerColumns, function(column){
 
-                var value = self.item[column.value];
+                var value = self.item[column.value] + "";
 
                 var filter = _.findWhere(self.queryFilters, {id : column.value});
                 var type = filter ? filter.realType : 'string';
