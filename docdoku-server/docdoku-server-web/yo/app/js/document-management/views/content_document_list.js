@@ -47,8 +47,10 @@ define([
                     collection: this.collection
                 })
             );
-
-            this.collection.fetch({reset: true});
+            var self = this;
+            this.collection.fetch({reset: true}).error(function(err) {
+                self.onError(null,err);
+            });
 
             this.listenTo(this.listView, 'selectionChange', this.onStateChange);
             this.listenTo(this.collection, 'change', this.onStateChange);
