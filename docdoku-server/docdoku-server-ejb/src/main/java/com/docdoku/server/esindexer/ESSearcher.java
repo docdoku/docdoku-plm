@@ -323,8 +323,7 @@ public class ESSearcher {
                 queryBuilder.add(QueryBuilders.fuzzyQuery(ESMapper.PART_NAME_KEY, partQuery.getName()));
             }
             if (partQuery.isStandardPart() != null) {
-                String text = partQuery.isStandardPart() ? "TRUE" : "FALSE";
-                queryBuilder.add(FilterBuilders.termFilter(ESMapper.STANDARD_PART_KEY, text));
+                queryBuilder.add(FilterBuilders.termFilter(ESMapper.STANDARD_PART_KEY, partQuery.isStandardPart()));
             }
             addCommonQuery(queryBuilder,partQuery);
         }
