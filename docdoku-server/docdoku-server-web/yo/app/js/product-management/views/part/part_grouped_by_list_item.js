@@ -39,15 +39,12 @@ define([
                 var isStringValue = !isDate && !isPartNumber && !isLinkedDocuments;
 
                 if(isDate) {
-                    if (!value) {
-                        value = '';
-                    }
-                    var timestampFormated = Date.formatTimestamp(
+                    var timestampFormatted = Date.formatTimestamp(
                         App.config.i18n._DATE_FORMAT,
                         value
                     );
 
-                    value = timestampFormated ? timestampFormated : '';
+                    value = timestampFormatted ? timestampFormatted : '';
                 }
 
                 if(isLinkedDocuments){
