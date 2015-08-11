@@ -500,15 +500,15 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
         this.releaseStatusChange = statusChange;
     }
 
-    public String getObsoleteAuthor() {
-        return obsoleteStatusChange == null ? null : obsoleteStatusChange.getStatusChangeAuthor().getLogin();
+    public User getObsoleteAuthor() {
+        return obsoleteStatusChange == null ? null : obsoleteStatusChange.getStatusChangeAuthor();
     }
 
     public Date getObseleteDate() {
         return obsoleteStatusChange == null ? null : obsoleteStatusChange.getStatusModificationDate();
     }
-    public String getReleaseAuthor() {
-        return releaseStatusChange == null ? null : releaseStatusChange.getStatusChangeAuthor().getLogin();
+    public User getReleaseAuthor() {
+        return releaseStatusChange == null ? null : releaseStatusChange.getStatusChangeAuthor();
     }
 
     public Date getReleaseDate() {

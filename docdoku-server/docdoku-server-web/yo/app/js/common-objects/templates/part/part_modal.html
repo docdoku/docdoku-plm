@@ -112,6 +112,7 @@
                                 <span class="help-inline">{{part.getLifeCycleState}}</span>
                             </div>
                         </div>
+                        {{#isCheckout}}
                         <div class="control-group">
                             <label class="control-label">{{i18n.CHECKOUT_BY}}</label>
 
@@ -127,6 +128,7 @@
                                 <span class="help-inline"><a class="date-popover">{{part.getFormattedCheckoutDate}}</a></span>
                             </div>
                         </div>
+                        {{/isCheckout}}
                         <div class="control-group">
                             <label class="control-label">{{i18n.DESCRIPTION}}</label>
 
@@ -141,10 +143,11 @@
                                 <ul class="help-inline master-tags-list unstyled"></ul>
                             </div>
                         </div>
+                        {{#part.getReleaseAuthor}}
                         <div class="control-group">
                             <label class="control-label">{{i18n.RELEASE_AUTHOR}}</label>
                             <div class="controls">
-                                <span class="help-inline"><a class="author-popover">{{part.getReleaseAuthor}}</a></span>
+                                <span class="help-inline"><a class="release-user-popover">{{part.getReleaseAuthorName}}</a></span>
                             </div>
                         </div>
                         <div class="control-group">
@@ -153,10 +156,12 @@
                                 <span class="help-inline"><a class="date-popover">{{part.getReleaseDate}}</a></span>
                             </div>
                         </div>
+                        {{/part.getReleaseAuthor}}
+                        {{#isObsolete}}
                         <div class="control-group">
                             <label class="control-label">{{i18n.OBSOLETE_AUTHOR}}</label>
                             <div class="controls">
-                                <span class="help-inline"><a class="author-popover">{{part.getObsoleteAuthor}}</a></span>
+                                <span class="help-inline"><a class="obsolete-user-popover">{{part.getObsoleteAuthorName}}</a></span>
                             </div>
                         </div>
                         <div class="control-group">
@@ -165,6 +170,7 @@
                                 <span class="help-inline"><a class="date-popover">{{part.getObsoleteDate}}</a></span>
                             </div>
                         </div>
+                        {{/isObsolete}}
                     </div>
 
                     {{#hasIterations}}

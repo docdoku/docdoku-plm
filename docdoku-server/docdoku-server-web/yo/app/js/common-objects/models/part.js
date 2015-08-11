@@ -87,6 +87,20 @@ define([
                 return this.get('obsoleteAuthor');
             },
 
+            getObsoleteAuthorLogin: function () {
+                if (this.isObsolete()) {
+                    return this.getObsoleteAuthor().login;
+                }
+                return null;
+            },
+
+            getObsoleteAuthorName: function () {
+                if (this.isObsolete()) {
+                    return this.getObsoleteAuthor().name;
+                }
+                return null;
+            },
+
             getReleaseDate: function() {
                 return Date.formatTimestamp(
                     App.config.i18n._DATE_FORMAT,
@@ -96,6 +110,20 @@ define([
 
             getReleaseAuthor: function() {
                 return this.get('releaseAuthor');
+            },
+
+            getReleaseAuthorLogin: function () {
+                if (this.getReleaseAuthor()) {
+                    return this.getReleaseAuthor().login;
+                }
+                return null;
+            },
+
+            getReleaseAuthorName: function () {
+                if (this.getReleaseAuthor()) {
+                    return this.getReleaseAuthor().name;
+                }
+                return null;
             },
 
             getFormattedCheckoutDate: function () {

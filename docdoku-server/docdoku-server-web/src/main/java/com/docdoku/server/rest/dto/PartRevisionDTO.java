@@ -62,9 +62,11 @@ public class PartRevisionDTO implements Serializable {
     private String[] tags;
     private List<ModificationNotificationDTO> notifications;
     private Date obsoleteDate;
-    private String obsoleteAuthor;
+    @XmlElement(nillable = true)
+    private UserDTO obsoleteAuthor;
     private Date releaseDate;
-    private String releaseAuthor;
+    @XmlElement(nillable = true)
+    private UserDTO releaseAuthor;
 
     public PartRevisionDTO() {
     }
@@ -268,6 +270,38 @@ public class PartRevisionDTO implements Serializable {
         this.tags = tags;
     }
 
+    public void setObsoleteDate(Date obsoleteDate) {
+        this.obsoleteDate = obsoleteDate;
+    }
+
+    public void setObsoleteAuthor(UserDTO obsoleteAuthor) {
+        this.obsoleteAuthor = obsoleteAuthor;
+    }
+
+    public void setReleaseDate(Date releasedDate) {
+        this.releaseDate = releasedDate;
+    }
+
+    public void setReleaseAuthor(UserDTO releasedAuthor) {
+        this.releaseAuthor = releasedAuthor;
+    }
+
+    public Date getObsoleteDate() {
+        return obsoleteDate;
+    }
+
+    public UserDTO getObsoleteAuthor() {
+        return obsoleteAuthor;
+    }
+
+    public Date getReleaseDate() {
+        return releaseDate;
+    }
+
+    public UserDTO getReleaseAuthor() {
+        return releaseAuthor;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o){
@@ -295,37 +329,5 @@ public class PartRevisionDTO implements Serializable {
         result = 31 * result + version.hashCode();
         result = 31 * result + workspaceId.hashCode();
         return result;
-    }
-
-    public void setObsoleteDate(Date obsoleteDate) {
-        this.obsoleteDate = obsoleteDate;
-    }
-
-    public void setObsoleteAuthor(String obsoleteAuthor) {
-        this.obsoleteAuthor = obsoleteAuthor;
-    }
-
-    public void setReleaseDate(Date releasedDate) {
-        this.releaseDate = releasedDate;
-    }
-
-    public void setReleaseAuthor(String releasedAuthor) {
-        this.releaseAuthor = releasedAuthor;
-    }
-
-    public Date getObsoleteDate() {
-        return obsoleteDate;
-    }
-
-    public String getObsoleteAuthor() {
-        return obsoleteAuthor;
-    }
-
-    public Date getReleaseDate() {
-        return releaseDate;
-    }
-
-    public String getReleaseAuthor() {
-        return releaseAuthor;
     }
 }

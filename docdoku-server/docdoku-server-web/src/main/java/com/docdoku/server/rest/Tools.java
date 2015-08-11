@@ -95,7 +95,7 @@ public class Tools {
 
         for (Map.Entry<UserGroup,ACLUserGroupEntry> entry : acl.getGroupEntries().entrySet()) {
             ACLUserGroupEntry aclEntry = entry.getValue();
-            aclDTO.addGroupEntry(aclEntry.getPrincipalId(),aclEntry.getPermission());
+            aclDTO.addGroupEntry(aclEntry.getPrincipalId(), aclEntry.getPermission());
         }
 
         return aclDTO;
@@ -152,10 +152,18 @@ public class Tools {
         partRevisionDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
         partRevisionDTO.setName(partRevision.getPartMaster().getName());
         partRevisionDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
-        partRevisionDTO.setObsoleteDate(partRevision.getObseleteDate());
-        partRevisionDTO.setObsoleteAuthor(partRevision.getObsoleteAuthor());
-        partRevisionDTO.setReleaseDate(partRevision.getReleaseDate());
-        partRevisionDTO.setReleaseAuthor(partRevision.getReleaseAuthor());
+
+        if (partRevision.isObsolete()) {
+            partRevisionDTO.setObsoleteDate(partRevision.getObseleteDate());
+            UserDTO obsoleteUserDTO = mapper.map(partRevision.getObsoleteAuthor(), UserDTO.class);
+            partRevisionDTO.setObsoleteAuthor(obsoleteUserDTO);
+        }
+
+        if (partRevision.getReleaseAuthor() != null) {
+            partRevisionDTO.setReleaseDate(partRevision.getReleaseDate());
+            UserDTO releaseUserDTO = mapper.map(partRevision.getReleaseAuthor(), UserDTO.class);
+            partRevisionDTO.setReleaseAuthor(releaseUserDTO);
+        }
 
         List<PartIterationDTO> partIterationDTOs = new ArrayList<>();
         for(PartIteration partIteration : partRevision.getPartIterations()){

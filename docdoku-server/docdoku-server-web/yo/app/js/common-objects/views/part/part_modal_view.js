@@ -135,6 +135,8 @@ define([
 
             this.$authorLink = this.$('.author-popover');
             this.$checkoutUserLink = this.$('.checkout-user-popover');
+            this.$releaseUserLink = this.$('.release-user-popover');
+            this.$obsoleteUserLink = this.$('.obsolete-user-popover');
 
             this.$inputIterationNote = this.$('#inputRevisionNote');
             this.$tabs = this.$('.nav-tabs li');
@@ -163,6 +165,12 @@ define([
             this.$authorLink.userPopover(this.model.getAuthorLogin(), this.model.getNumber(), 'right');
             if (this.model.isCheckout()) {
                 this.$checkoutUserLink.userPopover(this.model.getCheckOutUserLogin(), this.model.getNumber(), 'right');
+            }
+            if (this.model.getReleaseAuthor()) {
+                this.$releaseUserLink.userPopover(this.model.getReleaseAuthorLogin(), this.model.getNumber(), 'right');
+            }
+            if (this.model.isObsolete()) {
+                this.$obsoleteUserLink.userPopover(this.model.getObsoleteAuthorLogin(), this.model.getNumber(), 'right');
             }
         },
 
