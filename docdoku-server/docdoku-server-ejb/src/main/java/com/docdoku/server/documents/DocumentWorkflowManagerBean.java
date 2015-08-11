@@ -92,22 +92,6 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    @Override
-    public DocumentRevision[] getDocumentRevisionsWithAssignedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).findDocsWithAssignedTasksForGivenUser(pWorkspaceId, assignedUserLogin);
-        return docRs.toArray(new DocumentRevision[docRs.size()]);
-    }
-
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    @Override
-    public DocumentRevision[] getDocumentRevisionsWithOpenedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).findDocsWithOpenedTasksForGivenUser(pWorkspaceId, assignedUserLogin);
-        return docRs.toArray(new DocumentRevision[docRs.size()]);
-    }
-
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @CheckActivity
     @Override
     public DocumentRevision approveTaskOnDocument(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException {

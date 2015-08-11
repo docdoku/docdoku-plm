@@ -253,12 +253,12 @@ public class DocumentsResource {
 
         DocumentRevision[] docRs;
         if(filter == null){
-            docRs = documentWorkflowService.getDocumentRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
+            docRs = documentService.getDocumentRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
         }else{
             if ("in_progress".equals(filter)) {
-                docRs = documentWorkflowService.getDocumentRevisionsWithOpenedTasksForGivenUser(workspaceId, assignedUserLogin);
+                docRs = documentService.getDocumentRevisionsWithOpenedTasksForGivenUser(workspaceId, assignedUserLogin);
             } else {
-                docRs = documentWorkflowService.getDocumentRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
+                docRs = documentService.getDocumentRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
             }
         }
 

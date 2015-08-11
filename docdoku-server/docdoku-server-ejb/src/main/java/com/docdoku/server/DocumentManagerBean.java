@@ -1673,6 +1673,48 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return iterations;
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public DocumentRevision[] getDocumentRevisionsWithAssignedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin)
+            throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).findDocsWithAssignedTasksForGivenUser(pWorkspaceId, assignedUserLogin);
+
+        ListIterator<DocumentRevision> ite = docRs.listIterator();
+        while (ite.hasNext()) {
+            DocumentRevision docR = ite.next();
+            if (!hasDocumentRevisionReadAccess(user, docR)) {
+                ite.remove();
+            } else if (isCheckoutByAnotherUser(user, docR)) {
+                em.detach(docR);
+                docR.removeLastIteration();
+            }
+        }
+
+        return docRs.toArray(new DocumentRevision[docRs.size()]);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public DocumentRevision[] getDocumentRevisionsWithOpenedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin)
+            throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).findDocsWithOpenedTasksForGivenUser(pWorkspaceId, assignedUserLogin);
+
+        ListIterator<DocumentRevision> ite = docRs.listIterator();
+        while (ite.hasNext()) {
+            DocumentRevision docR = ite.next();
+            if (!hasDocumentRevisionReadAccess(user, docR)) {
+                ite.remove();
+            } else if (isCheckoutByAnotherUser(user, docR)) {
+                em.detach(docR);
+                docR.removeLastIteration();
+            }
+        }
+
+        return docRs.toArray(new DocumentRevision[docRs.size()]);
+    }
+
     /**
      * Apply read access policy on a document revision
      *
