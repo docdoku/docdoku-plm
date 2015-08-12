@@ -504,7 +504,7 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
         return obsoleteStatusChange == null ? null : obsoleteStatusChange.getStatusChangeAuthor();
     }
 
-    public Date getObseleteDate() {
+    public Date getObsoleteDate() {
         return obsoleteStatusChange == null ? null : obsoleteStatusChange.getStatusModificationDate();
     }
     public User getReleaseAuthor() {

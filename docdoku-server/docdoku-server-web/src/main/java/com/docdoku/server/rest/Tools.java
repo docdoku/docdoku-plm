@@ -154,7 +154,7 @@ public class Tools {
         partRevisionDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
 
         if (partRevision.isObsolete()) {
-            partRevisionDTO.setObsoleteDate(partRevision.getObseleteDate());
+            partRevisionDTO.setObsoleteDate(partRevision.getObsoleteDate());
             UserDTO obsoleteUserDTO = mapper.map(partRevision.getObsoleteAuthor(), UserDTO.class);
             partRevisionDTO.setObsoleteAuthor(obsoleteUserDTO);
         }
