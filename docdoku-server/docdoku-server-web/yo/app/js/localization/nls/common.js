@@ -47,7 +47,7 @@ define({
 		BOM_VIEW: "Product Breakdown Structure",
 		BOOLEAN: "Boolean",
         BY: "by",
-		CAD_FILE: "CAD File",
+		CAD_FILE: "CAD file",
 		CALCULATIONS: "Calculations",
 		CALL_TO_TITLE: "Call to",
 		CANCEL: "Cancel",

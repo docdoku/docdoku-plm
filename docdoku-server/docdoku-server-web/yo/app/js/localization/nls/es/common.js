@@ -38,7 +38,6 @@ define({
 	BLOCKER_TITLE: "Click to launch the scene",
 	BOM_VIEW: "Components View",
 	BOOLEAN: "Boolean",
-	CAD_FILE: "CAD File",
 	CALL_TO_TITLE: "Call to",
 	CANCEL: "Cancel",
 	CANCEL_CHECKOUT: "Undo check out",
