@@ -419,7 +419,6 @@ define({
 	UNSUBSCRIBE_ITERATION_CHANGE: "Unsubscribe from iteration change notifications",
 	UNSUBSCRIBE_STATE_CHANGE: "Unsubscribe from document state change notifications",
 	UPDATE_ACL_ERROR:"An error occurred while updating acl",
-	UPDATE_AUTHOR: "Update author",
 	URL: "URL",
 	USE_ACL: "Use ACL ?",
     USER_DEFINED_FUNCTION:"User defined function",
