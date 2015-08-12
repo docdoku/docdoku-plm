@@ -99,6 +99,7 @@
                                 <span class="help-inline">{{docRevision.lifeCycleState}}</span>
                             </div>
                         </div>
+                        {{#isCheckout}}
                         <div class="control-group">
                             <label class="control-label">{{i18n.CHECKOUT_BY}}</label>
 
@@ -114,6 +115,7 @@
                                 <span class="help-inline"><a class="date-popover">{{docRevision.checkOutDate}}</a></span>
                             </div>
                         </div>
+                        {{/isCheckout}}
                         <div class="control-group">
                             <label class="control-label">{{i18n.DESCRIPTION}}</label>
 

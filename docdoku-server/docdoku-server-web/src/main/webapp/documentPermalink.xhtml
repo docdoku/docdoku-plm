@@ -62,7 +62,7 @@
                     <table class="table table-striped table-condensed">
                         <tbody>
                         <tr>
-                            <th scope="row">#{i18nDocument['general.creation_date']}:</th>
+                            <th scope="row">#{i18nDocument['general.creation_date']}</th>
                             <td>
                                 <h:outputText value="#{accountBean.addTimeZone(documentRevision.creationDate)}">
                                     <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
@@ -70,39 +70,41 @@
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row">#{i18nDocument['general.type']}:</th>
+                            <th scope="row">#{i18nDocument['general.type']}</th>
                             <td>${documentRevision.documentMaster.type}</td>
                         </tr>
                         <tr>
-                            <th scope="row">#{i18nDocument['general.titledoc']}:</th>
+                            <th scope="row">#{i18nDocument['general.title']}</th>
                             <td>${documentRevision.title}</td>
                         </tr>
                         <tr>
-                            <th scope="row">#{i18nDocument['general.author']}:</th>
+                            <th scope="row">#{i18nDocument['general.author']}</th>
                             <td>${documentRevision.author.name}</td>
                         </tr>
                         <tr>
-                            <th scope="row">#{i18nDocument['general.lifeCycleState']}:</th>
+                            <th scope="row">#{i18nDocument['general.lifeCycleState']}</th>
                             <td>${documentRevision.lifeCycleState}</td>
                         </tr>
+                        <c:if test="${documentRevision.isCheckedOut()}">
+                            <tr>
+                                <th scope="row">#{i18nDocument['general.checkout_user']}</th>
+                                <td>${documentRevision.checkOutUser.name}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">#{i18nDocument['general.checkout_date']}</th>
+                                <td>
+                                    <h:outputText value="#{accountBean.addTimeZone(documentRevision.checkOutDate)}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+                                    </h:outputText>
+                                </td>
+                            </tr>
+                        </c:if>
                         <tr>
-                            <th scope="row">#{i18nDocument['general.checkout_user']}:</th>
-                            <td>${documentRevision.checkOutUser.name}</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">#{i18nDocument['general.checkout_date']}:</th>
-                            <td>
-                                <h:outputText value="#{accountBean.addTimeZone(documentRevision.checkOutDate)}">
-                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
-                                </h:outputText>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">#{i18nDocument['general.description']}:</th>
+                            <th scope="row">#{i18nDocument['general.description']}</th>
                             <td>${documentRevision.description}</td>
                         </tr>
                         <tr>
-                            <th scope="row">#{i18nDocument['general.tags']}:</th>
+                            <th scope="row">#{i18nDocument['general.tags']}</th>
                             <td>${documentRevision.tags}</td>
                         </tr>
                         </tbody>
@@ -114,15 +116,15 @@
                     <table class="table table-striped table-condensed">
                         <tbody>
                         <tr>
-                            <th scope="row">#{i18nDocument['iteration.number']}:</th>
+                            <th scope="row">#{i18nDocument['iteration.number']}</th>
                             <td>${documentRevision.lastIteration.iteration}</td>
                         </tr>
                         <tr>
-                            <th scope="row">#{i18nDocument['iteration.iterationNote']}:</th>
+                            <th scope="row">#{i18nDocument['iteration.revisionNote']}</th>
                             <td>${documentRevision.lastIteration.revisionNote}</td>
                         </tr>
                         <tr>
-                            <th scope="row">#{i18nDocument['iteration.revision_date']}:</th>
+                            <th scope="row">#{i18nDocument['iteration.revision_date']}</th>
                             <td>
                                 <h:outputText value="#{documentRevision.isCheckedOut() ? accountBean.addTimeZone(documentRevision.lastIteration.creationDate) : accountBean.addTimeZone(documentRevision.lastIteration.checkInDate)}">
                                     <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
@@ -130,7 +132,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row">#{i18nDocument['iteration.modification_date']}:</th>
+                            <th scope="row">#{i18nDocument['iteration.modification_date']}</th>
                             <td>
                                 <h:outputText value="#{accountBean.addTimeZone(documentRevision.lastIteration.modificationDate)}">
                                     <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
@@ -138,7 +140,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row">#{i18nDocument['iteration.author']}:</th>
+                            <th scope="row">#{i18nDocument['iteration.author']}</th>
                             <td>${documentRevision.lastIteration.author.name}</td>
                         </tr>
                         </tbody>
