@@ -185,7 +185,6 @@ define({
     HOME_PAGE: "Página principal",
 	HISTORY: "History",
 	ID_GENERATION: "Id generation",
-	INITIATOR: "Initiator",
     INIT_VALUE: "Init value",
     IN_PROGRESS: "Work in progress",
 	INSTANCE_SELECTED: "Selected instance",

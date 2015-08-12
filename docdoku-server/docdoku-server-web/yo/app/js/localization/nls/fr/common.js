@@ -216,7 +216,6 @@ define({
 	HISTORY: "Historique",
     ID_GENERATION: "Génération de l'id",
     IGNORE: "Ignorer",
-	INITIATOR: "Initiateur",
     INIT_VALUE: "Valeur initiale",
     IN_PROGRESS: "En cours",
 	INSTANCE_SELECTED: "Instance sélectionnée",

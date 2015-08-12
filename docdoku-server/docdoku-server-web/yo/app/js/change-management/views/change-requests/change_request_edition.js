@@ -6,6 +6,7 @@ define([
         'models/change_request',
         'common-objects/collections/users',
         'collections/milestone_collection',
+        'common-objects/utils/date',
         'common-objects/models/tag',
         'common-objects/views/tags/tag',
         'common-objects/views/linked/linked_documents',
@@ -15,7 +16,7 @@ define([
         'common-objects/views/linked/linked_issues',
         'common-objects/collections/linked/linked_change_item_collection'
     ],
-    function (Backbone, Mustache, template, ChangeRequestModel, UserList, MilestoneList, Tag, TagView, LinkedDocumentsView, LinkedDocumentCollection, LinkedPartsView, LinkedPartCollection, LinkedIssuesView, LinkedChangeItemCollection) {
+    function (Backbone, Mustache, template, ChangeRequestModel, UserList, MilestoneList, Date, Tag, TagView, LinkedDocumentsView, LinkedDocumentCollection, LinkedPartsView, LinkedPartCollection, LinkedIssuesView, LinkedChangeItemCollection) {
 	    'use strict';
         var ChangeRequestEditionView = Backbone.View.extend({
             events: {
@@ -41,6 +42,8 @@ define([
                 this.editMode = this.model.isWritable();
                 this.$el.html(Mustache.render(template, {i18n: App.config.i18n, model: this.model}));
                 this.bindDomElements();
+                this.bindUserPopover();
+                Date.dateHelper(this.$('.date-popover'));
                 new UserList().fetch({success: this.fillUserList});
                 new MilestoneList().fetch({success: this.fillMilestoneList});
                 this.fillPriorityList();
@@ -159,6 +162,11 @@ define([
                 this.$inputRequestPriority = this.$('#inputRequestPriority');
                 this.$inputRequestAssignee = this.$('#inputRequestAssignee');
                 this.$inputRequestCategory = this.$('#inputRequestCategory');
+                this.$authorLink = this.$('.author-popover');
+            },
+
+            bindUserPopover: function () {
+                this.$authorLink.userPopover(this.model.getAuthor(), this.model.getId(), 'right');
             },
 
             initValue: function () {

@@ -216,7 +216,6 @@ define({
 		HISTORY: "History",
 		ID_GENERATION: "Id generation",
         IGNORE: "Ignore",
-		INITIATOR: "Initiator",
 		INIT_VALUE: "Init value",
 		IN_PROGRESS: "Work in progress",
 		INSTANCE_SELECTED: "Selected instance",
