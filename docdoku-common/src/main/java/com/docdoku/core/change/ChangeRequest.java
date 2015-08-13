@@ -84,7 +84,8 @@ import java.util.Set;
         @NamedQuery(name="ChangeRequest.findChangeRequestsByWorkspace",query="SELECT DISTINCT c FROM ChangeRequest c WHERE c.workspace.id = :workspaceId"),
         @NamedQuery(name="ChangeRequest.countRequestByMilestonesAndWorkspace",query="SELECT COUNT(r) FROM ChangeRequest r WHERE r.workspace.id = :workspaceId AND r.milestone.id = :milestoneId"),
         @NamedQuery(name="ChangeRequest.getRequestByMilestonesAndWorkspace",query="SELECT DISTINCT r FROM ChangeRequest r WHERE r.workspace.id = :workspaceId AND r.milestone.id = :milestoneId"),
-        @NamedQuery(name="ChangeRequest.findByReference", query="SELECT c FROM ChangeRequest c WHERE c.name LIKE :name AND c.workspace.id = :workspaceId")
+        @NamedQuery(name="ChangeRequest.findByReference", query="SELECT c FROM ChangeRequest c WHERE c.name LIKE :name AND c.workspace.id = :workspaceId"),
+        @NamedQuery(name="ChangeRequest.findByChangeIssue", query="SELECT c FROM ChangeRequest c WHERE c.workspace.id = :workspaceId AND :changeIssue member of c.addressedChangeIssues")
 })
 public class ChangeRequest extends ChangeItem {
 

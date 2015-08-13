@@ -225,15 +225,26 @@ public class ChangeItemDAO {
         return !findChangeItemByFolder(folder).isEmpty();
     }
 
-    public List<ChangeOrder> findAllChangeOrdersByChangeRequest(ChangeRequest changeRequest) {
-        return em.createNamedQuery("ChangeOrder.findByChangeRequest",ChangeOrder.class)
+    public boolean hasChangeRequestsLinked(ChangeIssue changeIssue) {
+        return !findAllChangeRequestsByChangeIssue(changeIssue).isEmpty();
+    }
+    
+    public boolean hasChangeOrdersLinked(ChangeRequest changeRequest) {
+        return !findAllChangeOrdersByChangeRequest(changeRequest).isEmpty();
+    }
+
+    private List<ChangeRequest> findAllChangeRequestsByChangeIssue(ChangeIssue changeIssue) {
+        return em.createNamedQuery("ChangeRequest.findByChangeIssue", ChangeRequest.class)
+                .setParameter("workspaceId", changeIssue.getWorkspaceId())
+                .setParameter("changeIssue", changeIssue)
+                .getResultList();
+    }
+
+    private List<ChangeOrder> findAllChangeOrdersByChangeRequest(ChangeRequest changeRequest) {
+        return em.createNamedQuery("ChangeOrder.findByChangeRequest", ChangeOrder.class)
                 .setParameter("workspaceId", changeRequest.getWorkspaceId())
                 .setParameter("changeRequest", changeRequest)
                 .getResultList();
-    }
-    
-    public boolean hasChangeOrdersLinked( ChangeRequest changeRequest){
-        return !findAllChangeOrdersByChangeRequest(changeRequest).isEmpty();
     }
 
 }
