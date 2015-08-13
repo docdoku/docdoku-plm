@@ -45,6 +45,10 @@ define([
             return this.get('assignee');
         },
 
+        getAssigneeName: function () {
+            return this.get('assigneeName');
+        },
+
         getCreationDate: function () {
             return this.get('creationDate');
         },

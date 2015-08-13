@@ -39,6 +39,7 @@ public class ChangeItemDTO implements Serializable {
     private String author;
     private String authorName;
     private String assignee;
+    private String assigneeName;
     private Date creationDate;
     private String description;
     private ChangeItem.Priority priority;
@@ -82,11 +83,25 @@ public class ChangeItemDTO implements Serializable {
         this.author = author;
     }
 
+    public String getAuthorName() {
+        return authorName;
+    }
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
+
     public String getAssignee() {
         return assignee;
     }
     public void setAssignee(String assignee) {
         this.assignee = assignee;
+    }
+
+    public String getAssigneeName() {
+        return assigneeName;
+    }
+    public void setAssigneeName(String assigneeName) {
+        this.assigneeName = assigneeName;
     }
 
     public Date getCreationDate() {
@@ -150,12 +165,5 @@ public class ChangeItemDTO implements Serializable {
     }
     public void setWritable(boolean writable) {
         this.writable = writable;
-    }
-
-    public String getAuthorName() {
-        return authorName;
-    }
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
     }
 }

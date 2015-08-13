@@ -205,6 +205,10 @@ public abstract class ChangeItem implements Serializable {
         this.assignee = assignee;
     }
 
+    public String getAssigneeName() {
+        return assignee == null ? null : assignee.getName();
+    }
+
     public Set<DocumentIteration> getAffectedDocuments() {
         return affectedDocuments;
     }
