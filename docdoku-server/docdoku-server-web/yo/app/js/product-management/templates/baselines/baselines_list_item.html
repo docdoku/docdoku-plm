@@ -4,10 +4,10 @@
 <td><a class="product_id">{{model.getConfigurationItemId}}</a></td>
 <td>
     {{#model.isReleased}}
-    {{i18n.RELEASED}}
+    {{i18n.HEAD_RELEASED}}
     {{/model.isReleased}}
     {{^model.isReleased}}
-    {{i18n.LATEST}}
+    {{i18n.HEAD_CHECKIN}}
     {{/model.isReleased}}
 </td>
 <td><a class="author-popover">{{model.getAuthor}}</a></td>
