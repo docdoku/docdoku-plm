@@ -123,7 +123,7 @@ casper.test.begin('Workflow duplication tests suite', 6, function workflowDuplic
      * */
 
     casper.then(function checkForNewWorkflowCreated() {
-        this.waitForSelector('.workflow-table', function workflowTableDisplayed() {
+        this.waitForSelector('.workflow-table tbody tr', function workflowTableDisplayed() {
             this.test.assertElementCount('.workflow-table tbody tr', 2, 'Should have 2 rows in workflow table');
         }, function fail() {
             this.capture('screenshot/workflowDuplication/checkForNewWorkflowCreated-error.png');

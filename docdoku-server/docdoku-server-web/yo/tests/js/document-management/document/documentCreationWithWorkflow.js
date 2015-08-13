@@ -50,12 +50,24 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
                 return true;
             });
 
+        }, function fail() {
+            this.capture('screenshot/documentCreationWithWorkflow/waitForDocumentCreationModal-error.png');
+            this.test.assert(false, 'New document modal can not be found');
+        });
+    });
+
+    /**
+     * Wait for role item
+     */
+
+    casper.then(function waitForRoleItem() {
+        this.waitForSelector('.modal.document-modal.new-document .role-mapping .roles-item', function () {
             this.test.assertElementCount('.modal.document-modal.new-document .role-mapping .roles-item', 1, 'There should be one role item in role mapping list');
             this.click('.modal.document-modal.new-document .btn.btn-primary');
 
         }, function fail() {
-            this.capture('screenshot/documentCreationWithWorkflow/waitForDocumentCreationModal-error.png');
-            this.test.assert(false, 'New document modal can not be found');
+            this.capture('screenshot/documentCreationWithWorkflow/waitForRoleItem-error.png');
+            this.test.assert(false, 'No role item can not be found');
         });
     });
 
@@ -192,15 +204,10 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
     /**
      * Open Lifecycle tab and approve task
      */
-
     casper.then(function openLifecycleTab() {
         var modalTab = '.document-modal .tabs li a[href="#tab-iteration-lifecycle"]';
-        var activityElement = '#lifecycle-activities-wrapper #lifecycle-activities .activity.in_progress';
         this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
-            this.test.assertSelectorExist(activityElement, 'An activity should be present and marked in_progress');
-            this.click(activityElement+' .approve-task');
-            this.click(activityElement+' .closure-comment-form > div.task-buttons > input');
         }, function fail() {
             this.capture('screenshot/documentCreationWithWorkflow/openLifecycleTab-error.png');
             this.test.assert(false, 'Lifecycle tab can not be found');
@@ -208,9 +215,23 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
     });
 
     /**
+     * Approve task
+     */
+    casper.then(function approveTask() {
+        var activityElement = '#lifecycle-activities-wrapper #lifecycle-activities .activity.in_progress';
+        this.waitForSelector(activityElement, function modalOpened() {
+            this.test.assertSelectorExist(activityElement, 'An activity should be present and marked in_progress');
+            this.click(activityElement+' .approve-task');
+            this.click(activityElement+' .closure-comment-form > div.task-buttons > input');
+        }, function fail() {
+            this.capture('screenshot/documentCreationWithWorkflow/approveTask-error.png');
+            this.test.assert(false, 'Activity can not be found');
+        });
+    });
+
+    /**
      * Wait for activity being completed
      */
-
     casper.then(function waitTaskBeingCompleted() {
         var activityElement = '#lifecycle-activities-wrapper #lifecycle-activities .activity.complete';
         this.waitForSelector(activityElement, function taskCompleted() {
