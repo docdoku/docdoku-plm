@@ -112,6 +112,10 @@ define(['backbone',
             return this.getLastIteration().getPathData().length;
         },
 
+        hasAttachedFilesInLastIteration: function () {
+            return this.getLastIteration().getAttachedFiles().length;
+        },
+
         hasACLForCurrentUser: function () {
             return this.getACLPermissionForCurrentUser() !== false;
         },
