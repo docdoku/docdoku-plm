@@ -214,9 +214,7 @@ define([
 		            model: model,
 		            isAdded: false,
 		            isAvailable: true,
-		            clicked: function () {
-			            that._existingTagsCollection.remove(model);
-		            },
+		            clicked: function () {},
 		            crossClicked: function () {
 			            that._existingTagsCollection.remove(model);
 		            }

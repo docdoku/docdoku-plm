@@ -13,7 +13,8 @@ define([
             'click input[type=checkbox]': 'selectionChanged',
             'click td.reference': 'openEditView',
             'click td.has-path-to-path-link i.fa-exchange': 'openEditViewOnPathToPathLinkTab',
-            'click td.has-path-data i.fa-asterisk': 'openEditViewOnPathDataTab'
+            'click td.has-path-data i.fa-asterisk': 'openEditViewOnPathDataTab',
+            'click td.has-attached-files i': 'openEditViewOnFilesTab'
         },
 
         tagName: 'tr',
@@ -114,6 +115,17 @@ define([
                 window.document.body.appendChild(view.el);
                 view.render();
                 view.activePathDataTab();
+
+            }.bind(this));
+        },
+
+        openEditViewOnFilesTab: function () {
+            var model = this.model;
+            model.fetch().success(function () {
+                var view = new ProductInstanceModalView({model: model});
+                window.document.body.appendChild(view.el);
+                view.render();
+                view.activeFilesTab();
 
             }.bind(this));
         }

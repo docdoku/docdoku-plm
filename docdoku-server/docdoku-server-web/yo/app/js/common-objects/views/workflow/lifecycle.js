@@ -3,10 +3,11 @@ define([
     'backbone',
     'mustache',
     'common-objects/views/workflow/lifecycle_activity',
-    'text!common-objects/templates/workflow/lifecycle.html',
-    'common-objects/utils/date'
+    'common-objects/utils/date',
+    'common-objects/views/alert',
+    'text!common-objects/templates/workflow/lifecycle.html'
 
-], function (Backbone, Mustache, LifecycleActivityView, template, Date) {
+], function (Backbone, Mustache, LifecycleActivityView, Date, AlertView, template) {
 	'use strict';
     var LifecycleView = Backbone.View.extend({
 
@@ -19,6 +20,7 @@ define([
         },
 
         initialize: function () {
+            Backbone.Events.on('task:errorDisplay', this.onError.bind(this));
         },
 
         setAbortedWorkflowsUrl: function (url) {
@@ -120,6 +122,15 @@ define([
                     });
                 }
             });
+        },
+
+        onError: function (model, error) {
+            var errorMessage = error ? error.responseText : model;
+
+            this.$el.find('.notifications').first().append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
         }
 
     });

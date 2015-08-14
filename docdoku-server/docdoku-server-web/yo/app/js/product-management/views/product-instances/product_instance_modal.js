@@ -360,6 +360,10 @@ define([
 
         activePathDataTab: function () {
             this.activateTab(7);
+        },
+
+        activeFilesTab: function () {
+            this.activateTab(4);
         }
 
     });
