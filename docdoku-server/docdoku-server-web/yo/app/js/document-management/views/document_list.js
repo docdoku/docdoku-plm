@@ -50,6 +50,17 @@ define([
             });
 
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
+        },
+
+        checkCheckboxes: function (selectedDocuments) {
+            var that = this;
+            _.each(selectedDocuments, function(selectedView) {
+                _.each(that.subViews, function(view) {
+                    if(selectedView.model.getId() === view.model.getId()) {
+                        view.check();
+                    }
+                });
+            });
         }
 
     });
