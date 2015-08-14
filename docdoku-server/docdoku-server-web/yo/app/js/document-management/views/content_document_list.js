@@ -185,7 +185,7 @@ define([
             });
 
             queueCheckOut.drain = function(){
-                self.multipleCheckInCheckOutDone();
+                self.multipleCheckInCheckOutDone(selectedDocuments);
             };
 
             queueCheckOut.push(selectedDocuments);
@@ -202,7 +202,7 @@ define([
                             docView.model.undocheckout().success(callback);
                         });
                     queueUndoCheckOut.drain = function(){
-                        self.multipleCheckInCheckOutDone();
+                        self.multipleCheckInCheckOutDone(selectedDocuments);
                     };
 
                     queueUndoCheckOut.push(selectedDocuments);
@@ -243,7 +243,7 @@ define([
                 });
 
                 queueCheckIn.drain = function(){
-                    self.multipleCheckInCheckOutDone();
+                    self.multipleCheckInCheckOutDone(selectedDocuments);
                 };
 
                 queueCheckIn.push(selectedDocuments);
@@ -255,7 +255,7 @@ define([
                     });
 
                 queueCheckIn.drain = function(){
-                    self.multipleCheckInCheckOutDone();
+                    self.multipleCheckInCheckOutDone(selectedDocuments);
                 };
 
                 queueCheckIn.push(selectedDocuments);
@@ -264,8 +264,11 @@ define([
             return false;
         },
 
-        multipleCheckInCheckOutDone: function () {
-            this.collection.fetch();
+        multipleCheckInCheckOutDone: function (selectedDocuments) {
+            var that = this;
+            this.collection.fetch({reset: true}).success(function(){
+                that.listView.checkCheckboxes(selectedDocuments);
+            });
             Backbone.Events.trigger('document:iterationChange');
         },
 

@@ -142,11 +142,19 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deleteChangeIssue(int pId) throws ChangeIssueNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+    public void deleteChangeIssue(int pId) throws ChangeIssueNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, EntityConstraintException {
         ChangeIssue changeIssue = new ChangeItemDAO(em).loadChangeIssue(pId);                                           // Load the Change-Issue
         User user = userManager.checkWorkspaceReadAccess(changeIssue.getWorkspaceId());                                 // Check the read access to the workspace
-        checkChangeItemWriteAccess(changeIssue, user);                                                                   // Check the write access to the Change-Issue
-        new ChangeItemDAO(new Locale(user.getLanguage()), em).deleteChangeItem(changeIssue);                             // Delete the Change-Issue
+        checkChangeItemWriteAccess(changeIssue, user);                                                                  // Check the write access to the Change-Issue
+
+        Locale locale = new Locale(user.getLanguage());
+        ChangeItemDAO changeItemDAO = new ChangeItemDAO(locale, em);
+
+        if (changeItemDAO.hasChangeRequestsLinked(changeIssue)) {
+            throw new EntityConstraintException(locale, "EntityConstraintException26");
+        }
+
+        new ChangeItemDAO(locale, em).deleteChangeItem(changeIssue);                                                    // Delete the Change-Issue
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

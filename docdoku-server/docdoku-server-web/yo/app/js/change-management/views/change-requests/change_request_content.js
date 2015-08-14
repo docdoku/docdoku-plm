@@ -141,8 +141,8 @@ define([
             }
         },
 
-        onError:function(model, error){
-            var errorMessage = error ? model.responseText : error;
+        onError: function(model, error) {
+            var errorMessage = error ? error.responseText : model;
             this.$notifications.append(new AlertView({
                 type: 'error',
                 message: errorMessage
