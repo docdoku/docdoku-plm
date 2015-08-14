@@ -162,18 +162,18 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
 
     public static void addToZipFile(BinaryResource binaryResource, String folderName, ZipOutputStream zos) throws IOException, StorageException {
 
-        InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+        try(InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource)) {
 
-        ZipEntry zipEntry = new ZipEntry(folderName+"/"+binaryResource.getName());
-        zos.putNextEntry(zipEntry);
+            ZipEntry zipEntry = new ZipEntry(folderName + "/" + binaryResource.getName());
+            zos.putNextEntry(zipEntry);
 
-        byte[] bytes = new byte[1024];
-        int length;
-        while ((length = binaryResourceInputStream.read(bytes)) >= 0) {
-            zos.write(bytes, 0, length);
+            byte[] bytes = new byte[1024];
+            int length;
+            while ((length = binaryResourceInputStream.read(bytes)) >= 0) {
+                zos.write(bytes, 0, length);
+            }
+            zos.closeEntry();
         }
-        zos.closeEntry();
-        binaryResourceInputStream.close();
     }
 
 }

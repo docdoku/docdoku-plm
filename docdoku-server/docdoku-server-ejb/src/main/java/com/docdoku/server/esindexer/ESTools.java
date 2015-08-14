@@ -190,96 +190,101 @@ public class ESTools {
 
     private static String openOfficeDocumentToString(InputStream inputStream) throws IOException, SAXException, ParserConfigurationException {
         final StringBuilder text = new StringBuilder();
-        ZipInputStream zipOpenDoc = new ZipInputStream(new BufferedInputStream(inputStream));
-        ZipEntry zipEntry;
-        while ((zipEntry = zipOpenDoc.getNextEntry()) != null) {
-            if ("content.xml".equals(zipEntry.getName())) {
-                SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-                SAXParser parser = saxParserFactory.newSAXParser();
-                parser.parse(zipOpenDoc, new DefaultHandler() {
+        try(ZipInputStream zipOpenDoc = new ZipInputStream(new BufferedInputStream(inputStream))) {
+            ZipEntry zipEntry;
+            while((zipEntry=zipOpenDoc.getNextEntry())!=null)
 
-                    @Override
-                    public void characters(char[] ch,
-                                           int start,
-                                           int length)
-                            throws SAXException {
-                        for (int i = start; i < start + length; i++) {
-                            text.append(ch[i]);
+            {
+                if ("content.xml".equals(zipEntry.getName())) {
+                    SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+                    SAXParser parser = saxParserFactory.newSAXParser();
+                    parser.parse(zipOpenDoc, new DefaultHandler() {
+
+                        @Override
+                        public void characters(char[] ch,
+                                               int start,
+                                               int length)
+                                throws SAXException {
+                            for (int i = start; i < start + length; i++) {
+                                text.append(ch[i]);
+                            }
+                            text.append("\r\n");
                         }
-                        text.append("\r\n");
-                    }
-                });
-                break;
+                    });
+                    break;
+                }
             }
         }
-        zipOpenDoc.close();
-
         return text.toString();
     }
 
     private static String microsoftWordDocumentToString(InputStream inputStream) throws IOException {
         String strRet;
-        InputStream wordStream = new BufferedInputStream(inputStream);
-        WordExtractor wordExtractor = new WordExtractor(wordStream);
-        strRet = wordExtractor.getText();
-        wordStream.close();
+        try(InputStream wordStream = new BufferedInputStream(inputStream)) {
+            WordExtractor wordExtractor = new WordExtractor(wordStream);
+            strRet = wordExtractor.getText();
+        }
         return strRet;
     }
 
     private static String microsoftXMLWordDocumentToString(InputStream inputStream) throws IOException {
         String strRet;
-        InputStream wordXStream = new BufferedInputStream(inputStream);
-        XWPFWordExtractor wordXExtractor = new XWPFWordExtractor(new XWPFDocument(wordXStream));
-        strRet = wordXExtractor.getText();
-        wordXStream.close();
+        try(InputStream wordXStream = new BufferedInputStream(inputStream)) {
+            XWPFWordExtractor wordXExtractor = new XWPFWordExtractor(new XWPFDocument(wordXStream));
+            strRet = wordXExtractor.getText();
+        }
         return strRet;
     }
 
     private static String microsoftPowerPointDocumentToString(InputStream inputStream) throws IOException {
         String strRet;
-        InputStream pptStream = new BufferedInputStream(inputStream);
-        PowerPointExtractor pptExtractor = new PowerPointExtractor(pptStream);
-        strRet = pptExtractor.getText(true, true);
-        pptStream.close();
+        try(InputStream pptStream = new BufferedInputStream(inputStream)) {
+            PowerPointExtractor pptExtractor = new PowerPointExtractor(pptStream);
+            strRet = pptExtractor.getText(true, true);
+        }
         return strRet;
     }
 
     private static String microsoftExcelDocumentToString(InputStream inputStream) throws IOException, OpenXML4JException, XmlException {
         StringBuilder sb = new StringBuilder();
-        if(POIFSFileSystem.hasPOIFSHeader(inputStream)){ // Before 2007 format files
-            POIFSFileSystem excelStream = new POIFSFileSystem(inputStream);
-            ExcelExtractor excelExtractor= new ExcelExtractor(excelStream);
-            sb.append(excelExtractor.getText());
-        }else{ // New format
-            XSSFWorkbook workBook = new XSSFWorkbook(inputStream);
-            int numberOfSheets = workBook.getNumberOfSheets();
-            for(int i = 0; i < numberOfSheets; i++){
-                XSSFSheet sheet = workBook.getSheetAt(0);
-                Iterator<Row> rowIterator = sheet.rowIterator();
-                while(rowIterator.hasNext()) {
-                    XSSFRow row = (XSSFRow) rowIterator.next();
-                    Iterator<Cell> cellIterator = row.cellIterator();
-                    while (cellIterator.hasNext()) {
-                        XSSFCell cell = (XSSFCell) cellIterator.next();
-                        sb.append(cell.toString());
-                        sb.append(" ");
+        try(InputStream excelStream=new BufferedInputStream(inputStream)) {
+            if (POIFSFileSystem.hasPOIFSHeader(excelStream)) { // Before 2007 format files
+                POIFSFileSystem excelFS = new POIFSFileSystem(excelStream);
+                ExcelExtractor excelExtractor = new ExcelExtractor(excelFS);
+                sb.append(excelExtractor.getText());
+            } else { // New format
+                XSSFWorkbook workBook = new XSSFWorkbook(excelStream);
+                int numberOfSheets = workBook.getNumberOfSheets();
+                for (int i = 0; i < numberOfSheets; i++) {
+                    XSSFSheet sheet = workBook.getSheetAt(0);
+                    Iterator<Row> rowIterator = sheet.rowIterator();
+                    while (rowIterator.hasNext()) {
+                        XSSFRow row = (XSSFRow) rowIterator.next();
+                        Iterator<Cell> cellIterator = row.cellIterator();
+                        while (cellIterator.hasNext()) {
+                            XSSFCell cell = (XSSFCell) cellIterator.next();
+                            sb.append(cell.toString());
+                            sb.append(" ");
+                        }
+                        sb.append("\n");
                     }
                     sb.append("\n");
                 }
-                sb.append("\n");
             }
-
         }
         return sb.toString();
     }
 
     private static String pdfDocumentToString(InputStream inputStream, String fullName) throws IOException {
         StringBuilder buf = new StringBuilder();
-        PdfReader reader = new PdfReader(inputStream);
-        for(int i=1; i<=reader.getNumberOfPages(); i++){
-            buf.append(pdfPageToString(reader,i,fullName));
+        try(InputStream pdfStream=new BufferedInputStream(inputStream)){
+            PdfReader reader = new PdfReader(pdfStream);
+            for(int i=1; i<=reader.getNumberOfPages(); i++){
+                buf.append(pdfPageToString(reader,i,fullName));
+            }
+            reader.close();
         }
-        reader.close();
+
         return buf.toString();
     }
 

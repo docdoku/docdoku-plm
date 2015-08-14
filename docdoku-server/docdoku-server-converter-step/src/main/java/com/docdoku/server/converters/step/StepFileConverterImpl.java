@@ -28,11 +28,10 @@ import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
 import com.docdoku.server.converters.utils.ConverterUtils;
-import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
 
 import javax.ejb.EJB;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.UUID;
@@ -81,17 +80,12 @@ public class StepFileConverterImpl implements CADConverter{
 
         File scriptToOBJ =  FileIO.urlToFile(StepFileConverterImpl.class.getResource(PYTHON_SCRIPT_TO_OBJ));
 
-        Files.copy(new InputSupplier<InputStream>() {
-            @Override
-            public InputStream getInput() throws IOException {
-                try {
-                    return dataManager.getBinaryResourceInputStream(cadFile);
-                } catch (StorageException e) {
-                    Logger.getLogger(StepFileConverterImpl.class.getName()).log(Level.WARNING, null, e);
-                    throw new IOException(e);
-                }
-            }
-        }, tmpCadFile);
+        try(InputStream in = dataManager.getBinaryResourceInputStream(cadFile)) {
+            Files.copy(in, tmpCadFile.toPath());
+        } catch (StorageException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new IOException(e);
+        }
 
         String[] args = {pythonInterpreter, scriptToOBJ.getAbsolutePath(), "-l" , freeCadLibPath, "-i", tmpCadFile.getAbsolutePath(), "-o", tmpOBJFile.getAbsolutePath()};
         ProcessBuilder pb = new ProcessBuilder(args);

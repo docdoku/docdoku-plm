@@ -181,14 +181,11 @@ public class ConverterBean implements IConverterManagerLocal {
             StringBuilder output = new StringBuilder();
             String line;
             // Read buffer
-            InputStreamReader isr = new InputStreamReader(proc.getInputStream(),"UTF-8");
-            BufferedReader br = new BufferedReader(isr);
-
-            while ((line = br.readLine()) != null){
-                output.append(line).append("\n");
+            try(InputStreamReader isr = new InputStreamReader(proc.getInputStream(),"UTF-8");BufferedReader br = new BufferedReader(isr)){
+                while ((line = br.readLine()) != null){
+                    output.append(line).append("\n");
+                }
             }
-
-            br.close();
 
             proc.waitFor();
 
@@ -227,7 +224,6 @@ public class ConverterBean implements IConverterManagerLocal {
         } finally {
             try {
                 if(os != null){
-                    os.flush();
                     os.close();
                 }
             } catch (IOException e) {
@@ -254,7 +250,6 @@ public class ConverterBean implements IConverterManagerLocal {
         } finally {
             try {
                 if(os != null){
-                    os.flush();
                     os.close();
                 }
             } catch (IOException e) {

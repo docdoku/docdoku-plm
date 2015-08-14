@@ -13,11 +13,6 @@
     <name>docdoku-server-converter-catia Java EE 7 Catia Converter</name>
     <dependencies>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>15.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-ext</artifactId>
             <version>${project.version}</version>

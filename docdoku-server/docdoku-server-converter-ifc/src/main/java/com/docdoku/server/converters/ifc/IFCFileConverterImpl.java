@@ -28,13 +28,12 @@ import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
 import com.docdoku.server.converters.utils.ConverterUtils;
-import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
 
 import javax.ejb.EJB;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -93,17 +92,12 @@ public class IFCFileConverterImpl implements CADConverter{
             return null;
         }
 
-        Files.copy(new InputSupplier<InputStream>() {
-            @Override
-            public InputStream getInput() throws IOException {
-                try {
-                    return dataManager.getBinaryResourceInputStream(cadFile);
-                } catch (StorageException e) {
-                    LOGGER.log(Level.WARNING, null, e);
-                    throw new IOException(e);
-                }
-            }
-        }, tmpCadFile);
+        try(InputStream in = dataManager.getBinaryResourceInputStream(cadFile)) {
+            Files.copy(in, tmpCadFile.toPath());
+        } catch (StorageException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new IOException(e);
+        }
 
         String[] args = {ifcConverter, "--sew-shells", tmpCadFile.getAbsolutePath(), convertedFileName};
         ProcessBuilder pb = new ProcessBuilder(args);

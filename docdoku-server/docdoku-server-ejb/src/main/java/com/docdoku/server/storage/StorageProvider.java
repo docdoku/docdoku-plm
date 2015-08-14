@@ -38,6 +38,6 @@ public interface StorageProvider {
     void delData(BinaryResource pBinaryResource) throws StorageException;
     String getExternalResourceURI(BinaryResource binaryResource);
     String getShortenExternalResourceURI(BinaryResource binaryResource);
-    public void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException;
+    void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException;
     void renameData(File file, String pNewName) throws StorageException;
 }

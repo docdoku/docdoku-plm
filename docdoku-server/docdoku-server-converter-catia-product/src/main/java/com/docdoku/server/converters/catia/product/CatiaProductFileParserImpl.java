@@ -33,8 +33,6 @@ import com.docdoku.server.converters.catia.product.parser.ComponentDTK;
 import com.docdoku.server.converters.catia.product.parser.ComponentDTKSaxHandler;
 import com.docdoku.server.converters.utils.ConversionResult;
 import com.docdoku.server.converters.utils.ConverterUtils;
-import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
 import org.xml.sax.SAXException;
 
 import javax.ejb.EJB;
@@ -42,6 +40,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,17 +99,12 @@ public class CatiaProductFileParserImpl implements CADConverter {
 
         tmpCadFile = new File(tempDir, cadFile.getName());
 
-        Files.copy(new InputSupplier<InputStream>() {
-            @Override
-            public InputStream getInput() throws IOException {
-                try {
-                    return dataManager.getBinaryResourceInputStream(cadFile);
-                } catch (StorageException e) {
-                    LOGGER.log(Level.WARNING, null, e);
-                    throw new IOException(e);
-                }
-            }
-        }, tmpCadFile);
+        try(InputStream in = dataManager.getBinaryResourceInputStream(cadFile)) {
+            Files.copy(in, tmpCadFile.toPath());
+        } catch (StorageException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new IOException(e);
+        }
 
         String[] args = {"sh", catProductReader, tmpCadFile.getAbsolutePath()};
 

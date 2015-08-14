@@ -31,12 +31,11 @@ public class ConverterUtils {
     public static String getOutput(InputStream is) throws IOException {
         StringBuilder output = new StringBuilder();
         String line;
-        InputStreamReader isr = new InputStreamReader(is,"UTF-8");
-        BufferedReader br = new BufferedReader(isr);
-        while ((line = br.readLine()) != null){
-            output.append(line).append("\n");
+        try(InputStreamReader isr = new InputStreamReader(is,"UTF-8");BufferedReader br = new BufferedReader(isr)) {
+            while ((line = br.readLine()) != null) {
+                output.append(line).append("\n");
+            }
         }
-        br.close();
         return output.toString();
     }
 

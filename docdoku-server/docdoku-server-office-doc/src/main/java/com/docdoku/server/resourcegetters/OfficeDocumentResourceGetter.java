@@ -85,16 +85,13 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
                 //if the resource is already converted, return it
                 inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
             } else {
-                //copy the converted file for further reuse
-                OutputStream outputStream = dataManager.getBinarySubResourceOutputStream(binaryResource, subResourceVirtualPath);
-                InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
                 String normalizedName = Tools.unAccent(binaryResource.getName());
-                try (InputStream inputStreamConverted = fileConverter.convertToPDF(normalizedName,binaryResourceInputStream)) {
+                //copy the converted file for further reuse
+
+                try (OutputStream outputStream = dataManager.getBinarySubResourceOutputStream(binaryResource, subResourceVirtualPath);
+                     InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+                     InputStream inputStreamConverted = fileConverter.convertToPDF(normalizedName,binaryResourceInputStream)) {
                     ByteStreams.copy(inputStreamConverted, outputStream);
-                } finally {
-                    binaryResourceInputStream.close();
-                    outputStream.flush();
-                    outputStream.close();
                 }
                 inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
             }
