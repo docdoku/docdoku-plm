@@ -122,7 +122,7 @@ define([
                         this.refreshTask();
                     },
                     error: function (error) {
-                        window.alert(error.responseText);
+                        Backbone.Events.trigger('task:errorDisplay', this.task, error);
                     }
                 });
 
@@ -142,7 +142,7 @@ define([
                         this.refreshTask();
                     },
                     error: function (error) {
-                        window.alert(error.responseText);
+                        Backbone.Events.trigger('task:errorDisplay', this.task, error);
                     }
                 });
 
