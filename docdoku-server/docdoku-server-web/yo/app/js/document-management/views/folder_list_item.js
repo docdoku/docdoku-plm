@@ -197,7 +197,9 @@ define([
                     that.model.destroy({
                         wait:true,
                         dataType: 'text', // server doesn't send a json hash in the response body,
-                        success:function(){},
+                        success:function(){
+                            Backbone.Events.trigger('document:iterationChange');
+                        },
                         error:function(model,res){
                             window.alert(res.responseText);
                         }
