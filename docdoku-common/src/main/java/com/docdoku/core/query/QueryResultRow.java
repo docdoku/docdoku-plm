@@ -22,8 +22,10 @@ package com.docdoku.core.query;
 
 import com.docdoku.core.configuration.PathDataIteration;
 import com.docdoku.core.product.PartLink;
+import com.docdoku.core.product.PartLinkList;
 import com.docdoku.core.product.PartRevision;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,8 +38,8 @@ public class QueryResultRow {
 
     private PartRevision partRevision;
     private int depth;
-    private Map<String, List<PartLink>> sources = new HashMap<>();
-    private Map<String, List<PartLink>> targets = new HashMap<>();
+    private Map<String, List<PartLinkList>> sources = new HashMap<>();
+    private Map<String, List<PartLinkList>> targets = new HashMap<>();
     private PathDataIteration pathDataIteration;
     private double[] results;
     private QueryContext context;
@@ -97,28 +99,32 @@ public class QueryResultRow {
         this.amount = amount;
     }
 
-    public Map<String, List<PartLink>> getSources() {
+    public Map<String, List<PartLinkList>> getSources() {
         return sources;
     }
 
-    public void setSources(Map<String, List<PartLink>> sources) {
+    public void setSources(Map<String, List<PartLinkList>> sources) {
         this.sources = sources;
     }
 
-    public Map<String, List<PartLink>> getTargets() {
+    public Map<String, List<PartLinkList>> getTargets() {
         return targets;
     }
 
-    public void setTargets(Map<String, List<PartLink>> targets) {
+    public void setTargets(Map<String, List<PartLinkList>> targets) {
         this.targets = targets;
     }
 
-    public void addTarget(String type, List<PartLink> target) {
-        targets.put(type, target);
+    public void addTarget(String type, List<PartLink> targetPath) {
+        List<PartLinkList> paths = targets.get(type) != null ? targets.get(type) : new ArrayList<>();
+        paths.add(new PartLinkList(targetPath));
+        targets.put(type, paths);
     }
 
-    public void addSource(String type, List<PartLink> source) {
-        sources.put(type, source);
+    public void addSource(String type, List<PartLink> sourcePath) {
+        List<PartLinkList> paths = sources.get(type) != null ? sources.get(type) : new ArrayList<>();
+        paths.add(new PartLinkList(sourcePath));
+        sources.put(type, paths);
     }
 
     public PathDataIteration getPathDataIteration() {

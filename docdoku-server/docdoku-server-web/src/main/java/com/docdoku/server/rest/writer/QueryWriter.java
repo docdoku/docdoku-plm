@@ -32,7 +32,7 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeDescriptor;
 import com.docdoku.core.meta.InstanceListOfValuesAttribute;
 import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartLink;
+import com.docdoku.core.product.PartLinkList;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryField;
@@ -312,13 +312,13 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
             }
 
             if (selects.contains(QueryField.CTX_P2P_SOURCE)) {
-                Map<String, List<PartLink>> sources = row.getSources();
+                Map<String, List<PartLinkList>> sources = row.getSources();
                 String partLinksAsString = Tools.getPartLinksAsHumanString(sources);
                 jg.write(QueryField.CTX_P2P_SOURCE, partLinksAsString);
             }
 
             if (selects.contains(QueryField.CTX_P2P_TARGET)) {
-                Map<String, List<PartLink>> targets = row.getTargets();
+                Map<String, List<PartLinkList>> targets = row.getTargets();
                 String partLinksAsString = Tools.getPartLinksAsHumanString(targets);
                 jg.write(QueryField.CTX_P2P_TARGET, partLinksAsString);
             }

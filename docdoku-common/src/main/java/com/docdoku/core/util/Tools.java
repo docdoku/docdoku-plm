@@ -20,6 +20,7 @@
 package com.docdoku.core.util;
 
 import com.docdoku.core.product.PartLink;
+import com.docdoku.core.product.PartLinkList;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.TaskModel;
 import com.docdoku.core.workflow.WorkflowModel;
@@ -233,36 +234,47 @@ public class Tools {
         return s.substring(0, s.length() - 1);
     }
 
-    public static String getPartLinksAsHumanString(Map<String, List<PartLink>> links){
+    public static String getPartLinksAsHumanString(Map<String, List<PartLinkList>> links){
         return getPartLinkAsString(links, " -> ");
     }
 
-    public static String getPartLinksAsExcelString(Map<String, List<PartLink>> links){
+    public static String getPartLinksAsExcelString(Map<String, List<PartLinkList>> links){
         return getPartLinkAsString(links, " - ");
     }
 
-    private static String getPartLinkAsString(Map<String, List<PartLink>> links, String joinWith) {
+    private static String getPartLinkAsString(Map<String, List<PartLinkList>> links, String joinWith) {
         List<String> componentNumbers = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
+        List<String> pathStrings = new ArrayList<>();
+        List<String> typeStrings = new ArrayList<>();
 
         for (String type : links.keySet()) {
-            List<PartLink> linksList = links.get(type);
+            List<PartLinkList> paths = links.get(type);
 
-            for (PartLink link:linksList) {
-                String linkAsString = link.getComponent().getName() + " < " + link.getComponent().getNumber() + " > ";
-                if (null != link.getReferenceDescription()) {
-                    linkAsString += " ( " + link.getReferenceDescription() + " )";
+            for (PartLinkList path : paths) {
+
+                for (PartLink partLink : path.getPath()) {
+                    String linkAsString = partLink.getComponent().getName() + " < " + partLink.getComponent().getNumber() + " > ";
+
+                    if (partLink.getReferenceDescription() != null && !partLink.getReferenceDescription().isEmpty()) {
+                        linkAsString += " ( " + partLink.getReferenceDescription() + " )";
+                    }
+                    componentNumbers.add(linkAsString);
                 }
-                componentNumbers.add(linkAsString);
+
+                String join = StringUtils.join(componentNumbers, joinWith);
+                pathStrings.add(type + ": " + join);
+                componentNumbers.clear();
             }
 
-            String join = StringUtils.join(componentNumbers, joinWith);
-            sb.append(type + ": " + join);
-            sb.append("\n");
-            componentNumbers.clear();
+            String typeLines = StringUtils.join(pathStrings, "\n");
+            typeStrings.add(typeLines);
+            pathStrings.clear();
         }
 
-        return sb.toString();
+        String fullString = StringUtils.join(typeStrings, "\n");
+        typeStrings.clear();
+
+        return fullString;
     }
 
 }

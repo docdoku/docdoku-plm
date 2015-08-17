@@ -28,7 +28,7 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeDescriptor;
 import com.docdoku.core.meta.InstanceListOfValuesAttribute;
 import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartLink;
+import com.docdoku.core.product.PartLinkList;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryField;
@@ -213,13 +213,13 @@ public class ExcelGenerator {
                     break;
 
                 case QueryField.CTX_P2P_SOURCE:
-                    Map<String, List<PartLink>> sources = row.getSources();
+                    Map<String, List<PartLinkList>> sources = row.getSources();
                     String sourcePartLinksAsString = Tools.getPartLinksAsExcelString(sources);
                     data.add(sourcePartLinksAsString);
                     break;
 
                 case QueryField.CTX_P2P_TARGET:
-                    Map<String, List<PartLink>> targets = row.getTargets();
+                    Map<String, List<PartLinkList>> targets = row.getTargets();
                     String targetPartLinksAsString = Tools.getPartLinksAsExcelString(targets);
                     data.add(targetPartLinksAsString);
                     break;
