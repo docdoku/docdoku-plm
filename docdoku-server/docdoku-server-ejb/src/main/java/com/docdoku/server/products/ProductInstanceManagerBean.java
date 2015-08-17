@@ -396,7 +396,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             }
 
             @Override
-            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+            public void onOptionalPath(List<PartLink> path, List<PartIteration> partIterations) {
                 // Unused here
             }
 
@@ -855,7 +855,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public PathDataMaster getPathDataByPath(String workspaceId, String configurationItemId, String serialNumber, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, ProductInstanceMasterNotFoundException {
+    public PathDataMaster getPathDataByPath(String workspaceId, String configurationItemId, String serialNumber, String pathAsString) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, ProductInstanceMasterNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
 
@@ -869,7 +869,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         ProductInstanceIteration prodInstI = prodInstM.getLastIteration();
         PathDataMasterDAO pathDataMasterDAO = new PathDataMasterDAO(locale, em);
 
-        return pathDataMasterDAO.findByPathAndProductInstanceIteration(path, prodInstI);
+        return pathDataMasterDAO.findByPathAndProductInstanceIteration(pathAsString, prodInstI);
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})

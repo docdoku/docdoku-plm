@@ -530,9 +530,9 @@ public class ProductResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<LightPartLinkDTO> decodePath(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("path") String pathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
-        List<PartLink> partLinks = productService.decodePath(ciKey, pathAsString);
+        List<PartLink> path = productService.decodePath(ciKey, pathAsString);
         List<LightPartLinkDTO> lightPartLinkDTOs = new ArrayList<>();
-        for(PartLink partLink : partLinks){
+        for(PartLink partLink : path){
             LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
             lightPartLinkDTOs.add(lightPartLinkDTO);
         }

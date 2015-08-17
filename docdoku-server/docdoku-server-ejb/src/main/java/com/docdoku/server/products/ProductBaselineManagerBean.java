@@ -109,7 +109,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
             }
 
             @Override
-            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+            public void onOptionalPath(List<PartLink> path, List<PartIteration> partIterations) {
                 // Unused here
             }
 
@@ -188,7 +188,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
             }
 
             @Override
-            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+            public void onOptionalPath(List<PartLink> path, List<PartIteration> partIterations) {
                 // Unused here
             }
 
@@ -388,7 +388,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
             }
 
             @Override
-            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+            public void onOptionalPath(List<PartLink> path, List<PartIteration> partIterations) {
                 // Unused here
             }
 

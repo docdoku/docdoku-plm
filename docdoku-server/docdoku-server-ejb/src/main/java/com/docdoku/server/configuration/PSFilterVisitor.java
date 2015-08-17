@@ -86,7 +86,7 @@ public abstract class PSFilterVisitor {
         List<PartIteration> currentPathPartIterations = new ArrayList<>();
 
         // Visit last
-        PartMaster rootNode = currentPath.get(currentPath.size()-1).getComponent();
+        PartMaster rootNode = currentPath.get(currentPath.size() - 1).getComponent();
         currentPathParts.add(rootNode);
 
         stopAtDepth = (pDepth == null) ? -1 : pDepth + currentPath.size();
@@ -222,21 +222,21 @@ public abstract class PSFilterVisitor {
                 currentPath.add(usageLink);
 
                 // Filter the current path, potentially diverging branches
-                List<PartLink> eligibleLinks = filter.filter(currentPath);
+                List<PartLink> eligiblePath = filter.filter(currentPath);
 
-                if(eligibleLinks.isEmpty() && !usageLink.isOptional()){
+                if(eligiblePath.isEmpty() && !usageLink.isOptional()){
                     onUnresolvedPath(new ArrayList<>(currentPath), new ArrayList<>(copyPartIteration));
                 }
 
-                if(eligibleLinks.size() > 1 ){
+                if(eligiblePath.size() > 1 ){
                     onIndeterminatePath(new ArrayList<>(currentPath), new ArrayList<>(copyPartIteration));
                 }
 
-                if (eligibleLinks.size() == 1 && eligibleLinks.get(0).isOptional()){
+                if (eligiblePath.size() == 1 && eligiblePath.get(0).isOptional()){
                     onOptionalPath(new ArrayList<>(currentPath), new ArrayList<>(copyPartIteration));
                 }
 
-                for(PartLink link : eligibleLinks){
+                for(PartLink link : eligiblePath){
                     List<PartLink> nextPath = new ArrayList<>(pCurrentPath);
                     nextPath.add(link);
 
@@ -293,6 +293,6 @@ public abstract class PSFilterVisitor {
     public abstract void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) throws NotAllowedException;
     public abstract void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException;
     public abstract void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration);
-    public abstract void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations);
+    public abstract void onOptionalPath(List<PartLink> path, List<PartIteration> partIterations);
     public abstract void onPathWalk(List<PartLink> path, List<PartMaster> parts);
 }

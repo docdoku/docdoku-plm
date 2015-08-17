@@ -54,10 +54,10 @@ public class PathDataMasterDAO {
     }
 
 
-    public PathDataMaster findByPathAndProductInstanceIteration(String path, ProductInstanceIteration productInstanceIteration) {
+    public PathDataMaster findByPathAndProductInstanceIteration(String pathAsString, ProductInstanceIteration productInstanceIteration) {
         try {
             return em.createNamedQuery("pathDataMaster.findByPathAndProductInstanceIteration", PathDataMaster.class)
-                    .setParameter("path", path)
+                    .setParameter("path", pathAsString)
                     .setParameter("productInstanceIteration", productInstanceIteration)
                     .getSingleResult();
         } catch (NoResultException e) {

@@ -140,7 +140,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             @Override
-            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+            public void onOptionalPath(List<PartLink> path, List<PartIteration> partIterations) {
                 // Unused here
             }
 
@@ -2371,7 +2371,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             @Override
-            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+            public void onOptionalPath(List<PartLink> path, List<PartIteration> partIterations) {
                 // Unused here
             }
 
@@ -2771,7 +2771,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             @Override
-            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+            public void onOptionalPath(List<PartLink> path, List<PartIteration> partIterations) {
                 // Unused here
             }
 
@@ -2867,7 +2867,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             @Override
-            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+            public void onOptionalPath(List<PartLink> path, List<PartIteration> partIterations) {
                 // Unused here
             }
 
@@ -2975,7 +2975,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             @Override
-            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+            public void onOptionalPath(List<PartLink> path, List<PartIteration> partIterations) {
                 // Unused here
             }
 
@@ -3118,7 +3118,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             @Override
-            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+            public void onOptionalPath(List<PartLink> path, List<PartIteration> partIterations) {
                 // Unused here
             }
 
@@ -3145,19 +3145,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     List<PathToPathLink> pathToPathLinkSourceInContext = pathToPathLinkDAO.getPathToPathLinkSourceInContext(ci, finalProductInstanceIteration, pathAsString);
                     for (PathToPathLink pathToPathLink : pathToPathLinkSourceInContext) {
                         try {
-                            List<PartLink> partLinks = decodePath(ciKey, pathToPathLink.getTargetPath());
-                            row.addSource(pathToPathLink.getType(), partLinks);
+                            List<PartLink> sourcePath = decodePath(ciKey, pathToPathLink.getTargetPath());
+                            row.addSource(pathToPathLink.getType(), sourcePath);
                         } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | PartUsageLinkNotFoundException | ConfigurationItemNotFoundException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
-
                     }
 
                     List<PathToPathLink> pathToPathLinkTargetInContext = pathToPathLinkDAO.getPathToPathLinkTargetInContext(ci, finalProductInstanceIteration, pathAsString);
                     for (PathToPathLink pathToPathLink : pathToPathLinkTargetInContext) {
                         try {
-                            List<PartLink> partLinks = decodePath(ciKey, pathToPathLink.getSourcePath());
-                            row.addTarget(pathToPathLink.getType(), partLinks);
+                            List<PartLink> targetPath = decodePath(ciKey, pathToPathLink.getSourcePath());
+                            row.addTarget(pathToPathLink.getType(), targetPath);
                         } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | PartUsageLinkNotFoundException | ConfigurationItemNotFoundException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
@@ -3262,12 +3261,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
         // Decode the paths to insure path validity
-        List<PartLink> sourceLinks = decodePath(ci.getKey(), pathFrom);
-        List<PartLink> targetLinks = decodePath(ci.getKey(), pathTo);
+        List<PartLink> sourcePath = decodePath(ci.getKey(), pathFrom);
+        List<PartLink> targetPath = decodePath(ci.getKey(), pathTo);
 
         // Check for substitute linking
-        PartLink sourceLink = sourceLinks.get(sourceLinks.size() - 1);
-        PartLink targetLink = targetLinks.get(targetLinks.size() - 1);
+        PartLink sourceLink = sourcePath.get(sourcePath.size() - 1);
+        PartLink targetLink = targetPath.get(targetPath.size() - 1);
 
         if(sourceLink.getSubstitutes() != null && sourceLink.getSubstitutes().contains(targetLink) || targetLink.getSubstitutes() != null && targetLink.getSubstitutes().contains(sourceLink)){
             throw new NotAllowedException(locale, "NotAllowedException58");
@@ -3343,8 +3342,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public PartMaster getPartMasterFromPath(String workspaceId, String configurationItemId, String partPath) throws ConfigurationItemNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException {
         ConfigurationItem configurationItem = new ConfigurationItemDAO(em).loadConfigurationItem(new ConfigurationItemKey(workspaceId, configurationItemId));
-        List<PartLink> partLinks = decodePath(configurationItem.getKey(), partPath);
-        return partLinks.get(partLinks.size() - 1).getComponent();
+        List<PartLink> path = decodePath(configurationItem.getKey(), partPath);
+        return path.get(path.size() - 1).getComponent();
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})

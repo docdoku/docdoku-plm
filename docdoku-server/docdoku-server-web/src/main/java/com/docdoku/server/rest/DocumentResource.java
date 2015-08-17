@@ -522,8 +522,8 @@ public class DocumentResource {
             ProductInstanceMaster productInstanceMaster = productService.findProductByPathMaster(workspaceId, pathDataMaster);
 
             LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
-            List<PartLink> partLinks = productService.decodePath(productInstanceMaster.getInstanceOf().getKey(), pathDataMaster.getPath());
-            for(PartLink partLink : partLinks){
+            List<PartLink> path = productService.decodePath(productInstanceMaster.getInstanceOf().getKey(), pathDataMaster.getPath());
+            for(PartLink partLink : path){
                 partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink));
             }
             dto.setPartLinksList(partLinksList);

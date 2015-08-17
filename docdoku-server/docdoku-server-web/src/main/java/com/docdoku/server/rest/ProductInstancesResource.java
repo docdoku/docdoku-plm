@@ -332,23 +332,23 @@ public class ProductInstancesResource {
     @GET
     @Path("{serialNumber}/pathdata/{path}")
     @Produces(MediaType.APPLICATION_JSON)
-    public PathDataMasterDTO getPathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, BaselineNotFoundException {
-        PathDataMaster pathDataMaster = productInstanceService.getPathDataByPath(workspaceId, configurationItemId, serialNumber, path);
+    public PathDataMasterDTO getPathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("path") String pathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, BaselineNotFoundException {
+        PathDataMaster pathDataMaster = productInstanceService.getPathDataByPath(workspaceId, configurationItemId, serialNumber, pathAsString);
 
-        PathDataMasterDTO dto = pathDataMaster == null ? new PathDataMasterDTO(path) : mapper.map(pathDataMaster, PathDataMasterDTO.class);
+        PathDataMasterDTO dto = pathDataMaster == null ? new PathDataMasterDTO(pathAsString) : mapper.map(pathDataMaster, PathDataMasterDTO.class);
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
 
         LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
-        List<PartLink> partLinks = productService.decodePath(ciKey, path);
-        for(PartLink partLink : partLinks){
+        List<PartLink> path = productService.decodePath(ciKey, pathAsString);
+        for(PartLink partLink : path){
             partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink));
         }
         dto.setPartLinksList(partLinksList);
 
         List<InstanceAttributeDTO> attributesDTO = new ArrayList<>();
         List<InstanceAttributeTemplateDTO> attributeTemplatesDTO = new ArrayList<>();
-        PartLink partLink = partLinks.get(partLinks.size() - 1);
+        PartLink partLink = path.get(path.size() - 1);
         PSFilter filter = productService.getPSFilter(ciKey,"pi-"+serialNumber, false);
         List<PartIteration> partIterations = filter.filter(partLink.getComponent());
         PartIteration partIteration = partIterations.get(0);
@@ -447,14 +447,14 @@ public class ProductInstancesResource {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
 
         LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
-        List<PartLink> partLinks = productService.decodePath(ciKey, pathDataIterationCreationDTO.getPath());
-        for(PartLink partLink : partLinks){
+        List<PartLink> path = productService.decodePath(ciKey, pathDataIterationCreationDTO.getPath());
+        for(PartLink partLink : path){
             partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink));
         }
         dto.setPartLinksList(partLinksList);
 
         List<InstanceAttributeDTO> attributesDTO = new ArrayList<>();
-        PartLink partLink = partLinks.get(partLinks.size() - 1);
+        PartLink partLink = path.get(path.size() - 1);
         PSFilter filter = productService.getPSFilter(ciKey,"pi-"+serialNumber, false);
         List<PartIteration> partIterations = filter.filter(partLink.getComponent());
         PartIteration partIteration = partIterations.get(0);
@@ -473,7 +473,7 @@ public class ProductInstancesResource {
     @Path("{serialNumber}/pathdata/{path}/new")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PathDataMasterDTO createPathDataMaster(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber,@PathParam("path") String path, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, FileAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+    public PathDataMasterDTO createPathDataMaster(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber,@PathParam("path") String pathAsString, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, FileAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
 
         InstanceAttributeFactory factory = new InstanceAttributeFactory();
 
@@ -483,15 +483,15 @@ public class ProductInstancesResource {
             attributes = factory.createInstanceAttributes(instanceAttributes);
         }
 
-        PathDataMaster pathDataMaster = productInstanceService.createPathDataMaster(workspaceId, configurationItemId, serialNumber, path, attributes, pathDataIterationCreationDTO.getIterationNote());
+        PathDataMaster pathDataMaster = productInstanceService.createPathDataMaster(workspaceId, configurationItemId, serialNumber, pathAsString, attributes, pathDataIterationCreationDTO.getIterationNote());
 
         PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
 
         LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
-        List<PartLink> partLinks = productService.decodePath(ciKey, path);
-        for(PartLink partLink : partLinks){
+        List<PartLink> path = productService.decodePath(ciKey, pathAsString);
+        for(PartLink partLink : path){
             partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink));
         }
         dto.setPartLinksList(partLinksList);
@@ -537,8 +537,8 @@ public class ProductInstancesResource {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
 
         LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
-        List<PartLink> partLinks = productService.decodePath(ciKey, dto.getPath());
-        for(PartLink partLink : partLinks){
+        List<PartLink> path = productService.decodePath(ciKey, dto.getPath());
+        for(PartLink partLink : path){
             partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink));
         }
         dto.setPartLinksList(partLinksList);
