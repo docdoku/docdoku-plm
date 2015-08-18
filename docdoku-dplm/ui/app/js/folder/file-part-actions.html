@@ -1,7 +1,6 @@
-<md-progress-linear ng-if="file.busy" mode="determinate" ng-value="file.progress"></md-progress-linear>
 
 
-<div class="row" ng-if="!file.notSync && !file.busy && !file.part.isReleased">
+<div class="row" ng-if="!file.notSync && !file.busy && !file.part.isReleased && !file.part.checkoutUser">
     <md-checkbox ng-model="options.force" aria-label="">
     {{'FORCE'|translate}}
     </md-checkbox>

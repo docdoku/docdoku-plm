@@ -32,5 +32,7 @@
     <div>
         <file-document-actions class="slide-down" ng-if="file === openedFile"></file-document-actions>
     </div>
+    
+    <md-progress-linear ng-if="file.busy" mode="determinate" ng-value="file.progress"></md-progress-linear>
 
 </div>

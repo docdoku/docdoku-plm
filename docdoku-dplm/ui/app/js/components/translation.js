@@ -94,7 +94,8 @@
                     HOME_FOLDER:'Home folder',
                     ROOT_FOLDER:'Root folder',
                     NO_DOCUMENTS:'No documents',
-                    DOWNLOADS_FINISHED:'All downloads are finished'
+                    DOWNLOADS_FINISHED:'All downloads are finished',
+                    SYNC_ALL:'Synchronise all'
                 })
                 .translations('fr', {
                     CUT: 'Couper',
@@ -185,7 +186,8 @@
                     CHECKED_OUT:'Réservés',
                     HOME_FOLDER:'Dossier personnel',
                     ROOT_FOLDER:'Dossier racine',
-                    DOWNLOADS_FINISHED:'Tous les téléchargements sont terminés'
+                    DOWNLOADS_FINISHED:'Tous les téléchargements sont terminés',
+                    SYNC_ALL:'Tout synchroniser'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

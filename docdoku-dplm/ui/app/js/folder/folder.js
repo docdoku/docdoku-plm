@@ -109,6 +109,18 @@
                 });
             };
 
+            var getUploadableFiles = function(){
+                return $filter('filter')($scope.files,{modified:true, sync:false});
+            };
+
+            $scope.hasUploadableFiles = function(){
+                return ($scope.tabs.selected === $scope.tabs.documents || $scope.tabs.selected === $scope.tabs.parts ) && getUploadableFiles().length;
+            };
+
+            $scope.syncAll = function(){
+                $scope.$broadcast('sync:all');
+            };
+
             $scope.refresh();
 
         })
@@ -131,7 +143,7 @@
             };
         })
 
-        .controller('FileController', function ($scope, FolderService, AvailableLoaders) {
+        .controller('FileController', function ($scope, FolderService, AvailableLoaders, CliService) {
             $scope.fetchStatus = function () {
                 $scope.loading = true;
                 FolderService.fetchFileStatus($scope.file).then(function () {
@@ -140,7 +152,37 @@
                     $scope.loading = false;
                 });
             };
+
+            $scope.onFinish = function () {
+                $scope.file.busy = false;
+                $scope.file.progress = 0;
+            };
+
+            $scope.onProgress = function (progress) {
+                $scope.file.progress = progress;
+            };
+
             $scope.isViewable = AvailableLoaders.indexOf($scope.file.path.split('.').pop()) !== -1;
+
+            $scope.$on('sync:all',function(){
+                if(!$scope.file.sync && $scope.file.modified && !$scope.file.busy){
+                   $scope.put();
+                }
+            });        
+
+            $scope.put = function () {
+                $scope.file.busy = true;
+                if($scope.file.part){
+                    CliService.putCADFile($scope.file.part.workspace, $scope.file.path).then(function () {
+                        return $scope.fetchStatus();
+                    }, null, $scope.onProgress).then($scope.onFinish);
+                }else if($scope.file.document){
+                    CliService.putDocumentFile($scope.file.document.workspace, $scope.file.path).then(function () {
+                        return $scope.fetchStatus();
+                    }, null, $scope.onProgress).then($scope.onFinish);
+                }                
+            };                
+
         })
 
         .directive('filePartActions', function () {
@@ -148,48 +190,32 @@
             return {
 
                 templateUrl: 'js/folder/file-part-actions.html',
-
+                scope:false,
                 controller: function ($scope, $element, $attrs, $transclude, $timeout, $filter, CliService, WorkspaceService, NotificationService) {
 
                     $scope.options = {force: true,recursive:true};
                     $scope.workspaces = WorkspaceService.workspaces;
                     $scope.show3D = false;
 
-                    var onFinish = function () {
-                        $scope.file.busy = false;
-                        $scope.file.progress = 0;
-                    };
-
-                    var onProgress = function (progress) {
-                        $scope.file.progress = progress;
-                    };
-
                     $scope.checkout = function () {
                         $scope.file.busy = true;
                         CliService.checkoutPart($scope.file.part, $scope.folder.path, $scope.options).then(function () {
                             return $scope.fetchStatus();
-                        }, null, onProgress).then(onFinish);
+                        }, null, $scope.onProgress).then($scope.onFinish);
                     };
 
                     $scope.checkin = function () {
                         $scope.file.busy = true;
                         CliService.checkinPart($scope.file.part,$scope.folder.path).then(function () {
                             return $scope.fetchStatus();
-                        }, null, onProgress).then(onFinish);
-                    };
-
-                    $scope.put = function () {
-                        $scope.file.busy = true;
-                        CliService.putCADFile($scope.file.part.workspace, $scope.file.path).then(function () {
-                            return $scope.fetchStatus();
-                        }, null, onProgress).then(onFinish);
-                    };
+                        }, null, $scope.onProgress).then($scope.onFinish);
+                    };                    
 
                     $scope.undoCheckout = function () {
                         $scope.file.busy = true;
                         CliService.undoCheckoutPart($scope.file.part).then(function () {
                             return $scope.fetchStatus();
-                        }).then(onFinish);
+                        }).then($scope.onFinish);
                     };
 
                     $scope.conversionStatus = function () {
@@ -220,47 +246,32 @@
             return {
 
                 templateUrl: 'js/folder/file-document-actions.html',
-
+                scope:false,
                 controller: function ($scope, $element, $attrs, $transclude, $timeout, $filter, CliService, WorkspaceService, NotificationService) {
 
                     $scope.options = {force: true,recursive:true};
-                    $scope.workspaces = WorkspaceService.workspaces;
-
-                    var onFinish = function () {
-                        $scope.file.busy = false;
-                        $scope.file.progress = 0;
-                    };
-
-                    var onProgress = function (progress) {
-                        $scope.file.progress = progress;
-                    };
+                    $scope.workspaces = WorkspaceService.workspaces;                  
 
                     $scope.checkout = function () {
                         $scope.file.busy = true;
                         CliService.checkoutDocument($scope.file.document, $scope.folder.path, $scope.options).then(function () {
                             return $scope.fetchStatus();
-                        }, null, onProgress).then(onFinish);
+                        }, null, $scope.onProgress).then($scope.onFinish);
                     };
 
                     $scope.checkin = function () {
                         $scope.file.busy = true;
                         CliService.checkinDocument($scope.file.document,$scope.folder.path).then(function () {
                             return $scope.fetchStatus();
-                        }, null, onProgress).then(onFinish);
+                        }, null, $scope.onProgress).then($scope.onFinish);
                     };
 
-                    $scope.put = function () {
-                        $scope.file.busy = true;
-                        CliService.putDocumentFile($scope.file.document.workspace, $scope.file.path).then(function () {
-                            return $scope.fetchStatus();
-                        }, null, onProgress).then(onFinish);
-                    };
 
                     $scope.undoCheckout = function () {
                         $scope.file.busy = true;
                         CliService.undoCheckoutDocument($scope.file.document).then(function () {
                             return $scope.fetchStatus();
-                        }).then(onFinish);
+                        }).then($scope.onFinish);
                     };
 
                 }
@@ -272,7 +283,7 @@
             return {
 
                 templateUrl: 'js/folder/file-unknown-actions.html',
-
+                sope:false,
                 controller: function ($scope, $element, $attrs, $transclude, $timeout, $filter, CliService, WorkspaceService, NotificationService) {
 
                     $scope.options = {force: true,recursive:true};
@@ -280,21 +291,12 @@
                     $scope.newPart = {workspace: $scope.workspaces[0]};
                     $scope.newDocument = {workspace: $scope.workspaces[0]};
 
-                    var onFinish = function () {
-                        $scope.file.busy = false;
-                        $scope.file.progress = 0;
-                    };
-
-                    var onProgress = function (progress) {
-                        $scope.file.progress = progress;
-                    };
-
                     $scope.createPart = function () {
                         $scope.file.busy = true;
                         CliService.createPart($scope.newPart, $scope.file.path).then(function () {
                             $scope.newPart = {workspace: $scope.workspaces[0]};
                             return $scope.fetchStatus();
-                        }, null, onProgress).then(onFinish);
+                        }, null, $scope.onProgress).then($scope.onFinish);
                     };
 
                     $scope.createDocument = function () {
@@ -302,7 +304,7 @@
                         CliService.createDocument($scope.newDocument, $scope.file.path).then(function () {
                             $scope.newDocument = {workspace: $scope.workspaces[0]};
                             return $scope.fetchStatus();
-                        }, null, onProgress).then(onFinish);
+                        }, null, $scope.onProgress).then($scope.onFinish);
                     };
 
                 }

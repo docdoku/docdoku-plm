@@ -44,7 +44,8 @@
         'dplm.filters.timeago',
         'dplm.filters.last',
 
-        'dplm.contextmenu'
+        'dplm.contextmenu',
+        'dplm.menu'
 
     ])
 
