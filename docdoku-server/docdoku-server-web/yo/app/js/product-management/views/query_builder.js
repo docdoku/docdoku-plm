@@ -83,6 +83,7 @@ define([
                     return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1;
                 });
                 data.map(fillOption);
+                $select.change();
             });
 
         },
