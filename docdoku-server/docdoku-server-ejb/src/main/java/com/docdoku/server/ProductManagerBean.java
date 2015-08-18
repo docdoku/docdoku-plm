@@ -358,7 +358,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             partR.setCheckOutUser(null);
 
             // Remove path to path links impacted by this change
-            removeObsoletePathToPathLinks(user, partIte);
+            removeObsoletePathToPathLinks(user,pPartRPK.getWorkspaceId());
 
             return partR;
         } else {
@@ -366,18 +366,27 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
-    private void removeObsoletePathToPathLinks(User user, PartIteration partIte) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
-        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(new Locale(user.getLanguage()), em);
-        List<PartUsageLink> components = partIte.getComponents();
-        for (PartUsageLink partUsageLink : components) {
-            String usageLinkId = partUsageLink.getFullId();
-            pathToPathLinkDAO.removePathToPathLinks(usageLinkId);
-            List<PartSubstituteLink> substitutes = partUsageLink.getSubstitutes();
-            for (PartSubstituteLink substituteLink : substitutes) {
-                String substituteLinkId = substituteLink.getFullId();
-                pathToPathLinkDAO.removePathToPathLinks(substituteLinkId);
+    private void removeObsoletePathToPathLinks(User user, String workspaceId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+        Locale locale = new Locale(user.getLanguage());
+        ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(locale, em);
+        List<ConfigurationItem> configurationItems = configurationItemDAO.findAllConfigurationItems(workspaceId);
+        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale,em);
+
+        for(ConfigurationItem configurationItem:configurationItems){
+            List<PathToPathLink> pathToPathLinks = configurationItem.getPathToPathLinks();
+            for(PathToPathLink pathToPathLink:pathToPathLinks){
+                try {
+                    decodePath(configurationItem.getKey(),pathToPathLink.getSourcePath());
+                    decodePath(configurationItem.getKey(),pathToPathLink.getTargetPath());
+                } catch (PartUsageLinkNotFoundException e) {
+                    pathToPathLinkDAO.removePathToPathLink(pathToPathLink);
+                } catch (ConfigurationItemNotFoundException e) {
+                    // Should not be thrown
+                    LOGGER.log(Level.SEVERE,null,e);
+                }
             }
         }
+
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -508,7 +517,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             esIndexer.index(lastIteration);
 
             if (lastCheckedInIteration != null) {
-                removeObsoletePathToPathLinks(user, lastCheckedInIteration);
+                removeObsoletePathToPathLinks(user, pPartRPK.getWorkspaceId());
             }
 
             partIterationEvent.select(new AnnotationLiteral<CheckedIn>() {
