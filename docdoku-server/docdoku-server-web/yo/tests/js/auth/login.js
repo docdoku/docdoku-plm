@@ -1,5 +1,5 @@
 /*global casper,homeUrl,login,pass,apiUrls*/
-casper.test.begin('Login tests suite', 2, function loginTestsSuite() {
+casper.test.begin('Login tests suite', 3, function loginTestsSuite() {
 
     'use strict';
 
@@ -42,10 +42,22 @@ casper.test.begin('Login tests suite', 2, function loginTestsSuite() {
     });
 
     /**
-     * Check if we are connected
+     * We should be redirected on workspace menu
+     */
+    casper.then(function waitForLogoutButton() {
+        this.waitForSelector('#logout_link',function(){
+            this.test.assert(true,'Logout link should be displayed');
+        },function(){
+            this.capture('screenshot/auth/login.png');
+            this.test.assert(true,'Logout link should be displayed');
+        });
+    });
+
+    /**
+     * Check if we are connected to the api
      */
     casper.then(function checkSessionState() {
-        this.open(apiUrls.userInfo).then(function (response) {
+        this.open(apiUrls.userInfo).then(function(response){
             this.test.assertEqual(response.status, 200, 'User "' + login + '" should log in');
         });
     });
