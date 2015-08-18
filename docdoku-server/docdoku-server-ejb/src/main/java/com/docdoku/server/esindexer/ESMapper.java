@@ -23,6 +23,7 @@ package com.docdoku.server.esindexer;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.meta.InstanceListOfValuesAttribute;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevisionKey;
@@ -99,7 +100,7 @@ public class ESMapper {
 
     /**
      * Convert a Document Revision to a JSON Builder.
-     *
+     *"" + attr.getValue()
      * @param doc           Document to pass to JSON
      * @param contentInputs Map of binary resources content
      * @return A JSON Builder to index
@@ -142,8 +143,7 @@ public class ESMapper {
                     tmp.startArray(ATTRIBUTES_KEY);
                     for (InstanceAttribute attr : listAttr) {
                         tmp.startObject();
-                        setField(tmp,ATTRIBUTE_NAME,attr.getNameWithoutWhiteSpace(),0.6f);
-                        setField(tmp,ATTRIBUTE_VALUE,""+attr.getValue(),0.6f);
+                        setAttrField(tmp, attr, 0.6f);
                         tmp.endObject();
                     }
                     tmp.endArray();
@@ -211,8 +211,7 @@ public class ESMapper {
             for (InstanceAttribute attr : listAttr) {
                 Map<String,Object> attributesParams = new HashMap<>();
                 listAttributes.add(attributesParams);
-                setParam(attributesParams, ATTRIBUTE_NAME, attr.getNameWithoutWhiteSpace(), 0.6f);
-                setParam(attributesParams, ATTRIBUTE_VALUE, "" + attr.getValue(), 0.6f);
+                setAttrParam(attributesParams, attr, 0.6f);
             }
         }
         if (!doc.getAttachedFiles().isEmpty()) {
@@ -276,8 +275,7 @@ public class ESMapper {
                     tmp.startArray(ATTRIBUTES_KEY);
                     for (InstanceAttribute attr : listAttr) {
                         tmp.startObject();
-                        setField(tmp,ATTRIBUTE_NAME,attr.getNameWithoutWhiteSpace(),0.6f);
-                        setField(tmp,ATTRIBUTE_VALUE,""+attr.getValue(),0.6f);
+                        setAttrField(tmp,attr,0.6f);
                         tmp.endObject();
                     }
                     tmp.endArray();
@@ -349,8 +347,7 @@ public class ESMapper {
             for (InstanceAttribute attr : listAttr) {
                 Map<String,Object> attributesParams = new HashMap<>();
                 listAttributes.add(attributesParams);
-                setParam(attributesParams, ATTRIBUTE_NAME, attr.getNameWithoutWhiteSpace(), 0.6f);
-                setParam(attributesParams, ATTRIBUTE_VALUE, "" + attr.getValue(), 0.6f);
+                setAttrParam(attributesParams, attr, 0.6f);
             }
         }
 
@@ -366,6 +363,29 @@ public class ESMapper {
         }
 
         return params;
+    }
+
+    private static void setAttrField(XContentBuilder object,InstanceAttribute attr, float coef ) throws IOException {
+        setField(object,ATTRIBUTE_NAME,attr.getNameWithoutWhiteSpace(),coef);
+        if(attr instanceof InstanceListOfValuesAttribute) {
+            InstanceListOfValuesAttribute lov = (InstanceListOfValuesAttribute) attr;
+            String lovItemName = lov.getItems().get(lov.getIndexValue()).getName();
+            setField(object,ATTRIBUTE_VALUE,lovItemName,coef);
+        } else {
+            setField(object,ATTRIBUTE_VALUE,""+attr.getValue(),coef);
+        }
+
+    }
+
+    private static void setAttrParam(Map<String,Object> params, InstanceAttribute attr,float coef) {
+        setParam(params, ATTRIBUTE_NAME, attr.getNameWithoutWhiteSpace(), coef);
+        if(attr instanceof InstanceListOfValuesAttribute) {
+            InstanceListOfValuesAttribute lov = (InstanceListOfValuesAttribute) attr;
+            String lovItemName = lov.getItems().get(lov.getIndexValue()).getName();
+            setParam(params, ATTRIBUTE_VALUE, lovItemName, coef);
+        } else {
+            setParam(params,ATTRIBUTE_VALUE,""+attr.getValue(),coef);
+        }
     }
 
     private static void setParam(Map<String, Object> params, String name, Object value, float coef) {

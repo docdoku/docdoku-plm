@@ -28,8 +28,7 @@ define([
             if (type === 'LOV') {
                 type = this.model.get('lovName');
             }
-
-            if (this.editMode && !this.attributesLocked && this.model.get('locked') === false && this.model.get('mandatory') === false) {
+            if (this.editMode && !this.attributesLocked && !this.model.get('locked') && !this.model.get('mandatory')) {
                 this.$el.find('select.type').val(type);
             } else {
                 this.$('div.type').html(type);

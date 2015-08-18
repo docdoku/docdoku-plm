@@ -202,6 +202,7 @@ define([
                     var name = attribute.get('name');
                     var value = attribute.get('value');
                     value = type === 'BOOLEAN' ? (value ? 'true' : 'false') : value;
+                    value = type === 'LOV' ? attribute.get('items')[value].name : value;
                     queryString += type + ':' + name + ':' + value + ';';
                 });
                 // remove last '+'

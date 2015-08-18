@@ -283,6 +283,12 @@ public class SearchQueryParser {
                     SearchQuery.URLAttributeQuery uaq = new SearchQuery.URLAttributeQuery(attributeName,attributeValue);
                     pAttributes.add(uaq);
                     break;
+
+                case "LOV":
+                    SearchQuery.LovAttributeQuery laq = new SearchQuery.LovAttributeQuery(attributeName,attributeValue);
+                    pAttributes.add(laq);
+                    break;
+
                 default :
                     break;
             }

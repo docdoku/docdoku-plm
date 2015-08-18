@@ -327,4 +327,35 @@ public class SearchQuery  implements Serializable {
             return date.toString();
         }
     }
+    public static class LovAttributeQuery extends AbstractAttributeQuery{
+        private String lovValue;
+        public LovAttributeQuery(){
+
+        }
+        public LovAttributeQuery(String name, String value){
+            super(name);
+            this.lovValue=value;
+        }
+
+        public void setLovValue(String lovValue) {
+            this.lovValue = lovValue;
+        }
+        public String getLovValue() {
+            return lovValue;
+        }
+        @Override
+        public boolean attributeMatches(InstanceAttribute attr){
+            return attr.isValueEquals(lovValue);
+        }
+
+        @Override
+        public boolean hasValue() {
+            return !lovValue.isEmpty();
+        }
+
+        @Override
+        public String toString() {
+            return lovValue;
+        }
+    }
 }
