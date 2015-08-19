@@ -370,16 +370,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         Locale locale = new Locale(user.getLanguage());
         ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(locale, em);
         List<ConfigurationItem> configurationItems = configurationItemDAO.findAllConfigurationItems(workspaceId);
-        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale,em);
 
         for(ConfigurationItem configurationItem:configurationItems){
-            List<PathToPathLink> pathToPathLinks = configurationItem.getPathToPathLinks();
+            List<PathToPathLink> pathToPathLinks = new ArrayList<>(configurationItem.getPathToPathLinks());
             for(PathToPathLink pathToPathLink:pathToPathLinks){
                 try {
                     decodePath(configurationItem.getKey(),pathToPathLink.getSourcePath());
                     decodePath(configurationItem.getKey(),pathToPathLink.getTargetPath());
                 } catch (PartUsageLinkNotFoundException e) {
-                    pathToPathLinkDAO.removePathToPathLink(pathToPathLink);
+                    configurationItem.removePathToPathLink(pathToPathLink);
                 } catch (ConfigurationItemNotFoundException e) {
                     // Should not be thrown
                     LOGGER.log(Level.SEVERE,null,e);
@@ -504,8 +503,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         if (isCheckoutByUser(user, partR)) {
 
-            PartIteration lastCheckedInIteration = partR.getLastCheckedInIteration();
-
             checkCyclicAssemblyForPartIteration(partR.getLastIteration());
 
             partR.setCheckOutDate(null);
@@ -515,10 +512,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             lastIteration.setCheckInDate(new Date());
 
             esIndexer.index(lastIteration);
-
-            if (lastCheckedInIteration != null) {
-                removeObsoletePathToPathLinks(user, pPartRPK.getWorkspaceId());
-            }
 
             partIterationEvent.select(new AnnotationLiteral<CheckedIn>() {
             }).fire(new PartIterationChangeEvent(lastIteration));
@@ -811,6 +804,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
                 PartUsageLinkDAO partUsageLinkDAO = new PartUsageLinkDAO(new Locale(user.getLanguage()), em);
                 partUsageLinkDAO.removeOrphanPartLinks();
+                removeObsoletePathToPathLinks(user, pKey.getWorkspaceId());
                 checkCyclicAssemblyForPartIteration(partIte);
 
             }
@@ -2100,10 +2094,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             List<PartUsageLink> oldComponents = lastPartI.getComponents();
             for (PartUsageLink usage : lastPartI.getComponents()) {
                 PartUsageLink newUsage = usage.clone();
+                //PartUsageLink is shared among PartIteration hence there is no cascade persist
+                //so we need to persist them explicitly
+                em.persist(newUsage);
                 newComponents.add(newUsage);
             }
             firstPartI.setComponents(newComponents);
-
+            //flush to ensure the new PartUsageLinks have their id generated
+            em.flush();
             PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
             pathToPathLinkDAO.cloneAndUpgradePathToPathLinks(oldComponents, newComponents);
 
