@@ -1,6 +1,6 @@
 /*global casper,urls,documents*/
 
-casper.test.begin('Document tag creation tests suite', 6, function documentTagCreationTestsSuite() {
+casper.test.begin('Document tag creation tests suite', 7, function documentTagCreationTestsSuite() {
 
     'use strict';
 
@@ -44,15 +44,37 @@ casper.test.begin('Document tag creation tests suite', 6, function documentTagCr
      * Try to add a empty tag
      * */
     casper.then(function createEmptyTag() {
-        this.click('.modal.tag-management .newTag-button');
-        this.test.assertElementCount('.modal.tag-management ul.existing-tags-list li', 0, 'Should not create a tag without a name');
+        this.waitFor(function checkHidden() {
+            return this.evaluate(function() {
+                return $('.modal.tag-management .newTag-button').is(':hidden');
+            });
+        },function success() {
+            this.test.assert(true, 'add tag button hidden');
+        }, function fail() {
+            this.test.assert(false, 'add tab button not hidden');
+        });
+    });
+
+    /**
+     * Send key to input
+     */
+    casper.then(function sendKey() {
+        this.sendKeys('.modal.tag-management .newTag', documents.tags.tag1,{reset:true});
+        this.waitFor(function checkVisible() {
+            return this.evaluate(function() {
+                return $('.modal.tag-management .newTag-button').is(':visible');
+            });
+        }, function success() {
+            this.test.assert(true, 'add tag button visible');
+        }, function fail() {
+            this.test.assert(false, 'add tab button not visible');
+        });
     });
 
     /**
      * Try to add a tag
      * */
     casper.then(function createTags() {
-        this.sendKeys('.modal.tag-management .newTag', documents.tags.tag1,{reset:true});
         this.click('.modal.tag-management .newTag-button');
         this.waitForSelector('.modal.tag-management ul.existing-tags-list li',function tagAdded(){
             this.test.assertElementCount('.modal.tag-management ul.existing-tags-list li', 1, 'Should add a tag');
@@ -66,7 +88,7 @@ casper.test.begin('Document tag creation tests suite', 6, function documentTagCr
      * Assert the input has been reset
      * */
     casper.then(function checkInputReset() {
-        this.test.assertField('.modal.tag-management .newTag', null, 'Input has been reset');        
+        this.test.assertField('.modal.tag-management .newTag', null, 'Input has been reset');
     });
 
     /**

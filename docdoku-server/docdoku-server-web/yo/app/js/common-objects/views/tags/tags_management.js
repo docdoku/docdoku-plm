@@ -24,6 +24,9 @@ define([
             ModalView.prototype.initialize.apply(this, arguments);
             this.events['submit #form-' + this.cid] = 'onSubmitForm';
             this.events['click .newTag-button'] = 'onNewTagButton';
+            this.events['input .newTag'] = 'onInputChange';
+            this.$newTagButton = this.$('.newTag-button').hide();
+            this.buttonEnabled = false;
 
             this._existingTagsCollection = new TagList();
             this._existingTagsCollection.fetch({                                                                        // Get all Tag of the Workspace
@@ -41,6 +44,18 @@ define([
 
             _.bindAll(this);
             this.$el.on('remove', this.removeSubviews);                                                                 // Remove cascade
+        },
+
+        onInputChange: function(e) {
+            //Show or hide only if it's not already hidden/shown
+            if(!this.buttonEnabled && e.target.value) {
+                this.$newTagButton.show();
+                this.buttonEnabled = true;
+            }
+            if(this.buttonEnabled && !e.target.value) {
+                this.$newTagButton.hide();
+                this.buttonEnabled = false;
+            }
         },
 
         removeSubviews: function () {                                                                                   // Remove all tagViews
