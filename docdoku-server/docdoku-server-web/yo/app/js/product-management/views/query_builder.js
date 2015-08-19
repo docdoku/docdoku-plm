@@ -70,6 +70,7 @@ define([
             var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries';
 
             var $select = this.$selectQuery;
+            var selected = this.$selectQuery.val();
             $select.empty();
             $select.append('<option value=""></option>');
 
@@ -83,6 +84,7 @@ define([
                     return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1;
                 });
                 data.map(fillOption);
+                $select.val(selected);
             });
 
         },
