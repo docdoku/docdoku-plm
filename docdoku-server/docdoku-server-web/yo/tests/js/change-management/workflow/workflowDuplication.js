@@ -32,7 +32,7 @@ casper.test.begin('Workflow duplication tests suite', 6, function workflowDuplic
      */
 
     casper.then(function checkWorkflowTable() {
-        this.waitForSelector('.workflow-table', function workflowTableDisplayed() {
+        this.waitForSelector('.workflow-table tbody tr:first-child td.reference', function workflowTableDisplayed() {
             this.click('.workflow-table tbody tr:first-child td.reference');
         }, function fail() {
             this.capture('screenshot/workflowDuplication/checkWorkflowTable-error.png');

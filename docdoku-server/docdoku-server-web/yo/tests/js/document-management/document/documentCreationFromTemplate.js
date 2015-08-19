@@ -40,20 +40,24 @@ casper.test.begin('Document creation from template tests suite', 2, function doc
      */
 
     casper.then(function waitForDocumentCreationModal() {
-        this.waitForSelector('.modal.document-modal.new-document', function () {
+        this.waitForSelector('.modal.document-modal.new-document .template-selector', function () {
 
             this.evaluate(function () {
                 document.querySelector('.modal.document-modal.new-document .template-selector').selectedIndex = 1;
-                $('.modal.document-modal.new-document .template-selector').change();
+                $('.modal.document-modal.new-document .template-selector').change();               
+                $('.modal.document-modal.new-document input.reference').val('000');                 
+                $('.modal.document-modal.new-document input.reference').focus();                 
                 return true;
             });
-            this.sendKeys('.modal.document-modal.new-document input.reference', '000');
+            
             this.click('.modal.document-modal.new-document .btn.btn-primary');
+            
         }, function fail() {
             this.capture('screenshot/documentCreationFromTemplate/waitForDocumentCreationModal-error.png');
             this.test.assert(false, 'New document modal can not be found');
         });
     });
+   
 
     /**
      * Check if document has been created

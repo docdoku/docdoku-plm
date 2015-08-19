@@ -32,6 +32,7 @@ casper.test.begin('Document tag creation tests suite', 6, function documentTagCr
      * */
     casper.then(function waitTagCreationModal() {
         this.waitForSelector('.modal.tag-management .newTag', function modalOpened() {
+
             this.test.assert(true, 'Tag creation modal opened');
         }, function fail() {
             this.capture('screenshot/documentTagCreation/waitTagCreationModal-error.png');
@@ -51,18 +52,21 @@ casper.test.begin('Document tag creation tests suite', 6, function documentTagCr
      * Try to add a tag
      * */
     casper.then(function createTags() {
-        this.sendKeys('.modal.tag-management .newTag', documents.tags.tag1);
+        this.sendKeys('.modal.tag-management .newTag', documents.tags.tag1,{reset:true});
         this.click('.modal.tag-management .newTag-button');
-        this.test.assertElementCount('.modal.tag-management ul.existing-tags-list li', 1, 'Should add a tag');
+        this.waitForSelector('.modal.tag-management ul.existing-tags-list li',function tagAdded(){
+            this.test.assertElementCount('.modal.tag-management ul.existing-tags-list li', 1, 'Should add a tag');
+        },function fail(){
+            this.capture('screenshot/documentTagCreation/createTags-error.png');
+            this.test.assert(false, 'Cannot add a tag');
+        });
     });
 
     /**
      * Assert the input has been reset
      * */
     casper.then(function checkInputReset() {
-        this.wait(100, function () {
-            this.test.assertField('.modal.tag-management .newTag', null, 'Input has been reset');
-        });
+        this.test.assertField('.modal.tag-management .newTag', null, 'Input has been reset');        
     });
 
     /**

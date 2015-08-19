@@ -1,5 +1,5 @@
 /*global casper,urls,workspace,documents*/
-casper.test.begin('Document add link tests suite', 2, function documentAddLinkTestsSuite() {
+casper.test.begin('Document add link tests suite', 3, function documentAddLinkTestsSuite() {
     'use strict';
 
     casper.open('');
@@ -30,8 +30,8 @@ casper.test.begin('Document add link tests suite', 2, function documentAddLinkTe
      */
 
     casper.then(function waitForDocumentDisplayed() {
-        this.waitForSelector('#document-management-content table.dataTable tr:first-child td.reference', function documentIsDisplayed() {
-            this.click('#document-management-content table.dataTable tr:first-child td.reference');
+        this.waitForSelector('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference', function documentIsDisplayed() {
+            this.click('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference');
         }, function fail() {
             this.capture('screenshot/documentAddLink/waitForDocumentDisplayed-error.png');
             this.test.assert(false, 'Document can not be found');
@@ -89,6 +89,18 @@ casper.test.begin('Document add link tests suite', 2, function documentAddLinkTe
         }, function fail() {
             this.capture('screenshot/documentAddLink/waitForLinkedDocumentDisplay-error.png');
             this.test.assert(false, 'Linked document can not be found and saved');
+        });
+    });
+
+     /**
+     * Wait for the modal to be closed
+     */
+    casper.then(function waitForModalToBeClosed() {
+        this.waitWhileSelector('.document-modal', function modalClosed() {
+           this.test.assert(true, 'Document modal has been closed');
+        }, function fail() {
+            this.capture('screenshot/documentAddLink/waitForModalToBeClosed-error.png');
+            this.test.assert(false, 'Document modal not closed');
         });
     });
 

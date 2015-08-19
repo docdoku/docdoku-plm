@@ -43,16 +43,26 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
         this.waitForSelector('.modal.document-modal.new-document', function () {
             this.sendKeys('.modal.document-modal.new-document input.reference', documents.documentWithWorkflow.number);
             this.click('.modal.document-modal.new-document .nav.nav-tabs > li:nth-child(2) > a');
+        }, function fail() {
+            this.capture('screenshot/documentCreationWithWorkflow/waitForDocumentCreationModal-error.png');
+            this.test.assert(false, 'New document modal can not be found');
+        });
+    });
 
+    /**
+     * Wait for workflow selector to be filled
+     */
+
+    casper.then(function waitForWorkflowSelector() {
+        this.waitForSelector('.modal.document-modal.new-document .workflow-selector option[value="'+workflows.workflow1.name+'"]', function () {
             this.evaluate(function () {
                 document.querySelector('.modal.document-modal.new-document .workflow-selector').selectedIndex = 1;
                 $('.modal.document-modal.new-document .workflow-selector').change();
                 return true;
             });
-
         }, function fail() {
-            this.capture('screenshot/documentCreationWithWorkflow/waitForDocumentCreationModal-error.png');
-            this.test.assert(false, 'New document modal can not be found');
+            this.capture('screenshot/documentCreationWithWorkflow/waitForWorkflowSelector-error.png');
+            this.test.assert(false, 'Workflow selector not found');
         });
     });
 
