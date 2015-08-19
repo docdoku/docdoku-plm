@@ -44,6 +44,7 @@ import java.util.List;
  */
 @Table(name="CONFIGURATIONITEM")
 @NamedQueries({
+        @NamedQuery(name="ConfigurationItem.getConfigurationItemsInWorkspace",query="SELECT DISTINCT ci FROM ConfigurationItem ci WHERE ci.workspace.id = :workspaceId"),
         @NamedQuery(name="ConfigurationItem.getEffectivities",query="SELECT e FROM Effectivity e WHERE e.configurationItem = :configurationItem"),
         @NamedQuery(name="ConfigurationItem.findByDesignItem",query="SELECT c FROM ConfigurationItem c WHERE c.designItem = :designItem"),
         @NamedQuery(name="ConfigurationItem.findByPathToPathLink",query="SELECT c FROM ConfigurationItem c WHERE :pathToPathLink member of c.pathToPathLinks")

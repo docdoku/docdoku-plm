@@ -29,6 +29,7 @@ import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.dao.ConfigurationItemDAO;
 import com.docdoku.server.dao.PartUsageLinkDAO;
 import com.docdoku.server.dao.PathToPathLinkDAO;
 import com.docdoku.server.esindexer.ESIndexer;
@@ -68,8 +69,12 @@ public class ProductManagerBeanTest {
     ProductBaselineManagerBean productBaselineManager;
     @Rule
     public CyclicAssemblyRule cyclicAssemblyRule;
+
     @Mock
     private TypedQuery<PartUsageLink> partUsageLinkTypedQuery;
+
+    @Mock
+    private TypedQuery<ConfigurationItem> configurationItemTypedQuery;
 
     @Spy
     private PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(Locale.getDefault(),em);
@@ -127,6 +132,7 @@ public class ProductManagerBeanTest {
         Mockito.when(em.find(PartRevision.class, null)).thenReturn(partRevision);
         Mockito.when(em.find(PartRevision.class, partRevisionKey)).thenReturn(partRevision);
         Mockito.when(em.createNamedQuery("PartUsageLink.findOrphans", PartUsageLink.class)).thenReturn(partUsageLinkTypedQuery);
+        Mockito.when(em.createNamedQuery("ConfigurationItem.getConfigurationItemsInWorkspace", ConfigurationItem.class)).thenReturn(configurationItemTypedQuery);
 
         //PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys
         ArrayList<PartUsageLink> partUsageLinks = new ArrayList<>();
@@ -181,6 +187,7 @@ public class ProductManagerBeanTest {
         Mockito.when(em.find(PartRevision.class, null)).thenReturn(partRevision);
         Mockito.when(em.find(PartRevision.class, partRevisionKey)).thenReturn(partRevision);
         Mockito.when(em.createNamedQuery("PartUsageLink.findOrphans", PartUsageLink.class)).thenReturn(partUsageLinkTypedQuery);
+        Mockito.when(em.createNamedQuery("ConfigurationItem.getConfigurationItemsInWorkspace", ConfigurationItem.class)).thenReturn(configurationItemTypedQuery);
 
         //PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys
         ArrayList<PartUsageLink> partUsageLinks = new ArrayList<>();
