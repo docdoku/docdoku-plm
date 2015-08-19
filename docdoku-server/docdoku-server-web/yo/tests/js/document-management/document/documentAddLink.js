@@ -71,8 +71,8 @@ casper.test.begin('Document add link tests suite', 3, function documentAddLinkTe
     casper.then(function waitForDocumentsSelectList() {
         this.sendKeys('.document-modal .linked-items-reference-typehead', documents.document1.documentLink, {reset: true});
 
-        this.waitForSelector('#iteration-links > .linked-items-view > ul.dropdown-menu > li:first-child', function documentsSelectListDisplayed() {
-            this.click('#iteration-links > .linked-items-view > ul.dropdown-menu > li:first-child');
+        this.waitForSelector('#iteration-links > div > ul.typeahead.dropdown-menu > li:first-child > a', function documentsSelectListDisplayed() {
+            this.click('#iteration-links > div > ul.typeahead.dropdown-menu > li:first-child > a');
         }, function fail() {
             this.capture('screenshot/documentAddLink/waitForDocumentsSelectList-error.png');
             this.test.assert(false, 'Documents select list can not be found');
@@ -83,19 +83,37 @@ casper.test.begin('Document add link tests suite', 3, function documentAddLinkTe
      * Wait for linked document display
      */
     casper.then(function waitForLinkedDocumentDisplay() {
-        this.waitForSelector('#iteration-links > .linked-items-view > ul.linked-items > li:first-child', function linkDocumentDisplayed() {
+        this.waitForSelector('.document-modal .linked-items-view > ul.linked-items > li:first-child > a.reference', function linkDocumentDisplayed() {
             this.test.assert(true, 'Link added');
-            this.click('.modal.document-modal .btn.btn-primary');
         }, function fail() {
             this.capture('screenshot/documentAddLink/waitForLinkedDocumentDisplay-error.png');
             this.test.assert(false, 'Linked document can not be found and saved');
         });
     });
 
-     /**
-     * Wait for the modal to be closed
+    /**
+     * Set a comment
      */
-    casper.then(function waitForModalToBeClosed() {
+
+    casper.then(function openLinkComment(){
+        var descriptionButton = '.document-modal .linked-items-view > ul.linked-items > li:first-child > a.edit-linked-item-comment';
+        var descriptionInput = '.document-modal .linked-items-view > ul.linked-items > li:first-child .commentInput';
+        this.click(descriptionButton);
+        this.waitForSelector(descriptionInput,function openDescription(){
+            this.sendKeys(descriptionInput,documents.document1.documentLinkComment,{reset:true});
+            this.click('.document-modal .linked-items-view > ul.linked-items > li:first-child .validate-comment');
+        },function fail(){
+            this.capture('screenshot/documentAddLink/addLinkComment-error.png');
+            this.test.assert(false, 'Cannot edit document link comment');
+        });
+    });
+
+    /**
+     * Save and wait for the modal to be closed
+     */
+
+    casper.then(function savePartIteration(){
+        this.click('#save-iteration');
         this.waitWhileSelector('.document-modal', function modalClosed() {
            this.test.assert(true, 'Document modal has been closed');
         }, function fail() {

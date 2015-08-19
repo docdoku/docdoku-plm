@@ -15,6 +15,8 @@ module.exports = {
     pass: 'testpassword',
     contextPath: '/',
     waitOnRequest: true,
+    debugResponses:false,
+    debugRequests:false,
     requestTimeOut: 1000,
     globalTimeout: 20,
     soundOnTestsEnd:false,

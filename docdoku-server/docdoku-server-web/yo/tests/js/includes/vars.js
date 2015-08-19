@@ -37,7 +37,8 @@ var documents = {
         sharedPassword: 'azertyuiop',
         expireDate: tomorrowValue,
         expireDate2: yesterdayValue,
-        documentLink: '100-AAA-CasperJsTestDocument'
+        documentLink: '100-AAA-CasperJsTestDocument',
+        documentLinkComment: 'Some dummy comment'
     },
     document2: {
         number: '100-AAA-CasperJsTestDocument',

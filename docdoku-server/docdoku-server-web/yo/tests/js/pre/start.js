@@ -26,9 +26,16 @@ casper.options.viewportSize = {
 };
 
 // add AJAX waiting logic to onResourceRequested
-if (conf.waitOnRequest) {
-    casper.options.onResourceRequested = function (casper, requestData) {
 
+casper.options.onResourceRequested = function (casper, requestData) {
+    if (conf.debugRequests) {
+        if(requestData.url.match('/api/')){
+            console.log(requestData.method + ' ' + requestData.url);
+            console.log(JSON.stringify(requestData.headers));
+        }
+    }
+
+    if (conf.waitOnRequest) {
         // do not wait for fonts
         if(requestData.url.indexOf('fonts') === -1 && requestData.url.indexOf('livereload.js') === -1) {
             this.log('Waiting for AJAX request: ' + requestData.url, 'info');
@@ -38,11 +45,16 @@ if (conf.waitOnRequest) {
                 this.log('AJAX request didn\'t return after wait period: ' + requestData.url, 'warning');
             }, conf.requestTimeOut);
         }
+    }
+};
 
+if (conf.debugResponses) {
+    casper.options.onResourceReceived = function (C, response) {
+        if(response.url.match('/api/')){
+            console.log('#'+response.status + ' ' +response.statusText + ' ' + response.url);
+        }
     };
-
 }
-
 // Wait actions
 casper.options.waitTimeout = 10 * 1000; // 10 sec
 // Global test duration
