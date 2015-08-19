@@ -1,5 +1,5 @@
 {{#editMode}}<a class="remove">×</a>{{/editMode}}
-<input type="text" name="number" value="{{component.number}}" title="{{i18n.PART_NUMBER}}" {{componentDisabled}}/>
+<input type="text" name="number" value="{{component.number}}" placeholder="{{i18n.PART_NUMBER}}" {{componentDisabled}}/>
 <input type="text" name="name" value="{{component.name}}" placeholder="{{i18n.PART_NAME}}" {{componentDisabled}}/>
 {{#handleSubstitutes}}
 <label name="optional"><input type="checkbox" name="optional" placeholder="{{i18n.OPTIONAL}}" {{optionalChecked}}  {{disabled}}/>{{i18n.OPTIONAL}}</label>
@@ -27,4 +27,3 @@
 <div class="part-substitute-links"></div>
 {{/handleSubstitutes}}
 <i class="fa fa-angle-double-down toggle-cad-instances"></i>
-
