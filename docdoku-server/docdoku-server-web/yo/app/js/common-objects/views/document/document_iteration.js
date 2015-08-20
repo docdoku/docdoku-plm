@@ -245,6 +245,7 @@ define([
                     linkedDocuments: this.linkedDocumentsView.collection.toJSON()
                 }, {
                     success: function () {
+                        _this.closeModal();
                         _this.model.fetch();
                     }
                 });
@@ -268,9 +269,6 @@ define([
                  * */
 
                 this.deleteClickedTags();
-
-
-                this.hide();
 
             }
 
