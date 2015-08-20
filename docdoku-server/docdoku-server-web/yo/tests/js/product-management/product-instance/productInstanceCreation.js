@@ -1,6 +1,6 @@
 /*global casper,urls,productInstances*/
 
-casper.test.begin('Product instance creation tests suite', 3, function productInstanceCreationTestsSuite() {
+casper.test.begin('Product instance creation tests suite', 4, function productInstanceCreationTestsSuite() {
     'use strict';
 
     casper.open('');
@@ -74,13 +74,26 @@ casper.test.begin('Product instance creation tests suite', 3, function productIn
      * Wait for the modal to be closed
      */
     casper.then(function waitForProductInstanceModalToBeClosed() {
-        this.waitWhileSelector('#product_instance_creation_modal.ready', function onModalClosed() {
+        this.waitWhileSelector('#product_instance_creation_modal', function onModalClosed() {
             this.test.assert(true, 'Product instance creation modal closed');
         }, function fail() {
             this.capture('screenshot/productInstanceCreation/waitForProductInstanceModalToBeClosed-error.png');
             this.test.assert(false, 'Product instance creation modal not closed');
         });
     });
+
+    /**
+     * Wait for the line in the table
+     */
+    casper.then(function waitForProductInstanceToBeCreated() {
+        this.waitWhileSelector('#product_instances_table > tbody > tr > td.reference', function onProductInstanceCreated() {
+            this.test.assert(true, 'Product instance created');
+        }, function fail() {
+            this.capture('screenshot/productInstanceCreation/waitForProductInstanceToBeCreated-error.png');
+            this.test.assert(false, 'Product instance not in the list');
+        });
+    });
+
 
     casper.run(function allDone() {
         this.test.done();
