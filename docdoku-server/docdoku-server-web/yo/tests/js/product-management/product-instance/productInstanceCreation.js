@@ -1,6 +1,6 @@
 /*global casper,urls,productInstances*/
 
-casper.test.begin('Product instance creation tests suite', 4, function productInstanceCreationTestsSuite() {
+casper.test.begin('Product instance creation tests suite', 5, function productInstanceCreationTestsSuite() {
     'use strict';
 
     casper.open('');
@@ -46,6 +46,18 @@ casper.test.begin('Product instance creation tests suite', 4, function productIn
         }, function fail() {
             this.capture('screenshot/productInstanceCreation/waitForNewProductInstanceModal-error.png');
             this.test.assert(false, 'Product instance creation modal can not be found');
+        });
+    });
+
+     /**
+     * Wait for the selects to be loaded
+     */
+    casper.then(function waitForData() {
+        this.waitForSelector('#product_instance_creation_modal #inputBaseline > option', function dataReady() {
+            this.test.assert(true, 'Product instance ready to create');
+        }, function fail() {
+            this.capture('screenshot/productInstanceCreation/waitForData-error.png');
+            this.test.assert(false, 'No data available to create the product instance');
         });
     });
 
