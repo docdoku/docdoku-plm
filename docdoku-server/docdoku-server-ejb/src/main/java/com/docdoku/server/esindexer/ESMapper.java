@@ -369,7 +369,7 @@ public class ESMapper {
         setField(object,ATTRIBUTE_NAME,attr.getNameWithoutWhiteSpace(),coef);
         if(attr instanceof InstanceListOfValuesAttribute) {
             InstanceListOfValuesAttribute lov = (InstanceListOfValuesAttribute) attr;
-            String lovItemName = lov.getItems().get(lov.getIndexValue()).getName();
+            String lovItemName = lov.getItems().size() != 0 ? lov.getItems().get(lov.getIndexValue()).getName() : "";
             setField(object,ATTRIBUTE_VALUE,lovItemName,coef);
         } else {
             setField(object,ATTRIBUTE_VALUE,""+attr.getValue(),coef);
@@ -381,7 +381,7 @@ public class ESMapper {
         setParam(params, ATTRIBUTE_NAME, attr.getNameWithoutWhiteSpace(), coef);
         if(attr instanceof InstanceListOfValuesAttribute) {
             InstanceListOfValuesAttribute lov = (InstanceListOfValuesAttribute) attr;
-            String lovItemName = lov.getItems().get(lov.getIndexValue()).getName();
+            String lovItemName = lov.getItems().size() != 0 ? lov.getItems().get(lov.getIndexValue()).getName() : "";
             setParam(params, ATTRIBUTE_VALUE, lovItemName, coef);
         } else {
             setParam(params,ATTRIBUTE_VALUE,""+attr.getValue(),coef);
