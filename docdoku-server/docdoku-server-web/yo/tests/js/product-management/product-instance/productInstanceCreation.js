@@ -98,7 +98,7 @@ casper.test.begin('Product instance creation tests suite', 5, function productIn
      * Wait for the line in the table
      */
     casper.then(function waitForProductInstanceToBeCreated() {
-        this.waitWhileSelector('#product_instances_table > tbody > tr > td.reference', function onProductInstanceCreated() {
+        this.waitForSelector('#product_instances_table > tbody > tr > td.reference', function onProductInstanceCreated() {
             this.test.assert(true, 'Product instance created');
         }, function fail() {
             this.capture('screenshot/productInstanceCreation/waitForProductInstanceToBeCreated-error.png');
