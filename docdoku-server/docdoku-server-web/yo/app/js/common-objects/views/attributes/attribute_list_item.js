@@ -38,7 +38,7 @@ define([
         },
 
         rendered: function () {
-            var type = this.model.get('type');
+            var type = this.model.get('type') || this.model.get('attributeType');
             if (this.editMode && !this.attributesLocked) {
                 this.$el.find('select.type').val(type);
             }

@@ -22,13 +22,13 @@ define([
 
             this.modelChange = function(){};
 
-            var type = this.model.get('type');
+            var type = this.model.get('type') || this.model.get('attributeType');
             var items = this.model.get('items');
             var typeCopy = type;
             if (type === 'LOV') {
                 type = this.model.get('lovName');
             }
-            if (this.editMode && !this.attributesLocked && !this.model.get('locked') && !this.model.get('mandatory')) {
+            if ((this.editMode && !this.attributesLocked && !this.model.get('locked') && !this.model.get('mandatory')) || this.displayOnly) {
                 this.$el.find('select.type').val(type);
             } else {
                 this.$('div.type').html(type);
