@@ -53,7 +53,7 @@ casper.test.begin('Product instance data path tests suite', 19, function product
      * Count the part attributes present in the modal
      */
     casper.then(function countPartAttribute() {
-        this.waitForSelector('#partAttributes', function countAttributes() {
+        this.waitForSelector('#partAttributes .list-item', function countAttributes() {
             this.test.assertElementCount('#partAttributes .list-item', 2, '2 parts attributes present');
         }, function fail() {
             this.capture('screenshot/product-instance/CouldNotLoadPartAttributes.png');

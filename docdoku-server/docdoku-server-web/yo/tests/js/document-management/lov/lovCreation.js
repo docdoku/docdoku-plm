@@ -68,7 +68,7 @@ casper.test.begin('LOV creation tests suite', 5, function documentLOVCreationTes
 
     casper.then(function tryCreateLOVWithEmptyPossibleValue() {
         this.click('.btn-saveLovs');
-        this.test.assertExists('input.lovItemNameValueNameInput:invalid', 'Should not create lov without a name');
+        this.test.assertExists('input.lovItemNameValueNameInput:invalid', 'Should not create lov entry without a name');
     });
 
     /**
@@ -109,6 +109,7 @@ casper.test.begin('LOV creation tests suite', 5, function documentLOVCreationTes
             this.test.assertElementCount('.list_of_lov .lovItem', 1, 'One element should be in the list of LOV');
         }, function(){
             this.capture('screenshot/lovCreation/waitForLOVCreationModal-error.png');
+            this.test.assert(false,'One element should be in the list of LOV');
         });
     });
 
