@@ -60,7 +60,7 @@ casper.test.begin('Document upload  file tests suite', 2, function documentUploa
             this.test.assert(true, 'File upload tab opened');
         }, function fail() {
             this.capture('screenshot/documentUpload/waitForDocumentModalTab-error.png');
-            this.test.assert(false, 'Document modal tab can not be found');
+            this.test.assert(false, 'Upload button can not be found');
         });
     });
     /**
