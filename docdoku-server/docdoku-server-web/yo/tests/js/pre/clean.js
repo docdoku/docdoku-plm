@@ -89,37 +89,6 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
         });
     });
 
-    // Documents
-    casper.then(function cleanupDocuments() {
-        var that = this;
-        that.log('Deleting documents', 'info');
-        this.open(apiUrls.getDocuments, {method: 'GET'}).then(function (response) {
-            that.log(response);
-            if (response.status === 200) {
-                var documents = JSON.parse(this.getPageContent());
-                documents.forEach(function (document) {
-                    that.log('Deleting document' + document.id, 'info');
-                    that.open(apiUrls.getDocuments + '/' + document.id, {method: 'DELETE'}).then(function () {
-                        that.log('Document ' + document.id + ' deleted', 'warning');
-                    });
-                });
-            } else {
-                this.log('Cannot delete test documents, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
-            }
-        });
-    });
-
-    // Folders
-    casper.then(function cleanupFolders() {
-        this.open(apiUrls.deleteFolder, {method: 'DELETE'}).then(function (response) {
-            if (response.status === 200) {
-                this.log('Test folders has been deleted', 'info');
-            } else {
-                this.log('Cannot delete test folders, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
-            }
-        });
-    });
-
     // Products
     casper.then(function cleanupProducts() {
         this.open(apiUrls.deleteProduct, {method: 'DELETE'}).then(function (response) {
@@ -182,6 +151,37 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
                 this.log('Test document template has been deleted', 'info');
             } else {
                 this.log('Cannot delete test document template, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+            }
+        });
+    });
+
+    // Documents
+    casper.then(function cleanupDocuments() {
+        var that = this;
+        that.log('Deleting documents', 'info');
+        this.open(apiUrls.getDocuments, {method: 'GET'}).then(function (response) {
+            that.log(response);
+            if (response.status === 200) {
+                var documents = JSON.parse(this.getPageContent());
+                documents.forEach(function (document) {
+                    that.log('Deleting document' + document.id, 'info');
+                    that.open(apiUrls.getDocuments + '/' + document.id, {method: 'DELETE'}).then(function () {
+                        that.log('Document ' + document.id + ' deleted', 'warning');
+                    });
+                });
+            } else {
+                this.log('Cannot delete test documents, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+            }
+        });
+    });
+
+    // Folders
+    casper.then(function cleanupFolders() {
+        this.open(apiUrls.deleteFolder, {method: 'DELETE'}).then(function (response) {
+            if (response.status === 200) {
+                this.log('Test folders has been deleted', 'info');
+            } else {
+                this.log('Cannot delete test folders, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
             }
         });
     });
