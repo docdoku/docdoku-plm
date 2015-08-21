@@ -56,13 +56,30 @@ casper.test.begin('Part checkout tests suite', 3, function partCheckoutTestsSuit
     casper.then(function waitForCheckoutButtonDisabled() {
         this.waitForSelector('.actions .checkout:disabled', function partIsCheckout() {
             this.test.assert(true, 'Part has been checkout');
-            this.test.assertSelectorHasText('.nav-checkedOut-number-item', 1, 'checkout number updated');
         }, function fail() {
-            this.capture('screenshot/baselineCreation/waitForCheckoutButtonDisabled-error.png');
+            this.capture('screenshot/partCheckout/waitForCheckoutButtonDisabled-error.png');
             this.test.assert(false, 'Part has not been checkout');
         });
     });
 
+    /**
+     * Wait for the checked out number to be updated
+     */
+    casper.then(function waitForCheckedOutNumberUpdated() {
+        this.waitFor(function check() {
+            return this.evaluate(function () {
+                return $('.nav-checkedOut-number-item').text() === '0';
+            });
+        }, function then() {
+            this.test.assert(true, 'Checkout nav number updated');
+        }, function fail() {
+            var value = this.evaluate(function () {
+                $('.nav-checkedOut-number-item').text();
+            });
+            this.capture('screenshot/partCheckout/waitForNavUpdateCount.png');
+            this.test.assert(false, 'Checkout nav number not updated');
+        });
+    });
 
     casper.run(function allDone() {
         this.test.done();
