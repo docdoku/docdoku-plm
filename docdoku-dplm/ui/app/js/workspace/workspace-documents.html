@@ -57,6 +57,10 @@
                                 <small class="subtitle">
                                     {{ document.files.length ? document.files.length + ' ' + ('FILES' | translate) : ( 'NO_ATTACHED_FILES' | translate ) }}
                                 </small>
+                                <br />
+                                <small>
+                                    {{ document.files | join:', ' }}
+                                </small>
                             </h3>
 
                             <h4 ng-show="document.checkoutUser">

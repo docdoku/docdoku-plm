@@ -43,6 +43,7 @@
         'dplm.filters.fileshortname',
         'dplm.filters.timeago',
         'dplm.filters.last',
+        'dplm.filters.join',
 
         'dplm.contextmenu',
         'dplm.menu'

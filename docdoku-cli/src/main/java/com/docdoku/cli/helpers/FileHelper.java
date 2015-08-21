@@ -210,7 +210,7 @@ public class FileHelper {
                 + URLEncoder.encode(pPartIPK.getPartMasterNumber(), "UTF-8") + "/"
                 + pPartIPK.getPartRevision().getVersion() + "/"
                 + pPartIPK.getIteration() + "/nativecad/"
-                + URLEncoder.encode(pRemoteFileName, "UTF-8");
+                + pRemoteFileName;
     }
 
     private static String getDocumentURL(URL serverURL, DocumentIterationKey pDocIPK, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
@@ -221,7 +221,7 @@ public class FileHelper {
                 + URLEncoder.encode(pDocIPK.getDocumentMasterId(), "UTF-8") + "/"
                 + pDocIPK.getDocumentRevision().getVersion() + "/"
                 + pDocIPK.getIteration() + "/"
-                + URLEncoder.encode(pRemoteFileName, "UTF-8");
+                + pRemoteFileName;
     }
 
     public static String getPartURLUpload(URL serverURL, PartIterationKey pPart) throws UnsupportedEncodingException, MalformedURLException {

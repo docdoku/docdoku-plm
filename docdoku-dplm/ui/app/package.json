@@ -7,7 +7,7 @@
     "recursive-readdir": "^1.2.0"
   },
   "window": {
-    "toolbar": false,
+    "toolbar": true,
     "position": "center",
     "width": 960,
     "height": 500,
