@@ -23,6 +23,7 @@ package com.docdoku.server.dao;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.EntityConstraintException;
 import com.docdoku.core.exceptions.FolderAlreadyExistsException;
 import com.docdoku.core.exceptions.FolderNotFoundException;
 
@@ -95,36 +96,25 @@ public class FolderDAO {
         return getSubFolders(pFolder.getCompletePath());
     }
 
-    public List<DocumentRevision> removeFolder(String pCompletePath) throws FolderNotFoundException{
+    public void removeFolder(String pCompletePath) throws FolderNotFoundException, EntityConstraintException {
         Folder folder = em.find(Folder.class,pCompletePath);
         if(folder==null) {
             throw new FolderNotFoundException(mLocale, pCompletePath);
         }
         
-        return removeFolder(folder);
+        removeFolder(folder);
     }
     
-    public List<DocumentRevision> removeFolder(Folder pFolder){
-        DocumentRevisionDAO docRDAO=new DocumentRevisionDAO(mLocale,em);
-        List<DocumentRevision> allDocR = new LinkedList<>();
-        List<DocumentRevision> docRs = docRDAO.findDocRsByFolder(pFolder.getCompletePath());
-        allDocR.addAll(docRs);
-        
-        for(DocumentRevision docR:allDocR) {
-            docRDAO.removeRevision(docR);
-        }
-        
+    public void removeFolder(Folder pFolder) throws EntityConstraintException {
         Folder[] subFolders = getSubFolders(pFolder);
         for(Folder subFolder:subFolders) {
-            allDocR.addAll(removeFolder(subFolder));
+            removeFolder(subFolder);
         }
         
         em.remove(pFolder);
         //flush to insure the right delete order to avoid integrity constraint
         //violation on folder.
         em.flush();
-        
-        return allDocR;
     }
 
     public List<DocumentRevision> moveFolder(Folder pFolder, Folder pNewFolder) throws FolderAlreadyExistsException, CreationException{
@@ -141,7 +131,7 @@ public class FolderDAO {
         for(Folder subFolder:subFolders){
             Folder newSubFolder = new Folder(pNewFolder.getCompletePath(),subFolder.getShortName());
             createFolder(newSubFolder);
-            allDocRs.addAll(moveFolder(subFolder,newSubFolder));
+            allDocRs.addAll(moveFolder(subFolder, newSubFolder));
         }
         em.remove(pFolder);
         //flush to insure the right delete order to avoid integrity constraint
@@ -150,4 +140,19 @@ public class FolderDAO {
 
         return allDocRs;
     }
+
+    public List<DocumentRevision> findDocumentRevisionsInFolder(Folder pFolder) {
+        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(mLocale, em);
+        List<DocumentRevision> allDocRs = new LinkedList<>();
+        List<DocumentRevision> docRs = docRDAO.findDocRsByFolder(pFolder.getCompletePath());
+        allDocRs.addAll(docRs);
+
+        Folder[] subFolders = getSubFolders(pFolder);
+        for (Folder subFolder : subFolders) {
+            allDocRs.addAll(findDocumentRevisionsInFolder(subFolder));
+        }
+
+        return allDocRs;
+    }
+
 }

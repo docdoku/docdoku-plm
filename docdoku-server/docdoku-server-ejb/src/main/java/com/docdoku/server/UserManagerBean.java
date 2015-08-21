@@ -20,12 +20,13 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.*;
-import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IUserManagerWS;
 import com.docdoku.core.util.NamingConvention;
@@ -51,7 +52,6 @@ import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @DeclareRoles({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
@@ -68,6 +68,8 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     private ESIndexer esIndexer;
     @EJB
     private IDataManagerLocal dataManager;
+    @EJB
+    private IDocumentManagerLocal documentService;
 
     @Inject
     private Event<WorkspaceAccessEvent> workspaceAccessEvent;
@@ -447,24 +449,24 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public void removeUsers(String pWorkspaceId, String[] pLogins) throws UserNotFoundException, NotAllowedException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, ESServerException {
+    public void removeUsers(String pWorkspaceId, String[] pLogins) throws UserNotFoundException, NotAllowedException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException {
         Account account = checkAdmin(pWorkspaceId);
-        UserDAO userDAO = new UserDAO(new Locale(account.getLanguage()), em);
-        for (String login : pLogins) {
-            DocumentRevision[] docRs = userDAO.removeUser(new UserKey(pWorkspaceId, login));
-            for (DocumentRevision docR : docRs) {
-                for (DocumentIteration doc : docR.getDocumentIterations()) {
-                    for (BinaryResource file : doc.getAttachedFiles()) {
-                        try {
-                            dataManager.deleteData(file);
-                        } catch (StorageException e) {
-                            LOGGER.log(Level.INFO, null, e);
-                        }
-                    }
+        Locale locale = new Locale(account.getLanguage());
+        UserDAO userDAO = new UserDAO(locale, em);
 
-                    esIndexer.delete(doc);
-                }
+        for (String login : pLogins) {
+            FolderDAO folderDAO = new FolderDAO(locale, em);
+            User user = userDAO.loadUser(new UserKey(pWorkspaceId, login));
+            String folderCompletePath = user.getWorkspaceId() + "/~" + user.getLogin();
+            Folder folder = folderDAO.loadFolder(folderCompletePath);
+
+            List<DocumentRevision> allDocRevision = folderDAO.findDocumentRevisionsInFolder(folder);
+            for (DocumentRevision documentRevision : allDocRevision) {
+                documentService.deleteDocumentRevision(documentRevision.getKey());
             }
+
+            folderDAO.removeFolder(folderCompletePath);
+            userDAO.removeUser(user);
         }
     }
 

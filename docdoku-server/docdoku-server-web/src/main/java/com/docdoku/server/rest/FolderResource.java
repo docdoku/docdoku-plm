@@ -210,7 +210,7 @@ public class FolderResource {
     }
     
     private DocumentRevisionKey[] deleteFolder(String pCompletePath)
-            throws EntityNotFoundException, ESServerException, AccessRightException, NotAllowedException, EntityConstraintException {
+            throws EntityNotFoundException, ESServerException, AccessRightException, NotAllowedException, EntityConstraintException, UserNotActiveException {
 
         String decodedCompletePath = FolderDTO.replaceColonWithSlash(pCompletePath);
         String completePath = Tools.stripTrailingSlash(decodedCompletePath);

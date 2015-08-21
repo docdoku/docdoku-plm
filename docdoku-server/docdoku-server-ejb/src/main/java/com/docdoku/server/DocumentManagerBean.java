@@ -1033,50 +1033,30 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevisionKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException {
+    public DocumentRevisionKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(Folder.parseWorkspaceId(pCompletePath));
         Locale userLocale = new Locale(user.getLanguage());
 
         FolderDAO folderDAO = new FolderDAO(userLocale, em);
         Folder folder = folderDAO.loadFolder(pCompletePath);
         checkFoldersStructureChangeRight(user);
+
         if (isAnotherUserHomeFolder(user, folder) || folder.isRoot() || folder.isHome()) {
             throw new NotAllowedException(userLocale, "NotAllowedException21");
+
         } else {
+            List<DocumentRevision> allDocRevision = folderDAO.findDocumentRevisionsInFolder(folder);
+            List<DocumentRevisionKey> allDocRevisionKey = new ArrayList<>();
 
-            ChangeItemDAO changeItemDAO = new ChangeItemDAO(userLocale, em);
-
-            if (changeItemDAO.hasConstraintsInFolderHierarchy(folder)) {
-                throw new EntityConstraintException(userLocale, "EntityConstraintException7");
+            for (DocumentRevision documentRevision : allDocRevision) {
+                DocumentRevisionKey documentRevisionKey = documentRevision.getKey();
+                deleteDocumentRevision(documentRevisionKey);
+                allDocRevisionKey.add(documentRevisionKey);
             }
 
-            List<DocumentRevision> docRs = folderDAO.removeFolder(folder);
-            DocumentRevisionKey[] pks = new DocumentRevisionKey[docRs.size()];
+            folderDAO.removeFolder(folder);
 
-            DocumentMasterDAO mdocDAO = new DocumentMasterDAO(userLocale, em);
-            int i = 0;
-            for (DocumentRevision docR : docRs) {
-                pks[i++] = docR.getKey();
-                for (DocumentIteration doc : docR.getDocumentIterations()) {
-                    for (BinaryResource file : doc.getAttachedFiles()) {
-                        //indexer.removeFromIndex(file.getFullName());
-                        try {
-                            dataManager.deleteData(file);
-                        } catch (StorageException e) {
-                            LOGGER.log(Level.INFO, null, e);
-                        }
-                    }
-                    esIndexer.delete(doc);
-                    // Remove ElasticSearch Index for this DocumentIteration
-                }
-                DocumentMaster docM = docR.getDocumentMaster();
-                boolean noRevision = docM.getDocumentRevisions().isEmpty();
-
-                if (noRevision) {
-                    mdocDAO.removeDocM(docM);
-                }
-            }
-            return pks;
+            return (DocumentRevisionKey[]) allDocRevisionKey.toArray();
         }
     }
 

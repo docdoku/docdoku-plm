@@ -22,7 +22,6 @@ package com.docdoku.server.dao;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserKey;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.WorkspaceUserMembership;
@@ -107,21 +106,20 @@ public class UserDAO {
         return memberships;
     }
 
-    public DocumentRevision[] removeUser(UserKey pKey) throws UserNotFoundException, NotAllowedException, FolderNotFoundException {
-        User user = loadUser(pKey);
-        removeUserMembership(new WorkspaceUserMembershipKey(pKey.getWorkspaceId(), pKey.getWorkspaceId(), pKey.getLogin()));
-        new SubscriptionDAO(em).removeAllSubscriptions(user);
-        new UserGroupDAO(mLocale, em).removeUserFromAllGroups(user);
-        new RoleDAO(mLocale,em).removeUserFromRoles(user);
-        new ACLDAO(em).removeAclUserEntries(user);
-        List<DocumentRevision> docRs = new FolderDAO(mLocale, em).removeFolder(user.getWorkspaceId() + "/~" + user.getLogin());
-        boolean author = isDocMAuthor(user) || isDocAuthor(user) || isDocMTemplateAuthor(user) || isWorkflowModelAuthor(user);
-        boolean involved = isInvolvedInWF(user);
+    public void removeUser(User pUser) throws UserNotFoundException, NotAllowedException, FolderNotFoundException, EntityConstraintException {
+        removeUserMembership(new WorkspaceUserMembershipKey(pUser.getWorkspaceId(), pUser.getWorkspaceId(), pUser.getLogin()));
+        new SubscriptionDAO(em).removeAllSubscriptions(pUser);
+        new UserGroupDAO(mLocale, em).removeUserFromAllGroups(pUser);
+        new RoleDAO(mLocale,em).removeUserFromRoles(pUser);
+        new ACLDAO(em).removeAclUserEntries(pUser);
+
+        boolean author = isDocMAuthor(pUser) || isDocAuthor(pUser) || isDocMTemplateAuthor(pUser) || isWorkflowModelAuthor(pUser);
+        boolean involved = isInvolvedInWF(pUser);
+
         if (author || involved) {
             throw new NotAllowedException(mLocale, "NotAllowedException8");
         } else {
-            em.remove(user);
-            return docRs.toArray(new DocumentRevision[docRs.size()]);
+            em.remove(pUser);
         }
     }
 
