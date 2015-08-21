@@ -1055,8 +1055,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
 
             folderDAO.removeFolder(folder);
+            return allDocRevisionKey.toArray(new DocumentRevisionKey[allDocRevisionKey.size()]);
 
-            return (DocumentRevisionKey[]) allDocRevisionKey.toArray();
         }
     }
 

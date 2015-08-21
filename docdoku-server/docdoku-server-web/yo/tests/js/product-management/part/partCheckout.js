@@ -68,7 +68,7 @@ casper.test.begin('Part checkout tests suite', 3, function partCheckoutTestsSuit
     casper.then(function waitForCheckedOutNumberUpdated() {
         this.waitFor(function check() {
             return this.evaluate(function () {
-                return $('.nav-checkedOut-number-item').text() === '0';
+                return $('.nav-checkedOut-number-item').text() === '1';
             });
         }, function then() {
             this.test.assert(true, 'Checkout nav number updated');

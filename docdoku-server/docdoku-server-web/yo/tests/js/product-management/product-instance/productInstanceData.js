@@ -31,13 +31,19 @@ casper.test.begin('Product instance data path tests suite', 19, function product
      * Wait for the Deliverable Data button
      */
     casper.then(function openDataModal() {
-        this.waitForSelector('#path_data_btn', function openModal() {
-            this.click('#path_data_btn');
+
+        this.waitFor(function checkVisible() {
+            return this.evaluate(function() {
+                return $('#path_data_btn').is(':visible');
+            });
+        }, function success() {
             this.test.assert(true, 'deliverable data button present');
+            this.click('#path_data_btn');
         }, function fail() {
             this.capture('screenshot/product-instance/NoDeliverableButton.png');
             this.test.assert(false, 'deliverable data button not present');
         });
+
     });
 
     casper.then(function openDataModal() {
