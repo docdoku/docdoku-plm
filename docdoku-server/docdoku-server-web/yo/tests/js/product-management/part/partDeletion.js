@@ -81,7 +81,6 @@ casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuit
             var value = this.evaluate(function () {
                 $('.nav-checkedOut-number-item').text();
             });
-            this.log('value: ' + value, 'warning');
             this.capture('screenshot/partDeletion/waitForNavUpdateCount.png');
             this.test.assert(false, 'Checkout nav number not updated');
         });
