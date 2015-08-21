@@ -60,6 +60,9 @@ public class PartCheckInCommand extends BaseCommandLine {
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
+    @Option(metaVar = "<message>", name = "-m", aliases = "--message", usage = "a message specifying the iteration modifications")
+    private String message;
+
     public void execImpl() throws Exception {
 
         if(partNumber==null || revision==null){
@@ -68,17 +71,17 @@ public class PartCheckInCommand extends BaseCommandLine {
 
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
         PartRevisionKey partRPK = new PartRevisionKey(workspace,partNumber,revision.toString());
+        PartRevision pr = productS.getPartRevision(partRPK);
+        PartIteration pi = pr.getLastIteration();
+        PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
 
         if(!noUpload){
-            PartRevision pr = productS.getPartRevision(partRPK);
-            PartIteration pi = pr.getLastIteration();
-
             BinaryResource bin = pi.getNativeCADFile();
             if(bin!=null){
                 String fileName =  bin.getName();
                 File localFile = new File(path,fileName);
                 if(localFile.exists()){
-                    PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
+
                     FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
                     fh.uploadNativeCADFile(getServerURL(), localFile, partIPK);
                     localFile.setWritable(false);
@@ -86,8 +89,13 @@ public class PartCheckInCommand extends BaseCommandLine {
             }
         }
 
-        PartRevision pr = productS.checkInPart(partRPK);
-        PartIteration pi = pr.getLastIteration();
+        if(message != null && !message.isEmpty()){
+            productS.updatePartIteration(partIPK,message,null,null,null,null, null,null,null);
+        }
+
+        pr = productS.checkInPart(partRPK);
+        pi = pr.getLastIteration();
+
         output.printInfo(LangHelper.getLocalizedMessage("CheckingInPart",user)  + " : " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
     }
 

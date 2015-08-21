@@ -191,7 +191,7 @@
 
                 templateUrl: 'js/folder/file-part-actions.html',
                 scope:false,
-                controller: function ($scope, $element, $attrs, $transclude, $timeout, $filter, CliService, WorkspaceService, NotificationService) {
+                controller: function ($scope, $element, $attrs, $transclude, $timeout, $filter, CliService, WorkspaceService, NotificationService, PromptService) {
 
                     $scope.options = {force: true,recursive:true};
                     $scope.workspaces = WorkspaceService.workspaces;
@@ -204,11 +204,13 @@
                         }, null, $scope.onProgress).then($scope.onFinish);
                     };
 
-                    $scope.checkin = function () {
-                        $scope.file.busy = true;
-                        CliService.checkinPart($scope.file.part,$scope.folder.path).then(function () {
-                            return $scope.fetchStatus();
-                        }, null, $scope.onProgress).then($scope.onFinish);
+                    $scope.checkin = function (e) {
+                        PromptService.prompt(e, {title:$filter('translate')('CHECKIN_MESSAGE')}).then(function(message){
+                            $scope.file.busy = true;
+                            CliService.checkinPart($scope.file.part,$scope.folder.path, message).then(function () {
+                                return $scope.fetchStatus();
+                            }, null, $scope.onProgress).then($scope.onFinish);
+                        });
                     };                    
 
                     $scope.undoCheckout = function () {
@@ -247,7 +249,7 @@
 
                 templateUrl: 'js/folder/file-document-actions.html',
                 scope:false,
-                controller: function ($scope, $element, $attrs, $transclude, $timeout, $filter, CliService, WorkspaceService, NotificationService) {
+                controller: function ($scope, $element, $attrs, $transclude, $timeout, $filter, CliService, WorkspaceService, PromptService) {
 
                     $scope.options = {force: true,recursive:true};
                     $scope.workspaces = WorkspaceService.workspaces;                  
@@ -259,11 +261,14 @@
                         }, null, $scope.onProgress).then($scope.onFinish);
                     };
 
-                    $scope.checkin = function () {
-                        $scope.file.busy = true;
-                        CliService.checkinDocument($scope.file.document,$scope.folder.path).then(function () {
-                            return $scope.fetchStatus();
-                        }, null, $scope.onProgress).then($scope.onFinish);
+                    $scope.checkin = function (e) {
+                        PromptService.prompt(e, {title:$filter('translate')('CHECKIN_MESSAGE')}).then(function(message){
+                            $scope.file.busy = true;
+                            CliService.checkinDocument($scope.file.document,$scope.folder.path,message).then(function () {
+                                return $scope.fetchStatus();
+                            }, null, $scope.onProgress).then($scope.onFinish);
+                        });
+
                     };
 
 

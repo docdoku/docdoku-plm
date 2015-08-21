@@ -60,6 +60,9 @@ public class DocumentCheckInCommand extends BaseCommandLine {
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
+    @Option(metaVar = "<message>", name = "-m", aliases = "--message", usage = "a message specifying the iteration modifications")
+    private String message;
+
     public void execImpl() throws Exception {
 
         if(id ==null || revision==null){
@@ -69,27 +72,30 @@ public class DocumentCheckInCommand extends BaseCommandLine {
         IDocumentManagerWS documentS = ScriptingTools.createDocumentService(getServerURL(),user,password);
         DocumentRevisionKey docRPK = new DocumentRevisionKey(workspace,id,revision.toString());
 
-        if(!noUpload){
+        DocumentRevision dr = documentS.getDocumentRevision(docRPK);
+        DocumentIteration di = dr.getLastIteration();
+        DocumentIterationKey docIPK = new DocumentIterationKey(docRPK,di.getIteration());
 
-            DocumentRevision dr = documentS.getDocumentRevision(docRPK);
-            DocumentIteration di = dr.getLastIteration();
+        if(!noUpload && !di.getAttachedFiles().isEmpty()){
 
-            if(!di.getAttachedFiles().isEmpty()){
-                for(BinaryResource bin:di.getAttachedFiles()){
-                    String fileName =  bin.getName();
-                    File localFile = new File(path,fileName);
-                    if(localFile.exists()){
-                        DocumentIterationKey docIPK = new DocumentIterationKey(docRPK,di.getIteration());
-                        FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
-                        fh.uploadDocumentFile(getServerURL(), localFile, docIPK);
-                        localFile.setWritable(false);
-                    }
+            for(BinaryResource bin:di.getAttachedFiles()){
+                String fileName =  bin.getName();
+                File localFile = new File(path,fileName);
+                if(localFile.exists()){
+                    FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
+                    fh.uploadDocumentFile(getServerURL(), localFile, docIPK);
+                    localFile.setWritable(false);
                 }
             }
+
         }
 
-        DocumentRevision dr = documentS.checkInDocument(docRPK);
-        DocumentIteration di = dr.getLastIteration();
+        if(message != null && !message.isEmpty()){
+            documentS.updateDocument(docIPK, message, null, null, null);
+        }
+
+        dr = documentS.checkInDocument(docRPK);
+
         output.printInfo(LangHelper.getLocalizedMessage("CheckingInDocument",user)  + " : " + id + " " + dr.getVersion() + "." + di.getIteration() + " (" + workspace + ")");
     }
 

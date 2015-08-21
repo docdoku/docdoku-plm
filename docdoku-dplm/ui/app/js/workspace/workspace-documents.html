@@ -7,7 +7,7 @@
     </div>
 </div>
 
-<div class="fullscreen-wrapper offset-toolbar">
+<div class="fullscreen-wrapper offset-2-toolbar">
 
     <md-content class="md-padding">
 
@@ -57,10 +57,12 @@
                                 <small class="subtitle">
                                     {{ document.files.length ? document.files.length + ' ' + ('FILES' | translate) : ( 'NO_ATTACHED_FILES' | translate ) }}
                                 </small>
-                                <br />
-                                <small>
-                                    {{ document.files | join:', ' }}
-                                </small>
+                               <ul ng-if="document === openedDocument" class="file-list">
+                                   <li ng-repeat="f in document.files">
+                                       <i class="fa  fa-file-text-o"></i>
+                                       <span ng-bind="f"></span>
+                                   </li>
+                               </ul>
                             </h3>
 
                             <h4 ng-show="document.checkoutUser">

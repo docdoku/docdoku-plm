@@ -193,7 +193,7 @@
 
             };
 
-            this.checkinPart = function (part,path) {
+            this.checkinPart = function (part,path,message) {
 
                 var args = [
                     'ci', 'part',
@@ -206,6 +206,11 @@
                     '-o', part.partNumber,
                     '-r', part.version
                 ];
+
+                if(message){
+                    args.push('-m');
+                    args.push(message);
+                }
 
                 if(path){
                     args.push(path);
@@ -522,7 +527,7 @@
 
             };
 
-            this.checkinDocument = function (document,path) {
+            this.checkinDocument = function (document,path,message) {
 
                 var args = [
                     'ci', 'document',
@@ -535,6 +540,11 @@
                     '-o', document.id,
                     '-r', document.version
                 ];
+
+                if(message){
+                    args.push('-m');
+                    args.push(message);
+                }
 
                 if(path){
                     args.push(path);

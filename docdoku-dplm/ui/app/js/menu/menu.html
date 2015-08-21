@@ -29,8 +29,8 @@
     <md-item ng-repeat="folder in folders | orderBy:'-favorite'" ng-controller="FolderMenuController">
       <md-item-content>
             <div class="md-tile-content small">
-              <md-button aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">
-                  <i ng-if="isActive('/folder/'+folder.uuid)" class="fa fa-folder-open"></i>
+                <md-button ng-class="{'md-raised':isSameBaseRoute('/folder/'+folder.uuid)}"  aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">
+                  <i ng-if="isSameBaseRoute('/folder/'+folder.uuid)" class="fa fa-folder-open"></i>
                   <i ng-if="folder.newStuff" class="fa fa-download" title="{{'NEW_STUFF'|translate}}"></i>
                   {{folder.path | fileshortname}}
               </md-button>
@@ -54,8 +54,8 @@
         ui-on-drop="onDrop($data,$event)"
         drag-hover-class="dropzone-selected">
             <div class="md-tile-content small">
-              <md-button aria-label="" href="#/workspace/{{workspace}}" class="md-primary">
-                  <i ng-if="isActive('/workspace/'+workspace)" class="fa fa-globe"></i>
+              <md-button ng-class="{'md-raised':isSameBaseRoute('/workspace/'+workspace)}" aria-label="" href="#/workspace/{{workspace}}" class="md-primary">
+                  <i ng-if="isSameBaseRoute('/workspace/'+workspace)" class="fa fa-globe"></i>
                   {{workspace}}
               </md-button>
             </div>         

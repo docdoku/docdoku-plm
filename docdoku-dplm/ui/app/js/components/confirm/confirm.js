@@ -10,20 +10,10 @@
                 var deferred = $q.defer();
                 var confirmed = false;
                 $mdDialog.show({
-                    //targetEvent: $event,
-                    template:
-                    '<md-dialog>' +
-                    '  <md-content>'+confirmOptions.content+'</md-content>' +
-                    '  <div class="md-actions">' +
-                    '    <md-button aria-label="" class="md-default md-raised"  ng-click="cancel()">' +
-                    '      {{\'NO\' | translate }}' +
-                    '    </md-button>' +
-                    '    <md-button aria-label="" class="md-primary md-raised"  ng-click="confirm()">' +
-                    '      {{\'YES\' | translate }}' +
-                    '    </md-button>' +
-                    '  </div>' +
-                    '</md-dialog>',
+                    targetEvent: $event,
+                    templateUrl:'js/components/confirm/confirm.html' ,
                     controller: function($scope){
+                        $scope.title=confirmOptions.content;
                         $scope.cancel = function(){
                             $mdDialog.hide();
                         };

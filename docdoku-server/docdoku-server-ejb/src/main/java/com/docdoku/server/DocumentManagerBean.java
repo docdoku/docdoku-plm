@@ -1302,20 +1302,22 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         if (isCheckoutByUser(user, docR) && docR.getLastIteration().getKey().equals(iKey)) {
             DocumentIteration doc = docR.getLastIteration();
 
-            Set<DocumentLink> currentLinks = new HashSet<>(doc.getLinkedDocuments());
+            if(pLinkKeys != null) {
+                Set<DocumentLink> currentLinks = new HashSet<>(doc.getLinkedDocuments());
 
-            for (DocumentLink link : currentLinks) {
-                doc.getLinkedDocuments().remove(link);
-            }
+                for (DocumentLink link : currentLinks) {
+                    doc.getLinkedDocuments().remove(link);
+                }
 
-            int counter = 0;
-            for (DocumentRevisionKey link : pLinkKeys) {
-                if (!link.equals(iKey)) {
-                    DocumentLink newLink = new DocumentLink(em.getReference(DocumentRevision.class, link));
-                    newLink.setComment(documentLinkComments[counter]);
-                    linkDAO.createLink(newLink);
-                    doc.getLinkedDocuments().add(newLink);
-                    counter++;
+                int counter = 0;
+                for (DocumentRevisionKey link : pLinkKeys) {
+                    if (!link.equals(iKey)) {
+                        DocumentLink newLink = new DocumentLink(em.getReference(DocumentRevision.class, link));
+                        newLink.setComment(documentLinkComments[counter]);
+                        linkDAO.createLink(newLink);
+                        doc.getLinkedDocuments().add(newLink);
+                        counter++;
+                    }
                 }
             }
 

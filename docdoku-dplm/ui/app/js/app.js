@@ -35,6 +35,7 @@
         'dplm.services.folders',
         'dplm.services.workspaces',
         'dplm.services.confirm',
+        'dplm.services.prompt',
 
         'dplm.services.3d',
         'dplm.directives.filechange',
@@ -76,6 +77,9 @@
                 return route === $location.path();
             };
 
+            $scope.isSameBaseRoute = function(route) {
+                return $location.path().indexOf(route)!==-1;
+            };
         })
 
         .controller('MenuController', function ($scope,FolderService) {

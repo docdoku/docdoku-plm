@@ -68,3 +68,15 @@ md-sidenav h3:first-of-type{
     text-align: center;
     padding: 50px 0;
 }
+
+ul.file-list{
+    margin: 12px;
+    padding: 0;
+    font-size: small;
+    color: #757575;
+}
+ul.file-list li{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
