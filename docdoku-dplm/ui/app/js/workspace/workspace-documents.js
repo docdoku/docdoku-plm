@@ -150,7 +150,7 @@
 
                 templateUrl: 'js/workspace/document-actions.html',
 
-                controller: function ($scope, $filter,$element, $attrs, $transclude, $timeout, CliService, FolderService) {
+                controller: function ($scope, $filter,$element, $attrs, $transclude, $timeout, CliService, FolderService, PromptService) {
 
                     $scope.folders = FolderService.folders;
                     $scope.options = {force: true};
@@ -190,11 +190,13 @@
                         }, null, onProgress).then(onFinish).then(newStuff).then(checkForWorkspaceReload);
                     };
 
-                    $scope.checkin = function () {
-                        $scope.document.busy = true;
-                        CliService.checkinDocument($scope.document).then(function () {
-                            return CliService.getStatusForDocument($scope.document);
-                        }, null, onProgress).then(onFinish);
+                    $scope.checkin = function (e) {
+                        PromptService.prompt(e, {title:$filter('translate')('CHECKIN_MESSAGE')}).then(function(message) {
+                            $scope.document.busy = true;
+                            CliService.checkinDocument($scope.document,{message:message}).then(function () {
+                                return CliService.getStatusForDocument($scope.document);
+                            }, null, onProgress).then(onFinish);
+                        });
                     };
 
                     $scope.undoCheckout = function () {

@@ -207,7 +207,7 @@
                     $scope.checkin = function (e) {
                         PromptService.prompt(e, {title:$filter('translate')('CHECKIN_MESSAGE')}).then(function(message){
                             $scope.file.busy = true;
-                            CliService.checkinPart($scope.file.part,$scope.folder.path, message).then(function () {
+                            CliService.checkinPart($scope.file.part,{path:$scope.folder.path,message: message}).then(function () {
                                 return $scope.fetchStatus();
                             }, null, $scope.onProgress).then($scope.onFinish);
                         });
@@ -264,7 +264,7 @@
                     $scope.checkin = function (e) {
                         PromptService.prompt(e, {title:$filter('translate')('CHECKIN_MESSAGE')}).then(function(message){
                             $scope.file.busy = true;
-                            CliService.checkinDocument($scope.file.document,$scope.folder.path,message).then(function () {
+                            CliService.checkinDocument($scope.file.document,{path:$scope.folder.path,message:message}).then(function () {
                                 return $scope.fetchStatus();
                             }, null, $scope.onProgress).then($scope.onFinish);
                         });
@@ -295,6 +295,12 @@
                     $scope.workspaces = WorkspaceService.workspaces;
                     $scope.newPart = {workspace: $scope.workspaces[0]};
                     $scope.newDocument = {workspace: $scope.workspaces[0]};
+
+                    $scope.form={
+                        selected:0,
+                        part:0,
+                        document:1
+                    };
 
                     $scope.createPart = function () {
                         $scope.file.busy = true;

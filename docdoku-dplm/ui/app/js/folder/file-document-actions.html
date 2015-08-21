@@ -20,5 +20,7 @@
     <md-button ng-if="file.document.checkoutUser === configuration.user" aria-label="" ng-click="put()" class="md-raised md-primary">
     {{'PUT' | translate}}
     </md-button>
+    <md-button ng-click="reveal()" aria-label="" class="md-primary">
+        {{'OPEN_IN_EXPLORER'|translate}}
+    </md-button>
 </div>
-

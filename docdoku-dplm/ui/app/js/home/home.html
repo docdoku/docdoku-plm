@@ -17,7 +17,7 @@
     </md-content>
 
     <md-content class="md-padding">
-        <i class="fa fa-star favorite"></i> {{'FAVORITE_FOLDERS' | translate}}
+        <h3 class="subtitle"><i class="fa fa-star favorite"></i> {{'FAVORITE_FOLDERS' | translate}}</h3>
         <md-list>
             <md-item ng-if="!folders.length">
                 <md-item-content>
@@ -41,7 +41,7 @@
     </md-content>
 
     <md-content class="md-padding">
-        <i class="fa fa-star favorite"></i> {{'LAST_WORKSPACES_VISITED' | translate}}
+        <h3 class="subtitle"><i class="fa fa-star favorite"></i> {{'LAST_WORKSPACES_VISITED' | translate}}</h3>
         <md-list>
             <md-item ng-if="!workspaces.length">
                 <md-item-content>
@@ -51,9 +51,7 @@
             <md-item ng-repeat="workspace in workspaces">
                 <md-item-content>
                     <div class="md-tile-content">
-                        <h3>
-                            <md-button aria-label="" href="#/workspace/{{workspace}}" class="md-primary">  <i class="fa fa-globe"></i> {{workspace}}</md-button>
-                        </h3>
+                        <md-button aria-label="" href="#/workspace/{{workspace}}" class="md-primary">  <i class="fa fa-globe"></i> {{workspace}}</md-button>
                     </div>
                     <div class="md-tile-right">
                        <i class="fa fa-arrow-circle-right"></i>

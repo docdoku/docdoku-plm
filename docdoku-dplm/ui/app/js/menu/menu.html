@@ -33,6 +33,9 @@
                   <i ng-if="isSameBaseRoute('/folder/'+folder.uuid)" class="fa fa-folder-open"></i>
                   <i ng-if="folder.newStuff" class="fa fa-download" title="{{'NEW_STUFF'|translate}}"></i>
                   {{folder.path | fileshortname}}
+                    <md-tooltip>
+                        {{folder.path}}
+                    </md-tooltip>
               </md-button>
             </div>
       </md-item-content>

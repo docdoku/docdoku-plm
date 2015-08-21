@@ -145,7 +145,7 @@
 
                 templateUrl: 'js/workspace/part-actions.html',
 
-                controller: function ($scope, $filter,$element, $attrs, $transclude, $timeout, CliService, FolderService) {
+                controller: function ($scope, $filter,$element, $attrs, $transclude, $timeout, CliService, FolderService, PromptService) {
 
                     $scope.folders = FolderService.folders;
                     $scope.options = {force: true, recursive: true};
@@ -194,11 +194,13 @@
                         }, null, onProgress).then(onFinish).then(newStuff).then(checkForWorkspaceReload);
                     };
 
-                    $scope.checkin = function () {
-                        $scope.part.busy = true;
-                        CliService.checkinPart($scope.part).then(function () {
-                            return CliService.getStatusForPart($scope.part);
-                        }, null, onProgress).then(onFinish);
+                    $scope.checkin = function (e) {
+                        PromptService.prompt(e, {title:$filter('translate')('CHECKIN_MESSAGE')}).then(function(message) {
+                            $scope.part.busy = true;
+                            CliService.checkinPart($scope.part, {message:message}).then(function () {
+                                return CliService.getStatusForPart($scope.part);
+                            }, null, onProgress).then(onFinish);
+                        });
                     };
 
                     $scope.undoCheckout = function () {

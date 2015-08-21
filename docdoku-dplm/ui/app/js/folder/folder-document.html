@@ -14,19 +14,21 @@
                ng-show="file.document && file.document.checkoutUser && file.document.checkoutUser !== configuration.user"></i>
 
             {{file.path | fileshortname}}
-            <small class="cad-file-name" ng-if="file.document.id">
+            <small class="subtitle" ng-if="file.document.id">
                 {{file.document.id}}-{{file.document.version}}-{{file.document.iterations | last}}
             </small>
         </h3>
-        <h4 ng-show="file.document.checkoutUser">
-            {{'CHECKOUT_BY' | translate }} {{file.document.checkoutUser}} {{file.document.checkoutDate |
-            timeago}}
-        </h4>
-        <h4 ng-show="file.document.lastModified">
-            {{'LAST_MODIFIED' | translate }} {{file.document.lastModified | timeago}}
-        </h4><h4 ng-show="file.mtime">
-        {{'LAST_ACTION' | translate }} {{file.mtime | timeago}}
-    </h4>
+
+        <div class="subtitle" ng-show="file.document.checkoutUser">
+            <small>{{'CHECKOUT_BY' | translate }} {{file.document.checkoutUser}} {{file.document.checkoutDate |
+            timeago}}</small>
+        </div>
+        <div ng-show="file.document.lastModified">
+            <small>{{'LAST_MODIFIED' | translate }} {{file.document.lastModified | timeago}}</small>
+        </div>
+        <div ng-show="file.mtime">
+            <small>{{'LAST_ACTION' | translate }} {{file.mtime | timeago}}</small>
+        </div>
     </div>
 
     <div>

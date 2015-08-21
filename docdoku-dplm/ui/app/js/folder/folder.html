@@ -29,10 +29,7 @@
             </md-button>
         </h3>
     </div>
-
 </md-toolbar>
-
-
 <div class="tabs default" layout="horizontal">
     <div flex ng-class="{selected:tabs.selected == tabs.documents}">
         <a ng-href="#/folder/{{folder.uuid}}/documents">{{'DOCUMENTS' | translate}}</a>
@@ -50,17 +47,6 @@
         <md-text-float style="margin: 0 18px;"
                        label="{{'SEARCH' | translate}} ({{files.length}} {{'ITEMS' | translate}})" ng-model="search"
                        type="text"></md-text-float>
-       <md-button 
-            ng-if="hasUploadableFiles()" 
-            class="md-margin md-raised md-primary" 
-            aria-label="" 
-            ng-click="syncAll()">
-                <i class="fa fa-refresh"></i>
-                {{'SYNC_ALL'|translate}}
-                <md-tooltip>
-                    {{'SYNC_ALL'|translate}}
-                </md-tooltip>
-            </md-button>
     </div>
     <div style="padding-right:8px;">
         <md-checkbox ng-model="filters.sync" aria-label="" title="{{'UP_TO_DATE' | translate}}">
@@ -75,6 +61,19 @@
 
 <div on-scroll-end="onScrollEnd()" class="fullscreen-wrapper offset-toolbar">
     <md-content class="md-padding">
+
+        <md-button
+                ng-if="hasUploadableFiles()"
+                class="md-margin md-raised md-primary"
+                aria-label=""
+                ng-click="syncAll()">
+            <i class="fa fa-refresh"></i>
+            {{'SYNC_ALL'|translate}}
+            <md-tooltip>
+                {{'SYNC_ALL'|translate}}
+            </md-tooltip>
+        </md-button>
+
         <md-progress-linear ng-show="loadingFiles" mode="indeterminate"></md-progress-linear>
 
         <md-list>

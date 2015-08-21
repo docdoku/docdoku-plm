@@ -1,5 +1,3 @@
-
-
 <div class="row" ng-if="!file.notSync && !file.busy && !file.part.isReleased && !file.part.checkoutUser">
     <md-checkbox ng-model="options.force" aria-label="">
     {{'FORCE'|translate}}
@@ -33,6 +31,9 @@
     </md-button>
     <md-button aria-label="" ng-click="conversionStatus()" class="md-raised md-primary">
     {{'CONVERSION_STATUS' | translate}}
+    </md-button>
+    <md-button ng-click="reveal()" aria-label="" class="md-primary">
+        {{'OPEN_IN_EXPLORER'|translate}}
     </md-button>
 </div>
 

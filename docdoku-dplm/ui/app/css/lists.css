@@ -29,8 +29,14 @@ file-part-actions{
 .file{
     width: 100%;
 }
-
+.clickable{
+    cursor: pointer;
+}
 .subtitle{
+	color: #757575;
+}
+.subtitle.selected{
+    font-weight: bold;
 	color: #757575;
 }
 

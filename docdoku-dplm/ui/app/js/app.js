@@ -73,35 +73,8 @@
                 }
             };
 
-            $scope.isActive = function(route) {
-                return route === $location.path();
-            };
-
             $scope.isSameBaseRoute = function(route) {
                 return $location.path().indexOf(route)!==-1;
-            };
-        })
-
-        .controller('MenuController', function ($scope,FolderService) {
-            $scope.toggleFolders = function(){
-                $scope.foldersExpanded=!$scope.foldersExpanded;
-            };
-            $scope.toggleWorkspaces = function(){
-                $scope.workspacesExpanded=!$scope.workspacesExpanded;
-            };
-            $scope.onFileDropped = function(path){
-                if(path){
-                    FolderService.add(path);
-                }
-            };
-        })
-
-        .controller('FolderMenuController', function ($scope) {
-            $scope.onDrop = function () {
-            };
-        })
-        .controller('WorkspaceMenuController', function ($scope) {
-            $scope.onDrop = function () {
             };
         });
 

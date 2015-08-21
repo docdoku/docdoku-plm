@@ -18,15 +18,16 @@
                 {{file.part.partNumber}}-{{file.part.version}}-{{file.part.iterations | last}}
             </small>
         </h3>
-        <h4 ng-show="file.part.checkoutUser">
-            {{'CHECKOUT_BY' | translate }} {{file.part.checkoutUser}} {{file.part.checkoutDate |
-            timeago}}
-        </h4>
-        <h4 ng-show="file.part.lastModified">
-            {{'LAST_MODIFIED' | translate }} {{file.part.lastModified | timeago}}
-        </h4><h4 ng-show="file.mtime">
-        {{'LAST_ACTION' | translate }} {{file.mtime | timeago}}
-    </h4>
+        <div class="subtitle" ng-show="file.part.checkoutUser">
+            <small>{{'CHECKOUT_BY' | translate }} {{file.part.checkoutUser}} {{file.part.checkoutDate |
+            timeago}}</small>
+        </div>
+        <div class="subtitle" ng-show="file.part.lastModified">
+            <small>{{'LAST_MODIFIED' | translate }} {{file.part.lastModified | timeago}}</small>
+        </div>
+        <div class="subtitle" ng-show="file.mtime">
+            <small>{{'LAST_ACTION' | translate }} {{file.mtime | timeago}}</small>
+        </div>
     </div>
 
     <div>
