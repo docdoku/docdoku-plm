@@ -78,7 +78,7 @@
         <md-progress-linear ng-show="loadingFiles" mode="indeterminate"></md-progress-linear>
 
         <md-list>
-            <md-item ng-show="!loadingFiles && !files.length">{{'NO_FILES'|translate}}</md-item>
+
 
             <md-item ng-repeat="file in files | filter:search | filterFiles:filters">
                 <md-item-content
@@ -101,5 +101,6 @@
                 <md-divider ng-if="!$last"></md-divider>
             </md-item>
         </md-list>
+        <p class="empty-list" ng-show="!loadingFiles && !files.length">{{'NO_FILES'|translate}}</p>
     </md-content>
 </div>

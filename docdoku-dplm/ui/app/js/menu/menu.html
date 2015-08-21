@@ -13,7 +13,7 @@
 
 <md-content class="md-padding">
 
-   <h3>
+   <h3 class="subtitle">
     <i class="fa fa-folder-open"></i> 
     {{ 'FOLDERS' | translate }}
        <md-button style="float:right" class="md-raised md-primary file-input" md-theme="default" aria-label="Profile">
@@ -24,7 +24,6 @@
            </md-tooltip>
        </md-button>
     </h3>
-
   <md-content class="menu-list" ng-class="{expanded: foldersExpanded}" droppable on-file-dropped="onFileDropped(path)">
    <md-list>
     <md-item ng-repeat="folder in folders | orderBy:'-favorite'" ng-controller="FolderMenuController">
@@ -42,7 +41,7 @@
   </md-content>
   <i class="list-toggle fa" ng-class="{'fa-caret-up': foldersExpanded,'fa-caret-down': !foldersExpanded}" ng-click="toggleFolders()"></i>
 
-  <h3>
+  <h3 class="subtitle">
     <i class="fa fa-globe"></i> 
     {{ configuration.host + ':' + configuration.port }}
   </h3>

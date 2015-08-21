@@ -47,19 +47,24 @@ md-sidenav h3:first-of-type{
 	transition: all 1s linear;
 }
 .menu-list.expanded{
-	max-height: 800px;
+	max-height: initial;
 }
 .list-toggle{
 	transition: all 0.5s linear;
 	text-align: center;
 	cursor: pointer;
 	width: 100%;
-	background: #eee;
 	color: #999;
 }
 .list-toggle:hover{
-	background: #ddd;
+    color: #555;
 }
 .list-toggle.expanded{
 	color:blue;
+}
+
+.empty-list{
+    width: 100%;
+    text-align: center;
+    padding: 50px 0;
 }

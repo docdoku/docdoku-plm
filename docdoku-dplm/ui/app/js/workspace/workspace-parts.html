@@ -25,7 +25,6 @@
         <md-progress-linear ng-show="loadingParts" mode="indeterminate"></md-progress-linear>
 
         <md-list>
-            <md-item ng-show="!loadingParts && !parts.length">{{'NO_PARTS'|translate}}</md-item>
             <md-item ng-repeat="part in parts | filterParts:filters">
                 <md-item-content ng-controller="PartController" layout-align="start start" ng-class="{opened: part == openedPart}">
                     <div ng-show="part.busy" class="md-tile-left md-tile-top" align="center">
@@ -70,5 +69,7 @@
             </md-item>
         </md-list>
         <md-progress-linear ng-show="loadingMore" mode="indeterminate"></md-progress-linear>
+        <p class="empty-list" ng-show="!loadingParts && !parts.length">{{'NO_PARTS'|translate}}</p>
+
     </md-content>
 </div>
