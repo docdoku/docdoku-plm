@@ -389,7 +389,6 @@ define({
 	SUB_PARTS: "Assembly",
 	SUBSCRIBE_ITERATION_CHANGE: "Subscribe to iteration change notifications",
 	SUBSCRIBE_STATE_CHANGE: "Subscribe to document state change notifications",
-    SUBSTITUTE_PART_REFERENCE: "Part reference",
     TAGS_HELP: "Tags list, comma separated",
 	TAGS: "Tags",
 	TAGS_TO_ADD: "Tags to add",

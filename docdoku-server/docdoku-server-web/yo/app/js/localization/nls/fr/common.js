@@ -551,7 +551,6 @@ define({
     SUB_PARTS: "Assemblage",
 	SUBSCRIBE_ITERATION_CHANGE: "S'abonner aux notifications de changement d'itération",
 	SUBSCRIBE_STATE_CHANGE: "S'abonner aux notifications de changement d'état",
-    SUBSTITUTE_PART_REFERENCE:"Référence de l'article",
     SUM:"Somme",
     TAGS_HELP: "Liste des libéllés, séparés par une virgule",
 	TAGS: "Libellés",
