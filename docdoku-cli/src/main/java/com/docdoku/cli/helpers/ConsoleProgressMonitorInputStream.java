@@ -25,12 +25,13 @@ import org.apache.commons.io.FileUtils;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 
 public class ConsoleProgressMonitorInputStream extends FilterInputStream {
 
     private long maximum;
     private long totalRead;
-
+    private PrintStream OUTPUT_STREAM = System.out;
     private int rotationChar;
 
     private static final char[] ROTATION = {'|','|','|','|','/','/','/','/','-','-','-','-','\\','\\','\\','\\'};
@@ -54,9 +55,9 @@ public class ConsoleProgressMonitorInputStream extends FilterInputStream {
         }
 
         if(length ==-1) {
-            System.out.println("\r" + 100);
+            OUTPUT_STREAM.println("\r" + 100);
         }else {
-            System.out.print("\r" + percentageToPrint + "% Total " + FileUtils.byteCountToDisplaySize(maximum) + " " + ROTATION[rotationChar % ROTATION.length]);
+            OUTPUT_STREAM.print("\r" + percentageToPrint + "% Total " + FileUtils.byteCountToDisplaySize(maximum) + " " + ROTATION[rotationChar % ROTATION.length]);
         }
 
         rotationChar++;

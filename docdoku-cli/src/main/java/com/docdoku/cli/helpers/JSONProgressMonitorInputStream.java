@@ -23,12 +23,14 @@ package com.docdoku.cli.helpers;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 
 public class JSONProgressMonitorInputStream extends FilterInputStream {
 
     private long maximum;
     private long totalRead;
     private int oldPercentage=-1;
+    private PrintStream OUTPUT_STREAM = System.out;
 
     public JSONProgressMonitorInputStream(long maximum, InputStream in){
         super(in);
@@ -42,7 +44,7 @@ public class JSONProgressMonitorInputStream extends FilterInputStream {
         int percentage = (int)((totalRead * 100.0f) / maximum);
 
         if(percentage > oldPercentage) {
-            System.out.println("{\"progress\":" + percentage + "}");
+            OUTPUT_STREAM.println("{\"progress\":" + percentage + "}");
         }
 
         oldPercentage = percentage ;
