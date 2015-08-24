@@ -22,7 +22,8 @@ define([
             'dragover .droppable': 'fileDragHover',
             'dragleave .droppable': 'fileDragHover',
             'drop .droppable': 'fileDropHandler',
-            'submit form':'formSubmit'
+            'submit form':'formSubmit',
+            'click a.toggle-checkAll': 'toggleCheckAll'
         },
 
         initialize: function () {
@@ -54,6 +55,7 @@ define([
             } else {
                 this.listenTo(this.collection, 'add', this.addOneFile);
             }
+            this.checkAll = true;
 
         },
 
@@ -89,7 +91,7 @@ define([
 
         addOneFile: function (attachedFile) {
             var self = this;
-
+            this.$toggleCheckAll.show();
             var fileView = new FileView({
                 model: attachedFile,
                 filesToDelete: self.filesToDelete,
@@ -118,6 +120,13 @@ define([
             this.filesUL.empty();
             this.addOneFile(attachedFile);
             this.$el.trigger('file:uploaded');
+        },
+
+        toggleCheckAll: function() {
+            this.$('input.file-check').prop('checked',this.checkAll).change();
+            this.checkAll = ! this.checkAll;
+            var text = this.checkAll ? App.config.i18n.CHECK_ALL : App.config.i18n.UNCHECK_ALL;
+            this.$toggleCheckAll.text(text);
         },
 
         uploadNewFile: function (file) {
@@ -272,6 +281,8 @@ define([
             this.uploadInput = this.$('input.upload-btn');
             this.progressBars = this.$('div.progress-bars');
             this.notifications = this.$('div.notifications');
+            //Hide the toggleCheckAll link which will be shown on add new File
+            this.$toggleCheckAll = this.$('a.toggle-checkAll').hide();
         }
     });
     return FileListView;

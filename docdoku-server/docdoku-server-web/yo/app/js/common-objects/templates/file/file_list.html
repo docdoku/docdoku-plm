@@ -3,7 +3,10 @@
 {{#title}}
 <h4>{{title}}</h4>
 {{/title}}
-
+{{#multiple}} {{#editMode}}
+<a class="toggle-checkAll">{{i18n.CHECK_ALL}}</a>
+{{/editMode}}
+{{/multiple}}
 <ul class="file-list"></ul>
 
 <div class="progress-bars"></div>
