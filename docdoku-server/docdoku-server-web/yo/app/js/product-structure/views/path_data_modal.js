@@ -234,6 +234,7 @@ define([
                                 self.iteration.setSerialNumber(self.serialNumber);
                                 self.iteration.setPath(self.path);
                                 self.iteration.setId(self.model.id);
+                                self.trigger('path-data:created');
                                 self.closeModal();
                             },
                             error: function (errorMessage) {

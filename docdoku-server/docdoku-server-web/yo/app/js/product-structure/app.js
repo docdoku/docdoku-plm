@@ -304,6 +304,7 @@ define([
             });
             window.document.body.appendChild(pathDataModal.el);
             pathDataModal.initAndOpenModal();
+            this.listenTo(pathDataModal,'path-data:created',this.refreshTree.bind(this));
         },
 
         onPathDataClicked:function(pathSelected){

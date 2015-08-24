@@ -1,6 +1,6 @@
 /*global casper,urls,productInstances*/
 
-casper.test.begin('Product instance data path tests suite', 19, function productInstanceDataPathTestsSuite() {
+casper.test.begin('Product instance data path tests suite', 21, function productInstanceDataPathTestsSuite() {
     'use strict';
 
     casper.open('');
@@ -104,6 +104,31 @@ casper.test.begin('Product instance data path tests suite', 19, function product
         }, function fail() {
             this.capture('screenshot/product-instance/ModalNotClosing.png');
             this.test.assert(false, 'could not close the modal');
+        });
+    });
+
+    /**
+     * Check for icon in PS
+     */
+    casper.then(function waitForPathDataIcon() {
+        this.waitForSelector('#product_nav_list_container > .treeview > ul > li >  i.fa-asterisk', function iconShown() {
+            this.test.assert(true, 'Should refresh the treeview and show the path data icon');
+        }, function fail() {
+            this.capture('screenshot/product-instance/ModalNotClosing.png');
+            this.test.assert(false, 'could not close the modal');
+        });
+    });
+
+    /**
+    * click on the checkbox from the bom
+    */
+    casper.then(function waitForBOM() {
+        this.waitForSelector('.selectable-part-checkbox', function loadDataButton() {
+            this.click('.selectable-part-checkbox');
+            this.test.assert(true, 'click on product-instance checkbox');
+        }, function fail() {
+            this.capture('screenshot/product-instance/FailToLoadDeliverable.png');
+            this.test.assert(false, 'could not load deliverable');
         });
     });
 
