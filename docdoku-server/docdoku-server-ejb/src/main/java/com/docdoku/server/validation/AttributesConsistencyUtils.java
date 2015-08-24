@@ -30,6 +30,9 @@ import java.util.*;
 
 public class AttributesConsistencyUtils {
 
+    private AttributesConsistencyUtils() {
+    }
+
     public static boolean hasValidChange(List<InstanceAttribute> pAttributes, boolean attributesLocked, List<InstanceAttribute> currentAttrs) {
         if (attributesLocked) {
             //Check attributes haven't changed

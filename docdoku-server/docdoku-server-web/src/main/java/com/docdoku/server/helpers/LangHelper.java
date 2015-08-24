@@ -40,7 +40,7 @@ public class LangHelper {
 
     }
 
-    public static String getLocalizedMessage(String key, Locale locale){
+    public String getLocalizedMessage(String key, Locale locale){
         return mResourceBundle.getString(key);
     }
 
