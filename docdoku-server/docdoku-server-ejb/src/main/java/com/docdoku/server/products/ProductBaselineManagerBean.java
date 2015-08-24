@@ -72,6 +72,10 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
         User user = userManager.checkWorkspaceWriteAccess(ciKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
 
+        if(null == name || name.isEmpty()){
+            throw new NotAllowedException(locale,"NotAllowedException61");
+        }
+
         ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(locale, em);
         ConfigurationItem configurationItem = configurationItemDAO.loadConfigurationItem(ciKey);
 
