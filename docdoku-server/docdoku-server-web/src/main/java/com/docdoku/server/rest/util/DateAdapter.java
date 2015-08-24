@@ -25,6 +25,7 @@ package com.docdoku.server.rest.util;
  */
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -35,7 +36,7 @@ public class DateAdapter extends XmlAdapter<String, Date> {
     // the desired format
     private static String pattern = "yyyy-MM-dd'T'HH:mm:ss";
 
-    public String marshal(Date date) throws Exception {
+    public String marshal(Date date){
         if(date == null) {
             return null;
         }
@@ -44,7 +45,7 @@ public class DateAdapter extends XmlAdapter<String, Date> {
         return df.format(date);
     }
 
-    public Date unmarshal(String dateString) throws Exception {
+    public Date unmarshal(String dateString) throws ParseException {
         //TODO: check if we have to specify UTC
         SimpleDateFormat df =  new SimpleDateFormat(pattern);
         df.setTimeZone(TimeZone.getTimeZone("UTC"));

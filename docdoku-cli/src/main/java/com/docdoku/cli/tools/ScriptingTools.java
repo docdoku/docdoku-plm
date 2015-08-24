@@ -45,7 +45,7 @@ public class ScriptingTools {
     private ScriptingTools() {
     }
 
-    public static IDocumentManagerWS createDocumentService(URL url, String login, String password) throws Exception {
+    public static IDocumentManagerWS createDocumentService(URL url, String login, String password) throws MalformedURLException {
         DocumentService service = new DocumentService(new URL(url, DOCUMENT_WSDL_LOCATION), new javax.xml.namespace.QName(NAMESPACEURI, "DocumentManagerBeanService"));
         IDocumentManagerWS port = service.getPort(IDocumentManagerWS.class);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
@@ -54,7 +54,7 @@ public class ScriptingTools {
         return port;
     }
 
-    public static IProductManagerWS createProductService(URL url, String login, String password) throws Exception {
+    public static IProductManagerWS createProductService(URL url, String login, String password) throws MalformedURLException {
         ProductService service = new ProductService(new URL(url, PRODUCT_WSDL_LOCATION), new javax.xml.namespace.QName(NAMESPACEURI, "ProductManagerBeanService"));
         IProductManagerWS port = service.getPort(IProductManagerWS.class);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
@@ -63,7 +63,7 @@ public class ScriptingTools {
         return port;
     }
 
-    public static IProductBaselineManagerWS createProductBaselineService(URL url, String login, String password) throws Exception {
+    public static IProductBaselineManagerWS createProductBaselineService(URL url, String login, String password) throws MalformedURLException {
         ProductBaselineService service = new ProductBaselineService(new URL(url, PRODUCT_BASELINE_WSDL_LOCATION), new javax.xml.namespace.QName(PRODUCT_NAMESPACEURI, "ProductBaselineManagerBeanService"));
         IProductBaselineManagerWS port = service.getPort(IProductBaselineManagerWS.class);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
@@ -80,7 +80,7 @@ public class ScriptingTools {
         return port;
     }
 
-    public static ILOVManagerWS createLOVService(URL url, String login, String password) throws Exception {
+    public static ILOVManagerWS createLOVService(URL url, String login, String password) throws MalformedURLException {
         LOVService service = new LOVService(new URL(url, LOV_WSDL_LOCATION), new javax.xml.namespace.QName(NAMESPACEURI, "LOVManagerBean"));
         ILOVManagerWS port = service.getPort(ILOVManagerWS.class);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);

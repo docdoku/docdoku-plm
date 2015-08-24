@@ -1,4 +1,4 @@
-/*global casper,urls*/
+/*global casper,urls,$*/
 
 casper.test.begin('Part checkout tests suite', 3, function partCheckoutTestsSuite() {
     'use strict';

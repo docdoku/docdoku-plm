@@ -1,4 +1,4 @@
-/*global casper,urls,productInstances*/
+/*global casper,urls,productInstances,$*/
 
 casper.test.begin('Product instance data path tests suite', 21, function productInstanceDataPathTestsSuite() {
     'use strict';

@@ -1,4 +1,4 @@
-/*global casper,urls,documents*/
+/*global casper,urls,documents,$*/
 
 casper.test.begin('Document tag creation tests suite', 7, function documentTagCreationTestsSuite() {
 

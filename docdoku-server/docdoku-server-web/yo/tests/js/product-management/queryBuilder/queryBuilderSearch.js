@@ -1,4 +1,4 @@
-/*global casper,urls, products*/
+/*global casper,urls,products,$*/
 
 casper.test.begin('Query builder search tests suite', 5, function queryBuilderSearchTestsSuite() {
     'use strict';

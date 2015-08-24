@@ -1,4 +1,4 @@
-/*global casper,urls,workspace,documents*/
+/*global casper,urls,workspace,documents,$*/
 
 casper.test.begin('Document creation from template tests suite', 2, function documentCreationFromTemplateTestsSuite() {
 

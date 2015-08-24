@@ -1,4 +1,4 @@
-/*global casper,urls,workspace,documents, workflows*/
+/*global casper,urls,workspace,documents,workflows,$*/
 
 casper.test.begin('Document creation with workflow tests suite', 9, function documentCreationWithWorkflowTestsSuite() {
 

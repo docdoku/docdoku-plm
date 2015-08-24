@@ -1,4 +1,4 @@
-/*global define,THREE,requestAnimationFrame,_*/
+/*global define,THREE,requestAnimationFrame,_,$*/
 
 // Global Namespace for the application
 var App = {
