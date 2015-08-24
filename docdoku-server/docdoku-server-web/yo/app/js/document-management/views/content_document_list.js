@@ -25,6 +25,7 @@ define([
             this.events['submit .actions #document-search-form'] = 'onQuickSearch';
             this.events['click .actions .advanced-search-button'] = 'onAdvancedSearchButton';
             this.events['click .actions .edit-acl'] = 'onEditAcl';
+            Backbone.Events.on('folder-delete:error',this.onError);
         },
 
         rendered: function () {

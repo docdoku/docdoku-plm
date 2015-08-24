@@ -201,7 +201,7 @@ define([
                             Backbone.Events.trigger('document:iterationChange');
                         },
                         error:function(model,res){
-                            window.alert(res.responseText);
+                            Backbone.Events.trigger('folder-delete:error',model,res);
                         }
                     });
                 }
