@@ -73,8 +73,6 @@ define([
 
             _.each(self.model.getPathToPathLinks(), function (pathToPathLink) {
                 self.existingPathToPathLinkCollection.push({
-                    source: pathToPathLink.source,
-                    target: pathToPathLink.target,
                     pathToPath: pathToPathLink,
                     productId: self.productId,
                     serialNumber: self.model.getConfigurationItemId()
