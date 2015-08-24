@@ -76,6 +76,7 @@ public class PartGetCommand extends BaseCommandLine {
     private IProductManagerWS productS;
     private IProductBaselineManagerWS productBaselineManager;
 
+    @Override
     public void execImpl() throws Exception {
 
         if(partNumber==null){

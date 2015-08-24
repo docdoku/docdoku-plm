@@ -52,6 +52,7 @@ public abstract class AbstractCommandLine implements CommandLine {
 
     }
 
+    @Override
     public CliOutput getOutput(){
         return output;
     }

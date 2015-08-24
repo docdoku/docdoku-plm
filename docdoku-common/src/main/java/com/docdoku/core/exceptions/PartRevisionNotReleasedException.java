@@ -44,7 +44,8 @@ public class PartRevisionNotReleasedException extends ApplicationException {
         super(pLocale, pCause);
         mCIId=pCIId;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mCIId);     

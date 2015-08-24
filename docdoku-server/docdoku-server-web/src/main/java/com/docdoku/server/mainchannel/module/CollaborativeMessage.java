@@ -49,6 +49,7 @@ public class CollaborativeMessage extends AbstractMessage{
         this.messageBroadcast = messageBroadcast;
     }
 
+    @Override
     public String getType() {
         return type;
     }

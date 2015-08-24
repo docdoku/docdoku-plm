@@ -36,6 +36,7 @@ public class AccountInfosCommand extends BaseCommandLine {
 
     private IUserManagerWS userS;
 
+    @Override
     public void execImpl() throws Exception {
         userS = ScriptingTools.createUserManagerService(getServerURL(),user,password);
         Account account = userS.getMyAccount();

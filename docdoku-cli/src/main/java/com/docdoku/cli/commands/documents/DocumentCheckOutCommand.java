@@ -67,6 +67,7 @@ public class DocumentCheckOutCommand extends BaseCommandLine {
 
     private IDocumentManagerWS documentS;
 
+    @Override
     public void execImpl() throws Exception {
         if(id==null || revision==null){
             loadMetadata();

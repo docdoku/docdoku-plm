@@ -35,6 +35,7 @@ import java.io.IOException;
  */
 public class WorkspacesCommand extends BaseCommandLine {
 
+    @Override
     public void execImpl() throws Exception {
         IUserManagerWS userS = ScriptingTools.createUserManagerService(getServerURL(), user, password);
         new AccountsManager().saveAccount(userS.getMyAccount());

@@ -61,6 +61,7 @@ public class DocumentUndoCheckOutCommand extends BaseCommandLine {
     @Option(name="-f", aliases = "--force", usage="overwrite existing files even if they have been modified locally")
     private boolean force;
 
+    @Override
     public void execImpl() throws Exception {
         if(id==null || revision==null){
             loadMetadata();

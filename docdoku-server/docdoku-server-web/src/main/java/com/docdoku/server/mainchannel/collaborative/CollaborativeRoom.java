@@ -77,6 +77,7 @@ public class CollaborativeRoom {
         this.lastMaster = lastMaster;
     }
 
+    @Override
     public String toString() {
         return this.getContext().toString();
     }

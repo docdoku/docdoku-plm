@@ -60,6 +60,7 @@ public class PartCreationCommand extends BaseCommandLine {
     @Argument(metaVar = "<cadfile>", required = true, index=0, usage = "specify the cad file of the part to import")
     private File cadFile;
 
+    @Override
     public void execImpl() throws Exception {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
         PartMaster partMaster = productS.createPartMaster(workspace, partNumber, partName, standardPart, null, description, null, null, null, null);

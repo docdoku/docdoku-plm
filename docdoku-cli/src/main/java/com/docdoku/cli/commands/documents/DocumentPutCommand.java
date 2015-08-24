@@ -56,6 +56,7 @@ public class DocumentPutCommand extends BaseCommandLine {
     @Argument(metaVar = "<file>", required = true, index=0, usage = "specify the file of the document to import")
     private File file;
 
+    @Override
     public void execImpl() throws Exception {
         if(id==null || revision==null){
             loadMetadata();

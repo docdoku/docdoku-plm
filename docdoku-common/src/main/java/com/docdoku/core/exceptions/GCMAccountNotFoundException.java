@@ -39,7 +39,8 @@ public class GCMAccountNotFoundException extends EntityNotFoundException {
         super(pLocale, pCause);
         mLogin=pLogin;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mLogin);     

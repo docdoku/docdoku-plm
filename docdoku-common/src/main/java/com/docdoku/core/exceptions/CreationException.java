@@ -39,7 +39,8 @@ public class CreationException extends ApplicationException {
     public CreationException(Locale pLocale, Throwable pCause) {
         super(pLocale, pCause);
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         return getBundleDefaultMessage();   
     }

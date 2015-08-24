@@ -68,6 +68,7 @@ public class ListOfValuesAttributeTemplate extends InstanceAttributeTemplate {
         return this.lov != null ? this.lov.getName():null;
     }
 
+    @Override
     public InstanceAttribute createInstanceAttribute() {
         InstanceListOfValuesAttribute attr = new InstanceListOfValuesAttribute();
         List<NameValuePair> items = new ArrayList<>(lov.getValues());

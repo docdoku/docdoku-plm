@@ -56,6 +56,7 @@ public class PartPutCommand extends BaseCommandLine {
     @Argument(metaVar = "<cadfile>", required = true, index=0, usage = "specify the cad file of the part to import")
     private File cadFile;
 
+    @Override
     public void execImpl() throws Exception {
         if(partNumber==null || revision==null){
             loadMetadata();

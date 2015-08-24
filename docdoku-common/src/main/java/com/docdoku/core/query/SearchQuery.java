@@ -164,6 +164,7 @@ public class SearchQuery  implements Serializable {
         }
         public abstract boolean attributeMatches(InstanceAttribute attr);
         public abstract boolean hasValue();
+        @Override
         public abstract String toString();
     }
 

@@ -66,6 +66,7 @@ public class DocumentGetCommand extends BaseCommandLine {
 
     private IDocumentManagerWS documenS;
 
+    @Override
     public void execImpl() throws Exception {
 
         if(id==null){

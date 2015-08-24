@@ -40,6 +40,7 @@ public class ConsoleProgressMonitorInputStream extends FilterInputStream {
         this.maximum=maximum;
     }
 
+    @Override
     public int read(byte b[]) throws IOException {
         int length =  super.read(b, 0, b.length);
         totalRead += length;

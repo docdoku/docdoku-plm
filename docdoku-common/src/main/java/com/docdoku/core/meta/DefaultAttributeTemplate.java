@@ -55,6 +55,7 @@ public class DefaultAttributeTemplate extends InstanceAttributeTemplate {
         this.attributeType = attributeType;
     }
 
+    @Override
     public InstanceAttribute createInstanceAttribute() {
         InstanceAttribute attr = null;
         if(attributeType!=null){

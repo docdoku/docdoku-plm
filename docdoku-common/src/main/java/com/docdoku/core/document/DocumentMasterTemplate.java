@@ -193,7 +193,7 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     public void addFile(BinaryResource pBinaryResource){
         attachedFiles.add(pBinaryResource);
     }
-    
+    @Override
     public Set<BinaryResource> getAttachedFiles() {
         return attachedFiles;
     }

@@ -48,6 +48,7 @@ public abstract class ProductConfigSpec extends PSFilter implements Serializable
 
     // Config specs are strict and returns a single value
     // Do not override them
+    @Override
     public final List<PartLink> filter(List<PartLink> path) {
         PartLink partLink = filterPartLink(path);
         if(partLink != null){
@@ -55,6 +56,8 @@ public abstract class ProductConfigSpec extends PSFilter implements Serializable
         }
         return new ArrayList<>();
     }
+
+    @Override
     public final List<PartIteration> filter(PartMaster partMaster) {
         PartIteration partIteration = filterPartIteration(partMaster);
         if(partIteration != null){

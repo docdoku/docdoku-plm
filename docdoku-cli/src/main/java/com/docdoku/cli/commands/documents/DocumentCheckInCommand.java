@@ -63,6 +63,7 @@ public class DocumentCheckInCommand extends BaseCommandLine {
     @Option(metaVar = "<message>", name = "-m", aliases = "--message", usage = "a message specifying the iteration modifications")
     private String message;
 
+    @Override
     public void execImpl() throws Exception {
 
         if(id ==null || revision==null){
