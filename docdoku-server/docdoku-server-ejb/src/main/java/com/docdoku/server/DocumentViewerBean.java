@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -85,7 +86,7 @@ public class DocumentViewerBean implements IFileViewerManagerLocal {
 
         MustacheFactory mf = new DefaultMustacheFactory();
         Mustache mustache = mf.compile("com/docdoku/server/viewers/default_viewer.mustache");
-        HashMap<Object,Object> scopes = new HashMap<>();
+        Map<Object,Object> scopes = new HashMap<>();
         scopes.put("uriResource", ViewerUtils.getURI(binaryResource, uuid));
         scopes.put("fileName", binaryResource.getName());
         StringWriter templateWriter = new StringWriter();

@@ -281,7 +281,7 @@ public class ProductResource {
         // Serve the latest first
         parts.sort(Comparator.<PartIteration>reverseOrder());
 
-        HashMap<PartMaster,List<PartIteration>> map = new HashMap<>();
+        Map<PartMaster,List<PartIteration>> map = new HashMap<>();
 
         for(PartIteration partIteration : parts){
             PartMaster partMaster = partIteration.getPartRevision().getPartMaster();

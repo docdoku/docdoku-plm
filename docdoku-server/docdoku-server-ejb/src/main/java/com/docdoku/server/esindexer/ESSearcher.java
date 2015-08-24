@@ -126,7 +126,7 @@ public class ESSearcher {
             SearchRequestBuilder srb = getSearchRequest(client, ESTools.formatIndexName(partQuery.getWorkspaceId()), ES_TYPE_PART, qr);
             SearchResponse sr = srb.execute().actionGet();
 
-            HashSet<PartRevision> setOfParts = new HashSet<>();
+            Set<PartRevision> setOfParts = new HashSet<>();
             for (int i = 0; i < sr.getHits().getHits().length; i++) {
                 SearchHit hit = sr.getHits().getAt(i);
                 PartRevision partRevision = getPartRevision(hit);
