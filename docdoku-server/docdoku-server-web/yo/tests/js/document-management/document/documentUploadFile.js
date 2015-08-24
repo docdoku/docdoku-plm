@@ -71,7 +71,7 @@ casper.test.begin('Document upload  file tests suite', 2, function documentUploa
             'upload': 'res/document-upload.txt'
         }, false);
 
-        casper.waitFor(function check() {
+        casper.waitFor(function checkFileHasBeenUploaded () {
             return this.evaluate(function () {
                 return document.querySelectorAll('.document-modal .attachedFiles ul.file-list li').length === 1;
             });
