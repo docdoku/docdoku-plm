@@ -10,6 +10,10 @@ define([
         tagName: 'li',
         className: 'used-by-item well',
 
+        events:{
+            'click a.reference': 'toPartDetailView'
+        },
+
         initialize: function () {
             _.bindAll(this);
         },
@@ -22,6 +26,19 @@ define([
 
             this.$el.html(Mustache.render(template, data));
             return this;
+        },
+
+        toPartDetailView:function(){
+            this.$el.trigger('close-modal-request');
+            var part = this.model;
+            part.fetch().success(function () {
+                require(['common-objects/views/part/part_modal_view'],function(PartModalView){
+                    var partModalView = new PartModalView({
+                        model: part
+                    });
+                    partModalView.show();
+                });
+            });
         }
 
     });
