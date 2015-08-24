@@ -13,7 +13,6 @@ define([
         events: {
             'click input[type=checkbox]': 'selectionChanged',
             'click td.product_id': 'openDetailsView',
-            'click td.has-path-to-path-link': 'openDetailsViewOnPathToPathLink',
             'click a.design_item': 'openPartView'
         },
 
@@ -84,17 +83,6 @@ define([
             });
             window.document.body.appendChild(pdv.render().el);
             pdv.openModal();
-        },
-
-        openDetailsViewOnPathToPathLink: function () {
-            var that = this;
-            var pdv = new ProductDetailsView({model: that.model});
-            pdv.on('pathToPathLink:remove', function() {
-                that.syncProduct();
-            });
-            window.document.body.appendChild(pdv.render().el);
-            pdv.openModal();
-            pdv.activePathToPathLinkTab();
         },
 
         syncProduct: function() {

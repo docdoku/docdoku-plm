@@ -5,9 +5,8 @@ define([
     'text!templates/product/product_details.html',
     'views/baselines/baseline_list',
     'views/baselines/baseline_detail_view',
-    'common-objects/views/pathToPathLink/path_to_path_link_item',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, BaselineListView, BaselineDetailView, PathToPathLinkItemView, AlertView) {
+], function (Backbone, Mustache, template, BaselineListView, BaselineDetailView, AlertView) {
 
     'use strict';
 
@@ -29,7 +28,6 @@ define([
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n, model: this.model}));
             this.bindDomElements();
             this.initBaselinesView();
-            this.initPathToPathLinksView();
             return this;
         },
 
@@ -64,34 +62,6 @@ define([
             this.$tabBaselines.append(this.baselineListView.$el);
         },
 
-        initPathToPathLinksView: function () {
-
-            this.existingPathToPathLinkCollection = [];
-            this.availableType = [];
-            var self = this;
-            _.each(self.model.getPathToPathLinks(), function (pathToPathLink) {
-                self.existingPathToPathLinkCollection.push({
-                    source: pathToPathLink.source,
-                    target: pathToPathLink.target,
-                    pathToPath: pathToPathLink,
-                    productId: self.productId,
-                    serialNumber: self.model.getId(),
-                    canSuppress:true
-                });
-            });
-
-            _.each(self.existingPathToPathLinkCollection, function (pathToPathLink) {
-                var pathToPathLinkItem = new PathToPathLinkItemView({model: pathToPathLink}).render();
-                self.$('#path-to-path-links').append(pathToPathLinkItem.el);
-
-                pathToPathLinkItem.on('pathToPathLink:remove', function () {
-                    self.existingPathToPathLinkCollection.splice(self.existingPathToPathLinkCollection.indexOf(pathToPathLink), 1);
-                    self.trigger('pathToPathLink:remove');
-                });
-            });
-
-        },
-
         onError: function (model, error) {
             var errorMessage = error ? error.responseText : model;
 
@@ -115,10 +85,6 @@ define([
 
         activateTab: function (index) {
             this.$tabs.eq(index).children().tab('show');
-        },
-
-        activePathToPathLinkTab: function () {
-            this.activateTab(2);
         }
 
     });
