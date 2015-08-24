@@ -115,7 +115,7 @@ casper.test.begin('Document add link tests suite', 3, function documentAddLinkTe
     casper.then(function savePartIteration(){
         this.click('#save-iteration');
         this.waitWhileSelector('.document-modal', function modalClosed() {
-           this.test.assert(true, 'Document modal has been closed');
+            this.test.assert(true, 'Document modal has been closed');
         }, function fail() {
             this.capture('screenshot/documentAddLink/waitForModalToBeClosed-error.png');
             this.test.assert(false, 'Document modal not closed');

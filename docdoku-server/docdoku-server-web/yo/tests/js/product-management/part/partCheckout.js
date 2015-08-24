@@ -73,9 +73,6 @@ casper.test.begin('Part checkout tests suite', 3, function partCheckoutTestsSuit
         }, function then() {
             this.test.assert(true, 'Checkout nav number updated');
         }, function fail() {
-            var value = this.evaluate(function () {
-                $('.nav-checkedOut-number-item').text();
-            });
             this.capture('screenshot/partCheckout/waitForNavUpdateCount.png');
             this.test.assert(false, 'Checkout nav number not updated');
         });

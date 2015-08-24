@@ -44,20 +44,20 @@ casper.test.begin('Document creation from template tests suite', 2, function doc
 
             this.evaluate(function () {
                 document.querySelector('.modal.document-modal.new-document .template-selector').selectedIndex = 1;
-                $('.modal.document-modal.new-document .template-selector').change();               
-                $('.modal.document-modal.new-document input.reference').val('000');                 
-                $('.modal.document-modal.new-document input.reference').focus();                 
+                $('.modal.document-modal.new-document .template-selector').change();
+                $('.modal.document-modal.new-document input.reference').val('000');
+                $('.modal.document-modal.new-document input.reference').focus();
                 return true;
             });
-            
+
             this.click('.modal.document-modal.new-document .btn.btn-primary');
-            
+
         }, function fail() {
             this.capture('screenshot/documentCreationFromTemplate/waitForDocumentCreationModal-error.png');
             this.test.assert(false, 'New document modal can not be found');
         });
     });
-   
+
 
     /**
      * Check if document has been created
