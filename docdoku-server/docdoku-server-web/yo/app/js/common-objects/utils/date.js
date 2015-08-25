@@ -73,6 +73,10 @@ define([
         },
 
         dateHelper: function ($querySelector) {
+            this.dateHelperWithPlacement($querySelector, 'top');
+        },
+
+        dateHelperWithPlacement: function ($querySelector, placement) {
 
             $querySelector.each(function () {
                 var _date = $(this).text();
@@ -85,7 +89,7 @@ define([
                     html: true,
                     content: '<b>UTC</b><br /><i class="fa fa-clock-o"></i>  ' + moment.utc(_date, App.config.i18n._DATE_FORMAT).zone(-offset).format(App.config.i18n._DATE_FORMAT),
                     trigger: 'manual',
-                    placement: 'top'
+                    placement: placement
                 }).click(function (e) {
                     $(this).popover('show');
                     e.stopPropagation();
