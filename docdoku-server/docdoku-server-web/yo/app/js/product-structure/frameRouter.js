@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global define,App,$*/
 define([
     'backbone',
     'common-objects/common/singleton_decorator'
@@ -28,10 +28,11 @@ define([
                 App.instancesManager.clear();
                 App.sceneManager.clear();
                 App.sceneManager.resetCameraPlace();
-                App.instancesManager.loadComponent({
-                    getEncodedPath: function () {
-                        return pathToLoad;
-                    }
+                $('#container').css({opacity:0});
+                App.instancesManager.loadProduct(pathToLoad,function(){
+                    $('#content').remove();
+                    $('#container').css({opacity:1});
+                    setTimeout(App.instancesManager.planNewEval,100);
                 });
 
             }
@@ -52,7 +53,12 @@ define([
                 App.instancesManager.clear();
                 App.sceneManager.clear();
                 App.sceneManager.resetCameraPlace();
-                App.instancesManager.loadAssembly(partRevisionKey);
+                $('#container').css({opacity:0});
+                App.instancesManager.loadAssembly(partRevisionKey,function(){
+                    $('#content').remove();
+                    $('#container').css({opacity:1});
+                    setTimeout(App.instancesManager.planNewEval,100);
+                });
 
             }
         },

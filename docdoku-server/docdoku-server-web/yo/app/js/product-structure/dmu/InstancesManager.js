@@ -382,7 +382,26 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
                 return instancesIndexed[instanceId];
             };
 
-            this.loadAssembly = function(partRevisionKey){
+            // Method called from product visualization iframe
+            this.loadProduct = function(pathToLoad, callback){
+
+                var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
+                    App.config.productId + '/instances' +
+                    '?configSpec=' + App.config.productConfigSpec + '&path=' + pathToLoad + '&timestamp=' + getTimestamp();
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function (instances) {
+                        onSuccessLoadPath(instances);
+                        callback();
+                    }
+                });
+
+            };
+
+            // Method called from assembly visualization iframe
+            this.loadAssembly = function(partRevisionKey, callback){
 
                 var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' +
                     partRevisionKey + '/instances';
@@ -390,7 +409,10 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
                 $.ajax({
                     url: url,
                     type: 'GET',
-                    success: onSuccessLoadPath
+                    success: function (instances) {
+                        onSuccessLoadPath(instances);
+                        callback();
+                    }
                 });
 
             };
