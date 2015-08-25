@@ -43,7 +43,7 @@ import java.util.ArrayList;
  */
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
-public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceCollection> {
+public class InstanceCollectionMessageBodyWriter implements MessageBodyWriter<InstanceCollection> {
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return type.equals(InstanceCollection.class);
@@ -62,7 +62,7 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
 
         Matrix4d gM=new Matrix4d();
         gM.setIdentity();
-        InstanceBodyWriterTools.generateInstanceStreamWithGlobalMatrix(null, gM, instanceCollection, new ArrayList<Integer>(), jg);
+        InstanceBodyWriterTools.generateInstanceStreamWithGlobalMatrix(null, gM, instanceCollection, new ArrayList<>(), jg);
         jg.writeEnd();
         jg.flush();
     }

@@ -32,9 +32,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A {@link com.docdoku.core.configuration.ProductConfigSpec} which selects the latest checkin iteration.
+ * A {@link com.docdoku.core.configuration.ProductConfigSpec} which selects the latest checked in iteration.
  *
- * Filters the usage link to nominal
+ * Filters the usage link to nominal, filters the iteration to the latest checked in.
+ * This filter is strict, and will return only one result for the iteration.
  *
  * @author Florent Garin
  * @version 1.1, 30/10/11
@@ -53,6 +54,7 @@ public class LatestPSFilter extends PSFilter {
     public LatestPSFilter(User user) {
         this.user = user;
     }
+
     public LatestPSFilter(User user, boolean diverge) {
         this.user = user;
         this.diverge = diverge;

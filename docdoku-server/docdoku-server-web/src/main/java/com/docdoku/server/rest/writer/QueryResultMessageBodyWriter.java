@@ -66,14 +66,14 @@ import java.util.logging.Logger;
 
 
 @Provider
-public class QueryWriter implements MessageBodyWriter<QueryResult> {
+public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResult> {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private ExcelGenerator excelGenerator = new ExcelGenerator();
 
     private static Context context;
     private static IProductInstanceManagerLocal productInstanceService;
-    private static final Logger LOGGER = Logger.getLogger(QueryWriter.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(QueryResultMessageBodyWriter.class.getName());
 
     static {
         try {

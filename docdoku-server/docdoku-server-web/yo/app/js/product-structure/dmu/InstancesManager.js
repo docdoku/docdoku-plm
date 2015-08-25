@@ -382,6 +382,19 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
                 return instancesIndexed[instanceId];
             };
 
+            this.loadAssembly = function(partRevisionKey){
+
+                var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' +
+                    partRevisionKey + '/instances';
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: onSuccessLoadPath
+                });
+
+            };
+
         };
 
         return InstancesManager;

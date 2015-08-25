@@ -4960,3 +4960,9 @@ input[readonly].autoselect {
   width: 100%;
   height: 1000px;
 }
+
+#assembly-frame{
+    width: 100%;
+    height: 600px;
+    border: none;
+}

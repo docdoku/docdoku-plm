@@ -606,6 +606,7 @@ define({
 	VIDEO_INVITE_REJECT: "Refuser",
 	VIDEO_INVITE_TEXT: "vous invite à démarrer une session vidéo.",
 	VIEW_MODE: "Mode de vue",
+	VISUALIZE_ASSEMBLY: "Visualiser l'assemblage",
 	VISUALIZE_PRODUCT: "Visualiser le produit",
 	WAITING_REMOTE_VIDEO: "En attente de la vidéo de l'utilisateur distant.",
 	WAITING_USER_MEDIA: "En attente de l'entrée vidéo ... Veuillez accepter la demande de votre navigateur.",

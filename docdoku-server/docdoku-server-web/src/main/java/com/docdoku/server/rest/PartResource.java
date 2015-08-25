@@ -24,6 +24,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.configuration.ProductInstanceMaster;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
@@ -40,6 +41,7 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.sharing.SharedPart;
 import com.docdoku.core.workflow.Workflow;
+import com.docdoku.server.rest.collections.VirtualInstanceCollection;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -538,6 +540,16 @@ public class PartResource {
         return Response.ok().build();
     }
 
+
+    @GET
+    @Path("/instances")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getInstances(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+        PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId,partNumber,partVersion));
+        PSFilter filter = productService.getLatestCheckedInPSFilter(workspaceId);
+        VirtualInstanceCollection virtualInstanceCollection = new VirtualInstanceCollection(partRevision,filter);
+        return Response.ok().entity(virtualInstanceCollection).build();
+    }
 
 
     public List<PartUsageLink> createComponents(String workspaceId, List<PartUsageLinkDTO> pComponents)

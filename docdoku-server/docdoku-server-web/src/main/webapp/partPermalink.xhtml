@@ -280,19 +280,13 @@
                     </div>
 
                     <div id="tab-part-files" class="tab-pane">
-
                         <h:panelGroup layout="block" id="files" styleClass="accordion"></h:panelGroup>
                         <f:event type="preRenderView" listener="#{viewerBean.process}" />
-
                     </div>
 
                     <div id="tab-part-assembly" class="tab-pane">
                         <c:if test="${partRevision.lastIteration.components.size()!=0}">
-                            <ul>
-                                <c:forEach var="item" items="${partRevision.lastIteration.components}">
-                                    <li><a href="#{request.contextPath}/parts/${item.component.workspace.id}/${item.component.number}/${item.component.getLastRevision().version}">${item.component.number}-${item.component.getLastRevision().version} (${item.amount.intValue()})</a></li>
-                                </c:forEach>
-                            </ul>
+                            <iframe id="assembly-frame" src="#{request.contextPath}/visualization/#assembly/#{partRevision.partMaster.workspace.id}/${partRevision.partMaster.number}-${partRevision.version}/0/0/0"></iframe>
                         </c:if>
                     </div>
 

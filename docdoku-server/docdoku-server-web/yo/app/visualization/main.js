@@ -3,8 +3,8 @@ var App = {
     debug: false,
 
 	config:{
-		workspaceId: /^#([^\/]+)/.exec(window.location.hash)[1] || null,
-		productId: window.location.hash.split('/')[1] || null,
+		workspaceId: /^#(product|assembly)\/([^\/]+)/.exec(window.location.hash)[2] || null,
+		productId: window.location.hash.split('/')[2] || null,
 		login: '',
 		groups: [],
 		contextPath: '',
@@ -148,7 +148,7 @@ function (ContextResolver,  commonStrings, productStructureStrings) {
     'use strict';
     App.config.i18n = _.extend(commonStrings,productStructureStrings);
     ContextResolver.resolve(function(){
-        require(['backbone','frameRouter', 'dmu/SceneManager','dmu/InstancesManager'],function(Backbone,  Router,SceneManager,InstancesManager){
+        require(['backbone', 'frameRouter', 'dmu/SceneManager','dmu/InstancesManager'],function(Backbone,  Router,SceneManager,InstancesManager){
             App.$SceneContainer = $('div#frameWorkspace');
             App.instancesManager = new InstancesManager();
             App.sceneManager = new SceneManager();

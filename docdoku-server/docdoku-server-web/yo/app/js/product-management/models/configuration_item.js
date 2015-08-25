@@ -60,11 +60,6 @@ define(['backbone'], function (Backbone) {
             return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getId()) + '/config-spec/wip/scene';
         },
 
-        getFrameUrl: function () {
-            return App.config.contextPath + '/visualization/#' + App.config.workspaceId + '/' + this.getId() + '/0/10/1000/null/' + App.config.productConfigSpec;
-        },
-
-
         getZipUrl: function () {
             return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + encodeURIComponent(this.getId()) + '/export-files?configSpecType=latest';
         },

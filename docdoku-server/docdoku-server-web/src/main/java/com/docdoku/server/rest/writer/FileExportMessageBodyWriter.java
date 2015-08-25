@@ -55,13 +55,13 @@ import java.util.zip.ZipOutputStream;
 
 
 @Provider
-public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
+public class FileExportMessageBodyWriter implements MessageBodyWriter<FileExportEntity> {
 
     private static Context context;
     private static IProductManagerLocal productService;
     private static IProductInstanceManagerLocal productInstanceService;
     private static IDataManagerLocal dataManager;
-    private static final Logger LOGGER = Logger.getLogger(FileExportWriter.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(FileExportMessageBodyWriter.class.getName());
 
     static {
         try {

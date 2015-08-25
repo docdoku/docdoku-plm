@@ -2393,12 +2393,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
         };
 
-        PartMaster root = null;
-
         if (path == null) {
             ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(ciKey);
-            root = ci.getDesignItem();
-            psFilterVisitor.visit(root, pDepth);
+            psFilterVisitor.visit(ci.getDesignItem(), pDepth);
         }else{
             psFilterVisitor.visit(path, pDepth);
         }
@@ -2834,6 +2831,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 break;
         }
         return filter;
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public PSFilter getLatestCheckedInPSFilter(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        return new LatestPSFilter(user);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

@@ -56,3 +56,8 @@
     <i class="fa fa-paperclip" title="{{i18n.ATTACHED_FILES}}"></i>
     {{/model.hasLastIterationAttachedFiles}}
 </td>
+<td>
+    {{#model.isLastIterationAssembly}}
+    <a target="_blank" href="{{model.getVisualizationUrl}}" title="{{i18n.VISUALIZE_ASSEMBLY}}"><i class="fa fa-video-camera"></i></a>
+    {{/model.isLastIterationAssembly}}
+</td>

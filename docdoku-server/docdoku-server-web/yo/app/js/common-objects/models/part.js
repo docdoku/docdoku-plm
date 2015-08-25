@@ -515,12 +515,18 @@ define([
                     }
                 });
             },
+
+            getVisualizationUrl:function(){
+                return App.config.contextPath + '/visualization/#assembly/' + App.config.workspaceId + '/' +  this.getPartKey() +'/0/0/0';
+            },
+
             url: function () {
                 if (this.getPartKey()) {
                     return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getPartKey();
                 }
                 return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/';
             },
+
             onError: function (model, error) {
                 var errorMessage = error ? error.responseText : model;
 

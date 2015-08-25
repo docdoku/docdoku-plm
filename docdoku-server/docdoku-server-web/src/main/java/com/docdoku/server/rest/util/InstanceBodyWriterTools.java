@@ -20,12 +20,14 @@
 
 package com.docdoku.server.rest.util;
 
+import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.rest.collections.InstanceCollection;
+import com.docdoku.server.rest.collections.VirtualInstanceCollection;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -107,6 +109,33 @@ public class InstanceBodyWriterTools {
 
     }
 
+    public static void generateInstanceStreamWithGlobalMatrix(List<PartLink> currentPath, Matrix4d matrix, VirtualInstanceCollection virtualInstanceCollection, List<Integer> instanceIds, JsonGenerator jg) {
+
+        PartLink partLink = currentPath.get(currentPath.size()-1);
+        PSFilter filter = virtualInstanceCollection.getFilter();
+        PartIteration partI = filter.filter(partLink.getComponent()).iterator().next();
+
+        for (CADInstance instance : partLink.getCadInstances()) {
+
+            List<Integer> copyInstanceIds = new ArrayList<>(instanceIds);
+            copyInstanceIds.add(instance.getId());
+
+            Vector3d instanceTranslation = new Vector3d(instance.getTx(), instance.getTy(), instance.getTz());
+            Vector3d instanceRotation = new Vector3d(instance.getRx(), instance.getRy(), instance.getRz());
+            Matrix4d combinedMatrix = combineTransformation(matrix, instanceTranslation, instanceRotation);
+
+            if (!partI.isAssembly() && !partI.getGeometries().isEmpty()) {
+                writeLeaf(currentPath, copyInstanceIds, partI, combinedMatrix, jg);
+            } else {
+                for (PartLink subLink : partI.getComponents()) {
+                    List<PartLink> subPath = new ArrayList<>(currentPath);
+                    subPath.add(subLink);
+                    generateInstanceStreamWithGlobalMatrix(subPath, combinedMatrix, virtualInstanceCollection, copyInstanceIds, jg);
+                }
+            }
+        }
+
+    }
 
     public static Matrix4d combineTransformation(Matrix4d matrix, Vector3d translation, Vector3d rotation){
         Matrix4d gM=new Matrix4d(matrix);
@@ -182,6 +211,7 @@ public class InstanceBodyWriterTools {
         }
         jg.writeEnd();
     }
+
     private static void writeAttributes(List<InstanceAttributeDTO> attributes, JsonGenerator jg){
         jg.writeStartArray("attributes");
         for (InstanceAttributeDTO a : attributes) {
@@ -193,4 +223,5 @@ public class InstanceBodyWriterTools {
         }
         jg.writeEnd();
     }
+
 }

@@ -612,6 +612,7 @@ define({
 		VIDEO_INVITE_REJECT: "Reject",
 		VIDEO_INVITE_TEXT: "is inviting you to a video chat session",
 		VIEW_MODE: "View mode",
+		VISUALIZE_ASSEMBLY: "Visualize assembly",
 		VISUALIZE_PRODUCT: "Visualize product",
 		WAITING_REMOTE_VIDEO: "Waiting for remote video.",
 		WAITING_USER_MEDIA: "Waiting user media ... Please accept the prompt from your browser.",

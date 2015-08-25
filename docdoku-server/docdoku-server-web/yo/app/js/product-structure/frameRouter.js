@@ -5,10 +5,13 @@ define([
 ], function (Backbone, singletonDecorator) {
     'use strict';
     var Router = Backbone.Router.extend({
+
         routes: {
-            ':workspaceId/:productId/:cameraX/:cameraY/:cameraZ/:pathToLoad(/:configSpec)': 'load'
+            'product/:workspaceId/:productId/:cameraX/:cameraY/:cameraZ/:pathToLoad(/:configSpec)': 'loadProduct',
+            'assembly/:workspaceId/:partRevisionKey/:cameraX/:cameraY/:cameraZ': 'loadAssembly'
         },
-        load: function (workspaceId, productId, cameraX, cameraY, cameraZ, pathToLoad, configSpec) {
+
+        loadProduct: function (workspaceId, productId, cameraX, cameraY, cameraZ, pathToLoad, configSpec) {
 
             if (pathToLoad && productId) {
 
@@ -24,9 +27,7 @@ define([
 
                 App.instancesManager.clear();
                 App.sceneManager.clear();
-
                 App.sceneManager.resetCameraPlace();
-
                 App.instancesManager.loadComponent({
                     getEncodedPath: function () {
                         return pathToLoad;
@@ -35,6 +36,27 @@ define([
 
             }
         },
+
+        loadAssembly:function(workspaceId, partRevisionKey, cameraX, cameraY, cameraZ){
+
+            if (partRevisionKey) {
+
+                App.config.workspaceId = workspaceId;
+
+                App.config.defaultCameraPosition = {
+                    x: parseFloat(cameraX || 0),
+                    y: parseFloat(cameraY || 0),
+                    z: parseFloat(cameraZ || 0)
+                };
+
+                App.instancesManager.clear();
+                App.sceneManager.clear();
+                App.sceneManager.resetCameraPlace();
+                App.instancesManager.loadAssembly(partRevisionKey);
+
+            }
+        },
+
         updateRoute: function () {
             /* nothing to do, but needs to be present*/
         }
