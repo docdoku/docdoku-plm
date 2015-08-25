@@ -818,7 +818,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public void deletePathData(String workspaceId, String configurationItemId, String serialNumber, int pathDataId, int iteration) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
+    public void deletePathData(String workspaceId, String configurationItemId, String serialNumber, int pathDataId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
@@ -831,7 +831,6 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
         PathDataMasterDAO pathDataMasterDAO = new PathDataMasterDAO(locale, em);
         PathDataMaster pathDataMaster = em.find(PathDataMaster.class, pathDataId);
-        PathDataIteration pathDataIteration = pathDataMaster.getPathDataIterations().get(iteration - 1);
 
         ProductInstanceIteration prodInstI = prodInstM.getLastIteration();
 
@@ -842,13 +841,16 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
         prodInstI.getPathDataMasterList().remove(pathDataMaster);
 
-        for (BinaryResource file : pathDataIteration.getAttachedFiles()) {
-            try {
-                dataManager.deleteData(file);
-            } catch (StorageException e) {
-                LOGGER.log(Level.INFO, null, e);
+        for(PathDataIteration pathDataIteration : pathDataMaster.getPathDataIterations()) {
+            for (BinaryResource file : pathDataIteration.getAttachedFiles()) {
+                try {
+                    dataManager.deleteData(file);
+                } catch (StorageException e) {
+                    LOGGER.log(Level.INFO, null, e);
+                }
             }
         }
+
 
         pathDataMasterDAO.removePathData(pathDataMaster);
     }
