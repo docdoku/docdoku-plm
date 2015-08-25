@@ -147,7 +147,7 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
 function (ContextResolver,  commonStrings, productStructureStrings) {
     'use strict';
     App.config.i18n = _.extend(commonStrings,productStructureStrings);
-    ContextResolver.resolve(function(){
+    ContextResolver.resolveUser(function(){
         require(['backbone', 'frameRouter', 'dmu/SceneManager','dmu/InstancesManager'],function(Backbone,  Router,SceneManager,InstancesManager){
             App.$SceneContainer = $('div#frameWorkspace');
             App.instancesManager = new InstancesManager();

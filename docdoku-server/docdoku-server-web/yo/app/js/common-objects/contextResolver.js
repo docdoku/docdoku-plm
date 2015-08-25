@@ -18,7 +18,7 @@ define([
         }
     });
 
-    ContextResolver.prototype.resolve = function (success) {
+    ContextResolver.prototype.resolveUser = function (success) {
         $.getJSON('../server.properties.json').success(function (properties) {
 
             App.config.contextPath = properties.contextRoot;
