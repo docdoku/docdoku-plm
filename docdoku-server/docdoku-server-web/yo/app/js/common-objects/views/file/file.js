@@ -89,6 +89,7 @@ define([
                     _this.trigger('clear');
                     _this.render();
                     _this.$el.toggleClass('edition');
+                    _this.checkbox.change();
 
                 }).error(function(error) {
 
