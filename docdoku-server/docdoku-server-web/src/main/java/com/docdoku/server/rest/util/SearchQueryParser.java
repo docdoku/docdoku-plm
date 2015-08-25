@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -261,7 +262,10 @@ public class SearchQueryParser {
                     SearchQuery.DateAttributeQuery daq = new SearchQuery.DateAttributeQuery();
                     daq.setName(attributeName);
                     try {
-                        daq.setDate(SIMPLE_DATE_FORMAT.parse(attributeValue));
+                        //Date attributes are always UTC, should not use the default timezone
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+                        daq.setDate(df.parse(attributeValue));
                         pAttributes.add(daq);
                     } catch (ParseException e) {
                         LOGGER.log(Level.FINEST,null,e);
