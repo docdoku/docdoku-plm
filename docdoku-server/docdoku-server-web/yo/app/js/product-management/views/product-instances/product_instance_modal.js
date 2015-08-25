@@ -34,6 +34,7 @@ define([
             this.productId = this.model.getConfigurationItemId();
             this.iteration = this.model.getLastIteration();
             this.iterations = this.model.getIterations();
+            _.bindAll(this);
         },
 
         render: function () {
@@ -138,8 +139,8 @@ define([
             this.$substitutesCount.text(substitutes.length);
             this.$optionalsCount.text(optionals.length);
 
-            _.each(substitutes, this.drawSubstitutesChoice.bind(this));
-            _.each(optionals, this.drawOptionalsChoice.bind(this));
+            _.each(substitutes, this.drawSubstitutesChoice);
+            _.each(optionals, this.drawOptionalsChoice);
         },
 
         drawSubstitutesChoice: function (data) {
@@ -230,15 +231,48 @@ define([
         initPathDataView: function () {
             var pathDataList = this.$('#path-data-list');
             var paths = this.iteration.getPathDataPaths();
-
+            var self = this;
+            var pathsHtml = [];
             _.each(paths, function (path) {
-                pathDataList.append(Mustache.render(pathTemplate, {
-                    i18n: App.config.i18n,
-                    partLinks:path.partLinks
-                }));
-                pathDataList.find('.well i.fa-long-arrow-right').last().remove();
-            });
 
+                var html = $(Mustache.render(pathTemplate, {
+                    i18n: App.config.i18n,
+                    partLinks:path.partLinks,
+                    editMode: self.editMode
+                }));
+
+                html.find('button.close').click({fullPath: self.getFullPath(path)},self.removePathData);
+                html.find('i.fa-long-arrow-right').last().remove();
+                pathsHtml.push(html);
+            });
+            pathDataList.html(pathsHtml);
+        },
+
+        getFullPath: function(path) {
+            var fullPath = '';
+            _.each(path.partLinks, function(partLink) {
+                fullPath += partLink.fullId + '-';
+            });
+            return fullPath.substr(0,fullPath.length-1);
+        },
+
+        removePathData: function(event) {
+            var self = this;
+            var fullPath = event.data.fullPath;
+            var pathData = _.findWhere(this.iteration.getPathData(), {path: fullPath});
+            $.ajax({
+                url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/'+self.model.getConfigurationItemId()+'/product-instances/' + self.model.getSerialNumber()+'/pathdata/'+pathData.id,
+                type: 'DELETE',
+                error: function(error, type) {
+                    self.onError(type,error);
+                },
+                success : function() {
+                    self.model.fetch().success(function() {
+                        self.iteration = self.model.getIterations().get(self.iteration.getIteration());
+                        self.initPathDataView();
+                    });
+                }
+            });
         },
 
         bindUserPopover: function () {
@@ -269,7 +303,7 @@ define([
                     _this.model.fetch();
                     _this.closeModal();
                 },
-                error: _this.onError.bind(_this)
+                error: _this.onError
             });
             this.fileListView.deleteFilesToDelete();
             e.preventDefault();
@@ -285,7 +319,7 @@ define([
                 success: function () {
                     self.model.fetch();
                 },
-                error: self.onError.bind(self)
+                error: self.onError
             });
             this.fileListView.deleteFilesToDelete();
 
@@ -309,11 +343,8 @@ define([
                         self.onRebaseSuccess();
                     });
                 },
-                error: function (errorMessage) {
-                    self.$('#alerts').append(new AlertView({
-                        type: 'error',
-                        message: errorMessage
-                    }).render().$el);
+                error: function (errorMessage,type) {
+                    self.onError(type,errorMessage);
                 }
             });
 
