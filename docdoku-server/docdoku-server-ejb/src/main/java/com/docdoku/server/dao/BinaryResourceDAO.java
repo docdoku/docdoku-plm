@@ -79,9 +79,12 @@ public class BinaryResourceDAO {
         em.flush();
     }
 
-    public BinaryResource loadBinaryResource(String pFullName)  {
+    public BinaryResource loadBinaryResource(String pFullName) throws FileNotFoundException {
         BinaryResource file = em.find(BinaryResource.class, pFullName);
-            return file;
+        if(null == file){
+            throw new FileNotFoundException(mLocale,pFullName);
+        }
+        return file;
 
     }
 

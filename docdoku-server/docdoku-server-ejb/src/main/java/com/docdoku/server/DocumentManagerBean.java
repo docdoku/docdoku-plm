@@ -1210,10 +1210,13 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
-        if (file == null) {
-            throw new FileNotFoundException(userLocale, pFullName);
-        }
-        if (binDAO.loadBinaryResource(file.getNewFullName(pNewName)) == null) {
+
+        try{
+
+            binDAO.loadBinaryResource(file.getNewFullName(pNewName));
+            throw new FileAlreadyExistsException(userLocale, pNewName);
+
+        }catch(FileNotFoundException e){
 
             DocumentIteration document = binDAO.getDocumentOwner(file);
             DocumentRevision docR = document.getDocumentRevision();
@@ -1232,8 +1235,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             } else {
                 throw new NotAllowedException(userLocale, "NotAllowedException29");
             }
-        } else {
-            throw new FileAlreadyExistsException(userLocale, pNewName);
         }
 
     }
@@ -1265,12 +1266,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
-        if (file == null) {
-            throw new FileNotFoundException(userLocale, pFullName);
-        }
-
-        if (binDAO.loadBinaryResource(file.getNewFullName(pNewName)) == null) {
-
+        try{
+            binDAO.loadBinaryResource(file.getNewFullName(pNewName));
+            throw new FileAlreadyExistsException(userLocale, pNewName);
+        }catch(FileNotFoundException e){
             DocumentMasterTemplate template = binDAO.getDocumentTemplateOwner(file);
 
             checkDocumentTemplateWriteAccess(template, user);
@@ -1283,9 +1282,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             binDAO.createBinaryResource(newFile);
             template.addFile(newFile);
             return newFile;
-        } else {
-            throw new FileAlreadyExistsException(userLocale, pNewName);
         }
+
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
