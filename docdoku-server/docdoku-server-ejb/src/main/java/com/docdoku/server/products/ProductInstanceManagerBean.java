@@ -504,7 +504,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductInstanceMaster removeFileFromProductInstanceIteration(String workspaceId, int iteration, String fullName, ProductInstanceMaster productInstanceMaster) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException {
+    public ProductInstanceMaster removeFileFromProductInstanceIteration(String workspaceId, int iteration, String fullName, ProductInstanceMaster productInstanceMaster) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException, FileNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale userLocale = new Locale(user.getLanguage());
@@ -533,15 +533,18 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
-        if (file == null) {
-            throw new FileNotFoundException(new Locale(user.getLanguage()), pFullName);
-        }
+
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocale, em);
         ProductInstanceMasterKey pInstanceIterationKey = new ProductInstanceMasterKey(serialNumber, user.getWorkspaceId(), cId);
         ProductInstanceMaster productInstanceMaster = productInstanceMasterDAO.loadProductInstanceMaster(pInstanceIterationKey);
         checkNameFileValidity(pNewName, userLocale);
 
-        if (binDAO.loadBinaryResource(file.getNewFullName(pNewName)) == null) {
+        try{
+
+            binDAO.loadBinaryResource(file.getNewFullName(pNewName));
+            throw new FileAlreadyExistsException(userLocale, pNewName);
+
+        }catch(FileNotFoundException e){
 
             ProductInstanceIteration productInstanceIteration = productInstanceMaster.getProductInstanceIterations().get(iteration - 1);
             //check access rights on product instance
@@ -555,9 +558,6 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             binDAO.createBinaryResource(newFile);
             productInstanceIteration.addFile(newFile);
             return newFile;
-
-        } else {
-            throw new FileAlreadyExistsException(userLocale, pNewName);
         }
 
     }
@@ -961,17 +961,16 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
-        if (file == null) {
-            throw new FileNotFoundException(userLocale, pFullName);
-        }
-
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocale, em);
         ProductInstanceMasterKey pInstanceIterationKey = new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId);
         ProductInstanceMaster productInstanceMaster = productInstanceMasterDAO.loadProductInstanceMaster(pInstanceIterationKey);
 
         checkNameFileValidity(pNewName, userLocale);
 
-        if (binDAO.loadBinaryResource(file.getNewFullName(pNewName)) == null) {
+        try{
+            binDAO.loadBinaryResource(file.getNewFullName(pNewName));
+            throw new FileAlreadyExistsException(userLocale, pNewName);
+        }catch(FileNotFoundException e){
 
             //check access rights on product master
             checkProductInstanceWriteAccess(user.getWorkspaceId(), productInstanceMaster, user);
@@ -1001,19 +1000,17 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
                 return newFile;
 
 
-            } catch (StorageException e) {
-                LOGGER.log(Level.INFO, null, e);
+            } catch (StorageException se) {
+                LOGGER.log(Level.INFO, null, se);
                 return null;
             }
 
-        } else {
-            throw new FileAlreadyExistsException(userLocale, pNewName);
         }
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public ProductInstanceMaster removeFileFromPathData(String workspaceId, String configurationItemId, String serialNumber, int pathDataId, int iteration, String fullName, ProductInstanceMaster productInstanceMaster) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException, NotAllowedException {
+    public ProductInstanceMaster removeFileFromPathData(String workspaceId, String configurationItemId, String serialNumber, int pathDataId, int iteration, String fullName, ProductInstanceMaster productInstanceMaster) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException, NotAllowedException, FileNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale userLocale = new Locale(user.getLanguage());
