@@ -23,7 +23,7 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.AccountAlreadyExistsException;
 import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.exceptions.CreationException;
-import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.IAccountManagerLocal;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
@@ -40,7 +40,7 @@ import java.util.*;
 public class AccountBean {
 
     @EJB
-    private IUserManagerLocal userManager;
+    private IAccountManagerLocal accountManager;
     
     private String password;
 
@@ -72,7 +72,7 @@ public class AccountBean {
             language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
         }
 
-        userManager.createAccount(login, name, email, language, password, timeZone);
+        accountManager.createAccount(login, name, email, language, password, timeZone);
         request.login(login, password);
 
         HttpSession session = request.getSession();
@@ -85,7 +85,7 @@ public class AccountBean {
             language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
         }
         FacesContext.getCurrentInstance().getViewRoot().setLocale(new Locale(language));
-        userManager.updateAccount(name, email, language, password,timeZone);
+        accountManager.updateAccount(name, email, language, password,timeZone);
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         return request.getContextPath()+"/";
     }

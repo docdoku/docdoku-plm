@@ -26,6 +26,7 @@ import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.EntityAlreadyExistsException;
 import com.docdoku.core.exceptions.EntityNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.AccountDTO;
 import com.docdoku.server.rest.dto.GCMAccountDTO;
@@ -51,6 +52,9 @@ import java.util.List;
 public class AccountResource {
 
     @EJB
+    private IAccountManagerLocal accountManager;
+
+    @EJB
     private IUserManagerLocal userManager;
 
     private Mapper mapper;
@@ -67,7 +71,7 @@ public class AccountResource {
     @Path("/me")
     @Produces(MediaType.APPLICATION_JSON)
     public AccountDTO getAccount() throws AccountNotFoundException {
-        Account account = userManager.getMyAccount();
+        Account account = accountManager.getMyAccount();
         return mapper.map(account,AccountDTO.class);
     }
 
@@ -91,7 +95,7 @@ public class AccountResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response setGCMAccount(GCMAccountDTO data)
             throws EntityAlreadyExistsException, AccountNotFoundException, CreationException {
-        userManager.setGCMAccount(data.getGcmId());
+        accountManager.setGCMAccount(data.getGcmId());
         return Response.ok().build();
     }
 
@@ -99,7 +103,7 @@ public class AccountResource {
     @DELETE
     @Path("gcm")
     public Response deleteGCMAccount() throws EntityNotFoundException {
-        userManager.deleteGCMAccount();
+        accountManager.deleteGCMAccount();
         return Response.ok().build();
     }
 

@@ -24,6 +24,7 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.exceptions.PasswordRecoveryRequestNotFoundException;
 import com.docdoku.core.security.PasswordRecoveryRequest;
+import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 
@@ -41,6 +42,9 @@ public class RecoveryBean {
     private IMailerLocal mailer;
     @EJB
     private IUserManagerLocal userManager;
+    @EJB
+    private IAccountManagerLocal accountManager;
+
     private String login;
     private String newPassword;
     private String passwordRRUuid;
@@ -62,7 +66,7 @@ public class RecoveryBean {
     }
 
     public String sendRecoveryMessage() throws AccountNotFoundException {
-        Account account = userManager.getAccount(login);
+        Account account = accountManager.getAccount(login);
         PasswordRecoveryRequest passwdRR = userManager.createPasswordRecoveryRequest(account.getLogin());
         mailer.sendPasswordRecovery(account, passwdRR.getUuid());
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());

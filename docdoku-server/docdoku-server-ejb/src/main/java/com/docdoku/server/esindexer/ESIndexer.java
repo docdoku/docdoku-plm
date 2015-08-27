@@ -29,9 +29,9 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
-import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.DocumentMasterDAO;
 import com.docdoku.server.dao.PartMasterDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
@@ -109,7 +109,7 @@ public class ESIndexer {
     private SessionContext ctx;
 
     @EJB
-    private IUserManagerLocal userManager;
+    private IAccountManagerLocal accountManager;
 
     @EJB
     private IMailerLocal mailer;
@@ -338,7 +338,7 @@ public class ESIndexer {
 
         try {
             String login = ctx.getCallerPrincipal().getName();
-            Account account = userManager.getAccount(login);
+            Account account = accountManager.getAccount(login);
             mailer.sendIndexerResult(account, workspaceId, hasSuccess, failureMessage);
         } catch (AccountNotFoundException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString("ES_MailError1");
@@ -451,7 +451,7 @@ public class ESIndexer {
 
         try {
             String login = ctx.getCallerPrincipal().getName();
-            Account account = userManager.getAccount(login);
+            Account account = accountManager.getAccount(login);
             mailer.sendIndexerResult(account, workspaceId, hasSuccess, failureMessage);
         } catch (AccountNotFoundException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString("ES_MailError1");

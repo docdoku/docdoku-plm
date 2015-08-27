@@ -25,6 +25,7 @@ import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.services.IAccountManagerWS;
 import com.docdoku.core.services.IUserManagerWS;
 
 import java.io.IOException;
@@ -38,7 +39,8 @@ public class WorkspacesCommand extends BaseCommandLine {
     @Override
     public void execImpl() throws Exception {
         IUserManagerWS userS = ScriptingTools.createUserManagerService(getServerURL(), user, password);
-        new AccountsManager().saveAccount(userS.getMyAccount());
+        IAccountManagerWS accountS = ScriptingTools.createAccountManagerService(getServerURL(), user, password);
+        new AccountsManager().saveAccount(accountS.getMyAccount());
         Workspace[] workspaces = userS.getWorkspacesWhereCallerIsActive();
         output.printWorkspaces(workspaces);
     }
