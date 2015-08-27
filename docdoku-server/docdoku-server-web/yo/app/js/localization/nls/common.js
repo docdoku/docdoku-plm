@@ -623,7 +623,7 @@ define({
 		WORKFLOW_LEGEND_INCOMPLETE: "Incomplete",
 		WORKFLOW_LEGEND_INPROGRESS: "In progress",
 		WORKFLOW_LEGEND_REJECTED: "Rejected",
-		WORKFLOW_NAME_PLACEHOLDER: "New workflow name",
+		WORKFLOW_NAME_PLACEHOLDER: "Workflow name",
 		WORKFLOW: "Workflow",
         WORKFLOW_COPY: "Workflow copy",
         WORKFLOWS: "Workflows",
