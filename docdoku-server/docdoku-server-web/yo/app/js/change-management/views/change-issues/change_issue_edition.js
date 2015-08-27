@@ -133,6 +133,7 @@ define([
                 this.$inputIssuePriority = this.$('#inputIssuePriority');
                 this.$inputIssueAssignee = this.$('#inputIssueAssignee');
                 this.$inputIssueCategory = this.$('#inputIssueCategory');
+                this.$inputIssueInitiator = this.$("#inputIssueInitiator");
                 this.$authorLink = this.$('.author-popover');
             },
 
@@ -152,7 +153,8 @@ define([
                     author: App.config.login,
                     assignee: this.$inputIssueAssignee.val(),
                     priority: this.$inputIssuePriority.val(),
-                    category: this.$inputIssueCategory.val()
+                    category: this.$inputIssueCategory.val(),
+                    initiator: this.$inputIssueInitiator.val()
                 };
 
                 this.model.save(data, {
