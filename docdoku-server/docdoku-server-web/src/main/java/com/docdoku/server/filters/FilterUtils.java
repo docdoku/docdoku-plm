@@ -39,16 +39,16 @@ public class FilterUtils {
 
     public static void hookAccountBeanData(String remoteUser, IUserManagerLocal userManager, IAccountManagerLocal accountManager, AccountBean accountBean) throws AccountNotFoundException {
 
-        Account user = accountManager.getAccount(remoteUser);
+        Account account = accountManager.getAccount(remoteUser);
         boolean isAdmin = userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID);
-        accountBean.setLogin(user.getLogin());
-        accountBean.setEmail(user.getEmail());
-        accountBean.setLanguage(user.getLanguage());
-        accountBean.setName(user.getName());
-        accountBean.setTimeZone(user.getTimeZone());
-        Organization organization = user.getOrganization();
+        accountBean.setLogin(account.getLogin());
+        accountBean.setEmail(account.getEmail());
+        accountBean.setLanguage(account.getLanguage());
+        accountBean.setName(account.getName());
+        accountBean.setTimeZone(account.getTimeZone());
+        Organization organization = account.getOrganization();
         if(organization!=null){
-            accountBean.setOrganizationName(user.getOrganization().getName());
+            accountBean.setOrganizationName(account.getOrganization().getName());
             accountBean.setOrganizationAdmin(organization.getOwner().getLogin());
         }
 
