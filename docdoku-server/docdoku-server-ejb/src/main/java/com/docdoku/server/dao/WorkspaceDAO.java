@@ -288,6 +288,11 @@ public class WorkspaceDAO {
         em.createQuery("DELETE FROM ListOfValues lov where lov.workspace = :workspace")
                 .setParameter("workspace",workspace).executeUpdate();
 
+        // Query
+        em.createQuery("DELETE FROM QueryContext qc where qc.workspaceId = :workspaceId")
+                .setParameter("workspaceId", workspaceId).executeUpdate();
+        em.createQuery("DELETE FROM Query q where q.author.workspace = :workspace")
+                .setParameter("workspace", workspace).executeUpdate();
 
         // WorkspaceUserGroupMembership
         em.createQuery("DELETE FROM WorkspaceUserGroupMembership w where w.workspace = :workspace")
