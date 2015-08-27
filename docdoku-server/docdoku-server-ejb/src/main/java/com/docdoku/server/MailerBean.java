@@ -381,12 +381,15 @@ public class MailerBean implements IMailerLocal {
     }
 
     private String getStateNotificationMessage(DocumentRevision pDocumentRevision, Locale pLocale) {
-
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        String stateName = pDocumentRevision.getLifeCycleState();
+        stateName = (stateName != null && ! stateName.isEmpty()) ? stateName : bundle.getString("FinalState_name");
         Object[] args = {
                 pDocumentRevision,
                 pDocumentRevision.getLastIteration().getCreationDate(),
-            getURL(pDocumentRevision)};
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+                getURL(pDocumentRevision),
+                stateName};
+
         return MessageFormat.format(bundle.getString("StateNotification_text"), args);
 
     }
