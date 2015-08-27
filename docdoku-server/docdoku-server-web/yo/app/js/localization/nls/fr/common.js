@@ -229,7 +229,7 @@ define({
     IS_SUBSTITUTE: "Est une variante",
 	ITERATION_CHANGE: "Changement d'iteration",
 	ITERATION: "Itération",
-	ITERATION_NOTE: "Note d'itération",
+	REVISION_NOTE: "Note de révision",
 	ITERATION_NOTE_PROMPT_CANCEL: "Ignorer",
 	ITERATION_NOTE_PROMPT_LABEL: "La note d'itération n'a pas été définie. Souhaitez-vous l'ajouter ?",
 	ITERATION_NOTE_PROMPT_OK: "Ajouter la note d'itération",
