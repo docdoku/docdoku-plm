@@ -64,9 +64,7 @@
                         <tr>
                             <th scope="row">#{i18nDocument['general.creation_date']}</th>
                             <td>
-                                <h:outputText value="#{accountBean.addTimeZone(documentRevision.creationDate)}">
-                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
-                                </h:outputText>
+                                <h:outputText value="#{accountBean.addTimeZone(documentRevision.creationDate)}"/>
                             </td>
                         </tr>
                         <tr>
@@ -93,9 +91,7 @@
                             <tr>
                                 <th scope="row">#{i18nDocument['general.checkout_date']}</th>
                                 <td>
-                                    <h:outputText value="#{accountBean.addTimeZone(documentRevision.checkOutDate)}">
-                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
-                                    </h:outputText>
+                                    <h:outputText value="#{accountBean.addTimeZone(documentRevision.checkOutDate)}"/>
                                 </td>
                             </tr>
                         </c:if>
@@ -126,17 +122,13 @@
                         <tr>
                             <th scope="row">#{i18nDocument['iteration.revision_date']}</th>
                             <td>
-                                <h:outputText value="#{documentRevision.isCheckedOut() ? accountBean.addTimeZone(documentRevision.lastIteration.creationDate) : accountBean.addTimeZone(documentRevision.lastIteration.checkInDate)}">
-                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
-                                </h:outputText>
+                                <h:outputText value="#{documentRevision.isCheckedOut() ? accountBean.addTimeZone(documentRevision.lastIteration.creationDate) : accountBean.addTimeZone(documentRevision.lastIteration.checkInDate)}"/>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['iteration.modification_date']}</th>
                             <td>
-                                <h:outputText value="#{accountBean.addTimeZone(documentRevision.lastIteration.modificationDate)}">
-                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
-                                </h:outputText>
+                                <h:outputText value="#{accountBean.addTimeZone(documentRevision.lastIteration.modificationDate)}"/>
                             </td>
                         </tr>
                         <tr>
