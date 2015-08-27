@@ -25,6 +25,7 @@ import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IWorkspaceManagerLocal;
 
@@ -47,6 +48,9 @@ public class WorkspaceBean {
 
     @EJB
     private IUserManagerLocal userManager;
+
+    @EJB
+    private IAccountManagerLocal accountManager;
 
     @Inject
     private AdminStateBean adminState;
@@ -116,7 +120,7 @@ public class WorkspaceBean {
 
     public String updateWorkspace() throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException {
         Workspace workspace = adminState.getCurrentWorkspace();
-        Account newAdmin = userManager.getAccount(workspaceAdmin);
+        Account newAdmin = accountManager.getAccount(workspaceAdmin);
         workspace.setDescription(workspaceDescription);
         workspace.setFolderLocked(freezeFolders);
         workspace.setAdmin(newAdmin);
@@ -129,9 +133,9 @@ public class WorkspaceBean {
         String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
         Account account;
         if(userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
-            account = userManager.getAccount(loginToAdd);
+            account = accountManager.getAccount(loginToAdd);
         }else{
-            account = userManager.getAccount(remoteUser);
+            account = accountManager.getAccount(remoteUser);
         }
         Workspace workspace = userManager.createWorkspace(workspaceId, account, workspaceDescription, freezeFolders);
         adminState.setSelectedWorkspace(workspace.getId());

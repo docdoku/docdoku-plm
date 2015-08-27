@@ -37,6 +37,7 @@ public class ScriptingTools {
     private static final String PRODUCT_WSDL_LOCATION = "/services/product?wsdl";
     private static final String PRODUCT_BASELINE_WSDL_LOCATION = "/services/productBaseline?wsdl";
     private static final String USER_WSDL_LOCATION = "/services/user?wsdl";
+    private static final String ACCOUNT_WSDL_LOCATION = "/services/account?wsdl";
     private static final String LOV_WSDL_LOCATION = "/services/lov?wsdl";
 
     private static final String NAMESPACEURI = "http://server.docdoku.com/";
@@ -74,6 +75,15 @@ public class ScriptingTools {
     public static IUserManagerWS createUserManagerService(URL url, String login, String password) throws MalformedURLException {
         UserService service = new UserService(new URL(url, USER_WSDL_LOCATION), new javax.xml.namespace.QName(NAMESPACEURI, "UserManagerBeanService"));
         IUserManagerWS port = service.getPort(IUserManagerWS.class);
+        ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
+        ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+
+        return port;
+    }
+
+    public static IAccountManagerWS createAccountManagerService(URL url, String login, String password) throws MalformedURLException {
+        AccountService service = new AccountService(new URL(url, ACCOUNT_WSDL_LOCATION), new javax.xml.namespace.QName(NAMESPACEURI, "AccountManagerBeanService"));
+        IAccountManagerWS port = service.getPort(IAccountManagerWS.class);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
 

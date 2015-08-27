@@ -33,23 +33,6 @@ import com.docdoku.core.security.WorkspaceUserMembership;
  */
 public interface IUserManagerLocal{
 
-    Organization createOrganization(String pName, Account pOwner, String pDescription) throws OrganizationAlreadyExistsException, CreationException, NotAllowedException;
-    void deleteOrganization(String pName) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException;
-    void updateOrganization(Organization pOrganization) throws AccountNotFoundException, OrganizationNotFoundException, AccessRightException;
-    void addAccountInOrganization(String pOrganizationName, String pLogin) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException, NotAllowedException;
-    void removeAccountFromOrganization(String pOrganizationName, String[] pLogins) throws AccessRightException, OrganizationNotFoundException, AccountNotFoundException;
-
-    /**
-     * Get the account matching a login. ONLY USE IN LOCAL.
-     * @param pLogin Login you search
-     * @return The account matching the login
-     * @throws AccountNotFoundException If no account was found
-     */
-    Account getAccount(String pLogin) throws AccountNotFoundException;
-
-    Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountAlreadyExistsException, CreationException;
-    void updateAccount(String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountNotFoundException;
-
     void recoverPassword(String pPasswdRRUuid, String pPassword) throws PasswordRecoveryRequestNotFoundException;
     PasswordRecoveryRequest createPasswordRecoveryRequest(String login);
 
@@ -59,7 +42,6 @@ public interface IUserManagerLocal{
     void updateWorkspace(Workspace pWorkspace) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException;
 
     User whoAmI(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
-    Account getMyAccount() throws AccountNotFoundException;
     void addUserInWorkspace(String pWorkspaceId, String pLogin) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException;
     void removeUsers(String pWorkspaceId, String[] pLogins) throws UserNotFoundException, NotAllowedException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException;
     Workspace[] getAdministratedWorkspaces() throws AccountNotFoundException;
@@ -92,9 +74,8 @@ public interface IUserManagerLocal{
     User checkWorkspaceWriteAccess(String pWorkspaceId) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException;
 
     boolean isCallerInRole(String role);
+    String getCallerPrincipalLogin();
+    String getCallerPrincipalName();
 
     UserGroup[] getUserGroupsForUser(UserKey userKey) throws UserNotFoundException;
-
-    void setGCMAccount(String gcmId) throws AccountNotFoundException, GCMAccountAlreadyExistsException, CreationException;
-    void deleteGCMAccount() throws AccountNotFoundException, GCMAccountNotFoundException;
 }

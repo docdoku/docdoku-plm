@@ -22,6 +22,7 @@ package com.docdoku.server.filters;
 
 import com.docdoku.core.common.Account;
 import com.docdoku.core.exceptions.AccountNotFoundException;
+import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.jsf.actions.AccountBean;
 
@@ -54,6 +55,9 @@ public class AuthFilter implements Filter {
     @EJB
     private IUserManagerLocal userManager;
 
+    @EJB
+    private IAccountManagerLocal accountManager;
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
@@ -75,7 +79,7 @@ public class AuthFilter implements Filter {
             redirectLogin(httpRequest,response);
         } else {
             try {
-                FilterUtils.hookAccountBeanData(remoteUser,userManager,accountBean);
+                FilterUtils.hookAccountBeanData(remoteUser, userManager, accountManager, accountBean);
                 chain.doFilter(request, response);
             } catch (AccountNotFoundException e) {
                 LOGGER.log(Level.FINEST,null,e);
@@ -111,7 +115,7 @@ public class AuthFilter implements Filter {
                     String userLogin = splitCredentials[0];
                     String userPassword = splitCredentials[1];
                     httpRequest.login(userLogin, userPassword);
-                    Account account = userManager.getAccount(userLogin);
+                    Account account = accountManager.getAccount(userLogin);
                     if(account!=null) {
                         return account.getLogin();
                     }

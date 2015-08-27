@@ -22,6 +22,7 @@ package com.docdoku.server.jsf.actions;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 
 import javax.ejb.EJB;
@@ -45,6 +46,9 @@ public class ConnectionBean {
     
     @EJB
     private IUserManagerLocal userManager;
+
+    @EJB
+    private IAccountManagerLocal accountManager;
 
     private String login;
     private String password;
@@ -140,7 +144,7 @@ public class ConnectionBean {
         String accountLogin=null;
         Locale accountLocale=Locale.getDefault();
         try {
-            Account account = userManager.getAccount(login);
+            Account account = accountManager.getAccount(login);
             if(account!=null) {
                 accountLogin = account.getLogin();
                 accountLocale = new Locale(account.getLanguage());

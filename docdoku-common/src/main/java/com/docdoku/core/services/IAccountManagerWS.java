@@ -18,33 +18,17 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands.common;
+package com.docdoku.core.services;
 
-import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.common.Account;
-import com.docdoku.core.services.IAccountManagerWS;
+import com.docdoku.core.exceptions.AccountNotFoundException;
 
-import java.io.IOException;
+import javax.jws.WebService;
 
 /**
- *
- * @author Morgan Guimard
+ * @author Elisabel Généreux
  */
-public class AccountInfosCommand extends BaseCommandLine {
-
-    private IAccountManagerWS accountS;
-
-    @Override
-    public void execImpl() throws Exception {
-        accountS = ScriptingTools.createAccountManagerService(getServerURL(),user,password);
-        Account account = accountS.getMyAccount();
-        output.printAccount(account);
-    }
-
-    @Override
-    public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("AccountInfosCommandDescription",user);
-    }
+@WebService
+public interface IAccountManagerWS {
+    Account getMyAccount() throws AccountNotFoundException;
 }

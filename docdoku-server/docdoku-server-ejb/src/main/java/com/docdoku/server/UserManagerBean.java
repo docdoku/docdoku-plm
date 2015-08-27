@@ -23,7 +23,6 @@ import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.*;
-import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
@@ -49,7 +48,6 @@ import javax.inject.Inject;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
@@ -75,14 +73,6 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     private Event<WorkspaceAccessEvent> workspaceAccessEvent;
 
     private static final Logger LOGGER = Logger.getLogger(UserManagerBean.class.getName());
-
-    @Override
-    public Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountAlreadyExistsException, CreationException {
-        Date now = new Date();
-        Account account = new Account(pLogin, pName, pEmail, pLanguage, now, pTimeZone);
-        new AccountDAO(new Locale(pLanguage), em).createAccount(account, pPassword);
-        return account;
-    }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
@@ -142,108 +132,6 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public void updateOrganization(Organization pOrganization) throws AccountNotFoundException, OrganizationNotFoundException, AccessRightException {
-
-        OrganizationDAO organizationDAO = new OrganizationDAO(em);
-        Organization oldOrganization = organizationDAO.loadOrganization(pOrganization.getName());
-
-        if (isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
-            organizationDAO.updateOrganization(pOrganization);
-        } else {
-            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
-            if (oldOrganization.getOwner().equals(account)) {
-                organizationDAO.updateOrganization(pOrganization);
-            } else {
-                throw new AccessRightException(new Locale(account.getLanguage()), account);
-            }
-        }
-    }
-
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    @Override
-    public void addAccountInOrganization(String pOrganizationName, String pLogin) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException, NotAllowedException {
-        OrganizationDAO organizationDAO = new OrganizationDAO(em);
-        Organization organization = organizationDAO.loadOrganization(pOrganizationName);
-        Locale locale;
-
-        if (!isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
-            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
-            locale = new Locale(account.getLanguage());
-            if (!organization.getOwner().getLogin().equals(ctx.getCallerPrincipal().toString())) {
-                throw new AccessRightException(locale, account);
-            }
-        } else {
-            locale = Locale.getDefault();
-        }
-
-        Account accountToAdd = new AccountDAO(locale, em).loadAccount(pLogin);
-        if (accountToAdd.getOrganization() != null) {
-            throw new NotAllowedException(locale, "NotAllowedException12");
-        } else {
-            accountToAdd.setOrganization(organization);
-            organization.addMember(accountToAdd);
-        }
-    }
-
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    @Override
-    public void removeAccountFromOrganization(String pOrganizationName, String[] pLogins) throws AccessRightException, OrganizationNotFoundException, AccountNotFoundException {
-        OrganizationDAO organizationDAO = new OrganizationDAO(em);
-        Organization organization = organizationDAO.loadOrganization(pOrganizationName);
-
-        if (!isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
-            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
-            if (!organization.getOwner().getLogin().equals(ctx.getCallerPrincipal().toString())) {
-                throw new AccessRightException(new Locale(account.getLanguage()), account);
-            }
-        }
-
-        for (String login : pLogins) {
-            Account accountToRemove = new AccountDAO(em).loadAccount(login);
-            accountToRemove.setOrganization(null);
-            organization.removeMember(accountToRemove);
-        }
-
-
-    }
-
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    @Override
-    public Organization createOrganization(String pName, Account pOwner, String pDescription) throws OrganizationAlreadyExistsException, CreationException, NotAllowedException {
-        if (pOwner.getOrganization() == null) {
-            Organization organization = new Organization(pName, pOwner, pDescription);
-            new OrganizationDAO(new Locale(pOwner.getLanguage()), em).createOrganization(organization);
-            pOwner.setOrganization(organization);
-            organization.addMember(pOwner);
-            em.merge(pOwner);
-            return organization;
-        } else {
-            throw new NotAllowedException(new Locale(pOwner.getLanguage()), "NotAllowedException11");
-        }
-    }
-
-    @Override
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    public void deleteOrganization(String pName) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException {
-        OrganizationDAO organizationDAO = new OrganizationDAO(em);
-        Organization organization = organizationDAO.loadOrganization(pName);
-
-        if (isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
-            organizationDAO.deleteOrganization(organization);
-        } else {
-            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
-            if (organization.getOwner().getLogin().equals(ctx.getCallerPrincipal().toString())) {
-                organizationDAO.deleteOrganization(organization);
-            } else {
-                throw new AccessRightException(new Locale(account.getLanguage()), account);
-            }
-        }
-
-
-    }
-
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    @Override
     public Workspace createWorkspace(String pID, Account pAdmin, String pDescription, boolean pFolderLocked) throws WorkspaceAlreadyExistsException, FolderAlreadyExistsException, UserAlreadyExistsException, CreationException, ESIndexNamingException, NotAllowedException {
         if (!NamingConvention.correct(pID)) {
             throw new NotAllowedException(new Locale(pAdmin.getLanguage()), "NotAllowedException9");
@@ -264,11 +152,6 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         }
 
         return workspace;
-    }
-
-    @Override
-    public Account getAccount(String pLogin) throws AccountNotFoundException {
-        return new AccountDAO(em).loadAccount(pLogin);
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
@@ -492,31 +375,6 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         new WorkspaceDAO(new Locale(account.getLanguage()), em).updateWorkspace(pWorkspace);
     }
 
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    @Override
-    public void updateAccount(String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountNotFoundException {
-        AccountDAO accountDAO = new AccountDAO(new Locale(pLanguage), em);
-        Account account = accountDAO.loadAccount(ctx.getCallerPrincipal().toString());
-        account.setName(pName);
-        account.setEmail(pEmail);
-        account.setLanguage(pLanguage);
-        account.setTimeZone(pTimeZone);
-        if (pPassword != null) {
-            accountDAO.updateCredential(account.getLogin(), pPassword);
-        }
-
-        // Sync user data in workspaces
-        UserDAO userDAO = new UserDAO(new Locale(pLanguage), em);
-        User[] users = userDAO.getUsers(account.getLogin());
-
-        for (User user : users) {
-            user.setEmail(pEmail);
-            user.setLanguage(pLanguage);
-            user.setName(pName);
-        }
-
-    }
-
     @Override
     public void recoverPassword(String pPasswdRRUuid, String pPassword) throws PasswordRecoveryRequestNotFoundException {
         PasswordRecoveryRequestDAO passwdRRequestDAO = new PasswordRecoveryRequestDAO(em);
@@ -608,6 +466,18 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         return ctx.isCallerInRole(role);
     }
 
+    @RolesAllowed({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public String getCallerPrincipalLogin() {
+        return ctx.getCallerPrincipal().toString();
+    }
+
+    @RolesAllowed({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public String getCallerPrincipalName() {
+        return ctx.getCallerPrincipal().getName();
+    }
+
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public UserGroup[] getUserGroupsForUser(UserKey userKey) throws UserNotFoundException {
@@ -624,36 +494,10 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         return workspaces.toArray(new Workspace[workspaces.size()]);
     }
 
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    @Override
-    public void setGCMAccount(String gcmId) throws AccountNotFoundException, GCMAccountAlreadyExistsException, CreationException {
-        String callerLogin = ctx.getCallerPrincipal().toString();
-        Account account = getAccount(callerLogin);
-        GCMAccountDAO gcmAccountDAO = new GCMAccountDAO(em);
-
-        try {
-            GCMAccount gcmAccount = gcmAccountDAO.loadGCMAccount(account);
-            gcmAccount.setGcmId(gcmId);
-        } catch (GCMAccountNotFoundException e) {
-            gcmAccountDAO.createGCMAccount(new GCMAccount(account, gcmId));
-        }
-
-    }
-
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    @Override
-    public void deleteGCMAccount() throws AccountNotFoundException, GCMAccountNotFoundException {
-        String callerLogin = ctx.getCallerPrincipal().toString();
-        Account account = getAccount(callerLogin);
-        GCMAccountDAO gcmAccountDAO = new GCMAccountDAO(new Locale(account.getLanguage()), em);
-        GCMAccount gcmAccount = gcmAccountDAO.loadGCMAccount(account);
-        gcmAccountDAO.deleteGCMAccount(gcmAccount);
-    }
-
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public Account checkAdmin(Workspace pWorkspace) throws AccessRightException, AccountNotFoundException {
-        Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+        Account account = new AccountDAO(em).loadAccount(getCallerPrincipalLogin());
         if (!isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID) && !pWorkspace.getAdmin().equals(account)) {
             throw new AccessRightException(new Locale(account.getLanguage()), account);
         }
@@ -663,7 +507,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public Account checkAdmin(String pWorkspaceId) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
-        Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+        Account account = new AccountDAO(em).loadAccount(getCallerPrincipalLogin());
 
         if (isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
             return account;
@@ -681,11 +525,5 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @Override
     public User whoAmI(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         return checkWorkspaceReadAccess(pWorkspaceId);
-    }
-
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    @Override
-    public Account getMyAccount() throws AccountNotFoundException {
-        return getAccount(ctx.getCallerPrincipal().getName());
     }
 }
