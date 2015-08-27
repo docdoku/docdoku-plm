@@ -133,7 +133,7 @@ define([
                 this.$inputIssuePriority = this.$('#inputIssuePriority');
                 this.$inputIssueAssignee = this.$('#inputIssueAssignee');
                 this.$inputIssueCategory = this.$('#inputIssueCategory');
-                this.$inputIssueInitiator = this.$("#inputIssueInitiator");
+                this.$inputIssueInitiator = this.$('#inputIssueInitiator');
                 this.$authorLink = this.$('.author-popover');
             },
 
