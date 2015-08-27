@@ -617,7 +617,7 @@ define({
 	WORKFLOW_LEGEND_INCOMPLETE: "Incomplet",
 	WORKFLOW_LEGEND_INPROGRESS: "En cours",
 	WORKFLOW_LEGEND_REJECTED: "Rejeté",
-	WORKFLOW_NAME_PLACEHOLDER: "Nom du nouveau processus métier",
+	WORKFLOW_NAME_PLACEHOLDER: "Nom du processus métier",
     WORKFLOW: "Processus",
     WORKFLOW_COPY: "Copie du processus",
 	WORKFLOWS: "Processus",
