@@ -188,6 +188,7 @@ define({
 	ID_GENERATION: "Id generation",
     INIT_VALUE: "Init value",
     IN_PROGRESS: "Work in progress",
+    INITIATOR: "Initiator",
 	INSTANCE_SELECTED: "Selected instance",
 	INSTRUCTIONS: "Instructions",
 	INVITE: "Invite coworkers",

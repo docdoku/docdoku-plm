@@ -219,6 +219,7 @@ define({
     IGNORE: "Ignorer",
     INIT_VALUE: "Valeur initiale",
     IN_PROGRESS: "En cours",
+    INITIATOR: "Initiateur",
 	INSTANCE_SELECTED: "Instance sélectionnée",
 	INSTRUCTIONS: "Instructions",
     INVERT_SOURCE_DESTINATION:"Inverser la source et la destination",

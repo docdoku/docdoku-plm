@@ -219,6 +219,7 @@ define({
         IGNORE: "Ignore",
 		INIT_VALUE: "Init value",
 		IN_PROGRESS: "Work in progress",
+        INITIATOR: "Initiator",
 		INSTANCE_SELECTED: "Selected instance",
 		INSTRUCTIONS: "Instructions",
         INVERT_SOURCE_DESTINATION:"Invert source and destination",
