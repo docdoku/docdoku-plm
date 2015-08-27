@@ -91,7 +91,7 @@ public class OrganizationBean {
             Account account = accountManager.getAccount(remoteUser);
             Organization organization = account.getOrganization();
 
-            organizationManager.removeAccountFromOrganization(organization.getName(), getLogins());
+            organizationManager.removeAccountsFromOrganization(organization.getName(), getLogins());
         }
 
         selectedLogins.clear();

@@ -130,7 +130,7 @@ public class OrganizationManagerBean implements IOrganizationManagerLocal {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public void removeAccountFromOrganization(String pOrganizationName, String[] pLogins) throws AccessRightException, OrganizationNotFoundException, AccountNotFoundException {
+    public void removeAccountsFromOrganization(String pOrganizationName, String[] pLogins) throws AccessRightException, OrganizationNotFoundException, AccountNotFoundException {
         OrganizationDAO organizationDAO = new OrganizationDAO(em);
         Organization organization = organizationDAO.loadOrganization(pOrganizationName);
 
