@@ -196,8 +196,13 @@ public class AccountBean {
         if(date == null){
             return "";
         }
+        if(this.getLanguage() == null) {
+            this.setLanguage(this.getBrowserLanguage());
+        }
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("com.docdoku.server.localization.part_permalink_resource",this.getLocale());
+        String format = resourceBundle.getString("date.format");
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
 
         if(timeZone == null || timeZone.isEmpty()){
             return simpleDateFormat.format(date);

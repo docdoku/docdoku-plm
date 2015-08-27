@@ -213,7 +213,7 @@
                                             <c:when test="${item.value.class=='class java.util.Date'}">
                                                 <td>
                                                     <h:outputText value="#{item.value}">
-                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                        <f:convertDateTime pattern="#{i18nPart['date.shortFormat']}" />
                                                     </h:outputText>
                                                 </td>
                                             </c:when>
