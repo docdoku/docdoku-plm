@@ -17,31 +17,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.docdoku.core.services;
 
 import com.docdoku.core.common.Account;
+import com.docdoku.core.common.Organization;
 import com.docdoku.core.exceptions.*;
 
 /**
  *
  * @author Elisabel Généreux
  */
-public interface IAccountManagerLocal {
+public interface IOrganizationManagerLocal {
 
-    /**
-     * Get the account matching a login. ONLY USE IN LOCAL.
-     * @param pLogin Login you search
-     * @return The account matching the login
-     * @throws AccountNotFoundException If no account was found
-     */
-    Account getAccount(String pLogin) throws AccountNotFoundException;
-
-    Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountAlreadyExistsException, CreationException;
-    void updateAccount(String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountNotFoundException;
-
-    Account getMyAccount() throws AccountNotFoundException;
-
-    void setGCMAccount(String gcmId) throws AccountNotFoundException, GCMAccountAlreadyExistsException, CreationException;
-    void deleteGCMAccount() throws AccountNotFoundException, GCMAccountNotFoundException;
+    Organization createOrganization(String pName, Account pOwner, String pDescription) throws OrganizationAlreadyExistsException, CreationException, NotAllowedException;
+    void deleteOrganization(String pName) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException;
+    void updateOrganization(Organization pOrganization) throws AccountNotFoundException, OrganizationNotFoundException, AccessRightException;
+    void addAccountInOrganization(String pOrganizationName, String pLogin) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException, NotAllowedException;
+    void removeAccountFromOrganization(String pOrganizationName, String[] pLogins) throws AccessRightException, OrganizationNotFoundException, AccountNotFoundException;
 
 }

@@ -23,6 +23,7 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Organization;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.services.IAccountManagerLocal;
+import com.docdoku.core.services.IOrganizationManagerLocal;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
@@ -35,10 +36,10 @@ import java.util.*;
 @RequestScoped
 public class OrganizationBean {
 
-
     @EJB
     private IAccountManagerLocal accountManager;
-
+    @EJB
+    private IOrganizationManagerLocal organizationManager;
 
     private Map<String, Boolean> selectedLogins = new HashMap<>();
 
@@ -79,7 +80,7 @@ public class OrganizationBean {
         Account account = accountManager.getAccount(remoteUser);
         Organization organization = account.getOrganization();
 
-        accountManager.addAccountInOrganization(organization.getName(), loginToAdd);
+        organizationManager.addAccountInOrganization(organization.getName(), loginToAdd);
         return "/admin/organization/manageAccounts.xhtml";
     }
 
@@ -90,7 +91,7 @@ public class OrganizationBean {
             Account account = accountManager.getAccount(remoteUser);
             Organization organization = account.getOrganization();
 
-            accountManager.removeAccountFromOrganization(organization.getName(), getLogins());
+            organizationManager.removeAccountFromOrganization(organization.getName(), getLogins());
         }
 
         selectedLogins.clear();
@@ -106,7 +107,7 @@ public class OrganizationBean {
         Organization organization = account.getOrganization();
         if(organization!=null) {
             organization.setDescription(organizationDescription);
-            accountManager.updateOrganization(organization);
+            organizationManager.updateOrganization(organization);
         }
         return "/admin/organization/organizationMenu.xhtml";
     }
@@ -117,7 +118,7 @@ public class OrganizationBean {
 
         Organization organization = account.getOrganization();
         if(organization!=null) {
-            accountManager.deleteOrganization(organization.getName());
+            organizationManager.deleteOrganization(organization.getName());
         }
         return "/admin/organization/organizationMenu.xhtml?faces-redirect=true";
     }
@@ -126,7 +127,7 @@ public class OrganizationBean {
         String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
         Account account = accountManager.getAccount(remoteUser);
 
-        accountManager.createOrganization(organizationName, account, organizationDescription);
+        organizationManager.createOrganization(organizationName, account, organizationDescription);
 
         return "/admin/organization/organizationMenu.xhtml?faces-redirect=true";
     }
