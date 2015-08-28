@@ -20,6 +20,7 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.Account;
+import com.docdoku.core.common.Organization;
 import com.docdoku.core.common.User;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
@@ -30,6 +31,7 @@ import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.AccountDAO;
 import com.docdoku.server.dao.GCMAccountDAO;
+import com.docdoku.server.dao.OrganizationDAO;
 import com.docdoku.server.dao.UserDAO;
 
 import javax.annotation.security.DeclareRoles;
@@ -96,6 +98,33 @@ public class AccountManagerBean implements IAccountManagerLocal, IAccountManager
             user.setLanguage(pLanguage);
             user.setName(pName);
         }
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public Account checkAdmin(Organization pOrganization) throws AccessRightException, AccountNotFoundException {
+        Account account = new AccountDAO(em).loadAccount(userManager.getCallerPrincipalLogin());
+
+        if (!userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID) && !pOrganization.getOwner().equals(account)) {
+            throw new AccessRightException(new Locale(account.getLanguage()), account);
+        }
+
+        return account;
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public Account checkAdmin(String pOrganizationName)
+            throws AccessRightException, AccountNotFoundException, OrganizationNotFoundException {
+
+        Account account = new AccountDAO(em).loadAccount(userManager.getCallerPrincipalLogin());
+        Organization organization = new OrganizationDAO(em).loadOrganization(pOrganizationName);
+
+        if (!userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID) && !organization.getOwner().equals(account)) {
+            throw new AccessRightException(new Locale(account.getLanguage()), account);
+        }
+
+        return account;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
