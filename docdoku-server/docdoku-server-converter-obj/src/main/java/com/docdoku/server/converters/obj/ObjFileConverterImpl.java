@@ -24,10 +24,14 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.server.ServicesInjector;
+import com.docdoku.server.InternalService;
+import com.docdoku.server.ServiceLocator;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
@@ -39,26 +43,22 @@ import java.util.logging.Logger;
 
 
 @ObjFileConverter
-public class ObjFileConverterImpl implements CADConverter{
+public class ObjFileConverterImpl implements CADConverter {
 
-   private static IDataManagerLocal dataManager;
+
+    @InternalService
+    @Inject
+    private IDataManagerLocal dataManager;
 
     private static final Logger LOGGER = Logger.getLogger(ObjFileConverterImpl.class.getName());
 
-    static{
-        try {
-            dataManager = (IDataManagerLocal) ServicesInjector.inject(ServicesInjector.DATAMANAGER);
-        } catch (NamingException e) {
-            LOGGER.log(Level.SEVERE,null,e);
-        }
-    }
 
     @Override
-    public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir)  throws Exception{
+    public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws Exception {
 
-        File tmpCadFile = new File(tempDir, partToConvert.getKey() + ".obj" );
+        File tmpCadFile = new File(tempDir, partToConvert.getKey() + ".obj");
 
-        try(InputStream in = dataManager.getBinaryResourceInputStream(cadFile)) {
+        try (InputStream in = dataManager.getBinaryResourceInputStream(cadFile)) {
             Files.copy(in, tmpCadFile.toPath());
         } catch (StorageException e) {
             LOGGER.log(Level.WARNING, null, e);

@@ -24,11 +24,13 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.server.ServicesInjector;
+import com.docdoku.server.InternalService;
+import com.docdoku.server.ServiceLocator;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
 import com.docdoku.server.converters.utils.ConverterUtils;
 
+import javax.inject.Inject;
 import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
@@ -39,15 +41,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @DaeFileConverter
-public class DaeFileConverterImpl implements CADConverter{
+public class DaeFileConverterImpl implements CADConverter {
 
-    private static final String CONF_PROPERTIES="/com/docdoku/server/converters/dae/conf.properties";
+    private static final String CONF_PROPERTIES = "/com/docdoku/server/converters/dae/conf.properties";
     private static final Properties CONF = new Properties();
     private static final Logger LOGGER = Logger.getLogger(DaeFileConverterImpl.class.getName());
 
-   private static IDataManagerLocal dataManager;
+    @InternalService
+    @Inject
+    private IDataManagerLocal dataManager;
 
-    static{
+    static {
         InputStream inputStream = null;
         try {
             inputStream = DaeFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES);
@@ -55,19 +59,13 @@ public class DaeFileConverterImpl implements CADConverter{
         } catch (IOException e) {
             LOGGER.log(Level.INFO, null, e);
         } finally {
-            try{
-                if(inputStream!=null){
+            try {
+                if (inputStream != null) {
                     inputStream.close();
                 }
-            }catch (IOException e){
+            } catch (IOException e) {
                 LOGGER.log(Level.FINEST, null, e);
             }
-        }
-
-        try {
-            dataManager = (IDataManagerLocal) ServicesInjector.inject(ServicesInjector.DATAMANAGER);
-        } catch (NamingException e) {
-            LOGGER.log(Level.SEVERE,null,e);
         }
     }
 
@@ -78,19 +76,19 @@ public class DaeFileConverterImpl implements CADConverter{
 
         File executable = new File(assimp);
 
-        if(!executable.exists()){
-            LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+assimp+"\" is not available");
+        if (!executable.exists()) {
+            LOGGER.log(Level.SEVERE, "Cannot convert file \"" + cadFile.getName() + "\", \"" + assimp + "\" is not available");
             return null;
         }
 
-        if(!executable.canExecute()){
-            LOGGER.log(Level.SEVERE, "Cannot convert file \""+cadFile.getName()+"\", \""+assimp+"\" has no execution rights");
+        if (!executable.canExecute()) {
+            LOGGER.log(Level.SEVERE, "Cannot convert file \"" + cadFile.getName() + "\", \"" + assimp + "\" has no execution rights");
             return null;
         }
 
 
         File tmpCadFile = new File(tempDir, cadFile.getName().trim());
-        try(InputStream in = dataManager.getBinaryResourceInputStream(cadFile)) {
+        try (InputStream in = dataManager.getBinaryResourceInputStream(cadFile)) {
             Files.copy(in, tmpCadFile.toPath());
         } catch (StorageException e) {
             LOGGER.log(Level.WARNING, null, e);
@@ -116,7 +114,7 @@ public class DaeFileConverterImpl implements CADConverter{
         if (process.exitValue() == 0) {
             List<File> materials = new ArrayList<>();
             materials.add(new File(convertedMtlFileName));
-            return new ConversionResult(new File(convertedFileName),materials);
+            return new ConversionResult(new File(convertedFileName), materials);
         }
 
         LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), errorOutput);
@@ -127,7 +125,7 @@ public class DaeFileConverterImpl implements CADConverter{
 
     @Override
     public boolean canConvertToOBJ(String cadFileExtension) {
-        return Arrays.asList("dxf","dae","lwo","x","ac","cob","scn","ms3d").contains(cadFileExtension);
+        return Arrays.asList("dxf", "dae", "lwo", "x", "ac", "cob", "scn", "ms3d").contains(cadFileExtension);
     }
 
 }

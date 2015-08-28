@@ -22,7 +22,8 @@ package com.docdoku.server.viewers;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.server.ServicesInjector;
+import com.docdoku.server.InternalService;
+import com.docdoku.server.ServiceLocator;
 import com.docdoku.server.viewers.utils.ScormManifestParser;
 import com.docdoku.server.viewers.utils.ScormOrganization;
 import com.docdoku.server.viewers.utils.ScormUtil;
@@ -30,6 +31,7 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 
+import javax.enterprise.inject.Produces;
 import javax.naming.NamingException;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -41,17 +43,10 @@ public class ScormViewerImpl implements DocumentViewer {
 
     private static final Logger LOGGER = Logger.getLogger(ScormViewerImpl.class.getName());
 
-    private static IDataManagerLocal dataManager;
+    @InternalService
+    @Produces
+    private IDataManagerLocal dataManager;
 
-    static {
-
-        try {
-            dataManager = (IDataManagerLocal) ServicesInjector.inject(ServicesInjector.DATAMANAGER);
-        } catch (NamingException e) {
-            LOGGER.log(Level.SEVERE,null,e);
-        }
-
-    }
 
     @Override
     public boolean canRenderViewerTemplate(BinaryResource binaryResource) {

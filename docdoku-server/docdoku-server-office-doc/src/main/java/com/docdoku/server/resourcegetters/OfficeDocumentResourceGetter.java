@@ -26,7 +26,8 @@ import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.util.Tools;
-import com.docdoku.server.ServicesInjector;
+import com.docdoku.server.InternalService;
+import com.docdoku.server.ServiceLocator;
 import com.docdoku.server.extras.TitleBlockGenerator;
 import com.google.common.io.ByteStreams;
 import com.itextpdf.text.DocumentException;
@@ -47,15 +48,10 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
     @Inject
     private FileConverter fileConverter;
 
-    private static IDataManagerLocal dataManager;
+    @InternalService
+    @Inject
+    private IDataManagerLocal dataManager;
 
-    static {
-        try {
-            dataManager = (IDataManagerLocal) ServicesInjector.inject(ServicesInjector.DATAMANAGER);
-        } catch (NamingException e) {
-            LOGGER.log(Level.SEVERE,null,e);
-        }
-    }
 
     @Override
     public boolean canGetConvertedResource(String outputFormat, BinaryResource binaryResource) {

@@ -22,10 +22,12 @@ package com.docdoku.server.postuploaders;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.server.ServicesInjector;
+import com.docdoku.server.InternalService;
+import com.docdoku.server.ServiceLocator;
 import com.docdoku.server.viewers.utils.ScormUtil;
 import com.google.common.io.ByteStreams;
 
+import javax.inject.Inject;
 import javax.naming.NamingException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,17 +42,10 @@ public class ScormPostUploaderImpl implements DocumentPostUploader {
 
     private static final Logger LOGGER = Logger.getLogger(ScormPostUploaderImpl.class.getName());
 
-    private static IDataManagerLocal dataManager;
+    @InternalService
+    @Inject
+    private IDataManagerLocal dataManager;
 
-    static {
-
-        try {
-            dataManager = (IDataManagerLocal) ServicesInjector.inject(ServicesInjector.DATAMANAGER);
-        } catch (NamingException e) {
-            LOGGER.log(Level.SEVERE,null,e);
-        }
-
-    }
     @Override
     public boolean canProcess(final BinaryResource binaryResource) {
         try {

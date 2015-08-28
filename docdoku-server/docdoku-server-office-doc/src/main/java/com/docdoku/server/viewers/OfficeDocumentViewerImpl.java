@@ -22,11 +22,13 @@ package com.docdoku.server.viewers;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.server.ServicesInjector;
+import com.docdoku.server.InternalService;
+import com.docdoku.server.ServiceLocator;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 
+import javax.enterprise.inject.Produces;
 import javax.naming.NamingException;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -39,15 +41,10 @@ public class OfficeDocumentViewerImpl implements DocumentViewer {
 
     private static final Logger LOGGER = Logger.getLogger(OfficeDocumentViewerImpl.class.getName());
 
-    private static IDataManagerLocal dataManager;
+    @InternalService
+    @Produces
+    private IDataManagerLocal dataManager;
 
-    static {
-        try {
-            dataManager = (IDataManagerLocal) ServicesInjector.inject(ServicesInjector.DATAMANAGER);
-        } catch (NamingException e) {
-            LOGGER.log(Level.SEVERE,null,e);
-        }
-    }
 
     @Override
     public boolean canRenderViewerTemplate(BinaryResource binaryResource) {
