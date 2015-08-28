@@ -24,11 +24,12 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.server.ServicesInjector;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
 import com.docdoku.server.converters.utils.ConverterUtils;
 
-import javax.ejb.EJB;
+import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,8 +45,7 @@ public class DaeFileConverterImpl implements CADConverter{
     private static final Properties CONF = new Properties();
     private static final Logger LOGGER = Logger.getLogger(DaeFileConverterImpl.class.getName());
 
-    @EJB
-    private IDataManagerLocal dataManager;
+   private static IDataManagerLocal dataManager;
 
     static{
         InputStream inputStream = null;
@@ -62,6 +62,12 @@ public class DaeFileConverterImpl implements CADConverter{
             }catch (IOException e){
                 LOGGER.log(Level.FINEST, null, e);
             }
+        }
+
+        try {
+            dataManager = (IDataManagerLocal) ServicesInjector.inject(ServicesInjector.DATAMANAGER);
+        } catch (NamingException e) {
+            LOGGER.log(Level.SEVERE,null,e);
         }
     }
 

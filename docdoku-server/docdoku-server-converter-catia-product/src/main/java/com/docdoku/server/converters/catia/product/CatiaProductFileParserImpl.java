@@ -28,6 +28,7 @@ import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.server.ServicesInjector;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.catia.product.parser.ComponentDTK;
 import com.docdoku.server.converters.catia.product.parser.ComponentDTKSaxHandler;
@@ -35,11 +36,13 @@ import com.docdoku.server.converters.utils.ConversionResult;
 import com.docdoku.server.converters.utils.ConverterUtils;
 import org.xml.sax.SAXException;
 
-import javax.ejb.EJB;
+import javax.naming.NamingException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.logging.Level;
@@ -53,11 +56,8 @@ public class CatiaProductFileParserImpl implements CADConverter {
     private static final Properties CONF = new Properties();
     private static final Logger LOGGER = Logger.getLogger(CatiaProductFileParserImpl.class.getName());
 
-    @EJB
-    private IProductManagerLocal productService;
-
-    @EJB
-    private IDataManagerLocal dataManager;
+    private static IProductManagerLocal productService;
+    private static IDataManagerLocal dataManager;
 
     static {
         InputStream inputStream = null;
@@ -74,6 +74,14 @@ public class CatiaProductFileParserImpl implements CADConverter {
             }catch (IOException e){
                 LOGGER.log(Level.FINEST,null,e);
             }
+        }
+
+
+        try {
+            dataManager = (IDataManagerLocal) ServicesInjector.inject(ServicesInjector.DATAMANAGER);
+            productService = (IProductManagerLocal) ServicesInjector.inject(ServicesInjector.PRODUCTMANAGER);
+        } catch (NamingException e) {
+            LOGGER.log(Level.SEVERE,null,e);
         }
     }
 

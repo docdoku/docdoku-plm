@@ -31,21 +31,9 @@
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
-            <artifactId>docdoku-server-converter-step</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-converter-dae</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.docdoku</groupId>
-            <artifactId>docdoku-server-converter-dae</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
@@ -55,21 +43,9 @@
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
-            <artifactId>docdoku-server-converter-all</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-converter-obj</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.docdoku</groupId>
-            <artifactId>docdoku-server-converter-obj</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
@@ -79,21 +55,9 @@
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
-            <artifactId>docdoku-server-converter-ifc</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-converter-catia</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.docdoku</groupId>
-            <artifactId>docdoku-server-converter-catia</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
@@ -103,21 +67,9 @@
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
-            <artifactId>docdoku-server-converter-catia-product</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-ext</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.docdoku</groupId>
-            <artifactId>docdoku-server-ext</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
@@ -127,21 +79,9 @@
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
-            <artifactId>docdoku-server-scorm</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-viewer-image</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.docdoku</groupId>
-            <artifactId>docdoku-server-viewer-image</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
@@ -151,21 +91,9 @@
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
-            <artifactId>docdoku-server-office-doc</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-viewer-multimedia</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.docdoku</groupId>
-            <artifactId>docdoku-server-viewer-multimedia</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -278,37 +206,6 @@
                 <configuration>
                     <ejbVersion>3.1</ejbVersion>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.2</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <artifactSet>
-                                <includes>
-                                    <include>org.ow2.docdoku:docdoku-server-ext</include>
-                                    <include>org.ow2.docdoku:docdoku-server-converter-step</include>
-                                    <include>org.ow2.docdoku:docdoku-server-converter-dae</include>
-                                    <include>org.ow2.docdoku:docdoku-server-converter-all</include>
-                                    <include>org.ow2.docdoku:docdoku-server-converter-obj</include>
-                                    <include>org.ow2.docdoku:docdoku-server-converter-ifc</include>
-                                    <include>org.ow2.docdoku:docdoku-server-converter-catia</include>
-                                    <include>org.ow2.docdoku:docdoku-server-converter-catia-product</include>
-                                    <include>org.ow2.docdoku:docdoku-server-scorm</include>
-                                    <include>org.ow2.docdoku:docdoku-server-office-doc</include>
-                                    <include>org.ow2.docdoku:docdoku-server-viewer-image</include>
-                                    <include>org.ow2.docdoku:docdoku-server-viewer-multimedia</include>
-                                </includes>
-                            </artifactSet>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
         <finalName>${project.artifactId}</finalName>

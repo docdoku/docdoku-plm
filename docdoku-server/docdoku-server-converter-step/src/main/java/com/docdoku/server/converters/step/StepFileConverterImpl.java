@@ -25,12 +25,15 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
+import com.docdoku.server.ServicesInjector;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
 import com.docdoku.server.converters.utils.ConverterUtils;
 
-import javax.ejb.EJB;
-import java.io.*;
+import javax.naming.NamingException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Properties;
@@ -47,8 +50,7 @@ public class StepFileConverterImpl implements CADConverter{
     private static final Properties CONF = new Properties();
     private static final Logger LOGGER = Logger.getLogger(StepFileConverterImpl.class.getName());
 
-    @EJB
-    private IDataManagerLocal dataManager;
+   private static IDataManagerLocal dataManager;
 
     static{
         InputStream inputStream = null;
@@ -66,6 +68,13 @@ public class StepFileConverterImpl implements CADConverter{
                 LOGGER.log(Level.FINEST, null, e);
             }
         }
+
+        try {
+            dataManager = (IDataManagerLocal) ServicesInjector.inject(ServicesInjector.DATAMANAGER);
+        } catch (NamingException e) {
+            LOGGER.log(Level.SEVERE,null,e);
+        }
+
     }
 
     @Override
