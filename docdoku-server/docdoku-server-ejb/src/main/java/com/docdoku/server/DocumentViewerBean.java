@@ -28,7 +28,6 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -43,7 +42,7 @@ import java.util.logging.Logger;
 @Stateless(name="DocumentViewerBean")
 public class DocumentViewerBean implements IFileViewerManagerLocal {
 
-    @EJB
+    @Inject
     private IDataManagerLocal dataManager;
 
     @Inject

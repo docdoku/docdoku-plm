@@ -44,10 +44,10 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
 
     private static final Logger LOGGER = Logger.getLogger(DocumentResourceGetter.class.getName());
 
-    private static IDataManagerLocal dataManager;
-
     @Inject
     private FileConverter fileConverter;
+
+    private static IDataManagerLocal dataManager;
 
     static {
         try {
