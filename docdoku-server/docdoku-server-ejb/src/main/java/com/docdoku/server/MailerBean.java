@@ -291,7 +291,8 @@ public class MailerBean implements IMailerLocal {
     private String getCredentialMessage(Account account, Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale);
         Object[] args = {
-                account.getLogin()
+                account.getLogin(),
+                codebase
         };
 
         return MessageFormat.format(bundle.getString("SignUp_success_text"),args);
