@@ -273,6 +273,35 @@ public class MailerBean implements IMailerLocal {
         }
     }
 
+    @Asynchronous
+    @Override
+    public void sendCredential(Account account) {
+        try {
+            Locale locale = new Locale(account.getLanguage());
+            sendMessage(new InternetAddress(account.getEmail()),
+                    getCredentialSubject(locale),
+                    getCredentialMessage(account,locale));
+        }  catch (MessagingException pMEx) {
+            String message = "Message format error. \n\t"+pMEx.getMessage();
+            LOGGER.severe(message);
+            LOGGER.log(Level.FINER, message, pMEx);
+        }
+    }
+
+    private String getCredentialMessage(Account account, Locale locale) {
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale);
+        Object[] args = {
+                account.getLogin()
+        };
+
+        return MessageFormat.format(bundle.getString("SignUp_success_text"),args);
+    }
+
+    private String getCredentialSubject(Locale pLocale) {
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return bundle.getString("SignUp_success_title");
+    }
+
     private void sendWorkflowRelaunchedNotification(String userName, String userEmail, String userLanguage, String workspaceId, PartRevision partRevision){
         try {
             Locale locale = new Locale(userLanguage);
