@@ -22,11 +22,13 @@ package com.docdoku.server.viewers;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.server.ServicesInjector;
+import com.docdoku.server.InternalService;
+import com.docdoku.server.ServiceLocator;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 
+import javax.inject.Inject;
 import javax.naming.NamingException;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -38,15 +40,10 @@ public class ImageViewerImpl implements DocumentViewer {
 
     private static final Logger LOGGER = Logger.getLogger(ImageViewerImpl.class.getName());
 
-    private static IDataManagerLocal dataManager;
+    @InternalService
+    @Inject
+    private IDataManagerLocal dataManager;
 
-    static {
-        try {
-            dataManager = (IDataManagerLocal) ServicesInjector.inject(ServicesInjector.DATAMANAGER);
-        } catch (NamingException e) {
-            LOGGER.log(Level.SEVERE,null,e);
-        }
-    }
 
 
     @Override

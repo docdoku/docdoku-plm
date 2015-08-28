@@ -25,11 +25,14 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.server.ServicesInjector;
+import com.docdoku.server.InternalService;
+import com.docdoku.server.ServiceLocator;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
 import com.docdoku.server.converters.utils.ConverterUtils;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
@@ -43,16 +46,19 @@ import java.util.logging.Logger;
 
 
 @StepFileConverter
-public class StepFileConverterImpl implements CADConverter{
+public class StepFileConverterImpl implements CADConverter {
 
-    private static final String PYTHON_SCRIPT_TO_OBJ="/com/docdoku/server/converters/step/convert_step_obj.py";
-    private static final String CONF_PROPERTIES="/com/docdoku/server/converters/step/conf.properties";
+    private static final String PYTHON_SCRIPT_TO_OBJ = "/com/docdoku/server/converters/step/convert_step_obj.py";
+    private static final String CONF_PROPERTIES = "/com/docdoku/server/converters/step/conf.properties";
     private static final Properties CONF = new Properties();
     private static final Logger LOGGER = Logger.getLogger(StepFileConverterImpl.class.getName());
 
-   private static IDataManagerLocal dataManager;
 
-    static{
+    @InternalService
+    @Inject
+    private IDataManagerLocal dataManager;
+
+    static {
         InputStream inputStream = null;
         try {
             inputStream = StepFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES);
@@ -60,22 +66,17 @@ public class StepFileConverterImpl implements CADConverter{
         } catch (IOException e) {
             LOGGER.log(Level.INFO, null, e);
         } finally {
-            try{
-                if(inputStream!=null){
+            try {
+                if (inputStream != null) {
                     inputStream.close();
                 }
-            }catch (IOException e){
+            } catch (IOException e) {
                 LOGGER.log(Level.FINEST, null, e);
             }
         }
 
-        try {
-            dataManager = (IDataManagerLocal) ServicesInjector.inject(ServicesInjector.DATAMANAGER);
-        } catch (NamingException e) {
-            LOGGER.log(Level.SEVERE,null,e);
-        }
-
     }
+
 
     @Override
     public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
@@ -87,16 +88,16 @@ public class StepFileConverterImpl implements CADConverter{
         String pythonInterpreter = CONF.getProperty("pythonInterpreter");
         String freeCadLibPath = CONF.getProperty("freeCadLibPath");
 
-        File scriptToOBJ =  FileIO.urlToFile(StepFileConverterImpl.class.getResource(PYTHON_SCRIPT_TO_OBJ));
+        File scriptToOBJ = FileIO.urlToFile(StepFileConverterImpl.class.getResource(PYTHON_SCRIPT_TO_OBJ));
 
-        try(InputStream in = dataManager.getBinaryResourceInputStream(cadFile)) {
+        try (InputStream in = dataManager.getBinaryResourceInputStream(cadFile)) {
             Files.copy(in, tmpCadFile.toPath());
         } catch (StorageException e) {
             LOGGER.log(Level.WARNING, null, e);
             throw new IOException(e);
         }
 
-        String[] args = {pythonInterpreter, scriptToOBJ.getAbsolutePath(), "-l" , freeCadLibPath, "-i", tmpCadFile.getAbsolutePath(), "-o", tmpOBJFile.getAbsolutePath()};
+        String[] args = {pythonInterpreter, scriptToOBJ.getAbsolutePath(), "-l", freeCadLibPath, "-i", tmpCadFile.getAbsolutePath(), "-o", tmpOBJFile.getAbsolutePath()};
         ProcessBuilder pb = new ProcessBuilder(args);
 
         Process process = pb.start();
@@ -109,7 +110,7 @@ public class StepFileConverterImpl implements CADConverter{
 
         process.waitFor();
 
-        if(process.exitValue() == 0){
+        if (process.exitValue() == 0) {
             return new ConversionResult(tmpOBJFile);
         }
 

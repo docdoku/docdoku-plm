@@ -25,11 +25,13 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.server.ServicesInjector;
+import com.docdoku.server.InternalService;
+import com.docdoku.server.ServiceLocator;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
 import com.docdoku.server.converters.utils.ConverterUtils;
 
+import javax.enterprise.inject.Produces;
 import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +48,9 @@ public class IFCFileConverterImpl implements CADConverter{
     private static final String CONF_PROPERTIES="/com/docdoku/server/converters/ifc/conf.properties";
     private static final Properties CONF = new Properties();
 
-    private static IDataManagerLocal dataManager;
+    @InternalService
+    @Produces
+    private IDataManagerLocal dataManager;
 
     private static final Logger LOGGER = Logger.getLogger(IFCFileConverterImpl.class.getName());
 
@@ -67,11 +71,6 @@ public class IFCFileConverterImpl implements CADConverter{
             }
         }
 
-        try {
-            dataManager = (IDataManagerLocal) ServicesInjector.inject(ServicesInjector.DATAMANAGER);
-        } catch (NamingException e) {
-            LOGGER.log(Level.SEVERE,null,e);
-        }
     }
 
 
