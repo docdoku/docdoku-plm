@@ -26,23 +26,36 @@ import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.util.Tools;
+import com.docdoku.server.ServicesInjector;
 import com.docdoku.server.extras.TitleBlockGenerator;
 import com.google.common.io.ByteStreams;
 import com.itextpdf.text.DocumentException;
 
-import javax.ejb.EJB;
+import javax.inject.Inject;
+import javax.naming.NamingException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
 
-    @EJB
-    private IDataManagerLocal dataManager;
+    private static final Logger LOGGER = Logger.getLogger(DocumentResourceGetter.class.getName());
 
-    @EJB
+    private static IDataManagerLocal dataManager;
+
+    @Inject
     private FileConverter fileConverter;
+
+    static {
+        try {
+            dataManager = (IDataManagerLocal) ServicesInjector.inject(ServicesInjector.DATAMANAGER);
+        } catch (NamingException e) {
+            LOGGER.log(Level.SEVERE,null,e);
+        }
+    }
 
     @Override
     public boolean canGetConvertedResource(String outputFormat, BinaryResource binaryResource) {
