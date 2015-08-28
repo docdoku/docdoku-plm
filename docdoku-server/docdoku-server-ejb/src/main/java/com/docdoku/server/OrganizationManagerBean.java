@@ -23,6 +23,7 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Organization;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IOrganizationManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.AccountDAO;
@@ -47,25 +48,21 @@ public class OrganizationManagerBean implements IOrganizationManagerLocal {
     private EntityManager em;
     @EJB
     private IUserManagerLocal userManager;
+    @EJB
+    private IAccountManagerLocal accountManager;
 
     private static final Logger LOGGER = Logger.getLogger(UserManagerBean.class.getName());
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public void updateOrganization(Organization pOrganization) throws AccountNotFoundException, OrganizationNotFoundException, AccessRightException {
+    public void updateOrganization(Organization pOrganization)
+            throws AccountNotFoundException, OrganizationNotFoundException, AccessRightException {
 
         OrganizationDAO organizationDAO = new OrganizationDAO(em);
         Organization oldOrganization = organizationDAO.loadOrganization(pOrganization.getName());
 
-        if (userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
+        if (accountManager.checkAdmin(oldOrganization) != null) {
             organizationDAO.updateOrganization(pOrganization);
-        } else {
-            Account account = new AccountDAO(em).loadAccount(userManager.getCallerPrincipalLogin());
-            if (oldOrganization.getOwner().equals(account)) {
-                organizationDAO.updateOrganization(pOrganization);
-            } else {
-                throw new AccessRightException(new Locale(account.getLanguage()), account);
-            }
         }
     }
 
@@ -90,15 +87,8 @@ public class OrganizationManagerBean implements IOrganizationManagerLocal {
         OrganizationDAO organizationDAO = new OrganizationDAO(em);
         Organization organization = organizationDAO.loadOrganization(pName);
 
-        if (userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
+        if (accountManager.checkAdmin(organization) != null) {
             organizationDAO.deleteOrganization(organization);
-        } else {
-            Account account = new AccountDAO(em).loadAccount(userManager.getCallerPrincipalLogin());
-            if (organization.getOwner().getLogin().equals(userManager.getCallerPrincipalLogin())) {
-                organizationDAO.deleteOrganization(organization);
-            } else {
-                throw new AccessRightException(new Locale(account.getLanguage()), account);
-            }
         }
     }
 
@@ -107,14 +97,11 @@ public class OrganizationManagerBean implements IOrganizationManagerLocal {
     public void addAccountInOrganization(String pOrganizationName, String pLogin) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException, NotAllowedException {
         OrganizationDAO organizationDAO = new OrganizationDAO(em);
         Organization organization = organizationDAO.loadOrganization(pOrganizationName);
+        Account account = accountManager.checkAdmin(organization);
         Locale locale;
 
-        if (!userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
-            Account account = new AccountDAO(em).loadAccount(userManager.getCallerPrincipalLogin());
+        if (account != null) {
             locale = new Locale(account.getLanguage());
-            if (!organization.getOwner().getLogin().equals(userManager.getCallerPrincipalLogin())) {
-                throw new AccessRightException(locale, account);
-            }
         } else {
             locale = Locale.getDefault();
         }
@@ -134,17 +121,12 @@ public class OrganizationManagerBean implements IOrganizationManagerLocal {
         OrganizationDAO organizationDAO = new OrganizationDAO(em);
         Organization organization = organizationDAO.loadOrganization(pOrganizationName);
 
-        if (!userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
-            Account account = new AccountDAO(em).loadAccount(userManager.getCallerPrincipalLogin());
-            if (!organization.getOwner().getLogin().equals(userManager.getCallerPrincipalLogin())) {
-                throw new AccessRightException(new Locale(account.getLanguage()), account);
+        if (accountManager.checkAdmin(organization) != null) {
+            for (String login : pLogins) {
+                Account accountToRemove = new AccountDAO(em).loadAccount(login);
+                accountToRemove.setOrganization(null);
+                organization.removeMember(accountToRemove);
             }
-        }
-
-        for (String login : pLogins) {
-            Account accountToRemove = new AccountDAO(em).loadAccount(login);
-            accountToRemove.setOrganization(null);
-            organization.removeMember(accountToRemove);
         }
     }
 

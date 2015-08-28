@@ -20,6 +20,7 @@
 package com.docdoku.core.services;
 
 import com.docdoku.core.common.Account;
+import com.docdoku.core.common.Organization;
 import com.docdoku.core.exceptions.*;
 
 /**
@@ -40,6 +41,9 @@ public interface IAccountManagerLocal {
     void updateAccount(String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountNotFoundException;
 
     Account getMyAccount() throws AccountNotFoundException;
+
+    Account checkAdmin(Organization pOrganization) throws AccessRightException, AccountNotFoundException;
+    Account checkAdmin(String pOrganizationName) throws AccessRightException, AccountNotFoundException, OrganizationNotFoundException;
 
     void setGCMAccount(String gcmId) throws AccountNotFoundException, GCMAccountAlreadyExistsException, CreationException;
     void deleteGCMAccount() throws AccountNotFoundException, GCMAccountNotFoundException;
