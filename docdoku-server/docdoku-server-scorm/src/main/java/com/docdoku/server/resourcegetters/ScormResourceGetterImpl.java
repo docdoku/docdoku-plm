@@ -24,9 +24,10 @@ import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.exceptions.ConvertedResourceException;
 import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.server.ServicesInjector;
 import com.docdoku.server.viewers.utils.ScormUtil;
 
-import javax.ejb.EJB;
+import javax.naming.NamingException;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -34,10 +35,19 @@ import java.util.logging.Logger;
 
 public class ScormResourceGetterImpl implements DocumentResourceGetter {
 
-    @EJB
-    private IDataManagerLocal dataManager;
-
     private static final Logger LOGGER = Logger.getLogger(ScormResourceGetterImpl.class.getName());
+
+    private static IDataManagerLocal dataManager;
+
+    static {
+
+        try {
+            dataManager = (IDataManagerLocal) ServicesInjector.inject(ServicesInjector.DATAMANAGER);
+        } catch (NamingException e) {
+            LOGGER.log(Level.SEVERE,null,e);
+        }
+
+    }
 
     @Override
     public boolean canGetConvertedResource(String outputFormat, BinaryResource binaryResource) {
