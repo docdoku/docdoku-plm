@@ -716,6 +716,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             for (Task runningTask : runningTasks) {
                 runningTask.start();
             }
+
             mailer.sendApproval(runningTasks, docR);
         }
 
@@ -1427,6 +1428,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             for (Task runningTask : runningTasks) {
                 runningTask.start();
             }
+
             mailer.sendApproval(runningTasks, docR);
         }
 

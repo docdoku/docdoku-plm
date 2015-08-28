@@ -362,7 +362,7 @@ public class MailerBean implements IMailerLocal {
     private String getApprovalRequiredMessage(Task pTask, PartRevision partRevision, Locale pLocale) {
         String voteURL = codebase + "/action/vote";
         String instructions = pTask.getInstructions()==null?"-":pTask.getInstructions();
-        Object[] args = {voteURL, partRevision.getWorkspaceId(), pTask.getWorkflowId(), pTask.getActivityStep(), pTask.getNum(), pTask.getTitle(), getURL(partRevision), partRevision, instructions};
+        Object[] args = {voteURL, partRevision.getWorkspaceId(), String.valueOf(pTask.getWorkflowId()), String.valueOf(pTask.getActivityStep()), String.valueOf(pTask.getNum()), pTask.getTitle(), getURL(partRevision), partRevision, instructions};
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return MessageFormat.format(bundle.getString("Approval_part_text"), args);
     }
@@ -384,7 +384,7 @@ public class MailerBean implements IMailerLocal {
             DocumentRevision pDocumentRevision, Locale pLocale) {
         String voteURL = codebase + "/action/vote";
         String instructions = pTask.getInstructions()==null?"-":pTask.getInstructions();
-        Object[] args = {voteURL, pDocumentRevision.getWorkspaceId(), pTask.getWorkflowId(), pTask.getActivityStep(), pTask.getNum(), pTask.getTitle(), getURL(pDocumentRevision), pDocumentRevision, instructions};
+        Object[] args = {voteURL, pDocumentRevision.getWorkspaceId(), String.valueOf(pTask.getWorkflowId()), String.valueOf(pTask.getActivityStep()), String.valueOf(pTask.getNum()), pTask.getTitle(), getURL(pDocumentRevision), pDocumentRevision, instructions};
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return MessageFormat.format(bundle.getString("Approval_document_text"), args);
     }
