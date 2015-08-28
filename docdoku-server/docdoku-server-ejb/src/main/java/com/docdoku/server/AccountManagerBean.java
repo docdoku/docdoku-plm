@@ -26,6 +26,7 @@ import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IAccountManagerWS;
+import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.AccountDAO;
 import com.docdoku.server.dao.GCMAccountDAO;
@@ -54,6 +55,9 @@ public class AccountManagerBean implements IAccountManagerLocal, IAccountManager
     @EJB
     private IUserManagerLocal userManager;
 
+    @EJB
+    private IMailerLocal mailer;
+
     private static final Logger LOGGER = Logger.getLogger(UserManagerBean.class.getName());
 
     @Override
@@ -61,6 +65,7 @@ public class AccountManagerBean implements IAccountManagerLocal, IAccountManager
         Date now = new Date();
         Account account = new Account(pLogin, pName, pEmail, pLanguage, now, pTimeZone);
         new AccountDAO(new Locale(pLanguage), em).createAccount(account, pPassword);
+        mailer.sendCredential(account);
         return account;
     }
 
