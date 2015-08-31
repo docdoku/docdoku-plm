@@ -95,24 +95,29 @@ public class InstanceBodyWriterTools {
 
         PartLink partLink = currentPath.get(currentPath.size()-1);
         PSFilter filter = virtualInstanceCollection.getFilter();
-        PartIteration partI = filter.filter(partLink.getComponent()).iterator().next();
+        List<PartIteration> filteredPartIterations = filter.filter(partLink.getComponent());
 
-        for (CADInstance instance : partLink.getCadInstances()) {
+        if(!filteredPartIterations.isEmpty()){
 
-            List<Integer> copyInstanceIds = new ArrayList<>(instanceIds);
-            copyInstanceIds.add(instance.getId());
+            PartIteration partI = filteredPartIterations.iterator().next();
 
-            Vector3d instanceTranslation = new Vector3d(instance.getTx(), instance.getTy(), instance.getTz());
-            Vector3d instanceRotation = new Vector3d(instance.getRx(), instance.getRy(), instance.getRz());
-            Matrix4d combinedMatrix = combineTransformation(matrix, instanceTranslation, instanceRotation);
+            for (CADInstance instance : partLink.getCadInstances()) {
 
-            if (!partI.isAssembly() && !partI.getGeometries().isEmpty()) {
-                writeLeaf(currentPath, copyInstanceIds, partI, combinedMatrix, jg);
-            } else {
-                for (PartLink subLink : partI.getComponents()) {
-                    List<PartLink> subPath = new ArrayList<>(currentPath);
-                    subPath.add(subLink);
-                    generateInstanceStreamWithGlobalMatrix(subPath, combinedMatrix, virtualInstanceCollection, copyInstanceIds, jg);
+                List<Integer> copyInstanceIds = new ArrayList<>(instanceIds);
+                copyInstanceIds.add(instance.getId());
+
+                Vector3d instanceTranslation = new Vector3d(instance.getTx(), instance.getTy(), instance.getTz());
+                Vector3d instanceRotation = new Vector3d(instance.getRx(), instance.getRy(), instance.getRz());
+                Matrix4d combinedMatrix = combineTransformation(matrix, instanceTranslation, instanceRotation);
+
+                if (!partI.isAssembly() && !partI.getGeometries().isEmpty()) {
+                    writeLeaf(currentPath, copyInstanceIds, partI, combinedMatrix, jg);
+                } else {
+                    for (PartLink subLink : partI.getComponents()) {
+                        List<PartLink> subPath = new ArrayList<>(currentPath);
+                        subPath.add(subLink);
+                        generateInstanceStreamWithGlobalMatrix(subPath, combinedMatrix, virtualInstanceCollection, copyInstanceIds, jg);
+                    }
                 }
             }
         }
