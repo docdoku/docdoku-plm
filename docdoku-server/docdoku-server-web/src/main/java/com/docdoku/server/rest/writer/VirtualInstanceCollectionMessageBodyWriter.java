@@ -26,6 +26,8 @@ import com.docdoku.core.product.PartSubstituteLink;
 import com.docdoku.server.rest.collections.VirtualInstanceCollection;
 import com.docdoku.server.rest.util.InstanceBodyWriterTools;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.json.Json;
 import javax.json.stream.JsonGenerator;
 import javax.vecmath.Matrix4d;
@@ -46,9 +48,14 @@ import java.util.List;
  *
  * @author Morgan Guimard
  */
+
+@Stateless
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 public class VirtualInstanceCollectionMessageBodyWriter implements MessageBodyWriter<VirtualInstanceCollection> {
+
+    @EJB
+    private InstanceBodyWriterTools instanceBodyWriterTools;
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -72,7 +79,7 @@ public class VirtualInstanceCollectionMessageBodyWriter implements MessageBodyWr
         PartLink virtualRootPartLink = getVirtualRootPartLink(virtualInstanceCollection);
         List<PartLink> path = new ArrayList<>();
         path.add(virtualRootPartLink);
-        InstanceBodyWriterTools.generateInstanceStreamWithGlobalMatrix(path, gM, virtualInstanceCollection, new ArrayList<>(), jg);
+        instanceBodyWriterTools.generateInstanceStreamWithGlobalMatrix(path, gM, virtualInstanceCollection, new ArrayList<>(), jg);
         jg.writeEnd();
         jg.flush();
     }

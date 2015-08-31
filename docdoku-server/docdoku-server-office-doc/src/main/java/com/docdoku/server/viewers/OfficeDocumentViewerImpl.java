@@ -23,28 +23,21 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.InternalService;
-import com.docdoku.server.ServiceLocator;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 
-import javax.enterprise.inject.Produces;
-import javax.naming.NamingException;
+import javax.inject.Inject;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class OfficeDocumentViewerImpl implements DocumentViewer {
 
-    private static final Logger LOGGER = Logger.getLogger(OfficeDocumentViewerImpl.class.getName());
-
     @InternalService
-    @Produces
+    @Inject
     private IDataManagerLocal dataManager;
-
 
     @Override
     public boolean canRenderViewerTemplate(BinaryResource binaryResource) {

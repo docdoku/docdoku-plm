@@ -22,18 +22,20 @@ package com.docdoku.server.viewers;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
+import com.docdoku.server.InternalService;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 
-import javax.ejb.EJB;
+import javax.inject.Inject;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MultimediaViewerImpl implements DocumentViewer {
 
-    @EJB
+    @InternalService
+    @Inject
     private IDataManagerLocal dataManager;
 
     @Override
