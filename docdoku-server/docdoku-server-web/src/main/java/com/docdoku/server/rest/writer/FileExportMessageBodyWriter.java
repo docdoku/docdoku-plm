@@ -31,9 +31,8 @@ import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.util.FileExportEntity;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -53,26 +52,20 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-
+@Stateless
 @Provider
 public class FileExportMessageBodyWriter implements MessageBodyWriter<FileExportEntity> {
 
-    private static Context context;
-    private static IProductManagerLocal productService;
-    private static IProductInstanceManagerLocal productInstanceService;
-    private static IDataManagerLocal dataManager;
-    private static final Logger LOGGER = Logger.getLogger(FileExportMessageBodyWriter.class.getName());
+    @EJB
+    private IDataManagerLocal dataManager;
 
-    static {
-        try {
-            context = new InitialContext();
-            productService = (IProductManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductManagerBean");
-            productInstanceService = (IProductInstanceManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductInstanceManagerBean");
-            dataManager = (IDataManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/DataManagerBean");
-        } catch (NamingException e) {
-            LOGGER.log(Level.WARNING, null, e);
-        }
-    }
+    @EJB
+    private IProductManagerLocal productService;
+
+    @EJB
+    private IProductInstanceManagerLocal productInstanceService;
+
+    private static final Logger LOGGER = Logger.getLogger(FileExportMessageBodyWriter.class.getName());
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -160,7 +153,7 @@ public class FileExportMessageBodyWriter implements MessageBodyWriter<FileExport
         }
     }
 
-    public static void addToZipFile(BinaryResource binaryResource, String folderName, ZipOutputStream zos) throws IOException, StorageException {
+    public void addToZipFile(BinaryResource binaryResource, String folderName, ZipOutputStream zos) throws IOException, StorageException {
 
         try(InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource)) {
 

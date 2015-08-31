@@ -50,7 +50,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 @DeclareRoles({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IUserManagerLocal.class)
@@ -71,8 +70,6 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @Inject
     private Event<WorkspaceAccessEvent> workspaceAccessEvent;
-
-    private static final Logger LOGGER = Logger.getLogger(UserManagerBean.class.getName());
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override

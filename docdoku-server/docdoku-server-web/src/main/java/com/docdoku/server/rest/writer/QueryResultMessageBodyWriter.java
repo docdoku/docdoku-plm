@@ -42,12 +42,11 @@ import com.docdoku.core.util.Tools;
 import com.docdoku.server.export.ExcelGenerator;
 import com.docdoku.server.rest.collections.QueryResult;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.json.Json;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -65,25 +64,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
+@Stateless
 @Provider
 public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResult> {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private ExcelGenerator excelGenerator = new ExcelGenerator();
 
-    private static Context context;
-    private static IProductInstanceManagerLocal productInstanceService;
+    @EJB
+    private IProductInstanceManagerLocal productInstanceService;
+
     private static final Logger LOGGER = Logger.getLogger(QueryResultMessageBodyWriter.class.getName());
-
-    static {
-        try {
-            context = new InitialContext();
-            productInstanceService = (IProductInstanceManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductInstanceManagerBean");
-        } catch (NamingException e) {
-            LOGGER.log(Level.WARNING, null, e);
-        }
-    }
-
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {

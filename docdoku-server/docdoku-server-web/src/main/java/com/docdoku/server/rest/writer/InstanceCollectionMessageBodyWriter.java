@@ -22,6 +22,8 @@ package com.docdoku.server.rest.writer;
 import com.docdoku.server.rest.collections.InstanceCollection;
 import com.docdoku.server.rest.util.InstanceBodyWriterTools;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.json.Json;
 import javax.json.stream.JsonGenerator;
 import javax.vecmath.Matrix4d;
@@ -41,9 +43,14 @@ import java.util.ArrayList;
  *
  * @author Florent Garin
  */
+@Stateless
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 public class InstanceCollectionMessageBodyWriter implements MessageBodyWriter<InstanceCollection> {
+
+    @EJB
+    private InstanceBodyWriterTools instanceBodyWriterTools;
+
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return type.equals(InstanceCollection.class);
@@ -62,7 +69,7 @@ public class InstanceCollectionMessageBodyWriter implements MessageBodyWriter<In
 
         Matrix4d gM=new Matrix4d();
         gM.setIdentity();
-        InstanceBodyWriterTools.generateInstanceStreamWithGlobalMatrix(null, gM, instanceCollection, new ArrayList<>(), jg);
+        instanceBodyWriterTools.generateInstanceStreamWithGlobalMatrix(null, gM, instanceCollection, new ArrayList<>(), jg);
         jg.writeEnd();
         jg.flush();
     }
