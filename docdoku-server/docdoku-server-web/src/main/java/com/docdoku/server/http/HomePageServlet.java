@@ -24,20 +24,20 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @WebServlet(name = "HomePageServlet", urlPatterns = {"/home"})
 public class HomePageServlet extends HttpServlet {
+
+    @EJB
+    private IUserManagerLocal userManager;
 
     private static final Logger LOGGER = Logger.getLogger(HomePageServlet.class.getName());
 
@@ -45,29 +45,21 @@ public class HomePageServlet extends HttpServlet {
             HttpServletResponse pResponse)
             throws ServletException, IOException {
 
-        try {
+        if (userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
+            pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+        } else {
 
-            Context context = new InitialContext();
-            IUserManagerLocal userManager = (IUserManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/UserManagerBean");
-
-            if (userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
+            String workspaceID = null;
+            Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
+            if (workspaces != null && workspaces.length > 0) {
+                workspaceID = workspaces[0].getId();
+            }
+            if (workspaceID == null) {
                 pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
             } else {
-
-                String workspaceID = null;
-                Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
-                if (workspaces != null && workspaces.length > 0) {
-                    workspaceID = workspaces[0].getId();
-                }
-                if (workspaceID == null) {
-                    pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
-                } else {
-                    pResponse.sendRedirect(pRequest.getContextPath() + "/document-management/#" + workspaceID);
-                }
-
+                pResponse.sendRedirect(pRequest.getContextPath() + "/document-management/#" + workspaceID);
             }
-        } catch (NamingException e) {
-            LOGGER.log(Level.FINEST,null,e);
+
         }
 
     }
