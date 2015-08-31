@@ -26,8 +26,7 @@ import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.services.IDocumentManagerLocal;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -44,13 +43,13 @@ import java.util.regex.Pattern;
 
 public class DocumentPermalinkServlet extends HttpServlet {
 
+    @EJB
+    private IDocumentManagerLocal documentService;
+
     @Override
     protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
 
         try {
-
-            Context context = new InitialContext();
-            IDocumentManagerLocal documentService = (IDocumentManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/DocumentManagerBean");
 
             if(pRequest.getAttribute("publicDocumentRevision") != null){
                 DocumentRevision documentRevision = (DocumentRevision) pRequest.getAttribute("publicDocumentRevision");

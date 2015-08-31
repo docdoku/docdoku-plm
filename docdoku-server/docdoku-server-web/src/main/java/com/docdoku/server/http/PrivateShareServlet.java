@@ -33,8 +33,7 @@ import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -56,6 +55,9 @@ import java.util.regex.Pattern;
 
 public class PrivateShareServlet extends HttpServlet {
 
+    @EJB
+    private IShareManagerLocal shareService;
+
     private static final Logger LOGGER = Logger.getLogger(PrivateShareServlet.class.getName());
 
     @Override
@@ -66,9 +68,6 @@ public class PrivateShareServlet extends HttpServlet {
         String uuid = URLDecoder.decode(pathInfos[offset], "UTF-8");
 
         try{
-
-            Context context = new InitialContext();
-            IShareManagerLocal shareService = (IShareManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ShareManagerBean");
 
             SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
 
@@ -109,9 +108,6 @@ public class PrivateShareServlet extends HttpServlet {
             String uuid = URLDecoder.decode(pathInfos[offset], "UTF-8");
 
             try{
-
-                Context context = new InitialContext();
-                IShareManagerLocal shareService = (IShareManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ShareManagerBean");
 
                 SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
 

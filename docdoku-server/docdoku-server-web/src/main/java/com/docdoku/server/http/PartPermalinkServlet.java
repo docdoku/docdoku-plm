@@ -27,8 +27,7 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.IProductManagerLocal;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +44,9 @@ import java.util.regex.Pattern;
 
 public class PartPermalinkServlet extends HttpServlet {
 
+    @EJB
+    private IProductManagerLocal productService;
+
     @Override
     protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
 
@@ -53,9 +55,6 @@ public class PartPermalinkServlet extends HttpServlet {
                 PartRevision partRevision = (PartRevision) pRequest.getAttribute("publicPartRevision");
                 handleSuccess(pRequest,pResponse,partRevision);
             }else{
-
-                Context context = new InitialContext();
-                IProductManagerLocal productService = (IProductManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductManagerBean");
 
                 String requestURI = pRequest.getRequestURI();
                 String[] pathInfos = Pattern.compile("/").split(requestURI);

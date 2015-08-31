@@ -27,8 +27,7 @@ import com.docdoku.core.services.IPartWorkflowManagerLocal;
 import com.docdoku.core.workflow.ActivityKey;
 import com.docdoku.core.workflow.TaskKey;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +41,12 @@ public class VoteServlet extends HttpServlet {
     private static final String URL_SUFIXE_APPROVE = "/faces/taskApproved.xhtml";
     private static final String URL_SUFIXE_REJECT = "/faces/taskRejected.xhtml";
     private static final String ENTITY_ATTRIBUTE = "entity";
+
+    @EJB
+    private IPartWorkflowManagerLocal  partWorkflowService;
+
+    @EJB
+    private IDocumentWorkflowManagerLocal documentWorkflowService;
 
     @Override
     protected void doGet(HttpServletRequest pRequest,
@@ -61,11 +66,7 @@ public class VoteServlet extends HttpServlet {
 
         try {
 
-            Context context = new InitialContext();
-
             if("parts".equals(entityType)){
-
-                IPartWorkflowManagerLocal  partWorkflowService = (IPartWorkflowManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/PartWorkflowManagerBean");
 
                 if (APPROVE.equals(action)) {
                     PartRevision partRevision = partWorkflowService.approveTaskOnPart(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
@@ -78,8 +79,6 @@ public class VoteServlet extends HttpServlet {
                 }
 
             }else if("documents".equals(entityType)){
-
-                IDocumentWorkflowManagerLocal documentWorkflowService = (IDocumentWorkflowManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/DocumentWorkflowManagerBean");
 
                 if (APPROVE.equals(action)) {
                     DocumentRevision documentRevision = documentWorkflowService.approveTaskOnDocument(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
