@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest.writer;
 
+import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.collections.InstanceCollection;
 import com.docdoku.server.rest.util.InstanceBodyWriterTools;
 
@@ -49,7 +50,7 @@ import java.util.ArrayList;
 public class InstanceCollectionMessageBodyWriter implements MessageBodyWriter<InstanceCollection> {
 
     @EJB
-    private InstanceBodyWriterTools instanceBodyWriterTools;
+    private IProductManagerLocal productService;
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -69,7 +70,7 @@ public class InstanceCollectionMessageBodyWriter implements MessageBodyWriter<In
 
         Matrix4d gM=new Matrix4d();
         gM.setIdentity();
-        instanceBodyWriterTools.generateInstanceStreamWithGlobalMatrix(null, gM, instanceCollection, new ArrayList<>(), jg);
+        InstanceBodyWriterTools.generateInstanceStreamWithGlobalMatrix(productService, null, gM, instanceCollection, new ArrayList<>(), jg);
         jg.writeEnd();
         jg.flush();
     }

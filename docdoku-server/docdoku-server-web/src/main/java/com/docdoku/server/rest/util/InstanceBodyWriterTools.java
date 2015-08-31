@@ -32,8 +32,6 @@ import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.json.stream.JsonGenerator;
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Vector3d;
@@ -46,16 +44,12 @@ import java.util.logging.Logger;
  *
  * @author Taylor LABEJOF
  */
-@Stateless
 public class InstanceBodyWriterTools {
-
-    @EJB
-    private IProductManagerLocal productService;
 
     private static final Logger LOGGER = Logger.getLogger(InstanceBodyWriterTools.class.getName());
     private static Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
 
-    public void generateInstanceStreamWithGlobalMatrix(List<PartLink> currentPath, Matrix4d matrix, InstanceCollection instanceCollection, List<Integer> instanceIds, JsonGenerator jg) {
+    public static void generateInstanceStreamWithGlobalMatrix(IProductManagerLocal productService, List<PartLink> currentPath, Matrix4d matrix, InstanceCollection instanceCollection, List<Integer> instanceIds, JsonGenerator jg) {
 
         try {
 
@@ -84,7 +78,7 @@ public class InstanceBodyWriterTools {
                     writeLeaf(currentPath, copyInstanceIds, partI, combinedMatrix, jg);
                 } else {
                     for (Component subComponent : component.getComponents()) {
-                        generateInstanceStreamWithGlobalMatrix(subComponent.getPath(), combinedMatrix, instanceCollection, copyInstanceIds, jg);
+                        generateInstanceStreamWithGlobalMatrix(productService, subComponent.getPath(), combinedMatrix, instanceCollection, copyInstanceIds, jg);
                     }
                 }
             }
@@ -97,7 +91,7 @@ public class InstanceBodyWriterTools {
 
     }
 
-    public void generateInstanceStreamWithGlobalMatrix(List<PartLink> currentPath, Matrix4d matrix, VirtualInstanceCollection virtualInstanceCollection, List<Integer> instanceIds, JsonGenerator jg) {
+    public static void generateInstanceStreamWithGlobalMatrix(List<PartLink> currentPath, Matrix4d matrix, VirtualInstanceCollection virtualInstanceCollection, List<Integer> instanceIds, JsonGenerator jg) {
 
         PartLink partLink = currentPath.get(currentPath.size()-1);
         PSFilter filter = virtualInstanceCollection.getFilter();
@@ -125,7 +119,7 @@ public class InstanceBodyWriterTools {
 
     }
 
-    private Matrix4d combineTransformation(Matrix4d matrix, Vector3d translation, Vector3d rotation){
+    private static Matrix4d combineTransformation(Matrix4d matrix, Vector3d translation, Vector3d rotation){
         Matrix4d gM=new Matrix4d(matrix);
         Matrix4d m=new Matrix4d();
 
