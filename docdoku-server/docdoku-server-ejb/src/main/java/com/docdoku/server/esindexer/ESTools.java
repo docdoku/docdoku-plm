@@ -153,10 +153,8 @@ public class ESTools {
                     strRet = openOfficeDocumentToString(inputStream);
                     break;
                 case ".doc":
-                    strRet = microsoftWordDocumentToString(inputStream);
-                    break;
                 case ".docx":
-                    strRet = microsoftXMLWordDocumentToString(inputStream);
+                    strRet = microsoftWordDocumentToString(inputStream);
                     break;
                 case ".ppt":
                 case ".pps":
@@ -221,17 +219,13 @@ public class ESTools {
     private static String microsoftWordDocumentToString(InputStream inputStream) throws IOException {
         String strRet;
         try(InputStream wordStream = new BufferedInputStream(inputStream)) {
-            WordExtractor wordExtractor = new WordExtractor(wordStream);
-            strRet = wordExtractor.getText();
-        }
-        return strRet;
-    }
-
-    private static String microsoftXMLWordDocumentToString(InputStream inputStream) throws IOException {
-        String strRet;
-        try(InputStream wordXStream = new BufferedInputStream(inputStream)) {
-            XWPFWordExtractor wordXExtractor = new XWPFWordExtractor(new XWPFDocument(wordXStream));
-            strRet = wordXExtractor.getText();
+            if(POIFSFileSystem.hasPOIFSHeader(wordStream)){
+                WordExtractor wordExtractor = new WordExtractor(wordStream);
+                strRet = wordExtractor.getText();
+            }else{
+                XWPFWordExtractor wordXExtractor = new XWPFWordExtractor(new XWPFDocument(wordStream));
+                strRet = wordXExtractor.getText();
+            }
         }
         return strRet;
     }
