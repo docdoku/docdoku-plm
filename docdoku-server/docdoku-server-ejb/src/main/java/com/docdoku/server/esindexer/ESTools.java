@@ -31,6 +31,8 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -158,6 +160,7 @@ public class ESTools {
                     break;
                 case ".ppt":
                 case ".pps":
+                case ".pptx":
                     strRet = microsoftPowerPointDocumentToString(inputStream);
                     break;
                 case ".txt":                                                                                            //Text Document
@@ -233,8 +236,13 @@ public class ESTools {
     private static String microsoftPowerPointDocumentToString(InputStream inputStream) throws IOException {
         String strRet;
         try(InputStream pptStream = new BufferedInputStream(inputStream)) {
-            PowerPointExtractor pptExtractor = new PowerPointExtractor(pptStream);
-            strRet = pptExtractor.getText(true, true);
+            if(POIFSFileSystem.hasPOIFSHeader(pptStream)) {
+                PowerPointExtractor pptExtractor = new PowerPointExtractor(pptStream);
+                strRet = pptExtractor.getText(true, true);
+            }else{
+                XSLFPowerPointExtractor pptExtractor = new XSLFPowerPointExtractor(new XMLSlideShow(pptStream));
+                strRet = pptExtractor.getText(true,true,true);
+            }
         }
         return strRet;
     }
