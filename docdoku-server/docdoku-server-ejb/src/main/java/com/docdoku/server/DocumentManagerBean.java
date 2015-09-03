@@ -1046,19 +1046,39 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             throw new NotAllowedException(userLocale, "NotAllowedException21");
 
         } else {
-            List<DocumentRevision> allDocRevision = folderDAO.findDocumentRevisionsInFolder(folder);
-            List<DocumentRevisionKey> allDocRevisionKey = new ArrayList<>();
-
-            for (DocumentRevision documentRevision : allDocRevision) {
-                DocumentRevisionKey documentRevisionKey = documentRevision.getKey();
-                deleteDocumentRevision(documentRevisionKey);
-                allDocRevisionKey.add(documentRevisionKey);
-            }
-
-            folderDAO.removeFolder(folder);
-            return allDocRevisionKey.toArray(new DocumentRevisionKey[allDocRevisionKey.size()]);
-
+            return doFolderDeletion(folder,userLocale);
         }
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public DocumentRevisionKey[] deleteUserFolder(User pUser) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException {
+
+        User user = userManager.checkWorkspaceWriteAccess(pUser.getWorkspaceId());
+        Locale userLocale = new Locale(user.getLanguage());
+        String folderCompletePath = pUser.getWorkspaceId() + "/~" + pUser.getLogin();
+        FolderDAO folderDAO = new FolderDAO(userLocale, em);
+        Folder folder = folderDAO.loadFolder(folderCompletePath);
+
+        if (!user.isAdministrator()) {
+            throw new NotAllowedException(userLocale, "NotAllowedException21");
+        }
+
+        return doFolderDeletion(folder,userLocale);
+    }
+
+    private DocumentRevisionKey[] doFolderDeletion(Folder folder, Locale locale) throws EntityConstraintException, NotAllowedException, WorkspaceNotFoundException, ESServerException, AccessRightException, DocumentRevisionNotFoundException, UserNotActiveException, UserNotFoundException {
+        FolderDAO folderDAO = new FolderDAO(locale, em);
+        List<DocumentRevision> allDocRevision = folderDAO.findDocumentRevisionsInFolder(folder);
+        List<DocumentRevisionKey> allDocRevisionKey = new ArrayList<>();
+
+        for (DocumentRevision documentRevision : allDocRevision) {
+            DocumentRevisionKey documentRevisionKey = documentRevision.getKey();
+            deleteDocumentRevision(documentRevisionKey);
+            allDocRevisionKey.add(documentRevisionKey);
+        }
+        folderDAO.removeFolder(folder);
+        return allDocRevisionKey.toArray(new DocumentRevisionKey[allDocRevisionKey.size()]);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -1100,7 +1120,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(locale, em);
 
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
-        if (isInAnotherUserHomeFolder(user, docR)) {
+        if (!user.isAdministrator() && isInAnotherUserHomeFolder(user, docR)) {
             throw new NotAllowedException(locale, "NotAllowedException22");
         }
 
@@ -1779,7 +1799,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
      */
     private void checkFoldersStructureChangeRight(User pUser) throws NotAllowedException {
         Workspace wks = pUser.getWorkspace();
-        if (wks.isFolderLocked() && (!pUser.isAdministrator())) {
+        if (wks.isFolderLocked() && !pUser.isAdministrator()) {
             throw new NotAllowedException(new Locale(pUser.getLanguage()), "NotAllowedException7");
         }
     }

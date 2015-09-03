@@ -20,8 +20,6 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.*;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.IDataManagerLocal;
@@ -31,9 +29,7 @@ import com.docdoku.core.services.IUserManagerWS;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
-import com.docdoku.server.events.Read;
-import com.docdoku.server.events.WorkspaceAccessEvent;
-import com.docdoku.server.events.Write;
+import com.docdoku.server.events.*;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -65,11 +61,14 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     private ESIndexer esIndexer;
     @EJB
     private IDataManagerLocal dataManager;
-    @EJB
+    @Inject
     private IDocumentManagerLocal documentService;
 
     @Inject
     private Event<WorkspaceAccessEvent> workspaceAccessEvent;
+
+    @Inject
+    private Event<UserRemovedEvent> userRemovedEvent;
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
@@ -335,19 +334,12 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         UserDAO userDAO = new UserDAO(locale, em);
 
         for (String login : pLogins) {
-            FolderDAO folderDAO = new FolderDAO(locale, em);
             User user = userDAO.loadUser(new UserKey(pWorkspaceId, login));
-            String folderCompletePath = user.getWorkspaceId() + "/~" + user.getLogin();
-            Folder folder = folderDAO.loadFolder(folderCompletePath);
-
-            List<DocumentRevision> allDocRevision = folderDAO.findDocumentRevisionsInFolder(folder);
-            for (DocumentRevision documentRevision : allDocRevision) {
-                documentService.deleteDocumentRevision(documentRevision.getKey());
-            }
-
-            folderDAO.removeFolder(folderCompletePath);
+            userRemovedEvent.select(new AnnotationLiteral<Removed>() {
+            }).fire(new UserRemovedEvent(user));
             userDAO.removeUser(user);
         }
+
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
