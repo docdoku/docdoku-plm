@@ -38,14 +38,15 @@ import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 
-@Stateless
+@RequestScoped
 @Path("accounts")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -79,7 +80,7 @@ public class AccountResource {
     @GET
     @Path("/workspaces")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<WorkspaceDTO> getWorkspaces(){
+    public Response getWorkspaces(){
         Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
 
         List<WorkspaceDTO> workspaceDTOs = new ArrayList<>();
@@ -87,7 +88,9 @@ public class AccountResource {
             workspaceDTOs.add(mapper.map(workspace, WorkspaceDTO.class));
         }
 
-        return workspaceDTOs;
+        return Response.ok(new GenericEntity<List<WorkspaceDTO>>((List<WorkspaceDTO>) workspaceDTOs) {
+        }).build();
+
     }
 
     @PUT

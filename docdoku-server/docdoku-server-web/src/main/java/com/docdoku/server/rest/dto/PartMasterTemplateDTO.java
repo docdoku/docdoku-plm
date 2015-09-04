@@ -20,10 +20,13 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class PartMasterTemplateDTO {
+@XmlRootElement
+public class PartMasterTemplateDTO implements Serializable {
 
     private String workspaceId;
     private String id;

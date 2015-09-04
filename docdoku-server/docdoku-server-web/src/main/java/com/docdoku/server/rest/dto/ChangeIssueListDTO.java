@@ -19,57 +19,30 @@
  */
 package com.docdoku.server.rest.dto;
 
+import com.docdoku.server.rest.dto.change.ChangeIssueDTO;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  *
- * @author Yassine Belouad
+ * @author Morgan Guimard
  */
+
 @XmlRootElement
-public class RoleDTO implements Serializable {
+public class ChangeIssueListDTO implements Serializable {
 
-    private String id;
-    private String name;
-    private String workspaceId;
-    private UserDTO defaultAssignee;
+    private List<ChangeIssueDTO> issues;
 
-    public RoleDTO(){
+    public ChangeIssueListDTO() {
     }
 
-    public RoleDTO(String name){
-        this.name=name;
+    public List<ChangeIssueDTO> getIssues() {
+        return issues;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getWorkspaceId() {
-        return workspaceId;
-    }
-
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
-    }
-
-    public UserDTO getDefaultAssignee() {
-        return defaultAssignee;
-    }
-
-    public void setDefaultAssignee(UserDTO defaultAssignee) {
-        this.defaultAssignee = defaultAssignee;
+    public void setIssues(List<ChangeIssueDTO> issues) {
+        this.issues = issues;
     }
 }

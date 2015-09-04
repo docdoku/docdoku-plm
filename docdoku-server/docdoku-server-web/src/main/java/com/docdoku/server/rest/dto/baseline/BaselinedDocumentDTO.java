@@ -22,7 +22,11 @@ package com.docdoku.server.rest.dto.baseline;
 
 import com.docdoku.core.document.DocumentIteration;
 
-public class BaselinedDocumentDTO {
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+
+@XmlRootElement
+public class BaselinedDocumentDTO implements Serializable {
 
     private String documentId;
     private String version;

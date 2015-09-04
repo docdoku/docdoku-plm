@@ -24,12 +24,15 @@ import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.DocumentRevisionDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ProductInstanceCreationDTO {
+@XmlRootElement
+public class ProductInstanceCreationDTO implements Serializable {
 
     private String serialNumber;
     private String configurationItemId;

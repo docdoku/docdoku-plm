@@ -20,7 +20,11 @@
 
 package com.docdoku.server.rest.dto;
 
-public class WorkspaceDTO {
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+
+@XmlRootElement
+public class WorkspaceDTO implements Serializable {
 
     private String id;
 

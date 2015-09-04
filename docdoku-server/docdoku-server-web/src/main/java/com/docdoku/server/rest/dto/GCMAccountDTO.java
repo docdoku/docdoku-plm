@@ -20,7 +20,11 @@
 
 package com.docdoku.server.rest.dto;
 
-public class GCMAccountDTO {
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+
+@XmlRootElement
+public class GCMAccountDTO implements Serializable {
 
     private String login;
     private String gcmId;

@@ -54,6 +54,7 @@ public class AccountManagerBean implements IAccountManagerLocal, IAccountManager
 
     @PersistenceContext
     private EntityManager em;
+
     @EJB
     private IUserManagerLocal userManager;
 

@@ -29,10 +29,7 @@ import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IChangeManagerLocal;
-import com.docdoku.server.rest.dto.ACLDTO;
-import com.docdoku.server.rest.dto.DocumentIterationDTO;
-import com.docdoku.server.rest.dto.PartIterationDTO;
-import com.docdoku.server.rest.dto.TagDTO;
+import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.change.ChangeItemDTO;
 import com.docdoku.server.rest.dto.change.ChangeOrderDTO;
 import com.docdoku.server.rest.dto.change.ChangeRequestDTO;
@@ -43,13 +40,14 @@ import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
 
-@Stateless
+@RequestScoped
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ChangeOrdersResource {
@@ -69,7 +67,7 @@ public class ChangeOrdersResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ChangeOrderDTO> getOrders(@PathParam("workspaceId") String workspaceId)
+    public Response getOrders(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException{
         List<ChangeOrder> changeOrders = changeManager.getChangeOrders(workspaceId);
         List<ChangeOrderDTO> changeOrderDTOs = new ArrayList<>();
@@ -78,7 +76,8 @@ public class ChangeOrdersResource {
             changeOrderDTO.setWritable(changeManager.isChangeItemWritable(order));
             changeOrderDTOs.add(changeOrderDTO);
         }
-        return changeOrderDTOs;
+        return Response.ok(new GenericEntity<List<ChangeOrderDTO>>((List<ChangeOrderDTO>) changeOrderDTOs) {
+        }).build();
     }
 
     @POST
@@ -141,8 +140,9 @@ public class ChangeOrdersResource {
     @Path("{orderId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeOrderDTO saveTags(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<TagDTO> tagDtos)
+    public ChangeOrderDTO saveTags(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, TagListDTO tagListDto)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException{
+        List<TagDTO> tagDtos = tagListDto.getTags();
         String[] tagsLabel = new String[tagDtos.size()];
         for (int i = 0; i < tagDtos.size(); i++) {
             tagsLabel[i] = tagDtos.get(i).getLabel();
@@ -158,13 +158,13 @@ public class ChangeOrdersResource {
     @Path("{orderId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO addTag(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<TagDTO> tagDtos)
+    public ChangeItemDTO addTag(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, TagListDTO tagListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException{
         ChangeOrder changeOrder = changeManager.getChangeOrder(workspaceId, orderId);
         Set<Tag> tags = changeOrder.getTags();
         Set<String> tagLabels = new HashSet<>();
 
-        for(TagDTO tagDto:tagDtos){
+        for(TagDTO tagDto:tagListDTO.getTags()){
             tagLabels.add(tagDto.getLabel());
         }
 
@@ -191,12 +191,11 @@ public class ChangeOrdersResource {
     @Path("{orderId}/affected-documents")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO saveAffectedDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<DocumentIterationDTO> documentLinkDtos)
+    public ChangeItemDTO saveAffectedDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, DocumentIterationListDTO documentLinkListDtos)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException{
-        DocumentIterationKey[] links = null;
-        if (documentLinkDtos != null) {
-            links = createDocumentIterationKeys(documentLinkDtos);
-        }
+
+        List<DocumentIterationDTO> documentLinkDtos = documentLinkListDtos.getDocuments();
+        DocumentIterationKey[] links = createDocumentIterationKeys(documentLinkDtos);
 
         ChangeOrder changeOrder = changeManager.saveChangeOrderAffectedDocuments(workspaceId, orderId, links);
         ChangeOrderDTO changeOrderDTO= mapper.map(changeOrder, ChangeOrderDTO.class);
@@ -208,12 +207,11 @@ public class ChangeOrdersResource {
     @Path("{orderId}/affected-parts")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO saveAffectedParts(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<PartIterationDTO> partLinkDtos)
+    public ChangeItemDTO saveAffectedParts(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, PartIterationListDTO partIterationListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException{
-        PartIterationKey[] links = null;
-        if (partLinkDtos != null) {
-            links = createPartIterationKeys(partLinkDtos);
-        }
+
+        List<PartIterationDTO> partLinkDtos = partIterationListDTO.getParts();
+        PartIterationKey[] links = createPartIterationKeys(partLinkDtos);
 
         ChangeOrder changeOrder = changeManager.saveChangeOrderAffectedParts(workspaceId, orderId, links);
         ChangeOrderDTO changeOrderDTO= mapper.map(changeOrder, ChangeOrderDTO.class);
@@ -225,9 +223,10 @@ public class ChangeOrdersResource {
     @Path("{orderId}/affected-requests")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO saveAffectedRequests(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<ChangeRequestDTO> changeRequestDTOs)
+    public ChangeItemDTO saveAffectedRequests(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, ChangeRequestListDTO changeRequestListDTOs)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException{
         int[] links;
+        List<ChangeRequestDTO> changeRequestDTOs = changeRequestListDTOs.getRequests();
         if (changeRequestDTOs != null) {
             int i = 0;
             links = new int[changeRequestDTOs.size()];

@@ -20,7 +20,11 @@
 
 package com.docdoku.server.rest.dto;
 
-public class PathDTO {
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+
+@XmlRootElement
+public class PathDTO implements Serializable {
 
     private String path;
 

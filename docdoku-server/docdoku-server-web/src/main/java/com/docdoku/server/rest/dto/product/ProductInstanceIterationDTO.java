@@ -21,14 +21,15 @@
 package com.docdoku.server.rest.dto.product;
 
 import com.docdoku.server.rest.dto.*;
-import com.docdoku.server.rest.dto.baseline.BaselineDTO;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
+import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.*;
 
 @XmlRootElement
-public class ProductInstanceIterationDTO {
+public class ProductInstanceIterationDTO implements Serializable {
     private String serialNumber;
     private int iteration;
     private String iterationNote;
@@ -45,7 +46,7 @@ public class ProductInstanceIterationDTO {
     private List<LightPartLinkListDTO> optionalsParts;
     private List<PathToPathLinkDTO> pathToPathLinks;
 
-    private BaselineDTO basedOn;
+    private ProductBaselineDTO basedOn;
     private List<PathDataMasterDTO> pathDataMasterList;
     private List<LightPartLinkListDTO> pathDataPaths;
     private List<InstanceAttributeDTO> instanceAttributes = new ArrayList<>();
@@ -144,11 +145,11 @@ public class ProductInstanceIterationDTO {
         this.attachedFiles = attachedFiles;
     }
 
-    public BaselineDTO getBasedOn() {
+    public ProductBaselineDTO getBasedOn() {
         return basedOn;
     }
 
-    public void setBasedOn(BaselineDTO basedOn) {
+    public void setBasedOn(ProductBaselineDTO basedOn) {
         this.basedOn = basedOn;
     }
 

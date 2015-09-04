@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import java.util.List;
  *
  * @author Florent Garin
  */
+@XmlRootElement
 public class ConfigurationItemDTO implements Serializable {
 
     private String id;

@@ -24,12 +24,15 @@ import com.docdoku.core.meta.TagKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.TagDTO;
+import com.docdoku.server.rest.dto.TagListDTO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
@@ -39,7 +42,7 @@ import java.util.List;
  *
  * @author Yassine Belouad
  */
-@Stateless
+@RequestScoped
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class TagResource {
@@ -47,7 +50,7 @@ public class TagResource {
     @EJB
     private IDocumentManagerLocal documentService;
 
-    @EJB
+    @Inject
     private DocumentsResource documentsResource;
 
     public TagResource() {
@@ -60,7 +63,7 @@ public class TagResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TagDTO> getTagsInWorkspace (@PathParam("workspaceId") String workspaceId)
+    public Response getTagsInWorkspace (@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         String[] tagsName = documentService.getTags(workspaceId);
@@ -68,7 +71,8 @@ public class TagResource {
         for (String tagName : tagsName) {
             tagsDTO.add(new TagDTO(tagName,workspaceId));
         }
-        return tagsDTO;
+        return Response.ok(new GenericEntity<List<TagDTO>>((List<TagDTO>) tagsDTO) {
+        }).build();
     }
 
     @POST
@@ -84,10 +88,10 @@ public class TagResource {
     @POST
     @Path("/multiple")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createTags(@PathParam("workspaceId") String workspaceId, List<TagDTO> tagsDTO)
+    public Response createTags(@PathParam("workspaceId") String workspaceId, TagListDTO tagList)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, CreationException {
 
-        for(TagDTO tagDTO : tagsDTO){
+        for(TagDTO tagDTO : tagList.getTags()){
             documentService.createTag(workspaceId, tagDTO.getLabel());
         }
         return Response.ok().build();

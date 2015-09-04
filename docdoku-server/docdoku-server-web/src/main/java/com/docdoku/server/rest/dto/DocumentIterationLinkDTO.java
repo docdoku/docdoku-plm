@@ -19,8 +19,10 @@
  */
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
+@XmlRootElement
 public class DocumentIterationLinkDTO implements Serializable {
 
     private String workspaceId;

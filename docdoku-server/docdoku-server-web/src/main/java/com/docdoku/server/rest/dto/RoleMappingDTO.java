@@ -18,11 +18,17 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.docdoku.server.rest.dto;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+
 /**
  *
  * @author Morgan Guimard
  */
-public class RoleMappingDTO {
+
+@XmlRootElement
+public class RoleMappingDTO implements Serializable {
 
     private String roleName;
     private String userLogin;

@@ -20,12 +20,15 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
  *
  * @author Florent Garin
  */
+
+@XmlRootElement
 public class TransformationDTO implements Serializable, Cloneable{
 
     /**

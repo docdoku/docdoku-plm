@@ -37,6 +37,8 @@ import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -245,9 +247,15 @@ public class Tools {
         }
         return folderDTOs;
     }
+
     public static List<FolderDTO> mapBaselinedFoldersToFolderDTO(DocumentBaseline documentBaseline){
         return mapBaselinedFoldersToFolderDTO(documentBaseline.getBaselinedFolders().values());
     }
+
+    public static Response wrapList(List<?> list){
+        return Response.ok(new GenericEntity<List<Object>>((List<Object>) list) {}).build();
+    }
+
     private static FolderDTO mapBaselinedFolderToFolderDTO(BaselinedFolder baselinedFolder) {
         String completePath = baselinedFolder.getCompletePath();
         return new FolderDTO(FolderDTO.extractParentFolder(completePath),FolderDTO.extractName(completePath));

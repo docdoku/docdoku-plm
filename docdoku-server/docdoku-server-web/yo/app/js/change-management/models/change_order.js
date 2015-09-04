@@ -21,7 +21,7 @@ define([
                 context: this,
                 type: 'PUT',
                 url: this.url() + '/affected-requests',
-                data: JSON.stringify(requests),
+                data: JSON.stringify({requests:requests}),
                 contentType: 'application/json; charset=utf-8',
                 success: function () {
                     this.fetch();

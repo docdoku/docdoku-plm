@@ -20,12 +20,14 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
  * @author Emmanuel Nhan
  *
  */
+@XmlRootElement
 public class TaskModelDTO implements Serializable {
 
     private int num;

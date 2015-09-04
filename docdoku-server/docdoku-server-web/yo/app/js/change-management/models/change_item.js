@@ -89,7 +89,7 @@ define([
                 context: this,
                 type: 'POST',
                 url: this.url() + '/tags',
-                data: JSON.stringify(tags),
+                data: JSON.stringify({tags:tags}),
                 contentType: 'application/json; charset=utf-8',
                 success: function () {
                 }
@@ -130,7 +130,7 @@ define([
                 context: this,
                 type: 'PUT',
                 url: this.url() + '/affected-documents',
-                data: JSON.stringify(documents),
+                data: JSON.stringify({documents:documents}),
                 contentType: 'application/json; charset=utf-8',
                 success: function () {
                     if (callback) {
@@ -145,7 +145,7 @@ define([
                 context: this,
                 type: 'PUT',
                 url: this.url() + '/affected-parts',
-                data: JSON.stringify(parts),
+                data: JSON.stringify({parts:parts}),
                 contentType: 'application/json; charset=utf-8',
                 success: function () {
                     if (callback) {

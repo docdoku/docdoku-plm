@@ -20,9 +20,11 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
+@XmlRootElement
 public class TaskDTO implements Serializable {
 
     public enum Status {

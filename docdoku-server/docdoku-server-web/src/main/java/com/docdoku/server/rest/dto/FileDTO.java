@@ -20,7 +20,11 @@
 
 package com.docdoku.server.rest.dto;
 
-public class FileDTO {
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+
+@XmlRootElement
+public class FileDTO  implements Serializable {
     private boolean created;
     private String fullName;
     private String shortName;

@@ -25,7 +25,11 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.server.rest.dto.LightPartLinkDTO;
 import com.docdoku.server.rest.dto.PartIterationDTO;
 
-public class ResolvedPartLinkDTO {
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+
+@XmlRootElement
+public class ResolvedPartLinkDTO implements Serializable {
 
     private PartIterationDTO partIteration;
     private LightPartLinkDTO partLink;

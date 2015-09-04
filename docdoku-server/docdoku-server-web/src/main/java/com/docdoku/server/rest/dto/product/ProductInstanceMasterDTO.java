@@ -23,10 +23,11 @@ package com.docdoku.server.rest.dto.product;
 import com.docdoku.server.rest.dto.ACLDTO;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.List;
 
 @XmlRootElement
-public class ProductInstanceMasterDTO {
+public class ProductInstanceMasterDTO implements Serializable {
 
     private String serialNumber;
     private String configurationItemId;

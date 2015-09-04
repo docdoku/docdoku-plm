@@ -54,13 +54,14 @@ import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
 
-@Stateless
+@RequestScoped
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class DocumentResource {
@@ -304,8 +305,9 @@ public class DocumentResource {
     @Path("/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO saveDocTags(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, List<TagDTO> tagDtos)
+    public DocumentRevisionDTO saveDocTags(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, TagListDTO tagListDto)
             throws EntityNotFoundException, NotAllowedException, ESServerException, AccessRightException, UserNotActiveException {
+        List<TagDTO> tagDtos = tagListDto.getTags();
         String[] tagsLabel = new String[tagDtos.size()];
         for (int i = 0; i < tagDtos.size(); i++) {
             tagsLabel[i] = tagDtos.get(i).getLabel();
@@ -323,7 +325,7 @@ public class DocumentResource {
     @Path("/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addDocTag(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, List<TagDTO> tagDtos)
+    public Response addDocTag(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, TagListDTO tagListDto)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, ESServerException {
 
         DocumentRevisionKey docRPK = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
@@ -331,7 +333,7 @@ public class DocumentResource {
         Set<Tag> tags = docR.getTags();
         Set<String> tagLabels = new HashSet<>();
 
-        for (TagDTO tagDto : tagDtos) {
+        for (TagDTO tagDto : tagListDto.getTags()) {
             tagLabels.add(tagDto.getLabel());
         }
 
@@ -444,7 +446,7 @@ public class DocumentResource {
     @GET
     @Path("aborted-workflows")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<WorkflowDTO> getAbortedWorkflows(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
+    public Response getAbortedWorkflows(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
         Workflow[] abortedWorkflows = documentWorkflowService.getAbortedWorkflow(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
         List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<>();
@@ -455,13 +457,14 @@ public class DocumentResource {
 
         Collections.sort(abortedWorkflowsDTO);
 
-        return abortedWorkflowsDTO;
+        return Response.ok(new GenericEntity<List<WorkflowDTO>>((List<WorkflowDTO>) abortedWorkflowsDTO) {
+        }).build();
     }
 
     @GET
     @Path("{iteration}/inverse-document-link")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<DocumentRevisionDTO> getInverseDocumentLinks(@PathParam("workspaceId") String workspaceId,
+    public Response getInverseDocumentLinks(@PathParam("workspaceId") String workspaceId,
                                                              @PathParam("documentId") String documentId,
                                                              @PathParam("documentVersion") String documentVersion,
                                                              @QueryParam("configSpec") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, DocumentIterationNotFoundException {
@@ -471,13 +474,15 @@ public class DocumentResource {
         for (DocumentIteration doc : documents) {
             dtos.add(new DocumentRevisionDTO(doc.getWorkspaceId(), doc.getDocumentMasterId(), doc.getTitle(), doc.getVersion()));
         }
-        return new ArrayList<>(dtos);
+
+        return Response.ok(new GenericEntity<List<DocumentRevisionDTO>>((List<DocumentRevisionDTO>) new ArrayList<>(dtos)) {
+        }).build();
     }
 
     @GET
     @Path("{iteration}/inverse-part-link")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PartRevisionDTO> getInversePartsLinks(@PathParam("workspaceId") String workspaceId,
+    public Response getInversePartsLinks(@PathParam("workspaceId") String workspaceId,
                                               @PathParam("documentId") String documentId,
                                               @PathParam("documentVersion") String documentVersion,
                                               @QueryParam("configSpec") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentRevisionNotFoundException {
@@ -487,13 +492,15 @@ public class DocumentResource {
         for (PartIteration part : parts) {
             dtos.add(new PartRevisionDTO(workspaceId, part.getNumber(), part.getPartName(), part.getVersion()));
         }
-        return new ArrayList<>(dtos);
+
+        return Response.ok(new GenericEntity<List<PartRevisionDTO>>((List<PartRevisionDTO>) new ArrayList<>(dtos)) {
+        }).build();
     }
 
     @GET
     @Path("{iteration}/inverse-product-instances-link")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ProductInstanceMasterDTO> getInverseProductInstancesLinks(@PathParam("workspaceId") String workspaceId,
+    public Response getInverseProductInstancesLinks(@PathParam("workspaceId") String workspaceId,
                                                                              @PathParam("documentId") String documentId,
                                                                              @PathParam("documentVersion") String documentVersion,
                                                                              @QueryParam("configSpec") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentRevisionNotFoundException {
@@ -503,13 +510,14 @@ public class DocumentResource {
         for (ProductInstanceMaster productInstanceMaster:productInstanceMasterList) {
             dtos.add(mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class));
         }
-        return new ArrayList<>(dtos);
+        return Response.ok(new GenericEntity<List<ProductInstanceMasterDTO>>((List<ProductInstanceMasterDTO>) new ArrayList<>(dtos)) {
+        }).build();
     }
 
     @GET
     @Path("{iteration}/inverse-path-data-link")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PathDataMasterDTO> getInversePathDataLinks(@PathParam("workspaceId") String workspaceId,
+    public Response getInversePathDataLinks(@PathParam("workspaceId") String workspaceId,
                                                            @PathParam("documentId") String documentId,
                                                            @PathParam("documentVersion") String documentVersion,
                                                            @QueryParam("configSpec") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentRevisionNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
@@ -531,7 +539,10 @@ public class DocumentResource {
             dto.setSerialNumber(productInstanceMaster.getSerialNumber());
             dtos.add(dto);
         }
-        return new ArrayList<>(dtos);
+
+        return Response.ok(new GenericEntity<List<PathDataMasterDTO>>((List<PathDataMasterDTO>) new ArrayList<>(dtos)) {
+        }).build();
+
     }
 
     private List<InstanceAttribute> createInstanceAttributes(List<InstanceAttributeDTO> dtos) {

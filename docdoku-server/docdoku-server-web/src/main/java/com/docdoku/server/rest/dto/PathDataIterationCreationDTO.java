@@ -20,13 +20,16 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
 /**
  * @author: Chadid Asmae
  */
-public class PathDataIterationCreationDTO {
+@XmlRootElement
+public class PathDataIterationCreationDTO implements Serializable {
 
     private int id;
     private String path;

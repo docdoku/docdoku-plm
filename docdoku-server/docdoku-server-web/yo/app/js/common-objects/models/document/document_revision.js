@@ -203,7 +203,7 @@ define([
 				context: this,
 				type: 'POST',
 				url: this.baseUrl() + '/tags',
-				data: JSON.stringify(tags),
+				data: JSON.stringify({tags:tags}),
 				contentType: 'application/json; charset=utf-8',
 				success: function () {
 					this.fetch();

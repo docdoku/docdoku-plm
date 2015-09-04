@@ -34,8 +34,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
@@ -50,7 +51,8 @@ import java.util.logging.Logger;
  *
  * @author Taylor LABEJOF
  */
-@Stateless
+
+@RequestScoped
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class DocumentBaselinesResource {
@@ -77,7 +79,7 @@ public class DocumentBaselinesResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<DocumentBaselineDTO> getBaselines(@PathParam("workspaceId") String workspaceId)
+    public Response getBaselines(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException{
         List<DocumentBaseline> documentBaselines;
         documentBaselines = documentBaselineService.getBaselines(workspaceId);
@@ -87,7 +89,8 @@ public class DocumentBaselinesResource {
             documentBaselineDTO.setWorkspaceId(workspaceId);
             baselinesDTO.add(documentBaselineDTO);
         }
-        return baselinesDTO;
+        return Response.ok(new GenericEntity<List<DocumentBaselineDTO>>((List<DocumentBaselineDTO>) baselinesDTO) {
+        }).build();
     }
 
     /**

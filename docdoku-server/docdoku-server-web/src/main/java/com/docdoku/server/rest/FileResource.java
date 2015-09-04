@@ -24,23 +24,28 @@ import com.docdoku.server.rest.file.*;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.Path;
 
-@Stateless
+@RequestScoped
 @Path("files")
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
 public class FileResource {
-    @EJB
+
+    @Inject
     private DocumentBinaryResource documentBinaryResource;
-    @EJB
+
+    @Inject
     private PartBinaryResource partBinaryResource;
-    @EJB
+
+    @Inject
     private DocumentTemplateBinaryResource documentTemplateBinaryResource;
-    @EJB
+
+    @Inject
     private PartTemplateBinaryResource partTemplateBinaryResource;
-    @EJB
+
+    @Inject
     private ProductInstanceBinaryResource productInstanceBinaryResource;
 
     public FileResource() {

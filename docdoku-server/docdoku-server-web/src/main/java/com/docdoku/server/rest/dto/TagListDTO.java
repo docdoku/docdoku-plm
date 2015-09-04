@@ -21,55 +21,25 @@ package com.docdoku.server.rest.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  *
- * @author Yassine Belouad
+ * @author Morgan Guimard
  */
 @XmlRootElement
-public class RoleDTO implements Serializable {
+public class TagListDTO implements Serializable {
 
-    private String id;
-    private String name;
-    private String workspaceId;
-    private UserDTO defaultAssignee;
+    private List<TagDTO> tags;
 
-    public RoleDTO(){
+    public TagListDTO(){
     }
 
-    public RoleDTO(String name){
-        this.name=name;
+    public List<TagDTO> getTags() {
+        return tags;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getWorkspaceId() {
-        return workspaceId;
-    }
-
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
-    }
-
-    public UserDTO getDefaultAssignee() {
-        return defaultAssignee;
-    }
-
-    public void setDefaultAssignee(UserDTO defaultAssignee) {
-        this.defaultAssignee = defaultAssignee;
+    public void setTags(List<TagDTO> tags) {
+        this.tags = tags;
     }
 }

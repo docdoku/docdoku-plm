@@ -23,22 +23,22 @@ import com.docdoku.core.security.UserGroupMapping;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.Path;
 
-@Stateless
+@RequestScoped
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ChangeItemsResource {
 
-    @EJB
+    @Inject
     private ChangeIssuesResource issues;
-    @EJB
+    @Inject
     private ChangeRequestsResource requests;
-    @EJB
+    @Inject
     private ChangeOrdersResource orders;
-    @EJB
+    @Inject
     private ChangeMilestonesResource changeMilestones;
 
     public ChangeItemsResource() {

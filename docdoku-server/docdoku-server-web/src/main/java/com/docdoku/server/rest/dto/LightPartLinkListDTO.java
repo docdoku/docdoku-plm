@@ -20,10 +20,13 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LightPartLinkListDTO {
+@XmlRootElement
+public class LightPartLinkListDTO  implements Serializable {
 
     private List<LightPartLinkDTO> partLinks = new ArrayList<>();
 

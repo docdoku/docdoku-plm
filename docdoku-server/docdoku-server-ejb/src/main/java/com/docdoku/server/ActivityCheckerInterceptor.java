@@ -31,25 +31,26 @@ import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.dao.TaskDAO;
 import com.docdoku.server.dao.WorkflowDAO;
 
-import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Locale;
 
 @CheckActivity
 @Interceptor
 public class ActivityCheckerInterceptor {
 
-    @EJB
+    @Inject
+    private EntityManagerProducer emf;
+
+    @Inject
     private IUserManagerLocal userManager;
-    @PersistenceContext
-    private EntityManager em;
 
     @AroundInvoke
-    public Object check(InvocationContext ctx) throws Exception {    
+    public Object check(InvocationContext ctx) throws Exception {
+        EntityManager em = emf.create();
         String workspaceId = (String) ctx.getParameters()[0];
         TaskKey taskKey = (TaskKey) ctx.getParameters()[1];
                 

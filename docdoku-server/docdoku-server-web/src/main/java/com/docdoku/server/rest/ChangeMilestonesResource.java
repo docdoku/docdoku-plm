@@ -37,8 +37,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Stateless
+@RequestScoped
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ChangeMilestonesResource {
@@ -67,7 +68,7 @@ public class ChangeMilestonesResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ChangeMilestoneDTO> getMilestones(@PathParam("workspaceId") String workspaceId)
+    public Response getMilestones(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
         List<Milestone> changeMilestones = changeManager.getChangeMilestones(workspaceId);
         List<ChangeMilestoneDTO> changeMilestoneDTOs = new ArrayList<>();
@@ -78,7 +79,8 @@ public class ChangeMilestonesResource {
             changeMilestoneDTO.setNumberOfOrders(changeManager.getNumberOfOrderByMilestone(milestone.getWorkspaceId(),milestone.getId()));
             changeMilestoneDTOs.add(changeMilestoneDTO);
         }
-        return changeMilestoneDTOs;
+        return Response.ok(new GenericEntity<List<ChangeMilestoneDTO>>((List<ChangeMilestoneDTO>) changeMilestoneDTOs) {
+        }).build();
     }
 
     @POST
@@ -131,27 +133,29 @@ public class ChangeMilestonesResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}/requests")
-    public List<ChangeRequestDTO> getRequestsByMilestone(@PathParam("workspaceId") String workspaceId, @PathParam("milestoneId") int milestoneId)
+    public Response getRequestsByMilestone(@PathParam("workspaceId") String workspaceId, @PathParam("milestoneId") int milestoneId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         List<ChangeRequest> changeRequests = changeManager.getChangeRequestsByMilestone(workspaceId, milestoneId);
         List<ChangeRequestDTO> changeRequestDTOs = new ArrayList<>();
         for(ChangeRequest changeRequest : changeRequests){
             changeRequestDTOs.add(mapper.map(changeRequest, ChangeRequestDTO.class));
         }
-        return changeRequestDTOs;
+        return Response.ok(new GenericEntity<List<ChangeRequestDTO>>((List<ChangeRequestDTO>) changeRequestDTOs) {
+        }).build();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}/orders")
-    public List<ChangeOrderDTO> getOrdersByMilestone(@PathParam("workspaceId") String workspaceId, @PathParam("milestoneId") int milestoneId)
+    public Response getOrdersByMilestone(@PathParam("workspaceId") String workspaceId, @PathParam("milestoneId") int milestoneId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         List<ChangeOrder> changeOrders = changeManager.getChangeOrdersByMilestone(workspaceId, milestoneId);
         List<ChangeOrderDTO> changeOrderDTOs = new ArrayList<>();
         for(ChangeOrder changeOrder : changeOrders){
             changeOrderDTOs.add(mapper.map(changeOrder, ChangeOrderDTO.class));
         }
-        return changeOrderDTOs;
+        return Response.ok(new GenericEntity<List<ChangeOrderDTO>>((List<ChangeOrderDTO>) changeOrderDTOs) {
+        }).build();
     }
 
     @PUT

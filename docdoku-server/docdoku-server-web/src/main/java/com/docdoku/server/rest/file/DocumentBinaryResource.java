@@ -36,12 +36,10 @@ import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 import com.docdoku.server.rest.interceptors.Compress;
 
-import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
@@ -58,13 +56,15 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 
-@Stateless
+@RequestScoped
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
 public class DocumentBinaryResource {
     @EJB
     private IDataManagerLocal dataManager;
     @EJB
     private IDocumentManagerLocal documentService;
+    @EJB
+    private IUserManagerLocal userService;
     @EJB
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
     @EJB
@@ -73,9 +73,6 @@ public class DocumentBinaryResource {
     private IShareManagerLocal shareService;
     @EJB
     private GuestProxy guestProxy;
-
-    @Resource
-    private SessionContext ctx;
 
     public DocumentBinaryResource() {
     }
@@ -205,7 +202,7 @@ public class DocumentBinaryResource {
      */
     private InputStream getConvertedBinaryResource(BinaryResource binaryResource, String outputFormat) throws FileConversionException {
         try {
-            if(ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
+            if(userService.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
                 return documentResourceGetterService.getConvertedResource(outputFormat, binaryResource);
             }else{
                 return guestProxy.getConvertedResource(outputFormat, binaryResource);
@@ -216,7 +213,7 @@ public class DocumentBinaryResource {
     }
 
     private boolean canAccess(DocumentIterationKey docIKey) throws UserNotActiveException, EntityNotFoundException {
-        if(ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
+        if(userService.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
             return documentService.canAccess(docIKey);
         }else{
             return guestProxy.canAccess(docIKey);
@@ -225,7 +222,7 @@ public class DocumentBinaryResource {
 
     private BinaryResource getBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
-        if(ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
+        if(userService.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
             return documentService.getBinaryResource(fullName);
         }else{
             return guestProxy.getBinaryResourceForDocument(fullName);

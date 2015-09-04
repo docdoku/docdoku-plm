@@ -26,10 +26,13 @@ import com.docdoku.server.rest.dto.PartUsageLinkDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PathChoiceDTO {
+@XmlRootElement
+public class PathChoiceDTO implements Serializable {
 
     private List<ResolvedPartLinkDTO> resolvedPath = new ArrayList<>();
     private PartUsageLinkDTO partUsageLink;

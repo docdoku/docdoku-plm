@@ -32,7 +32,8 @@ import com.docdoku.server.rest.dto.TaskProcessDTO;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -41,17 +42,19 @@ import javax.ws.rs.core.Response;
  * @author Morgan Guimard
  */
 
-@Stateless
+@RequestScoped
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class TaskResource {
 
     @EJB
-    private DocumentsResource documentsResource;
-    @EJB
     private IDocumentWorkflowManagerLocal documentWorkflowService;
+
     @EJB
     private IPartWorkflowManagerLocal partWorkflowService;
+
+    @Inject
+    private DocumentsResource documentsResource;
 
     public TaskResource() {
     }

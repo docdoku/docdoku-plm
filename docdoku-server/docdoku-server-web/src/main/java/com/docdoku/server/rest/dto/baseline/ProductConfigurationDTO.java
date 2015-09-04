@@ -25,10 +25,13 @@ import com.docdoku.server.rest.dto.LightPartLinkListDTO;
 import com.docdoku.server.rest.dto.UserDTO;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class ProductConfigurationDTO{
+@XmlRootElement
+public class ProductConfigurationDTO implements Serializable {
 
     @XmlElement(nillable = true)
     private int id;

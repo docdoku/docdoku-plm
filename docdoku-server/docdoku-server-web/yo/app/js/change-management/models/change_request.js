@@ -20,7 +20,7 @@ define([
                 context: this,
                 type: 'PUT',
                 url: this.url() + '/affected-issues',
-                data: JSON.stringify(issues),
+                data: JSON.stringify({issues:issues}),
                 contentType: 'application/json; charset=utf-8',
                 success: function () {
                     this.fetch();

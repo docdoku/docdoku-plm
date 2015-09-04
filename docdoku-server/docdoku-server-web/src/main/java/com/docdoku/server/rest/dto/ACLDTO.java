@@ -23,10 +23,12 @@ package com.docdoku.server.rest.dto;
 import com.docdoku.core.security.ACL;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+@XmlRootElement
 public class ACLDTO implements Serializable{
 
     @XmlElement(nillable = true)

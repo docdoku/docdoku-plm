@@ -20,10 +20,13 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorkspaceListDTO {
+@XmlRootElement
+public class WorkspaceListDTO implements Serializable {
     private List<WorkspaceDTO> administratedWorkspaces = new ArrayList<>();
     private List<WorkspaceDTO> allWorkspaces = new ArrayList<>();
 

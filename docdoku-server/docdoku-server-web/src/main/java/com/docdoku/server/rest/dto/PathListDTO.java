@@ -21,8 +21,10 @@
 package com.docdoku.server.rest.dto;
 
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
+@XmlRootElement
 public class PathListDTO implements Serializable {
     private String configSpec;
     private String[] paths;

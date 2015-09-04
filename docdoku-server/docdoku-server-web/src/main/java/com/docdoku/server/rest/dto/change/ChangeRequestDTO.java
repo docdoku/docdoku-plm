@@ -21,9 +21,11 @@
 package com.docdoku.server.rest.dto.change;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
 
+@XmlRootElement
 public class ChangeRequestDTO extends ChangeItemDTO implements Serializable{
     private List<ChangeIssueDTO> addressedChangeIssues;
     @XmlElement(nillable = true)

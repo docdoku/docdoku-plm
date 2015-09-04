@@ -21,9 +21,12 @@
 package com.docdoku.server.rest.dto;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.Date;
 
-public class ModificationNotificationDTO {
+@XmlRootElement
+public class ModificationNotificationDTO implements Serializable {
 
     private int id;
 

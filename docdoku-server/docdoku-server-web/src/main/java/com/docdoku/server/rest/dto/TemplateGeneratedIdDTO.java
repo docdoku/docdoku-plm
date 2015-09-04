@@ -20,7 +20,11 @@
 
 package com.docdoku.server.rest.dto;
 
-public class TemplateGeneratedIdDTO {
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+
+@XmlRootElement
+public class TemplateGeneratedIdDTO implements Serializable {
     private String id;
 
     public TemplateGeneratedIdDTO() {

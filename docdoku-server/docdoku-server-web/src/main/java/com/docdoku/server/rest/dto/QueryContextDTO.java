@@ -20,10 +20,14 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+
 /**
  * Created by lebeaujulien on 23/04/15.
  */
-public class QueryContextDTO {
+@XmlRootElement
+public class QueryContextDTO implements Serializable {
 
     private String workspaceId;
     private String serialNumber;

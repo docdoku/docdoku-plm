@@ -20,13 +20,14 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author Morgan Guimard
  */
-
+@XmlRootElement
 public class SharedDocumentDTO implements Serializable {
 
     private String uuid;

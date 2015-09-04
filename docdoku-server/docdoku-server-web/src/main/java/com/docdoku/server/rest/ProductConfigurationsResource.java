@@ -39,8 +39,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ import java.util.Map;
  *
  * @author Morgan Guimard
  */
-@Stateless
+@RequestScoped
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ProductConfigurationsResource {
@@ -75,7 +76,7 @@ public class ProductConfigurationsResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ProductConfigurationDTO> getAllConfiguration(@PathParam("workspaceId") String workspaceId,  @PathParam("ciId") String ciId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
+    public Response getAllConfiguration(@PathParam("workspaceId") String workspaceId,  @PathParam("ciId") String ciId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
         List<ProductConfiguration> allProductConfigurations;
         if(ciId != null) {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
@@ -89,7 +90,10 @@ public class ProductConfigurationsResource {
             productConfigurationDTO.setConfigurationItemId(productConfiguration.getConfigurationItem().getId());
             configurationDTOs.add(productConfigurationDTO);
         }
-        return configurationDTOs;
+
+        return Response.ok(new GenericEntity<List<ProductConfigurationDTO>>((List<ProductConfigurationDTO>) configurationDTOs) {
+        }).build();
+
     }
 
     @GET
