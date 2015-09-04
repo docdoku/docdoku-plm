@@ -42,11 +42,11 @@ import com.docdoku.core.util.Tools;
 import com.docdoku.server.export.ExcelGenerator;
 import com.docdoku.server.rest.collections.QueryResult;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
+import javax.ejb.EJB;
 import javax.json.Json;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
+import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -64,14 +64,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-@RequestScoped
 @Provider
+@Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_OCTET_STREAM})
 public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResult> {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private ExcelGenerator excelGenerator = new ExcelGenerator();
 
-    @Inject
+    @EJB
     private IProductInstanceManagerLocal productInstanceService;
 
     private static final Logger LOGGER = Logger.getLogger(QueryResultMessageBodyWriter.class.getName());
@@ -87,12 +87,16 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
     }
 
     @Override
-    public void writeTo(QueryResult queryResult, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> multivaluedMap, OutputStream outputStream) throws IOException, WebApplicationException {
+    public void writeTo(QueryResult queryResult, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream outputStream) throws IOException, WebApplicationException {
 
         if(queryResult.getExportType().equals(QueryResult.ExportType.JSON)){
+            httpHeaders.putSingle("Content-Type","application/json");
+            httpHeaders.putSingle("Content-Disposition", "inline");
             generateJSONResponse(outputStream, queryResult);
         }
         else if(queryResult.getExportType().equals(QueryResult.ExportType.XLS)){
+            httpHeaders.putSingle("Content-Type","application/octet-stream");
+            httpHeaders.putSingle("Content-Disposition","attachment; filename=\"TSR.csv\"");
             excelGenerator.generateXLSResponse(queryResult, new Locale(queryResult.getQuery().getAuthor().getLanguage()), "");
         }
         else{

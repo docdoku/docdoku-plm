@@ -177,19 +177,17 @@ public class PartsResource {
     @POST
     @Path("queries")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_OCTET_STREAM})
     public Response runCustomQuery(@PathParam("workspaceId") String workspaceId, @QueryParam("save") boolean save, @QueryParam("export") String exportType, QueryDTO queryDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
         Query query = mapper.map(queryDTO, Query.class);
         QueryResult queryResult = getQueryResult(workspaceId, query, exportType);
+
         if (save) {
             productService.createQuery(workspaceId, query);
         }
-        String contentType = queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "application/octet-stream" : "application/json";
-        String contentDisposition = queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "attachment; filename=\"TSR.csv\"" : "inline";
 
-        return Response.ok()
-                .header("Content-Type", contentType)
-                .header("Content-Disposition", contentDisposition)
-                .entity(queryResult).build();
+        return Response.ok(new GenericEntity<QueryResult>((QueryResult)queryResult){
+        }).build();
     }
 
     @GET
