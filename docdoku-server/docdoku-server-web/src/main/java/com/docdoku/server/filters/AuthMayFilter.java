@@ -26,7 +26,6 @@ import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.jsf.actions.AccountBean;
 
-import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -41,13 +40,13 @@ public class AuthMayFilter implements Filter {
     @Inject
     private AccountBean accountBean;
 
-    @EJB
+    @Inject
     private IUserManagerLocal userManager;
 
-    @EJB
+    @Inject
     private IContextManagerLocal contextManager;
 
-    @EJB
+    @Inject
     private IAccountManagerLocal accountManager;
 
     @Override

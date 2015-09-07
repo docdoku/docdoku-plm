@@ -28,9 +28,9 @@ import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,11 +38,13 @@ import javax.servlet.http.HttpServletRequest;
 @RequestScoped
 public class RecoveryBean {
 
-    @EJB
+    @Inject
     private IMailerLocal mailer;
-    @EJB
+
+    @Inject
     private IUserManagerLocal userManager;
-    @EJB
+
+    @Inject
     private IAccountManagerLocal accountManager;
 
     private String login;

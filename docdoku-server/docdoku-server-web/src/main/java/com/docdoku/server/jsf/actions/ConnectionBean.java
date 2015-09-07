@@ -25,10 +25,10 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IContextManagerLocal;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -44,10 +44,10 @@ import java.util.logging.Logger;
 public class ConnectionBean {
     private static final Logger LOGGER = Logger.getLogger(ConnectionBean.class.getName());
     
-    @EJB
+    @Inject
     private IContextManagerLocal contextManager;
 
-    @EJB
+    @Inject
     private IAccountManagerLocal accountManager;
 
     private String login;

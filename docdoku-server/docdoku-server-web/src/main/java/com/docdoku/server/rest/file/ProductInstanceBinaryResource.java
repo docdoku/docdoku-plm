@@ -36,8 +36,8 @@ import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
@@ -62,16 +62,16 @@ import java.util.Collection;
 @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
 public class ProductInstanceBinaryResource {
 
-    @EJB
+    @Inject
     private IDataManagerLocal dataManager;
 
-    @EJB
+    @Inject
     private IContextManagerLocal contextManager;
 
-    @EJB
+    @Inject
     private IProductInstanceManagerLocal productInstanceManagerLocal;
 
-    @EJB
+    @Inject
     private GuestProxy guestProxy;
 
     @POST

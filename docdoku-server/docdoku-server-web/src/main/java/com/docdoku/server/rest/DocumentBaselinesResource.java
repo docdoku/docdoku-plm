@@ -33,8 +33,8 @@ import org.dozer.Mapper;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
@@ -57,7 +57,7 @@ import java.util.logging.Logger;
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class DocumentBaselinesResource {
 
-    @EJB
+    @Inject
     private IDocumentBaselineManagerLocal documentBaselineService;
 
     private static final Logger LOGGER = Logger.getLogger(DocumentBaselinesResource.class.getName());

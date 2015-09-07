@@ -28,7 +28,6 @@ import com.docdoku.server.rest.dto.TagListDTO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -47,7 +46,7 @@ import java.util.List;
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class TagResource {
 
-    @EJB
+    @Inject
     private IDocumentManagerLocal documentService;
 
     @Inject

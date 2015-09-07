@@ -27,7 +27,6 @@ import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.jsf.actions.AccountBean;
 
-import javax.ejb.EJB;
 import javax.el.PropertyNotFoundException;
 import javax.inject.Inject;
 import javax.servlet.*;
@@ -53,13 +52,13 @@ public class AuthFilter implements Filter {
     @Inject
     private AccountBean accountBean;
 
-    @EJB
+    @Inject
     private IUserManagerLocal userManager;
 
-    @EJB
+    @Inject
     private IContextManagerLocal contextManager;
 
-    @EJB
+    @Inject
     private IAccountManagerLocal accountManager;
 
     @Override

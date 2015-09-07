@@ -27,7 +27,7 @@ import com.docdoku.core.services.IPartWorkflowManagerLocal;
 import com.docdoku.core.workflow.ActivityKey;
 import com.docdoku.core.workflow.TaskKey;
 
-import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -42,10 +42,10 @@ public class VoteServlet extends HttpServlet {
     private static final String URL_SUFIXE_REJECT = "/faces/taskRejected.xhtml";
     private static final String ENTITY_ATTRIBUTE = "entity";
 
-    @EJB
+    @Inject
     private IPartWorkflowManagerLocal  partWorkflowService;
 
-    @EJB
+    @Inject
     private IDocumentWorkflowManagerLocal documentWorkflowService;
 
     @Override

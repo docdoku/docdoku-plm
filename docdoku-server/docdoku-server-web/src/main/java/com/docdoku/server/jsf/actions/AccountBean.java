@@ -25,9 +25,9 @@ import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.services.IAccountManagerLocal;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +39,7 @@ import java.util.*;
 @RequestScoped
 public class AccountBean {
 
-    @EJB
+    @Inject
     private IAccountManagerLocal accountManager;
     
     private String password;

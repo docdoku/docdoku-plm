@@ -26,12 +26,12 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IFileViewerManagerLocal;
 import com.docdoku.core.sharing.SharedEntity;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIOutput;
 import javax.faces.component.html.HtmlPanelGroup;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ import java.util.Set;
 @RequestScoped
 public class ViewerBean {
 
-    @EJB
+    @Inject
     private IFileViewerManagerLocal fileViewerService;
 
     public void process() {

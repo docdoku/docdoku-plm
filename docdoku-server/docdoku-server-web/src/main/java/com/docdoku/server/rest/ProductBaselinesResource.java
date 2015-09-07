@@ -30,7 +30,10 @@ import com.docdoku.core.product.PathToPathLink;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.dto.LightPartLinkDTO;
+import com.docdoku.server.rest.dto.LightPartLinkListDTO;
+import com.docdoku.server.rest.dto.LightPathToPathLinkDTO;
+import com.docdoku.server.rest.dto.PathToPathLinkDTO;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -39,8 +42,8 @@ import org.dozer.Mapper;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
@@ -57,10 +60,10 @@ import java.util.List;
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ProductBaselinesResource {
 
-    @EJB
+    @Inject
     private IProductBaselineManagerLocal productBaselineService;
 
-    @EJB
+    @Inject
     private IProductManagerLocal productService;
 
     private Mapper mapper;

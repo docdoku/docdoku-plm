@@ -26,7 +26,7 @@ import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.services.IDocumentManagerLocal;
 
-import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
 
 public class DocumentPermalinkServlet extends HttpServlet {
 
-    @EJB
+    @Inject
     private IDocumentManagerLocal documentService;
 
     @Override

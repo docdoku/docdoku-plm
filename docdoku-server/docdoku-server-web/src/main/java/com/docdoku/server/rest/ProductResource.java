@@ -46,7 +46,6 @@ import org.dozer.Mapper;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -67,10 +66,10 @@ import java.util.logging.Logger;
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ProductResource {
 
-    @EJB
+    @Inject
     private IProductManagerLocal productService;
 
-    @EJB
+    @Inject
     private IProductBaselineManagerLocal productBaselineService;
 
     @Inject
@@ -87,8 +86,6 @@ public class ProductResource {
 
     @Inject
     private ProductInstancesResource productInstancesResource;
-
-
 
     private static final Logger LOGGER = Logger.getLogger(ProductResource.class.getName());
     private Mapper mapper;

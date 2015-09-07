@@ -37,8 +37,8 @@ import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
@@ -63,22 +63,22 @@ import java.util.logging.Logger;
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
 public class PartBinaryResource{
 
-    @EJB
+    @Inject
     private IDataManagerLocal dataManager;
 
-    @EJB
+    @Inject
     private IProductManagerLocal productService;
 
-    @EJB
+    @Inject
     private IContextManagerLocal contextManager;
 
-    @EJB
+    @Inject
     private IConverterManagerLocal converterService;
 
-    @EJB
+    @Inject
     private IShareManagerLocal shareService;
 
-    @EJB
+    @Inject
     private GuestProxy guestProxy;
 
     private static final Logger LOGGER = Logger.getLogger(PartBinaryResource.class.getName());

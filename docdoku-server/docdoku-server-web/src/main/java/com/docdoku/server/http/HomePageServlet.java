@@ -25,7 +25,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 
-import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -37,10 +37,10 @@ import java.util.logging.Logger;
 @WebServlet(name = "HomePageServlet", urlPatterns = {"/home"})
 public class HomePageServlet extends HttpServlet {
 
-    @EJB
+    @Inject
     private IContextManagerLocal contextManager;
 
-    @EJB
+    @Inject
     private IUserManagerLocal userManager;
 
     private static final Logger LOGGER = Logger.getLogger(HomePageServlet.class.getName());

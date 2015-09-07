@@ -30,7 +30,6 @@ import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IWorkspaceManagerLocal;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -44,16 +43,16 @@ import java.util.*;
 @RequestScoped
 public class WorkspaceBean {
 
-    @EJB
+    @Inject
     private IWorkspaceManagerLocal workspaceManager;
 
-    @EJB
+    @Inject
     private IUserManagerLocal userManager;
 
-    @EJB
+    @Inject
     private IContextManagerLocal contextManager;
 
-    @EJB
+    @Inject
     private IAccountManagerLocal accountManager;
 
     @Inject

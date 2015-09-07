@@ -42,7 +42,6 @@ import org.dozer.Mapper;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -62,15 +61,18 @@ import java.util.logging.Logger;
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class DocumentsResource {
 
-    @EJB
+    @Inject
     private IDocumentManagerLocal documentService;
-    @EJB
+
+    @Inject
     private IDocumentConfigSpecManagerLocal documentConfigSpecService;
-    @EJB
+
+    @Inject
     private IDocumentWorkflowManagerLocal documentWorkflowService;
 
     @Inject
     private DocumentBaselinesResource baselinesResource;
+
     @Inject
     private DocumentResource documentResource;
 

@@ -42,7 +42,7 @@ import com.docdoku.core.util.Tools;
 import com.docdoku.server.export.ExcelGenerator;
 import com.docdoku.server.rest.collections.QueryResult;
 
-import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
@@ -71,7 +71,7 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private ExcelGenerator excelGenerator = new ExcelGenerator();
 
-    @EJB
+    @Inject
     private IProductInstanceManagerLocal productInstanceService;
 
     private static final Logger LOGGER = Logger.getLogger(QueryResultMessageBodyWriter.class.getName());

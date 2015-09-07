@@ -29,8 +29,8 @@ import com.docdoku.server.rest.dto.ModificationNotificationDTO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -47,7 +47,7 @@ import javax.ws.rs.core.Response;
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ModificationNotificationResource {
 
-    @EJB
+    @Inject
     private IProductManagerLocal productService;
 
     public ModificationNotificationResource() {
