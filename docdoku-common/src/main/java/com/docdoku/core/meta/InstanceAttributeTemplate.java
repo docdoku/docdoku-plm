@@ -25,7 +25,7 @@ import java.io.Serializable;
 
 /**
  * This class holds the definition of the custom attribute of the documents and parts
- * created by the template.
+ * @author the template.
  * 
  * @author Florent Garin
  * @version 1.1, 23/01/12

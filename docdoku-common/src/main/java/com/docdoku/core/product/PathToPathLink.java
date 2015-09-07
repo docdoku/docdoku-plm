@@ -24,7 +24,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * Created by morgan on 29/04/15.
+ * @author morgan on 29/04/15.
  *
  *
  */

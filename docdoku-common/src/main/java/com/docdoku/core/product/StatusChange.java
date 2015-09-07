@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Created by kelto on 20/07/15.
+ * @author kelto on 20/07/15.
  */
 @Embeddable
 public class StatusChange implements Serializable{

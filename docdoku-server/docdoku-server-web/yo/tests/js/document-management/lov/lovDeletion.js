@@ -1,5 +1,9 @@
 /*global casper,urls*/
 
+/**
+ * @author lebeaujulien on 12/03/15.
+ */
+
 casper.test.begin('LOV deletion tests suite', 3, function documentLOVDeletionTestsSuite() {
 
     'use strict';
@@ -80,6 +84,3 @@ casper.test.begin('LOV deletion tests suite', 3, function documentLOVDeletionTes
         this.test.done();
     });
 });
-/**
- * Created by lebeaujulien on 12/03/15.
- */

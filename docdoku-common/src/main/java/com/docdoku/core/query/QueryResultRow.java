@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by morgan on 21/04/15.
+ * @author morgan on 21/04/15.
  */
 
 public class QueryResultRow {

@@ -25,7 +25,7 @@ import com.docdoku.core.meta.InstanceAttribute;
 import java.util.*;
 
 /**
- * Created by kelto on 15/07/15.
+ * @author kelto on 15/07/15.
  */
 
 public class AttributesConsistencyUtils {

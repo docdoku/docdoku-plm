@@ -40,7 +40,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by morgan on 09/04/15.
+ * @author morgan on 09/04/15.
  */
 public class QueryDAO {
 

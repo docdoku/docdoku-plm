@@ -19,7 +19,7 @@
  */
 
 /**
- * Created by kelto on 01/06/15.
+ * @author kelto on 01/06/15.
  */
 @XmlJavaTypeAdapter(value=DateAdapter.class, type=Date.class)
 package com.docdoku.server.rest.dto;

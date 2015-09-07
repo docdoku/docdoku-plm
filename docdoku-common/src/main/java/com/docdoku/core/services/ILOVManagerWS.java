@@ -29,7 +29,7 @@ import javax.jws.WebService;
 import java.util.List;
 
 /**
- * Created by lebeaujulien on 26/03/15.
+ * @author lebeaujulien on 26/03/15.
  */
 @WebService
 public interface ILOVManagerWS {

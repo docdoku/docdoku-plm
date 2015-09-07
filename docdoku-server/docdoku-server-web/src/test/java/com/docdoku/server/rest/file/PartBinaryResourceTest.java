@@ -29,10 +29,7 @@ import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IConverterManagerLocal;
-import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.services.IShareManagerLocal;
+import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedPart;
 import com.docdoku.server.filters.GuestProxy;
 import com.docdoku.server.rest.file.util.BinaryResourceBinaryStreamingOutput;
@@ -46,7 +43,6 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import javax.ejb.SessionContext;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.Part;
 import javax.ws.rs.core.Request;
@@ -71,6 +67,8 @@ public class PartBinaryResourceTest {
     @Mock
     private IDataManagerLocal dataManager;
     @Mock
+    private IContextManagerLocal contextManager;
+    @Mock
     private IProductManagerLocal productService;
     @Mock
     private IConverterManagerLocal converterService;
@@ -78,9 +76,6 @@ public class PartBinaryResourceTest {
     private IShareManagerLocal shareService;
     @Mock
     private GuestProxy guestProxy;
-    @Mock
-    private SessionContext ctx;
-
 
     @Before
     public void setup() throws Exception {
@@ -243,7 +238,7 @@ public class PartBinaryResourceTest {
         Request request = Mockito.mock(Request.class);
         BinaryResource binaryResource = Mockito.spy(new BinaryResource(ResourceUtil.FILENAME1, ResourceUtil.DOCUMENT_SIZE, new Date()));
         Mockito.when(dataManager.getBinaryResourceInputStream(binaryResource)).thenReturn(new FileInputStream(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1).getFile())));
-        Mockito.when(ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)).thenReturn(false);
+        Mockito.when(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)).thenReturn(false);
         Mockito.when(guestProxy.canAccess(Mockito.any(PartIterationKey.class))).thenReturn(true);
         Mockito.when(productService.canAccess(Matchers.any(PartIterationKey.class))).thenReturn(false);
         Mockito.when(dataManager.getBinaryResourceInputStream(binaryResource)).thenReturn(new FileInputStream(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME1).getFile())));
@@ -282,7 +277,7 @@ public class PartBinaryResourceTest {
 
         BinaryResource binaryResource = Mockito.spy(new BinaryResource(ResourceUtil.FILENAME1, ResourceUtil.DOCUMENT_SIZE, new Date()));
         Mockito.when(dataManager.getBinaryResourceInputStream(binaryResource)).thenReturn(new FileInputStream(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1).getFile())));
-        Mockito.when(ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)).thenReturn(false);
+        Mockito.when(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)).thenReturn(false);
         Mockito.when(guestProxy.canAccess(Mockito.any(PartIterationKey.class))).thenReturn(true);
         Mockito.when(productService.canAccess(Matchers.any(PartIterationKey.class))).thenReturn(false);
         File file = File.createTempFile(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME1).getFile(), ResourceUtil.TEMP_SUFFIX);
@@ -313,7 +308,7 @@ public class PartBinaryResourceTest {
         Request request = Mockito.mock(Request.class);
         BinaryResource binaryResource = Mockito.spy(new BinaryResource(ResourceUtil.FILENAME1, ResourceUtil.DOCUMENT_SIZE, new Date()));
         Mockito.when(dataManager.getBinaryResourceInputStream(binaryResource)).thenReturn(new FileInputStream(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1).getFile())));
-        Mockito.when(ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)).thenReturn(true);
+        Mockito.when(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)).thenReturn(true);
         Mockito.when(productService.getBinaryResource(Matchers.anyString())).thenReturn(binaryResource);
         Mockito.when(productService.canAccess(Matchers.any(PartIterationKey.class))).thenReturn(true);
         Mockito.when(dataManager.getBinaryResourceInputStream(binaryResource)).thenReturn(new FileInputStream(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME1).getFile())));
@@ -341,7 +336,7 @@ public class PartBinaryResourceTest {
         BinaryResource binaryResource = Mockito.spy(new BinaryResource(ResourceUtil.FILENAME1, ResourceUtil.DOCUMENT_SIZE, new Date()));
         File file = File.createTempFile(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1).getFile(),ResourceUtil.TEMP_SUFFIX);
         Mockito.when(dataManager.getBinaryResourceInputStream(binaryResource)).thenReturn(new FileInputStream(file));
-        Mockito.when(ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)).thenReturn(true);
+        Mockito.when(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)).thenReturn(true);
         Mockito.when(productService.getBinaryResource(Matchers.anyString())).thenReturn(binaryResource);
         Mockito.when(productService.canAccess(Matchers.any(PartIterationKey.class))).thenReturn(false);
         File file1 = File.createTempFile(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME1).getFile(),ResourceUtil.TEMP_SUFFIX);

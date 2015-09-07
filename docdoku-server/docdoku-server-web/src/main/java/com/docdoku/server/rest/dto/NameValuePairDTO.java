@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
- * Created by lebeaujulien on 03/03/15.
+ * @author lebeaujulien on 03/03/15.
  */
 @XmlRootElement
 public class NameValuePairDTO implements Serializable {

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by kelto on 09/07/15.
+ * @author kelto on 09/07/15.
  */
 public class ESQueryBuilder {
 

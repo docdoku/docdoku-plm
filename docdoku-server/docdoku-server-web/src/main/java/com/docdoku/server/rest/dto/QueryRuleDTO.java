@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by morgan on 09/04/15.
+ * @author morgan on 09/04/15.
  */
 
 @XmlRootElement
