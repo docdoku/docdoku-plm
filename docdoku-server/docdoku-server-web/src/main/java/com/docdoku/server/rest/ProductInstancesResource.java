@@ -29,6 +29,7 @@ import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IPSFilterManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.*;
@@ -67,6 +68,11 @@ public class ProductInstancesResource {
 
     @EJB
     private IProductManagerLocal productService;
+
+    @EJB
+    private IPSFilterManagerLocal psFilterService;
+
+
 
     private Mapper mapper;
 
@@ -352,7 +358,7 @@ public class ProductInstancesResource {
         List<InstanceAttributeDTO> attributesDTO = new ArrayList<>();
         List<InstanceAttributeTemplateDTO> attributeTemplatesDTO = new ArrayList<>();
         PartLink partLink = path.get(path.size() - 1);
-        PSFilter filter = productService.getPSFilter(ciKey,"pi-"+serialNumber, false);
+        PSFilter filter = psFilterService.getPSFilter(ciKey,"pi-"+serialNumber, false);
         List<PartIteration> partIterations = filter.filter(partLink.getComponent());
         PartIteration partIteration = partIterations.get(0);
 
@@ -458,7 +464,7 @@ public class ProductInstancesResource {
 
         List<InstanceAttributeDTO> attributesDTO = new ArrayList<>();
         PartLink partLink = path.get(path.size() - 1);
-        PSFilter filter = productService.getPSFilter(ciKey,"pi-"+serialNumber, false);
+        PSFilter filter = psFilterService.getPSFilter(ciKey,"pi-"+serialNumber, false);
         List<PartIteration> partIterations = filter.filter(partLink.getComponent());
         PartIteration partIteration = partIterations.get(0);
 

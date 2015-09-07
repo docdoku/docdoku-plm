@@ -29,9 +29,9 @@ import com.docdoku.server.events.PartIterationChangeEvent;
 import com.docdoku.server.events.PartRevisionChangeEvent;
 import com.docdoku.server.events.Removed;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
@@ -41,10 +41,8 @@ import javax.inject.Named;
 @RequestScoped
 public class PartNotificationManager {
 
-
-    @EJB
+    @Inject
     private IProductManagerLocal productService;
-
 
     private void onRemovePartIteration(@Observes @Removed PartIterationChangeEvent event){
         PartIteration partIteration = event.getModifiedPart();

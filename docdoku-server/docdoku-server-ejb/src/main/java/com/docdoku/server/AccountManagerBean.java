@@ -25,10 +25,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IAccountManagerLocal;
-import com.docdoku.core.services.IAccountManagerWS;
-import com.docdoku.core.services.IMailerLocal;
-import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.*;
 import com.docdoku.server.dao.AccountDAO;
 import com.docdoku.server.dao.GCMAccountDAO;
 import com.docdoku.server.dao.OrganizationDAO;
@@ -36,9 +33,9 @@ import com.docdoku.server.dao.UserDAO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -55,13 +52,16 @@ public class AccountManagerBean implements IAccountManagerLocal, IAccountManager
     @PersistenceContext
     private EntityManager em;
 
-    @EJB
-    private IUserManagerLocal userManager;
+    @Inject
+    private IContextManagerLocal contextManager;
 
-    @EJB
+    @Inject
     private IMailerLocal mailer;
 
-    private static final Logger LOGGER = Logger.getLogger(UserManagerBean.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AccountManagerBean.class.getName());
+
+    public AccountManagerBean() {
+    }
 
     @Override
     public Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountAlreadyExistsException, CreationException {
@@ -81,7 +81,7 @@ public class AccountManagerBean implements IAccountManagerLocal, IAccountManager
     @Override
     public void updateAccount(String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountNotFoundException {
         AccountDAO accountDAO = new AccountDAO(new Locale(pLanguage), em);
-        Account account = accountDAO.loadAccount(userManager.getCallerPrincipalLogin());
+        Account account = accountDAO.loadAccount(contextManager.getCallerPrincipalLogin());
         account.setName(pName);
         account.setEmail(pEmail);
         account.setLanguage(pLanguage);
@@ -104,9 +104,9 @@ public class AccountManagerBean implements IAccountManagerLocal, IAccountManager
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public Account checkAdmin(Organization pOrganization) throws AccessRightException, AccountNotFoundException {
-        Account account = new AccountDAO(em).loadAccount(userManager.getCallerPrincipalLogin());
+        Account account = new AccountDAO(em).loadAccount(contextManager.getCallerPrincipalLogin());
 
-        if (!userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID) && !pOrganization.getOwner().equals(account)) {
+        if (!contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID) && !pOrganization.getOwner().equals(account)) {
             throw new AccessRightException(new Locale(account.getLanguage()), account);
         }
 
@@ -118,10 +118,10 @@ public class AccountManagerBean implements IAccountManagerLocal, IAccountManager
     public Account checkAdmin(String pOrganizationName)
             throws AccessRightException, AccountNotFoundException, OrganizationNotFoundException {
 
-        Account account = new AccountDAO(em).loadAccount(userManager.getCallerPrincipalLogin());
+        Account account = new AccountDAO(em).loadAccount(contextManager.getCallerPrincipalLogin());
         Organization organization = new OrganizationDAO(em).loadOrganization(pOrganizationName);
 
-        if (!userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID) && !organization.getOwner().equals(account)) {
+        if (!contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID) && !organization.getOwner().equals(account)) {
             throw new AccessRightException(new Locale(account.getLanguage()), account);
         }
 
@@ -131,7 +131,7 @@ public class AccountManagerBean implements IAccountManagerLocal, IAccountManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void setGCMAccount(String gcmId) throws AccountNotFoundException, GCMAccountAlreadyExistsException, CreationException {
-        String callerLogin = userManager.getCallerPrincipalLogin();
+        String callerLogin = contextManager.getCallerPrincipalLogin();
         Account account = getAccount(callerLogin);
         GCMAccountDAO gcmAccountDAO = new GCMAccountDAO(em);
 
@@ -147,7 +147,7 @@ public class AccountManagerBean implements IAccountManagerLocal, IAccountManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void deleteGCMAccount() throws AccountNotFoundException, GCMAccountNotFoundException {
-        String callerLogin = userManager.getCallerPrincipalLogin();
+        String callerLogin = contextManager.getCallerPrincipalLogin();
         Account account = getAccount(callerLogin);
         GCMAccountDAO gcmAccountDAO = new GCMAccountDAO(new Locale(account.getLanguage()), em);
         GCMAccount gcmAccount = gcmAccountDAO.loadGCMAccount(account);
@@ -157,7 +157,7 @@ public class AccountManagerBean implements IAccountManagerLocal, IAccountManager
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public Account getMyAccount() throws AccountNotFoundException {
-        return getAccount(userManager.getCallerPrincipalName());
+        return getAccount(contextManager.getCallerPrincipalName());
     }
 
 }

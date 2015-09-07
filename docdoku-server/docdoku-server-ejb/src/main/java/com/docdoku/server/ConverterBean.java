@@ -35,7 +35,6 @@ import com.docdoku.server.dao.PartIterationDAO;
 import com.google.common.io.Files;
 
 import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -64,10 +63,10 @@ public class ConverterBean implements IConverterManagerLocal {
     @Any
     private Instance<CADConverter> converters;
 
-    @EJB
+    @Inject
     private IProductManagerLocal productService;
 
-    @EJB
+    @Inject
     private IDataManagerLocal dataManager;
 
     private static final String CONF_PROPERTIES = "/com/docdoku/server/converters/utils/conf.properties";

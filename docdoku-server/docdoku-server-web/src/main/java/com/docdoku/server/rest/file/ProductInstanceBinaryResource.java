@@ -25,9 +25,9 @@ import com.docdoku.core.configuration.ProductInstanceIterationKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
-import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.filters.GuestProxy;
 import com.docdoku.server.rest.exceptions.*;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
@@ -66,11 +66,10 @@ public class ProductInstanceBinaryResource {
     private IDataManagerLocal dataManager;
 
     @EJB
-    private IUserManagerLocal userService;
+    private IContextManagerLocal contextManager;
 
     @EJB
     private IProductInstanceManagerLocal productInstanceManagerLocal;
-
 
     @EJB
     private GuestProxy guestProxy;
@@ -275,7 +274,7 @@ public class ProductInstanceBinaryResource {
     private BinaryResource getBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
 
-        if (userService.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
             return productInstanceManagerLocal.getBinaryResource(fullName);
         } else {
             return guestProxy.getBinaryResourceForProducInstance(fullName);
@@ -283,7 +282,7 @@ public class ProductInstanceBinaryResource {
     }
     private BinaryResource getPathDataBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
-        if (userService.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
             return productInstanceManagerLocal.getPathDataBinaryResource(fullName);
         } else {
             return guestProxy.getBinaryResourceForPathData(fullName);

@@ -38,9 +38,9 @@ import com.docdoku.server.dao.WorkflowDAO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Collection;
@@ -55,13 +55,16 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
     @PersistenceContext
     private EntityManager em;
 
-    @EJB
+    @Inject
     private IUserManagerLocal userManager;
-    @EJB
+
+    @Inject
     private IDocumentManagerLocal documentManager;
-    @EJB
+
+    @Inject
     private IMailerLocal mailer;
-    @EJB
+
+    @Inject
     private IGCMSenderLocal gcmNotifier;
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

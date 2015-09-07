@@ -59,18 +59,25 @@ import java.util.Locale;
 @RequestScoped
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
 public class DocumentBinaryResource {
+
     @EJB
     private IDataManagerLocal dataManager;
+
     @EJB
     private IDocumentManagerLocal documentService;
+
     @EJB
-    private IUserManagerLocal userService;
+    private IContextManagerLocal contextManager;
+
     @EJB
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
+
     @EJB
     private IDocumentPostUploaderManagerLocal documentPostUploaderService;
+
     @EJB
     private IShareManagerLocal shareService;
+
     @EJB
     private GuestProxy guestProxy;
 
@@ -202,7 +209,7 @@ public class DocumentBinaryResource {
      */
     private InputStream getConvertedBinaryResource(BinaryResource binaryResource, String outputFormat) throws FileConversionException {
         try {
-            if(userService.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
+            if(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
                 return documentResourceGetterService.getConvertedResource(outputFormat, binaryResource);
             }else{
                 return guestProxy.getConvertedResource(outputFormat, binaryResource);
@@ -213,7 +220,7 @@ public class DocumentBinaryResource {
     }
 
     private boolean canAccess(DocumentIterationKey docIKey) throws UserNotActiveException, EntityNotFoundException {
-        if(userService.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
+        if(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
             return documentService.canAccess(docIKey);
         }else{
             return guestProxy.canAccess(docIKey);
@@ -222,7 +229,7 @@ public class DocumentBinaryResource {
 
     private BinaryResource getBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
-        if(userService.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
+        if(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
             return documentService.getBinaryResource(fullName);
         }else{
             return guestProxy.getBinaryResourceForDocument(fullName);

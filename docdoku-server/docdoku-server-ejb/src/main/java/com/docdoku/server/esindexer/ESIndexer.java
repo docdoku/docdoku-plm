@@ -50,9 +50,9 @@ import org.elasticsearch.indices.InvalidIndexNameException;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
@@ -68,6 +68,22 @@ import java.util.logging.Logger;
  */
 @Stateless(name = "ESIndexer")
 public class ESIndexer {
+
+    @PersistenceContext
+    private EntityManager em;
+
+    @Resource
+    private SessionContext ctx;
+
+    @Inject
+    private IDataManagerLocal dataManager;
+
+    @Inject
+    private IAccountManagerLocal accountManager;
+
+    @Inject
+    private IMailerLocal mailer;
+
     private static final String CONF_PROPERTIES = "/com/docdoku/server/esindexer/conf.properties";
     private static final Properties CONF = new Properties();
     private static final String I18N_CONF = "com.docdoku.core.i18n.LocalStrings";
@@ -98,21 +114,6 @@ public class ESIndexer {
             }
         }
     }
-
-    @PersistenceContext
-    private EntityManager em;
-
-    @EJB
-    private IDataManagerLocal dataManager;
-
-    @Resource
-    private SessionContext ctx;
-
-    @EJB
-    private IAccountManagerLocal accountManager;
-
-    @EJB
-    private IMailerLocal mailer;
 
     /**
      * Constructor

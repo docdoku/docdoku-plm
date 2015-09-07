@@ -73,9 +73,5 @@ public interface IUserManagerLocal{
     User checkWorkspaceReadAccess(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     User checkWorkspaceWriteAccess(String pWorkspaceId) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException;
 
-    boolean isCallerInRole(String role);
-    String getCallerPrincipalLogin();
-    String getCallerPrincipalName();
-
     UserGroup[] getUserGroupsForUser(UserKey userKey) throws UserNotFoundException;
 }

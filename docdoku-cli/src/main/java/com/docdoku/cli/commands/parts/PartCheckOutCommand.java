@@ -31,7 +31,7 @@ import com.docdoku.core.common.Version;
 import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
-import com.docdoku.core.services.IProductBaselineManagerWS;
+import com.docdoku.core.services.IPSFilterManagerWS;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
@@ -73,7 +73,7 @@ public class PartCheckOutCommand extends BaseCommandLine {
     protected int baselineId;
 
     private IProductManagerWS productS;
-    private IProductBaselineManagerWS productBaselineManager;
+    private IPSFilterManagerWS psFilterManagerWS;
 
     @Override
     public void execImpl() throws Exception {
@@ -81,14 +81,14 @@ public class PartCheckOutCommand extends BaseCommandLine {
             loadMetadata();
         }
         productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        productBaselineManager = ScriptingTools.createProductBaselineService(getServerURL(), user, password);
+        psFilterManagerWS = ScriptingTools.createPSFilterService(getServerURL(), user, password);
 
         String strRevision = revision==null?null:revision.toString();
 
         PSFilter filter = null;
 
         if(baselineId != 0){
-            filter = productBaselineManager.getBaselinePSFilter(baselineId);
+            filter = psFilterManagerWS.getBaselinePSFilter(baselineId);
         }
 
         checkoutPart(partNumber,strRevision,filter);

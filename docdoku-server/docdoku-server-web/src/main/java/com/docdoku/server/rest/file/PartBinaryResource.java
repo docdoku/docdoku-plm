@@ -62,16 +62,22 @@ import java.util.logging.Logger;
 @RequestScoped
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
 public class PartBinaryResource{
+
     @EJB
     private IDataManagerLocal dataManager;
+
     @EJB
     private IProductManagerLocal productService;
-     @EJB
-    private IUserManagerLocal userService;
+
+    @EJB
+    private IContextManagerLocal contextManager;
+
     @EJB
     private IConverterManagerLocal converterService;
+
     @EJB
     private IShareManagerLocal shareService;
+
     @EJB
     private GuestProxy guestProxy;
 
@@ -295,7 +301,7 @@ public class PartBinaryResource{
     }
 
     private boolean canAccess(PartIterationKey partIKey) throws UserNotActiveException, EntityNotFoundException {
-        if(userService.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
+        if(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
             return productService.canAccess(partIKey);
         }else{
             return guestProxy.canAccess(partIKey);
@@ -304,7 +310,7 @@ public class PartBinaryResource{
 
     private BinaryResource getBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
-        if(userService.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
+        if(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
             return productService.getBinaryResource(fullName);
         }else{
             return guestProxy.getBinaryResourceForPart(fullName);

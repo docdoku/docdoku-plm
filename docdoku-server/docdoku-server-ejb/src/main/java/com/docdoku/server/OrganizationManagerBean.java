@@ -31,9 +31,9 @@ import com.docdoku.server.dao.OrganizationDAO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Locale;
@@ -46,12 +46,14 @@ public class OrganizationManagerBean implements IOrganizationManagerLocal {
 
     @PersistenceContext
     private EntityManager em;
-    @EJB
+
+    @Inject
     private IUserManagerLocal userManager;
-    @EJB
+
+    @Inject
     private IAccountManagerLocal accountManager;
 
-    private static final Logger LOGGER = Logger.getLogger(UserManagerBean.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(OrganizationManagerBean.class.getName());
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override

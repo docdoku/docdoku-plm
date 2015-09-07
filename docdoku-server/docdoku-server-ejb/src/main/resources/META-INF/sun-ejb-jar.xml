@@ -72,11 +72,11 @@
             </webservice-endpoint>
         </ejb>
         <ejb>
-            <ejb-name>UploadDownloadService</ejb-name>
-            <jndi-name>ejb/UploadDownloadService</jndi-name>
+            <ejb-name>UserManagerBean</ejb-name>
+            <jndi-name>ejb/UserManagerBean</jndi-name>
             <webservice-endpoint>
-                <port-component-name>UploadDownloadService</port-component-name>
-                <endpoint-address-uri>services/UploadDownload</endpoint-address-uri>
+                <port-component-name>UserManagerBean</port-component-name>
+                <endpoint-address-uri>services/user</endpoint-address-uri>
                 <login-config>
                     <auth-method>BASIC</auth-method>
                     <realm>docdokuRealm</realm>
@@ -84,11 +84,11 @@
             </webservice-endpoint>
         </ejb>
         <ejb>
-            <ejb-name>UserManagerBean</ejb-name>
-            <jndi-name>ejb/UserManagerBean</jndi-name>
+            <ejb-name>PSFilterManagerBean</ejb-name>
+            <jndi-name>ejb/PSFilterManagerBean</jndi-name>
             <webservice-endpoint>
-                <port-component-name>UserManagerBean</port-component-name>
-                <endpoint-address-uri>services/user</endpoint-address-uri>
+                <port-component-name>PSFilterManagerBean</port-component-name>
+                <endpoint-address-uri>services/psFilter</endpoint-address-uri>
                 <login-config>
                     <auth-method>BASIC</auth-method>
                     <realm>docdokuRealm</realm>

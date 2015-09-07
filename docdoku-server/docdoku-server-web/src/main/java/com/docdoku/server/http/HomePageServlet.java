@@ -22,6 +22,7 @@ package com.docdoku.server.http;
 
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 
 import javax.ejb.EJB;
@@ -37,6 +38,9 @@ import java.util.logging.Logger;
 public class HomePageServlet extends HttpServlet {
 
     @EJB
+    private IContextManagerLocal contextManager;
+
+    @EJB
     private IUserManagerLocal userManager;
 
     private static final Logger LOGGER = Logger.getLogger(HomePageServlet.class.getName());
@@ -45,7 +49,7 @@ public class HomePageServlet extends HttpServlet {
             HttpServletResponse pResponse)
             throws ServletException, IOException {
 
-        if (userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
             pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
         } else {
 

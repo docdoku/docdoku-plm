@@ -43,7 +43,6 @@ import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.*;
 import com.docdoku.server.configuration.PSFilterVisitor;
 import com.docdoku.server.configuration.filter.*;
-import com.docdoku.server.configuration.spec.ProductInstanceConfigSpec;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
@@ -54,10 +53,12 @@ import com.docdoku.server.events.Removed;
 import com.docdoku.server.factory.ACLFactory;
 import com.docdoku.server.validation.AttributesConsistencyUtils;
 
-import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.*;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
@@ -79,24 +80,31 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @PersistenceContext
     private EntityManager em;
-    @Resource
-    private SessionContext ctx;
-    @EJB
+
+    @Inject
     private IMailerLocal mailer;
-    @EJB
+
+    @Inject
     private IUserManagerLocal userManager;
-    @EJB
+
+    @Inject
+    private IContextManagerLocal contextManager;
+
+    @Inject
     private IDataManagerLocal dataManager;
-    @EJB
-    private IProductBaselineManagerLocal productBaselineManager;
-    @EJB
+
+    @Inject
     private ESIndexer esIndexer;
-    @EJB
+
+    @Inject
     private ESSearcher esSearcher;
 
+    @Inject
+    private IPSFilterManagerLocal psFilterManager;
 
     @Inject
     private Event<PartIterationChangeEvent> partIterationEvent;
+
     @Inject
     private Event<PartRevisionChangeEvent> partRevisionEvent;
 
@@ -526,7 +534,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public BinaryResource getBinaryResource(String pFullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException {
 
-        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
             // Don't check access right because it is do before. (Is public or isShared)
             return new BinaryResourceDAO(em).loadBinaryResource(pFullName);
         }
@@ -694,7 +702,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public List<ConfigurationItem> getConfigurationItems(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         Locale locale;
-        if (!userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
+        if (!contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
             User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
             locale = new Locale(user.getLanguage());
         } else {
@@ -871,7 +879,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public PartRevision getPartRevision(PartRevisionKey pPartRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
 
-        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
             PartRevision partRevision = new PartRevisionDAO(em).loadPartR(pPartRPK);
             if (partRevision.isCheckedOut()) {
                 em.detach(partRevision);
@@ -1893,7 +1901,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public int getTotalNumberOfParts(String pWorkspaceId) throws AccessRightException, WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException {
         Locale locale;
-        if (!userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
+        if (!contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
             User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
             locale = new Locale(user.getLanguage());
         } else {
@@ -2297,7 +2305,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public boolean canAccess(PartRevisionKey partRKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException {
         PartRevision partRevision;
-        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
             partRevision = new PartRevisionDAO(em).loadPartR(partRKey);
             return partRevision.isPublicShared();
         }
@@ -2310,7 +2318,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public boolean canAccess(PartIterationKey partIKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, PartIterationNotFoundException {
         PartRevision partRevision;
-        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
             partRevision = new PartRevisionDAO(em).loadPartR(partIKey.getPartRevision());
             return partRevision.isPublicShared() && partRevision.getLastCheckedInIteration().getIteration() >= partIKey.getIteration();
         }
@@ -2794,45 +2802,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PSFilter getPSFilter(ConfigurationItemKey ciKey, String filterType, boolean diverge) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException {
-
-        User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
-
-        if (filterType == null) {
-            return new WIPPSFilter(user);
-        }
-
-        PSFilter filter;
-
-        switch (filterType) {
-
-            case "wip":
-            case "undefined":
-                filter = new WIPPSFilter(user, diverge);
-                break;
-            case "latest":
-                filter = new LatestPSFilter(user, diverge);
-                break;
-            case "released":
-                filter = new ReleasedPSFilter(user, diverge);
-                break;
-            case "latest-released":
-                filter = new LatestReleasedPSFilter(user, diverge);
-                break;
-            default:
-                if (filterType.startsWith("pi-")) {
-                    String serialNumber = filterType.substring(3);
-                    filter = getConfigSpecForProductInstance(ciKey, serialNumber);
-                } else {
-                    filter = getConfigSpecForBaseline(Integer.parseInt(filterType));
-                }
-                break;
-        }
-        return filter;
-    }
-
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    @Override
     public PSFilter getLatestCheckedInPSFilter(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         return new LatestPSFilter(user);
@@ -3089,7 +3058,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         List<QueryResultRow> rows = new ArrayList<>();
 
-        PSFilter filter = serialNumber != null ? getPSFilter(ciKey, "pi-" + serialNumber, false) : getPSFilter(ciKey, "latest", false);
+        PSFilter filter = serialNumber != null ? psFilterManager.getPSFilter(ciKey, "pi-" + serialNumber, false) : psFilterManager.getPSFilter(ciKey, "latest", false);
 
         ProductInstanceIteration productInstanceIteration = null;
         if (serialNumber != null) {
@@ -3427,18 +3396,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             visitedLinks.add(nextPathToPathLink);
             checkCyclicPathToPathLink(ci, startLink, user, visitedLinks);
         }
-    }
-
-    private PSFilter getConfigSpecForBaseline(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
-        return productBaselineManager.getBaselinePSFilter(baselineId);
-    }
-
-    private PSFilter getConfigSpecForProductInstance(ConfigurationItemKey ciKey, String serialNumber) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
-        ProductInstanceMasterKey pimk = new ProductInstanceMasterKey(serialNumber, ciKey);
-        ProductInstanceMaster productIM = new ProductInstanceMasterDAO(em).loadProductInstanceMaster(pimk);
-        ProductInstanceIteration productII = productIM.getLastIteration();
-        return new ProductInstanceConfigSpec(productII, user);
     }
 
     private User checkPartRevisionWriteAccess(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {

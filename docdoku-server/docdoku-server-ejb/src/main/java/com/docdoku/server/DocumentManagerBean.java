@@ -46,10 +46,10 @@ import com.docdoku.server.validation.AttributesConsistencyUtils;
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -68,20 +68,25 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @PersistenceContext
     private EntityManager em;
 
-    @Resource
-    private SessionContext ctx;
-
-    @EJB
+    @Inject
     private IUserManagerLocal userManager;
-    @EJB
+
+    @Inject
+    private IContextManagerLocal contextManager;
+
+    @Inject
     private IMailerLocal mailer;
-    @EJB
+
+    @Inject
     private IGCMSenderLocal gcmNotifier;
-    @EJB
+
+    @Inject
     private ESIndexer esIndexer;
-    @EJB
+
+    @Inject
     private ESSearcher esSearcher;
-    @EJB
+
+    @Inject
     private IDataManagerLocal dataManager;
 
     private static final Logger LOGGER = Logger.getLogger(DocumentManagerBean.class.getName());
@@ -159,7 +164,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public BinaryResource getBinaryResource(String pFullName) throws WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
 
-        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
             // Don't check access right because it is do before. (Is public or isShared)
             return new BinaryResourceDAO(em).loadBinaryResource(pFullName);
         }
@@ -251,7 +256,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
     @Override
     public DocumentRevision getDocumentRevision(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, DocumentRevisionNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, AccessRightException {
-        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
             DocumentRevision documentRevision = new DocumentRevisionDAO(em).loadDocR(pDocRPK);
             if (documentRevision.isCheckedOut()) {
                 em.detach(documentRevision);
@@ -283,7 +288,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
     @Override
     public DocumentIteration findDocumentIterationByBinaryResource(BinaryResource pBinaryResource) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
             return new DocumentRevisionDAO(em).findDocumentIterationByBinaryResource(pBinaryResource);
         }
 
@@ -1542,8 +1547,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public User[] getUsers(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException, UserNotFoundException, UserNotActiveException {
-        if (userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
-            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+        if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
+            Account account = new AccountDAO(em).loadAccount(contextManager.getCallerPrincipalLogin());
             return new UserDAO(new Locale(account.getLanguage()), em).findAllUsers(pWorkspaceId);
         }
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -1553,7 +1558,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public User[] getReachableUsers(String workspaceId) throws AccountNotFoundException {
-        String callerLogin = ctx.getCallerPrincipal().getName();
+        String callerLogin = contextManager.getCallerPrincipalLogin();
         Account account = new AccountDAO(em).loadAccount(callerLogin);
         return new UserDAO(new Locale(account.getLanguage()), em).findReachableUsersForCaller(callerLogin, workspaceId);
     }
@@ -1612,7 +1617,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public boolean canAccess(DocumentRevisionKey docRKey) throws DocumentRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         DocumentRevision documentRevision;
-        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
             documentRevision = new DocumentRevisionDAO(em).loadDocR(docRKey);
             return documentRevision.isPublicShared();
         }
@@ -1625,7 +1630,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public boolean canAccess(DocumentIterationKey docIKey) throws DocumentRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         DocumentRevision documentRevision;
-        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
             documentRevision = new DocumentRevisionDAO(em).loadDocR(docIKey.getDocumentRevision());
             DocumentIteration lastCheckedInIteration = documentRevision.getLastCheckedInIteration();
             return documentRevision.isPublicShared() && null != lastCheckedInIteration && lastCheckedInIteration.getIteration() >= docIKey.getIteration();

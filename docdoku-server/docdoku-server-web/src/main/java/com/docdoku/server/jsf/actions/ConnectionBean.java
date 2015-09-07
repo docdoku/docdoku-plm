@@ -23,7 +23,7 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
-import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.IContextManagerLocal;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
@@ -45,7 +45,7 @@ public class ConnectionBean {
     private static final Logger LOGGER = Logger.getLogger(ConnectionBean.class.getName());
     
     @EJB
-    private IUserManagerLocal userManager;
+    private IContextManagerLocal contextManager;
 
     @EJB
     private IAccountManagerLocal accountManager;
@@ -89,7 +89,7 @@ public class ConnectionBean {
         if(tryLogin(request)) {
             checkAccount(request);
             session.setAttribute("remoteUser",login);
-            boolean isAdmin=userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID);
+            boolean isAdmin = contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID);
 
             if(isAdmin){
                 URL url=new URL(request.getRequestURL().toString());

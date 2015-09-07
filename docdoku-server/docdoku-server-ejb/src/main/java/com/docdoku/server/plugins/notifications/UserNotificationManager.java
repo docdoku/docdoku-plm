@@ -26,9 +26,9 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.events.Removed;
 import com.docdoku.server.events.UserRemovedEvent;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
@@ -38,7 +38,7 @@ import javax.inject.Named;
 @RequestScoped
 public class UserNotificationManager {
 
-    @EJB
+    @Inject
     private IDocumentManagerLocal documentService;
 
     private void onRemoveUser(@Observes @Removed UserRemovedEvent userRemovedEvent) throws ESServerException, EntityConstraintException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, FolderNotFoundException, AccessRightException, UserNotActiveException {

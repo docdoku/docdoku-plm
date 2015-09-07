@@ -32,6 +32,7 @@ import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IPSFilterManagerLocal;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.collections.InstanceCollection;
@@ -68,8 +69,12 @@ public class ProductResource {
 
     @EJB
     private IProductManagerLocal productService;
+
     @EJB
     private IProductBaselineManagerLocal productBaselineService;
+
+    @Inject
+    private IPSFilterManagerLocal psFilterService;
 
     @Inject
     private LayerResource layerResource;
@@ -82,6 +87,7 @@ public class ProductResource {
 
     @Inject
     private ProductInstancesResource productInstancesResource;
+
 
 
     private static final Logger LOGGER = Logger.getLogger(ProductResource.class.getName());
@@ -142,7 +148,7 @@ public class ProductResource {
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter filter = productService.getPSFilter(ciKey, configSpecType, diverge);
+        PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
         List<PartLink> decodedPath = productService.decodePath(ciKey, path);
         Component component = productService.filterProductStructure(ciKey, filter, decodedPath, 1);
 
@@ -171,7 +177,7 @@ public class ProductResource {
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
-        PSFilter filter = productService.getPSFilter(ciKey, configSpecType, diverge);
+        PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
 
         Component component;
         String serialNumber = null;
@@ -227,7 +233,7 @@ public class ProductResource {
             throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, NotAllowedException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter filter = productService.getPSFilter(ciKey, configSpecType, diverge);
+        PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
         List<PartLink[]> usagePaths = productService.findPartUsages(ciKey, filter, search);
 
         List<PathDTO> pathsDTO = new ArrayList<>();
@@ -324,7 +330,7 @@ public class ProductResource {
             //this request is resources consuming so we cache the response for 30 minutes
             cc.setMaxAge(60 * 15);
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-            PSFilter filter = productService.getPSFilter(ciKey, configSpecType, diverge);
+            PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
             List<PartLink> decodedPath = productService.decodePath(ciKey,path);
 
             List<List<PartLink>> paths = new ArrayList<>();
@@ -356,7 +362,7 @@ public class ProductResource {
 
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
-            PSFilter filter = productService.getPSFilter(ciKey, pathsDTO.getConfigSpec(), diverge);
+            PSFilter filter = psFilterService.getPSFilter(ciKey, pathsDTO.getConfigSpec(), diverge);
 
             List<List<PartLink>> paths = new ArrayList<>();
 
@@ -431,7 +437,7 @@ public class ProductResource {
 
         FileExportEntity fileExportEntity = new FileExportEntity();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter psFilter = productService.getPSFilter(ciKey,configSpecType, false);
+        PSFilter psFilter = psFilterService.getPSFilter(ciKey,configSpecType, false);
 
         fileExportEntity.setPsFilter(psFilter);
         fileExportEntity.setConfigurationItemKey(ciKey);
