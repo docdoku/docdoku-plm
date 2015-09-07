@@ -31,10 +31,7 @@ import com.docdoku.core.meta.InstanceDateAttribute;
 import com.docdoku.core.meta.InstanceTextAttribute;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.IGCMSenderLocal;
-import com.docdoku.core.services.IMailerLocal;
-import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
 import com.docdoku.server.util.DocumentUtil;
@@ -70,6 +67,8 @@ public class DocumentManagerBeanTest {
 
     @Mock
     private IUserManagerLocal userManager;
+    @Mock
+    private IContextManagerLocal contextManager;
     @Mock
     private IMailerLocal mailer;
     @Mock
@@ -229,6 +228,7 @@ public class DocumentManagerBeanTest {
         //Given
         Mockito.when(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)).thenReturn(true);
         Mockito.when(userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(DocumentUtil.FULL_NAME))).thenReturn(user);
+        Mockito.when(contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)).thenReturn(true);
         Mockito.when(em.find(BinaryResource.class, DocumentUtil.FULL_NAME)).thenReturn(binaryResource);
         BinaryResource binaryResource = documentManagerBean.getBinaryResource(DocumentUtil.FULL_NAME);
     }
