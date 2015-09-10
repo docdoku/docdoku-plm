@@ -23,10 +23,12 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.collections.InstanceCollection;
 import com.docdoku.server.rest.util.InstanceBodyWriterTools;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.json.Json;
 import javax.json.stream.JsonGenerator;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.vecmath.Matrix4d;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -39,6 +41,8 @@ import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -49,8 +53,9 @@ import java.util.ArrayList;
 @Produces(MediaType.APPLICATION_JSON)
 public class InstanceCollectionMessageBodyWriter implements MessageBodyWriter<InstanceCollection> {
 
-    @EJB
-    private IProductManagerLocal productService;
+    private Context context;
+
+    private static final Logger LOGGER = Logger.getLogger(InstanceCollectionMessageBodyWriter.class.getName());
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -64,14 +69,24 @@ public class InstanceCollectionMessageBodyWriter implements MessageBodyWriter<In
 
     @Override
     public void writeTo(InstanceCollection instanceCollection, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws UnsupportedEncodingException {
-        String charSet="UTF-8";
-        JsonGenerator jg = Json.createGenerator(new OutputStreamWriter(entityStream, charSet));
-        jg.writeStartArray();
 
-        Matrix4d gM=new Matrix4d();
-        gM.setIdentity();
-        InstanceBodyWriterTools.generateInstanceStreamWithGlobalMatrix(productService, null, gM, instanceCollection, new ArrayList<>(), jg);
-        jg.writeEnd();
-        jg.flush();
+        try {
+            context = new InitialContext();
+            IProductManagerLocal productService = (IProductManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductManagerBean");
+
+            String charSet="UTF-8";
+            JsonGenerator jg = Json.createGenerator(new OutputStreamWriter(entityStream, charSet));
+            jg.writeStartArray();
+
+            Matrix4d gM=new Matrix4d();
+            gM.setIdentity();
+            InstanceBodyWriterTools.generateInstanceStreamWithGlobalMatrix(productService, null, gM, instanceCollection, new ArrayList<>(), jg);
+            jg.writeEnd();
+            jg.flush();
+
+        } catch (NamingException e) {
+            LOGGER.log(Level.SEVERE,null,e);
+        }
+
     }
 }

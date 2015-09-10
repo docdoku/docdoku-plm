@@ -31,8 +31,10 @@ import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.util.FileExportEntity;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -56,16 +58,9 @@ import java.util.zip.ZipOutputStream;
 @Provider
 public class FileExportMessageBodyWriter implements MessageBodyWriter<FileExportEntity> {
 
-    @EJB
-    private IDataManagerLocal dataManager;
-
-    @EJB
-    private IProductManagerLocal productService;
-
-    @EJB
-    private IProductInstanceManagerLocal productInstanceService;
-
     private static final Logger LOGGER = Logger.getLogger(FileExportMessageBodyWriter.class.getName());
+
+    private Context context;
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -80,9 +75,13 @@ public class FileExportMessageBodyWriter implements MessageBodyWriter<FileExport
     @Override
     public void writeTo(FileExportEntity fileExportEntity, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> multivaluedMap, OutputStream outputStream) throws IOException, WebApplicationException {
 
+
         ZipOutputStream zs = new ZipOutputStream(outputStream);
 
         try {
+
+            context = new InitialContext();
+            IProductManagerLocal productService = (IProductManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductManagerBean");
 
             Map<String, Set<BinaryResource>> binariesInTree = productService.getBinariesInTree(fileExportEntity.getBaselineId(), fileExportEntity.getConfigurationItemKey().getWorkspace(), fileExportEntity.getConfigurationItemKey(), fileExportEntity.getPsFilter(), fileExportEntity.isExportNativeCADFile(), fileExportEntity.isExportDocumentLinks());
             Set<Map.Entry<String, Set<BinaryResource>>> entries = binariesInTree.entrySet();
@@ -128,13 +127,18 @@ public class FileExportMessageBodyWriter implements MessageBodyWriter<FileExport
                 NotAllowedException | EntityConstraintException | PartMasterNotFoundException | ProductInstanceMasterNotFoundException |
                 StorageException e) {
             LOGGER.log(Level.FINEST, null, e);
+        } catch (NamingException e) {
+            LOGGER.log(Level.SEVERE, null, e);
         }
 
         zs.close();
 
     }
 
-    private void addProductInstanceDataToZip(ZipOutputStream zs, ConfigurationItemKey configurationItemKey, String serialNumber, List<String> baselinedSourcesName) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductInstanceMasterNotFoundException, IOException, StorageException {
+    private void addProductInstanceDataToZip(ZipOutputStream zs, ConfigurationItemKey configurationItemKey, String serialNumber, List<String> baselinedSourcesName) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductInstanceMasterNotFoundException, IOException, StorageException, NamingException {
+
+        IProductInstanceManagerLocal productInstanceService = (IProductInstanceManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductInstanceManagerBean");
+
         ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, configurationItemKey));
         ProductInstanceIteration lastIteration = productInstanceMaster.getLastIteration();
 
@@ -151,9 +155,12 @@ public class FileExportMessageBodyWriter implements MessageBodyWriter<FileExport
                 }
             }
         }
+
     }
 
-    public void addToZipFile(BinaryResource binaryResource, String folderName, ZipOutputStream zos) throws IOException, StorageException {
+    public void addToZipFile(BinaryResource binaryResource, String folderName, ZipOutputStream zos) throws IOException, StorageException, NamingException {
+
+        IDataManagerLocal dataManager = (IDataManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/DataManagerBean");
 
         try(InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource)) {
 
@@ -167,6 +174,7 @@ public class FileExportMessageBodyWriter implements MessageBodyWriter<FileExport
             }
             zos.closeEntry();
         }
+
     }
 
 }
