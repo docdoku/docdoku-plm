@@ -109,6 +109,7 @@ module.exports = {
 
         // Product structure
         'js/product-management/assembly/bomInspection.js',
+        'js/product-management/assembly/instancesCheck.js',
         'js/product-management/product-instance/productInstanceData.js',
         'js/product-management/pathToPathLink/pathToPathLinkCheck.js',
         'js/product-management/part/checkUsedByList.js',
