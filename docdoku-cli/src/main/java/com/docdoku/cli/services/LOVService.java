@@ -28,7 +28,8 @@ import java.net.URL;
 import java.util.logging.Logger;
 
 /**
- * Created by lebeaujulien on 26/03/15.
+ *
+ * @author Julien lebeau
  */
 @WebServiceClient(name = "LOVService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/lov?wsdl")
 public class LOVService extends Service {

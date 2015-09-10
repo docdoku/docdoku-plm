@@ -22,7 +22,7 @@ package com.docdoku.core.exceptions;
 import java.util.Locale;
 
 /**
- * Exception when trying to create a index with a wrong Name;
+ * Exception when trying to create a index with a wrong Name.
  * @author Taylor LABEJOF
  */
 public class ESIndexNamingException extends ApplicationException {

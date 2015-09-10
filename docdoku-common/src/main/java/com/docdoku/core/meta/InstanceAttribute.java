@@ -31,7 +31,6 @@ import java.io.Serializable;
  * @version 1.0, 02/06/08
  * @since V1.0
  */
-
 @Table(name = "INSTANCEATTRIBUTE")
 @XmlSeeAlso({InstanceTextAttribute.class, InstanceNumberAttribute.class, InstanceDateAttribute.class, InstanceBooleanAttribute.class, InstanceURLAttribute.class, InstanceListOfValuesAttribute.class})
 @Inheritance()

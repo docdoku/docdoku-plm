@@ -29,7 +29,6 @@ import java.util.List;
 /**
  * @author Morgan Guimard
  */
-
 @Table(name="PATHDATAMASTER")
 @Entity
 @NamedQueries({

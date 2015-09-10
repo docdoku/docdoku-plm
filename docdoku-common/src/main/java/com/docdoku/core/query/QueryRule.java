@@ -27,7 +27,6 @@ import java.util.List;
 /**
  * @author Morgan Guimard
  */
-
 @Table(name="QUERYRULE")
 @Entity
 public class QueryRule implements Serializable {

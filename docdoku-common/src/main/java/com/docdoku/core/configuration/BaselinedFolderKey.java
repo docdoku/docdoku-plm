@@ -30,7 +30,7 @@ import java.io.Serializable;
  *
  * @author Taylor LABEJOF
  * @version 2.0, 25/08/14
- * @since   V2.0
+ * @since V2.0
  */
 @Embeddable
 public class BaselinedFolderKey implements Serializable{

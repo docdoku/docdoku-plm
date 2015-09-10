@@ -49,7 +49,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author: Chadid Asmae
+ * @author Chadid Asmae
  */
 public class ExcelGenerator {
 

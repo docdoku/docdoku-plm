@@ -39,7 +39,7 @@ import static com.docdoku.cli.helpers.CliOutput.formats.HUMAN;
 
 /**
  * @author Morgan Guimard
- * @version 1.0, 14/11/14
+ * @version 2.0, 14/11/14
  * @since   V2.0
  */
 public abstract class CliOutput {

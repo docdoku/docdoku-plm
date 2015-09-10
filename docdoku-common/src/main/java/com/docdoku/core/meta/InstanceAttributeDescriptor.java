@@ -24,11 +24,10 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Wraps type and name for attributes facilities
+ * Wraps type and name for attributes facilities.
  * 
  * @author Morgan Guimard
  */
-
 public class InstanceAttributeDescriptor implements Serializable {
 
     private String name;

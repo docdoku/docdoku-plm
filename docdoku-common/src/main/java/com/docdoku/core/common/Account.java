@@ -33,7 +33,7 @@ import java.util.Date;
  *
  * @author Florent Garin
  * @version 1.0, 02/06/08
- * @since   V1.0
+ * @since V1.0
  */
 @Table(name="ACCOUNT")
 @javax.persistence.Entity

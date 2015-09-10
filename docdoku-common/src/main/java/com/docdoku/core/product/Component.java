@@ -25,9 +25,9 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @author: Morgan Guimard
+ * @author Morgan Guimard
  *
- * Helping class to construct a descriptive tree of a resolved configuration
+ * Helping class to construct a descriptive tree of a resolved configuration.
  */
 
 public class Component implements Serializable {

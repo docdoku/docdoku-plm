@@ -37,7 +37,7 @@ import java.util.Set;
  * 
  * @author Florent Garin
  * @version 2.0, 15/05/13
- * @since   V2.0
+ * @since V2.0
  */
 @Table(name="PRODUCTCONFIGURATION")
 @Entity

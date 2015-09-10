@@ -37,7 +37,7 @@ import java.util.List;
  *
  * @author Florent Garin
  * @version 2.0, 24/02/14
- * @since   V2.0
+ * @since V2.0
  */
 @Table(name="PRODUCTINSTANCEMASTER")
 @IdClass(com.docdoku.core.configuration.ProductInstanceMasterKey.class)

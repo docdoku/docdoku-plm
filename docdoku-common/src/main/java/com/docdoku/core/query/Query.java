@@ -29,11 +29,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Wraps data needed to perform a custom query on database
+ * Wraps data needed to perform a custom query on database.
  *
  * @author Morgan Guimard
  */
-
 @Table(name="QUERY")
 @Entity
 @NamedQueries({

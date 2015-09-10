@@ -22,7 +22,7 @@ package com.docdoku.core.exceptions;
 import java.util.Locale;
 
 /**
- * Exception on the Indexer Server usage
+ * Exception on the Indexer Server.
  * @author Taylor LABEJOF
  */
 public class ESServerException extends ApplicationException {

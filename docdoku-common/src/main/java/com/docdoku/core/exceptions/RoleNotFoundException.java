@@ -28,7 +28,6 @@ import java.util.Locale;
 /**
  * @author Morgan Guimard
  */
-
 public class RoleNotFoundException extends EntityNotFoundException {
     private final RoleKey mRoleKey;
 

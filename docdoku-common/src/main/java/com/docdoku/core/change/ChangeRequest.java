@@ -34,7 +34,7 @@ import java.util.Set;
  * which addresses one or more {@link ChangeIssue}.
  * @author Florent Garin
  * @version 2.0, 09/01/14
- * @since   V2.0
+ * @since V2.0
  */
 @Table(name="CHANGEREQUEST")
 @Entity
