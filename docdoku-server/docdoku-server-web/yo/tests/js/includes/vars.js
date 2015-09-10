@@ -228,6 +228,7 @@ var workflows = {
 var urls = {
     productManagement: homeUrl + 'product-management/#' + workspace,
     productStructure: homeUrl + 'product-structure/#' + workspace + '/' + products.product1.number + '/config-spec/wip/bom',
+    productStructureInstances: homeUrl + 'api/workspaces/' + workspace + '/products/' + products.product1.number + '/instances?configSpec=wip&path=-1',
     productStructureForDeliverable: homeUrl + 'product-structure/#' + workspace + '/' + products.product1.number + '/config-spec/pi-' + productInstances.productInstance1.serialNumber + '/bom',
     documentManagement: homeUrl + 'document-management/#' + workspace,
     changeManagement: homeUrl + 'change-management/#' + workspace,
