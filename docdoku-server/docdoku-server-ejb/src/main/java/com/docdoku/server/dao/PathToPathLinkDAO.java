@@ -42,7 +42,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by morgan on 29/04/15.
+ * @author morgan on 29/04/15.
  */
 public class PathToPathLinkDAO {
 

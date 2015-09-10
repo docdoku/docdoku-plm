@@ -26,7 +26,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 
-import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.security.auth.login.LoginException;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -49,9 +49,8 @@ public class PermalinkFilter implements Filter {
     private static final String ERROR_403_PART = "Attempt of access to a forbidden part.";
     private static final String ERROR_404_PART = "Attempt of access to a not found part.";
 
-    @EJB
+    @Inject
     private GuestProxy guestProxy;
-
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,

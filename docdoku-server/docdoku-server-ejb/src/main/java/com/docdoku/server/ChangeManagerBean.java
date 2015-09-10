@@ -37,9 +37,9 @@ import com.docdoku.server.dao.*;
 import com.docdoku.server.factory.ACLFactory;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
@@ -56,7 +56,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
     @PersistenceContext
     private EntityManager em;
 
-    @EJB
+    @Inject
     private IUserManagerLocal userManager;
 
     private static final Logger LOGGER = Logger.getLogger(ChangeManagerBean.class.getName());

@@ -27,7 +27,7 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.IProductManagerLocal;
 
-import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
 
 public class PartPermalinkServlet extends HttpServlet {
 
-    @EJB
+    @Inject
     private IProductManagerLocal productService;
 
     @Override

@@ -28,7 +28,7 @@ import java.io.InputStream;
 import java.util.Collection;
 
 /**
- * Created by asmae on 12/01/15.
+ * @author asmae on 12/01/15.
  */
 public class PartImp implements Part {
 

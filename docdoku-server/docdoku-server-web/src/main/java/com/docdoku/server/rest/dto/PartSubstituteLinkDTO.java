@@ -19,9 +19,12 @@
  */
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.List;
 
-public class PartSubstituteLinkDTO {
+@XmlRootElement
+public class PartSubstituteLinkDTO implements Serializable {
 
     private int id;
     private String fullId;

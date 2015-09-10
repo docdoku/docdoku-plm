@@ -27,8 +27,8 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IWorkspaceManagerLocal;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -39,13 +39,16 @@ import java.io.Serializable;
 @SessionScoped
 public class SuperAdminStateBean implements Serializable {
 
-    @EJB
+    @Inject
     private IWorkspaceManagerLocal workspaceService;
-    @EJB
+
+    @Inject
     private IDocumentManagerLocal documentService;
-    @EJB
+
+    @Inject
     private IProductManagerLocal productService;
-    @EJB
+
+    @Inject
     private IUserManagerLocal userManager;
 
     public SuperAdminStateBean(){

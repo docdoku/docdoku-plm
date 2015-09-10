@@ -24,7 +24,7 @@ import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.IProductManagerLocal;
 
-import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 @Interceptor
 public class CADConvertInterceptor {
 
-    @EJB
+    @Inject
     private IProductManagerLocal productService;
 
     private static final Logger LOGGER = Logger.getLogger(CADConvertInterceptor.class.getName());

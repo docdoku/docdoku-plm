@@ -23,8 +23,7 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.collections.InstanceCollection;
 import com.docdoku.server.rest.util.InstanceBodyWriterTools;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.stream.JsonGenerator;
 import javax.vecmath.Matrix4d;
@@ -44,12 +43,11 @@ import java.util.ArrayList;
  *
  * @author Florent Garin
  */
-@Stateless
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 public class InstanceCollectionMessageBodyWriter implements MessageBodyWriter<InstanceCollection> {
 
-    @EJB
+    @Inject
     private IProductManagerLocal productService;
 
     @Override

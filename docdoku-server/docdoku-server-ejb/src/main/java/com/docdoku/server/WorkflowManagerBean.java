@@ -35,9 +35,9 @@ import com.docdoku.server.factory.ACLFactory;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -52,10 +52,7 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
     @PersistenceContext
     private EntityManager em;
 
-    //@PersistenceUnit
-    //private EntityManagerFactory emf;
-
-    @EJB
+    @Inject
     private IUserManagerLocal userManager;
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

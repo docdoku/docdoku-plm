@@ -20,11 +20,13 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@XmlRootElement
 public class WorkflowDTO implements Serializable, Comparable<WorkflowDTO> {
 
     private int id;

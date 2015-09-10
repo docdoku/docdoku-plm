@@ -32,77 +32,79 @@ import org.dozer.Mapper;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 
-@Stateless
+@RequestScoped
 @Path("workspaces")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class WorkspaceResource {
 
-    @EJB
+    @Inject
     private DocumentsResource documents;
 
-    @EJB
+    @Inject
     private DocumentBaselinesResource documentBaselines;
 
-    @EJB
+    @Inject
     private FolderResource folders;
 
-    @EJB
+    @Inject
     private DocumentTemplateResource docTemplates;
 
-    @EJB
+    @Inject
     private PartTemplateResource partTemplates;
 
-    @EJB
+    @Inject
     private ProductResource products;
 
-    @EJB
+    @Inject
     private PartsResource parts;
 
-    @EJB
+    @Inject
     private TagResource tags;
 
-    @EJB
+    @Inject
     private CheckedOutResource checkedOuts;
 
-    @EJB
+    @Inject
     private TaskResource tasks;
 
-    @EJB
+    @Inject
     private SearchResource searches;
 
-    @EJB
+    @Inject
     private WorkflowResource workflows;
 
-    @EJB
+    @Inject
     private ChangeItemsResource changeItems;
 
-    @EJB
+    @Inject
     private UserResource users;
 
-    @EJB
+    @Inject
     private RoleResource roles;
 
-    @EJB
+    @Inject
     private ModificationNotificationResource notifications;
 
-    @EJB
+    @Inject
     private WorkspaceMembershipResource workspaceMemberships;
 
-    @EJB
+    @Inject
     private IUserManagerLocal userManager;
 
-    @EJB
+    @Inject
     private LOVResource lov;
 
-    @EJB
+    @Inject
     private AttributesResource attributes;
 
     private Mapper mapper;
@@ -134,13 +136,14 @@ public class WorkspaceResource {
 
     @GET
     @Path("/more")
-    public List<WorkspaceDetailsDTO> getDetailedWorkspacesForConnectedUser() throws EntityNotFoundException {
+    public Response getDetailedWorkspacesForConnectedUser() throws EntityNotFoundException {
         List<WorkspaceDetailsDTO> workspaceListDTO = new ArrayList<>();
 
         for (Workspace workspace : userManager.getWorkspacesWhereCallerIsActive()) {
             workspaceListDTO.add(mapper.map(workspace, WorkspaceDetailsDTO.class));
         }
-        return workspaceListDTO;
+        return Response.ok(new GenericEntity<List<WorkspaceDetailsDTO>>((List<WorkspaceDetailsDTO>) workspaceListDTO) {
+        }).build();
     }
 
     @Path("/{workspaceId}/documents")

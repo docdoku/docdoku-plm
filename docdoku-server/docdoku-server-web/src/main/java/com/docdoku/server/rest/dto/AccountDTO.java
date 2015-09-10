@@ -20,7 +20,11 @@
 
 package com.docdoku.server.rest.dto;
 
-public class AccountDTO {
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+
+@XmlRootElement
+public class AccountDTO implements Serializable {
 
     private String login;
     private String name;

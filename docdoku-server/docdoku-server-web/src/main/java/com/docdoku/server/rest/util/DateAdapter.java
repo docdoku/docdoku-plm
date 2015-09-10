@@ -21,7 +21,7 @@
 package com.docdoku.server.rest.util;
 
 /**
- * Created by kelto on 01/06/15.
+ * @author kelto on 01/06/15.
  */
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;

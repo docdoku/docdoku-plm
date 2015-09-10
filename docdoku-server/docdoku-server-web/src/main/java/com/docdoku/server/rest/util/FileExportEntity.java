@@ -24,7 +24,7 @@ import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.product.ConfigurationItemKey;
 
 /**
- * Created by morgan on 29/04/15.
+ * @author morgan on 29/04/15.
  */
 public class FileExportEntity {
 

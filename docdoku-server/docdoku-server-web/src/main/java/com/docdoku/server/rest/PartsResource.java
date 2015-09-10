@@ -48,26 +48,26 @@ import org.dozer.Mapper;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.*;
 
-@Stateless
+@RequestScoped
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class PartsResource {
 
-    @EJB
+    @Inject
     private IProductManagerLocal productService;
 
-    @EJB
+    @Inject
     private IUserManagerLocal userManager;
 
-    @EJB
-    private PartResource part;
+    @Inject
+    private PartResource partResource;
 
     public PartsResource() {
     }
@@ -81,13 +81,13 @@ public class PartsResource {
 
     @Path("{partNumber: [^/].*}-{partVersion:[A-Z]+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public PartResource getPart() {
-        return part;
+    public PartResource getPartResource() {
+        return partResource;
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PartRevisionDTO> getPartRevisions(@PathParam("workspaceId") String workspaceId, @QueryParam("start") int start, @QueryParam("length") int length)
+    public Response getPartRevisions(@PathParam("workspaceId") String workspaceId, @QueryParam("start") int start, @QueryParam("length") int length)
         throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         List<PartRevision> partRevisions = productService.getPartRevisions(Tools.stripTrailingSlash(workspaceId), start, length);
@@ -101,8 +101,8 @@ public class PartsResource {
 
             partRevisionDTOs.add(partRevisionDTO);
         }
-
-        return partRevisionDTOs;
+        return Response.ok(new GenericEntity<List<PartRevisionDTO>>((List<PartRevisionDTO>) partRevisionDTOs) {
+        }).build();
     }
 
     @GET
@@ -117,7 +117,7 @@ public class PartsResource {
     @GET
     @Path("tags/{tagId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PartRevisionDTO> getPartRevisions(@PathParam("workspaceId") String workspaceId, @PathParam("tagId") String tagId)
+    public Response getPartRevisions(@PathParam("workspaceId") String workspaceId, @PathParam("tagId") String tagId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         PartRevision[] partRevisions = productService.findPartRevisionsByTag(Tools.stripTrailingSlash(workspaceId), tagId);
@@ -131,14 +131,14 @@ public class PartsResource {
 
             partRevisionDTOs.add(partRevisionDTO);
         }
-
-        return partRevisionDTOs;
+        return Response.ok(new GenericEntity<List<PartRevisionDTO>>((List<PartRevisionDTO>) partRevisionDTOs) {
+        }).build();
     }
 
     @GET
     @Path("search")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PartRevisionDTO> searchPartRevisions(@Context UriInfo uri,@PathParam("workspaceId") String workspaceId)
+    public Response searchPartRevisions(@Context UriInfo uri,@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, ESServerException, UserNotActiveException, AccessRightException {
 
         PartSearchQuery partSearchQuery = SearchQueryParser.parsePartStringQuery(workspaceId, uri.getQueryParameters());
@@ -155,38 +155,38 @@ public class PartsResource {
             partRevisionDTOs.add(partRevisionDTO);
         }
 
-        return partRevisionDTOs;
+        return Response.ok(new GenericEntity<List<PartRevisionDTO>>((List<PartRevisionDTO>) partRevisionDTOs) {
+        }).build();
     }
 
     @GET
     @Path("queries")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public List<QueryDTO> getCustomQueries(@PathParam("workspaceId") String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public Response getCustomQueries(@PathParam("workspaceId") String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         List<Query> queries = productService.getQueries(workspaceId);
         List<QueryDTO> queryDTOs = new ArrayList<>();
         for (Query query : queries) {
             queryDTOs.add(mapper.map(query, QueryDTO.class));
         }
-        return queryDTOs;
+        return Response.ok(new GenericEntity<List<QueryDTO>>((List<QueryDTO>) queryDTOs) {
+        }).build();
     }
 
     @POST
     @Path("queries")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_OCTET_STREAM})
     public Response runCustomQuery(@PathParam("workspaceId") String workspaceId, @QueryParam("save") boolean save, @QueryParam("export") String exportType, QueryDTO queryDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
         Query query = mapper.map(queryDTO, Query.class);
         QueryResult queryResult = getQueryResult(workspaceId, query, exportType);
+
         if (save) {
             productService.createQuery(workspaceId, query);
         }
-        String contentType = queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "application/octet-stream" : "application/json";
-        String contentDisposition = queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "attachment; filename=\"TSR.csv\"" : "inline";
 
-        return Response.ok()
-                .header("Content-Type", contentType)
-                .header("Content-Disposition", contentDisposition)
-                .entity(queryResult).build();
+        return Response.ok(new GenericEntity<QueryResult>((QueryResult)queryResult){
+        }).build();
     }
 
     @GET
@@ -239,7 +239,7 @@ public class PartsResource {
     @GET
     @Path("checkedout")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PartRevisionDTO> getCheckedOutPartRevisions(@PathParam("workspaceId") String workspaceId)
+    public Response getCheckedOutPartRevisions(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         PartRevision[] checkedOutPartRevisions = productService.getCheckedOutPartRevisions(workspaceId);
         List<PartRevisionDTO> partRevisionDTOs = new ArrayList<>();
@@ -252,7 +252,9 @@ public class PartsResource {
 
             partRevisionDTOs.add(partRevisionDTO);
         }
-        return partRevisionDTOs;
+
+        return Response.ok(new GenericEntity<List<PartRevisionDTO>>((List<PartRevisionDTO>) partRevisionDTOs) {
+        }).build();
     }
 
     @GET
@@ -265,7 +267,7 @@ public class PartsResource {
     @GET
     @Path("numbers")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<LightPartMasterDTO> searchPartNumbers(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q)
+    public Response searchPartNumbers(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q)
             throws EntityNotFoundException, AccessRightException {
 
         String search = "%" + q + "%";
@@ -275,7 +277,9 @@ public class PartsResource {
             LightPartMasterDTO lightPartMasterDTO = new LightPartMasterDTO(p.getNumber(), p.getName());
             partsMastersDTO.add(lightPartMasterDTO);
         }
-        return partsMastersDTO;
+
+        return Response.ok(new GenericEntity<List<LightPartMasterDTO>>((List<LightPartMasterDTO>) partsMastersDTO) {
+        }).build();
     }
 
 

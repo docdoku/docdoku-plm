@@ -38,8 +38,8 @@ import com.docdoku.server.rest.interceptors.Compress;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
@@ -54,15 +54,18 @@ import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.Collection;
 
-@Stateless
+@RequestScoped
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID})
 @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
 public class DocumentTemplateBinaryResource {
-    @EJB
+
+    @Inject
     private IDataManagerLocal dataManager;
-    @EJB
+
+    @Inject
     private IDocumentManagerLocal documentService;
-    @EJB
+
+    @Inject
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
 
     public DocumentTemplateBinaryResource() {

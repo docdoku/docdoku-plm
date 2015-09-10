@@ -21,13 +21,17 @@
 package com.docdoku.server.rest.dto;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 /**
- * Created by morgan on 09/04/15.
+ * @author morgan on 09/04/15.
  */
-public class QueryDTO {
+
+@XmlRootElement
+public class QueryDTO implements Serializable {
 
     private int id;
     private String name;

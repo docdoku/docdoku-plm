@@ -26,10 +26,10 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
+import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IWorkspaceManagerLocal;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -43,13 +43,16 @@ import java.util.*;
 @RequestScoped
 public class WorkspaceBean {
 
-    @EJB
+    @Inject
     private IWorkspaceManagerLocal workspaceManager;
 
-    @EJB
+    @Inject
     private IUserManagerLocal userManager;
 
-    @EJB
+    @Inject
+    private IContextManagerLocal contextManager;
+
+    @Inject
     private IAccountManagerLocal accountManager;
 
     @Inject
@@ -79,7 +82,7 @@ public class WorkspaceBean {
 
 
     public String synchronizeIndexer() throws AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        if(userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
+        if(contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
             String wksId = adminState.getSelectedWorkspace();
             workspaceManager.synchronizeIndexer(wksId);
             HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
@@ -132,7 +135,7 @@ public class WorkspaceBean {
     public String createWorkspace() throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException, AccountNotFoundException, ESIndexNamingException, IOException {
         String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
         Account account;
-        if(userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
+        if(contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
             account = accountManager.getAccount(loginToAdd);
         }else{
             account = accountManager.getAccount(remoteUser);

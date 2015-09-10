@@ -46,10 +46,10 @@ import com.docdoku.server.validation.AttributesConsistencyUtils;
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -68,20 +68,25 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @PersistenceContext
     private EntityManager em;
 
-    @Resource
-    private SessionContext ctx;
-
-    @EJB
+    @Inject
     private IUserManagerLocal userManager;
-    @EJB
+
+    @Inject
+    private IContextManagerLocal contextManager;
+
+    @Inject
     private IMailerLocal mailer;
-    @EJB
+
+    @Inject
     private IGCMSenderLocal gcmNotifier;
-    @EJB
+
+    @Inject
     private ESIndexer esIndexer;
-    @EJB
+
+    @Inject
     private ESSearcher esSearcher;
-    @EJB
+
+    @Inject
     private IDataManagerLocal dataManager;
 
     private static final Logger LOGGER = Logger.getLogger(DocumentManagerBean.class.getName());
@@ -159,7 +164,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public BinaryResource getBinaryResource(String pFullName) throws WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
 
-        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
             // Don't check access right because it is do before. (Is public or isShared)
             return new BinaryResourceDAO(em).loadBinaryResource(pFullName);
         }
@@ -251,7 +256,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
     @Override
     public DocumentRevision getDocumentRevision(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, DocumentRevisionNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, AccessRightException {
-        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
             DocumentRevision documentRevision = new DocumentRevisionDAO(em).loadDocR(pDocRPK);
             if (documentRevision.isCheckedOut()) {
                 em.detach(documentRevision);
@@ -283,7 +288,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
     @Override
     public DocumentIteration findDocumentIterationByBinaryResource(BinaryResource pBinaryResource) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
             return new DocumentRevisionDAO(em).findDocumentIterationByBinaryResource(pBinaryResource);
         }
 
@@ -1046,19 +1051,39 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             throw new NotAllowedException(userLocale, "NotAllowedException21");
 
         } else {
-            List<DocumentRevision> allDocRevision = folderDAO.findDocumentRevisionsInFolder(folder);
-            List<DocumentRevisionKey> allDocRevisionKey = new ArrayList<>();
-
-            for (DocumentRevision documentRevision : allDocRevision) {
-                DocumentRevisionKey documentRevisionKey = documentRevision.getKey();
-                deleteDocumentRevision(documentRevisionKey);
-                allDocRevisionKey.add(documentRevisionKey);
-            }
-
-            folderDAO.removeFolder(folder);
-            return allDocRevisionKey.toArray(new DocumentRevisionKey[allDocRevisionKey.size()]);
-
+            return doFolderDeletion(folder,userLocale);
         }
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public DocumentRevisionKey[] deleteUserFolder(User pUser) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException {
+
+        User user = userManager.checkWorkspaceWriteAccess(pUser.getWorkspaceId());
+        Locale userLocale = new Locale(user.getLanguage());
+        String folderCompletePath = pUser.getWorkspaceId() + "/~" + pUser.getLogin();
+        FolderDAO folderDAO = new FolderDAO(userLocale, em);
+        Folder folder = folderDAO.loadFolder(folderCompletePath);
+
+        if (!user.isAdministrator()) {
+            throw new NotAllowedException(userLocale, "NotAllowedException21");
+        }
+
+        return doFolderDeletion(folder,userLocale);
+    }
+
+    private DocumentRevisionKey[] doFolderDeletion(Folder folder, Locale locale) throws EntityConstraintException, NotAllowedException, WorkspaceNotFoundException, ESServerException, AccessRightException, DocumentRevisionNotFoundException, UserNotActiveException, UserNotFoundException {
+        FolderDAO folderDAO = new FolderDAO(locale, em);
+        List<DocumentRevision> allDocRevision = folderDAO.findDocumentRevisionsInFolder(folder);
+        List<DocumentRevisionKey> allDocRevisionKey = new ArrayList<>();
+
+        for (DocumentRevision documentRevision : allDocRevision) {
+            DocumentRevisionKey documentRevisionKey = documentRevision.getKey();
+            deleteDocumentRevision(documentRevisionKey);
+            allDocRevisionKey.add(documentRevisionKey);
+        }
+        folderDAO.removeFolder(folder);
+        return allDocRevisionKey.toArray(new DocumentRevisionKey[allDocRevisionKey.size()]);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -1100,7 +1125,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(locale, em);
 
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
-        if (isInAnotherUserHomeFolder(user, docR)) {
+        if (!user.isAdministrator() && isInAnotherUserHomeFolder(user, docR)) {
             throw new NotAllowedException(locale, "NotAllowedException22");
         }
 
@@ -1522,8 +1547,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public User[] getUsers(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException, UserNotFoundException, UserNotActiveException {
-        if (userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
-            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+        if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
+            Account account = new AccountDAO(em).loadAccount(contextManager.getCallerPrincipalLogin());
             return new UserDAO(new Locale(account.getLanguage()), em).findAllUsers(pWorkspaceId);
         }
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -1533,7 +1558,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public User[] getReachableUsers(String workspaceId) throws AccountNotFoundException {
-        String callerLogin = ctx.getCallerPrincipal().getName();
+        String callerLogin = contextManager.getCallerPrincipalLogin();
         Account account = new AccountDAO(em).loadAccount(callerLogin);
         return new UserDAO(new Locale(account.getLanguage()), em).findReachableUsersForCaller(callerLogin, workspaceId);
     }
@@ -1592,7 +1617,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public boolean canAccess(DocumentRevisionKey docRKey) throws DocumentRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         DocumentRevision documentRevision;
-        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
             documentRevision = new DocumentRevisionDAO(em).loadDocR(docRKey);
             return documentRevision.isPublicShared();
         }
@@ -1605,7 +1630,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public boolean canAccess(DocumentIterationKey docIKey) throws DocumentRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         DocumentRevision documentRevision;
-        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
             documentRevision = new DocumentRevisionDAO(em).loadDocR(docIKey.getDocumentRevision());
             DocumentIteration lastCheckedInIteration = documentRevision.getLastCheckedInIteration();
             return documentRevision.isPublicShared() && null != lastCheckedInIteration && lastCheckedInIteration.getIteration() >= docIKey.getIteration();
@@ -1779,7 +1804,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
      */
     private void checkFoldersStructureChangeRight(User pUser) throws NotAllowedException {
         Workspace wks = pUser.getWorkspace();
-        if (wks.isFolderLocked() && (!pUser.isAdministrator())) {
+        if (wks.isFolderLocked() && !pUser.isAdministrator()) {
             throw new NotAllowedException(new Locale(pUser.getLanguage()), "NotAllowedException7");
         }
     }

@@ -20,12 +20,16 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by morgan on 09/04/15.
+ * @author morgan on 09/04/15.
  */
-public class QueryRuleDTO {
+
+@XmlRootElement
+public class QueryRuleDTO implements Serializable {
 
     private String condition;
     private String id;

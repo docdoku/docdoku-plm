@@ -23,10 +23,10 @@ package com.docdoku.server.filters;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.services.IAccountManagerLocal;
+import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.jsf.actions.AccountBean;
 
-import javax.ejb.EJB;
 import javax.el.PropertyNotFoundException;
 import javax.inject.Inject;
 import javax.servlet.*;
@@ -52,10 +52,13 @@ public class AuthFilter implements Filter {
     @Inject
     private AccountBean accountBean;
 
-    @EJB
+    @Inject
     private IUserManagerLocal userManager;
 
-    @EJB
+    @Inject
+    private IContextManagerLocal contextManager;
+
+    @Inject
     private IAccountManagerLocal accountManager;
 
     @Override
@@ -79,7 +82,7 @@ public class AuthFilter implements Filter {
             redirectLogin(httpRequest,response);
         } else {
             try {
-                FilterUtils.hookAccountBeanData(remoteUser, userManager, accountManager, accountBean);
+                FilterUtils.hookAccountBeanData(remoteUser, contextManager, userManager, accountManager, accountBean);
                 chain.doFilter(request, response);
             } catch (AccountNotFoundException e) {
                 LOGGER.log(Level.FINEST,null,e);

@@ -29,10 +29,11 @@ import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IPSFilterManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.*;
-import com.docdoku.server.rest.dto.baseline.BaselineDTO;
+import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceCreationDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceIterationDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
@@ -43,9 +44,10 @@ import org.dozer.Mapper;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
@@ -56,16 +58,21 @@ import java.util.logging.Logger;
  *
  * @author Taylor LABEJOF
  */
-@Stateless
+@RequestScoped
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ProductInstancesResource {
 
-    @EJB
+    @Inject
     private IProductInstanceManagerLocal productInstanceService;
 
-    @EJB
+    @Inject
     private IProductManagerLocal productService;
+
+    @Inject
+    private IPSFilterManagerLocal psFilterService;
+
+
 
     private Mapper mapper;
 
@@ -81,7 +88,7 @@ public class ProductInstancesResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ProductInstanceMasterDTO> getProductInstances(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
+    public Response getProductInstances(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
             throws EntityNotFoundException, UserNotActiveException {
 
         List<ProductInstanceMaster> productInstanceMasterList;
@@ -91,13 +98,14 @@ public class ProductInstancesResource {
         }else{
             productInstanceMasterList = productInstanceService.getProductInstanceMasters(workspaceId);
         }
-        List<ProductInstanceMasterDTO> productInstanceMasterDTOList = new ArrayList<>();
+        List<ProductInstanceMasterDTO> dtos = new ArrayList<>();
         for(ProductInstanceMaster productInstanceMaster : productInstanceMasterList){
             ProductInstanceMasterDTO productInstanceMasterDTO = mapper.map(productInstanceMaster,ProductInstanceMasterDTO.class);
             productInstanceMasterDTO.setConfigurationItemId(productInstanceMaster.getInstanceOf().getId());
-            productInstanceMasterDTOList.add(productInstanceMasterDTO);
+            dtos.add(productInstanceMasterDTO);
         }
-        return productInstanceMasterDTOList;
+        return Response.ok(new GenericEntity<List<ProductInstanceMasterDTO>>((List<ProductInstanceMasterDTO>) dtos) {
+        }).build();
     }
 
     @POST
@@ -284,16 +292,17 @@ public class ProductInstancesResource {
     @GET
     @Path("{serialNumber}/iterations")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ProductInstanceIterationDTO> getProductInstanceIterations(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber)
+    public Response getProductInstanceIterations(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber)
             throws EntityNotFoundException, UserNotActiveException {
 
         List<ProductInstanceIteration> productInstanceIterationList = productInstanceService.getProductInstanceIterations(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
-        List<ProductInstanceIterationDTO> productInstanceIterationDTOList = new ArrayList<>();
+        List<ProductInstanceIterationDTO> dtos = new ArrayList<>();
         for (ProductInstanceIteration productInstanceIteration : productInstanceIterationList) {
             ProductInstanceIterationDTO productInstanceIterationDTO = mapper.map(productInstanceIteration, ProductInstanceIterationDTO.class);
-            productInstanceIterationDTOList.add(productInstanceIterationDTO);
+            dtos.add(productInstanceIterationDTO);
         }
-        return productInstanceIterationDTOList;
+        return Response.ok(new GenericEntity<List<ProductInstanceIterationDTO>>((List<ProductInstanceIterationDTO>) dtos) {
+        }).build();
     }
 
 
@@ -313,7 +322,7 @@ public class ProductInstancesResource {
     @Path("{serialNumber}/rebase")
     public Response rebaseProductInstance(@PathParam("workspaceId") String workspaceId,
                                           @PathParam("ciId") String configurationItemId,
-                                          @PathParam("serialNumber") String serialNumber, BaselineDTO baselineDTO) throws UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemNotFoundException, PathToPathLinkAlreadyExistsException, PartMasterNotFoundException, CreationException, EntityConstraintException {
+                                          @PathParam("serialNumber") String serialNumber, ProductBaselineDTO baselineDTO) throws UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemNotFoundException, PathToPathLinkAlreadyExistsException, PartMasterNotFoundException, CreationException, EntityConstraintException {
 
         productInstanceService.rebaseProductInstance(workspaceId, serialNumber, new ConfigurationItemKey(workspaceId, configurationItemId), baselineDTO.getId());
         return Response.ok().build();
@@ -349,7 +358,7 @@ public class ProductInstancesResource {
         List<InstanceAttributeDTO> attributesDTO = new ArrayList<>();
         List<InstanceAttributeTemplateDTO> attributeTemplatesDTO = new ArrayList<>();
         PartLink partLink = path.get(path.size() - 1);
-        PSFilter filter = productService.getPSFilter(ciKey,"pi-"+serialNumber, false);
+        PSFilter filter = psFilterService.getPSFilter(ciKey,"pi-"+serialNumber, false);
         List<PartIteration> partIterations = filter.filter(partLink.getComponent());
         PartIteration partIteration = partIterations.get(0);
 
@@ -455,7 +464,7 @@ public class ProductInstancesResource {
 
         List<InstanceAttributeDTO> attributesDTO = new ArrayList<>();
         PartLink partLink = path.get(path.size() - 1);
-        PSFilter filter = productService.getPSFilter(ciKey,"pi-"+serialNumber, false);
+        PSFilter filter = psFilterService.getPSFilter(ciKey,"pi-"+serialNumber, false);
         List<PartIteration> partIterations = filter.filter(partLink.getComponent());
         PartIteration partIteration = partIterations.get(0);
 
@@ -549,7 +558,7 @@ public class ProductInstancesResource {
     @GET
     @Path("{serialNumber}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<LightPathToPathLinkDTO> getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
+    public Response getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
         List<String> pathToPathLinkTypes = productInstanceService.getPathToPathLinkTypes(workspaceId, configurationItemId, serialNumber);
         List<LightPathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
         for(String type : pathToPathLinkTypes){
@@ -557,7 +566,8 @@ public class ProductInstancesResource {
             pathToPathLinkDTO.setType(type);
             pathToPathLinkDTOs.add(pathToPathLinkDTO);
         }
-        return pathToPathLinkDTOs;
+        return Response.ok(new GenericEntity<List<LightPathToPathLinkDTO>>((List<LightPathToPathLinkDTO>) pathToPathLinkDTOs) {
+        }).build();
     }
     @GET
     @Path("{serialNumber}/link-path-part/{pathPart}")
@@ -574,14 +584,15 @@ public class ProductInstancesResource {
     @GET
     @Path("{serialNumber}/path-to-path-links")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<LightPathToPathLinkDTO> getPathToPathLinks(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
+    public Response getPathToPathLinks(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
         List<PathToPathLink> pathToPathLinkTypes = productInstanceService.getPathToPathLinks(workspaceId, configurationItemId, serialNumber);
         List<LightPathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
         for(PathToPathLink pathToPathLink : pathToPathLinkTypes){
             pathToPathLinkDTOs.add(mapper.map(pathToPathLink, LightPathToPathLinkDTO.class));
 
         }
-        return pathToPathLinkDTOs;
+        return Response.ok(new GenericEntity<List<LightPathToPathLinkDTO>>((List<LightPathToPathLinkDTO>) pathToPathLinkDTOs) {
+        }).build();
     }
 
 
@@ -596,7 +607,7 @@ public class ProductInstancesResource {
     @GET
     @Path("{serialNumber}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PathToPathLinkDTO> getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("sourcePath") String sourcePathAsString, @PathParam("targetPath") String targetPathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+    public Response getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("sourcePath") String sourcePathAsString, @PathParam("targetPath") String targetPathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
         List<PathToPathLink> pathToPathLinks = productInstanceService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, serialNumber, sourcePathAsString, targetPathAsString);
         List<PathToPathLinkDTO> dtos = new ArrayList<>();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
@@ -624,19 +635,21 @@ public class ProductInstancesResource {
             dtos.add(pathToPathLinkDTO);
         }
 
-        return dtos;
+        return Response.ok(new GenericEntity<List<PathToPathLinkDTO>>((List<PathToPathLinkDTO>) dtos) {
+        }).build();
     }
 
     @GET
     @Path("{serialNumber}/path-to-path-links-roots/{type}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<LightPathToPathLinkDTO> getRootPathToPathLinks(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("type") String type) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
+    public Response getRootPathToPathLinks(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("type") String type) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
         List<PathToPathLink> pathToPathLinks = productInstanceService.getRootPathToPathLinks(workspaceId, configurationItemId, serialNumber, type);
         List<LightPathToPathLinkDTO> dtos = new ArrayList<>();
         for(PathToPathLink pathToPathLink : pathToPathLinks) {
             dtos.add(mapper.map(pathToPathLink, LightPathToPathLinkDTO.class));
         }
-        return dtos;
+        return Response.ok(new GenericEntity<List<LightPathToPathLinkDTO>>((List<LightPathToPathLinkDTO>) dtos) {
+        }).build();
     }
 
     private DocumentRevisionKey[] createDocumentRevisionKeys(Set<DocumentRevisionDTO> dtos) {

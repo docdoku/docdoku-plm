@@ -25,6 +25,7 @@ import com.docdoku.core.configuration.ProductInstanceIterationKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.server.filters.GuestProxy;
@@ -33,12 +34,10 @@ import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 
-import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
@@ -57,21 +56,23 @@ import java.util.Collection;
  *
  * @author Asmae CHADID on 30/03/15.
  */
-@Stateless
+
+@RequestScoped
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID})
 @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
 public class ProductInstanceBinaryResource {
 
-
-    @EJB
+    @Inject
     private IDataManagerLocal dataManager;
-    @EJB
-    private IProductInstanceManagerLocal productInstanceManagerLocal;
-    @Resource
-    private SessionContext ctx;
-    @EJB
-    private GuestProxy guestProxy;
 
+    @Inject
+    private IContextManagerLocal contextManager;
+
+    @Inject
+    private IProductInstanceManagerLocal productInstanceManagerLocal;
+
+    @Inject
+    private GuestProxy guestProxy;
 
     @POST
     @Path("iterations/{iteration}")
@@ -272,7 +273,8 @@ public class ProductInstanceBinaryResource {
 
     private BinaryResource getBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
-        if (ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
+
+        if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
             return productInstanceManagerLocal.getBinaryResource(fullName);
         } else {
             return guestProxy.getBinaryResourceForProducInstance(fullName);
@@ -280,7 +282,7 @@ public class ProductInstanceBinaryResource {
     }
     private BinaryResource getPathDataBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
-        if (ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
             return productInstanceManagerLocal.getPathDataBinaryResource(fullName);
         } else {
             return guestProxy.getBinaryResourceForPathData(fullName);

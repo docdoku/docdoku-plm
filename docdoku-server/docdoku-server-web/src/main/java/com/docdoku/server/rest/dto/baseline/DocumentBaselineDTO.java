@@ -22,19 +22,54 @@ package com.docdoku.server.rest.dto.baseline;
 
 import com.docdoku.server.rest.dto.FolderDTO;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class DocumentBaselineDTO extends BaselineDTO {
+@XmlRootElement
+public class DocumentBaselineDTO implements Serializable {
 
+    private int id;
+    private String name;
+    private String description;
+    private Date creationDate;
     private String workspaceId;
     private List<FolderDTO> baselinedFolders;
 
     public DocumentBaselineDTO() {
     }
 
-    public DocumentBaselineDTO(int id, String name, String description, Date creationDate) {
-        super(id, name, description, creationDate);
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     public String getWorkspaceId() {

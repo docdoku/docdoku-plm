@@ -32,8 +32,8 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.json.*;
 import java.io.Serializable;
@@ -43,11 +43,13 @@ import java.util.*;
 @SessionScoped
 public class AdminStateBean implements Serializable {
 
-    @EJB
+    @Inject
     private IDocumentManagerLocal documentService;
-    @EJB
+
+    @Inject
     private IProductManagerLocal productService;
-    @EJB
+
+    @Inject
     private IUserManagerLocal userManager;
 
     private String selectedWorkspace;

@@ -31,9 +31,10 @@ import org.dozer.Mapper;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
@@ -43,14 +44,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by lebeaujulien on 03/03/15.
+ * @author lebeaujulien on 03/03/15.
  */
-@Stateless
+
+@RequestScoped
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class LOVResource {
 
-    @EJB
+    @Inject
     private ILOVManagerLocal lovManager;
 
     private Mapper mapper;
@@ -65,7 +67,7 @@ public class LOVResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ListOfValuesDTO> getLovs(@PathParam("workspaceId") String workspaceId)
+    public Response getLovs(@PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         List<ListOfValuesDTO> lovsDTO = new ArrayList<>();
         List<ListOfValues> lovs = lovManager.findLOVFromWorkspace(workspaceId);
@@ -75,8 +77,8 @@ public class LOVResource {
             lovDTO.setDeletable(lovManager.isLOVDeletable(new ListOfValuesKey(lov.getWorkspaceId(), lov.getName())));
             lovsDTO.add(lovDTO);
         }
-
-        return lovsDTO;
+        return Response.ok(new GenericEntity<List<ListOfValuesDTO>>((List<ListOfValuesDTO>) lovsDTO) {
+        }).build();
     }
 
     @POST

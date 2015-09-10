@@ -32,25 +32,28 @@ import org.dozer.Mapper;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Morgan Guimard
+ * @author Morgan Guimard
  */
-@Stateless
+
+@RequestScoped
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class AttributesResource {
 
-    @EJB
+    @Inject
     private IProductManagerLocal productManager;
 
     private Mapper mapper;
@@ -66,26 +69,29 @@ public class AttributesResource {
     @GET
     @Path("part-iterations")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<InstanceAttributeDescriptorDTO> getPartIterationsAttributes(@PathParam("workspaceId") String workspaceId)
+    public Response getPartIterationsAttributes(@PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         List<InstanceAttributeDescriptor> attributes = productManager.getPartIterationsInstanceAttributesInWorkspace(workspaceId);
         List<InstanceAttributeDescriptorDTO> dtos = new ArrayList<>();
         for (InstanceAttributeDescriptor descriptor:attributes){
             dtos.add(mapper.map(descriptor,InstanceAttributeDescriptorDTO.class));
         }
-        return dtos;
+
+        return Response.ok(new GenericEntity<List<InstanceAttributeDescriptorDTO>>((List<InstanceAttributeDescriptorDTO>) dtos) {
+        }).build();
     }
 
     @GET
     @Path("path-data")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<InstanceAttributeDescriptorDTO> getPathDataAttributes(@PathParam("workspaceId") String workspaceId)
+    public Response getPathDataAttributes(@PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         List<InstanceAttributeDescriptor> attributes = productManager.getPathDataInstanceAttributesInWorkspace(workspaceId);
         List<InstanceAttributeDescriptorDTO> dtos = new ArrayList<>();
         for (InstanceAttributeDescriptor descriptor:attributes){
             dtos.add(mapper.map(descriptor,InstanceAttributeDescriptorDTO.class));
         }
-        return dtos;
+        return Response.ok(new GenericEntity<List<InstanceAttributeDescriptorDTO>>((List<InstanceAttributeDescriptorDTO>) dtos) {
+        }).build();
     }
 }

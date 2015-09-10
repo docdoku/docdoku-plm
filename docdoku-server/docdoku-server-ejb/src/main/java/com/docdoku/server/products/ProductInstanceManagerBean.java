@@ -46,10 +46,10 @@ import com.docdoku.server.validation.AttributesConsistencyUtils;
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
@@ -64,13 +64,13 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
     @PersistenceContext
     private EntityManager em;
 
-    @EJB
-    private IUserManagerLocal userManager;
-
     @Resource
     private SessionContext ctx;
 
-    @EJB
+    @Inject
+    private IUserManagerLocal userManager;
+
+    @Inject
     private IDataManagerLocal dataManager;
 
     private static final Logger LOGGER = Logger.getLogger(ProductInstanceManagerBean.class.getName());

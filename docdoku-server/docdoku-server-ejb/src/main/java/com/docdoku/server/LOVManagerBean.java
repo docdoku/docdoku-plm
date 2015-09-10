@@ -35,9 +35,9 @@ import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.*;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Created by Lebeau Julien on 03/03/15.
+ * @author Lebeau Julien on 03/03/15.
  */
 @Local(ILOVManagerLocal.class)
 @Stateless(name = "LOVManagerBean")
@@ -55,7 +55,7 @@ public class LOVManagerBean implements ILOVManagerLocal, ILOVManagerWS {
     @PersistenceContext
     private EntityManager em;
 
-    @EJB
+    @Inject
     private IUserManagerLocal userManager;
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

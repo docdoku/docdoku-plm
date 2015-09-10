@@ -40,7 +40,7 @@ import java.util.List;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
- * Created by lebeaujulien on 12/03/15.
+ * @author lebeaujulien on 12/03/15.
  */
 public class LOVManagerBeanTest extends LOVManagerBean {
 

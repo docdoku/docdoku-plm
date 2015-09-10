@@ -33,7 +33,7 @@ import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
 
-import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +55,7 @@ import java.util.regex.Pattern;
 
 public class PrivateShareServlet extends HttpServlet {
 
-    @EJB
+    @Inject
     private IShareManagerLocal shareService;
 
     private static final Logger LOGGER = Logger.getLogger(PrivateShareServlet.class.getName());

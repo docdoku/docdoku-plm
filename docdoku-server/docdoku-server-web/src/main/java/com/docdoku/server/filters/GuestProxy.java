@@ -38,9 +38,9 @@ import com.docdoku.core.services.IProductManagerLocal;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RunAs;
-import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.security.auth.login.LoginException;
 import java.io.InputStream;
 
@@ -49,15 +49,18 @@ import java.io.InputStream;
 @LocalBean
 @Stateless
 public class GuestProxy{
-    @EJB
-    private IProductManagerLocal productService;
-    @EJB
-    private IProductInstanceManagerLocal productInstanceManagerLocal;
-    @EJB
-    private IDocumentManagerLocal documentService;
-    @EJB
-    private IDocumentResourceGetterManagerLocal documentResourceGetterService;
 
+    @Inject
+    private IProductManagerLocal productService;
+
+    @Inject
+    private IProductInstanceManagerLocal productInstanceManagerLocal;
+
+    @Inject
+    private IDocumentManagerLocal documentService;
+
+    @Inject
+    private IDocumentResourceGetterManagerLocal documentResourceGetterService;
 
     public PartRevision getPublicPartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, LoginException, AccessRightException {
 

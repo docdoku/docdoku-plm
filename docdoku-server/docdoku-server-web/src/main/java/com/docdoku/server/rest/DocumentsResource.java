@@ -42,8 +42,8 @@ import org.dozer.Mapper;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.UnsupportedEncodingException;
@@ -56,22 +56,25 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Stateless
+@RequestScoped
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class DocumentsResource {
 
-    @EJB
+    @Inject
     private IDocumentManagerLocal documentService;
-    @EJB
+
+    @Inject
     private IDocumentConfigSpecManagerLocal documentConfigSpecService;
-    @EJB
+
+    @Inject
     private IDocumentWorkflowManagerLocal documentWorkflowService;
 
-    @EJB
+    @Inject
     private DocumentBaselinesResource baselinesResource;
-    @EJB
-    private DocumentResource document;
+
+    @Inject
+    private DocumentResource documentResource;
 
     private static final Logger LOGGER = Logger.getLogger(DocumentsResource.class.getName());
     private static final String BASELINE_LATEST = "latest";
@@ -88,8 +91,8 @@ public class DocumentsResource {
 
     @Path("{documentId: [^/].*}-{documentVersion:[A-Z]+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentResource getDocument() {
-        return document;
+    public DocumentResource getDocumentResource() {
+        return documentResource;
     }
 
     // Todo Split it

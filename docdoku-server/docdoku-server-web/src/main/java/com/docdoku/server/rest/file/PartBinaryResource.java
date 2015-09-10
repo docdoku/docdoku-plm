@@ -26,10 +26,7 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IConverterManagerLocal;
-import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.services.IShareManagerLocal;
+import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
 import com.docdoku.server.filters.GuestProxy;
@@ -38,12 +35,10 @@ import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 
-import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
@@ -64,22 +59,27 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Stateless
+@RequestScoped
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
 public class PartBinaryResource{
-    @EJB
-    private IDataManagerLocal dataManager;
-    @EJB
-    private IProductManagerLocal productService;
-    @EJB
-    private IConverterManagerLocal converterService;
-    @EJB
-    private IShareManagerLocal shareService;
-    @EJB
-    private GuestProxy guestProxy;
 
-    @Resource
-    private SessionContext ctx;
+    @Inject
+    private IDataManagerLocal dataManager;
+
+    @Inject
+    private IProductManagerLocal productService;
+
+    @Inject
+    private IContextManagerLocal contextManager;
+
+    @Inject
+    private IConverterManagerLocal converterService;
+
+    @Inject
+    private IShareManagerLocal shareService;
+
+    @Inject
+    private GuestProxy guestProxy;
 
     private static final Logger LOGGER = Logger.getLogger(PartBinaryResource.class.getName());
     private static final String NATIVE_CAD_SUBTYPE = "nativecad";
@@ -301,7 +301,7 @@ public class PartBinaryResource{
     }
 
     private boolean canAccess(PartIterationKey partIKey) throws UserNotActiveException, EntityNotFoundException {
-        if(ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
+        if(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
             return productService.canAccess(partIKey);
         }else{
             return guestProxy.canAccess(partIKey);
@@ -310,7 +310,7 @@ public class PartBinaryResource{
 
     private BinaryResource getBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
-        if(ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
+        if(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
             return productService.getBinaryResource(fullName);
         }else{
             return guestProxy.getBinaryResourceForPart(fullName);

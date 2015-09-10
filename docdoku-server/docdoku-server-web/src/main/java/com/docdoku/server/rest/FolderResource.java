@@ -31,22 +31,24 @@ import com.docdoku.server.rest.dto.FolderDTO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Stateless
+@RequestScoped
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class FolderResource {
 
-    @EJB
+    @Inject
     private IDocumentManagerLocal documentService;
-    @EJB
+
+    @Inject
     private IDocumentConfigSpecManagerLocal documentConfigSpecService;
-    @EJB
+
+    @Inject
     private DocumentsResource documentsResource;
 
     public FolderResource() {

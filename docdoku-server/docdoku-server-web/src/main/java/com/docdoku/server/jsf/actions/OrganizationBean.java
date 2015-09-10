@@ -25,9 +25,9 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IOrganizationManagerLocal;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -36,9 +36,10 @@ import java.util.*;
 @RequestScoped
 public class OrganizationBean {
 
-    @EJB
+    @Inject
     private IAccountManagerLocal accountManager;
-    @EJB
+
+    @Inject
     private IOrganizationManagerLocal organizationManager;
 
     private Map<String, Boolean> selectedLogins = new HashMap<>();

@@ -20,7 +20,11 @@
 
 package com.docdoku.server.rest.dto;
 
-public class CountDTO {
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+
+@XmlRootElement
+public class CountDTO implements Serializable {
 
     private int count;
 

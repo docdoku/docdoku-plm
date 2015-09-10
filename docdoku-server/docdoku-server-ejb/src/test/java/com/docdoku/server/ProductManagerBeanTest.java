@@ -28,8 +28,8 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.server.dao.ConfigurationItemDAO;
 import com.docdoku.server.dao.PartUsageLinkDAO;
 import com.docdoku.server.dao.PathToPathLinkDAO;
 import com.docdoku.server.esindexer.ESIndexer;
@@ -59,6 +59,8 @@ public class ProductManagerBeanTest {
     private EntityManager em;
     @Mock
     private IUserManagerLocal userManager;
+    @Mock
+    private IContextManagerLocal contextManager;
     @Mock
     SessionContext ctx;
     @Spy

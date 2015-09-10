@@ -32,7 +32,7 @@ import java.util.List;
  * @author Morgan Guimard
  */
 
-public class QueryResult {
+public class QueryResult{
 
     private Query query;
     private List<QueryResultRow> rows = new ArrayList<>();

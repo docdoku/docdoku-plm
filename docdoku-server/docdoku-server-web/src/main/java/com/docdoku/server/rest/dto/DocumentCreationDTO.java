@@ -20,12 +20,14 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
  *
  * @author Yassine Belouad
  */
+@XmlRootElement
 public class DocumentCreationDTO implements Serializable, Comparable<DocumentCreationDTO> {
 
     private String workspaceId;

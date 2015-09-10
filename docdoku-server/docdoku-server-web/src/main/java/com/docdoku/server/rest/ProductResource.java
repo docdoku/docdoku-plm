@@ -32,6 +32,7 @@ import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IPSFilterManagerLocal;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.collections.InstanceCollection;
@@ -45,8 +46,8 @@ import org.dozer.Mapper;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.UnsupportedEncodingException;
@@ -60,25 +61,31 @@ import java.util.logging.Logger;
  *
  * @author Florent Garin
  */
-@Stateless
+@RequestScoped
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ProductResource {
 
-    @EJB
+    @Inject
     private IProductManagerLocal productService;
-    @EJB
+
+    @Inject
     private IProductBaselineManagerLocal productBaselineService;
 
-    @EJB
-    private LayerResource layerResource;
-    @EJB
-    private ProductConfigurationsResource productConfigurationsResource;
-    @EJB
-    private ProductBaselinesResource productBaselinesResource;
-    @EJB
-    private ProductInstancesResource productInstancesResource;
+    @Inject
+    private IPSFilterManagerLocal psFilterService;
 
+    @Inject
+    private LayerResource layerResource;
+
+    @Inject
+    private ProductConfigurationsResource productConfigurationsResource;
+
+    @Inject
+    private ProductBaselinesResource productBaselinesResource;
+
+    @Inject
+    private ProductInstancesResource productInstancesResource;
 
     private static final Logger LOGGER = Logger.getLogger(ProductResource.class.getName());
     private Mapper mapper;
@@ -138,7 +145,7 @@ public class ProductResource {
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter filter = productService.getPSFilter(ciKey, configSpecType, diverge);
+        PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
         List<PartLink> decodedPath = productService.decodePath(ciKey, path);
         Component component = productService.filterProductStructure(ciKey, filter, decodedPath, 1);
 
@@ -167,7 +174,7 @@ public class ProductResource {
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
-        PSFilter filter = productService.getPSFilter(ciKey, configSpecType, diverge);
+        PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
 
         Component component;
         String serialNumber = null;
@@ -219,11 +226,11 @@ public class ProductResource {
     @GET
     @Path("{ciId}/paths")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PathDTO> searchPaths(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("search") String search, @QueryParam("configSpec") String configSpecType, @QueryParam("diverge") boolean diverge)
+    public Response searchPaths(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("search") String search, @QueryParam("configSpec") String configSpecType, @QueryParam("diverge") boolean diverge)
             throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, NotAllowedException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter filter = productService.getPSFilter(ciKey, configSpecType, diverge);
+        PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
         List<PartLink[]> usagePaths = productService.findPartUsages(ciKey, filter, search);
 
         List<PathDTO> pathsDTO = new ArrayList<>();
@@ -233,7 +240,8 @@ public class ProductResource {
             pathsDTO.add(new PathDTO(pathAsString));
         }
 
-        return pathsDTO;
+        return Response.ok(new GenericEntity<List<PathDTO>>((List<PathDTO>) pathsDTO) {
+        }).build();
     }
     
     @Path("{ciId}/layers")
@@ -244,7 +252,7 @@ public class ProductResource {
     @GET
     @Path("{ciId}/path-choices")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PathChoiceDTO> getBaselineCreationPathChoices(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("type") String pType) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
+    public Response getBaselineCreationPathChoices(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("type") String pType) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
@@ -266,13 +274,14 @@ public class ProductResource {
             pathChoiceDTOs.add(new PathChoiceDTO(choice));
         }
 
-        return pathChoiceDTOs;
+        return Response.ok(new GenericEntity<List<PathChoiceDTO>>((List<PathChoiceDTO>) pathChoiceDTOs) {
+        }).build();
     }
 
     @GET
     @Path("{ciId}/versions-choices")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<BaselinedPartDTO> getBaselineCreationVersionsChoices(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
+    public Response getBaselineCreationVersionsChoices(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
@@ -300,7 +309,8 @@ public class ProductResource {
             }
         }
 
-        return partsDTO;
+        return Response.ok(new GenericEntity<List<BaselinedPartDTO>>((List<BaselinedPartDTO>) partsDTO) {
+        }).build();
     }
 
 
@@ -317,7 +327,7 @@ public class ProductResource {
             //this request is resources consuming so we cache the response for 30 minutes
             cc.setMaxAge(60 * 15);
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-            PSFilter filter = productService.getPSFilter(ciKey, configSpecType, diverge);
+            PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
             List<PartLink> decodedPath = productService.decodePath(ciKey,path);
 
             List<List<PartLink>> paths = new ArrayList<>();
@@ -349,7 +359,7 @@ public class ProductResource {
 
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
-            PSFilter filter = productService.getPSFilter(ciKey, pathsDTO.getConfigSpec(), diverge);
+            PSFilter filter = psFilterService.getPSFilter(ciKey, pathsDTO.getConfigSpec(), diverge);
 
             List<List<PartLink>> paths = new ArrayList<>();
 
@@ -424,7 +434,7 @@ public class ProductResource {
 
         FileExportEntity fileExportEntity = new FileExportEntity();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter psFilter = productService.getPSFilter(ciKey,configSpecType, false);
+        PSFilter psFilter = psFilterService.getPSFilter(ciKey,configSpecType, false);
 
         fileExportEntity.setPsFilter(psFilter);
         fileExportEntity.setConfigurationItemKey(ciKey);
@@ -480,7 +490,7 @@ public class ProductResource {
     @GET
     @Path("{ciId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PathToPathLinkDTO> getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("sourcePath") String sourcePathAsString, @PathParam("targetPath") String targetPathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+    public Response getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("sourcePath") String sourcePathAsString, @PathParam("targetPath") String targetPathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
         List<PathToPathLink> pathToPathLinks = productService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, sourcePathAsString, targetPathAsString);
         List<PathToPathLinkDTO> dtos = new ArrayList<>();
 
@@ -508,14 +518,14 @@ public class ProductResource {
             pathToPathLinkDTO.setTargetComponents(targetLightPartLinkDTOs);
             dtos.add(pathToPathLinkDTO);
         }
-
-        return dtos;
+        return Response.ok(new GenericEntity<List<PathToPathLinkDTO>>((List<PathToPathLinkDTO>) dtos) {
+        }).build();
     }
 
     @GET
     @Path("{ciId}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<LightPathToPathLinkDTO> getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException {
+    public Response getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException {
         List<String> pathToPathLinkTypes = productService.getPathToPathLinkTypes(workspaceId, configurationItemId);
         List<LightPathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
         for(String type : pathToPathLinkTypes){
@@ -523,12 +533,13 @@ public class ProductResource {
             pathToPathLinkDTO.setType(type);
             pathToPathLinkDTOs.add(pathToPathLinkDTO);
         }
-        return pathToPathLinkDTOs;
+        return Response.ok(new GenericEntity<List<LightPathToPathLinkDTO>>((List<LightPathToPathLinkDTO>) pathToPathLinkDTOs) {
+        }).build();
     }
     @GET
     @Path("{ciId}/decode-path/{path}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<LightPartLinkDTO> decodePath(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("path") String pathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+    public Response decodePath(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("path") String pathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
         List<PartLink> path = productService.decodePath(ciKey, pathAsString);
         List<LightPartLinkDTO> lightPartLinkDTOs = new ArrayList<>();
@@ -536,13 +547,14 @@ public class ProductResource {
             LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
             lightPartLinkDTOs.add(lightPartLinkDTO);
         }
-        return lightPartLinkDTOs;
+        return Response.ok(new GenericEntity<List<LightPartLinkDTO>>((List<LightPartLinkDTO>) lightPartLinkDTOs) {
+        }).build();
     }
 
     @GET
     @Path("{ciId}/document-links/{partNumber: [^/].*}-{partVersion:[A-Z]+}-{partIteration:[0-9]+}/{configSpec}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<DocumentIterationLinkDTO> getDocumentLinksForGivenPartIteration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, @PathParam("configSpec") String configSpec) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, PartIterationNotFoundException {
+    public Response getDocumentLinksForGivenPartIteration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, @PathParam("configSpec") String configSpec) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, PartIterationNotFoundException {
 
         List<DocumentIterationLinkDTO> dtos = new ArrayList<>();
         PartIterationKey partIterationKey = new PartIterationKey(workspaceId,partNumber,partVersion,partIteration);
@@ -563,7 +575,8 @@ public class ProductResource {
             dtos.add(documentIterationLinkDTO);
 
         }
-        return dtos;
+        return Response.ok(new GenericEntity<List<DocumentIterationLinkDTO>>((List<DocumentIterationLinkDTO>) dtos) {
+        }).build();
     }
 
     /**

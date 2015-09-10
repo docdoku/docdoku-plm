@@ -15,20 +15,33 @@
  * GNU Affero General Public License for more details.  
  *  
  * You should have received a copy of the GNU Affero General Public License  
- * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>. 
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
+package com.docdoku.server.rest.dto;
 
-package com.docdoku.server.rest;
+import com.docdoku.server.rest.dto.change.ChangeRequestDTO;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  *
- * @author Florent Garin
+ * @author Morgan Guimard
  */
-//switched to web.xml definition because some
-//settings can only be made inside that file (async-supported).
-//Just keep this class in case of we want to revert...
-//@ApplicationPath("/api/")
-public class ApplicationConfig /*extends Application*/{
-    
-    
+@XmlRootElement
+public class ChangeRequestListDTO implements Serializable {
+
+    private List<ChangeRequestDTO> requests;
+
+    public ChangeRequestListDTO() {
+    }
+
+    public List<ChangeRequestDTO> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<ChangeRequestDTO> requests) {
+        this.requests = requests;
+    }
 }

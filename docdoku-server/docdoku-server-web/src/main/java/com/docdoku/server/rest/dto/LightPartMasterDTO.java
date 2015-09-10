@@ -20,7 +20,11 @@
 
 package com.docdoku.server.rest.dto;
 
-public class LightPartMasterDTO {
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+
+@XmlRootElement
+public class LightPartMasterDTO implements Serializable {
 
     private String partNumber;
     private String partName;

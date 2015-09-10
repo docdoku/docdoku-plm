@@ -44,9 +44,9 @@ import com.docdoku.server.factory.ACLFactory;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -60,9 +60,11 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
 
     @PersistenceContext
     private EntityManager em;
-    @EJB
+
+    @Inject
     private IUserManagerLocal userManager;
-    @EJB
+
+    @Inject
     private IProductManagerLocal productManager;
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -410,15 +412,6 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
         psFilterVisitor.visit(configurationItem.getDesignItem(), -1);
 
         return new ArrayList<>(parts);
-    }
-
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    @Override
-    public PSFilter getBaselinePSFilter(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
-        ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(em);
-        ProductBaseline productBaseline = productBaselineDAO.loadBaseline(baselineId);
-        User user = userManager.checkWorkspaceReadAccess(productBaseline.getConfigurationItem().getWorkspaceId());
-        return new ProductBaselineConfigSpec(productBaseline, user);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

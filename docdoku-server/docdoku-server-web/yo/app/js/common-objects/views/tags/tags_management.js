@@ -300,6 +300,10 @@ define([
                     function () {
                         callbackSuccess();
                         Backbone.Events.trigger('refreshTagNavViewCollection');
+                    },
+                    function (error) {
+                        debugger
+                       alert(error)
                     }
                 );
             } else {

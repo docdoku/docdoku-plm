@@ -21,9 +21,10 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
-
+@XmlRootElement
 public class MarkerDTO implements Serializable{
 
     private int id;

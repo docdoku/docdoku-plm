@@ -31,8 +31,7 @@ import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.util.FileExportEntity;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -52,17 +51,16 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-@Stateless
 @Provider
 public class FileExportMessageBodyWriter implements MessageBodyWriter<FileExportEntity> {
 
-    @EJB
+    @Inject
     private IDataManagerLocal dataManager;
 
-    @EJB
+    @Inject
     private IProductManagerLocal productService;
 
-    @EJB
+    @Inject
     private IProductInstanceManagerLocal productInstanceService;
 
     private static final Logger LOGGER = Logger.getLogger(FileExportMessageBodyWriter.class.getName());

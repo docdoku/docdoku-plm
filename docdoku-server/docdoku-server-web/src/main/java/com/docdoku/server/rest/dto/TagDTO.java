@@ -20,12 +20,15 @@
 package com.docdoku.server.rest.dto;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
  *
  * @author Yassine Belouad
  */
+
+@XmlRootElement
 public class TagDTO implements Serializable {
 
     @XmlElement(nillable = true)

@@ -24,8 +24,8 @@ import com.docdoku.core.services.IWorkspaceManagerLocal;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -35,16 +35,16 @@ import javax.ws.rs.core.Response;
  *
  * @author Morgan Guimard
  */
-@Stateless
+@RequestScoped
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class SearchResource {
 
-    @EJB
-    private DocumentsResource documentsResource;
-
-    @EJB
+    @Inject
     private IWorkspaceManagerLocal workspaceManager;
+
+    @Inject
+    private DocumentsResource documentsResource;
 
     public SearchResource() {
     }

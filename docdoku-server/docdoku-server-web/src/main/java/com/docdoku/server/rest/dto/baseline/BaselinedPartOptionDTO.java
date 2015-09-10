@@ -20,7 +20,11 @@
 
 package com.docdoku.server.rest.dto.baseline;
 
-public class BaselinedPartOptionDTO {
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+
+@XmlRootElement
+public class BaselinedPartOptionDTO implements Serializable {
     private String version;
     private int lastIteration;
     private boolean released;

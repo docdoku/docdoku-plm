@@ -40,9 +40,9 @@ import com.docdoku.server.dao.WorkspaceDAO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
@@ -58,9 +58,10 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
     @PersistenceContext
     private EntityManager em;
 
-    @EJB
+    @Inject
     private IUserManagerLocal userManager;
-    @EJB
+
+    @Inject
     private IDocumentManagerLocal documentService;
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

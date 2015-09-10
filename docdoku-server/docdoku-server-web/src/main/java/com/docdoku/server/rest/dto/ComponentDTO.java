@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.List;
  *
  * @author Julien Maffre
  */
+@XmlRootElement
 public class ComponentDTO implements Serializable{
 
     private String author;

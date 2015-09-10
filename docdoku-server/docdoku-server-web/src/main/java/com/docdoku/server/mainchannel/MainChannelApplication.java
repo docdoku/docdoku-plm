@@ -27,8 +27,8 @@ import com.docdoku.server.mainchannel.util.ChannelMessagesBuilder;
 import com.docdoku.server.mainchannel.util.ChannelMessagesType;
 import com.docdoku.server.mainchannel.util.Room;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
@@ -46,12 +46,13 @@ import java.util.logging.Logger;
 @ServerEndpoint(value = "/mainChannelSocket", decoders = {MessageDecoder.class}, encoders = {WebRTCMessageEncoder.class, StatusMessageEncoder.class, ChatMessageEncoder.class, CollaborativeMessageEncoder.class})
 public class MainChannelApplication {
 
+    @Inject
+    private IUserManagerLocal userManager;
+
     // Users WebSockets Map : <UserLogin, <SessionId, Session>>
     private static final ConcurrentMap<String, Map<String, Session>> CHANNELS = new ConcurrentHashMap<>();
 
     private static final Logger LOGGER = Logger.getLogger(MainChannelApplication.class.getName());
-    @EJB
-    private IUserManagerLocal userManager;
 
     public static boolean hasChannels(String userLogin) {
         return CHANNELS!=null

@@ -19,7 +19,11 @@
  */
 package com.docdoku.server.rest.dto;
 
-public class CADInstanceDTO {
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+
+@XmlRootElement
+public class CADInstanceDTO implements Serializable {
 
     private Double rx;
     private Double ry;
