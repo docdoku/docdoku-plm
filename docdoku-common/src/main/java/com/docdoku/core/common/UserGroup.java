@@ -30,7 +30,7 @@ import java.util.Set;
  * 
  * @author Florent Garin
  * @version 1.1, 8/07/09
- * @since   V1.1
+ * @since V1.1
  */
 @Table(name="USERGROUP")
 @javax.persistence.IdClass(com.docdoku.core.common.UserGroupKey.class)

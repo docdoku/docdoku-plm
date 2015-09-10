@@ -30,7 +30,7 @@ import java.io.Serializable;
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08
- * @since   V1.0
+ * @since V1.0
  */
 @Table(name="WORKSPACE")
 @javax.persistence.Entity

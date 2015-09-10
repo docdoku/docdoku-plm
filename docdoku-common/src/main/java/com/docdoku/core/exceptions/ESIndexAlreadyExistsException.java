@@ -22,7 +22,7 @@ package com.docdoku.core.exceptions;
 import java.util.Locale;
 
 /**
- * Exception when trying to create a existing index;
+ * Exception when trying to create a existing index.
  * @author Taylor LABEJOF
  */
 public class ESIndexAlreadyExistsException extends EntityAlreadyExistsException {

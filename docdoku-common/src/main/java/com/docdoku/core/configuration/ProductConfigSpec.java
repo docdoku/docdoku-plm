@@ -38,9 +38,8 @@ import java.util.List;
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11
- * @since   V1.1
+ * @since V1.1
  */
-
 public abstract class ProductConfigSpec extends PSFilter implements Serializable{
 
     public ProductConfigSpec() {

@@ -33,7 +33,7 @@ import java.util.Date;
  *
  * @author Florent Garin
  * @version 2.0, 06/01/14
- * @since   V2.0
+ * @since V2.0
  */
 @Table(name="CHANGEISSUE")
 @Entity

@@ -35,13 +35,13 @@ import java.util.Arrays;
 
 public class MainCommand {
 
-  /*
-  * Main function wrapper
-  * */
 
     private static final String PART = "part";
     private static final String DOCUMENT = "document";
 
+    /**
+     * Main function wrapper
+     */
     public static void main(String[] args) {
         try {
             switch (args[0]) {

@@ -25,7 +25,6 @@ import java.util.Locale;
 /**
  * @author Morgan Guimard
  */
-
 public class SharedEntityNotFoundException extends EntityNotFoundException {
     private final String uuid;
 

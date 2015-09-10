@@ -38,7 +38,7 @@ import java.util.Map;
  *
  * @author Florent Garin
  * @version 2.0, 25/02/14
- * @since   V2.0
+ * @since V2.0
  */
 @Table(name="PARTCOLLECTION")
 @Entity

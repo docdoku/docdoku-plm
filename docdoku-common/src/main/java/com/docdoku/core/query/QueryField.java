@@ -24,7 +24,6 @@ package com.docdoku.core.query;
  *
  * @author Morgan Guimard
  */
-
 public class QueryField {
 
     public static final String PART_MASTER_NUMBER = "pm.number";

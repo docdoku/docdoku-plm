@@ -31,9 +31,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by morgan on 21/04/15.
+ * @author Morgan Guimard
  */
-
 public class QueryResultRow {
 
     private PartRevision partRevision;
