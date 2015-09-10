@@ -42,11 +42,13 @@ import com.docdoku.core.util.Tools;
 import com.docdoku.server.export.ExcelGenerator;
 import com.docdoku.server.rest.collections.QueryResult;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.json.Json;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -71,10 +73,9 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private ExcelGenerator excelGenerator = new ExcelGenerator();
 
-    @EJB
-    private IProductInstanceManagerLocal productInstanceService;
-
     private static final Logger LOGGER = Logger.getLogger(QueryResultMessageBodyWriter.class.getName());
+
+    private Context context;
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -90,7 +91,11 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
     public void writeTo(QueryResult queryResult, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> multivaluedMap, OutputStream outputStream) throws IOException, WebApplicationException {
 
         if(queryResult.getExportType().equals(QueryResult.ExportType.JSON)){
-            generateJSONResponse(outputStream, queryResult);
+            try {
+                generateJSONResponse(outputStream, queryResult);
+            } catch (NamingException e) {
+                LOGGER.log(Level.SEVERE,null,e);
+            }
         }
         else if(queryResult.getExportType().equals(QueryResult.ExportType.XLS)){
             excelGenerator.generateXLSResponse(queryResult, new Locale(queryResult.getQuery().getAuthor().getLanguage()), "");
@@ -101,7 +106,7 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
 
     }
 
-    private void generateJSONResponse(OutputStream outputStream, QueryResult queryResult) throws UnsupportedEncodingException {
+    private void generateJSONResponse(OutputStream outputStream, QueryResult queryResult) throws UnsupportedEncodingException, NamingException {
 
         String charSet = "UTF-8";
         JsonGenerator jg = Json.createGenerator(new OutputStreamWriter(outputStream, charSet));
@@ -110,6 +115,9 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
         List<String> selects = queryResult.getQuery().getSelects();
         List<String> partIterationSelectedAttributes = getPartIterationSelectedAttributes(selects);
         List<String> pathDataSelectedAttributes = getPathDataSelectedAttributes(selects);
+
+        context = new InitialContext();
+        IProductInstanceManagerLocal productInstanceService = (IProductInstanceManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductInstanceManagerBean");
 
         for (QueryResultRow row : queryResult.getRows()) {
 
@@ -194,6 +202,7 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
 
                 if(null!= queryContext && null != queryContext.getSerialNumber()){
                     try {
+
                         ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(queryContext.getSerialNumber(), queryContext.getWorkspaceId(), queryContext.getConfigurationItemId()));
                         ProductInstanceIteration lastIteration = productInstanceMaster.getLastIteration();
                         ProductBaseline basedOn = lastIteration.getBasedOn();
