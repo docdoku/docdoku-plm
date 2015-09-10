@@ -13,7 +13,9 @@
         <ui:define name="additional-scripts">
             <script type="text/javascript">
                 localStorage.locale="${accountBean.language}";
-                window.onload = uncheckPasswordFields;
+                window.onload = function(){
+                    uncheckPasswordFields();
+                };
             </script>
         </ui:define>
         <ui:define name="content">
