@@ -26,7 +26,7 @@
                         <label class="control-label" for="inputMilestoneDueDate">{{i18n.DUE_DATE}}</label>
 
                         <div class="controls">
-                            <input type="date" id="inputMilestoneDueDate" required/>
+                            <input type="text" id="inputMilestoneDueDate" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-language="{{language}}" data-date-today-highlight="true" required/>
                             <p class="helper-block"><i class="fa fa-clock-o"></i> {{timeZone}}</p>
                         </div>
                     </div>

@@ -1,7 +1,7 @@
 {{> attributeListItem}}
 <div class="controls shift-margin">
     {{#availability.value}}
-    <input type="date" class="input-xlarge value" value="{{model.value}}"
+    <input type="text" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-language="{{language}}" data-date-today-highlight="true" class="input-xlarge value" value="{{model.value}}"
     {{#model.mandatory}}required{{/model.mandatory}}/>
     {{#availability.displayRequired}}
         {{#model.mandatory}}*{{/model.mandatory}}
