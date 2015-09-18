@@ -38,6 +38,7 @@ require.config({
 	    unmask: { deps: ['jquery'], exports: 'jQuery' },
 	    unmaskConfig: { deps: ['unmask','jquery'], exports: 'jQuery' },
         bootstrapSwitch: { deps: ['jquery'], exports: 'jQuery'},
+        bootstrapDatepicker: {deps: ['jquery'], exports: 'jQuery'},
         backbone: { deps: ['underscore', 'jquery'], exports: 'Backbone'}
     },
 
@@ -55,6 +56,7 @@ require.config({
         jqueryUI: '../../bower_components/jqueryui/ui/jquery-ui',
         unmask:'../../bower_components/jquery-maskedinput/dist/jquery.maskedinput',
         bootstrapSwitch:'../../bower_components/bootstrap-switch/static/js/bootstrap-switch',
+        bootstrapDatepicker:'../../bower_components/bootstrap-datepicker/js/bootstrap-datepicker',
         date:'../../bower_components/date.format/date.format',
         unorm:'../../bower_components/unorm/lib/unorm',
         moment:'../../bower_components/moment/min/moment-with-locales',
@@ -79,6 +81,7 @@ require.config({
         'bootstrap',
         'bootbox',
         'bootstrapSwitch',
+        'bootstrapDatepicker',
         'jqueryUI',
         'effects',
         'popoverUtils',

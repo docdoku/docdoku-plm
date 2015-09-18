@@ -35,6 +35,7 @@ require.config({
         bootbox: { deps: ['jquery'], exports: 'jQuery' },
         datatables: { deps: ['jquery'], exports: 'jQuery' },
         bootstrapSwitch: {deps: ['jquery'], exports: 'jQuery'},
+        bootstrapDatepicker: {deps: ['jquery'], exports: 'jQuery'},
         backbone: {deps: ['underscore', 'jquery'],exports: 'Backbone'}
     },
 
@@ -51,6 +52,7 @@ require.config({
         datatables: '../../bower_components/datatables/media/js/jquery.dataTables',
         jqueryUI: '../../bower_components/jqueryui/ui/jquery-ui',
         bootstrapSwitch:'../../bower_components/bootstrap-switch/static/js/bootstrap-switch',
+        bootstrapDatepicker:'../../bower_components/bootstrap-datepicker/js/bootstrap-datepicker',
         date:'../../bower_components/date.format/date.format',
         unorm:'../../bower_components/unorm/lib/unorm',
         moment:'../../bower_components/moment/min/moment-with-locales',
@@ -73,6 +75,7 @@ require.config({
         'bootstrap',
         'bootbox',
         'bootstrapSwitch',
+        'bootstrapDatepicker',
         'jqueryUI',
         'effects',
         'popoverUtils',
