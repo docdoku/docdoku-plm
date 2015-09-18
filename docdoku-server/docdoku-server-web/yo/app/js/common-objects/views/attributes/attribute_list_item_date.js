@@ -17,7 +17,8 @@ define([
         initialize: function () {
             AttributeListItemView.prototype.initialize.apply(this, arguments);
             this.templateExtraData = {
-                timeZone : App.config.timeZone
+                timeZone : App.config.timeZone,
+                language : App.config.locale
             };
         },
 
