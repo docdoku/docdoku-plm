@@ -190,15 +190,17 @@ define([
                     _.each(data, function(attribute){
 
                         var attributeType = queryBuilderOptions.types[attribute.type];
+                        var group = _.findWhere(queryBuilderOptions.groups, {id : 'attr-'+attribute.type});
                         var filter = {
                             id: 'attr-'+attribute.type+'.'+attribute.name,
                             label: attribute.name,
                             type: attributeType,
                             realType: attributeType,
-                            optgroup: _.findWhere(queryBuilderOptions.groups, {id : 'attr-'+attribute.type}).name
+                            optgroup: group.name
                         };
                         if(attributeType === 'date'){
                             filter.operators = queryBuilderOptions.dateOperators;
+                            filter.input = queryBuilderOptions.dateInput;
                         } else if (attributeType === 'string'){
                             filter.operators = queryBuilderOptions.stringOperators;
                         } else if (attributeType === 'lov'){

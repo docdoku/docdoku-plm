@@ -296,6 +296,7 @@ define(function () {
     });
 
     return {
+        dateInput: dateInput,
         filters : filters,
         fields : fields,
         groups : groups,
