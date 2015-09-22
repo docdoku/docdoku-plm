@@ -1,4 +1,4 @@
-/*global casper,urls,products,homeUrl,workspace*/
+/*global casper,urls*/
 
 casper.test.begin('Instances tests suite', 1, function instancesCheckTestsSuite() {
 

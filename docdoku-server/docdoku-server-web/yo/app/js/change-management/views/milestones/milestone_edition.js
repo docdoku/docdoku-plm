@@ -96,7 +96,6 @@ define([
         },
 
         onSubmitForm: function (e) {
-            debugger;
             var data = {
                 title: this.$inputMilestoneTitle.val(),
                 description: this.$inputMilestoneDescription.val(),
