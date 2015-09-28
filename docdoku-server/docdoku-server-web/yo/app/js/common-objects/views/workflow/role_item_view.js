@@ -23,7 +23,11 @@ function (Backbone, Mustache, template) {
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, model: this.model}));
+            this.$el.html(Mustache.render(template, {
+                i18n: App.config.i18n,
+                model: this.model,
+                required: !this.options.nullable
+            }));
             this.$select = this.$('select');
             this.fillUserList();
             return this;
@@ -32,9 +36,7 @@ function (Backbone, Mustache, template) {
         fillUserList: function () {
             var self = this;
 
-            if (this.options.nullable) {
-                this.$select.append('<option value=""></option>');
-            }
+            this.$select.append('<option value=""></option>');
 
             this.options.userList.each(function (user) {
                 var selected = '';
