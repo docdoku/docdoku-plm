@@ -34,7 +34,7 @@ define([
             this.editMode = this.model.isWritable();
             this.$el.html(Mustache.render(template, {
                 timeZone: App.config.timeZone,
-                language: App.config.language,
+                language : App.config.locale,
                 i18n: App.config.i18n,
                 hasRequest: hasRequest,
                 hasOrder: hasOrder,

@@ -167,7 +167,6 @@ require.config({
         'datatablesOsortExt',
         'bootstrapCombobox',
         'bootstrapSwitch',
-        'bootstrapDatepicker',
         'utilsprototype',
         'threecore',
         'pointerlockcontrols',
@@ -205,9 +204,7 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
     function (ContextResolver,  commonStrings, productStructureStrings) {
 	    'use strict';
         App.config.i18n = _.extend(commonStrings,productStructureStrings);
-        require(['date_picker_lang'],function(){
-            // Date picker loaded
-        });
+        require(['bootstrapDatepicker','date_picker_lang']);
         ContextResolver.resolveUser(function(){
             require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
                 App.appView = new AppView().render();
