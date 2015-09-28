@@ -40,7 +40,8 @@ require.config({
         unmaskConfig: { deps: ['unmask'], exports: 'jQuery' },
         inputValidity: { deps: ['jquery'], exports: 'jQuery' },
         'query-builder': { deps: ['jquery'], exports: 'jQuery' },
-        selectize: { deps: ['jquery'], exports: 'jQuery' }
+        selectize: { deps: ['jquery'], exports: 'jQuery' },
+        date_picker_lang: { deps: ['bootstrapDatepicker'], exports: 'jQuery'}
     },
     paths: {
         jquery: '../../bower_components/jquery/jquery',
@@ -74,7 +75,8 @@ require.config({
         utilsprototype:'../utils/utils.prototype',
         async: '../../bower_components/async/lib/async',
         'query-builder': '../../bower_components/jQuery-QueryBuilder/dist/js/query-builder.standalone',
-        selectize: '../../bower_components/selectize/dist/js/standalone/selectize'
+        selectize: '../../bower_components/selectize/dist/js/standalone/selectize',
+        date_picker_lang: '../utils/bootstrap-datepicker-langs'
     },
 
     deps:[
@@ -115,6 +117,9 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
     function (ContextResolver,  commonStrings, productManagementStrings) {
 	    'use strict';
         App.config.i18n = _.extend(commonStrings,productManagementStrings);
+        require(['date_picker_lang'],function(){
+            // Date picker loaded
+        });
         ContextResolver.resolveUser(function(){
             require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
                 App.appView = new AppView().render();
