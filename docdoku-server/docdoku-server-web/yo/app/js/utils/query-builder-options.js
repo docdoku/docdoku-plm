@@ -65,7 +65,7 @@ define(function () {
     }});
 
     var dateInput = function(rule,inputName){
-        return '<input type="text" name="'+inputName+'" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-language="{{language}}" data-date-today-highlight="true" />';
+        return '<input type="text" name="' + inputName + '" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-language="' + App.config.locale + '" data-date-today-highlight="true" />';
     };
 
     var stringOperators = ['equal', 'not_equal', 'contains', 'not_contains', 'begins_with', 'not_begins_with', 'ends_with', 'not_ends_with'];
