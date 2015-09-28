@@ -105,7 +105,8 @@ require.config({
         mtlloader:{deps:['threecore'],exports:'THREE'},
         buffergeometryutils:{deps:['threecore'],exports:'THREE'},
         typeface : { deps: ['threecore'], exports: 'window' },
-        selectize: { deps: ['jquery'], exports: 'jQuery' }
+        selectize: { deps: ['jquery'], exports: 'jQuery' },
+        date_picker_lang: { deps: ['bootstrapDatepicker'], exports: 'jQuery'}
     },
     paths: {
         jquery: '../../bower_components/jquery/jquery',
@@ -150,7 +151,8 @@ require.config({
         buffergeometryutils: 'dmu/utils/BufferGeometryUtils',
         stats:'dmu/utils/Stats',
         typeface:'../lib/helvetiker_regular.typeface',
-        selectize: '../../bower_components/selectize/dist/js/standalone/selectize'
+        selectize: '../../bower_components/selectize/dist/js/standalone/selectize',
+        date_picker_lang: '../utils/bootstrap-datepicker-langs'
     },
 
     deps:[
@@ -203,6 +205,9 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
     function (ContextResolver,  commonStrings, productStructureStrings) {
 	    'use strict';
         App.config.i18n = _.extend(commonStrings,productStructureStrings);
+        require(['date_picker_lang'],function(){
+            // Date picker loaded
+        });
         ContextResolver.resolveUser(function(){
             require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
                 App.appView = new AppView().render();
