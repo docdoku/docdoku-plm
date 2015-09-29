@@ -1,4 +1,4 @@
-/*global $,define,App*/
+/*global App*/
 (function ($) {
 
     'use strict';

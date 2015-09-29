@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,$*/
 define([
     'common-objects/views/base'
 ], function (BaseView) {
