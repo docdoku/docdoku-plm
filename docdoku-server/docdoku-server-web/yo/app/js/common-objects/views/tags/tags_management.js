@@ -302,8 +302,7 @@ define([
                         Backbone.Events.trigger('refreshTagNavViewCollection');
                     },
                     function (error) {
-                        debugger
-                       alert(error)
+                        that.alert({message: error.responseText, type: 'error'});
                     }
                 );
             } else {
