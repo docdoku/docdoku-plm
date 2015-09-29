@@ -25,6 +25,8 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The Account class holds personal user data applicable inside the whole application.
@@ -38,6 +40,8 @@ import java.util.Date;
 @Table(name="ACCOUNT")
 @javax.persistence.Entity
 public class Account implements Serializable, Cloneable {
+
+    private static final Logger LOGGER = Logger.getLogger(Account.class.getName());
 
     @javax.persistence.Id
     private String login="";
@@ -147,6 +151,7 @@ public class Account implements Serializable, Cloneable {
         try {
             clone = (Account) super.clone();
         } catch (CloneNotSupportedException e) {
+            LOGGER.log(Level.WARNING,e.getMessage());
             throw new InternalError();
         }
         clone.creationDate = (Date) creationDate.clone();
