@@ -21,14 +21,13 @@
 package com.docdoku.server.resourcegetters;
 
 import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
 import org.artofsolving.jodconverter.OfficeDocumentConverter;
 import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.ejb.*;
+import javax.inject.Singleton;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,7 +36,6 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 @Singleton
 public class FileConverter {
 
@@ -81,17 +79,11 @@ public class FileConverter {
         officeManager.stop();
     }
 
-    @Lock(LockType.WRITE)
-    public InputStream convertToPDF(String sourceName, final InputStream streamToConvert) throws IOException {
+    public synchronized InputStream convertToPDF(String sourceName, final InputStream streamToConvert) throws IOException {
         File tmpDir = com.google.common.io.Files.createTempDir();
         File fileToConvert = new File(tmpDir, sourceName);
 
-        Files.copy(new InputSupplier<InputStream>() {
-            @Override
-            public InputStream getInput() throws IOException {
-                return streamToConvert;
-            }
-        }, fileToConvert);
+        Files.copy(() -> streamToConvert, fileToConvert);
 
         File pdfFile = convertToPDF(fileToConvert);
 
