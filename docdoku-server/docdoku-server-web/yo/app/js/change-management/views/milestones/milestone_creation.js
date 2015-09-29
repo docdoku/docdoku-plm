@@ -22,7 +22,11 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {timeZone:App.config.timeZone,i18n: App.config.i18n}));
+            this.$el.html(Mustache.render(template, {
+                timeZone:App.config.timeZone,
+                language : App.config.locale,
+                i18n: App.config.i18n
+            }));
             this.bindDomElements();
             this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
             return this;

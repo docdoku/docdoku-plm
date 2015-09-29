@@ -28,7 +28,7 @@ import org.artofsolving.jodconverter.office.OfficeManager;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.ejb.*;
+import javax.inject.Singleton;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,7 +37,6 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 @Singleton
 public class FileConverter {
 
@@ -81,8 +80,7 @@ public class FileConverter {
         officeManager.stop();
     }
 
-    @Lock(LockType.WRITE)
-    public InputStream convertToPDF(String sourceName, final InputStream streamToConvert) throws IOException {
+    public synchronized InputStream convertToPDF(String sourceName, final InputStream streamToConvert) throws IOException {
         File tmpDir = com.google.common.io.Files.createTempDir();
         File fileToConvert = new File(tmpDir, sourceName);
 

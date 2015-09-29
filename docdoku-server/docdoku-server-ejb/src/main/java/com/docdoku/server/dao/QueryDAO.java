@@ -342,7 +342,11 @@ public class QueryDAO {
 
             case "date":
                 try {
-                    o = new SimpleDateFormat("yyyy-MM-dd").parse((String) value);
+                    //TODO: this formatting is already done by other method, should be refactored.
+                    //TODO: the pattern for the date format should be declared somewhere.
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    df.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    o = df.parse((String) value);
                 } catch (ParseException e) {
                     throw new IllegalArgumentException();
                 }

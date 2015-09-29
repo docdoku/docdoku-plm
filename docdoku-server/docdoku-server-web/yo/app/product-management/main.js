@@ -35,11 +35,13 @@ require.config({
         backbone: {deps: ['underscore', 'jquery'],exports: 'Backbone'},
         bootstrapCombobox:{deps:["jquery"],exports:"jQuery"},
         bootstrapSwitch:{deps:['jquery'],exports:'jQuery'},
+        bootstrapDatepicker: {deps: ['jquery'], exports: 'jQuery'},
         unmask: { deps: ['jquery'], exports: 'jQuery' },
         unmaskConfig: { deps: ['unmask'], exports: 'jQuery' },
         inputValidity: { deps: ['jquery'], exports: 'jQuery' },
         'query-builder': { deps: ['jquery'], exports: 'jQuery' },
-        selectize: { deps: ['jquery'], exports: 'jQuery' }
+        selectize: { deps: ['jquery'], exports: 'jQuery' },
+        date_picker_lang: { deps: ['bootstrapDatepicker'], exports: 'jQuery'}
     },
     paths: {
         jquery: '../../bower_components/jquery/jquery',
@@ -56,6 +58,7 @@ require.config({
         unmask:'../../bower_components/jquery-maskedinput/dist/jquery.maskedinput',
         bootstrapCombobox:'../../bower_components/bootstrap-combobox/js/bootstrap-combobox',
         bootstrapSwitch:'../../bower_components/bootstrap-switch/static/js/bootstrap-switch',
+        bootstrapDatepicker:'../../bower_components/bootstrap-datepicker/js/bootstrap-datepicker',
         unorm:'../../bower_components/unorm/lib/unorm',
         moment:'../../bower_components/moment/min/moment-with-locales',
         momentTimeZone:'../../bower_components/moment-timezone/builds/moment-timezone-with-data',
@@ -72,7 +75,8 @@ require.config({
         utilsprototype:'../utils/utils.prototype',
         async: '../../bower_components/async/lib/async',
         'query-builder': '../../bower_components/jQuery-QueryBuilder/dist/js/query-builder.standalone',
-        selectize: '../../bower_components/selectize/dist/js/standalone/selectize'
+        selectize: '../../bower_components/selectize/dist/js/standalone/selectize',
+        date_picker_lang: '../utils/bootstrap-datepicker-langs'
     },
 
     deps:[
@@ -112,6 +116,7 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
     function (ContextResolver,  commonStrings, productManagementStrings) {
 	    'use strict';
         App.config.i18n = _.extend(commonStrings,productManagementStrings);
+        require(['bootstrapDatepicker','date_picker_lang']);
         ContextResolver.resolveUser(function(){
             require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
                 App.appView = new AppView().render();

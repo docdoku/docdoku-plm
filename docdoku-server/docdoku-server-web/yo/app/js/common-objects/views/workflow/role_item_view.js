@@ -16,14 +16,14 @@ function (Backbone, Mustache, template) {
 
         initialize: function () {
             _.bindAll(this);
-
-            if (!this.options.nullable && !this.model.get('defaultAssignee')) {
-                this.model.set('defaultAssignee', {login: this.options.userList.first().getLogin()});
-            }
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, model: this.model}));
+            this.$el.html(Mustache.render(template, {
+                i18n: App.config.i18n,
+                model: this.model,
+                required: !this.options.nullable
+            }));
             this.$select = this.$('select');
             this.fillUserList();
             return this;
@@ -32,9 +32,7 @@ function (Backbone, Mustache, template) {
         fillUserList: function () {
             var self = this;
 
-            if (this.options.nullable) {
-                this.$select.append('<option value=""></option>');
-            }
+            this.$select.append('<option value=""></option>');
 
             this.options.userList.each(function (user) {
                 var selected = '';

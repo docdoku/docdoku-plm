@@ -35,7 +35,9 @@ require.config({
         bootbox: { deps: ['jquery'], exports: 'jQuery' },
         datatables: { deps: ['jquery'], exports: 'jQuery' },
         bootstrapSwitch: {deps: ['jquery'], exports: 'jQuery'},
-        backbone: {deps: ['underscore', 'jquery'],exports: 'Backbone'}
+        bootstrapDatepicker: {deps: ['jquery'], exports: 'jQuery'},
+        backbone: {deps: ['underscore', 'jquery'],exports: 'Backbone'},
+        date_picker_lang: { deps: ['bootstrapDatepicker'], exports: 'jQuery'}
     },
 
     paths: {
@@ -51,6 +53,7 @@ require.config({
         datatables: '../../bower_components/datatables/media/js/jquery.dataTables',
         jqueryUI: '../../bower_components/jqueryui/ui/jquery-ui',
         bootstrapSwitch:'../../bower_components/bootstrap-switch/static/js/bootstrap-switch',
+        bootstrapDatepicker:'../../bower_components/bootstrap-datepicker/js/bootstrap-datepicker',
         date:'../../bower_components/date.format/date.format',
         unorm:'../../bower_components/unorm/lib/unorm',
         moment:'../../bower_components/moment/min/moment-with-locales',
@@ -63,7 +66,8 @@ require.config({
         popoverUtils: '../utils/popover.utils',
         datatablesOsortExt: '../utils/datatables.oSort.ext',
         utilsprototype: '../utils/utils.prototype',
-        inputValidity: '../utils/input-validity'
+        inputValidity: '../utils/input-validity',
+        date_picker_lang: '../utils/bootstrap-datepicker-langs'
     },
 
     deps: [
@@ -100,6 +104,7 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
 function (ContextResolver,  commonStrings, changeManagementStrings) {
     'use strict';
 	App.config.i18n = _.extend(commonStrings,changeManagementStrings);
+    require(['bootstrapDatepicker','date_picker_lang']);
     ContextResolver.resolveUser(function(){
         require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
             App.appView = new AppView().render();

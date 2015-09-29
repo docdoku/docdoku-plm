@@ -33,7 +33,13 @@ define([
                     break;
             }
 
-            this.$el.html(Mustache.render(template, {timeZone:App.config.timeZone,i18n: App.config.i18n, title: title, permalink: this.model.getPermalink()}));
+            this.$el.html(Mustache.render(template, {
+                timeZone:App.config.timeZone,
+                language : App.config.locale,
+                i18n: App.config.i18n,
+                title: title,
+                permalink: this.model.getPermalink()
+            }));
             this.bindDomElements();
 
             this.$badPasswordLabel.hide();

@@ -30,6 +30,7 @@ import com.docdoku.core.exceptions.UserNotFoundException;
 import com.docdoku.core.exceptions.WorkspaceNotFoundException;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeDescriptor;
+import com.docdoku.core.meta.InstanceDateAttribute;
 import com.docdoku.core.meta.InstanceListOfValuesAttribute;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartLinkList;
@@ -70,12 +71,18 @@ import java.util.logging.Logger;
 @Provider
 public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResult> {
 
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private static SimpleDateFormat FORMAT = QueryResultMessageBodyWriter.getFormat();
     private ExcelGenerator excelGenerator = new ExcelGenerator();
 
     private static final Logger LOGGER = Logger.getLogger(QueryResultMessageBodyWriter.class.getName());
 
     private Context context;
+
+    private static SimpleDateFormat getFormat() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return format;
+    }
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -260,7 +267,10 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
                                     && attributeDescriptor.getStringType().equals(attributeSelectType)) {
 
                                 attributeValue = attribute.getValue() + "";
-                                if (attribute instanceof InstanceListOfValuesAttribute) {
+                                if(attribute instanceof InstanceDateAttribute) {
+                                    attributeValue = getFormattedDate(((InstanceDateAttribute) attribute).getDateValue());
+                                }
+                                else if (attribute instanceof InstanceListOfValuesAttribute) {
                                     attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                 }
                             }
@@ -338,7 +348,7 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
 
     private void writeDate(JsonGenerator jg, String key, Date date) {
         if (date != null){
-            String formattedDate = simpleDateFormat.format(date);
+            String formattedDate = getFormattedDate(date);
             jg.write(key, formattedDate);
         }else{
             jg.write(key, JsonValue.NULL);
@@ -346,7 +356,7 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
     }
 
     private String getFormattedDate(Date date) {
-        return date != null ? simpleDateFormat.format(date) : "";
+        return date != null ? FORMAT.format(date) : "";
     }
 
     public List<String> getPartIterationSelectedAttributes(List<String> selects) {

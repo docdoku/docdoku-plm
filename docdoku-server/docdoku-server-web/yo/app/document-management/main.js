@@ -38,7 +38,9 @@ require.config({
 	    unmask: { deps: ['jquery'], exports: 'jQuery' },
 	    unmaskConfig: { deps: ['unmask','jquery'], exports: 'jQuery' },
         bootstrapSwitch: { deps: ['jquery'], exports: 'jQuery'},
-        backbone: { deps: ['underscore', 'jquery'], exports: 'Backbone'}
+        bootstrapDatepicker: {deps: ['jquery'], exports: 'jQuery'},
+        backbone: { deps: ['underscore', 'jquery'], exports: 'Backbone'},
+        date_picker_lang: { deps: ['bootstrapDatepicker'], exports: 'jQuery'}
     },
 
     paths: {
@@ -55,6 +57,7 @@ require.config({
         jqueryUI: '../../bower_components/jqueryui/ui/jquery-ui',
         unmask:'../../bower_components/jquery-maskedinput/dist/jquery.maskedinput',
         bootstrapSwitch:'../../bower_components/bootstrap-switch/static/js/bootstrap-switch',
+        bootstrapDatepicker:'../../bower_components/bootstrap-datepicker/js/bootstrap-datepicker',
         date:'../../bower_components/date.format/date.format',
         unorm:'../../bower_components/unorm/lib/unorm',
         moment:'../../bower_components/moment/min/moment-with-locales',
@@ -69,7 +72,8 @@ require.config({
         datatablesOsortExt: '../utils/datatables.oSort.ext',
         utilsprototype: '../utils/utils.prototype',
         userPopover: 'modules/user-popover-module/app',
-        async: '../../bower_components/async/lib/async'
+        async: '../../bower_components/async/lib/async',
+        date_picker_lang: '../utils/bootstrap-datepicker-langs'
     },
 
     deps: [
@@ -106,8 +110,9 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
 function (ContextResolver,  commonStrings, documentManagementStrings) {
     'use strict';
     App.config.i18n = _.extend(commonStrings,documentManagementStrings);
+    require(['bootstrapDatepicker','date_picker_lang']);
     ContextResolver.resolveUser(function(){
-        require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
+        require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules,date_picker_lang){
             App.appView = new AppView().render();
             App.headerView = new HeaderView().render();
             App.router = Router.getInstance();
