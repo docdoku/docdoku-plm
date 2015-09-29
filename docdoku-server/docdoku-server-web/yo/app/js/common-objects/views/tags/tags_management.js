@@ -146,7 +146,7 @@ define([
                     if (this._collectionSize !== 0) {
                         this._currentTagsCollection.push(newModel);
                     }
-                    $newTagInput.val('');
+                    $newTagInput.val('').trigger('input');
                 }
             }
         },
