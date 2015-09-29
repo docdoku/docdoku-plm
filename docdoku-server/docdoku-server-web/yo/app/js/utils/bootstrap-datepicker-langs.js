@@ -1,4 +1,4 @@
-/*global App*/
+/*global App, jQuery*/
 (function ($) {
 
     'use strict';
