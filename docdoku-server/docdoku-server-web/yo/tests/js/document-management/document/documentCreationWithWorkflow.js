@@ -54,7 +54,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
      */
 
     casper.then(function waitForWorkflowSelector() {
-        this.waitForSelector('.modal.document-modal.new-document .workflow-selector option[value="'+workflows.workflow1.name+'"]', function () {
+        this.waitForSelector('.modal.document-modal.new-document .workflow-selector option:nth-child(2)', function () {
             this.evaluate(function () {
                 document.querySelector('.modal.document-modal.new-document .workflow-selector').selectedIndex = 1;
                 $('.modal.document-modal.new-document .workflow-selector').change();
@@ -73,12 +73,28 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
     casper.then(function waitForRoleItem() {
         this.waitForSelector('.modal.document-modal.new-document .role-mapping .roles-item', function () {
             this.test.assertElementCount('.modal.document-modal.new-document .role-mapping .roles-item', 1, 'There should be one role item in role mapping list');
-            this.click('.modal.document-modal.new-document .btn.btn-primary');
-
         }, function fail() {
             this.capture('screenshot/documentCreationWithWorkflow/waitForRoleItem-error.png');
             this.test.assert(false, 'No role item can not be found');
         });
+    });
+
+    /**
+     * Select person in charge
+     */
+    casper.then(function selectRole() {
+        this.evaluate(function () {
+            document.querySelector('select.role-user-mapped').selectedIndex = 1;
+            $('.modal.document-modal.new-document .role-user-mapped').change();
+            return true;
+        });
+    });
+
+    /**
+     * Submit document
+     */
+    casper.then(function submit() {
+        this.click('.modal.document-modal.new-document .btn.btn-primary');
     });
 
     /**
