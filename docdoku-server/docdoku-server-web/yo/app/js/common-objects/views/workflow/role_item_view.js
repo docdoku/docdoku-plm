@@ -16,10 +16,6 @@ function (Backbone, Mustache, template) {
 
         initialize: function () {
             _.bindAll(this);
-
-            if (!this.options.nullable && !this.model.get('defaultAssignee')) {
-                this.model.set('defaultAssignee', {login: this.options.userList.first().getLogin()});
-            }
         },
 
         render: function () {
