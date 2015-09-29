@@ -27,18 +27,15 @@ import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.InternalService;
-import com.docdoku.server.ServiceLocator;
 import com.docdoku.server.extras.TitleBlockGenerator;
 import com.google.common.io.ByteStreams;
 import com.itextpdf.text.DocumentException;
 
 import javax.inject.Inject;
-import javax.naming.NamingException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
