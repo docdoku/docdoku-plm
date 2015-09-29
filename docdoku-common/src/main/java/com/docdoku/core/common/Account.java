@@ -151,7 +151,7 @@ public class Account implements Serializable, Cloneable {
         try {
             clone = (Account) super.clone();
         } catch (CloneNotSupportedException e) {
-            LOGGER.log(Level.WARNING,e.getMessage());
+            LOGGER.log(Level.WARNING,"CloneNotSupportedException on cloning account : "+this.getLogin(),e);
             throw new InternalError();
         }
         clone.creationDate = (Date) creationDate.clone();
