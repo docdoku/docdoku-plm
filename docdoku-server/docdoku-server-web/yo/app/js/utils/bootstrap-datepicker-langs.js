@@ -1,5 +1,5 @@
 /*global App, $*/
-define(function () {
+define(['bootstrapDatepicker'], function () {
 
     'use strict';
 

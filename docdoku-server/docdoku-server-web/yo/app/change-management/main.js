@@ -83,8 +83,7 @@ require.config({
         'datatables',
         'datatablesOsortExt',
         'utilsprototype',
-        'inputValidity',
-        'bootstrapDatepicker'
+        'inputValidity'
     ],
     config: {
         i18n: {

@@ -96,8 +96,7 @@ require.config({
         'unmaskConfig',
         'inputValidity',
         'query-builder',
-        'selectize',
-        'bootstrapDatepicker'
+        'selectize'
     ],
     config: {
         i18n: {

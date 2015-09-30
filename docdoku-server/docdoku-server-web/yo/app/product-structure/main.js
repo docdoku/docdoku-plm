@@ -184,8 +184,7 @@ require.config({
         'tween',
         'inputValidity',
         'typeface',
-        'selectize',
-        'bootstrapDatepicker'
+        'selectize'
     ],
     config: {
         i18n: {

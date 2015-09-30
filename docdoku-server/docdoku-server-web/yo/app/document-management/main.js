@@ -90,8 +90,7 @@ require.config({
         'datatables',
         'datatablesOsortExt',
         'unmaskConfig',
-        'utilsprototype',
-        'bootstrapDatepicker'
+        'utilsprototype'
     ],
     config: {
         i18n: {
