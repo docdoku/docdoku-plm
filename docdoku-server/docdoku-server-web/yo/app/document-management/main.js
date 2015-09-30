@@ -90,7 +90,8 @@ require.config({
         'datatables',
         'datatablesOsortExt',
         'unmaskConfig',
-        'utilsprototype'
+        'utilsprototype',
+        'bootstrapDatepicker'
     ],
     config: {
         i18n: {
@@ -106,11 +107,13 @@ require.config({
     }
 });
 
-require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/document-management'],
-function (ContextResolver,  commonStrings, documentManagementStrings) {
+require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/document-management', 'date_picker_lang'],
+function (ContextResolver,  commonStrings, documentManagementStrings, datePickerLang) {
     'use strict';
+
     App.config.i18n = _.extend(commonStrings,documentManagementStrings);
-    require(['bootstrapDatepicker','date_picker_lang']);
+    datePickerLang.init();
+
     ContextResolver.resolveUser(function(){
         require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules,date_picker_lang){
             App.appView = new AppView().render();
