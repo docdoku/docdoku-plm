@@ -184,7 +184,8 @@ require.config({
         'tween',
         'inputValidity',
         'typeface',
-        'selectize'
+        'selectize',
+        'bootstrapDatepicker'
     ],
     config: {
         i18n: {
@@ -200,11 +201,11 @@ require.config({
     }
 });
 
-require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/product-structure'],
-    function (ContextResolver,  commonStrings, productStructureStrings) {
+require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/product-structure', 'date_picker_lang'],
+    function (ContextResolver,  commonStrings, productStructureStrings, datePickerLang) {
 	    'use strict';
         App.config.i18n = _.extend(commonStrings,productStructureStrings);
-        require(['bootstrapDatepicker','date_picker_lang']);
+        datePickerLang.init();
         ContextResolver.resolveUser(function(){
             require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
                 App.appView = new AppView().render();
