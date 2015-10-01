@@ -42,9 +42,11 @@ define([
             this.parentView.$el.find('input.reference:first')
                 .unmask()
                 .val('');
+
             // Insert Template attributes if any
             var collection = [];
             var template = this.selected();
+
             if (template) {
                 var attributes = template.get('attributeTemplates');
                 for (var i = attributes.length - 1; i >= 0; i--) {
@@ -65,14 +67,14 @@ define([
                     this.generateId(template);
                 }
 
-                if (template.get('workflowModelId')) {
-                    this.workflowsView.setValue(template.get('workflowModelId'));
-                }
+                this.workflowsView.setValue(template.get('workflowModelId'));
 
                 this.attributesView.setAttributesLocked(template.isAttributesLocked());
                 this.attributesView.render();
-            }
 
+            } else {
+                this.workflowsView.setValue(null);
+            }
 
             this.attributesView.collection.reset(collection);
         },
