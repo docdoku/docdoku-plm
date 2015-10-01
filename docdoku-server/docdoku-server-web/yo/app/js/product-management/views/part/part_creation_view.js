@@ -90,12 +90,12 @@ define([
         },
 
         setWorkflowModel: function(template) {
-            this.workflowsView.setValue(template.get('workflowModelId'));
+            var workflowModelId = template ? template.get('workflowModelId') : null;
+            this.workflowsView.setValue(workflowModelId);
         },
 
         addAttributes: function (template) {
             var that = this;
-
 
             _.each(template.get('attributeTemplates'), function (object) {
                 that.attributesView.collection.add({
@@ -220,7 +220,6 @@ define([
         onChangeTemplate: function () {
             this.resetMask();
 
-
             var templateId = this.$inputPartTemplate.val();
 
             if (templateId) {
@@ -235,13 +234,15 @@ define([
                     this.generateId(template);
                 }
 
-                if (template.get('workflowModelId')) {
-                    this.setWorkflowModel(template);
-                }
+                this.setWorkflowModel(template);
 
                 if (template.get('attributeTemplates') || template.get('attributeInstanceTemplates')) {
                     this.addAttributes(template);
                 }
+
+            } else {
+                this.bindAttributesView();
+                this.setWorkflowModel();
             }
         },
 
