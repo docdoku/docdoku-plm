@@ -110,7 +110,7 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
         esIndexer.indexWorkspace(workspaceId);
     }
 
-    private void doWorkspaceDeletion(Workspace workspace){
+    private void doWorkspaceDeletion(Workspace workspace) throws Exception {
         Account admin = workspace.getAdmin();
         String workspaceId = workspace.getId();
         try {
@@ -119,6 +119,12 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
             LOGGER.log(Level.SEVERE,"IOException while deleting the workspace : "+workspaceId,e);
         } catch (StorageException e) {
             LOGGER.log(Level.SEVERE,"StorageException while deleting the workspace : "+workspaceId,e);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE,"Exception while deleting the workspace : "+workspaceId,e);
+            //TODO : create own exception
+            mailerManager.sendWorkspaceDeletionErrorNotification(admin, workspaceId);
+            throw new Exception("Runtime exception while deleting the workspace : "+workspaceId);
+
         }
 
         mailerManager.sendWorkspaceDeletionNotification(admin,workspaceId);

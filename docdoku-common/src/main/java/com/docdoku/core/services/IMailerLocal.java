@@ -52,4 +52,6 @@ public interface IMailerLocal {
     void sendIndexerResult(Account account, String workspaceId, boolean hasSuccess, String pMessage);
 
     void sendCredential(Account account);
+
+    void sendWorkspaceDeletionErrorNotification(Account admin, String workspaceId);
 }

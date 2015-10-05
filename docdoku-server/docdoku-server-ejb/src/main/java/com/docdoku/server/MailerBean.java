@@ -225,6 +225,26 @@ public class MailerBean implements IMailerLocal {
 
     @Asynchronous
     @Override
+    public void sendWorkspaceDeletionErrorNotification(Account admin, String workspaceId) {
+        try {
+            Locale locale = new Locale(admin.getLanguage());
+            sendMessage(new InternetAddress(admin.getEmail(),admin.getName()),
+                    getWorkspaceDeletionSubject(locale),
+                    getWorkspaceDeletionErrorMessage(workspaceId, locale));
+
+        } catch (UnsupportedEncodingException pUEEx) {
+            String message ="Mail address format error. \n\t"+pUEEx.getMessage();
+            LOGGER.warning(message);
+            LOGGER.log(Level.FINER, message, pUEEx);
+        } catch (MessagingException pMEx) {
+            String message = "Message format error. \n\t"+ pMEx.getMessage();
+            LOGGER.severe(message);
+            LOGGER.log(Level.FINER, message, pMEx);
+        }
+    }
+
+    @Asynchronous
+    @Override
     public void sendPartRevisionWorkflowRelaunchedNotification(PartRevision partRevision) {
         Workspace workspace = partRevision.getPartMaster().getWorkspace();
         Account admin = workspace.getAdmin();
@@ -358,6 +378,13 @@ public class MailerBean implements IMailerLocal {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return MessageFormat.format(bundle.getString("WorkspaceDeletion_text"), args);
     }
+
+    private String getWorkspaceDeletionErrorMessage(String workspaceId, Locale locale) {
+        Object[] args = {workspaceId};
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale);
+        return MessageFormat.format(bundle.getString("WorkspaceDeletionError_text"), args);
+    }
+
 
     private String getApprovalRequiredMessage(Task pTask, PartRevision partRevision, Locale pLocale) {
         String voteURL = codebase + "/action/vote";
