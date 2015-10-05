@@ -93,7 +93,7 @@ require.config({
         backbone: {deps: ['underscore', 'jquery'],exports: 'Backbone'},
         bootstrapCombobox:{deps:["jquery"],exports:"jQuery"},
         bootstrapSwitch:{deps:['jquery'],exports:'jQuery'},
-        bootstrapDatepicker: {deps: ['jquery'], exports: 'jQuery'},
+        bootstrapDatepicker: {deps: ['jquery','bootstrap'], exports: 'jQuery'},
         pointerlockcontrols:{deps:['threecore'],exports:'THREE'},
         trackballcontrols:{deps:['threecore'],exports:'THREE'},
         orbitcontrols:{deps:['threecore'],exports:'THREE'},
@@ -152,7 +152,7 @@ require.config({
         stats:'dmu/utils/Stats',
         typeface:'../lib/helvetiker_regular.typeface',
         selectize: '../../bower_components/selectize/dist/js/standalone/selectize',
-        date_picker_lang: '../utils/bootstrap-datepicker-langs'
+        date_picker_lang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr'
     },
 
     deps:[
@@ -184,7 +184,8 @@ require.config({
         'tween',
         'inputValidity',
         'typeface',
-        'selectize'
+        'selectize',
+        'date_picker_lang'
     ],
     config: {
         i18n: {

@@ -35,7 +35,7 @@ require.config({
         backbone: {deps: ['underscore', 'jquery'],exports: 'Backbone'},
         bootstrapCombobox:{deps:["jquery"],exports:"jQuery"},
         bootstrapSwitch:{deps:['jquery'],exports:'jQuery'},
-        bootstrapDatepicker: {deps: ['jquery'], exports: 'jQuery'},
+        bootstrapDatepicker: {deps: ['jquery','bootstrap'], exports: 'jQuery'},
         unmask: { deps: ['jquery'], exports: 'jQuery' },
         unmaskConfig: { deps: ['unmask'], exports: 'jQuery' },
         inputValidity: { deps: ['jquery'], exports: 'jQuery' },
@@ -76,7 +76,7 @@ require.config({
         async: '../../bower_components/async/lib/async',
         'query-builder': '../../bower_components/jQuery-QueryBuilder/dist/js/query-builder.standalone',
         selectize: '../../bower_components/selectize/dist/js/standalone/selectize',
-        date_picker_lang: '../utils/bootstrap-datepicker-langs'
+        date_picker_lang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr'
     },
 
     deps:[
@@ -96,7 +96,8 @@ require.config({
         'unmaskConfig',
         'inputValidity',
         'query-builder',
-        'selectize'
+        'selectize',
+        'date_picker_lang'
     ],
     config: {
         i18n: {
@@ -112,11 +113,10 @@ require.config({
     }
 });
 
-require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/product-management', 'date_picker_lang'],
-    function (ContextResolver,  commonStrings, productManagementStrings,datePickerLang) {
+require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/product-management'],
+    function (ContextResolver,  commonStrings, productManagementStrings) {
 	    'use strict';
         App.config.i18n = _.extend(commonStrings,productManagementStrings);
-        datePickerLang.init();
         ContextResolver.resolveUser(function(){
             require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
                 App.appView = new AppView().render();
