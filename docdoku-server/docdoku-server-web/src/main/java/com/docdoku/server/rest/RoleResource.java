@@ -79,6 +79,7 @@ public class RoleResource {
             rolesDTO[i] = mapRoleToDTO(roles[i]);
         }
 
+        // TODO: return Response instead of RoleDTO[]
         return rolesDTO;
     }
 
@@ -95,6 +96,7 @@ public class RoleResource {
             rolesDTO[i] = mapRoleToDTO(roles[i]);
         }
 
+        // TODO: return Response instead of RoleDTO[]
         return rolesDTO;
     }
 
@@ -114,7 +116,7 @@ public class RoleResource {
         Role roleCreated = roleService.createRole(roleDTO.getName(),roleDTO.getWorkspaceId(),userLogin);
         RoleDTO roleCreatedDTO = mapRoleToDTO(roleCreated);
 
-        try{
+        try {
             return Response.created(URI.create(URLEncoder.encode(roleCreatedDTO.getName(), "UTF-8"))).entity(roleCreatedDTO).build();
         } catch (UnsupportedEncodingException ex) {
             LOGGER.log(Level.WARNING,null,ex);
