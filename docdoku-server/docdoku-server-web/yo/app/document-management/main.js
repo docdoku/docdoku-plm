@@ -38,7 +38,7 @@ require.config({
 	    unmask: { deps: ['jquery'], exports: 'jQuery' },
 	    unmaskConfig: { deps: ['unmask','jquery'], exports: 'jQuery' },
         bootstrapSwitch: { deps: ['jquery'], exports: 'jQuery'},
-        bootstrapDatepicker: {deps: ['jquery'], exports: 'jQuery'},
+        bootstrapDatepicker: {deps: ['jquery','bootstrap'], exports: 'jQuery'},
         backbone: { deps: ['underscore', 'jquery'], exports: 'Backbone'},
         date_picker_lang: { deps: ['bootstrapDatepicker'], exports: 'jQuery'}
     },
@@ -73,7 +73,7 @@ require.config({
         utilsprototype: '../utils/utils.prototype',
         userPopover: 'modules/user-popover-module/app',
         async: '../../bower_components/async/lib/async',
-        date_picker_lang: '../utils/bootstrap-datepicker-langs'
+        date_picker_lang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr'
     },
 
     deps: [
@@ -91,7 +91,7 @@ require.config({
         'datatablesOsortExt',
         'unmaskConfig',
         'utilsprototype',
-        'bootstrapDatepicker'
+        'date_picker_lang'
     ],
     config: {
         i18n: {
@@ -107,12 +107,11 @@ require.config({
     }
 });
 
-require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/document-management', 'date_picker_lang'],
-function (ContextResolver,  commonStrings, documentManagementStrings, datePickerLang) {
+require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/document-management'],
+function (ContextResolver,  commonStrings, documentManagementStrings) {
     'use strict';
 
     App.config.i18n = _.extend(commonStrings,documentManagementStrings);
-    datePickerLang.init();
 
     ContextResolver.resolveUser(function(){
         require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules,date_picker_lang){
