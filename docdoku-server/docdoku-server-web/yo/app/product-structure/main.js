@@ -201,11 +201,10 @@ require.config({
     }
 });
 
-require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/product-structure', 'date_picker_lang'],
-    function (ContextResolver,  commonStrings, productStructureStrings, datePickerLang) {
+require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/product-structure'],
+    function (ContextResolver,  commonStrings, productStructureStrings) {
 	    'use strict';
         App.config.i18n = _.extend(commonStrings,productStructureStrings);
-        datePickerLang.init();
         ContextResolver.resolveUser(function(){
             require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
                 App.appView = new AppView().render();
