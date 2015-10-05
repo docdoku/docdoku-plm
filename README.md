@@ -1,4 +1,4 @@
-<h1> Welcome to the DocDoku PLM project</h1><img src = "http://www.docdokuplm.com/wp-content/themes/docdokuplm/images/logo-DocDokuPLM.png" />
+<h1> Welcome to the DocDoku PLM project</h1><img src = "http://www.docdokuplm.com/wp-content/themes/docdokuplm2/library/images/plm_logo2.png" />
 
 ## What is DocDoku PLM?
 
