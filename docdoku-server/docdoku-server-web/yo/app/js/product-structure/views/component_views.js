@@ -108,6 +108,11 @@ define([
         fetchAll: function () {
             this.$el.empty();
             this.collection.fetch({reset: true});
+        },
+
+        setChecked: function(status) {
+            _.invoke(this.componentViews,'setChecked',false);
+
         }
 
     });
@@ -183,6 +188,7 @@ define([
             this.$el.html(nodeTemplate(data));
 
             this.input = this.$('input.load-3D').first();
+            this.checkbox = this.$('.selectable-part-checkbox');
 
 	        //If the ComponentViews is checked
 	        if(this.options.checkedAtInit){
@@ -221,6 +227,10 @@ define([
 
         openPathDataModal : function () {
             Backbone.Events.trigger('path-data:clicked',this.model);
+        },
+
+        setChecked: function(status) {
+            this.checkbox.prop('checked',status).change();
         }
     });
 
@@ -304,6 +314,7 @@ define([
             this.$el.html(nodeTemplate(data));
 
             this.input = this.$('input.load-3D').first();
+            this.checkbox = this.$('.selectable-part-checkbox');
 
 	        //If the ComponentViews is checked
 	        if(this.options.checkedAtInit && (!App.collaborativeView || !App.collaborativeView.roomKey)){
@@ -399,7 +410,11 @@ define([
 			    }).show();
 		    });
 
-	    }
+	    },
+
+        setChecked: function(status) {
+            this.checkbox.prop('checked',status).change();
+        }
     });
 
     return ComponentViews;

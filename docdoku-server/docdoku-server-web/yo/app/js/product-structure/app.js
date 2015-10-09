@@ -187,10 +187,12 @@ define([
             Backbone.Events.on('part:saved', this.refreshTree, this);
             Backbone.Events.on('path:selected', this.updateDisplayPathToPathLinkButton, this);
             Backbone.Events.on('path-data:clicked', this.onPathDataClicked, this);
+            this.listenTo(App.bomView,'checkbox:change',App.partsTreeView.uncheckAll);
         },
 
         updateDisplayPathToPathLinkButton: function(pathSelected){
 
+            App.bomView.uncheckAll(pathSelected);
             this.pathSelected = pathSelected;
 
             if (pathSelected.length === 2) {

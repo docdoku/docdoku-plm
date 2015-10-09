@@ -32,7 +32,7 @@ define([
         },
 
         onHeaderSelectionChanged: function (e) {
-            _.invoke(this.itemViews, 'setSelectionState', e.target.checked);
+            this.setCheckAll(e.target.checked);
             this.notifySelectionChanged();
         },
 
@@ -69,6 +69,10 @@ define([
             parts.each(this.addBomItem, this);
             this.notifySelectionChanged();
             this.dataTable();
+        },
+
+        setCheckAll: function(status) {
+            _.invoke(this.itemViews, 'setSelectionState', status);
         },
 
         checkedViews: function () {

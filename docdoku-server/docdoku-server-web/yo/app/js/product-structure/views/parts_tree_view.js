@@ -19,6 +19,14 @@ define(['backbone', 'models/component_module', 'views/component_views'
 
         checkedPath : [],
 
+        initialize: function () {
+            _.bindAll(this);
+        },
+
+        uncheckAll: function() {
+            this.componentViews.setChecked(false);
+        },
+
         onCheckboxSelected:function(e, checked, model){
             if(checked){
                 this.checkedPath.push(model);
