@@ -2379,6 +2379,110 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
+    @Override
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    public CascadeResult cascadeCheckout(ConfigurationItemKey configurationItemKey, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
+
+        CascadeResult cascadeResult = new CascadeResult();
+        List<PartRevision> partRevisions = getPartRevisions(configurationItemKey,path,user);
+        for(PartRevision pr : partRevisions) {
+            try {
+                checkOutPart(pr.getKey());
+                cascadeResult.incEffectiveAttemps();
+            } catch (PartRevisionNotFoundException | AccessRightException  | NotAllowedException | FileAlreadyExistsException | CreationException e) {
+                cascadeResult.incFailedAttemps();
+                LOGGER.log(Level.SEVERE,null,e);
+            }
+        }
+        return cascadeResult;
+    }
+
+    @Override
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    public CascadeResult cascadeUndocheckout(ConfigurationItemKey configurationItemKey, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
+
+        CascadeResult cascadeResult = new CascadeResult();
+        List<PartRevision> partRevisions = getPartRevisions(configurationItemKey,path,user);
+        for(PartRevision pr : partRevisions) {
+            try {
+                undoCheckOutPart(pr.getKey());
+                cascadeResult.incEffectiveAttemps();
+            } catch (PartRevisionNotFoundException | AccessRightException  | NotAllowedException  e) {
+                cascadeResult.incFailedAttemps();
+                LOGGER.log(Level.SEVERE,null,e);
+            }
+        }
+        return cascadeResult;
+    }
+
+    @Override
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    public CascadeResult cascadeCheckin(ConfigurationItemKey configurationItemKey, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
+
+        CascadeResult cascadeResult = new CascadeResult();
+        List<PartRevision> partRevisions = getPartRevisions(configurationItemKey,path,user);
+        for(PartRevision pr : partRevisions) {
+            try {
+                checkInPart(pr.getKey());
+                cascadeResult.incEffectiveAttemps();;
+            } catch (PartRevisionNotFoundException | AccessRightException  | NotAllowedException | ESServerException e) {
+                cascadeResult.incFailedAttemps();
+                LOGGER.log(Level.SEVERE,null,e);
+            }
+        }
+        return cascadeResult;
+    }
+
+    private List<PartRevision> getPartRevisions(ConfigurationItemKey configurationItemKey, String path ,User user) throws EntityConstraintException, PartMasterNotFoundException, NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+        List<PartRevision> partRevisions = new ArrayList<>();
+        PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em,user,new WIPPSFilter(user)) {
+            @Override
+            public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
+
+            }
+
+            @Override
+            public void onUnresolvedVersion(PartMaster partMaster) throws NotAllowedException {
+
+            }
+
+            @Override
+            public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) throws NotAllowedException {
+
+            }
+
+            @Override
+            public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
+
+            }
+
+            @Override
+            public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+
+            }
+
+            @Override
+            public void onOptionalPath(List<PartLink> path, List<PartIteration> partIterations) {
+
+            }
+
+            @Override
+            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+
+                for (PartMaster pm : parts) {
+                    if(!partRevisions.contains(pm.getLastRevision()))
+                        partRevisions.add(pm.getLastRevision());
+                }
+            }
+        };
+
+        psFilterVisitor.visit(decodePath(configurationItemKey,path),null);
+        return partRevisions;
+    }
+
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public Component filterProductStructureOnLinkType(ConfigurationItemKey ciKey, PSFilter filter, String configSpecType, String path, String linkType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException {

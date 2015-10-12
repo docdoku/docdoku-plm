@@ -21,6 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.User;
+import com.docdoku.core.configuration.CascadeResult;
 import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.configuration.PathChoice;
 import com.docdoku.core.configuration.ProductBaseline;
@@ -581,6 +582,43 @@ public class ProductResource {
         return Response.ok(new GenericEntity<List<DocumentIterationLinkDTO>>((List<DocumentIterationLinkDTO>) dtos) {
         }).build();
     }
+
+    @PUT
+    @Path("{ciId}/cascade-checkout")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response cascadeCheckout(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException {
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+        ConfigurationItem ci = productService.getConfigurationItem(ciKey);
+
+        CascadeResult cascadeResult = productService.cascadeCheckout(ciKey,path);
+
+        return Response.ok(cascadeResult).build();
+    }
+
+    @PUT
+    @Path("{ciId}/cascade-checkin")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response cascadeCheckin(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException {
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+        ConfigurationItem ci = productService.getConfigurationItem(ciKey);
+
+        CascadeResult cascadeResult = productService.cascadeCheckin(ciKey,path);
+
+        return Response.ok(cascadeResult).build();
+    }
+
+    @PUT
+    @Path("{ciId}/cascade-undocheckout")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response cascadeUndocheckout(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException {
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+        ConfigurationItem ci = productService.getConfigurationItem(ciKey);
+
+        CascadeResult cascadeResult = productService.cascadeUndocheckout(ciKey,path);
+
+        return Response.ok(cascadeResult).build();
+    }
+
 
     /**
      * Because some AS (like Glassfish) forbids the use of CacheControl
