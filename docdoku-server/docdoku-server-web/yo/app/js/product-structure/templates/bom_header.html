@@ -9,34 +9,39 @@
         <span class="icon"></span>
     </button>
 </span>
+<span class="cascade-checkout-group">
+<span class="btn-group">
+    <button type="button" class="btn btn-default checkout"><span class="icon"></span></button>
+  <button type="button" class="btn btn-default dropdown-toggle cascade-button-checkout" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span class="caret"></span>
+      <span class="sr-only"></span>
+  </button>
+     <ul class="dropdown-menu">
+         <li class="cascade"><a class="checkout">{{i18n.CASCADE}}</a></li>
+     </ul>
+</span>
 
-<span class="btn-group cascade-checkout-group">
-    <button type="button" class="btn btn-default dropdown-toggle checkout" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span class="icon"></span> <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu">
-        <li class="selected"><a class="checkout">{{i18n.SELECTED}}</a></li>
-        <li class="cascade"><a class="checkout">{{i18n.CASCADE}}</a></li>
-    </ul>
+<span class="btn-group">
+    <button type="button" class="btn btn-default undocheckout"><span class="icon"></span></button>
+  <button type="button" class="btn btn-default dropdown-toggle cascade-button-undocheckout" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span class="caret"></span>
+      <span class="sr-only"></span>
+  </button>
+     <ul class="dropdown-menu">
+         <li class="cascade"><a class="undocheckout">{{i18n.CASCADE}}</a></li>
+     </ul>
 </span>
-<span class="btn-group cascade-checkout-group">
-    <button type="button" class="btn btn-default dropdown-toggle undocheckout" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span class="icon"></span> <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu">
-        <li class="selected"><a class="undocheckout">{{i18n.SELECTED}}</a></li>
-        <li class="cascade"><a class="undocheckout">{{i18n.CASCADE}}</a></li>
-    </ul>
+<span class="btn-group">
+    <button type="button" class="btn btn-default checkin"><span class="icon"></span></button>
+  <button type="button" class="btn btn-default dropdown-toggle cascade-button-checkin" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span class="caret"></span>
+      <span class="sr-only"></span>
+  </button>
+     <ul class="dropdown-menu">
+         <li class="cascade"><a class="checkin">{{i18n.CASCADE}}</a></li>
+     </ul>
 </span>
-<span class="btn-group cascade-checkout-group">
-    <button type="button" class="btn btn-default dropdown-toggle checkin" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span class="icon"></span><span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu">
-        <li class="selected"><a class="checkin">{{i18n.SELECTED}}</a></li>
-        <li class="cascade"><a class="checkin">{{i18n.CASCADE}}</a></li>
-    </ul>
-</span>
+    </span>
 <button class="btn edit-acl" title="{{i18n.ACL}}">
     <span class="icon"></span>
 </button>

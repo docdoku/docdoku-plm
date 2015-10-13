@@ -111,8 +111,7 @@ define([
         },
 
         setChecked: function(status) {
-            _.invoke(this.componentViews,'setChecked',false);
-
+            this.$el.find('.selectable-part-checkbox').prop('checked',status);
         }
 
     });
@@ -227,10 +226,6 @@ define([
 
         openPathDataModal : function () {
             Backbone.Events.trigger('path-data:clicked',this.model);
-        },
-
-        setChecked: function(status) {
-            this.checkbox.prop('checked',status).change();
         }
     });
 
@@ -410,11 +405,7 @@ define([
 			    }).show();
 		    });
 
-	    },
-
-        setChecked: function(status) {
-            this.checkbox.prop('checked',status).change();
-        }
+	    }
     });
 
     return ComponentViews;

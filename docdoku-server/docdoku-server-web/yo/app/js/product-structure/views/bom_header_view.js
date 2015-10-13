@@ -11,9 +11,9 @@ define([
             'click .checkout-group .checkout': 'actionCheckout',
             'click .checkout-group .undocheckout': 'actionUndocheckout',
             'click .checkout-group .checkin': 'actionCheckin',
-            'click .cascade-checkout-group .selected a.checkout': 'actionPBSCheckout',
-            'click .cascade-checkout-group .selected a.undocheckout': 'actionPBSUndocheckout',
-            'click .cascade-checkout-group .selected a.checkin': 'actioPBSnCheckin',
+            'click .cascade-checkout-group button.checkout': 'actionPBSCheckout',
+            'click .cascade-checkout-group button.undocheckout': 'actionPBSUndocheckout',
+            'click .cascade-checkout-group button.checkin': 'actioPBSnCheckin',
             'click .cascade-checkout-group .cascade a.checkout': 'actionCascadeCheckout',
             'click .cascade-checkout-group .cascade a.undocheckout': 'actionCascadeUndocheckout',
             'click .cascade-checkout-group .cascade a.checkin': 'actionCascadeCheckin',
@@ -36,13 +36,23 @@ define([
             this.trigger('actionUpdateACL');
         },
 
+        cascadeSuccess: function(params) {
+            App.partsTreeView.refreshAll();
+            this.trigger('alert',{type: 'info', message: this.formatResponse(params)});
+        },
+
+        formatResponse: function(params) {
+            //TODO: might be better to format the response on the server
+            return App.config.i18n.CASCADE_RESULT + ' : '+params.succeedAttempts + ' / ' + (params.failedAttempts + params.succeedAttempts) + ' ' + App.config.i18n.DONE;
+        },
+
         onSuccess: function() {
             Backbone.Events.trigger('part:saved');
         },
 
         actionPBSCheckout: function () {
             var ajaxes = [];
-            _(App.partsTreeView.componentViews.componentViews).each(function (component) {
+            _(App.partsTreeView.checkedPath).each(function (component) {
                 ajaxes.push(component.checkout());
             });
             $.when.apply($, ajaxes).then(this.onSuccess);
@@ -50,7 +60,7 @@ define([
 
         actionPBSUndocheckout: function () {
             var ajaxes = [];
-            _(App.partsTreeView.componentViews.componentViews).each(function (component) {
+            _(App.partsTreeView.checkedPath).each(function (component) {
                 ajaxes.push(component.undocheckout());
             });
             $.when.apply($, ajaxes).then(this.onSuccess);
@@ -58,22 +68,23 @@ define([
 
         actioPBSnCheckin: function () {
             var ajaxes = [];
-            _(App.partsTreeView.componentViews.componentViews).each(function (component) {
+            _(App.partsTreeView.checkedPath).each(function (component) {
                 ajaxes.push(component.checkin());
             });
             $.when.apply($, ajaxes).then(this.onSuccess);
         },
 
         actionCascadeCheckout: function() {
-
+            App.partsTreeView.checkedPath[0].cascadeCheckout(this.cascadeSuccess);
         },
 
         actionCascadeUndocheckout: function() {
+            App.partsTreeView.checkedPath[0].cascadeUndoCheckout(this.cascadeSuccess);
 
         },
 
         actionCascadeCheckin: function() {
-
+            App.partsTreeView.checkedPath[0].cascadeCheckin(this.cascadeSuccess);
         },
 
         initialize: function () {
@@ -87,9 +98,12 @@ define([
             this.undoCheckoutButton = this.$('.checkout-group .undocheckout');
             this.checkinButton = this.$('.checkout-group .checkin');
             this.cascadeCheckoutGroup = this.$('.cascade-checkout-group');
-            this.cascadeCheckout = this.$('.cascade-checkout-group .checkout');
-            this.cascadeUndocheckout = this.$('.cascade-checkout-group .undocheckout');
-            this.cascadeCheckin = this.$('.cascade-checkout-group .checkin');
+            this.cascadeCheckout = this.$('.cascade-checkout-group .cascade-button-checkout');
+            this.cascadeUndocheckout = this.$('.cascade-checkout-group .cascade-button-undocheckout');
+            this.cascadeCheckin = this.$('.cascade-checkout-group .cascade-button-checkin');
+            this.pbsCheckout = this.$('.cascade-checkout-group .checkout');
+            this.pbsUndocheckout = this.$('.cascade-checkout-group .undocheckout');
+            this.pbsCheckin = this.$('.cascade-checkout-group .checkin');
             this.aclButton = this.$('.edit-acl');
             return this;
         },
@@ -114,19 +128,27 @@ define([
 
         onOnePathSelected: function(component) {
             this.cascadeCheckoutGroup.show();
-            this.cascadeCheckoutGroup.find('.cascade').removeClass('disabled');
-            this.updatePathActionsButton(this.getPermission(component));
+            this.updatePathActionsButton(this.getPermission(component),true);
         },
 
         onSeveralPathSelected: function(list) {
             this.cascadeCheckoutGroup.show();
-            this.cascadeCheckoutGroup.find('.cascade').addClass('disabled');
+            var perm = this.getPermissionFromSeveral(list);
+            if(perm) {
+                this.updatePathActionsButton(perm,false);
+            } else {
+                this.cascadeCheckoutGroup.hide();
+            }
         },
 
-        updatePathActionsButton: function (permission) {
-            this.cascadeCheckout.prop('disabled', !permission.canCheckout);
-            this.cascadeUndocheckout.prop('disabled', !permission.canUndoAndCheckin);
-            this.cascadeCheckin.prop('disabled', !permission.canUndoAndCheckin);
+        updatePathActionsButton: function (permission,dropdownStatus) {
+            debugger;
+            this.pbsCheckout.prop('disabled', !permission.canCheckout);
+            this.cascadeCheckout.prop('disabled', (!permission.canCheckout || !dropdownStatus));
+            this.pbsUndocheckout.prop('disabled', !permission.canUndoAndCheckin);
+            this.cascadeUndocheckout.prop('disabled', (!permission.canUndoAndCheckin || !dropdownStatus));
+            this.pbsCheckin.prop('disabled', !permission.canUndoAndCheckin);
+            this.cascadeCheckin.prop('disabled', (!permission.canUndoAndCheckin || !dropdownStatus));
         },
 
         onSelectionChange: function (checkedViews) {
@@ -190,18 +212,23 @@ define([
             }
         },
 
-        onSeveralComponentsSelected: function (listComponent) {
+        getPermissionFromSeveral: function(list) {
             var noneReleased = true;
-            var permission = this.getPermission(listComponent[0].model);
+            var permission = this.getPermission(list[0]);
             var samePermission = true;
             var that = this;
-            _.each(listComponent, function (component) {
-                var permComponent = that.getPermission(component.model);
+            _.each(list, function (component) {
+                var permComponent = that.getPermission(component);
                 samePermission = samePermission && (permission.canCheckout === permComponent.canCheckout &&
-                permComponent.canUndoAndCheckin === permComponent.canUndoAndCheckin);
-                noneReleased = noneReleased && !component.model.isReleased();
+                    permComponent.canUndoAndCheckin === permComponent.canUndoAndCheckin);
+                noneReleased = noneReleased && !component.isReleased();
             });
-            if (noneReleased && samePermission) {
+            return (noneReleased && samePermission) ? permission : null;
+        },
+
+        onSeveralComponentsSelected: function (listComponent) {
+            var permission = this.getPermissionFromSeveral(_.pluck(listComponent,'model'));
+            if (permission !== null) {
                 this.checkoutGroup.show();
                 this.updateActionsButton(permission);
             } else {

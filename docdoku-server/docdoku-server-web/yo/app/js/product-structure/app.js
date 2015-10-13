@@ -25,8 +25,9 @@ define([
     'text!templates/content.html',
     'common-objects/models/part',
     'views/path_data_modal',
-    'views/path_to_path_link_modal'
-], function (Backbone, Mustache, SearchView, PartsTreeView, BomView, CollaborativeView, PartMetadataView, PartInstanceView, ExportSceneModalView, ControlNavigationView, ControlModesView, ControlTransformView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlClippingView, ControlExplodeView, ControlMeasureView, BaselineSelectView, SceneManager, CollaborativeController, InstancesManager, template, Part, PathDataModalView, PathToPathLinkModalView) {
+    'views/path_to_path_link_modal',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, SearchView, PartsTreeView, BomView, CollaborativeView, PartMetadataView, PartInstanceView, ExportSceneModalView, ControlNavigationView, ControlModesView, ControlTransformView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlClippingView, ControlExplodeView, ControlMeasureView, BaselineSelectView, SceneManager, CollaborativeController, InstancesManager, template, Part, PathDataModalView, PathToPathLinkModalView, AlertView) {
 
     'use strict';
 
@@ -188,6 +189,11 @@ define([
             Backbone.Events.on('path:selected', this.updateDisplayPathToPathLinkButton, this);
             Backbone.Events.on('path-data:clicked', this.onPathDataClicked, this);
             this.listenTo(App.bomView,'checkbox:change',App.partsTreeView.uncheckAll);
+            this.listenTo(App.bomView.bomHeaderView,'alert',this.alert);
+        },
+
+        alert: function(params) {
+            this.$('.notifications').first().append(new AlertView(params).render().$el);
         },
 
         updateDisplayPathToPathLinkButton: function(pathSelected){

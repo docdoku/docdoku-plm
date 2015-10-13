@@ -194,22 +194,22 @@ define(['backbone', 'common-objects/utils/date'],
             },
 
             getInstancesUrl: function () {
-                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/instances?configSpec=' + App.config.productConfigSpec + '&path=' + this.getEncodedPath();
+                return this.getProductUrl() + '/instances?configSpec=' + App.config.productConfigSpec + '&path=' + this.getEncodedPath();
             },
 
             getEncodedPath : function(){
                 return this.getPath();
             },
 
+            getProductUrl: function() {
+                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId;
+            },
             getUrlForBom: function () {
 
                 var url;
 
                 if (this.isAssembly()) {
-                    url = App.config.contextPath +
-                        '/api/workspaces/' +
-                        App.config.workspaceId +
-                        '/products/' + App.config.productId +
+                    url = this.getProductUrl() +
                         '/bom?configSpec=' + App.config.productConfigSpec +
                         '&path=' + this.getEncodedPath();
 
@@ -226,6 +226,63 @@ define(['backbone', 'common-objects/utils/date'],
 
             getRootUrlForBom: function () {
                 return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getNumber() + '-' + this.getVersion();
+            },
+
+            cascadeCheckin: function(callback) {
+                var that = this;
+                return $.ajax({
+                    context: this,
+                    type: 'PUT',
+                    url: that.getProductUrl() + '/cascade-checkin?path='+this.getEncodedPath() + '&configSpec='+App.config.productConfigSpec,
+                    success:callback
+                });
+            },
+
+            cascadeCheckout: function(callback) {
+                var that = this;
+                return $.ajax({
+                    context: this,
+                    type: 'PUT',
+                    url: that.getProductUrl() + '/cascade-checkout?path='+this.getEncodedPath() + '&configSpec='+App.config.productConfigSpec,
+                    success:callback
+                });
+            },
+
+            cascadeUndoCheckout: function(callback) {
+                var that = this;
+                return $.ajax({
+                    context: this,
+                    type: 'PUT',
+                    url: that.getProductUrl() + '/cascade-undocheckout?path='+this.getEncodedPath() + '&configSpec='+App.config.productConfigSpec,
+                    success:callback
+                });
+            },
+
+            checkin: function() {
+                var that = this;
+                return $.ajax({
+                    context: this,
+                    type: 'PUT',
+                    url: that.getRootUrlForBom() + '/checkin'
+                });
+            },
+
+            checkout: function() {
+                var that = this;
+                return $.ajax({
+                    context: this,
+                    type: 'PUT',
+                    url: that.getRootUrlForBom() + '/checkout'
+                });
+            },
+
+            undocheckout: function() {
+                var that = this;
+                return $.ajax({
+                    context: this,
+                    type: 'PUT',
+                    url: that.getRootUrlForBom() + '/undocheckout'
+                });
             }
 
         });

@@ -25,6 +25,8 @@ define(['backbone', 'models/component_module', 'views/component_views'
 
         uncheckAll: function() {
             this.componentViews.setChecked(false);
+            this.checkedPath.length = 0;
+            Backbone.Events.trigger('path:selected', this.checkedPath);
         },
 
         onCheckboxSelected:function(e, checked, model){
