@@ -109,16 +109,20 @@ define([
         },
 
         onPathChange: function(list) {
-            switch (list.length) {
-                case 0:
-                    this.onNoPathSelected();
-                    break;
-                case 1:
-                    this.onOnePathSelected(list[0]);
-                    break;
-                default:
-                    this.onSeveralPathSelected(list);
-                    break;
+            if(App.config.productConfigSpec === 'wip') {
+                switch (list.length) {
+                    case 0:
+                        this.onNoPathSelected();
+                        break;
+                    case 1:
+                        this.onOnePathSelected(list[0]);
+                        break;
+                    default:
+                        this.onSeveralPathSelected(list);
+                        break;
+                }
+            } else {
+                this.cascadeCheckoutGroup.hide();
             }
 
         },
@@ -142,7 +146,6 @@ define([
         },
 
         updatePathActionsButton: function (permission,dropdownStatus) {
-            debugger;
             this.pbsCheckout.prop('disabled', !permission.canCheckout);
             this.cascadeCheckout.prop('disabled', (!permission.canCheckout || !dropdownStatus));
             this.pbsUndocheckout.prop('disabled', !permission.canUndoAndCheckin);
