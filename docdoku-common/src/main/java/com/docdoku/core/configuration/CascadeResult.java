@@ -25,28 +25,28 @@ import java.io.Serializable;
 */
 public class CascadeResult implements Serializable{
 
-    private int effectiveAttemps;
+    private int succeedAttempts;
     private int failedAttempts;
 
     public CascadeResult() {
-        this.effectiveAttemps = 0;
+        this.succeedAttempts = 0;
         this.failedAttempts = 0;
     }
 
-    public void incEffectiveAttemps() {
-        this.effectiveAttemps++;
+    public void incSucceedAttempts() {
+        this.succeedAttempts++;
     }
 
     public void incFailedAttemps() {
-        this.effectiveAttemps++;
+        this.failedAttempts++;
     }
 
-    public int getEffectiveAttemps() {
-        return effectiveAttemps;
+    public int getSucceedAttempts() {
+        return succeedAttempts;
     }
 
-    public void setEffectiveAttemps(int effectiveAttemps) {
-        this.effectiveAttemps = effectiveAttemps;
+    public void setSucceedAttempts(int succeedAttempts) {
+        this.succeedAttempts = succeedAttempts;
     }
 
     public int getFailedAttempts() {

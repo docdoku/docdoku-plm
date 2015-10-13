@@ -2385,11 +2385,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
 
         CascadeResult cascadeResult = new CascadeResult();
-        List<PartRevision> partRevisions = getPartRevisions(configurationItemKey,path,user);
+        List<PartRevision> partRevisions = getPartRevisionsFromPath(configurationItemKey,path,user);
         for(PartRevision pr : partRevisions) {
             try {
                 checkOutPart(pr.getKey());
-                cascadeResult.incEffectiveAttemps();
+                cascadeResult.incSucceedAttempts();
             } catch (PartRevisionNotFoundException | AccessRightException  | NotAllowedException | FileAlreadyExistsException | CreationException e) {
                 cascadeResult.incFailedAttemps();
                 LOGGER.log(Level.SEVERE,null,e);
@@ -2404,11 +2404,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
 
         CascadeResult cascadeResult = new CascadeResult();
-        List<PartRevision> partRevisions = getPartRevisions(configurationItemKey,path,user);
+        List<PartRevision> partRevisions = getPartRevisionsFromPath(configurationItemKey, path,user);
         for(PartRevision pr : partRevisions) {
             try {
                 undoCheckOutPart(pr.getKey());
-                cascadeResult.incEffectiveAttemps();
+                cascadeResult.incSucceedAttempts();
             } catch (PartRevisionNotFoundException | AccessRightException  | NotAllowedException  e) {
                 cascadeResult.incFailedAttemps();
                 LOGGER.log(Level.SEVERE,null,e);
@@ -2423,11 +2423,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
 
         CascadeResult cascadeResult = new CascadeResult();
-        List<PartRevision> partRevisions = getPartRevisions(configurationItemKey,path,user);
+        List<PartRevision> partRevisions = getPartRevisionsFromPath(configurationItemKey, path,user);
         for(PartRevision pr : partRevisions) {
             try {
                 checkInPart(pr.getKey());
-                cascadeResult.incEffectiveAttemps();;
+                cascadeResult.incSucceedAttempts();;
             } catch (PartRevisionNotFoundException | AccessRightException  | NotAllowedException | ESServerException e) {
                 cascadeResult.incFailedAttemps();
                 LOGGER.log(Level.SEVERE,null,e);
@@ -2436,7 +2436,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return cascadeResult;
     }
 
-    private List<PartRevision> getPartRevisions(ConfigurationItemKey configurationItemKey, String path ,User user) throws EntityConstraintException, PartMasterNotFoundException, NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+    private List<PartRevision> getPartRevisionsFromPath(ConfigurationItemKey configurationItemKey, String path ,User user) throws EntityConstraintException, PartMasterNotFoundException, NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
         List<PartRevision> partRevisions = new ArrayList<>();
         PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em,user,new WIPPSFilter(user)) {
             @Override
