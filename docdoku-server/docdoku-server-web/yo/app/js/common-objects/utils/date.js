@@ -97,6 +97,33 @@ define([
                     return false;
                 });
             });
+        },
+
+        lastDayOfMonthDate: function (anyDate) {
+            return moment.utc(anyDate).zone(offset).endOf('month');
+        },
+
+        lastDayOfMonthDatestring: function (anyDate, format) {
+            return this.lastDayOfMonthDate(anyDate).format(format);
+        },
+
+        monthDifference: function (d1, d2) {
+            var date1 = moment(d1);
+            var date2 = moment(d2);
+            var months = (date2.year() - date1.year()) * 12;
+            months -= date1.month();
+            months += date2.month();
+            return months <= 0 ? 0 : months;
+        },
+
+        changeDateWithMonthDifference: function (date, difference) {
+            return moment(date).add(difference, 'months').format();
+        },
+
+        nextDayDate: function (anyDate, format) {
+            var duration = moment.duration({'days' : 1});
+            var datestring =  moment.utc(anyDate).zone(offset).add(duration).format(format);
+            return new Date(datestring);
         }
     };
 });
