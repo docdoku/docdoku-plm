@@ -74,7 +74,6 @@ define({
 	COMPONENT_SELECTED: "Selected part",
 	CONFIG_SPEC: "Config spec",
     CONFIGURATION: "Configuration",
-    CONFIRM: "Confirm password",
 	CONNECTED: "Connected",
 	CONNECTING: "Connecting...",
 	CONTENT: "Content",
