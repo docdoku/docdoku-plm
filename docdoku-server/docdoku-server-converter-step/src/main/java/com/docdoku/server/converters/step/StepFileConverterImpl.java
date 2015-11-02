@@ -26,14 +26,11 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.InternalService;
-import com.docdoku.server.ServiceLocator;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
 import com.docdoku.server.converters.utils.ConverterUtils;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -88,7 +85,12 @@ public class StepFileConverterImpl implements CADConverter {
         String pythonInterpreter = CONF.getProperty("pythonInterpreter");
         String freeCadLibPath = CONF.getProperty("freeCadLibPath");
 
-        File scriptToOBJ = FileIO.urlToFile(StepFileConverterImpl.class.getResource(PYTHON_SCRIPT_TO_OBJ));
+        InputStream scriptStream = StepFileConverterImpl.class.getResourceAsStream(PYTHON_SCRIPT_TO_OBJ);
+        File scriptToOBJ = new File(tempDir,"python_script" + UUID.randomUUID() + ".py");
+        Files.copy(scriptStream, scriptToOBJ.toPath());
+        scriptStream.close();
+
+
 
         try (InputStream in = dataManager.getBinaryResourceInputStream(cadFile)) {
             Files.copy(in, tmpCadFile.toPath());
