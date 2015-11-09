@@ -231,7 +231,7 @@ define([
 
             var selectedParts = this.partListView.getSelectedParts();
             var promptView = new PromptView();
-            promptView.setPromptOptions(App.config.i18n.REVISION_NOTE, App.config.i18n.ITERATION_NOTE_PROMPT_LABEL, App.config.i18n.ITERATION_NOTE_PROMPT_OK, App.config.i18n.ITERATION_NOTE_PROMPT_CANCEL);
+            promptView.setPromptOptions(App.config.i18n.REVISION_NOTE, App.config.i18n.REVISION_NOTE_PROMPT_LABEL, App.config.i18n.REVISION_NOTE_PROMPT_OK, App.config.i18n.REVISION_NOTE_PROMPT_CANCEL);
             promptView.specifyInput('textarea');
             window.document.body.appendChild(promptView.render().el);
             promptView.openModal();
@@ -244,8 +244,15 @@ define([
 
                 var _this = this;
                 Async.each(selectedParts, function(part, callback) {
+                    if (iterationNote) {
+                        var revisionNote = part.getLastIteration().get('iterationNote');
+                        if (!revisionNote) {
+                            revisionNote = iterationNote;
+                        }
+                    }
+
                     part.getLastIteration().save({
-                        iterationNote: iterationNote
+                        iterationNote: revisionNote
                     }).success(function () {
                         part.checkin().success(callback);
                     });
