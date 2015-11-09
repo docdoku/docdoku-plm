@@ -231,9 +231,11 @@ define([
                 }
 
                 var queueCheckIn= async.queue(function(docView,callback){
-                    var revisionNote = docView.model.getLastIteration().get('revisionNote');
-                    if (iterationNote){
-                        revisionNote = iterationNote;
+                    if (iterationNote) {
+                        var revisionNote = docView.model.getLastIteration().get('revisionNote');
+                        if (!revisionNote) {
+                            revisionNote = iterationNote;
+                        }
                     }
 
                     docView.model.getLastIteration().save({
