@@ -8,19 +8,16 @@ define([
     'text!templates/product/product_content.html',
     'views/product/product_list',
     'views/product/product_creation_view',
-    'views/configuration/configuration_creation_view',
     'views/baselines/baseline_creation_view',
-    'text!common-objects/templates/buttons/new_configuration_button.html',
     'text!common-objects/templates/buttons/snap_button.html',
     'text!common-objects/templates/buttons/delete_button.html',
     'text!common-objects/templates/buttons/udf_button.html',
     'common-objects/views/alert',
     'common-objects/views/udf/user_defined_function'
-], function (Backbone, Mustache, ConfigurationItemCollection, PartCollection, ConfigurationItem, template, ProductListView, ProductCreationView, ConfigurationCreationView, BaselineCreationView, newConfigurationButton, snapButton, deleteButton, udfButton,  AlertView, UserDefinedFunctionView) {
+], function (Backbone, Mustache, ConfigurationItemCollection, PartCollection, ConfigurationItem, template, ProductListView, ProductCreationView, BaselineCreationView, snapButton, deleteButton, udfButton,  AlertView, UserDefinedFunctionView) {
     'use strict';
 	var ProductContentView = Backbone.View.extend({
         partials: {
-            newConfigurationButton: newConfigurationButton,
             snapButton: snapButton,
             deleteButton: deleteButton,
             udfButton: udfButton
@@ -28,7 +25,6 @@ define([
 
         events: {
             'click button.new-product': 'newProduct',
-            'click button.new-configuration': 'newConfiguration',
             'click button.delete': 'deleteProduct',
             'click button.udf': 'openUdfView',
             'click button.new-baseline': 'createBaseline'
@@ -64,7 +60,6 @@ define([
         },
         bindDomElements: function () {
             this.$notifications = this.$el.find('.notifications').first();
-            this.newConfigurationButton = this.$('.new-configuration');
             this.snapBaselineButton = this.$('.new-baseline');
             this.deleteButton = this.$('.delete');
         },
@@ -74,7 +69,6 @@ define([
             this.productListView.on('warning', this.onWarning);
             this.productListView.on('info', this.onInfo);
             this.productListView.on('delete-button:display', this.changeDeleteButtonDisplay);
-            this.productListView.on('create-configuration-button:display', this.changeNewConfigurationButtonDisplay);
             this.productListView.on('create-baseline-button:display', this.changeSnapBaselineButtonDisplay);
         },
 
@@ -83,16 +77,6 @@ define([
             window.document.body.appendChild(productCreationView.render().el);
             productCreationView.on('product:created',this.configurationItemCollection.push,this.configurationItemCollection);
             productCreationView.openModal();
-        },
-
-        newConfiguration: function () {
-            var configurationCreationView = new ConfigurationCreationView({
-                model:new ConfigurationItem()
-            });
-            window.document.body.appendChild(configurationCreationView.render().el);
-            configurationCreationView.on('warning', this.onWarning);
-            configurationCreationView.on('info', this.onInfo);
-            configurationCreationView.openModal();
         },
 
         createBaseline: function () {
@@ -114,10 +98,6 @@ define([
                 type: 'info',
                 message: message
             }).render().$el);
-        },
-
-        changeNewConfigurationButtonDisplay: function (state) {
-            this.newConfigurationButton.toggle(state);
         },
 
         changeSnapBaselineButtonDisplay: function (state) {
