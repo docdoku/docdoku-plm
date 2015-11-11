@@ -241,7 +241,8 @@ var urls = {
         homeUrl + 'services/productBaseline?wsdl',
         homeUrl + 'services/user?wsdl',
         homeUrl + 'services/workflow?wsdl',
-        homeUrl + 'services/psFilter?wsdl'
+        homeUrl + 'services/psFilter?wsdl',
+        homeUrl + 'services/account?wsdl'
     ],
 
     documentPermalink: homeUrl + 'documents/' + workspace + '/' + documents.document1.number + '/A',

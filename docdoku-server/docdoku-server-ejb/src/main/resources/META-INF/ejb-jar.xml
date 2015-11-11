@@ -33,6 +33,9 @@
             <ejb-name>UserManagerBean</ejb-name>
         </session>
         <session>
+            <ejb-name>AccountManagerBean</ejb-name>
+        </session>
+        <session>
             <ejb-name>ChangeManagerBean</ejb-name>
         </session>
         <session>
