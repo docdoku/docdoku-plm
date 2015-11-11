@@ -242,6 +242,7 @@ var urls = {
         homeUrl + 'services/UploadDownload?wsdl',
         homeUrl + 'services/user?wsdl',
         homeUrl + 'services/workflow?wsdl'
+        homeUrl + 'services/account?wsdl'
     ],
 
     documentPermalink: homeUrl + 'documents/' + workspace + '/' + documents.document1.number + '/A',

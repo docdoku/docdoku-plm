@@ -96,6 +96,18 @@
             </webservice-endpoint>
         </ejb>
         <ejb>
+            <ejb-name>AccountManagerBean</ejb-name>
+            <jndi-name>ejb/AccountManagerBean</jndi-name>
+            <webservice-endpoint>
+                <port-component-name>AccountManagerBean</port-component-name>
+                <endpoint-address-uri>services/account</endpoint-address-uri>
+                <login-config>
+                    <auth-method>BASIC</auth-method>
+                    <realm>docdokuRealm</realm>
+                </login-config>
+            </webservice-endpoint>
+        </ejb>
+        <ejb>
             <ejb-name>MailerBean</ejb-name>
             <jndi-name>ejb/MailerBean</jndi-name>
             <resource-ref>
