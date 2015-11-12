@@ -2586,11 +2586,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public List<PartRevision> searchPartRevisions(String workspaceId, Query query) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        QueryDAO queryDAO = new QueryDAO(new Locale(user.getLanguage()), em);
+        Locale locale = new Locale(user.getLanguage());
 
-        WorkspaceDAO workspaceDAO = new WorkspaceDAO(new Locale(user.getLanguage()), em);
+        WorkspaceDAO workspaceDAO = new WorkspaceDAO(locale, em);
         Workspace workspace = workspaceDAO.loadWorkspace(workspaceId);
 
+        QueryDAO queryDAO = new QueryDAO(locale, em);
         List<PartRevision> parts = queryDAO.runQuery(workspace, query);
 
         ListIterator<PartRevision> ite = parts.listIterator();
