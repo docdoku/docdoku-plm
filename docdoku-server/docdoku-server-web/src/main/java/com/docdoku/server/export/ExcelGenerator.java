@@ -229,6 +229,7 @@ public class ExcelGenerator {
                         String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());
                         String attributeSelectName = select.substring(select.indexOf(".") + 1);
                         String attributeValue = "";
+                        StringBuilder sbattr = new StringBuilder();
                         if (lastIteration != null) {
                             List<InstanceAttribute> attributes = lastIteration.getInstanceAttributes();
                             if (attributes != null) {
@@ -241,18 +242,19 @@ public class ExcelGenerator {
                                         if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                         }
+                                        sbattr.append(attributeValue + " ");
                                     }
                                 }
                             }
                         }
-
-                        data.add(attributeValue);
+                        data.add(sbattr.toString());
                     }
                     if (select.startsWith(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)) {
                         String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PATH_DATA_ATTRIBUTES_PREFIX.length());
                         String attributeSelectName = select.substring(select.indexOf(".") + 1);
                         String attributeValue = "";
                         PathDataIteration pdi = row.getPathDataIteration();
+                        StringBuilder sbpdattr = new StringBuilder();
                         if (pdi != null) {
                             List<InstanceAttribute> attributes = pdi.getInstanceAttributes();
                             if (attributes != null) {
@@ -265,12 +267,12 @@ public class ExcelGenerator {
                                         if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                         }
+                                        sbpdattr.append(attributeValue + " ");
                                     }
                                 }
                             }
                         }
-
-                        data.add(attributeValue);
+                        data.add(sbpdattr.toString());
                     } else {
                         data.add("");
                     }
