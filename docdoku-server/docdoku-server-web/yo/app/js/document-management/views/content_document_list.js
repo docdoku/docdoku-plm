@@ -230,9 +230,10 @@ define([
                     iterationNote = null;
                 }
 
-                var queueCheckIn= async.queue(function(docView,callback){
+                var queueCheckIn = async.queue(function(docView, callback) {
+                    var revisionNote;
                     if (iterationNote) {
-                        var revisionNote = docView.model.getLastIteration().get('revisionNote');
+                        revisionNote = docView.model.getLastIteration().get('revisionNote');
                         if (!revisionNote) {
                             revisionNote = iterationNote;
                         }

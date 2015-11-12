@@ -244,8 +244,9 @@ define([
 
                 var _this = this;
                 Async.each(selectedParts, function(part, callback) {
+                    var revisionNote;
                     if (iterationNote) {
-                        var revisionNote = part.getLastIteration().get('iterationNote');
+                        revisionNote = part.getLastIteration().get('iterationNote');
                         if (!revisionNote) {
                             revisionNote = iterationNote;
                         }
