@@ -4,6 +4,12 @@
     <a class="date-popover">{{value}}</a>
     {{/isDate}}
 
+    {{#isStringArray}}
+    {{#value}}
+    <span class="part_attribute_value well">{{.}}</span>
+    {{/value}}
+    {{/isStringArray}}
+
     {{#isStringValue}}
     {{#value}}
         {{.}}<br/>
