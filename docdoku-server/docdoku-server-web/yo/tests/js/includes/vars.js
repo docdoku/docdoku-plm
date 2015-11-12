@@ -241,7 +241,7 @@ var urls = {
         homeUrl + 'services/productBaseline?wsdl',
         homeUrl + 'services/UploadDownload?wsdl',
         homeUrl + 'services/user?wsdl',
-        homeUrl + 'services/workflow?wsdl'
+        homeUrl + 'services/workflow?wsdl',
         homeUrl + 'services/account?wsdl'
     ],
 
