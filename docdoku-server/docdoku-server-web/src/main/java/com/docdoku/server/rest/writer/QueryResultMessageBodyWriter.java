@@ -258,24 +258,39 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
                 String attributeValue = "";
 
                 PartIteration pi = part.getLastIteration();
+
                 if (pi != null) {
                     List<InstanceAttribute> attributes = pi.getInstanceAttributes();
+
                     if (attributes != null) {
+                        jg.writeStartArray(attributeSelect);
+
+
                         for (InstanceAttribute attribute : attributes) {
                             InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
+
                             if (attributeDescriptor.getName().equals(attributeSelectName)
                                     && attributeDescriptor.getStringType().equals(attributeSelectType)) {
 
                                 attributeValue = attribute.getValue() + "";
-                                if(attribute instanceof InstanceDateAttribute) {
+
+                                if (attribute instanceof InstanceDateAttribute) {
                                     attributeValue = getFormattedDate(((InstanceDateAttribute) attribute).getDateValue());
-                                }
-                                else if (attribute instanceof InstanceListOfValuesAttribute) {
+                                } else if (attribute instanceof InstanceListOfValuesAttribute) {
                                     attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                 }
+
+                                jg.write(attributeValue);
                             }
                         }
+
+                        jg.writeEnd();
+
+                    } else {
+                        jg.write(attributeSelect, attributeValue);
                     }
+
+                } else {
                     jg.write(attributeSelect, attributeValue);
                 }
             }
@@ -289,22 +304,34 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
                 String attributeValue = "";
 
                 PathDataIteration pdi = row.getPathDataIteration();
+
                 if (pdi != null) {
                     List<InstanceAttribute> attributes = pdi.getInstanceAttributes();
+
                     if (attributes != null) {
+                        jg.writeStartArray(attributeSelect);
+
                         for (InstanceAttribute attribute : attributes) {
                             InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
+
                             if (attributeDescriptor.getName().equals(attributeSelectName)
                                     && attributeDescriptor.getStringType().equals(attributeSelectType)) {
 
                                 attributeValue = attribute.getValue() + "";
+
                                 if (attribute instanceof InstanceListOfValuesAttribute) {
                                     attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                 }
+
+                                jg.write(attributeValue);
                             }
                         }
+
+                        jg.writeEnd();
+
+                    } else {
+                        jg.write(attributeSelect, attributeValue);
                     }
-                    jg.write(attributeSelect, attributeValue);
                 }
             }
 

@@ -37,6 +37,7 @@ define([
                 var isLinkedDocuments = type ==='linkedDocuments';
 
                 var isStringValue = !isDate && !isPartNumber && !isLinkedDocuments;
+                var isStringArray;
 
                 if(isDate) {
                     var timestampFormatted = Date.formatTimestamp(
@@ -73,10 +74,17 @@ define([
                     }
                 }
 
+                if (isStringValue && self.item[column.value] instanceof Array) {
+                    isStringArray = true;
+                    isStringValue = false;
+                    value = self.item[column.value];
+                }
+
                 var itemColumn = {
                     isDate : isDate,
                     isPartNumber : isPartNumber,
                     isStringValue : isStringValue,
+                    isStringArray : isStringArray,
                     isLinkedDocuments : isLinkedDocuments,
                     value : isStringValue ? value.split('\n') : value
                 };
