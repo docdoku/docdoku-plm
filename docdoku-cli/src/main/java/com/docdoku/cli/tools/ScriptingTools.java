@@ -74,7 +74,7 @@ public class ScriptingTools {
     }
 
     public static IPSFilterManagerWS createPSFilterService(URL url, String login, String password) throws MalformedURLException {
-        PSFilterService service = new PSFilterService(new URL(url, PS_FILTER_WSDL_LOCATION), new javax.xml.namespace.QName(NAMESPACEURI, "ProductBaselineManagerBeanService"));
+        PSFilterService service = new PSFilterService(new URL(url, PS_FILTER_WSDL_LOCATION), new javax.xml.namespace.QName(NAMESPACEURI, "PSFilterManagerBeanService"));
         IPSFilterManagerWS port = service.getPort(IPSFilterManagerWS.class);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
