@@ -33,10 +33,12 @@ public class DocumentUtil {
     public static final String FILE1_NAME ="uplodedFile";
     public static final String FILE2_NAME="file_à-tèsté.txt";
     public static final String FILE3_NAME="file_à-t*st?! .txt";
+    public static final String FILE4_NAME ="uploadedFile";
     public static final long DOCUMENT_SIZE = 22;
     public static final String VERSION ="A" ;
     public static final int ITERATION = 1;
     public static final String FULL_NAME = WORKSPACE_ID+"/documents/"+DOCUMENT_ID+"/"+VERSION+"/"+ITERATION+"/"+ FILE1_NAME;
+    public static final String FULL_NAME4 = WORKSPACE_ID+"/documents/"+DOCUMENT_ID+"/"+VERSION+"/"+ITERATION+"/"+ FILE4_NAME;
     public static final String FOLDER = "newFolder";
     public static final String USER_2_LOGIN = "user2";
     public static final String USER_2_NAME = "user2";
