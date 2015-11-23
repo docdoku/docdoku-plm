@@ -228,33 +228,71 @@ define([
 
         checkin: function () {
             this.partListView.getSelectedPartIndexes();
-
             var selectedParts = this.partListView.getSelectedParts();
-            var promptView = new PromptView();
-            promptView.setPromptOptions(App.config.i18n.REVISION_NOTE, App.config.i18n.REVISION_NOTE_PROMPT_LABEL, App.config.i18n.REVISION_NOTE_PROMPT_OK, App.config.i18n.REVISION_NOTE_PROMPT_CANCEL);
-            promptView.specifyInput('textarea');
-            window.document.body.appendChild(promptView.render().el);
-            promptView.openModal();
+            var selectedPartsWithoutNote = 0;
 
-            this.listenTo(promptView, 'prompt-ok', function (args) {
-                var iterationNote = args[0];
-                if (_.isEqual(iterationNote, '')) {
-                    iterationNote = null;
+            _.each(selectedParts, function (selectedPart) {
+                if (!selectedPart.getLastIteration().get('iterationNote')) {
+                    selectedPartsWithoutNote++;
+                }
+            });
+
+            var _this = this;
+
+            if (selectedPartsWithoutNote > 0) {
+                var promptView = new PromptView();
+
+                if (selectedParts.length > 1) {
+                    promptView.setPromptOptions(App.config.i18n.REVISION_NOTE, App.config.i18n.PART_REVISION_NOTE_PROMPT_LABEL, App.config.i18n.REVISION_NOTE_PROMPT_OK, App.config.i18n.REVISION_NOTE_PROMPT_CANCEL);
+                } else {
+                    promptView.setPromptOptions(App.config.i18n.REVISION_NOTE, App.config.i18n.REVISION_NOTE_PROMPT_LABEL, App.config.i18n.REVISION_NOTE_PROMPT_OK, App.config.i18n.REVISION_NOTE_PROMPT_CANCEL);
                 }
 
-                var _this = this;
-                Async.each(selectedParts, function(part, callback) {
-                    var revisionNote;
-                    if (iterationNote) {
-                        revisionNote = part.getLastIteration().get('iterationNote');
-                        if (!revisionNote) {
-                            revisionNote = iterationNote;
-                        }
+                promptView.specifyInput('textarea');
+                window.document.body.appendChild(promptView.render().el);
+                promptView.openModal();
+
+                this.listenTo(promptView, 'prompt-ok', function (args) {
+                    var iterationNote = args[0];
+                    if (_.isEqual(iterationNote, '')) {
+                        iterationNote = null;
                     }
 
-                    part.getLastIteration().save({
-                        iterationNote: revisionNote
-                    }).success(function () {
+                    Async.each(selectedParts, function(part, callback) {
+                        var revisionNote;
+                        if (iterationNote) {
+                            revisionNote = part.getLastIteration().get('iterationNote');
+                            if (!revisionNote) {
+                                revisionNote = iterationNote;
+                            }
+                        }
+
+                        part.getLastIteration().save({
+                            iterationNote: revisionNote
+                        }).success(function () {
+                            part.checkin().success(callback);
+                        });
+
+                    }, function(err) {
+                        if (!err) {
+                            _this.allCheckinDone();
+                        }
+                    });
+
+                });
+
+                this.listenTo(promptView, 'prompt-cancel', function () {
+                    var ajaxes = [];
+                    _(selectedParts).each(function (part) {
+                        ajaxes.push(part.checkin());
+                    });
+                    $.when.apply($, ajaxes).then(this.allCheckinDone);
+                });
+
+            } else {
+                Async.each(selectedParts, function(part, callback) {
+
+                    part.getLastIteration().save().success(function () {
                         part.checkin().success(callback);
                     });
 
@@ -263,18 +301,9 @@ define([
                         _this.allCheckinDone();
                     }
                 });
-
-            });
-
-            this.listenTo(promptView, 'prompt-cancel', function () {
-                var ajaxes = [];
-                _(selectedParts).each(function (part) {
-                    ajaxes.push(part.checkin());
-                });
-                $.when.apply($, ajaxes).then(this.allCheckinDone);
-            });
-
+            }
         },
+
         allCheckinDone: function () {
             this.resetCollection();
             Backbone.Events.trigger('part:iterationChange');

@@ -213,35 +213,75 @@ define([
         },
 
         actionCheckin: function () {
-
             var selectedDocuments = this.listView.checkedViews();
-            var promptView = new PromptView();
+            var selectedDocumentsWithoutNote = 0;
 
-            promptView.setPromptOptions(App.config.i18n.REVISION_NOTE, App.config.i18n.REVISION_NOTE_PROMPT_LABEL, App.config.i18n.REVISION_NOTE_PROMPT_OK, App.config.i18n.REVISION_NOTE_PROMPT_CANCEL);
-            promptView.specifyInput('textarea');
-            window.document.body.appendChild(promptView.render().el);
-            promptView.openModal();
+            _.each(selectedDocuments, function (selectedDocView) {
+                if (!selectedDocView.model.getLastIteration().get('revisionNote')) {
+                    selectedDocumentsWithoutNote++;
+                }
+            });
 
             var self = this;
-            this.listenTo(promptView, 'prompt-ok', function (args) {
 
-                var iterationNote = args[0];
-                if(_.isEqual(iterationNote, '')){
-                    iterationNote = null;
+            if (selectedDocumentsWithoutNote > 0) {
+                var promptView = new PromptView();
+
+                if (selectedDocuments.length > 1) {
+                    promptView.setPromptOptions(App.config.i18n.REVISION_NOTE, App.config.i18n.DOCUMENT_REVISION_NOTE_PROMPT_LABEL, App.config.i18n.REVISION_NOTE_PROMPT_OK, App.config.i18n.REVISION_NOTE_PROMPT_CANCEL);
+                } else {
+                    promptView.setPromptOptions(App.config.i18n.REVISION_NOTE, App.config.i18n.REVISION_NOTE_PROMPT_LABEL, App.config.i18n.REVISION_NOTE_PROMPT_OK, App.config.i18n.REVISION_NOTE_PROMPT_CANCEL);
                 }
 
-                var queueCheckIn = async.queue(function(docView, callback) {
-                    var revisionNote;
-                    if (iterationNote) {
-                        revisionNote = docView.model.getLastIteration().get('revisionNote');
-                        if (!revisionNote) {
-                            revisionNote = iterationNote;
-                        }
+                promptView.specifyInput('textarea');
+                window.document.body.appendChild(promptView.render().el);
+                promptView.openModal();
+
+                this.listenTo(promptView, 'prompt-ok', function (args) {
+
+                    var iterationNote = args[0];
+                    if(_.isEqual(iterationNote, '')){
+                        iterationNote = null;
                     }
 
-                    docView.model.getLastIteration().save({
-                        revisionNote: revisionNote
-                    }).success(function(){
+                    var queueCheckIn = async.queue(function(docView, callback) {
+                        var revisionNote;
+                        if (iterationNote) {
+                            revisionNote = docView.model.getLastIteration().get('revisionNote');
+                            if (!revisionNote) {
+                                revisionNote = iterationNote;
+                            }
+                        }
+
+                        docView.model.getLastIteration().save({
+                            revisionNote: revisionNote
+                        }).success(function(){
+                            docView.model.checkin().success(callback);
+                        });
+                    });
+
+                    queueCheckIn.drain = function(){
+                        self.multipleCheckInCheckOutDone(selectedDocuments);
+                    };
+
+                    queueCheckIn.push(selectedDocuments);
+                });
+
+                this.listenTo(promptView, 'prompt-cancel', function () {
+                    var queueCheckIn= async.queue(function(docView,callback){
+                        docView.model.checkin().success(callback);
+                    });
+
+                    queueCheckIn.drain = function(){
+                        self.multipleCheckInCheckOutDone(selectedDocuments);
+                    };
+
+                    queueCheckIn.push(selectedDocuments);
+                });
+
+            } else {
+                var queueCheckIn = async.queue(function(docView, callback) {
+                    docView.model.getLastIteration().save().success(function(){
                         docView.model.checkin().success(callback);
                     });
                 });
@@ -251,19 +291,7 @@ define([
                 };
 
                 queueCheckIn.push(selectedDocuments);
-            });
-
-            this.listenTo(promptView, 'prompt-cancel', function () {
-                var queueCheckIn= async.queue(function(docView,callback){
-                        docView.model.checkin().success(callback);
-                    });
-
-                queueCheckIn.drain = function(){
-                    self.multipleCheckInCheckOutDone(selectedDocuments);
-                };
-
-                queueCheckIn.push(selectedDocuments);
-            });
+            }
 
             return false;
         },
