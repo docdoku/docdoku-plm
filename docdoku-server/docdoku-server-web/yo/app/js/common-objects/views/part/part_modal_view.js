@@ -28,7 +28,10 @@ define([
         initialize: function () {
 
             this.iterations = this.model.getIterations();
-            this.iteration = this.options.iteration ? this.iterations.get(this.options.iteration) : this.model.getLastIteration();
+
+            this.iteration = this.options.iteration && this.options.iteration < this.iterations.size() ?
+                this.iterations.get(this.options.iteration) : this.model.getLastIteration();
+
             this.productId = this.options.productId;
             this.productConfigSpec = this.options.productConfigSpec;
 
