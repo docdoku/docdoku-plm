@@ -23,6 +23,7 @@ package com.docdoku.server;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.server.storage.StorageProvider;
 import com.docdoku.server.storage.filesystem.FileStorageProvider;
+import com.docdoku.server.util.DocumentUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,29 +36,22 @@ public class DataManagerBeanTest {
 
     public static final String TARGET_FILE_STORAGE="";
 
-    public static final String FULLNAME= "/home/asmae/projects/plm/docdoku-plm/docdoku-server/docdoku-server-web/src/test/resources/com/docdoku/server/rest/file/toUpload/TestFile.txt";
     private StorageProvider defaultStorageProvider;
-    private FileStorageProvider fileStorageProvider;
+    private BinaryResource binaryResource;
 
     @Before
     public void setUp() throws Exception {
-
+        //Given
         defaultStorageProvider = new FileStorageProvider(System.getProperty("java.io.tmpdir")+TARGET_FILE_STORAGE);
+        binaryResource = new BinaryResource(DocumentUtil.FULL_NAME4,DocumentUtil.DOCUMENT_SIZE,new Date());
     }
 
     @Test
     public void testGetBinaryResourceOutputStream() throws Exception {
-
-        //Given
-        BinaryResource binaryResource = new BinaryResource( FULLNAME, 22,new Date());
         //When
         BufferedOutputStream outputStream = (BufferedOutputStream)defaultStorageProvider.getBinaryResourceOutputStream(binaryResource);
         //Then
         Assert.assertTrue(outputStream != null);
     }
-
-
-
-
 
 }
