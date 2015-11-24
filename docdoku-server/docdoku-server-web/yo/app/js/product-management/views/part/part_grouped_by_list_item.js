@@ -27,7 +27,7 @@ define([
 
             _.each(this.headerColumns, function(column){
 
-                var value = self.item[column.value] + '';
+                var value = self.item[column.value];
 
                 var filter = _.findWhere(self.queryFilters, {id : column.value});
                 var type = filter ? filter.realType : 'string';
@@ -44,7 +44,6 @@ define([
                         App.config.i18n._DATE_FORMAT,
                         value
                     );
-
                     value = timestampFormatted ? timestampFormatted : '';
                 }
 
@@ -86,7 +85,7 @@ define([
                     isStringValue : isStringValue,
                     isStringArray : isStringArray,
                     isLinkedDocuments : isLinkedDocuments,
-                    value : isStringValue ? value.split('\n') : value
+                    value : isStringValue ? value.toString().split('\n') : value
                 };
 
                 itemOrdered.push(itemColumn);
