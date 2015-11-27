@@ -53,6 +53,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RequestScoped
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -67,6 +69,9 @@ public class DocumentTemplateBinaryResource {
 
     @Inject
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
+
+    private static final Logger LOGGER = Logger.getLogger(DocumentTemplateBinaryResource.class.getName());
+
 
     public DocumentTemplateBinaryResource() {
     }
@@ -130,8 +135,9 @@ public class DocumentTemplateBinaryResource {
             return rb.build();
         }
 
+        InputStream binaryContentInputStream = null;
+
         try {
-            InputStream binaryContentInputStream;
             if(output!=null && !output.isEmpty()){
                 binaryContentInputStream = getConvertedBinaryResource(binaryResource, output);
             }else{
@@ -139,6 +145,13 @@ public class DocumentTemplateBinaryResource {
             }
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
         } catch (StorageException | FileConversionException e) {
+            if(binaryContentInputStream != null){
+                try {
+                    binaryContentInputStream.close();
+                } catch (IOException ioEx) {
+                    LOGGER.log(Level.SEVERE,null,ioEx);
+                }
+            }
             return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
         }
     }

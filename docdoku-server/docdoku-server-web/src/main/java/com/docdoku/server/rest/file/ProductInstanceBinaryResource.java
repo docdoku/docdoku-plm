@@ -130,12 +130,12 @@ public class ProductInstanceBinaryResource {
             return rb.build();
         }
 
-        try {
-            InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+        try (InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource)) {
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
-        } catch (StorageException e) {
+        } catch (StorageException | IOException e) {
             return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
         }
+
     }
 
 
@@ -230,10 +230,9 @@ public class ProductInstanceBinaryResource {
             return rb.build();
         }
 
-        try {
-            InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+        try (InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource)){
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
-        } catch (StorageException e) {
+        } catch (StorageException | IOException e) {
             return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
         }
     }
@@ -263,10 +262,9 @@ public class ProductInstanceBinaryResource {
             return rb.build();
         }
 
-        try {
-            InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+        try (InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource)) {
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
-        } catch (StorageException e) {
+        } catch (StorageException | IOException e) {
             return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
         }
     }

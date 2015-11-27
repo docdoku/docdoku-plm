@@ -50,30 +50,17 @@ public class StepFileConverterImpl implements CADConverter {
     private static final Properties CONF = new Properties();
     private static final Logger LOGGER = Logger.getLogger(StepFileConverterImpl.class.getName());
 
-
     @InternalService
     @Inject
     private IDataManagerLocal dataManager;
 
     static {
-        InputStream inputStream = null;
-        try {
-            inputStream = StepFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES);
+        try (InputStream inputStream = StepFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES)){
             CONF.load(inputStream);
         } catch (IOException e) {
-            LOGGER.log(Level.INFO, null, e);
-        } finally {
-            try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException e) {
-                LOGGER.log(Level.FINEST, null, e);
-            }
+            LOGGER.log(Level.SEVERE, null, e);
         }
-
     }
-
 
     @Override
     public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {

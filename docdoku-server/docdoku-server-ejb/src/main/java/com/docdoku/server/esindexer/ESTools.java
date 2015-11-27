@@ -69,26 +69,13 @@ import java.util.zip.ZipInputStream;
 public class ESTools {
     private static final String CONF_PROPERTIES="/com/docdoku/server/esindexer/conf.properties";
     private static final Properties CONF = new Properties();
-    private static final String I18N_CONF="com.docdoku.core.i18n.LocalStrings";
     private static final Logger LOGGER = Logger.getLogger(ESTools.class.getName());
 
-
     static{
-        InputStream inputStream = null;
-        try {
-            inputStream = ESTools.class.getResourceAsStream(CONF_PROPERTIES);
+        try (InputStream inputStream = ESTools.class.getResourceAsStream(CONF_PROPERTIES)){
             CONF.load(inputStream);
         } catch (IOException e) {
-            String message = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString("ES_ConfWarning1");
-            LOGGER.log(Level.WARNING, message, e);
-        } finally {
-            try{
-                if(inputStream!=null){
-                    inputStream.close();
-                }
-            }catch (IOException e){
-                LOGGER.log(Level.WARNING,null,e);
-            }
+            LOGGER.log(Level.SEVERE, null, e);
         }
     }
 

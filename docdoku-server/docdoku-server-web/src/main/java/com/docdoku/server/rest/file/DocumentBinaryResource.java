@@ -55,6 +55,8 @@ import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RequestScoped
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
@@ -80,6 +82,8 @@ public class DocumentBinaryResource {
 
     @Inject
     private GuestProxy guestProxy;
+
+    private static final Logger LOGGER = Logger.getLogger(DocumentBinaryResource.class.getName());
 
     public DocumentBinaryResource() {
     }
@@ -185,8 +189,10 @@ public class DocumentBinaryResource {
             return rb.build();
         }
 
+        InputStream binaryContentInputStream = null;
+
         try {
-            InputStream binaryContentInputStream;
+
             if(virtualSubResource!=null && !virtualSubResource.isEmpty()){
                 binaryContentInputStream = dataManager.getBinarySubResourceInputStream(binaryResource, fullName+"/"+virtualSubResource);
             }else if(output!=null && !output.isEmpty()){
@@ -196,6 +202,15 @@ public class DocumentBinaryResource {
             }
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
         } catch (StorageException | FileConversionException e) {
+
+            if(binaryContentInputStream != null){
+                try {
+                    binaryContentInputStream.close();
+                } catch (IOException ioEx) {
+                    LOGGER.log(Level.SEVERE,null,ioEx);
+                }
+            }
+
             return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
         }
     }

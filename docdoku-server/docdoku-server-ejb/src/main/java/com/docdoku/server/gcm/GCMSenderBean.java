@@ -51,20 +51,10 @@ public class GCMSenderBean implements IGCMSenderLocal {
     private static final Logger LOGGER = Logger.getLogger(GCMSenderBean.class.getName());
 
     static {
-        InputStream inputStream = null;
-        try {
-            inputStream = GCMSenderBean.class.getResourceAsStream(CONF_PROPERTIES);
+        try (InputStream inputStream = GCMSenderBean.class.getResourceAsStream(CONF_PROPERTIES)){
             CONF.load(inputStream);
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, null, e);
-        } finally {
-            try{
-                if(inputStream!=null){
-                    inputStream.close();
-                }
-            }catch (IOException e){
-                LOGGER.log(Level.SEVERE, null, e);
-            }
+            LOGGER.log(Level.SEVERE, null, e);
         }
     }
 

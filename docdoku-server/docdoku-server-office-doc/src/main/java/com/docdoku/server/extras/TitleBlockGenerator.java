@@ -73,7 +73,7 @@ public class TitleBlockGenerator {
             PdfReader pdfReader;
 
             int n;
-
+            // TODO check for resources to be closed
             for (InputStream file : files) {
                 pdfReader = new PdfReader(file);
                 n = pdfReader.getNumberOfPages();

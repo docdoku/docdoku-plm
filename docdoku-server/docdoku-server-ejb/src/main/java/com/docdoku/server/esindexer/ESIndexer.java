@@ -97,21 +97,10 @@ public class ESIndexer {
     private static final String ES_DELETE_ERROR_1 = "ES_DeleteError1";
 
     static {
-        InputStream inputStream = null;
-        try {
-            inputStream = ESIndexer.class.getResourceAsStream(CONF_PROPERTIES);
+        try (InputStream inputStream  = ESIndexer.class.getResourceAsStream(CONF_PROPERTIES)) {
             CONF.load(inputStream);
         } catch (IOException e) {
-            String message = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString("ES_ConfWarning1");
-            LOGGER.log(Level.WARNING, message, e);
-        } finally {
-            try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException e) {
-                LOGGER.log(Level.WARNING, null, e);
-            }
+            LOGGER.log(Level.SEVERE, null, e);
         }
     }
 
@@ -508,9 +497,9 @@ public class ESIndexer {
     private UpdateRequestBuilder indexRequest(Client client, DocumentIteration doc) throws NoNodeAvailableException {
         Map<String, String> binaryList = new HashMap<>();
         for (BinaryResource bin : doc.getAttachedFiles()) {
-            try {
-                binaryList.put(bin.getName(), ESTools.streamToString(bin.getFullName(), dataManager.getBinaryResourceInputStream(bin)));
-            } catch (StorageException e) {
+            try (InputStream in = dataManager.getBinaryResourceInputStream(bin)){
+                binaryList.put(bin.getName(), ESTools.streamToString(bin.getFullName(), in));
+            } catch (StorageException | IOException e) {
                 LOGGER.log(Level.FINEST, null, e);
             }
         }
@@ -530,9 +519,9 @@ public class ESIndexer {
     private UpdateRequestBuilder indexRequest(Client client, PartIteration part) {
         Map<String, String> binaryList = new HashMap<>();
         for(BinaryResource bin : part.getAttachedFiles()) {
-            try {
-                binaryList.put(bin.getName(),ESTools.streamToString(bin.getFullName(), dataManager.getBinaryResourceInputStream(bin)));
-            } catch (StorageException e) {
+            try (InputStream in = dataManager.getBinaryResourceInputStream(bin)){
+                binaryList.put(bin.getName(),ESTools.streamToString(bin.getFullName(), in));
+            } catch (StorageException | IOException e) {
                 LOGGER.log(Level.FINEST, null, e);
             }
         }

@@ -25,13 +25,11 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.server.InternalService;
-import com.docdoku.server.ServiceLocator;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
 import com.docdoku.server.converters.utils.ConverterUtils;
 
 import javax.inject.Inject;
-import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,20 +55,10 @@ public class CatiaFileConverterImpl implements CADConverter{
     private static final Logger LOGGER = Logger.getLogger(CatiaFileConverterImpl.class.getName());
 
     static{
-        InputStream inputStream = null;
-        try {
-            inputStream = CatiaFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES);
+        try (InputStream inputStream = CatiaFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES)){
             CONF.load(inputStream);
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, null, e);
-        } finally {
-            try{
-                if(inputStream!=null){
-                    inputStream.close();
-                }
-            }catch (IOException e){
-                LOGGER.log(Level.FINEST,null, e);
-            }
+            LOGGER.log(Level.SEVERE, null, e);
         }
     }
 

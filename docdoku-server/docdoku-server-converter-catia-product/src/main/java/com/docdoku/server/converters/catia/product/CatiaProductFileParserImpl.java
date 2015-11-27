@@ -29,7 +29,6 @@ import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.InternalService;
-import com.docdoku.server.ServiceLocator;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.catia.product.parser.ComponentDTK;
 import com.docdoku.server.converters.catia.product.parser.ComponentDTKSaxHandler;
@@ -38,7 +37,6 @@ import com.docdoku.server.converters.utils.ConverterUtils;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
-import javax.naming.NamingException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -67,20 +65,10 @@ public class CatiaProductFileParserImpl implements CADConverter {
     private IDataManagerLocal dataManager;
 
     static {
-        InputStream inputStream = null;
-        try {
-            inputStream = CatiaProductFileParserImpl.class.getResourceAsStream(CONF_PROPERTIES);
+        try (InputStream inputStream = CatiaProductFileParserImpl.class.getResourceAsStream(CONF_PROPERTIES)){
             CONF.load(inputStream);
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, null, e);
-        } finally {
-            try{
-                if(inputStream!=null){
-                    inputStream.close();
-                }
-            }catch (IOException e){
-                LOGGER.log(Level.FINEST,null,e);
-            }
+            LOGGER.log(Level.SEVERE, null, e);
         }
     }
 
