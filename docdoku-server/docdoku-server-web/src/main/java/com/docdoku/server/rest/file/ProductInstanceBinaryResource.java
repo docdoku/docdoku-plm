@@ -29,6 +29,7 @@ import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.server.filters.GuestProxy;
+import com.docdoku.server.helpers.Streams;
 import com.docdoku.server.rest.exceptions.*;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
@@ -129,10 +130,12 @@ public class ProductInstanceBinaryResource {
         if (rb != null) {
             return rb.build();
         }
-
-        try (InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource)) {
+        InputStream binaryContentInputStream = null;
+        try  {
+            binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
-        } catch (StorageException | IOException e) {
+        } catch (StorageException e) {
+            Streams.close(binaryContentInputStream);
             return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
         }
 
@@ -230,9 +233,12 @@ public class ProductInstanceBinaryResource {
             return rb.build();
         }
 
-        try (InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource)){
+        InputStream binaryContentInputStream = null;
+        try {
+            binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
-        } catch (StorageException | IOException e) {
+        } catch (StorageException e) {
+            Streams.close(binaryContentInputStream);
             return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
         }
     }
@@ -262,9 +268,13 @@ public class ProductInstanceBinaryResource {
             return rb.build();
         }
 
-        try (InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource)) {
+        InputStream binaryContentInputStream = null;
+
+        try {
+            binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
-        } catch (StorageException | IOException e) {
+        } catch (StorageException e) {
+            Streams.close(binaryContentInputStream);
             return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
         }
     }

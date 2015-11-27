@@ -30,6 +30,7 @@ import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.server.filters.GuestProxy;
+import com.docdoku.server.helpers.Streams;
 import com.docdoku.server.rest.exceptions.*;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
@@ -55,7 +56,6 @@ import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RequestScoped
@@ -190,9 +190,7 @@ public class DocumentBinaryResource {
         }
 
         InputStream binaryContentInputStream = null;
-
         try {
-
             if(virtualSubResource!=null && !virtualSubResource.isEmpty()){
                 binaryContentInputStream = dataManager.getBinarySubResourceInputStream(binaryResource, fullName+"/"+virtualSubResource);
             }else if(output!=null && !output.isEmpty()){
@@ -202,15 +200,7 @@ public class DocumentBinaryResource {
             }
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
         } catch (StorageException | FileConversionException e) {
-
-            if(binaryContentInputStream != null){
-                try {
-                    binaryContentInputStream.close();
-                } catch (IOException ioEx) {
-                    LOGGER.log(Level.SEVERE,null,ioEx);
-                }
-            }
-
+            Streams.close(binaryContentInputStream);
             return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
         }
     }

@@ -27,6 +27,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
+import com.docdoku.server.helpers.Streams;
 import com.docdoku.server.rest.exceptions.FileConversionException;
 import com.docdoku.server.rest.exceptions.NotModifiedException;
 import com.docdoku.server.rest.exceptions.PreconditionFailedException;
@@ -53,7 +54,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.Collection;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RequestScoped
@@ -136,7 +136,6 @@ public class DocumentTemplateBinaryResource {
         }
 
         InputStream binaryContentInputStream = null;
-
         try {
             if(output!=null && !output.isEmpty()){
                 binaryContentInputStream = getConvertedBinaryResource(binaryResource, output);
@@ -145,13 +144,7 @@ public class DocumentTemplateBinaryResource {
             }
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
         } catch (StorageException | FileConversionException e) {
-            if(binaryContentInputStream != null){
-                try {
-                    binaryContentInputStream.close();
-                } catch (IOException ioEx) {
-                    LOGGER.log(Level.SEVERE,null,ioEx);
-                }
-            }
+            Streams.close(binaryContentInputStream);
             return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
         }
     }
