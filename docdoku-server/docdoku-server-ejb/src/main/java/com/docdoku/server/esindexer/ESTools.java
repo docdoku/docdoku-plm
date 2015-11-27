@@ -286,4 +286,10 @@ public class ESTools {
             return "";
         }
     }
+
+    public static void closeClient(Client client){
+        if(client != null){
+            client.close();
+        }
+    }
 }
