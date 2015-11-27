@@ -62,6 +62,7 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
     @Override
     public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration docI, Locale locale) throws ConvertedResourceException {
         try {
+            // TODO check for resources to be closed
             InputStream inputStream=null;
 
             if ("pdf".equals(outputFormat)) {
@@ -94,6 +95,7 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
                 String normalizedName = Tools.unAccent(binaryResource.getName());
                 //copy the converted file for further reuse
 
+                // TODO check for resources to be closed
                 try (OutputStream outputStream = dataManager.getBinarySubResourceOutputStream(binaryResource, subResourceVirtualPath);
                      InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
                      InputStream inputStreamConverted = fileConverter.convertToPDF(normalizedName,binaryResourceInputStream)) {

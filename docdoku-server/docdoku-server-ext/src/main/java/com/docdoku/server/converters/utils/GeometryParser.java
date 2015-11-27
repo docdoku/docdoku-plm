@@ -25,7 +25,6 @@ import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import java.io.*;
-import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Properties;
@@ -42,10 +41,11 @@ public class GeometryParser {
     }
 
     public static double[] calculateBox(File file) {
-        InputStream inputStream = null;
-        try{
-            inputStream = GeometryParser.class.getResourceAsStream(CONF_PROPERTIES);
+
+        try (InputStream inputStream = GeometryParser.class.getResourceAsStream(CONF_PROPERTIES)){
+
             CONF.load(inputStream);
+
             String nodeServerUrl = CONF.getProperty("nodeServerUrl");
 
             URL url = new URL(nodeServerUrl+"/box");
@@ -87,20 +87,8 @@ public class GeometryParser {
                     max.getJsonNumber("z").doubleValue()
             };
 
-        } catch (ConnectException e) {
-            LOGGER.log(Level.INFO, null, e);
-        } catch (IOException e) {
-            LOGGER.log(Level.INFO, null, e);
-        } catch (JsonException e) {
-            LOGGER.log(Level.INFO, null, e);
-        } finally {
-            try{
-                if(inputStream!=null){
-                    inputStream.close();
-                }
-            }catch (IOException ioe){
-                LOGGER.log(Level.SEVERE,null,ioe);
-            }
+        } catch (IOException | JsonException e) {
+            LOGGER.log(Level.SEVERE, null, e);
         }
 
         return new double[6];

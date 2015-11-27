@@ -60,7 +60,7 @@ public class BinaryResourceBinaryStreamingOutput implements StreamingOutput {
             try {
                 ByteStreams.copy(input, output);
             }catch (IOException e){
-                // may cause by a client side cancel
+                // may be caused by a client side cancel
                 LOGGER.log(Level.FINE,"A downloading stream was interrupted.",e);
                 throw new InterruptedStreamException();
             }finally {
@@ -80,7 +80,7 @@ public class BinaryResourceBinaryStreamingOutput implements StreamingOutput {
             }, start, length).getInput()) {
                 ByteStreams.copy(slicedInputStream, output);
             } catch (IOException e) {
-                // may cause by a client side cancel
+                // may be caused by a client side cancel
                 LOGGER.log(Level.FINE,"A downloading stream was interrupted.",e);
                 throw new InterruptedStreamException();
             }

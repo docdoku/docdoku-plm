@@ -75,21 +75,10 @@ public class ConverterBean implements IConverterManagerLocal {
     private static final Logger LOGGER = Logger.getLogger(ConverterBean.class.getName());
 
     static {
-
-        InputStream inputStream = null;
-        try {
-            inputStream = ConverterBean.class.getResourceAsStream(CONF_PROPERTIES);
+        try (InputStream inputStream = ConverterBean.class.getResourceAsStream(CONF_PROPERTIES)){
             CONF.load(inputStream);
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, null, e);
-        } finally {
-            try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException e) {
-                LOGGER.log(Level.FINEST, null, e);
-            }
+            LOGGER.log(Level.SEVERE, null, e);
         }
     }
 
