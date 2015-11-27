@@ -35,6 +35,7 @@ import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.server.dao.DocumentMasterDAO;
 import com.docdoku.server.dao.PartMasterDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
+import org.elasticsearch.ElasticsearchIllegalArgumentException;
 import org.elasticsearch.action.ActionRequestValidationException;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -234,13 +235,15 @@ public class ESIndexer {
      * @throws ESIndexNamingException        If the name doesn't suit for indexing.
      */
     public void createIndex(String workspaceId) throws ESServerException, ESIndexAlreadyExistsException, ESIndexNamingException {
+        Client client = null;
         try {
-            Client client = ESTools.createClient();
+            client = ESTools.createClient();
             createIndex(ESTools.formatIndexName(workspaceId), client);
-            client.close();
         } catch (NoNodeAvailableException e) {
             LOGGER.log(Level.WARNING, "Error on creating: " + workspaceId + " index");
             LOGGER.log(Level.FINER, null, e);
+        } finally {
+            ESTools.closeClient(client);
         }
     }
 
@@ -250,12 +253,14 @@ public class ESIndexer {
      * @param workspaceId The name of the index to delete.
      */
     public void deleteIndex(String workspaceId) {
+        Client client = null;
         try {
-            Client client = ESTools.createClient();
+            client = ESTools.createClient();
             deleteIndex(ESTools.formatIndexName(workspaceId), client);
-            client.close();
         } catch (NoNodeAvailableException | ESServerException e) {
             LOGGER.log(Level.WARNING, "Error on deleting: " + workspaceId + " index", e);
+        } finally {
+            ESTools.closeClient(client);
         }
     }
 
@@ -264,8 +269,9 @@ public class ESIndexer {
      */
     @Asynchronous
     public void indexAll() {
+        Client client = null;
         try {
-            Client client = ESTools.createClient();
+            client = ESTools.createClient();
             BulkRequestBuilder bulkRequest = client.prepareBulk();
             WorkspaceDAO wDAO = new WorkspaceDAO(em);
 
@@ -274,7 +280,6 @@ public class ESIndexer {
             }
 
             BulkResponse bulkResponse = bulkRequest.execute().actionGet();
-            client.close();
 
             if (bulkResponse.hasFailures()) {
                 String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_INDEX_ERROR_3);
@@ -283,6 +288,8 @@ public class ESIndexer {
         } catch (ESServerException | NoNodeAvailableException | ESIndexNamingException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_INDEX_ERROR_2);
             LOGGER.log(Level.WARNING, logMessage, e);
+        } finally {
+            ESTools.closeClient(client);
         }
     }
 
@@ -295,13 +302,13 @@ public class ESIndexer {
     public void indexWorkspace(String workspaceId) {
         String failureMessage = "";
         boolean hasSuccess = true;
+        Client client = null;
 
         try {
-            Client client = ESTools.createClient();
+            client = ESTools.createClient();
             BulkRequestBuilder bulkRequest = client.prepareBulk();
             bulkRequest = bulkWorkspaceRequestBuilder(client, bulkRequest, workspaceId, false);
             BulkResponse bulkResponse = bulkRequest.execute().actionGet();
-            client.close();
 
             if (bulkResponse.hasFailures()) {
                 hasSuccess = false;
@@ -316,6 +323,8 @@ public class ESIndexer {
         } catch (ESServerException | NoNodeAvailableException e) {
             hasSuccess = false;
             failureMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_INDEX_ERROR_2);
+        } finally {
+            ESTools.closeClient(client);
         }
 
         if (!hasSuccess) {
@@ -343,18 +352,22 @@ public class ESIndexer {
     @Asynchronous
     public void index(DocumentIteration doc) {
         String workspaceId = doc.getWorkspaceId();
+        Client client = null;
         try {
-            Client client = ESTools.createClient();
+            client = ESTools.createClient();
             tryCreateIndex(ESTools.formatIndexName(workspaceId), client);
             indexRequest(client, doc).execute()
                     .actionGet();
-            client.close();
         } catch (NoNodeAvailableException | ESServerException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_INDEX_ERROR_1);
             LOGGER.log(Level.WARNING, doc + ES_INDEX_FAIL + logMessage, e);
         } catch (ESIndexNamingException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_INDEX_CREATION_ERROR_2);
             LOGGER.log(Level.WARNING, doc + ES_INDEX_FAIL + logMessage + " " + workspaceId, e);
+        } catch (ElasticsearchIllegalArgumentException e){
+            LOGGER.log(Level.SEVERE, null, e);
+        } finally {
+            ESTools.closeClient(client);
         }
     }
 
@@ -366,18 +379,22 @@ public class ESIndexer {
     @Asynchronous
     public void index(PartIteration part) {
         String workspaceId = part.getWorkspaceId();
+        Client client = null;
         try {
-            Client client = ESTools.createClient();
+            client = ESTools.createClient();
             tryCreateIndex(ESTools.formatIndexName(workspaceId), client);
             indexRequest(client, part).execute()
                     .actionGet();
-            client.close();
         } catch (NoNodeAvailableException | ESServerException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_INDEX_ERROR_1);
             LOGGER.log(Level.WARNING, part + ES_INDEX_FAIL + logMessage, e);
         } catch (ESIndexNamingException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_INDEX_CREATION_ERROR_2);
             LOGGER.log(Level.WARNING, part + ES_INDEX_FAIL + logMessage + " " + workspaceId, e);
+        } catch (ElasticsearchIllegalArgumentException e){
+            LOGGER.log(Level.SEVERE, null, e);
+        } finally {
+            ESTools.closeClient(client);
         }
     }
 
@@ -388,14 +405,16 @@ public class ESIndexer {
      */
     @Asynchronous
     public void delete(DocumentIteration doc) {
+        Client client = null;
         try {
-            Client client = ESTools.createClient();
+            client = ESTools.createClient();
             deleteRequest(client, doc).execute()
                     .actionGet();
-            client.close();
         } catch (NoNodeAvailableException | ESServerException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_DELETE_ERROR_1);
             LOGGER.log(Level.WARNING, logMessage, e);
+        } finally {
+            ESTools.closeClient(client);
         }
     }
 
@@ -406,14 +425,16 @@ public class ESIndexer {
      */
     @Asynchronous
     public void delete(PartIteration part) {
+        Client client = null;
         try {
-            Client client = ESTools.createClient();
+            client = ESTools.createClient();
             deleteRequest(client, part).execute()
                     .actionGet();
-            client.close();
         } catch (NoNodeAvailableException | ESServerException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_DELETE_ERROR_1);
             LOGGER.log(Level.WARNING, logMessage, e);
+        } finally {
+            ESTools.closeClient(client);
         }
     }
 
@@ -426,16 +447,17 @@ public class ESIndexer {
     public void deleteWorkspace(String workspaceId) {
         String failureMessage = "";
         boolean hasSuccess = true;
-
+        Client client = null;
         try {
-            Client client = ESTools.createClient();
+            client = ESTools.createClient();
             deleteIndex(ESTools.formatIndexName(workspaceId), client);
-            client.close();
         } catch (ESServerException | NoNodeAvailableException e) {
             hasSuccess = false;
             failureMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString("ES_DeleteError2");
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString("ES_DeleteError3");
             LOGGER.log(Level.WARNING, logMessage + " \n " + failureMessage, e);
+        } finally {
+            ESTools.closeClient(client);
         }
 
         try {
@@ -551,4 +573,6 @@ public class ESIndexer {
     private DeleteRequestBuilder deleteRequest(Client client, PartIteration part) throws NoNodeAvailableException {
         return client.prepareDelete(ESTools.formatIndexName(part.getWorkspaceId()), ESMapper.PART_TYPE, part.getKey().toString());
     }
+
+
 }

@@ -82,12 +82,12 @@ public class ESSearcher {
      * @return List of document master
      */
     public List<DocumentRevision> search(DocumentSearchQuery docQuery) throws ESServerException {
+        Client client = null;
         try {
-            Client client = ESTools.createClient();
+            client = ESTools.createClient();
             QueryBuilder qr = getQueryBuilder(docQuery);
             SearchRequestBuilder srb = getSearchRequest(client, ESTools.formatIndexName(docQuery.getWorkspaceId()), ES_TYPE_DOCUMENT, qr);
             SearchResponse sr = srb.execute().actionGet();
-
 
             List<DocumentRevision> listOfDocuments = new ArrayList<>();
             for (int i = 0; i < sr.getHits().getHits().length; i++) {
@@ -100,7 +100,6 @@ public class ESSearcher {
 
             //Todo FilterConfigSpec
 
-            client.close();
             return listOfDocuments;
         } catch (NoNodeAvailableException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_SEARCH_ERROR_1);
@@ -110,6 +109,8 @@ public class ESSearcher {
             String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString(ES_SEARCH_ERROR_2);
             LOGGER.log(Level.WARNING,logMessage,e);
             throw new ESServerException(Locale.getDefault(),ES_SERVER_ERROR_2);
+        } finally {
+            ESTools.closeClient(client);
         }
     }
 
@@ -120,8 +121,9 @@ public class ESSearcher {
      * @return List of part revision
      */
     public List<PartRevision> search(PartSearchQuery partQuery) throws ESServerException {
+        Client client = null;
         try {
-            Client client = ESTools.createClient();
+            client = ESTools.createClient();
             QueryBuilder qr = getQueryBuilder(partQuery);
             SearchRequestBuilder srb = getSearchRequest(client, ESTools.formatIndexName(partQuery.getWorkspaceId()), ES_TYPE_PART, qr);
             SearchResponse sr = srb.execute().actionGet();
@@ -136,8 +138,6 @@ public class ESSearcher {
             }
 
             //Todo FilterConfigSpec
-
-            client.close();
             return new ArrayList<>(setOfParts);
         } catch (NoNodeAvailableException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_SEARCH_ERROR_1);
@@ -147,6 +147,8 @@ public class ESSearcher {
             String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString(ES_SEARCH_ERROR_2);
             LOGGER.log(Level.WARNING,logMessage,e);
             throw new ESServerException(Locale.getDefault(),ES_SERVER_ERROR_2);
+        } finally {
+            ESTools.closeClient(client);
         }
 
     }
@@ -158,8 +160,9 @@ public class ESSearcher {
      * @return List of document master
      */
     public List<DocumentRevision> searchInAllWorkspace(DocumentSearchQuery docQuery) throws ESServerException {
+        Client client = null;
         try {
-            Client client = ESTools.createClient();
+           client = ESTools.createClient();
             QueryBuilder qr = getQueryBuilder(docQuery);
             MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
             WorkspaceDAO wDAO = new WorkspaceDAO(em);
@@ -182,12 +185,13 @@ public class ESSearcher {
                     }
                 }
             }
-            client.close();
             return listOfDocuments;
         } catch (NoNodeAvailableException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_SEARCH_ERROR_1);
             LOGGER.log(Level.WARNING, logMessage, e);
             throw new ESServerException(Locale.getDefault(), ES_SERVER_ERROR_1);
+        } finally {
+            ESTools.closeClient(client);
         }
     }
 
@@ -198,8 +202,10 @@ public class ESSearcher {
      * @return List of part revision
      */
     public List<PartRevision> searchInAllWorkspace(PartSearchQuery partQuery) throws ESServerException {
+        Client client = null;
+
         try {
-            Client client = ESTools.createClient();
+            client = ESTools.createClient();
             QueryBuilder qr = getQueryBuilder(partQuery);
             MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
             WorkspaceDAO wDAO = new WorkspaceDAO(em);
@@ -223,12 +229,13 @@ public class ESSearcher {
                 }
             }
 
-            client.close();
             return listOfParts;
         } catch (NoNodeAvailableException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_SEARCH_ERROR_1);
             LOGGER.log(Level.WARNING, logMessage, e);
             throw new ESServerException(Locale.getDefault(), ES_SERVER_ERROR_1);
+        } finally {
+            ESTools.closeClient(client);
         }
     }
 
