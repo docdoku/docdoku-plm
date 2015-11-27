@@ -26,6 +26,7 @@ import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.server.helpers.Streams;
 import com.docdoku.server.rest.exceptions.NotModifiedException;
 import com.docdoku.server.rest.exceptions.PreconditionFailedException;
 import com.docdoku.server.rest.exceptions.RequestedRangeNotSatisfiableException;
@@ -119,9 +120,12 @@ public class PartTemplateBinaryResource {
             return rb.build();
         }
 
-        try (InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource)){
+        InputStream binaryContentInputStream = null;
+        try {
+            binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
-        } catch (IOException| StorageException e) {
+        } catch (StorageException e) {
+            Streams.close(binaryContentInputStream);
             return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
         }
 

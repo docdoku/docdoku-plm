@@ -20,6 +20,7 @@
 
 package com.docdoku.server.rest.file.util;
 
+import com.docdoku.server.helpers.Streams;
 import com.docdoku.server.rest.exceptions.InterruptedStreamException;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.InputSupplier;
@@ -64,11 +65,7 @@ public class BinaryResourceBinaryStreamingOutput implements StreamingOutput {
                 LOGGER.log(Level.FINE,"A downloading stream was interrupted.",e);
                 throw new InterruptedStreamException();
             }finally {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    LOGGER.log(Level.SEVERE, "A input stream was not clearly close.", e);
-                }
+                Streams.close(input);
             }
         }else{
             // Slice the input stream considering offset and length
