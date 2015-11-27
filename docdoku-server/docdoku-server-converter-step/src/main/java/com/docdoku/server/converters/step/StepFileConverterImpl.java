@@ -72,12 +72,12 @@ public class StepFileConverterImpl implements CADConverter {
         String pythonInterpreter = CONF.getProperty("pythonInterpreter");
         String freeCadLibPath = CONF.getProperty("freeCadLibPath");
 
-        InputStream scriptStream = StepFileConverterImpl.class.getResourceAsStream(PYTHON_SCRIPT_TO_OBJ);
-        File scriptToOBJ = new File(tempDir,"python_script" + UUID.randomUUID() + ".py");
-        Files.copy(scriptStream, scriptToOBJ.toPath());
-        scriptStream.close();
+        File scriptToOBJ;
 
-
+        try(InputStream scriptStream = StepFileConverterImpl.class.getResourceAsStream(PYTHON_SCRIPT_TO_OBJ)){
+            scriptToOBJ = new File(tempDir,"python_script" + UUID.randomUUID() + ".py");
+            Files.copy(scriptStream, scriptToOBJ.toPath());
+        }
 
         try (InputStream in = dataManager.getBinaryResourceInputStream(cadFile)) {
             Files.copy(in, tmpCadFile.toPath());
