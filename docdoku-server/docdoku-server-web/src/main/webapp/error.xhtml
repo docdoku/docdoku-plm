@@ -13,7 +13,7 @@
         <ui:define name="content">
             <h2>#{i18nError['main.title']}</h2>
             <p>
-                <blockquote>#{requestScope['javax.servlet.error.exception'].message}</blockquote>
+                <blockquote>#{errorBean.exceptionMessage}</blockquote>
             </p>
         </ui:define>
 
