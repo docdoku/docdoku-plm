@@ -84,7 +84,7 @@ public class ExcelGenerator {
                     columnTranslated = columnTranslated.substring(columnTranslated.indexOf(".") + 1);
                 }
                 else {
-                    columnTranslated = langHelper.getLocalizedMessage(column.trim(), locale);
+                    columnTranslated = langHelper.getLocalizedMessage(column.trim());
                 }
                 headerFormatted[headerIndex++] = columnTranslated != null ? columnTranslated : column;
             }
