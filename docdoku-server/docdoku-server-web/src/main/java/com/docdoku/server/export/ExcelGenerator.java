@@ -273,8 +273,6 @@ public class ExcelGenerator {
                             }
                         }
                         data.add(sbpdattr.toString());
-                    } else {
-                        data.add("");
                     }
             }
 
