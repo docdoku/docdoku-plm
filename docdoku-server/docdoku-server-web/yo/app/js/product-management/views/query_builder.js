@@ -491,9 +491,15 @@ define([
             var queryId = this.$selectQuery.val();
             var query = _.findWhere(this.queries, {id : parseInt(queryId,10)});
             var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries/'+query.id+'/format/XLS';
-            var link=document.createElement('a');
+            var link = document.createElement('a');
             link.href = url;
-            link.click();
+
+            var event = document.createEvent("MouseEvents");
+            event.initMouseEvent(
+                "click", true, false, window, 0, 0, 0, 0, 0
+                , false, false, false, false, 0, null
+            );
+            link.dispatchEvent(event);
         },
 
         onSearch:function(){
