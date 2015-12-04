@@ -797,6 +797,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                         lovAttr.setLov(lovDAO.loadLOV(lovKey));
                     }
                 }
+                if(!AttributesConsistencyUtils.isTemplateAttributesValid(templateAttrs,false)) {
+                    throw new NotAllowedException(locale, "NotAllowedException59");
+                }
                 partIte.setInstanceAttributeTemplates(pAttributeTemplates);
             }
 
@@ -1670,6 +1673,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         List<InstanceAttributeTemplate> attrs = new ArrayList<>();
         for (int i = 0; i < pAttributeTemplates.length; i++) {
+            if(attributesLocked) {
+                pAttributeTemplates[i].setLocked(attributesLocked);
+            }
             attrs.add(pAttributeTemplates[i]);
             if (pAttributeTemplates[i] instanceof ListOfValuesAttributeTemplate) {
                 ListOfValuesAttributeTemplate lovAttr = (ListOfValuesAttributeTemplate) pAttributeTemplates[i];
@@ -1690,6 +1696,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 ListOfValuesKey lovKey = new ListOfValuesKey(user.getWorkspaceId(), instanceLovNames[i]);
                 lovAttr.setLov(lovDAO.loadLOV(lovKey));
             }
+        }
+        if(!AttributesConsistencyUtils.isTemplateAttributesValid(instanceAttrs,false)) {
+            throw new NotAllowedException(locale, "NotAllowedException59");
         }
         template.setAttributeInstanceTemplates(instanceAttrs);
 
@@ -1724,6 +1733,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         List<InstanceAttributeTemplate> attrs = new ArrayList<>();
         for (int i = 0; i < pAttributeTemplates.length; i++) {
+            if(attributesLocked) {
+                pAttributeTemplates[i].setLocked(attributesLocked);
+            }
             attrs.add(pAttributeTemplates[i]);
             if (pAttributeTemplates[i] instanceof ListOfValuesAttributeTemplate) {
                 ListOfValuesAttributeTemplate lovAttr = (ListOfValuesAttributeTemplate) pAttributeTemplates[i];
@@ -1744,6 +1756,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 ListOfValuesKey lovKey = new ListOfValuesKey(user.getWorkspaceId(), instanceLovNames[i]);
                 lovAttr.setLov(lovDAO.loadLOV(lovKey));
             }
+        }
+        if(!AttributesConsistencyUtils.isTemplateAttributesValid(instanceAttrs,false)) {
+            throw new NotAllowedException(locale, "NotAllowedException59");
         }
         template.setAttributeInstanceTemplates(instanceAttrs);
 

@@ -574,6 +574,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         List<InstanceAttributeTemplate> attrs = new ArrayList<>();
         for (int i = 0; i < pAttributeTemplates.length; i++) {
+            if(attributesLocked) {
+                pAttributeTemplates[i].setLocked(attributesLocked);
+            }
             attrs.add(pAttributeTemplates[i]);
             if (pAttributeTemplates[i] instanceof ListOfValuesAttributeTemplate) {
                 ListOfValuesAttributeTemplate lovAttr = (ListOfValuesAttributeTemplate) pAttributeTemplates[i];
