@@ -130,7 +130,7 @@ public class DocumentTemplateResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentMasterTemplateDTO updateDocMsTemplate(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, DocumentMasterTemplateDTO docMsTemplateDTO)
-            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
         String documentType = docMsTemplateDTO.getDocumentType();
         String workflowModelId = docMsTemplateDTO.getWorkflowModelId();

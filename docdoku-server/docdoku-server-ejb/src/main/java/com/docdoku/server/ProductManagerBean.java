@@ -1669,6 +1669,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 lovAttr.setLov(lovDAO.loadLOV(lovKey));
             }
         }
+        if(!AttributesConsistencyUtils.isTemplateAttributesValid(attrs,attributesLocked)) {
+            throw new NotAllowedException(locale, "NotAllowedException59");
+        }
         template.setAttributeTemplates(attrs);
 
         List<InstanceAttributeTemplate> instanceAttrs = new ArrayList<>();
@@ -1693,7 +1696,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, String[] lovNames, InstanceAttributeTemplate[] pAttributeInstanceTemplates, String[] instanceLovNames, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException, WorkflowModelNotFoundException, UserNotActiveException, ListOfValuesNotFoundException {
+    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, String[] lovNames, InstanceAttributeTemplate[] pAttributeInstanceTemplates, String[] instanceLovNames, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException, WorkflowModelNotFoundException, UserNotActiveException, ListOfValuesNotFoundException, NotAllowedException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         Locale locale = new Locale(user.getLanguage());
 
@@ -1720,7 +1723,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 lovAttr.setLov(lovDAO.loadLOV(lovKey));
             }
         }
-
+        if(!AttributesConsistencyUtils.isTemplateAttributesValid(attrs,attributesLocked)) {
+            throw new NotAllowedException(locale, "NotAllowedException59");
+        }
         template.setAttributeTemplates(attrs);
 
         List<InstanceAttributeTemplate> instanceAttrs = new ArrayList<>();
