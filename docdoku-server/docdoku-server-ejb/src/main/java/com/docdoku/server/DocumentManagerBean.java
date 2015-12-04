@@ -554,7 +554,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentMasterTemplate updateDocumentMasterTemplate(DocumentMasterTemplateKey pKey, String pDocumentType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, String[] lovNames, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException, WorkflowModelNotFoundException, UserNotActiveException, ListOfValuesNotFoundException {
+    public DocumentMasterTemplate updateDocumentMasterTemplate(DocumentMasterTemplateKey pKey, String pDocumentType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, String[] lovNames, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException, WorkflowModelNotFoundException, UserNotActiveException, ListOfValuesNotFoundException, NotAllowedException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         Locale locale = new Locale(user.getLanguage());
 
@@ -582,6 +582,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
         }
 
+        if(!AttributesConsistencyUtils.isTemplateAttributesValid(attrs,attributesLocked)) {
+            throw new NotAllowedException(locale, "NotAllowedException59");
+        }
         template.setAttributeTemplates(attrs);
 
         WorkflowModel workflowModel = null;
@@ -791,6 +794,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 ListOfValuesKey lovKey = new ListOfValuesKey(user.getWorkspaceId(), lovNames[i]);
                 lovAttr.setLov(lovDAO.loadLOV(lovKey));
             }
+        }
+        if(!AttributesConsistencyUtils.isTemplateAttributesValid(attrs,attributesLocked)) {
+            throw new NotAllowedException(locale, "NotAllowedException59");
         }
         template.setAttributeTemplates(attrs);
 

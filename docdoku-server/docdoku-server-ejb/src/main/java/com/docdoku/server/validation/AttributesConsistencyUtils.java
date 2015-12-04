@@ -21,6 +21,7 @@
 package com.docdoku.server.validation;
 
 import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 
 import java.util.*;
 
@@ -42,7 +43,28 @@ public class AttributesConsistencyUtils {
         }
     }
 
+    public static boolean isTemplateAttributesValid(List<InstanceAttributeTemplate> pAttributes, boolean attributesLocked) {
+        for(InstanceAttributeTemplate instanceAttributeTemplate: pAttributes) {
+            if(attributesLocked && !instanceAttributeTemplate.isLocked()) {
+                return false;
+            }
+
+            if(instanceAttributeTemplate.isMandatory() && !instanceAttributeTemplate.isLocked()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check if the structure has not been changed. The following rules apply: The attributes must be in the same order,
+     * the type of attribute and the name must stay the same.
+     * @param currentAttrs Current list of attributes
+     * @param pAttributes List of attributes to be used.
+     * @return A boolean stating the equality.
+     */
     private static boolean checkAttributesEquality(List<InstanceAttribute> currentAttrs, List<InstanceAttribute> pAttributes) {
+        //Can not use the equal() function, it is already implemented using the id.
         for (int i = 0; i < currentAttrs.size(); i++) {
             InstanceAttribute currentAttr = currentAttrs.get(i);
             InstanceAttribute newAttr = pAttributes.get(i);
@@ -59,6 +81,11 @@ public class AttributesConsistencyUtils {
         return true;
     }
 
+    /**
+     * Check the validity of an attribute.
+     * @param newAttr
+     * @return a boolean stating the validity of the attribute
+     */
     private static boolean checkValidAttribute(InstanceAttribute newAttr) {
         if(newAttr.isMandatory()) {
             if(!newAttr.isLocked()) {
@@ -74,6 +101,15 @@ public class AttributesConsistencyUtils {
         return true;
     }
 
+    /**
+     * Check if an attribute is lock in currentAttrs, that it still exists in pAttributes.
+     * Since an attribute does not have a uniq id, for X locked attributes of name N in currentAttrs,
+     * we must have X locked attributes of name N in pAttributes.
+     * This function will also check for all attributes in pAttributes their invidual validity.
+     * @param currentAttrs Current list of attributes
+     * @param pAttributes List of attributes to be used.
+     * @return a boolean stating the consistency of the attributes
+     */
     private static boolean lockedAttributesConsistency(List<InstanceAttribute> currentAttrs, List<InstanceAttribute> pAttributes) {
         Map<String,List<InstanceAttribute>> pMapAttributes = getMappedAttributes(pAttributes);
         if(pMapAttributes == null) {
@@ -91,7 +127,14 @@ public class AttributesConsistencyUtils {
         return true;
     }
 
+    /**
+     * Assert that an attribute is present in the list of attribute, and remove
+     * @param attribute Attribute to look for
+     * @param attributes List of attributes
+     * @return True if it's exist
+     */
     private static boolean existSameProperties(InstanceAttribute attribute, List<InstanceAttribute> attributes) {
+        //Can not use the List.remove() function, since the equal() function is already implemented using the id.
         for(Iterator<InstanceAttribute> iterator = attributes.iterator(); iterator.hasNext();) {
             InstanceAttribute attr = iterator.next();
             if(attribute.isLocked() == attr.isLocked()

@@ -20,7 +20,9 @@
 
 package com.docdoku.server.validation;
 
+import com.docdoku.core.meta.DefaultAttributeTemplate;
 import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.meta.InstanceTextAttribute;
 import junit.framework.TestCase;
 import org.junit.Assert;
@@ -38,7 +40,7 @@ import java.util.List;
  */
 @RunWith(Parameterized.class)
 public class AttributesConsistencyUtilsTest extends TestCase {
-
+    //TODO: use mockito for the test
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         Object[][] parameters = new Object[4][4];
@@ -114,6 +116,68 @@ public class AttributesConsistencyUtilsTest extends TestCase {
     @Test
     public void testHasValidChange() throws Exception {
         Assert.assertEquals("Wrong result from hasValidChange", expect, AttributesConsistencyUtils.hasValidChange(pAttributes, isAttributesLocked, currentAttrs));
+    }
+
+    @Test
+    public void testIsTemplateAttributesValid() throws Exception {
+        List<InstanceAttributeTemplate> instanceAttributeTemplates = new ArrayList<>();
+
+        //bad attribute: can not be "not locked" and mandatory
+        InstanceAttributeTemplate attr = new DefaultAttributeTemplate("test", InstanceAttributeTemplate.AttributeType.BOOLEAN);
+        attr.setLocked(false);
+        attr.setMandatory(true);
+        instanceAttributeTemplates.add(attr);
+
+        attr = new DefaultAttributeTemplate("test", InstanceAttributeTemplate.AttributeType.TEXT);
+        attr.setLocked(true);
+        attr.setMandatory(true);
+        instanceAttributeTemplates.add(attr);
+
+        //bad attribute: can not be "not locked" and mandatory
+        attr = new DefaultAttributeTemplate("test1", InstanceAttributeTemplate.AttributeType.LOV);
+        attr.setLocked(false);
+        attr.setMandatory(true);
+        instanceAttributeTemplates.add(attr);
+
+        //Should failed either attributesLocked or not.
+        Assert.assertFalse(AttributesConsistencyUtils.isTemplateAttributesValid(instanceAttributeTemplates,false));
+        Assert.assertFalse(AttributesConsistencyUtils.isTemplateAttributesValid(instanceAttributeTemplates,true));
+
+        instanceAttributeTemplates.clear();
+        attr = new DefaultAttributeTemplate("test", InstanceAttributeTemplate.AttributeType.BOOLEAN);
+        attr.setLocked(false);
+        attr.setMandatory(false);
+        instanceAttributeTemplates.add(attr);
+        attr = new DefaultAttributeTemplate("test", InstanceAttributeTemplate.AttributeType.TEXT);
+        attr.setLocked(true);
+        attr.setMandatory(true);
+        instanceAttributeTemplates.add(attr);
+        attr = new DefaultAttributeTemplate("test1", InstanceAttributeTemplate.AttributeType.LOV);
+        attr.setLocked(true);
+        attr.setMandatory(false);
+        instanceAttributeTemplates.add(attr);
+
+        //Should fail if attributesLocked, some attributes are not locked.
+        Assert.assertTrue(AttributesConsistencyUtils.isTemplateAttributesValid(instanceAttributeTemplates,false));
+        Assert.assertFalse(AttributesConsistencyUtils.isTemplateAttributesValid(instanceAttributeTemplates,true));
+
+        instanceAttributeTemplates.clear();
+        attr = new DefaultAttributeTemplate("test", InstanceAttributeTemplate.AttributeType.BOOLEAN);
+        attr.setLocked(true);
+        attr.setMandatory(false);
+        instanceAttributeTemplates.add(attr);
+        attr = new DefaultAttributeTemplate("test", InstanceAttributeTemplate.AttributeType.TEXT);
+        attr.setLocked(true);
+        attr.setMandatory(true);
+        instanceAttributeTemplates.add(attr);
+        attr = new DefaultAttributeTemplate("test1", InstanceAttributeTemplate.AttributeType.LOV);
+        attr.setLocked(true);
+        attr.setMandatory(false);
+        instanceAttributeTemplates.add(attr);
+
+        //All attributes are locked and valid, should succeed for either attributesLocked true or false.
+        Assert.assertTrue(AttributesConsistencyUtils.isTemplateAttributesValid(instanceAttributeTemplates, false));
+        Assert.assertTrue(AttributesConsistencyUtils.isTemplateAttributesValid(instanceAttributeTemplates,true));
     }
 
 }
