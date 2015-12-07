@@ -31,13 +31,13 @@ define(function () {
         var extension = filename.substr(filename.lastIndexOf('.') + 1).toLowerCase();
 
         function addLightsToCamera(camera) {
-            var dirLight1 = new THREE.DirectionalLight(App.SceneOptions.cameraLightColor);
+            var dirLight1 = new THREE.DirectionalLight(App.SceneOptions.cameraLight1Color);
             dirLight1.position.set(200, 200, 1000).normalize();
             dirLight1.name = 'CameraLight1';
             camera.add(dirLight1);
             camera.add(dirLight1.target);
 
-            var dirLight2 = new THREE.DirectionalLight( 0xffffff, 1 );
+            var dirLight2 = new THREE.DirectionalLight( App.SceneOptions.cameraLight2Color, 1 );
             dirLight2.color.setHSL( 0.1, 1, 0.95 );
             dirLight2.position.set( -1, 1.75, 1 );
             dirLight2.position.multiplyScalar( 50 );
@@ -60,7 +60,7 @@ define(function () {
             dirLight2.shadowBias = -0.0001;
             dirLight2.shadowDarkness = 0.35;
 
-            var hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
+            var hemiLight = new THREE.HemisphereLight( App.SceneOptions.ambientLightColor, App.SceneOptions.ambientLightColor, 0.6 );
             hemiLight.color.setHSL( 0.6, 1, 0.6 );
             hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
             hemiLight.position.set( 0, 0, 500 );
