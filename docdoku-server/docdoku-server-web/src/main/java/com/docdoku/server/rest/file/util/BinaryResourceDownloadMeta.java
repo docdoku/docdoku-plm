@@ -21,14 +21,12 @@
 package com.docdoku.server.rest.file.util;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.server.rest.util.FileDownloadTools;
 
 import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
 import javax.ws.rs.core.EntityTag;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Date;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -67,25 +65,6 @@ public class BinaryResourceDownloadMeta {
      */
     public String getFullName(){
         return fullName;
-    }
-
-    /**
-     * Get the output name of file
-     * @return Output name of file
-     */
-    public String getFileName(){
-        String fileName = fullName;
-        try {
-            fileName = URLEncoder.encode(fileName, CHARSET).replace("+", " ");
-        } catch (UnsupportedEncodingException e) {
-            LOGGER.log(Level.WARNING,null,e);
-        }
-
-        if(outputFormat !=null){
-            fileName += "."+ outputFormat;
-        }
-
-        return fileName;
     }
 
     public boolean isConverted(){
@@ -161,9 +140,9 @@ public class BinaryResourceDownloadMeta {
      */
     // Todo check if we can have unencoding contentDisposition
     // Todo check accept request
-    public String getContentDisposition(){
-        String dispositionType = ("viewer".equals(downloadType)) ? "inline" : "attachement";
-        return dispositionType+";filename*=\""+ getFileName() +"\"";
+    public String getContentDisposition() {
+        String fileName = FileDownloadTools.getFileName(fullName, outputFormat);
+        return FileDownloadTools.getContentDisposition(downloadType, fileName);
     }
 
     private static void initFileTypeMap(){
