@@ -163,7 +163,7 @@ public class BinaryResourceDownloadMeta {
     // Todo check accept request
     public String getContentDisposition(){
         String dispositionType = ("viewer".equals(downloadType)) ? "inline" : "attachement";
-        return dispositionType+";filename=\""+ getFileName() +"\"";
+        return dispositionType+";filename*=\""+ getFileName() +"\"";
     }
 
     private static void initFileTypeMap(){
