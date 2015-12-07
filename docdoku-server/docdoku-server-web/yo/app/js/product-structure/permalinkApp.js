@@ -223,6 +223,7 @@ define(function () {
 
                 OBJLoader.load(filename, texturePath + '/attachedfiles/', function (object) {
                     setShadows(object);
+                    updateMaterial(object);
                     onParseSuccess(object);
                 });
 
