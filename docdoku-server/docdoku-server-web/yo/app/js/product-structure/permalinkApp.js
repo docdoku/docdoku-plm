@@ -188,9 +188,22 @@ define(function () {
 
                 break;
 
-            case 'js':
+            // Used for json files only (no referenced buffers)
             case 'json':
+                var jsonLoader = new THREE.JSONLoader();
 
+                jsonLoader.load(filename, function (geometry, materials) {
+                    geometry.dynamic = false;
+                    var object = new THREE.Object3D();
+                    object.add(new THREE.Mesh(geometry,new THREE.MeshFaceMaterial(materials)));
+                    setShadows(object);
+                    onParseSuccess(object);
+                }, texturePath+'/attachedfiles/');
+
+                break;
+
+            // Used for binary json files only (referenced buffers - bin file)
+            case 'js':
                 var binaryLoader = new THREE.BinaryLoader();
 
                 binaryLoader.load(filename, function (geometry, materials) {
