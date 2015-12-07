@@ -494,10 +494,10 @@ define([
             var link = document.createElement('a');
             link.href = url;
 
-            var event = document.createEvent("MouseEvents");
+            var event = document.createEvent('MouseEvents');
             event.initMouseEvent(
-                "click", true, false, window, 0, 0, 0, 0, 0
-                , false, false, false, false, 0, null
+                'click', true, false, window, 0, 0, 0, 0, 0,
+                false, false, false, false, 0, null
             );
             link.dispatchEvent(event);
         },
