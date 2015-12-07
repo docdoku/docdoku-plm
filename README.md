@@ -1,10 +1,9 @@
-<h1> Welcome to the DocDoku PLM project</h1><img src = "http://www.docdokuplm.com/wp-content/themes/docdokuplm/images/logo-DocDokuPLM.png" />
+<h1> Welcome to the DocDokuPLM project</h1>![Image of DocDokuPLM logo](http://www.docdokuplm.com/wp-content/themes/docdokuplm2/library/images/plm_logo2.png)
+## What is DocDokuPLM?
 
-## What is DocDoku PLM?
+DocDokuPLM is a high end Open Source PLM solution.
 
-DocDoku PLM is a high end Open Source PLM solution.
-
-## What does DocDoku PLM offer?
+## What does DocDokuPLM offer?
 
 * Document Management: Version control, workflows, templates, links
 * Product Structure: Search and filters the product structure
