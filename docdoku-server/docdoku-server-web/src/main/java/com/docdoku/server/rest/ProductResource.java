@@ -39,6 +39,7 @@ import com.docdoku.server.rest.collections.InstanceCollection;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.PathChoiceDTO;
+import com.docdoku.server.rest.util.FileDownloadTools;
 import com.docdoku.server.rest.util.FileExportEntity;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -455,9 +456,12 @@ public class ProductResource {
             }
         }
 
+        String fileName = FileDownloadTools.getFileName(ciId+"-"+configSpecType+"-export", "zip");
+        String contentDisposition = FileDownloadTools.getContentDisposition("attachment", fileName);
+
         return Response.ok()
                 .header("Content-Type", "application/download")
-                .header("Content-Disposition", "attachment; filename=\""+ciId+"-"+configSpecType+"-export.zip\"")
+                .header("Content-Disposition", contentDisposition)
                 .entity(fileExportEntity).build();
     }
 
