@@ -1886,13 +1886,13 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     private void checkNameValidity(String name, Locale locale) throws NotAllowedException {
         if (!NamingConvention.correct(name)) {
-            throw new NotAllowedException(locale, "NotAllowedException9");
+            throw new NotAllowedException(locale, "NotAllowedException9", name);
         }
     }
 
     private void checkNameFileValidity(String name, Locale locale) throws NotAllowedException {
         if (!NamingConvention.correctNameFile(name)) {
-            throw new NotAllowedException(locale, "NotAllowedException9");
+            throw new NotAllowedException(locale, "NotAllowedException9", name);
         }
     }
 
