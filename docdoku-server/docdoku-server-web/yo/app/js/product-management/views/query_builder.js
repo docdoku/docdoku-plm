@@ -62,7 +62,7 @@ define([
             this.fetchTags();
         },
 
-        fetchQueries:function(){
+        fetchQueries: function (queryName) {
 
             this.queries = [];
             var queries = this.queries;
@@ -84,6 +84,13 @@ define([
                     return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1;
                 });
                 data.map(fillOption);
+
+                if (queryName) {
+                    var selectedQuery = _.find(data, function (query) {
+                        return query.name === queryName;
+                    });
+                    selected = selectedQuery.id;
+                }
                 $select.val(selected);
             });
 
@@ -578,7 +585,7 @@ define([
                             queryColumnNameMapping:self.selectizeAvailableOptions
                         };
                         self.$searchButton.button('reset');
-                        self.fetchQueries();
+                        self.fetchQueries(save);
                         self.trigger('query:search', dataToTransmit);
                     },
                     error: function (errorMessage) {
