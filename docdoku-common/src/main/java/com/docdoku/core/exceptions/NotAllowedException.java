@@ -20,6 +20,7 @@
 
 package com.docdoku.core.exceptions;
 
+import java.text.MessageFormat;
 import java.util.Locale;
 
 /**
@@ -28,20 +29,27 @@ import java.util.Locale;
  */
 public class NotAllowedException extends ApplicationException {
     private final String mKey;
-    
-
-    public NotAllowedException(String pMessage) {
-        super(pMessage);
-        mKey=null;
-    }
+    private final String mName;
     
     public NotAllowedException(Locale pLocale, String pKey) {
         super(pLocale);
         mKey=pKey;
+        mName=null;
+    }
+
+    public NotAllowedException(Locale pLocale, String pKey, String pName) {
+        super(pLocale);
+        mKey=pKey;
+        mName=pName;
     }
 
     @Override
     public String getLocalizedMessage() {
-        return mKey==null?null:getBundleMessage(mKey);     
+        if (mKey == null) {
+            return null;
+        }
+
+        String message = getBundleMessage(mKey);
+        return MessageFormat.format(message, mName);
     }
 }

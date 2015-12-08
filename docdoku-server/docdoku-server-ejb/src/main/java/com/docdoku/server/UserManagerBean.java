@@ -124,7 +124,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @Override
     public Workspace createWorkspace(String pID, Account pAdmin, String pDescription, boolean pFolderLocked) throws WorkspaceAlreadyExistsException, FolderAlreadyExistsException, UserAlreadyExistsException, CreationException, ESIndexNamingException, NotAllowedException {
         if (!NamingConvention.correct(pID)) {
-            throw new NotAllowedException(new Locale(pAdmin.getLanguage()), "NotAllowedException9");
+            throw new NotAllowedException(new Locale(pAdmin.getLanguage()), "NotAllowedException9", pID);
         }
         Workspace workspace = new Workspace(pID, pAdmin, pDescription, pFolderLocked);
         new WorkspaceDAO(em).createWorkspace(workspace);
