@@ -1078,7 +1078,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             throw new NotAllowedException(userLocale, "NotAllowedException21");
         }
 
-        return doFolderDeletion(folder,userLocale);
+        return doFolderDeletion(folder, userLocale);
     }
 
     private DocumentRevisionKey[] doFolderDeletion(Folder folder, Locale locale) throws EntityConstraintException, NotAllowedException, WorkspaceNotFoundException, ESServerException, AccessRightException, DocumentRevisionNotFoundException, UserNotActiveException, UserNotFoundException {
@@ -1916,6 +1916,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     }
 
     private void checkNameFileValidity(String name, Locale locale) throws NotAllowedException {
+        if (name != null) {
+            name = name.trim();
+        }
         if (!NamingConvention.correctNameFile(name)) {
             throw new NotAllowedException(locale, "NotAllowedException9", name);
         }

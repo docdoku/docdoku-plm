@@ -26,7 +26,7 @@ define([
             if(this.model.getSubType()) {
                 this.model.url += this.model.getSubType() + '/';
             }
-            this.model.url +=  this.model.get('shortName');
+            this.model.url += this.model.get('shortName');
             this.fileUrl = this.options.uploadBaseUrl + this.model.get('shortName');
         },
 
@@ -72,7 +72,7 @@ define([
         },
 
         validateName:function(){
-            var newName = this.fileNameInput.val();
+            var newName = this.fileNameInput.val().trim();
             if (!newName.length) {
                 return;
             }

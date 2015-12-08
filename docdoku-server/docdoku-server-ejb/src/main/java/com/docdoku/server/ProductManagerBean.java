@@ -3512,6 +3512,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     }
 
     private void checkNameFileValidity(String name, Locale locale) throws NotAllowedException {
+        if (name != null) {
+            name = name.trim();
+        }
         if (!NamingConvention.correctNameFile(name)) {
             throw new NotAllowedException(locale, "NotAllowedException9", name);
         }
