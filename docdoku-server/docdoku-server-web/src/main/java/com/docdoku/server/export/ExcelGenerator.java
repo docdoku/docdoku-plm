@@ -97,11 +97,9 @@ public class ExcelGenerator {
         }
 
         //Iterate over data and write to sheet
-        Set<Integer> keyset = data.keySet();
         int rownum = 0;
-        for (Integer key : keyset) {
+        for(String[] objArr : data.values()) {
             Row row = sheet.createRow(rownum++);
-            String[] objArr = data.get(key);
             int cellnum = 0;
             for (String obj : objArr) {
                 Cell cell = row.createCell(cellnum++);
@@ -120,11 +118,11 @@ public class ExcelGenerator {
         headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
         sheet.getRow(0).setRowStyle(headerStyle);
-        try {
+
             //Write the workbook in file system
-            FileOutputStream out = new FileOutputStream(excelFile);
+        try(FileOutputStream out = new FileOutputStream(excelFile)) {
             workbook.write(out);
-            out.close();
+
         } catch (Exception e) {
             LOGGER.log(Level.FINEST, null, e);
         }
