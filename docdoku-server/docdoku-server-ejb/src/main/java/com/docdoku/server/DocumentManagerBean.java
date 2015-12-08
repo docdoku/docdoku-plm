@@ -1066,7 +1066,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
             folderDAO.removeFolder(folder);
             return allDocRevisionKey.toArray(new DocumentRevisionKey[allDocRevisionKey.size()]);
-
         }
     }
 
@@ -1891,6 +1890,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     }
 
     private void checkNameFileValidity(String name, Locale locale) throws NotAllowedException {
+        if (name != null) {
+            name = name.trim();
+        }
         if (!NamingConvention.correctNameFile(name)) {
             throw new NotAllowedException(locale, "NotAllowedException9", name);
         }
