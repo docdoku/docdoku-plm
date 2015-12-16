@@ -193,8 +193,8 @@ public class WorkspaceDAO {
         em.createQuery("DELETE FROM ModificationNotification m where m.impactedPart.partRevision.partMaster.workspace = :workspace or m.modifiedPart.partRevision.partMaster.workspace = :workspace")
                 .setParameter("workspace", workspace).executeUpdate();
 
-        // Change issues
-        em.createQuery("DELETE FROM ChangeIssue c where c.workspace = :workspace")
+        // Change order
+        em.createQuery("DELETE FROM ChangeOrder c where c.workspace = :workspace")
                 .setParameter("workspace", workspace).executeUpdate();
 
         // Change requests
@@ -202,7 +202,7 @@ public class WorkspaceDAO {
                 .setParameter("workspace", workspace).executeUpdate();
 
         // Change issues
-        em.createQuery("DELETE FROM ChangeOrder c where c.workspace = :workspace")
+        em.createQuery("DELETE FROM ChangeIssue c where c.workspace = :workspace")
                 .setParameter("workspace", workspace).executeUpdate();
 
         // Change issues / requests
@@ -338,3 +338,4 @@ public class WorkspaceDAO {
                 .getResultList();
     }
 }
+
