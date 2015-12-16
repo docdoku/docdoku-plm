@@ -1801,6 +1801,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         BinaryResource bin = template.getAttachedFile();
         if (bin != null && bin.getFullName().equals(fullName)) {
             binaryResource = bin;
+        } else if(bin != null && !bin.getFullName().equals(fullName)) {
+            try {
+                dataManager.deleteData(bin);
+            } catch (StorageException e) {
+                LOGGER.log(Level.WARNING, "Could not delete attached file", e);
+            }
         }
 
         if (binaryResource == null) {
