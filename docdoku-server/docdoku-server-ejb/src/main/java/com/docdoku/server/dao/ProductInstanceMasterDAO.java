@@ -94,11 +94,12 @@ public class ProductInstanceMasterDAO {
             for(BaselinedPart baselinedPart : productInstanceIteration.getBaselinedParts().values()){
                 em.remove(baselinedPart);
             }
+            
             em.refresh(productInstanceIteration.getPartCollection());
             em.remove(productInstanceIteration.getPartCollection());
             em.remove(productInstanceIteration);
         }
-        // todo remove path data
+
         em.remove(productInstanceMaster);
         em.flush();
     }
