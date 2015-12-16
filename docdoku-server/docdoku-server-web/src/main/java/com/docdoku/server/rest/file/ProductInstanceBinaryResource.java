@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.text.Normalizer;
 import java.util.Collection;
 
 /*
@@ -155,6 +156,7 @@ public class ProductInstanceBinaryResource {
             @PathParam("iteration") int iteration)
             throws EntityNotFoundException, UserNotActiveException, NotAllowedException, AccessRightException, EntityAlreadyExistsException, CreationException {
 
+        // TODO: determine if this WS is really used...
 
         try {
             String fileName = null;
@@ -301,7 +303,7 @@ public class ProductInstanceBinaryResource {
     private String uploadAFile(String workspaceId, Part formPart, ProductInstanceIterationKey pdtIterationKey)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException, UserNotActiveException, StorageException, IOException {
 
-        String fileName = formPart.getSubmittedFileName();
+        String fileName = Normalizer.normalize(formPart.getSubmittedFileName(), Normalizer.Form.NFC);
         // Init the binary resource with a null length
         BinaryResource binaryResource = productInstanceManagerLocal.saveFileInProductInstance(workspaceId, pdtIterationKey, fileName, 0);
         OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
@@ -313,7 +315,7 @@ public class ProductInstanceBinaryResource {
     private String uploadAFileToPathData(String workspaceId, Part formPart, String configurationItemId, String serialNumber, int pathDataId,int iteration)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException, UserNotActiveException, StorageException, IOException {
 
-        String fileName = formPart.getSubmittedFileName();
+        String fileName = Normalizer.normalize(formPart.getSubmittedFileName(), Normalizer.Form.NFC);
         // Init the binary resource with a null length
         BinaryResource binaryResource = productInstanceManagerLocal.saveFileInPathData(workspaceId, configurationItemId, serialNumber, pathDataId,iteration, fileName, 0);
         OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
@@ -324,7 +326,7 @@ public class ProductInstanceBinaryResource {
     private String uploadAFileToPathDataIteration(String workspaceId, Part formPart, String configurationItemId, String serialNumber, int pathDataId,int iteration)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException, UserNotActiveException, StorageException, IOException {
 
-        String fileName = formPart.getSubmittedFileName();
+        String fileName = Normalizer.normalize(formPart.getSubmittedFileName(), Normalizer.Form.NFC);
         // Init the binary resource with a null length
         BinaryResource binaryResource = productInstanceManagerLocal.saveFileInPathDataIteration(workspaceId, configurationItemId, serialNumber, pathDataId,iteration, fileName, 0);
         OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);

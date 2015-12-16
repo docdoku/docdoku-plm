@@ -54,6 +54,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.Normalizer;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
@@ -142,7 +143,7 @@ public class PartBinaryResource{
             String fileName = null;
 
             for(Part formPart : formParts){
-                fileName = formPart.getSubmittedFileName();
+                fileName = Normalizer.normalize(formPart.getSubmittedFileName(), Normalizer.Form.NFC);
                 BinaryResource binaryResource = productService.saveFileInPartIteration(partPK, fileName, ATTACHED_FILES_SUBTYPE, 0);
                 OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
                 long length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
