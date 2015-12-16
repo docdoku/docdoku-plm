@@ -237,9 +237,7 @@ public class ProductInstancesResource {
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         String fullName = workspaceId + "/product-instances/" + serialNumber +"/iterations/" + iteration + "/" + fileName;
-        ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,workspaceId,configurationItemId));
-
-        productInstanceService.removeFileFromProductInstanceIteration(workspaceId, iteration, fullName, productInstanceMaster);
+        productInstanceService.removeFileFromProductInstanceIteration(workspaceId, iteration, fullName, new ProductInstanceMasterKey(serialNumber,workspaceId,configurationItemId));
         return Response.ok().build();
     }
 

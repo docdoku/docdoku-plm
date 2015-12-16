@@ -504,10 +504,11 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductInstanceMaster removeFileFromProductInstanceIteration(String workspaceId, int iteration, String fullName, ProductInstanceMaster productInstanceMaster) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException, FileNotFoundException {
+    public ProductInstanceMaster removeFileFromProductInstanceIteration(String workspaceId, int iteration, String fullName, ProductInstanceMasterKey productInstanceMasterKey) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException, FileNotFoundException, ProductInstanceMasterNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale userLocale = new Locale(user.getLanguage());
+        ProductInstanceMaster productInstanceMaster =  getProductInstanceMaster(productInstanceMasterKey);
 
         ProductInstanceIteration productInstanceIteration = productInstanceMaster.getProductInstanceIterations().get(iteration - 1);
         BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
