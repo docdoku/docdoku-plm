@@ -571,6 +571,17 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocale, em);
         ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
         checkProductInstanceWriteAccess(workspaceId, prodInstM, user);
+
+        for (ProductInstanceIteration pii : prodInstM.getProductInstanceIterations()) {
+            for (BinaryResource file : pii.getAttachedFiles()) {
+                try {
+                    dataManager.deleteData(file);
+                } catch (StorageException e) {
+                    LOGGER.log(Level.INFO, null, e);
+                }
+            }
+        }
+
         productInstanceMasterDAO.deleteProductInstanceMaster(prodInstM);
     }
 
