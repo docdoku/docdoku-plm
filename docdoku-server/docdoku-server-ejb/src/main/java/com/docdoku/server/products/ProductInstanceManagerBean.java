@@ -515,13 +515,15 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         BinaryResource file = binDAO.loadBinaryResource(fullName);
         checkProductInstanceWriteAccess(workspaceId, productInstanceMaster, user);
 
+        productInstanceIteration.removeFile(file);
+        binDAO.removeBinaryResource(file);
+
         try {
             dataManager.deleteData(file);
         } catch (StorageException e) {
             LOGGER.log(Level.INFO, null, e);
         }
-        productInstanceIteration.removeFile(file);
-        binDAO.removeBinaryResource(file);
+
         return productInstanceMaster;
 
     }
@@ -572,6 +574,8 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
         checkProductInstanceWriteAccess(workspaceId, prodInstM, user);
 
+        productInstanceMasterDAO.deleteProductInstanceMaster(prodInstM);
+
         for (ProductInstanceIteration pii : prodInstM.getProductInstanceIterations()) {
             for (BinaryResource file : pii.getAttachedFiles()) {
                 try {
@@ -581,8 +585,6 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
                 }
             }
         }
-
-        productInstanceMasterDAO.deleteProductInstanceMaster(prodInstM);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -852,6 +854,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         }
 
         prodInstI.getPathDataMasterList().remove(pathDataMaster);
+        pathDataMasterDAO.removePathData(pathDataMaster);
 
         for(PathDataIteration pathDataIteration : pathDataMaster.getPathDataIterations()) {
             for (BinaryResource file : pathDataIteration.getAttachedFiles()) {
@@ -862,9 +865,6 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
                 }
             }
         }
-
-
-        pathDataMasterDAO.removePathData(pathDataMaster);
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -1039,13 +1039,15 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             throw new NotAllowedException(userLocale, "NotAllowedException52");
         }
 
+        pathDataIteration.removeFile(file);
+        binDAO.removeBinaryResource(file);
+
         try {
             dataManager.deleteData(file);
         } catch (StorageException e) {
             LOGGER.log(Level.INFO, null, e);
         }
-        pathDataIteration.removeFile(file);
-        binDAO.removeBinaryResource(file);
+
         return productInstanceMaster;
     }
 

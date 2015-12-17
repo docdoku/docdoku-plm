@@ -43,12 +43,10 @@ import com.docdoku.server.esindexer.ESSearcher;
 import com.docdoku.server.factory.ACLFactory;
 import com.docdoku.server.validation.AttributesConsistencyUtils;
 
-import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Local;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
@@ -986,6 +984,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 throw new NotAllowedException(userLocale, "NotAllowedException27");
             }
             DocumentIteration doc = docR.removeLastIteration();
+
+            DocumentDAO docDAO = new DocumentDAO(em);
+            docDAO.removeDoc(doc);
+            docR.setCheckOutDate(null);
+            docR.setCheckOutUser(null);
+
             for (BinaryResource file : doc.getAttachedFiles()) {
                 try {
                     dataManager.deleteData(file);
@@ -994,10 +998,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 }
             }
 
-            DocumentDAO docDAO = new DocumentDAO(em);
-            docDAO.removeDoc(doc);
-            docR.setCheckOutDate(null);
-            docR.setCheckOutUser(null);
             return docR;
         } else {
             throw new NotAllowedException(userLocale, "NotAllowedException19");
@@ -1138,6 +1138,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             throw new EntityConstraintException(locale, "EntityConstraintException7");
         }
 
+        DocumentMaster documentMaster = docR.getDocumentMaster();
+        boolean isLastRevision = documentMaster.getDocumentRevisions().size() == 1;
+        if (isLastRevision) {
+            documentMasterDAO.removeDocM(documentMaster);
+        } else {
+            docRDAO.removeRevision(docR);
+        }
+
         for (DocumentIteration doc : docR.getDocumentIterations()) {
             for (BinaryResource file : doc.getAttachedFiles()) {
                 try {
@@ -1148,14 +1156,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
                 esIndexer.delete(doc);
             }
-        }
-
-        DocumentMaster documentMaster = docR.getDocumentMaster();
-        boolean isLastRevision = documentMaster.getDocumentRevisions().size() == 1;
-        if (isLastRevision) {
-            documentMasterDAO.removeDocM(documentMaster);
-        } else {
-            docRDAO.removeRevision(docR);
         }
     }
 
@@ -1196,14 +1196,17 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         user = checkDocumentRevisionWriteAccess(docR.getKey());
 
         if (isCheckoutByUser(user, docR) && docR.getLastIteration().equals(document)) {
+            document.removeFile(file);
+            binDAO.removeBinaryResource(file);
+
             try {
                 dataManager.deleteData(file);
             } catch (StorageException e) {
                 LOGGER.log(Level.INFO, null, e);
             }
-            document.removeFile(file);
-            binDAO.removeBinaryResource(file);
+
             return docR;
+
         } else {
             throw new NotAllowedException(userLocale, "NotAllowedException24");
         }
@@ -1259,10 +1262,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentMasterTemplate template = binDAO.getDocumentTemplateOwner(file);
         checkDocumentTemplateWriteAccess(template, user);
 
-        dataManager.deleteData(file);
-
         template.removeFile(file);
         binDAO.removeBinaryResource(file);
+
+        try {
+            dataManager.deleteData(file);
+        } catch (StorageException e) {
+            LOGGER.log(Level.INFO, null, e);
+        }
+
         return template;
     }
 

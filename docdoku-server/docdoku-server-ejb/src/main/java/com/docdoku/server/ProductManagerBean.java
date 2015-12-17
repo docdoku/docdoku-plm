@@ -327,6 +327,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             partIterationEvent.select(new AnnotationLiteral<Removed>() {
             }).fire(new PartIterationChangeEvent(partIte));
 
+            PartIterationDAO partIDAO = new PartIterationDAO(locale, em);
+            partIDAO.removeIteration(partIte);
+            partR.setCheckOutDate(null);
+            partR.setCheckOutUser(null);
+
+            // Remove path to path links impacted by this change
+            removeObsoletePathToPathLinks(user, pPartRPK.getWorkspaceId());
+
             for (Geometry file : partIte.getGeometries()) {
                 try {
                     dataManager.deleteData(file);
@@ -351,14 +359,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     LOGGER.log(Level.INFO, null, e);
                 }
             }
-
-            PartIterationDAO partIDAO = new PartIterationDAO(locale, em);
-            partIDAO.removeIteration(partIte);
-            partR.setCheckOutDate(null);
-            partR.setCheckOutUser(null);
-
-            // Remove path to path links impacted by this change
-            removeObsoletePathToPathLinks(user,pPartRPK.getWorkspaceId());
 
             return partR;
         } else {
@@ -574,25 +574,30 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartRevisionDAO partRDAO = new PartRevisionDAO(locale, em);
         PartRevision partR = partRDAO.loadPartR(pPartIPK.getPartRevision());
         PartIteration partI = partR.getIteration(pPartIPK.getIteration());
+
         if (isCheckoutByUser(user, partR) && partR.getLastIteration().equals(partI)) {
             String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + partI.getIteration() + "/nativecad/" + pName;
             BinaryResource nativeCADBinaryResource = partI.getNativeCADFile();
+
             if (nativeCADBinaryResource == null) {
                 nativeCADBinaryResource = new BinaryResource(fullName, pSize, new Date());
                 binDAO.createBinaryResource(nativeCADBinaryResource);
                 partI.setNativeCADFile(nativeCADBinaryResource);
+
             } else if (nativeCADBinaryResource.getFullName().equals(fullName)) {
                 nativeCADBinaryResource.setContentLength(pSize);
                 nativeCADBinaryResource.setLastModified(new Date());
+
             } else {
+                partI.setNativeCADFile(null);
+                binDAO.removeBinaryResource(nativeCADBinaryResource);
 
                 try {
                     dataManager.deleteData(nativeCADBinaryResource);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
-                partI.setNativeCADFile(null);
-                binDAO.removeBinaryResource(nativeCADBinaryResource);
+
                 nativeCADBinaryResource = new BinaryResource(fullName, pSize, new Date());
                 binDAO.createBinaryResource(nativeCADBinaryResource);
                 partI.setNativeCADFile(nativeCADBinaryResource);
@@ -601,13 +606,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             //Delete converted files if any
             List<Geometry> geometries = new ArrayList<>(partI.getGeometries());
             for (Geometry geometry : geometries) {
+                partI.removeGeometry(geometry);
+                binDAO.removeBinaryResource(geometry);
                 try {
                     dataManager.deleteData(geometry);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
-                partI.removeGeometry(geometry);
-                binDAO.removeBinaryResource(geometry);
             }
             return nativeCADBinaryResource;
         } else {
@@ -1513,9 +1518,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartRevision partR = partIteration.getPartRevision();
 
         if (isCheckoutByUser(user, partR) && partR.getLastIteration().equals(partIteration)) {
-
             BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
             BinaryResource file = binDAO.loadBinaryResource(pName);
+
+            if (pSubType != null && "nativecad".equals(pSubType)) {
+                partIteration.setNativeCADFile(null);
+            } else {
+                partIteration.removeAttachedFile(file);
+            }
 
             try {
                 dataManager.deleteData(file);
@@ -1523,11 +1533,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 LOGGER.log(Level.INFO, null, e);
             }
 
-            if (pSubType != null && "nativecad".equals(pSubType)) {
-                partIteration.setNativeCADFile(null);
-            } else {
-                partIteration.removeAttachedFile(file);
-            }
             binDAO.removeBinaryResource(file);
         }
 
@@ -1828,16 +1833,16 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
         PartMasterTemplate template = binDAO.getPartTemplateOwner(file);
-
         checkPartTemplateWriteAccess(template, user);
+
+        template.setAttachedFile(null);
+        binDAO.removeBinaryResource(file);
 
         try {
             dataManager.deleteData(file);
         } catch (StorageException e) {
             LOGGER.log(Level.INFO, null, e);
         }
-        template.setAttachedFile(null);
-        binDAO.removeBinaryResource(file);
         return template;
     }
 
@@ -1925,13 +1930,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         } else {
             locale = Locale.getDefault();
         }
-        //Todo count only part you can see
+        //TODO: count only part you can see
         return new PartRevisionDAO(locale, em).getTotalNumberOfParts(pWorkspaceId);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void deletePartMaster(PartMasterKey partMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException, ESServerException {
+
+        //TODO: never used?
 
         User user = userManager.checkWorkspaceReadAccess(partMasterKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
@@ -1962,6 +1969,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new EntityConstraintException(locale, "EntityConstraintException5");
         }
 
+        // ok to delete
+        partMasterDAO.removePartM(partMaster);
+
         // delete CAD and other files attached with this partMaster
         // and notified remove part observers
         for (PartRevision partRevision : partMaster.getPartRevisions()) {
@@ -1984,9 +1994,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 // Remove ElasticSearch Index for this PartIteration
             }
         }
-
-        // ok to delete
-        partMasterDAO.removePartM(partMaster);
     }
 
 
@@ -2040,6 +2047,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             // Remove ElasticSearch Index for this PartIteration
         }
 
+        if (isLastRevision) {
+            partMasterDAO.removePartM(partMaster);
+        } else {
+            partMaster.removeRevision(partR);
+            partRevisionDAO.removeRevision(partR);
+        }
+
         // delete CAD and other files attached with this partMaster
         for (PartIteration partIteration : partR.getPartIterations()) {
             try {
@@ -2052,14 +2066,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         partRevisionEvent.select(new AnnotationLiteral<Removed>() {
         }).fire(new PartRevisionChangeEvent(partR));
-
-        if (isLastRevision) {
-            partMasterDAO.removePartM(partMaster);
-        } else {
-            partMaster.removeRevision(partR);
-            partRevisionDAO.removeRevision(partR);
-        }
-
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
