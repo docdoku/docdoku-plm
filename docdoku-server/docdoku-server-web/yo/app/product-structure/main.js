@@ -20,7 +20,7 @@ var App = {
 
 	config:{
 		workspaceId: decodeURIComponent(workspace[1]).trim() || null,
-		productId: window.location.hash.split('/')[1] || null,
+		productId: decodeURIComponent(window.location.hash.split('/')[1]).trim() || null,
 		login: '',
 		groups: [],
 		contextPath: '',

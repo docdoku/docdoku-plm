@@ -3,8 +3,8 @@ var App = {
     debug: false,
 
 	config:{
-		workspaceId: /^#(product|assembly)\/([^\/]+)/.exec(window.location.hash)[2] || null,
-		productId: window.location.hash.split('/')[2] || null,
+		workspaceId: decodeURIComponent(/^#(product|assembly)\/([^\/]+)/.exec(window.location.hash)[2]).trim() || null,
+		productId: decodeURIComponent(window.location.hash.split('/')[2]).trim() || null,
 		login: '',
 		groups: [],
 		contextPath: '',
