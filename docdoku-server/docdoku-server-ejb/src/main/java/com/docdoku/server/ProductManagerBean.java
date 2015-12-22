@@ -2555,18 +2555,21 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         // Iterate the list and populate sub components
 
         for (String link : links) {
-
             Component subComponent = new Component();
 
             List<PartLink> decodedPath = decodePath(ciKey, link);
+            subComponent.setPath(decodedPath);
 
             PartLink partLink = decodedPath.get(decodedPath.size() - 1);
-            List<PartIteration> partIterations = filter.filter(partLink.getComponent());
-            PartIteration retainedIteration = partIterations.get(partIterations.size() - 1);
-
             subComponent.setPartMaster(partLink.getComponent());
-            subComponent.setPath(decodedPath);
-            subComponent.setRetainedIteration(retainedIteration);
+
+            // TODO: determine if we do not need to add the subcomponent if there is no retainedIteration
+            List<PartIteration> partIterations = filter.filter(partLink.getComponent());
+            if (partIterations.size() > 0) {
+                PartIteration retainedIteration = partIterations.get(partIterations.size() - 1);
+                subComponent.setRetainedIteration(retainedIteration);
+            }
+
             subComponent.setUser(user);
             subComponent.setComponents(new ArrayList<>());
             component.addComponent(subComponent);
