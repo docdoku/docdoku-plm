@@ -163,8 +163,10 @@ define([
             var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId ;
 
             var selectedType = this.$selectConfSpec.val();
-            if(selectedType==='serial-number'){
+            if (selectedType === 'serial-number') {
                 url+= '/product-instances/' + this.$selectProdInstSpec.val().substr(3);
+            } else if (selectedType === 'baseline') {
+                url+= '/baselines/' + this.$selectBaselineSpec.val();
             }
             url+= '/path-to-path-links-types';
 
