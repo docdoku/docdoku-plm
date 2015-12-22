@@ -46,7 +46,7 @@ define([
 
         update: function (component) {
             this.itemViews = [];
-            if (!component.isVirtual()) {
+            if (component && !component.isVirtual()) {
                 this.partsCollection = new PartList();
                 this.partsCollection.setFilterUrl(component.getUrlForBom());
                 this.listenTo(this.partsCollection, 'reset', this.addAllBomItem);
@@ -56,7 +56,7 @@ define([
 
         showRoot: function (rootComponent) {
             this.itemViews = [];
-            if (!rootComponent.isVirtual()) {
+            if (rootComponent && !rootComponent.isVirtual()) {
                 this.partsCollection = new PartList();
                 this.partsCollection.setFilterUrl(rootComponent.getRootUrlForBom());
                 this.listenTo(this.partsCollection, 'reset', this.addAllBomItem);

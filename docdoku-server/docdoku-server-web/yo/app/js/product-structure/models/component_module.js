@@ -271,11 +271,13 @@ define(['backbone', 'common-objects/utils/date'],
             },
 
             parse: function (response) {
-                if (this.isRoot ){
-                    response.path = response.partUsageLinkId;
-                    return [response];
-                } else {
-                    return response.components;
+                if (response) {
+                    if (this.isRoot) {
+                        response.path = response.partUsageLinkId;
+                        return [response];
+                    } else {
+                        return response.components;
+                    }
                 }
             }
         });

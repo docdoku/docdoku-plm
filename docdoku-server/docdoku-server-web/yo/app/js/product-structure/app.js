@@ -268,9 +268,11 @@ define([
         onComponentSelected: function (showRoot) {
             this.exportSceneButton.show();
 
-            this.updateBom(showRoot);
-            this.showPartMetadata();
-            App.sceneManager.setPathForIFrame(App.partsTreeView.componentSelected.getPath());
+            if (App.partsTreeView.componentSelected) {
+                this.updateBom(showRoot);
+                this.showPartMetadata();
+                App.sceneManager.setPathForIFrame(App.partsTreeView.componentSelected.getPath());
+            }
         },
 
         exportScene: function () {
