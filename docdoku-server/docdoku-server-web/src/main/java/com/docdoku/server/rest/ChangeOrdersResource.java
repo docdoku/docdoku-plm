@@ -33,6 +33,7 @@ import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.change.ChangeItemDTO;
 import com.docdoku.server.rest.dto.change.ChangeOrderDTO;
 import com.docdoku.server.rest.dto.change.ChangeRequestDTO;
+import com.docdoku.server.rest.dto.change.ChangeRequestListDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 

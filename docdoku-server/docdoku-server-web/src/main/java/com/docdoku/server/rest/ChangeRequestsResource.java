@@ -32,6 +32,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IChangeManagerLocal;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.change.ChangeIssueDTO;
+import com.docdoku.server.rest.dto.change.ChangeIssueListDTO;
 import com.docdoku.server.rest.dto.change.ChangeItemDTO;
 import com.docdoku.server.rest.dto.change.ChangeRequestDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
