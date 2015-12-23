@@ -41,13 +41,9 @@ import java.io.Serializable;
         @NamedQuery(name="PathToPathLink.findPathToPathLinkBySourceAndTargetInProduct", query="SELECT DISTINCT p FROM ConfigurationItem ci JOIN ci.pathToPathLinks p WHERE ci = :configurationItem AND (p.sourcePath = :source AND p.targetPath = :target OR p.sourcePath = :target AND p.targetPath = :source)"),
         @NamedQuery(name="PathToPathLink.findSamePathToPathLinkInProduct", query="SELECT DISTINCT p FROM ConfigurationItem ci JOIN ci.pathToPathLinks p WHERE ci = :configurationItem AND p.sourcePath = :sourcePath AND p.targetPath = :targetPath AND p.type = :type"),
         @NamedQuery(name="PathToPathLink.findPathToPathLinksForGivenProductInstanceIterationAndType", query="SELECT DISTINCT p FROM ProductInstanceIteration pi JOIN pi.pathToPathLinks p WHERE pi = :productInstanceIteration AND p.type = :type"),
-
         @NamedQuery(name="PathToPathLink.findRootPathToPathLinkForGivenProductInstanceIterationAndType", query="SELECT DISTINCT p FROM ProductInstanceIteration pi JOIN pi.pathToPathLinks p WHERE p.type = :type AND pi = :productInstanceIteration AND p.sourcePath not in (SELECT _p.targetPath FROM PathToPathLink _p WHERE _p member of pi.pathToPathLinks AND _p.type = :type)"),
-
         @NamedQuery(name="PathToPathLink.findRootPathToPathLinkForGivenProductBaselineAndType", query="SELECT DISTINCT p FROM ProductBaseline pb JOIN pb.pathToPathLinks p WHERE p.type = :type AND pb = :productBaseline AND p.sourcePath not in (SELECT _p.targetPath FROM PathToPathLink _p WHERE _p member of pb.pathToPathLinks AND _p.type = :type)"),
-
         @NamedQuery(name="PathToPathLink.findRootPathToPathLinkForGivenProductAndType", query="SELECT DISTINCT p FROM ConfigurationItem ci JOIN ci.pathToPathLinks p WHERE p.type = :type AND ci = :configurationItem AND p.sourcePath not in (SELECT _p.targetPath FROM PathToPathLink _p WHERE _p member of ci.pathToPathLinks AND _p.type = :type)"),
-
         @NamedQuery(name="PathToPathLink.findPathToPathLinkByPathListInProduct", query="SELECT DISTINCT p FROM ConfigurationItem ci JOIN ci.pathToPathLinks p WHERE ci = :configurationItem AND p.sourcePath in :paths AND p.targetPath in :paths"),
         @NamedQuery(name="PathToPathLink.findSourcesPathToPathLinkInProduct", query="SELECT DISTINCT p FROM ConfigurationItem ci JOIN ci.pathToPathLinks p WHERE ci = :configurationItem AND p.sourcePath = :source AND p.type = :type"),
         @NamedQuery(name="PathToPathLink.findSourcesPathToPathLinkInProductBaseline", query="SELECT DISTINCT p FROM ProductBaseline pb JOIN pb.pathToPathLinks p WHERE pb = :productBaseline AND p.sourcePath = :source AND p.type = :type"),
