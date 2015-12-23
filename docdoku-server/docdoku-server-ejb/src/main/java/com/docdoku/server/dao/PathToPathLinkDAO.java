@@ -167,6 +167,13 @@ public class PathToPathLinkDAO {
                 .getResultList();
     }
 
+    public List<PathToPathLink> findRootPathToPathLinks(ProductBaseline productBaseline, String type) {
+        return em.createNamedQuery("PathToPathLink.findRootPathToPathLinkForGivenProductBaselineAndType", PathToPathLink.class)
+                .setParameter("productBaseline", productBaseline)
+                .setParameter("type", type)
+                .getResultList();
+    }
+
     public List<PathToPathLink> findRootPathToPathLinks(ProductInstanceIteration productInstanceIteration, String type) {
         return em.createNamedQuery("PathToPathLink.findRootPathToPathLinkForGivenProductInstanceIterationAndType", PathToPathLink.class)
                 .setParameter("productInstanceIteration", productInstanceIteration)
@@ -184,7 +191,15 @@ public class PathToPathLinkDAO {
     public List<PathToPathLink> getSourcesPathToPathLinksInProduct(ConfigurationItem configurationItem, String type, String source) {
         return em.createNamedQuery("PathToPathLink.findSourcesPathToPathLinkInProduct", PathToPathLink.class)
                 .setParameter("configurationItem", configurationItem)
-                .setParameter("type",type)
+                .setParameter("type", type)
+                .setParameter("source", source)
+                .getResultList();
+    }
+
+    public List<PathToPathLink> getSourcesPathToPathLinksInBaseline(ProductBaseline productBaseline, String type, String source) {
+        return em.createNamedQuery("PathToPathLink.findSourcesPathToPathLinkInProductBaseline", PathToPathLink.class)
+                .setParameter("productBaseline", productBaseline)
+                .setParameter("type", type)
                 .setParameter("source", source)
                 .getResultList();
     }

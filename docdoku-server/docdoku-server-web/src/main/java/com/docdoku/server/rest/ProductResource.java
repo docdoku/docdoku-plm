@@ -173,29 +173,28 @@ public class ProductResource {
     @Produces(MediaType.APPLICATION_JSON)
     public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path, @QueryParam("depth") Integer depth, @QueryParam("linkType") String linkType, @QueryParam("diverge") boolean diverge)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
+
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-
         PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
-
         Component component;
-        String serialNumber = null;
 
-        if(configSpecType.startsWith("pi-")){
-            serialNumber = configSpecType.substring(3);
-        }
-
-        if(linkType == null){
+        if (linkType == null) {
             List<PartLink> decodedPath = productService.decodePath(ciKey, path);
-            component = productService.filterProductStructure(ciKey,filter,decodedPath,depth);
-        }else {
-            component = productService.filterProductStructureOnLinkType(ciKey, filter, serialNumber, path, linkType);
+            component = productService.filterProductStructure(ciKey, filter, decodedPath, depth);
+        } else {
+            component = productService.filterProductStructureOnLinkType(ciKey, filter, configSpecType, path, linkType);
         }
 
-        if(component == null){
+        if (component == null) {
             throw new IllegalArgumentException();
         }
 
-        return createComponentDTO(component,workspaceId,ciId,serialNumber);
+        String serialNumber = null;
+        if (configSpecType.startsWith("pi-")) {
+            serialNumber = configSpecType.substring(3);
+        }
+
+        return createComponentDTO(component, workspaceId, ciId, serialNumber);
     }
 
     @GET
