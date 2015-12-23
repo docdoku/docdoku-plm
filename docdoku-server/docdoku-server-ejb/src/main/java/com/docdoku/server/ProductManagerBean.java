@@ -2436,7 +2436,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Component filterProductStructureOnLinkType(ConfigurationItemKey ciKey, PSFilter filter, String serialNumber, String path, String linkType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+    public Component filterProductStructureOnLinkType(ConfigurationItemKey ciKey, PSFilter filter, String configSpecType, String path, String linkType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
@@ -2450,98 +2450,150 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         Set<String> links = new HashSet<>();
 
-        // If path is null => get Root links embedded as subComponents of a virtual component
-        if (path == null) {
+        if (path == null) { // If path is null => get Root links embedded as subComponents of a virtual component
+            List<PathToPathLink> rootPathToPathLinks;
 
-            List<PathToPathLink> rootPathToPathLinks = pathToPathLinkDAO.findRootPathToPathLinks(ci, linkType);
-            for (PathToPathLink link : rootPathToPathLinks) {
-                links.add(link.getSourcePath());
+            if (configSpecType.startsWith("pi-")) {
+                String serialNumber = configSpecType.substring(3);
+                ProductInstanceMasterKey productInstanceMasterKey = new ProductInstanceMasterKey(serialNumber, ciKey.getWorkspace(), ciKey.getId());
+                ProductInstanceIteration pii = new ProductInstanceMasterDAO(locale, em).loadProductInstanceMaster(productInstanceMasterKey).getLastIteration();
+                rootPathToPathLinks = pathToPathLinkDAO.findRootPathToPathLinks(pii, linkType);
+
+            } else if (!"wip".equals(configSpecType) && !"latest".equals(configSpecType) && !"released".equals(configSpecType)) {
+                int baselineId = 0;
+                try {
+                    baselineId = Integer.parseInt(configSpecType);
+                } catch(NumberFormatException e) {
+                    LOGGER.log(Level.FINEST, null, e);
+                }
+                ProductBaseline pb = new ProductBaselineDAO(locale, em).loadBaseline(baselineId);
+                rootPathToPathLinks = pathToPathLinkDAO.findRootPathToPathLinks(pb, linkType);
+
+            } else {
+                rootPathToPathLinks = pathToPathLinkDAO.findRootPathToPathLinks(ci, linkType);
             }
 
-            PartMaster virtualPartMaster = new PartMaster(ci.getWorkspace(), linkType, user);
-            PartRevision virtualPartRevision = new PartRevision(virtualPartMaster, user);
-            virtualPartMaster.getPartRevisions().add(virtualPartRevision);
-            PartIteration virtualPartIteration = new PartIteration(virtualPartRevision, user);
-            virtualPartRevision.getPartIterations().add(virtualPartIteration);
-
-            component.setPartMaster(virtualPartMaster);
-            component.setRetainedIteration(virtualPartIteration);
-            component.setPath(new ArrayList<>());
-            component.setVirtual(true);
-
-            component.getPath().add(new PartLink() {
-                @Override
-                public int getId() {
-                    return 0;
+            if (rootPathToPathLinks.size() > 0) {
+                for (PathToPathLink link : rootPathToPathLinks) {
+                    links.add(link.getSourcePath());
                 }
 
-                @Override
-                public Character getCode() {
-                    return null;
-                }
+                PartMaster virtualPartMaster = new PartMaster(ci.getWorkspace(), linkType, user);
+                PartRevision virtualPartRevision = new PartRevision(virtualPartMaster, user);
+                virtualPartMaster.getPartRevisions().add(virtualPartRevision);
+                PartIteration virtualPartIteration = new PartIteration(virtualPartRevision, user);
+                virtualPartRevision.getPartIterations().add(virtualPartIteration);
 
-                @Override
-                public String getFullId() {
-                    return null;
-                }
+                component.setPartMaster(virtualPartMaster);
+                component.setRetainedIteration(virtualPartIteration);
+                component.setPath(new ArrayList<>());
+                component.setVirtual(true);
 
-                @Override
-                public double getAmount() {
-                    return 1;
-                }
+                component.getPath().add(new PartLink() {
+                    @Override
+                    public int getId() {
+                        return 0;
+                    }
 
-                @Override
-                public String getUnit() {
-                    return null;
-                }
+                    @Override
+                    public Character getCode() {
+                        return null;
+                    }
 
-                @Override
-                public String getComment() {
-                    return null;
-                }
+                    @Override
+                    public String getFullId() {
+                        return null;
+                    }
 
-                @Override
-                public boolean isOptional() {
-                    return false;
-                }
+                    @Override
+                    public double getAmount() {
+                        return 1;
+                    }
 
-                @Override
-                public PartMaster getComponent() {
-                    return virtualPartMaster;
-                }
+                    @Override
+                    public String getUnit() {
+                        return null;
+                    }
 
-                @Override
-                public List<PartSubstituteLink> getSubstitutes() {
-                    return null;
-                }
+                    @Override
+                    public String getComment() {
+                        return null;
+                    }
 
-                @Override
-                public String getReferenceDescription() {
-                    return linkType;
-                }
+                    @Override
+                    public boolean isOptional() {
+                        return false;
+                    }
 
-                @Override
-                public List<CADInstance> getCadInstances() {
-                    return null;
-                }
-            });
+                    @Override
+                    public PartMaster getComponent() {
+                        return virtualPartMaster;
+                    }
 
-        }
-        // If path is not null => get next path to path links
+                    @Override
+                    public List<PartSubstituteLink> getSubstitutes() {
+                        return null;
+                    }
 
-        else {
-            List<PathToPathLink> sourcesPathToPathLinksInProduct = pathToPathLinkDAO.getSourcesPathToPathLinksInProduct(ci, linkType, path);
-            for (PathToPathLink link : sourcesPathToPathLinksInProduct) {
-                links.add(link.getTargetPath());
+                    @Override
+                    public String getReferenceDescription() {
+                        return linkType;
+                    }
+
+                    @Override
+                    public List<CADInstance> getCadInstances() {
+                        return null;
+                    }
+                });
             }
-            List<PartLink> decodedSourcePath = decodePath(ciKey, path);
-            PartLink link = decodedSourcePath.get(decodedSourcePath.size() - 1);
-            List<PartIteration> partIterations = filter.filter(link.getComponent());
-            PartIteration retainedIteration = partIterations.get(partIterations.size() - 1);
 
-            component.setPath(decodedSourcePath);
-            component.setPartMaster(link.getComponent());
-            component.setRetainedIteration(retainedIteration);
+        } else { // If path is not null => get next path to path links
+
+            if ("wip".equals(configSpecType) || "latest".equals(configSpecType) || "released".equals(configSpecType)) {
+                List<PathToPathLink> sourcesPathToPathLinksInProduct = pathToPathLinkDAO.getSourcesPathToPathLinksInProduct(ci, linkType, path);
+                for (PathToPathLink link : sourcesPathToPathLinksInProduct) {
+                    links.add(link.getTargetPath());
+                }
+                List<PartLink> decodedSourcePath = decodePath(ciKey, path);
+                PartLink link = decodedSourcePath.get(decodedSourcePath.size() - 1);
+                List<PartIteration> partIterations = filter.filter(link.getComponent());
+                PartIteration retainedIteration = partIterations.get(partIterations.size() - 1);
+
+                component.setPath(decodedSourcePath);
+                component.setPartMaster(link.getComponent());
+                component.setRetainedIteration(retainedIteration);
+
+            } else {
+                ProductBaseline productBaseline = null;
+                ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(locale, em);
+
+                if (configSpecType.startsWith("pi-")) {
+                    String serialNumber = configSpecType.substring(3);
+                    productBaseline = productBaselineDAO.findLastBaselineWithSerialNumber(ciKey, serialNumber);
+
+                } else {
+                    int baselineId = 0;
+                    try {
+                        baselineId = Integer.parseInt(configSpecType);
+                    } catch(NumberFormatException e) {
+                        LOGGER.log(Level.FINEST, null, e);
+                    }
+                    productBaseline = productBaselineDAO.loadBaseline(baselineId);
+                }
+
+                List<PathToPathLink> sourcesPathToPathLinksInProduct = pathToPathLinkDAO.getSourcesPathToPathLinksInBaseline(productBaseline, linkType, path);
+                for (PathToPathLink link : sourcesPathToPathLinksInProduct) {
+                    links.add(link.getTargetPath());
+                }
+                List<PartLink> decodedSourcePath = decodePath(ciKey, path);
+                PartLink link = decodedSourcePath.get(decodedSourcePath.size() - 1);
+                List<PartIteration> partIterations = filter.filter(link.getComponent());
+                PartIteration retainedIteration = partIterations.get(partIterations.size() - 1);
+
+                component.setPath(decodedSourcePath);
+                component.setPartMaster(link.getComponent());
+                component.setRetainedIteration(retainedIteration);
+            }
         }
 
         // Iterate the list and populate sub components
