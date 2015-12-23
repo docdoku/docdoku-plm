@@ -23,10 +23,7 @@ package com.docdoku.server.configuration.filter;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.PSFilter;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartLink;
-import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartSubstituteLink;
+import com.docdoku.core.product.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,12 +66,21 @@ public class LatestPSFilter extends PSFilter {
     }
 
     @Override
-    public List<PartIteration> filter(PartMaster part) {
+    public List<PartIteration> filter(PartMaster partMaster) {
         List<PartIteration> partIterations = new ArrayList<>();
-        PartIteration partIteration = part.getLastRevision().getLastCheckedInIteration();
-        if(partIteration != null){
+        PartIteration partIteration = null;
+        int i = partMaster.getPartRevisions().size() - 1;
+
+        while(i >= 0 && partIteration == null) {
+            PartRevision partRevision = partMaster.getPartRevisions().get(i);
+            partIteration = partRevision.getLastCheckedInIteration();
+            i--;
+        }
+
+        if (partIteration != null) {
             partIterations.add(partIteration);
         }
+
         return partIterations;
     }
 
