@@ -230,7 +230,8 @@ public class TitleBlockGenerator {
             for (InstanceAttribute attr : instanceAttributes) {
                 cell = new PdfPCell(new Phrase(attr.getName()));
                 attributesTable.addCell(cell);
-                cell = new PdfPCell(new Phrase(String.valueOf(attr.getValue())));
+                Object value = attr.getValue();
+                cell = new PdfPCell(new Phrase(value != null ? String.valueOf(value) : ""));
                 attributesTable.addCell(cell);
             }
 
