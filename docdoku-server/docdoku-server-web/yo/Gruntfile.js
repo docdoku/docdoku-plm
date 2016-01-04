@@ -405,6 +405,7 @@ module.exports = function (grunt) {
                             'download/**',
 	                        'js/home/main.js',
 	                        'js/lib/plugin-detect.js',
+	                        'js/lib/empty.pdf',
 	                        'js/lib/charts/**'
                         ]
                     },{
