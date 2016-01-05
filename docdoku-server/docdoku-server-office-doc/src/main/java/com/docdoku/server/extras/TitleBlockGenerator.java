@@ -341,6 +341,7 @@ public class TitleBlockGenerator {
         tmpDir.deleteOnExit();
 
         // Merge the pdf generated with the pdf given in the input stream
+        //TODO: use PdfStamper to insert into the existing pdf.
         return mergePdfDocuments(new FileInputStream(blockTitleFile),inputStream);
 
     }
