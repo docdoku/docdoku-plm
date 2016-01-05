@@ -69,7 +69,7 @@ public class AccountBean {
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
 
         if(language == null || "".equals(language) || " ".equals(language)){
-            language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
+            language = getBrowserLanguage();
         }
 
         accountManager.createAccount(login, name, email, language, password, timeZone);
@@ -121,10 +121,15 @@ public class AccountBean {
     public String getLanguage() {
         return language;
     }
+
     public void setLanguage(String language) {
+        if(language == null || "".equals(language) || " ".equals(language)){
+            language = getBrowserLanguage();
+        }
         this.language = language;
         this.locale = new Locale(language);
     }
+
     public String getBrowserLanguage() {
         return FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
     }
