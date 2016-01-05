@@ -309,6 +309,7 @@ define({
 		NEW_WORKFLOW: "New workflow",
 		NEXT_PAGE: "Next page",
         NO_CONVERSION: "No conversion",
+        NO_COWORKERS:'No coworkers',
 		NO_DATA: "No data available in table",
 		NO_FILTERED_DATA: "No matching records found",
 		NO_LAYERS: "No layers",

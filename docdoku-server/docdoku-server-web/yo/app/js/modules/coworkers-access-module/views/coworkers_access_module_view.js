@@ -17,7 +17,19 @@ define([
             var $ul = this.$('#coworkers_access_module_entries');
 
             users.fetch({reset: true, success: function () {
-                _.each(users.models, function (user) {
+
+                var coWorkers = users.models.filter(function(user){
+                    return user.attributes.login !== App.config.login;
+                });
+
+                if(!coWorkers.length){
+                    var menuUrl = App.config.contextPath+'/faces/admin/workspace/workspacesMenu.xhtml';
+                    $ul.append('<li><i>&nbsp;'+App.config.i18n.NO_COWORKERS+'</i></li>');
+                    $ul.append('<li><a href="'+menuUrl+'"><i class="fa fa-cog"></i> '+App.config.i18n.WORKSPACES_ADMINISTRATION+'</a></li>');
+                    return;
+                }
+
+                _.each(coWorkers, function (user) {
                     if (user.attributes.login !== App.config.login) {
                         var cwiv = new CoWorkersItemView({
                             model: user.attributes
