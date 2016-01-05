@@ -171,7 +171,7 @@ define(function () {
     });
 
     filters.push({
-        id: 'pr.checkoutDate',
+        id: 'pr.checkOutDate',
         label: App.config.i18n.CHECKOUT_DATE,
         type: 'date',
         input:dateInput,
@@ -181,7 +181,7 @@ define(function () {
     });
 
     filters.push({
-        id: 'pr.checkinDate',
+        id: 'pr.checkInDate',
         label: App.config.i18n.CHECKIN_DATE,
         type: 'date',
         input:dateInput,
