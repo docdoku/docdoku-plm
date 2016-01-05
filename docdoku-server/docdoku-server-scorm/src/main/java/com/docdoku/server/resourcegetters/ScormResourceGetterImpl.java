@@ -23,13 +23,12 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.exceptions.ConvertedResourceException;
 import com.docdoku.core.exceptions.StorageException;
+import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.server.InternalService;
-import com.docdoku.server.ServiceLocator;
 import com.docdoku.server.viewers.utils.ScormUtil;
 
 import javax.inject.Inject;
-import javax.naming.NamingException;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -51,6 +50,11 @@ public class ScormResourceGetterImpl implements DocumentResourceGetter {
 
     @Override
     public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration docI, Locale locale) throws ConvertedResourceException {
+        return null;
+    }
+
+    @Override
+    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, PartIteration partIteration, Locale locale) throws ConvertedResourceException {
         return null;
     }
 

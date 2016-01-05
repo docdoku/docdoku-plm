@@ -372,7 +372,7 @@ public class DocumentBinaryResourceTest {
         Mockito.when(guestProxy.getBinaryResourceForDocument(fullName)).thenReturn(binaryResource);
         Mockito.when(ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)).thenReturn(true);
         Mockito.when(documentService.canAccess(Matchers.any(DocumentIterationKey.class))).thenReturn(true);
-        Mockito.when(documentResourceGetterService.getConvertedResource(output, binaryResource)).thenReturn(new FileInputStream(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.VIRTUAL_SUB_RESOURCE).getFile())));
+        Mockito.when(documentResourceGetterService.getDocumentConvertedResource(output, binaryResource)).thenReturn(new FileInputStream(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.VIRTUAL_SUB_RESOURCE).getFile())));
         Mockito.when(dataManager.getBinarySubResourceInputStream(binaryResource, fullName+"/"+ResourceUtil.VIRTUAL_SUB_RESOURCE)).thenReturn(new FileInputStream(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.VIRTUAL_SUB_RESOURCE).getFile())));
         //When
         Response response = documentBinaryResource.downloadDocumentFile(request, ResourceUtil.RANGE,ResourceUtil.DOC_REFER, ResourceUtil.WORKSPACE_ID,ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION,ResourceUtil.FILENAME1,ResourceUtil.VIRTUAL_SUB_RESOURCE,ResourceUtil.FILE_TYPE,null,null);

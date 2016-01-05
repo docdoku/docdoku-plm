@@ -23,6 +23,7 @@ package com.docdoku.server.resourcegetters;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.exceptions.ConvertedResourceException;
+import com.docdoku.core.product.PartIteration;
 
 import java.io.InputStream;
 import java.util.Locale;
@@ -30,6 +31,7 @@ import java.util.Locale;
 public interface DocumentResourceGetter {
     boolean canGetConvertedResource(String outputFormat, BinaryResource binaryResource);
     InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration docI, Locale locale) throws ConvertedResourceException;
+    InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, PartIteration partIteration, Locale locale) throws ConvertedResourceException;
     boolean canGetSubResourceVirtualPath(BinaryResource binaryResource);
     String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri);
 }

@@ -3497,6 +3497,20 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return documentIterationLinks;
     }
 
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+    @Override
+    public PartIteration findPartIterationByBinaryResource(BinaryResource binaryResource) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        BinaryResourceDAO binaryResourceDAO;
+
+        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
+            binaryResourceDAO = new BinaryResourceDAO(em);
+        } else {
+            User user = userManager.checkWorkspaceReadAccess(binaryResource.getWorkspaceId());
+            binaryResourceDAO = new BinaryResourceDAO(new Locale(user.getLanguage()),em);
+        }
+        return binaryResourceDAO.getPartOwner(binaryResource);
+    }
+
     private void checkCyclicPathToPathLink(ConfigurationItem ci, PathToPathLink startLink, User user, List<PathToPathLink> visitedLinks) throws PathToPathCyclicException {
         Locale locale = new Locale(user.getLanguage());
         PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);

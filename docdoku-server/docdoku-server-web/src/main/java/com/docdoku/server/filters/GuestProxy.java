@@ -126,8 +126,12 @@ public class GuestProxy{
     }
 
 
-    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConvertedResourceException {
-        return documentResourceGetterService.getConvertedResource(outputFormat, binaryResource);
+    public InputStream getDocumentConvertedResource(String outputFormat, BinaryResource binaryResource) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConvertedResourceException {
+        return documentResourceGetterService.getDocumentConvertedResource(outputFormat, binaryResource);
+    }
+
+    public InputStream getPartConvertedResource(String outputFormat, BinaryResource binaryResource) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConvertedResourceException {
+        return documentResourceGetterService.getPartConvertedResource(outputFormat, binaryResource);
     }
 
     public BinaryResource getBinaryResourceForProducInstance(String fullName) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException {

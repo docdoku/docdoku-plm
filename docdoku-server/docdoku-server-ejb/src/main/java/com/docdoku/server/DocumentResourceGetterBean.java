@@ -26,13 +26,17 @@ import com.docdoku.core.exceptions.ConvertedResourceException;
 import com.docdoku.core.exceptions.UserNotActiveException;
 import com.docdoku.core.exceptions.UserNotFoundException;
 import com.docdoku.core.exceptions.WorkspaceNotFoundException;
+import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.resourcegetters.DocumentResourceGetter;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -52,11 +56,18 @@ public class DocumentResourceGetterBean implements IDocumentResourceGetterManage
     private Instance<DocumentResourceGetter> documentResourceGetters;
     @EJB
     private IDocumentManagerLocal documentService;
+
+    @EJB
+    private IProductManagerLocal productService;
+
+    @Resource
+    private SessionContext contextManager;
+
     @EJB
     private IUserManagerLocal userManager;
 
     @Override
-    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource)
+    public InputStream getDocumentConvertedResource(String outputFormat, BinaryResource binaryResource)
             throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConvertedResourceException {
         DocumentIteration docI;
         Locale locale;
@@ -79,6 +90,36 @@ public class DocumentResourceGetterBean implements IDocumentResourceGetterManage
         }
         if (selectedDocumentResourceGetter != null) {
             return selectedDocumentResourceGetter.getConvertedResource(outputFormat, binaryResource,docI,locale);
+        }
+
+        return null;
+    }
+
+    @Override
+    public InputStream getPartConvertedResource(String outputFormat, BinaryResource binaryResource)
+            throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConvertedResourceException {
+
+        PartIteration partIteration;
+        Locale locale;
+
+        if(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
+            User user = userManager.whoAmI(binaryResource.getWorkspaceId());
+            locale = new Locale(user.getLanguage());
+        }else{
+            locale = Locale.getDefault();
+        }
+
+        partIteration = productService.findPartIterationByBinaryResource(binaryResource);
+
+        DocumentResourceGetter selectedDocumentResourceGetter = null;
+        for (DocumentResourceGetter documentResourceGetter : documentResourceGetters) {
+            if (documentResourceGetter.canGetConvertedResource(outputFormat, binaryResource)) {
+                selectedDocumentResourceGetter = documentResourceGetter;
+                break;
+            }
+        }
+        if (selectedDocumentResourceGetter != null) {
+            return selectedDocumentResourceGetter.getConvertedResource(outputFormat, binaryResource,partIteration,locale);
         }
 
         return null;

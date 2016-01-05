@@ -26,10 +26,7 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IConverterManagerLocal;
-import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.services.IShareManagerLocal;
+import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
 import com.docdoku.server.filters.GuestProxy;
@@ -83,10 +80,15 @@ public class PartBinaryResource{
     @Resource
     private SessionContext ctx;
 
+    @EJB
+    private IDocumentResourceGetterManagerLocal documentResourceGetterService;
+
+
     private static final Logger LOGGER = Logger.getLogger(PartBinaryResource.class.getName());
     private static final String NATIVE_CAD_SUBTYPE = "nativecad";
     private static final String ATTACHED_FILES_SUBTYPE = "attachedfiles";
     private static final String UTF8_ENCODING = "UTF-8";
+
 
     public PartBinaryResource() {
     }
@@ -281,17 +283,42 @@ public class PartBinaryResource{
             return rb.build();
         }
 
-        if(subType!= null && !subType.isEmpty()){
+        //attachedfiles is not a valid subtype
+        if(subType!= null && !subType.isEmpty() && !subType.equals("attachedfiles")){
             binaryResourceDownloadMeta.setSubResourceVirtualPath(subType);
         }
 
         InputStream binaryContentInputStream = null;
         try {
-            binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+            if("attachedfiles".equals(subType)) {
+                binaryResourceDownloadMeta.setSubResourceVirtualPath(null);
+                binaryContentInputStream = getConvertedBinaryResource(binaryResource,output);
+            } else {
+                binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+            }
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
-        } catch (StorageException e) {
+        } catch (StorageException | FileConversionException e) {
             Streams.close(binaryContentInputStream);
             return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
+        }
+    }
+
+    /**
+     * Try to convert a binary resource to a specific format
+     * @param binaryResource The binary resource
+     * @param outputFormat The wanted output
+     * @return The binary resource stream in the wanted output
+     * @throws com.docdoku.server.rest.exceptions.FileConversionException
+     */
+    private InputStream getConvertedBinaryResource(BinaryResource binaryResource, String outputFormat) throws FileConversionException {
+        try {
+            if(ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
+                return documentResourceGetterService.getPartConvertedResource(outputFormat, binaryResource);
+            }else{
+                return guestProxy.getPartConvertedResource(outputFormat, binaryResource);
+            }
+        } catch (Exception e) {
+            throw new FileConversionException(e);
         }
     }
 
