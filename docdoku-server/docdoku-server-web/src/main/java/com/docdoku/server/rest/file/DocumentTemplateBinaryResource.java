@@ -159,7 +159,7 @@ public class DocumentTemplateBinaryResource {
      */
     private InputStream getConvertedBinaryResource(BinaryResource binaryResource, String output) throws FileConversionException {
         try {
-            return documentResourceGetterService.getConvertedResource(output, binaryResource);
+            return documentResourceGetterService.getDocumentConvertedResource(output, binaryResource);
         } catch (Exception e) {
             throw new FileConversionException(e);
         }

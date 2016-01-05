@@ -216,9 +216,9 @@ public class DocumentBinaryResource {
     private InputStream getConvertedBinaryResource(BinaryResource binaryResource, String outputFormat) throws FileConversionException {
         try {
             if(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
-                return documentResourceGetterService.getConvertedResource(outputFormat, binaryResource);
+                return documentResourceGetterService.getDocumentConvertedResource(outputFormat, binaryResource);
             }else{
-                return guestProxy.getConvertedResource(outputFormat, binaryResource);
+                return guestProxy.getDocumentConvertedResource(outputFormat, binaryResource);
             }
         } catch (Exception e) {
             throw new FileConversionException(e);

@@ -23,6 +23,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.exceptions.ConvertedResourceException;
 import com.docdoku.core.exceptions.StorageException;
+import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.util.Tools;
@@ -71,6 +72,25 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
 
             if ("documents".equals(binaryResource.getOwnerType()) && docI != null){
                 return TitleBlockGenerator.addBlockTitleToPDF(inputStream, docI, locale);
+            }
+
+            return inputStream;
+        } catch (StorageException | DocumentException | IOException e) {
+            throw new ConvertedResourceException(locale,e);
+        }
+    }
+
+    @Override
+    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, PartIteration partIteration, Locale locale) throws ConvertedResourceException {
+        try {
+            InputStream inputStream=null;
+
+            if("pdf".equals(outputFormat)) {
+                inputStream = getPdfConvertedResource(binaryResource);
+            }
+
+            if("parts".equals(binaryResource.getOwnerType()) && partIteration != null) {
+                return TitleBlockGenerator.addBlockTitleToPDF(inputStream,partIteration,locale);
             }
 
             return inputStream;
