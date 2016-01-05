@@ -240,9 +240,10 @@ public class TitleBlockGenerator {
             // Table body
 
             for (InstanceAttribute attr : instanceAttributes) {
-                cell = new PdfPCell(new Phrase(attr.getName()));
+                cell = new PdfPCell(new Phrase(attr.getName(), NORMAL_12));
                 attributesTable.addCell(cell);
-                cell = new PdfPCell(new Phrase(String.valueOf(attr.getValue())));
+                Object value = attr.getValue();
+                cell = new PdfPCell(new Phrase(value != null ? String.valueOf(value) : "", NORMAL_12));
                 attributesTable.addCell(cell);
             }
 
@@ -325,7 +326,7 @@ public class TitleBlockGenerator {
                                 cell = new PdfPCell(image);
                                 lifeCycleTable.addCell(cell);
                             } catch (Exception e) {
-                                cell = new PdfPCell(new Phrase(bundle.getString("signature.error")));
+                                cell = new PdfPCell(new Phrase(bundle.getString("signature.error"), NORMAL_12));
                                 lifeCycleTable.addCell(cell);
                             }
 
@@ -352,6 +353,7 @@ public class TitleBlockGenerator {
         tmpDir.deleteOnExit();
 
         // Merge the pdf generated with the pdf given in the input stream
+        //TODO: use PdfStamper to insert into the existing pdf.
         return mergePdfDocuments(new FileInputStream(blockTitleFile),inputStream);
 
     }
