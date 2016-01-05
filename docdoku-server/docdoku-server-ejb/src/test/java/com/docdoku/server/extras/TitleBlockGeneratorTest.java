@@ -4,6 +4,8 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartRevision;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -34,9 +36,10 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class TitleBlockGeneratorTest {
 
     private File tmpDir;
-    private Date documentDate;
+    private Date date;
 
     private DocumentIteration documentIteration;
+    private PartIteration partIteration;
 
     @Before
     public void setup() throws Exception {
@@ -49,20 +52,38 @@ public class TitleBlockGeneratorTest {
         DocumentRevision documentRevision = new DocumentRevision();
         documentRevision.setCreationDate(new Date());
         documentRevision.setAuthor(user);
-        documentRevision.setTitle("DocumentTitle");
+        documentRevision.setTitle("TestTitleOrName");
         documentRevision.setTags(new HashSet<>());
-        documentRevision.setDescription("DocumentDescription");
+        documentRevision.setDescription("TestDescription");
 
         documentIteration = Mockito.spy(new DocumentIteration());
         documentIteration.setDocumentRevision(documentRevision);
-        documentDate = new Date();
-        documentIteration.setCreationDate(documentDate);
-        Mockito.doReturn("DocId").when(documentIteration).getId();
-        Mockito.doReturn("DocId-A").when(documentIteration).getVersion();
+        date = new Date();
+        documentIteration.setCreationDate(date);
+        Mockito.doReturn("TestIdOrNumber").when(documentIteration).getId();
+        Mockito.doReturn("A").when(documentIteration).getVersion();
         Mockito.when(documentIteration.getInstanceAttributes()).thenReturn(new ArrayList<InstanceAttribute>());
         documentIteration.setAuthor(user);
         documentIteration.setRevisionNote("RevisionNote");
         documentIteration.setIteration(154);
+
+        PartRevision partRevision = Mockito.spy(new PartRevision());
+        partRevision.setCreationDate(new Date());
+        partRevision.setAuthor(user);
+        Mockito.doReturn("TestTitleOrName").when(partRevision).getPartName();
+        partRevision.setTags(new HashSet<>());
+        partRevision.setDescription("TestDescription");
+
+        partIteration = Mockito.spy(new PartIteration());
+        partIteration.setPartRevision(partRevision);
+        date = new Date();
+        partIteration.setCreationDate(date);
+        Mockito.doReturn("TestIdOrNumber").when(partIteration).getNumber();
+        Mockito.doReturn("A").when(partIteration).getVersion();
+        Mockito.when(partIteration.getInstanceAttributes()).thenReturn(new ArrayList<InstanceAttribute>());
+        partIteration.setAuthor(user);
+        partIteration.setIterationNote("RevisionNote");
+        partIteration.setIteration(154);
 
     }
 
@@ -103,15 +124,32 @@ public class TitleBlockGeneratorTest {
         content = new String(pdfReader.getPageContent(2));
         Assert.assertTrue(content.contains("DocdokuKeyword."));
 
+        fullPdf = TitleBlockGenerator.addBlockTitleToPDF(createSimplePdf(""), partIteration, Locale.ENGLISH);
+        pdfReader = new PdfReader(fullPdf);
+        //The number page is always
+        Assert.assertTrue(pdfReader.getNumberOfPages() >= 2);
+        content = new String(pdfReader.getPageContent(1));
+        assertInContent(content);
+
+        fullPdf= TitleBlockGenerator.addBlockTitleToPDF(createSimplePdf("Some text from a binary ressource. This text should be on the second page of the pdf. DocdokuKeyword.")
+                ,documentIteration,Locale.ENGLISH);
+        pdfReader = new PdfReader(fullPdf);
+        Assert.assertTrue(pdfReader.getNumberOfPages() >= 2);
+        content = new String(pdfReader.getPageContent(1));
+        assertInContent(content);
+        //Assert that the second page still exist.
+        content = new String(pdfReader.getPageContent(2));
+        Assert.assertTrue(content.contains("DocdokuKeyword."));
+
     }
 
     private void assertInContent(String content) throws  Exception{
         Assert.assertTrue(content.contains("DocdokuTest"));
-        Assert.assertTrue(content.contains("DocId"));
-        Assert.assertTrue(content.contains("DocId-A"));
+        Assert.assertTrue(content.contains("TestIdOrNumber"));
+        Assert.assertTrue(content.contains("TestIdOrNumber-A"));
         Assert.assertTrue(content.contains(""+154));
         SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy/MM/dd");
-        Assert.assertTrue(content.contains(simpleFormat.format(documentDate)));
+        Assert.assertTrue(content.contains(simpleFormat.format(date)));
         Assert.assertTrue(content.contains("RevisionNote"));
         //Currently, we do not display the title of the document. Could be a good idea to do so.
         //Assert.assertTrue(content.contains("DocumentTitle"));
