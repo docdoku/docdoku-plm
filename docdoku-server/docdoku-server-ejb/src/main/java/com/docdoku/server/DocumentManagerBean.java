@@ -288,8 +288,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
 
         User user = userManager.checkWorkspaceReadAccess(pBinaryResource.getWorkspaceId());
-        DocumentRevisionDAO documentMasterDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
-        return documentMasterDAO.findDocumentIterationByBinaryResource(pBinaryResource);
+        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
+        return documentRevisionDAO.findDocumentIterationByBinaryResource(pBinaryResource);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
