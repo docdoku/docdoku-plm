@@ -25,22 +25,21 @@
             <h:form>
                 <fieldset id="admin">
                     <h:link value="#{i18nWorkspacesMenu['section.create']}" outcome="/admin/workspace/workspaceCreationForm.xhtml"/>
-                    <h:outputLabel value="#{i18nWorkspacesMenu['section.select']}:" for="selectedWorkspace"/>
 
-                    <div class="actions-btn">
-                        <h:selectOneMenu label="#{i18nWorkspacesMenu['section.selectName']}" required="true" id="selectedWorkspace" value="#{adminStateBean.selectedWorkspace}">
-                            <f:selectItems value="#{accountBean.administeredWorkspaces}" var="w" itemLabel="#{w.value.id}" itemValue="#{w.value.id}" />
-                        </h:selectOneMenu>
-                        <c:if test="#{accountBean.administeredWorkspaces.size()!=0}">
+                    <c:if test="#{accountBean.administeredWorkspaces.size()!=0}">
+                        <div class="actions-btn">
+                            <h:outputLabel value="#{i18nWorkspacesMenu['section.select']}:" for="selectedWorkspace"/>
+
+                            <h:selectOneMenu label="#{i18nWorkspacesMenu['section.selectName']}" required="true" id="selectedWorkspace" value="#{adminStateBean.selectedWorkspace}">
+                                <f:selectItems value="#{accountBean.administeredWorkspaces}" var="w" itemLabel="#{w.value.id}" itemValue="#{w.value.id}" />
+                            </h:selectOneMenu>
                             <p>
                                 <h:commandLink value="#{i18nWorkspacesMenu['section.document']}" action="#{workspaceBean.goToDocuments}"/> |
                                 <h:commandLink value="#{i18nWorkspacesMenu['section.product']}" action="#{workspaceBean.goToProducts}"/> |
                                 <h:commandLink value="#{i18nWorkspacesMenu['section.change']}" action="#{workspaceBean.goToChangeManagement}"/>
                             </p>
-                        </c:if>
                         </div>
 
-                    <c:if test="#{accountBean.administeredWorkspaces.size()!=0}">
                         <div class="actions-btn">
                             <h:commandLink value="#{i18nWorkspacesMenu['section.edit']}" action="#{workspaceBean.editWorkspace}"/> |
                             <h:commandLink value="#{i18nWorkspacesMenu['section.manage']}" action="/admin/workspace/manageUsers.xhtml"/> |
@@ -48,6 +47,7 @@
                             <h:commandLink value="#{i18nWorkspacesMenu['section.dashboard']}" action="/admin/workspace/workspaceDashboard.xhtml"/> |
                             <h:commandLink value="#{i18nWorkspacesMenu['section.delete']}" action="#{workspaceBean.deleteWorkspace}" onclick="return prompt('#{i18nWorkspacesMenu['section.deleteConfirm']}') == '#{i18nWorkspacesMenu['section.deleteConfirmPromptValue']}'" />
                         </div>
+
                     </c:if>
 
                     <c:if test="#{accountBean.superAdmin==true}">
