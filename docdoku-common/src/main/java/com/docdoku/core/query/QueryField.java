@@ -34,8 +34,8 @@ public class QueryField {
     public static final String PART_REVISION_PART_KEY = "pr.partKey";
     public static final String PART_REVISION_VERSION = "pr.version";
     public static final String PART_REVISION_MODIFICATION_DATE = "pr.modificationDate";
-    public static final String PART_REVISION_CHECKIN_DATE = "pr.checkinDate";
-    public static final String PART_REVISION_CHECKOUT_DATE = "pr.checkoutDate";
+    public static final String PART_REVISION_CHECKIN_DATE = "pr.checkInDate";
+    public static final String PART_REVISION_CHECKOUT_DATE = "pr.checkOutDate";
     public static final String PART_REVISION_CREATION_DATE = "pr.creationDate";
     public static final String PART_REVISION_LIFECYCLE_STATE = "pr.lifeCycleState";
     public static final String PART_REVISION_STATUS = "pr.status";

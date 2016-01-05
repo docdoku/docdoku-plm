@@ -258,17 +258,22 @@ public class QueryDAO {
         throw new IllegalArgumentException();
     }
 
-
     private Predicate getAuthorPredicate(String field, String operator, String value, String type) {
         return getPredicate(pr.get("author").get(field),operator,value,type);
     }
 
     private Predicate getPartRevisionPredicate(String field, String operator, String value, String type) {
-        if("status".equals(field)){
-            return getPredicate(pr.get(field),operator,PartRevision.RevisionStatus.valueOf(value),"");
-        } else if("tags".equals(field)){
+        if("checkInDate".equals(field)){
+            Predicate lastIterationPredicate = cb.equal(cb.size(pr.get("partIterations")), pi.get("iteration"));
+            return cb.and(lastIterationPredicate, getPredicate(pi.get("checkInDate"), operator, value, type));
+        }
+        else if("status".equals(field)){
+            return getPredicate(pr.get(field), operator, PartRevision.RevisionStatus.valueOf(value), "");
+        }
+        else if("tags".equals(field)){
             return getTagsPredicate(value);
-        }else if("linkedDocuments".equals(field)){
+        }
+        else if("linkedDocuments".equals(field)){
             // should be ignored, returning always true for the moment
             return cb.and();
         }
@@ -369,7 +374,19 @@ public class QueryDAO {
 
         switch (operator){
 
-            case "equal" : return cb.equal(fieldExp,o);
+            case "equal" :
+                if("date".equals(type)){
+
+                    Date date1 = (Date) o;
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(date1);
+                    c.add(Calendar.DATE, 1);
+                    Date date2 = c.getTime();
+
+                    return cb.between(fieldExp, date1, date2);
+                } else {
+                    return cb.equal(fieldExp,o);
+                }
             case "not_equal" : return cb.equal(fieldExp, o).not();
 
             case "contains" : return cb.like(fieldExp, "%" + o + "%");
