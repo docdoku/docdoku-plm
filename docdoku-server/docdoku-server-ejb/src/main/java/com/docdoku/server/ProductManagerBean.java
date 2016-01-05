@@ -3187,7 +3187,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(ciKey);
         PartMaster root = ci.getDesignItem();
 
-        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
+        List<PathToPathLink> pathToPathLinks = ci.getPathToPathLinks();
         PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(em);
 
         final ProductInstanceIteration finalProductInstanceIteration = productInstanceIteration;
@@ -3238,30 +3238,25 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     row.setContext(queryContext);
                     row.setAmount(totalAmount);
 
-                    List<PathToPathLink> pathToPathLinkSourceInContext = pathToPathLinkDAO.getPathToPathLinkSourceInContext(ci, finalProductInstanceIteration, pathAsString);
-                    for (PathToPathLink pathToPathLink : pathToPathLinkSourceInContext) {
-                        try {
-                            List<PartLink> sourcePath = decodePath(ciKey, pathToPathLink.getTargetPath());
-                            row.addSource(pathToPathLink.getType(), sourcePath);
-                        } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | PartUsageLinkNotFoundException | ConfigurationItemNotFoundException e) {
-                            LOGGER.log(Level.FINEST, null, e);
+                    for(PathToPathLink pathToPathLink:pathToPathLinks){
+                        try{
+                            if(pathToPathLink.getSourcePath().equals(pathAsString)){
+                                row.addSource(pathToPathLink.getType(), decodePath(ciKey, pathToPathLink.getTargetPath()));
+                            }
+                            if(pathToPathLink.getTargetPath().equals(pathAsString)){
+                                row.addTarget(pathToPathLink.getType(), decodePath(ciKey, pathToPathLink.getTargetPath()));
+                            }
+                        } catch (WorkspaceNotFoundException |UserNotFoundException | ConfigurationItemNotFoundException | PartUsageLinkNotFoundException | UserNotActiveException e) {
+                            LOGGER.log(Level.SEVERE,null,e);
                         }
                     }
 
-                    List<PathToPathLink> pathToPathLinkTargetInContext = pathToPathLinkDAO.getPathToPathLinkTargetInContext(ci, finalProductInstanceIteration, pathAsString);
-                    for (PathToPathLink pathToPathLink : pathToPathLinkTargetInContext) {
-                        try {
-                            List<PartLink> targetPath = decodePath(ciKey, pathToPathLink.getSourcePath());
-                            row.addTarget(pathToPathLink.getType(), targetPath);
-                        } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | PartUsageLinkNotFoundException | ConfigurationItemNotFoundException e) {
-                            LOGGER.log(Level.FINEST, null, e);
+                    if(finalProductInstanceIteration != null) {
+                        PathDataIteration pathDataIteration = pathDataIterationDAO.getLastPathDataIteration(pathAsString, finalProductInstanceIteration);
+
+                        if (null != pathDataIteration) {
+                            row.setPathDataIteration(pathDataIteration);
                         }
-                    }
-
-                    PathDataIteration pathDataIteration = pathDataIterationDAO.getLastPathDataIteration(pathAsString, finalProductInstanceIteration);
-
-                    if (null != pathDataIteration) {
-                        row.setPathDataIteration(pathDataIteration);
                     }
 
                     rows.add(row);
