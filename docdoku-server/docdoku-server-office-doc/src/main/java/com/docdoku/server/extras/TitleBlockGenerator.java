@@ -40,9 +40,9 @@ import java.util.logging.Logger;
 
 public class TitleBlockGenerator {
 
-    private static final Font BOLD_18 = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
-    private static final Font BOLD_12 = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
-    private static final Font NORMAL_12 = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL);
+    private static Font NORMAL_12;
+    private static Font BOLD_12;
+    private static Font BOLD_18;
 
     private static final float TABLE_PERCENT_WIDTH = 100f;
     private static final float SIGNATURE_SIZE_W = 80f;
@@ -53,6 +53,18 @@ public class TitleBlockGenerator {
     private static final String BASE_NAME = "com.docdoku.server.viewers.localization.TitleBlockGenerator";
 
     private static final Logger LOGGER = Logger.getLogger(TitleBlockGenerator.class.getName());
+
+    static{
+        try {
+            BaseFont normal = BaseFont.createFont("com/docdoku/server/viewers/fonts/DejaVuSans.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            BaseFont bold = BaseFont.createFont("com/docdoku/server/viewers/fonts/DejaVuSans-Bold.ttf",  BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            NORMAL_12 = new Font(normal, 12, Font.NORMAL);
+            BOLD_12 = new Font(bold, 12, Font.BOLD);
+            BOLD_18 = new Font(bold, 18, Font.BOLD);
+        } catch (DocumentException | IOException e) {
+            LOGGER.log(Level.SEVERE,null,e);
+        }
+    }
 
     private TitleBlockGenerator(){
     }
