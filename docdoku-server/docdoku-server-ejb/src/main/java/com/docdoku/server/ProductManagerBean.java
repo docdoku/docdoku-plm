@@ -1944,69 +1944,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deletePartMaster(PartMasterKey partMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException, ESServerException {
-
-        //TODO: never used?
-
-        User user = userManager.checkWorkspaceReadAccess(partMasterKey.getWorkspace());
-        Locale locale = new Locale(user.getLanguage());
-
-        PartMasterDAO partMasterDAO = new PartMasterDAO(locale, em);
-        PartUsageLinkDAO partUsageLinkDAO = new PartUsageLinkDAO(locale, em);
-        ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(locale, em);
-        ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(locale, em);
-        PartMaster partMaster = partMasterDAO.loadPartM(partMasterKey);
-
-        // check if part is linked to a product
-        if (configurationItemDAO.isPartMasterLinkedToConfigurationItem(partMaster)) {
-            throw new EntityConstraintException(locale, "EntityConstraintException1");
-        }
-
-        // check if this part is in a partUsage
-        if (partUsageLinkDAO.hasPartUsages(partMasterKey.getWorkspace(), partMasterKey.getNumber())) {
-            throw new EntityConstraintException(locale, "EntityConstraintException2");
-        }
-
-        // check if this part is in a partSubstitute
-        if (partUsageLinkDAO.hasPartSubstitutes(partMasterKey.getWorkspace(), partMasterKey.getNumber())) {
-            throw new EntityConstraintException(locale, "EntityConstraintException22");
-        }
-
-        // check if part is baselined
-        if (productBaselineDAO.existBaselinedPart(partMasterKey.getWorkspace(), partMasterKey.getNumber())) {
-            throw new EntityConstraintException(locale, "EntityConstraintException5");
-        }
-
-        // ok to delete
-        partMasterDAO.removePartM(partMaster);
-
-        // delete CAD and other files attached with this partMaster
-        // and notified remove part observers
-        for (PartRevision partRevision : partMaster.getPartRevisions()) {
-            partRevisionEvent.select(new AnnotationLiteral<Removed>() {
-            }).fire(new PartRevisionChangeEvent(partRevision));
-            for (PartIteration partIteration : partRevision.getPartIterations()) {
-                try {
-                    removeCADFile(partIteration);
-                    removeAttachedFiles(partIteration);
-                } catch (PartIterationNotFoundException e) {
-                    LOGGER.log(Level.INFO, null, e);
-                }
-            }
-        }
-
-        // delete ElasticSearch Index for this revision iteration
-        for (PartRevision partRevision : partMaster.getPartRevisions()) {
-            for (PartIteration partIteration : partRevision.getPartIterations()) {
-                esIndexer.delete(partIteration);
-                // Remove ElasticSearch Index for this PartIteration
-            }
-        }
-    }
-
-
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    @Override
     public void deletePartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, EntityConstraintException, ESServerException {
 
         User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
