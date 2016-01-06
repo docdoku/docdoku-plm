@@ -131,7 +131,9 @@ define([
         },
 
         onOnePathSelected: function(component) {
-            this.cascadeCheckoutGroup.css('display', 'inline-block');
+            if(!component.isReleased() && !component.isObsolete())  {
+                this.cascadeCheckoutGroup.css('display', 'inline-block');
+            }
             this.updatePathActionsButton(this.getPermission(component),true);
         },
 
@@ -183,7 +185,7 @@ define([
         },
 
         onOneComponentSelected: function (component) {
-            if (!component.isReleased()) {
+            if (!component.isReleased() && !component.isObsolete()) {
                 this.checkoutGroup.show();
             }
             if (App.config.workspaceAdmin || component.getAuthorLogin() === App.config.login) {
@@ -217,6 +219,7 @@ define([
 
         getPermissionFromSeveral: function(list) {
             var noneReleased = true;
+            var noneObsolete = true;
             var permission = this.getPermission(list[0]);
             var samePermission = true;
             var that = this;
@@ -225,8 +228,9 @@ define([
                 samePermission = samePermission && (permission.canCheckout === permComponent.canCheckout &&
                     permComponent.canUndoAndCheckin === permComponent.canUndoAndCheckin);
                 noneReleased = noneReleased && !component.isReleased();
+                noneObsolete = noneObsolete && !component.isObsolete();
             });
-            return (noneReleased && samePermission) ? permission : null;
+            return (noneReleased && noneObsolete && samePermission) ? permission : null;
         },
 
         onSeveralComponentsSelected: function (listComponent) {
