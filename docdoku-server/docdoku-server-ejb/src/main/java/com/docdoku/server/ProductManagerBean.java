@@ -2047,6 +2047,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             // Remove ElasticSearch Index for this PartIteration
         }
 
+        partRevisionEvent.select(new AnnotationLiteral<Removed>() {
+        }).fire(new PartRevisionChangeEvent(partR));
+
         if (isLastRevision) {
             partMasterDAO.removePartM(partMaster);
         } else {
@@ -2063,9 +2066,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 LOGGER.log(Level.INFO, null, e);
             }
         }
-
-        partRevisionEvent.select(new AnnotationLiteral<Removed>() {
-        }).fire(new PartRevisionChangeEvent(partR));
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
