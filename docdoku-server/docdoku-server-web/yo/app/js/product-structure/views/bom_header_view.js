@@ -131,12 +131,12 @@ define([
         },
 
         onOnePathSelected: function(component) {
-            this.cascadeCheckoutGroup.show();
+            this.cascadeCheckoutGroup.css('display', 'inline-block');
             this.updatePathActionsButton(this.getPermission(component),true);
         },
 
         onSeveralPathSelected: function(list) {
-            this.cascadeCheckoutGroup.show();
+            this.cascadeCheckoutGroup.css('display', 'inline-block');
             var perm = this.getPermissionFromSeveral(list);
             if(perm) {
                 this.updatePathActionsButton(perm,false);
