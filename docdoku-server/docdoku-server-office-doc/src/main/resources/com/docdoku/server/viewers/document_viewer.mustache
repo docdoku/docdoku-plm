@@ -1,9 +1,11 @@
 <div id="pdf-container-{{thisId}}"></div>
 <script type="text/javascript">
-    var div = document.getElementById('pdf-container-{{thisId}}');
-    PluginDetect.canHandlePDF(function(canHandle){
-        div.innerHTML =  canHandle ?
-                    '<iframe class="pdfviewer" id="pdfjs-{{thisId}}" src="{{uriResource}}?type=viewer&output=pdf"></iframe>' :
-                    '<a class="pdflink" id="pdfjs-{{thisId}}" href="{{uriResource}}?type=viewer&output=pdf">{{fileName}}</a>' ;
-    });
+    (function(){
+        var div = document.getElementById('pdf-container-{{thisId}}');
+        PluginDetect.canHandlePDF(function(canHandle){
+            div.innerHTML =  canHandle ?
+                        '<iframe class="pdfviewer" id="pdfjs-{{thisId}}" src="{{uriResource}}?type=viewer&output=pdf"></iframe>' :
+                        '<a class="pdflink" id="pdfjs-{{thisId}}" href="{{uriResource}}?type=viewer&output=pdf">{{fileName}}</a>' ;
+        });
+    })();
 </script>
