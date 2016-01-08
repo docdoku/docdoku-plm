@@ -131,6 +131,10 @@ public class ProductInstanceMaster implements Serializable {
         this.productInstanceIterations = productInstanceIterations;
     }
 
+    public String getIdentifier(){
+        return instanceOf.getId() + "-" + serialNumber;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

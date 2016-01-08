@@ -21,8 +21,13 @@ define([
 
         initialize: function () {
             this._isChecked = false;
+            this.listenTo(this.model,'change',this.render.bind(this));
+            this.listenTo(this.model,'sync',this.render.bind(this));
+
         },
+
         render: function () {
+            console.log('render')
             this.$el.html(Mustache.render(template, {
                 model: this.model,
                 i18n: App.config.i18n,
@@ -39,8 +44,6 @@ define([
                 this.trigger('selectionChanged', this);
             }
 
-            this.model.on('change', this.render, this);
-            this.model.on('sync', this.render, this);
             this.bindUserPopover();
             date.dateHelper(this.$('.date-popover'));
             this.trigger('rendered', this);
