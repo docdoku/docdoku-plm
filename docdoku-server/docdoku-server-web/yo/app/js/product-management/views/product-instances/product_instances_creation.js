@@ -103,6 +103,7 @@ define([
             };
 
             if (data.serialNumber && data.configurationItemId && data.baselineId) {
+                this.model.unset('identifier');
                 this.model.unset('serialNumber');
                 this.model.save(data, {
                     success: this.onProductInstanceCreated,

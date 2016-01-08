@@ -11,7 +11,15 @@ define(['backbone',
             _.bindAll(this);
         },
 
-        idAttribute: 'serialNumber',
+        idAttribute: 'identifier',
+
+        url:function(){
+            if(this.get('identifier')){
+                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.getConfigurationItemId() + '/product-instances/' + this.getSerialNumber();
+            }
+            return this.urlRoot();
+        },
+
         urlRoot: function () {
             if (this.getConfigurationItemId()) {
                 return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.getConfigurationItemId() + '/product-instances';

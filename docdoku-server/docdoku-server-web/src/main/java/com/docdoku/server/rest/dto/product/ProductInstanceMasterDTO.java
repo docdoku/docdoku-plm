@@ -28,12 +28,21 @@ import java.util.List;
 @XmlRootElement
 public class ProductInstanceMasterDTO {
 
+    private String identifier;
     private String serialNumber;
     private String configurationItemId;
     private List<ProductInstanceIterationDTO> productInstanceIterations;
     private ACLDTO acl;
 
     public ProductInstanceMasterDTO() {
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     public String getSerialNumber() {
