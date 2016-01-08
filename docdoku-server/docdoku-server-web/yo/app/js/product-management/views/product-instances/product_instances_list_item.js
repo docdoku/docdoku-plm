@@ -27,7 +27,6 @@ define([
         },
 
         render: function () {
-            console.log('render')
             this.$el.html(Mustache.render(template, {
                 model: this.model,
                 i18n: App.config.i18n,
