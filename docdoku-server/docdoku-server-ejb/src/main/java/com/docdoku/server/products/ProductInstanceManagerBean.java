@@ -1235,7 +1235,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         if (prodInstM.getAcl() == null) {
             // Check if the item has no ACL
             return userManager.checkWorkspaceReadAccess(workspaceId);
-        } else if (prodInstM.getAcl().hasWriteAccess(user)) {
+        } else if (prodInstM.getAcl().hasReadAccess(user)) {
             // Check if there is a write access
             return user;
         } else {
