@@ -11,6 +11,9 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
+import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
+import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -61,6 +64,7 @@ public class TitleBlockGeneratorTest {
         date = new Date();
         documentIteration.setCreationDate(date);
         Mockito.doReturn("TestIdOrNumber").when(documentIteration).getId();
+        Mockito.doReturn("TestIdOrNumber-A-154").when(documentIteration).toString();
         Mockito.doReturn("A").when(documentIteration).getVersion();
         Mockito.when(documentIteration.getInstanceAttributes()).thenReturn(new ArrayList<InstanceAttribute>());
         documentIteration.setAuthor(user);
@@ -111,34 +115,34 @@ public class TitleBlockGeneratorTest {
         PdfReader pdfReader = new PdfReader(fullPdf);
         //The number page is always
         Assert.assertTrue(pdfReader.getNumberOfPages() >= 2);
-        String content = new String(pdfReader.getPageContent(1));
+        String content = parsePdf(pdfReader,1);
         assertInContent(content);
 
         fullPdf= TitleBlockGenerator.addBlockTitleToPDF(createSimplePdf("Some text from a binary ressource. This text should be on the second page of the pdf. DocdokuKeyword.")
                 ,documentIteration,Locale.ENGLISH);
         pdfReader = new PdfReader(fullPdf);
         Assert.assertTrue(pdfReader.getNumberOfPages() >= 2);
-        content = new String(pdfReader.getPageContent(1));
+        content = parsePdf(pdfReader,1);
         assertInContent(content);
         //Assert that the second page still exist.
-        content = new String(pdfReader.getPageContent(2));
+        content = parsePdf(pdfReader,2);
         Assert.assertTrue(content.contains("DocdokuKeyword."));
 
         fullPdf = TitleBlockGenerator.addBlockTitleToPDF(createSimplePdf(""), partIteration, Locale.ENGLISH);
         pdfReader = new PdfReader(fullPdf);
         //The number page is always
         Assert.assertTrue(pdfReader.getNumberOfPages() >= 2);
-        content = new String(pdfReader.getPageContent(1));
+        content = parsePdf(pdfReader,1);
         assertInContent(content);
 
         fullPdf= TitleBlockGenerator.addBlockTitleToPDF(createSimplePdf("Some text from a binary ressource. This text should be on the second page of the pdf. DocdokuKeyword.")
                 ,documentIteration,Locale.ENGLISH);
         pdfReader = new PdfReader(fullPdf);
         Assert.assertTrue(pdfReader.getNumberOfPages() >= 2);
-        content = new String(pdfReader.getPageContent(1));
+        content = parsePdf(pdfReader,1);
         assertInContent(content);
         //Assert that the second page still exist.
-        content = new String(pdfReader.getPageContent(2));
+        content = parsePdf(pdfReader,2);
         Assert.assertTrue(content.contains("DocdokuKeyword."));
 
     }
@@ -165,5 +169,17 @@ public class TitleBlockGeneratorTest {
         Assert.assertTrue(firstPage.contains("DocdokuKeyword."));
         String secondPage = new String(pdfReader.getPageContent(2));
         Assert.assertTrue(secondPage.contains("SecondDocdokuKeyword."));
+    }
+
+    private String parsePdf(PdfReader reader, int page) throws IOException {
+//        PdfReader reader = new PdfReader(pdf);
+        PdfReaderContentParser parser = new PdfReaderContentParser(reader);
+//        PrintWriter out = new PrintWriter(new FileOutputStream(txt));
+        TextExtractionStrategy strategy;
+        strategy = parser.processContent(page, new SimpleTextExtractionStrategy());
+        return strategy.getResultantText();
+
+//        out.flush();
+//        out.close();
     }
 }
