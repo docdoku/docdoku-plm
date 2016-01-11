@@ -600,7 +600,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocale, em);
         ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
 
-        // Check the access to the part template
+        // Check the access to the product instance master
         checkProductInstanceWriteAccess(workspaceId, prodInstM, user);
 
         if (prodInstM.getAcl() == null) {
