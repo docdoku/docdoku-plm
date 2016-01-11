@@ -240,7 +240,8 @@ define([
                             error: function (errorMessage) {
                                 self.$('#alerts').append(new AlertView({
                                     type: 'error',
-                                    message: errorMessage
+                                    title: errorMessage.statusText,
+                                    message: errorMessage.responseText
                                 }).render().$el);
                             }
                         });
@@ -277,7 +278,8 @@ define([
                     error: function (errorMessage) {
                         self.$('#alerts').append(new AlertView({
                             type: 'error',
-                            message: errorMessage
+                            title: errorMessage.statusText,
+                            message: errorMessage.responseText
                         }).render().$el);
                     }
                 });
