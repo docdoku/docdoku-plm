@@ -84,7 +84,7 @@ public class PSFilterManagerBean implements IPSFilterManagerLocal,IPSFilterManag
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
 
         if (filterType == null) {
-            return new WIPPSFilter(user,em);
+            return new WIPPSFilter(user);
         }
 
         PSFilter filter;
@@ -93,7 +93,7 @@ public class PSFilterManagerBean implements IPSFilterManagerLocal,IPSFilterManag
 
             case "wip":
             case "undefined":
-                filter = new WIPPSFilter(user, diverge,em);
+                filter = new WIPPSFilter(user, diverge);
                 break;
             case "latest":
                 filter = new LatestPSFilter(user, diverge);
