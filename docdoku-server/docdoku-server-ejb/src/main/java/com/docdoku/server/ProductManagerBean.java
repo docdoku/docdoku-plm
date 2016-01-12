@@ -2438,7 +2438,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     private List<PartRevision> getPartRevisionsFromPath(ConfigurationItemKey configurationItemKey, String path ,User user) throws EntityConstraintException, PartMasterNotFoundException, NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
         List<PartRevision> partRevisions = new ArrayList<>();
-        PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em,user,new WIPPSFilter(user)) {
+        PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em,user,new WIPPSFilter(user,em)) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
 
