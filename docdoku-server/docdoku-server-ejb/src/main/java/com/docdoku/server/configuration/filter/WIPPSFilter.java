@@ -23,11 +23,9 @@ package com.docdoku.server.configuration.filter;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.PSFilter;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartLink;
-import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartSubstituteLink;
+import com.docdoku.core.product.*;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,16 +38,20 @@ public class WIPPSFilter extends PSFilter {
 
     private User user;
     private boolean diverge = false;
+    private EntityManager em;
 
-    public WIPPSFilter() {
+    public WIPPSFilter(EntityManager em) {
+        this.em = em;
     }
 
-    public WIPPSFilter(User user) {
+    public WIPPSFilter(User user, EntityManager em) {
         this.user = user;
+        this.em = em;
     }
-    public WIPPSFilter(User user, boolean diverge) {
+    public WIPPSFilter(User user, boolean diverge, EntityManager em) {
         this.user = user;
         this.diverge = diverge;
+        this.em = em;
     }
 
     public User getUser() {
@@ -63,6 +65,14 @@ public class WIPPSFilter extends PSFilter {
     @Override
     public List<PartIteration> filter(PartMaster part) {
         List<PartIteration> partIterations = new ArrayList<>();
+        if(isCheckoutByAnotherUser(user,part.getLastRevision())) {
+            em.detach(part);
+            part.getLastRevision().removeLastIteration();
+        }
+        if(part.getLastRevision().getPartIterations().size() == 0) {
+            em.detach(part);
+            part.removeLastRevision();
+        }
         PartIteration partIteration = part.getLastRevision().getLastIteration();
         partIterations.add(partIteration);
         return partIterations;
@@ -83,6 +93,11 @@ public class WIPPSFilter extends PSFilter {
         }
 
         return links;
+    }
+
+    //TODO: Duplicate from ProductManagerBean. Need refactor.
+    private boolean isCheckoutByAnotherUser(User user, PartRevision partRevision) {
+        return partRevision.isCheckedOut() && !partRevision.getCheckOutUser().equals(user);
     }
 
 }

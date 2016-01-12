@@ -2886,7 +2886,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
 
         if (filterType == null) {
-            return new WIPPSFilter(user);
+            return new WIPPSFilter(user,em);
         }
 
         PSFilter filter;
@@ -2895,7 +2895,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             case "wip":
             case "undefined":
-                filter = new WIPPSFilter(user, diverge);
+                filter = new WIPPSFilter(user, diverge,em);
                 break;
             case "latest":
                 filter = new LatestPSFilter(user, diverge);
