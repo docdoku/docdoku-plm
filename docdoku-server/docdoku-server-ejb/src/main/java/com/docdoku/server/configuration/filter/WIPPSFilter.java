@@ -25,7 +25,6 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.product.*;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,20 +37,16 @@ public class WIPPSFilter extends PSFilter {
 
     private User user;
     private boolean diverge = false;
-    private EntityManager em;
 
-    public WIPPSFilter(EntityManager em) {
-        this.em = em;
+    public WIPPSFilter() {
     }
 
-    public WIPPSFilter(User user, EntityManager em) {
+    public WIPPSFilter(User user) {
         this.user = user;
-        this.em = em;
     }
-    public WIPPSFilter(User user, boolean diverge, EntityManager em) {
+    public WIPPSFilter(User user, boolean diverge) {
         this.user = user;
         this.diverge = diverge;
-        this.em = em;
     }
 
     public User getUser() {
@@ -65,16 +60,10 @@ public class WIPPSFilter extends PSFilter {
     @Override
     public List<PartIteration> filter(PartMaster part) {
         List<PartIteration> partIterations = new ArrayList<>();
-        if(isCheckoutByAnotherUser(user,part.getLastRevision())) {
-            em.detach(part);
-            part.getLastRevision().removeLastIteration();
+        PartIteration partIteration = getLastAccessibleIteration(part);
+        if(partIteration != null) {
+            partIterations.add(partIteration);
         }
-        if(part.getLastRevision().getPartIterations().size() == 0) {
-            em.detach(part);
-            part.removeLastRevision();
-        }
-        PartIteration partIteration = part.getLastRevision().getLastIteration();
-        partIterations.add(partIteration);
         return partIterations;
     }
 
@@ -98,6 +87,33 @@ public class WIPPSFilter extends PSFilter {
     //TODO: Duplicate from ProductManagerBean. Need refactor.
     private boolean isCheckoutByAnotherUser(User user, PartRevision partRevision) {
         return partRevision.isCheckedOut() && !partRevision.getCheckOutUser().equals(user);
+    }
+
+    private PartIteration getLastAccessibleIteration(PartMaster partMaster) {
+        PartRevision partRevision = partMaster.getLastRevision();
+
+        int i = partMaster.getPartRevisions().size() -1;
+        //find a revision with checked-in iteration
+        while(hasAccessibleIteration(partRevision)){
+            partRevision = i == -1 ? null : partMaster.getPartRevisions().get(i--);
+        }
+
+        if(partRevision == null) {
+            return null;
+        }
+        else if(isCheckoutByAnotherUser(user,partRevision)) {
+            List<PartIteration> partIterations = partRevision.getPartIterations();
+            //The last iteration is checked-out by another user, take the one before.
+            return partIterations.get(partIterations.size() - 2);
+        } else {
+            return partRevision.getLastIteration();
+        }
+    }
+
+    private boolean hasAccessibleIteration(PartRevision partRevision) {
+        return (partRevision != null
+                && isCheckoutByAnotherUser(user,partRevision)
+                && partRevision.getPartIterations().size() >= 1 );
     }
 
 }

@@ -149,6 +149,11 @@ public class ProductResource {
         for (int i = 0; i < components.size(); i++) {
             PartRevision lastRevision = components.get(i).getPartMaster().getLastRevision();
             partsDTO[i] = mapper.map(lastRevision, PartRevisionDTO.class);
+            partsDTO[i].getPartIterations().clear();
+            //specify the iteration only if an iteration has been retained.
+            if(components.get(i).getRetainedIteration() != null) {
+                partsDTO[i].getPartIterations().add(mapper.map(component.getRetainedIteration(), PartIterationDTO.class));
+            }
             partsDTO[i].setNumber(lastRevision.getPartNumber());
             partsDTO[i].setPartKey(lastRevision.getPartNumber() + "-" + lastRevision.getVersion());
             partsDTO[i].setName(lastRevision.getPartMaster().getName());
