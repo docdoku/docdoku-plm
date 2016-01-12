@@ -68,22 +68,31 @@ public class OrganizationManagerBean implements IOrganizationManagerLocal {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public Organization createOrganization(String pName, Account pOwner, String pDescription) throws OrganizationAlreadyExistsException, CreationException, NotAllowedException {
-        if (pOwner.getOrganization() == null) {
-            Organization organization = new Organization(pName, pOwner, pDescription);
-            new OrganizationDAO(new Locale(pOwner.getLanguage()), em).createOrganization(organization);
-            pOwner.setOrganization(organization);
-            organization.addMember(pOwner);
-            em.merge(pOwner);
+    public Organization getOrganizationOfAccount(String pLogin) {
+        OrganizationDAO organizationDAO = new OrganizationDAO(em);
+        return organizationDAO.findOrganizationOfAccount(pLogin);
+
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public Organization createOrganization(String pName, String pDescription) throws AccountNotFoundException, OrganizationAlreadyExistsException, CreationException, NotAllowedException {
+        Account me = accountManager.getMyAccount();
+        OrganizationDAO organizationDAO = new OrganizationDAO(new Locale(me.getLanguage()), em);
+        Organization ownerOrg=organizationDAO.findOrganizationOfAccount(me.getLogin());
+        if (ownerOrg == null) {
+            Organization organization = new Organization(pName, me, pDescription);
+            organizationDAO.createOrganization(organization);
+            organization.addMember(me);
             return organization;
         } else {
-            throw new NotAllowedException(new Locale(pOwner.getLanguage()), "NotAllowedException11");
+            throw new NotAllowedException(new Locale(me.getLanguage()), "NotAllowedException11");
         }
     }
 
     @Override
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    public void deleteOrganization(String pName) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException {
+    public void deleteOrganization(String pName) throws OrganizationNotFoundException, AccessRightException, AccountNotFoundException {
         OrganizationDAO organizationDAO = new OrganizationDAO(em);
         Organization organization = organizationDAO.loadOrganization(pName);
 
@@ -94,40 +103,36 @@ public class OrganizationManagerBean implements IOrganizationManagerLocal {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public void addAccountInOrganization(String pOrganizationName, String pLogin) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException, NotAllowedException {
+    public void addAccountInOrganization(String pOrganizationName, String pLogin) throws OrganizationNotFoundException, AccountNotFoundException, NotAllowedException, AccessRightException {
         OrganizationDAO organizationDAO = new OrganizationDAO(em);
         Organization organization = organizationDAO.loadOrganization(pOrganizationName);
         Account account = accountManager.checkAdmin(organization);
-        Locale locale;
-
-        if (account != null) {
-            locale = new Locale(account.getLanguage());
-        } else {
-            locale = Locale.getDefault();
-        }
+        Locale locale=new Locale(account.getLanguage());
 
         Account accountToAdd = new AccountDAO(locale, em).loadAccount(pLogin);
-        if (accountToAdd.getOrganization() != null) {
+        Organization accountToAddOrg=organizationDAO.findOrganizationOfAccount(pLogin);
+        if (accountToAddOrg != null) {
             throw new NotAllowedException(locale, "NotAllowedException12");
         } else {
-            accountToAdd.setOrganization(organization);
             organization.addMember(accountToAdd);
         }
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public void removeAccountsFromOrganization(String pOrganizationName, String[] pLogins) throws AccessRightException, OrganizationNotFoundException, AccountNotFoundException {
+    public void removeAccountsFromOrganization(String pOrganizationName, String[] pLogins) throws OrganizationNotFoundException, AccessRightException, AccountNotFoundException {
         OrganizationDAO organizationDAO = new OrganizationDAO(em);
         Organization organization = organizationDAO.loadOrganization(pOrganizationName);
 
-        if (accountManager.checkAdmin(organization) != null) {
-            for (String login : pLogins) {
-                Account accountToRemove = new AccountDAO(em).loadAccount(login);
-                accountToRemove.setOrganization(null);
-                organization.removeMember(accountToRemove);
-            }
+        Account account = accountManager.checkAdmin(organization);
+        Locale locale=new Locale(account.getLanguage());
+
+        AccountDAO accountDAO = new AccountDAO(locale, em);
+        for (String login : pLogins) {
+            Account accountToRemove = accountDAO.loadAccount(login);
+            organization.removeMember(accountToRemove);
         }
+
     }
 
 }

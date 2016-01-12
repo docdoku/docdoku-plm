@@ -22,7 +22,9 @@ package com.docdoku.core.common;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -36,6 +38,9 @@ import java.util.Set;
  */
 @Table(name = "ORGANIZATION")
 @javax.persistence.Entity
+@NamedQueries ({
+        @NamedQuery(name="Organization.ofAccount", query = "SELECT orga FROM Organization orga WHERE :account MEMBER OF orga.members")
+})
 public class Organization implements Serializable {
 
     @Column(length = 100)
@@ -48,8 +53,16 @@ public class Organization implements Serializable {
     @Lob
     private String description;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "organization")
-    protected Set<Account> members = new HashSet<>();
+    @JoinTable(name="ORGANIZATION_ACCOUNT",
+            inverseJoinColumns={
+                    @JoinColumn(name="ACCOUNT_LOGIN", referencedColumnName="LOGIN")
+            },
+            joinColumns={
+                    @JoinColumn(name="ORGANIZATION_NAME", referencedColumnName="NAME")
+            })
+    @OrderColumn(name="ACCOUNT_ORDER")
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<Account> members = new ArrayList<>();
 
     public Organization() {
 
@@ -60,7 +73,7 @@ public class Organization implements Serializable {
         description = pDescription;
     }
 
-    public Set<Account> getMembers() {
+    public List<Account> getMembers() {
         return members;
     }
     public boolean addMember(Account pAccount){

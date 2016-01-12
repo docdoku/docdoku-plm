@@ -53,34 +53,33 @@ public class OrganizationBean {
 
 
 
-    public Set<Account> getAccountsToManage() throws AccountNotFoundException {
+    public List<Account> getAccountsToManage() {
         String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
-        Account account = accountManager.getAccount(remoteUser);
-
-        Organization organization = account.getOrganization();
-
-        return organization.getMembers();
+        Organization organization = organizationManager.getOrganizationOfAccount(remoteUser);
+        if(organization!=null){
+            return organization.getMembers();
+        }else{
+            return null;
+        }
     }
 
-    public String editOrganization() throws AccountNotFoundException {
-        String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
-        Account account = accountManager.getAccount(remoteUser);
 
-        Organization organization = account.getOrganization();
+
+    public String editOrganization() {
+        String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
+        Organization organization = organizationManager.getOrganizationOfAccount(remoteUser);
         if(organization!=null) {
             organizationName=organization.getName();
             organizationDescription=organization.getDescription();
         }
-        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
-        return request.getContextPath() + "/admin/organization/organizationEditionForm.xhtml";
+        return "/admin/organization/organizationEditionForm.xhtml";
     }
 
-    public String addAccount() throws AccountNotFoundException, NotAllowedException, AccessRightException, OrganizationNotFoundException {
+    public String addAccount() throws NotAllowedException, AccountNotFoundException, AccessRightException, OrganizationNotFoundException {
         String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
-        Account account = accountManager.getAccount(remoteUser);
-        Organization organization = account.getOrganization();
-
+        Organization organization = organizationManager.getOrganizationOfAccount(remoteUser);
         if (organization == null) {
+            Account account = accountManager.getAccount(remoteUser);
             throw new NotAllowedException(new Locale(account.getLanguage()), "NotAllowedException62");
         }
 
@@ -89,12 +88,14 @@ public class OrganizationBean {
     }
 
 
-    public void removeAccounts() throws AccountNotFoundException, AccessRightException, OrganizationNotFoundException {
+    public void removeAccounts() throws AccountNotFoundException, AccessRightException, OrganizationNotFoundException, NotAllowedException {
         if (!selectedLogins.isEmpty()) {
             String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
-            Account account = accountManager.getAccount(remoteUser);
-            Organization organization = account.getOrganization();
-
+            Organization organization = organizationManager.getOrganizationOfAccount(remoteUser);
+            if (organization == null) {
+                Account account = accountManager.getAccount(remoteUser);
+                throw new NotAllowedException(new Locale(account.getLanguage()), "NotAllowedException62");
+            }
             organizationManager.removeAccountsFromOrganization(organization.getName(), getLogins());
         }
 
@@ -102,16 +103,52 @@ public class OrganizationBean {
     }
 
 
+    public void moveMemberUp() throws AccountNotFoundException, NotAllowedException, OrganizationNotFoundException, AccessRightException {
+        String[] logins=getLogins();
+        if (logins.length==1) {
+            String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
+            Organization organization = organizationManager.getOrganizationOfAccount(remoteUser);
+            if (organization == null) {
+                Account account = accountManager.getAccount(remoteUser);
+                throw new NotAllowedException(new Locale(account.getLanguage()), "NotAllowedException62");
+            }
+            List<Account> members=organization.getMembers();
+            Account member = accountManager.getAccount(logins[0]);
+            int i =members.indexOf(member);
+            if(i>0) {
+                Collections.swap(members, i - 1, i);
+                organizationManager.updateOrganization(organization);
+            }
+        }
+    }
 
+    public void moveMemberDown() throws AccountNotFoundException, NotAllowedException, OrganizationNotFoundException, AccessRightException {
+        String[] logins=getLogins();
+        if (logins.length==1) {
+            String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
+            Organization organization = organizationManager.getOrganizationOfAccount(remoteUser);
+            if (organization == null) {
+                Account account = accountManager.getAccount(remoteUser);
+                throw new NotAllowedException(new Locale(account.getLanguage()), "NotAllowedException62");
+            }
+            List<Account> members=organization.getMembers();
+            Account member = accountManager.getAccount(logins[0]);
+            int i =members.indexOf(member);
+            if(i>-1 && i<members.size()-1) {
+                Collections.swap(members, i + 1, i);
+                organizationManager.updateOrganization(organization);
+            }
+        }
+    }
 
     public String updateOrganization()
             throws AccountNotFoundException, AccessRightException, OrganizationNotFoundException, NotAllowedException {
 
         String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
-        Account account = accountManager.getAccount(remoteUser);
-        Organization organization = account.getOrganization();
+        Organization organization = organizationManager.getOrganizationOfAccount(remoteUser);
 
         if (organization == null) {
+            Account account = accountManager.getAccount(remoteUser);
             throw new NotAllowedException(new Locale(account.getLanguage()), "NotAllowedException62");
         }
 
@@ -122,9 +159,7 @@ public class OrganizationBean {
 
     public String deleteOrganization() throws AccountNotFoundException, AccessRightException, OrganizationNotFoundException {
         String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
-        Account account = accountManager.getAccount(remoteUser);
-
-        Organization organization = account.getOrganization();
+        Organization organization = organizationManager.getOrganizationOfAccount(remoteUser);
         if(organization!=null) {
             organizationManager.deleteOrganization(organization.getName());
         }
@@ -132,11 +167,7 @@ public class OrganizationBean {
     }
 
     public String createOrganization() throws OrganizationAlreadyExistsException, CreationException, AccountNotFoundException, NotAllowedException {
-        String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
-        Account account = accountManager.getAccount(remoteUser);
-
-        organizationManager.createOrganization(organizationName, account, organizationDescription);
-
+        organizationManager.createOrganization(organizationName, organizationDescription);
         return "/admin/organization/organizationMenu.xhtml?faces-redirect=true";
     }
 

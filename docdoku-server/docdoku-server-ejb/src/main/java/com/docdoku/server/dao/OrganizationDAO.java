@@ -28,6 +28,7 @@ import com.docdoku.core.exceptions.OrganizationNotFoundException;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import java.util.Locale;
 
@@ -47,6 +48,18 @@ public class OrganizationDAO {
         mLocale=Locale.getDefault();
     }
 
+
+    public Organization findOrganizationOfAccount(String login) {
+        Account account = em.getReference(Account.class, login);
+        Organization organization = null;
+        try {
+            organization = em.createNamedQuery("Organization.ofAccount", Organization.class)
+                    .setParameter("account", account).getSingleResult();
+        }catch (NoResultException ex){
+            //null will be returned
+        }
+        return organization;
+    }
 
     public void updateOrganization(Organization pOrganization){
         em.merge(pOrganization);
@@ -68,9 +81,6 @@ public class OrganizationDAO {
     }
 
     public void deleteOrganization(Organization pOrganization) {
-        for(Account member:pOrganization.getMembers())
-            member.setOrganization(null);
-
         em.remove(pOrganization);
         em.flush();
     }

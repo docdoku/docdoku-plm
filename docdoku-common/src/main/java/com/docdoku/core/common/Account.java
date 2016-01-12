@@ -47,9 +47,6 @@ public class Account implements Serializable, Cloneable {
     private String language;
     private String timeZone = "Europe/London";
 
-    @ManyToOne
-    private Organization organization;
-
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate;
 
@@ -99,14 +96,6 @@ public class Account implements Serializable, Cloneable {
 
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
-    }
-
-    @XmlTransient
-    public Organization getOrganization() {
-        return organization;
-    }
-    public void setOrganization(Organization organization) {
-        this.organization = organization;
     }
 
     public void setCreationDate(Date pCreationDate) {

@@ -27,6 +27,7 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
+import com.docdoku.core.services.IOrganizationManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.jsf.actions.AccountBean;
 
@@ -37,7 +38,7 @@ public class FilterUtils {
     private FilterUtils() {
     }
 
-    public static void hookAccountBeanData(String remoteUser, IUserManagerLocal userManager, IAccountManagerLocal accountManager, AccountBean accountBean) throws AccountNotFoundException {
+    public static void hookAccountBeanData(String remoteUser, IUserManagerLocal userManager, IAccountManagerLocal accountManager, IOrganizationManagerLocal organizationManager, AccountBean accountBean) throws AccountNotFoundException {
 
         Account account = accountManager.getAccount(remoteUser);
         boolean isAdmin = userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID);
@@ -46,9 +47,9 @@ public class FilterUtils {
         accountBean.setLanguage(account.getLanguage());
         accountBean.setName(account.getName());
         accountBean.setTimeZone(account.getTimeZone());
-        Organization organization = account.getOrganization();
+        Organization organization = organizationManager.getOrganizationOfAccount(remoteUser);
         if(organization!=null){
-            accountBean.setOrganizationName(account.getOrganization().getName());
+            accountBean.setOrganizationName(organization.getName());
             accountBean.setOrganizationAdmin(organization.getOwner().getLogin());
         }
 
