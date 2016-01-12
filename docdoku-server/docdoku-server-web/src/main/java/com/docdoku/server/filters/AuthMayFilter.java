@@ -23,9 +23,11 @@ package com.docdoku.server.filters;
 import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IContextManagerLocal;
+import com.docdoku.core.services.IOrganizationManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.jsf.actions.AccountBean;
 
+import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -49,6 +51,9 @@ public class AuthMayFilter implements Filter {
     @Inject
     private IAccountManagerLocal accountManager;
 
+    @EJB
+    private IOrganizationManagerLocal organizationManager;
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
@@ -58,7 +63,7 @@ public class AuthMayFilter implements Filter {
 
         if(remoteUser != null){
             try{
-                FilterUtils.hookAccountBeanData(remoteUser, contextManager,userManager, accountManager, accountBean);
+                FilterUtils.hookAccountBeanData(remoteUser, contextManager, userManager, accountManager, organizationManager, accountBean);
             }catch(AccountNotFoundException e){
                 LOGGER.log(Level.SEVERE, "Cannot find account for " + remoteUser);
                 LOGGER.log(Level.FINEST, null, e);

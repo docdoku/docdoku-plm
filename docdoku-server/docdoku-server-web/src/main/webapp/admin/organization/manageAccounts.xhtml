@@ -49,6 +49,8 @@
 
                     <div class="actions-btn">
                         <h:commandButton action="#{organizationBean.removeAccounts}" styleClass="btn" value="#{i18nManageAccounts['section.remove']}" alt="#{i18nManageAccounts['section.remove']}"/>
+                        <h:commandButton action="#{organizationBean.moveMemberUp}" styleClass="btn" value="#{i18nManageAccounts['section.up']}" alt="#{i18nManageAccounts['section.up']}"/>
+                        <h:commandButton action="#{organizationBean.moveMemberDown}" styleClass="btn" value="#{i18nManageAccounts['section.down']}" alt="#{i18nManageAccounts['section.down']}"/>
                     </div>
                 </fieldset>
             </h:form>
