@@ -16,80 +16,47 @@ define([], function () {
             var userLogin = App.config.login;
             var userGroups = App.config.groups;
 
-            // 1. Find FULL ACCESS
-            var fullAccess = _(userEntries).filter(function (a) {
-                return a.key === userLogin && a.value === 'FULL_ACCESS';
+            var userAccess = _(userEntries).filter(function (a) {
+                return a.key === userLogin && a.value;
             })[0];
 
-            if (fullAccess) {
-                return 'FULL_ACCESS';
+            if (userAccess) {
+                return userAccess.value;
             }
+
+            var self = this;
+            var groupAccess;
 
             _.each(userGroups, function (group) {
 
-                var groupFullAccess = _(groupEntries).filter(function (a) {
-                    return a.key === group.memberId && a.value === 'FULL_ACCESS';
-                })[0];
-
-                if (groupFullAccess) {
-                    permission = 'FULL_ACCESS';
-                }
-
+                groupAccess = _(groupEntries).filter(function (a) {
+                    return a.key === group.memberId && a.value;
+                });
             });
 
-            if (permission) {
-                return permission;
+            if (groupAccess.length) {
+                permission = _.sortBy(groupAccess,self.accessPriority)[0].value;
             }
-
-            // 2. Find READ_ONLY
-            var readOnly = _(userEntries).filter(function (a) {
-                return a.key === userLogin && a.value === 'READ_ONLY';
-            })[0];
-
-            if (readOnly) {
-                return 'READ_ONLY';
-            }
-
-            _.each(userGroups, function (group) {
-
-                var groupFullAccess = _(groupEntries).filter(function (a) {
-                    return a.key === group.memberId && a.value === 'READ_ONLY';
-                })[0];
-
-                if (groupFullAccess) {
-                    permission = 'READ_ONLY';
-                }
-
-            });
-
-            if (permission) {
-                return permission;
-            }
-
-            // 3. Find FORBIDDEN
-            var forbidden = _(userEntries).filter(function (a) {
-                return a.key === userLogin && a.value === 'FORBIDDEN';
-            })[0];
-
-            if (forbidden) {
-                return 'FORBIDDEN';
-            }
-
-            _.each(userGroups, function (group) {
-
-                var groupForbidden = _(groupEntries).filter(function (a) {
-                    return a.key === group.memberId && a.value === 'FORBIDDEN';
-                })[0];
-
-                if (groupForbidden) {
-                    permission = 'FORBIDDEN';
-                }
-
-            });
 
             return permission;
+        },
+
+        accessPriority: function(access) {
+            switch(access) {
+                case 'FULL_ACCESS':
+                    return 0;
+                case 'READ_ONLY':
+                    return 1;
+                case 'FORBIDDEN':
+                    return 2;
+                default:
+                    //should log this, it's strange, or exception ?
+                    return 3;
+            }
         }
     };
+
+
 
     return ACLChecker;
 
