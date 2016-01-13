@@ -99,6 +99,11 @@ define([
             });
         },
 
+        lastTimeOfDayDate: function (anyDate) {
+            return moment(anyDate).endOf('day');
+        },
+
+
         lastDayOfMonthDate: function (anyDate) {
             return moment.utc(anyDate).zone(offset).endOf('month');
         },
