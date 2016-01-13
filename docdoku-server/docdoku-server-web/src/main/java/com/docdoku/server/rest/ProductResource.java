@@ -147,19 +147,21 @@ public class ProductResource {
         PartRevisionDTO[] partsDTO = new PartRevisionDTO[components.size()];
 
         for (int i = 0; i < components.size(); i++) {
-            PartRevision lastRevision = components.get(i).getPartMaster().getLastRevision();
-            partsDTO[i] = mapper.map(lastRevision, PartRevisionDTO.class);
+            PartIteration retainedIteration = components.get(i).getRetainedIteration();
+            //If no iteration has been retained, then take the last revision (the first one).
+            PartRevision partRevision = retainedIteration == null ? components.get(i).getPartMaster().getLastRevision() : retainedIteration.getPartRevision();
+            partsDTO[i] = mapper.map(partRevision, PartRevisionDTO.class);
             partsDTO[i].getPartIterations().clear();
             //specify the iteration only if an iteration has been retained.
-            if(components.get(i).getRetainedIteration() != null) {
-                partsDTO[i].getPartIterations().add(mapper.map(component.getRetainedIteration(), PartIterationDTO.class));
+            if(retainedIteration != null) {
+                partsDTO[i].getPartIterations().add(mapper.map(retainedIteration, PartIterationDTO.class));
             }
-            partsDTO[i].setNumber(lastRevision.getPartNumber());
-            partsDTO[i].setPartKey(lastRevision.getPartNumber() + "-" + lastRevision.getVersion());
-            partsDTO[i].setName(lastRevision.getPartMaster().getName());
-            partsDTO[i].setStandardPart(lastRevision.getPartMaster().isStandardPart());
+            partsDTO[i].setNumber(partRevision.getPartNumber());
+            partsDTO[i].setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
+            partsDTO[i].setName(partRevision.getPartMaster().getName());
+            partsDTO[i].setStandardPart(partRevision.getPartMaster().isStandardPart());
 
-            List<ModificationNotificationDTO> notificationDTOs = getModificationNotificationDTOs(lastRevision);
+            List<ModificationNotificationDTO> notificationDTOs = getModificationNotificationDTOs(partRevision);
             partsDTO[i].setNotifications(notificationDTOs);
         }
 
