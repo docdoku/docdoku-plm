@@ -94,7 +94,7 @@ public class WIPPSFilter extends PSFilter {
 
         int i = partMaster.getPartRevisions().size() -1;
         //find a revision with checked-in iteration
-        while(hasAccessibleIteration(partRevision)){
+        while(hasNoAccessibleIteration(partRevision)){
             partRevision = i == -1 ? null : partMaster.getPartRevisions().get(i--);
         }
 
@@ -110,10 +110,11 @@ public class WIPPSFilter extends PSFilter {
         }
     }
 
-    private boolean hasAccessibleIteration(PartRevision partRevision) {
+    private boolean hasNoAccessibleIteration(PartRevision partRevision) {
         return (partRevision != null
-                && isCheckoutByAnotherUser(user,partRevision)
-                && partRevision.getPartIterations().size() >= 1 );
+                &&
+                (isCheckoutByAnotherUser(user,partRevision) &&
+                        partRevision.getPartIterations().size() <= 1));
     }
 
 }
