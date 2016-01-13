@@ -84,37 +84,13 @@ public class WIPPSFilter extends PSFilter {
         return links;
     }
 
-    //TODO: Duplicate from ProductManagerBean. Need refactor.
-    private boolean isCheckoutByAnotherUser(User user, PartRevision partRevision) {
-        return partRevision.isCheckedOut() && !partRevision.getCheckOutUser().equals(user);
-    }
-
     private PartIteration getLastAccessibleIteration(PartMaster partMaster) {
-        PartRevision partRevision = partMaster.getLastRevision();
-
-        int i = partMaster.getPartRevisions().size() -1;
-        //find a revision with checked-in iteration
-        while(hasNoAccessibleIteration(partRevision)){
-            partRevision = i == -1 ? null : partMaster.getPartRevisions().get(i--);
+        PartIteration iteration = null;
+        for(int i = partMaster.getPartRevisions().size()-1; i >= 0 && iteration == null; i--) {
+            iteration = partMaster.getPartRevisions().get(i).getLastAccessibleIteration(user);
         }
-
-        if(partRevision == null) {
-            return null;
-        }
-        else if(isCheckoutByAnotherUser(user,partRevision)) {
-            List<PartIteration> partIterations = partRevision.getPartIterations();
-            //The last iteration is checked-out by another user, take the one before.
-            return partIterations.get(partIterations.size() - 2);
-        } else {
-            return partRevision.getLastIteration();
-        }
+        return iteration;
     }
 
-    private boolean hasNoAccessibleIteration(PartRevision partRevision) {
-        return (partRevision != null
-                &&
-                (isCheckoutByAnotherUser(user,partRevision) &&
-                        partRevision.getPartIterations().size() <= 1));
-    }
 
 }

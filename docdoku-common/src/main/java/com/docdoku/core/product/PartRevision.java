@@ -556,4 +556,15 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
         }
     }
 
+    public PartIteration getLastAccessibleIteration(User user) {
+        if(isCheckoutByAnotherUser(user)) {
+            return partIterations.size() <= 1 ? null : partIterations.get(partIterations.size() -2);
+        } else {
+            return getLastIteration();
+        }
+    }
+
+    private boolean isCheckoutByAnotherUser(User user) {
+        return isCheckedOut() && !getCheckOutUser().equals(user);
+    }
 }
