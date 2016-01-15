@@ -129,6 +129,10 @@ define([
             var duration = moment.duration({'days' : 1});
             var datestring =  moment.utc(anyDate).zone(offset).add(duration).format(format);
             return new Date(datestring);
+        },
+
+        addSeconds: function (anyDate, seconds) {
+            moment(anyDate).add(seconds, 'seconds');
         }
     };
 });
