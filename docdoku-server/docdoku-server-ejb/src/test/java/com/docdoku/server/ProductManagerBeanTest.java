@@ -243,7 +243,7 @@ public class ProductManagerBeanTest {
         Mockito.when(userManager.checkWorkspaceWriteAccess(ProductUtil.WORKSPACE_ID)).thenReturn(user);
         Mockito.when(em.find(PartRevision.class, partRevisionKey)).thenReturn(partRevision);
 
-        Mockito.when(em.createQuery("SELECT DISTINCT t FROM Tag t WHERE t.workspaceId = :workspaceId")).thenReturn(tagsQuery);
+        Mockito.when(em.createQuery("SELECT DISTINCT t FROM Tag t WHERE t.workspaceId = :workspaceId", Tag.class)).thenReturn(tagsQuery);
         Mockito.when(tagsQuery.setParameter("workspaceId", ProductUtil.WORKSPACE_ID)).thenReturn(tagsQuery);
         Mockito.when(tagsQuery.getResultList()).thenReturn(new ArrayList<Tag>());
 
