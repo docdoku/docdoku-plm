@@ -34,7 +34,7 @@ import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.filters.GuestProxy;
-import com.docdoku.server.util.PartImp;
+import com.docdoku.server.util.PartImpl;
 import com.docdoku.server.util.ResourceUtil;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -99,7 +99,8 @@ public class DocumentBinaryResourceTest {
         //Given
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
         Collection<Part> filesParts = new ArrayList<Part>();
-        filesParts.add(new PartImp(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1).getFile())));
+
+        filesParts.add(new PartImpl(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1).getFile())));
 
         BinaryResource binaryResource = new BinaryResource(ResourceUtil.FILENAME1, ResourceUtil.DOCUMENT_SIZE, new Date());
 
@@ -136,7 +137,7 @@ public class DocumentBinaryResourceTest {
         //Given
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
         Collection<Part> filesParts = new ArrayList<Part>();
-        filesParts.add(new PartImp(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE).getFile() + ResourceUtil.FILENAME2)));
+        filesParts.add(new PartImpl(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE).getFile() + ResourceUtil.FILENAME2)));
 
         BinaryResource binaryResource = new BinaryResource(Tools.unAccent(ResourceUtil.FILENAME2), ResourceUtil.DOCUMENT_SIZE, new Date());
 
@@ -175,9 +176,9 @@ public class DocumentBinaryResourceTest {
         //Given
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
         Collection<Part> filesParts = new ArrayList<Part>();
-        filesParts.add(new PartImp(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1).getFile())));
-        filesParts.add(new PartImp(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE).getFile() + ResourceUtil.FILENAME2)));
-        filesParts.add(new PartImp(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME3).getFile())));
+        filesParts.add(new PartImpl(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1).getFile())));
+        filesParts.add(new PartImpl(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE).getFile() + ResourceUtil.FILENAME2)));
+        filesParts.add(new PartImpl(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME3).getFile())));
 
         BinaryResource binaryResource1 = new BinaryResource(ResourceUtil.FILENAME1, ResourceUtil.DOCUMENT_SIZE, new Date());
         BinaryResource binaryResource2 = new BinaryResource(ResourceUtil.FILENAME2, ResourceUtil.DOCUMENT_SIZE, new Date());

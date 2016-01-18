@@ -252,9 +252,6 @@ public class Tools {
         return mapBaselinedFoldersToFolderDTO(documentBaseline.getBaselinedFolders().values());
     }
 
-    public static Response wrapList(List<?> list){
-        return Response.ok(new GenericEntity<List<Object>>((List<Object>) list) {}).build();
-    }
 
     private static FolderDTO mapBaselinedFolderToFolderDTO(BaselinedFolder baselinedFolder) {
         String completePath = baselinedFolder.getCompletePath();

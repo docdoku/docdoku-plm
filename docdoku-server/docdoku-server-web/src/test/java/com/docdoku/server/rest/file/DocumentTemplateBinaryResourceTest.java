@@ -25,7 +25,7 @@ import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
-import com.docdoku.server.util.PartImp;
+import com.docdoku.server.util.PartImpl;
 import com.docdoku.server.util.ResourceUtil;
 import org.junit.Assert;
 import org.junit.Before;
@@ -90,7 +90,7 @@ public class DocumentTemplateBinaryResourceTest {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         binaryResource = Mockito.spy(new BinaryResource(ResourceUtil.FILENAME1,ResourceUtil.DOCUMENT_SIZE,new Date()));
         Collection<Part> filesParts = new ArrayList<Part>();
-        filesParts.add(new PartImp(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1).getFile())));
+        filesParts.add(new PartImpl(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1).getFile())));
         File uploadedFile = File.createTempFile(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME1,ResourceUtil.TEMP_SUFFIX);
 
         OutputStream outputStream = new FileOutputStream(uploadedFile);

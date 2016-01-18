@@ -28,13 +28,13 @@ import java.io.InputStream;
 import java.util.Collection;
 
 /**
- * @author asmae on 12/01/15.
+ * @author Asmae Chadid on 12/01/15.
  */
-public class PartImp implements Part {
+public class PartImpl implements Part {
 
     private File fileToUpload;
 
-    public PartImp(File file){
+    public PartImpl(File file){
         this.fileToUpload = file;
     }
     @Override
