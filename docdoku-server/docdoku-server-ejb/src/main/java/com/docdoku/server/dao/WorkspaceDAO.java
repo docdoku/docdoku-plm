@@ -334,7 +334,7 @@ public class WorkspaceDAO {
     }
 
     public List<Workspace> getAll() {
-        return em.createNamedQuery("Workspace.findAllWorkspaces")
+        return em.createNamedQuery("Workspace.findAllWorkspaces", Workspace.class)
                 .getResultList();
     }
 }
