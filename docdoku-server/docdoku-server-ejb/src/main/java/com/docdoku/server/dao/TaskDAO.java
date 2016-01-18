@@ -27,6 +27,7 @@ import com.docdoku.core.workflow.TaskKey;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Locale;
 
@@ -56,12 +57,12 @@ public class TaskDAO {
     
     public Task[] findTasks(User pUser){
         Task[] tasks;
-        Query query = em.createQuery("SELECT DISTINCT t FROM Task t WHERE t.worker = :user");
+        TypedQuery<Task> query = em.createQuery("SELECT DISTINCT t FROM Task t WHERE t.worker = :user", Task.class);
         query.setParameter("user",pUser);
-        List listTasks = query.getResultList();
+        List<Task> listTasks = query.getResultList();
         tasks = new Task[listTasks.size()];
         for(int i=0;i<listTasks.size();i++) {
-            tasks[i] = (Task) listTasks.get(i);
+            tasks[i] = listTasks.get(i);
         }
         
         return tasks;

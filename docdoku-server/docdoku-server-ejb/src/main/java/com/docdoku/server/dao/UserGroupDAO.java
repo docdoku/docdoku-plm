@@ -29,10 +29,7 @@ import com.docdoku.core.exceptions.UserGroupNotFoundException;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserGroupMembershipKey;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
+import javax.persistence.*;
 import java.util.List;
 import java.util.Locale;
 
@@ -62,24 +59,24 @@ public class UserGroupDAO {
 
     public WorkspaceUserGroupMembership[] getUserGroupMemberships(String pWorkspaceId, User pUser) {
         WorkspaceUserGroupMembership[] ms;
-        Query query = em.createQuery("SELECT DISTINCT m FROM WorkspaceUserGroupMembership m WHERE m.workspaceId = :workspaceId AND :user MEMBER OF m.member.users");
+        TypedQuery<WorkspaceUserGroupMembership> query = em.createQuery("SELECT DISTINCT m FROM WorkspaceUserGroupMembership m WHERE m.workspaceId = :workspaceId AND :user MEMBER OF m.member.users", WorkspaceUserGroupMembership.class);
         query.setParameter("workspaceId", pWorkspaceId);
         query.setParameter("user", pUser);
-        List listUserGroupMemberships = query.getResultList();
+        List<WorkspaceUserGroupMembership> listUserGroupMemberships = query.getResultList();
         ms = new WorkspaceUserGroupMembership[listUserGroupMemberships.size()];
         for (int i = 0; i < listUserGroupMemberships.size(); i++) {
-            ms[i] = (WorkspaceUserGroupMembership) listUserGroupMemberships.get(i);
+            ms[i] = listUserGroupMemberships.get(i);
         }
         return ms;
     }
 
     public UserGroup[] findAllUserGroups(String pWorkspaceId) {
         UserGroup[] groups;
-        Query query = em.createQuery("SELECT DISTINCT g FROM UserGroup g WHERE g.workspaceId = :workspaceId");
-        List listUserGroups = query.setParameter("workspaceId", pWorkspaceId).getResultList();
+        TypedQuery<UserGroup> query = em.createQuery("SELECT DISTINCT g FROM UserGroup g WHERE g.workspaceId = :workspaceId", UserGroup.class);
+        List<UserGroup> listUserGroups = query.setParameter("workspaceId", pWorkspaceId).getResultList();
         groups = new UserGroup[listUserGroups.size()];
         for (int i = 0; i < listUserGroups.size(); i++) {
-            groups[i] = (UserGroup) listUserGroups.get(i);
+            groups[i] = listUserGroups.get(i);
         }
         return groups;
     }
@@ -104,20 +101,20 @@ public class UserGroupDAO {
     }
 
     public void removeUserFromAllGroups(User pUser) {
-        Query query = em.createQuery("SELECT DISTINCT g FROM UserGroup g WHERE g.workspaceId = :workspaceId");
-        List listUserGroups = query.setParameter("workspaceId", pUser.getWorkspaceId()).getResultList();
-        for (Object listUserGroup : listUserGroups) {
-            ((UserGroup) listUserGroup).removeUser(pUser);
+        TypedQuery<UserGroup> query = em.createQuery("SELECT DISTINCT g FROM UserGroup g WHERE g.workspaceId = :workspaceId", UserGroup.class);
+        List<UserGroup> listUserGroups = query.setParameter("workspaceId", pUser.getWorkspaceId()).getResultList();
+        for (UserGroup listUserGroup : listUserGroups) {
+            listUserGroup.removeUser(pUser);
         }
     }
 
     public WorkspaceUserGroupMembership[] findAllWorkspaceUserGroupMemberships(String pWorkspaceId) {
         WorkspaceUserGroupMembership[] memberships;
-        Query query = em.createQuery("SELECT DISTINCT m FROM WorkspaceUserGroupMembership m WHERE m.workspaceId = :workspaceId");
-        List listMemberships = query.setParameter("workspaceId", pWorkspaceId).getResultList();
+        TypedQuery<WorkspaceUserGroupMembership> query = em.createQuery("SELECT DISTINCT m FROM WorkspaceUserGroupMembership m WHERE m.workspaceId = :workspaceId", WorkspaceUserGroupMembership.class);
+        List<WorkspaceUserGroupMembership> listMemberships = query.setParameter("workspaceId", pWorkspaceId).getResultList();
         memberships = new WorkspaceUserGroupMembership[listMemberships.size()];
         for (int i = 0; i < listMemberships.size(); i++) {
-            memberships[i] = (WorkspaceUserGroupMembership) listMemberships.get(i);
+            memberships[i] = listMemberships.get(i);
         }
 
         return memberships;
@@ -152,7 +149,7 @@ public class UserGroupDAO {
     }
 
     public List<UserGroup> getUserGroups(String workspaceId, User user) {
-        return em.createNamedQuery("UserGroup.findUserGroups").
+        return em.createNamedQuery("UserGroup.findUserGroups", UserGroup.class).
                 setParameter("workspaceId", workspaceId).
                 setParameter("user", user).
                 getResultList();

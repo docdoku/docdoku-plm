@@ -26,6 +26,7 @@ import com.docdoku.core.gcm.GCMAccount;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -142,11 +143,11 @@ public class SubscriptionDAO {
 
     public User[] getIterationChangeEventSubscribers(DocumentRevision pDocR) {
         User[] users;
-        Query query = em.createQuery("SELECT DISTINCT s.subscriber FROM IterationChangeSubscription s WHERE s.observedDocumentRevision = :docR");
-        List listUsers = query.setParameter("docR", pDocR).getResultList();
+        TypedQuery<User> query = em.createQuery("SELECT DISTINCT s.subscriber FROM IterationChangeSubscription s WHERE s.observedDocumentRevision = :docR", User.class);
+        List<User> listUsers = query.setParameter("docR", pDocR).getResultList();
         users = new User[listUsers.size()];
         for (int i = 0; i < listUsers.size(); i++) {
-            users[i] = (User) listUsers.get(i);
+            users[i] = listUsers.get(i);
         }
 
         return users;
@@ -154,11 +155,11 @@ public class SubscriptionDAO {
 
     public User[] getStateChangeEventSubscribers(DocumentRevision pDocR) {
         User[] users;
-        Query query = em.createQuery("SELECT DISTINCT s.subscriber FROM StateChangeSubscription s WHERE s.observedDocumentRevision = :docR");
-        List listUsers = query.setParameter("docR", pDocR).getResultList();
+        TypedQuery<User> query = em.createQuery("SELECT DISTINCT s.subscriber FROM StateChangeSubscription s WHERE s.observedDocumentRevision = :docR", User.class);
+        List<User> listUsers = query.setParameter("docR", pDocR).getResultList();
         users = new User[listUsers.size()];
         for (int i = 0; i < listUsers.size(); i++) {
-            users[i] = (User) listUsers.get(i);
+            users[i] = listUsers.get(i);
         }
 
         return users;
@@ -166,11 +167,11 @@ public class SubscriptionDAO {
 
     public GCMAccount[] getIterationChangeEventSubscribersGCMAccount(DocumentRevision pDocR) {
         GCMAccount[] gcmAccounts;
-        Query query = em.createQuery("SELECT DISTINCT gcm FROM GCMAccount gcm, IterationChangeSubscription s WHERE gcm.account.login = s.subscriber.login AND s.observedDocumentRevision = :docR");
-        List gcmAccountsList = query.setParameter("docR", pDocR).getResultList();
+        TypedQuery<GCMAccount> query = em.createQuery("SELECT DISTINCT gcm FROM GCMAccount gcm, IterationChangeSubscription s WHERE gcm.account.login = s.subscriber.login AND s.observedDocumentRevision = :docR", GCMAccount.class);
+        List<GCMAccount> gcmAccountsList = query.setParameter("docR", pDocR).getResultList();
         gcmAccounts = new GCMAccount[gcmAccountsList.size()];
         for (int i = 0; i < gcmAccountsList.size(); i++) {
-            gcmAccounts[i] = (GCMAccount) gcmAccountsList.get(i);
+            gcmAccounts[i] = gcmAccountsList.get(i);
         }
 
         return gcmAccounts;
@@ -178,11 +179,11 @@ public class SubscriptionDAO {
 
     public GCMAccount[] getStateChangeEventSubscribersGCMAccount(DocumentRevision pDocR) {
         GCMAccount[] gcmAccounts;
-        Query query = em.createQuery("SELECT DISTINCT gcm FROM GCMAccount gcm, StateChangeSubscription s WHERE gcm.account.login = s.subscriber.login AND s.observedDocumentRevision = :docR");
-        List gcmAccountsList = query.setParameter("docR", pDocR).getResultList();
+        TypedQuery<GCMAccount> query = em.createQuery("SELECT DISTINCT gcm FROM GCMAccount gcm, StateChangeSubscription s WHERE gcm.account.login = s.subscriber.login AND s.observedDocumentRevision = :docR", GCMAccount.class);
+        List<GCMAccount> gcmAccountsList = query.setParameter("docR", pDocR).getResultList();
         gcmAccounts = new GCMAccount[gcmAccountsList.size()];
         for (int i = 0; i < gcmAccountsList.size(); i++) {
-            gcmAccounts[i] = (GCMAccount) gcmAccountsList.get(i);
+            gcmAccounts[i] = gcmAccountsList.get(i);
         }
 
         return gcmAccounts;

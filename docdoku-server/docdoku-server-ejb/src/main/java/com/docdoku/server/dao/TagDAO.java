@@ -25,10 +25,7 @@ import com.docdoku.core.exceptions.TagNotFoundException;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.meta.TagKey;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
+import javax.persistence.*;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,20 +41,20 @@ public class TagDAO {
 
     public Tag[] findAllTags(String pWorkspaceId) {
         Tag[] tags;
-        Query query = em.createQuery("SELECT DISTINCT t FROM Tag t WHERE t.workspaceId = :workspaceId");
-        List listTags = query.setParameter("workspaceId", pWorkspaceId).getResultList();
+        TypedQuery<Tag> query = em.createQuery("SELECT DISTINCT t FROM Tag t WHERE t.workspaceId = :workspaceId",Tag.class);
+        List<Tag> listTags = query.setParameter("workspaceId", pWorkspaceId).getResultList();
         tags = new Tag[listTags.size()];
         for (int i = 0; i < listTags.size(); i++) {
-            tags[i] = (Tag) listTags.get(i);
+            tags[i] = listTags.get(i);
         }
 
         return tags;
     }
 
     public void deleteOrphanTags(String pWorkspaceId) {
-        Query query = em.createQuery("SELECT t FROM Tag t WHERE t.workspaceId = :workspaceId AND t.label <> ALL (SELECT t2.label FROM DocumentMaster m, IN (m.tags) t2 WHERE t2.workspaceId = :workspaceId)");
-        List tags = query.setParameter("workspaceId", pWorkspaceId).getResultList();
-        for (Object t : tags) {
+        TypedQuery<Tag> query = em.createQuery("SELECT t FROM Tag t WHERE t.workspaceId = :workspaceId AND t.label <> ALL (SELECT t2.label FROM DocumentMaster m, IN (m.tags) t2 WHERE t2.workspaceId = :workspaceId)", Tag.class);
+        List<Tag> tags = query.setParameter("workspaceId", pWorkspaceId).getResultList();
+        for (Tag t : tags) {
             em.remove(t);
         }
     }

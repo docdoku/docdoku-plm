@@ -21,10 +21,7 @@
 package com.docdoku.server.util;
 
 import javax.servlet.http.Part;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Collection;
 
 /**
@@ -39,7 +36,7 @@ public class PartImpl implements Part {
     }
     @Override
     public InputStream getInputStream() throws IOException {
-        return new FileInputStream(this.fileToUpload);
+        return new BufferedInputStream(new FileInputStream(this.fileToUpload));
     }
 
     @Override

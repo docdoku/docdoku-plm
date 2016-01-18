@@ -185,10 +185,10 @@ public class UserDAO {
 
         Map<String,User> users = new TreeMap<>();
 
-        List<String> listWorkspaceId = em.createQuery("SELECT u.workspaceId FROM User u WHERE u.login = :login")
+        List<String> listWorkspaceId = em.createQuery("SELECT u.workspaceId FROM User u WHERE u.login = :login", String.class)
                 .setParameter("login", callerLogin).getResultList();
 
-        List<User> listUsers = em.createQuery("SELECT u FROM User u where u.workspaceId IN :workspacesId")
+        List<User> listUsers = em.createQuery("SELECT u FROM User u where u.workspaceId IN :workspacesId", User.class)
                 .setParameter("workspacesId", listWorkspaceId).getResultList();
 
 

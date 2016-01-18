@@ -130,7 +130,6 @@ public class SharedEntityDAO {
                 deleteSharedPart((SharedPart) sharedEntity);
             }
         } catch (SharedEntityNotFoundException e) {
-            return;
         }
 
     }
