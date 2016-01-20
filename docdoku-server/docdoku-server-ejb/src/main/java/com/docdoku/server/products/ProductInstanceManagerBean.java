@@ -401,7 +401,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             }
 
             @Override
-            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+            public boolean onPathWalk(List<PartLink> path, List<PartMaster> parts) {
                 // Find pathData in previous iteration which is on this path. Copy it.
                 String pathAsString = Tools.getPathAsString(path);
                 for (PathDataMaster pathDataMaster : lastIteration.getPathDataMasterList()) {
@@ -409,6 +409,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
                         pathDataMasterList.add(clonePathDataMaster(pathDataMaster));
                     }
                 }
+                return true;
             }
 
             private PathDataMaster clonePathDataMaster(PathDataMaster pathDataMaster) {
