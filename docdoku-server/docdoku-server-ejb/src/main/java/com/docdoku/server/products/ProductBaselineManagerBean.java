@@ -118,8 +118,9 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
             }
 
             @Override
-            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+            public boolean onPathWalk(List<PartLink> path, List<PartMaster> parts) {
                 // Unused here
+                return true;
             }
 
         };
@@ -197,9 +198,10 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
             }
 
             @Override
-            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+            public boolean onPathWalk(List<PartLink> path, List<PartMaster> parts) {
                 String encodedPath = Tools.getPathAsString(path);
                 visitedPaths.add(encodedPath);
+                return true;
             }
 
             @Override
@@ -332,8 +334,9 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
             }
 
             @Override
-            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+            public boolean onPathWalk(List<PartLink> path, List<PartMaster> parts) {
                 // Unused here
+                return true;
             }
 
             @Override
@@ -397,8 +400,9 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,
             }
 
             @Override
-            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+            public boolean onPathWalk(List<PartLink> path, List<PartMaster> parts) {
                 // Unused here
+                return true;
             }
 
             @Override

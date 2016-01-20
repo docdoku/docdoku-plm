@@ -145,13 +145,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             @Override
-            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+            public boolean onPathWalk(List<PartLink> path, List<PartMaster> parts) {
                 PartMaster pm = parts.get(parts.size() - 1);
 
                 if (pm.getNumber().matches(search) || (pm.getName() != null && pm.getName().matches(search)) || Tools.getPathAsString(path).equals(search)) {
                     PartLink[] partLinks = path.toArray(new PartLink[path.size()]);
                     usagePaths.add(partLinks);
                 }
+                return true;
             }
 
         };
@@ -2413,8 +2414,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             @Override
-            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+            public boolean onPathWalk(List<PartLink> path, List<PartMaster> parts) {
                 // Unused here
+                return true;
             }
 
             @Override
@@ -2865,8 +2867,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             @Override
-            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+            public boolean onPathWalk(List<PartLink> path, List<PartMaster> parts) {
                 // Unused here
+                return true;
             }
 
             @Override
@@ -2968,7 +2971,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             @Override
-            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+            public boolean onPathWalk(List<PartLink> path, List<PartMaster> parts) {
                 PartMaster partMaster = parts.get(parts.size() - 1);
                 if (!visitedPartNumbers.contains(partMaster.getNumber()) && !hasModificationNotification[0]) {
                     visitedPartNumbers.add(partMaster.getNumber());
@@ -2981,6 +2984,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                         }
                     }
                 }
+                return true;
             }
 
             @Override
@@ -3076,7 +3080,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             @Override
-            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+            public boolean onPathWalk(List<PartLink> path, List<PartMaster> parts) {
                 PartMaster part = parts.get(parts.size() - 1);
                 List<PartIteration> partIterations = psFilter.filter(part);
 
@@ -3137,6 +3141,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     }
 
                 }
+                return true;
             }
 
             @Override
@@ -3219,7 +3224,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             @Override
-            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+            public boolean onPathWalk(List<PartLink> path, List<PartMaster> parts) {
                 QueryResultRow row = new QueryResultRow();
                 double totalAmount = 1;
                 for (PartLink pl : path) {
@@ -3261,6 +3266,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
                     rows.add(row);
                 }
+                return true;
             }
 
             @Override

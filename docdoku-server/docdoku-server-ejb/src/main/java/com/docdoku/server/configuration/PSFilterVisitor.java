@@ -178,7 +178,9 @@ public abstract class PSFilterVisitor {
             return components;
         }
 
-        onPathWalk(new ArrayList<>(pCurrentPath), new ArrayList<>(pCurrentPathParts));
+        if(!onPathWalk(new ArrayList<>(pCurrentPath), new ArrayList<>(pCurrentPathParts))) {
+            return components;
+        }
 
 
 
@@ -294,5 +296,5 @@ public abstract class PSFilterVisitor {
     public abstract void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException;
     public abstract void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration);
     public abstract void onOptionalPath(List<PartLink> path, List<PartIteration> partIterations);
-    public abstract void onPathWalk(List<PartLink> path, List<PartMaster> parts);
+    public abstract boolean onPathWalk(List<PartLink> path, List<PartMaster> parts);
 }
