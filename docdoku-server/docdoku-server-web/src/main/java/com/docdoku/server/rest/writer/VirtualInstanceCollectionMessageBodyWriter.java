@@ -27,8 +27,12 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.collections.VirtualInstanceCollection;
 import com.docdoku.server.rest.util.InstanceBodyWriterTools;
 
+import javax.ejb.Stateless;
 import javax.json.Json;
 import javax.json.stream.JsonGenerator;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.vecmath.Matrix4d;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -42,14 +46,21 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Morgan Guimard
  */
+@Stateless
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 public class VirtualInstanceCollectionMessageBodyWriter implements MessageBodyWriter<VirtualInstanceCollection> {
+
+    private Context context;
+
+    private static final Logger LOGGER = Logger.getLogger(VirtualInstanceCollectionMessageBodyWriter.class.getName());
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -63,19 +74,29 @@ public class VirtualInstanceCollectionMessageBodyWriter implements MessageBodyWr
 
     @Override
     public void writeTo(VirtualInstanceCollection virtualInstanceCollection, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws UnsupportedEncodingException {
-        String charSet="UTF-8";
-        JsonGenerator jg = Json.createGenerator(new OutputStreamWriter(entityStream, charSet));
-        jg.writeStartArray();
 
-        Matrix4d gM=new Matrix4d();
-        gM.setIdentity();
+        try {
+            context = new InitialContext();
+            IProductManagerLocal productService = (IProductManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductManagerBean");
 
-        PartLink virtualRootPartLink = getVirtualRootPartLink(virtualInstanceCollection);
-        List<PartLink> path = new ArrayList<>();
-        path.add(virtualRootPartLink);
-        InstanceBodyWriterTools.generateInstanceStreamWithGlobalMatrix(productService, path, gM, virtualInstanceCollection, new ArrayList<>(), jg);
-        jg.writeEnd();
-        jg.flush();
+            String charSet="UTF-8";
+            JsonGenerator jg = Json.createGenerator(new OutputStreamWriter(entityStream, charSet));
+            jg.writeStartArray();
+
+            Matrix4d gM=new Matrix4d();
+            gM.setIdentity();
+
+            PartLink virtualRootPartLink = getVirtualRootPartLink(virtualInstanceCollection);
+            List<PartLink> path = new ArrayList<>();
+            path.add(virtualRootPartLink);
+            InstanceBodyWriterTools.generateInstanceStreamWithGlobalMatrix(productService, path, gM, virtualInstanceCollection, new ArrayList<>(), jg);
+            jg.writeEnd();
+            jg.flush();
+
+        } catch (NamingException e) {
+            LOGGER.log(Level.SEVERE,null,e);
+        }
+
     }
 
 
