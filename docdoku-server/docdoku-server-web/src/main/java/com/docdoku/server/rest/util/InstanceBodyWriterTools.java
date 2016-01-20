@@ -65,6 +65,11 @@ public class InstanceBodyWriterTools {
             PartLink partLink = component.getPartLink();
             PartIteration partI = component.getRetainedIteration();
 
+            // Filter ACL on part
+            if(!productService.canAccess(partI.getPartRevision().getKey())){
+                return;
+            }
+
             for (CADInstance instance : partLink.getCadInstances()) {
 
                 List<Integer> copyInstanceIds = new ArrayList<>(instanceIds);
@@ -83,43 +88,53 @@ public class InstanceBodyWriterTools {
                 }
             }
 
-        } catch (PartMasterNotFoundException | PartUsageLinkNotFoundException | UserNotFoundException | WorkspaceNotFoundException | ConfigurationItemNotFoundException e) {
-            LOGGER.log(Level.FINEST, null, e);
+        } catch (PartMasterNotFoundException | PartRevisionNotFoundException | PartUsageLinkNotFoundException | UserNotFoundException | WorkspaceNotFoundException | ConfigurationItemNotFoundException e) {
+            LOGGER.log(Level.SEVERE, null, e);
         } catch (AccessRightException | EntityConstraintException | NotAllowedException | UserNotActiveException e) {
             LOGGER.log(Level.FINEST, null, e);
         }
 
     }
 
-    public static void generateInstanceStreamWithGlobalMatrix(List<PartLink> currentPath, Matrix4d matrix, VirtualInstanceCollection virtualInstanceCollection, List<Integer> instanceIds, JsonGenerator jg) {
+    public static void generateInstanceStreamWithGlobalMatrix(IProductManagerLocal productService, List<PartLink> currentPath, Matrix4d matrix, VirtualInstanceCollection virtualInstanceCollection, List<Integer> instanceIds, JsonGenerator jg) {
+        try {
 
-        PartLink partLink = currentPath.get(currentPath.size()-1);
-        PSFilter filter = virtualInstanceCollection.getFilter();
-        List<PartIteration> filteredPartIterations = filter.filter(partLink.getComponent());
+            PartLink partLink = currentPath.get(currentPath.size()-1);
+            PSFilter filter = virtualInstanceCollection.getFilter();
+            List<PartIteration> filteredPartIterations = filter.filter(partLink.getComponent());
 
-        if(!filteredPartIterations.isEmpty()){
+            if(!filteredPartIterations.isEmpty()){
 
-            PartIteration partI = filteredPartIterations.iterator().next();
+                PartIteration partI = filteredPartIterations.iterator().next();
 
-            for (CADInstance instance : partLink.getCadInstances()) {
+                // Filter ACL on part
+                if(!productService.canAccess(partI.getPartRevision().getKey())){
+                    return;
+                }
 
-                List<Integer> copyInstanceIds = new ArrayList<>(instanceIds);
-                copyInstanceIds.add(instance.getId());
+                for (CADInstance instance : partLink.getCadInstances()) {
 
-                Vector3d instanceTranslation = new Vector3d(instance.getTx(), instance.getTy(), instance.getTz());
-                Vector3d instanceRotation = new Vector3d(instance.getRx(), instance.getRy(), instance.getRz());
-                Matrix4d combinedMatrix = combineTransformation(matrix, instanceTranslation, instanceRotation);
+                    List<Integer> copyInstanceIds = new ArrayList<>(instanceIds);
+                    copyInstanceIds.add(instance.getId());
 
-                if (!partI.isAssembly() && !partI.getGeometries().isEmpty()) {
-                    writeLeaf(currentPath, copyInstanceIds, partI, combinedMatrix, jg);
-                } else {
-                    for (PartLink subLink : partI.getComponents()) {
-                        List<PartLink> subPath = new ArrayList<>(currentPath);
-                        subPath.add(subLink);
-                        generateInstanceStreamWithGlobalMatrix(subPath, combinedMatrix, virtualInstanceCollection, copyInstanceIds, jg);
+                    Vector3d instanceTranslation = new Vector3d(instance.getTx(), instance.getTy(), instance.getTz());
+                    Vector3d instanceRotation = new Vector3d(instance.getRx(), instance.getRy(), instance.getRz());
+                    Matrix4d combinedMatrix = combineTransformation(matrix, instanceTranslation, instanceRotation);
+
+                    if (!partI.isAssembly() && !partI.getGeometries().isEmpty()) {
+                        writeLeaf(currentPath, copyInstanceIds, partI, combinedMatrix, jg);
+                    } else {
+                        for (PartLink subLink : partI.getComponents()) {
+                            List<PartLink> subPath = new ArrayList<>(currentPath);
+                            subPath.add(subLink);
+                            generateInstanceStreamWithGlobalMatrix(productService, subPath, combinedMatrix, virtualInstanceCollection, copyInstanceIds, jg);
+                        }
                     }
                 }
             }
+
+        } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | PartRevisionNotFoundException e) {
+            e.printStackTrace();
         }
 
     }
