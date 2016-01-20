@@ -134,7 +134,7 @@ public class InstanceBodyWriterTools {
             }
 
         } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | PartRevisionNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, null, e);
         }
 
     }
