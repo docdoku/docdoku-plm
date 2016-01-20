@@ -652,6 +652,11 @@ public class ProductResource {
 
         PartRevision partR = retainedIteration.getPartRevision();
 
+        // Filter ACL on partR
+        if(!productService.canAccess(partR.getKey())){
+            return null;
+        }
+
         List<PartLink> path = component.getPath();
         PartLink usageLink = path.get(path.size()-1);
 
