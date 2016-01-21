@@ -2,8 +2,9 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/bom_header.html'
-], function (Backbone, Mustache, template) {
+    'text!templates/bom_header.html',
+    'common-objects/views/prompt'
+], function (Backbone, Mustache, template, PromptView) {
     'use strict';
     var BomHeaderView = Backbone.View.extend({
 
@@ -84,7 +85,27 @@ define([
         },
 
         actionCascadeCheckin: function() {
-            App.partsTreeView.checkedPath[0].cascadeCheckin(this.cascadeSuccess);
+
+            var _this = this;
+            var promptView = new PromptView();
+
+            promptView.specifyInput('textarea');
+            promptView.setPromptOptions(App.config.i18n.REVISION_NOTE, App.config.i18n.PART_REVISION_NOTE_PROMPT_LABEL, App.config.i18n.REVISION_NOTE_PROMPT_OK, App.config.i18n.REVISION_NOTE_PROMPT_CANCEL);
+            window.document.body.appendChild(promptView.render().el);
+            promptView.openModal();
+
+            this.listenTo(promptView, 'prompt-ok', function (args) {
+                var iterationNote = args[0];
+                if (_.isEqual(iterationNote, '')) {
+                    iterationNote = null;
+                }
+                App.partsTreeView.checkedPath[0].cascadeCheckin(_this.cascadeSuccess,iterationNote);
+            });
+
+            this.listenTo(promptView, 'prompt-cancel', function () {
+                App.partsTreeView.checkedPath[0].cascadeCheckin(_this.cascadeSuccess,null);
+            });
+
         },
 
         initialize: function () {

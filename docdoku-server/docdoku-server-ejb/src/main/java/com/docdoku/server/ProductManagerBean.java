@@ -2421,16 +2421,22 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @Override
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    public CascadeResult cascadeCheckin(ConfigurationItemKey configurationItemKey, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
+    public CascadeResult cascadeCheckin(ConfigurationItemKey configurationItemKey, String path, String iterationNote) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
 
         CascadeResult cascadeResult = new CascadeResult();
         List<PartRevision> partRevisions = getPartRevisionsFromPath(configurationItemKey, path,user);
         for(PartRevision pr : partRevisions) {
             try {
+                // Set the iteration note only if param is set and part has no iteration note
+                if((iterationNote != null || !iterationNote.isEmpty()) && (null == pr.getLastIteration().getIterationNote() || pr.getLastIteration().getIterationNote().isEmpty())){
+                    updatePartIteration(pr.getLastIteration().getKey(), iterationNote, null, null, null, null, null, null, null);
+                }
+
                 checkInPart(pr.getKey());
-                cascadeResult.incSucceedAttempts();;
-            } catch (PartRevisionNotFoundException | AccessRightException  | NotAllowedException | ESServerException e) {
+                cascadeResult.incSucceedAttempts();
+
+            } catch (PartRevisionNotFoundException | AccessRightException  | NotAllowedException | ESServerException | ListOfValuesNotFoundException e) {
                 cascadeResult.incFailedAttemps();
                 LOGGER.log(Level.SEVERE,null,e);
             }

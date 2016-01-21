@@ -228,11 +228,13 @@ define(['backbone', 'common-objects/utils/date'],
                 return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getNumber() + '-' + this.getVersion();
             },
 
-            cascadeCheckin: function(callback) {
+            cascadeCheckin: function(callback, iterationNote) {
                 var that = this;
                 return $.ajax({
                     context: this,
                     type: 'PUT',
+                    data:JSON.stringify({iterationNote:iterationNote}),
+                    contentType: 'application/json; charset=utf-8',
                     url: that.getProductUrl() + '/cascade-checkin?path='+this.getEncodedPath() + '&configSpec='+App.config.productConfigSpec,
                     success:callback
                 });

@@ -595,22 +595,17 @@ public class ProductResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response cascadeCheckout(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        ConfigurationItem ci = productService.getConfigurationItem(ciKey);
-
         CascadeResult cascadeResult = productService.cascadeCheckout(ciKey,path);
-
         return Response.ok(cascadeResult).build();
     }
 
     @PUT
     @Path("{ciId}/cascade-checkin")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response cascadeCheckin(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response cascadeCheckin(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path, IterationNoteDTO iterationNoteDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        ConfigurationItem ci = productService.getConfigurationItem(ciKey);
-
-        CascadeResult cascadeResult = productService.cascadeCheckin(ciKey,path);
-
+        CascadeResult cascadeResult = productService.cascadeCheckin(ciKey,path, iterationNoteDTO.getIterationNote());
         return Response.ok(cascadeResult).build();
     }
 
@@ -619,10 +614,7 @@ public class ProductResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response cascadeUndocheckout(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        ConfigurationItem ci = productService.getConfigurationItem(ciKey);
-
         CascadeResult cascadeResult = productService.cascadeUndocheckout(ciKey,path);
-
         return Response.ok(cascadeResult).build();
     }
 
