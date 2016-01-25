@@ -322,6 +322,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         PartRevisionDAO partRDAO = new PartRevisionDAO(locale, em);
         PartRevision partR = partRDAO.loadPartR(pPartRPK);
+        if(partR.getACL() == null) {
+            userManager.checkWorkspaceWriteAccess(pPartRPK.getWorkspaceId());
+        }
 
         //Check access rights on partR
         if (!hasPartRevisionWriteAccess(user, partR)) {
@@ -399,13 +402,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartRevision checkOutPart(PartRevisionKey pPartRPK) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, NotAllowedException, FileAlreadyExistsException, CreationException {
-        User user = userManager.checkWorkspaceWriteAccess(pPartRPK.getPartMaster().getWorkspace());
+    public PartRevision checkOutPart(PartRevisionKey pPartRPK) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, NotAllowedException, FileAlreadyExistsException, CreationException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pPartRPK.getPartMaster().getWorkspace());
         Locale locale = new Locale(user.getLanguage());
 
         PartRevisionDAO partRDAO = new PartRevisionDAO(locale, em);
         PartRevision partR = partRDAO.loadPartR(pPartRPK);
-
+        if(partR.getACL() == null) {
+            userManager.checkWorkspaceWriteAccess(pPartRPK.getWorkspaceId());
+        }
         //Check access rights on partR
         if (!hasPartRevisionWriteAccess(user, partR)) {
             throw new AccessRightException(locale, user);
@@ -498,12 +503,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartRevision checkInPart(PartRevisionKey pPartRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ESServerException, EntityConstraintException, UserNotActiveException, PartMasterNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pPartRPK.getPartMaster().getWorkspace());
+        User user = userManager.checkWorkspaceReadAccess(pPartRPK.getPartMaster().getWorkspace());
         Locale locale = new Locale(user.getLanguage());
 
         PartRevisionDAO partRDAO = new PartRevisionDAO(locale, em);
         PartRevision partR = partRDAO.loadPartR(pPartRPK);
-
+        if(partR.getACL() == null) {
+            userManager.checkWorkspaceWriteAccess(pPartRPK.getWorkspaceId());
+        }
 
         //Check access rights on partR
         if (!hasPartRevisionWriteAccess(user, partR)) {
@@ -2387,7 +2394,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
 
         CascadeResult cascadeResult = new CascadeResult();
-        List<PartRevision> partRevisions = getPartRevisionsFromPath(configurationItemKey,path,user);
+            List<PartRevision> partRevisions = getPartRevisionsFromPath(configurationItemKey,path,user);
         for(PartRevision pr : partRevisions) {
             try {
                 checkOutPart(pr.getKey());

@@ -266,7 +266,7 @@ public class PartResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response checkOut(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
-            throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException {
+            throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException, UserNotActiveException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
         productService.checkOutPart(revisionKey);
