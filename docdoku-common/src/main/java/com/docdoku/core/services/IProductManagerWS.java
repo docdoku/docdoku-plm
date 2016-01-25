@@ -185,7 +185,7 @@ public interface IProductManagerWS{
      * @throws FileAlreadyExistsException
      * @throws CreationException
      */
-    PartRevision checkOutPart(PartRevisionKey partRPK) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, NotAllowedException, FileAlreadyExistsException, CreationException;
+    PartRevision checkOutPart(PartRevisionKey partRPK) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, NotAllowedException, FileAlreadyExistsException, CreationException, UserNotActiveException;
 
 
     /**
