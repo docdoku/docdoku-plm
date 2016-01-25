@@ -47,6 +47,7 @@ import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
+import com.docdoku.server.rest.util.InstanceAttributeFactory;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -243,7 +244,7 @@ public class DocumentResource {
         List<InstanceAttributeDTO> instanceAttributes = data.getInstanceAttributes();
         List<InstanceAttribute> attributes = null;
         if (instanceAttributes != null) {
-            attributes = createInstanceAttributes(instanceAttributes);
+            attributes = new InstanceAttributeFactory().createInstanceAttributes(instanceAttributes);
         }
 
         DocumentRevision docR = documentService.updateDocument(new DocumentIterationKey(workspaceId, documentId, documentVersion, pIteration), pRevisionNote, attributes, links, documentLinkComments);
@@ -546,59 +547,6 @@ public class DocumentResource {
         return Response.ok(new GenericEntity<List<PathDataMasterDTO>>((List<PathDataMasterDTO>) new ArrayList<>(dtos)) {
         }).build();
 
-    }
-
-    private List<InstanceAttribute> createInstanceAttributes(List<InstanceAttributeDTO> dtos) {
-        if (dtos == null) {
-            return new ArrayList<>();
-        }
-        List<InstanceAttribute> data = new ArrayList<>();
-        for (InstanceAttributeDTO dto : dtos) {
-            data.add(createInstanceAttribute(dto));
-        }
-
-        return data;
-    }
-
-    private InstanceAttribute createInstanceAttribute(InstanceAttributeDTO dto) {
-        InstanceAttribute attr;
-        switch (dto.getType()) {
-            case BOOLEAN:
-                attr = new InstanceBooleanAttribute();
-                break;
-            case TEXT:
-                attr = new InstanceTextAttribute();
-                break;
-            case NUMBER:
-                attr = new InstanceNumberAttribute();
-                break;
-            case DATE:
-                attr = new InstanceDateAttribute();
-                break;
-            case URL:
-                attr = new InstanceURLAttribute();
-                break;
-            case LOV:
-                attr = new InstanceListOfValuesAttribute();
-                List<NameValuePairDTO> itemsDTO = dto.getItems();
-                List<NameValuePair> items = new ArrayList<>();
-                if (itemsDTO != null) {
-                    for (NameValuePairDTO itemDTO : itemsDTO) {
-                        items.add(mapper.map(itemDTO, NameValuePair.class));
-                    }
-                }
-                ((InstanceListOfValuesAttribute) attr).setItems(items);
-
-                break;
-            default:
-                throw new IllegalArgumentException("Instance attribute not supported");
-        }
-
-        attr.setName(dto.getName());
-        attr.setValue(dto.getValue());
-        attr.setLocked(dto.isLocked());
-        attr.setMandatory(dto.isMandatory());
-        return attr;
     }
 
     private DocumentRevisionKey[] createDocumentRevisionKeys(List<DocumentRevisionDTO> dtos) {

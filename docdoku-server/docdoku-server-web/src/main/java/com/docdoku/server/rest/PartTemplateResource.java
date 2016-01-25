@@ -22,15 +22,13 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.meta.DefaultAttributeTemplate;
-import com.docdoku.core.meta.InstanceAttributeTemplate;
-import com.docdoku.core.meta.ListOfValuesAttributeTemplate;
 import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.util.InstanceAttributeFactory;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -128,8 +126,8 @@ public class PartTemplateResource {
         for (int i=0;i<attributeInstanceTemplates.size();i++) {
             instanceLovNames[i] = attributeInstanceTemplates.get(i).getLovName();
         }
-
-        PartMasterTemplate template = productService.createPartMasterTemplate(workspaceId, id, partType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, createInstanceAttributeTemplateFromDto(attributeInstanceTemplates), instanceLovNames, idGenerated, attributesLocked);
+        InstanceAttributeFactory attributeFactory = new InstanceAttributeFactory();
+        PartMasterTemplate template = productService.createPartMasterTemplate(workspaceId, id, partType, workflowModelId, mask, attributeFactory.createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, attributeFactory.createInstanceAttributeTemplateFromDto(attributeInstanceTemplates), instanceLovNames, idGenerated, attributesLocked);
         return mapper.map(template, PartMasterTemplateDTO.class);
     }
     
@@ -158,8 +156,8 @@ public class PartTemplateResource {
         for (int i=0;i<attributeInstanceTemplates.size();i++) {
             instanceLovNames[i] = attributeInstanceTemplates.get(i).getLovName();
         }
-
-        PartMasterTemplate template = productService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, createInstanceAttributeTemplateFromDto(attributeInstanceTemplates) ,instanceLovNames,idGenerated, attributesLocked);
+        InstanceAttributeFactory attributeFactory = new InstanceAttributeFactory();
+        PartMasterTemplate template = productService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, workflowModelId, mask, attributeFactory.createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, attributeFactory.createInstanceAttributeTemplateFromDto(attributeInstanceTemplates) ,instanceLovNames,idGenerated, attributesLocked);
         return mapper.map(template, PartMasterTemplateDTO.class);
     }
 
@@ -222,31 +220,4 @@ public class PartTemplateResource {
         return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
     }
 
-
-
-    private InstanceAttributeTemplate[] createInstanceAttributeTemplateFromDto(List<InstanceAttributeTemplateDTO> dtos) {
-        InstanceAttributeTemplate[] data = new InstanceAttributeTemplate[dtos.size()];
-        for (int i = 0; i < dtos.size(); i++) {
-            data[i] = createInstanceAttributeTemplateObject(dtos.get(i));
-        }
-        return data;
-    }
-
-    private InstanceAttributeTemplate createInstanceAttributeTemplateObject(InstanceAttributeTemplateDTO dto) {
-        InstanceAttributeTemplate data;
-        if(dto.getLovName()==null || dto.getLovName().isEmpty()) {
-            DefaultAttributeTemplate defaultIA = new DefaultAttributeTemplate();
-            defaultIA.setAttributeType(InstanceAttributeTemplate.AttributeType.valueOf(dto.getAttributeType().name()));
-            data=defaultIA;
-        }
-        else {
-            ListOfValuesAttributeTemplate lovA = new ListOfValuesAttributeTemplate();
-            data=lovA;
-        }
-
-        data.setName(dto.getName());
-        data.setMandatory(dto.isMandatory());
-        data.setLocked(dto.isLocked());
-        return data;
-    }
 }

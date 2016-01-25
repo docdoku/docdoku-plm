@@ -93,6 +93,7 @@ public class InstanceAttributeDozerConverter extends DozerConverter<InstanceAttr
 
     @Override
     public InstanceAttribute convertFrom(InstanceAttributeDTO source, InstanceAttribute destination) {
+        //TODO: complete method, should not be called, not taking into account LOV Attributes.
         switch(source.getType()){
             case BOOLEAN:
                 return new InstanceBooleanAttribute(source.getName(), Boolean.parseBoolean(source.getValue()), source.isMandatory());

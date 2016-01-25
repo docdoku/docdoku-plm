@@ -44,6 +44,7 @@ import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.collections.VirtualInstanceCollection;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
+import com.docdoku.server.rest.util.InstanceAttributeFactory;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -175,13 +176,13 @@ public class PartResource {
         List<InstanceAttributeDTO> instanceAttributes = data.getInstanceAttributes();
         List<InstanceAttribute> attributes = null;
         if (instanceAttributes != null) {
-            attributes = createInstanceAttributes(instanceAttributes);
+            attributes = new InstanceAttributeFactory().createInstanceAttributes(instanceAttributes);
         }
 
         List<InstanceAttributeTemplateDTO> instanceAttributeTemplates = data.getInstanceAttributeTemplates();
         List<InstanceAttributeTemplate> attributeTemplates = null;
         if (instanceAttributeTemplates != null) {
-            attributeTemplates = createInstanceAttributeTemplateFromDto(instanceAttributeTemplates);
+            attributeTemplates = new InstanceAttributeFactory().createInstanceAttributeTemplateFromDto(instanceAttributeTemplates);
         }
 
         String[] lovNames=new String[instanceAttributeTemplates.size()];
@@ -610,84 +611,6 @@ public class PartResource {
         } else {
             return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.isStandardPart(), null, componentDTO.getDescription(), null, null, null, null);
         }
-    }
-
-    private List<InstanceAttribute> createInstanceAttributes(List<InstanceAttributeDTO> dtos) {
-        if (dtos == null) {
-            return new ArrayList<>();
-        }
-        List<InstanceAttribute> data = new ArrayList<>();
-        for (InstanceAttributeDTO dto : dtos) {
-            data.add(createInstanceAttribute(dto));
-        }
-
-        return data;
-    }
-
-    private InstanceAttribute createInstanceAttribute(InstanceAttributeDTO dto) {
-        InstanceAttribute attr;
-        switch (dto.getType()) {
-            case BOOLEAN:
-                attr = new InstanceBooleanAttribute();
-                break;
-            case TEXT:
-                attr = new InstanceTextAttribute();
-                break;
-            case NUMBER:
-                attr = new InstanceNumberAttribute();
-                break;
-            case DATE:
-                attr = new InstanceDateAttribute();
-                break;
-            case URL:
-                attr = new InstanceURLAttribute();
-                break;
-            case LOV :
-                attr = new InstanceListOfValuesAttribute();
-                List<NameValuePairDTO> itemsDTO = dto.getItems();
-                List<NameValuePair> items = new ArrayList<>();
-                if (itemsDTO!= null){
-                    for (NameValuePairDTO itemDTO : itemsDTO){
-                        items.add(mapper.map(itemDTO, NameValuePair.class));
-                    }
-                }
-                ((InstanceListOfValuesAttribute) attr).setItems(items);
-                break;
-            default:
-                throw new IllegalArgumentException("Instance attribute not supported");
-        }
-
-        attr.setName(dto.getName());
-        attr.setValue(dto.getValue());
-        attr.setLocked(dto.isLocked());
-        attr.setMandatory(dto.isMandatory());
-        return attr;
-    }
-
-    private List<InstanceAttributeTemplate> createInstanceAttributeTemplateFromDto(List<InstanceAttributeTemplateDTO> dtos) {
-        List<InstanceAttributeTemplate> data = new ArrayList<>();
-        for (InstanceAttributeTemplateDTO dto: dtos) {
-            data.add(createInstanceAttributeTemplateObject(dto));
-        }
-        return data;
-    }
-
-    private InstanceAttributeTemplate createInstanceAttributeTemplateObject(InstanceAttributeTemplateDTO dto) {
-        InstanceAttributeTemplate data;
-        if(dto.getLovName()==null || dto.getLovName().isEmpty()) {
-            DefaultAttributeTemplate defaultIA = new DefaultAttributeTemplate();
-            defaultIA.setAttributeType(InstanceAttributeTemplate.AttributeType.valueOf(dto.getAttributeType().name()));
-            data=defaultIA;
-        }
-        else {
-            ListOfValuesAttributeTemplate lovA = new ListOfValuesAttributeTemplate();
-            data=lovA;
-        }
-
-        data.setName(dto.getName());
-        data.setMandatory(dto.isMandatory());
-        data.setLocked(dto.isLocked());
-        return data;
     }
 
     private DocumentRevisionKey[] createDocumentRevisionKey(List<DocumentRevisionDTO> dtos) {

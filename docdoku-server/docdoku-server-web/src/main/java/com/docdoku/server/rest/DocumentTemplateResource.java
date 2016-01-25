@@ -24,13 +24,11 @@ import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.meta.DefaultAttributeTemplate;
-import com.docdoku.core.meta.InstanceAttributeTemplate;
-import com.docdoku.core.meta.ListOfValuesAttributeTemplate;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.util.InstanceAttributeFactory;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -122,7 +120,7 @@ public class DocumentTemplateResource {
         for (int i=0;i<attributeTemplates.size();i++)
             lovNames[i]=attributeTemplates.get(i).getLovName();
 
-        DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, idGenerated, attributesLocked);
+        DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, workflowModelId, mask, new InstanceAttributeFactory().createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, idGenerated, attributesLocked);
         DocumentMasterTemplateDTO response = mapper.map(template, DocumentMasterTemplateDTO.class);
         return response;
     }
@@ -145,7 +143,7 @@ public class DocumentTemplateResource {
         for (int i=0;i<attributeTemplates.size();i++)
             lovNames[i]=attributeTemplates.get(i).getLovName();
 
-        DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, idGenerated, attributesLocked);
+        DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, workflowModelId, mask, new InstanceAttributeFactory().createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, idGenerated, attributesLocked);
         return mapper.map(template, DocumentMasterTemplateDTO.class);
     }
 
@@ -206,33 +204,5 @@ public class DocumentTemplateResource {
         String fileFullName = workspaceId + "/document-templates/" + templateId + "/" + fileName;
         BinaryResource binaryResource = documentService.renameFileInTemplate(fileFullName, fileDTO.getShortName());
         return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
-    }
-
-    private InstanceAttributeTemplate[] createInstanceAttributeTemplateFromDto(List<InstanceAttributeTemplateDTO> dtos) {
-        InstanceAttributeTemplate[] data = new InstanceAttributeTemplate[dtos.size()];
-
-        for (int i = 0; i < dtos.size(); i++) {
-            data[i] = createInstanceAttributeTemplateObject(dtos.get(i));
-        }
-
-        return data;
-    }
-
-    private InstanceAttributeTemplate createInstanceAttributeTemplateObject(InstanceAttributeTemplateDTO dto) {
-        InstanceAttributeTemplate data;
-        if(dto.getLovName()==null || dto.getLovName().isEmpty()) {
-            DefaultAttributeTemplate defaultIA = new DefaultAttributeTemplate();
-            defaultIA.setAttributeType(InstanceAttributeTemplate.AttributeType.valueOf(dto.getAttributeType().name()));
-            data=defaultIA;
-        }
-        else {
-            ListOfValuesAttributeTemplate lovA = new ListOfValuesAttributeTemplate();
-            data=lovA;
-        }
-
-        data.setName(dto.getName());
-        data.setMandatory(dto.isMandatory());
-        data.setLocked(dto.isLocked());
-        return data;
     }
 }

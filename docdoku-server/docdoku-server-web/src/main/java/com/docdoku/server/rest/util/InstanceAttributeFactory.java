@@ -22,6 +22,7 @@ package com.docdoku.server.rest.util;
 
 import com.docdoku.core.meta.*;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
 import com.docdoku.server.rest.dto.NameValuePairDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -29,10 +30,13 @@ import org.dozer.Mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- *
+/**
  * @author Asmae CHADID on 25/03/15.
+ *
+ * Should be replaced with DozerMapper.
+ * @see com.docdoku.server.rest.converters.InstanceAttributeDozerConverter
  */
+@Deprecated
 public class InstanceAttributeFactory {
 
     private Mapper mapper;
@@ -92,4 +96,30 @@ public class InstanceAttributeFactory {
         attr.setMandatory(dto.isMandatory());
         return attr;
     }
+
+    public InstanceAttributeTemplate createInstanceAttributeTemplateObject(InstanceAttributeTemplateDTO dto) {
+        InstanceAttributeTemplate data;
+        if(dto.getLovName()==null || dto.getLovName().isEmpty()) {
+            DefaultAttributeTemplate defaultIA = new DefaultAttributeTemplate();
+            defaultIA.setAttributeType(InstanceAttributeTemplate.AttributeType.valueOf(dto.getAttributeType().name()));
+            data=defaultIA;
+        }
+        else {
+            ListOfValuesAttributeTemplate lovA = new ListOfValuesAttributeTemplate();
+            data=lovA;
+        }
+
+        data.setName(dto.getName());
+        data.setMandatory(dto.isMandatory());
+        data.setLocked(dto.isLocked());
+        return data;
+    }
+    public List<InstanceAttributeTemplate> createInstanceAttributeTemplateFromDto(List<InstanceAttributeTemplateDTO> dtos) {
+        List<InstanceAttributeTemplate> data = new ArrayList<>();
+        for (InstanceAttributeTemplateDTO dto: dtos) {
+            data.add(createInstanceAttributeTemplateObject(dto));
+        }
+        return data;
+    }
+
 }
