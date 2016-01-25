@@ -135,18 +135,8 @@ public class PartResource {
         for(PartIteration partIteration:partIterations){
             partRevisions.add(partIteration.getPartRevision());
         }
+        List<PartRevisionDTO> partRevisionDTOs = getPartRevisionDTO(partRevisions);
 
-        List<PartRevisionDTO> partRevisionDTOs = new ArrayList<>();
-
-        for(PartRevision partRevision:partRevisions){
-            PartRevisionDTO partRevisionDTO = mapper.map(partRevision, PartRevisionDTO.class);
-            partRevisionDTO.setNumber(partRevision.getPartNumber());
-            partRevisionDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
-            partRevisionDTO.setName(partRevision.getPartMaster().getName());
-            partRevisionDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
-
-            partRevisionDTOs.add(partRevisionDTO);
-        }
         return Response.ok(new GenericEntity<List<PartRevisionDTO>>((List<PartRevisionDTO>) partRevisionDTOs) {
         }).build();
     }
@@ -165,16 +155,7 @@ public class PartResource {
             partRevisions.add(partIteration.getPartRevision());
         }
 
-        List<PartRevisionDTO> partRevisionDTOs = new ArrayList<>();
-
-        for(PartRevision partRevision:partRevisions){
-            PartRevisionDTO partRevisionDTO = mapper.map(partRevision, PartRevisionDTO.class);
-            partRevisionDTO.setNumber(partRevision.getPartNumber());
-            partRevisionDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
-            partRevisionDTO.setName(partRevision.getPartMaster().getName());
-            partRevisionDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
-            partRevisionDTOs.add(partRevisionDTO);
-        }
+        List<PartRevisionDTO> partRevisionDTOs = getPartRevisionDTO(partRevisions);
         return Response.ok(new GenericEntity<List<PartRevisionDTO>>((List<PartRevisionDTO>) partRevisionDTOs) {
         }).build();
     }
@@ -716,6 +697,23 @@ public class PartResource {
             data[i++] =new DocumentRevisionKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getVersion());
         }
         return data;
+    }
+
+    private List<PartRevisionDTO> getPartRevisionDTO(Set<PartRevision> partRevisions) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException {
+        List<PartRevisionDTO> partRevisionDTOs = new ArrayList<>();
+
+        for(PartRevision partRevision:partRevisions){
+            if(!productService.canAccess(partRevision.getKey())) {
+                continue;
+            }
+            PartRevisionDTO partRevisionDTO = mapper.map(partRevision, PartRevisionDTO.class);
+            partRevisionDTO.setNumber(partRevision.getPartNumber());
+            partRevisionDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
+            partRevisionDTO.setName(partRevision.getPartMaster().getName());
+            partRevisionDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
+            partRevisionDTOs.add(partRevisionDTO);
+        }
+        return partRevisionDTOs;
     }
 
 }
