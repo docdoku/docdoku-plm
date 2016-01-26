@@ -2436,7 +2436,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         for(PartRevision pr : partRevisions) {
             try {
                 // Set the iteration note only if param is set and part has no iteration note
-                if((iterationNote != null || !iterationNote.isEmpty()) && (null == pr.getLastIteration().getIterationNote() || pr.getLastIteration().getIterationNote().isEmpty())){
+                if( (iterationNote != null && iterationNote.isEmpty()) && (null == pr.getLastIteration().getIterationNote() && pr.getLastIteration().getIterationNote().isEmpty())){
                     updatePartIteration(pr.getLastIteration().getKey(), iterationNote, null, null, null, null, null, null, null);
                 }
 
