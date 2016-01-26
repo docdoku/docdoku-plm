@@ -737,12 +737,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, List<InstanceAttributeTemplate> pAttributeTemplates, DocumentRevisionKey[] pLinkKeys, String[] documentLinkComments, String[] lovNames)
             throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException, EntityConstraintException, UserNotActiveException, ListOfValuesNotFoundException, PartUsageLinkNotFoundException {
 
-        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+        User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         Locale locale = new Locale(user.getLanguage());
 
         PartRevisionDAO partRDAO = new PartRevisionDAO(locale, em);
         PartRevision partRev = partRDAO.loadPartR(pKey.getPartRevision());
-
+        if(partRev.getACL() == null) {
+            userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+        }
         //check access rights on partRevision
         if (!hasPartRevisionWriteAccess(user, partRev)) {
             throw new AccessRightException(locale, user);
