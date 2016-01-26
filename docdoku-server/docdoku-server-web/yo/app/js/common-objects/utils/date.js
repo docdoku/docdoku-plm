@@ -132,8 +132,12 @@ define([
         },
 
         stringAsDate: function (anyDate, format) {
-            var datestring =  moment.utc(anyDate).zone(offset).format(format);
+            var datestring = moment.utc(anyDate).zone(offset).format(format);
             return new Date(datestring);
+        },
+
+        dateAsString: function (date, format) {
+            return moment(date).format(format);
         },
 
         addSeconds: function (anyDate, seconds) {
