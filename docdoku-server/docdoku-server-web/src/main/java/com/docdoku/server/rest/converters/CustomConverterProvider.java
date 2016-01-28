@@ -18,13 +18,28 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * Created by kelto on 01/06/15.
- */
-@XmlJavaTypeAdapter(value=DateAdapter.class, type=Date.class)
-package com.docdoku.server.rest.dto;
+package com.docdoku.server.rest.converters;
 
-import com.docdoku.server.rest.converters.DateAdapter;
-
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.ws.rs.ext.ParamConverter;
+import javax.ws.rs.ext.ParamConverterProvider;
+import javax.ws.rs.ext.Provider;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.Date;
+
+/**
+ * Created by Florent Garin on 12/03/15.
+ */
+@Provider
+public class CustomConverterProvider implements ParamConverterProvider {
+
+    private final DateAdapter dateAdapter = new DateAdapter();
+
+    @Override
+    public <T> ParamConverter<T> getConverter(Class<T> clazz, Type type, Annotation[] annotations) {
+        if (clazz.getName().equals(Date.class.getName())) {
+            return (ParamConverter<T>) dateAdapter;
+        }
+        return null;
+    }
+}

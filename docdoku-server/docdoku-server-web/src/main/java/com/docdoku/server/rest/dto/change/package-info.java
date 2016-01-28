@@ -4,7 +4,7 @@
 @XmlJavaTypeAdapter(value=DateAdapter.class, type=Date.class)
 package com.docdoku.server.rest.dto.change;
 
-import com.docdoku.server.rest.util.DateAdapter;
+import com.docdoku.server.rest.converters.DateAdapter;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
