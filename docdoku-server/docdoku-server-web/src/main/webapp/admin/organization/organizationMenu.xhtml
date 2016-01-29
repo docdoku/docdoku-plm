@@ -34,6 +34,9 @@
                                 <h:link value="#{i18nOrganizationMenu['section.manage']}" outcome="/admin/organization/manageAccounts.xhtml"/> |
                                 <h:commandLink value="#{i18nOrganizationMenu['section.delete']}" action="#{organizationBean.deleteOrganization}" onclick="return prompt('#{i18nOrganizationMenu['section.deleteConfirm']}') == '#{i18nOrganizationMenu['section.deleteConfirmPromptValue']}'" />
                             </c:if>
+                            <c:if test="#{!accountBean.superAdmin and accountBean.organizationAdmin ne accountBean.login}">
+                                <p>#{i18nOrganizationMenu['section.notAdmin']}</p>
+                            </c:if>
                         </c:otherwise>
                     </c:choose>
                 </fieldset>
