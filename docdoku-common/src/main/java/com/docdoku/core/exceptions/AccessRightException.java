@@ -37,11 +37,6 @@ public class AccessRightException extends ApplicationException {
         super(pMessage);
         mName=null;
     }
-
-    public AccessRightException(String pMessage, Account pAccount) {
-        super(pMessage);
-        mName=pAccount.toString();
-    }
     
     public AccessRightException(Locale pLocale, User pUser) {
         this(pLocale, pUser.toString());
