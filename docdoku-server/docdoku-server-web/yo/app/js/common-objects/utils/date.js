@@ -14,6 +14,7 @@ define([
     var moffset = offset * 60 * 1000;
 
     return {
+        // This function should be removed as it does not use the correct timezone offset
         formatTimestamp: function (format, timestamp) {
             if (!timestamp) {
                 return '';
@@ -22,6 +23,22 @@ define([
                 // set the timezone to be the current one (problem with daylight saving time)
                 // and return the string with the format specified
                 return moment.utc(timestamp).zone(offset).format(format);
+            } catch (error) {
+                console.error('Date.formatTimestamp(' + format + ', ' + timestamp + ')', error);
+                return timestamp;
+            }
+        },
+
+        // This function gets the real offset, that is the offset of the timestamp not the current offset
+        correctFormatTimestamp: function (format, timestamp) {
+            if (!timestamp) {
+                return '';
+            }
+            try {
+                // set the timezone to be the current one (problem with daylight saving time)
+                // and return the string with the format specified
+                var timestampOffset = moment(timestamp).tz(App.config.timeZone).zone();
+                return moment.utc(timestamp).zone(timestampOffset).format(format);
             } catch (error) {
                 console.error('Date.formatTimestamp(' + format + ', ' + timestamp + ')', error);
                 return timestamp;
