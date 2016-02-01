@@ -247,7 +247,7 @@ public class ExcelGenerator {
                                 }
                             }
                         }
-                        data.add(sbattr.toString());
+                        data.add(sbattr.toString().trim());
                     }
                     if (select.startsWith(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)) {
                         String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PATH_DATA_ATTRIBUTES_PREFIX.length());
@@ -272,7 +272,7 @@ public class ExcelGenerator {
                                 }
                             }
                         }
-                        data.add(sbpdattr.toString());
+                        data.add(sbpdattr.toString().trim());
                     }
             }
 
