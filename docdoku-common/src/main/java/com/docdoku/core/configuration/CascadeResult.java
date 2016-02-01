@@ -37,7 +37,7 @@ public class CascadeResult implements Serializable{
         this.succeedAttempts++;
     }
 
-    public void incFailedAttemps() {
+    public void incFailedAttempts() {
         this.failedAttempts++;
     }
 

@@ -2402,7 +2402,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 checkOutPart(pr.getKey());
                 cascadeResult.incSucceedAttempts();
             } catch (PartRevisionNotFoundException | AccessRightException  | NotAllowedException | FileAlreadyExistsException | CreationException e) {
-                cascadeResult.incFailedAttemps();
+                cascadeResult.incFailedAttempts();
                 LOGGER.log(Level.SEVERE,null,e);
             }
         }
@@ -2421,7 +2421,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 undoCheckOutPart(pr.getKey());
                 cascadeResult.incSucceedAttempts();
             } catch (PartRevisionNotFoundException | AccessRightException  | NotAllowedException  e) {
-                cascadeResult.incFailedAttemps();
+                cascadeResult.incFailedAttempts();
                 LOGGER.log(Level.SEVERE,null,e);
             }
         }
@@ -2446,7 +2446,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 cascadeResult.incSucceedAttempts();
 
             } catch (PartRevisionNotFoundException | AccessRightException  | NotAllowedException | ESServerException | ListOfValuesNotFoundException e) {
-                cascadeResult.incFailedAttemps();
+                cascadeResult.incFailedAttempts();
                 LOGGER.log(Level.SEVERE,null,e);
             }
         }
