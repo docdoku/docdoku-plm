@@ -2393,10 +2393,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     public CascadeResult cascadeCheckout(ConfigurationItemKey configurationItemKey, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
-
         CascadeResult cascadeResult = new CascadeResult();
-            List<PartRevision> partRevisions = getPartRevisionsFromPath(configurationItemKey,path,user);
+            List<PartRevision> partRevisions = getWritablePartRevisionsFromPath(configurationItemKey,path);
         for(PartRevision pr : partRevisions) {
             try {
                 checkOutPart(pr.getKey());
@@ -2412,10 +2410,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     public CascadeResult cascadeUndocheckout(ConfigurationItemKey configurationItemKey, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
-
         CascadeResult cascadeResult = new CascadeResult();
-        List<PartRevision> partRevisions = getPartRevisionsFromPath(configurationItemKey, path,user);
+        List<PartRevision> partRevisions = getWritablePartRevisionsFromPath(configurationItemKey, path);
         for(PartRevision pr : partRevisions) {
             try {
                 undoCheckOutPart(pr.getKey());
@@ -2431,10 +2427,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     public CascadeResult cascadeCheckin(ConfigurationItemKey configurationItemKey, String path, String iterationNote) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
 
         CascadeResult cascadeResult = new CascadeResult();
-        List<PartRevision> partRevisions = getPartRevisionsFromPath(configurationItemKey, path,user);
+        List<PartRevision> partRevisions = getWritablePartRevisionsFromPath(configurationItemKey, path);
         for(PartRevision pr : partRevisions) {
             try {
                 // Set the iteration note only if param is set and part has no iteration note
@@ -2453,7 +2448,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return cascadeResult;
     }
 
-    private List<PartRevision> getPartRevisionsFromPath(ConfigurationItemKey configurationItemKey, String path ,User user) throws EntityConstraintException, PartMasterNotFoundException, NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+    private List<PartRevision> getWritablePartRevisionsFromPath(ConfigurationItemKey configurationItemKey, String path) throws EntityConstraintException, PartMasterNotFoundException, NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
         List<PartRevision> partRevisions = new ArrayList<>();
         PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em,user,new WIPPSFilter(user)) {
             @Override
@@ -2490,16 +2486,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             public boolean onPathWalk(List<PartLink> path, List<PartMaster> parts) {
                 PartMaster pm = parts.get(parts.size() -1);
                 try {
-                    if(!canAccess(pm.getLastRevision().getKey())) {
+                    if(!hasPartRevisionReadAccess(user,pm.getLastRevision())) {
                         //Don't visit this branch anymore
                         return false;
                     }
-
+                    if(!hasPartOrWorkspaceWriteAccess(user,pm.getLastRevision())) {
+                        return true;
+                    }
                     if(!partRevisions.contains(pm.getLastRevision())) {
                         partRevisions.add(pm.getLastRevision());
                     }
 
-                } catch (UserNotFoundException | UserNotActiveException | PartRevisionNotFoundException | WorkspaceNotFoundException e) {
+                } catch (WorkspaceNotFoundException e) {
                     LOGGER.log(Level.SEVERE, "Could not check access to part revision",e);
                     return false;
                 }
@@ -3628,6 +3626,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
      */
     private boolean hasPartRevisionWriteAccess(User user, PartRevision partRevision) {
         return user.isAdministrator() || isACLGrantWriteAccess(user, partRevision);
+    }
+
+    /**
+     * Say if a user can write on a part Revision through ACL or Workspace Access
+     * @param user A user with at least Read access to the workspace
+     * @param partRevision
+     * @return True if access is granted, False otherwise
+     * @throws WorkspaceNotFoundException
+     */
+    private boolean hasPartOrWorkspaceWriteAccess(User user, PartRevision partRevision) throws WorkspaceNotFoundException {
+        return partRevision.getACL() == null ?
+                userManager.hasWorkspaceWriteAccess(user,partRevision.getWorkspaceId()) : partRevision.getACL().hasWriteAccess(user);
     }
 
     private boolean isAuthor(User user, PartRevision partRevision) {

@@ -64,6 +64,8 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @Inject
     private IContextManagerLocal contextManager;
 
+
+
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public void addUserInGroup(UserGroupKey pGroupKey, String pLogin) throws AccessRightException, UserGroupNotFoundException, AccountNotFoundException, WorkspaceNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {
@@ -407,14 +409,29 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         String login = contextManager.getCallerPrincipalLogin();
 
         UserDAO userDAO = new UserDAO(em);
+        User user = userDAO.loadUser(new UserKey(pWorkspaceId, login));
+        if(!hasWorkspaceWriteAccess(user,pWorkspaceId)) {
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+        workspaceAccessEvent.select(new AnnotationLiteral<Write>() {
+        }).fire(new WorkspaceAccessEvent(user));
+
+        return user;
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public boolean hasWorkspaceWriteAccess(User user, String pWorkspaceId) throws WorkspaceNotFoundException {
+        String login = contextManager.getCallerPrincipalLogin();
+
+        UserDAO userDAO = new UserDAO(em);
 
         Workspace wks = new WorkspaceDAO(em).loadWorkspace(pWorkspaceId);
-        User user = userDAO.loadUser(new UserKey(pWorkspaceId, login));
         if (!wks.getAdmin().getLogin().equals(login)) {
             WorkspaceUserMembership userMS = userDAO.loadUserMembership(new WorkspaceUserMembershipKey(pWorkspaceId, pWorkspaceId, login));
             if (userMS != null) {
                 if (userMS.isReadOnly()) {
-                    throw new AccessRightException(new Locale(user.getLanguage()), user);
+                    return false;
                 }
             } else {
                 WorkspaceUserGroupMembership[] groupMS = new UserGroupDAO(em).getUserGroupMemberships(pWorkspaceId, user);
@@ -425,14 +442,12 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
                         break;
                     }
                 }
-                if (readOnly)
-                    throw new AccessRightException(new Locale(user.getLanguage()), user);
+                if (readOnly) {
+                    return false;
+                }
             }
         }
-        workspaceAccessEvent.select(new AnnotationLiteral<Write>() {
-        }).fire(new WorkspaceAccessEvent(user));
-
-        return user;
+        return true;
     }
 
 
