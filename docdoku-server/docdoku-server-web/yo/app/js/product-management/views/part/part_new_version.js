@@ -5,8 +5,9 @@ define([
     'text!templates/part/part_new_version.html',
     'common-objects/views/workflow/workflow_mapping',
     'common-objects/views/workflow/workflow_list',
-    'common-objects/views/security/acl_clone_edit'
-], function (Backbone, Mustache, template, WorkflowMappingView, WorkflowListView, ACLView) {
+    'common-objects/views/security/acl_clone_edit',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, template, WorkflowMappingView, WorkflowListView, ACLView, AlertView) {
     'use strict';
     var PartNewVersionView = Backbone.View.extend({
 
@@ -53,12 +54,12 @@ define([
             this.newVersionWorkflowDiv = this.$('#new-version-workflow');
             this.textAreaNewVersionDescription = this.$('#new-version-description');
             this.$modal = this.$('#new-version-modal');
+            this.$notifications = this.$('.notifications');
         },
 
         createNewVersionAction: function () {
             this.model.createNewVersion(this.textAreaNewVersionDescription.val(), this.workflowsView.selected(),
-                this.workflowsMappingView.toList(), this.aclView.toList());
-            this.closeModalAction();
+                this.workflowsMappingView.toList(), this.aclView.toList(),this.closeModalAction, this.onError);
         },
 
         openModal: function(){
@@ -71,6 +72,13 @@ define([
 
         onHidden: function(){
             this.remove();
+        },
+
+        onError: function(model) {
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: model.responseText
+            }).render().$el);
         }
 
     });
