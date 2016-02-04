@@ -290,7 +290,7 @@ public class PartBinaryResource{
 
         InputStream binaryContentInputStream = null;
         try {
-            if("attachedfiles".equals(subType)) {
+            if("attachedfiles".equals(subType) && output!=null && !output.isEmpty()) {
                 binaryResourceDownloadMeta.setSubResourceVirtualPath(null);
                 binaryContentInputStream = getConvertedBinaryResource(binaryResource,output);
             } else {
