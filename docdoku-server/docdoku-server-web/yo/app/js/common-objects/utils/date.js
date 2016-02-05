@@ -142,9 +142,9 @@ define([
             return moment(date).add(difference, 'months').format();
         },
 
-        nextDayDate: function (anyDate, format) {
+        nextDayDate: function (anyDate, fromFormat, toFormat) {
             var duration = moment.duration({'days' : 1});
-            var datestring =  moment.utc(anyDate).zone(offset).add(duration).format(format);
+            var datestring = moment(anyDate, fromFormat).add(duration).format(toFormat);
             return new Date(datestring);
         },
 
