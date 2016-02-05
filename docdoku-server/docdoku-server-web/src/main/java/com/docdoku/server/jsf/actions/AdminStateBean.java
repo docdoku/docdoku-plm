@@ -60,13 +60,13 @@ public class AdminStateBean implements Serializable {
         return documentService.getUsers(selectedWorkspace);
     }
     
-    public User[] getUsersInGroup() throws UserGroupNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, AccountNotFoundException {
-        UserGroup ug = userManager.getUserGroup(new UserGroupKey(selectedWorkspace,selectedGroup));
+    public User[] getUsersInGroup() throws UserGroupNotFoundException, WorkspaceNotFoundException, AccessRightException, AccountNotFoundException {
+        UserGroup ug = userManager.getUserGroupWithCheckAdmin(new UserGroupKey(selectedWorkspace, selectedGroup));
         return ug.getUsers().toArray(new User[ug.getUsers().size()]);
     }
     
     public User[] getUsersToManage() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
-        User[] users = documentService.getUsers(selectedWorkspace);
+        User[] users = userManager.getUsersWithCheckAdmin(selectedWorkspace);
         List<User> usersToManage=new ArrayList<>();
         Map<String, List<UserGroup>> usersGroups = getUsersGroups();
         Map<String, WorkspaceUserMembership> userMembers = getUserMembers();
@@ -78,13 +78,16 @@ public class AdminStateBean implements Serializable {
         return usersToManage.toArray(new User[usersToManage.size()]);
     }
 
+    public UserGroup[] getGroupsToManage() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+        return userManager.getUserGroupsWithCheckAdmin(selectedWorkspace);
+    }
+
     public UserGroup[] getGroups() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException {
         return userManager.getUserGroups(selectedWorkspace);
     }
     
-    public Map<String, WorkspaceUserMembership> getUserMembers() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException {
-
-        WorkspaceUserMembership[] userMemberships = userManager.getWorkspaceUserMemberships(selectedWorkspace);
+    public Map<String, WorkspaceUserMembership> getUserMembers() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+        WorkspaceUserMembership[] userMemberships = userManager.getWorkspaceUserMembershipsWithCheckAdmin(selectedWorkspace);
         Map<String, WorkspaceUserMembership> userMembersMap = new HashMap<>();
         for (WorkspaceUserMembership membership : userMemberships) {
             userMembersMap.put(membership.getMemberLogin(), membership);
@@ -92,8 +95,8 @@ public class AdminStateBean implements Serializable {
         return userMembersMap;
     }
 
-    public Map<String, WorkspaceUserGroupMembership> getGroupMembers() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException {
-        WorkspaceUserGroupMembership[] groupMemberships = userManager.getWorkspaceUserGroupMemberships(selectedWorkspace);
+    public Map<String, WorkspaceUserGroupMembership> getGroupMembers() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+        WorkspaceUserGroupMembership[] groupMemberships = userManager.getWorkspaceUserGroupMembershipsWithCheckAdmin(selectedWorkspace);
         Map<String, WorkspaceUserGroupMembership> groupMembersMap = new HashMap<>();
         for (WorkspaceUserGroupMembership membership : groupMemberships) {
             groupMembersMap.put(membership.getMemberId(), membership);
@@ -102,9 +105,9 @@ public class AdminStateBean implements Serializable {
         return groupMembersMap;
     }
 
-    public Map<String, List<UserGroup>> getUsersGroups() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException {
+    private Map<String, List<UserGroup>> getUsersGroups() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
         Map<String, List<UserGroup>> usersGroups = new HashMap<>();
-        UserGroup[] groups = getGroups();
+        UserGroup[] groups = getGroupsToManage();
         for (UserGroup group : groups) {
             for (User user : group.getUsers()) {
                 List<UserGroup> lstGroups = usersGroups.get(user.getLogin());

@@ -46,7 +46,12 @@ public interface IUserManagerLocal{
     void removeUsers(String pWorkspaceId, String[] pLogins) throws UserNotFoundException, NotAllowedException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException;
     Workspace[] getAdministratedWorkspaces() throws AccountNotFoundException;
 
-    UserGroup getUserGroup(UserGroupKey pKey) throws WorkspaceNotFoundException, UserGroupNotFoundException, UserNotFoundException, UserNotActiveException, AccountNotFoundException;
+    User[] getUsersWithCheckAdmin(String pWorkspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException;
+    UserGroup[] getUserGroupsWithCheckAdmin(String pWorkspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException;
+    WorkspaceUserMembership[] getWorkspaceUserMembershipsWithCheckAdmin(String pWorkspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException;
+    WorkspaceUserGroupMembership[] getWorkspaceUserGroupMembershipsWithCheckAdmin(String pWorkspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException;
+    UserGroup getUserGroupWithCheckAdmin(UserGroupKey pKey) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserGroupNotFoundException;
+
     UserGroup[] getUserGroups(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccountNotFoundException;
     UserGroup createUserGroup(String pId, Workspace pWorkspace) throws UserGroupAlreadyExistsException, AccessRightException, AccountNotFoundException, CreationException;
     void removeUserGroups(String pWorkspaceId, String[] pIds) throws UserGroupNotFoundException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, EntityConstraintException;
