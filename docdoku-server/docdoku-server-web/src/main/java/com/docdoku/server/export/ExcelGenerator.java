@@ -240,12 +240,16 @@ public class ExcelGenerator {
                                         if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                         }
-                                        sbattr.append(attributeValue + " ");
+                                        sbattr.append(attributeValue + "|");
                                     }
                                 }
                             }
                         }
-                        data.add(sbattr.toString().trim());
+                        String content = sbattr.toString().trim();
+                        if (content.length() > 0) {
+                            content = content.substring(0, content.lastIndexOf("|"));
+                        }
+                        data.add(content);
                     }
                     if (select.startsWith(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)) {
                         String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PATH_DATA_ATTRIBUTES_PREFIX.length());
@@ -265,18 +269,22 @@ public class ExcelGenerator {
                                         if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                         }
-                                        sbpdattr.append(attributeValue + " ");
+                                        sbpdattr.append(attributeValue + "|");
                                     }
                                 }
                             }
                         }
-                        data.add(sbpdattr.toString().trim());
+                        String content = sbpdattr.toString().trim();
+                        if (content.length() > 0) {
+                            content = content.substring(0, content.lastIndexOf("|"));
+                        }
+                        data.add(content);
                     }
             }
 
         }
 
-        String rowData = StringUtils.join(data, "; ");
+        String rowData = StringUtils.join(data, ";");
         return rowData.split(";");
     }
 }
