@@ -334,15 +334,7 @@ public class ESIndexer {
         } else {
             LOGGER.log(Level.INFO, "The workspace " + workspaceId + " has been indexed");
         }
-
-        try {
-            String login = ctx.getCallerPrincipal().getName();
-            Account account = accountManager.getAccount(login);
-            mailer.sendIndexerResult(account, workspaceId, hasSuccess, failureMessage);
-        } catch (AccountNotFoundException e) {
-            String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString("ES_MailError1");
-            LOGGER.log(Level.WARNING, logMessage, e);
-        }
+        sendNotification(workspaceId,hasSuccess,failureMessage);
     }
 
     /**
@@ -460,7 +452,10 @@ public class ESIndexer {
         } finally {
             ESTools.closeClient(client);
         }
+        sendNotification(workspaceId,hasSuccess,failureMessage);
+    }
 
+    private void sendNotification(String workspaceId, boolean hasSuccess, String failureMessage) {
         try {
             String login = ctx.getCallerPrincipal().getName();
             Account account = accountManager.getAccount(login);
