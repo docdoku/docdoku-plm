@@ -106,8 +106,9 @@ public class ExcelGenerator {
             for (String obj : objArr) {
                 Cell cell = row.createCell(cellnum++);
                 cell.setCellValue(obj);
-            }
         }
+
+        // Define header style
         Font headerFont = workbook.createFont();
         headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
         headerFont.setFontHeightInPoints((short) 10);
@@ -116,10 +117,14 @@ public class ExcelGenerator {
         headerFont.setColor(IndexedColors.WHITE.getIndex());
         CellStyle headerStyle = workbook.createCellStyle();
         headerStyle.setFont(headerFont);
-        headerStyle.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+        headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
         headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
-        sheet.getRow(0).setRowStyle(headerStyle);
+        // Set header style
+        for (int j=0; j<columns.length; j++) {
+            sheet.getRow(0).getCell(j).setCellStyle(headerStyle);
+        }
+
         try {
             //Write the workbook in file system
             FileOutputStream out = new FileOutputStream(excelFile);
