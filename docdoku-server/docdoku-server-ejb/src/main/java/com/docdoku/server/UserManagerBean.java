@@ -516,4 +516,15 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         Account account = new AccountDAO(em).loadAccount(callerLogin);
         return new UserDAO(new Locale(account.getLanguage()), em).findReachableUsersForCaller(callerLogin, workspaceId);
     }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public User[] getUsers(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException, UserNotFoundException, UserNotActiveException {
+        if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
+            Account account = new AccountDAO(em).loadAccount(contextManager.getCallerPrincipalLogin());
+            return new UserDAO(new Locale(account.getLanguage()), em).findAllUsers(pWorkspaceId);
+        }
+        User user = checkWorkspaceReadAccess(pWorkspaceId);
+        return new UserDAO(new Locale(user.getLanguage()), em).findAllUsers(pWorkspaceId);
+    }
 }

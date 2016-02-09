@@ -76,7 +76,7 @@ public class SuperAdminStateBean implements Serializable {
         Workspace[] allWorkspaces = userManager.getAdministratedWorkspaces();
 
         for(Workspace workspace:allWorkspaces){
-            int userCount =  documentService.getUsers(workspace.getId()).length;
+            int userCount =  userManager.getUsers(workspace.getId()).length;
             userStats.add(workspace.getId(), userCount);
         }
 

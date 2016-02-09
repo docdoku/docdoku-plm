@@ -59,7 +59,7 @@ public class AdminStateBean implements Serializable {
     }
 
     public User[] getUsers() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
-        return documentService.getUsers(selectedWorkspace);
+        return userManager.getUsers(selectedWorkspace);
     }
     
     public User[] getUsersInGroup() throws UserGroupNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, AccountNotFoundException {
@@ -68,7 +68,7 @@ public class AdminStateBean implements Serializable {
     }
     
     public User[] getUsersToManage() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
-        User[] users = documentService.getUsers(selectedWorkspace);
+        User[] users = userManager.getUsers(selectedWorkspace);
         List<User> usersToManage=new ArrayList<>();
         Map<String, List<UserGroup>> usersGroups = getUsersGroups();
         Map<String, WorkspaceUserMembership> userMembers = getUserMembers();
@@ -121,7 +121,7 @@ public class AdminStateBean implements Serializable {
     }
 
     public int getUsersCount() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
-        return documentService.getUsers(selectedWorkspace).length;
+        return userManager.getUsers(selectedWorkspace).length;
     }
 
     public int getDocumentsCount() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
@@ -205,7 +205,7 @@ public class AdminStateBean implements Serializable {
     public JsonArray getUsersInWorkspace() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
 
         JsonArrayBuilder usersJSONArrayBuilder = Json.createArrayBuilder();
-        User[] users = documentService.getUsers(selectedWorkspace);
+        User[] users = userManager.getUsers(selectedWorkspace);
         for (User user : users) {
             usersJSONArrayBuilder.add(user.getLogin());
         }

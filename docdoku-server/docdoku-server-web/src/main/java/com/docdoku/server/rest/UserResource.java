@@ -25,7 +25,6 @@ import com.docdoku.core.exceptions.AccessRightException;
 import com.docdoku.core.exceptions.EntityNotFoundException;
 import com.docdoku.core.exceptions.UserNotActiveException;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.UserDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -47,8 +46,6 @@ import javax.ws.rs.core.MediaType;
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class UserResource {
 
-    @Inject
-    private IDocumentManagerLocal documentService;
 
     @Inject
     private IUserManagerLocal userManager;
@@ -68,7 +65,7 @@ public class UserResource {
     public UserDTO[] getUsersInWorkspace(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
-        User[] users = documentService.getUsers(workspaceId);
+        User[] users = userManager.getUsers(workspaceId);
         UserDTO[] dtos = new UserDTO[users.length];
 
         for(int i=0; i<users.length; i++){

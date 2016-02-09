@@ -22,13 +22,8 @@ package com.docdoku.core.services;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.exceptions.AccessRightException;
-import com.docdoku.core.exceptions.UserNotActiveException;
-import com.docdoku.core.exceptions.UserNotFoundException;
-import com.docdoku.core.exceptions.WorkspaceNotFoundException;
-import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.exceptions.*;
 
-import javax.annotation.security.RolesAllowed;
 import javax.jws.WebService;
 
 
