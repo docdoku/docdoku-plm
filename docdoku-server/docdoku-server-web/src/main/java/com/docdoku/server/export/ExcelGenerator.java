@@ -56,6 +56,7 @@ public class ExcelGenerator {
     private static final Logger LOGGER = Logger.getLogger(ExcelGenerator.class.getName());
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private SimpleDateFormat attributeDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public File generateXLSResponse(QueryResult queryResult, Locale locale, String baseURL) {
         File excelFile = new File("export_parts.xls");
@@ -302,7 +303,11 @@ public class ExcelGenerator {
                                             && attributeDescriptor.getStringType().equals(attributeSelectType)) {
 
                                         attributeValue = attribute.getValue() + "";
-                                        if (attribute instanceof InstanceListOfValuesAttribute) {
+                                        if (attributeDescriptor.getType() == InstanceAttributeDescriptor.Type.DATE) {
+                                            if (attribute.getValue() != null) {
+                                                attributeValue = attributeDateFormat.format(attribute.getValue());
+                                            }
+                                        } else if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                         }
                                         sbattr.append(attributeValue + "|");
@@ -332,7 +337,11 @@ public class ExcelGenerator {
                                             && attributeDescriptor.getStringType().equals(attributeSelectType)) {
 
                                         attributeValue = attribute.getValue() + "";
-                                        if (attribute instanceof InstanceListOfValuesAttribute) {
+                                        if (attributeDescriptor.getType() == InstanceAttributeDescriptor.Type.DATE) {
+                                            if (attribute.getValue() != null) {
+                                                attributeValue = attributeDateFormat.format(attribute.getValue());
+                                            }
+                                        } else if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                         }
                                         sbpdattr.append(attributeValue + "|");
