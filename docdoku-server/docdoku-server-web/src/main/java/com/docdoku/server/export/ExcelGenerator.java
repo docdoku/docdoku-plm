@@ -56,9 +56,9 @@ public class ExcelGenerator {
     private static final Logger LOGGER = Logger.getLogger(ExcelGenerator.class.getName());
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private SimpleDateFormat attributeDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public File generateXLSResponse(QueryResult queryResult, Locale locale, String baseURL) {
-        LangHelper langHelper = new LangHelper(locale);
         File excelFile = new File("export_parts.xls");
         //Blank workbook
         XSSFWorkbook workbook = new XSSFWorkbook();
@@ -66,46 +66,66 @@ public class ExcelGenerator {
         //Create a blank sheet
         XSSFSheet sheet = workbook.createSheet("Parts Data");
 
-        //This data needs to be written (Object[])
-        String header = StringUtils.join(queryResult.getQuery().getSelects(), "; ");
-        Map<Integer, String[]> data = new HashMap<>();
-        String[] headerFormatted = new String[header.split(";").length];
-        int headerIndex = 0;
+        String header = StringUtils.join(queryResult.getQuery().getSelects(), ";");
         String[] columns = header.split(";");
-        for (String column : columns) {
-            String columnTranslated;
-            if (!column.isEmpty()) {
-                if (column.trim().startsWith(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
-                    columnTranslated = column.split("-")[1];
-                    columnTranslated = columnTranslated.substring(columnTranslated.indexOf(".") + 1);
-                }
-                else if (column.trim().startsWith(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)) {
-                    columnTranslated = column.split("-")[2];
-                    columnTranslated = columnTranslated.substring(columnTranslated.indexOf(".") + 1);
-                }
-                else {
-                    columnTranslated = langHelper.getLocalizedMessage(column.trim());
-                }
-                headerFormatted[headerIndex++] = columnTranslated != null ? columnTranslated : column;
-            }
-        }
+
+        Map<Integer, String[]> data = new HashMap<>();
+        String[] headerFormatted = createXLSHeaderRow(header, columns, locale);
         data.put(1, headerFormatted);
+
+        Map<Integer, String[]> commentsData = new HashMap<>();
+        String[] headerComments = createXLSHeaderRowComments(header, columns);
+        commentsData.put(1, headerComments);
+
+        List<String> selects = queryResult.getQuery().getSelects();
         int i = 1;
         for (QueryResultRow row : queryResult.getRows()) {
             i++;
-            data.put(i, createXLSRow(queryResult, row, baseURL));
+            data.put(i, createXLSRow(selects, row, baseURL));
+            commentsData.put(i, createXLSRowComments(selects, row));
         }
 
         //Iterate over data and write to sheet
+        Set<Integer> keyset = data.keySet();
         int rownum = 0;
-        for(String[] objArr : data.values()) {
+
+        for (Integer key : keyset) {
+
             Row row = sheet.createRow(rownum++);
+            String[] objArr = data.get(key);
             int cellnum = 0;
             for (String obj : objArr) {
                 Cell cell = row.createCell(cellnum++);
                 cell.setCellValue(obj);
             }
+
+            CreationHelper factory = workbook.getCreationHelper();
+            Drawing drawing = sheet.createDrawingPatriarch();
+            String[] commentsObjArr = commentsData.get(key);
+            cellnum = 0;
+            for (String commentsObj : commentsObjArr) {
+                if (commentsObj.length() > 0) {
+                    Cell cell = row.getCell(cellnum) != null ? row.getCell(cellnum) : row.createCell(cellnum);
+
+                    // When the comment box is visible, have it show in a 1x3 space
+                    ClientAnchor anchor = factory.createClientAnchor();
+                    anchor.setCol1(cell.getColumnIndex());
+                    anchor.setCol2(cell.getColumnIndex()+1);
+                    anchor.setRow1(row.getRowNum());
+                    anchor.setRow2(row.getRowNum()+1);
+
+                    Comment comment = drawing.createCellComment(anchor);
+                    RichTextString str = factory.createRichTextString(commentsObj);
+                    comment.setString(str);
+
+                    // Assign the comment to the cell
+                    cell.setCellComment(comment);
+                }
+                cellnum++;
+            }
         }
+
+        // Define header style
         Font headerFont = workbook.createFont();
         headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
         headerFont.setFontHeightInPoints((short) 10);
@@ -114,15 +134,31 @@ public class ExcelGenerator {
         headerFont.setColor(IndexedColors.WHITE.getIndex());
         CellStyle headerStyle = workbook.createCellStyle();
         headerStyle.setFont(headerFont);
-        headerStyle.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+        headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
         headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
-        sheet.getRow(0).setRowStyle(headerStyle);
+        // Set header style
+        for (int j=0; j<columns.length; j++) {
+            Cell cell = sheet.getRow(0).getCell(j);
+            cell.setCellStyle(headerStyle);
 
+            if (cell.getCellComment() != null) {
+                String comment = cell.getCellComment().getString().toString();
+
+                if (comment.equals(QueryField.CTX_PRODUCT_ID) || comment.equals(QueryField.CTX_SERIAL_NUMBER) || comment.equals(QueryField.PART_MASTER_NUMBER)) {
+                    for (int k=0; k<queryResult.getRows().size(); k++) {
+                        Cell grayCell = sheet.getRow(k+1).getCell(j) != null ? sheet.getRow(k+1).getCell(j) : sheet.getRow(k+1).createCell(j);
+                        grayCell.setCellStyle(headerStyle);
+                    }
+                }
+            }
+        }
+
+        try {
             //Write the workbook in file system
-        try(FileOutputStream out = new FileOutputStream(excelFile)) {
+            FileOutputStream out = new FileOutputStream(excelFile);
             workbook.write(out);
-
+            out.close();
         } catch (Exception e) {
             LOGGER.log(Level.FINEST, null, e);
         }
@@ -130,15 +166,54 @@ public class ExcelGenerator {
 
     }
 
-    private String[] createXLSRow(QueryResult queryResult, QueryResultRow row, String baseURL) {
+    private String[] createXLSHeaderRow(String header, String[] columns, Locale locale) {
+        LangHelper langHelper = new LangHelper(locale);
+        String[] headerFormatted = new String[header.split(";").length];
+        int headerIndex = 0;
 
-        List<String> selects = queryResult.getQuery().getSelects();
+        for (String column : columns) {
+            String columnTranslated;
+            if (!column.isEmpty()) {
+                if (column.trim().startsWith(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
+                    columnTranslated = column.substring(column.indexOf(".") + 1);
+                }
+                else if (column.trim().startsWith(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)) {
+                    columnTranslated = column.substring(column.indexOf(".") + 1);
+                }
+                else {
+                    columnTranslated = langHelper.getLocalizedMessage(column.trim(), locale);
+                }
+                headerFormatted[headerIndex++] = columnTranslated != null ? columnTranslated : column;
+            }
+        }
+
+        return headerFormatted;
+    }
+
+    private String[] createXLSHeaderRowComments(String header, String[] columns) {
+        String[] headerComments = new String[header.split(";").length];
+        int headerIndex = 0;
+
+        for (String column : columns) {
+            if (column.equals(QueryField.CTX_PRODUCT_ID) || column.equals(QueryField.CTX_SERIAL_NUMBER) || column.equals(QueryField.PART_MASTER_NUMBER)) {
+                headerComments[headerIndex++] = column;
+            } else if (column.startsWith(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
+                headerComments[headerIndex++] = column.substring(0, column.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());
+            } else if (column.startsWith(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)) {
+                headerComments[headerIndex++] = column.substring(0, column.indexOf(".")).substring(QueryField.PATH_DATA_ATTRIBUTES_PREFIX.length());
+            } else {
+                headerComments[headerIndex++] = "";
+            }
+        }
+
+        return headerComments;
+    }
+
+    private String[] createXLSRow(List<String> selects, QueryResultRow row, String baseURL) {
         List<String> data = new ArrayList<>();
-
         PartRevision part = row.getPartRevision();
         PartIteration lastCheckedInIteration = part.getLastCheckedInIteration();
         PartIteration lastIteration = part.getLastIteration();
-
         QueryContext context = row.getContext();
 
         for (String select : selects) {
@@ -228,6 +303,7 @@ public class ExcelGenerator {
                         String attributeSelectName = select.substring(select.indexOf(".") + 1);
                         String attributeValue = "";
                         StringBuilder sbattr = new StringBuilder();
+
                         if (lastIteration != null) {
                             List<InstanceAttribute> attributes = lastIteration.getInstanceAttributes();
                             if (attributes != null) {
@@ -237,7 +313,9 @@ public class ExcelGenerator {
                                             && attributeDescriptor.getStringType().equals(attributeSelectType)) {
 
                                         attributeValue = attribute.getValue() + "";
-                                        if (attribute instanceof InstanceListOfValuesAttribute) {
+                                        if (attributeDescriptor.getType() == InstanceAttributeDescriptor.Type.DATE) {
+                                            attributeValue = attribute.getValue() != null ? attributeDateFormat.format(attribute.getValue()) : "";
+                                        } else if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                         }
                                         sbattr.append(attributeValue + "|");
@@ -257,6 +335,7 @@ public class ExcelGenerator {
                         String attributeValue = "";
                         PathDataIteration pdi = row.getPathDataIteration();
                         StringBuilder sbpdattr = new StringBuilder();
+
                         if (pdi != null) {
                             List<InstanceAttribute> attributes = pdi.getInstanceAttributes();
                             if (attributes != null) {
@@ -266,7 +345,9 @@ public class ExcelGenerator {
                                             && attributeDescriptor.getStringType().equals(attributeSelectType)) {
 
                                         attributeValue = attribute.getValue() + "";
-                                        if (attribute instanceof InstanceListOfValuesAttribute) {
+                                        if (attributeDescriptor.getType() == InstanceAttributeDescriptor.Type.DATE) {
+                                            attributeValue = attribute.getValue() != null ? attributeDateFormat.format(attribute.getValue()) : "";
+                                        } else if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                         }
                                         sbpdattr.append(attributeValue + "|");
@@ -287,4 +368,79 @@ public class ExcelGenerator {
         String rowData = StringUtils.join(data, ";");
         return rowData.split(";");
     }
+
+    private String[] createXLSRowComments(List<String> selects, QueryResultRow row) {
+        List<String> commentsData = new ArrayList<>();
+        PartRevision part = row.getPartRevision();
+        PartIteration lastIteration = part.getLastIteration();
+
+        for (String select : selects) {
+
+            if (select.equals(QueryField.CTX_SERIAL_NUMBER)) {
+                String path = row.getPath();
+                if (path != null && !path.isEmpty()) {
+                    commentsData.add(path);
+                }
+
+            } else if (select.startsWith(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
+                String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());
+                String attributeSelectName = select.substring(select.indexOf(".") + 1);
+                StringBuilder commentsSbattr = new StringBuilder();
+
+                if (lastIteration != null) {
+                    List<InstanceAttribute> attributes = lastIteration.getInstanceAttributes();
+                    if (attributes != null) {
+                        for (InstanceAttribute attribute : attributes) {
+                            InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
+
+                            if (attributeDescriptor.getName().equals(attributeSelectName)
+                                    && attributeDescriptor.getStringType().equals(attributeSelectType)) {
+                                commentsSbattr.append(attribute.getId() + "|");
+                            }
+                        }
+                    }
+                }
+
+                String commentsContent = commentsSbattr.toString().trim();
+                if (commentsContent.length() > 0) {
+                    commentsContent = commentsContent.substring(0, commentsContent.lastIndexOf("|"));
+                }
+                commentsData.add(commentsContent);
+
+            } else if (select.startsWith(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)) {
+                String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PATH_DATA_ATTRIBUTES_PREFIX.length());
+                String attributeSelectName = select.substring(select.indexOf(".") + 1);
+                PathDataIteration pdi = row.getPathDataIteration();
+                StringBuilder commentsSbpattr = new StringBuilder();
+
+                if (pdi != null) {
+                    List<InstanceAttribute> attributes = pdi.getInstanceAttributes();
+                    if (attributes != null) {
+                        for (InstanceAttribute attribute : attributes) {
+                            InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
+
+                            if (attributeDescriptor.getName().equals(attributeSelectName)
+                                    && attributeDescriptor.getStringType().equals(attributeSelectType)) {
+                                commentsSbpattr.append(attribute.getId() + "|");
+                            }
+                        }
+                    }
+                }
+
+                String commentsContent = commentsSbpattr.toString().trim();
+                if (commentsContent.length() > 0) {
+                    commentsContent = commentsContent.substring(0, commentsContent.lastIndexOf("|"));
+                }
+                commentsData.add(commentsContent);
+
+            } else {
+                commentsData.add("");
+            }
+
+        }
+
+        String commentsRowData = StringUtils.join(commentsData, ";");
+        return commentsRowData.split(";");
+    }
+
 }
