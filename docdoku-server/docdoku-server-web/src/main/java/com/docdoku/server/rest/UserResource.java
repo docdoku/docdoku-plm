@@ -94,7 +94,7 @@ public class UserResource {
     public UserDTO[] getReachableUsersForCaller(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException{
 
-        User[] users = documentService.getReachableUsers(workspaceId);
+        User[] users = userManager.getReachableUsers(workspaceId);
         UserDTO[] dtos = new UserDTO[users.length];
 
         for(int i=0; i<users.length; i++){

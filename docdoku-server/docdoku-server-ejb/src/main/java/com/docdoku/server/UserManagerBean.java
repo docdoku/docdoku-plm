@@ -508,4 +508,12 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     public User whoAmI(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         return checkWorkspaceReadAccess(pWorkspaceId);
     }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public User[] getReachableUsers(String workspaceId) throws AccountNotFoundException {
+        String callerLogin = contextManager.getCallerPrincipalLogin();
+        Account account = new AccountDAO(em).loadAccount(callerLogin);
+        return new UserDAO(new Locale(account.getLanguage()), em).findReachableUsersForCaller(callerLogin, workspaceId);
+    }
 }

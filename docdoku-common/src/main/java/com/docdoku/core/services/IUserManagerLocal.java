@@ -77,4 +77,6 @@ public interface IUserManagerLocal{
     User checkWorkspaceWriteAccess(String pWorkspaceId) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException;
 
     UserGroup[] getUserGroupsForUser(UserKey userKey) throws UserNotFoundException;
+
+    User[] getReachableUsers(String workspaceId) throws AccountNotFoundException;
 }
