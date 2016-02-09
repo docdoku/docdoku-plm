@@ -111,7 +111,7 @@ public class ExcelGenerator {
                     anchor.setCol1(cell.getColumnIndex());
                     anchor.setCol2(cell.getColumnIndex()+1);
                     anchor.setRow1(row.getRowNum());
-                    anchor.setRow2(row.getRowNum()+3);
+                    anchor.setRow2(row.getRowNum()+1);
 
                     Comment comment = drawing.createCellComment(anchor);
                     RichTextString str = factory.createRichTextString(commentsObj);
