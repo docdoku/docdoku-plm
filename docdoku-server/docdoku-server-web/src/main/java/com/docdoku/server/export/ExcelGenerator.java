@@ -379,7 +379,13 @@ public class ExcelGenerator {
 
         for (String select : selects) {
 
-            if (select.startsWith(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
+            if (select.equals(QueryField.CTX_SERIAL_NUMBER)) {
+                PathDataIteration pdi = row.getPathDataIteration();
+                if (pdi != null) {
+                    commentsData.add(pdi.getPathDataMaster().getId() + "");
+                }
+
+            } else if (select.startsWith(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
                 String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());
                 String attributeSelectName = select.substring(select.indexOf(".") + 1);
                 StringBuilder commentsSbattr = new StringBuilder();
