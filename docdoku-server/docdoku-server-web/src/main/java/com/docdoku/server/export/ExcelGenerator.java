@@ -139,7 +139,16 @@ public class ExcelGenerator {
 
         // Set header style
         for (int j=0; j<columns.length; j++) {
-            sheet.getRow(0).getCell(j).setCellStyle(headerStyle);
+            Cell cell = sheet.getRow(0).getCell(j);
+            cell.setCellStyle(headerStyle);
+            String comment = cell.getCellComment().getString().toString();
+
+            if (comment.equals(QueryField.CTX_PRODUCT_ID) || comment.equals(QueryField.CTX_SERIAL_NUMBER) || comment.equals(QueryField.PART_MASTER_NUMBER)) {
+                for (int k=0; k<queryResult.getRows().size(); k++) {
+                    Cell grayCell = sheet.getRow(k+1).getCell(j) != null ? sheet.getRow(k+1).getCell(j) : sheet.getRow(k+1).createCell(j);
+                    grayCell.setCellStyle(headerStyle);
+                }
+            }
         }
 
         try {
