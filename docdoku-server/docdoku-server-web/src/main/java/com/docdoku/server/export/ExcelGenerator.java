@@ -105,7 +105,7 @@ public class ExcelGenerator {
             cellnum = 0;
             for (String commentsObj : commentsObjArr) {
                 if (commentsObj.length() > 0) {
-                    Cell cell = row.getCell(cellnum);
+                    Cell cell = row.getCell(cellnum) != null ? row.getCell(cellnum) : row.createCell(cellnum);
 
                     // When the comment box is visible, have it show in a 1x3 space
                     ClientAnchor anchor = factory.createClientAnchor();
@@ -141,12 +141,15 @@ public class ExcelGenerator {
         for (int j=0; j<columns.length; j++) {
             Cell cell = sheet.getRow(0).getCell(j);
             cell.setCellStyle(headerStyle);
-            String comment = cell.getCellComment().getString().toString();
 
-            if (comment.equals(QueryField.CTX_PRODUCT_ID) || comment.equals(QueryField.CTX_SERIAL_NUMBER) || comment.equals(QueryField.PART_MASTER_NUMBER)) {
-                for (int k=0; k<queryResult.getRows().size(); k++) {
-                    Cell grayCell = sheet.getRow(k+1).getCell(j) != null ? sheet.getRow(k+1).getCell(j) : sheet.getRow(k+1).createCell(j);
-                    grayCell.setCellStyle(headerStyle);
+            if (cell.getCellComment() != null) {
+                String comment = cell.getCellComment().getString().toString();
+
+                if (comment.equals(QueryField.CTX_PRODUCT_ID) || comment.equals(QueryField.CTX_SERIAL_NUMBER) || comment.equals(QueryField.PART_MASTER_NUMBER)) {
+                    for (int k=0; k<queryResult.getRows().size(); k++) {
+                        Cell grayCell = sheet.getRow(k+1).getCell(j) != null ? sheet.getRow(k+1).getCell(j) : sheet.getRow(k+1).createCell(j);
+                        grayCell.setCellStyle(headerStyle);
+                    }
                 }
             }
         }
