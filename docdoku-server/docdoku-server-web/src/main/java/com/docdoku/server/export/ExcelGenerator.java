@@ -316,9 +316,7 @@ public class ExcelGenerator {
 
                                         attributeValue = attribute.getValue() + "";
                                         if (attributeDescriptor.getType() == InstanceAttributeDescriptor.Type.DATE) {
-                                            if (attribute.getValue() != null) {
-                                                attributeValue = attributeDateFormat.format(attribute.getValue());
-                                            }
+                                            attributeValue = attribute.getValue() != null ? attributeDateFormat.format(attribute.getValue()) : "";
                                         } else if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                         }
@@ -350,9 +348,7 @@ public class ExcelGenerator {
 
                                         attributeValue = attribute.getValue() + "";
                                         if (attributeDescriptor.getType() == InstanceAttributeDescriptor.Type.DATE) {
-                                            if (attribute.getValue() != null) {
-                                                attributeValue = attributeDateFormat.format(attribute.getValue());
-                                            }
+                                            attributeValue = attribute.getValue() != null ? attributeDateFormat.format(attribute.getValue()) : "";
                                         } else if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                         }
