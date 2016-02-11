@@ -6,7 +6,7 @@
 
     {{#isStringArray}}
     {{#value}}
-    <span class="part_attribute_value well">{{.}}</span>
+    <span class="well">{{.}}</span>
     {{/value}}
     {{/isStringArray}}
 
@@ -18,7 +18,7 @@
 
     {{#isLinkedDocuments}}
     {{#value}}
-        <a target="_blank" class="linkedDocument" href="{{link}}">{{name}}</a>
+        <span class="well"><a target="_blank" class="linkedDocument" href="{{link}}">{{name}}</a></span>
     {{/value}}
     {{/isLinkedDocuments}}
 
