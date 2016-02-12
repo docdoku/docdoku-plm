@@ -18,18 +18,30 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.importers;
+package com.docdoku.server.rest.dto;
 
-import java.io.File;
-import java.util.List;
-import java.util.Map;
+public class AttributesImportDTO {
 
-public interface AttributesImporter {
+    // Includes path
+    private String filename;
+    private String revisionNote;
 
-    Map<String, List<String>> checkPartAttributesImport(String workspaceId, File file);
-    boolean savePartAttributes(String workspaceId, File file, String revisionNote, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate);
+    public AttributesImportDTO() {
+    }
 
-    Map<String, List<String>> checkPathDataAttributesImport(String workspaceId, File file);
-    boolean savePathDataAttributes(String workspaceId, File file, String revisionNote, boolean autoFreezeAfterUpdate, boolean permissiveUpdate);
+    public String getFilename() {
+        return filename;
+    }
 
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public String getRevisionNote() {
+        return revisionNote;
+    }
+
+    public void setRevisionNote(String revisionNote) {
+        this.revisionNote = revisionNote;
+    }
 }
