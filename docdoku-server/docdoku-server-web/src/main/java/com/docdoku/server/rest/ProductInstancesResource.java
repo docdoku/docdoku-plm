@@ -50,7 +50,10 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -71,8 +74,6 @@ public class ProductInstancesResource {
 
     @Inject
     private IPSFilterManagerLocal psFilterService;
-
-
 
     private Mapper mapper;
 
@@ -178,7 +179,7 @@ public class ProductInstancesResource {
             }
         }
 
-        ProductInstanceMaster productInstanceMaster = productInstanceService.updateProductInstance(workspaceId,iteration,productInstanceCreationDTO.getIterationNote(),new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBasedOn().getId(), attributes, links, documentLinkComments);
+        ProductInstanceMaster productInstanceMaster = productInstanceService.updateProductInstance(workspaceId, iteration, productInstanceCreationDTO.getIterationNote(), new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBasedOn().getId(), attributes, links, documentLinkComments);
 
         return mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
     }
@@ -189,7 +190,7 @@ public class ProductInstancesResource {
     public ProductInstanceMasterDTO getProductInstance(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber)
             throws EntityNotFoundException, UserNotActiveException {
 
-        ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,workspaceId,configurationItemId));
+        ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
         ProductInstanceMasterDTO dto = mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
 
@@ -414,7 +415,7 @@ public class ProductInstancesResource {
     @Path("{serialNumber}/pathdata/{pathDataId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deletePathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathDataId") int pathDataId) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
-        productInstanceService.deletePathData(workspaceId,configurationItemId,serialNumber,pathDataId);
+        productInstanceService.deletePathData(workspaceId, configurationItemId, serialNumber, pathDataId);
         return Response.ok().build();
     }
 
@@ -536,7 +537,7 @@ public class ProductInstancesResource {
             }
         }
 
-        PathDataMaster pathDataMaster = productInstanceService.updatePathData(workspaceId, configurationItemId, serialNumber, pathDataIterationCreationDTO.getId(),iteration, attributes, pathDataIterationCreationDTO.getIterationNote(), links, documentLinkComments);
+        PathDataMaster pathDataMaster = productInstanceService.updatePathData(workspaceId, configurationItemId, serialNumber, pathDataIterationCreationDTO.getId(), iteration, attributes, pathDataIterationCreationDTO.getIterationNote(), links, documentLinkComments);
 
 
         PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
@@ -649,6 +650,19 @@ public class ProductInstancesResource {
         return Response.ok(new GenericEntity<List<LightPathToPathLinkDTO>>((List<LightPathToPathLinkDTO>) dtos) {
         }).build();
     }
+
+    @PUT
+    @Path("import-attributes")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response importAttributes(@PathParam("workspaceId") String workspaceId, @QueryParam("autoFreezeAfterUpdate") boolean autoFreezeAfterUpdate, @QueryParam("permissiveUpdate") boolean permissiveUpdate, AttributesImportDTO attributesImportDTO)
+            throws ExecutionException, InterruptedException {
+
+        File file = new File(attributesImportDTO.getFilename());
+        Future<Map<String, List<String>>> importResult = importerService.importPathDataAttributes(workspaceId, file, attributesImportDTO.getRevisionNote(), autoFreezeAfterUpdate, permissiveUpdate);
+        return Response.ok(importResult.get()).build();
+    }
+
 
     private DocumentRevisionKey[] createDocumentRevisionKeys(Set<DocumentRevisionDTO> dtos) {
         DocumentRevisionKey[] data = new DocumentRevisionKey[dtos.size()];

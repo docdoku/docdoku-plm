@@ -17,19 +17,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.docdoku.server;
 
-package com.docdoku.server.importers;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-import java.io.File;
-import java.util.List;
-import java.util.Map;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-public interface AttributesImporter {
-
-    Map<String, List<String>> checkPartAttributesImport(String workspaceId, File file);
-    boolean savePartAttributes(String workspaceId, File file, String revisionNote, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate);
-
-    Map<String, List<String>> checkPathDataAttributesImport(String workspaceId, File file);
-    boolean savePathDataAttributes(String workspaceId, File file, String revisionNote, boolean autoFreezeAfterUpdate, boolean permissiveUpdate);
-
+@Inherited
+@Target({TYPE, METHOD})
+@Retention(RUNTIME)
+public @interface AttributesImport {
 }

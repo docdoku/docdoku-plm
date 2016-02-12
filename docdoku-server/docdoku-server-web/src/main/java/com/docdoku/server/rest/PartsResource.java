@@ -37,6 +37,7 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IImporterManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.export.ExcelGenerator;
@@ -53,8 +54,14 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.io.File;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @RequestScoped
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -69,6 +76,9 @@ public class PartsResource {
 
     @Inject
     private PartResource partResource;
+
+    @EJB
+    private IImporterManagerLocal importerService;
 
     public PartsResource() {
     }
@@ -201,9 +211,8 @@ public class PartsResource {
         QueryResult queryResult = getQueryResult(workspaceId, query, exportType);
         String url = request.getRequestURL().toString();
         String baseURL = url.substring(0, url.length() - request.getRequestURI().length()) + request.getContextPath();
-        return makeQueryResponse(queryResult,locale, baseURL);
+        return makeQueryResponse(queryResult, locale, baseURL);
     }
-
 
     private QueryResult getQueryResult(String workspaceId, Query query, String pExportType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, EntityConstraintException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, NotAllowedException, ConfigurationItemNotFoundException, PartMasterNotFoundException {
         List<PartRevision> partRevisions = productService.searchPartRevisions(workspaceId, query);
@@ -342,6 +351,18 @@ public class PartsResource {
         }
 
         return partsLastIter.toArray(new PartIterationDTO[partsLastIter.size()]);
+    }
+
+    @PUT
+    @Path("import-attributes")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response importAttributes(@PathParam("workspaceId") String workspaceId, @QueryParam("autoCheckout") boolean autoCheckout, @QueryParam("autoCheckin") boolean autoCheckin, @QueryParam("permissiveUpdate") boolean permissiveUpdate, AttributesImportDTO attributesImportDTO)
+            throws ExecutionException, InterruptedException {
+
+        File file = new File(attributesImportDTO.getFilename());
+        Future<Map<String, List<String>>> importResult = importerService.importPartAttributes(workspaceId, file, attributesImportDTO.getRevisionNote(), autoCheckout, autoCheckin, permissiveUpdate);
+        return Response.ok(importResult.get()).build();
     }
 
     /**
