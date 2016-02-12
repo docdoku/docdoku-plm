@@ -207,12 +207,11 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
                     try {
                         ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(queryContext.getSerialNumber(), queryContext.getWorkspaceId(), queryContext.getConfigurationItemId()));
                         ProductInstanceIteration lastIteration = productInstanceMaster.getLastIteration();
-                        ProductBaseline basedOn = lastIteration.getBasedOn();
-                        PartCollection partCollection = basedOn.getPartCollection();
+                        PartCollection partCollection = lastIteration.getPartCollection();
                         BaselinedPart baselinedPart = partCollection.getBaselinedPart(new BaselinedPartKey(partCollection.getId(), queryContext.getWorkspaceId(), part.getPartNumber()));
                         PartIteration targetPart = baselinedPart.getTargetPart();
                         Set<DocumentLink> linkedDocuments = targetPart.getLinkedDocuments();
-                        DocumentCollection documentCollection = basedOn.getDocumentCollection();
+                        DocumentCollection documentCollection = lastIteration.getDocumentCollection();
 
                         for(DocumentLink documentLink:linkedDocuments){
                             DocumentRevision targetDocument = documentLink.getTargetDocument();
