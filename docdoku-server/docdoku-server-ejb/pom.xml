@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.ow2.docdoku</groupId>
+        <groupId>com.docdoku</groupId>
         <artifactId>docdoku-server</artifactId>
         <version>2.5-SNAPSHOT</version>
     </parent>
@@ -17,80 +17,80 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.ow2.docdoku</groupId>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- declare dependency as pom and jar for transitive libs inclusion-->
         <dependency>
-            <groupId>org.ow2.docdoku</groupId>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-converter-step</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.ow2.docdoku</groupId>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-converter-dae</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.ow2.docdoku</groupId>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-converter-all</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.ow2.docdoku</groupId>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-converter-obj</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.ow2.docdoku</groupId>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-converter-ifc</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.ow2.docdoku</groupId>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-converter-catia</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.ow2.docdoku</groupId>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-converter-catia-product</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.ow2.docdoku</groupId>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-ext</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.ow2.docdoku</groupId>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-scorm</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.ow2.docdoku</groupId>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-viewer-image</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.ow2.docdoku</groupId>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-office-doc</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.ow2.docdoku</groupId>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-viewer-multimedia</artifactId>
             <version>${project.version}</version>
             <type>jar</type>

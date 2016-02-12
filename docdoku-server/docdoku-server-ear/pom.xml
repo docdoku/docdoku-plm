@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.ow2.docdoku</groupId>
+        <groupId>com.docdoku</groupId>
         <artifactId>docdoku-server</artifactId>
         <version>2.5-SNAPSHOT</version>
     </parent>
@@ -49,12 +49,12 @@
                     <generateApplicationXml>true</generateApplicationXml>
                     <modules>
                         <ejbModule>
-                            <groupId>org.ow2.docdoku</groupId>
+                            <groupId>com.docdoku</groupId>
                             <artifactId>docdoku-server-ejb</artifactId>
                             <bundleFileName>docdoku-server-ejb.jar</bundleFileName>
                         </ejbModule>
                         <webModule>
-                            <groupId>org.ow2.docdoku</groupId>
+                            <groupId>com.docdoku</groupId>
                             <artifactId>docdoku-server-web</artifactId>
                             <contextRoot>${server.contextRoot}</contextRoot>
                             <bundleFileName>docdoku-server-web.war</bundleFileName>
@@ -68,13 +68,13 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>org.ow2.docdoku</groupId>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-ejb</artifactId>
             <version>${project.version}</version>
             <type>ejb</type>
         </dependency>
         <dependency>
-            <groupId>org.ow2.docdoku</groupId>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-web</artifactId>
             <version>${project.version}</version>
             <type>war</type>

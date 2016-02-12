@@ -24,7 +24,6 @@ import com.docdoku.core.product.PartLinkList;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.TaskModel;
 import com.docdoku.core.workflow.WorkflowModel;
-import org.apache.commons.lang.StringUtils;
 
 import javax.swing.text.MaskFormatter;
 import java.text.Normalizer;
@@ -261,17 +260,18 @@ public class Tools {
                     componentNumbers.add(linkAsString);
                 }
 
-                String join = StringUtils.join(componentNumbers, joinWith);
+
+                String join = String.join(joinWith,componentNumbers);
                 pathStrings.add(type + ": " + join);
                 componentNumbers.clear();
             }
 
-            String typeLines = StringUtils.join(pathStrings, "\n");
+            String typeLines = String.join("\n", pathStrings);
             typeStrings.add(typeLines);
             pathStrings.clear();
         }
 
-        String fullString = StringUtils.join(typeStrings, "\n");
+        String fullString = String.join("\n", typeStrings);
         typeStrings.clear();
 
         return fullString;

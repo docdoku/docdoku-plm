@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
+        <groupId>com.docdoku</groupId>
         <artifactId>docdoku-server</artifactId>
-        <groupId>org.ow2.docdoku</groupId>
         <version>2.5-SNAPSHOT</version>
     </parent>
     <artifactId>docdoku-server-ext</artifactId>
@@ -13,7 +13,7 @@
     <name>docdoku-server-ext Java EE 7 Extensions API</name>
     <dependencies>
         <dependency>
-            <groupId>org.ow2.docdoku</groupId>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
