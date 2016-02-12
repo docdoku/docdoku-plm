@@ -41,6 +41,7 @@ public class ServiceLocator {
     private static final String SHARE_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/ShareManagerBean!com.docdoku.core.services.IShareManagerLocal";
     private static final String PART_WORKFLOW_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/PartWorkflowManagerBean!com.docdoku.core.services.IPartWorkflowManagerLocal";
     private static final String DOCUMENT_WORKFLOW_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/DocumentWorkflowManagerBean!com.docdoku.core.services.IDocumentWorkflowManagerLocal";
+    private static final String CASCADE_ACTION_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/CascadeActionManagerBean!com.docdoku.core.services.ICascadeActionManagerLocal";
 
     private static final Logger LOGGER = Logger.getLogger(ServiceLocator.class.getName());
 
@@ -98,5 +99,10 @@ public class ServiceLocator {
         return (IDocumentWorkflowManagerLocal) context.lookup(DOCUMENT_WORKFLOW_MANAGER);
     }
 
+    @InternalService
+    @Produces
+    public ICascadeActionManagerLocal findCascadeActionManager() throws NamingException {
+        return (ICascadeActionManagerLocal) context.lookup(CASCADE_ACTION_MANAGER);
+    }
 
 }

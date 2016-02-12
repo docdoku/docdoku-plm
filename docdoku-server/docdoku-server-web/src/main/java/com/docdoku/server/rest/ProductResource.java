@@ -34,6 +34,7 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IPSFilterManagerLocal;
+import com.docdoku.core.services.ICascadeActionManagerLocal;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.collections.InstanceCollection;
@@ -73,6 +74,8 @@ public class ProductResource {
 
     @Inject
     private IProductBaselineManagerLocal productBaselineService;
+    @Inject
+    private ICascadeActionManagerLocal cascadeActionService;
 
     @Inject
     private IPSFilterManagerLocal psFilterService;
@@ -598,7 +601,7 @@ public class ProductResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response cascadeCheckout(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        CascadeResult cascadeResult = productService.cascadeCheckout(ciKey,path);
+        CascadeResult cascadeResult = cascadeActionService.cascadeCheckout(ciKey,path);
         return Response.ok(cascadeResult).build();
     }
 
@@ -608,7 +611,7 @@ public class ProductResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response cascadeCheckin(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path, IterationNoteDTO iterationNoteDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        CascadeResult cascadeResult = productService.cascadeCheckin(ciKey,path, iterationNoteDTO.getIterationNote());
+        CascadeResult cascadeResult = cascadeActionService.cascadeCheckin(ciKey,path, iterationNoteDTO.getIterationNote());
         return Response.ok(cascadeResult).build();
     }
 
@@ -617,7 +620,7 @@ public class ProductResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response cascadeUndocheckout(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        CascadeResult cascadeResult = productService.cascadeUndocheckout(ciKey,path);
+        CascadeResult cascadeResult = cascadeActionService.cascadeUndocheckout(ciKey,path);
         return Response.ok(cascadeResult).build();
     }
 

@@ -2390,67 +2390,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
-    @Override
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    public CascadeResult cascadeCheckout(ConfigurationItemKey configurationItemKey, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
-        CascadeResult cascadeResult = new CascadeResult();
-            List<PartRevision> partRevisions = getWritablePartRevisionsFromPath(configurationItemKey,path);
-        for(PartRevision pr : partRevisions) {
-            try {
-                checkOutPart(pr.getKey());
-                cascadeResult.incSucceedAttempts();
-            } catch (PartRevisionNotFoundException | AccessRightException  | NotAllowedException | FileAlreadyExistsException | CreationException e) {
-                cascadeResult.incFailedAttempts();
-                LOGGER.log(Level.SEVERE,null,e);
-            }
-        }
-        return cascadeResult;
-    }
 
-    @Override
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    public CascadeResult cascadeUndocheckout(ConfigurationItemKey configurationItemKey, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
-        CascadeResult cascadeResult = new CascadeResult();
-        List<PartRevision> partRevisions = getWritablePartRevisionsFromPath(configurationItemKey, path);
-        for(PartRevision pr : partRevisions) {
-            try {
-                undoCheckOutPart(pr.getKey());
-                cascadeResult.incSucceedAttempts();
-            } catch (PartRevisionNotFoundException | AccessRightException  | NotAllowedException  e) {
-                cascadeResult.incFailedAttempts();
-                LOGGER.log(Level.SEVERE,null,e);
-            }
-        }
-        return cascadeResult;
-    }
-
-    @Override
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    public CascadeResult cascadeCheckin(ConfigurationItemKey configurationItemKey, String path, String iterationNote) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
-
-        CascadeResult cascadeResult = new CascadeResult();
-        List<PartRevision> partRevisions = getWritablePartRevisionsFromPath(configurationItemKey, path);
-        for(PartRevision pr : partRevisions) {
-            try {
-                // Set the iteration note only if param is set and part has no iteration note
-                if( (iterationNote != null && iterationNote.isEmpty()) && (null == pr.getLastIteration().getIterationNote() && pr.getLastIteration().getIterationNote().isEmpty())){
-                    updatePartIteration(pr.getLastIteration().getKey(), iterationNote, null, null, null, null, null, null, null);
-                }
-
-                checkInPart(pr.getKey());
-                cascadeResult.incSucceedAttempts();
-
-            } catch (PartRevisionNotFoundException | AccessRightException  | NotAllowedException | ESServerException | ListOfValuesNotFoundException e) {
-                cascadeResult.incFailedAttempts();
-                LOGGER.log(Level.SEVERE,null,e);
-            }
-        }
-        return cascadeResult;
-    }
-
-    private List<PartRevision> getWritablePartRevisionsFromPath(ConfigurationItemKey configurationItemKey, String path) throws EntityConstraintException, PartMasterNotFoundException, NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+        @Override
+        @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+        public Set<PartRevision> getWritablePartRevisionsFromPath(ConfigurationItemKey configurationItemKey, String path) throws EntityConstraintException, PartMasterNotFoundException, NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
-        List<PartRevision> partRevisions = new ArrayList<>();
+        Set<PartRevision> partRevisions = new HashSet<>();
         PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em,user,new WIPPSFilter(user)) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
@@ -2493,9 +2438,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     if(!hasPartOrWorkspaceWriteAccess(user,pm.getLastRevision())) {
                         return true;
                     }
-                    if(!partRevisions.contains(pm.getLastRevision())) {
-                        partRevisions.add(pm.getLastRevision());
-                    }
+                    partRevisions.add(pm.getLastRevision());
 
                 } catch (WorkspaceNotFoundException e) {
                     LOGGER.log(Level.SEVERE, "Could not check access to part revision",e);
