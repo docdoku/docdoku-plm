@@ -413,8 +413,23 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
                         onSuccessLoadPath(instances);
                         callback();
                     }
+
                 });
 
+            };
+
+            this.computeGlobalBBox = function(){
+
+                var box = new THREE.Box3(new THREE.Vector3(0,0,0),new THREE.Vector3(0,0,0));
+
+                _.each(instancesIndexed, function (instance) {
+                    var min = new THREE.Vector3(instance.xMin, instance.yMin, instance.zMin);
+                    var max = new THREE.Vector3(instance.xMax, instance.yMax, instance.zMax);
+                    var instanceBox = new THREE.Box3(min, max).applyMatrix4(instance.matrix);
+                    box.union(instanceBox);
+                });
+
+                return box;
             };
 
         };
