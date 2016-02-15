@@ -34,6 +34,7 @@ define({
 	BASELINE_DELETION_ERROR:"Cannot delete baseline : ",
 	BASELINE_OF: 'Baseline of',
 	BASELINES: "Baselines",
+    BEST_FIT_VIEW:"Best fit view",
 	BLOCKER_TEXT: "(Z, Q, S, D = Move, SPACE = Up, CTRL = Down, MOUSE = Look around, ESC = Quit)",
 	BLOCKER_TITLE: "Click to launch the scene",
 	BOM_VIEW: "Components View",
