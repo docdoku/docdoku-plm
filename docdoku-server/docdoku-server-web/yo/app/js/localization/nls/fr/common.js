@@ -41,6 +41,7 @@ define({
 	BASELINE_DELETION_ERROR:"Impossible de supprimer la baseline : ",
 	BASELINE_OF: 'Baseline de',
 	BASELINES: "Baselines",
+    BEST_FIT_VIEW:"Meilleure vue",
 	BLOCKER_TEXT: "(Z, Q, S, D = Déplacer, ESPACE = Haut, CTRL = Bas, SOURIS = Regarder autour, ECHAP = Quitter)",
 	BLOCKER_TITLE: "Cliquez pour lancer la visualisation",
 	BOM_VIEW: "Visualiser structure produit",

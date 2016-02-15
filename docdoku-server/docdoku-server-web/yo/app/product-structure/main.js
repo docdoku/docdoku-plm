@@ -30,7 +30,7 @@ var App = {
     WorkerManagedValues: {
         maxInstances: 500,
         maxAngle: Math.PI / 2,
-        maxDist: 100000,
+        maxDist: 5E10,
         minProjectedSize: 0.000001,//100,
         distanceRating: 0.6,//0.7,
         angleRating: 0.4,//0.6,//0.5,

@@ -632,9 +632,7 @@ define([
                 .to({x: endTarPos.x, y: endTarPos.y, z: endTarPos.z}, duration)
                 .interpolation(TWEEN.Interpolation.CatmullRom)
                 .easing(TWEEN.Easing.Quintic.InOut)
-                .onUpdate(function () {
-                    _this.reDraw();
-                })
+                .onUpdate(_this.reDraw)
                 .start();
 
             if (position) {
@@ -646,9 +644,7 @@ define([
                     .to({x: endCamPos.x, y: endCamPos.y, z: endCamPos.z}, duration)
                     .interpolation(TWEEN.Interpolation.CatmullRom)
                     .easing(TWEEN.Easing.Quintic.InOut)
-                    .onUpdate(function () {
-                        _this.reDraw();
-                    })
+                    .onUpdate(_this.reDraw)
                     .start();
             }
         }
@@ -674,27 +670,20 @@ define([
                     .to({x: endTarPos.x, y: endTarPos.y, z: endTarPos.z}, duration)
                     .interpolation(TWEEN.Interpolation.CatmullRom)
                     .easing(TWEEN.Easing.Linear.None)
-                    .onUpdate(function () {
-                        _this.reDraw();
-                    })
-                ;
+                    .onUpdate(_this.reDraw);
 
 
             var tween2 = new TWEEN.Tween(curCamPos)
                 .to({x: endCamPos.x, y: endCamPos.y, z: endCamPos.z}, duration)
                 .interpolation(TWEEN.Interpolation.CatmullRom)
                 .easing(TWEEN.Easing.Linear.None)
-                .onUpdate(function () {
-                    _this.reDraw();
-                });
+                .onUpdate(_this.reDraw);
 
             var tween3 = new TWEEN.Tween(curCamUp)
                 .to({x: camUp.x, y: camUp.y, z: camUp.z}, duration)
                 .interpolation(TWEEN.Interpolation.CatmullRom)
                 .easing(TWEEN.Easing.Linear.None)
-                .onUpdate(function () {
-                    _this.reDraw();
-                });
+                .onUpdate(_this.reDraw);
 
             tween1.start();
             tween2.start();
@@ -1245,6 +1234,28 @@ define([
                 _this.drawMeasure([point0, point1]);
             });
         };
+
+        this.bestFitView = function(){
+
+            var box = App.instancesManager.computeGlobalBBox();
+            var size = box.size();
+
+            if(size.length()){
+                var cog = box.center().clone();
+                var radius = Math.max(size.x, size.y, size.z);
+                var camera = _this.cameraObject;
+                var dir = new THREE.Vector3().copy(cog).sub(camera.position).normalize();
+                var distance = radius ? radius / 2  : 1000;
+                distance = distance < App.SceneOptions.cameraNear ? App.SceneOptions.cameraNear + 100 : distance;
+                var endCamPos = new THREE.Vector3().copy(cog).sub(dir.multiplyScalar(distance));
+                cameraAnimation(cog, 2000, endCamPos);
+                _this.cameraObject.far = radius * 2;
+
+                _this.cameraObject.updateProjectionMatrix();
+            }
+
+        };
+
     };
 
     return SceneManager;
