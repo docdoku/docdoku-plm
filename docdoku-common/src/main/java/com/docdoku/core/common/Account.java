@@ -20,13 +20,9 @@
 
 package com.docdoku.core.common;
 
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The Account class holds personal user data applicable inside the whole application.
@@ -41,7 +37,6 @@ import java.util.logging.Logger;
 @javax.persistence.Entity
 public class Account implements Serializable, Cloneable {
 
-    private static final Logger LOGGER = Logger.getLogger(Account.class.getName());
 
     @javax.persistence.Id
     private String login="";
@@ -103,10 +98,10 @@ public class Account implements Serializable, Cloneable {
     }
 
     public void setCreationDate(Date pCreationDate) {
-        creationDate = (pCreationDate!=null) ? (Date) pCreationDate.clone() : null;
+        creationDate = pCreationDate;
     }
     public Date getCreationDate() {
-        return (creationDate!=null) ? (Date) creationDate.clone() : null;
+        return creationDate;
     }
 
     @Override
@@ -140,7 +135,6 @@ public class Account implements Serializable, Cloneable {
         try {
             clone = (Account) super.clone();
         } catch (CloneNotSupportedException e) {
-            LOGGER.log(Level.WARNING,"CloneNotSupportedException on cloning account : "+this.getLogin(),e);
             throw new InternalError();
         }
         clone.creationDate = (Date) creationDate.clone();
