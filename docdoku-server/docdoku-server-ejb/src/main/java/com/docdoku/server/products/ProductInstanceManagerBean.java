@@ -690,7 +690,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
         BinaryResource binaryResource = binDAO.loadBinaryResource(fullName);
 
-        ProductInstanceIteration productInstanceIteration = binDAO.getProductInstanceIterationOwner(binaryResource);
+        ProductInstanceIteration productInstanceIteration = binDAO.getProductInstanceIterationHolder(binaryResource);
         if (productInstanceIteration != null) {
             ProductInstanceMaster productInstanceMaster = productInstanceIteration.getProductInstanceMaster();
 
@@ -945,7 +945,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
         BinaryResource binaryResource = binDAO.loadBinaryResource(fullName);
 
-        PathDataIteration pathDataIteration = binDAO.getPathDataOwner(binaryResource);
+        PathDataIteration pathDataIteration = binDAO.getPathDataHolder(binaryResource);
         PathDataMaster pathDataMaster = pathDataIteration.getPathDataMaster();
         PathDataMasterDAO pathDataMasterDAO = new PathDataMasterDAO(userLocale, em);
 

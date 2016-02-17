@@ -88,11 +88,12 @@ public class BinaryResourceDAO {
 
     }
 
-    public PartIteration getPartOwner(BinaryResource pBinaryResource) {
+    public PartIteration getPartHolder(BinaryResource pBinaryResource) {
         TypedQuery<PartIteration> query;
+        String fileType = pBinaryResource.getFileType();
         if(pBinaryResource instanceof Geometry){
             query = em.createQuery("SELECT p FROM PartIteration p WHERE :binaryResource MEMBER OF p.geometries", PartIteration.class);
-        }else if(pBinaryResource.isNativeCADFile()){
+        }else if("nativecad".equals(fileType)){
             query = em.createQuery("SELECT p FROM PartIteration p WHERE p.nativeCADFile = :binaryResource", PartIteration.class);
         }else{
             query = em.createQuery("SELECT p FROM PartIteration p WHERE :binaryResource MEMBER OF p.attachedFiles", PartIteration.class);
@@ -105,7 +106,7 @@ public class BinaryResourceDAO {
         }
     }
     
-    public DocumentIteration getDocumentOwner(BinaryResource pBinaryResource) {
+    public DocumentIteration getDocumentHolder(BinaryResource pBinaryResource) {
         TypedQuery<DocumentIteration> query = em.createQuery("SELECT d FROM DocumentIteration d WHERE :binaryResource MEMBER OF d.attachedFiles", DocumentIteration.class);
         try {
             return query.setParameter("binaryResource", pBinaryResource).getSingleResult();
@@ -114,7 +115,7 @@ public class BinaryResourceDAO {
             return null;
         }
     }
-    public ProductInstanceIteration getProductInstanceIterationOwner(BinaryResource pBinaryResource) {
+    public ProductInstanceIteration getProductInstanceIterationHolder(BinaryResource pBinaryResource) {
         TypedQuery<ProductInstanceIteration> query = em.createQuery("SELECT d FROM ProductInstanceIteration d WHERE :binaryResource MEMBER OF d.attachedFiles", ProductInstanceIteration.class);
         try {
             return query.setParameter("binaryResource", pBinaryResource).getSingleResult();
@@ -124,7 +125,7 @@ public class BinaryResourceDAO {
         }
     }
 
-    public PathDataIteration getPathDataOwner(BinaryResource pBinaryResource) {
+    public PathDataIteration getPathDataHolder(BinaryResource pBinaryResource) {
         TypedQuery<PathDataIteration> query = em.createQuery("SELECT p FROM PathDataIteration p WHERE :binaryResource MEMBER OF p.attachedFiles", PathDataIteration.class);
         try {
             return query.setParameter("binaryResource", pBinaryResource).getSingleResult();
@@ -135,7 +136,7 @@ public class BinaryResourceDAO {
     }
 
 
-    public DocumentMasterTemplate getDocumentTemplateOwner(BinaryResource pBinaryResource) {
+    public DocumentMasterTemplate getDocumentTemplateHolder(BinaryResource pBinaryResource) {
         TypedQuery<DocumentMasterTemplate> query = em.createQuery("SELECT t FROM DocumentMasterTemplate t WHERE :binaryResource MEMBER OF t.attachedFiles", DocumentMasterTemplate.class);
         try {
             return query.setParameter("binaryResource", pBinaryResource).getSingleResult();
@@ -145,7 +146,7 @@ public class BinaryResourceDAO {
         }
     }
 
-    public PartMasterTemplate getPartTemplateOwner(BinaryResource pBinaryResource) {
+    public PartMasterTemplate getPartTemplateHolder(BinaryResource pBinaryResource) {
         TypedQuery<PartMasterTemplate> query = em.createQuery("SELECT t FROM PartMasterTemplate t WHERE t.attachedFile = :binaryResource", PartMasterTemplate.class);
         try {
             return query.setParameter("binaryResource", pBinaryResource).getSingleResult();
@@ -165,5 +166,16 @@ public class BinaryResourceDAO {
         }
     }
 
+
+
+    private boolean isNativeCADFile(String pFullName){
+        String[] parts = pFullName.split("/");
+        return parts.length==7 && "nativecad".equals(parts[5]);
+    }
+
+    private boolean isAttachedFile(String pFullName) {
+        String[] parts = pFullName.split("/");
+        return parts.length==7 && "attachedfiles".equals(parts[5]);
+    }
 
 }

@@ -172,7 +172,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
         BinaryResource binaryResource = binDAO.loadBinaryResource(pFullName);
 
-        DocumentIteration document = binDAO.getDocumentOwner(binaryResource);
+        DocumentIteration document = binDAO.getDocumentHolder(binaryResource);
         if (document != null) {
             DocumentRevision docR = document.getDocumentRevision();
 
@@ -1215,7 +1215,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
-        DocumentIteration document = binDAO.getDocumentOwner(file);
+        DocumentIteration document = binDAO.getDocumentHolder(file);
         DocumentRevision docR = document.getDocumentRevision();
 
         //check access rights on docR
@@ -1256,7 +1256,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         }catch(FileNotFoundException e){
 
-            DocumentIteration document = binDAO.getDocumentOwner(file);
+            DocumentIteration document = binDAO.getDocumentHolder(file);
             DocumentRevision docR = document.getDocumentRevision();
 
             //check access rights on docR
@@ -1285,7 +1285,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
-        DocumentMasterTemplate template = binDAO.getDocumentTemplateOwner(file);
+        DocumentMasterTemplate template = binDAO.getDocumentTemplateHolder(file);
         checkDocumentTemplateWriteAccess(template, user);
 
         template.removeFile(file);
@@ -1313,7 +1313,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             binDAO.loadBinaryResource(file.getNewFullName(pNewName));
             throw new FileAlreadyExistsException(userLocale, pNewName);
         }catch(FileNotFoundException e){
-            DocumentMasterTemplate template = binDAO.getDocumentTemplateOwner(file);
+            DocumentMasterTemplate template = binDAO.getDocumentTemplateHolder(file);
 
             checkDocumentTemplateWriteAccess(template, user);
 

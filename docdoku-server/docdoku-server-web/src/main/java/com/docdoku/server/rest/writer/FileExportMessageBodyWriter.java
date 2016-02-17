@@ -90,7 +90,8 @@ public class FileExportMessageBodyWriter implements MessageBodyWriter<FileExport
                 List<BinaryResource> baselinedSources = productService.getBinaryResourceFromBaseline(fileExportEntity.getBaselineId());
 
                 for (BinaryResource binaryResource : baselinedSources) {
-                    String folderName = BinaryResource.getFolderName(binaryResource.getFullName());
+                    String[] parts = binaryResource.getFullName().split("/");
+                    String folderName= parts[2] + "-" + parts[3] + "-" + parts[4];
                     baselinedSourcesName.add(folderName);
                     addToZipFile(binaryResource, "links/" + folderName, zs);
                 }
@@ -103,13 +104,8 @@ public class FileExportMessageBodyWriter implements MessageBodyWriter<FileExport
 
                 for (BinaryResource binaryResource : files) {
                     try {
-                        if (binaryResource.isNativeCADFile()) {
-                            folderName = partNumberFolderName + "/nativecad";
-                        } else if (binaryResource.isAttachedFile()) {
-                            folderName = partNumberFolderName + "/attachedfiles";
-                        } else {
-                            folderName = partNumberFolderName;
-                        }
+                        String fileType=binaryResource.getFileType();
+                        folderName = partNumberFolderName + (fileType==null?"":"/"+fileType);
                         addToZipFile(binaryResource, folderName, zs);
 
                     } catch (StorageException e) {

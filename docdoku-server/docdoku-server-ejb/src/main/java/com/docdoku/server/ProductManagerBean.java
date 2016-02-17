@@ -552,7 +552,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
         BinaryResource binaryResource = binDAO.loadBinaryResource(pFullName);
 
-        PartIteration partIte = binDAO.getPartOwner(binaryResource);
+        PartIteration partIte = binDAO.getPartHolder(binaryResource);
         if (partIte != null) {
             PartRevision partR = partIte.getPartRevision();
 
@@ -1103,7 +1103,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         if (br == null) {
             return null;
         }
-        String partNumber = br.getOwnerId();
+        String partNumber = br.getHolderId();
         PartMasterKey partMasterKey = new PartMasterKey(workspaceId, partNumber);
         try {
             return new PartMasterDAO(locale, em).loadPartM(partMasterKey);
@@ -1452,7 +1452,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
-        PartIteration partIteration = binDAO.getPartOwner(file);
+        PartIteration partIteration = binDAO.getPartHolder(file);
 
         PartRevision partR = partIteration.getPartRevision();
 
@@ -1850,7 +1850,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
-        PartMasterTemplate template = binDAO.getPartTemplateOwner(file);
+        PartMasterTemplate template = binDAO.getPartTemplateHolder(file);
         checkPartTemplateWriteAccess(template, user);
 
         template.setAttachedFile(null);
@@ -1874,7 +1874,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
-        PartMasterTemplate template = binDAO.getPartTemplateOwner(file);
+        PartMasterTemplate template = binDAO.getPartTemplateHolder(file);
 
         checkPartTemplateWriteAccess(template, user);
 
@@ -3492,7 +3492,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             User user = userManager.checkWorkspaceReadAccess(binaryResource.getWorkspaceId());
             binaryResourceDAO = new BinaryResourceDAO(new Locale(user.getLanguage()),em);
         }
-        return binaryResourceDAO.getPartOwner(binaryResource);
+        return binaryResourceDAO.getPartHolder(binaryResource);
     }
 
     private void checkCyclicPathToPathLink(ConfigurationItem ci, PathToPathLink startLink, User user, List<PathToPathLink> visitedLinks) throws PathToPathCyclicException {

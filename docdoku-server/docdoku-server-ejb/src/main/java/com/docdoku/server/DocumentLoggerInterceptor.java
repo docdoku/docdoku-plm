@@ -60,7 +60,7 @@ public class DocumentLoggerInterceptor implements Serializable{
                 String userLogin = ejbCtx.getCallerPrincipal().toString();
                 BinaryResourceDAO binDAO = new BinaryResourceDAO(em);
                 BinaryResource file = binDAO.loadBinaryResource(fullName);
-                DocumentIteration document = binDAO.getDocumentOwner(file);
+                DocumentIteration document = binDAO.getDocumentHolder(file);
                 if (document != null) {
                     DocumentLog log = new DocumentLog();
                     log.setUserLogin(userLogin);

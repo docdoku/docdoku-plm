@@ -70,7 +70,7 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
                 inputStream = getPdfConvertedResource(binaryResource);
             }
 
-            if ("documents".equals(binaryResource.getOwnerType()) && docI != null){
+            if ("documents".equals(binaryResource.getHolderType()) && docI != null){
                 return TitleBlockGenerator.addBlockTitleToPDF(inputStream, docI, locale);
             }
 
@@ -89,7 +89,7 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
                 inputStream = getPdfConvertedResource(binaryResource);
             }
 
-            if("parts".equals(binaryResource.getOwnerType()) && partIteration != null) {
+            if("parts".equals(binaryResource.getHolderType()) && partIteration != null) {
                 return TitleBlockGenerator.addBlockTitleToPDF(inputStream,partIteration,locale);
             }
 
