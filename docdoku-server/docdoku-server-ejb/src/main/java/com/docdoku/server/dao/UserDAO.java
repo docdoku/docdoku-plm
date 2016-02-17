@@ -54,7 +54,7 @@ public class UserDAO {
     public User loadUser(UserKey pUserKey) throws UserNotFoundException {
         User user = em.find(User.class, pUserKey);
         if (user == null) {
-            throw new UserNotFoundException(mLocale, pUserKey.getLogin());
+            throw new UserNotFoundException(mLocale, pUserKey.getAccount());
         } else {
             return user;
         }

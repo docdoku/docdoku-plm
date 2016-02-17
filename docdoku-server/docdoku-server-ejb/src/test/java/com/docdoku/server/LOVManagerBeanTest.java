@@ -66,7 +66,7 @@ public class LOVManagerBeanTest extends LOVManagerBean {
         initMocks(this);
         account = new Account(USER_LOGIN, USER_NAME, USER_MAIL, USER_LANGUAGE, new Date(), null);
         workspace = new Workspace(WORKSPACE_ID,account, "pDescription", false);
-        user = new User(workspace, USER_LOGIN , USER_LOGIN, USER_MAIL,USER_LANGUAGE);
+        user = new User(workspace, new Account(USER_LOGIN, USER_LOGIN, USER_MAIL,USER_LANGUAGE, new Date(), null));
     }
 
     @Test

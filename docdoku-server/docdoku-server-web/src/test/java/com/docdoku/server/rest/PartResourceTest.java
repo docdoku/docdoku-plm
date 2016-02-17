@@ -20,6 +20,7 @@
 
 package com.docdoku.server.rest;
 
+import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.product.PartMaster;
@@ -39,6 +40,7 @@ import org.mockito.*;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -61,7 +63,7 @@ public class PartResourceTest {
     @Spy
     Workspace workspace = new Workspace();
     @Spy
-    private User user = new User(workspace, "login", "user", "@docdoku.com", "en");
+    private User user = new User(workspace, new Account("login", "user", "@docdoku.com", "en", new Date(),null));
     @Spy
     private PartMaster partMaster = new PartMaster(workspace, "partNumber", user);
     @Spy

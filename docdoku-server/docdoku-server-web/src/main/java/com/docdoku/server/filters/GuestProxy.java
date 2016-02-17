@@ -98,7 +98,7 @@ public class GuestProxy{
     }
 
     public User whoAmI() {
-       return new User("en");
+       return new User();
     }
 
     public BinaryResource getBinaryResourceForSharedDocument(String fullName) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, UserNotActiveException {

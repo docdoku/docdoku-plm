@@ -89,16 +89,6 @@ public class AccountManagerBean implements IAccountManagerLocal, IAccountManager
         if (pPassword != null) {
             accountDAO.updateCredential(account.getLogin(), pPassword);
         }
-
-        // Sync user data in workspaces
-        UserDAO userDAO = new UserDAO(new Locale(pLanguage), em);
-        User[] users = userDAO.getUsers(account.getLogin());
-
-        for (User user : users) {
-            user.setEmail(pEmail);
-            user.setLanguage(pLanguage);
-            user.setName(pName);
-        }
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})

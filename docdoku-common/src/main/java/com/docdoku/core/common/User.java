@@ -20,8 +20,7 @@
 
 package com.docdoku.core.common;
 
-import javax.persistence.FetchType;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -36,66 +35,45 @@ import java.io.Serializable;
 @javax.persistence.Entity
 public class User implements Serializable, Cloneable {
 
-    private String name;
-    private String email;
-    private String language;
-    @javax.persistence.Column(name = "WORKSPACE_ID", length = 100, nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
+    @Column(name = "WORKSPACE_ID", nullable = false, insertable = false, updatable = false)
     private String workspaceId = "";
-    @javax.persistence.Id
+
+    @Column(name = "LOGIN", nullable = false, insertable = false, updatable = false)
     private String login = "";
-    @javax.persistence.ManyToOne(optional = false, fetch = FetchType.EAGER)
+
+    @Id
+    @JoinColumn(name = "LOGIN")
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    private Account account;
+
+    @Id
+    @JoinColumn(name = "WORKSPACE_ID")
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Workspace workspace;
 
     public User() {
     }
 
-    public User(Workspace pWorkspace, String pLogin) {
-        this(pWorkspace, pLogin, null, null, null);
-    }
-
-    public User(Workspace pWorkspace, String pLogin, String pName, String pEmail, String pLanguage) {
+    public User(Workspace pWorkspace, Account pAccount) {
         setWorkspace(pWorkspace);
-        login = pLogin;
-        name = pName;
-        email = pEmail;
-        language = pLanguage;
+        setAccount(pAccount);
     }
 
-    public User(String pLanguage){
-        language = pLanguage;
-    }
 
     public String getLogin() {
         return login;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
     public String getName() {
-        return name;
-    }
-
-    public void setName(String pName) {
-        name = pName;
-    }
-
-    public void setEmail(String pEmail) {
-        email = pEmail;
+        return account==null?null:account.getName();
     }
 
     public String getEmail() {
-        return email;
-    }
-
-    public void setLanguage(String pLanguage) {
-        language = pLanguage;
+        return account==null?null:account.getEmail();
     }
 
     public String getLanguage() {
-        return language;
+        return account==null?null:account.getLanguage();
     }
 
     public boolean isAdministrator() {
@@ -106,6 +84,16 @@ public class User implements Serializable, Cloneable {
         return new UserKey(workspaceId, login);
     }
 
+    public void setAccount(Account pAccount) {
+        account = pAccount;
+        login = pAccount.getLogin();
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+
     public void setWorkspace(Workspace pWorkspace) {
         workspace = pWorkspace;
         workspaceId = workspace.getId();
@@ -114,6 +102,7 @@ public class User implements Serializable, Cloneable {
     public Workspace getWorkspace() {
         return workspace;
     }
+
 
     public String getWorkspaceId() {
         return workspaceId;

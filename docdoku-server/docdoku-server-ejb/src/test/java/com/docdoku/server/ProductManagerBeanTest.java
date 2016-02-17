@@ -102,8 +102,8 @@ public class ProductManagerBeanTest {
         initMocks(this);
         account = new Account(ProductUtil.USER_2_LOGIN, ProductUtil.USER_2_NAME, ProductUtil.USER_1_MAIL, ProductUtil.USER_1_LANGUAGE, new Date(), null);
         workspace = new Workspace(ProductUtil.WORKSPACE_ID,account, "pDescription", false);
-        user = new User(workspace, ProductUtil.USER_1_LOGIN , ProductUtil.USER_1_LOGIN, ProductUtil.USER_1_MAIL,ProductUtil.USER_1_LANGUAGE);
-        user2 = new User(workspace, ProductUtil.USER_2_LOGIN , ProductUtil.USER_2_LOGIN, ProductUtil.USER_2_MAIL,ProductUtil.USER_2_LANGUAGE);
+        user = new User(workspace, new Account(ProductUtil.USER_1_LOGIN , ProductUtil.USER_1_LOGIN, ProductUtil.USER_1_MAIL,ProductUtil.USER_1_LANGUAGE, new Date(), null));
+        user2 = new User(workspace, new Account(ProductUtil.USER_2_LOGIN , ProductUtil.USER_2_LOGIN, ProductUtil.USER_2_MAIL,ProductUtil.USER_2_LANGUAGE, new Date(), null));
         partMaster = new PartMaster(workspace, ProductUtil.PART_ID, user);
         partMasterTemplate = new PartMasterTemplate(workspace, ProductUtil.PART_MASTER_TEMPLATE_ID, user, ProductUtil.PART_TYPE, "", true);
         partRevision = new PartRevision(partMaster,ProductUtil.VERSION,user);

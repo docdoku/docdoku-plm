@@ -23,6 +23,7 @@ package com.docdoku.core.common;
 import java.io.Serializable;
 
 /**
+ * Identity class of {@link UserGroup} objects.
  *
  * @author Florent Garin
  */

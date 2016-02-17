@@ -68,7 +68,7 @@ public class DocumentBaselineManagerBeanTest {
 
     private Account account = new Account(DocumentUtil.USER_2_LOGIN, DocumentUtil.USER_2_NAME, DocumentUtil.USER2_MAIL, DocumentUtil.LANGUAGE,new Date(),null);
     private Workspace workspace = new Workspace("workspace01",account, DocumentUtil.WORKSPACE_DESCRIPTION, false);
-    private User user = new User(workspace, DocumentUtil.USER_1_LOGIN , DocumentUtil.USER_1_NAME, DocumentUtil.USER1_MAIL, DocumentUtil.LANGUAGE);
+    private User user = new User(workspace, new Account(DocumentUtil.USER_1_LOGIN , DocumentUtil.USER_1_NAME, DocumentUtil.USER1_MAIL, DocumentUtil.LANGUAGE,new Date(),null));
     private Folder folder = new Folder("workspace01");
 
 

@@ -100,7 +100,7 @@ public class ProductBaselineManagerBeanTest {
 
         //Given
         baselineRuleReleased = new BaselineRule("myBaseline", ProductBaseline.BaselineType.RELEASED, "description", "workspace01", "user1", "part01", "product01", true);
-        doReturn(new User("en")).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
+        doReturn(new User()).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
         Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleReleased.getUser());
         Mockito.when(em.find(ConfigurationItem.class, baselineRuleReleased.getConfigurationItemKey())).thenReturn(baselineRuleReleased.getConfigurationItem());
         Mockito.when(new ConfigurationItemDAO(new Locale("en"), em).loadConfigurationItem(baselineRuleReleased.getConfigurationItemKey())).thenReturn(baselineRuleReleased.getConfigurationItem());
@@ -131,7 +131,7 @@ public class ProductBaselineManagerBeanTest {
         //Given
         baselineRuleNotReleased = new BaselineRule("myBaseline", ProductBaseline.BaselineType.RELEASED, "description", "workspace01", "user1", "part01", "product01", false);
 
-        doReturn(new User("en")).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
+        doReturn(new User()).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
         Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleNotReleased.getUser());
         Mockito.when(em.find(ConfigurationItem.class, baselineRuleNotReleased.getConfigurationItemKey())).thenReturn(baselineRuleNotReleased.getConfigurationItem());
         Mockito.when(new ConfigurationItemDAO(new Locale("en"), em).loadConfigurationItem(baselineRuleNotReleased.getConfigurationItemKey())).thenReturn(baselineRuleNotReleased.getConfigurationItem());
@@ -148,7 +148,7 @@ public class ProductBaselineManagerBeanTest {
 
         //Given
         baselineRuleLatest = new BaselineRule("myBaseline", ProductBaseline.BaselineType.LATEST, "description", "workspace01", "user1", "part01", "product01", true);
-        doReturn(new User("en")).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
+        doReturn(new User()).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
         Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleLatest.getUser());
         Mockito.when(em.find(ConfigurationItem.class, baselineRuleLatest.getConfigurationItemKey())).thenReturn(baselineRuleLatest.getConfigurationItem());
         Mockito.when(new ConfigurationItemDAO(new Locale("en"), em).loadConfigurationItem(baselineRuleLatest.getConfigurationItemKey())).thenReturn(baselineRuleLatest.getConfigurationItem());
@@ -183,7 +183,7 @@ public class ProductBaselineManagerBeanTest {
 
         //Given
         baselineRuleReleased = new BaselineRule("myBaseline", ProductBaseline.BaselineType.LATEST , "description", "workspace01", "user1", "part01", "product01", true, false);
-        doReturn(new User("en")).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
+        doReturn(new User()).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
         Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleReleased.getUser());
         Mockito.when(em.find(ConfigurationItem.class, baselineRuleReleased.getConfigurationItemKey())).thenReturn(baselineRuleReleased.getConfigurationItem()
         );

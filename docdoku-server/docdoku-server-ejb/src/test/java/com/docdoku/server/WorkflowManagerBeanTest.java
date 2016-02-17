@@ -68,7 +68,7 @@ public class WorkflowManagerBeanTest {
         initMocks(this);
         account = new Account(WorkflowUtil.ADMIN_LOGIN, WorkflowUtil.ADMIN_NAME, WorkflowUtil.ADMIN_MAIL, "en", new Date(), null);
         workspace = new Workspace(WorkflowUtil.WORKSPACE_ID, account, WorkflowUtil.WORKSPACE_DESCRIPTION, false);
-        user = new User(workspace,WorkflowUtil.USER_LOGIN , WorkflowUtil.USER_NAME,WorkflowUtil.USER_MAIL, "en");
+        user = new User(workspace,new Account(WorkflowUtil.USER_LOGIN, WorkflowUtil.USER_NAME,WorkflowUtil.USER_MAIL, "en", new Date(), null));
     }
 
     /**
@@ -101,8 +101,8 @@ public class WorkflowManagerBeanTest {
         //Given
         WorkflowModel workflowModel = new WorkflowModel(workspace, WorkflowUtil.WORKSPACE_ID, user, "");
         Map<String, String> userEntries = new HashMap<>();
-        User user2 = new User(workspace,WorkflowUtil.USER2_LOGIN , WorkflowUtil.USER2_NAME,WorkflowUtil.USER2_MAIL, "en");
-        User user3 = new User(workspace,WorkflowUtil.USER3_LOGIN , WorkflowUtil.USER3_NAME,WorkflowUtil.USER3_MAIL, "en");
+        User user2 = new User(workspace,new Account(WorkflowUtil.USER2_LOGIN , WorkflowUtil.USER2_NAME,WorkflowUtil.USER2_MAIL, "en", new Date(), null));
+        User user3 = new User(workspace,new Account(WorkflowUtil.USER3_LOGIN , WorkflowUtil.USER3_NAME,WorkflowUtil.USER3_MAIL, "en", new Date(), null));
         userEntries.put(user.getLogin(), ACL.Permission.FORBIDDEN.name());
         userEntries.put(user2.getLogin(), ACL.Permission.READ_ONLY.name());
         userEntries.put(user3.getLogin(), ACL.Permission.FULL_ACCESS.name());
@@ -131,8 +131,8 @@ public class WorkflowManagerBeanTest {
         //Given
         Map<String, String> userEntries = new HashMap<>();
         Map<String, String> grpEntries = new HashMap<>();
-        User user2 = new User(workspace,WorkflowUtil.USER2_LOGIN , WorkflowUtil.USER2_NAME,WorkflowUtil.USER2_MAIL, "en");
-        User user3 = new User(workspace,WorkflowUtil.USER3_LOGIN , WorkflowUtil.USER3_NAME,WorkflowUtil.USER3_MAIL, "en");
+        User user2 = new User(workspace,new Account(WorkflowUtil.USER2_LOGIN , WorkflowUtil.USER2_NAME,WorkflowUtil.USER2_MAIL, "en", new Date(), null));
+        User user3 = new User(workspace,new Account(WorkflowUtil.USER3_LOGIN , WorkflowUtil.USER3_NAME,WorkflowUtil.USER3_MAIL, "en", new Date(), null));
         UserGroup group1 = new UserGroup(workspace,WorkflowUtil.GRP1_ID);
 
         WorkflowModel workflowModel = new WorkflowModel(workspace, WorkflowUtil.WORKSPACE_ID, user, "");

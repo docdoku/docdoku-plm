@@ -264,7 +264,7 @@ public class PartBinaryResourceTest {
         Request request = Mockito.mock(Request.class);
         Account account = Mockito.spy(new Account("user2", "user2", "user2@docdoku.com", "en", new Date(), null));
         Workspace workspace = new Workspace(ResourceUtil.WORKSPACE_ID,account, "pDescription", false);
-        User user = new User(workspace, "user1" , "user1", "user1@docdoku.com", "en");
+        User user = new User(workspace, new Account("user1" , "user1", "user1@docdoku.com", "en", new Date(), null));
         PartMaster partMaster = new PartMaster(workspace,ResourceUtil.PART_NUMBER,user);
         PartRevision partRevision = new PartRevision(partMaster,ResourceUtil.VERSION,user);
         List<PartIteration> iterations = new ArrayList<>();

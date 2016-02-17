@@ -23,27 +23,28 @@ package com.docdoku.core.common;
 import java.io.Serializable;
 
 /**
+ * Identity class of {@link User} objects.
  *
  * @author Florent Garin
  */
 public class UserKey implements Serializable {
     
-    private String workspaceId;
-    private String login;
+    private String workspace;
+    private String account;
     
     public UserKey() {
     }
     
     public UserKey(String pWorkspaceId, String pLogin) {
-        workspaceId=pWorkspaceId;
-        login=pLogin;
+        workspace =pWorkspaceId;
+        account =pLogin;
     }
     
     @Override
     public int hashCode() {
         int hash = 1;
-        hash = 31 * hash + workspaceId.hashCode();
-        hash = 31 * hash + login.hashCode();
+        hash = 31 * hash + workspace.hashCode();
+        hash = 31 * hash + account.hashCode();
         return hash;
     }
     
@@ -56,28 +57,28 @@ public class UserKey implements Serializable {
             return false;
         }
         UserKey key = (UserKey) pObj;
-        return key.login.equals(login) && key.workspaceId.equals(workspaceId);
+        return key.account.equals(account) && key.workspace.equals(workspace);
     }
     
     @Override
     public String toString() {
-        return workspaceId + "-" + login;
+        return workspace + "-" + account;
     }
     
-    public String getWorkspaceId() {
-        return workspaceId;
+    public String getWorkspace() {
+        return workspace;
     }
     
-    public void setWorkspaceId(String pWorkspaceId) {
-        workspaceId = pWorkspaceId;
+    public void setWorkspace(String pWorkspaceId) {
+        workspace = pWorkspaceId;
     }
     
-    public String getLogin() {
-        return login;
+    public String getAccount() {
+        return account;
     }
     
-    public void setLogin(String pLogin) {
-        login = pLogin;
+    public void setAccount(String pLogin) {
+        account = pLogin;
     }
     
 }

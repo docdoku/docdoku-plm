@@ -52,6 +52,10 @@ public class Account implements Serializable, Cloneable {
     public Account(){
     }
 
+    public Account(String pLogin){
+        login = pLogin;
+    }
+
     public Account(String pLogin, String pName, String pEmail, String pLanguage, Date pCreationDate,String pTimeZone) {
         login = pLogin;
         name = pName;

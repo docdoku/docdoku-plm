@@ -253,7 +253,7 @@ public class DocumentBinaryResourceTest {
         //Workspace workspace, User author, Date expireDate, String password, DocumentRevision documentRevision
         Account account = Mockito.spy(new Account("user2" , "user2", "user2@docdoku.com", "en",new Date(),null));
         Workspace workspace = new Workspace(ResourceUtil.WORKSPACE_ID,account, "pDescription", false);
-        User user = new User(workspace, "user1" , "user1", "user1@docdoku.com", "en");
+        User user = new User(workspace, new Account("user1" , "user1", "user1@docdoku.com", "en", new Date(),null));
         DocumentMaster documentMaster = new DocumentMaster(workspace,ResourceUtil.DOCUMENT_ID,user);
         DocumentRevision documentRevision = new DocumentRevision(documentMaster,ResourceUtil.VERSION,user);
         List<DocumentIteration> iterations = new ArrayList<>();
@@ -293,7 +293,7 @@ public class DocumentBinaryResourceTest {
         //Workspace workspace, User author, Date expireDate, String password, DocumentRevision documentRevision
         Account account = Mockito.spy(new Account("user2" , "user2", "user2@docdoku.com", "en",new Date(),null));
         Workspace workspace = new Workspace(ResourceUtil.WORKSPACE_ID,account, "pDescription", false);
-        User user = new User(workspace, "user1" , "user1", "user1@docdoku.com", "en");
+        User user = new User(workspace, new Account("user1" , "user1", "user1@docdoku.com", "en", new Date(),null));
         DocumentMaster documentMaster = new DocumentMaster(workspace,ResourceUtil.DOCUMENT_ID,user);
         DocumentRevision documentRevision = new DocumentRevision(documentMaster,ResourceUtil.VERSION,user);
         List<DocumentIteration> iterations = new ArrayList<>();

@@ -20,6 +20,7 @@
 
 package com.docdoku.server.util;
 
+import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
@@ -29,6 +30,7 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /*
@@ -53,7 +55,7 @@ import java.util.List;
         this.type = type;
         this.description = description;
         this.workspace = new Workspace(workspaceId);
-        user = new User(workspace, login,login,login+"@docdoku.com", "en");
+        user = new User(workspace, new Account(login,login,login+"@docdoku.com", "en", new Date() ,null));
         partMaster = new PartMaster(workspace, partId, user);
         configurationItemKey = new ConfigurationItemKey("workspace1",productId);
         configurationItem = new ConfigurationItem(user,workspace, productId, "description");

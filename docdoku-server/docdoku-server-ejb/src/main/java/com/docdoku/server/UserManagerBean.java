@@ -75,7 +75,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         if (userToAdd == null) {
             Account userAccount = new AccountDAO(em).loadAccount(pLogin);
             Workspace workspace = em.getReference(Workspace.class, pGroupKey.getWorkspaceId());
-            userToAdd = new User(workspace, userAccount.getLogin(), userAccount.getName(), userAccount.getEmail(), userAccount.getLanguage());
+            userToAdd = new User(workspace, userAccount);
             userDAO.createUser(userToAdd);
         }
         UserGroupDAO groupDAO = new UserGroupDAO(new Locale(account.getLanguage()), em);
@@ -94,7 +94,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         Workspace workspace = em.getReference(Workspace.class, pWorkspaceId);
         if (userToAdd == null) {
             Account userAccount = new AccountDAO(em).loadAccount(pLogin);
-            userToAdd = new User(workspace, userAccount.getLogin(), userAccount.getName(), userAccount.getEmail(), userAccount.getLanguage());
+            userToAdd = new User(workspace, userAccount);
             userDAO.createUser(userToAdd);
         }
         userDAO.addUserMembership(workspace, userToAdd);
@@ -130,7 +130,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         }
         Workspace workspace = new Workspace(pID, pAdmin, pDescription, pFolderLocked);
         new WorkspaceDAO(em).createWorkspace(workspace);
-        User userToCreate = new User(workspace, pAdmin.getLogin(), pAdmin.getName(), pAdmin.getEmail(), pAdmin.getLanguage());
+        User userToCreate = new User(workspace, pAdmin);
         UserDAO userDAO = new UserDAO(new Locale(pAdmin.getLanguage()), em);
         userDAO.createUser(userToCreate);
         userDAO.addUserMembership(workspace, userToCreate);
@@ -464,7 +464,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @Override
     public UserGroup[] getUserGroupsForUser(UserKey userKey) throws UserNotFoundException {
         User user = new UserDAO(em).loadUser(userKey);
-        List<UserGroup> userGroups = new UserGroupDAO(em).getUserGroups(userKey.getWorkspaceId(), user);
+        List<UserGroup> userGroups = new UserGroupDAO(em).getUserGroups(userKey.getWorkspace(), user);
         return userGroups.toArray(new UserGroup[userGroups.size()]);
     }
 

@@ -20,10 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.change.ModificationNotification;
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.common.User;
-import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.common.Workspace;
+import com.docdoku.core.common.*;
 import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.configuration.ProductInstanceMaster;
 import com.docdoku.core.document.DocumentRevisionKey;
@@ -335,7 +332,7 @@ public class PartResource {
             int i = 0;
             for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
                 userEntries[i] = new ACLUserEntry();
-                userEntries[i].setPrincipal(new User(new Workspace(workspaceId), entry.getKey()));
+                userEntries[i].setPrincipal(new User(new Workspace(workspaceId), new Account(entry.getKey())));
                 userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
             }
             i = 0;

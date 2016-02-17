@@ -99,7 +99,7 @@ public class DocumentManagerBeanTest {
         initMocks(this);
         account = new Account(DocumentUtil.USER_2_LOGIN, DocumentUtil.USER_2_NAME, DocumentUtil.USER2_MAIL, DocumentUtil.LANGUAGE,new Date(),null);
         workspace = new Workspace(DocumentUtil.WORKSPACE_ID,account, DocumentUtil.WORKSPACE_DESCRIPTION, false);
-        user = new User(workspace, DocumentUtil.USER_1_LOGIN, DocumentUtil.USER_1_NAME, DocumentUtil.USER1_MAIL, DocumentUtil.LANGUAGE);
+        user = new User(workspace, new Account(DocumentUtil.USER_1_LOGIN, DocumentUtil.USER_1_NAME, DocumentUtil.USER1_MAIL, DocumentUtil.LANGUAGE, new Date(), null));
         documentMasterTemplate= new DocumentMasterTemplate(workspace, DocumentUtil.DOCUMENT_TEMPLATE_ID, user,"","");
         binaryResource = new BinaryResource(DocumentUtil.FULL_NAME,DocumentUtil.DOCUMENT_SIZE,new Date());
         documentIteration = new DocumentIteration();
@@ -365,7 +365,7 @@ public class DocumentManagerBeanTest {
     @Test
     public void removeACLFromDocument()throws Exception{
 
-        user = new User(workspace, DocumentUtil.USER_1_LOGIN, DocumentUtil.USER_1_NAME, DocumentUtil.USER1_MAIL, DocumentUtil.LANGUAGE);
+        user = new User(workspace, new Account(DocumentUtil.USER_1_LOGIN, DocumentUtil.USER_1_NAME, DocumentUtil.USER1_MAIL, DocumentUtil.LANGUAGE, new Date(),null));
 
         DocumentMaster documentMaster = new DocumentMaster(workspace, DocumentUtil.DOCUMENT_ID,user);
         documentRevision = new DocumentRevision(documentMaster, "A", user);

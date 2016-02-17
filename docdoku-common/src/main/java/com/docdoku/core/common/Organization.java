@@ -23,9 +23,7 @@ package com.docdoku.core.common;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * The Organization class represents an entity which groups users

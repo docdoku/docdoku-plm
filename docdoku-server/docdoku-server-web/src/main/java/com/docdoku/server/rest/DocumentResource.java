@@ -19,10 +19,7 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.common.User;
-import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.common.Workspace;
+import com.docdoku.core.common.*;
 import com.docdoku.core.configuration.DocumentConfigSpec;
 import com.docdoku.core.configuration.PathDataMaster;
 import com.docdoku.core.configuration.ProductInstanceMaster;
@@ -271,7 +268,7 @@ public class DocumentResource {
             int i = 0;
             for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
                 userEntries[i] = new ACLUserEntry();
-                userEntries[i].setPrincipal(new User(new Workspace(pWorkspaceId), entry.getKey()));
+                userEntries[i].setPrincipal(new User(new Workspace(pWorkspaceId), new Account(entry.getKey())));
                 userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
             }
             i = 0;
