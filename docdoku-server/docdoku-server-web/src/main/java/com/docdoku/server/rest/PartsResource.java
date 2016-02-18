@@ -20,6 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.change.ModificationNotification;
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
@@ -39,9 +40,11 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IImporterManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.util.FileIO;
 import com.docdoku.server.export.ExcelGenerator;
 import com.docdoku.server.rest.collections.QueryResult;
 import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 import com.docdoku.server.rest.util.SearchQueryParser;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -51,13 +54,16 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.io.File;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -349,15 +355,34 @@ public class PartsResource {
     }
 
     @PUT
-    @Path("import-attributes")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("import")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response importAttributes(@PathParam("workspaceId") String workspaceId, @QueryParam("autoCheckout") boolean autoCheckout, @QueryParam("autoCheckin") boolean autoCheckin, @QueryParam("permissiveUpdate") boolean permissiveUpdate, AttributesImportDTO attributesImportDTO)
-            throws ExecutionException, InterruptedException {
+    public Response importAttributes(@Context HttpServletRequest request,
+                                     @PathParam("workspaceId") String workspaceId,
+                                     @QueryParam("autoCheckout") boolean autoCheckout,
+                                     @QueryParam("autoCheckin") boolean autoCheckin,
+                                     @QueryParam("permissiveUpdate") boolean permissiveUpdate,
+                                     @QueryParam("revisionNote") String revisionNote)
+            throws Exception {
 
-        File file = new File(attributesImportDTO.getFilename());
-        Future<Map<String, List<String>>> importResult = importerService.importPartAttributes(workspaceId, file, attributesImportDTO.getRevisionNote(), autoCheckout, autoCheckin, permissiveUpdate);
-        return Response.ok(importResult.get()).build();
+        Collection<Part> parts = request.getParts();
+
+        if(parts.isEmpty() || parts.size() > 1){
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
+        Part part = parts.iterator().next();
+        String name = FileIO.getFileNameWithoutExtension(part.getSubmittedFileName());
+        String extension = FileIO.getExtension(part.getSubmittedFileName());
+
+        File importFile = Files.createTempFile("part-" + name, "-import.tmp" +  (extension==null?"":"." + extension)).toFile();
+        long length = BinaryResourceUpload.uploadBinary(new BufferedOutputStream(new FileOutputStream(importFile)), part);
+        importerService.importIntoParts(workspaceId, importFile, revisionNote, autoCheckout, autoCheckin, permissiveUpdate);
+
+        importFile.delete();
+
+        return Response.noContent().build();
     }
 
     /**

@@ -2,18 +2,17 @@ package com.docdoku.server;
 
 
 import com.docdoku.core.services.IImporterManagerLocal;
-import com.docdoku.server.importers.AttributesImporter;
+import com.docdoku.server.importers.PartImporter;
+import com.docdoku.server.importers.PathDataImporter;
+import com.docdoku.server.importers.utils.ImportResult;
 
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import java.io.File;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.logging.Logger;
 
 /**
  * Attributes importer
@@ -23,85 +22,52 @@ import java.util.concurrent.TimeoutException;
 @Stateless(name = "ImporterBean")
 public class ImporterBean implements IImporterManagerLocal {
 
+
+
+    private static final Logger LOGGER = Logger.getLogger(ImporterBean.class.getName());
+
     @Inject
-    private AttributesImporter importer;
+    @Any
+    private Instance<PartImporter> partImporters;
+
+    @Inject
+    @Any
+    private Instance<PathDataImporter> pathDataImporters;
 
     @Override
     @Asynchronous
-    @AttributesImport
-    public Future<Map<String, List<String>>> importPartAttributes(String workspaceId, File file, String revisionNote, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate) {
-        // First check if provided data are ok
-        Map<String, List<String>> importResult = importer.checkPartAttributesImport(workspaceId, file);
-        // Then update the part iterations attributes
-        if (importResult == null) {
-            importer.savePartAttributes(workspaceId, file, revisionNote, autoCheckout, autoCheckin, permissiveUpdate);
+    public void importIntoParts(String workspaceId, File file, String revisionNote, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate) throws Exception{
+        PartImporter selectedImporter = null;
+
+        for (PartImporter importer : partImporters) {
+            if (importer.canImportFile(file.getName())) {
+                selectedImporter = importer;
+                break;
+            }
         }
 
-        return new Future<Map<String, List<String>>>() {
-            @Override
-            public boolean cancel(boolean mayInterruptIfRunning) {
-                return false;
-            }
+        if (selectedImporter != null) {
+            ImportResult result = selectedImporter.importFile(workspaceId, file, revisionNote, autoCheckout, autoCheckin, permissiveUpdate);
+        }
 
-            @Override
-            public boolean isCancelled() {
-                return false;
-            }
-
-            @Override
-            public boolean isDone() {
-                return false;
-            }
-
-            @Override
-            public Map<String, List<String>> get() throws InterruptedException, ExecutionException {
-                return importResult;
-            }
-
-            @Override
-            public Map<String, List<String>> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-                return importResult;
-            }
-        };
     }
 
     @Override
     @Asynchronous
-    @AttributesImport
-    public Future<Map<String, List<String>>> importPathDataAttributes(String workspaceId, File file, String revisionNote, boolean autoFreezeAfterUpdate, boolean permissiveUpdate) {
-        // First check if provided data are ok
-        Map<String, List<String>> importResult = importer.checkPathDataAttributesImport(workspaceId, file);
-        // Then update the path data iterations attributes
-        if (importResult == null) {
-            importer.savePathDataAttributes(workspaceId, file, revisionNote, autoFreezeAfterUpdate, permissiveUpdate);
+    public void importIntoPathData(String workspaceId, File file, String revisionNote, boolean autoFreezeAfterUpdate, boolean permissiveUpdate) throws Exception{
+        PathDataImporter selectedImporter = null;
+
+        for (PathDataImporter importer : pathDataImporters) {
+            if (importer.canImportFile(file.getName())) {
+                selectedImporter = importer;
+                break;
+            }
         }
 
-        return new Future<Map<String, List<String>>>() {
-            @Override
-            public boolean cancel(boolean mayInterruptIfRunning) {
-                return false;
-            }
+        if (selectedImporter != null) {
+            ImportResult result = selectedImporter.importFile(workspaceId, file, revisionNote, autoFreezeAfterUpdate, permissiveUpdate);
 
-            @Override
-            public boolean isCancelled() {
-                return false;
-            }
-
-            @Override
-            public boolean isDone() {
-                return false;
-            }
-
-            @Override
-            public Map<String, List<String>> get() throws InterruptedException, ExecutionException {
-                return importResult;
-            }
-
-            @Override
-            public Map<String, List<String>> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-                return importResult;
-            }
-        };
+        }
     }
 
 }
