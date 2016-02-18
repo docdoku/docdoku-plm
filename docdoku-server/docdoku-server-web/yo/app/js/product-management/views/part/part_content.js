@@ -23,10 +23,12 @@ define([
 	'text!templates/part/search_part_form.html',
     'common-objects/views/alert',
     'common-objects/views/tags/tags_management',
+    'common-objects/views/import_management',
     'views/product/product_creation_view',
     'views/advanced_search',
-    'views/part/part_grouped_by_list'
-], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, QueryBuilder, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,ProductCreationView,AdvancedSearchView, PartGroupedByView) {
+    'views/part/part_grouped_by_list',
+    'text!common-objects/templates/buttons/import_button.html',
+], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, QueryBuilder, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,ProductCreationView,AdvancedSearchView, PartGroupedByView, importButton) {
     'use strict';
 	var PartContentView = Backbone.View.extend({
         events: {
@@ -49,7 +51,8 @@ define([
             'click button.new-product': 'newProduct',
             'submit #part-search-form': 'onQuickSearch',
             'click .advanced-search-button': 'onAdvancedSearch',
-            'click .display-query-builder-button': 'toggleQueryBuilder'
+            'click .display-query-builder-button': 'toggleQueryBuilder',
+            'click .import': 'showImporter'
         },
 
         partials: {
@@ -61,7 +64,8 @@ define([
             searchForm: searchForm,
             newProductButton:newProductButton,
             tagsButton: tagsButton,
-            obsoleteButton:obsoleteButton
+            obsoleteButton:obsoleteButton,
+            importButton:importButton
         },
 
         initialize: function () {
@@ -530,6 +534,24 @@ define([
             }
 
             this.isQueryBuilderDisplayed = !this.isQueryBuilderDisplayed;
+        },
+
+        showImporter:function(){
+
+            var partsChecked = new Backbone.Collection();
+
+            this.partListView.eachChecked(function (view) {
+                partsChecked.push(view.model);
+            });
+
+            var importView = new importView({
+                collection: partsChecked
+            });
+
+            window.document.body.appendChild(importView.el);
+            importView.show();
+
+            return false;
         },
 
         destroy:function(){
