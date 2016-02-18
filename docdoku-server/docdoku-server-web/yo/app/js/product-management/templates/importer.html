@@ -2,9 +2,11 @@
     <div class="modal-header">
         <a class="close" data-dismiss="modal">×</a>
 
-        <h3><span class="icon plm-icon-nav-tag"></span>{{i18n.IMPORTER}}</h3>
+        <h3>{{i18n.IMPORTER}}</h3>
     </div>
     <div class="modal-body">
+
+        <div class="attachedFiles idle">
 
         <div class="progress-bars"></div>
 
@@ -22,19 +24,22 @@
 
 
         </form>
+            <p></p>
 
-        <div>
+        </div>
+
+        <p>
             <input type="checkbox" data-fullname="{{revision_note_checkbox}}"/>{{i18n.ADD_REVISION_NOTE}}
-            <input type="text" class="input-xlarge description-input" data-fullname="{{revision_note}}"/>
-        </div>
+            <textarea type="text" id="revision_note" data-fullname="{{revision_note}}"></textarea>
+        </p>
 
-        <div>
+        <p>
             <input type="checkbox" data-fullname="{{froze_iteration}}"/>{{i18n.FREEZE_CURRENT_ITERATION}}
-        </div>
+        </p>
 
-        <div>
+        <p>
             <input type="checkbox" data-fullname="{{permissive_update}}"/>{{i18n.PERMISSIVE_UPDATE}}
-        </div>
+        </p>
 
         <button type="button" class="btn btn-primary import-button">{{i18n.IMPORT}}
         </button>
