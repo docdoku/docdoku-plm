@@ -8,7 +8,7 @@ define([
     'text!templates/importer.html',
     'common-objects/views/alert',
     'common-objects/views/prompt'
-], function (Backbone, Mustache, template,  selectize, queryBuilderOptions, AlertView, ConfigurationItemCollection, ProductInstances, PromptView) {
+], function (Backbone, Mustache, template, AlertView, PromptView) {
     'use strict';
     var ImporterView = Backbone.View.extend({
 
@@ -21,8 +21,18 @@ define([
 
         delimiter:',',
 
-        onImport:function(){
 
+        initialize:function(){
+
+        },
+
+        onImport:function(){
+            var self = this;
+
+            var promptView = new PromptView();
+            //TODO: add message
+            window.document.body.appendChild(promptView.render().el);
+            promptView.openModal();
         },
 
         fileDropHandler: function (e) {
@@ -60,6 +70,6 @@ define([
 
     });
 
-
+    return ImporterView;
 
 });

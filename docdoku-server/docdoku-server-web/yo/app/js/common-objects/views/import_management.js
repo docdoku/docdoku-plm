@@ -6,9 +6,8 @@ define([
     'common-objects/models/tag',
     'common-objects/collections/tag',
     'common-objects/views/components/modal',
-    'common-objects/views/tags/tag',
-    'text!common-objects/templates/tags/tags_management.html'
-], function (Backbone,Tag, TagList, ModalView, TagView, template) {
+    'text!templates/importer.html'
+], function (Backbone,Tag, TagList, ModalView, template) {
     'use strict';
     var TagsManagementView = ModalView.extend({
 
@@ -16,4 +15,12 @@ define([
 
         templateExtraData: {},
 
-    }
+        initialize: function () {
+            ModalView.prototype.initialize.apply(this, arguments);
+        }
+
+
+    });
+        return TagsManagementView;
+
+    });
