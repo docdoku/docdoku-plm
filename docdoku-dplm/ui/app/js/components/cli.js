@@ -11,7 +11,7 @@
             var mainClass = 'com.docdoku.cli.MainCommand';
             var memOptions = '-Xmx1024M';
 
-            var run = function (args, silent) {
+            var run = function (args, silent, onOutput) {
 
                 if(configuration.ssl){
                     args.push('--ssl');
@@ -33,9 +33,15 @@
                     angular.forEach(entries, function (entry) {
                         if (entry && entry.trim()) {
                             var object = JSON.parse(entry);
+
                             if (object.progress) {
                                 deferred.notify(object.progress);
                             } else if (object.info) {
+
+                                if(typeof onOutput === 'function'){
+                                    onOutput(object);
+                                }
+
                                 if (!silent) {
                                     NotificationService.toast(object.info);
                                 }
@@ -52,6 +58,11 @@
                     angular.forEach(entries, function (entry) {
                         if (entry && entry.trim()) {
                             var object = JSON.parse(entry);
+
+                            if(typeof onOutput === 'function'){
+                                onOutput(object);
+                            }
+
                             if (object.error) {
                                 if (!silent) {
                                     NotificationService.toast(object.error);
@@ -162,7 +173,7 @@
 
             };
 
-            this.checkoutPart = function (part, path, options) {
+            this.checkoutPart = function (part, path, options, onOutput) {
 
                 var args = [
                     'co', 'part',
@@ -189,11 +200,11 @@
 
                 args.push(path);
 
-                return run(args);
+                return run(args, true, onOutput);
 
             };
 
-            this.checkinPart = function (part,options) {
+            this.checkinPart = function (part,options, onOutput) {
 
                 var args = [
                     'ci', 'part',
@@ -216,11 +227,11 @@
                     args.push(options.path);
                 }
 
-                return run(args);
+                return run(args,true,onOutput);
 
             };
 
-            this.undoCheckoutPart = function (part) {
+            this.undoCheckoutPart = function (part, onOutput) {
 
                 var args = [
                     'uco', 'part',
@@ -234,10 +245,10 @@
                     '-r', part.version
                 ];
 
-                return run(args);
+                return run(args, true, onOutput);
             };
 
-            this.downloadNativeCad = function (part, path, options) {
+            this.downloadNativeCad = function (part, path, options, cbOutput) {
 
                 var args = [
                     'get', 'part',
@@ -264,11 +275,11 @@
 
                 args.push(path);
 
-                return run(args);
+                return run(args, true, cbOutput);
 
             };
 
-            this.putCADFile = function (workspace, file) {
+            this.putCADFile = function (workspace, file, onOutput) {
 
                 var args = [
                     'put', 'part',
@@ -282,10 +293,11 @@
 
                 args.push(file);
 
-                return run(args);
+                return run(args, true, onOutput);
 
             };
-            this.createPart = function (part, filePath) {
+
+            this.createPart = function (part, filePath, onOutput) {
 
                 var args = [
                     'cr', 'part',
@@ -313,7 +325,7 @@
 
                 args.push(filePath);
 
-                return run(args);
+                return run(args,true,onOutput);
 
             };
 
@@ -384,7 +396,7 @@
                 return run(args);
             };
 
-            this.getConversionStatus = function (part) {
+            this.getConversionStatus = function (part, onOutput) {
 
                 var args = [
                     'cv',
@@ -399,7 +411,7 @@
                     '-i', part.iterations[part.iterations.length-1]
                 ];
 
-                return run(args);
+                return run(args,true,onOutput);
 
             };
 
@@ -460,7 +472,7 @@
                 return run(args);
             };
 
-            this.downloadDocumentFiles=function(document,path,options){
+            this.downloadDocumentFiles=function(document,path,options,onOutput){
 
                 var args = [
                     'get', 'document',
@@ -480,7 +492,7 @@
 
                 args.push(path);
 
-                return run(args);
+                return run(args,true,onOutput);
             };
 
             this.getStatusForDocument = function(document) {
@@ -503,7 +515,7 @@
 
             };
 
-            this.checkoutDocument = function (document, path, options) {
+            this.checkoutDocument = function (document, path, options, onOutput) {
 
                 var args = [
                     'co', 'document',
@@ -523,11 +535,11 @@
 
                 args.push(path);
 
-                return run(args);
+                return run(args, true, onOutput);
 
             };
 
-            this.checkinDocument = function (document, options) {
+            this.checkinDocument = function (document, options, onOutput) {
 
                 var args = [
                     'ci', 'document',
@@ -550,11 +562,11 @@
                     args.push(options.path);
                 }
 
-                return run(args);
+                return run(args, true, onOutput);
 
             };
 
-            this.undoCheckoutDocument = function (document) {
+            this.undoCheckoutDocument = function (document, onOutput) {
 
                 var args = [
                     'uco', 'document',
@@ -568,10 +580,10 @@
                     '-r', document.version
                 ];
 
-                return run(args);
+                return run(args, true, onOutput);
             };
 
-            this.putDocumentFile = function (workspace, file) {
+            this.putDocumentFile = function (workspace, file, onOutput) {
 
                 var args = [
                     'put', 'document',
@@ -585,11 +597,11 @@
 
                 args.push(file);
 
-                return run(args);
+                return run(args, true, onOutput);
 
             };
 
-            this.createDocument = function (document, filePath) {
+            this.createDocument = function (document, filePath, onOutput) {
 
                 var args = [
                     'cr', 'document',
@@ -613,7 +625,7 @@
 
                 args.push(filePath);
 
-                return run(args);
+                return run(args, true, onOutput);
 
             };
 

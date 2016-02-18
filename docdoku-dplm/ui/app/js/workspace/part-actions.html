@@ -46,3 +46,6 @@
         {{'UNDO_CHECKOUT' | translate}}
     </md-button>
 </div>
+<div class="row output" ng-if="output.length">
+    <output ng-repeat="o in output" entry="o"></output>
+</div>

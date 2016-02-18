@@ -38,7 +38,6 @@
             $scope.documents = [];
             $scope.loadingDocuments = true;
             $scope.loadingMore = false;
-            $scope.openedDocument = null;
 
             var onListResults = function (documents) {
                 $scope.loadingDocuments = false;
@@ -48,51 +47,72 @@
                 });
             };
 
+            var onError = function(error){
+                $scope.error = error;
+                $scope.loadingDocuments = false;
+            };
+
             var getDocumentsRevisions = function () {
+                $scope.error = null;
                 return CliService.getDocumentsRevisionsInFolder($scope.workspace, $filter('decodePath')($scope.path))
-                    .then(onListResults);
+                    .then(onListResults, onError);
             };
 
             var getCheckedOutDocumentsRevisions = function(){
+                $scope.error = null;
                 return CliService.getCheckedOutDocumentsRevisions($scope.workspace, $filter('decodePath')($scope.path))
-                    .then(onListResults);
-            };
-           
-            $scope.toggleOpenedDocument = function (document) {
-                $scope.openedDocument = document == $scope.openedDocument ? null : document;
+                    .then(onListResults, onError);
             };
 
             $scope.showInBrowser = function () {
                 var host = ConfigurationService.configuration.host;
                 var port = ConfigurationService.configuration.port;
                 $window.open('http://' + host + ':' + port + '/product-management/#' + $scope.workspace);
-            };            
+            };
 
             $scope.refreshCurrent = function(){
+                var chain = $q.when();
+
                 angular.forEach($scope.documents, function (document) {
-                    document.busy=true;
-                    CliService.getStatusForDocument(document).then(function(){
-                        document.busy = false;
+                    chain = chain.then(function(){
+                        document.busy=true;
+                        return CliService.getStatusForDocument(document).then(function(){
+                            document.busy = false;
+                        });
                     });
                 });
             };
 
+            $scope.downloadAllData = {
+                downloading:false,
+                inProgress:0,
+                total:0
+            };
+
             $scope.downloadAll = function(){
-                var downloadPromises = [];
+
+                $scope.downloadAllData.inProgress = 0;
+                $scope.downloadAllData.total = $scope.documents.length;
+                $scope.downloadAllData.downloading = true;
+
+                var chain = $q.when();
                 angular.forEach($scope.documents,function(document){
-                    downloadPromises.push($q(function(resolve,reject){
-                        CliService.downloadDocumentFiles(document, $scope.folder.path, $scope.options).then(resolve,resolve);
-                    }));
+                    chain = chain.then(function(){
+                        $scope.downloadAllData.inProgress++;
+                        return CliService.downloadDocumentFiles(document, $scope.folder.path, $scope.options);
+                    });
                 });
-                $q.all(downloadPromises).then(function(){
-                   NotificationService.toast($filter('translate')('DOWNLOADS_FINISHED'));
+
+                chain.then(function(){
+                    $scope.downloadAllData.downloading = false;
+                    NotificationService.toast($filter('translate')('DOWNLOADS_FINISHED'));
                     FolderService.getFolder({path:$scope.folder.path}).newStuff = true;
                 });
             };
 
             // if action = folders
             if($routeParams.action === 'folders'){
-
+                $scope.error = null;
                 CliService.getFolders($scope.workspace,$filter('decodePath')($scope.path)).then(function(folders){
 
                     angular.forEach(folders,function(folder){
@@ -104,7 +124,7 @@
                         $scope.remoteFolders.push(fullPath);
                     });
 
-                }).then(getDocumentsRevisions);
+                }).then(getDocumentsRevisions).catch(onError);
 
             } else if($routeParams.action === 'checkedOut'){
                 getCheckedOutDocumentsRevisions();
@@ -132,6 +152,10 @@
         .controller('DocumentController', function ($scope, ConfigurationService) {
             $scope.configuration = ConfigurationService.configuration;
             $scope.actions = false;
+            $scope.openedDocument= false;
+            $scope.toggleOpenedDocument = function () {
+                $scope.openedDocument = ! $scope.openedDocument;
+            };
         })
 
         .directive('folders', function () {
@@ -176,34 +200,44 @@
                         }
                     };
 
+                    $scope.output = [];
+
+                    var onOutput = function(o){
+                        $scope.output.push(o);
+                    };
+
+                    var onError = function(error){
+                        $scope.error = error;
+                    };
+
                     $scope.download = function () {
                         $scope.document.busy = true;
-                        CliService.downloadDocumentFiles($scope.document, $scope.folder.path, $scope.options).then(function () {
+                        CliService.downloadDocumentFiles($scope.document, $scope.folder.path, $scope.options, onOutput).then(function () {
                             return CliService.getStatusForDocument($scope.document);
-                        }, null, onProgress).then(onFinish).then(newStuff);
+                        }, onError, onProgress).then(onFinish).then(newStuff);
                     };
 
                     $scope.checkout = function () {
                         $scope.document.busy = true;
-                        CliService.checkoutDocument($scope.document, $scope.folder.path, $scope.options).then(function () {
+                        CliService.checkoutDocument($scope.document, $scope.folder.path, $scope.options, onOutput).then(function () {
                             return CliService.getStatusForDocument($scope.document);
-                        }, null, onProgress).then(onFinish).then(newStuff).then(checkForWorkspaceReload);
+                        }, onError, onProgress).then(onFinish).then(newStuff).then(checkForWorkspaceReload);
                     };
 
                     $scope.checkin = function (e) {
                         PromptService.prompt(e, {title:$filter('translate')('CHECKIN_MESSAGE')}).then(function(message) {
                             $scope.document.busy = true;
-                            CliService.checkinDocument($scope.document,{message:message}).then(function () {
+                            CliService.checkinDocument($scope.document,{message:message}, onOutput).then(function () {
                                 return CliService.getStatusForDocument($scope.document);
-                            }, null, onProgress).then(onFinish);
+                            }, onError, onProgress).then(onFinish);
                         });
                     };
 
                     $scope.undoCheckout = function () {
                         $scope.document.busy = true;
-                        CliService.undoCheckoutDocument($scope.document).then(function () {
+                        CliService.undoCheckoutDocument($scope.document, onOutput).then(function () {
                             return CliService.getStatusForDocument($scope.document);
-                        }).then(onFinish);
+                        }, onError).then(onFinish);
                     };
 
                 }

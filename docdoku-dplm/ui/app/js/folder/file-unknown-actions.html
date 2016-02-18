@@ -5,12 +5,12 @@
     <div class="row" layout="horizontal">
         <div flex>
             <span class="clickable subtitle" ng-class="{selected: form.selected===form.part}"  ng-click="form.selected=form.part">
-                {{'CREATE_PART'|translate}}
+                <i class="fa fa fa-arrow-circle-right" ng-if="form.selected===form.part"></i> {{'CREATE_PART'|translate}}
             </span>
         </div>
         <div flex>
            <span class="clickable subtitle" ng-class="{selected: form.selected===form.document}"  ng-click="form.selected=form.document">
-            {{'CREATE_DOCUMENT'|translate}}
+            <i class="fa fa fa-arrow-circle-right" ng-if="form.selected===form.document"></i> {{'CREATE_DOCUMENT'|translate}}
         </span>
         </div>
     </div>
@@ -67,6 +67,8 @@
         </form>
     </div>
 </div>
-<md-button ng-click="reveal()" aria-label="" class="md-primary">
-    {{'OPEN_IN_EXPLORER'|translate}}
-</md-button>
+
+
+<div class="output" ng-if="output.length">
+    <output ng-repeat="o in output" entry="o"></output>
+</div>

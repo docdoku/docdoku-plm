@@ -7,81 +7,86 @@
     </div>
 </div>
 
-<div class="fullscreen-wrapper offset-2-toolbar">
+<md-content class="md-padding">
 
-    <md-content class="md-padding">
-
-        <div ng-if="action.selected == action.folders">
-            <folders></folders>
+    <div ng-if="action.selected == action.folders">
+        <folders></folders>
+    </div>
+    <div ng-if="action.selected == action.checkedOut && !loadingDocuments && documents.length">
+        <div class="row">
+            <md-button class="md-raised md-primary" ng-click="downloadAll()" aria-label="">{{'DOWNLOAD_ALL' | translate}}</md-button>
+            <span>
+            <label>{{'SAVE_TO' | translate}}</label>
+            <i class="fa fa-folder-open"></i>
+            <select ng-model="folder.path" class="cursor">
+                <option ng-repeat="folder in folders | orderBy:'-favorite'" value="{{folder.path}}">
+                    {{folder.path | fileshortname}}
+                </option>
+            </select>
+            </span>
         </div>
-        <div ng-if="action.selected == action.checkedOut && !loadingDocuments && documents.length">
-            <div class="row">
-                <label>{{'SAVE_TO' | translate}}</label>
-                <i class="fa fa-folder-open"></i>
-                <select ng-model="folder.path" class="cursor">
-                    <option ng-repeat="folder in folders | orderBy:'-favorite'" value="{{folder.path}}">
-                        {{folder.path | fileshortname}}
-                    </option>
-                </select>
+    </div>
+    <div class="output" ng-if="error">
+        <output entry="error"></output>
+    </div>
 
-                <md-button class="md-raised md-primary" ng-click="downloadAll()" aria-label="">{{'DOWNLOAD_ALL'}}</md-button>
-            </div>
-        </div>
+    <span ng-show="downloadAllData.downloading">{{ 'DOWNLOADING' | translate }} ... ({{downloadAllData.inProgress}}/{{downloadAllData.total}})</span>
+    <md-progress-linear ng-show="downloadAllData.downloading" mode="indeterminate"></md-progress-linear>
 
-        <md-progress-linear ng-show="loadingDocuments" mode="indeterminate"></md-progress-linear>
+    <md-progress-linear ng-show="loadingDocuments" mode="indeterminate"></md-progress-linear>
 
-        <md-list>
-            <md-item ng-repeat="document in documents">
-                <md-item-content ng-controller="DocumentController" layout-align="start start" ng-class="{opened: document == openedDocument}">
-                    <div ng-show="document.busy" class="md-tile-left md-tile-top" align="center">
-                        <i class="fa fa-spinner fa-spin"></i>
-                    </div>
-                    <div ng-hide="document.busy" class="md-tile-left md-tile-top" align="center">
-                        <i class="fa fa-check fa-lg" ng-show="document.isReleased"></i>
-                        <i class="fa fa-eye fa-lg" ng-show="!document.isReleased
-              && !document.checkoutUser"></i>
-                        <i class="fa fa-pencil fa-lg" ng-show="document.checkoutUser === configuration.user"></i>
-                        <i class="fa fa-lock"
-                           ng-show="document.checkoutUser && document.checkoutUser !== configuration.user"></i>
-                    </div>
+    <md-list>
+        <md-item ng-repeat="document in documents">
+            <md-item-content ng-controller="DocumentController" layout-align="start start" ng-class="{opened: openedDocument}">
+                <div ng-show="document.busy" class="md-tile-left md-tile-top" align="center">
+                    <i class="fa fa-spinner fa-spin"></i>
+                </div>
+                <div ng-hide="document.busy" class="md-tile-left md-tile-top" align="center">
+                    <i class="fa fa-check fa-lg" ng-show="document.isReleased"></i>
+                    <i class="fa fa-eye fa-lg" ng-show="!document.isReleased
+          && !document.checkoutUser"></i>
+                    <i class="fa fa-pencil fa-lg" ng-show="document.checkoutUser === configuration.user"></i>
+                    <i class="fa fa-lock"
+                       ng-show="document.checkoutUser && document.checkoutUser !== configuration.user"></i>
+                </div>
 
-                    <div class="md-tile-content">
+                <div class="md-tile-content">
 
-                        <div class="cursor" ng-click="toggleOpenedDocument(document)">
-                            <i style="float:right" class="fa"
-                               ng-class="{'fa-angle-down': document != openedDocument, 'fa-angle-up': document === openedDocument}"></i>
+                    <div class="cursor" ng-click="toggleOpenedDocument()">
+                        <i style="float:right" class="fa"
+                           ng-class="{'fa-angle-down': !openedDocument, 'fa-angle-up': openedDocument}"></i>
 
-                            <h3>
-                                {{document.id}}  <span class="subtitle">{{document.version}}-{{document.iterations | last}}</span>
-                                <br />
-                                <small class="subtitle">
-                                    {{ document.files.length ? document.files.length + ' ' + ('FILES' | translate) : ( 'NO_ATTACHED_FILES' | translate ) }}
-                                </small>
-                               <ul ng-if="document === openedDocument" class="file-list">
-                                   <li ng-repeat="f in document.files">
-                                       <i class="fa  fa-file-text-o"></i>
-                                       <span ng-bind="f"></span>
-                                   </li>
-                               </ul>
-                            </h3>
+                        <h3>
+                            {{document.id}}  <span class="subtitle">{{document.version}}-{{document.iterations | last}}</span>
+                            <br />
+                            <small class="subtitle">
+                                {{ document.files.length ? document.files.length + ' ' + ('FILES' | translate) : ( 'NO_ATTACHED_FILES' | translate ) }}
+                            </small>
+                           <ul ng-if="openedDocument" class="file-list">
+                               <li ng-repeat="f in document.files">
+                                   <i class="fa  fa-file-text-o"></i>
+                                   <span ng-bind="f"></span>
+                               </li>
+                           </ul>
+                        </h3>
 
-                            <h4 ng-show="document.checkoutUser">
-                                {{'CHECKOUT_BY' | translate }} <b>{{document.checkoutUser}}</b> {{document.checkoutDate | timeago}}
-                            </h4>
-                        </div>
-
-                        <div>
-                            <document-actions class="slide-down" ng-if="document === openedDocument"></document-actions>
-                        </div>
-
+                        <h4 ng-show="document.checkoutUser">
+                            {{'CHECKOUT_BY' | translate }} <b>{{document.checkoutUser}}</b> {{document.checkoutDate | timeago}}
+                        </h4>
                     </div>
 
-                </md-item-content>
-                <md-divider ng-if="!$last"></md-divider>
-            </md-item>
-        </md-list>
+                    <div>
+                        <document-actions class="slide-down" ng-if="openedDocument"></document-actions>
+                    </div>
 
-        <p class="empty-list" ng-show="!loadingDocuments && !documents.length">{{'NO_DOCUMENTS'|translate}}</p>
+                </div>
 
-    </md-content>
-</div>
+            </md-item-content>
+            <md-divider ng-if="!$last"></md-divider>
+        </md-item>
+    </md-list>
+
+    <p class="empty-list" ng-show="!loadingDocuments && !documents.length">{{'NO_DOCUMENTS'|translate}}</p>
+
+</md-content>
+

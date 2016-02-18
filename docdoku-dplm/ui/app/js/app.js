@@ -36,6 +36,7 @@
         'dplm.services.workspaces',
         'dplm.services.confirm',
         'dplm.services.prompt',
+        'dplm.services.output',
 
         'dplm.services.3d',
         'dplm.directives.filechange',
@@ -45,6 +46,7 @@
         'dplm.filters.timeago',
         'dplm.filters.last',
         'dplm.filters.join',
+        'dplm.filters.humanreadablesize',
 
         'dplm.contextmenu',
         'dplm.menu'

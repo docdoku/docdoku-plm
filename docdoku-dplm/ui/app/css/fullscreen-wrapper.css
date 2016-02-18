@@ -2,12 +2,12 @@
 	position: absolute;
 	top: 0;
 	left: 0;
-	right: 18px;
+	right: 0px;
 	bottom: 0;
 	overflow: auto;
 }
 .fullscreen-wrapper.offset-toolbar{
-	top: 124px;
+	top: 64px;
 }
 .fullscreen-wrapper.offset-2-toolbar{
     top: 154px;

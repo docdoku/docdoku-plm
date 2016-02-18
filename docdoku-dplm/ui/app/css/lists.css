@@ -32,12 +32,25 @@ file-part-actions{
 .clickable{
     cursor: pointer;
 }
-.subtitle{
+small.subtitle{
 	color: #757575;
 }
+.subtitle{
+	color: #02587F;
+}
+md-sidenav .subtitle{
+	color: rgba(0, 0, 0, 0.729412);
+	font-weight: normal;
+}
+
 .subtitle.selected{
     font-weight: bold;
-	color: #757575;
+	color: #02587F;
+}
+
+[ng-controller="PartController"] h3{
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 md-sidenav h3:first-of-type{

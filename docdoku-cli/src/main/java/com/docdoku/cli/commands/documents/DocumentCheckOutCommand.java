@@ -39,6 +39,7 @@ import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Locale;
 
 /**
  *
@@ -96,10 +97,17 @@ public class DocumentCheckOutCommand extends BaseCommandLine {
 
     private void checkoutDocument(String id, String pRevision) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, LoginException, NoSuchAlgorithmException, NotAllowedException, FileAlreadyExistsException, AccessRightException, CreationException, DocumentRevisionNotFoundException {
 
+        Locale locale = new AccountsManager().getUserLocale(user);
+
         DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(workspace, id, pRevision);
 
         DocumentRevision dr = documentS.getDocumentRevision(documentRevisionKey);
         DocumentIteration di = dr.getLastIteration();
+
+        output.printInfo(
+                LangHelper.getLocalizedMessage("CheckingOutDocument",locale)
+                        + " : "
+                        + id + "-" + dr.getVersion() + "-" + di.getIteration() + " (" + workspace + ")");
 
         if(!dr.isCheckedOut()) {
             try{
@@ -111,7 +119,7 @@ public class DocumentCheckOutCommand extends BaseCommandLine {
         }
 
         if(!noDownload && !di.getAttachedFiles().isEmpty()){
-            FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
+            FileHelper fh = new FileHelper(user,password,output,locale);
             fh.downloadDocumentFiles(getServerURL(), path, workspace, id, dr, di, force);
         }
 

@@ -65,7 +65,9 @@ public class FileHelper {
         try {
             //Hack for NTLM proxy
             //perform a head method to negotiate the NTLM proxy authentication
-            URL url = new URL(pURL);
+            // Always replace trailing slashes with %20
+            // avoid 505 bad http version error cause servers interpret everything after first space as the http version
+            URL url = new URL(pURL.replace(" ", "%20"));
 
             output.printInfo(
                     LangHelper.getLocalizedMessage("DownloadingFile",locale)

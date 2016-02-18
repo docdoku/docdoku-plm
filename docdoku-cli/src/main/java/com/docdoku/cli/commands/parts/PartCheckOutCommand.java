@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -113,9 +114,16 @@ public class PartCheckOutCommand extends BaseCommandLine {
 
     private void checkoutPart(String pPartNumber, String pRevision, PSFilter filter) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException, FileAlreadyExistsException, AccessRightException, CreationException {
 
+        Locale locale = new AccountsManager().getUserLocale(user);
+
         PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, pPartNumber));
         PartRevision pr;
         PartIteration pi;
+
+        output.printInfo(
+                LangHelper.getLocalizedMessage("CheckingOutPart",locale)
+                        + " : "
+                        + pm.getNumber());
 
         if(filter != null){
 
@@ -154,7 +162,7 @@ public class PartCheckOutCommand extends BaseCommandLine {
         BinaryResource bin = pi.getNativeCADFile();
 
         if(bin!=null && !noDownload){
-            FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
+            FileHelper fh = new FileHelper(user,password,output,locale);
             fh.downloadNativeCADFile(getServerURL(), path, workspace, pPartNumber, pr, pi, force);
         }
 

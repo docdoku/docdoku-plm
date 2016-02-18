@@ -14,12 +14,23 @@
 .menu-file-input {
 	float: right;
 }
-
-.file-input {
+.menu-file-input-wrapper{
+	position: relative;
+}
+.file-input-container{
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+.file-input-container md-button.file-input {
+	float: right;
     display: inline-block;
 	cursor: pointer;
+	font-size:12px;
 }
-
+.file-input-container md-button.file-input *{
+	cursor: pointer;
+}
 select{
 	background: transparent;
 	border: none;

@@ -70,7 +70,7 @@ public class DocumentUndoCheckOutCommand extends BaseCommandLine {
         DocumentRevision dr = documentS.undoCheckOutDocument(new DocumentRevisionKey(workspace, id, revision.toString()));
         DocumentIteration di = dr.getLastIteration();
 
-        output.printInfo(LangHelper.getLocalizedMessage("UndoCheckoutDocument",user) + " : " + id + " " + dr.getVersion() + "." + di.getIteration()+1 + " (" + workspace + ")");
+        output.printInfo(LangHelper.getLocalizedMessage("UndoCheckoutDocument",user) + " : " + id + "-" + dr.getVersion() + "-" + di.getIteration()+1 + " (" + workspace + ")");
 
         if(download && !di.getAttachedFiles().isEmpty()){
             FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));

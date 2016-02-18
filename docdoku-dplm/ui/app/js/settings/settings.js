@@ -10,8 +10,9 @@
             });
         })
 
-        .controller('SettingsController', function ($scope, $location, $translate, ConfigurationService,WorkspaceService) {
+        .controller('SettingsController', function ($scope, $location, $translate, ConfigurationService, WorkspaceService) {
             $scope.configuration = ConfigurationService.configuration;
+            $scope.output = WorkspaceService.output;
 
             $scope.save = function () {
                 ConfigurationService.save();
