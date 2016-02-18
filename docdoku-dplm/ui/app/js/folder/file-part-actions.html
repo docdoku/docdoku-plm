@@ -1,3 +1,4 @@
+
 <div class="row" ng-if="!file.notSync && !file.busy && !file.part.isReleased && !file.part.checkoutUser">
     <md-checkbox ng-model="options.force" aria-label="">
     {{'FORCE'|translate}}
@@ -9,7 +10,7 @@
 
 <div class="md-actions" ng-if="!file.notSync && !file.busy">
 
-    <md-button ng-if="file === openedFile && isViewable && !show3D" aria-label="" ng-click="toggle3D()"
+    <md-button ng-if="isViewable && !show3D" aria-label="" ng-click="toggle3D()"
                class="md-raised md-primary">
         {{'3D' | translate}}
     </md-button>
@@ -32,11 +33,12 @@
     <md-button aria-label="" ng-click="conversionStatus()" class="md-raised md-primary">
     {{'CONVERSION_STATUS' | translate}}
     </md-button>
-    <md-button ng-click="reveal()" aria-label="" class="md-primary">
-        {{'OPEN_IN_EXPLORER'|translate}}
-    </md-button>
 </div>
 
-<div class="md-tile-left md-tile-top" ng-if="file === openedFile && isViewable && show3D">
+<div class="md-tile-left md-tile-top" ng-if="isViewable && show3D">
     <div class="row" model-viewer filename="file.path" width="120" height="80"></div>
+</div>
+
+<div class="output" ng-if="output.length">
+    <output ng-repeat="o in output" entry="o"></output>
 </div>

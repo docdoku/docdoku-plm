@@ -13,17 +13,30 @@
 
 <md-content class="md-padding">
 
-   <h3 class="subtitle">
-    <i class="fa fa-folder-open"></i> 
-    {{ 'FOLDERS' | translate }}
-       <md-button style="float:right" class="md-raised md-primary file-input" md-theme="default" aria-label="Profile">
-           <input file-change="addFolder($event,files)" type="file" webkitdirectory/>
-           <i class="fa fa-plus"></i>
-           <md-tooltip>
-               {{'ADD_FOLDER'|translate}}
-           </md-tooltip>
-       </md-button>
-    </h3>
+    <div class="row menu-file-input-wrapper">
+       <h3 class="subtitle">
+        <i class="fa fa-folder-open"></i>
+        {{ 'FOLDERS' | translate }}
+        </h3>
+        <div class="file-input-container">
+            <md-button class="file-input md-raised md-primary" md-theme="default" aria-label="Profile">
+                <input file-change="addFolder($event,files)" type="file" webkitdirectory/>
+
+
+
+                        <i class="fa fa-plus"></i>
+                        <md-tooltip>
+                            {{'ADD_FOLDER'|translate}}
+                        </md-tooltip>
+
+
+
+
+
+
+            </md-button>
+        </div>
+    </div>
   <md-content class="menu-list" ng-class="{expanded: foldersExpanded}" droppable on-file-dropped="onFileDropped(path)">
    <md-list>
     <md-item ng-repeat="folder in folders | orderBy:'-favorite'" ng-controller="FolderMenuController">
@@ -44,12 +57,12 @@
   </md-content>
   <i class="list-toggle fa" ng-class="{'fa-caret-up': foldersExpanded,'fa-caret-down': !foldersExpanded}" ng-click="toggleFolders()"></i>
 
-  <h3 class="subtitle">
+  <h3 ng-if="configuration.host" class="subtitle">
     <i class="fa fa-globe"></i> 
     {{ configuration.host + ':' + configuration.port }}
   </h3>
 
-    <md-content class="menu-list" ng-class="{expanded: workspacesExpanded}">
+   <md-content ng-if="configuration.host" class="menu-list" ng-class="{expanded: workspacesExpanded}">
    <md-list>
     <md-item ng-repeat="workspace in workspaces" ng-controller="WorkspaceMenuController">
       <md-item-content 
@@ -66,7 +79,7 @@
     </md-item>
   </md-list>
   </md-content>
-    <i class="list-toggle fa" ng-class="{'fa-caret-up': workspacesExpanded,'fa-caret-down': !workspacesExpanded}" ng-click="toggleWorkspaces()"></i>
+  <i ng-if="configuration.host" class="list-toggle fa" ng-class="{'fa-caret-up': workspacesExpanded,'fa-caret-down': !workspacesExpanded}" ng-click="toggleWorkspaces()"></i>
 
 
 </md-content>

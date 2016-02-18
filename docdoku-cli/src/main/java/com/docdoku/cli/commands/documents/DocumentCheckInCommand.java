@@ -95,9 +95,11 @@ public class DocumentCheckInCommand extends BaseCommandLine {
             documentS.updateDocument(docIPK, message, null, null, null);
         }
 
-        dr = documentS.checkInDocument(docRPK);
+        output.printInfo(LangHelper.getLocalizedMessage("CheckingInDocument",user)  + " : " + id
+                + "-" + dr.getVersion() + "-" + di.getIteration() + " (" + workspace + ")");
 
-        output.printInfo(LangHelper.getLocalizedMessage("CheckingInDocument",user)  + " : " + id + " " + dr.getVersion() + "." + di.getIteration() + " (" + workspace + ")");
+        documentS.checkInDocument(docRPK);
+
     }
 
     private void loadMetadata() throws IOException {

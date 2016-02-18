@@ -30,7 +30,13 @@ import java.util.Locale;
 public class NotAllowedException extends ApplicationException {
     private final String mKey;
     private final String mName;
-    
+
+    public NotAllowedException(String pMessage) {
+        super(pMessage);
+        mKey=null;
+        mName=null;
+    }
+
     public NotAllowedException(Locale pLocale, String pKey) {
         super(pLocale);
         mKey=pKey;

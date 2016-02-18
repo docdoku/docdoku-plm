@@ -11,7 +11,13 @@
 
             var lastVisitedWorkspaces = JSON.parse(localStorage.lastVisitedWorkspaces || '[]');
 
+            this.output = {
+                error: null
+            };
+
             this.getWorkspaces = function () {
+
+                _this.output.error = null;
 
                 var deferred = $q.defer();
 
@@ -26,7 +32,8 @@
                     angular.copy(workspaces,_this.workspaces);
                     NotificationService.hide();
                     deferred.resolve();
-                },function(){
+                },function(error){
+                    _this.output.error = error;
                     // Should be offline, or auth error
                     $location.path('settings');
                     deferred.reject();

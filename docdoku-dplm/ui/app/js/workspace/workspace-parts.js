@@ -4,7 +4,7 @@
 
     angular.module('dplm.workspace.parts', [])
 
-        .controller('WorkspacePartsController', function ($scope, $filter, $window, $timeout, $routeParams, CliService, ConfigurationService, NotificationService, WorkspaceService) {
+        .controller('WorkspacePartsController', function ($scope, $q, $filter, $window, $timeout, $routeParams, CliService, ConfigurationService, NotificationService, WorkspaceService) {
 
             $scope.count = 0;
             $scope.start = 0;
@@ -12,7 +12,6 @@
             $scope.parts = [];
             $scope.loadingParts = true;
             $scope.loadingMore = false;
-            $scope.openedPart = null;
 
             $scope.filters = {
                 checkoutable: true,
@@ -43,15 +42,22 @@
                 });
             };
 
+            var onError = function(error){
+                $scope.error = error;
+                $scope.loadingParts = false;
+            };
+
             var runSearch = function (search) {
+                $scope.error = null;
                 $scope.loadingParts = true;
                 return CliService.searchPartMasters($scope.workspace, search)
-                    .then(onSearchResults);
+                    .then(onSearchResults, onError);
             };
 
             var getPartMasters = function () {
+                $scope.error = null;
                 return CliService.getPartMasters($scope.workspace, $scope.start, $scope.max)
-                    .then(onListResults);
+                    .then(onListResults, onError);
             };
 
             var searchTimeout;
@@ -69,10 +75,6 @@
                 }
             });
 
-            $scope.toggleOpenedPart = function (part) {
-                $scope.openedPart = part == $scope.openedPart ? null : part;
-            };
-
             $scope.showInBrowser = function () {
                 var host = ConfigurationService.configuration.host;
                 var port = ConfigurationService.configuration.port;
@@ -89,17 +91,23 @@
             };
 
             $scope.refreshCurrent = function(){
+
+                var chain = $q.when();
+
                 angular.forEach($scope.parts, function (part) {
-                    part.busy=true;
-                    CliService.getStatusForPart(part).then(function(){
-                        part.busy = false;
+                    chain = chain.then(function(){
+                        part.busy=true;
+                        return CliService.getStatusForPart(part).then(function(){
+                            part.busy = false;
+                        });
                     });
                 });
+
             };
 
             CliService.getPartMastersCount($routeParams.workspace).then(function (data) {
                 $scope.count = data.count;
-            }).then(getPartMasters);
+            }).then(getPartMasters).catch(onError);
 
         })
         .filter('filterParts', function (ConfigurationService) {
@@ -137,6 +145,10 @@
         .controller('PartController', function ($scope, ConfigurationService) {
             $scope.configuration = ConfigurationService.configuration;
             $scope.actions = false;
+            $scope.openedPart = false;
+            $scope.toggleOpenedPart = function () {
+                $scope.openedPart = !$scope.openedPart;
+            };
         })
 
         .directive('partActions', function () {
@@ -144,8 +156,8 @@
             return {
 
                 templateUrl: 'js/workspace/part-actions.html',
-
-                controller: function ($scope, $filter,$element, $attrs, $transclude, $timeout, CliService, FolderService, PromptService) {
+                scope:false,
+                controller: function ($scope, $filter, $element, $attrs, $timeout, CliService, FolderService, PromptService) {
 
                     $scope.folders = FolderService.folders;
                     $scope.options = {force: true, recursive: true};
@@ -160,6 +172,10 @@
 
                     $scope.folder = {};
                     $scope.folder.path = FolderService.folders.length ? FolderService.folders[0].path : '';
+
+                    var onError = function(error){
+                        $scope.error = error;
+                    };
 
                     var onFinish = function () {
                         $scope.part.busy = false;
@@ -180,34 +196,42 @@
                         }
                     };
 
+                    $scope.output = [];
+
+                    var onOutput = function(o){
+                        $scope.$apply(function(){
+                            $scope.output.push(o);
+                        });
+                    };
+
                     $scope.download = function () {
                         $scope.part.busy = true;
-                        CliService.downloadNativeCad($scope.part, $scope.folder.path, $scope.options).then(function () {
+                        CliService.downloadNativeCad($scope.part, $scope.folder.path, $scope.options, onOutput).then(function () {
                             return CliService.getStatusForPart($scope.part);
-                        }, null, onProgress).then(onFinish).then(newStuff);
+                        }, onError, onProgress).then(onFinish).then(newStuff);
                     };
 
                     $scope.checkout = function () {
                         $scope.part.busy = true;
-                        CliService.checkoutPart($scope.part, $scope.folder.path, $scope.options).then(function () {
+                        CliService.checkoutPart($scope.part, $scope.folder.path, $scope.options, onOutput).then(function () {
                             return CliService.getStatusForPart($scope.part);
-                        }, null, onProgress).then(onFinish).then(newStuff).then(checkForWorkspaceReload);
+                        }, onError, onProgress).then(onFinish).then(newStuff).then(checkForWorkspaceReload);
                     };
 
                     $scope.checkin = function (e) {
                         PromptService.prompt(e, {title:$filter('translate')('CHECKIN_MESSAGE')}).then(function(message) {
                             $scope.part.busy = true;
-                            CliService.checkinPart($scope.part, {message:message}).then(function () {
+                            CliService.checkinPart($scope.part, {message:message}, onOutput).then(function () {
                                 return CliService.getStatusForPart($scope.part);
-                            }, null, onProgress).then(onFinish);
+                            }, onError, onProgress).then(onFinish);
                         });
                     };
 
                     $scope.undoCheckout = function () {
                         $scope.part.busy = true;
-                        CliService.undoCheckoutPart($scope.part).then(function () {
+                        CliService.undoCheckoutPart($scope.part, onOutput).then(function () {
                             return CliService.getStatusForPart($scope.part);
-                        }).then(onFinish);
+                        }, onError).then(onFinish);
                     };
 
                 }

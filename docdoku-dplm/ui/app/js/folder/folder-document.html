@@ -1,9 +1,9 @@
 <div class="md-tile-content">
 
-    <div class="cursor" ng-click="toggleOpenedFile(file)">
+    <div class="cursor" ng-click="toggleOpenedFile()">
 
         <i style="float:right" class="fa"
-           ng-class="{'fa-angle-down': file != openedFile, 'fa-angle-up': file === openedFile}"></i>
+           ng-class="{'fa-angle-down': !openedFile, 'fa-angle-up': openedFile}"></i>
 
         <h3>
             <i class="fa fa-check" ng-show="file.document && file.document.isReleased"></i>
@@ -29,10 +29,16 @@
         <div ng-show="file.mtime">
             <small>{{'LAST_ACTION' | translate }} {{file.mtime | timeago}}</small>
         </div>
+        <div ng-show="file">
+            <small>{{'SIZE' | translate}} : {{file.size | humanreadablesize}}</small>
+        </div>
+        <div class="subtitle clickable" ng-click="reveal($event)" ng-show="openedFile">
+            <small> {{file.path}}</small>
+        </div>
     </div>
 
     <div>
-        <file-document-actions class="slide-down" ng-if="file === openedFile"></file-document-actions>
+        <file-document-actions class="slide-down" ng-show="openedFile"></file-document-actions>
     </div>
     
     <md-progress-linear ng-if="file.busy" mode="determinate" ng-value="file.progress"></md-progress-linear>

@@ -4,7 +4,7 @@
             <md-button aria-label="" ng-click="openMenu()" hide-md><i class="fa fa-bars"></i></md-button>
             <md-button aria-label="" ng-click="reveal()">
                 <i class="fa fa-folder-open"></i> {{'FOLDER' | translate}} :
-                {{ folder.path | fileshortname }}
+                {{ folder.path | fileshortname }} ({{counts.totalFiles}} {{'FILES' |translate}})
                 <md-tooltip>
                     {{'OPEN_IN_EXPLORER'|translate}}
                 </md-tooltip>
@@ -15,7 +15,7 @@
                     {{'FAVORITE'|translate}}
                 </md-tooltip>
             </md-button>
-            <md-button aria-label="" ng-click="refresh()" class="right">
+            <md-button aria-label="" ng-click="refresh(true)" class="right">
                 <i class="fa fa-refresh"></i>
                 <md-tooltip>
                     {{'REFRESH_FOLDER'|translate}}
@@ -30,40 +30,43 @@
         </h3>
     </div>
 </md-toolbar>
-<div class="tabs default" layout="horizontal">
-    <div flex ng-class="{selected:tabs.selected == tabs.documents}">
-        <a ng-href="#/folder/{{folder.uuid}}/documents">{{'DOCUMENTS' | translate}}</a>
-    </div>
-    <div flex ng-class="{selected:tabs.selected == tabs.parts}">
-        <a ng-href="#/folder/{{folder.uuid}}/parts">{{'PARTS' | translate}}</a>
-    </div>
-    <div flex ng-class="{selected:tabs.selected == tabs.unknown}">
-        <a ng-href="#/folder/{{folder.uuid}}/unknown">{{'UNKNOWN' | translate}}</a>
-    </div>
-</div>
-
-<div class="row list-header" layout="horizontal">
-    <div flex>
-        <md-text-float style="margin: 0 18px;"
-                       label="{{'SEARCH' | translate}} ({{files.length}} {{'ITEMS' | translate}})" ng-model="search"
-                       type="text"></md-text-float>
-    </div>
-    <div style="padding-right:8px;">
-        <md-checkbox ng-model="filters.sync" aria-label="" title="{{'UP_TO_DATE' | translate}}">
-            <i class="fa fa-check-circle-o file-sync"></i>
-        </md-checkbox>
-        <md-checkbox ng-model="filters.modified" aria-label="" title="{{'MODIFIED' | translate}}">
-            <i class="fa fa-cloud-upload file-modified"></i>
-        </md-checkbox>
-    </div>
-</div>
 
 
 <div on-scroll-end="onScrollEnd()" class="fullscreen-wrapper offset-toolbar">
+
+    <div class="tabs default" layout="horizontal">
+        <div flex ng-class="{selected:tabs.selected == tabs.documents}">
+            <a ng-href="#/folder/{{folder.uuid}}/documents">{{'DOCUMENTS' | translate}} ({{counts.documents}})</a>
+        </div>
+        <div flex ng-class="{selected:tabs.selected == tabs.parts}">
+            <a ng-href="#/folder/{{folder.uuid}}/parts">{{'PARTS' | translate}} ({{counts.parts}})</a>
+        </div>
+        <div flex ng-class="{selected:tabs.selected == tabs.unknown}">
+            <a ng-href="#/folder/{{folder.uuid}}/unknown">{{'UNKNOWN' | translate}} ({{counts.unknown}})</a>
+        </div>
+    </div>
+
+    <div class="row list-header" layout="horizontal">
+        <div flex>
+            <md-text-float style="margin: 0 18px;"
+                           label="{{'SEARCH' | translate}} ({{files.length}} {{'ITEMS' | translate}})" ng-model="search"
+                           type="text"></md-text-float>
+        </div>
+        <div style="padding-right:8px;">
+            <md-checkbox ng-model="filters.sync" aria-label="" title="{{'UP_TO_DATE' | translate}}">
+                <i class="fa fa-check-circle-o file-sync"></i>
+            </md-checkbox>
+            <md-checkbox ng-model="filters.modified" aria-label="" title="{{'MODIFIED' | translate}}">
+                <i class="fa fa-cloud-upload file-modified"></i>
+            </md-checkbox>
+        </div>
+    </div>
+
+
     <md-content class="md-padding">
 
         <md-button
-                ng-if="hasUploadableFiles()"
+                ng-if="!loadingFiles && hasUploadableFiles()"
                 class="md-margin md-raised md-primary"
                 aria-label=""
                 ng-click="syncAll()">
@@ -74,6 +77,8 @@
             </md-tooltip>
         </md-button>
 
+
+        <span ng-show="loadingFiles">{{'FILE_ANALYSIS' | translate}} ... {{counts.inProgress}}/{{counts.totalFiles}}</span>
         <md-progress-linear ng-show="loadingFiles" mode="indeterminate"></md-progress-linear>
 
         <md-list>
@@ -81,7 +86,7 @@
 
             <md-item ng-repeat="file in files | filter:search | filterFiles:filters">
                 <md-item-content
-                        ng-controller="FileController" layout-align="start start" ng-class="{opened: file == openedFile}">
+                        ng-controller="FileController" layout-align="start start" ng-class="{opened:openedFile}">
                     <div class="md-tile-left md-tile-top" align="center" ng-if="loading">
                         <i class="fa fa-spinner fa-spin"></i>
                     </div>
@@ -95,7 +100,6 @@
                     <div class="file" ng-if="file.part" ng-include="'js/folder/folder-part.html'"></div>
                     <div class="file" ng-if="file.document" ng-include="'js/folder/folder-document.html'"></div>
                     <div class="file" ng-if="!file.document && !file.part" ng-include="'js/folder/folder-unknown.html'"></div>
-
                 </md-item-content>
                 <md-divider ng-if="!$last"></md-divider>
             </md-item>

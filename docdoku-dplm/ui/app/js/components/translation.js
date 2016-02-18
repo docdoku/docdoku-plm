@@ -96,7 +96,11 @@
                     NO_DOCUMENTS:'No documents',
                     DOWNLOADS_FINISHED:'All downloads are finished',
                     SYNC_ALL:'Synchronise all',
-                    CHECKIN_MESSAGE:'Add an iteration note'
+                    CHECKIN_MESSAGE:'Add an iteration note',
+                    DOWNLOAD_ALL:'Download all files',
+                    FILE_ANALYSIS:'Files analysis',
+                    DOWNLOADING:'Download in progress',
+                    SIZE:'Size'
                 })
                 .translations('fr', {
                     CUT: 'Couper',
@@ -189,7 +193,11 @@
                     ROOT_FOLDER:'Dossier racine',
                     DOWNLOADS_FINISHED:'Tous les téléchargements sont terminés',
                     SYNC_ALL:'Tout synchroniser',
-                    CHECKIN_MESSAGE:'Ajouter une note d\'itération'
+                    CHECKIN_MESSAGE:'Ajouter une note d\'itération',
+                    DOWNLOAD_ALL:'Télécharger tous les fichiers',
+                    FILE_ANALYSIS:'Analyse des fichiers',
+                    DOWNLOADING:'Téléchargement en cours',
+                    SIZE:'Taille'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

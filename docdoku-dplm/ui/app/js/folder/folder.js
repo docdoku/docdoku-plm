@@ -41,7 +41,6 @@
 
             $scope.configuration = ConfigurationService.configuration;
             $scope.files = [];
-            $scope.openedFile = null;
 
             $scope.filters = {
                 sync: true,
@@ -49,49 +48,80 @@
                 entity:$routeParams.entity
             };
 
-            $scope.refresh = function () {
-                $scope.loadingFiles = true;
+            $scope.counts = {
+                documents:0,
+                parts:0,
+                unknown:0,
+                totalFiles:0,
+                inProgress:0
+            };
+
+            var resetFiles = function(files){
                 $scope.files.length = 0;
+                $scope.counts.totalFiles = files.length;
+                $scope.counts.documents = 0;
+                $scope.counts.parts = 0;
+                $scope.counts.unknown = 0;
+                $scope.counts.inProgress=0;
+            };
 
-                FolderService.recursiveReadDir($scope.folder.path).then(function (files) {
+            var onFile = function(file){
+                $scope.counts.inProgress++;
+                $scope.counts.documents+=file.document?1:0;
+                $scope.counts.parts+=file.part?1:0;
+                $scope.counts.unknown+=!file.part && !file.document?1:0;
+                if(file.document && $scope.filters.entity == 'documents'){
+                    $scope.files.push(file);
+                }else if(file.part && $scope.filters.entity == 'parts'){
+                    $scope.files.push(file);
+                }else if(!file.part && !file.document && $scope.filters.entity == 'unknown'){
+                    $scope.files.push(file);
+                }
+            };
 
-                    var statusPromises = [];
+            $scope.refresh = function (forceRefresh) {
 
-                    angular.forEach(files,function(file){
-                        statusPromises.push($q(function (resolve, reject) {
-                            FolderService.fetchFileStatus(file).then(function () {
-                                if(file.document && $scope.filters.entity == 'documents'){
-                                    $scope.files.push(file);
-                                }else if(file.part && $scope.filters.entity == 'parts'){
-                                    $scope.files.push(file);
-                                }else if(!file.part && !file.document && $scope.filters.entity == 'unknown'){
-                                    $scope.files.push(file);
-                                }
-                                resolve();
-                            }, function () {
-                                resolve();
+                resetFiles([]);
+
+                if(!forceRefresh && FolderService.cache[$scope.folder.uuid]){
+                    var files = FolderService.cache[$scope.folder.uuid];
+                    resetFiles(files);
+                    angular.forEach(files, onFile);
+                }else{
+
+                    $scope.loadingFiles = true;
+                    FolderService.recursiveReadDir($scope.folder.path).then(function (files) {
+
+                        resetFiles(files);
+
+                        var toCache = [];
+                        var statusRequestChain = $q.when();
+                        angular.forEach(files,function(file){
+                            statusRequestChain = statusRequestChain.then(function(){
+                                return FolderService.fetchFileStatus(file).then(function () {
+                                    onFile(file);
+                                    toCache.push(file);
+                                });
                             });
-                        }));
-                    });
+                        });
 
-                    $q.all(statusPromises).then(function(){
+                        statusRequestChain.then(function(){
+                            $scope.loadingFiles = false;
+                            FolderService.cache[$scope.folder.uuid] = toCache;
+                        });
+
+                    }, function () {
                         $scope.loadingFiles = false;
+                    }).then(function(){
+                        $scope.folder.newStuff = false;
                     });
-
-                }, function () {
-                    $scope.loadingFiles = false;
-                }).then(function(){
-                    $scope.folder.newStuff = false;
-                });
+                }
 
             };
 
-            $scope.toggleOpenedFile = function (file) {
-                $scope.openedFile = file == $scope.openedFile ? null : file;
-            };
-
-            $scope.reveal = function () {
+            $scope.reveal = function ($event) {
                 FolderService.reveal($scope.folder.path);
+                $event.stopPropagation();
             };
 
             $scope.toggleFavorite = function () {
@@ -143,7 +173,14 @@
             };
         })
 
-        .controller('FileController', function ($scope, FolderService, AvailableLoaders, CliService) {
+        .controller('FileController', function ($scope, FolderService, AvailableLoaders) {
+
+            $scope.openedFile = false;
+
+            $scope.toggleOpenedFile = function (scope) {
+                $scope.openedFile = !$scope.openedFile;
+            };
+
             $scope.fetchStatus = function () {
                 $scope.loading = true;
                 FolderService.fetchFileStatus($scope.file).then(function () {
@@ -164,24 +201,7 @@
 
             $scope.isViewable = AvailableLoaders.indexOf($scope.file.path.split('.').pop()) !== -1;
 
-            $scope.$on('sync:all',function(){
-                if(!$scope.file.sync && $scope.file.modified && !$scope.file.busy){
-                   $scope.put();
-                }
-            });        
 
-            $scope.put = function () {
-                $scope.file.busy = true;
-                if($scope.file.part){
-                    CliService.putCADFile($scope.file.part.workspace, $scope.file.path).then(function () {
-                        return $scope.fetchStatus();
-                    }, null, $scope.onProgress).then($scope.onFinish);
-                }else if($scope.file.document){
-                    CliService.putDocumentFile($scope.file.document.workspace, $scope.file.path).then(function () {
-                        return $scope.fetchStatus();
-                    }, null, $scope.onProgress).then($scope.onFinish);
-                }                
-            };                
 
         })
 
@@ -197,38 +217,60 @@
                     $scope.workspaces = WorkspaceService.workspaces;
                     $scope.show3D = false;
 
+                    var onError = function(error){
+                        $scope.error = error;
+                    };
+
+                    $scope.output = [];
+
+                    var onOutput = function(o){
+                        $scope.output.push(o);
+                    };
+
+                    $scope.$on('sync:all',function(){
+                        if(!$scope.file.sync && $scope.file.modified && !$scope.file.busy){
+                            $scope.put();
+                        }
+                    });
+
+                    $scope.put = function () {
+                        $scope.file.busy = true;
+                        CliService.putCADFile($scope.file.part.workspace, $scope.file.path, onOutput).then(function () {
+                            return $scope.fetchStatus();
+                        }, onError, $scope.onProgress).then($scope.onFinish);
+                    };
+
                     $scope.checkout = function () {
                         $scope.file.busy = true;
-                        CliService.checkoutPart($scope.file.part, $scope.folder.path, $scope.options).then(function () {
+                        CliService.checkoutPart($scope.file.part, $scope.folder.path, $scope.options, onOutput).then(function () {
                             return $scope.fetchStatus();
-                        }, null, $scope.onProgress).then($scope.onFinish);
+                        }, onError, $scope.onProgress).then($scope.onFinish);
                     };
 
                     $scope.checkin = function (e) {
                         PromptService.prompt(e, {title:$filter('translate')('CHECKIN_MESSAGE')}).then(function(message){
                             $scope.file.busy = true;
-                            CliService.checkinPart($scope.file.part,{path:$scope.folder.path,message: message}).then(function () {
+                            CliService.checkinPart($scope.file.part,{path:$scope.folder.path,message: message}, onOutput).then(function () {
                                 return $scope.fetchStatus();
-                            }, null, $scope.onProgress).then($scope.onFinish);
+                            }, onError, $scope.onProgress).then($scope.onFinish);
                         });
                     };                    
 
                     $scope.undoCheckout = function () {
                         $scope.file.busy = true;
-                        CliService.undoCheckoutPart($scope.file.part).then(function () {
+                        CliService.undoCheckoutPart($scope.file.part, onOutput).then(function () {
                             return $scope.fetchStatus();
-                        }).then($scope.onFinish);
+                        }, onError).then($scope.onFinish);
                     };
 
                     $scope.conversionStatus = function () {
-                        CliService.getConversionStatus($scope.file.part).then(function (conversion) {
+                        CliService.getConversionStatus($scope.file.part, onOutput).then(function (conversion) {
                             var message = conversion.pending ? $filter('translate')('PENDING') :
                                 conversion.succeed ? $filter('translate')('SUCCESS') :
                                     $filter('translate')('FAIL');
-
-                                NotificationService.toast(message);
+                                onOutput({info:message});
                         },function(){
-                            NotificationService.toast($filter('translate')('NO_CONVERSION'));
+                            onOutput({info:$filter('translate')('NO_CONVERSION')});
                         });
                     };
 
@@ -252,21 +294,45 @@
                 controller: function ($scope, $element, $attrs, $transclude, $timeout, $filter, CliService, WorkspaceService, PromptService) {
 
                     $scope.options = {force: true,recursive:true};
-                    $scope.workspaces = WorkspaceService.workspaces;                  
+                    $scope.workspaces = WorkspaceService.workspaces;
+
+                    var onError = function(error){
+                        $scope.error = error;
+                    };
+
+                    $scope.output = [];
+
+                    var onOutput = function(o){
+                        $scope.output.push(o);
+                    };
+
+                    $scope.$on('sync:all',function(){
+                        if(!$scope.file.sync && $scope.file.modified && !$scope.file.busy){
+                            $scope.put();
+                        }
+                    });
+
+                    $scope.put = function () {
+                        $scope.file.busy = true;
+                        CliService.putDocumentFile($scope.file.document.workspace, $scope.file.path, onOutput).then(function () {
+                            return $scope.fetchStatus();
+                        }, onError, $scope.onProgress).then($scope.onFinish);
+
+                    };
 
                     $scope.checkout = function () {
                         $scope.file.busy = true;
-                        CliService.checkoutDocument($scope.file.document, $scope.folder.path, $scope.options).then(function () {
+                        CliService.checkoutDocument($scope.file.document, $scope.folder.path, $scope.options, onOutput).then(function () {
                             return $scope.fetchStatus();
-                        }, null, $scope.onProgress).then($scope.onFinish);
+                        }, onError, $scope.onProgress).then($scope.onFinish);
                     };
 
                     $scope.checkin = function (e) {
                         PromptService.prompt(e, {title:$filter('translate')('CHECKIN_MESSAGE')}).then(function(message){
                             $scope.file.busy = true;
-                            CliService.checkinDocument($scope.file.document,{path:$scope.folder.path,message:message}).then(function () {
+                            CliService.checkinDocument($scope.file.document,{path:$scope.folder.path,message:message}, onOutput).then(function () {
                                 return $scope.fetchStatus();
-                            }, null, $scope.onProgress).then($scope.onFinish);
+                            }, onError, $scope.onProgress).then($scope.onFinish);
                         });
 
                     };
@@ -274,9 +340,9 @@
 
                     $scope.undoCheckout = function () {
                         $scope.file.busy = true;
-                        CliService.undoCheckoutDocument($scope.file.document).then(function () {
+                        CliService.undoCheckoutDocument($scope.file.document, onOutput).then(function () {
                             return $scope.fetchStatus();
-                        }).then($scope.onFinish);
+                        }, onError).then($scope.onFinish);
                     };
 
                 }
@@ -288,7 +354,7 @@
             return {
 
                 templateUrl: 'js/folder/file-unknown-actions.html',
-                sope:false,
+                scope:false,
                 controller: function ($scope, $element, $attrs, $transclude, $timeout, $filter, CliService, WorkspaceService, NotificationService) {
 
                     $scope.options = {force: true,recursive:true};
@@ -302,20 +368,30 @@
                         document:1
                     };
 
+                    var onError = function(error){
+                        $scope.error = error;
+                    };
+
+                    $scope.output = [];
+
+                    var onOutput = function(o){
+                        $scope.output.push(o);
+                    };
+
                     $scope.createPart = function () {
                         $scope.file.busy = true;
-                        CliService.createPart($scope.newPart, $scope.file.path).then(function () {
+                        CliService.createPart($scope.newPart, $scope.file.path, onOutput).then(function () {
                             $scope.newPart = {workspace: $scope.workspaces[0]};
                             return $scope.fetchStatus();
-                        }, null, $scope.onProgress).then($scope.onFinish);
+                        }, onError, $scope.onProgress).then($scope.onFinish);
                     };
 
                     $scope.createDocument = function () {
                         $scope.file.busy = true;
-                        CliService.createDocument($scope.newDocument, $scope.file.path).then(function () {
+                        CliService.createDocument($scope.newDocument, $scope.file.path, onOutput).then(function () {
                             $scope.newDocument = {workspace: $scope.workspaces[0]};
                             return $scope.fetchStatus();
-                        }, null, $scope.onProgress).then($scope.onFinish);
+                        }, onError, $scope.onProgress).then($scope.onFinish);
                     };
 
                 }

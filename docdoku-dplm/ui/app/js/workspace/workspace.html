@@ -13,6 +13,7 @@
     </div>
 </md-toolbar>
 
+<div class="fullscreen-wrapper offset-toolbar">
 <div class="tabs default" layout="horizontal">
     <div flex ng-class="{selected:tabs.selected == tabs.documents}">
         <a ng-href="#/workspace/{{workspace}}/documents/folders">{{'DOCUMENTS' | translate}}</a>
@@ -28,4 +29,5 @@
 
 <div ng-if="tabs.selected == tabs.parts">
     <div ng-controller="WorkspacePartsController" ng-include="'js/workspace/workspace-parts.html'"></div>
+</div>
 </div>

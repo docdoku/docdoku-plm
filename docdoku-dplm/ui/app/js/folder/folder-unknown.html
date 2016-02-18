@@ -1,15 +1,23 @@
 <div class="md-tile-content">
 
-    <div class="cursor" ng-click="toggleOpenedFile(file)">
-        <i style="float:right" class="fa" ng-class="{'fa-angle-down': file != openedFile, 'fa-angle-up': file === openedFile}"></i>
+    <div class="cursor" ng-click="toggleOpenedFile()">
+        <i style="float:right" class="fa" ng-class="{'fa-angle-down': !openedFile, 'fa-angle-up': openedFile}"></i>
         <h3>
           {{file.path | fileshortname}}
         </h3>
-        {{'LAST_ACTION' | translate }} {{file.mtime | timeago}}
+        <div class="subtitle" ng-show="file.mtime">
+            <small>{{'LAST_ACTION' | translate }} {{file.mtime | timeago}}</small>
+        </div>
+        <div ng-show="file">
+            <small>{{'SIZE' | translate}} : {{file.size | humanreadablesize}}</small>
+        </div>
+        <div class="subtitle clickable" ng-click="reveal($event)" ng-show="openedFile">
+            <small> {{file.path}}</small>
+        </div>
     </div>
 
     <div>
-        <file-unknown-actions class="slide-down" ng-if="file === openedFile"></file-unknown-actions>
+        <file-unknown-actions class="slide-down" ng-show="openedFile"></file-unknown-actions>
     </div>
 
 </div>

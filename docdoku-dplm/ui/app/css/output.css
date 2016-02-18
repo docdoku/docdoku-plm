@@ -1,0 +1,14 @@
+.output{
+    margin-top: 12px;
+}
+
+.output span{
+    display: block;
+    font-size: smaller;
+}
+.output-info{
+    color: #02587F;
+}
+.output-error{
+    color: #e84e40;
+}

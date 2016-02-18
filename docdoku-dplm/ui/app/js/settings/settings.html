@@ -12,6 +12,9 @@
 <div layout="vertical" class="settings">
 
     <md-content class="md-padding">
+        <div class="output" ng-if="output.error">
+            <output entry="output.error"></output>
+        </div>
         <form ng-submit="save()">
             <div class="row">
                 <md-text-float label="{{'USER' | translate}}" ng-model="configuration.user" required></md-text-float>

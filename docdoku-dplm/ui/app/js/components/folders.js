@@ -9,6 +9,9 @@
 
             var ignoreList = ['.dplm'];
 
+            // HashMap for cache by folder id
+            this.cache={};
+
             this.folders = angular.fromJson(localStorage.folders || '[]');
 
             var alreadyHave = function (path) {
