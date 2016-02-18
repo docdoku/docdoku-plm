@@ -20,16 +20,15 @@
 
 package com.docdoku.server.importers;
 
+import com.docdoku.server.importers.utils.ImportResult;
+
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-public interface AttributesImporter {
+public interface PartImporter {
 
-    Map<String, List<String>> checkPartAttributesImport(String workspaceId, File file);
-    boolean savePartAttributes(String workspaceId, File file, String revisionNote, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate);
-
-    Map<String, List<String>> checkPathDataAttributesImport(String workspaceId, File file);
-    boolean savePathDataAttributes(String workspaceId, File file, String revisionNote, boolean autoFreezeAfterUpdate, boolean permissiveUpdate);
+    ImportResult importFile(String workspaceId, File file, String revisionNote, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate);
+    boolean canImportFile(String importFileName);
 
 }
