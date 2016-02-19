@@ -40,6 +40,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 
 public class FileHelper {
 
@@ -84,14 +85,24 @@ public class FileHelper {
             conn.setUseCaches(false);
             conn.setAllowUserInteraction(true);
             conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("Accept-Encoding", "gzip");
             conn.setRequestMethod("GET");
             byte[] encoded = Base64.encodeBase64((login + ":" + password).getBytes("ISO-8859-1"));
             conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
             conn.connect();
             manageHTTPCode(conn);
 
+
             MessageDigest md = MessageDigest.getInstance("MD5");
-            in = output.getMonitor(conn.getContentLength(),new DigestInputStream(new BufferedInputStream(conn.getInputStream(), BUFFER_CAPACITY),md));
+            InputStream connInputStream;
+            if ("gzip".equals(conn.getContentEncoding())) {
+                connInputStream =new GZIPInputStream(conn.getInputStream());
+            }
+            else {
+                connInputStream =conn.getInputStream();
+            }
+
+            in = output.getMonitor(conn.getContentLength(),new DigestInputStream(new BufferedInputStream(connInputStream, BUFFER_CAPACITY), md));
 
             byte[] data = new byte[CHUNK_SIZE];
             int length;
