@@ -10,11 +10,15 @@
 
         <div class="progress-bars"></div>
 
+            <div id="iteration-files">
+
+            </div>
+
         <form enctype="multipart/form-data" class="upload-form">
             <div class="droppable filedroparea">
                 <input name="upload" type="file" class="input-xlarge droppable upload-btn"/>
                 <button class="btn btn-success droppable">{{i18n.SELECT_FILE}}</button>
-                <span class="droppable">{{i18n.DROP_FILES_HERE}}</span>
+                <span class="droppable">{{i18n.DROP_FILE_HERE}}</span>
                 <p class="upload-file-shortname"></p>
                 <div class="progress progress-striped">
                     <div class="bar"></div>
@@ -24,17 +28,17 @@
 
 
         </form>
+
+        </div>
             <p></p>
 
+        <div>
+            <input type="checkbox" data-fullname="{{revision_note_checkbox}}"/>{{i18n.ADD_REVISION_NOTE}}
+            <textarea type="text" id="revision_note" rows="1" data-fullname="{{revision_note}}"></textarea>
         </div>
 
         <p>
-            <input type="checkbox" data-fullname="{{revision_note_checkbox}}"/>{{i18n.ADD_REVISION_NOTE}}
-            <textarea type="text" id="revision_note" data-fullname="{{revision_note}}"></textarea>
-        </p>
-
-        <p>
-            <input type="checkbox" data-fullname="{{froze_iteration}}"/>{{i18n.FREEZE_CURRENT_ITERATION}}
+                <input type="checkbox" data-fullname="{{froze_iteration}}"/>{{i18n.FREEZE_AFTER_MODIFICATION}}
         </p>
 
         <p>
@@ -43,5 +47,6 @@
 
         <button type="button" class="btn btn-primary import-button">{{i18n.IMPORT}}
         </button>
+
     </div>
 </div>

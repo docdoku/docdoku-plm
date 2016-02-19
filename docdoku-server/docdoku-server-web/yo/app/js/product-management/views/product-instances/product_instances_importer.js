@@ -1,16 +1,17 @@
 /**
- * Created by laurent on 18/02/16.
+ * Created by laurentlevan on 19/02/16.
  */
 define([
-    'backbone',
+    '../../../../bower_components/backbone/backbone',
     'common-objects/views/components/modal',
     'common-objects/models/file/attached_file',
     'common-objects/views/file/file',
-    'text!templates/importer.html'
+    'text!templates/product-instances/product_instances_import_form.html',
+    'common-objects/views/file/file_list'
 
 ], function (Backbone, ModalView, AttachedFile, FileView, template,FileListView) {
     'use strict';
-    var ImportManagementView = ModalView.extend({
+    var PartImportView = ModalView.extend({
 
         template: template,
 
@@ -25,7 +26,7 @@ define([
             'dragover .droppable': 'fileDragHover',
             'dragleave .droppable': 'fileDragHover',
             'drop .droppable': 'fileDropHandler',
-            'submit form':'formSubmit',
+            'submit form':'formSubmit'
         },
 
         initialize: function () {
@@ -44,12 +45,12 @@ define([
             }, false);
 
             /*
-            if (this.options.singleFile) {
-                this.listenTo(this.collection, 'add', this.addSingleFile);
-            } else {
-                this.listenTo(this.collection, 'add', this.addOneFile);
-            }
-            */
+             if (this.options.singleFile) {
+             this.listenTo(this.collection, 'add', this.addSingleFile);
+             } else {
+             this.listenTo(this.collection, 'add', this.addOneFile);
+             }
+             */
 
             ModalView.prototype.initialize.apply(this, arguments);
         },
@@ -101,29 +102,29 @@ define([
             //empty the array
             this.xhrs.length = 0;
             this.finished();
-        },
+        }
 
         /*
-        initAttachedFilesUploadView: function () {
-            this.FileView = new FileListView({
-                title: App.config.i18n.ATTACHED_FILES,
-                deleteBaseUrl: this.iteration.url(),
-                baseName: this.iteration.getBaseName('attachedfiles'),
-                uploadBaseUrl: this.iteration.getNativeCadFileUploadBaseUrl(),
-                collection: this.iteration._File,
-                editMode: this.editMode,
-                singleFile: true
-            }).render();
+         initAttachedFilesUploadView: function () {
+         this.FileView = new FileListView({
+         title: App.config.i18n.ATTACHED_FILES,
+         deleteBaseUrl: this.iteration.url(),
+         baseName: this.iteration.getBaseName('attachedfiles'),
+         uploadBaseUrl: this.iteration.getNativeCadFileUploadBaseUrl(),
+         collection: this.iteration._File,
+         editMode: this.editMode,
+         singleFile: true
+         }).render();
 
-            this.$('#iteration-files').html(this.FileView.el);
+         this.$('#iteration-files').html(this.FileView.el);
 
-        },
+         },
 
-        render:function(){
-            this.initAttachedFilesUploadView();
-        }*/
-
-    });
-        return ImportManagementView;
+         render:function(){
+         this.initAttachedFilesUploadView();
+         }*/
 
     });
+    return PartImportView;
+
+});
