@@ -32,8 +32,6 @@ define([
             this.editMode = this.options.editMode;
             this.title = this.options.title;
 
-            this.xhrs = [];
-
             // jQuery creates it's own event object, and it doesn't have a
             // dataTransfer property yet. This adds dataTransfer to the event object.
             $.event.props.push('dataTransfer');
