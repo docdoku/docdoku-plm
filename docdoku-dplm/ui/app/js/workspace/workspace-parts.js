@@ -16,8 +16,8 @@
             $scope.filters = {
                 checkoutable: true,
                 checkedOutByMe: true,
-                released: false,
-                checkedOut: false,
+                isReleased: true,
+                checkedOut: true,
                 search:''
             };
 
