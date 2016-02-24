@@ -43,6 +43,7 @@ define([
                 this.trigger('selectionChanged', this);
             }
             this.bindUserPopover();
+            this.bindDescriptionPopover();
             date.dateHelper(this.$('.date-popover'));
             this.trigger('rendered', this);
             return this;
@@ -98,6 +99,21 @@ define([
                 partModalView.show();
                 partModalView.activateNotificationsTab();
             });
+        },
+
+        bindDescriptionPopover: function() {
+            if(this.model.getDescription() != null && this.model.getDescription() != "") {
+                var self = this;
+                this.$('.part_number')
+                    .popover({
+                        title: App.config.i18n.DESCRIPTION,
+                        html: true,
+                        content: self.model.getDescription(),
+                        trigger: 'hover',
+                        placement: 'top',
+                        container: 'body'
+                    });
+            }
         },
 
         bindUserPopover: function () {
