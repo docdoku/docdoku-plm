@@ -538,8 +538,6 @@ define([
 
         showImporter:function(){
             var partImporterView = new PartImporterView();
-
-            window.document.body.appendChild(partImporterView.el);
             partImporterView.show();
 
             return false;
