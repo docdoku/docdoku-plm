@@ -6,7 +6,6 @@ define([
     'text!common-objects/templates/file/file_list.html',
     'common-objects/models/file/attached_file',
     'common-objects/views/file/file',
-    'common-objects/views/file/file_list',
     'common-objects/views/alert'
 
 ], function (Backbone, Mustache, unorm, template, AttachedFile, FileView, AlertView) {
@@ -31,6 +30,8 @@ define([
         initialize: function () {
             this.editMode = this.options.editMode;
             this.title = this.options.title;
+
+            this.xhrs = [];
 
             // jQuery creates it's own event object, and it doesn't have a
             // dataTransfer property yet. This adds dataTransfer to the event object.
@@ -184,7 +185,7 @@ define([
 
             var fd = new window.FormData();
             fd.append('upload', file);
-
+            console.log(fd);
             xhr.send(fd);
 
             this.xhrs.push(xhr);

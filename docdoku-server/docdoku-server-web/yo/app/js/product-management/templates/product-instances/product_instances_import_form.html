@@ -10,13 +10,13 @@
 
             <div class="progress-bars"></div>
 
-            <div id="iteration-files">
+            <div id="file-selected"><ul></ul>
 
             </div>
 
             <form enctype="multipart/form-data" class="upload-form">
                 <div class="droppable filedroparea">
-                    <input name="upload" type="file" class="input-xlarge droppable upload-btn"/>
+                    <input name="upload" type="file" class="input-xlarge droppable upload-btn" accept=".xls"/>
                     <button class="btn btn-success droppable">{{i18n.SELECT_FILE}}</button>
                     <span class="droppable">{{i18n.DROP_FILE_HERE}}</span>
                     <p class="upload-file-shortname"></p>
@@ -33,17 +33,17 @@
         <p></p>
 
         <div>
-            <input type="checkbox" data-fullname="{{revision_note_checkbox}}"/>{{i18n.ADD_REVISION_NOTE}}
-            <textarea type="text" id="revision_note" rows="1" data-fullname="{{revision_note}}"></textarea>
+            <input type="checkbox" id="revision_checkbox_product"/>{{i18n.ADD_REVISION_NOTE}}
+            <textarea type="text" id="revision_text_product" rows="1" ></textarea>
         </div>
 
 
         <p>
-            <input type="checkbox" data-fullname="{{freeze_iteration}}"/>{{i18n.FREEZE_AFTER_MODIFICATION}}
+            <input type="checkbox" id="freeze-checkbox"/>{{i18n.FREEZE_AFTER_MODIFICATION}}
         </p>
 
         <p>
-            <input type="checkbox" data-fullname="{{permissive_update}}"/>{{i18n.PERMISSIVE_UPDATE_PATH_DATA}}
+            <input type="checkbox" id="permissive_update_product_instance"/>{{i18n.PERMISSIVE_UPDATE_PATH_DATA}}
         </p>
 
         <button type="button" class="btn btn-primary import-button">{{i18n.IMPORT}}
