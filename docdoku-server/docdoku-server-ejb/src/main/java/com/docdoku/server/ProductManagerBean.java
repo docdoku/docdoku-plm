@@ -3210,7 +3210,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     }
                 }
                 String pathAsString = Tools.getPathAsString(path);
-                int depth = parts.size();
+                int depth = parts.size() -1;
                 PartMaster part = parts.get(parts.size() - 1);
                 List<PartIteration> partIterations = filter.filter(part);
                 if (!partIterations.isEmpty()) {
