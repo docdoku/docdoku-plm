@@ -108,10 +108,7 @@ define([
         },
 
         addOneFile: function (attachedFile) {
-            var self = this;
-            self.filedisplay.empty();
-            self.filedisplay.append('<li>' + attachedFile.getShortName() + '</li>');
-            this.$el.trigger('file:uploaded');
+            this.filedisplay.html('<li>' + attachedFile.getShortName() + '</li>');
         },
 
         bindDomElements: function () {
@@ -143,7 +140,7 @@ define([
         },
         formSubmit: function () {
 
-            if (this.file != null) {
+            if (this.file) {
 
 
                 var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/import';
@@ -151,7 +148,7 @@ define([
                 var autocheckin = this.checkboxAutoCheckin.is(':checked');
                 var autocheckout = this.checkboxAutoCheckin.is(':checked');
                 var permissive = this.$('#permissive_update_part').is(':checked');
-                var comment = this.$('#revision_checkbox_part').is(':checked') ? this.$('revision_text_part') : "null";
+                var comment = this.$('#revision_checkbox_part').is(':checked') ? this.$('revision_text_part') : '';
 
                 var params = {
                     'autoCheckout': autocheckout,
@@ -167,13 +164,11 @@ define([
 
                 var formdata = new window.FormData();
                 formdata.append('upload', this.file);
-                debugger;
-                console.log(this.file);
                 xhr.send(formdata);
 
             }
             return false;
-        },
+        }
 
     });
     return PartImportView;
