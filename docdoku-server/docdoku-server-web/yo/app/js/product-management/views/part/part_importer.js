@@ -163,7 +163,7 @@ define([
                 var importUrl = baseUrl + '?' + $.param(params);
 
                 var xhr = new XMLHttpRequest();
-                xhr.open('PUT', importUrl, true);
+                xhr.open('POST', importUrl, true);
 
                 var formdata = new window.FormData();
                 formdata.append('upload', this.file);

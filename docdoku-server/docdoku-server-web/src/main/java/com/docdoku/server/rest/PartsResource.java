@@ -354,7 +354,7 @@ public class PartsResource {
         return partsLastIter.toArray(new PartIterationDTO[partsLastIter.size()]);
     }
 
-    @PUT
+    @POST
     @Path("import")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
