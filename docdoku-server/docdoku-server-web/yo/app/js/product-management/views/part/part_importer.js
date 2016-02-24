@@ -2,7 +2,7 @@
  * Created by laurentlevan on 19/02/16.
  */
 
-/*global _,define,App*/
+/*global _,define,App,window*/
 define([
     'backbone',
     'mustache',
@@ -19,28 +19,18 @@ define([
 
         tagName: 'div',
         className: 'attachedFiles idle',
-        /*
-        event:{
-            'click form button.cancel-upload-btn': 'cancelButtonClicked',
-            'change form input.upload-btn': 'fileSelectHandler',
-            'dragover .droppable': 'fileDragHover',
-            'dragleave .droppable': 'fileDragHover',
-            'drop .droppable': 'fileDropHandler',
-            'submit form':'formSubmit'
-        },
-        */
+
         initialize: function () {
             ModalView.prototype.initialize.apply(this, arguments);
-            this.events['click form button.cancel-upload-btn']='cancelButtonClicked';
+            this.events['click form button.cancel-upload-btn'] = 'cancelButtonClicked';
             this.events['change form input.upload-btn'] = 'fileSelectHandler';
-            this.events['dragover .droppable']='fileDragHover';
-            this.events['dragleave .droppable']='fileDragHover';
-            this.events['drop .droppable']='fileDropHandler';
-            this.events['submit form']='formSubmit';
+            this.events['dragover .droppable'] = 'fileDragHover';
+            this.events['dragleave .droppable'] = 'fileDragHover';
+            this.events['drop .droppable'] = 'fileDropHandler';
+            this.events['click .import-button'] = 'formSubmit';
+            this.events['click #auto_checkout_part'] = 'changeAutoCheckout';
 
-            //$.event.props.push('dataTransfer');
-
-            this.xhrs = [];
+            $.event.props.push('dataTransfer');
 
             // Prevent browser behavior on file drop
             window.addEventListener('drop', function (e) {
@@ -53,13 +43,6 @@ define([
                 return false;
             }, false);
 
-            /*
-             if (this.options.singleFile) {
-             this.listenTo(this.collection, 'add', this.addSingleFile);
-             } else {
-             this.listenTo(this.collection, 'add', this.addOneFile);
-             }
-             */
         },
 
         // cancel event and hover styling
@@ -81,40 +64,18 @@ define([
                 return;
             }
 
-            _.each(e.dataTransfer.files, this.uploadNewFile.bind(this));
+            _.each(e.dataTransfer.files, this.loadNewFile.bind(this));
         },
 
         fileSelectHandler: function (e) {
-            _.each(e.target.files, this.uploadNewFile.bind(this));
-        },
-
-        addOneFile: function (attachedFile) {
-            var self = this;
-            this.$toggleCheckAll.show();
-            var fileView = new FileView({
-                model: attachedFile,
-                filesToDelete: self.filesToDelete,
-                deleteBaseUrl: self.options.deleteBaseUrl,
-                uploadBaseUrl: self.options.uploadBaseUrl,
-                editMode: self.editMode
-            });
-            this.listenTo(fileView,'notification',this.printNotifications);
-            this.listenTo(fileView,'clear', this.clearNotifications);
-            fileView.render();
-            self.filesUL.append(fileView.el);
+            _.each(e.target.files, this.loadNewFile.bind(this));
         },
 
         cancelButtonClicked: function () {
-            _.invoke(this.xhrs,'abort');
-            //empty the array
-            this.xhrs.length = 0;
+            //empty the file
+            this.file = null;
             this.finished();
         },
-
-        formSubmit: function () {
-            return false;
-        },
-
 
         render: function () {
             /*var _this = this;*/
@@ -123,102 +84,96 @@ define([
                 i18n: App.config.i18n
             }));
             this.bindDomElements();
+            this.checkboxAutoCheckin.disabled = true;
 
             return this;
         },
 
-        uploadNewFile: function (file) {
-
-            var self = this;
+        loadNewFile: function (file) {
 
             var fileName = unorm.nfc(file.name);
-            var progressBar = $('<div class="progress progress-striped"><div class="bar">'+fileName+'</div></div>');
-            var bar = progressBar.find('.bar');
+            var progressBar = $('<div class="progress progress-striped"><div class="bar">' + fileName + '</div></div>');
+            //var bar = progressBar.find('.bar');
             this.progressBars.append(progressBar);
 
             this.gotoUploadingState();
 
             var newFile = new AttachedFile({
-                fullName: this.options.baseName + '/' + fileName,
                 shortName: fileName
             });
 
+            this.file = file;
+            this.addOneFile(newFile);
 
-            /*
+        },
 
-            var xhr = new XMLHttpRequest();
-
-            xhr.upload.addEventListener('progress', function (evt) {
-                if (evt.lengthComputable) {
-                    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-                    bar.width(percentComplete + '%');
-                }
-            }, false);
-
-            xhr.addEventListener('load', function (e) {
-
-                if (e.currentTarget.status !== 200 && e.currentTarget.status !== 201) {
-                    self.xhrFinishedWithError(xhr, App.config.i18n.FILE + ' <' + fileName + '> : ' + e.currentTarget.statusText);
-                    progressBar.remove();
-                    return false;
-                }
-
-                self.xhrFinishedWithSuccess(xhr);
-                progressBar.remove();
-                newFile.isNew = function () {
-                    return false;
-                };
-                var existingFile = self.filesToDelete.findWhere({fullName:newFile.getFullName()});
-                if(existingFile){
-                    self.filesToDelete.remove(existingFile);
-                    var checkbox = self.$('[data-fullname="'+existingFile.getShortName()+'"]');
-                    if(checkbox && checkbox.is(':checked')){
-                        checkbox.click();
-                    }
-                }else{
-                    self.collection.add(newFile);
-                    self.newItems.add(newFile);
-                }
-            }, false);
-
-            /*
-            //Don't send it to the server yet
-            xhr.open('POST', this.options.uploadBaseUrl);
-
-
-            var fd = new window.FormData();
-            fd.append('upload', file);
-
-
-            xhr.send(fd);
-            this.xhrs.push(xhr);
-             */
-
-            //create a view
-            this.filedisplay.append(newFile.el);
+        addOneFile: function (attachedFile) {
+            var self = this;
+            self.filedisplay.empty();
+            self.filedisplay.append('<li>' + attachedFile.getShortName() + '</li>');
+            this.$el.trigger('file:uploaded');
         },
 
         bindDomElements: function () {
             this.filedroparea = this.$('.filedroparea');
-            this.filedisplay = this.$('#file-selected');
+            this.filedisplay = this.$('#file-selected ul');
             this.uploadInput = this.$('input.upload-btn');
             this.progressBars = this.$('div.progress-bars');
             this.notifications = this.$('div.notifications');
+            this.checkboxAutoCheckin = this.$('#auto_checkin_part');
+            this.checkboxAutoCheckout = this.$('#auto_checkout_part');
         },
 
         gotoUploadingState: function () {
-            this.$el.removeClass('idle');
-            this.$el.addClass('uploading');
+            //this.$el.removeClass('idle');
+            //this.$el.addClass('uploading');
         },
 
-        xhrFinishedWithError: function(xhr, error) {
-            this.printNotifications('error',error);
 
-            this.xhrs.splice(this.xhrs.indexOf(xhr), 1);
-            if (!this.xhrs.length) {
-                this.gotoIdleState();
+        /**
+         * to enable or disable checkbox for auto checkin
+         */
+        changeAutoCheckout: function () {
+            if (this.checkboxAutoCheckout.is(':checked') === true) {
+                this.checkboxAutoCheckin.prop('disabled', false);
+            } else {
+                this.checkboxAutoCheckin.prop('disabled', true);
+                this.checkboxAutoCheckin.is('checked', false);
             }
-        }
+        },
+        formSubmit: function () {
+
+            if (this.file != null) {
+
+
+                var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/import';
+
+                var autocheckin = this.checkboxAutoCheckin.is(':checked');
+                var autocheckout = this.checkboxAutoCheckin.is(':checked');
+                var permissive = this.$('#permissive_update_part').is(':checked');
+                var comment = this.$('#revision_checkbox_part').is(':checked') ? this.$('revision_text_part') : "null";
+
+                var params = {
+                    'autoCheckout': autocheckout,
+                    'autoCheckin': autocheckin,
+                    'permissiveUpdate': permissive,
+                    'revisionNote': comment
+                };
+
+                var importUrl = baseUrl + '?' + $.param(params);
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('PUT', importUrl, true);
+
+                var formdata = new window.FormData();
+                formdata.append('upload', this.file);
+                debugger;
+                console.log(this.file);
+                xhr.send(formdata);
+
+            }
+            return false;
+        },
 
     });
     return PartImportView;

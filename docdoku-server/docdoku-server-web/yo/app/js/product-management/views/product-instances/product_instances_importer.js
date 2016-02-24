@@ -1,35 +1,34 @@
 /**
  * Created by laurentlevan on 19/02/16.
  */
+
+/*global _,define,App*/
+
 define([
     '../../../../bower_components/backbone/backbone',
+    'mustache',
+    'unorm',
     'common-objects/views/components/modal',
     'common-objects/models/file/attached_file',
     'common-objects/views/file/file',
-    'text!templates/product-instances/product_instances_import_form.html',
-    'common-objects/views/file/file_list'
-
-], function (Backbone, ModalView, AttachedFile, FileView, template,FileListView) {
+    'text!templates/product-instances/product_instances_import_form.html'
+], function (Backbone, Mustache, unorm, ModalView, AttachedFile, FileView, template) {
     'use strict';
-    var PartImportView = ModalView.extend({
+    var ProductInstanceImportView = ModalView.extend({
 
         template: template,
-
-        templateExtraData: {},
 
         tagName: 'div',
         className: 'attachedFiles idle',
 
-        event:{
-            'click form button.cancel-upload-btn': 'cancelButtonClicked',
-            'change form input.upload-btn': 'fileSelectHandler',
-            'dragover .droppable': 'fileDragHover',
-            'dragleave .droppable': 'fileDragHover',
-            'drop .droppable': 'fileDropHandler',
-            'submit form':'formSubmit'
-        },
-
         initialize: function () {
+            ModalView.prototype.initialize.apply(this,arguments);
+            this.events['click form button.cancel-upload-btn']='cancelButtonClicked';
+            this.events['change form input.upload-btn'] = 'fileSelectHandler';
+            this.events['dragover .droppable']='fileDragHover';
+            this.events['dragleave .droppable']='fileDragHover';
+            this.events['drop .droppable']='fileDropHandler';
+            this.events['click .import-button']='formSubmit';
 
             $.event.props.push('dataTransfer');
 
@@ -44,15 +43,6 @@ define([
                 return false;
             }, false);
 
-            /*
-             if (this.options.singleFile) {
-             this.listenTo(this.collection, 'add', this.addSingleFile);
-             } else {
-             this.listenTo(this.collection, 'add', this.addOneFile);
-             }
-             */
-
-            ModalView.prototype.initialize.apply(this, arguments);
         },
 
         // cancel event and hover styling
@@ -74,57 +64,94 @@ define([
                 return;
             }
 
-            _.each(e.dataTransfer.files, this.uploadNewFile.bind(this));
+            _.each(e.dataTransfer.files, this.loadNewFile.bind(this));
         },
 
         fileSelectHandler: function (e) {
-            _.each(e.target.files, this.uploadNewFile.bind(this));
-        },
-
-        addOneFile: function (attachedFile) {
-            var self = this;
-            this.$toggleCheckAll.show();
-            var fileView = new FileView({
-                model: attachedFile,
-                filesToDelete: self.filesToDelete,
-                deleteBaseUrl: self.options.deleteBaseUrl,
-                uploadBaseUrl: self.options.uploadBaseUrl,
-                editMode: self.editMode
-            });
-            this.listenTo(fileView,'notification',this.printNotifications);
-            this.listenTo(fileView,'clear', this.clearNotifications);
-            fileView.render();
-            self.filesUL.append(fileView.el);
+            _.each(e.target.files, this.loadNewFile.bind(this));
         },
 
         cancelButtonClicked: function () {
             _.invoke(this.xhrs,'abort');
-            //empty the array
-            this.xhrs.length = 0;
+            //empty the file
+            this.file = null;
             this.finished();
-        }
+        },
 
-        /*
-         initAttachedFilesUploadView: function () {
-         this.FileView = new FileListView({
-         title: App.config.i18n.ATTACHED_FILES,
-         deleteBaseUrl: this.iteration.url(),
-         baseName: this.iteration.getBaseName('attachedfiles'),
-         uploadBaseUrl: this.iteration.getNativeCadFileUploadBaseUrl(),
-         collection: this.iteration._File,
-         editMode: this.editMode,
-         singleFile: true
-         }).render();
+        render: function () {
+            /*var _this = this;*/
 
-         this.$('#iteration-files').html(this.FileView.el);
+            this.$el.html(Mustache.render(template, {
+                i18n: App.config.i18n
+            }));
+            this.bindDomElements();
 
-         },
+            return this;
+        },
 
-         render:function(){
-         this.initAttachedFilesUploadView();
-         }*/
+        loadNewFile: function (file) {
+
+            var fileName = unorm.nfc(file.name);
+            var progressBar = $('<div class="progress progress-striped"><div class="bar">'+fileName+'</div></div>');
+            this.progressBars.append(progressBar);
+
+            var newFile = new AttachedFile({
+                shortName: fileName
+            });
+
+            this.file = file;
+            this.addOneFile(newFile);
+
+        },
+
+        addOneFile: function (attachedFile) {
+            var self = this;
+            self.filedisplay.empty();
+            self.filedisplay.append('<li>'+attachedFile.getShortName()+'</li>');
+        },
+
+        bindDomElements: function () {
+            this.filedroparea = this.$('.filedroparea');
+            this.filedisplay = this.$('#file-selected ul');
+            this.uploadInput = this.$('input.upload-btn');
+            this.progressBars = this.$('div.progress-bars');
+            this.notifications = this.$('div.notifications');
+        },
+
+        formSubmit: function () {
+
+            if (this.file != null) {
+
+                var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/product-instances/import';
+
+                var freeze = this.$('freeze-checkbox').is(':checked');
+                var permissive = this.$('#permissive_update_product_instance').is(':checked');
+                var revisionnote = this.$('#revision_checkbox_product').is(':checked') ? this.$('revision_text_product') : null;
+
+                var params = {
+                    'autoFreezeAfterUpdate': freeze,
+                    'permissiveUpdate': permissive,
+                    'revisionNote': revisionnote
+                };
+
+                var importUrl = baseUrl + '?' + $.param(params);
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('PUT', importUrl);
+
+                var fd = new window.FormData();
+                fd.append('upload', this.file);
+
+                xhr.send(fd);
+
+            }
+
+            return false;
+        },
+
+
 
     });
-    return PartImportView;
+    return ProductInstanceImportView;
 
 });
