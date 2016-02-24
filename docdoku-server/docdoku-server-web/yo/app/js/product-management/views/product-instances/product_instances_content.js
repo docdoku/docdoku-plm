@@ -147,10 +147,7 @@ define([
         },
 
         showImporter:function(){
-            var productInstanceImporterView = new ProductInstanceImporterView();
-
-            window.document.body.appendChild(productInstanceImporterView.el);
-            productInstanceImporterView.show();
+            new ProductInstanceImporterView().show();
 
             return false;
         }
