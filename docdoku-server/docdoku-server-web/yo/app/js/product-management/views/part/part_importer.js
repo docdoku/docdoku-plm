@@ -2,7 +2,7 @@
  * Created by laurentlevan on 19/02/16.
  */
 
-/*global _,define,App,window*/
+/*global _,define,App,window,confirm*/
 define([
     'backbone',
     'mustache',
@@ -128,13 +128,12 @@ define([
 
             if (this.file) {
 
-
                 var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/import';
 
                 var autocheckin = this.checkboxAutoCheckin.is(':checked');
-                var autocheckout = this.checkboxAutoCheckin.is(':checked');
+                var autocheckout = this.checkboxAutoCheckout.is(':checked');
                 var permissive = this.$('#permissive_update_part').is(':checked');
-                var comment = this.$('#revision_checkbox_part').is(':checked') ? this.$('revision_text_part') : '';
+                var comment = this.$('#revision_note_checkbox_part').is(':checked') ? this.$('#revision_text_part').val() : '';
 
                 var params = {
                     'autoCheckout': autocheckout,
@@ -148,9 +147,11 @@ define([
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', importUrl, true);
 
-                var formdata = new window.FormData();
-                formdata.append('upload', this.file);
-                xhr.send(formdata);
+                if(confirm(App.config.i18n.CONFIRM_IMPORT)){
+                    var formdata = new window.FormData();
+                    formdata.append('upload', this.file);
+                    xhr.send(formdata);
+                }
 
             }
             return false;
