@@ -653,7 +653,7 @@ public class ProductInstancesResource {
         return dtos;
     }
 
-    @PUT
+    @POST
     @Path("import")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)

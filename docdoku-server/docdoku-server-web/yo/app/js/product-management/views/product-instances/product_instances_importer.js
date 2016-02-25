@@ -72,14 +72,12 @@ define([
         },
 
         cancelButtonClicked: function () {
-            _.invoke(this.xhrs,'abort');
             //empty the file
             this.file = null;
             this.finished();
         },
 
         render: function () {
-            /*var _this = this;*/
 
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n
@@ -105,9 +103,7 @@ define([
         },
 
         addOneFile: function (attachedFile) {
-            var self = this;
-            self.filedisplay.empty();
-            self.filedisplay.append('<li>'+attachedFile.getShortName()+'</li>');
+            this.filedisplay.html('<li>'+attachedFile.getShortName()+'</li>');
         },
 
         bindDomElements: function () {
@@ -137,19 +133,16 @@ define([
                 var importUrl = baseUrl + '?' + $.param(params);
 
                 var xhr = new XMLHttpRequest();
-                xhr.open('PUT', importUrl);
+                xhr.open('POST', importUrl);
 
                 var fd = new window.FormData();
                 fd.append('upload', this.file);
 
                 xhr.send(fd);
-
             }
 
             return false;
         },
-
-
 
     });
     return ProductInstanceImportView;
