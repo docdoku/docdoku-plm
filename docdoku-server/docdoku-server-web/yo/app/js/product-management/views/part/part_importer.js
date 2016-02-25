@@ -30,8 +30,6 @@ define([
             this.events['click .import-button'] = 'formSubmit';
             this.events['click #auto_checkout_part'] = 'changeAutoCheckout';
 
-            $.event.props.push('dataTransfer');
-
             // Prevent browser behavior on file drop
             window.addEventListener('drop', function (e) {
                 e.preventDefault();
@@ -78,7 +76,6 @@ define([
         },
 
         render: function () {
-            /*var _this = this;*/
 
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n
@@ -92,11 +89,6 @@ define([
         loadNewFile: function (file) {
 
             var fileName = unorm.nfc(file.name);
-            var progressBar = $('<div class="progress progress-striped"><div class="bar">' + fileName + '</div></div>');
-            //var bar = progressBar.find('.bar');
-            this.progressBars.append(progressBar);
-
-            this.gotoUploadingState();
 
             var newFile = new AttachedFile({
                 shortName: fileName
@@ -120,12 +112,6 @@ define([
             this.checkboxAutoCheckin = this.$('#auto_checkin_part');
             this.checkboxAutoCheckout = this.$('#auto_checkout_part');
         },
-
-        gotoUploadingState: function () {
-            //this.$el.removeClass('idle');
-            //this.$el.addClass('uploading');
-        },
-
 
         /**
          * to enable or disable checkbox for auto checkin

@@ -655,7 +655,7 @@ public class ProductInstancesResource {
         }).build();
     }
 
-    @PUT
+    @POST
     @Path("import")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
