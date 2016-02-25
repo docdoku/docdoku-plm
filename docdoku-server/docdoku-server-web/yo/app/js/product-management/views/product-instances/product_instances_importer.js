@@ -120,7 +120,7 @@ define([
 
         formSubmit: function () {
 
-            if (this.file != null) {
+            if (this.file) {
 
                 var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/product-instances/import';
 
