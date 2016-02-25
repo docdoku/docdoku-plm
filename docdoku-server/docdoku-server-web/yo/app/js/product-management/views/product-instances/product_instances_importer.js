@@ -2,7 +2,7 @@
  * Created by laurentlevan on 19/02/16.
  */
 
-/*global _,define,App*/
+/*global _,define,App,confirm*/
 
 define([
     '../../../../bower_components/backbone/backbone',
@@ -90,8 +90,6 @@ define([
         loadNewFile: function (file) {
 
             var fileName = unorm.nfc(file.name);
-            var progressBar = $('<div class="progress progress-striped"><div class="bar">'+fileName+'</div></div>');
-            this.progressBars.append(progressBar);
 
             var newFile = new AttachedFile({
                 shortName: fileName
@@ -122,12 +120,12 @@ define([
 
                 var freeze = this.$('freeze-checkbox').is(':checked');
                 var permissive = this.$('#permissive_update_product_instance').is(':checked');
-                var revisionnote = this.$('#revision_checkbox_product').is(':checked') ? this.$('revision_text_product') : null;
+                var revisionNote = this.$('#revision_checkbox_product').is(':checked') ? this.$('revision_text_product').val : '';
 
                 var params = {
                     'autoFreezeAfterUpdate': freeze,
                     'permissiveUpdate': permissive,
-                    'revisionNote': revisionnote
+                    'revisionNote': revisionNote
                 };
 
                 var importUrl = baseUrl + '?' + $.param(params);
@@ -135,10 +133,12 @@ define([
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', importUrl);
 
-                var fd = new window.FormData();
-                fd.append('upload', this.file);
+                if(confirm(App.config.i18n.CONFIRM_IMPORT)){
+                    var formdata = new window.FormData();
+                    formdata.append('upload', this.file);
+                    xhr.send(formdata);
+                }
 
-                xhr.send(fd);
             }
 
             return false;
