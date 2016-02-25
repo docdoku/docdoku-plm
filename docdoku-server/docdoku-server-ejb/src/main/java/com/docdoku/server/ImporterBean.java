@@ -50,6 +50,7 @@ public class ImporterBean implements IImporterManagerLocal {
             ImportResult result = selectedImporter.importFile(workspaceId, file, revisionNote, autoCheckout, autoCheckin, permissiveUpdate);
         }
 
+        file.delete();
     }
 
     @Override
