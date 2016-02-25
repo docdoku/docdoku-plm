@@ -118,7 +118,7 @@ define([
 
             if (this.file) {
 
-                var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/product-instances/import';
+                var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/product-instances/import';
 
                 var freeze = this.$('freeze-checkbox').is(':checked');
                 var permissive = this.$('#permissive_update_product_instance').is(':checked');
