@@ -77,7 +77,7 @@ public class HumanOutput extends CliOutput{
     }
 
     private void printAvailableCommands(){
-        ERROR_STREAM.println(LangHelper.getLocalizedMessage("AvailableCommands",locale) +" :");
+        ERROR_STREAM.println(LangHelper.getLocalizedMessage("AvailableCommands",locale) +":");
         ERROR_STREAM.println("   checkin (ci)");
         ERROR_STREAM.println("   checkout (co)");
         ERROR_STREAM.println("   create (cr)");
@@ -86,6 +86,8 @@ public class HumanOutput extends CliOutput{
         ERROR_STREAM.println("   put");
         ERROR_STREAM.println("   status (stat, st)");
         ERROR_STREAM.println("   undocheckout (uco)");
+        ERROR_STREAM.println();
+        ERROR_STREAM.println(LangHelper.getLocalizedMessage("InstructionCommands",locale));
     }
 
     @Override

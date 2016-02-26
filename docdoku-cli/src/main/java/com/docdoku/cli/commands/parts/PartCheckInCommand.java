@@ -51,7 +51,7 @@ public class PartCheckInCommand extends BaseCommandLine {
     @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to check in; if not specified choose the part corresponding to the cad file")
     private String partNumber;
 
-    @Argument(metaVar = "[<cadfile>] | <dir>]", index=0, usage = "specify the cad file of the part to check in or the path where cad files are stored (default is working directory)")
+    @Argument(metaVar = "[<cadfile> | <dir>]", index=0, usage = "specify the cad file of the part to check in or the path where cad files are stored (default is working directory)")
     private File path = new File(System.getProperty("user.dir"));
 
     @Option(name="-n", aliases = "--no-upload", usage="do not upload the cad file of the part if any")

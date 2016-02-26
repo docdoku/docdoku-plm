@@ -51,7 +51,7 @@ public class DocumentCheckInCommand extends BaseCommandLine {
     @Option(metaVar = "<id>", name = "-o", aliases = "--id", usage = "the id of the document to check in; if not specified choose the document corresponding to the file")
     private String id;
 
-    @Argument(metaVar = "[<file>] | <dir>]", index=0, usage = "specify the file of the document to check in or the path where files are stored (default is working directory)")
+    @Argument(metaVar = "[<file> | <dir>]", index=0, usage = "specify the file of the document to check in or the path where files are stored (default is working directory)")
     private File path = new File(System.getProperty("user.dir"));
 
     @Option(name="-n", aliases = "--no-upload", usage="do not upload the file of the document if any")

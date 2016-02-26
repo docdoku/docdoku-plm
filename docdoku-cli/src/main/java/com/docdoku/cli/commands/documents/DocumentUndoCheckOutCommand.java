@@ -52,7 +52,7 @@ public class DocumentUndoCheckOutCommand extends BaseCommandLine {
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
-    @Argument(metaVar = "[<file>] | <dir>]", index=0, usage = "specify the file of the document to undo check out or the path where files are stored (default is working directory)")
+    @Argument(metaVar = "[<file> | <dir>]", index=0, usage = "specify the file of the document to undo check out or the path where files are stored (default is working directory)")
     private File path = new File(System.getProperty("user.dir"));
 
     @Option(name="-d", aliases = "--download", usage="download the previous files of the document if any to revert the local copy")

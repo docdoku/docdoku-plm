@@ -55,7 +55,7 @@ public class PartCheckOutCommand extends BaseCommandLine {
     @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to check out; if not specified choose the part corresponding to the cad file")
     private String partNumber;
 
-    @Argument(metaVar = "[<cadfile>] | <dir>]", index=0, usage = "specify the cad file of the part to check out or the path where cad files are stored (default is working directory)")
+    @Argument(metaVar = "[<cadfile> | <dir>]", index=0, usage = "specify the cad file of the part to check out or the path where cad files are stored (default is working directory)")
     private File path = new File(System.getProperty("user.dir"));
 
     @Option(name="-n", aliases = "--no-download", usage="do not download the native cad file of the part if any")
