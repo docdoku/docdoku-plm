@@ -124,7 +124,7 @@ define([
             var emptyRevision =false;
 
             if(revisionNote && this.$('#revision_text_product').val){
-                this.printNotifications('warning',App.config.i18n.EMPTY_REVISION_NOTE);
+                this.printNotifications('error',App.config.i18n.EMPTY_REVISION_NOTE);
                 emptyRevision = true;
             }
 
@@ -148,10 +148,13 @@ define([
                     var formdata = new window.FormData();
                     formdata.append('upload', this.file);
                     xhr.send(formdata);
+
+                    this.$('#import_pending').html('<i class="fa fa-refresh fa-spin" title="'+App.config.i18n.IMPORT_PENDING+'"></i><b> '+App.config.i18n.IMPORT_PENDING+' ...</b>');
                 }
 
 
-            } else {
+            } else if(!this.file){
+
 
                 this.printNotifications('error', App.config.i18n.NO_FILE_TO_IMPORT);
             }

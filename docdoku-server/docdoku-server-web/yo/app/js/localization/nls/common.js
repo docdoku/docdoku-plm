@@ -232,6 +232,7 @@ define({
         IMPORT_PART_DATA:"Import part data",
         IMPORT_PRODUCT_DATA:"Import product data",
         IMPORTER: "Import",
+        IMPORT_PENDING:"Import pending",
 		INIT_VALUE: "Init value",
 		IN_PROGRESS: "Work in progress",
         INITIATOR: "Initiator",
