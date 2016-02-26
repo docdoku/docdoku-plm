@@ -11,8 +11,9 @@ define([
     'common-objects/views/components/modal',
     'common-objects/models/file/attached_file',
     'common-objects/views/file/file',
+    'common-objects/views/alert',
     'text!templates/product-instances/product_instances_import_form.html'
-], function (Backbone, Mustache, unorm, ModalView, AttachedFile, FileView, template) {
+], function (Backbone, Mustache, unorm, ModalView, AttachedFile, FileView, AlertView, template) {
     'use strict';
     var ProductInstanceImportView = ModalView.extend({
 
@@ -22,13 +23,13 @@ define([
         className: 'attachedFiles idle',
 
         initialize: function () {
-            ModalView.prototype.initialize.apply(this,arguments);
-            this.events['click form button.cancel-upload-btn']='cancelButtonClicked';
+            ModalView.prototype.initialize.apply(this, arguments);
+            this.events['click form button.cancel-upload-btn'] = 'cancelButtonClicked';
             this.events['change form input.upload-btn'] = 'fileSelectHandler';
-            this.events['dragover .droppable']='fileDragHover';
-            this.events['dragleave .droppable']='fileDragHover';
-            this.events['drop .droppable']='fileDropHandler';
-            this.events['click .import-button']='formSubmit';
+            this.events['dragover .droppable'] = 'fileDragHover';
+            this.events['dragleave .droppable'] = 'fileDragHover';
+            this.events['drop .droppable'] = 'fileDropHandler';
+            this.events['click .import-button'] = 'formSubmit';
 
             $.event.props.push('dataTransfer');
 
@@ -101,7 +102,7 @@ define([
         },
 
         addOneFile: function (attachedFile) {
-            this.filedisplay.html('<li>'+attachedFile.getShortName()+'</li>');
+            this.filedisplay.html('<li>' + attachedFile.getShortName() + '</li>');
         },
 
         bindDomElements: function () {
@@ -114,13 +115,23 @@ define([
 
         formSubmit: function () {
 
-            if (this.file) {
+            this.clearNotifications();
+
+            var freeze = this.$('freeze-checkbox').is(':checked');
+            var permissive = this.$('#permissive_update_product_instance').is(':checked');
+            var revisionNote = this.$('#revision_checkbox_product').is(':checked') ? this.$('#revision_text_product').val : '';
+
+            var emptyRevision =false;
+
+            if(revisionNote && this.$('#revision_text_product').val){
+                this.printNotifications('warning',App.config.i18n.EMPTY_REVISION_NOTE);
+                emptyRevision = true;
+            }
+
+            if (this.file && !emptyRevision) {
 
                 var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/product-instances/import';
 
-                var freeze = this.$('freeze-checkbox').is(':checked');
-                var permissive = this.$('#permissive_update_product_instance').is(':checked');
-                var revisionNote = this.$('#revision_checkbox_product').is(':checked') ? this.$('revision_text_product').val : '';
 
                 var params = {
                     'autoFreezeAfterUpdate': freeze,
@@ -133,15 +144,30 @@ define([
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', importUrl);
 
-                if(confirm(App.config.i18n.CONFIRM_IMPORT)){
+                if (confirm(App.config.i18n.CONFIRM_IMPORT)) {
                     var formdata = new window.FormData();
                     formdata.append('upload', this.file);
                     xhr.send(formdata);
                 }
 
+
+            } else {
+
+                this.printNotifications('error', App.config.i18n.NO_FILE_TO_IMPORT);
             }
 
             return false;
+        },
+
+        printNotifications: function (type, message) {
+            this.notifications.append(new AlertView({
+                type: type,
+                message: message
+            }).render().$el);
+        },
+
+        clearNotifications: function () {
+            this.notifications.text('');
         },
 
     });
