@@ -45,6 +45,7 @@ public class ConsoleProgressMonitorInputStream extends FilterInputStream {
     public int read(byte b[]) throws IOException {
         int length =  super.read(b, 0, b.length);
         totalRead += length;
+
         int percentage = (int)((totalRead * 100.0f) / maximum);
 
         String percentageToPrint;
@@ -55,9 +56,13 @@ public class ConsoleProgressMonitorInputStream extends FilterInputStream {
         }
 
         if(length ==-1) {
-            OUTPUT_STREAM.println("\r" + 100);
+            OUTPUT_STREAM.println("\r" + "100%");
         }else {
-            OUTPUT_STREAM.print("\r" + percentageToPrint + "% Total " + FileUtils.byteCountToDisplaySize(maximum) + " " + ROTATION[rotationChar % ROTATION.length]);
+            if(maximum!=-1) {
+                OUTPUT_STREAM.print("\r" + percentageToPrint + "% Total " + FileUtils.byteCountToDisplaySize(totalRead) + " " + ROTATION[rotationChar % ROTATION.length] + "      ");
+            }else{
+                OUTPUT_STREAM.print("\r" + "     Total " + FileUtils.byteCountToDisplaySize(totalRead) + " " + ROTATION[rotationChar % ROTATION.length] + "      ");
+            }
         }
 
         rotationChar++;

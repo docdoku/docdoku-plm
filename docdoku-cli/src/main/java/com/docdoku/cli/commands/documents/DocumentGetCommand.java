@@ -55,7 +55,7 @@ public class DocumentGetCommand extends BaseCommandLine {
     @Option(metaVar = "<id>", name = "-o", aliases = "--id", usage = "the id of the document to fetch; if not specified choose the document corresponding to the file")
     private String id;
 
-    @Argument(metaVar = "[<file>] | <dir>]", index=0, usage = "specify the file of the document to fetch or the path where files are stored (default is working directory)")
+    @Argument(metaVar = "[<file> | <dir>]", index=0, usage = "specify the file of the document to fetch or the path where files are stored (default is working directory)")
     private File path = new File(System.getProperty("user.dir"));
 
     @Option(name="-f", aliases = "--force", usage="overwrite existing files even if they have been modified locally")

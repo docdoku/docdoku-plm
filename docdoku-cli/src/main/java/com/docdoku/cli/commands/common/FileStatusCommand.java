@@ -43,7 +43,7 @@ import java.io.IOException;
  */
 public class FileStatusCommand extends BaseCommandLine {
 
-    @Argument(metaVar = "[<file>]", required=true, index=0, usage = "specify the file of a document or a part to get a status")
+    @Argument(metaVar = "<file>", required=true, index=0, usage = "specify the file of a document or a part to get a status")
     private File file;
 
     @Override
