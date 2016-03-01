@@ -21,6 +21,7 @@ package com.docdoku.server.rest.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import com.docdoku.core.product.CADInstance;
 
 @XmlRootElement
 public class CADInstanceDTO implements Serializable {
@@ -31,6 +32,8 @@ public class CADInstanceDTO implements Serializable {
     private Double tx;
     private Double ty;
     private Double tz;
+    private double[] matrix;
+    private CADInstance.RotationType rotationType;
 
 
     public CADInstanceDTO() {
@@ -43,6 +46,22 @@ public class CADInstanceDTO implements Serializable {
         this.tx = tx;
         this.ty = ty;
         this.tz = tz;
+    }
+
+    public double[] getMatrix() {
+        return matrix;
+    }
+
+    public void setMatrix(double[] matrix) {
+        this.matrix = matrix;
+    }
+
+    public CADInstance.RotationType getRotationType() {
+        return rotationType;
+    }
+
+    public void setRotationType(CADInstance.RotationType rotationType) {
+        this.rotationType = rotationType;
     }
 
     public Double getRx() {

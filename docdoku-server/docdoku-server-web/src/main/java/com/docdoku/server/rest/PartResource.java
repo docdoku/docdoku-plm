@@ -551,7 +551,10 @@ public class PartResource {
 
                 if (partUsageLinkDTO.getCadInstances() != null) {
                     for (CADInstanceDTO cadInstanceDTO : partUsageLinkDTO.getCadInstances()) {
-                        cadInstances.add(mapper.map(cadInstanceDTO, CADInstance.class));
+                        CADInstance cadInstance = mapper.map(cadInstanceDTO, CADInstance.class);
+                        cadInstance.setRotationMatrix(new RotationMatrix(cadInstanceDTO.getMatrix()));
+                        cadInstances.add(cadInstance);
+
                     }
                 } else if (partUsageLinkDTO.getUnit() == null || partUsageLinkDTO.getUnit().isEmpty()) {
                     for (double i = 0; i < partUsageLinkDTO.getAmount(); i++) {

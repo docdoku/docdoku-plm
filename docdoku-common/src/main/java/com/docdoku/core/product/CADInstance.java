@@ -38,6 +38,9 @@ import java.io.Serializable;
 @Entity
 public class CADInstance implements Serializable, Cloneable {
 
+    public enum RotationType {
+        ANGLE,MATRIX
+    };
 
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Id
@@ -74,6 +77,15 @@ public class CADInstance implements Serializable, Cloneable {
      */
     private double rz;
 
+    /**
+     * Rotation matrix
+     */
+    @Embedded
+    private RotationMatrix rotationMatrix;
+
+    @Enumerated(EnumType.STRING)
+    private RotationType rotationType;
+
     
     public CADInstance() {
     }
@@ -85,6 +97,16 @@ public class CADInstance implements Serializable, Cloneable {
         this.rx = rx;
         this.ry = ry;
         this.rz = rz;
+        rotationType = RotationType.ANGLE;
+        this.rotationMatrix = new RotationMatrix(new double[9]);
+    }
+
+    public CADInstance(RotationMatrix rotationMatrix, double tx, double ty, double tz) {
+        rotationType = RotationType.MATRIX;
+        this.tx = tx;
+        this.ty = ty;
+        this.tz = tz;
+        this.rotationMatrix = rotationMatrix;
     }
     
 
@@ -134,6 +156,22 @@ public class CADInstance implements Serializable, Cloneable {
 
     public void setTz(double tz) {
         this.tz = tz;
+    }
+
+    public RotationMatrix getRotationMatrix() {
+        return rotationMatrix;
+    }
+
+    public void setRotationMatrix(RotationMatrix rotationMatrix) {
+        this.rotationMatrix = rotationMatrix;
+    }
+
+    public RotationType getRotationType() {
+        return rotationType;
+    }
+
+    public void setRotationType(RotationType rotationType) {
+        this.rotationType = rotationType;
     }
 
     public int getId() {
