@@ -82,9 +82,24 @@ define([
             }
 
             date.dateHelper(this.$('.date-popover'));
-
+            this.bindDescriptionPopover();
             this.$el.attr('title',this.model.getReference());
 
+        },
+
+        bindDescriptionPopover: function() {
+            if(this.model.getDescription() != null && this.model.getDescription() != "") {
+                var self = this;
+                this.$('.reference.doc-ref')
+                    .popover({
+                        title: App.config.i18n.DESCRIPTION,
+                        html: true,
+                        content: self.model.getDescription(),
+                        trigger: 'hover',
+                        placement: 'top',
+                        container: 'body'
+                    });
+            }
         },
 
         dragStart: function (e) {

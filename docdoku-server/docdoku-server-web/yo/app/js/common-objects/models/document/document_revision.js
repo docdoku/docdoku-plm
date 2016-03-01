@@ -49,6 +49,10 @@ define([
 			return this.get('id');
 		},
 
+        getDescription: function() {
+            return this.get('description');
+        },
+
 		getReference: function () {
 			var id = this.get('id');
 			return id.substr(0, id.lastIndexOf('-'));
