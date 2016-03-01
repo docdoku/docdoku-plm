@@ -118,6 +118,7 @@ define([
 
         addSingleFile: function (attachedFile) {
             this.filesUL.empty();
+            this.filesToDelete.reset();
             this.addOneFile(attachedFile);
             this.$el.trigger('file:uploaded');
         },
