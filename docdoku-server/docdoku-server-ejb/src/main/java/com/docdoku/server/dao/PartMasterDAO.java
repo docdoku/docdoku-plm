@@ -101,7 +101,7 @@ public class PartMasterDAO {
     public List<PartMaster> findPartMasters(String workspaceId, String partNumber, String partName, int maxResults){
         return em.createNamedQuery("PartMaster.findByNameOrNumber", PartMaster.class)
             .setParameter("partNumber", partNumber)
-            .setParameter("partName", partNumber)
+            .setParameter("partName", partName)
             .setParameter("workspaceId", workspaceId)
             .setMaxResults(maxResults)
             .getResultList();
