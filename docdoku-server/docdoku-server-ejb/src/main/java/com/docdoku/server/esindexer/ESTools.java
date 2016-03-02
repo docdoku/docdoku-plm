@@ -49,6 +49,8 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -56,7 +58,10 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -86,7 +91,9 @@ public class ESTools {
     /**
      * Create a ElasticSearch Client to make QueryRequest
      */
-    protected static Client createClient() throws ESServerException {
+    @Produces
+    @ApplicationScoped
+    public Client createClient() throws ESServerException {
         try{
             Settings settings = ImmutableSettings.settingsBuilder()
                     .put("cluster.name", CONF.getProperty("cluster.name")).build();
@@ -284,12 +291,6 @@ public class ESTools {
             Logger.getLogger(ESIndexer.class.getName()).log(Level.INFO,"A problem occur in the file : "+fullName+", indexing at page :"+pageNumber);
             Logger.getLogger(ESIndexer.class.getName()).log(Level.FINER,null,e);
             return "";
-        }
-    }
-
-    public static void closeClient(Client client){
-        if(client != null){
-            client.close();
         }
     }
 }

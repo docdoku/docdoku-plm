@@ -42,6 +42,7 @@ import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.search.SearchHit;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.MessageFormat;
@@ -68,6 +69,9 @@ public class ESSearcher {
     @PersistenceContext
     private EntityManager em;
 
+    @Inject
+    private Client client;
+
     /**
      * Constructor
      */
@@ -82,11 +86,9 @@ public class ESSearcher {
      * @return List of document master
      */
     public List<DocumentRevision> search(DocumentSearchQuery docQuery) throws ESServerException {
-        Client client = null;
         try {
-            client = ESTools.createClient();
             QueryBuilder qr = getQueryBuilder(docQuery);
-            SearchRequestBuilder srb = getSearchRequest(client, ESTools.formatIndexName(docQuery.getWorkspaceId()), ES_TYPE_DOCUMENT, qr);
+            SearchRequestBuilder srb = getSearchRequest(ESTools.formatIndexName(docQuery.getWorkspaceId()), ES_TYPE_DOCUMENT, qr);
             SearchResponse sr = srb.execute().actionGet();
 
             List<DocumentRevision> listOfDocuments = new ArrayList<>();
@@ -109,8 +111,6 @@ public class ESSearcher {
             String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString(ES_SEARCH_ERROR_2);
             LOGGER.log(Level.WARNING,logMessage,e);
             throw new ESServerException(Locale.getDefault(),ES_SERVER_ERROR_2);
-        } finally {
-            ESTools.closeClient(client);
         }
     }
 
@@ -121,11 +121,9 @@ public class ESSearcher {
      * @return List of part revision
      */
     public List<PartRevision> search(PartSearchQuery partQuery) throws ESServerException {
-        Client client = null;
         try {
-            client = ESTools.createClient();
             QueryBuilder qr = getQueryBuilder(partQuery);
-            SearchRequestBuilder srb = getSearchRequest(client, ESTools.formatIndexName(partQuery.getWorkspaceId()), ES_TYPE_PART, qr);
+            SearchRequestBuilder srb = getSearchRequest(ESTools.formatIndexName(partQuery.getWorkspaceId()), ES_TYPE_PART, qr);
             SearchResponse sr = srb.execute().actionGet();
 
             Set<PartRevision> setOfParts = new HashSet<>();
@@ -147,8 +145,6 @@ public class ESSearcher {
             String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString(ES_SEARCH_ERROR_2);
             LOGGER.log(Level.WARNING,logMessage,e);
             throw new ESServerException(Locale.getDefault(),ES_SERVER_ERROR_2);
-        } finally {
-            ESTools.closeClient(client);
         }
 
     }
@@ -160,14 +156,12 @@ public class ESSearcher {
      * @return List of document master
      */
     public List<DocumentRevision> searchInAllWorkspace(DocumentSearchQuery docQuery) throws ESServerException {
-        Client client = null;
         try {
-           client = ESTools.createClient();
             QueryBuilder qr = getQueryBuilder(docQuery);
             MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
             WorkspaceDAO wDAO = new WorkspaceDAO(em);
             for (Workspace w : wDAO.getAll()) {
-                srbm.add(getSearchRequest(client, ESTools.formatIndexName(w.getId()), ES_TYPE_DOCUMENT, qr));
+                srbm.add(getSearchRequest(ESTools.formatIndexName(w.getId()), ES_TYPE_DOCUMENT, qr));
             }
             MultiSearchResponse srm = srbm.execute().actionGet();
 
@@ -190,8 +184,6 @@ public class ESSearcher {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_SEARCH_ERROR_1);
             LOGGER.log(Level.WARNING, logMessage, e);
             throw new ESServerException(Locale.getDefault(), ES_SERVER_ERROR_1);
-        } finally {
-            ESTools.closeClient(client);
         }
     }
 
@@ -202,15 +194,13 @@ public class ESSearcher {
      * @return List of part revision
      */
     public List<PartRevision> searchInAllWorkspace(PartSearchQuery partQuery) throws ESServerException {
-        Client client = null;
 
         try {
-            client = ESTools.createClient();
             QueryBuilder qr = getQueryBuilder(partQuery);
             MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
             WorkspaceDAO wDAO = new WorkspaceDAO(em);
             for (Workspace w : wDAO.getAll()) {
-                srbm.add(getSearchRequest(client, ESTools.formatIndexName(w.getId()), ES_TYPE_PART, qr));
+                srbm.add(getSearchRequest(ESTools.formatIndexName(w.getId()), ES_TYPE_PART, qr));
             }
             MultiSearchResponse srm = srbm.execute().actionGet();
 
@@ -234,8 +224,6 @@ public class ESSearcher {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_SEARCH_ERROR_1);
             LOGGER.log(Level.WARNING, logMessage, e);
             throw new ESServerException(Locale.getDefault(), ES_SERVER_ERROR_1);
-        } finally {
-            ESTools.closeClient(client);
         }
     }
 
@@ -357,7 +345,7 @@ public class ESSearcher {
      * @param pQuery      Search criterion
      * @return the uniWorkspace Search Request
      */
-    private SearchRequestBuilder getSearchRequest(Client client, String workspaceId, String type, QueryBuilder pQuery) {
+    private SearchRequestBuilder getSearchRequest(String workspaceId, String type, QueryBuilder pQuery) {
         return client.prepareSearch(workspaceId)
                 .setTypes(type)
                 .setSearchType(SearchType.QUERY_THEN_FETCH)
