@@ -55,7 +55,7 @@ public class OfficeDocumentViewerImpl implements DocumentViewer {
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
 
-        return ViewerUtils.getViewerTemplate(dataManager, docResource, uuid, templateWriter.toString());
+        return ViewerUtils.getViewerTemplate(dataManager, docResource, uuid, templateWriter.toString(),true);
     }
 
 }

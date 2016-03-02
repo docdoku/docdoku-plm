@@ -46,11 +46,14 @@ public class ViewerUtils {
         }
     }
 
-    public static String getViewerTemplate(IDataManagerLocal dataManager, BinaryResource binaryResource, String uuid, String viewer) throws IOException {
+    public static String getViewerTemplate(IDataManagerLocal dataManager, BinaryResource binaryResource, String uuid, String viewer, boolean pdf) throws IOException {
         MustacheFactory mf = new DefaultMustacheFactory();
         Mustache mustache = mf.compile("com/docdoku/server/viewers/viewer_template.mustache");
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("uriResource", ViewerUtils.getURI(binaryResource, uuid));
+        if(pdf) {
+            scopes.put("pdfUri", ViewerUtils.getURI(binaryResource, uuid)+"?output=pdf");
+        }
 
         String externalURL = dataManager.getExternalStorageURI(binaryResource);
         scopes.put("externalUriResource", externalURL);

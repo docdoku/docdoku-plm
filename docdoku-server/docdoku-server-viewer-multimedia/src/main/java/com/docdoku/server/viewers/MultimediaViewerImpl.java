@@ -52,7 +52,7 @@ public class MultimediaViewerImpl implements DocumentViewer {
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
 
-        return ViewerUtils.getViewerTemplate(dataManager, multimediaResource, uuid, templateWriter.toString());
+        return ViewerUtils.getViewerTemplate(dataManager, multimediaResource, uuid, templateWriter.toString(), false);
     }
 
 }

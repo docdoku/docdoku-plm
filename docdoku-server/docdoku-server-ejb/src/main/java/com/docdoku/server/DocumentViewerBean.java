@@ -91,7 +91,7 @@ public class DocumentViewerBean implements IFileViewerManagerLocal {
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
 
-        return ViewerUtils.getViewerTemplate(dataManager, binaryResource, uuid, templateWriter.toString());
+        return ViewerUtils.getViewerTemplate(dataManager, binaryResource, uuid, templateWriter.toString(),false);
     }
 
 }

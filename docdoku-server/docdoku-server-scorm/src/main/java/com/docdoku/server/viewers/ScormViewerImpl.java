@@ -68,7 +68,7 @@ public class ScormViewerImpl implements DocumentViewer {
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
 
-        return ViewerUtils.getViewerTemplate(dataManager, scormResource, uuid, templateWriter.toString());
+        return ViewerUtils.getViewerTemplate(dataManager, scormResource, uuid, templateWriter.toString(), false);
     }
 
 }

@@ -4943,13 +4943,18 @@ body {
   left: 8px;
   top: 8px;
 }
+.accordion-heading a.download-pdf {
+    position: absolute;
+    left: 30px;
+    top: 8px;
+}
 .accordion-heading a.external-download {
   position: absolute;
   left: 26px;
   top: 8px;
 }
 .accordion-heading .accordion-toggle {
-  padding: 8px 42px;
+  padding: 8px 50px;
 }
 input[readonly].autoselect {
   width: 40%;

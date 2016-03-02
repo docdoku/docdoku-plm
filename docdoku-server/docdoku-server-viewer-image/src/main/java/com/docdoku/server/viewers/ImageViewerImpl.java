@@ -23,17 +23,14 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.InternalService;
-import com.docdoku.server.ServiceLocator;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 
 import javax.inject.Inject;
-import javax.naming.NamingException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ImageViewerImpl implements DocumentViewer {
@@ -60,7 +57,7 @@ public class ImageViewerImpl implements DocumentViewer {
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
 
-        return ViewerUtils.getViewerTemplate(dataManager, imageResource, uuid, templateWriter.toString());
+        return ViewerUtils.getViewerTemplate(dataManager, imageResource, uuid, templateWriter.toString(),false);
     }
 
 }
