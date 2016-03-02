@@ -63,8 +63,8 @@ public class ProductManagerBeanTest {
     private IContextManagerLocal contextManager;
     @Mock
     SessionContext ctx;
-    @Spy
-    private ESIndexer esIndexer = new ESIndexer();
+    @Mock
+    private ESIndexer esIndexer;
     @Mock
     TypedQuery<Tag> tagsQuery;
     @Mock
