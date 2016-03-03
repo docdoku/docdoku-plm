@@ -11,7 +11,7 @@ define([
     'common-objects/models/file/attached_file',
     'common-objects/views/file/file',
     'common-objects/views/alert',
-    'text!templates/part/part_import_form.html',
+    'text!templates/part/part_import_form.html'
 ], function (Backbone, Mustache, unorm, ModalView, AttachedFile, FileView, AlertView, template) {
     'use strict';
     var PartImportView = ModalView.extend({
@@ -134,11 +134,11 @@ define([
             var autocheckin = this.checkboxAutoCheckin.is(':checked');
             var autocheckout = this.checkboxAutoCheckout.is(':checked');
             var permissive = this.$('#permissive_update_part').is(':checked');
-            var revisionNote = this.$('#revision_note_checkbox_part').is(':checked') ? this.$('#revision_text_part').val  : '';
+            var revisionNote = this.$('#revision_note_checkbox_part').is(':checked') ? this.$('#revision_text_part').val()  : '';
 
             var emptyRevision =false;
 
-            if(revisionNote && this.$('#revision_text_part').val){
+            if(revisionNote && !this.$('#revision_text_part').val()){
                 this.printNotifications('error',App.config.i18n.EMPTY_REVISION_NOTE);
                 emptyRevision = true;
             }
