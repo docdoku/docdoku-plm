@@ -2,7 +2,7 @@
  * Created by laurentlevan on 19/02/16.
  */
 
-/*global _,define,App,window*/
+/*global _,define,App,window,confirm*/
 define([
     'backbone',
     'mustache',
@@ -10,8 +10,9 @@ define([
     'common-objects/views/components/modal',
     'common-objects/models/file/attached_file',
     'common-objects/views/file/file',
+    'common-objects/views/alert',
     'text!templates/part/part_import_form.html'
-], function (Backbone, Mustache, unorm, ModalView, AttachedFile, FileView, template) {
+], function (Backbone, Mustache, unorm, ModalView, AttachedFile, FileView, AlertView, template) {
     'use strict';
     var PartImportView = ModalView.extend({
 
@@ -126,21 +127,31 @@ define([
         },
         formSubmit: function () {
 
-            if (this.file) {
+            this.clearNotifications();
+
+            var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/import';
+
+            var autocheckin = this.checkboxAutoCheckin.is(':checked');
+            var autocheckout = this.checkboxAutoCheckout.is(':checked');
+            var permissive = this.$('#permissive_update_part').is(':checked');
+            var revisionNote = this.$('#revision_note_checkbox_part').is(':checked') ? this.$('#revision_text_part').val()  : '';
+
+            var emptyRevision =false;
+
+            if(revisionNote && !this.$('#revision_text_part').val()){
+                this.printNotifications('error',App.config.i18n.EMPTY_REVISION_NOTE);
+                emptyRevision = true;
+            }
+
+            if (this.file && !emptyRevision) {
 
 
-                var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/import';
-
-                var autocheckin = this.checkboxAutoCheckin.is(':checked');
-                var autocheckout = this.checkboxAutoCheckin.is(':checked');
-                var permissive = this.$('#permissive_update_part').is(':checked');
-                var comment = this.$('#revision_checkbox_part').is(':checked') ? this.$('revision_text_part') : '';
 
                 var params = {
                     'autoCheckout': autocheckout,
                     'autoCheckin': autocheckin,
                     'permissiveUpdate': permissive,
-                    'revisionNote': comment
+                    'revisionNote': revisionNote
                 };
 
                 var importUrl = baseUrl + '?' + $.param(params);
@@ -148,13 +159,33 @@ define([
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', importUrl, true);
 
-                var formdata = new window.FormData();
-                formdata.append('upload', this.file);
-                xhr.send(formdata);
+                if(confirm(App.config.i18n.CONFIRM_IMPORT)){
+                    var formdata = new window.FormData();
+                    formdata.append('upload', this.file);
+                    xhr.send(formdata);
 
+                    this.$('#import_pending').html('<i class="fa fa-refresh fa-spin" title="'+App.config.i18n.IMPORT_PENDING+'"></i><b> '+App.config.i18n.IMPORT_PENDING+' ...</b>');
+                }
+
+            }else if(!this.file){
+
+                this.printNotifications('error', App.config.i18n.NO_FILE_TO_IMPORT);
             }
+
+
             return false;
-        }
+        },
+
+        printNotifications: function(type,message) {
+            this.notifications.append(new AlertView({
+                type: type,
+                message: message
+            }).render().$el);
+        },
+
+        clearNotifications: function() {
+            this.notifications.text('');
+        },
 
     });
     return PartImportView;

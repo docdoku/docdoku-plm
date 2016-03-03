@@ -2387,6 +2387,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return user;
     }
 
+    @RolesAllowed({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public boolean canWrite(PartRevisionKey partRKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
+        User user = userManager.checkWorkspaceReadAccess(partRKey.getPartMaster().getWorkspace());
+        return canUserAccess(user, partRKey) && hasPartRevisionWriteAccess(user,getPartRevision(partRKey));
+    }
+
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public Component filterProductStructure(ConfigurationItemKey ciKey, PSFilter filter, List<PartLink> path, Integer pDepth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException, AccessRightException, PartMasterNotFoundException, EntityConstraintException {

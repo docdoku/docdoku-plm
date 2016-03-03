@@ -6,9 +6,11 @@
     </div>
     <div class="modal-body">
 
-        <div class="attachedFiles idle">
+        <div id="import_pending"></div>
 
-            <div class="progress-bars"></div>
+        <div class="notifications"></div>
+
+        <div class="attachedFiles idle">
 
             <div id="file-selected"><ul></ul>
 
@@ -20,9 +22,7 @@
                     <button class="btn btn-success droppable">{{i18n.SELECT_FILE}}</button>
                     <span class="droppable">{{i18n.DROP_FILE_HERE}}</span>
                     <p class="upload-file-shortname"></p>
-                    <div class="progress progress-striped">
-                        <div class="bar"></div>
-                    </div>
+
                 </div>
                 <button type="button" class="btn cancel cancel-upload-btn">{{i18n.CANCEL}}</button>
 
