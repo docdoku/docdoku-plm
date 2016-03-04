@@ -2338,8 +2338,36 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @RolesAllowed({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public boolean canWrite(PartRevisionKey partRKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
-        User user = userManager.checkWorkspaceReadAccess(partRKey.getPartMaster().getWorkspace());
-        return canUserAccess(user, partRKey) && hasPartRevisionWriteAccess(user,getPartRevision(partRKey));
+        String workspace = partRKey.getPartMaster().getWorkspace();
+        ​
+        User user = userManager.checkWorkspaceReadAccess(workspace);
+        ​
+        if(user.isAdministrator()){
+            return true;
+        }
+        ​
+        PartRevision partRevision;
+        ​
+        try {
+            partRevision = getPartRevision(partRKey);
+        }catch(AccessRightException e){
+            return false;
+        }
+        ​
+        if(partRevision.getACL() != null){
+            if(partRevision.getACL().hasWriteAccess(user)){
+                return true;
+            }
+            return false;
+        }
+        ​
+        try{
+            userManager.checkWorkspaceWriteAccess(workspace);
+            return true;
+        } catch(AccessRightException e){
+            return false;
+        }
+        ​
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
