@@ -123,6 +123,8 @@ public class PartResourceTest {
             newComponents = partResource.createComponents(ResourceUtil.WORKSPACE_ID, partUsageLinkDTOs);
 
         } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
             fail("Part Creation failed");
         }
 

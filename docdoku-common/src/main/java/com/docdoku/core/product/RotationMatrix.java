@@ -38,15 +38,17 @@ public class RotationMatrix {
     }
 
     public RotationMatrix(double[] values) {
-        m00 = values[0];
-        m01 = values[1];
-        m02 = values[2];
-        m10 = values[3];
-        m11 = values[4];
-        m12 = values[5];
-        m20 = values[6];
-        m21 = values[7];
-        m22 = values[8];
+        if(values!=null) {
+            m00 = values[0];
+            m01 = values[1];
+            m02 = values[2];
+            m10 = values[3];
+            m11 = values[4];
+            m12 = values[5];
+            m20 = values[6];
+            m21 = values[7];
+            m22 = values[8];
+        }
     }
 
     public double getM00() {
