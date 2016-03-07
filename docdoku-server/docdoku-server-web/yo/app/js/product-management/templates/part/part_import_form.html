@@ -6,14 +6,14 @@
     </div>
     <div class="modal-body">
 
-        <div id="import_pending"></div>
+        <h3>{{i18n.FILE}}</h3>
 
         <div class="notifications"></div>
 
         <div class="attachedFiles idle">
 
-            <div id="file-selected"><ul></ul>
-
+            <div id="file-selected">
+                <ul></ul>
             </div>
 
             <form enctype="multipart/form-data" class="upload-form">
@@ -24,34 +24,44 @@
                     <p class="upload-file-shortname"></p>
                 </div>
                 <button type="button" class="btn cancel cancel-upload-btn">{{i18n.CANCEL}}</button>
-
             </form>
 
+        </div>
+
+        <div class="form-horizontal import-status-views">
 
         </div>
-        <p></p>
 
-        <p>
-            <input type="checkbox" id="revision_note_checkbox_part"/>{{i18n.ADD_REVISION_NOTE}}
-            <textarea type="text" rows="1" id="revision_text_part"></textarea>
-        </p>
+        <h3>{{i18n.OPTIONS}}</h3>
 
-        <p>
-            <input type="checkbox" id="auto_checkout_part"/>{{i18n.AUTO_CHECKOUT}}
-        </p>
+        <div class="form-horizontal">
 
-        <p>
-            <input type="checkbox" disabled="disabled" id="auto_checkin_part"/>{{i18n.AUTO_CHECKIN}}
+            <div class="control-group">
+                <label class="control-label" for="revision_text_part">{{i18n.ADD_REVISION_NOTE}}</label>
+                <div class="controls">
+                    <textarea type="text" rows="1" id="revision_text_part"></textarea>
+                </div>
+            </div>
 
-        </p>
+            <div class="control-group">
+                <label class="checkbox">{{i18n.AUTO_CHECKOUT}} <input type="checkbox" id="auto_checkout_part"/></label>
+            </div>
 
-        <p>
-            <input type="checkbox" id="permissive_update_part"/>{{i18n.PERMISSIVE_UPDATE_PART}}
-        </p>
+            <div class="control-group">
+                <label class="checkbox">{{i18n.AUTO_CHECKIN}} <input type="checkbox" disabled="disabled" id="auto_checkin_part"/></label>
+            </div>
 
-        <button type="button" class="btn btn-primary import-button">{{i18n.IMPORT}}
+            <div class="control-group">
+                <label class="checkbox">{{i18n.PERMISSIVE_UPDATE_PART}} <input type="checkbox" id="permissive_update_part"/></label>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+        <button type="button" disabled class="btn btn-primary import-button">
+            {{i18n.IMPORT}}
         </button>
-
-
     </div>
 </div>

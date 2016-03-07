@@ -19,17 +19,19 @@
  */
 package com.docdoku.core.services;
 
+import com.docdoku.core.product.ImportResult;
+
 import java.io.File;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Future;
 
 /**
- * Created by Elisabel Genereux on 11/02/16.
+ * @author Elisabel Genereux
+ * @version 1.0.0
+ * @since 11/02/16
  */
 public interface IImporterManagerLocal {
 
-    void importIntoParts(String workspaceId, File file, String revisionNote, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate) throws Exception;
-    void importIntoPathData(String workspaceId, File file, String revisionNote, boolean autoFreezeAfterUpdate, boolean permissiveUpdate) throws Exception;
+    Future<ImportResult> importIntoParts(String workspaceId, File file, String originalFileName, String revisionNote, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate) throws Exception;
+    Future<ImportResult>  importIntoPathData(String workspaceId, File file, String originalFileName, String revisionNote, boolean autoFreezeAfterUpdate, boolean permissiveUpdate) throws Exception;
 
 }

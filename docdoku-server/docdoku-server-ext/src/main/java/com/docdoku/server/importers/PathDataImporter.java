@@ -20,11 +20,9 @@
 
 package com.docdoku.server.importers;
 
-import com.docdoku.server.importers.utils.ImportResult;
+import com.docdoku.core.product.ImportResult;
 
 import java.io.File;
-import java.util.List;
-import java.util.Map;
 
 public interface PathDataImporter {
 

@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.importers.utils;
+package com.docdoku.core.product;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ import java.util.List;
 public class ImportResult {
 
     private File importedFile;
+    private String originalFileName;
     private List<String> warnings = new ArrayList<>();
     private List<String> errors = new ArrayList<>();
     private String stdOutput;
@@ -41,6 +42,13 @@ public class ImportResult {
         this.importedFile = importedFile;
         this.warnings = warnings;
         this.errors=errors;
+    }
+
+    public ImportResult(File importedFile, String originalFileName, List<String> warnings, List<String> errors) {
+        this.importedFile = importedFile;
+        this.originalFileName = originalFileName;
+        this.warnings = warnings;
+        this.errors = errors;
     }
 
     public ImportResult(File importedFile, List<String> warnings, List<String> errors, String stdOutput, String errorOutput) {
@@ -90,4 +98,9 @@ public class ImportResult {
     public void setErrorOutput(String errorOutput) {
         this.errorOutput = errorOutput;
     }
+
+    public boolean isSucceed() {
+        return errors.isEmpty();
+    }
+
 }

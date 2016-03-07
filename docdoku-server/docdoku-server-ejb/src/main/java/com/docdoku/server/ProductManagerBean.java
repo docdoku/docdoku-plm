@@ -1158,6 +1158,74 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
+    @Override
+    public Import createImport(String workspaceId, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, CreationException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        Import importToCreate = new Import(user,fileName);
+        ImportDAO importDAO = new ImportDAO(locale, em);
+        importDAO.createImport(importToCreate);
+        return importToCreate;
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public List<Import> getImports(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        ImportDAO importDAO = new ImportDAO(locale, em);
+        return importDAO.findImports(user);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public Import getImport(String workspaceId, String id) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        ImportDAO importDAO = new ImportDAO(locale, em);
+        Import anImport = importDAO.findImport(user, id);
+        if(anImport.getUser().equals(user)){
+            return anImport;
+        }else{
+            throw new AccessRightException(locale, user);
+        }
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
+    @Override
+    public void endImport(String workspaceId, String id, ImportResult importResult) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        ImportDAO importDAO = new ImportDAO(locale, em);
+        Import anImport = importDAO.findImport(user, id);
+        anImport.setPending(false);
+        anImport.setEndDate(new Date());
+        if(importResult != null) {
+            anImport.setErrors(importResult.getErrors());
+            anImport.setWarnings(importResult.getWarnings());
+            anImport.setSucceed(importResult.isSucceed());
+        } else{
+            anImport.setSucceed(false);
+        }
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public void removeImport(String workspaceId, String id) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        ImportDAO importDAO = new ImportDAO(locale, em);
+        Import anImport = importDAO.findImport(user, id);
+        if(anImport.getUser().equals(user)){
+            importDAO.deleteImport(anImport);
+        }else{
+            throw new AccessRightException(locale, user);
+        }
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void updateACLForPartMasterTemplate(String pWorkspaceId, String templateId, Map<String, String> userEntries, Map<String, String> groupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException {
 
@@ -2390,36 +2458,37 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @RolesAllowed({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public boolean canWrite(PartRevisionKey partRKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
+
         String workspace = partRKey.getPartMaster().getWorkspace();
-        ​
+
         User user = userManager.checkWorkspaceReadAccess(workspace);
-        ​
+
         if(user.isAdministrator()){
             return true;
         }
-        ​
+
         PartRevision partRevision;
-        ​
+
         try {
             partRevision = getPartRevision(partRKey);
         }catch(AccessRightException e){
             return false;
         }
-        ​
+
         if(partRevision.getACL() != null){
             if(partRevision.getACL().hasWriteAccess(user)){
                 return true;
             }
             return false;
         }
-        ​
+
         try{
             userManager.checkWorkspaceWriteAccess(workspace);
             return true;
         } catch(AccessRightException e){
             return false;
         }
-        ​
+
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

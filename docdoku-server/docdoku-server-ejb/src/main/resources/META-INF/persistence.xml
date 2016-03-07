@@ -67,6 +67,7 @@
     <class>com.docdoku.core.product.Layer</class>
     <class>com.docdoku.core.product.CADInstance</class>
     <class>com.docdoku.core.product.Conversion</class>
+    <class>com.docdoku.core.product.Import</class>
     <class>com.docdoku.core.security.ACL</class>
     <class>com.docdoku.core.security.ACLUserEntry</class>
     <class>com.docdoku.core.security.ACLUserGroupEntry</class>

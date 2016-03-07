@@ -57,11 +57,8 @@ import javax.ws.rs.core.Response;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -676,7 +673,7 @@ public class ProductInstancesResource {
 
         File importFile = Files.createTempFile("product-" + name, "-import.tmp" + (extension == null ? "" : "." + extension)).toFile();
         long length = BinaryResourceUpload.uploadBinary(new BufferedOutputStream(new FileOutputStream(importFile)), part);
-        importerService.importIntoPathData(workspaceId, importFile, revisionNote, autoFreezeAfterUpdate, permissiveUpdate);
+        importerService.importIntoPathData(workspaceId, importFile, name+"."+extension, revisionNote, autoFreezeAfterUpdate, permissiveUpdate);
 
         importFile.delete();
 
