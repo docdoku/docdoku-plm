@@ -100,7 +100,7 @@ public class ImportResult {
     }
 
     public boolean isSucceed() {
-        return errors.isEmpty();
+        return errors == null || errors.isEmpty();
     }
 
 }

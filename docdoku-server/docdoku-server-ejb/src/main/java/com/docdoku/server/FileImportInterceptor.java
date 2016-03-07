@@ -27,7 +27,11 @@ import javax.ejb.EJB;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @FileImport
@@ -45,22 +49,31 @@ public class FileImportInterceptor {
         Object[] parameters = ctx.getParameters();
         // TODO : check parameters before cast
         String workspaceId = (String) parameters[0];
+        File file = (File) parameters[1];
         String originalFileName = (String) parameters[2];
 
         Import newImport = productService.createImport(workspaceId, originalFileName);
         String id = newImport.getId();
 
-        Future<ImportResult> result = null;
+        ImportResult importResult = null;
 
-        try{
-            // Run the import
+        try{ // Run the import
+
             Object proceed = ctx.proceed();
-            result = (Future<ImportResult>) proceed;
+            Future<ImportResult> result = (Future<ImportResult>) proceed;
+            importResult = result.get();
             return proceed;
+
         }catch(Exception e){
+
+            LOGGER.log(Level.SEVERE,"Cannot import the file", e);
+            List<String> errors = new ArrayList<>();
+            List<String> warnings = new ArrayList<>();
+            errors.add(e.getMessage());
+            importResult = new ImportResult(file, originalFileName, warnings,errors);
             return null;
+
         }finally {
-            ImportResult importResult = result != null ? result.get() : null;
             productService.endImport(workspaceId, id, importResult);
         }
         
