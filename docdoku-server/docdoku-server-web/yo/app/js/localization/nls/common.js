@@ -233,6 +233,8 @@ define({
         IMPORT_PRODUCT_DATA:"Import product data",
         IMPORTER: "Import",
         IMPORT_PENDING:"Import pending",
+        IMPORT_SUCCEED:"Import succeed",
+        IMPORT_FAILED:"Import failed",
 		INIT_VALUE: "Init value",
 		IN_PROGRESS: "Work in progress",
         INITIATOR: "Initiator",

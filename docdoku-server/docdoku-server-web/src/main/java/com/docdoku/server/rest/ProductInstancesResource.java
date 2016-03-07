@@ -678,7 +678,7 @@ public class ProductInstancesResource {
 
         File importFile = Files.createTempFile("product-" + name, "-import.tmp" + (extension == null ? "" : "." + extension)).toFile();
         long length = BinaryResourceUpload.uploadBinary(new BufferedOutputStream(new FileOutputStream(importFile)), part);
-        importerService.importIntoPathData(workspaceId, importFile, revisionNote, autoFreezeAfterUpdate, permissiveUpdate);
+        importerService.importIntoPathData(workspaceId, importFile, name+"."+extension, revisionNote, autoFreezeAfterUpdate, permissiveUpdate);
 
         importFile.delete();
 

@@ -231,6 +231,8 @@ define({
     IMPORT_ATTRIBUTE_FILE: "Importer un fichier d'attributs",
     IMPORT_PART_DATA:"Importer des données d'articles",
     IMPORT_PENDING:"Import en cours",
+    IMPORT_SUCCEED:"Import réussi",
+    IMPORT_FAILED:"Echec de l'import",
     IMPORT_PRODUCT_DATA:"Importer des données de produits",
     IMPORTER:"Importer un fichier",
     INIT_VALUE: "Valeur initiale",
