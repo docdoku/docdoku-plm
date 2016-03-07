@@ -538,7 +538,9 @@ define([
 
         showImporter:function(){
             var partImporterView = new PartImporterView();
-            partImporterView.show();
+            partImporterView.render();
+            document.body.appendChild(partImporterView.el);
+            partImporterView.openModal();
 
             return false;
         },

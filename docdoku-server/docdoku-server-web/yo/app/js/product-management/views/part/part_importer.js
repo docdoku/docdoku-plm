@@ -15,22 +15,26 @@ define([
     'common-objects/views/part/import_status_view'
 ], function (Backbone, Mustache, unorm, ModalView, AttachedFile, FileView, AlertView, template, ImportStatusView) {
     'use strict';
-    var PartImportView = ModalView.extend({
+    var PartImportView = Backbone.View.extend({
 
         template: template,
 
         tagName: 'div',
         className: 'attachedFiles idle',
 
+        events:{
+            'click form button.cancel-upload-btn':'cancelButtonClicked',
+            'change form input.upload-btn':'fileSelectHandler',
+            'dragover .droppable':'fileDragHover',
+            'dragleave .droppable':'fileDragHover',
+            'drop .droppable':'fileDropHandler',
+            'click .import-button':'formSubmit',
+            'click #auto_checkout_part':'changeAutoCheckout',
+            'hidden .importer-view':'onHidden'
+        },
+
         initialize: function () {
-            ModalView.prototype.initialize.apply(this, arguments);
-            this.events['click form button.cancel-upload-btn'] = 'cancelButtonClicked';
-            this.events['change form input.upload-btn'] = 'fileSelectHandler';
-            this.events['dragover .droppable'] = 'fileDragHover';
-            this.events['dragleave .droppable'] = 'fileDragHover';
-            this.events['drop .droppable'] = 'fileDropHandler';
-            this.events['click .import-button'] = 'formSubmit';
-            this.events['click #auto_checkout_part'] = 'changeAutoCheckout';
+            this.importStatusViews = [];
 
             // Prevent browser behavior on file drop
             window.addEventListener('drop', function (e) {
@@ -43,6 +47,7 @@ define([
                 return false;
             }, false);
 
+            this.$el.on('remove', this.removeSubviews);
         },
 
         // cancel event and hover styling
@@ -108,6 +113,7 @@ define([
         },
 
         bindDomElements: function () {
+            this.$modal = this.$('.modal.importer-view');
             this.filedroparea = this.$('.filedroparea');
             this.filedisplay = this.$('#file-selected ul');
             this.uploadInput = this.$('input.upload-btn');
@@ -173,7 +179,7 @@ define([
 
         fetchImports:function(){
             var _this = this;
-            this.importStatusViews = [];
+            this.removeSubviews();
             _this.$('.import-status-views').empty();
 
             var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/import';
@@ -196,6 +202,24 @@ define([
         clearNotifications: function() {
             this.notifications.text('');
         },
+
+        removeSubviews: function(){
+            console.log('remove sub views')
+            _(this.importStatusViews).invoke('remove');
+            this.importStatusViews = [];
+        },
+
+        openModal: function () {
+            this.$modal.modal('show');
+        },
+
+        closeModal: function () {
+            this.$modal.modal('hide');
+        },
+
+        onHidden: function () {
+            this.remove();
+        }
 
     });
     return PartImportView;
