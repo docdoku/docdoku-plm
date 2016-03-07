@@ -69,8 +69,8 @@ public class FileImportInterceptor {
             LOGGER.log(Level.SEVERE,"Cannot import the file", e);
             List<String> errors = new ArrayList<>();
             List<String> warnings = new ArrayList<>();
-            errors.add(e.getMessage());
-            importResult = new ImportResult(file, originalFileName, warnings,errors);
+            errors.add("Unhandled exception");
+            importResult = new ImportResult(file, originalFileName, warnings, errors);
             return null;
 
         }finally {

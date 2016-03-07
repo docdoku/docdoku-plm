@@ -12,10 +12,16 @@ define([
             'click .delete':'deleteImport'
         },
 
+        initialize:function(){
+            _.bindAll(this);
+            this.$el.on('remove', this.stopRefresh);
+            this.timeout = null;
+        },
+
         render:function(){
             this.$el.html(Mustache.render(template, {status:this.model,i18n:App.config.i18n}));
             if(this.model.pending){
-                setTimeout(this.refresh.bind(this),1000);
+                this.timeout = setTimeout(this.refresh.bind(this),1000);
             }
             return this;
         },
@@ -36,7 +42,12 @@ define([
                 _this.model = pImport;
                 _this.render();
             });
+        },
 
+        stopRefresh : function(){
+            if(this.timeout){
+                clearTimeout(this.timeout);
+            }
         }
 
     });
