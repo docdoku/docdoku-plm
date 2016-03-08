@@ -80,7 +80,7 @@ public abstract class ChangeItem implements Serializable {
     protected Priority priority;
 
     public enum Priority {
-        LOW, HIGH, MEDIUM, EMERGENCY
+        LOW, MEDIUM, HIGH, EMERGENCY
     }
 
     /**
