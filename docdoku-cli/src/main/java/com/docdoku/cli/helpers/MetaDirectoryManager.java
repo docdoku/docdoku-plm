@@ -83,12 +83,12 @@ public class MetaDirectoryManager {
     }
 
     public void setIteration(String filePath, int iteration) throws IOException {
-        indexProps.setProperty(filePath + "." + ITERATION_PROP, iteration+"");
+        indexProps.setProperty(filePath + "." + ITERATION_PROP, Integer.toString(iteration));
         saveIndex();
     }
 
     public void setLastModifiedDate(String filePath, long lastModifiedDate) throws IOException {
-        indexProps.setProperty(filePath + "." + LAST_MODIFIED_DATE_PROP, lastModifiedDate+"");
+        indexProps.setProperty(filePath + "." + LAST_MODIFIED_DATE_PROP, Long.toString(lastModifiedDate));
         saveIndex();
     }
 
