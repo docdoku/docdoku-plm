@@ -1,8 +1,4 @@
-/**
- * Created by laurentlevan on 19/02/16.
- */
-
-/*global _,define,App,window,confirm*/
+/*global _,define,App,window*/
 define([
     'backbone',
     'mustache',
@@ -204,7 +200,6 @@ define([
         },
 
         removeSubviews: function(){
-            console.log('remove sub views')
             _(this.importStatusViews).invoke('remove');
             this.importStatusViews = [];
         },

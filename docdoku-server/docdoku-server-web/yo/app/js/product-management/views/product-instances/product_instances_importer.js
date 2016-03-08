@@ -1,35 +1,33 @@
-/**
- * Created by laurentlevan on 19/02/16.
- */
-
-/*global _,define,App,confirm*/
-
+/*global _,define,App*/
 define([
-    '../../../../bower_components/backbone/backbone',
+    'backbone',
     'mustache',
     'unorm',
     'common-objects/views/components/modal',
     'common-objects/models/file/attached_file',
     'common-objects/views/file/file',
     'common-objects/views/alert',
-    'text!templates/product-instances/product_instances_import_form.html'
-], function (Backbone, Mustache, unorm, ModalView, AttachedFile, FileView, AlertView, template) {
+    'text!templates/product-instances/product_instances_import_form.html',
+    'common-objects/views/part/import_status_view'
+], function (Backbone, Mustache, unorm, ModalView, AttachedFile, FileView, AlertView, template, ImportStatusView) {
     'use strict';
-    var ProductInstanceImportView = ModalView.extend({
+    var ProductInstanceImportView = Backbone.View.extend({
 
         template: template,
 
         tagName: 'div',
         className: 'attachedFiles idle',
 
+        events:{
+            'click form button.cancel-upload-btn':'cancelButtonClicked',
+            'change form input.upload-btn':'fileSelectHandler',
+            'dragover .droppable':'fileDragHover',
+            'dragleave .droppable':'fileDragHover',
+            'drop .droppable':'fileDropHandler',
+            'click .import-button':'formSubmit'
+        },
+
         initialize: function () {
-            ModalView.prototype.initialize.apply(this, arguments);
-            this.events['click form button.cancel-upload-btn'] = 'cancelButtonClicked';
-            this.events['change form input.upload-btn'] = 'fileSelectHandler';
-            this.events['dragover .droppable'] = 'fileDragHover';
-            this.events['dragleave .droppable'] = 'fileDragHover';
-            this.events['drop .droppable'] = 'fileDropHandler';
-            this.events['click .import-button'] = 'formSubmit';
 
             $.event.props.push('dataTransfer');
 
@@ -44,6 +42,7 @@ define([
                 return false;
             }, false);
 
+            this.$el.on('remove', this.removeSubviews);
         },
 
         // cancel event and hover styling
@@ -84,6 +83,7 @@ define([
                 i18n: App.config.i18n
             }));
             this.bindDomElements();
+            this.fetchImports();
 
             return this;
         },
@@ -103,9 +103,11 @@ define([
 
         addOneFile: function (attachedFile) {
             this.filedisplay.html('<li>' + attachedFile.getShortName() + '</li>');
+            this.$('.import-button').removeAttr('disabled');
         },
 
         bindDomElements: function () {
+            this.$modal = this.$('.modal.importer-view');
             this.filedroparea = this.$('.filedroparea');
             this.filedisplay = this.$('#file-selected ul');
             this.uploadInput = this.$('input.upload-btn');
@@ -142,16 +144,11 @@ define([
                 var importUrl = baseUrl + '?' + $.param(params);
 
                 var xhr = new XMLHttpRequest();
+                xhr.onload = this.fetchImports.bind(this);
                 xhr.open('POST', importUrl);
-
-                if (confirm(App.config.i18n.CONFIRM_IMPORT)) {
-                    var formdata = new window.FormData();
-                    formdata.append('upload', this.file);
-                    xhr.send(formdata);
-
-                    this.$('#import_pending').html('<i class="fa fa-refresh fa-spin" title="'+App.config.i18n.IMPORT_PENDING+'"></i><b> '+App.config.i18n.IMPORT_PENDING+' ...</b>');
-                }
-
+                var formdata = new window.FormData();
+                formdata.append('upload', this.file);
+                xhr.send(formdata);
 
             } else if(!this.file){
 
@@ -160,6 +157,21 @@ define([
             }
 
             return false;
+        },
+
+        fetchImports:function(){
+            var _this = this;
+            this.removeSubviews();
+            _this.$('.import-status-views').empty();
+
+            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/import';
+            $.get(url).then(function(imports){
+                _.each(imports,function(pImport){
+                    var view = new ImportStatusView({model:pImport}).render();
+                    _this.importStatusViews.push(view);
+                    _this.$('.import-status-views').append(view.$el);
+                });
+            });
         },
 
         printNotifications: function (type, message) {
@@ -172,6 +184,23 @@ define([
         clearNotifications: function () {
             this.notifications.text('');
         },
+
+        removeSubviews: function(){
+            _(this.importStatusViews).invoke('remove');
+            this.importStatusViews = [];
+        },
+
+        openModal: function () {
+            this.$modal.modal('show');
+        },
+
+        closeModal: function () {
+            this.$modal.modal('hide');
+        },
+
+        onHidden: function () {
+            this.remove();
+        }
 
     });
     return ProductInstanceImportView;
