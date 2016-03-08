@@ -201,6 +201,8 @@ public class FileHelper {
                 throw new LoginException(LangHelper.getLocalizedMessage("LoginError",locale));
             case 500:
                 throw new IOException(conn.getHeaderField("Reason-Phrase"));
+            default:
+                break;
         }
     }
 

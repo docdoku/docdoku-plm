@@ -30,7 +30,7 @@ public class JSONProgressMonitorInputStream extends FilterInputStream {
     private long maximum;
     private long totalRead;
     private int oldPercentage=-1;
-    private PrintStream OUTPUT_STREAM = System.out;
+    private PrintStream outputStream = System.out;
 
     public JSONProgressMonitorInputStream(long maximum, InputStream in){
         super(in);
@@ -44,7 +44,7 @@ public class JSONProgressMonitorInputStream extends FilterInputStream {
         int percentage = (int)((totalRead * 100.0f) / maximum);
 
         if(percentage > oldPercentage) {
-            OUTPUT_STREAM.println("{\"progress\":" + percentage + "}");
+            outputStream.println("{\"progress\":" + percentage + "}");
         }
 
         oldPercentage = percentage ;
