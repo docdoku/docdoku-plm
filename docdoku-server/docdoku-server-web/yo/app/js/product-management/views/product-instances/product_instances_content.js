@@ -29,7 +29,8 @@ define([
             'click button.new-product-instance': 'newProductInstance',
             'click button.delete': 'deleteProductInstances',
             'click button.edit-acl': 'editACLProductInstances',
-            'click .import': 'showImporter'
+            'click .import': 'showImporter',
+            'hidden .importer-view':'onHidden'
         },
 
         initialize: function () {
@@ -147,8 +148,10 @@ define([
         },
 
         showImporter:function(){
-            new ProductInstanceImporterView().show();
-
+            var partImporterView = new ProductInstanceImporterView();
+            partImporterView.render();
+            document.body.appendChild(partImporterView.el);
+            partImporterView.openModal();
             return false;
         }
     });

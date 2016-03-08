@@ -1,12 +1,13 @@
 <div class="modal importer-view">
     <div class="modal-header">
         <a class="close" data-dismiss="modal">×</a>
-
         <h3>{{i18n.IMPORT_PRODUCT_DATA}}</h3>
     </div>
+
+
     <div class="modal-body">
 
-        <div id="import_pending"></div>
+        <h3>{{i18n.FILE}}</h3>
 
         <div class="notifications"></div>
 
@@ -30,24 +31,37 @@
             </form>
 
         </div>
-        <p></p>
 
-        <div>
-            <input type="checkbox" id="revision_checkbox_product"/>{{i18n.ADD_REVISION_NOTE}}
-            <textarea type="text" id="revision_text_product" rows="1" ></textarea>
+        <div class="form-horizontal import-status-views"></div>
+
+        <h3>{{i18n.OPTIONS}}</h3>
+
+        <div class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="revision_text_product">{{i18n.ADD_REVISION_NOTE}}</label>
+                <div class="controls">
+                    <textarea type="text" rows="1" id="revision_text_product"></textarea>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="checkbox">{{i18n.FREEZE_AFTER_MODIFICATION}} <input type="checkbox" id="freeze-checkbox"/></label>
+            </div>
+
+             <div class="control-group">
+                <label class="checkbox">{{i18n.PERMISSIVE_UPDATE_PATH_DATA}} <input type="checkbox" id="permissive_update_product_instance-checkbox"/></label>
+            </div>
+
         </div>
 
 
-        <p>
-            <input type="checkbox" id="freeze-checkbox"/>{{i18n.FREEZE_AFTER_MODIFICATION}}
-        </p>
-
-        <p>
-            <input type="checkbox" id="permissive_update_product_instance"/>{{i18n.PERMISSIVE_UPDATE_PATH_DATA}}
-        </p>
-
-        <button type="button" class="btn btn-primary import-button">{{i18n.IMPORT}}
-        </button>
-
     </div>
+
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+        <button type="button" disabled class="btn btn-primary import-button">
+            {{i18n.IMPORT}}
+        </button>
+    </div>
+
 </div>
