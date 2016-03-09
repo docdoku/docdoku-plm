@@ -44,7 +44,7 @@ import static com.docdoku.cli.helpers.CliOutput.formats.HUMAN;
  */
 public abstract class CliOutput {
 
-    public static enum formats{
+    public enum formats {
         HUMAN,
         JSON
     }

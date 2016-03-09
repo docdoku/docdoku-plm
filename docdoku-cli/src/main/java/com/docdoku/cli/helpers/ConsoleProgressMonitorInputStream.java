@@ -31,7 +31,7 @@ public class ConsoleProgressMonitorInputStream extends FilterInputStream {
 
     private long maximum;
     private long totalRead;
-    private PrintStream OUTPUT_STREAM = System.out;
+    private PrintStream outputStream = System.out;
     private int rotationChar;
 
     private static final char[] ROTATION = {'|','|','|','|','/','/','/','/','-','-','-','-','\\','\\','\\','\\'};
@@ -56,12 +56,12 @@ public class ConsoleProgressMonitorInputStream extends FilterInputStream {
         }
 
         if(length ==-1) {
-            OUTPUT_STREAM.println("\r" + "100%");
+            outputStream.println("\r" + "100%");
         }else {
             if(maximum!=-1) {
-                OUTPUT_STREAM.print("\r" + percentageToPrint + "% Total " + FileUtils.byteCountToDisplaySize(totalRead) + " " + ROTATION[rotationChar % ROTATION.length] + "      ");
+                outputStream.print("\r" + percentageToPrint + "% Total " + FileUtils.byteCountToDisplaySize(totalRead) + " " + ROTATION[rotationChar % ROTATION.length] + "      ");
             }else{
-                OUTPUT_STREAM.print("\r" + "     Total " + FileUtils.byteCountToDisplaySize(totalRead) + " " + ROTATION[rotationChar % ROTATION.length] + "      ");
+                outputStream.print("\r" + "     Total " + FileUtils.byteCountToDisplaySize(totalRead) + " " + ROTATION[rotationChar % ROTATION.length] + "      ");
             }
         }
 
