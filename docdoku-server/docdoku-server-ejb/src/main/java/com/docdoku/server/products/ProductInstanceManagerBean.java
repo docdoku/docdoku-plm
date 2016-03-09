@@ -46,10 +46,7 @@ import com.docdoku.server.validation.AttributesConsistencyUtils;
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Local;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import javax.ejb.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
@@ -885,6 +882,42 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         PathDataMasterDAO pathDataMasterDAO = new PathDataMasterDAO(locale, em);
 
         return pathDataMasterDAO.findByPathAndProductInstanceIteration(pathAsString, prodInstI);
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public PathDataMaster getPathDataMasterById(String workspaceId, String configurationItemId, String serialNumber, int pathDataMaterId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathDataMasterNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+
+        // Load the product instance
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
+        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+
+        // Check the access to the product instance
+        checkProductInstanceReadAccess(workspaceId, prodInstM, user);
+
+        ProductInstanceIteration prodInstI = prodInstM.getLastIteration();
+        PathDataMasterDAO pathDataMasterDAO = new PathDataMasterDAO(locale, em);
+
+        return pathDataMasterDAO.findByIdAndProductInstanceIteration(pathDataMaterId, prodInstI);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public boolean canWrite(String workspaceId, String configurationItemId, String serialNumber) {
+        try {
+            User user = userManager.checkWorkspaceReadAccess(workspaceId);
+            Locale locale = new Locale(user.getLanguage());
+            ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
+            ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+            checkProductInstanceWriteAccess(workspaceId, prodInstM, user);
+            return true;
+        } catch (ProductInstanceMasterNotFoundException | AccessRightException | UserNotActiveException | WorkspaceNotFoundException | UserNotFoundException e){
+            return false;
+        }
+
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
