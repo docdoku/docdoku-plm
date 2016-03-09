@@ -51,7 +51,7 @@ public class ViewerBean {
 
         HttpServletRequest request = (HttpServletRequest) currentInstance.getExternalContext().getRequest();
 
-        SharedEntity sharedEntity = null;
+        SharedEntity sharedEntity;
         String uuid = null;
         if(request.getAttribute("sharedEntity") != null){
             sharedEntity = (SharedEntity) request.getAttribute("sharedEntity");

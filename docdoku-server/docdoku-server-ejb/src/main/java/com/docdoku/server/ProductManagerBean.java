@@ -2581,7 +2581,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 component.setRetainedIteration(retainedIteration);
 
             } else {
-                ProductBaseline productBaseline = null;
+                ProductBaseline productBaseline;
                 ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(locale, em);
 
                 if (configSpecType.startsWith("pi-")) {
