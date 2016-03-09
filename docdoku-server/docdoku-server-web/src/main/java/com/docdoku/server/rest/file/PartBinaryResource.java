@@ -383,7 +383,7 @@ public class PartBinaryResource{
             throw new NotAllowedException(Locale.getDefault(),"NotAllowedException18");
         }
 
-        String refererPath[] = referer.split("/");
+        String[] refererPath = referer.split("/");
         String refererUUID = refererPath[refererPath.length-1];
         if(sharedEntity.getPassword()!=null && !sharedEntity.getUuid().equals(refererUUID)){
             throw new NotAllowedException(Locale.getDefault(),"NotAllowedException18");
