@@ -23,6 +23,7 @@ package com.docdoku.server.dao;
 import com.docdoku.core.configuration.PathDataMaster;
 import com.docdoku.core.configuration.ProductInstanceIteration;
 import com.docdoku.core.configuration.ProductInstanceMaster;
+import com.docdoku.core.exceptions.PathDataMasterNotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -33,6 +34,7 @@ import java.util.logging.Logger;
 public class PathDataMasterDAO {
 
     private EntityManager em;
+    private Locale mLocale;
 
     private static final Logger LOGGER = Logger.getLogger(PathDataMasterDAO.class.getName());
 
@@ -42,6 +44,7 @@ public class PathDataMasterDAO {
 
     public PathDataMasterDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
+        mLocale = pLocale;
     }
 
     public void createPathData(PathDataMaster pathDataMaster){
@@ -62,6 +65,17 @@ public class PathDataMasterDAO {
                     .getSingleResult();
         } catch (NoResultException e) {
             return null;
+        }
+    }
+
+    public PathDataMaster findByIdAndProductInstanceIteration(int pathDataMasterId, ProductInstanceIteration productInstanceIteration) throws PathDataMasterNotFoundException {
+        try {
+            return em.createNamedQuery("pathDataMaster.findByIdAndProductInstanceIteration", PathDataMaster.class)
+                    .setParameter("id", pathDataMasterId)
+                    .setParameter("productInstanceIteration", productInstanceIteration)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            throw new PathDataMasterNotFoundException(mLocale, pathDataMasterId);
         }
     }
 
