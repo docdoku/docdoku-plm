@@ -59,8 +59,6 @@ public class ImporterBean implements IImporterManagerLocal {
             result = getNoImporterAvailableError(file, originalFileName);
         }
 
-        file.delete();
-
         return new AsyncResult<>(result);
     }
 
