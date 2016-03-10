@@ -680,7 +680,7 @@ public class ProductInstancesResource {
         long length = BinaryResourceUpload.uploadBinary(new BufferedOutputStream(new FileOutputStream(importFile)), part);
         importerService.importIntoPathData(workspaceId, importFile, name+"."+extension, revisionNote, autoFreezeAfterUpdate, permissiveUpdate);
 
-        importFile.delete();
+        importFile.deleteOnExit();
 
         return Response.noContent().build();
 

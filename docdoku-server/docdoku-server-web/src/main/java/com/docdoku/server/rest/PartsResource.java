@@ -385,6 +385,8 @@ public class PartsResource {
         long length = BinaryResourceUpload.uploadBinary(new BufferedOutputStream(new FileOutputStream(importFile)), part);
         importerService.importIntoParts(workspaceId, importFile, name+"."+extension, revisionNote, autoCheckout, autoCheckin, permissiveUpdate);
 
+        importFile.deleteOnExit();
+
         return Response.noContent().build();
     }
 
