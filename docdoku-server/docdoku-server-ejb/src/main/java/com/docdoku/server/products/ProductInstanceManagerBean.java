@@ -887,25 +887,6 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         return pathDataMasterDAO.findByPathAndProductInstanceIteration(pathAsString, prodInstI);
     }
 
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    @Override
-    public PathDataMaster getPathDataMasterById(String workspaceId, String configurationItemId, String serialNumber, int pathDataMaterId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathDataMasterNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        Locale locale = new Locale(user.getLanguage());
-
-        // Load the product instance
-        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
-        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
-
-        // Check the access to the product instance
-        checkProductInstanceReadAccess(workspaceId, prodInstM, user);
-
-        ProductInstanceIteration prodInstI = prodInstM.getLastIteration();
-        PathDataMasterDAO pathDataMasterDAO = new PathDataMasterDAO(locale, em);
-
-        return pathDataMasterDAO.findByIdAndProductInstanceIteration(pathDataMaterId, prodInstI);
-    }
-
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override

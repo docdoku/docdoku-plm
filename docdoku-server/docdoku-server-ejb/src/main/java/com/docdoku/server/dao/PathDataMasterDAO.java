@@ -23,7 +23,6 @@ package com.docdoku.server.dao;
 import com.docdoku.core.configuration.PathDataMaster;
 import com.docdoku.core.configuration.ProductInstanceIteration;
 import com.docdoku.core.configuration.ProductInstanceMaster;
-import com.docdoku.core.exceptions.PathDataMasterNotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -65,17 +64,6 @@ public class PathDataMasterDAO {
                     .getSingleResult();
         } catch (NoResultException e) {
             return null;
-        }
-    }
-
-    public PathDataMaster findByIdAndProductInstanceIteration(int pathDataMasterId, ProductInstanceIteration productInstanceIteration) throws PathDataMasterNotFoundException {
-        try {
-            return em.createNamedQuery("pathDataMaster.findByIdAndProductInstanceIteration", PathDataMaster.class)
-                    .setParameter("id", pathDataMasterId)
-                    .setParameter("productInstanceIteration", productInstanceIteration)
-                    .getSingleResult();
-        } catch (NoResultException e) {
-            throw new PathDataMasterNotFoundException(mLocale, pathDataMasterId);
         }
     }
 
