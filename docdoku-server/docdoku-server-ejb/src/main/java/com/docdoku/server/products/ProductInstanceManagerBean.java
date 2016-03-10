@@ -810,22 +810,25 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         pathDataIteration.setInstanceAttributes(attributes);
         pathDataIteration.setIterationNote(note);
 
-        // Set links
-        DocumentLinkDAO linkDAO = new DocumentLinkDAO(locale, em);
+        if (pLinkKeys != null) {
 
-        Set<DocumentLink> currentLinks = new HashSet<>(pathDataIteration.getLinkedDocuments());
+            // Set links
+            DocumentLinkDAO linkDAO = new DocumentLinkDAO(locale, em);
 
-        for (DocumentLink link : currentLinks) {
-            pathDataIteration.getLinkedDocuments().remove(link);
-        }
+            Set<DocumentLink> currentLinks = new HashSet<>(pathDataIteration.getLinkedDocuments());
 
-        int counter = 0;
-        for (DocumentRevisionKey link : pLinkKeys) {
-            DocumentLink newLink = new DocumentLink(em.getReference(DocumentRevision.class, link));
-            newLink.setComment(documentLinkComments[counter]);
-            linkDAO.createLink(newLink);
-            pathDataIteration.getLinkedDocuments().add(newLink);
-            counter++;
+            for (DocumentLink link : currentLinks) {
+                pathDataIteration.getLinkedDocuments().remove(link);
+            }
+
+            int counter = 0;
+            for (DocumentRevisionKey link : pLinkKeys) {
+                DocumentLink newLink = new DocumentLink(em.getReference(DocumentRevision.class, link));
+                newLink.setComment(documentLinkComments[counter]);
+                linkDAO.createLink(newLink);
+                pathDataIteration.getLinkedDocuments().add(newLink);
+                counter++;
+            }
         }
 
         return pathDataMaster;
