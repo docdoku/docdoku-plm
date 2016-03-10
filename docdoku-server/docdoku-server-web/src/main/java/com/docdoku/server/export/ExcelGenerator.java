@@ -379,9 +379,9 @@ public class ExcelGenerator {
         for (String select : selects) {
 
             if (select.equals(QueryField.CTX_SERIAL_NUMBER)) {
-                PathDataIteration pdi = row.getPathDataIteration();
-                if (pdi != null) {
-                    commentsData.add(pdi.getPathDataMaster().getId() + "");
+                String path = row.getPath();
+                if (path != null && !path.isEmpty()) {
+                    commentsData.add(path);
                 }
 
             } else if (select.startsWith(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
