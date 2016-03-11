@@ -141,20 +141,13 @@ define([
             var permissive = this.$('#permissive_update_part').is(':checked');
             var revisionNote = this.$('#revision_text_part').val().trim();
 
-            var emptyRevision =false;
-
-            if(revisionNote && !this.$('#revision_text_part').val()){
-                this.printNotifications('error',App.config.i18n.EMPTY_REVISION_NOTE);
-                emptyRevision = true;
-            }
-
-            if (this.file && !emptyRevision) {
+            if (this.file) {
 
                 var params = {
-                    'autoCheckout': autocheckout,
-                    'autoCheckin': autocheckin,
-                    'permissiveUpdate': permissive,
-                    'revisionNote': revisionNote
+                    autoCheckout: autocheckout,
+                    autoCheckin: autocheckin,
+                    permissiveUpdate: permissive,
+                    revisionNote: revisionNote
                 };
 
                 var importUrl = baseUrl + '?' + $.param(params);
