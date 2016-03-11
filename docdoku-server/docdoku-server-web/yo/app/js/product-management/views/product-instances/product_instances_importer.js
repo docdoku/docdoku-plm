@@ -119,8 +119,8 @@ define([
 
             this.clearNotifications();
 
-            var freeze = this.$('freeze-checkbox').is(':checked');
-            var permissive = this.$('#permissive_update_product_instance').is(':checked');
+            var freeze = this.$('#freeze-checkbox').is(':checked');
+            var permissive = this.$('#permissive_update_product_instance-checkbox').is(':checked');
             var revisionNote = this.$('#revision_text_product').val().trim();
 
             if (this.file) {
