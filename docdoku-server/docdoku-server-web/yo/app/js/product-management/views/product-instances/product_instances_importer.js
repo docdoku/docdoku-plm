@@ -121,24 +121,16 @@ define([
 
             var freeze = this.$('freeze-checkbox').is(':checked');
             var permissive = this.$('#permissive_update_product_instance').is(':checked');
-            var revisionNote = this.$('#revision_checkbox_product').is(':checked') ? this.$('#revision_text_product').val : '';
+            var revisionNote = this.$('#revision_text_product').val().trim();
 
-            var emptyRevision =false;
-
-            if(revisionNote && this.$('#revision_text_product').val){
-                this.printNotifications('error',App.config.i18n.EMPTY_REVISION_NOTE);
-                emptyRevision = true;
-            }
-
-            if (this.file && !emptyRevision) {
+            if (this.file) {
 
                 var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/product-instances/import';
 
-
                 var params = {
-                    'autoFreezeAfterUpdate': freeze,
-                    'permissiveUpdate': permissive,
-                    'revisionNote': revisionNote
+                    autoFreezeAfterUpdate: freeze,
+                    permissiveUpdate: permissive,
+                    revisionNote: revisionNote
                 };
 
                 var importUrl = baseUrl + '?' + $.param(params);
@@ -151,8 +143,6 @@ define([
                 xhr.send(formdata);
 
             } else if(!this.file){
-
-
                 this.printNotifications('error', App.config.i18n.NO_FILE_TO_IMPORT);
             }
 
