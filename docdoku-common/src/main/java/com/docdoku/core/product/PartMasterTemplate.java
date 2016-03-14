@@ -97,6 +97,9 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date modificationDate;
+
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     private Workspace workspace;
 
@@ -234,7 +237,15 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     public Date getCreationDate() {
         return creationDate;
     }
-    
+
+    public Date getModificationDate() {
+        return modificationDate;
+    }
+
+    public void setModificationDate(Date modificationDate) {
+        this.modificationDate = modificationDate;
+    }
+
     public void setWorkspace(Workspace pWorkspace){
         workspace=pWorkspace;
         workspaceId=workspace.getId();

@@ -104,6 +104,9 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate;
+
+    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date modificationDate;
     
     @javax.persistence.ManyToOne(optional=false, fetch=FetchType.EAGER)
     private Workspace workspace;
@@ -229,7 +232,15 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     public Date getCreationDate() {
         return creationDate;
     }
-    
+
+    public Date getModificationDate() {
+        return modificationDate;
+    }
+
+    public void setModificationDate(Date modificationDate) {
+        this.modificationDate = modificationDate;
+    }
+
     public void setWorkspace(Workspace pWorkspace){
         workspace=pWorkspace;
         workspaceId=workspace.getId();

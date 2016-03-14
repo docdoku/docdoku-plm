@@ -34,6 +34,7 @@ public class PartMasterTemplateDTO implements Serializable {
     private String partType;
     private UserDTO author;
     private Date creationDate;
+    private Date modificationDate;
     private boolean idGenerated;
     private String mask;
     private String attachedFile;
@@ -86,6 +87,14 @@ public class PartMasterTemplateDTO implements Serializable {
 
     public Date getCreationDate() {
         return creationDate;
+    }
+
+    public Date getModificationDate() {
+        return modificationDate;
+    }
+
+    public void setModificationDate(Date modificationDate) {
+        this.modificationDate = modificationDate;
     }
 
     public String getAttachedFile() {

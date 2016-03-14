@@ -1737,7 +1737,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         checkPartTemplateWriteAccess(template, user);
 
         Date now = new Date();
-        template.setCreationDate(now);
+        template.setModificationDate(now);
         template.setAuthor(user);
         template.setPartType(pPartType);
         template.setMask(pMask);

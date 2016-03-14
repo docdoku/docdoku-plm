@@ -562,7 +562,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         checkDocumentTemplateWriteAccess(template, user);
 
         Date now = new Date();
-        template.setCreationDate(now);
+        template.setModificationDate(now);
         template.setAuthor(user);
         template.setDocumentType(pDocumentType);
         template.setMask(pMask);

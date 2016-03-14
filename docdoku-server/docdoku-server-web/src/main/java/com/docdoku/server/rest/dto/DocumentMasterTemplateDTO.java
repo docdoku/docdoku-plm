@@ -37,6 +37,7 @@ public class DocumentMasterTemplateDTO implements Serializable{
     private String documentType;
     private UserDTO author;
     private Date creationDate;
+    private Date modificationDate;
     private boolean idGenerated;
     private String mask;
     private String workflowModelId;
@@ -112,6 +113,14 @@ public class DocumentMasterTemplateDTO implements Serializable{
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Date getModificationDate() {
+        return modificationDate;
+    }
+
+    public void setModificationDate(Date modificationDate) {
+        this.modificationDate = modificationDate;
     }
 
     public boolean isIdGenerated() {
