@@ -170,6 +170,7 @@ public class ProductManagerBeanTest {
                 }
             }
         }
+        Mockito.verify(esIndexer,Mockito.never()).index(Mockito.any(PartIteration.class));
 
     }
 
@@ -217,6 +218,7 @@ public class ProductManagerBeanTest {
         }catch (NotAllowedException notAllowedException){
             Assert.assertTrue("updateDocument shouldn't have raised an exception because the attributes are not frozen", false);
         }
+        Mockito.verify(esIndexer,Mockito.never()).index(Mockito.any(PartIteration.class));
 
     }
 
@@ -255,6 +257,7 @@ public class ProductManagerBeanTest {
             Tag tag = it.next();
             Assert.assertEquals(tag.getLabel() ,tags[i++]);
         }
+        Mockito.verify(esIndexer,Mockito.times(1)).index(Mockito.any(PartIteration.class));
 
     }
 
@@ -274,7 +277,7 @@ public class ProductManagerBeanTest {
         Mockito.when(em.find(PartRevision.class, partRevisionKey)).thenReturn(partRevision);
 
         PartRevision partRevisionResult = productManagerBean.removeTag(partRevision.getKey(), "Important");
-
+        Mockito.verify(esIndexer,Mockito.times(1)).index(partRevisionResult.getLastIteration());
         Assert.assertEquals(partRevisionResult.getTags().size() ,2);
         Assert.assertFalse(partRevisionResult.getTags().contains(new Tag(workspace,"Important")));
         Assert.assertTrue(partRevisionResult.getTags().contains(new Tag(workspace,"Urgent")));
@@ -291,7 +294,14 @@ public class ProductManagerBeanTest {
         Mockito.when(userManager.checkWorkspaceReadAccess(ProductUtil.WORKSPACE_ID)).thenReturn(user);
         Mockito.when(userManager.checkWorkspaceWriteAccess(ProductUtil.WORKSPACE_ID)).thenReturn(user);
         Mockito.when(em.find(PartRevision.class, partRevisionKey)).thenReturn(partRevision);
-        productManagerBean.saveTags(partRevisionKey,tags);
+        try {
+            productManagerBean.saveTags(partRevisionKey,tags);
+        } catch (IllegalArgumentException e) {
+            Mockito.verify(esIndexer,Mockito.never()).index(Mockito.any(PartIteration.class));
+            throw e;
+        }
+
+
     }
 
     @Test
@@ -305,6 +315,7 @@ public class ProductManagerBeanTest {
         thrown.expect(EntityConstraintException.class);
 
         productManagerBean.checkCyclicAssemblyForPartIteration(cyclicAssemblyRule.getP1().getLastRevision().getLastIteration());
+        Mockito.verify(esIndexer,Mockito.never()).index(Mockito.any(PartIteration.class));
 
     }
 
