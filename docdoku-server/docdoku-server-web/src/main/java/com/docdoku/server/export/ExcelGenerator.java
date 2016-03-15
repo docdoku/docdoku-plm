@@ -175,12 +175,10 @@ public class ExcelGenerator {
             String columnTranslated;
             if (!column.isEmpty()) {
                 if (column.trim().startsWith(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
-                    columnTranslated = column.split("-")[1];
-                    columnTranslated = columnTranslated.substring(columnTranslated.indexOf(".") + 1);
+                    columnTranslated = column.substring(column.indexOf(".") + 1);
                 }
                 else if (column.trim().startsWith(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)) {
-                    columnTranslated = column.split("-")[2];
-                    columnTranslated = columnTranslated.substring(columnTranslated.indexOf(".") + 1);
+                    columnTranslated = column.substring(column.indexOf(".") + 1);
                 }
                 else {
                     columnTranslated = langHelper.getLocalizedMessage(column.trim(), locale);
