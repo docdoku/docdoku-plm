@@ -385,7 +385,7 @@ public class PartResource {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     public Response deletePartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
-            throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, ESServerException {
+            throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, ESServerException, AccessRightException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
         productService.deletePartRevision(revisionKey);

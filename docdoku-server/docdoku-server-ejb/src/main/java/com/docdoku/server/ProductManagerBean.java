@@ -1953,7 +1953,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deletePartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, EntityConstraintException, ESServerException {
+    public void deletePartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, EntityConstraintException, ESServerException, AccessRightException {
 
         User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
         Locale locale = new Locale(user.getLanguage());
@@ -1966,6 +1966,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(locale, em);
 
         PartRevision partR = partRevisionDAO.loadPartR(partRevisionKey);
+        if(!hasPartOrWorkspaceWriteAccess(user,partR)) {
+            throw new AccessRightException(locale, user);
+        }
         PartMaster partMaster = partR.getPartMaster();
         boolean isLastRevision = partMaster.getPartRevisions().size() == 1;
 
