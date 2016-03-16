@@ -67,6 +67,10 @@ define([
             return this.get('creationDate');
         },
 
+        getModificationDate: function () {
+            return this.get('modificationDate');
+        },
+
         hasAttachedFiles: function(){
             return this._attachedFile.length;
         },
@@ -74,6 +78,13 @@ define([
             return Date.formatTimestamp(
                 App.config.i18n._DATE_FORMAT,
                 this.getCreationDate()
+            );
+        },
+
+        getFormattedModificationDate: function () {
+            return Date.formatTimestamp(
+                App.config.i18n._DATE_FORMAT,
+                this.getModificationDate()
             );
         },
 

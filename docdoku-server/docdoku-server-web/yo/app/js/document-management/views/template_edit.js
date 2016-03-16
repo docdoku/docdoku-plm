@@ -5,7 +5,7 @@ define([
     'common-objects/views/workflow/workflow_list',
     'common-objects/views/attributes/template_new_attributes',
     'common-objects/views/file/file_list',
-    'text!templates/template_new.html'
+    'text!templates/template_new.html',
 ], function (date, ModalView, DocumentWorkflowListView, TemplateNewAttributesView, FileListView, template) {
 	'use strict';
     var TemplateEditView = ModalView.extend({
@@ -13,6 +13,7 @@ define([
         template: template,
 
         initialize: function () {
+            this.templateExtraData = {modificationDate: this.model.getFormattedModificationDate()};
             ModalView.prototype.initialize.apply(this, arguments);
             // destroy previous template edit view if any
             if (TemplateEditView._instance) {
@@ -73,7 +74,7 @@ define([
                 e.preventDefault();
                 return false;
             });
-
+            date.dateHelper(this.$('.date-popover'));
         },
 
         interceptSubmit:function(){

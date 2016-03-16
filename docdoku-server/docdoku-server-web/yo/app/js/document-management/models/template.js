@@ -2,8 +2,9 @@
 define([
     'backbone',
     'common-objects/collections/file/attached_file_collection',
-    'common-objects/utils/acl-checker'
-], function (Backbone, AttachedFileCollection, ACLChecker) {
+    'common-objects/utils/acl-checker',
+    'common-objects/utils/date',
+], function (Backbone, AttachedFileCollection, ACLChecker, Date) {
     'use strict';
     var Template = Backbone.Model.extend({
         initialize: function () {
@@ -78,6 +79,17 @@ define([
                 success: args.success,
                 error: args.error
             });
+        },
+
+        getModificationDate: function() {
+            return this.get('modificationDate');
+        },
+
+        getFormattedModificationDate: function () {
+            return Date.formatTimestamp(
+                App.config.i18n._DATE_FORMAT,
+                this.getModificationDate()
+            );
         }
 
     });

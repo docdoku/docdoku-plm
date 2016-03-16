@@ -6,14 +6,16 @@ define([
     'common-objects/views/file/file_list',
     'common-objects/views/attributes/template_new_attributes',
     'common-objects/views/workflow/workflow_list',
-    'common-objects/views/alert'
-], function (ModalView, template, PartTemplate, FileListView, TemplateNewAttributesView, WorkflowListView, AlertView) {
+    'common-objects/views/alert',
+    'common-objects/utils/date'
+], function (ModalView, template, PartTemplate, FileListView, TemplateNewAttributesView, WorkflowListView, AlertView, date) {
 	'use strict';
     var PartTemplateEditView = ModalView.extend({
 
         template: template,
 
         initialize: function () {
+            this.templateExtraData = {modificationDate : this.model.getFormattedModificationDate()};
             ModalView.prototype.initialize.apply(this, arguments);
             this.events['click .modal-footer .btn-primary'] = 'interceptSubmit';
             this.events['submit #part_template_creation_form'] = 'onSubmitForm';
@@ -78,6 +80,7 @@ define([
                 e.preventDefault();
                 return false;
             });
+            date.dateHelper(this.$('.date-popover'));
         },
 
         bindDomElements: function () {

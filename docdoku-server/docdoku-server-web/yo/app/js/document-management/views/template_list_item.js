@@ -32,6 +32,11 @@ define([
                     App.config.i18n._DATE_FORMAT,
                     data.creationDate);
             }
+            if (!_.isUndefined(data.modificationDate)) {
+                data.modificationDate = date.formatTimestamp(
+                    App.config.i18n._DATE_FORMAT,
+                    data.modificationDate);
+            }
             if (this.model.hasACLForCurrentUser()) {
                 data.isReadOnly = this.model.isReadOnly();
                 data.isFullAccess = this.model.isFullAccess();

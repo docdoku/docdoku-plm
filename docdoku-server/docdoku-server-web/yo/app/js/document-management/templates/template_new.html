@@ -66,6 +66,15 @@
                             {{#model.idGenerated}}checked{{/model.idGenerated}}/>
                             <p class="help-block"></p>
                         </div>
+                        {{#model.id}}
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.MODIFICATION_DATE}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline"><a class="date-popover">{{modificationDate}}</a></span>
+                            </div>
+                        </div>
+                        {{/model.id}}
                     </div>
                 </div>
                 <div id="tab-workflow-{{view.cid}}" class="tab-pane">
