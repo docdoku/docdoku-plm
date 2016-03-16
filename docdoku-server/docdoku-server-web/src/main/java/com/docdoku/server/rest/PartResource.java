@@ -172,14 +172,15 @@ public class PartResource {
 
         List<InstanceAttributeDTO> instanceAttributes = data.getInstanceAttributes();
         List<InstanceAttribute> attributes = null;
+        InstanceAttributeFactory instanceAttributeFactory = new InstanceAttributeFactory();
         if (instanceAttributes != null) {
-            attributes = new InstanceAttributeFactory().createInstanceAttributes(instanceAttributes);
+            attributes = instanceAttributeFactory.createInstanceAttributes(instanceAttributes);
         }
 
         List<InstanceAttributeTemplateDTO> instanceAttributeTemplates = data.getInstanceAttributeTemplates();
         List<InstanceAttributeTemplate> attributeTemplates = null;
         if (instanceAttributeTemplates != null) {
-            attributeTemplates = new InstanceAttributeFactory().createInstanceAttributeTemplateFromDto(instanceAttributeTemplates);
+            attributeTemplates = instanceAttributeFactory.createInstanceAttributeTemplateFromDto(instanceAttributeTemplates);
         }
 
         String[] lovNames=new String[instanceAttributeTemplates.size()];

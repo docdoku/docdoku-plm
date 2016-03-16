@@ -36,7 +36,6 @@ import java.util.List;
  * Should be replaced with DozerMapper.
  * @see com.docdoku.server.rest.converters.InstanceAttributeDozerConverter
  */
-@Deprecated
 public class InstanceAttributeFactory {
 
     private Mapper mapper;
