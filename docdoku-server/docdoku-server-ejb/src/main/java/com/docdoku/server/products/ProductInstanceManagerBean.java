@@ -46,9 +46,7 @@ import com.docdoku.server.validation.AttributesConsistencyUtils;
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import javax.ejb.*;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -803,7 +801,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             throw new NotAllowedException(locale, "NotAllowedException52");
         }
 
-        boolean valid = AttributesConsistencyUtils.hasValidChange(attributes,false,pathDataIteration.getInstanceAttributes());
+        boolean valid = AttributesConsistencyUtils.hasValidChange(attributes, false, pathDataIteration.getInstanceAttributes());
         if(!valid) {
             throw new NotAllowedException(locale, "NotAllowedException59");
         }

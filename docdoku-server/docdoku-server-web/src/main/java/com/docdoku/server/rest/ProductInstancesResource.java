@@ -29,6 +29,7 @@ import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IImporterManagerLocal;
 import com.docdoku.core.services.IPSFilterManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
@@ -48,9 +49,11 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 import javax.ws.rs.*;
-import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.BufferedOutputStream;
@@ -78,6 +81,9 @@ public class ProductInstancesResource {
 
     @Inject
     private IPSFilterManagerLocal psFilterService;
+
+    @Inject
+    private IImporterManagerLocal importerService;
 
     private Mapper mapper;
 

@@ -181,7 +181,7 @@ public class ExcelGenerator {
                     columnTranslated = column.substring(column.indexOf(".") + 1);
                 }
                 else {
-                    columnTranslated = langHelper.getLocalizedMessage(column.trim(), locale);
+                    columnTranslated = langHelper.getLocalizedMessage(column.trim());
                 }
                 headerFormatted[headerIndex++] = columnTranslated != null ? columnTranslated : column;
             }
