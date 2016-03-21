@@ -1,0 +1,32 @@
+{{#status}}
+    {{#pending}}
+    <i class="fa fa-refresh fa-spin" title="{{i18n.IMPORT_PENDING}}"></i><b>{{i18n.IMPORT_PENDING}} ...</b>
+    {{/pending}}
+    {{^pending}}
+        {{#succeed}}
+            <i class="fa fa-recycle success" title="{{i18n.IMPORT_SUCCEED}}"></i> <b>{{i18n.IMPORT_SUCCEED}}</b>
+        {{/succeed}}
+        {{^succeed}}
+            <i class="fa fa-recycle fail" title="{{i18n.IMPORT_FAILED}}"></i><b>{{i18n.IMPORT_FAILED}}</b>
+        {{/succeed}}
+        <span class="import-status-actions">
+                <a class="delete">{{i18n.DELETE}}</a>
+        </span>
+
+        <p class="file-name">
+            {{i18n.FILE}} :  {{fileName}}
+        </p>
+        <p class="start-date">
+            {{i18n.DATE}} : {{startDate}}
+        </p>
+
+        {{#errors}}
+            <p class="error">{{.}}</p>
+        {{/errors}}
+
+        {{#warnings}}
+            <p class="warning">{{.}}</p>
+        {{/warnings}}
+
+    {{/pending}}
+{{/status}}

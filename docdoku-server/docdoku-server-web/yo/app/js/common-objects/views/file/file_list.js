@@ -7,6 +7,7 @@ define([
     'common-objects/models/file/attached_file',
     'common-objects/views/file/file',
     'common-objects/views/alert'
+
 ], function (Backbone, Mustache, unorm, template, AttachedFile, FileView, AlertView) {
     'use strict';
 	var FileListView = Backbone.View.extend({
@@ -185,7 +186,7 @@ define([
 
             var fd = new window.FormData();
             fd.append('upload', file);
-
+            console.log(fd);
             xhr.send(fd);
 
             this.xhrs.push(xhr);

@@ -43,7 +43,7 @@ public class QueryResultRow {
     private double[] results;
     private QueryContext context;
     private double amount;
-
+    private String path;
 
     public QueryResultRow() {
     }
@@ -132,5 +132,13 @@ public class QueryResultRow {
 
     public void setPathDataIteration(PathDataIteration pathDataIteration) {
         this.pathDataIteration = pathDataIteration;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

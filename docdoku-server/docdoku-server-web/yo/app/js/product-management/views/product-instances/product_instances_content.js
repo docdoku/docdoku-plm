@@ -11,21 +11,26 @@ define([
     'text!common-objects/templates/buttons/delete_button.html',
     'text!common-objects/templates/buttons/ACL_button.html',
     'text!common-objects/templates/buttons/new_product_instance_button.html',
-    'common-objects/views/alert'
-], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, BaselinesCollection, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton, aclButton, newProductInstanceButton, AlertView) {
+    'text!common-objects/templates/buttons/import_button.html',
+    'common-objects/views/alert',
+    'views/product-instances/product_instances_importer'
+], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, BaselinesCollection, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton, aclButton, newProductInstanceButton,importButton, AlertView,ProductInstanceImporterView) {
     'use strict';
     var ProductInstancesContentView = Backbone.View.extend({
 
         partials: {
             deleteButton: deleteButton,
             aclButton: aclButton,
-            newProductInstanceButton: newProductInstanceButton
+            newProductInstanceButton: newProductInstanceButton,
+            importButton:importButton
         },
 
         events: {
             'click button.new-product-instance': 'newProductInstance',
             'click button.delete': 'deleteProductInstances',
-            'click button.edit-acl': 'editACLProductInstances'
+            'click button.edit-acl': 'editACLProductInstances',
+            'click .import': 'showImporter',
+            'hidden .importer-view':'onHidden'
         },
 
         initialize: function () {
@@ -140,6 +145,14 @@ define([
                 type: 'warning',
                 message: errorMessage
             }).render().$el);
+        },
+
+        showImporter:function(){
+            var partImporterView = new ProductInstanceImporterView();
+            partImporterView.render();
+            document.body.appendChild(partImporterView.el);
+            partImporterView.openModal();
+            return false;
         }
     });
 

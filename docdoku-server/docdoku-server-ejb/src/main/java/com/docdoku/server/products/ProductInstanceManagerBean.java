@@ -46,9 +46,7 @@ import com.docdoku.server.validation.AttributesConsistencyUtils;
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import javax.ejb.*;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -803,29 +801,32 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             throw new NotAllowedException(locale, "NotAllowedException52");
         }
 
-        boolean valid = AttributesConsistencyUtils.hasValidChange(attributes,false,pathDataIteration.getInstanceAttributes());
+        boolean valid = AttributesConsistencyUtils.hasValidChange(attributes, false, pathDataIteration.getInstanceAttributes());
         if(!valid) {
             throw new NotAllowedException(locale, "NotAllowedException59");
         }
         pathDataIteration.setInstanceAttributes(attributes);
         pathDataIteration.setIterationNote(note);
 
-        // Set links
-        DocumentLinkDAO linkDAO = new DocumentLinkDAO(locale, em);
+        if (pLinkKeys != null) {
 
-        Set<DocumentLink> currentLinks = new HashSet<>(pathDataIteration.getLinkedDocuments());
+            // Set links
+            DocumentLinkDAO linkDAO = new DocumentLinkDAO(locale, em);
 
-        for (DocumentLink link : currentLinks) {
-            pathDataIteration.getLinkedDocuments().remove(link);
-        }
+            Set<DocumentLink> currentLinks = new HashSet<>(pathDataIteration.getLinkedDocuments());
 
-        int counter = 0;
-        for (DocumentRevisionKey link : pLinkKeys) {
-            DocumentLink newLink = new DocumentLink(em.getReference(DocumentRevision.class, link));
-            newLink.setComment(documentLinkComments[counter]);
-            linkDAO.createLink(newLink);
-            pathDataIteration.getLinkedDocuments().add(newLink);
-            counter++;
+            for (DocumentLink link : currentLinks) {
+                pathDataIteration.getLinkedDocuments().remove(link);
+            }
+
+            int counter = 0;
+            for (DocumentRevisionKey link : pLinkKeys) {
+                DocumentLink newLink = new DocumentLink(em.getReference(DocumentRevision.class, link));
+                newLink.setComment(documentLinkComments[counter]);
+                linkDAO.createLink(newLink);
+                pathDataIteration.getLinkedDocuments().add(newLink);
+                counter++;
+            }
         }
 
         return pathDataMaster;
@@ -885,6 +886,23 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         PathDataMasterDAO pathDataMasterDAO = new PathDataMasterDAO(locale, em);
 
         return pathDataMasterDAO.findByPathAndProductInstanceIteration(pathAsString, prodInstI);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public boolean canWrite(String workspaceId, String configurationItemId, String serialNumber) {
+        try {
+            User user = userManager.checkWorkspaceReadAccess(workspaceId);
+            Locale locale = new Locale(user.getLanguage());
+            ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
+            ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+            checkProductInstanceWriteAccess(workspaceId, prodInstM, user);
+            return true;
+        } catch (ProductInstanceMasterNotFoundException | AccessRightException | UserNotActiveException | WorkspaceNotFoundException | UserNotFoundException e){
+            return false;
+        }
+
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})

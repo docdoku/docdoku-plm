@@ -26,10 +26,7 @@ import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.*;
 import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.query.Query;
 import com.docdoku.core.query.QueryResultRow;
@@ -37,11 +34,14 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IImporterManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.util.FileIO;
 import com.docdoku.server.export.ExcelGenerator;
 import com.docdoku.server.rest.collections.QueryResult;
 import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 import com.docdoku.server.rest.util.SearchQueryParser;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -49,11 +49,24 @@ import org.dozer.Mapper;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
 import java.util.*;
 
 @RequestScoped
@@ -69,6 +82,9 @@ public class PartsResource {
 
     @Inject
     private PartResource partResource;
+
+    @EJB    
+    private IImporterManagerLocal importerService;
 
     public PartsResource() {
     }
@@ -201,9 +217,8 @@ public class PartsResource {
         QueryResult queryResult = getQueryResult(workspaceId, query, exportType);
         String url = request.getRequestURL().toString();
         String baseURL = url.substring(0, url.length() - request.getRequestURI().length()) + request.getContextPath();
-        return makeQueryResponse(queryResult,locale, baseURL);
+        return makeQueryResponse(queryResult, locale, baseURL);
     }
-
 
     private QueryResult getQueryResult(String workspaceId, Query query, String pExportType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, EntityConstraintException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, NotAllowedException, ConfigurationItemNotFoundException, PartMasterNotFoundException {
         List<PartRevision> partRevisions = productService.searchPartRevisions(workspaceId, query);
@@ -342,6 +357,68 @@ public class PartsResource {
         }
 
         return partsLastIter.toArray(new PartIterationDTO[partsLastIter.size()]);
+    }
+
+    @POST
+    @Path("import")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response importAttributes(@Context HttpServletRequest request,
+                                     @PathParam("workspaceId") String workspaceId,
+                                     @QueryParam("autoCheckout") boolean autoCheckout,
+                                     @QueryParam("autoCheckin") boolean autoCheckin,
+                                     @QueryParam("permissiveUpdate") boolean permissiveUpdate,
+                                     @QueryParam("revisionNote") String revisionNote)
+            throws Exception {
+
+        Collection<Part> parts = request.getParts();
+
+        if(parts.isEmpty() || parts.size() > 1){
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
+        Part part = parts.iterator().next();
+        String name = FileIO.getFileNameWithoutExtension(part.getSubmittedFileName());
+        String extension = FileIO.getExtension(part.getSubmittedFileName());
+
+        File importFile = Files.createTempFile("part-" + name, "-import.tmp" +  (extension==null?"":"." + extension)).toFile();
+        long length = BinaryResourceUpload.uploadBinary(new BufferedOutputStream(new FileOutputStream(importFile)), part);
+        importerService.importIntoParts(workspaceId, importFile, name+"."+extension, revisionNote, autoCheckout, autoCheckin, permissiveUpdate);
+
+        importFile.deleteOnExit();
+
+        return Response.noContent().build();
+    }
+
+    @GET
+    @Path("import")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<ImportDTO> getImports(@PathParam("workspaceId") String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        List<Import> imports = productService.getImports(workspaceId);
+        List<ImportDTO> importDTOs = new ArrayList<>();
+        for(Import i:imports){
+            importDTOs.add(mapper.map(i,ImportDTO.class));
+        }
+        return importDTOs;
+    }
+
+    @GET
+    @Path("import/{importId}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public ImportDTO getImport(@PathParam("workspaceId") String workspaceId, @PathParam("importId") String importId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+        Import anImport = productService.getImport(workspaceId, importId);
+        return mapper.map(anImport,ImportDTO.class);
+    }
+
+    @DELETE
+    @Path("import/{importId}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response clearImport(@PathParam("workspaceId") String workspaceId, @PathParam("importId") String importId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException {
+        productService.removeImport(workspaceId, importId);
+        return Response.noContent().build();
     }
 
     /**

@@ -259,7 +259,6 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
                     if (attributes != null) {
                         jg.writeStartArray(attributeSelect);
 
-
                         for (InstanceAttribute attribute : attributes) {
                             InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
 
@@ -285,6 +284,7 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
                     }
 
                 } else {
+                    // TODO: maybe this line is useless and should be removed
                     jg.write(attributeSelect, attributeValue);
                 }
             }
@@ -313,7 +313,9 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
 
                                 attributeValue = attribute.getValue() + "";
 
-                                if (attribute instanceof InstanceListOfValuesAttribute) {
+                                if (attribute instanceof InstanceDateAttribute) {
+                                    attributeValue = getFormattedDate(((InstanceDateAttribute) attribute).getDateValue());
+                                } else if (attribute instanceof InstanceListOfValuesAttribute) {
                                     attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                 }
 
