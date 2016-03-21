@@ -122,14 +122,30 @@ casper.test.begin('Part creation tests suite', 8, function partCreationTestsSuit
      * Wait for the part to be created, will appears in the list
      */
     casper.then(function waitForPartToBeCreated() {
-        this.waitForSelector('#part_table .part_number span', function partHasBeenCreated() {
+        this.waitFor(function check() {
+            return this.evaluate(function () {
+                return $('#part_table tbody tr:first-child td.part_number span').text() == '000-AAA-CasperJsTestPart';
+            });
+        }, function partHasBeenCreated() {
             this.test.assertSelectorHasText('#part_table tbody tr:first-child td.part_number span', products.part1.number);
             this.test.assertSelectorHasText('#part_table tbody tr:first-child td:nth-child(8)', products.part1.name);
-            //check if the nav button with the number of checkout part has been updated
-            this.test.assertSelectorHasText('.nav-checkedOut-number-item', 1, 'part-nav checkout number has been updated.');
         }, function fail() {
             this.capture('screenshot/partCreation/waitForPartToBeCreated-error.png');
             this.test.assert(false, 'New part created can not be found');
+        });
+    });
+
+    casper.then(function waitForCountUpdate() {
+        //check if the nav button with the number of checkout part has been updated
+        this.waitFor(function check() {
+            return this.evaluate(function () {
+                return $('.nav-checkedOut-number-item').text() === '1';
+            });
+        }, function then() {
+            this.test.assert(true, 'part-nav checkout number has been updated.');
+        }, function fail() {
+            this.capture('screenshot/partCreation/waitForNavUpdateCount.png');
+            this.test.assert(false, 'Checkout nav number not updated');
         });
     });
 

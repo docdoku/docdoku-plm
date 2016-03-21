@@ -116,6 +116,9 @@ casper.test.begin('Path to path link check tests suite', 26, function pathToPath
         casper.then(function treeReRendered() {
             this.waitForSelector('#product_nav_list > ul > li > a > label', function treeReRendered() {
                 this.test.assertSelectorHasText('#product_nav_list > ul > li > a > label', p2pLinks.type, 'First Node of tree should be named "' + p2pLinks.type + '"');
+            }, function fail() {
+                this.capture('screenshot/pathToPathLinkCheck/TreeNotRenderedError.png');
+                this.test.assert(false, 'Could not load tree');
             });
         });
 
