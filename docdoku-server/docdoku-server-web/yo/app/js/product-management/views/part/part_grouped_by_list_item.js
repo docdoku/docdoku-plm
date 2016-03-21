@@ -40,7 +40,7 @@ define([
                 var isStringArray;
 
                 if(isDate) {
-                    if(_.isArray(value) && value.length > 1) {
+                    if(_.isArray(value)) {
                         value = _.map(value,function(dateValue) {
 
                             return Date.formatTimestamp(
