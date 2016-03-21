@@ -71,6 +71,7 @@ define([
 
         onModelChanged:function(){
             this.model.set('id',0,{silent:true});
+            this.model.set('ROTATIONTYPE','ANGLE',{silent:true});
         },
 
         changeAmount: function (e) {

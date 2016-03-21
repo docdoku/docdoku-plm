@@ -22,6 +22,7 @@
 package com.docdoku.core.product;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -84,6 +85,7 @@ public class CADInstance implements Serializable, Cloneable {
     private RotationMatrix rotationMatrix;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
     private RotationType rotationType;
 
     
