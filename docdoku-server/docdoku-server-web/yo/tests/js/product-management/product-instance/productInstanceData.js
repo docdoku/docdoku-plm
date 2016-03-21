@@ -1,6 +1,6 @@
 /*global casper,urls,productInstances,$*/
 
-casper.test.begin('Product instance data path tests suite', 21, function productInstanceDataPathTestsSuite() {
+casper.test.begin('Product instance data path tests suite', 22, function productInstanceDataPathTestsSuite() {
     'use strict';
 
     casper.open('');
@@ -142,6 +142,15 @@ casper.test.begin('Product instance data path tests suite', 21, function product
         }, function fail() {
             this.capture('screenshot/product-instance/NoDeliverableButton.png');
             this.test.assert(false, 'deliverable data button not present');
+        });
+    });
+
+    casper.then(function waitForModal() {
+        this.waitForSelector('.product-instance-data-modal', function modalOpened() {
+            this.test.assert(true, 'deliverable data modal opened');
+        }, function fail() {
+            this.capture('screenshot/product-instance/NoDeliverableModal.png');
+            this.test.assert(false, 'could not open deliverable data modal');
         });
     });
 
