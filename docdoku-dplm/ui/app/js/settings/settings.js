@@ -21,6 +21,10 @@
                 $location.path('home');
             };
 
+            $scope.onSslChange = function() {
+                $scope.configuration.port = $scope.configuration.ssl === true ? 443 : $scope.configuration.port;
+            };
+
 
         });
 })();

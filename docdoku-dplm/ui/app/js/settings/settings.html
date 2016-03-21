@@ -25,7 +25,7 @@
                 <md-text-float label="{{'HOST' | translate}}" ng-model="configuration.host"></md-text-float>
                 <md-text-float label="{{'PORT' | translate}}" ng-model="configuration.port"
                                type="number"></md-text-float>
-                <md-checkbox ng-model="configuration.ssl" aria-label="">
+                <md-checkbox ng-model="configuration.ssl" ng-change="onSslChange()" aria-label="">
                     {{'SSL'|translate}}
                 </md-checkbox>
             </div>
