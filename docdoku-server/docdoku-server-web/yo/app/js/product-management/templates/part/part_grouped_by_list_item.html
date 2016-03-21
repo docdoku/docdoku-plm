@@ -1,7 +1,9 @@
 {{#columns}}
 <td>
     {{#isDate}}
-    <a class="date-popover">{{value}}</a>
+    {{#value}}
+    <a class="date-popover">{{.}}</a><br/>
+    {{/value}}
     {{/isDate}}
 
     {{#isStringArray}}

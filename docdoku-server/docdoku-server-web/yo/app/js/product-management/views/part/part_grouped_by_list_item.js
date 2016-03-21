@@ -40,11 +40,21 @@ define([
                 var isStringArray;
 
                 if(isDate) {
-                    var timestampFormatted = Date.formatTimestamp(
-                        App.config.i18n._DATE_FORMAT,
-                        value
-                    );
-                    value = timestampFormatted ? timestampFormatted : '';
+                    if(_.isArray(value) && value.length > 1) {
+                        value = _.map(value,function(dateValue) {
+
+                            return Date.formatTimestamp(
+                                App.config.i18n._DATE_FORMAT,
+                                dateValue
+                            );
+                        });
+                    }
+                    else {
+                        value = Date.formatTimestamp(
+                            App.config.i18n._DATE_FORMAT,
+                            value
+                        );
+                    }
                 }
 
                 if(isLinkedDocuments){
