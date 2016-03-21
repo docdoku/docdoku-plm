@@ -29,6 +29,8 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.util.InstanceAttributeFactory;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -50,6 +52,7 @@ import java.util.Map;
  */
 
 @RequestScoped
+@Api(hidden = true, value = "document-templates", description = "Operations about document templates")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class DocumentTemplateResource {
@@ -68,6 +71,8 @@ public class DocumentTemplateResource {
     }
 
     @GET
+    @ApiOperation(value = "Get document templates", response = DocumentMasterTemplateDTO.class, responseContainer = "List")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentMasterTemplateDTO[] getDocumentMasterTemplates(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
@@ -83,9 +88,10 @@ public class DocumentTemplateResource {
     }
 
     @GET
+    @ApiOperation(value = "Get document template", response = DocumentMasterTemplateDTO.class)
     @Path("{templateId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentMasterTemplateDTO getDocumentMasterTemplates(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
+    public DocumentMasterTemplateDTO getDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
             throws EntityNotFoundException, UserNotActiveException {
 
         DocumentMasterTemplate docMsTemplate = documentService.getDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
@@ -93,6 +99,7 @@ public class DocumentTemplateResource {
     }
     
     @GET
+    @ApiOperation(value = "Generate document template id", response = TemplateGeneratedIdDTO.class)
     @Path("{templateId}/generate_id")
     @Produces(MediaType.APPLICATION_JSON)
     public TemplateGeneratedIdDTO generateDocMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
@@ -103,6 +110,8 @@ public class DocumentTemplateResource {
     }
 
     @POST
+    @ApiOperation(value = "Create document template", response = DocumentMasterTemplateDTO.class)
+    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentMasterTemplateDTO createDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, DocumentTemplateCreationDTO templateCreationDTO)
@@ -126,6 +135,7 @@ public class DocumentTemplateResource {
     }
     
     @PUT
+    @ApiOperation(value = "Update document template", response = DocumentMasterTemplateDTO.class)
     @Path("{templateId}") 
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -148,6 +158,7 @@ public class DocumentTemplateResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update document template ACL", response = Response.class)
     @Path("{templateId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateDocMsTemplateACL(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, ACLDTO acl)
@@ -175,6 +186,7 @@ public class DocumentTemplateResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete document template", response = Response.class)
     @Path("{templateId}")
     public Response deleteDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
@@ -184,6 +196,7 @@ public class DocumentTemplateResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Remove attached file from document template", response = Response.class)
     @Path("{templateId}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId, @PathParam("fileName") String fileName)
@@ -196,6 +209,7 @@ public class DocumentTemplateResource {
     }
 
     @PUT
+    @ApiOperation(value = "Rename attached file in document template", response = Response.class)
     @Path("{templateId}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

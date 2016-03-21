@@ -26,7 +26,9 @@ import com.docdoku.core.configuration.ProductInstanceMaster;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.meta.*;
+import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
@@ -42,6 +44,8 @@ import com.docdoku.server.rest.collections.VirtualInstanceCollection;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
 import com.docdoku.server.rest.util.InstanceAttributeFactory;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -57,6 +61,7 @@ import javax.ws.rs.core.Response;
 import java.util.*;
 
 @RequestScoped
+@Api(hidden = true, value = "part", description = "Operation about single parts")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class PartResource {
@@ -84,6 +89,8 @@ public class PartResource {
     }
 
     @GET
+    @ApiOperation(value = "Get part revision", response = PartRevisionDTO.class)
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPartDTO(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
@@ -100,6 +107,7 @@ public class PartResource {
     }
 
     @GET
+    @ApiOperation(value = "Get product instance where part is in use", response = ProductInstanceMasterDTO.class, responseContainer = "List")
     @Path("/used-by-product-instance-masters")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getProductInstanceMasterWherePartRevisionIsInUse(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
@@ -121,6 +129,7 @@ public class PartResource {
     }
 
     @GET
+    @ApiOperation(value = "Get part revisions where use as component", response = PartRevisionDTO.class, responseContainer = "List")
     @Path("/used-by-as-component")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPartRevisionsWherePartRevisionIsUsedAsComponent(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
@@ -140,6 +149,7 @@ public class PartResource {
     }
 
     @GET
+    @ApiOperation(value = "Get part revisions where use as substitute", response = PartRevisionDTO.class, responseContainer = "List")
     @Path("/used-by-as-substitute")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPartRevisionsWherePartRevisionIsUsedAsSubstitute(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
@@ -159,6 +169,7 @@ public class PartResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update part iteration", response = PartRevisionDTO.class)
     @Path("/iterations/{partIteration}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -218,6 +229,7 @@ public class PartResource {
     }
 
     @GET
+    @ApiOperation(value = "Get conversion status", response = ConversionDTO.class)
     @Path("/iterations/{partIteration}/conversion")
     @Produces(MediaType.APPLICATION_JSON)
     public ConversionDTO getConversionStatus(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration) throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, PartIterationNotFoundException, AccessRightException {
@@ -230,6 +242,7 @@ public class PartResource {
     }
 
     @PUT
+    @ApiOperation(value = "Retry conversion", response = Response.class)
     @Path("/iterations/{partIteration}/conversion")
     public Response retryConversion(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int iteration) throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, PartIterationNotFoundException, AccessRightException {
 
@@ -248,6 +261,7 @@ public class PartResource {
     }
 
     @PUT
+    @ApiOperation(value = "Checkin part", response = Response.class)
     @Path("/checkin")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -260,6 +274,7 @@ public class PartResource {
     }
 
     @PUT
+    @ApiOperation(value = "Checkout part", response = Response.class)
     @Path("/checkout")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -272,6 +287,7 @@ public class PartResource {
     }
 
     @PUT
+    @ApiOperation(value = "Undo checkout part", response = Response.class)
     @Path("/undocheckout")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -284,6 +300,7 @@ public class PartResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update part ACL", response = Response.class)
     @Path("/acl")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -313,6 +330,7 @@ public class PartResource {
     }
 
     @PUT
+    @ApiOperation(value = "Create new part version", response = Response.class)
     @Path("/newVersion")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -358,6 +376,7 @@ public class PartResource {
     }
 
     @PUT
+    @ApiOperation(value = "Release part", response = Response.class)
     @Path("/release")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -371,6 +390,7 @@ public class PartResource {
     }
 
     @PUT
+    @ApiOperation(value = "Set part as obsolete", response = Response.class)
     @Path("/obsolete")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -384,6 +404,8 @@ public class PartResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete part", response = Response.class)
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deletePartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, ESServerException, AccessRightException {
@@ -394,6 +416,7 @@ public class PartResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Remove file from part iteration", response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/iterations/{partIteration}/files/{subType}/{fileName}")
     public Response removeFile(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, @PathParam("subType") String subType, @PathParam("fileName") String fileName)
@@ -405,6 +428,7 @@ public class PartResource {
     }
 
     @PUT
+    @ApiOperation(value = "Remove attached file from part iteration", response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/iterations/{partIteration}/files/{subType}/{fileName}")
@@ -416,6 +440,7 @@ public class PartResource {
     }
 
     @POST
+    @ApiOperation(value = "Create a new shared part", response = SharedPartDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/share")
@@ -431,6 +456,7 @@ public class PartResource {
     }
 
     @PUT
+    @ApiOperation(value = "Publish part revision", response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/publish")
     public Response publishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
@@ -442,6 +468,7 @@ public class PartResource {
     }
 
     @PUT
+    @ApiOperation(value = "Unpublish part revision", response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/unpublish")
     public Response unPublishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
@@ -453,6 +480,7 @@ public class PartResource {
     }
 
     @GET
+    @ApiOperation(value = "Get part's aborted workflows", response = WorkflowDTO.class, responseContainer = "List")
     @Path("/aborted-workflows")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAbortedWorkflows(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
@@ -472,6 +500,7 @@ public class PartResource {
     }
 
     @PUT
+    @ApiOperation(value = "Save part's tags", response = PartRevisionDTO.class)
     @Path("/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -493,6 +522,7 @@ public class PartResource {
     }
 
     @POST
+    @ApiOperation(value = "Add tags to part", response = Response.class)
     @Path("/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -517,6 +547,7 @@ public class PartResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete tags from part", response = Response.class)
     @Path("/tags/{tagName}")
     public Response removePartTags(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("tagName") String tagName)
             throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, ESServerException {
@@ -526,6 +557,7 @@ public class PartResource {
 
 
     @GET
+    @ApiOperation(value = "Get instances", response = VirtualInstanceCollection.class)
     @Path("/instances")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getInstances(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {

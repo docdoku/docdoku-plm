@@ -67,7 +67,7 @@ public class LOVResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getLovs(@PathParam("workspaceId") String workspaceId)
+    public Response getLOVs(@PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         List<ListOfValuesDTO> lovsDTO = new ArrayList<>();
         List<ListOfValues> lovs = lovManager.findLOVFromWorkspace(workspaceId);
@@ -84,7 +84,7 @@ public class LOVResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createLov(@PathParam("workspaceId") String workspaceId, ListOfValuesDTO lovDTO)
+    public Response createLOV(@PathParam("workspaceId") String workspaceId, ListOfValuesDTO lovDTO)
             throws ListOfValuesAlreadyExistsException, CreationException, UnsupportedEncodingException, UserNotFoundException, AccessRightException, UserNotActiveException, WorkspaceNotFoundException {
         ListOfValues lov = mapper.map(lovDTO, ListOfValues.class);
         lovManager.createLov(workspaceId, lov.getName(), lov.getValues());
@@ -95,7 +95,7 @@ public class LOVResource {
     @Path("/{name}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ListOfValuesDTO getlov(@PathParam("workspaceId") String workspaceId, @PathParam("name") String name)
+    public ListOfValuesDTO getLOV(@PathParam("workspaceId") String workspaceId, @PathParam("name") String name)
             throws ListOfValuesNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         ListOfValuesKey lovKey = new ListOfValuesKey(workspaceId, name);
         ListOfValues lov = lovManager.findLov(lovKey);
@@ -106,7 +106,7 @@ public class LOVResource {
     @Path("/{name}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ListOfValuesDTO updatelov(@PathParam("workspaceId") String workspaceId, @PathParam("name") String name, ListOfValuesDTO lovDTO)
+    public ListOfValuesDTO updateLOV(@PathParam("workspaceId") String workspaceId, @PathParam("name") String name, ListOfValuesDTO lovDTO)
             throws ListOfValuesNotFoundException, ListOfValuesAlreadyExistsException, CreationException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException {
         ListOfValuesKey lovKey = new ListOfValuesKey(workspaceId, name);
         ListOfValues lov = mapper.map(lovDTO, ListOfValues.class);
@@ -119,7 +119,7 @@ public class LOVResource {
     @Path("/{name}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deletelov(@PathParam("workspaceId") String workspaceId, @PathParam("name") String name)
+    public Response deleteLOV(@PathParam("workspaceId") String workspaceId, @PathParam("name") String name)
             throws ListOfValuesNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException {
         ListOfValuesKey lovKey = new ListOfValuesKey(workspaceId, name);
         lovManager.deleteLov(lovKey);

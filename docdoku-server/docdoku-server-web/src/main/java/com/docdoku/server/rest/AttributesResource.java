@@ -26,6 +26,8 @@ import com.docdoku.core.meta.InstanceAttributeDescriptor;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.InstanceAttributeDescriptorDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -49,6 +51,7 @@ import java.util.List;
  */
 
 @RequestScoped
+@Api(hidden = true, value = "attributes", description = "Operations about attributes")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class AttributesResource {
@@ -68,6 +71,9 @@ public class AttributesResource {
 
     @GET
     @Path("part-iterations")
+    @ApiOperation(value = "Get parts attributes list for given workspace",
+            response = InstanceAttributeDescriptorDTO.class,
+            responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPartIterationsAttributes(@PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
@@ -83,6 +89,9 @@ public class AttributesResource {
 
     @GET
     @Path("path-data")
+    @ApiOperation(value = "Get path data attributes list for given workspace",
+            response = InstanceAttributeDescriptorDTO.class,
+            responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPathDataAttributes(@PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {

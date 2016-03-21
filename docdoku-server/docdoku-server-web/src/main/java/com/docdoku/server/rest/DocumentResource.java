@@ -29,7 +29,8 @@ import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.meta.*;
+import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartLink;
 import com.docdoku.core.security.ACL;
@@ -45,6 +46,8 @@ import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
 import com.docdoku.server.rest.util.InstanceAttributeFactory;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -60,6 +63,7 @@ import javax.ws.rs.core.Response;
 import java.util.*;
 
 @RequestScoped
+@Api(hidden = true, value = "/document", description = "Operations about document")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class DocumentResource {
@@ -89,6 +93,8 @@ public class DocumentResource {
     }
 
     @GET
+    @ApiOperation(value = "Get document", response = DocumentRevisionDTO.class)
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO getDocumentRevision(@PathParam("workspaceId") String workspaceId,
                                                    @PathParam("documentId") String documentId,
@@ -128,6 +134,7 @@ public class DocumentResource {
     }
 
     @PUT
+    @ApiOperation(value = "Checkin document", response = DocumentRevisionDTO.class)
     @Path("/checkin")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -140,6 +147,7 @@ public class DocumentResource {
     }
 
     @PUT
+    @ApiOperation(value = "Checkout document", response = DocumentRevisionDTO.class)
     @Path("/checkout")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -153,6 +161,7 @@ public class DocumentResource {
     }
 
     @PUT
+    @ApiOperation(value = "Undo checkout document", response = DocumentRevisionDTO.class)
     @Path("/undocheckout")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -166,6 +175,7 @@ public class DocumentResource {
     }
 
     @PUT
+    @ApiOperation(value = "Move document to folder", response = DocumentRevisionDTO.class)
     @Path("/move")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -182,6 +192,7 @@ public class DocumentResource {
     }
 
     @PUT
+    @ApiOperation(value = "Subscribe to notifications on change events", response = Response.class)
     @Path("/notification/iterationChange/subscribe")
     public Response subscribeToIterationChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException {
@@ -190,6 +201,7 @@ public class DocumentResource {
     }
 
     @PUT
+    @ApiOperation(value = "Unsubscribe from notifications on change events", response = Response.class)
     @Path("/notification/iterationChange/unsubscribe")
     public Response unSubscribeToIterationChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
@@ -198,6 +210,7 @@ public class DocumentResource {
     }
 
     @PUT
+    @ApiOperation(value = "Subscribe to notifications on state events", response = Response.class)
     @Path("/notification/stateChange/subscribe")
     public Response subscribeToStateChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException {
@@ -206,6 +219,7 @@ public class DocumentResource {
     }
 
     @PUT
+    @ApiOperation(value = "Unsubscribe to notifications on state events", response = Response.class)
     @Path("/notification/stateChange/unsubscribe")
     public Response unsubscribeToStateChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
@@ -214,6 +228,7 @@ public class DocumentResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update document iteration", response = DocumentIterationDTO.class)
     @Path("/iterations/{docIteration}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -249,6 +264,7 @@ public class DocumentResource {
     }
 
     @PUT
+    @ApiOperation(value = "Create a new version of the document", response = DocumentRevisionDTO.class, responseContainer = "List")
     @Path("/newVersion")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -303,6 +319,7 @@ public class DocumentResource {
     }
 
     @PUT
+    @ApiOperation(value = "Set the tags of the document", response = DocumentRevisionDTO.class)
     @Path("/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -323,6 +340,7 @@ public class DocumentResource {
     }
 
     @POST
+    @ApiOperation(value = "Add tags to document", response = Response.class)
     @Path("/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -347,6 +365,7 @@ public class DocumentResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Remove tags from document", response = Response.class)
     @Path("/tags/{tagName}")
     public Response removeDocTags(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @PathParam("tagName") String tagName)
             throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, ESServerException {
@@ -354,6 +373,7 @@ public class DocumentResource {
         return Response.ok().build();
     }
 
+    @ApiOperation(value = "Delete the document", response = Response.class)
     @DELETE
     public Response deleteDocument(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, ESServerException, EntityConstraintException {
@@ -362,6 +382,7 @@ public class DocumentResource {
     }
 
     @PUT
+    @ApiOperation(value = "Rename attached files of document", response = FileDTO.class)
     @Path("/iterations/{docIteration}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -373,6 +394,7 @@ public class DocumentResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Remove attached file from document", response = Response.class)
     @Path("/iterations/{docIteration}/files/{fileName}")
     public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @PathParam("docIteration") int docIteration, @PathParam("fileName") String fileName)
             throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException {
@@ -382,6 +404,7 @@ public class DocumentResource {
     }
 
     @POST
+    @ApiOperation(value = "Create a shared document", response = SharedDocumentDTO.class)
     @Path("share")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -398,6 +421,7 @@ public class DocumentResource {
 
 
     @PUT
+    @ApiOperation(value = "Publish a document", response = Response.class)
     @Path("publish")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response publishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
@@ -408,6 +432,7 @@ public class DocumentResource {
     }
 
     @PUT
+    @ApiOperation(value = "Unpublish a document", response = Response.class)
     @Path("unpublish")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response unPublishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
@@ -418,6 +443,7 @@ public class DocumentResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update document's ACL", response = Response.class)
     @Path("acl")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, ACLDTO acl)
@@ -445,6 +471,7 @@ public class DocumentResource {
     }
 
     @GET
+    @ApiOperation(value = "Get document's aborted workflows", response = WorkflowDTO.class, responseContainer = "List")
     @Path("aborted-workflows")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAbortedWorkflows(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
@@ -463,11 +490,13 @@ public class DocumentResource {
     }
 
     @GET
+    @ApiOperation(value = "Get inverse documents links", response = DocumentRevisionDTO.class, responseContainer = "List")
     @Path("{iteration}/inverse-document-link")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getInverseDocumentLinks(@PathParam("workspaceId") String workspaceId,
                                                              @PathParam("documentId") String documentId,
                                                              @PathParam("documentVersion") String documentVersion,
+                                                             @PathParam("iteration") int iteration,
                                                              @QueryParam("configSpec") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, DocumentIterationNotFoundException {
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
         List<DocumentIteration> documents = documentService.getInverseDocumentsLink(docKey);
@@ -481,11 +510,13 @@ public class DocumentResource {
     }
 
     @GET
+    @ApiOperation(value = "Get inverse parts links", response = Response.class)
     @Path("{iteration}/inverse-part-link")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getInversePartsLinks(@PathParam("workspaceId") String workspaceId,
                                               @PathParam("documentId") String documentId,
                                               @PathParam("documentVersion") String documentVersion,
+                                              @PathParam("iteration") int iteration,
                                               @QueryParam("configSpec") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentRevisionNotFoundException {
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
         List<PartIteration> parts = productService.getInversePartsLink(docKey);
@@ -499,11 +530,13 @@ public class DocumentResource {
     }
 
     @GET
+    @ApiOperation(value = "Get inverse product instances links", response = ProductInstanceMasterDTO.class, responseContainer = "List")
     @Path("{iteration}/inverse-product-instances-link")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getInverseProductInstancesLinks(@PathParam("workspaceId") String workspaceId,
                                                                              @PathParam("documentId") String documentId,
                                                                              @PathParam("documentVersion") String documentVersion,
+                                                                             @PathParam("iteration") int iteration,
                                                                              @QueryParam("configSpec") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentRevisionNotFoundException {
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
         Set<ProductInstanceMaster> productInstanceMasterList = productService.getInverseProductInstancesLink(docKey);
@@ -516,11 +549,13 @@ public class DocumentResource {
     }
 
     @GET
+    @ApiOperation(value = "Get inverse path data links", response = PathDataMasterDTO.class, responseContainer = "List")
     @Path("{iteration}/inverse-path-data-link")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getInversePathDataLinks(@PathParam("workspaceId") String workspaceId,
                                                            @PathParam("documentId") String documentId,
                                                            @PathParam("documentVersion") String documentVersion,
+                                                           @PathParam("iteration") int iteration,
                                                            @QueryParam("configSpec") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentRevisionNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
         Set<PathDataMaster> pathDataMasters = productService.getInversePathDataLink(docKey);

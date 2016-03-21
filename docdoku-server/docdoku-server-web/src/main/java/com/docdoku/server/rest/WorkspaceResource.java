@@ -26,6 +26,8 @@ import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.WorkspaceDTO;
 import com.docdoku.server.rest.dto.WorkspaceDetailsDTO;
 import com.docdoku.server.rest.dto.WorkspaceListDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -42,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequestScoped
+@Api(value = "workspaces", description = "Operations about workspaces")
 @Path("workspaces")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -118,6 +121,8 @@ public class WorkspaceResource {
     }
 
     @GET
+    @ApiOperation(value = "Get workspace list for authenticated user", response = WorkspaceListDTO.class)
+    @Path("/")
     public WorkspaceListDTO getWorkspacesForConnectedUser() throws EntityNotFoundException {
 
         WorkspaceListDTO workspaceListDTO = new WorkspaceListDTO();
@@ -135,6 +140,7 @@ public class WorkspaceResource {
     }
 
     @GET
+    @ApiOperation(value = "Get detailed workspace list for authenticated user", response = WorkspaceDetailsDTO.class, responseContainer = "List")
     @Path("/more")
     public Response getDetailedWorkspacesForConnectedUser() throws EntityNotFoundException {
         List<WorkspaceDetailsDTO> workspaceListDTO = new ArrayList<>();
@@ -146,96 +152,115 @@ public class WorkspaceResource {
         }).build();
     }
 
+    @ApiOperation(value = "SubResource : DocumentsResource")
     @Path("/{workspaceId}/documents")
     public DocumentsResource documents() {
         return documents;
     }
 
+    @ApiOperation(value = "SubResource : FolderResource")
     @Path("/{workspaceId}/folders")
     public FolderResource folders() {
         return folders;
     }
 
+    @ApiOperation(value = "SubResource : DocumentTemplateResource")
     @Path("/{workspaceId}/document-templates")
     public DocumentTemplateResource docTemplates() {
         return docTemplates;
     }
 
+    //@ApiOperation(value = "SubResource : PartTemplateResource")
     @Path("/{workspaceId}/part-templates")
     public PartTemplateResource partTemplates() {
         return partTemplates;
     }
 
+    //@ApiOperation(value = "SubResource : ProductResource")
     @Path("/{workspaceId}/products")
     public ProductResource products() {
         return products;
     }
 
+    @ApiOperation(value = "SubResource : PartsResource")
     @Path("/{workspaceId}/parts")
     public PartsResource parts() {
         return parts;
     }
 
+    //@ApiOperation(value = "SubResource : TagResource")
     @Path("/{workspaceId}/tags")
     public TagResource tags() {
         return tags;
     }
 
+    //@ApiOperation(value = "SubResource : CheckedOutResource")
     @Path("/{workspaceId}/checkedouts")
     public CheckedOutResource checkedOuts() {
         return checkedOuts;
     }
 
+    //@ApiOperation(value = "SubResource : SearchResource")
     @Path("/{workspaceId}/search")
     public SearchResource search() {
         return searches;
     }
 
+    //@ApiOperation(value = "SubResource : TaskResource")
     @Path("/{workspaceId}/tasks")
     public TaskResource tasks() {
         return tasks;
     }
 
+    //@ApiOperation(value = "SubResource : ModificationNotificationResource")
     @Path("/{workspaceId}/notifications")
     public ModificationNotificationResource notifications() {
         return notifications;
     }
 
+    //@ApiOperation(value = "SubResource : WorkflowResource")
     @Path("/{workspaceId}/workflows")
     public WorkflowResource workflows() {
         return workflows;
     }
 
+    //@ApiOperation(value = "SubResource : UserResource")
     @Path("/{workspaceId}/users")
     public UserResource users() {
         return users;
     }
 
+    //@ApiOperation(value = "SubResource : RoleResource")
     @Path("/{workspaceId}/roles")
     public RoleResource roles() {
         return roles;
     }
 
+    //@ApiOperation(value = "SubResource : WorkspaceMembershipResource")
     @Path("/{workspaceId}/memberships")
     public WorkspaceMembershipResource workspaceMemberships() {
         return workspaceMemberships;
     }
 
+    //@ApiOperation(value = "SubResource : ChangeItemsResource")
     @Path("/{workspaceId}/changes")
     public ChangeItemsResource changeItems() {
         return changeItems;
     }
 
+    //@ApiOperation(value = "SubResource : DocumentBaselinesResource")
     @Path("/{workspaceId}/document-baselines")
     public DocumentBaselinesResource documentBaselines() {
         return documentBaselines;
     }
 
+    //@ApiOperation(value = "SubResource : LOVResource")
     @Path("/{workspaceId}/lov")
     public LOVResource lov() {
         return lov;
     }
 
+    @ApiOperation(hidden = true, value = "SubResource : AttributesResource")
     @Path("/{workspaceId}/attributes")
     public AttributesResource attributes() {
         return attributes;

@@ -28,6 +28,8 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentConfigSpecManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.FolderDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -38,6 +40,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @RequestScoped
+@Api(hidden = true, value = "folders", description = "Operations about folders")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class FolderResource {
@@ -54,6 +57,7 @@ public class FolderResource {
     public FolderResource() {
     }
 
+    @ApiOperation(value = "SubResource : DocumentsResource")
     @Path("{folderId}/documents/")
     public DocumentsResource getDocumentsResource() {
         return documentsResource;
@@ -66,6 +70,8 @@ public class FolderResource {
      * @return The array of folders
      */
     @GET
+    @ApiOperation(value = "Get root folders", response = FolderDTO.class, responseContainer = "List")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO[] getRootFolders(@PathParam("workspaceId") String workspaceId, @QueryParam("configSpec") String configSpecType)
             throws EntityNotFoundException, UserNotActiveException {
@@ -74,6 +80,7 @@ public class FolderResource {
     }
     
     @GET
+    @ApiOperation(value = "Get sub folders", response = FolderDTO.class, responseContainer = "List")
     @Path("{completePath}/folders")
     @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO[] getSubFolders(@PathParam("workspaceId") String workspaceId, @PathParam("completePath") String folderId, @QueryParam("configSpec") String configSpecType)
@@ -119,6 +126,7 @@ public class FolderResource {
      * PUT method for updating or creating an instance of FolderResource
      */
     @PUT
+    @ApiOperation(value = "Rename a folder", response = FolderDTO.class)
     @Path("{folderId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -147,6 +155,7 @@ public class FolderResource {
      * PUT method for moving folder into an other
      */
     @PUT
+    @ApiOperation(value = "Move a folder", response = FolderDTO.class)
     @Path("{folderId}/move")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -173,6 +182,7 @@ public class FolderResource {
     }
     
     @POST
+    @ApiOperation(value = "Create a sub folder", response = FolderDTO.class)
     @Path("{parentFolderPath}/folders")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -186,6 +196,8 @@ public class FolderResource {
     }
 
     @POST
+    @ApiOperation(value = "Create root folder", response = FolderDTO.class)
+    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO createRootFolder(@PathParam("workspaceId") String workspaceId, FolderDTO folder)
@@ -202,6 +214,7 @@ public class FolderResource {
      * @return the array of the documents that have also been deleted
      */
     @DELETE
+    @ApiOperation(value = "Delete root folder", response = Response.class)
     @Path("{folderId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteRootFolder(@PathParam("folderId") String completePath)

@@ -27,6 +27,8 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentBaselineManagerLocal;
 import com.docdoku.server.rest.dto.FolderDTO;
 import com.docdoku.server.rest.dto.baseline.DocumentBaselineDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -53,6 +55,7 @@ import java.util.logging.Logger;
  */
 
 @RequestScoped
+@Api(hidden = true, value = "/baselines", description = "Operations about document baselines")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class DocumentBaselinesResource {
@@ -78,6 +81,9 @@ public class DocumentBaselinesResource {
      * @return The list of baselines
      */
     @GET
+    @ApiOperation(value = "Get baselines",
+            response = DocumentBaselineDTO.class,
+            responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBaselines(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException{
@@ -100,6 +106,7 @@ public class DocumentBaselinesResource {
      * @return Reponse of the transaction
      */
     @POST
+    @ApiOperation(value = "Create baseline", response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createBaseline(@PathParam("workspaceId") String workspaceId, DocumentBaselineDTO documentBaselineDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException{
@@ -128,6 +135,7 @@ public class DocumentBaselinesResource {
      * @return A response if the baseline was deleted
      */
     @DELETE
+    @ApiOperation(value = "Delete a baseline", response = Response.class)
     @Path("{baselineId}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteBaseline(@PathParam("baselineId") int baselineId)
@@ -143,6 +151,7 @@ public class DocumentBaselinesResource {
      * @return The specif baseline
      */
     @GET
+    @ApiOperation(value = "Get baseline", response = DocumentBaselineDTO.class)
     @Path("{baselineId}")
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId)
@@ -161,6 +170,7 @@ public class DocumentBaselinesResource {
      * @return The specif baseline
      */
     @GET
+    @ApiOperation(value = "Get baseline light format", response = DocumentBaselineDTO.class)
     @Path("{baselineId}-light")
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentBaselineDTO getBaselineLight(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId)

@@ -31,6 +31,8 @@ import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.AccountDTO;
 import com.docdoku.server.rest.dto.GCMAccountDTO;
 import com.docdoku.server.rest.dto.WorkspaceDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -48,6 +50,7 @@ import java.util.List;
 
 @RequestScoped
 @Path("accounts")
+@Api(value = "accounts", description = "Operations about accounts")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class AccountResource {
@@ -70,6 +73,7 @@ public class AccountResource {
 
     @GET
     @Path("/me")
+    @ApiOperation(value = "Get authenticated user's account", response = AccountDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
     public AccountDTO getAccount() throws AccountNotFoundException {
         Account account = accountManager.getMyAccount();
@@ -79,6 +83,7 @@ public class AccountResource {
 
     @GET
     @Path("/workspaces")
+    @ApiOperation(value = "Get workspaces where authenticated user is active", response = WorkspaceDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getWorkspaces(){
         Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
@@ -95,6 +100,7 @@ public class AccountResource {
 
     @PUT
     @Path("gcm")
+    @ApiOperation(value = "Update GCM account for authenticated user", response = Response.class, code = 200)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response setGCMAccount(GCMAccountDTO data)
             throws EntityAlreadyExistsException, AccountNotFoundException, CreationException {
@@ -105,6 +111,7 @@ public class AccountResource {
 
     @DELETE
     @Path("gcm")
+    @ApiOperation(value = "Update GCM account for authenticated user", response = Response.class, code = 200)
     public Response deleteGCMAccount() throws EntityNotFoundException {
         accountManager.deleteGCMAccount();
         return Response.ok().build();
