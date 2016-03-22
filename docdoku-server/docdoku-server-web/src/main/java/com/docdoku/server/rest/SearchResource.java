@@ -21,6 +21,8 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IWorkspaceManagerLocal;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -36,6 +38,7 @@ import javax.ws.rs.core.Response;
  * @author Morgan Guimard
  */
 @RequestScoped
+@Api(hidden = true, value = "document-search", description = "Operations about search")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class SearchResource {
@@ -49,13 +52,14 @@ public class SearchResource {
     public SearchResource() {
     }
 
+    @ApiOperation(value = "SubResource : DocumentsResource")
     @Path("{query : .+}/documents/")
     public DocumentsResource getDocumentsResource() {
         return documentsResource;
     }
 
-
     @PUT
+    @ApiOperation(value = "Synchronize index for workspace")
     @Path("indexall")
     public Response synchronizeIndexer(@PathParam("workspaceId") String workspaceId) {
         workspaceManager.synchronizeIndexer(workspaceId);

@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <script src="swagger-client.js" type="text/javascript"></script>
+    ​</head>
+    <body>
+        <script type="text/javascript">
+            var d = Date.now();
+            new SwaggerClient({
+                url: "swagger.json",
+                usePromise: true
+            }).then(function(api) {
+                console.log('Api loaded in ' + (Date.now() - d) + ' ms');
+                console.log(api);
+            });
+        </script>
+    </body>
+</html>

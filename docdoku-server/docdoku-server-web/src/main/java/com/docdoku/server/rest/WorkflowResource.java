@@ -30,6 +30,8 @@ import com.docdoku.core.workflow.WorkflowModelKey;
 import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.ActivityModelDTO;
 import com.docdoku.server.rest.dto.WorkflowModelDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -50,6 +52,7 @@ import java.util.Map;
  * @author Yassine Belouad
  */
 @RequestScoped
+@Api(hidden = true, value = "workflows", description = "Operations about workflows")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class WorkflowResource {
@@ -68,6 +71,8 @@ public class WorkflowResource {
     }
     
     @GET
+    @ApiOperation(value = "Get workflow models", response = WorkflowModelDTO.class, responseContainer = "List")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public WorkflowModelDTO[] getWorkflowsInWorkspace(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
@@ -83,6 +88,7 @@ public class WorkflowResource {
     }
 
     @GET
+    @ApiOperation(value = "Get workflow model", response = WorkflowModelDTO.class)
     @Path("{workflowModelId}")
     @Produces(MediaType.APPLICATION_JSON)
     public WorkflowModelDTO getWorkflowInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId)
@@ -93,6 +99,7 @@ public class WorkflowResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete workflow model", response = Response.class)
     @Path("{workflowModelId}")
     public Response delWorkflowModel(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, EntityConstraintException {
@@ -101,6 +108,7 @@ public class WorkflowResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update workflow model", response = WorkflowModelDTO.class)
     @Path("{workflowModelId}")
     @Produces(MediaType.APPLICATION_JSON)
     public WorkflowModelDTO updateWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId, WorkflowModelDTO workflowModelDTOToPersist)
@@ -112,10 +120,12 @@ public class WorkflowResource {
         WorkflowModel workflowModel = workflowService.updateWorkflowModel(workflowModelKey, workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);
         return mapper.map(workflowModel, WorkflowModelDTO.class);
     }
+
     @PUT
+    @ApiOperation(value = "Update workflow model ACL", response = Response.class)
     @Path("{workflowModelId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("workflowModelId") String workflowModelId, ACLDTO acl)
+    public Response updateWorkflowModelACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("workflowModelId") String workflowModelId, ACLDTO acl)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
@@ -138,6 +148,8 @@ public class WorkflowResource {
     }
 
     @POST
+    @ApiOperation(value = "Create workflow model", response = WorkflowModelDTO.class)
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public WorkflowModelDTO createWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, WorkflowModelDTO workflowModelDTOToPersist)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, NotAllowedException, AccessRightException, CreationException {

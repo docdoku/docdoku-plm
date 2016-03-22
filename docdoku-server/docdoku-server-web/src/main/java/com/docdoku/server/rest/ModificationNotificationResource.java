@@ -26,6 +26,8 @@ import com.docdoku.core.exceptions.WorkspaceNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.ModificationNotificationDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -43,6 +45,7 @@ import javax.ws.rs.core.Response;
  */
 
 @RequestScoped
+@Api(hidden = true, value = "modification-notifications", description = "Operations about modification notifications")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ModificationNotificationResource {
@@ -54,6 +57,7 @@ public class ModificationNotificationResource {
     }
 
     @PUT
+    @ApiOperation(value = "Acknowledge modification notification", response = Response.class)
     @Path("/{notificationId}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response acknowledgeNotification(@PathParam("workspaceId") String workspaceId, @PathParam("notificationId") int notificationId, ModificationNotificationDTO notificationDTO)

@@ -28,6 +28,8 @@ import com.docdoku.core.services.IPartWorkflowManagerLocal;
 import com.docdoku.core.workflow.ActivityKey;
 import com.docdoku.core.workflow.TaskKey;
 import com.docdoku.server.rest.dto.TaskProcessDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -42,6 +44,7 @@ import javax.ws.rs.core.Response;
  */
 
 @RequestScoped
+@Api(hidden = true, value = "tasks", description = "Operations about tasks")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class TaskResource {
@@ -58,12 +61,14 @@ public class TaskResource {
     public TaskResource() {
     }
 
+    @ApiOperation(value = "SubResource : DocumentsResource")
     @Path("{assignedUserLogin}/documents/")
     public DocumentsResource getDocumentsResource() {
         return documentsResource;
     }
 
     @POST
+    @ApiOperation(value = "Approve or reject task on document", response = Response.class)
     @Path("documents/process")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response processTaskForDocuments(@PathParam("workspaceId") String workspaceId, @QueryParam("activityWorkflowId") int activityWorkflowId, @QueryParam("activityStep") int activityStep, @QueryParam("index") int index, @QueryParam("action") String action, TaskProcessDTO taskProcessDTO)
@@ -84,6 +89,7 @@ public class TaskResource {
     }
 
     @POST
+    @ApiOperation(value = "Approve or reject task on part", response = Response.class)
     @Path("parts/process")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response processTaskForParts(@PathParam("workspaceId") String workspaceId, @QueryParam("activityWorkflowId") int activityWorkflowId, @QueryParam("activityStep") int activityStep, @QueryParam("index") int index, @QueryParam("action") String action, TaskProcessDTO taskProcessDTO)

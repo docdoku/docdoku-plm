@@ -27,6 +27,8 @@ import com.docdoku.core.workflow.Role;
 import com.docdoku.core.workflow.RoleKey;
 import com.docdoku.server.rest.dto.RoleDTO;
 import com.docdoku.server.rest.dto.UserDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -49,6 +51,7 @@ import java.util.logging.Logger;
  * @author Morgan Guimard
  */
 @RequestScoped
+@Api(hidden = true, value = "roles", description = "Operations about roles")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class RoleResource {
@@ -68,6 +71,8 @@ public class RoleResource {
     } 
 
     @GET
+    @ApiOperation(value = "Get roles", response = RoleDTO.class, responseContainer = "List")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public RoleDTO[] getRolesInWorkspace (@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
@@ -84,6 +89,7 @@ public class RoleResource {
     }
 
     @GET
+    @ApiOperation(value = "Get roles in use", response = RoleDTO.class, responseContainer = "List")
     @Path("inuse")
     @Produces(MediaType.APPLICATION_JSON)
     public RoleDTO[] getRolesInUseInWorkspace (@PathParam("workspaceId") String workspaceId)
@@ -102,6 +108,8 @@ public class RoleResource {
 
 
     @POST
+    @ApiOperation(value = "Create role", response = RoleDTO.class)
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createRole(RoleDTO roleDTO)
@@ -125,6 +133,7 @@ public class RoleResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update role", response = RoleDTO.class)
     @Path("{roleName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -148,6 +157,7 @@ public class RoleResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete role", response = Response.class)
     @Path("{roleName}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteRole(@PathParam("workspaceId") String workspaceId, @PathParam("roleName") String roleName)

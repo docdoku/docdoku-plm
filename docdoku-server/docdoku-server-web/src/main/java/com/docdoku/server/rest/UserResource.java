@@ -27,6 +27,8 @@ import com.docdoku.core.exceptions.UserNotActiveException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.UserDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -42,6 +44,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @RequestScoped
+@Api(hidden = true, value = "users", description = "Operations about users")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class UserResource {
@@ -61,6 +64,8 @@ public class UserResource {
     }
 
     @GET
+    @ApiOperation(value = "Get users", response = UserDTO.class, responseContainer = "List")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public UserDTO[] getUsersInWorkspace(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
@@ -76,6 +81,7 @@ public class UserResource {
     }
 
     @GET
+    @ApiOperation(value = "Get current user details", response = UserDTO.class)
     @Path("me")
     @Produces(MediaType.APPLICATION_JSON)
     public UserDTO whoami(@PathParam("workspaceId") String workspaceId)
@@ -86,6 +92,7 @@ public class UserResource {
     }
 
     @GET
+    @ApiOperation(value = "Get online users visible by current user", response = UserDTO.class, responseContainer = "List")
     @Path("reachable")
     @Produces(MediaType.APPLICATION_JSON)
     public UserDTO[] getReachableUsersForCaller(@PathParam("workspaceId") String workspaceId)
@@ -102,6 +109,7 @@ public class UserResource {
     }
 
     @GET
+    @ApiOperation(value = "Get admin for workspace", response = UserDTO.class)
     @Path("admin")
     @Produces(MediaType.APPLICATION_JSON)
     public UserDTO getAdminInWorkspace(@PathParam("workspaceId") String workspaceId)

@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequestScoped
-@Api(hidden = true, value = "workspaces", description = "Operations about workspaces")
+@Api(value = "workspaces", description = "Operations about workspaces")
 @Path("workspaces")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -75,7 +75,7 @@ public class WorkspaceResource {
     private TagResource tags;
 
     @Inject
-    private CheckedOutResource checkedOuts;
+    private CheckedOutDocumentResource checkedOutDocuments;
 
     @Inject
     private TaskResource tasks;
@@ -122,6 +122,7 @@ public class WorkspaceResource {
 
     @GET
     @ApiOperation(value = "Get workspace list for authenticated user", response = WorkspaceListDTO.class)
+    @Path("/")
     public WorkspaceListDTO getWorkspacesForConnectedUser() throws EntityNotFoundException {
 
         WorkspaceListDTO workspaceListDTO = new WorkspaceListDTO();
@@ -193,49 +194,49 @@ public class WorkspaceResource {
         return tags;
     }
 
-    //@ApiOperation(value = "SubResource : CheckedOutResource")
+    @ApiOperation(value = "SubResource : CheckedOutResource")
     @Path("/{workspaceId}/checkedouts")
-    public CheckedOutResource checkedOuts() {
-        return checkedOuts;
+    public CheckedOutDocumentResource checkedOuts() {
+        return checkedOutDocuments;
     }
 
-    //@ApiOperation(value = "SubResource : SearchResource")
+    @ApiOperation(value = "SubResource : SearchResource")
     @Path("/{workspaceId}/search")
     public SearchResource search() {
         return searches;
     }
 
-    //@ApiOperation(value = "SubResource : TaskResource")
+    @ApiOperation(value = "SubResource : TaskResource")
     @Path("/{workspaceId}/tasks")
     public TaskResource tasks() {
         return tasks;
     }
 
-    //@ApiOperation(value = "SubResource : ModificationNotificationResource")
+    @ApiOperation(value = "SubResource : ModificationNotificationResource")
     @Path("/{workspaceId}/notifications")
     public ModificationNotificationResource notifications() {
         return notifications;
     }
 
-    //@ApiOperation(value = "SubResource : WorkflowResource")
+    @ApiOperation(value = "SubResource : WorkflowResource")
     @Path("/{workspaceId}/workflows")
     public WorkflowResource workflows() {
         return workflows;
     }
 
-    //@ApiOperation(value = "SubResource : UserResource")
+    @ApiOperation(value = "SubResource : UserResource")
     @Path("/{workspaceId}/users")
     public UserResource users() {
         return users;
     }
 
-    //@ApiOperation(value = "SubResource : RoleResource")
+    @ApiOperation(value = "SubResource : RoleResource")
     @Path("/{workspaceId}/roles")
     public RoleResource roles() {
         return roles;
     }
 
-    //@ApiOperation(value = "SubResource : WorkspaceMembershipResource")
+    @ApiOperation(value = "SubResource : WorkspaceMembershipResource")
     @Path("/{workspaceId}/memberships")
     public WorkspaceMembershipResource workspaceMemberships() {
         return workspaceMemberships;

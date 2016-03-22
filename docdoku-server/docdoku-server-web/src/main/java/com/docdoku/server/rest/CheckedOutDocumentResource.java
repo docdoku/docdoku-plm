@@ -20,6 +20,8 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.security.UserGroupMapping;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -28,17 +30,19 @@ import javax.inject.Inject;
 import javax.ws.rs.Path;
 
 @RequestScoped
+@Api(hidden = true, value = "checked-out-documents", description = "Operations about checked out documents")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-public class CheckedOutResource {
+public class CheckedOutDocumentResource {
 
     @Inject
     private DocumentsResource documentsResource;
 
 
-    public CheckedOutResource() {
+    public CheckedOutDocumentResource() {
     }
 
+    @ApiOperation(value = "SubResource : DocumentsResource")
     @Path("{checkoutUser}/documents/")
     public DocumentsResource getDocumentsResource() {
         return documentsResource;
