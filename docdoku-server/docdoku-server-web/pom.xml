@@ -9,8 +9,8 @@
     <artifactId>docdoku-server-web</artifactId>
     <packaging>war</packaging>
     <name>docdoku-server-web Java EE 7 Webapp</name>
-    <dependencies>
 
+    <dependencies>
         <!-- docdoku core -->
         <dependency>
             <groupId>com.docdoku</groupId>
@@ -18,7 +18,6 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <!-- JEE core API -->
         <dependency>
             <groupId>javax</groupId>
@@ -26,6 +25,7 @@
             <version>7.0</version>
             <scope>provided</scope>
         </dependency>
+        <!--3rd party libs-->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -51,14 +51,11 @@
             <artifactId>exec-maven-plugin</artifactId>
             <version>1.2.1</version>
         </dependency>
-        <!--excel apache lib-->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>3.9</version>
         </dependency>
-
-        <!-- JUNIT & Mockito -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
@@ -71,7 +68,6 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.json</artifactId>
@@ -79,14 +75,12 @@
             <type>jar</type>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-common</artifactId>
-            <version>2.21</version>
+            <version>2.22.2</version>
             <scope>test</scope>
         </dependency>
-
        <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
@@ -98,11 +92,10 @@
             <artifactId>poi-ooxml</artifactId>
             <version>3.9</version>
         </dependency>
-
         <dependency>
             <groupId>io.swagger</groupId>
-            <artifactId>swagger-jaxrs</artifactId>
-            <version>1.5.8</version>
+            <artifactId>swagger-jersey2-jaxrs</artifactId>
+            <version>1.5.0</version>
         </dependency>
 
     </dependencies>
@@ -165,7 +158,6 @@
                 <configuration>
                     <apiSources>
                         <apiSource>
-                            <springmvc>false</springmvc>
                             <basePath>/api</basePath>
                             <locations>com.docdoku.server.rest</locations>
                             <schemes>http,https</schemes>

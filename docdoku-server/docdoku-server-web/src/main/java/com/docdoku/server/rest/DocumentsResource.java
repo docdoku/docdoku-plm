@@ -60,7 +60,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RequestScoped
-@Api(hidden = true, value = "/documents", description = "Operations about documents")
+@Api(hidden = true, value = "documents", description = "Operations about documents")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class DocumentsResource {
@@ -101,9 +101,7 @@ public class DocumentsResource {
     }
 
     @GET
-    @ApiOperation(value = "Get documents from given params",
-            response = DocumentRevisionDTO.class,
-            responseContainer = "List")
+    @ApiOperation(value = "Get documents from given params", response = DocumentRevisionDTO.class, responseContainer = "List")
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO[] getDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId, @PathParam("tagId") String tagId, @PathParam("query") String query, @PathParam("assignedUserLogin") String assignedUserLogin, @PathParam("checkoutUser") String checkoutUser, @QueryParam("filter") String filter, @QueryParam("start") int start, @QueryParam("configSpec") String configSpecType)

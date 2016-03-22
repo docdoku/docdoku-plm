@@ -21,6 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.server.rest.file.*;
+import io.swagger.annotations.Api;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -29,6 +30,7 @@ import javax.inject.Inject;
 import javax.ws.rs.Path;
 
 @RequestScoped
+@Api(value = "files", description = "Operations about files")
 @Path("files")
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
 public class FileResource {
