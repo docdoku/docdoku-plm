@@ -41,6 +41,8 @@ import com.docdoku.server.rest.dto.product.ProductInstanceIterationDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 import com.docdoku.server.rest.util.InstanceAttributeFactory;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -69,6 +71,7 @@ import java.util.logging.Logger;
  * @author Taylor LABEJOF
  */
 @RequestScoped
+@Api(hidden=true,value = "product-instances", description = "Operations about product-instances")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ProductInstancesResource {
@@ -98,6 +101,7 @@ public class ProductInstancesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get product-instance with given configuration item", response = ProductInstanceMasterDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getProductInstances(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
             throws EntityNotFoundException, UserNotActiveException {
@@ -120,6 +124,7 @@ public class ProductInstancesResource {
     }
 
     @POST
+    @ApiOperation(value = "Create product-instance", response = ProductInstanceMasterDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ProductInstanceMasterDTO createProductInstanceMaster(@PathParam("workspaceId") String workspaceId, ProductInstanceCreationDTO productInstanceCreationDTO)
@@ -159,6 +164,7 @@ public class ProductInstancesResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update product-instance", response = ProductInstanceMasterDTO.class)
     @Path("{serialNumber}/iterations/{iteration}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -195,6 +201,7 @@ public class ProductInstancesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get product-instance", response = ProductInstanceMasterDTO.class)
     @Path("{serialNumber}")
     @Produces(MediaType.APPLICATION_JSON)
     public ProductInstanceMasterDTO getProductInstance(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber)
@@ -250,6 +257,7 @@ public class ProductInstancesResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Remove attached file from product-instance", response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{serialNumber}/iterations/{iteration}/files/{fileName}")
     public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId,@PathParam("iteration") int iteration, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("fileName") String fileName)
@@ -262,6 +270,7 @@ public class ProductInstancesResource {
 
 
     @PUT
+    @ApiOperation(value = "Update product-instance's ACL", response = Response.class)
     @Path("{serialNumber}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateProductInstanceACL(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber,ACLDTO acl)
@@ -289,6 +298,7 @@ public class ProductInstancesResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete product-instance", response = Response.class)
     @Path("{serialNumber}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteProductInstanceMaster(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber)
@@ -299,6 +309,7 @@ public class ProductInstancesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get product-instance's iterations", response = ProductInstanceIterationDTO.class, responseContainer = "List")
     @Path("{serialNumber}/iterations")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getProductInstanceIterations(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber)
@@ -316,6 +327,7 @@ public class ProductInstancesResource {
 
 
     @GET
+    @ApiOperation(value = "Get product-instance's iteration", response = ProductInstanceIterationDTO.class)
     @Path("{serialNumber}/iterations/{iteration}")
     @Produces(MediaType.APPLICATION_JSON)
     public ProductInstanceIterationDTO getProductInstanceIteration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration)
@@ -326,6 +338,7 @@ public class ProductInstancesResource {
     }
 
     @PUT
+    @ApiOperation(value = "Rebase product-instance", response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{serialNumber}/rebase")
@@ -348,6 +361,7 @@ public class ProductInstancesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get product-instance's path-data", response = PathDataMasterDTO.class)
     @Path("{serialNumber}/pathdata/{path}")
     @Produces(MediaType.APPLICATION_JSON)
     public PathDataMasterDTO getPathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("path") String pathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, BaselineNotFoundException {
@@ -387,6 +401,7 @@ public class ProductInstancesResource {
 
 
     @PUT
+    @ApiOperation(value = "Rename product-instance's attached file", response = FileDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{serialNumber}/pathdata/{pathDataId}/iterations/{iteration}/files/{fileName}")
@@ -404,6 +419,7 @@ public class ProductInstancesResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete product-instance's attached file", response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{serialNumber}/pathdata/{pathDataId}/iterations/{iteration}/files/{fileName}")
@@ -422,6 +438,7 @@ public class ProductInstancesResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete product-instance's path-data", response = Response.class)
     @Path("{serialNumber}/pathdata/{pathDataId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deletePathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathDataId") int pathDataId) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
@@ -430,6 +447,7 @@ public class ProductInstancesResource {
     }
 
     @POST
+    @ApiOperation(value = "Add new path-data iteration", response = PathDataMasterDTO.class)
     @Path("{serialNumber}/pathdata/{pathDataId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -488,6 +506,7 @@ public class ProductInstancesResource {
     }
 
     @POST
+    @ApiOperation(value = "Create new path-data", response = PathDataMasterDTO.class)
     @Path("{serialNumber}/pathdata/{path}/new")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -518,6 +537,7 @@ public class ProductInstancesResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update path-data", response = PathDataMasterDTO.class)
     @Path("{serialNumber}/pathdata/{pathDataId}/iterations/{iteration}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -565,6 +585,7 @@ public class ProductInstancesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get path-to-path link types", response = LightPathToPathLinkDTO.class, responseContainer = "List")
     @Path("{serialNumber}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
@@ -579,6 +600,7 @@ public class ProductInstancesResource {
         }).build();
     }
     @GET
+    @ApiOperation(value = "Get part from path-to-path link", response = LightPartMasterDTO.class)
     @Path("{serialNumber}/link-path-part/{pathPart}")
     @Produces(MediaType.APPLICATION_JSON)
     public LightPartMasterDTO getPartFromPathLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber,@PathParam("pathPart") String partPath) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
@@ -591,6 +613,7 @@ public class ProductInstancesResource {
 
     }
     @GET
+    @ApiOperation(value = "Get path-to-path links", response = LightPathToPathLinkDTO.class, responseContainer = "List")
     @Path("{serialNumber}/path-to-path-links")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPathToPathLinks(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
@@ -606,6 +629,7 @@ public class ProductInstancesResource {
 
 
     @GET
+    @ApiOperation(value = "Get path-to-path link", response = LightPathToPathLinkDTO.class)
     @Path("{serialNumber}/path-to-path-links/{pathToPathLinkId}")
     @Produces(MediaType.APPLICATION_JSON)
     public LightPathToPathLinkDTO getPathToPathLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathToPathLinkId") int pathToPathLinkId) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathLinkNotFoundException {
@@ -614,6 +638,7 @@ public class ProductInstancesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get path-to-path link for given source and target", response = LightPathToPathLinkDTO.class, responseContainer = "List")
     @Path("{serialNumber}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("sourcePath") String sourcePathAsString, @PathParam("targetPath") String targetPathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
@@ -649,6 +674,7 @@ public class ProductInstancesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get root path-to-path links", response = LightPathToPathLinkDTO.class, responseContainer = "List")
     @Path("{serialNumber}/path-to-path-links-roots/{type}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRootPathToPathLinks(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("type") String type) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
@@ -662,6 +688,7 @@ public class ProductInstancesResource {
     }
 
     @POST
+    @ApiOperation(value = "Import attribute into product-instance", response = Response.class)
     @Path("import")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)

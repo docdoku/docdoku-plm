@@ -36,6 +36,8 @@ import com.docdoku.server.rest.dto.LightPathToPathLinkDTO;
 import com.docdoku.server.rest.dto.PathToPathLinkDTO;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -56,6 +58,7 @@ import java.util.List;
  * @author Taylor LABEJOF
  */
 @RequestScoped
+@Api(hidden=true,value = "product-baseline", description = "Operations about product-baseline")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ProductBaselinesResource {
@@ -77,6 +80,7 @@ public class ProductBaselinesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get product-baseline with given configuration item", response = ProductBaselineDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
             throws UserNotActiveException, EntityNotFoundException, AccessRightException {
@@ -100,6 +104,7 @@ public class ProductBaselinesResource {
     }
 
     @POST
+    @ApiOperation(value = "Create product-baseline", response = ProductBaselineDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ProductBaselineDTO createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, ProductBaselineDTO productBaselineDTO)
@@ -125,6 +130,7 @@ public class ProductBaselinesResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete product-baseline", response = Response.class)
     @Path("{baselineId}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId)
@@ -134,6 +140,7 @@ public class ProductBaselinesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get product-baseline", response = ProductBaselineDTO.class)
     @Path("{baselineId}")
     @Produces(MediaType.APPLICATION_JSON)
     public ProductBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId)
@@ -171,6 +178,7 @@ public class ProductBaselinesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get product-baseline's part", response = BaselinedPartDTO.class, responseContainer = "List")
     @Path("{baselineId}/parts")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBaselineParts(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId, @QueryParam("q") String q)
@@ -187,6 +195,7 @@ public class ProductBaselinesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get product-baseline's path-to-path links", response = LightPathToPathLinkDTO.class, responseContainer = "List")
     @Path("{baselineId}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("baselineId") int baselineId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException {
@@ -202,6 +211,7 @@ public class ProductBaselinesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get product-baseline's path-to-path links for given source and target", response = LightPathToPathLinkDTO.class, responseContainer = "List")
     @Path("{baselineId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("baselineId") int baselineId, @PathParam("sourcePath") String sourcePathAsString, @PathParam("targetPath") String targetPathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
