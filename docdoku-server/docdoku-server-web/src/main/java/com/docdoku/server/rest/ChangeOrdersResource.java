@@ -34,6 +34,8 @@ import com.docdoku.server.rest.dto.change.ChangeItemDTO;
 import com.docdoku.server.rest.dto.change.ChangeOrderDTO;
 import com.docdoku.server.rest.dto.change.ChangeRequestDTO;
 import com.docdoku.server.rest.dto.change.ChangeRequestListDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -49,6 +51,7 @@ import javax.ws.rs.core.Response;
 import java.util.*;
 
 @RequestScoped
+@Api(hidden = true, value = "orders", description = "Operations about orders")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ChangeOrdersResource {
@@ -67,6 +70,9 @@ public class ChangeOrdersResource {
     }
 
     @GET
+    @ApiOperation(value = "Get orders for given parameters",
+            response = ChangeOrderDTO.class,
+            responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOrders(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException{
@@ -82,6 +88,8 @@ public class ChangeOrdersResource {
     }
 
     @POST
+    @ApiOperation(value = "Create order",
+            response = ChangeOrderDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ChangeOrderDTO createOrder(@PathParam("workspaceId") String workspaceId, ChangeOrderDTO changeOrderDTO)
@@ -99,6 +107,8 @@ public class ChangeOrdersResource {
     }
 
     @GET
+    @ApiOperation(value = "Get order",
+            response = ChangeOrderDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{orderId}")
     public ChangeOrderDTO getOrder(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId)
@@ -110,6 +120,8 @@ public class ChangeOrdersResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update order",
+            response = ChangeOrderDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{orderId}")
@@ -128,6 +140,8 @@ public class ChangeOrdersResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete order",
+            response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{orderId}")
     public Response removeOrder(@PathParam("orderId") int orderId)
@@ -138,6 +152,8 @@ public class ChangeOrdersResource {
 
 
     @PUT
+    @ApiOperation(value = "Update tag attached to order",
+            response = ChangeOrderDTO.class)
     @Path("{orderId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -156,6 +172,8 @@ public class ChangeOrdersResource {
     }
 
     @POST
+    @ApiOperation(value = "Add new tag to order",
+            response = ChangeOrderDTO.class)
     @Path("{orderId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -181,6 +199,8 @@ public class ChangeOrdersResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete tag attached to order",
+            response = Response.class)
     @Path("{orderId}/tags/{tagName}")
     public Response removeTags(@PathParam("workspaceId") String workspaceId, @PathParam("orderId")int orderId, @PathParam("tagName") String tagName)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
@@ -189,6 +209,8 @@ public class ChangeOrdersResource {
     }
 
     @PUT
+    @ApiOperation(value = "Attach document to order",
+            response = ChangeOrderDTO.class)
     @Path("{orderId}/affected-documents")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -205,6 +227,8 @@ public class ChangeOrdersResource {
     }
 
     @PUT
+    @ApiOperation(value = "Attach part to order",
+            response = ChangeOrderDTO.class)
     @Path("{orderId}/affected-parts")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -221,6 +245,8 @@ public class ChangeOrdersResource {
     }
 
     @PUT
+    @ApiOperation(value = "Attach request to order",
+            response = ChangeOrderDTO.class)
     @Path("{orderId}/affected-requests")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -245,6 +271,8 @@ public class ChangeOrdersResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update ACL of the order",
+            response = Response.class)
     @Path("{orderId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("orderId") int orderId, ACLDTO acl)

@@ -33,6 +33,8 @@ import com.docdoku.core.services.IChangeManagerLocal;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.change.ChangeIssueDTO;
 import com.docdoku.server.rest.dto.change.ChangeItemDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -48,6 +50,7 @@ import javax.ws.rs.core.Response;
 import java.util.*;
 
 @RequestScoped
+@Api(hidden = true, value = "issues", description = "Operations about issues")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ChangeIssuesResource {
@@ -67,6 +70,9 @@ public class ChangeIssuesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get issues for given parameters",
+            response = ChangeIssueDTO.class,
+            responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getIssues(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException{
@@ -82,6 +88,8 @@ public class ChangeIssuesResource {
     }
 
     @POST
+    @ApiOperation(value = "Create issue",
+            response = ChangeIssueDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ChangeItemDTO createIssue(@PathParam("workspaceId") String workspaceId, ChangeIssueDTO changeIssueDTO)
@@ -99,6 +107,9 @@ public class ChangeIssuesResource {
     }
 
     @GET
+    @ApiOperation(value = "Search issue with given reference",
+            response = ChangeIssueDTO.class,
+            responseContainer = "List")
     @Path("link")
     @Produces(MediaType.APPLICATION_JSON)
     public ChangeIssueDTO[] searchIssuesToLink(@PathParam("workspaceId") String workspaceId,@QueryParam("q") String q)
@@ -115,6 +126,8 @@ public class ChangeIssuesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get issue",
+            response = ChangeIssueDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{issueId}")
     public ChangeItemDTO getIssue(@PathParam("workspaceId") String workspaceId, @PathParam("issueId") int issueId)
@@ -126,6 +139,8 @@ public class ChangeIssuesResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update issue",
+            response = ChangeIssueDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{issueId}")
@@ -143,6 +158,8 @@ public class ChangeIssuesResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete issue",
+            response = ChangeIssueDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{issueId}")
     public Response removeIssue(@PathParam("issueId") int issueId)
@@ -152,6 +169,8 @@ public class ChangeIssuesResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update tags attached to an issue",
+            response = ChangeIssueDTO.class)
     @Path("{issueId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -171,6 +190,8 @@ public class ChangeIssuesResource {
     }
 
     @POST
+    @ApiOperation(value = "Attached a new tag to an issue",
+            response = ChangeIssueDTO.class)
     @Path("{issueId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -195,6 +216,8 @@ public class ChangeIssuesResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete a tag attached to an issue",
+            response = ChangeIssueDTO.class)
     @Path("{issueId}/tags/{tagName}")
     public Response removeTags(@PathParam("workspaceId") String workspaceId, @PathParam("issueId")int issueId, @PathParam("tagName") String tagName)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
@@ -203,6 +226,8 @@ public class ChangeIssuesResource {
     }
 
     @PUT
+    @ApiOperation(value = "Attach a document to an issue",
+            response = ChangeIssueDTO.class)
     @Path("{issueId}/affected-documents")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -219,6 +244,8 @@ public class ChangeIssuesResource {
     }
 
     @PUT
+    @ApiOperation(value = "Attach a part to an issue",
+            response = ChangeIssueDTO.class)
     @Path("{issueId}/affected-parts")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -235,6 +262,8 @@ public class ChangeIssuesResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update ACL of an issue",
+            response = Response.class)
     @Path("{issueId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("issueId") int issueId, ACLDTO acl)

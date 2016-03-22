@@ -35,6 +35,8 @@ import com.docdoku.server.rest.dto.change.ChangeIssueDTO;
 import com.docdoku.server.rest.dto.change.ChangeIssueListDTO;
 import com.docdoku.server.rest.dto.change.ChangeItemDTO;
 import com.docdoku.server.rest.dto.change.ChangeRequestDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -50,6 +52,7 @@ import javax.ws.rs.core.Response;
 import java.util.*;
 
 @RequestScoped
+@Api(hidden = true, value = "requests", description = "Operations about requests")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ChangeRequestsResource {
@@ -69,6 +72,9 @@ public class ChangeRequestsResource {
     }
 
     @GET
+    @ApiOperation(value = "Get requests for given parameters",
+            response = ChangeRequestDTO.class,
+            responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRequests(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException{
@@ -84,6 +90,8 @@ public class ChangeRequestsResource {
     }
 
     @POST
+    @ApiOperation(value = "Create request",
+            response = ChangeRequestDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ChangeRequestDTO createRequest(@PathParam("workspaceId") String workspaceId, ChangeRequestDTO changeRequestDTO)
@@ -101,6 +109,9 @@ public class ChangeRequestsResource {
     }
 
     @GET
+    @ApiOperation(value = "Search request for given references",
+            response = ChangeRequestDTO.class,
+            responseContainer = "List")
     @Path("link")
     @Produces(MediaType.APPLICATION_JSON)
     public ChangeRequestDTO[] searchRequestsToLink(@PathParam("workspaceId") String workspaceId,@QueryParam("q") String q)
@@ -117,6 +128,8 @@ public class ChangeRequestsResource {
     }
 
     @GET
+    @ApiOperation(value = "Get request",
+            response = ChangeRequestDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{requestId}")
     public ChangeRequestDTO getRequest(@PathParam("workspaceId") String workspaceId, @PathParam("requestId") int requestId)
@@ -128,6 +141,8 @@ public class ChangeRequestsResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update request",
+            response = ChangeRequestDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{requestId}")
@@ -146,6 +161,8 @@ public class ChangeRequestsResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete request",
+            response = ChangeRequestDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{requestId}")
     public Response removeRequest(@PathParam("workspaceId") String workspaceId, @PathParam("requestId") int requestId)
@@ -156,6 +173,8 @@ public class ChangeRequestsResource {
 
 
     @PUT
+    @ApiOperation(value = "Update tag attached to a request",
+            response = ChangeRequestDTO.class)
     @Path("{requestId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -174,6 +193,8 @@ public class ChangeRequestsResource {
     }
 
     @POST
+    @ApiOperation(value = "Attach a new tag to a request",
+            response = ChangeRequestDTO.class)
     @Path("{requestId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -199,6 +220,8 @@ public class ChangeRequestsResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete tag attached to a request",
+            response = Response.class)
     @Path("{requestId}/tags/{tagName}")
     public Response removeTags(@PathParam("workspaceId") String workspaceId, @PathParam("requestId")int requestId, @PathParam("tagName") String tagName)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
@@ -207,6 +230,8 @@ public class ChangeRequestsResource {
     }
 
     @PUT
+    @ApiOperation(value = "Attach document to a request",
+            response = ChangeRequestDTO.class)
     @Path("{requestId}/affected-documents")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -223,6 +248,8 @@ public class ChangeRequestsResource {
     }
 
     @PUT
+    @ApiOperation(value = "Attach part to a request",
+            response = ChangeRequestDTO.class)
     @Path("{requestId}/affected-parts")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -239,6 +266,8 @@ public class ChangeRequestsResource {
     }
 
     @PUT
+    @ApiOperation(value = "Attach issue to a request",
+            response = ChangeRequestDTO.class)
     @Path("{requestId}/affected-issues")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -263,6 +292,8 @@ public class ChangeRequestsResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update ACL of a request",
+            response = Response.class)
     @Path("{requestId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("requestId") int requestId, ACLDTO acl)

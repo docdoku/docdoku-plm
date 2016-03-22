@@ -30,6 +30,8 @@ import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.change.ChangeMilestoneDTO;
 import com.docdoku.server.rest.dto.change.ChangeOrderDTO;
 import com.docdoku.server.rest.dto.change.ChangeRequestDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -48,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 
 @RequestScoped
+@Api(hidden = true, value = "milestones", description = "Operations about milestones")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ChangeMilestonesResource {
@@ -67,6 +70,9 @@ public class ChangeMilestonesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get milestones for given parameters",
+            response = ChangeMilestoneDTO.class,
+            responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getMilestones(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
@@ -84,6 +90,8 @@ public class ChangeMilestonesResource {
     }
 
     @POST
+    @ApiOperation(value = "Create milestone",
+            response = ChangeMilestoneDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ChangeMilestoneDTO createMilestone(@PathParam("workspaceId") String workspaceId, ChangeMilestoneDTO changeMilestoneDTO)
@@ -95,6 +103,8 @@ public class ChangeMilestonesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get milestone",
+            response = ChangeMilestoneDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}")
     public ChangeMilestoneDTO getMilestone(@PathParam("workspaceId") String workspaceId, @PathParam("milestoneId") int milestoneId)
@@ -108,6 +118,8 @@ public class ChangeMilestonesResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update milestone",
+            response = ChangeMilestoneDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}")
@@ -122,6 +134,8 @@ public class ChangeMilestonesResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete milestone",
+            response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}")
     public Response removeMilestone(@PathParam("workspaceId") String workspaceId, @PathParam("milestoneId") int milestoneId)
@@ -131,6 +145,9 @@ public class ChangeMilestonesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get requests for the given milestone",
+            response = ChangeRequestDTO.class,
+            responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}/requests")
     public Response getRequestsByMilestone(@PathParam("workspaceId") String workspaceId, @PathParam("milestoneId") int milestoneId)
@@ -145,6 +162,9 @@ public class ChangeMilestonesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get orders for the given milestone",
+            response = ChangeOrderDTO.class,
+            responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}/orders")
     public Response getOrdersByMilestone(@PathParam("workspaceId") String workspaceId, @PathParam("milestoneId") int milestoneId)
@@ -159,6 +179,8 @@ public class ChangeMilestonesResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update ACL of the milestone",
+            response = Response.class)
     @Path("{milestoneId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("milestoneId") int milestoneId, ACLDTO acl)

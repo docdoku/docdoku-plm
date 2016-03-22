@@ -242,19 +242,19 @@ public class WorkspaceResource {
         return workspaceMemberships;
     }
 
-    //@ApiOperation(value = "SubResource : ChangeItemsResource")
+    @ApiOperation(value = "SubResource : ChangeItemsResource")
     @Path("/{workspaceId}/changes")
     public ChangeItemsResource changeItems() {
         return changeItems;
     }
 
-    //@ApiOperation(value = "SubResource : DocumentBaselinesResource")
+    @ApiOperation(value = "SubResource : DocumentBaselinesResource")
     @Path("/{workspaceId}/document-baselines")
     public DocumentBaselinesResource documentBaselines() {
         return documentBaselines;
     }
 
-    //@ApiOperation(value = "SubResource : LOVResource")
+    @ApiOperation(value = "SubResource : LOVResource")
     @Path("/{workspaceId}/lov")
     public LOVResource lov() {
         return lov;

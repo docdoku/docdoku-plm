@@ -25,6 +25,8 @@ import com.docdoku.core.meta.ListOfValuesKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ILOVManagerLocal;
 import com.docdoku.server.rest.dto.ListOfValuesDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -48,6 +50,7 @@ import java.util.List;
  */
 
 @RequestScoped
+@Api(hidden= true, value = "listOfValues", description = "Operations about ListOfValues")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class LOVResource {
@@ -66,6 +69,10 @@ public class LOVResource {
     }
 
     @GET
+    @ApiOperation(value = "Get a list of  ListOfValues for given parameters",
+            response = ListOfValuesDTO.class,
+            responseContainer = "List")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getLOVs(@PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
@@ -82,6 +89,10 @@ public class LOVResource {
     }
 
     @POST
+    @ApiOperation(value = "Create ListOfValues",
+            response = ListOfValuesDTO.class,
+            responseContainer = "List")
+    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createLOV(@PathParam("workspaceId") String workspaceId, ListOfValuesDTO lovDTO)
@@ -92,6 +103,8 @@ public class LOVResource {
     }
 
     @GET
+    @ApiOperation(value = "Get the ListOfValues from the given parameters",
+            response = ListOfValuesDTO.class)
     @Path("/{name}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -104,6 +117,8 @@ public class LOVResource {
 
     @PUT
     @Path("/{name}")
+    @ApiOperation(value = "Update the ListOfValues",
+            response = ListOfValuesDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ListOfValuesDTO updateLOV(@PathParam("workspaceId") String workspaceId, @PathParam("name") String name, ListOfValuesDTO lovDTO)
@@ -117,6 +132,8 @@ public class LOVResource {
 
     @DELETE
     @Path("/{name}")
+    @ApiOperation(value = "Delete the ListOfValues",
+            response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteLOV(@PathParam("workspaceId") String workspaceId, @PathParam("name") String name)

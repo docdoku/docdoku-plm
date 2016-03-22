@@ -20,6 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.security.UserGroupMapping;
+import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -45,21 +46,25 @@ public class ChangeItemsResource {
     }
 
     @Path("/issues")
+    @ApiOperation(value = "SubResource : ChangeIssuesResource")
     public ChangeIssuesResource issues() {
         return issues;
     }
 
     @Path("/requests")
+    @ApiOperation(value = "SubResource : ChangeRequestsResource")
     public ChangeRequestsResource requests() {
         return requests;
     }
 
     @Path("/orders")
+    @ApiOperation(value = "SubResource : ChangeOrdersResource")
     public ChangeOrdersResource orders() {
         return orders;
     }
 
     @Path("/milestones")
+    @ApiOperation(value = "SubResource : ChangeMilestonesResource")
     public ChangeMilestonesResource milestones() {
         return changeMilestones;
     }
