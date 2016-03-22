@@ -38,7 +38,9 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,6 +125,7 @@ public class WorkspaceResource {
     @GET
     @ApiOperation(value = "Get workspace list for authenticated user", response = WorkspaceListDTO.class)
     @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
     public WorkspaceListDTO getWorkspacesForConnectedUser() throws EntityNotFoundException {
 
         WorkspaceListDTO workspaceListDTO = new WorkspaceListDTO();
@@ -142,6 +145,7 @@ public class WorkspaceResource {
     @GET
     @ApiOperation(value = "Get detailed workspace list for authenticated user", response = WorkspaceDetailsDTO.class, responseContainer = "List")
     @Path("/more")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getDetailedWorkspacesForConnectedUser() throws EntityNotFoundException {
         List<WorkspaceDetailsDTO> workspaceListDTO = new ArrayList<>();
 
