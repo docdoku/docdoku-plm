@@ -32,6 +32,8 @@ import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.LightPartLinkDTO;
 import com.docdoku.server.rest.dto.LightPartLinkListDTO;
 import com.docdoku.server.rest.dto.baseline.ProductConfigurationDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -54,6 +56,7 @@ import java.util.Map;
  * @author Morgan Guimard
  */
 @RequestScoped
+@Api(hidden = true, value = "product-configurations", description = "Operations about product configurations")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ProductConfigurationsResource {
@@ -75,6 +78,8 @@ public class ProductConfigurationsResource {
     }
 
     @GET
+    @ApiOperation(value = "Get all product configurations", response = ProductConfigurationDTO.class, responseContainer = "List")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllConfiguration(@PathParam("workspaceId") String workspaceId,  @PathParam("ciId") String ciId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
         List<ProductConfiguration> allProductConfigurations;
@@ -97,6 +102,7 @@ public class ProductConfigurationsResource {
     }
 
     @GET
+    @ApiOperation(value = "Get product configuration", response = ProductConfigurationDTO.class)
     @Path("{productConfigurationId}")
     @Produces(MediaType.APPLICATION_JSON)
     public ProductConfigurationDTO getConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("productConfigurationId") int productConfigurationId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, EntityConstraintException, NotAllowedException, AccessRightException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, PartMasterNotFoundException {
@@ -131,6 +137,8 @@ public class ProductConfigurationsResource {
     }
 
     @POST
+    @ApiOperation(value = "Create product configuration", response = ProductConfigurationDTO.class)
+    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ProductConfigurationDTO createConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, ProductConfigurationDTO pProductConfigurationDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, CreationException, AccessRightException {
@@ -155,6 +163,7 @@ public class ProductConfigurationsResource {
 
 
     @PUT
+    @ApiOperation(value = "Update product configuration", response = Response.class)
     @Path("{productConfigurationId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateConfigurationACL(@PathParam("workspaceId") String workspaceId,@PathParam("ciId") String pCiId, @PathParam("productConfigurationId") int productConfigurationId, ACLDTO acl) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, AccessRightException {
@@ -182,6 +191,7 @@ public class ProductConfigurationsResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete product configuration", response = Response.class)
     @Path("{productConfigurationId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteProductConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("productConfigurationId") int productConfigurationId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, AccessRightException {

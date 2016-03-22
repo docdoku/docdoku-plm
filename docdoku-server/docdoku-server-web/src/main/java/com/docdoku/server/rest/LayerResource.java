@@ -29,6 +29,8 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.LayerDTO;
 import com.docdoku.server.rest.dto.MarkerDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -46,6 +48,7 @@ import java.util.Set;
  */
 
 @RequestScoped
+@Api(hidden = true, value = "layers", description = "Operations about layers")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class LayerResource {
@@ -57,6 +60,8 @@ public class LayerResource {
     }
 
     @GET
+    @ApiOperation(value = "Get layers", response = LayerDTO.class, responseContainer = "List")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public LayerDTO[] getLayersInProduct(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
             throws EntityNotFoundException, UserNotActiveException {
@@ -72,6 +77,8 @@ public class LayerResource {
 
     
     @POST
+    @ApiOperation(value = "Create layers", response = LayerDTO.class)
+    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public LayerDTO createLayer(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, LayerDTO layer)
@@ -83,6 +90,7 @@ public class LayerResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update layer", response = LayerDTO.class)
     @Path("{layerId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -95,6 +103,7 @@ public class LayerResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete layer", response = Response.class)
     @Path("{layerId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteLayer(@PathParam("layerId") int layerId, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
@@ -105,6 +114,7 @@ public class LayerResource {
     }
 
     @GET
+    @ApiOperation(value = "Get markers", response = MarkerDTO.class, responseContainer = "List")
     @Path("{layerId}/markers")
     @Produces(MediaType.APPLICATION_JSON)
     public MarkerDTO[] getMarkersInLayer(@PathParam("workspaceId") String workspaceId, @PathParam("layerId") int layerId)
@@ -121,6 +131,7 @@ public class LayerResource {
     }
 
     @POST
+    @ApiOperation(value = "Create marker", response = MarkerDTO.class)
     @Path("{layerId}/markers")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -132,6 +143,7 @@ public class LayerResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete marker", response = Response.class)
     @Path("{layerId}/markers/{markerId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
