@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequestScoped
-@Api(value = "workspaces", description = "Operations about workspaces")
+@Api(hidden = true, value = "workspaces", description = "Operations about workspaces")
 @Path("workspaces")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -122,7 +122,6 @@ public class WorkspaceResource {
 
     @GET
     @ApiOperation(value = "Get workspace list for authenticated user", response = WorkspaceListDTO.class)
-    @Path("/")
     public WorkspaceListDTO getWorkspacesForConnectedUser() throws EntityNotFoundException {
 
         WorkspaceListDTO workspaceListDTO = new WorkspaceListDTO();
@@ -170,13 +169,13 @@ public class WorkspaceResource {
         return docTemplates;
     }
 
-    //@ApiOperation(value = "SubResource : PartTemplateResource")
+    @ApiOperation(value = "SubResource : PartTemplateResource")
     @Path("/{workspaceId}/part-templates")
     public PartTemplateResource partTemplates() {
         return partTemplates;
     }
 
-    //@ApiOperation(value = "SubResource : ProductResource")
+    @ApiOperation(value = "SubResource : ProductResource")
     @Path("/{workspaceId}/products")
     public ProductResource products() {
         return products;
@@ -188,7 +187,7 @@ public class WorkspaceResource {
         return parts;
     }
 
-    //@ApiOperation(value = "SubResource : TagResource")
+    @ApiOperation(value = "SubResource : TagResource")
     @Path("/{workspaceId}/tags")
     public TagResource tags() {
         return tags;

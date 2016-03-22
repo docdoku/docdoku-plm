@@ -25,6 +25,8 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.TagDTO;
 import com.docdoku.server.rest.dto.TagListDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -42,6 +44,7 @@ import java.util.List;
  * @author Yassine Belouad
  */
 @RequestScoped
+@Api(hidden = true, value = "tags", description = "Operations about tags")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class TagResource {
@@ -55,12 +58,15 @@ public class TagResource {
     public TagResource() {
     }
 
+    @ApiOperation(value = "SubResource DocumentResource")
     @Path("{tagId}/documents/")
     public DocumentsResource getDocumentsResource() {
         return documentsResource;
     }
 
     @GET
+    @ApiOperation(value = "Get tags in workspace", response = TagDTO.class, responseContainer = "List")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTagsInWorkspace (@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
@@ -75,6 +81,8 @@ public class TagResource {
     }
 
     @POST
+    @ApiOperation(value = "Create tag in workspace", response = TagDTO.class)
+    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public TagDTO createTag(@PathParam("workspaceId") String workspaceId, TagDTO tag)
@@ -85,6 +93,7 @@ public class TagResource {
     }
 
     @POST
+    @ApiOperation(value = "Create tags in workspace", response = Response.class)
     @Path("/multiple")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createTags(@PathParam("workspaceId") String workspaceId, TagListDTO tagList)
@@ -97,6 +106,7 @@ public class TagResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete tag in workspace", response = Response.class)
     @Path("{tagId}")
     public Response deleteTag(@PathParam("workspaceId") String workspaceId, @PathParam("tagId") String tagId)
             throws EntityNotFoundException, AccessRightException {

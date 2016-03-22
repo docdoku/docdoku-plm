@@ -29,6 +29,8 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.util.InstanceAttributeFactory;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -49,6 +51,7 @@ import java.util.Map;
  * @author Morgan Guimard
  */
 @RequestScoped
+@Api(hidden = true, value = "part-templates", description = "Operations about part templates")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class PartTemplateResource {
@@ -67,6 +70,8 @@ public class PartTemplateResource {
     }
 
     @GET
+    @ApiOperation(value = "Get part master templates", response = PartMasterTemplateDTO.class, responseContainer = "List")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public PartMasterTemplateDTO[] getPartMasterTemplates(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
@@ -83,6 +88,7 @@ public class PartTemplateResource {
     }
 
     @GET
+    @ApiOperation(value = "Get part master template", response = PartMasterTemplateDTO.class)
     @Path("{templateId}")
     @Produces(MediaType.APPLICATION_JSON)
     public PartMasterTemplateDTO getPartMasterTemplate(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
@@ -93,9 +99,10 @@ public class PartTemplateResource {
     }
     
     @GET
+    @ApiOperation(value = "Generate part master template id", response = TemplateGeneratedIdDTO.class)
     @Path("{templateId}/generate_id")
     @Produces(MediaType.APPLICATION_JSON)
-    public TemplateGeneratedIdDTO generatePartMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
+    public TemplateGeneratedIdDTO generatePartMasterTemplateId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
             throws EntityNotFoundException, UserNotActiveException {
 
         String generatedId = productService.generateId(workspaceId, templateId);
@@ -103,6 +110,7 @@ public class PartTemplateResource {
     }
 
     @POST
+    @ApiOperation(value = "Crate part master template", response = PartMasterTemplateDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public PartMasterTemplateDTO createPartMasterTemplate(@PathParam("workspaceId") String workspaceId, PartTemplateCreationDTO templateCreationDTO)
@@ -132,10 +140,11 @@ public class PartTemplateResource {
     }
     
     @PUT
+    @ApiOperation(value = "Update part master template", response = PartMasterTemplateDTO.class)
     @Path("{templateId}") 
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PartMasterTemplateDTO updatePartMsTemplate(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, PartMasterTemplateDTO partMsTemplateDTO)
+    public PartMasterTemplateDTO updatePartMasterTemplate(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, PartMasterTemplateDTO partMsTemplateDTO)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
         String partType = partMsTemplateDTO.getPartType();
@@ -162,9 +171,10 @@ public class PartTemplateResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update part master template ACL", response = Response.class)
     @Path("{templateId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updatePartMsTemplateACL(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, ACLDTO acl)
+    public Response updatePartMasterTemplateACL(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, ACLDTO acl)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
         if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
@@ -189,6 +199,7 @@ public class PartTemplateResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete part master template", response = Response.class)
     @Path("{templateId}")
     public Response deletePartMasterTemplate(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
@@ -198,6 +209,7 @@ public class PartTemplateResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Remove attached file from part master template", response = Response.class)
     @Path("{templateId}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId, @PathParam("fileName") String fileName)
@@ -209,6 +221,7 @@ public class PartTemplateResource {
     }
 
     @PUT
+    @ApiOperation(value = "Rename attached file in part master template", response = Response.class)
     @Path("{templateId}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

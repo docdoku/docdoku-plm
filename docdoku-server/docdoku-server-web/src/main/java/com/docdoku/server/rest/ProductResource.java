@@ -33,8 +33,8 @@ import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IPSFilterManagerLocal;
 import com.docdoku.core.services.ICascadeActionManagerLocal;
+import com.docdoku.core.services.IPSFilterManagerLocal;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.collections.InstanceCollection;
@@ -43,6 +43,8 @@ import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.PathChoiceDTO;
 import com.docdoku.server.rest.util.FileDownloadTools;
 import com.docdoku.server.rest.util.FileExportEntity;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -65,6 +67,7 @@ import java.util.logging.Logger;
  * @author Florent Garin
  */
 @RequestScoped
+@Api(hidden = true, value = "products", description = "Operations about products")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ProductResource {
@@ -104,6 +107,8 @@ public class ProductResource {
     }
 
     @GET
+    @ApiOperation(value = "Get configuration items", response = ConfigurationItemDTO.class, responseContainer = "List")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public ConfigurationItemDTO[] getConfigurationItems(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, NotAllowedException {
@@ -125,6 +130,8 @@ public class ProductResource {
     }
 
     @POST
+    @ApiOperation(value = "Create configuration item", response = ConfigurationItemDTO.class)
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response createConfigurationItem(ConfigurationItemDTO configurationItemDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException {
@@ -144,6 +151,7 @@ public class ProductResource {
 
 
     @GET
+    @ApiOperation(value = "Filter part", response = PartRevisionDTO.class ,responseContainer = "List")
     @Path("{ciId}/bom")
     @Produces(MediaType.APPLICATION_JSON)
     public PartRevisionDTO[] filterPart(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path, @QueryParam("diverge") boolean diverge)
@@ -183,6 +191,7 @@ public class ProductResource {
     }
 
     @GET
+    @ApiOperation(value = "Filter product structure", response = ComponentDTO.class)
     @Path("{ciId}/filter")
     @Produces(MediaType.APPLICATION_JSON)
     public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path, @QueryParam("depth") Integer depth, @QueryParam("linkType") String linkType, @QueryParam("diverge") boolean diverge)
@@ -212,6 +221,7 @@ public class ProductResource {
     }
 
     @GET
+    @ApiOperation(value = "Get configuration item", response = ComponentDTO.class)
     @Path("{ciId}")
     @Produces(MediaType.APPLICATION_JSON)
     public ConfigurationItemDTO getConfigurationItem(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
@@ -227,9 +237,10 @@ public class ProductResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete configuration item", response = ComponentDTO.class)
     @Path("{ciId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteProduct(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
+    public Response deleteConfigurationItem(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
             throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, EntityConstraintException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
@@ -238,6 +249,7 @@ public class ProductResource {
     }
 
     @GET
+    @ApiOperation(value = "Search paths", response = PathDTO.class, responseContainer = "List")
     @Path("{ciId}/paths")
     @Produces(MediaType.APPLICATION_JSON)
     public Response searchPaths(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("search") String search, @QueryParam("configSpec") String configSpecType, @QueryParam("diverge") boolean diverge)
@@ -257,13 +269,15 @@ public class ProductResource {
         return Response.ok(new GenericEntity<List<PathDTO>>((List<PathDTO>) pathsDTO) {
         }).build();
     }
-    
+
+    @ApiOperation(value = "SubResource : LayerResource")
     @Path("{ciId}/layers")
     public LayerResource processLayers(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId) {
         return layerResource;
     }
 
     @GET
+    @ApiOperation(value = "Get baseline creation path choices", response = PathChoiceDTO.class, responseContainer = "List")
     @Path("{ciId}/path-choices")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBaselineCreationPathChoices(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("type") String pType) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
@@ -293,6 +307,7 @@ public class ProductResource {
     }
 
     @GET
+    @ApiOperation(value = "Get baseline creation version choices", response = BaselinedPartDTO.class, responseContainer = "List")
     @Path("{ciId}/versions-choices")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBaselineCreationVersionsChoices(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
@@ -329,6 +344,7 @@ public class ProductResource {
 
 
     @GET
+    @ApiOperation(value = "Get instances", response = Response.class)
     @Path("{ciId}/instances")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getInstances(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path, @QueryParam("diverge") boolean diverge)
@@ -357,10 +373,11 @@ public class ProductResource {
     }
 
     @POST
+    @ApiOperation(value = "Get instances for multiple paths", response = Response.class)
     @Path("{ciId}/instances")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getInstancesByMultiplePath(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("diverge") boolean diverge, PathListDTO pathsDTO)
+    public Response getInstancesForMultiplePath(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("diverge") boolean diverge, PathListDTO pathsDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         Response.ResponseBuilder rb = fakeSimilarBehavior(request);
@@ -391,6 +408,7 @@ public class ProductResource {
     }
 
     @GET
+    @ApiOperation(value = "Get last release of part", response = PartRevisionDTO.class)
     @Path("{ciId}/releases/last")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getLastRelease(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
@@ -407,38 +425,50 @@ public class ProductResource {
         return Response.ok(partRevisionDTO).build();
     }
 
+    @ApiOperation(value = "Get all ProductConfigurationsResource")
     @Path("configurations")
     public ProductConfigurationsResource getAllConfigurations(@PathParam("workspaceId") String workspaceId){
         return productConfigurationsResource;
     }
 
+    @ApiOperation(value = "Get ProductConfigurationsResource")
     @Path("{ciId}/configurations")
     public ProductConfigurationsResource getConfigurations(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
         return productConfigurationsResource;
     }
 
 
+    // TODO : refactor with regex to merge 2 by 2
+
+    @ApiOperation(value = "Get ProductConfigurationsResource")
     @Path("baselines")
     public ProductBaselinesResource getAllBaselines(@PathParam("workspaceId") String workspaceId){
         return productBaselinesResource;
     }
 
+    @ApiOperation(value = "Get ProductBaselinesResource")
     @Path("{ciId}/baselines")
     public ProductBaselinesResource getBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
         return productBaselinesResource;
     }
 
+    @ApiOperation(value = "Get all ProductInstancesResource")
     @Path("product-instances")
     public ProductInstancesResource getAllProductInstances(@PathParam("workspaceId") String workspaceId){
         return productInstancesResource;
     }
 
+    @ApiOperation(value = "Get ProductInstancesResource")
     @Path("{ciId}/product-instances")
     public ProductInstancesResource getProductInstances(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
         return productInstancesResource;
     }
+    // -- refactor with regex to merge 2 by 2
+
+
 
     @GET
+    @ApiOperation(value = "Export files", response = Response.class)
     @Path("{ciId}/export-files")
     public Response exportFiles(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpecType") String configSpecType, @QueryParam("exportNativeCADFiles") boolean exportNativeCADFiles,@QueryParam("exportDocumentLinks") boolean exportDocumentLinks) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ProductInstanceMasterNotFoundException {
 
@@ -479,6 +509,7 @@ public class ProductResource {
     }
 
     @POST
+    @ApiOperation(value = "Create path to path link", response = LightPathToPathLinkDTO.class)
     @Path("{ciId}/path-to-path-links")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -488,6 +519,7 @@ public class ProductResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update path to path link", response = LightPathToPathLinkDTO.class)
     @Path("{ciId}/path-to-path-links/{pathToPathLinkId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -498,6 +530,7 @@ public class ProductResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete path to path link", response = Response.class)
     @Path("{ciId}/path-to-path-links/{pathToPathLinkId}")
     public Response deletePathToPathLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathToPathLinkId") int pathToPathLinkId) throws PathToPathLinkNotFoundException, UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, ConfigurationItemNotFoundException {
         productService.deletePathToPathLink(workspaceId, configurationItemId, pathToPathLinkId);
@@ -505,6 +538,7 @@ public class ProductResource {
     }
 
     @GET
+    @ApiOperation(value = "Get path to path links from source and target", response = Response.class)
     @Path("{ciId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("sourcePath") String sourcePathAsString, @PathParam("targetPath") String targetPathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
@@ -540,6 +574,7 @@ public class ProductResource {
     }
 
     @GET
+    @ApiOperation(value = "Get path to path links types", response = LightPathToPathLinkDTO.class, responseContainer = "List")
     @Path("{ciId}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException {
@@ -553,7 +588,9 @@ public class ProductResource {
         return Response.ok(new GenericEntity<List<LightPathToPathLinkDTO>>((List<LightPathToPathLinkDTO>) pathToPathLinkDTOs) {
         }).build();
     }
+
     @GET
+    @ApiOperation(value = "Decode string path", response = LightPartLinkDTO.class, responseContainer = "List")
     @Path("{ciId}/decode-path/{path}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response decodePath(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("path") String pathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
@@ -569,6 +606,7 @@ public class ProductResource {
     }
 
     @GET
+    @ApiOperation(value = "Get document links for given part operation", response = DocumentIterationLinkDTO.class, responseContainer = "List")
     @Path("{ciId}/document-links/{partNumber: [^/].*}-{partVersion:[A-Z]+}-{partIteration:[0-9]+}/{configSpec}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDocumentLinksForGivenPartIteration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, @PathParam("configSpec") String configSpec) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, PartIterationNotFoundException {
@@ -597,6 +635,7 @@ public class ProductResource {
     }
 
     @PUT
+    @ApiOperation(value = "Cascade checkout", response = CascadeResult.class)
     @Path("{ciId}/cascade-checkout")
     @Produces(MediaType.APPLICATION_JSON)
     public Response cascadeCheckout(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException {
@@ -606,6 +645,7 @@ public class ProductResource {
     }
 
     @PUT
+    @ApiOperation(value = "Cascade checkint", response = CascadeResult.class)
     @Path("{ciId}/cascade-checkin")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -616,6 +656,7 @@ public class ProductResource {
     }
 
     @PUT
+    @ApiOperation(value = "Cascade undo checkout", response = CascadeResult.class)
     @Path("{ciId}/cascade-undocheckout")
     @Produces(MediaType.APPLICATION_JSON)
     public Response cascadeUndocheckout(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException {
