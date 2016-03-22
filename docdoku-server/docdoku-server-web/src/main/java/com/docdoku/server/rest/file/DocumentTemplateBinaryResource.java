@@ -36,6 +36,8 @@ import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 import com.docdoku.server.rest.interceptors.Compress;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -58,6 +60,7 @@ import java.util.Collection;
 import java.util.logging.Logger;
 
 @RequestScoped
+@Api(hidden = true, value = "document-template-binary", description = "Operations about document templates files")
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID})
 @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
 public class DocumentTemplateBinaryResource {
@@ -78,6 +81,8 @@ public class DocumentTemplateBinaryResource {
     }
 
     @POST
+    @ApiOperation(value = "Upload document template file" , response = Response.class)
+    @Path("/")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response uploadDocumentTemplateFiles(@Context HttpServletRequest request,
                                                 @PathParam("workspaceId") final String workspaceId,
@@ -113,6 +118,7 @@ public class DocumentTemplateBinaryResource {
 
 
     @GET
+    @ApiOperation(value = "Download document template file" , response = Response.class)
     @Path("/{fileName}")
     @Compress
     @Produces(MediaType.APPLICATION_OCTET_STREAM)

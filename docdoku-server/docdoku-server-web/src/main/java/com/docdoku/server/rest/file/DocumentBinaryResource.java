@@ -36,6 +36,8 @@ import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 import com.docdoku.server.rest.interceptors.Compress;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -60,6 +62,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 @RequestScoped
+@Api(hidden = true, value = "document-binary", description = "Operations about document files")
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
 public class DocumentBinaryResource {
 
@@ -90,6 +93,7 @@ public class DocumentBinaryResource {
     }
 
     @POST
+    @ApiOperation(value = "Upload document file", response = Response.class)
     @Path("/{iteration}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -132,6 +136,7 @@ public class DocumentBinaryResource {
     }
 
     @GET
+    @ApiOperation(value = "Download document file", response = Response.class)
     @Path("/{iteration}/{fileName}{uuid:(/uuid/[^/]+?)?}{virtualSubResource : (/[^/]+?)?}")
     @Compress
     @Produces(MediaType.APPLICATION_OCTET_STREAM)

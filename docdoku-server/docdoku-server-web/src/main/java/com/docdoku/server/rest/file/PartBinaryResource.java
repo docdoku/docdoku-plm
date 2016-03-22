@@ -35,6 +35,8 @@ import com.docdoku.server.rest.exceptions.*;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -62,6 +64,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RequestScoped
+@Api(hidden = true, value = "part-binary", description = "Operations about part files")
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
 public class PartBinaryResource{
 
@@ -96,6 +99,7 @@ public class PartBinaryResource{
     }
 
     @POST
+    @ApiOperation(value = "Upload CAD file" , response = Response.class)
     @Path("/{iteration}/"+NATIVE_CAD_SUBTYPE)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -130,6 +134,7 @@ public class PartBinaryResource{
     }
 
     @POST
+    @ApiOperation(value = "Upload attached file" , response = Response.class)
     @Path("/{iteration}/"+ATTACHED_FILES_SUBTYPE)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -167,6 +172,7 @@ public class PartBinaryResource{
 
     // Split on several methods because of Path conflict when we use regex
     @GET
+    @ApiOperation(value = "Download direct part file" , response = Response.class)
     @Path("/{iteration}/{fileName}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadDirectPartFile(@Context Request request,
@@ -183,6 +189,7 @@ public class PartBinaryResource{
     }
 
     @GET
+    @ApiOperation(value = "Upload part file from uuid" , response = Response.class)
     @Path("/{iteration}/{fileName}/uuid/{uuid}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadPartFileWithUuid(@Context Request request,
@@ -201,6 +208,7 @@ public class PartBinaryResource{
     }
 
     @GET
+    @ApiOperation(value = "Download part file with subtype" , response = Response.class)
     @Path("/{iteration}/{subType}/{fileName}/")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadPartFileWithSubtype(@Context Request request,
@@ -219,6 +227,7 @@ public class PartBinaryResource{
 
 
     @GET
+    @ApiOperation(value = "Download part file" , response = Response.class)
     @Path("/{iteration}/{subType}/{fileName}/uuid/{uuid}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadPartFile(@Context Request request,

@@ -12,14 +12,23 @@
     "name" : "baselines",
     "description" : "Operations about document baselines"
   }, {
+    "name" : "change-items",
+    "description" : "Operations about change items"
+  }, {
     "name" : "checked-out-documents",
     "description" : "Operations about checked out documents"
   }, {
     "name" : "document",
     "description" : "Operations about document"
   }, {
+    "name" : "document-binary",
+    "description" : "Operations about document files"
+  }, {
     "name" : "document-search",
     "description" : "Operations about search"
+  }, {
+    "name" : "document-template-binary",
+    "description" : "Operations about document templates files"
   }, {
     "name" : "document-templates",
     "description" : "Operations about document templates"
@@ -27,14 +36,35 @@
     "name" : "documents",
     "description" : "Operations about documents"
   }, {
+    "name" : "files",
+    "description" : "Operations about files"
+  }, {
     "name" : "folders",
     "description" : "Operations about folders"
+  }, {
+    "name" : "issues",
+    "description" : "Operations about issues"
+  }, {
+    "name" : "listOfValues",
+    "description" : "Operations about ListOfValues"
+  }, {
+    "name" : "milestones",
+    "description" : "Operations about milestones"
   }, {
     "name" : "modification-notifications",
     "description" : "Operations about modification notifications"
   }, {
+    "name" : "orders",
+    "description" : "Operations about orders"
+  }, {
     "name" : "part",
     "description" : "Operation about single parts"
+  }, {
+    "name" : "part-binary",
+    "description" : "Operations about part files"
+  }, {
+    "name" : "part-template-binary",
+    "description" : "Operations about part templates files"
   }, {
     "name" : "part-templates",
     "description" : "Operations about part templates"
@@ -42,8 +72,14 @@
     "name" : "parts",
     "description" : "Operation about parts"
   }, {
+    "name" : "product-instance-binary",
+    "description" : "Operations about product instances files"
+  }, {
     "name" : "products",
     "description" : "Operations about products"
+  }, {
+    "name" : "requests",
+    "description" : "Operations about requests"
   }, {
     "name" : "roles",
     "description" : "Operations about roles"
@@ -130,6 +166,845 @@
         }
       }
     },
+    "/files/{workspaceId}/document-templates/{templateId}" : {
+      "post" : {
+        "tags" : [ "files", "document-template-binary" ],
+        "summary" : "Upload document template file",
+        "description" : "",
+        "operationId" : "uploadDocumentTemplateFiles",
+        "consumes" : [ "multipart/form-data" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "templateId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/files/{workspaceId}/document-templates/{templateId}/{fileName}" : {
+      "get" : {
+        "tags" : [ "files", "document-template-binary" ],
+        "summary" : "Download document template file",
+        "description" : "",
+        "operationId" : "downloadDocumentTemplateFile",
+        "produces" : [ "application/octet-stream" ],
+        "parameters" : [ {
+          "name" : "Range",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        }, {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "templateId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "fileName",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "output",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/files/{workspaceId}/documents/{documentId}/{version}/{iteration}" : {
+      "post" : {
+        "tags" : [ "document-binary", "files" ],
+        "summary" : "Upload document file",
+        "description" : "",
+        "operationId" : "uploadDocumentFiles",
+        "consumes" : [ "multipart/form-data" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "documentId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "version",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "iteration",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/files/{workspaceId}/documents/{documentId}/{version}/{iteration}/{fileName}{uuid}/uuid/[^/]+?)?}{virtualSubResource : (/[^/]+?)?}" : {
+      "get" : {
+        "tags" : [ "document-binary", "files" ],
+        "summary" : "Download document file",
+        "description" : "",
+        "operationId" : "downloadDocumentFile",
+        "produces" : [ "application/octet-stream" ],
+        "parameters" : [ {
+          "name" : "Range",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        }, {
+          "name" : "Referer",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        }, {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "documentId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "version",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "iteration",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "fileName",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "virtualSubResource",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "output",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "uuid",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/files/{workspaceId}/part-templates/{templateId}/{fileName}" : {
+      "get" : {
+        "tags" : [ "files", "part-template-binary" ],
+        "summary" : "Download part template file",
+        "description" : "",
+        "operationId" : "downloadPartTemplateFile",
+        "produces" : [ "application/octet-stream" ],
+        "parameters" : [ {
+          "name" : "Range",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        }, {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "templateId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "fileName",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/files/{workspaceId}/parts/{partNumber}/{version}/{iteration}/attachedfiles" : {
+      "post" : {
+        "tags" : [ "part-binary", "files" ],
+        "summary" : "Upload attached file",
+        "description" : "",
+        "operationId" : "uploadAttachedFiles",
+        "consumes" : [ "multipart/form-data" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "partNumber",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "version",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "iteration",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/files/{workspaceId}/parts/{partNumber}/{version}/{iteration}/nativecad" : {
+      "post" : {
+        "tags" : [ "part-binary", "files" ],
+        "summary" : "Upload CAD file",
+        "description" : "",
+        "operationId" : "uploadNativeCADFile",
+        "consumes" : [ "multipart/form-data" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "partNumber",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "version",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "iteration",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/files/{workspaceId}/parts/{partNumber}/{version}/{iteration}/{fileName}" : {
+      "get" : {
+        "tags" : [ "part-binary", "files" ],
+        "summary" : "Download direct part file",
+        "description" : "",
+        "operationId" : "downloadDirectPartFile",
+        "produces" : [ "application/octet-stream" ],
+        "parameters" : [ {
+          "name" : "Range",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        }, {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "partNumber",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "version",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "iteration",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "fileName",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "output",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/files/{workspaceId}/parts/{partNumber}/{version}/{iteration}/{fileName}/uuid/{uuid}" : {
+      "get" : {
+        "tags" : [ "part-binary", "files" ],
+        "summary" : "Upload part file from uuid",
+        "description" : "",
+        "operationId" : "downloadPartFileWithUuid",
+        "produces" : [ "application/octet-stream" ],
+        "parameters" : [ {
+          "name" : "Range",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        }, {
+          "name" : "Referer",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        }, {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "partNumber",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "version",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "iteration",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "fileName",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "output",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "uuid",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/files/{workspaceId}/parts/{partNumber}/{version}/{iteration}/{subType}/{fileName}" : {
+      "get" : {
+        "tags" : [ "part-binary", "files" ],
+        "summary" : "Download part file with subtype",
+        "description" : "",
+        "operationId" : "downloadPartFileWithSubtype",
+        "produces" : [ "application/octet-stream" ],
+        "parameters" : [ {
+          "name" : "Range",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        }, {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "partNumber",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "version",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "iteration",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "subType",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "fileName",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "output",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/files/{workspaceId}/parts/{partNumber}/{version}/{iteration}/{subType}/{fileName}/uuid/{uuid}" : {
+      "get" : {
+        "tags" : [ "part-binary", "files" ],
+        "summary" : "Download part file",
+        "description" : "",
+        "operationId" : "downloadPartFile",
+        "produces" : [ "application/octet-stream" ],
+        "parameters" : [ {
+          "name" : "Range",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        }, {
+          "name" : "Referer",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        }, {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "partNumber",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "version",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "iteration",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "subType",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "fileName",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "output",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "uuid",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/files/{workspaceId}/product-instances/{serialNumber}/{ciId}/iterations/{iteration}" : {
+      "post" : {
+        "tags" : [ "product-instance-binary", "files" ],
+        "summary" : "Upload product instance files",
+        "description" : "",
+        "operationId" : "uploadFilesToProductInstanceIteration",
+        "consumes" : [ "multipart/form-data" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "ciId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "serialNumber",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "iteration",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/files/{workspaceId}/product-instances/{serialNumber}/{ciId}/iterations/{iteration}/{fileName}" : {
+      "get" : {
+        "tags" : [ "product-instance-binary", "files" ],
+        "summary" : "Download product instance file",
+        "description" : "",
+        "operationId" : "downloadFileFromProductInstance",
+        "produces" : [ "application/octet-stream" ],
+        "parameters" : [ {
+          "name" : "Range",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        }, {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "serialNumber",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "ciId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "iteration",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "fileName",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "output",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/files/{workspaceId}/product-instances/{serialNumber}/{ciId}/pathdata/{pathDataId}" : {
+      "post" : {
+        "tags" : [ "product-instance-binary", "files" ],
+        "summary" : "Upload path data file",
+        "description" : "",
+        "operationId" : "uploadFilesToPathData",
+        "consumes" : [ "multipart/form-data" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "ciId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "serialNumber",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "pathDataId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "iteration",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/files/{workspaceId}/product-instances/{serialNumber}/{ciId}/pathdata/{pathDataId}/iterations/{iteration}/{fileName}" : {
+      "get" : {
+        "tags" : [ "product-instance-binary", "files" ],
+        "summary" : "Download path data iteration file",
+        "description" : "",
+        "operationId" : "downloadFileFromPathDataIteration",
+        "produces" : [ "application/octet-stream" ],
+        "parameters" : [ {
+          "name" : "Range",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        }, {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "serialNumber",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "pathDataId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "iteration",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "fileName",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "output",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/files/{workspaceId}/product-instances/{serialNumber}/{ciId}/pathdata/{pathDataId}/{fileName}" : {
+      "get" : {
+        "tags" : [ "product-instance-binary", "files" ],
+        "summary" : "Download path data file",
+        "description" : "",
+        "operationId" : "downloadFileFromPathData",
+        "produces" : [ "application/octet-stream" ],
+        "parameters" : [ {
+          "name" : "Range",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        }, {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "serialNumber",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "ciId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "pathDataId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "fileName",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "output",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/files/{workspaceId}/product-instances/{serialNumber}/{ciId}/pathdata/{path}/iterations/{iteration}" : {
+      "post" : {
+        "tags" : [ "product-instance-binary", "files" ],
+        "summary" : "Upload path data iteration file",
+        "description" : "",
+        "operationId" : "uploadFilesToPathDataIteration",
+        "consumes" : [ "multipart/form-data" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "ciId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "serialNumber",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "path",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "iteration",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
     "/workspaces" : {
       "get" : {
         "tags" : [ "workspaces" ],
@@ -161,6 +1036,1063 @@
                 "$ref" : "#/definitions/WorkspaceDetailsDTO"
               }
             }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/issues/link" : {
+      "get" : {
+        "tags" : [ "workspaces", "issues", "change-items" ],
+        "summary" : "Search issue with given reference",
+        "description" : "",
+        "operationId" : "searchIssuesToLink",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "q",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/ChangeIssueDTO"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/issues/{issueId}" : {
+      "get" : {
+        "tags" : [ "workspaces", "issues", "change-items" ],
+        "summary" : "Get issue",
+        "description" : "",
+        "operationId" : "getIssue",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "issueId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeIssueDTO"
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "workspaces", "issues", "change-items" ],
+        "summary" : "Update issue",
+        "description" : "",
+        "operationId" : "updateIssue",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "issueId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeIssueDTO"
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "workspaces", "issues", "change-items" ],
+        "summary" : "Delete issue",
+        "description" : "",
+        "operationId" : "removeIssue",
+        "consumes" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "issueId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeIssueDTO"
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/issues/{issueId}/acl" : {
+      "put" : {
+        "tags" : [ "workspaces", "issues", "change-items" ],
+        "summary" : "Update ACL of an issue",
+        "description" : "",
+        "operationId" : "updateACL",
+        "consumes" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "issueId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/issues/{issueId}/affected-documents" : {
+      "put" : {
+        "tags" : [ "workspaces", "issues", "change-items" ],
+        "summary" : "Attach a document to an issue",
+        "description" : "",
+        "operationId" : "saveAffectedDocuments",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "issueId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeIssueDTO"
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/issues/{issueId}/affected-parts" : {
+      "put" : {
+        "tags" : [ "workspaces", "issues", "change-items" ],
+        "summary" : "Attach a part to an issue",
+        "description" : "",
+        "operationId" : "saveAffectedParts",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "issueId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeIssueDTO"
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/issues/{issueId}/tags" : {
+      "post" : {
+        "tags" : [ "workspaces", "issues", "change-items" ],
+        "summary" : "Attached a new tag to an issue",
+        "description" : "",
+        "operationId" : "addTag",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "issueId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeIssueDTO"
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "workspaces", "issues", "change-items" ],
+        "summary" : "Update tags attached to an issue",
+        "description" : "",
+        "operationId" : "saveTags",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "issueId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeIssueDTO"
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/issues/{issueId}/tags/{tagName}" : {
+      "delete" : {
+        "tags" : [ "workspaces", "issues", "change-items" ],
+        "summary" : "Delete a tag attached to an issue",
+        "description" : "",
+        "operationId" : "removeTags",
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "issueId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "tagName",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeIssueDTO"
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/milestones/{milestoneId}" : {
+      "get" : {
+        "tags" : [ "workspaces", "milestones", "change-items" ],
+        "summary" : "Get milestone",
+        "description" : "",
+        "operationId" : "getMilestone",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "milestoneId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeMilestoneDTO"
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "workspaces", "milestones", "change-items" ],
+        "summary" : "Update milestone",
+        "description" : "",
+        "operationId" : "updateMilestone",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "milestoneId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeMilestoneDTO"
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "workspaces", "milestones", "change-items" ],
+        "summary" : "Delete milestone",
+        "description" : "",
+        "operationId" : "removeMilestone",
+        "consumes" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "milestoneId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/milestones/{milestoneId}/acl" : {
+      "put" : {
+        "tags" : [ "workspaces", "milestones", "change-items" ],
+        "summary" : "Update ACL of the milestone",
+        "description" : "",
+        "operationId" : "updateACL",
+        "consumes" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "milestoneId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/milestones/{milestoneId}/orders" : {
+      "get" : {
+        "tags" : [ "workspaces", "milestones", "change-items" ],
+        "summary" : "Get orders for the given milestone",
+        "description" : "",
+        "operationId" : "getOrdersByMilestone",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "milestoneId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/ChangeOrderDTO"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/milestones/{milestoneId}/requests" : {
+      "get" : {
+        "tags" : [ "workspaces", "milestones", "change-items" ],
+        "summary" : "Get requests for the given milestone",
+        "description" : "",
+        "operationId" : "getRequestsByMilestone",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "milestoneId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/ChangeRequestDTO"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/orders/{orderId}" : {
+      "get" : {
+        "tags" : [ "orders", "workspaces", "change-items" ],
+        "summary" : "Get order",
+        "description" : "",
+        "operationId" : "getOrder",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "orderId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeOrderDTO"
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "orders", "workspaces", "change-items" ],
+        "summary" : "Update order",
+        "description" : "",
+        "operationId" : "updateOrder",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "orderId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeOrderDTO"
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "orders", "workspaces", "change-items" ],
+        "summary" : "Delete order",
+        "description" : "",
+        "operationId" : "removeOrder",
+        "consumes" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "orderId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/orders/{orderId}/acl" : {
+      "put" : {
+        "tags" : [ "orders", "workspaces", "change-items" ],
+        "summary" : "Update ACL of the order",
+        "description" : "",
+        "operationId" : "updateACL",
+        "consumes" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "orderId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/orders/{orderId}/affected-documents" : {
+      "put" : {
+        "tags" : [ "orders", "workspaces", "change-items" ],
+        "summary" : "Attach document to order",
+        "description" : "",
+        "operationId" : "saveAffectedDocuments",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "orderId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeOrderDTO"
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/orders/{orderId}/affected-parts" : {
+      "put" : {
+        "tags" : [ "orders", "workspaces", "change-items" ],
+        "summary" : "Attach part to order",
+        "description" : "",
+        "operationId" : "saveAffectedParts",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "orderId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeOrderDTO"
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/orders/{orderId}/affected-requests" : {
+      "put" : {
+        "tags" : [ "orders", "workspaces", "change-items" ],
+        "summary" : "Attach request to order",
+        "description" : "",
+        "operationId" : "saveAffectedRequests",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "orderId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeOrderDTO"
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/orders/{orderId}/tags" : {
+      "post" : {
+        "tags" : [ "orders", "workspaces", "change-items" ],
+        "summary" : "Add new tag to order",
+        "description" : "",
+        "operationId" : "addTag",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "orderId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeOrderDTO"
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "orders", "workspaces", "change-items" ],
+        "summary" : "Update tag attached to order",
+        "description" : "",
+        "operationId" : "saveTags",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "orderId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeOrderDTO"
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/orders/{orderId}/tags/{tagName}" : {
+      "delete" : {
+        "tags" : [ "orders", "workspaces", "change-items" ],
+        "summary" : "Delete tag attached to order",
+        "description" : "",
+        "operationId" : "removeTags",
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "orderId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "tagName",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/requests/link" : {
+      "get" : {
+        "tags" : [ "requests", "workspaces", "change-items" ],
+        "summary" : "Search request for given references",
+        "description" : "",
+        "operationId" : "searchRequestsToLink",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "q",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/ChangeRequestDTO"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/requests/{requestId}" : {
+      "get" : {
+        "tags" : [ "requests", "workspaces", "change-items" ],
+        "summary" : "Get request",
+        "description" : "",
+        "operationId" : "getRequest",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "requestId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeRequestDTO"
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "requests", "workspaces", "change-items" ],
+        "summary" : "Update request",
+        "description" : "",
+        "operationId" : "updateRequest",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "requestId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeRequestDTO"
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "requests", "workspaces", "change-items" ],
+        "summary" : "Delete request",
+        "description" : "",
+        "operationId" : "removeRequest",
+        "consumes" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "requestId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeRequestDTO"
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/requests/{requestId}/acl" : {
+      "put" : {
+        "tags" : [ "requests", "workspaces", "change-items" ],
+        "summary" : "Update ACL of a request",
+        "description" : "",
+        "operationId" : "updateACL",
+        "consumes" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "requestId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/requests/{requestId}/affected-documents" : {
+      "put" : {
+        "tags" : [ "requests", "workspaces", "change-items" ],
+        "summary" : "Attach document to a request",
+        "description" : "",
+        "operationId" : "saveAffectedDocuments",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "requestId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeRequestDTO"
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/requests/{requestId}/affected-issues" : {
+      "put" : {
+        "tags" : [ "requests", "workspaces", "change-items" ],
+        "summary" : "Attach issue to a request",
+        "description" : "",
+        "operationId" : "saveAffectedIssues",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "requestId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeRequestDTO"
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/requests/{requestId}/affected-parts" : {
+      "put" : {
+        "tags" : [ "requests", "workspaces", "change-items" ],
+        "summary" : "Attach part to a request",
+        "description" : "",
+        "operationId" : "saveAffectedParts",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "requestId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeRequestDTO"
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/requests/{requestId}/tags" : {
+      "post" : {
+        "tags" : [ "requests", "workspaces", "change-items" ],
+        "summary" : "Attach a new tag to a request",
+        "description" : "",
+        "operationId" : "addTag",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "requestId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeRequestDTO"
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "requests", "workspaces", "change-items" ],
+        "summary" : "Update tag attached to a request",
+        "description" : "",
+        "operationId" : "saveTags",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "requestId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ChangeRequestDTO"
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/changes/requests/{requestId}/tags/{tagName}" : {
+      "delete" : {
+        "tags" : [ "requests", "workspaces", "change-items" ],
+        "summary" : "Delete tag attached to a request",
+        "description" : "",
+        "operationId" : "removeTags",
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "requestId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "tagName",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
           }
         }
       }
@@ -1383,6 +3315,83 @@
               "items" : {
                 "$ref" : "#/definitions/ProductInstanceMasterDTO"
               }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/document-baselines/{baselineId}" : {
+      "get" : {
+        "tags" : [ "baselines", "workspaces" ],
+        "summary" : "Get baseline",
+        "description" : "",
+        "operationId" : "getBaseline",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "baselineId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/DocumentBaselineDTO"
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "baselines", "workspaces" ],
+        "summary" : "Delete a baseline",
+        "description" : "",
+        "operationId" : "deleteBaseline",
+        "consumes" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "baselineId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/document-baselines/{baselineId}-light" : {
+      "get" : {
+        "tags" : [ "baselines", "workspaces" ],
+        "summary" : "Get baseline light format",
+        "description" : "",
+        "operationId" : "getBaselineLight",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "baselineId",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/DocumentBaselineDTO"
             }
           }
         }
@@ -4246,6 +6255,137 @@
             "schema" : {
               "$ref" : "#/definitions/FolderDTO"
             }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/lov" : {
+      "get" : {
+        "tags" : [ "listOfValues", "workspaces" ],
+        "summary" : "Get a list of  ListOfValues for given parameters",
+        "description" : "",
+        "operationId" : "getLOVs",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/ListOfValuesDTO"
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "listOfValues", "workspaces" ],
+        "summary" : "Create ListOfValues",
+        "description" : "",
+        "operationId" : "createLOV",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/ListOfValuesDTO"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/lov/{name}" : {
+      "get" : {
+        "tags" : [ "listOfValues", "workspaces" ],
+        "summary" : "Get the ListOfValues from the given parameters",
+        "description" : "",
+        "operationId" : "getLOV",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "name",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ListOfValuesDTO"
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "listOfValues", "workspaces" ],
+        "summary" : "Update the ListOfValues",
+        "description" : "",
+        "operationId" : "updateLOV",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "name",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ListOfValuesDTO"
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "listOfValues", "workspaces" ],
+        "summary" : "Delete the ListOfValues",
+        "description" : "",
+        "operationId" : "deleteLOV",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "workspaceId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "name",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
           }
         }
       }
@@ -11130,19 +13270,6 @@
         "relaunchActivity" : {
           "$ref" : "#/definitions/Activity"
         },
-        "key" : {
-          "$ref" : "#/definitions/ActivityKey"
-        },
-        "openTasks" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/Task"
-          }
-        },
-        "workflowId" : {
-          "type" : "integer",
-          "format" : "int32"
-        },
         "stopped" : {
           "type" : "boolean",
           "default" : false
@@ -11158,6 +13285,19 @@
         "complete" : {
           "type" : "boolean",
           "default" : false
+        },
+        "openTasks" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Task"
+          }
+        },
+        "workflowId" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "key" : {
+          "$ref" : "#/definitions/ActivityKey"
         }
       }
     },
@@ -11305,18 +13445,17 @@
           "type" : "string",
           "format" : "date-time"
         },
-        "name" : {
-          "type" : "string"
-        },
-        "holderId" : {
+        "workspaceId" : {
           "type" : "string"
         },
         "holderType" : {
           "type" : "string"
         },
-        "holderIteration" : {
-          "type" : "integer",
-          "format" : "int32"
+        "holderId" : {
+          "type" : "string"
+        },
+        "fileType" : {
+          "type" : "string"
         },
         "previous" : {
           "$ref" : "#/definitions/BinaryResource"
@@ -11324,10 +13463,11 @@
         "holderRevision" : {
           "type" : "string"
         },
-        "fileType" : {
-          "type" : "string"
+        "holderIteration" : {
+          "type" : "integer",
+          "format" : "int32"
         },
-        "workspaceId" : {
+        "name" : {
           "type" : "string"
         }
       }
@@ -11421,6 +13561,267 @@
           "format" : "int32"
         },
         "failedAttempts" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
+    "ChangeIssueDTO" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "workspaceId" : {
+          "type" : "string"
+        },
+        "author" : {
+          "type" : "string"
+        },
+        "authorName" : {
+          "type" : "string"
+        },
+        "assignee" : {
+          "type" : "string"
+        },
+        "assigneeName" : {
+          "type" : "string"
+        },
+        "creationDate" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "priority" : {
+          "type" : "string",
+          "enum" : [ "LOW", "MEDIUM", "HIGH", "EMERGENCY" ]
+        },
+        "category" : {
+          "type" : "string",
+          "enum" : [ "ADAPTIVE", "CORRECTIVE", "PERFECTIVE", "PREVENTIVE", "OTHER" ]
+        },
+        "affectedDocuments" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/DocumentIterationDTO"
+          }
+        },
+        "affectedParts" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/PartIterationDTO"
+          }
+        },
+        "tags" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "acl" : {
+          "$ref" : "#/definitions/ACLDTO"
+        },
+        "writable" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "initiator" : {
+          "type" : "string"
+        }
+      }
+    },
+    "ChangeMilestoneDTO" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "title" : {
+          "type" : "string"
+        },
+        "dueDate" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "workspaceId" : {
+          "type" : "string"
+        },
+        "numberOfRequests" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "numberOfOrders" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "acl" : {
+          "$ref" : "#/definitions/ACLDTO"
+        },
+        "writable" : {
+          "type" : "boolean",
+          "default" : false
+        }
+      }
+    },
+    "ChangeOrderDTO" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "workspaceId" : {
+          "type" : "string"
+        },
+        "author" : {
+          "type" : "string"
+        },
+        "authorName" : {
+          "type" : "string"
+        },
+        "assignee" : {
+          "type" : "string"
+        },
+        "assigneeName" : {
+          "type" : "string"
+        },
+        "creationDate" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "priority" : {
+          "type" : "string",
+          "enum" : [ "LOW", "MEDIUM", "HIGH", "EMERGENCY" ]
+        },
+        "category" : {
+          "type" : "string",
+          "enum" : [ "ADAPTIVE", "CORRECTIVE", "PERFECTIVE", "PREVENTIVE", "OTHER" ]
+        },
+        "affectedDocuments" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/DocumentIterationDTO"
+          }
+        },
+        "affectedParts" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/PartIterationDTO"
+          }
+        },
+        "tags" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "acl" : {
+          "$ref" : "#/definitions/ACLDTO"
+        },
+        "writable" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "addressedChangeRequests" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/ChangeRequestDTO"
+          }
+        },
+        "milestoneId" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
+    "ChangeRequestDTO" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "workspaceId" : {
+          "type" : "string"
+        },
+        "author" : {
+          "type" : "string"
+        },
+        "authorName" : {
+          "type" : "string"
+        },
+        "assignee" : {
+          "type" : "string"
+        },
+        "assigneeName" : {
+          "type" : "string"
+        },
+        "creationDate" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "priority" : {
+          "type" : "string",
+          "enum" : [ "LOW", "MEDIUM", "HIGH", "EMERGENCY" ]
+        },
+        "category" : {
+          "type" : "string",
+          "enum" : [ "ADAPTIVE", "CORRECTIVE", "PERFECTIVE", "PREVENTIVE", "OTHER" ]
+        },
+        "affectedDocuments" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/DocumentIterationDTO"
+          }
+        },
+        "affectedParts" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/PartIterationDTO"
+          }
+        },
+        "tags" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "acl" : {
+          "$ref" : "#/definitions/ACLDTO"
+        },
+        "writable" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "addressedChangeIssues" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/ChangeIssueDTO"
+          }
+        },
+        "milestoneId" : {
           "type" : "integer",
           "format" : "int32"
         }
@@ -11564,11 +13965,11 @@
             "$ref" : "#/definitions/PathToPathLink"
           }
         },
-        "key" : {
-          "$ref" : "#/definitions/ConfigurationItemKey"
-        },
         "workspaceId" : {
           "type" : "string"
+        },
+        "key" : {
+          "$ref" : "#/definitions/ConfigurationItemKey"
         }
       }
     },
@@ -11728,15 +14129,6 @@
         "version" : {
           "type" : "string"
         },
-        "key" : {
-          "$ref" : "#/definitions/DocumentIterationKey"
-        },
-        "id" : {
-          "type" : "string"
-        },
-        "documentRevisionKey" : {
-          "$ref" : "#/definitions/DocumentRevisionKey"
-        },
         "title" : {
           "type" : "string"
         },
@@ -11744,6 +14136,15 @@
           "type" : "string"
         },
         "documentMasterId" : {
+          "type" : "string"
+        },
+        "documentRevisionKey" : {
+          "$ref" : "#/definitions/DocumentRevisionKey"
+        },
+        "key" : {
+          "$ref" : "#/definitions/DocumentIterationKey"
+        },
+        "id" : {
           "type" : "string"
         }
       }
@@ -11915,14 +14316,14 @@
           "type" : "boolean",
           "default" : false
         },
-        "key" : {
-          "$ref" : "#/definitions/DocumentMasterKey"
+        "workspaceId" : {
+          "type" : "string"
         },
         "lastRevision" : {
           "$ref" : "#/definitions/DocumentRevision"
         },
-        "workspaceId" : {
-          "type" : "string"
+        "key" : {
+          "$ref" : "#/definitions/DocumentMasterKey"
         }
       }
     },
@@ -12058,21 +14459,25 @@
           "type" : "boolean",
           "default" : false
         },
-        "key" : {
-          "$ref" : "#/definitions/DocumentRevisionKey"
-        },
-        "id" : {
+        "workspaceId" : {
           "type" : "string"
         },
-        "type" : {
+        "lifeCycleState" : {
           "type" : "string"
         },
-        "checkedOut" : {
+        "lastIteration" : {
+          "$ref" : "#/definitions/DocumentIteration"
+        },
+        "attributesLocked" : {
           "type" : "boolean",
           "default" : false
         },
         "lastCheckedInIteration" : {
           "$ref" : "#/definitions/DocumentIteration"
+        },
+        "checkedOut" : {
+          "type" : "boolean",
+          "default" : false
         },
         "numberOfIterations" : {
           "type" : "integer",
@@ -12081,17 +14486,13 @@
         "documentMasterKey" : {
           "$ref" : "#/definitions/DocumentMasterKey"
         },
-        "lastIteration" : {
-          "$ref" : "#/definitions/DocumentIteration"
+        "key" : {
+          "$ref" : "#/definitions/DocumentRevisionKey"
         },
-        "workspaceId" : {
+        "id" : {
           "type" : "string"
         },
-        "attributesLocked" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "lifeCycleState" : {
+        "type" : {
           "type" : "string"
         }
       }
@@ -12244,25 +14645,6 @@
         "parentFolder" : {
           "$ref" : "#/definitions/Folder"
         },
-        "private" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "owner" : {
-          "type" : "string"
-        },
-        "allFolders" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/Folder"
-          }
-        },
-        "routePath" : {
-          "type" : "string"
-        },
-        "foldersPath" : {
-          "type" : "string"
-        },
         "root" : {
           "type" : "boolean",
           "default" : false
@@ -12276,6 +14658,25 @@
         "home" : {
           "type" : "boolean",
           "default" : false
+        },
+        "allFolders" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Folder"
+          }
+        },
+        "routePath" : {
+          "type" : "string"
+        },
+        "foldersPath" : {
+          "type" : "string"
+        },
+        "private" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "owner" : {
+          "type" : "string"
         }
       }
     },
@@ -12339,18 +14740,17 @@
           "type" : "number",
           "format" : "double"
         },
-        "name" : {
-          "type" : "string"
-        },
-        "holderId" : {
+        "workspaceId" : {
           "type" : "string"
         },
         "holderType" : {
           "type" : "string"
         },
-        "holderIteration" : {
-          "type" : "integer",
-          "format" : "int32"
+        "holderId" : {
+          "type" : "string"
+        },
+        "fileType" : {
+          "type" : "string"
         },
         "previous" : {
           "$ref" : "#/definitions/BinaryResource"
@@ -12358,10 +14758,11 @@
         "holderRevision" : {
           "type" : "string"
         },
-        "fileType" : {
-          "type" : "string"
+        "holderIteration" : {
+          "type" : "integer",
+          "format" : "int32"
         },
-        "workspaceId" : {
+        "name" : {
           "type" : "string"
         }
       }
@@ -12423,11 +14824,11 @@
           "type" : "boolean",
           "default" : false
         },
-        "value" : {
-          "type" : "object"
-        },
         "nameWithoutWhiteSpace" : {
           "type" : "string"
+        },
+        "value" : {
+          "type" : "object"
         }
       }
     },
@@ -12570,6 +14971,33 @@
         },
         "description" : {
           "type" : "string"
+        }
+      }
+    },
+    "ListOfValuesDTO" : {
+      "type" : "object",
+      "properties" : {
+        "workspaceId" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "workspace" : {
+          "$ref" : "#/definitions/WorkspaceDTO"
+        },
+        "values" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/NameValuePairDTO"
+          }
+        },
+        "id" : {
+          "type" : "string"
+        },
+        "deletable" : {
+          "type" : "boolean",
+          "default" : false
         }
       }
     },
@@ -12730,14 +15158,21 @@
         "version" : {
           "type" : "string"
         },
-        "name" : {
+        "workspaceId" : {
           "type" : "string"
         },
-        "key" : {
-          "$ref" : "#/definitions/PartIterationKey"
-        },
-        "number" : {
+        "partName" : {
           "type" : "string"
+        },
+        "partNumber" : {
+          "type" : "string"
+        },
+        "partVersion" : {
+          "type" : "string"
+        },
+        "assembly" : {
+          "type" : "boolean",
+          "default" : false
         },
         "sortedGeometries" : {
           "type" : "array",
@@ -12752,20 +15187,13 @@
           "type" : "boolean",
           "default" : false
         },
-        "assembly" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "workspaceId" : {
+        "name" : {
           "type" : "string"
         },
-        "partName" : {
-          "type" : "string"
+        "key" : {
+          "$ref" : "#/definitions/PartIterationKey"
         },
-        "partNumber" : {
-          "type" : "string"
-        },
-        "partVersion" : {
+        "number" : {
           "type" : "string"
         }
       }
@@ -12852,13 +15280,13 @@
           "type" : "integer",
           "format" : "int32"
         },
-        "partRevisionVersion" : {
-          "type" : "string"
-        },
         "workspaceId" : {
           "type" : "string"
         },
         "partMasterNumber" : {
+          "type" : "string"
+        },
+        "partRevisionVersion" : {
           "type" : "string"
         }
       }
@@ -12869,16 +15297,12 @@
         "comment" : {
           "type" : "string"
         },
-        "id" : {
-          "type" : "integer",
-          "format" : "int32"
+        "code" : {
+          "type" : "string"
         },
         "optional" : {
           "type" : "boolean",
           "default" : false
-        },
-        "code" : {
-          "type" : "string"
         },
         "fullId" : {
           "type" : "string"
@@ -12907,6 +15331,10 @@
           "items" : {
             "$ref" : "#/definitions/CADInstance"
           }
+        },
+        "id" : {
+          "type" : "integer",
+          "format" : "int32"
         }
       }
     },
@@ -12967,8 +15395,11 @@
           "type" : "boolean",
           "default" : false
         },
-        "key" : {
-          "$ref" : "#/definitions/PartMasterKey"
+        "workspaceId" : {
+          "type" : "string"
+        },
+        "lastRevision" : {
+          "$ref" : "#/definitions/PartRevision"
         },
         "allReleasedRevisions" : {
           "type" : "array",
@@ -12979,11 +15410,8 @@
         "lastReleasedRevision" : {
           "$ref" : "#/definitions/PartRevision"
         },
-        "lastRevision" : {
-          "$ref" : "#/definitions/PartRevision"
-        },
-        "workspaceId" : {
-          "type" : "string"
+        "key" : {
+          "$ref" : "#/definitions/PartMasterKey"
         }
       }
     },
@@ -13136,53 +15564,14 @@
         "obsoleteStatusChange" : {
           "$ref" : "#/definitions/StatusChange"
         },
-        "key" : {
-          "$ref" : "#/definitions/PartRevisionKey"
-        },
-        "type" : {
+        "workspaceId" : {
           "type" : "string"
         },
-        "checkedOut" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "lastCheckedInIteration" : {
-          "$ref" : "#/definitions/PartIteration"
-        },
-        "numberOfIterations" : {
-          "type" : "integer",
-          "format" : "int32"
-        },
-        "partMasterKey" : {
-          "$ref" : "#/definitions/PartMasterKey"
-        },
-        "obsoleteDate" : {
-          "type" : "string",
-          "format" : "date-time"
-        },
-        "obsoleteAuthor" : {
-          "$ref" : "#/definitions/User"
-        },
-        "releaseDate" : {
-          "type" : "string",
-          "format" : "date-time"
-        },
-        "releaseAuthor" : {
-          "$ref" : "#/definitions/User"
-        },
-        "released" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "obsolete" : {
-          "type" : "boolean",
-          "default" : false
+        "lifeCycleState" : {
+          "type" : "string"
         },
         "lastIteration" : {
           "$ref" : "#/definitions/PartIteration"
-        },
-        "workspaceId" : {
-          "type" : "string"
         },
         "partName" : {
           "type" : "string"
@@ -13198,7 +15587,46 @@
           "type" : "boolean",
           "default" : false
         },
-        "lifeCycleState" : {
+        "lastCheckedInIteration" : {
+          "$ref" : "#/definitions/PartIteration"
+        },
+        "released" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "obsolete" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "obsoleteDate" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "obsoleteAuthor" : {
+          "$ref" : "#/definitions/User"
+        },
+        "releaseDate" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "releaseAuthor" : {
+          "$ref" : "#/definitions/User"
+        },
+        "checkedOut" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "numberOfIterations" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "partMasterKey" : {
+          "$ref" : "#/definitions/PartMasterKey"
+        },
+        "key" : {
+          "$ref" : "#/definitions/PartRevisionKey"
+        },
+        "type" : {
           "type" : "string"
         }
       }
@@ -13358,12 +15786,12 @@
             "$ref" : "#/definitions/CADInstance"
           }
         },
+        "code" : {
+          "type" : "string"
+        },
         "optional" : {
           "type" : "boolean",
           "default" : false
-        },
-        "code" : {
-          "type" : "string"
         },
         "fullId" : {
           "type" : "string"
@@ -14401,8 +16829,9 @@
           "type" : "string",
           "enum" : [ "NOT_STARTED", "IN_PROGRESS", "APPROVED", "REJECTED", "NOT_TO_BE_DONE" ]
         },
-        "key" : {
-          "$ref" : "#/definitions/TaskKey"
+        "inProgress" : {
+          "type" : "boolean",
+          "default" : false
         },
         "workflowId" : {
           "type" : "integer",
@@ -14428,9 +16857,8 @@
           "type" : "integer",
           "format" : "int32"
         },
-        "inProgress" : {
-          "type" : "boolean",
-          "default" : false
+        "key" : {
+          "$ref" : "#/definitions/TaskKey"
         }
       }
     },
@@ -14523,6 +16951,13 @@
         "workspace" : {
           "$ref" : "#/definitions/Workspace"
         },
+        "email" : {
+          "type" : "string"
+        },
+        "administrator" : {
+          "type" : "boolean",
+          "default" : false
+        },
         "name" : {
           "type" : "string"
         },
@@ -14531,13 +16966,6 @@
         },
         "key" : {
           "$ref" : "#/definitions/UserKey"
-        },
-        "administrator" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "email" : {
-          "type" : "string"
         }
       }
     },
@@ -14625,18 +17053,6 @@
         "finalLifeCycleState" : {
           "type" : "string"
         },
-        "runningTasks" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/Task"
-          }
-        },
-        "lifeCycle" : {
-          "type" : "array",
-          "items" : {
-            "type" : "string"
-          }
-        },
         "tasks" : {
           "type" : "array",
           "items" : {
@@ -14652,6 +17068,18 @@
         "currentStep" : {
           "type" : "integer",
           "format" : "int32"
+        },
+        "runningTasks" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Task"
+          }
+        },
+        "lifeCycle" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
         }
       }
     },

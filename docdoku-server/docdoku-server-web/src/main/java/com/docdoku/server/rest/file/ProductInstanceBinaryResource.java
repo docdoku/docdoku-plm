@@ -34,6 +34,8 @@ import com.docdoku.server.rest.exceptions.*;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -60,6 +62,7 @@ import java.util.Collection;
  */
 
 @RequestScoped
+@Api(hidden = true, value = "product-instance-binary", description = "Operations about product instances files")
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID})
 @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
 public class ProductInstanceBinaryResource {
@@ -77,6 +80,7 @@ public class ProductInstanceBinaryResource {
     private GuestProxy guestProxy;
 
     @POST
+    @ApiOperation(value = "Upload product instance files" , response = Response.class)
     @Path("iterations/{iteration}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -108,6 +112,7 @@ public class ProductInstanceBinaryResource {
 
 
     @GET
+    @ApiOperation(value = "Download product instance file" , response = Response.class)
     @Path("iterations/{iteration}/{fileName}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadFileFromProductInstance(@Context Request request,
@@ -144,6 +149,7 @@ public class ProductInstanceBinaryResource {
 
 
     @POST
+    @ApiOperation(value = "Upload path data file" , response = Response.class)
     @Path("pathdata/{pathDataId}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -178,6 +184,7 @@ public class ProductInstanceBinaryResource {
     }
 
     @POST
+    @ApiOperation(value = "Upload path data iteration file" , response = Response.class)
     @Path("pathdata/{path}/iterations/{iteration}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -211,6 +218,7 @@ public class ProductInstanceBinaryResource {
     }
 
     @GET
+    @ApiOperation(value = "Download path data file" , response = Response.class)
     @Path("pathdata/{pathDataId}/{fileName}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadFileFromPathData(@Context Request request,
@@ -246,6 +254,7 @@ public class ProductInstanceBinaryResource {
     }
 
     @GET
+    @ApiOperation(value = "Download path data iteration file" , response = Response.class)
     @Path("pathdata/{pathDataId}/iterations/{iteration}/{fileName}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadFileFromPathDataIteration(@Context Request request,
