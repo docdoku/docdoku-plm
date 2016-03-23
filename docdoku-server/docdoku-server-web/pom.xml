@@ -154,6 +154,10 @@
                                 <include>server.properties.json</include>
                             </includes>
                         </resource>
+                        <resource>
+                            <directory>src/main/api</directory>
+                            <filtering>true</filtering>
+                        </resource>
                     </webResources>
                 </configuration>
             </plugin>
@@ -171,8 +175,7 @@
                                 <title>DocdokuPLM API</title>
                                 <version>v2.5</version>
                             </info>
-                            <outputPath>${basedir}/src/main/webapp/swagger/document.html</outputPath>
-                            <swaggerDirectory>${basedir}/src/main/webapp/swagger</swaggerDirectory>
+                            <swaggerDirectory>${basedir}/src/main/api/client</swaggerDirectory>
                         </apiSource>
                     </apiSources>
                 </configuration>
