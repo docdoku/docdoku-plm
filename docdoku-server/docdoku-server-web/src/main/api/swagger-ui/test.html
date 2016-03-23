@@ -4,14 +4,10 @@
     ​</head>
     <body>
         <script type="text/javascript">
-            var d = Date.now();
-            new SwaggerClient({
-                url: "${server.contextRoot}/client/swagger.json",
-                usePromise: true
-            }).then(function(api) {
-                console.log('Api loaded in ' + (Date.now() - d) + ' ms');
-                console.log(api);
-            });
+           DocdokuPLMClient.loadAPI(function(api){
+                console.log('ok')
+                console.log(api)
+           });
         </script>
     </body>
 </html>
