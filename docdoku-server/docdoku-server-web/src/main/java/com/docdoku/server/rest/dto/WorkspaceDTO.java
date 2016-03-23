@@ -27,6 +27,8 @@ import java.io.Serializable;
 public class WorkspaceDTO implements Serializable {
 
     private String id;
+    private String description;
+    private boolean folderLocked;
 
     public WorkspaceDTO() {
     }
@@ -37,5 +39,21 @@ public class WorkspaceDTO implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public boolean isFolderLocked() {
+        return folderLocked;
+    }
+
+    public void setFolderLocked(boolean folderLocked) {
+        this.folderLocked = folderLocked;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

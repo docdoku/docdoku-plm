@@ -20,7 +20,9 @@
 
 package com.docdoku.core.services;
 
+import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.AccountNotFoundException;
+import com.docdoku.core.exceptions.WorkspaceNotFoundException;
 
 /**
  *
@@ -30,4 +32,6 @@ public interface IWorkspaceManagerLocal {
     long getDiskUsageInWorkspace(String workspaceId) throws AccountNotFoundException;
     void deleteWorkspace(String workspaceId);
     void synchronizeIndexer(String workspaceId);
+
+    Workspace changeAdmin(String workspaceId, String login) throws WorkspaceNotFoundException, AccountNotFoundException;
 }

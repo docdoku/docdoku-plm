@@ -110,6 +110,16 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
         esIndexer.indexWorkspace(workspaceId);
     }
 
+    @Override
+    @RolesAllowed({UserGroupMapping.ADMIN_ROLE_ID})
+    public Workspace changeAdmin(String workspaceId, String login) throws WorkspaceNotFoundException, AccountNotFoundException {
+        Account account = new AccountDAO(em).loadAccount(login);
+        Workspace workspace = new WorkspaceDAO(em).loadWorkspace(workspaceId);
+
+        workspace.setAdmin(account);
+        return workspace;
+    }
+
     private void doWorkspaceDeletion(Workspace workspace) throws Exception {
         Account admin = workspace.getAdmin();
         String workspaceId = workspace.getId();
