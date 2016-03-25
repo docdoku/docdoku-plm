@@ -383,7 +383,7 @@ module.exports = function (grunt) {
                             'bower_components/jquery/jquery.min.*',
                             'bower_components/underscore/underscore-min.js',
                             'bower_components/threejs/build/three.min.js',
-                            'bower_components/tweenjs/build/tween.min.js',
+                            'bower_components/tweenjs/src/Tween.js',
                             'bower_components/bootstrap/docs/assets/js/bootstrap.min.js',
                             'bower_components/backbone/backbone-min.js'
                         ]
