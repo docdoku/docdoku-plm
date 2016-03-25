@@ -187,7 +187,7 @@ define([
             if (reference) {
                 if(this.newRoles.length){
                     _.each(this.newRoles, function(role){
-                        _this.roles.findWhere({name: role.name}).save(null,{
+                        role.save(null,{
                             success:function(){
                                 _this.saveModel(reference);
                             },

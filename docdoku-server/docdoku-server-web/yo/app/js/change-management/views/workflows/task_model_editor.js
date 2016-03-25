@@ -3,8 +3,9 @@ define([
     'backbone',
     'mustache',
     'common-objects/models/task_model',
+    'common-objects/models/role',
     'text!templates/workflows/task_model_editor.html'
-], function (Backbone, Mustache, TaskModel, template) {
+], function (Backbone, Mustache, TaskModel, Role, template) {
     'use strict';
     var TaskModelEditorView = Backbone.View.extend({
 
@@ -107,11 +108,11 @@ define([
             if (roleName) {
                 var selectedRole = this.roles.findWhere({name: roleName});
                 if (!selectedRole) {
-                    selectedRole = {
+                    selectedRole = new Role({
                         workspaceId: App.config.workspaceId,
                         name: roleName,
                         defaultAssignee: null
-                    };
+                    });
                     this.newRoles.push(selectedRole);
                     this.roles.add(selectedRole);
                 }

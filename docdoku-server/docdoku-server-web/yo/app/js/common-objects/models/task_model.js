@@ -18,9 +18,10 @@ define([
 
         toJSON: function () {
             var index = this.collection.indexOf(this);
-            _.extend(this.attributes, {num: index});
-
-            return _.clone(this.attributes);
+            var clonedAttributes = _.clone(this.attributes);
+            clonedAttributes.role = clonedAttributes.role.toJSON();
+            _.extend(clonedAttributes, {num: index});
+            return clonedAttributes;
         }
 
     });
