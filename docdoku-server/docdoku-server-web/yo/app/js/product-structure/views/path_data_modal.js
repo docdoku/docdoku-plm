@@ -225,7 +225,7 @@ define([
                         $.ajax({
                             type: 'POST',
                             url: creationURL,
-                            data: JSON.stringify(this.iteration),
+                            data: JSON.stringify(this.iteration.toJSON()),
                             contentType: 'application/json',
                             success: function (data) {
                                 self.model = new PathDataMaster(data);
@@ -270,7 +270,7 @@ define([
                 $.ajax({
                     type: 'PUT',
                     url: updateURL,
-                    data: JSON.stringify(this.iteration),
+                    data: JSON.stringify(this.iteration.toJSON()),
                     contentType: 'application/json',
                     success: function () {
                         callback();
@@ -305,7 +305,7 @@ define([
                 $.ajax({
                     type: 'POST',
                     url: url,
-                    data: JSON.stringify(this.iteration),
+                    data: JSON.stringify(this.iteration.toJSON()),
                     contentType: 'application/json',
                     success: function (data) {
                         self.model = new PathDataMaster(data);
