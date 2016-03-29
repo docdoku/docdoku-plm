@@ -60,6 +60,10 @@
                     .then(onListResults, onError);
             };
 
+            var showInBrowser = function () {
+                $window.open(ConfigurationService.resolveUrl() + '/product-management/#' + $scope.workspace);
+            };
+
             var searchTimeout;
 
             $scope.$watch('filters.search', function (newValue, oldValue) {
@@ -75,11 +79,8 @@
                 }
             });
 
-            $scope.showInBrowser = function () {
-                var host = ConfigurationService.configuration.host;
-                var port = ConfigurationService.configuration.port;
-                $window.open('http://' + host + ':' + port + '/product-management/#' + $scope.workspace);
-            };
+            $scope.$on('refresh',resetList);
+            $scope.$on('showInBrowser',showInBrowser);
 
             $scope.onScrollEnd = function () {
                 if (!$scope.loadingParts && !$scope.search && $scope.start < $scope.count) {

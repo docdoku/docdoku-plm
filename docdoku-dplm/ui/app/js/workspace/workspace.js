@@ -35,6 +35,14 @@
                 parts:1
             };
 
+            $scope.refresh = function() {
+                $scope.$broadcast('refresh');
+            };
+
+            $scope.showInBrowser = function () {
+                $scope.$broadcast('showInBrowser');
+            };
+
             $scope.workspace = $routeParams.workspace;
 
             WorkspaceService.addLastVisited($scope.workspace);

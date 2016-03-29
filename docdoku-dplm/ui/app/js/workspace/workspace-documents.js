@@ -64,10 +64,15 @@
                     .then(onListResults, onError);
             };
 
-            $scope.showInBrowser = function () {
-                var host = ConfigurationService.configuration.host;
-                var port = ConfigurationService.configuration.port;
-                $window.open('http://' + host + ':' + port + '/product-management/#' + $scope.workspace);
+            var showInBrowser = function () {
+                $window.open(ConfigurationService.resolveUrl() + '/product-management/#' + $scope.workspace);
+            };
+
+            var resetList = function () {
+                $scope.documents.length = 0;
+                $scope.loadingDocuments = true;
+                $scope.loadingMore = false;
+                getDocumentsRevisions();
             };
 
             $scope.refreshCurrent = function(){
@@ -82,6 +87,9 @@
                     });
                 });
             };
+
+            $scope.$on('refresh',resetList);
+            $scope.$on('showInBrowser',showInBrowser);
 
             $scope.downloadAllData = {
                 downloading:false,

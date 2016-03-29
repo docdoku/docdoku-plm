@@ -82,5 +82,10 @@
                 checkAtStartupPromise = null;
             };
 
+            this.resolveUrl = function () {
+                var protocole = this.configuration.ssl ? 'https' : 'http';
+                return protocole + '://' + this.configuration.host + ':' + this.configuration.port;
+            }
+
         });
 })();
