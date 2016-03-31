@@ -29,7 +29,7 @@ define([
 
         delimiter: ',',
 
-        initialize: function () {
+        init: function () {
 
             this.selectizeAvailableOptions = _.clone(queryBuilderOptions.fields);
 
@@ -57,13 +57,9 @@ define([
                 }
             };
 
-            this.fetchPartIterationsAttributes();
-            this.fetchPathDataAttributes();
-            this.fetchTags();
         },
 
         fetchQueries: function (queryName) {
-
             this.queries = [];
             var queries = this.queries;
 
@@ -79,13 +75,13 @@ define([
                 $select.append('<option value="'+ q.id+'">'+ q.name+'</option>');
             };
 
-            $.getJSON(url,function(data){
+            return $.getJSON(url,function(data){
                 data.sort(function(a,b){
                     return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1;
                 });
                 data.map(fillOption);
 
-                if (queryName) {
+                if (typeof queryName === 'string') {
                     var selectedQuery = _.find(data, function (query) {
                         return query.name === queryName;
                     });
@@ -190,7 +186,7 @@ define([
             var self = this;
             var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/attributes/part-iterations';
 
-            $.ajax({
+            return $.ajax({
                 type: 'GET',
                 url: url,
                 success: function (data) {
@@ -214,7 +210,7 @@ define([
             var self = this;
             var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/attributes/path-data';
 
-            $.ajax({
+            return $.ajax({
                 type: 'GET',
                 url: url,
                 success: function (data) {
@@ -280,7 +276,7 @@ define([
             var self = this;
             var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/tags';
 
-            $.ajax({
+            return $.ajax({
                 type: 'GET',
                 url: url,
                 success: function (tags) {
@@ -312,12 +308,15 @@ define([
         },
 
         render: function () {
+            this.init();
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
-            this.fillSelectizes();
-            this.fetchQueries();
-            this.initWhere();
-
+            this.fetchPartIterationsAttributes()
+                .then(this.fetchPathDataAttributes.bind(this))
+                .then(this.fetchTags.bind(this))
+                .then(this.fetchQueries.bind(this))
+                .then(this.fillSelectizes.bind(this))
+                .then(this.initWhere.bind(this));
             return this;
         },
 
