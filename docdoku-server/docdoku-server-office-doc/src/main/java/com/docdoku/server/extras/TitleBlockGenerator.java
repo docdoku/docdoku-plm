@@ -213,35 +213,7 @@ public abstract class TitleBlockGenerator {
 
                 if (task.isApproved() || task.isRejected()) {
 
-                    if(!headerRendered){
-                        // Table head
-                        cell = new PdfPCell(new Phrase(activity.getLifeCycleState(),BOLD_12));
-                        cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                        cell.setColspan(5);
-                        lifeCycleTable.addCell(cell);
-
-                        cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.task"),BOLD_12));
-                        cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                        lifeCycleTable.addCell(cell);
-
-                        cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.date"),BOLD_12));
-                        cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                        lifeCycleTable.addCell(cell);
-
-                        cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.author"),BOLD_12));
-                        cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                        lifeCycleTable.addCell(cell);
-
-                        cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.comments"),BOLD_12));
-                        cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                        lifeCycleTable.addCell(cell);
-
-                        cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.signature"),BOLD_12));
-                        cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                        lifeCycleTable.addCell(cell);
-
-                        headerRendered = true;
-                    }
+                    headerRendered = isHeaderRendered(bundle, lifeCycleTable, activity, headerRendered);
 
                     // Table body
                     cell = new PdfPCell(new Phrase(task.getTitle(),NORMAL_12));
@@ -257,26 +229,7 @@ public abstract class TitleBlockGenerator {
                     cell = new PdfPCell(new Phrase(task.getClosureComment(), NORMAL_12));
                     lifeCycleTable.addCell(cell);
 
-                    if (task.getSignature() != null) {
-                        try {
-                            byte[] imageByte;
-                            int indexOfFirstComma = task.getSignature().indexOf(",");
-                            String base64 = task.getSignature().substring(indexOfFirstComma+1,task.getSignature().length());
-                            imageByte = DatatypeConverter.parseBase64Binary(base64);
-                            Image image = Image.getInstance(imageByte);
-                            image.setCompressionLevel(Image.ORIGINAL_NONE);
-                            image.scaleToFit(SIGNATURE_SIZE_W,SIGNATURE_SIZE_H);
-                            cell = new PdfPCell(image);
-                            lifeCycleTable.addCell(cell);
-                        } catch (Exception e) {
-                            cell = new PdfPCell(new Phrase(bundle.getString("signature.error"), NORMAL_12));
-                            lifeCycleTable.addCell(cell);
-                        }
-
-                    } else {
-                        cell = new PdfPCell(new Phrase(""));
-                        lifeCycleTable.addCell(cell);
-                    }
+                    addSignature(bundle, lifeCycleTable, task);
 
                 }
             }
@@ -284,6 +237,64 @@ public abstract class TitleBlockGenerator {
         }
 
         preface.add(lifeCycleTable);
+    }
+
+    private void addSignature(ResourceBundle bundle, PdfPTable lifeCycleTable, Task task) {
+        PdfPCell cell;
+        if (task.getSignature() != null) {
+            try {
+                byte[] imageByte;
+                int indexOfFirstComma = task.getSignature().indexOf(",");
+                String base64 = task.getSignature().substring(indexOfFirstComma+1,task.getSignature().length());
+                imageByte = DatatypeConverter.parseBase64Binary(base64);
+                Image image = Image.getInstance(imageByte);
+                image.setCompressionLevel(Image.ORIGINAL_NONE);
+                image.scaleToFit(SIGNATURE_SIZE_W,SIGNATURE_SIZE_H);
+                cell = new PdfPCell(image);
+                lifeCycleTable.addCell(cell);
+            } catch (Exception e) {
+                cell = new PdfPCell(new Phrase(bundle.getString("signature.error"), NORMAL_12));
+                lifeCycleTable.addCell(cell);
+            }
+
+        } else {
+            cell = new PdfPCell(new Phrase(""));
+            lifeCycleTable.addCell(cell);
+        }
+    }
+
+    private boolean isHeaderRendered(ResourceBundle bundle, PdfPTable lifeCycleTable, Activity activity, boolean headerRendered) {
+        PdfPCell cell;
+        if(!headerRendered){
+            // Table head
+            cell = new PdfPCell(new Phrase(activity.getLifeCycleState(),BOLD_12));
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            cell.setColspan(5);
+            lifeCycleTable.addCell(cell);
+
+            cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.task"),BOLD_12));
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            lifeCycleTable.addCell(cell);
+
+            cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.date"),BOLD_12));
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            lifeCycleTable.addCell(cell);
+
+            cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.author"),BOLD_12));
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            lifeCycleTable.addCell(cell);
+
+            cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.comments"),BOLD_12));
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            lifeCycleTable.addCell(cell);
+
+            cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.signature"),BOLD_12));
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            lifeCycleTable.addCell(cell);
+
+            headerRendered = true;
+        }
+        return headerRendered;
     }
 
     /*
@@ -347,7 +358,8 @@ public abstract class TitleBlockGenerator {
             for (InputStream file : files) {
                 pdfReader = new PdfReader(file);
                 n = pdfReader.getNumberOfPages();
-                for (int page = 0; page < n; ) {
+                int page = 0;
+                while (page < n) {
                     copy.addPage(copy.getImportedPage(pdfReader, ++page));
                 }
             }
