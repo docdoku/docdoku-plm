@@ -229,7 +229,9 @@
                             <inputSpec>${project.build.directory}/swagger/swagger.json</inputSpec>
                             <language>java</language>
                             <output>../docdoku-server-web-api-java/generated-sources/swagger</output>
-                            <apiPackage>com.docdoku.server.api</apiPackage>
+                            <apiPackage>com.docdoku.server.api.services</apiPackage>
+                            <invokerPackage>com.docdoku.server.api.client</invokerPackage>
+                            <modelPackage>com.docdoku.server.api.models</modelPackage>
                             <library>jersey2</library>
                         </configuration>
                     </execution>

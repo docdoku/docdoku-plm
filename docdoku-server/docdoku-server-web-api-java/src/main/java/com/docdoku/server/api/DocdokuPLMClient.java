@@ -1,6 +1,6 @@
-package com.docdoku.server.client;
+package com.docdoku.server.api;
 
-import io.swagger.client.ApiClient;
+import com.docdoku.server.api.client.ApiClient;
 import org.apache.commons.codec.binary.Base64;
 
 import java.io.UnsupportedEncodingException;
@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * This class helps to create the swagger client.
  * @Author Morgan Guimard
  */
 public class DocdokuPLMClient {

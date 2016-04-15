@@ -1,15 +1,16 @@
 package com.docdoku.server.example.api;
 
-import com.docdoku.server.api.AccountsApi;
-import com.docdoku.server.api.FoldersApi;
-import com.docdoku.server.api.WorkspacesApi;
-import com.docdoku.server.client.DocdokuPLMClient;
-import io.swagger.client.ApiClient;
-import io.swagger.client.ApiException;
-import io.swagger.client.model.AccountDTO;
-import io.swagger.client.model.DocumentRevisionDTO;
-import io.swagger.client.model.FolderDTO;
-import io.swagger.client.model.WorkspaceDTO;
+
+import com.docdoku.server.api.DocdokuPLMClient;
+import com.docdoku.server.api.client.ApiClient;
+import com.docdoku.server.api.client.ApiException;
+import com.docdoku.server.api.models.AccountDTO;
+import com.docdoku.server.api.models.DocumentRevisionDTO;
+import com.docdoku.server.api.models.FolderDTO;
+import com.docdoku.server.api.models.WorkspaceDTO;
+import com.docdoku.server.api.services.AccountsApi;
+import com.docdoku.server.api.services.FoldersApi;
+import com.docdoku.server.api.services.WorkspacesApi;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.logging.Logger;
 /**
  * @author Morgan Guimard
  */
-public class UseAPI {
+public class DocdokuPLMClientExample {
 
     private final static String API_URL = "http://localhost:8080/api";
     private final static String USERNAME = "user";
@@ -29,7 +30,7 @@ public class UseAPI {
     private final static String FOLDERB = "FB";
     private final static boolean DEBUG = true;
 
-    private static final Logger LOGGER = Logger.getLogger(UseAPI.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DocdokuPLMClientExample.class.getName());
 
     public static void main(String[] args) throws UnsupportedEncodingException {
 
