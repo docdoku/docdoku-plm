@@ -19,18 +19,24 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.EntityNotFoundException;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.exceptions.UserNotActiveException;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentWorkflowManagerLocal;
 import com.docdoku.core.services.IPartWorkflowManagerLocal;
 import com.docdoku.core.workflow.ActivityKey;
 import com.docdoku.core.workflow.TaskKey;
+import com.docdoku.server.rest.dto.DocumentRevisionDTO;
 import com.docdoku.server.rest.dto.TaskProcessDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -38,6 +44,8 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Morgan Guimard
@@ -53,19 +61,59 @@ public class TaskResource {
     private IDocumentWorkflowManagerLocal documentWorkflowService;
 
     @Inject
-    private IPartWorkflowManagerLocal partWorkflowService;
+    private IDocumentManagerLocal documentService;
 
     @Inject
-    private DocumentsResource documentsResource;
+    private IPartWorkflowManagerLocal partWorkflowService;
+
+    private Mapper mapper;
+
+    @PostConstruct
+    public void init() {
+        mapper = DozerBeanMapperSingletonWrapper.getInstance();
+    }
 
     public TaskResource() {
     }
 
-    @ApiOperation(value = "SubResource : DocumentsResource")
+    @GET
+    @ApiOperation(value = "Get documents where user has assigned tasks", response = DocumentRevisionDTO.class, responseContainer = "List")
     @Path("{assignedUserLogin}/documents/")
-    public DocumentsResource getDocumentsResource() {
-        return documentsResource;
+    @Produces(MediaType.APPLICATION_JSON)
+    public DocumentRevisionDTO[] getDocumentsWhereGivenUserHasAssignedTasks(
+            @PathParam("workspaceId") String workspaceId,
+            @PathParam("assignedUserLogin") String assignedUserLogin,
+            @QueryParam("filter") String filter)
+                throws EntityNotFoundException, UserNotActiveException {
+
+        DocumentRevision[] docRs;
+
+        if(filter == null){
+            docRs = documentService.getDocumentRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
+        }else{
+            if ("in_progress".equals(filter)) {
+                docRs = documentService.getDocumentRevisionsWithOpenedTasksForGivenUser(workspaceId, assignedUserLogin);
+            } else {
+                docRs = documentService.getDocumentRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
+            }
+        }
+
+        List<DocumentRevisionDTO> docRsDTOs = new ArrayList<>();
+
+        for (DocumentRevision docR : docRs) {
+
+            DocumentRevisionDTO docDTO = mapper.map(docR, DocumentRevisionDTO.class);
+            docDTO.setPath(docR.getLocation().getCompletePath());
+            docDTO = Tools.createLightDocumentRevisionDTO(docDTO);
+            docDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docR));
+            docDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docR));
+            docRsDTOs.add(docDTO);
+
+        }
+
+        return docRsDTOs.toArray(new DocumentRevisionDTO[docRsDTOs.size()]);
     }
+
 
     @POST
     @ApiOperation(value = "Approve or reject task on document", response = Response.class)

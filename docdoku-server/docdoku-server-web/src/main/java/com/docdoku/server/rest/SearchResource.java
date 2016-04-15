@@ -46,16 +46,7 @@ public class SearchResource {
     @Inject
     private IWorkspaceManagerLocal workspaceManager;
 
-    @Inject
-    private DocumentsResource documentsResource;
-
     public SearchResource() {
-    }
-
-    @ApiOperation(value = "SubResource : DocumentsResource")
-    @Path("{query : .+}/documents/")
-    public DocumentsResource getDocumentsResource() {
-        return documentsResource;
     }
 
     @PUT

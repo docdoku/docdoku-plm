@@ -19,19 +19,31 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.common.Account;
+import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.DocumentConfigSpec;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
+import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLUserEntry;
+import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentConfigSpecManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.server.rest.dto.FolderDTO;
+import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.util.ConfigSpecHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -39,6 +51,13 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RequestScoped
 @Api(hidden = true, value = "folders", description = "Operations about folders")
@@ -52,16 +71,121 @@ public class FolderResource {
     @Inject
     private IDocumentConfigSpecManagerLocal documentConfigSpecService;
 
-    @Inject
-    private DocumentsResource documentsResource;
+    private static final Logger LOGGER = Logger.getLogger(FolderResource.class.getName());
+
+    private Mapper mapper;
+
+    @PostConstruct
+    public void init() {
+        mapper = DozerBeanMapperSingletonWrapper.getInstance();
+    }
 
     public FolderResource() {
     }
 
-    @ApiOperation(value = "FoldersDocumentsResource")
+    @GET
     @Path("{folderId}/documents/")
-    public DocumentsResource getDocumentsResource() {
-        return documentsResource;
+    @ApiOperation(value = "Get documents in folder", response = DocumentRevisionDTO.class, responseContainer = "List")
+    @Produces(MediaType.APPLICATION_JSON)
+    public DocumentRevisionDTO[] getDocumentsWithGivenFolderIdAndWorkspaceId(
+            @PathParam("workspaceId") String workspaceId,
+             @PathParam("folderId") String folderId,
+             @QueryParam("configSpec") String configSpecType)
+            throws EntityNotFoundException, UserNotActiveException {
+
+        String decodedCompletePath = getPathFromUrlParams(workspaceId, folderId);
+        DocumentRevision[] docRs;
+        if (configSpecType == null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
+            docRs = documentService.findDocumentRevisionsByFolder(decodedCompletePath);
+        } else {
+            DocumentConfigSpec configSpec = ConfigSpecHelper.getConfigSpec(workspaceId, configSpecType,documentConfigSpecService);
+            docRs = documentConfigSpecService.getFilteredDocumentsByFolder(workspaceId, configSpec, decodedCompletePath);
+        }
+        DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
+
+        for (int i = 0; i < docRs.length; i++) {
+            docRsDTOs[i] = mapper.map(docRs[i], DocumentRevisionDTO.class);
+            docRsDTOs[i].setPath(docRs[i].getLocation().getCompletePath());
+            docRsDTOs[i] = Tools.createLightDocumentRevisionDTO(docRsDTOs[i]);
+            if (configSpecType == null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
+                docRsDTOs[i].setLifeCycleState(docRs[i].getLifeCycleState());
+                docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
+                docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
+            }else{
+                docRsDTOs[i].setWorkflow(null);
+                docRsDTOs[i].setTags(null);
+            }
+        }
+
+        return docRsDTOs;
+    }
+
+    @POST
+    @Path("{folderId}/documents/")
+    @ApiOperation(value = "Create document", response = Response.class)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createDocumentMasterInFolder(
+            @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Document to create") DocumentCreationDTO docCreationDTO,
+            @PathParam("folderId") String folderId,
+            @QueryParam("configSpec") String configSpecType)
+            throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, CreationException, AccessRightException{
+
+        String pDocMID = docCreationDTO.getReference();
+        String pTitle = docCreationDTO.getTitle();
+        String pDescription = docCreationDTO.getDescription();
+
+        String decodedCompletePath = getPathFromUrlParams(workspaceId, folderId);
+
+        String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
+        RoleMappingDTO[] rolesMappingDTO = docCreationDTO.getRoleMapping();
+        String pDocMTemplateId = docCreationDTO.getTemplateId();
+
+        ACLDTO acl = docCreationDTO.getAcl();
+
+        ACLUserEntry[] userEntries = null;
+        ACLUserGroupEntry[] userGroupEntries = null;
+        if (acl != null) {
+            userEntries = new ACLUserEntry[acl.getUserEntries().size()];
+            userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
+            int i = 0;
+            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+                userEntries[i] = new ACLUserEntry();
+                userEntries[i].setPrincipal(new User(new Workspace(workspaceId), new Account(entry.getKey())));
+                userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+            }
+            i = 0;
+            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+                userGroupEntries[i] = new ACLUserGroupEntry();
+                userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
+                userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+            }
+        }
+
+        Map<String, String> roleMappings = new HashMap<>();
+
+        if(rolesMappingDTO != null){
+            for(RoleMappingDTO roleMappingDTO : rolesMappingDTO){
+                roleMappings.put(roleMappingDTO.getRoleName(),roleMappingDTO.getUserLogin());
+            }
+        }
+        DocumentRevision createdDocRs =  documentService.createDocumentMaster(decodedCompletePath, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries, roleMappings);
+
+        DocumentRevisionDTO docRsDTO = mapper.map(createdDocRs, DocumentRevisionDTO.class);
+        docRsDTO.setPath(createdDocRs.getLocation().getCompletePath());
+        docRsDTO.setLifeCycleState(createdDocRs.getLifeCycleState());
+
+        try{
+            return Response.created(URI.create(URLEncoder.encode(pDocMID + "-" + createdDocRs.getVersion(), "UTF-8"))).entity(docRsDTO).build();
+        } catch (UnsupportedEncodingException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
+            return Response.ok().build();
+        }
+    }
+
+    private String getPathFromUrlParams(String workspaceId, String folderId) {
+        return folderId == null ? Tools.stripTrailingSlash(workspaceId) : Tools.stripTrailingSlash(FolderDTO.replaceColonWithSlash(folderId));
     }
 
     /**
@@ -97,7 +221,7 @@ public class FolderResource {
         if(configSpecType==null || "latest".equals(configSpecType)){
             folderNames = documentService.getFolders(completePath);
         }else{
-            DocumentConfigSpec cs = getConfigSpec(workspaceId, configSpecType);
+            DocumentConfigSpec cs = ConfigSpecHelper.getConfigSpec(workspaceId, configSpecType, documentConfigSpecService);
             folderNames = documentConfigSpecService.getFilteredFolders(workspaceId,cs,completePath);
         }
 
@@ -248,27 +372,4 @@ public class FolderResource {
         return createdFolderDtos;
     }
 
-    /**
-     * Get a configuration specification
-     * @param workspaceId The current workspace
-     * @param configSpecType The configuration specification type
-     * @return A configuration specification
-     * @throws UserNotFoundException If the user login-workspace doesn't exist
-     * @throws UserNotActiveException If the user is disabled
-     * @throws WorkspaceNotFoundException If the workspace doesn't exist
-     * @throws BaselineNotFoundException If the baseline doesn't exist
-     */
-    private DocumentConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
-        DocumentConfigSpec cs;
-        switch (configSpecType) {
-            case "latest":
-            case "undefined":
-                cs = documentConfigSpecService.getLatestConfigSpec(workspaceId);
-                break;
-            default:
-                cs = documentConfigSpecService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
-                break;
-        }
-        return cs;
-    }
 }

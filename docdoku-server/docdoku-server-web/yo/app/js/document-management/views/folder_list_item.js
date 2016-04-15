@@ -236,7 +236,7 @@ define([
 
         onDragStart : function(e){
 
-            var data = JSON.stringify(this.model);
+            var data = JSON.stringify(this.model.toJSON());
 
             if(!data || this.model.get('home')){
                 e.preventDefault();

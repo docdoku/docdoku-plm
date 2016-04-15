@@ -19,15 +19,30 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.common.Account;
+import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.common.Workspace;
+import com.docdoku.core.configuration.DocumentConfigSpec;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.TagKey;
+import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLUserEntry;
+import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IDocumentConfigSpecManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.server.rest.dto.TagDTO;
-import com.docdoku.server.rest.dto.TagListDTO;
+import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.util.ConfigSpecHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -36,8 +51,15 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -53,15 +75,18 @@ public class TagResource {
     private IDocumentManagerLocal documentService;
 
     @Inject
-    private DocumentsResource documentsResource;
+    private IDocumentConfigSpecManagerLocal documentConfigSpecService;
+
+    private final static Logger LOGGER = Logger.getLogger(TagResource.class.getName());
+
+    private Mapper mapper;
 
     public TagResource() {
     }
 
-    @ApiOperation(value = "SubResource DocumentResource")
-    @Path("{tagId}/documents/")
-    public DocumentsResource getDocumentsResource() {
-        return documentsResource;
+    @PostConstruct
+    public void init() {
+        mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
     @GET
@@ -85,7 +110,7 @@ public class TagResource {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public TagDTO createTag(@PathParam("workspaceId") String workspaceId, TagDTO tag)
+    public TagDTO createTag(@PathParam("workspaceId") String workspaceId, @ApiParam(value = "Tag to create", required = true) TagDTO tag)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, CreationException {
 
         documentService.createTag(workspaceId, tag.getLabel());
@@ -96,7 +121,7 @@ public class TagResource {
     @ApiOperation(value = "Create tags in workspace", response = Response.class)
     @Path("/multiple")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createTags(@PathParam("workspaceId") String workspaceId, TagListDTO tagList)
+    public Response createTags(@PathParam("workspaceId") String workspaceId, @ApiParam(value = "Tag list to create", required = true) TagListDTO tagList)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, CreationException {
 
         for(TagDTO tagDTO : tagList.getTags()){
@@ -114,4 +139,111 @@ public class TagResource {
         documentService.deleteTag(new TagKey(workspaceId, tagId));
         return Response.ok().build();
     }
+
+    @GET
+    @ApiOperation(value = "Get documents from given tag id", response = DocumentRevisionDTO.class, responseContainer = "List")
+    @Path("{tagId}/documents/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public DocumentRevisionDTO[] getDocumentsWithGivenTagIdAndWorkspaceId(
+            @PathParam("workspaceId") String workspaceId,
+            @PathParam("tagId") String tagId,
+            @QueryParam("configSpec") String configSpecType)
+            throws EntityNotFoundException, UserNotActiveException {
+
+        DocumentRevision[] docRs;
+        TagKey tagKey = new TagKey(workspaceId, tagId);
+        if(configSpecType==null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
+            docRs = documentService.findDocumentRevisionsByTag(tagKey);
+        }else{
+            DocumentConfigSpec configSpec = ConfigSpecHelper.getConfigSpec(workspaceId, configSpecType, documentConfigSpecService);
+            docRs = documentConfigSpecService.getFilteredDocumentsByTag(workspaceId, configSpec, tagKey);
+        }
+        DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
+
+        for (int i = 0; i < docRs.length; i++) {
+            docRsDTOs[i] = mapper.map(docRs[i], DocumentRevisionDTO.class);
+            docRsDTOs[i].setPath(docRs[i].getLocation().getCompletePath());
+            docRsDTOs[i] = Tools.createLightDocumentRevisionDTO(docRsDTOs[i]);
+            if (configSpecType == null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
+                docRsDTOs[i].setLifeCycleState(docRs[i].getLifeCycleState());
+                docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
+                docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
+            }else{
+                docRsDTOs[i].setWorkflow(null);
+                docRsDTOs[i].setTags(null);
+            }
+        }
+
+        return docRsDTOs;
+    }
+
+    @POST
+    @Path("{tagId}/documents/")
+    @ApiOperation(value = "Create document", response = Response.class)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createDocumentMasterInRootFolderWithTag(
+            @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Document to create") DocumentCreationDTO docCreationDTO,
+            @PathParam("tagId") String tagId,
+            @QueryParam("configSpec") String configSpecType) throws CreationException, FileAlreadyExistsException, DocumentRevisionAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, DocumentMasterAlreadyExistsException, RoleNotFoundException, FolderNotFoundException, WorkflowModelNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, ESServerException {
+
+        String pDocMID = docCreationDTO.getReference();
+        String pTitle = docCreationDTO.getTitle();
+        String pDescription = docCreationDTO.getDescription();
+
+        String decodedCompletePath = getPathFromUrlParams(workspaceId, workspaceId);
+
+        String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
+        RoleMappingDTO[] rolesMappingDTO = docCreationDTO.getRoleMapping();
+        String pDocMTemplateId = docCreationDTO.getTemplateId();
+
+        ACLDTO acl = docCreationDTO.getAcl();
+
+        ACLUserEntry[] userEntries = null;
+        ACLUserGroupEntry[] userGroupEntries = null;
+        if (acl != null) {
+            userEntries = new ACLUserEntry[acl.getUserEntries().size()];
+            userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
+            int i = 0;
+            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+                userEntries[i] = new ACLUserEntry();
+                userEntries[i].setPrincipal(new User(new Workspace(workspaceId), new Account(entry.getKey())));
+                userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+            }
+            i = 0;
+            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+                userGroupEntries[i] = new ACLUserGroupEntry();
+                userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
+                userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+            }
+        }
+
+        Map<String, String> roleMappings = new HashMap<>();
+
+        if(rolesMappingDTO != null){
+            for(RoleMappingDTO roleMappingDTO : rolesMappingDTO){
+                roleMappings.put(roleMappingDTO.getRoleName(),roleMappingDTO.getUserLogin());
+            }
+        }
+
+        DocumentRevision createdDocRs =  documentService.createDocumentMaster(decodedCompletePath, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries, roleMappings);
+        documentService.saveTags(createdDocRs.getKey(), new String[]{tagId});
+
+        DocumentRevisionDTO docRsDTO = mapper.map(createdDocRs, DocumentRevisionDTO.class);
+        docRsDTO.setPath(createdDocRs.getLocation().getCompletePath());
+        docRsDTO.setLifeCycleState(createdDocRs.getLifeCycleState());
+
+        try{
+            return Response.created(URI.create(URLEncoder.encode(pDocMID + "-" + createdDocRs.getVersion(), "UTF-8"))).entity(docRsDTO).build();
+        } catch (UnsupportedEncodingException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
+            return Response.ok().build();
+        }
+    }
+
+    private String getPathFromUrlParams(String workspaceId, String folderId) {
+        return folderId == null ? Tools.stripTrailingSlash(workspaceId) : Tools.stripTrailingSlash(FolderDTO.replaceColonWithSlash(folderId));
+    }
+
 }

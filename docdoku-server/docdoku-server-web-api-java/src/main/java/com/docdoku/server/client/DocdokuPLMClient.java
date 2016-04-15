@@ -4,6 +4,7 @@ import io.swagger.client.ApiClient;
 import org.apache.commons.codec.binary.Base64;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,6 +31,7 @@ public class DocdokuPLMClient {
 
     private void createClient(String host, String login, String password, boolean debug) {
         client = new ApiClient();
+        client.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
         client.setBasePath(host);
         client.setDebugging(debug);
         try{

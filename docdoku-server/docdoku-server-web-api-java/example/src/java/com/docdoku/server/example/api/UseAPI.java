@@ -7,6 +7,7 @@ import com.docdoku.server.client.DocdokuPLMClient;
 import io.swagger.client.ApiClient;
 import io.swagger.client.ApiException;
 import io.swagger.client.model.AccountDTO;
+import io.swagger.client.model.DocumentRevisionDTO;
 import io.swagger.client.model.FolderDTO;
 import io.swagger.client.model.WorkspaceDTO;
 
@@ -18,7 +19,7 @@ import java.util.logging.Logger;
 /**
  * @author Morgan Guimard
  */
-public class UseApi {
+public class UseAPI {
 
     private final static String API_URL = "http://localhost:8080/api";
     private final static String USERNAME = "user";
@@ -28,7 +29,7 @@ public class UseApi {
     private final static String FOLDERB = "FB";
     private final static boolean DEBUG = true;
 
-    private static final Logger LOGGER = Logger.getLogger(UseApi.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(UseAPI.class.getName());
 
     public static void main(String[] args) throws UnsupportedEncodingException {
 
@@ -36,6 +37,8 @@ public class UseApi {
         ApiClient client = plmClient.getClient();
 
         AccountsApi accountsApi = new AccountsApi(client);
+        WorkspacesApi workspacesApi = new WorkspacesApi(client);
+        FoldersApi foldersApi = new FoldersApi(client);
 
         try {
             AccountDTO account = accountsApi.getAccount();
@@ -51,7 +54,6 @@ public class UseApi {
             LOGGER.log(Level.SEVERE, "Error " + client.getStatusCode() , e);
         }
 
-        WorkspacesApi workspacesApi = new WorkspacesApi(client);
         WorkspaceDTO workspaceDTO = new WorkspaceDTO();
         workspaceDTO.setId(WORKSPACE);
 
@@ -62,7 +64,6 @@ public class UseApi {
 
         }
 
-        FoldersApi foldersApi = new FoldersApi(client);
         try {
             List<FolderDTO> rootFolders = foldersApi.getRootFolders(WORKSPACE, null);
             System.out.println(rootFolders);
@@ -79,8 +80,22 @@ public class UseApi {
             LOGGER.log(Level.SEVERE, "Error " + client.getStatusCode(), e);
         }
 
+        try {
+            List<DocumentRevisionDTO> documentsWithGivenFolderIdAndWorkspaceId = foldersApi.getDocumentsWithGivenFolderIdAndWorkspaceId(WORKSPACE, WORKSPACE + ":" + FOLDERA, null);
+            System.out.println(documentsWithGivenFolderIdAndWorkspaceId);
+        } catch (ApiException e) {
+            LOGGER.log(Level.SEVERE, "Error " + client.getStatusCode(), e);
+        }
 
+        try {
+            List<DocumentRevisionDTO> documentsInWorkspace = workspacesApi.getDocumentsInWorkspace(WORKSPACE, 0, null);
+            System.out.println(documentsInWorkspace);
+        } catch (ApiException e) {
+            LOGGER.log(Level.SEVERE, "Error " + client.getStatusCode(), e);
+        }
 
     }
+
+
 
 }

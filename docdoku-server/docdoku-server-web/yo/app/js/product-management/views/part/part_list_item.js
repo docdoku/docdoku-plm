@@ -143,7 +143,7 @@ define([
                 Backbone.Events.off('part-error-moved');
                 that.$el.removeClass('moving');
             });
-            var data = JSON.stringify(this.model);
+            var data = JSON.stringify(this.model.toJSON());
             e.dataTransfer.setData('part:text/plain', data);
             e.dataTransfer.dropEffect = 'none';
             e.dataTransfer.effectAllowed = 'copyMove';

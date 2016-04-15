@@ -19,15 +19,28 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.exceptions.UserNotActiveException;
+import com.docdoku.core.exceptions.UserNotFoundException;
+import com.docdoku.core.exceptions.WorkspaceNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.server.rest.dto.DocumentRevisionDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 @RequestScoped
 @Api(hidden = true, value = "checked-out-documents", description = "Operations about checked out documents")
@@ -36,16 +49,35 @@ import javax.ws.rs.Path;
 public class CheckedOutDocumentResource {
 
     @Inject
-    private DocumentsResource documentsResource;
+    private IDocumentManagerLocal documentService;
 
+    private Mapper mapper;
 
     public CheckedOutDocumentResource() {
     }
 
-    @ApiOperation(value = "SubResource : DocumentsResource")
-    @Path("{checkoutUser}/documents/")
-    public DocumentsResource getDocumentsResource() {
-        return documentsResource;
+    @PostConstruct
+    public void init() {
+        mapper = DozerBeanMapperSingletonWrapper.getInstance();
+    }
+
+    @GET
+    @Path("{checkoutUser}/documents")
+    @ApiOperation(value = "Get documents checked out by caller", response = DocumentRevisionDTO.class, responseContainer = "List")
+    @Produces(MediaType.APPLICATION_JSON)
+    public DocumentRevisionDTO[] getDocumentsCheckedOutByUser(@PathParam("workspaceId") String workspaceId) throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
+        DocumentRevision[] docRs = documentService.getCheckedOutDocumentRevisions(workspaceId);
+        DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
+
+        for (int i = 0; i < docRs.length; i++) {
+            docRsDTOs[i] = mapper.map(docRs[i], DocumentRevisionDTO.class);
+            docRsDTOs[i].setPath(docRs[i].getLocation().getCompletePath());
+            docRsDTOs[i] = Tools.createLightDocumentRevisionDTO(docRsDTOs[i]);
+            docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
+            docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docRs[i]));
+        }
+
+        return docRsDTOs;
     }
 
 }

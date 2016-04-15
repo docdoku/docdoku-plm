@@ -116,7 +116,7 @@ define([
                 Backbone.Events.off('document-error-moved');
                 that.$el.removeClass('moving');
             });
-            var data = JSON.stringify(this.model);
+            var data = JSON.stringify(this.model.toJSON());
             var img = document.createElement('img');
             img.src = App.config.contextPath + '/images/icon-action-document-move.png';
             e.dataTransfer.setDragImage(img, 0, 0);

@@ -45,6 +45,7 @@ import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
+import com.docdoku.server.rest.util.ConfigSpecHelper;
 import com.docdoku.server.rest.util.InstanceAttributeFactory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -80,8 +81,6 @@ public class DocumentResource {
     @Inject
     private IDocumentConfigSpecManagerLocal documentConfigSpecService;
 
-    private static final String BASELINE_LATEST = "latest";
-    private static final String BASELINE_UNDEFINED = "undefined";
     private Mapper mapper;
 
     public DocumentResource() {
@@ -94,7 +93,6 @@ public class DocumentResource {
 
     @GET
     @ApiOperation(value = "Get document", response = DocumentRevisionDTO.class)
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO getDocumentRevision(@PathParam("workspaceId") String workspaceId,
                                                    @PathParam("documentId") String documentId,
@@ -103,17 +101,17 @@ public class DocumentResource {
             throws EntityNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException {
         DocumentRevision docR;
         DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
-        if (configSpecType == null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
+        if (configSpecType == null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
             docR = documentService.getDocumentRevision(documentRevisionKey);
         } else {
-            DocumentConfigSpec configSpec = getConfigSpec(workspaceId, configSpecType);
+            DocumentConfigSpec configSpec = ConfigSpecHelper.getConfigSpec(workspaceId, configSpecType, documentConfigSpecService);
             docR = documentConfigSpecService.getFilteredDocumentRevision(documentRevisionKey, configSpec);
         }
 
         DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
         docRsDTO.setPath(docR.getLocation().getCompletePath());
 
-        if (configSpecType == null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
+        if (configSpecType == null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
             setDocumentRevisionDTOWorkflow(docR, docRsDTO);
             docRsDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docR));
             docRsDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docR));
@@ -591,28 +589,4 @@ public class DocumentResource {
         return data;
     }
 
-    /**
-     * Get a configuration specification
-     *
-     * @param workspaceId    The current workspace
-     * @param configSpecType The configuration specification type
-     * @return A configuration specification
-     * @throws com.docdoku.core.exceptions.UserNotFoundException      If the user login-workspace doesn't exist
-     * @throws com.docdoku.core.exceptions.UserNotActiveException     If the user is disabled
-     * @throws com.docdoku.core.exceptions.WorkspaceNotFoundException If the workspace doesn't exist
-     * @throws com.docdoku.core.exceptions.BaselineNotFoundException  If the baseline doesn't exist
-     */
-    private DocumentConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
-        DocumentConfigSpec cs;
-        switch (configSpecType) {
-            case BASELINE_LATEST:
-            case BASELINE_UNDEFINED:
-                cs = documentConfigSpecService.getLatestConfigSpec(workspaceId);
-                break;
-            default:
-                cs = documentConfigSpecService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
-                break;
-        }
-        return cs;
-    }
 }

@@ -19,7 +19,6 @@ define([
             deleteButton: deleteButton,
             checkoutButtonGroup: checkoutButtonGroup,
             tagsButton: tagsButton,
-            newVersionButton: newVersionButton,
             searchForm: searchForm,
             aclButton: aclButton
         },

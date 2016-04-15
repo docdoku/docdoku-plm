@@ -18,24 +18,17 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.common.Account;
-import com.docdoku.core.common.User;
-import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.DocumentConfigSpec;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
-import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.meta.TagKey;
 import com.docdoku.core.query.DocumentSearchQuery;
-import com.docdoku.core.security.ACL;
-import com.docdoku.core.security.ACLUserEntry;
-import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentConfigSpecManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentWorkflowManagerLocal;
-import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.dto.CountDTO;
+import com.docdoku.server.rest.dto.DocumentRevisionDTO;
+import com.docdoku.server.rest.util.ConfigSpecHelper;
 import com.docdoku.server.rest.util.SearchQueryParser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,15 +41,12 @@ import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
-import javax.ws.rs.core.*;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URLEncoder;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RequestScoped
@@ -81,8 +71,7 @@ public class DocumentsResource {
     private DocumentResource documentResource;
 
     private static final Logger LOGGER = Logger.getLogger(DocumentsResource.class.getName());
-    private static final String BASELINE_LATEST = "latest";
-    private static final String BASELINE_UNDEFINED = "undefined";
+
     private Mapper mapper;
 
     public DocumentsResource() {
@@ -95,40 +84,42 @@ public class DocumentsResource {
 
     @ApiOperation(value = "SubResource : DocumentResource")
     @Path("{documentId: [^/].*}-{documentVersion:[A-Z]+}")
-    @Produces(MediaType.APPLICATION_JSON)
     public DocumentResource getDocumentResource() {
         return documentResource;
     }
 
     @GET
-    @ApiOperation(value = "Get documents from given params", response = DocumentRevisionDTO.class, responseContainer = "List")
-    @Path("/")
+    @ApiOperation(value = "Get documents in workspace", response = DocumentRevisionDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO[] getDocuments(
+    @Path("/")
+    public DocumentRevisionDTO[] getDocumentsInWorkspace(
             @PathParam("workspaceId") String workspaceId,
-            @PathParam("folderId") String folderId,
-            @PathParam("tagId") String tagId,
-            @PathParam("query") String query,
-            @PathParam("assignedUserLogin") String assignedUserLogin,
-            @PathParam("checkoutUser") String checkoutUser,
-            @QueryParam("filter") String filter,
             @QueryParam("start") int start,
             @QueryParam("configSpec") String configSpecType)
-            throws EntityNotFoundException, UserNotActiveException, ESServerException {
-        if(checkoutUser != null){
-            return getDocumentsCheckedOutByUser(workspaceId);
+            throws UserNotActiveException, ESServerException, WorkspaceNotFoundException, UserNotFoundException, BaselineNotFoundException, DocumentRevisionNotFoundException {
+
+        int maxResult = 20;
+
+        DocumentRevision[] docRs;
+        if(configSpecType==null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
+            docRs = documentService.getAllDocumentsInWorkspace(workspaceId, start, maxResult);
+        }else{
+            DocumentConfigSpec configSpec = ConfigSpecHelper.getConfigSpec(workspaceId, configSpecType, documentConfigSpecService);
+            docRs = documentConfigSpecService.getFilteredDocuments(workspaceId,configSpec,start,maxResult);
         }
-        if(tagId != null){
-            return getDocumentsWithGivenTagIdAndWorkspaceId(workspaceId, tagId, configSpecType);
+        DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
+
+        for (int i = 0; i < docRs.length; i++) {
+            docRsDTOs[i] = mapper.map(docRs[i], DocumentRevisionDTO.class);
+            docRsDTOs[i].setPath(docRs[i].getLocation().getCompletePath());
+            docRsDTOs[i] = Tools.createLightDocumentRevisionDTO(docRsDTOs[i]);
+            docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docRs[i]));
+            docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docRs[i]));
         }
-        if(assignedUserLogin !=null){
-            return getDocumentsWhereGivenUserHasAssignedTasks(workspaceId, assignedUserLogin, filter);
-        }
-        if(folderId != null){
-            return getDocumentsWithGivenFolderIdAndWorkspaceId(workspaceId,folderId, configSpecType);
-        }
-        return getDocumentsInWorkspace(workspaceId, start, configSpecType);
+
+        return docRsDTOs;
     }
+
 
     @GET
     @ApiOperation(value = "Search documents", response = DocumentRevisionDTO.class, responseContainer = "List")
@@ -141,10 +132,10 @@ public class DocumentsResource {
         DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseDocumentStringQuery(workspaceId,params);
 
         DocumentRevision[] docRs;
-        if(configSpecType==null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
+        if(configSpecType==null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
             docRs = documentService.searchDocumentRevisions(documentSearchQuery);
         }else{
-            DocumentConfigSpec configSpec = getConfigSpec(workspaceId,configSpecType);
+            DocumentConfigSpec configSpec = ConfigSpecHelper.getConfigSpec(workspaceId, configSpecType, documentConfigSpecService);
             docRs = documentConfigSpecService.searchFilteredDocuments(workspaceId,configSpec,documentSearchQuery);
         }
         DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
@@ -169,69 +160,6 @@ public class DocumentsResource {
         return new CountDTO(documentService.getDocumentsInWorkspaceCount(Tools.stripTrailingSlash(workspaceId)));
     }
 
-    @POST
-    @Path("/")
-    @ApiOperation(value = "Create document", response = Response.class)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response createDocumentMasterInFolder(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO, @PathParam("folderId") String folderId, @QueryParam("configSpec") String configSpecType)
-            throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, CreationException, AccessRightException{
-
-        String pDocMID = docCreationDTO.getReference();
-        String pTitle = docCreationDTO.getTitle();
-        String pDescription = docCreationDTO.getDescription();
-
-        String decodedCompletePath = getPathFromUrlParams(workspaceId, folderId);
-
-        String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
-        RoleMappingDTO[] rolesMappingDTO = docCreationDTO.getRoleMapping();
-        String pDocMTemplateId = docCreationDTO.getTemplateId();
-
-        ACLDTO acl = docCreationDTO.getAcl();
-
-        ACLUserEntry[] userEntries = null;
-        ACLUserGroupEntry[] userGroupEntries = null;
-        if (acl != null) {
-            userEntries = new ACLUserEntry[acl.getUserEntries().size()];
-            userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
-            int i = 0;
-            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
-                userEntries[i] = new ACLUserEntry();
-                userEntries[i].setPrincipal(new User(new Workspace(workspaceId), new Account(entry.getKey())));
-                userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
-            }
-            i = 0;
-            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
-                userGroupEntries[i] = new ACLUserGroupEntry();
-                userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
-                userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
-            }
-        }
-
-        Map<String, String> roleMappings = new HashMap<>();
-
-        if(rolesMappingDTO != null){
-            for(RoleMappingDTO roleMappingDTO : rolesMappingDTO){
-                roleMappings.put(roleMappingDTO.getRoleName(),roleMappingDTO.getUserLogin());
-            }
-        }
-        DocumentRevision createdDocRs =  documentService.createDocumentMaster(decodedCompletePath, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries, roleMappings);
-
-        DocumentRevisionDTO docRsDTO = mapper.map(createdDocRs, DocumentRevisionDTO.class);
-        docRsDTO.setPath(createdDocRs.getLocation().getCompletePath());
-        docRsDTO.setLifeCycleState(createdDocRs.getLifeCycleState());
-
-        try{
-            return Response.created(URI.create(URLEncoder.encode(pDocMID + "-" + createdDocRs.getVersion(),"UTF-8"))).entity(docRsDTO).build();
-        } catch (UnsupportedEncodingException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            return Response.ok().build();
-        }
-    }
-
-    private String getPathFromUrlParams(String workspaceId, String folderId) {
-        return folderId == null ? Tools.stripTrailingSlash(workspaceId) : Tools.stripTrailingSlash(FolderDTO.replaceColonWithSlash(folderId));
-    }
 
     @GET
     @ApiOperation(value = "Get checked out documents", response = DocumentRevisionDTO.class, responseContainer = "List")
@@ -288,157 +216,4 @@ public class DocumentsResource {
         return baselinesResource;
     }
 
-    private DocumentRevisionDTO[] getDocumentsInWorkspace(String workspaceId, int start, String configSpecType)
-            throws EntityNotFoundException, UserNotActiveException {
-        int maxResult = 20;
-
-        DocumentRevision[] docRs;
-        if(configSpecType==null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
-            docRs = documentService.getAllDocumentsInWorkspace(workspaceId, start, maxResult);
-        }else{
-            DocumentConfigSpec configSpec = getConfigSpec(workspaceId,configSpecType);
-            docRs = documentConfigSpecService.getFilteredDocuments(workspaceId,configSpec,start,maxResult);
-        }
-        DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
-
-        for (int i = 0; i < docRs.length; i++) {
-            docRsDTOs[i] = mapper.map(docRs[i], DocumentRevisionDTO.class);
-            docRsDTOs[i].setPath(docRs[i].getLocation().getCompletePath());
-            docRsDTOs[i] = Tools.createLightDocumentRevisionDTO(docRsDTOs[i]);
-            docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docRs[i]));
-            docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docRs[i]));
-        }
-
-        return docRsDTOs;
-    }
-
-    private DocumentRevisionDTO[] getDocumentsCheckedOutByUser(String workspaceId)
-            throws EntityNotFoundException, UserNotActiveException {
-        DocumentRevision[] docRs = documentService.getCheckedOutDocumentRevisions(workspaceId);
-        DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
-
-        for (int i = 0; i < docRs.length; i++) {
-            docRsDTOs[i] = mapper.map(docRs[i], DocumentRevisionDTO.class);
-            docRsDTOs[i].setPath(docRs[i].getLocation().getCompletePath());
-            docRsDTOs[i] = Tools.createLightDocumentRevisionDTO(docRsDTOs[i]);
-            docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
-            docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docRs[i]));
-        }
-
-        return docRsDTOs;
-    }
-
-    private DocumentRevisionDTO[] getDocumentsWithGivenFolderIdAndWorkspaceId(String workspaceId, String folderId, String configSpecType)
-            throws EntityNotFoundException, UserNotActiveException {
-        String decodedCompletePath = getPathFromUrlParams(workspaceId, folderId);
-        DocumentRevision[] docRs;
-        if (configSpecType == null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
-            docRs = documentService.findDocumentRevisionsByFolder(decodedCompletePath);
-        } else {
-            DocumentConfigSpec configSpec = getConfigSpec(workspaceId, configSpecType);
-            docRs = documentConfigSpecService.getFilteredDocumentsByFolder(workspaceId, configSpec, decodedCompletePath);
-        }
-        DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
-
-        for (int i = 0; i < docRs.length; i++) {
-            docRsDTOs[i] = mapper.map(docRs[i], DocumentRevisionDTO.class);
-            docRsDTOs[i].setPath(docRs[i].getLocation().getCompletePath());
-            docRsDTOs[i] = Tools.createLightDocumentRevisionDTO(docRsDTOs[i]);
-            if (configSpecType == null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
-                docRsDTOs[i].setLifeCycleState(docRs[i].getLifeCycleState());
-                docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
-                docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
-            }else{
-                docRsDTOs[i].setWorkflow(null);
-                docRsDTOs[i].setTags(null);
-            }
-        }
-
-        return docRsDTOs;
-    }
-
-    private DocumentRevisionDTO[] getDocumentsWithGivenTagIdAndWorkspaceId(String workspaceId, String tagId, String configSpecType)
-            throws EntityNotFoundException, UserNotActiveException {
-
-        DocumentRevision[] docRs;
-        TagKey tagKey = new TagKey(workspaceId, tagId);
-        if(configSpecType==null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
-            docRs = documentService.findDocumentRevisionsByTag(tagKey);
-        }else{
-            DocumentConfigSpec configSpec = getConfigSpec(workspaceId,configSpecType);
-            docRs = documentConfigSpecService.getFilteredDocumentsByTag(workspaceId, configSpec, tagKey);
-        }
-        DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
-
-        for (int i = 0; i < docRs.length; i++) {
-            docRsDTOs[i] = mapper.map(docRs[i], DocumentRevisionDTO.class);
-            docRsDTOs[i].setPath(docRs[i].getLocation().getCompletePath());
-            docRsDTOs[i] = Tools.createLightDocumentRevisionDTO(docRsDTOs[i]);
-            if (configSpecType == null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
-                docRsDTOs[i].setLifeCycleState(docRs[i].getLifeCycleState());
-                docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
-                docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
-            }else{
-                docRsDTOs[i].setWorkflow(null);
-                docRsDTOs[i].setTags(null);
-            }
-        }
-
-        return docRsDTOs;
-    }
-
-    private DocumentRevisionDTO[] getDocumentsWhereGivenUserHasAssignedTasks(String workspaceId, String assignedUserLogin, String filter)
-            throws EntityNotFoundException, UserNotActiveException {
-
-        DocumentRevision[] docRs;
-        if(filter == null){
-            docRs = documentService.getDocumentRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
-        }else{
-            if ("in_progress".equals(filter)) {
-                docRs = documentService.getDocumentRevisionsWithOpenedTasksForGivenUser(workspaceId, assignedUserLogin);
-            } else {
-                docRs = documentService.getDocumentRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
-            }
-        }
-
-        List<DocumentRevisionDTO> docRsDTOs = new ArrayList<>();
-
-        for (DocumentRevision docR : docRs) {
-
-            DocumentRevisionDTO docDTO = mapper.map(docR, DocumentRevisionDTO.class);
-            docDTO.setPath(docR.getLocation().getCompletePath());
-            docDTO = Tools.createLightDocumentRevisionDTO(docDTO);
-            docDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docR));
-            docDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docR));
-            docRsDTOs.add(docDTO);
-
-        }
-
-        return docRsDTOs.toArray(new DocumentRevisionDTO[docRsDTOs.size()]);
-    }
-
-
-    /**
-     * Get a configuration specification according a string params
-     * @param workspaceId The current workspace
-     * @param configSpecType The string discribing the configSpec
-     * @return A configuration specification
-     * @throws com.docdoku.core.exceptions.UserNotFoundException If the user login-workspace doesn't exist
-     * @throws com.docdoku.core.exceptions.UserNotActiveException If the user is disabled
-     * @throws com.docdoku.core.exceptions.WorkspaceNotFoundException If the workspace doesn't exist
-     * @throws com.docdoku.core.exceptions.BaselineNotFoundException If the baseline doesn't exist
-     */
-    private DocumentConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotActiveException, EntityNotFoundException {
-        DocumentConfigSpec cs;
-        switch (configSpecType) {
-            case BASELINE_LATEST:
-            case BASELINE_UNDEFINED:
-                cs = documentConfigSpecService.getLatestConfigSpec(workspaceId);
-                break;
-            default:
-                cs = documentConfigSpecService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
-                break;
-        }
-        return cs;
-    }
 }
