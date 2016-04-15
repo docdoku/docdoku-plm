@@ -34,6 +34,7 @@ import com.docdoku.core.services.IWorkspaceManagerLocal;
 import com.docdoku.server.rest.dto.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -351,7 +352,7 @@ public class WorkspaceResource {
     @ApiOperation(value = "Create workspace", response = WorkspaceDTO.class)
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceDTO createWorkspace(@QueryParam("userLogin") String userLogin, WorkspaceDTO workspaceDTO) throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException, AccountNotFoundException, ESIndexNamingException, IOException, com.docdoku.core.exceptions.NotAllowedException {
+    public WorkspaceDTO createWorkspace(@QueryParam("userLogin") String userLogin, @ApiParam(value = "Workspace to create", required = true) WorkspaceDTO workspaceDTO) throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException, AccountNotFoundException, ESIndexNamingException, IOException, com.docdoku.core.exceptions.NotAllowedException {
         Account account;
         if(contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
             account = accountManager.getAccount(userLogin);

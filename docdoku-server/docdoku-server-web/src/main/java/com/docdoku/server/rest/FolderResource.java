@@ -30,6 +30,7 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.FolderDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -57,7 +58,7 @@ public class FolderResource {
     public FolderResource() {
     }
 
-    @ApiOperation(value = "SubResource : DocumentsResource")
+    @ApiOperation(value = "FoldersDocumentsResource")
     @Path("{folderId}/documents/")
     public DocumentsResource getDocumentsResource() {
         return documentsResource;
@@ -130,7 +131,7 @@ public class FolderResource {
     @Path("{folderId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO renameFolder(@PathParam("folderId") String folderPath, FolderDTO folderDTO)
+    public FolderDTO renameFolder(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderPath, @ApiParam(value = "Folder with new name", required = true) FolderDTO folderDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException, CreationException {
 
         String decodedCompletePath = FolderDTO.replaceColonWithSlash(folderPath);
@@ -159,7 +160,7 @@ public class FolderResource {
     @Path("{folderId}/move")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO moveFolder(@PathParam("folderId") String folderPath, FolderDTO folderDTO)
+    public FolderDTO moveFolder(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderPath, FolderDTO folderDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException, CreationException {
 
         String decodedCompletePath = FolderDTO.replaceColonWithSlash(folderPath);
@@ -186,7 +187,7 @@ public class FolderResource {
     @Path("{parentFolderPath}/folders")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO createSubFolder(@PathParam("parentFolderPath") String parentFolderPath, FolderDTO folder)
+    public FolderDTO createSubFolder(@PathParam("workspaceId") String workspaceId, @PathParam("parentFolderPath") String parentFolderPath, @ApiParam(value = "Folder to create", required = true) FolderDTO folder)
             throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException, UserNotActiveException, CreationException {
 
         String decodedCompletePath = FolderDTO.replaceColonWithSlash(parentFolderPath);
@@ -217,7 +218,7 @@ public class FolderResource {
     @ApiOperation(value = "Delete root folder", response = Response.class)
     @Path("{folderId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteRootFolder(@PathParam("folderId") String completePath)
+    public Response deleteRootFolder(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String completePath)
             throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, ESServerException, EntityConstraintException {
 
         deleteFolder(completePath);

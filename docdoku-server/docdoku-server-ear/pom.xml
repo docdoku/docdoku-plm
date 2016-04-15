@@ -59,6 +59,12 @@
                             <contextRoot>${server.contextRoot}</contextRoot>
                             <bundleFileName>docdoku-server-web.war</bundleFileName>
                         </webModule>
+                        <webModule>
+                            <groupId>com.docdoku</groupId>
+                            <artifactId>docdoku-server-web-api-js</artifactId>
+                            <contextRoot>${server.contextRoot}/web-api-js</contextRoot>
+                            <bundleFileName>docdoku-server-web-api-js.war</bundleFileName>
+                        </webModule>
                     </modules>
 
                 </configuration>
@@ -76,6 +82,12 @@
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-web</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.docdoku</groupId>
+            <artifactId>docdoku-server-web-api-js</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>

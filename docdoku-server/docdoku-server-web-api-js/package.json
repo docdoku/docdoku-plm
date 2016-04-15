@@ -1,0 +1,21 @@
+{
+  "name": "docdoku-server-web-api-js",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "clean": "npm install && grunt clean:dist",
+    "build": "npm install && bower install && grunt build"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "load-grunt-tasks": "~0.3.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.3.3",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt-contrib-clean": "~0.5.0"
+  }
+}

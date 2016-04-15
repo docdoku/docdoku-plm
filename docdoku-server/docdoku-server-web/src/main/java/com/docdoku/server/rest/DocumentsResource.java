@@ -104,7 +104,16 @@ public class DocumentsResource {
     @ApiOperation(value = "Get documents from given params", response = DocumentRevisionDTO.class, responseContainer = "List")
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO[] getDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId, @PathParam("tagId") String tagId, @PathParam("query") String query, @PathParam("assignedUserLogin") String assignedUserLogin, @PathParam("checkoutUser") String checkoutUser, @QueryParam("filter") String filter, @QueryParam("start") int start, @QueryParam("configSpec") String configSpecType)
+    public DocumentRevisionDTO[] getDocuments(
+            @PathParam("workspaceId") String workspaceId,
+            @PathParam("folderId") String folderId,
+            @PathParam("tagId") String tagId,
+            @PathParam("query") String query,
+            @PathParam("assignedUserLogin") String assignedUserLogin,
+            @PathParam("checkoutUser") String checkoutUser,
+            @QueryParam("filter") String filter,
+            @QueryParam("start") int start,
+            @QueryParam("configSpec") String configSpecType)
             throws EntityNotFoundException, UserNotActiveException, ESServerException {
         if(checkoutUser != null){
             return getDocumentsCheckedOutByUser(workspaceId);
