@@ -172,120 +172,6 @@ public class WorkspaceResource {
         }).build();
     }
 
-    @ApiOperation(value = "SubResource : DocumentsResource")
-    @Path("/{workspaceId}/documents")
-    public DocumentsResource documents() {
-        return documents;
-    }
-
-    @ApiOperation(value = "SubResource : FolderResource")
-    @Path("/{workspaceId}/folders")
-    public FolderResource folders() {
-        return folders;
-    }
-
-    @ApiOperation(value = "SubResource : DocumentTemplateResource")
-    @Path("/{workspaceId}/document-templates")
-    public DocumentTemplateResource docTemplates() {
-        return docTemplates;
-    }
-
-    @ApiOperation(value = "SubResource : PartTemplateResource")
-    @Path("/{workspaceId}/part-templates")
-    public PartTemplateResource partTemplates() {
-        return partTemplates;
-    }
-
-    @ApiOperation(value = "SubResource : ProductResource")
-    @Path("/{workspaceId}/products")
-    public ProductResource products() {
-        return products;
-    }
-
-    @ApiOperation(value = "SubResource : PartsResource")
-    @Path("/{workspaceId}/parts")
-    public PartsResource parts() {
-        return parts;
-    }
-
-    @ApiOperation(value = "SubResource : TagResource")
-    @Path("/{workspaceId}/tags")
-    public TagResource tags() {
-        return tags;
-    }
-
-    @ApiOperation(value = "SubResource : CheckedOutResource")
-    @Path("/{workspaceId}/checkedouts")
-    public CheckedOutDocumentResource checkedOuts() {
-        return checkedOutDocuments;
-    }
-
-    @ApiOperation(value = "SubResource : SearchResource")
-    @Path("/{workspaceId}/search")
-    public SearchResource search() {
-        return searches;
-    }
-
-    @ApiOperation(value = "SubResource : TaskResource")
-    @Path("/{workspaceId}/tasks")
-    public TaskResource tasks() {
-        return tasks;
-    }
-
-    @ApiOperation(value = "SubResource : ModificationNotificationResource")
-    @Path("/{workspaceId}/notifications")
-    public ModificationNotificationResource notifications() {
-        return notifications;
-    }
-
-    @ApiOperation(value = "SubResource : WorkflowResource")
-    @Path("/{workspaceId}/workflows")
-    public WorkflowResource workflows() {
-        return workflows;
-    }
-
-    @ApiOperation(value = "SubResource : UserResource")
-    @Path("/{workspaceId}/users")
-    public UserResource users() {
-        return users;
-    }
-
-    @ApiOperation(value = "SubResource : RoleResource")
-    @Path("/{workspaceId}/roles")
-    public RoleResource roles() {
-        return roles;
-    }
-
-    @ApiOperation(value = "SubResource : WorkspaceMembershipResource")
-    @Path("/{workspaceId}/memberships")
-    public WorkspaceMembershipResource workspaceMemberships() {
-        return workspaceMemberships;
-    }
-
-    @ApiOperation(value = "SubResource : ChangeItemsResource")
-    @Path("/{workspaceId}/changes")
-    public ChangeItemsResource changeItems() {
-        return changeItems;
-    }
-
-    @ApiOperation(value = "SubResource : DocumentBaselinesResource")
-    @Path("/{workspaceId}/document-baselines")
-    public DocumentBaselinesResource documentBaselines() {
-        return documentBaselines;
-    }
-
-    @ApiOperation(value = "SubResource : LOVResource")
-    @Path("/{workspaceId}/lov")
-    public LOVResource lov() {
-        return lov;
-    }
-
-    @ApiOperation(hidden = true, value = "SubResource : AttributesResource")
-    @Path("/{workspaceId}/attributes")
-    public AttributesResource attributes() {
-        return attributes;
-    }
-
     @PUT
     @ApiOperation(value = "Update workspace", response = WorkspaceDTO.class)
     @Path("/{workspaceId}")
@@ -331,11 +217,12 @@ public class WorkspaceResource {
     @ApiOperation(value = "Add user to workspace", response = Response.class)
     @Path("/{workspaceId}/add-user")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addUser(@PathParam("workspaceId") String workspaceId, @QueryParam("group") String group, UserDTO userDTO) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, UserGroupNotFoundException, com.docdoku.core.exceptions.NotAllowedException, AccountNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {
+    public Response addUser(@PathParam("workspaceId") String workspaceId,
+                            @QueryParam("group") String group,
+                            @ApiParam(required = true, value = "User to add") UserDTO userDTO) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, UserGroupNotFoundException, com.docdoku.core.exceptions.NotAllowedException, AccountNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {
 
         if (group != null && !group.isEmpty()) {
             userManager.addUserInGroup(new UserGroupKey(workspaceId, group), userDTO.getLogin());
-
         } else {
             userManager.addUserInWorkspace(workspaceId, userDTO.getLogin());
         }
@@ -347,7 +234,8 @@ public class WorkspaceResource {
     @ApiOperation(value = "Set a new admin", response = WorkspaceDTO.class)
     @Path("/{workspaceId}/admin")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response setNewAdmin(@PathParam("workspaceId") String workspaceId, UserDTO userDTO) throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException {
+    public Response setNewAdmin(@PathParam("workspaceId") String workspaceId,
+                                @ApiParam(required = true, value = "New admin user") UserDTO userDTO) throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException {
         Workspace workspace = workspaceManager.changeAdmin(workspaceId,userDTO.getLogin());
 
         return Response.ok(mapper.map(workspace,WorkspaceDTO.class)).build();
@@ -356,7 +244,8 @@ public class WorkspaceResource {
     @ApiOperation(value = "Create workspace", response = WorkspaceDTO.class)
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceDTO createWorkspace(@QueryParam("userLogin") String userLogin, @ApiParam(value = "Workspace to create", required = true) WorkspaceDTO workspaceDTO) throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException, AccountNotFoundException, ESIndexNamingException, IOException, com.docdoku.core.exceptions.NotAllowedException {
+    public WorkspaceDTO createWorkspace(@QueryParam("userLogin") String userLogin,
+                                        @ApiParam(value = "Workspace to create", required = true) WorkspaceDTO workspaceDTO) throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException, AccountNotFoundException, ESIndexNamingException, IOException, com.docdoku.core.exceptions.NotAllowedException {
         Account account;
         if(contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
             account = accountManager.getAccount(userLogin);
@@ -372,7 +261,8 @@ public class WorkspaceResource {
     @ApiOperation(value = "Set user access in workspace", response = Response.class)
     @Path("/{workspaceId}/user-access")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response setUserAccess(@PathParam("workspaceId") String workspaceId, UserDTO userDTO) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+    public Response setUserAccess(@PathParam("workspaceId") String workspaceId,
+                                  @ApiParam(value = "User to grant access in workspace", required = true) UserDTO userDTO) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
         if(userDTO.getMembership() == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -384,7 +274,9 @@ public class WorkspaceResource {
     @ApiOperation(value = "Set group access in workspace", response = Response.class)
     @Path("/{workspaceId}/group-access")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response setGroupAccess(@PathParam("workspaceId") String workspaceId,WorkspaceUserGroupMemberShipDTO workspaceUserGroupMemberShipDTO) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+    public Response setGroupAccess(@PathParam("workspaceId") String workspaceId,
+                                   @ApiParam(value = "User to grant access in group", required = true) WorkspaceUserGroupMemberShipDTO workspaceUserGroupMemberShipDTO)
+            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
 
         WorkspaceUserGroupMembership membership = userManager.grantGroupAccess(workspaceId, workspaceUserGroupMemberShipDTO.getMemberId(), workspaceUserGroupMemberShipDTO.isReadOnly());
         return Response.ok(mapper.map(membership,WorkspaceUserGroupMemberShipDTO.class)).build();
@@ -394,7 +286,10 @@ public class WorkspaceResource {
     @ApiOperation(value = "Remove user from group", response = UserGroupDTO.class)
     @Path("/{workspaceId}/remove-from-group/{groupId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response removeUserFromGroup(@PathParam("workspaceId") String workspaceId, @PathParam("groupId") String groupId, UserDTO userDTO) throws AccessRightException, UserGroupNotFoundException, AccountNotFoundException, WorkspaceNotFoundException{
+    public Response removeUserFromGroup(@PathParam("workspaceId") String workspaceId,
+                                        @PathParam("groupId") String groupId,
+                                        @ApiParam(value = "User to remove from group", required = true) UserDTO userDTO)
+            throws AccessRightException, UserGroupNotFoundException, AccountNotFoundException, WorkspaceNotFoundException{
         UserGroup userGroup = userManager.removeUserFromGroup(new UserGroupKey(workspaceId,groupId),userDTO.getLogin());
         return Response.ok(mapper.map(userGroup,UserGroupDTO.class)).build();
     }
@@ -403,7 +298,9 @@ public class WorkspaceResource {
     @ApiOperation(value = "Remove user from workspace", response = WorkspaceDTO.class)
     @Path("/{workspaceId}/remove-from-workspace")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response removeUserFromWorkspace(@PathParam("workspaceId") String workspaceId, UserDTO userDTO) throws UserGroupNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, DocumentRevisionNotFoundException, UserNotActiveException, com.docdoku.core.exceptions.NotAllowedException {
+    public Response removeUserFromWorkspace(@PathParam("workspaceId") String workspaceId,
+                                            @ApiParam(value = "User to remove from workspace", required = true) UserDTO userDTO)
+            throws UserGroupNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, DocumentRevisionNotFoundException, UserNotActiveException, com.docdoku.core.exceptions.NotAllowedException {
         Workspace workspace = userManager.removeUser(workspaceId, userDTO.getLogin());
         return Response.ok(mapper.map(workspace,WorkspaceDTO.class)).build();
     }
@@ -412,7 +309,9 @@ public class WorkspaceResource {
     @ApiOperation(value = "Enable user", response = Response.class)
     @Path("/{workspaceId}/enable-user")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response enableUser(@PathParam("workspaceId") String workspaceId, UserDTO userDTO) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+    public Response enableUser(@PathParam("workspaceId") String workspaceId,
+                               @ApiParam(value = "User to enable", required = true) UserDTO userDTO)
+            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
         userManager.activateUser(workspaceId, userDTO.getLogin());
         return Response.ok().build();
     }
@@ -421,7 +320,9 @@ public class WorkspaceResource {
     @ApiOperation(value = "Disable user", response = Response.class)
     @Path("/{workspaceId}/disable-user")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response disableUser(@PathParam("workspaceId") String workspaceId, UserDTO userDTO) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+    public Response disableUser(@PathParam("workspaceId") String workspaceId,
+                                @ApiParam(value = "User to disable", required = true) UserDTO userDTO)
+            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
         userManager.passivateUser(workspaceId, userDTO.getLogin());
         return Response.ok().build();
     }
@@ -430,7 +331,9 @@ public class WorkspaceResource {
     @ApiOperation(value = "Enable group", response = Response.class)
     @Path("/{workspaceId}/enable-group")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response enableGroup(@PathParam("workspaceId") String workspaceId, UserGroupDTO userGroupDTO) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+    public Response enableGroup(@PathParam("workspaceId") String workspaceId,
+                                @ApiParam(value = "Group to enable", required = true) UserGroupDTO userGroupDTO)
+            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
         userManager.activateUserGroup(workspaceId, userGroupDTO.getId());
         return Response.ok().build();
     }
@@ -439,8 +342,127 @@ public class WorkspaceResource {
     @ApiOperation(value = "Disable group", response = Response.class)
     @Path("/{workspaceId}/disable-group")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response disableGroup(@PathParam("workspaceId") String workspaceId, UserGroupDTO userGroupDTO) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+    public Response disableGroup(@PathParam("workspaceId") String workspaceId,
+                                 @ApiParam(value = "Group to disable", required = true) UserGroupDTO userGroupDTO)
+            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
         userManager.passivateUserGroup(workspaceId, userGroupDTO.getId());
         return Response.ok().build();
     }
+
+    // Sub resources
+
+    @ApiOperation(value = "WorkspaceDocuments")
+    @Path("/{workspaceId}/documents")
+    public DocumentsResource documents() {
+        return documents;
+    }
+
+    @ApiOperation(value = "WorkspaceFolders")
+    @Path("/{workspaceId}/folders")
+    public FolderResource folders() {
+        return folders;
+    }
+
+    @ApiOperation(value = "WorkspaceDocumentTemplates")
+    @Path("/{workspaceId}/document-templates")
+    public DocumentTemplateResource docTemplates() {
+        return docTemplates;
+    }
+
+    @ApiOperation(value = "WorkspacePartTemplates")
+    @Path("/{workspaceId}/part-templates")
+    public PartTemplateResource partTemplates() {
+        return partTemplates;
+    }
+
+    @ApiOperation(value = "WorkspaceProducts")
+    @Path("/{workspaceId}/products")
+    public ProductResource products() {
+        return products;
+    }
+
+    @ApiOperation(value = "WorkspaceParts")
+    @Path("/{workspaceId}/parts")
+    public PartsResource parts() {
+        return parts;
+    }
+
+    @ApiOperation(value = "WorkspaceTags")
+    @Path("/{workspaceId}/tags")
+    public TagResource tags() {
+        return tags;
+    }
+
+    @ApiOperation(value = "WorkspaceCheckedOut")
+    @Path("/{workspaceId}/checkedouts")
+    public CheckedOutDocumentResource checkedOuts() {
+        return checkedOutDocuments;
+    }
+
+    @ApiOperation(value = "WorkspaceSearch")
+    @Path("/{workspaceId}/search")
+    public SearchResource search() {
+        return searches;
+    }
+
+    @ApiOperation(value = "WorkspaceTasks")
+    @Path("/{workspaceId}/tasks")
+    public TaskResource tasks() {
+        return tasks;
+    }
+
+    @ApiOperation(value = "WorkspaceModificationNotifications")
+    @Path("/{workspaceId}/notifications")
+    public ModificationNotificationResource notifications() {
+        return notifications;
+    }
+
+    @ApiOperation(value = "WorkspaceWorkflows")
+    @Path("/{workspaceId}/workflows")
+    public WorkflowResource workflows() {
+        return workflows;
+    }
+
+    @ApiOperation(value = "WorkspaceUsers")
+    @Path("/{workspaceId}/users")
+    public UserResource users() {
+        return users;
+    }
+
+    @ApiOperation(value = "WorkspaceRoles")
+    @Path("/{workspaceId}/roles")
+    public RoleResource roles() {
+        return roles;
+    }
+
+    @ApiOperation(value = "WorkspaceWorkspaceMemberships")
+    @Path("/{workspaceId}/memberships")
+    public WorkspaceMembershipResource workspaceMemberships() {
+        return workspaceMemberships;
+    }
+
+    @ApiOperation(value = "WorkspaceChangeItems")
+    @Path("/{workspaceId}/changes")
+    public ChangeItemsResource changeItems() {
+        return changeItems;
+    }
+
+    @ApiOperation(value = "WorkspaceDocumentBaselines")
+    @Path("/{workspaceId}/document-baselines")
+    public DocumentBaselinesResource documentBaselines() {
+        return documentBaselines;
+    }
+
+    @ApiOperation(value = "WorkspaceLOVs")
+    @Path("/{workspaceId}/lov")
+    public LOVResource lov() {
+        return lov;
+    }
+
+    @ApiOperation(hidden = true, value = "WorkspaceAttributes")
+    @Path("/{workspaceId}/attributes")
+    public AttributesResource attributes() {
+        return attributes;
+    }
+
 }

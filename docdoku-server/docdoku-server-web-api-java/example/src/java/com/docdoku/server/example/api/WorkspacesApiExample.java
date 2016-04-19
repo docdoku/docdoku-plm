@@ -2,10 +2,7 @@ package com.docdoku.server.example.api;
 
 
 import com.docdoku.server.api.client.ApiException;
-import com.docdoku.server.api.models.DocumentRevisionDTO;
-import com.docdoku.server.api.models.UserGroupDTO;
-import com.docdoku.server.api.models.WorkspaceDTO;
-import com.docdoku.server.api.models.WorkspaceDetailsDTO;
+import com.docdoku.server.api.models.*;
 import com.docdoku.server.api.services.WorkspacesApi;
 import com.docdoku.server.example.utils.ErrorHelper;
 
@@ -20,15 +17,39 @@ public class WorkspacesApiExample extends DocdokuPLMApiExample {
 
     private WorkspacesApi workspacesApi;
     private final static String USER_GROUP_ID = "Group1";
+    private final static String USER_2_LOGIN = "bar";
 
     @Override
     public void run() {
         workspacesApi = new WorkspacesApi(plmClient.getClient());
         createWorkspace();
         createUserGroup();
+        addUserInWorkspace();
+        grantAccessToUserInWorkspace();
         getWorkspaceDetailsList();
         listDocumentsInWorkspace();
         updateWorkspaceDescription();
+    }
+
+    private void grantAccessToUserInWorkspace() {
+        try {
+            UserDTO userToGrant = new UserDTO();
+            userToGrant.setLogin(USER_2_LOGIN);
+            userToGrant.setMembership(UserDTO.MembershipEnum.FULL_ACCESS);
+            workspacesApi.setUserAccess(WORKSPACE, userToGrant);
+        } catch (ApiException e) {
+            ErrorHelper.onError("Error while granting user 2 in workspace", plmClient.getClient());
+        }
+    }
+
+    private void addUserInWorkspace() {
+        try {
+            UserDTO userToCreate = new UserDTO();
+            userToCreate.setLogin(USER_2_LOGIN);
+            workspacesApi.addUser(WORKSPACE, userToCreate, null);
+        } catch (ApiException e) {
+            ErrorHelper.onError("Error while adding user 2 in workspace", plmClient.getClient());
+        }
     }
 
     private void createUserGroup() {

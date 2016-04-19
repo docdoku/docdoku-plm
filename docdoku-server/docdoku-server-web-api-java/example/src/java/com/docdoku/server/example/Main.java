@@ -1,6 +1,7 @@
 package com.docdoku.server.example;
 
 import com.docdoku.server.example.api.AccountsApiExample;
+import com.docdoku.server.example.api.DocumentsApiExample;
 import com.docdoku.server.example.api.FoldersApiExample;
 import com.docdoku.server.example.api.WorkspacesApiExample;
 
@@ -13,5 +14,6 @@ public class Main {
         new WorkspacesApiExample().run();
         new AccountsApiExample().run();
         new FoldersApiExample().run();
+        new DocumentsApiExample().run();
     }
 }
