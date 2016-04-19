@@ -290,9 +290,10 @@ public class WorkspaceResource {
     @ApiOperation(value = "Update workspace", response = WorkspaceDTO.class)
     @Path("/{workspaceId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateWorkspace(@PathParam("workspaceId") String workspaceId, WorkspaceDTO workspaceDTO) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccountNotFoundException, AccessRightException {
+    public Response updateWorkspace(@PathParam("workspaceId") String workspaceId,
+                                    @ApiParam(required = true, value = "Workspace values to update") WorkspaceDTO workspaceDTO)
+            throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccountNotFoundException, AccessRightException {
         Workspace workspace = userManager.updateWorkspace(workspaceId,workspaceDTO.getDescription(),workspaceDTO.isFolderLocked());
-
         return Response.ok(mapper.map(workspace, WorkspaceDTO.class)).build();
     }
 
@@ -300,7 +301,8 @@ public class WorkspaceResource {
     @Path("/{workspaceId}/index")
     @ApiOperation(value = "Index the workspace", response = Response.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response synchronizeIndexer(@PathParam("workspaceId") String workspaceId) throws AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public Response synchronizeIndexer(@PathParam("workspaceId") String workspaceId)
+            throws AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         workspaceManager.synchronizeIndexer(workspaceId);
         return Response.ok().build();
     }
@@ -318,7 +320,9 @@ public class WorkspaceResource {
     @ApiOperation(value = "Create user group", response = UserGroupDTO.class)
     @Path("/{workspaceId}/user-group")
     @Produces(MediaType.APPLICATION_JSON)
-    public UserGroupDTO createGroup(@PathParam("workspaceId") String workspaceId, UserGroupDTO userGroupDTO) throws UserGroupAlreadyExistsException, AccessRightException, AccountNotFoundException, CreationException, WorkspaceNotFoundException {
+    public UserGroupDTO createGroup(@PathParam("workspaceId") String workspaceId,
+                                    @ApiParam(required = true, value = "UserGroup to create") UserGroupDTO userGroupDTO)
+            throws UserGroupAlreadyExistsException, AccessRightException, AccountNotFoundException, CreationException, WorkspaceNotFoundException {
         UserGroup userGroup = userManager.createUserGroup(userGroupDTO.getId(), workspaceId);
         return mapper.map(userGroup,UserGroupDTO.class);
     }

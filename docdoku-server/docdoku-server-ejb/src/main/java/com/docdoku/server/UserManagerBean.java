@@ -153,7 +153,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @Override
     public UserGroup createUserGroup(String pId, String workspaceId) throws UserGroupAlreadyExistsException, AccessRightException, AccountNotFoundException, CreationException, WorkspaceNotFoundException {
         Workspace workspace = new WorkspaceDAO(em).loadWorkspace(workspaceId);
-        return createUserGroup(pId,workspaceId);
+        return createUserGroup(pId,workspace);
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})

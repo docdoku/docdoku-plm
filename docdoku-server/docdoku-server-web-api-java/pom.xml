@@ -137,6 +137,12 @@
             <artifactId>joda-time</artifactId>
             <version>${jodatime-version}</version>
         </dependency>
+        <!-- An HTTP & HTTP/2 client for Android and Java applications -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.2.0</version>
+        </dependency>
 
         <!-- Base64 encoding that works in both JVM and Android -->
         <dependency>
