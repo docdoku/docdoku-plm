@@ -17,7 +17,7 @@ define([
             var docId = this.options.linkedDocumentId;
             var that = this;
 
-            this.options.linkedDocument.getUsedByPathDataPdInstances(docId,{
+            this.options.linkedDocument.getInversePathDataLinks(docId,{
                 success: function (productInstancesArray) {
                     that.groupCollection(productInstancesArray);
                 }

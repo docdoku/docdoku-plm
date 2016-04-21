@@ -107,7 +107,7 @@ define([
         initUsedByGroup:function(){
             this.usedByGroupListView = new UsedByGroupListView({
                 linkedDocument: this.linkedDocument,
-                linkedDocumentId: this.linkedDocumentId
+                linkedDocumentId: this.linkedDocumentIterationId
             }).render();
 
             /* Add the usedByGroupListView to the tab */

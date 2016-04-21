@@ -368,7 +368,7 @@ define([
                 error: args.error
             });
         },
-        getUsedByPathDataPdInstances: function (iteration, args) {
+        getInversePathDataLinks: function (iteration, args) {
             $.ajax({
                 type: 'GET',
                 url: this.baseUrl() + '/' + iteration + '/inverse-path-data-link',
