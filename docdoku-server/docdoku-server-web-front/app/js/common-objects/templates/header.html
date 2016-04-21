@@ -46,6 +46,10 @@
                                     <a href="{{contextPath}}/change-management/#{{id}}/workflows"
                                        title="{{i18n.CHANGES_MANAGEMENT}}">{{i18n.CHANGES}}</a>
                                 </li>
+                                <li>
+                                    <a href="{{contextPath}}/workspace-management/#/workspace/{{id}}"
+                                       title="{{i18n.WORKSPACE_MANAGEMENT}}">{{i18n.WORKSPACE_MANAGEMENT}}</a>
+                                </li>
                             </ul>
                         </li>
                         <li class="BreadcrumbSubMenuItem hidden-desktop">
@@ -58,6 +62,7 @@
                                 <li><a href="{{contextPath}}/document-management/#{{id}}/folders" title="{{i18n.DOCUMENTS_MANAGEMENT}}"><i class="fa fa-folder"></i></a></li>
                                 <li><a href="{{contextPath}}/product-management/#{{id}}/products" title="{{i18n.PRODUCTS_MANAGEMENT}}"><i class="fa fa-briefcase"></i></a></li>
                                 <li><a href="{{contextPath}}/change-management/#{{id}}/workflows" title="{{i18n.CHANGES_MANAGEMENT}}"><i class="fa fa-refresh"></i></a></li>
+                                <li><a href="{{contextPath}}/workspace-management/#/workspace/{{id}}" title="{{i18n.WORKSPACE_MANAGEMENT}}"><i class="fa fa-refresh"></i></a></li>
                             </ul>
                         </li>
                         {{/administratedWorkspaces}}
@@ -121,7 +126,10 @@
                                               title="{{i18n.CHANGES_MANAGEMENT}}"><i class="fa fa-history"></i>
                     {{i18n.CHANGES}}</a>
                     {{/isChangeManagement}}
-
+                    {{#isWorkspaceManagement}}<a class="BreadcrumbMenuItem-link dropdown-toggle" data-toggle="dropdown"
+                                                 title="{{i18n.WORKSPACE_MANAGEMENT}}"><i class="fa fa-cog"></i>
+                    {{i18n.WORKSPACE_MANAGEMENT}}</a>
+                    {{/isWorkspaceManagement}}
                     <ul class="dropdown-menu">
                         <li>
                             <a href="{{contextPath}}/document-management/#{{currentWorkspace}}/folders">
@@ -139,6 +147,12 @@
                             <i class="fa fa-check"></i>
                             {{/isChangeManagement}}
                             {{i18n.CHANGES}}
+                        </a></li>
+                        <li><a href="{{contextPath}}/workspace-management/#/workspace/{{currentWorkspace}}">
+                            {{#isWorkspaceManagement}}
+                            <i class="fa fa-check"></i>
+                            {{/isWorkspaceManagement}}
+                            {{i18n.WORKSPACE_MANAGEMENT}}
                         </a></li>
                     </ul>
 

@@ -14,6 +14,7 @@ module.exports = function(grunt) {
 		'build-module:productManagement',
 		'build-module:productStructure',
 		'build-module:productFrame',
-		'build-module:changeManagement'
+		'build-module:changeManagement',
+		'build-module:workspaceManagement'
 	]);
 };

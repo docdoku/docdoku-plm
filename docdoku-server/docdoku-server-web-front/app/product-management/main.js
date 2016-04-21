@@ -117,13 +117,18 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
     function (ContextResolver,  commonStrings, productManagementStrings) {
 	    'use strict';
         App.config.i18n = _.extend(commonStrings,productManagementStrings);
-        ContextResolver.resolveUser(function(){
-            require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
-                App.appView = new AppView().render();
-                App.headerView = new HeaderView().render();
-                App.router = Router.getInstance();
-                App.coworkersView = new Modules.CoWorkersAccessModuleView().render();
-                Backbone.history.start();
+        ContextResolver.resolveServerProperties()
+            .then(ContextResolver.resolveAccount)
+            .then(ContextResolver.resolveWorkspaces)
+            .then(ContextResolver.resolveGroups)
+            .then(ContextResolver.resolveUser)
+            .then(function(){
+                require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
+                    App.appView = new AppView().render();
+                    App.headerView = new HeaderView().render();
+                    App.router = Router.getInstance();
+                    App.coworkersView = new Modules.CoWorkersAccessModuleView().render();
+                    Backbone.history.start();
+                });
             });
-        });
     });

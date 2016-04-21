@@ -147,14 +147,19 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
 function (ContextResolver,  commonStrings, productStructureStrings) {
     'use strict';
     App.config.i18n = _.extend(commonStrings,productStructureStrings);
-    ContextResolver.resolveUser(function(){
-        require(['backbone', 'frameRouter', 'dmu/SceneManager','dmu/InstancesManager'],function(Backbone,  Router,SceneManager,InstancesManager){
-            App.$SceneContainer = $('div#frameWorkspace');
-            App.instancesManager = new InstancesManager();
-            App.sceneManager = new SceneManager();
-            App.sceneManager.init();
-            App.router = Router.getInstance();
-            Backbone.history.start();
+    ContextResolver.resolveServerProperties()
+        .then(ContextResolver.resolveAccount)
+        .then(ContextResolver.resolveWorkspaces)
+        .then(ContextResolver.resolveGroups)
+        .then(ContextResolver.resolveUser)
+        .then(function(){
+            require(['backbone', 'frameRouter', 'dmu/SceneManager','dmu/InstancesManager'],function(Backbone,  Router,SceneManager,InstancesManager){
+                App.$SceneContainer = $('div#frameWorkspace');
+                App.instancesManager = new InstancesManager();
+                App.sceneManager = new SceneManager();
+                App.sceneManager.init();
+                App.router = Router.getInstance();
+                Backbone.history.start();
+            });
         });
-    });
 });

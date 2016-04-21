@@ -18,13 +18,11 @@ define([
                 return !_.findWhere(workspaces.administratedWorkspaces, workspace);
             });
 
-            _.each(workspaces.administratedWorkspaces, function (workspace) {
+            function isCurrent(workspace){
                 workspace.isCurrent = workspace.id === App.config.workspaceId;
-            });
-
-            _.each(otherWorkspaces, function (workspace) {
-                workspace.isCurrent = workspace.id === App.config.workspaceId;
-            });
+            }
+            _.each(workspaces.administratedWorkspaces, isCurrent);
+            _.each(otherWorkspaces, isCurrent);
 
             $el.html(Mustache.render(template, {
                 currentWorkspace: App.config.workspaceId,
@@ -36,10 +34,16 @@ define([
                 isDocumentManagement: window.location.pathname.match('/document-management/'),
                 isProductManagement: window.location.pathname.match('/product-management/'),
                 isProductStructure: window.location.pathname.match('/product-structure/'),
-                isChangeManagement: window.location.pathname.match('/change-management/')
+                isChangeManagement: window.location.pathname.match('/change-management/'),
+                isWorkspaceManagement: window.location.pathname.match('/workspace-management/'),
             }));
 
             $el.show().addClass('loaded');
+
+            if(this.CoWorkersView) {
+                var CoWorkersView = this.CoWorkersView;
+                new CoWorkersView().render();
+            }
 
             return this;
         },
@@ -49,6 +53,10 @@ define([
         },
         addActionDisabled: function () {
             this.$('#coworkers_access_module_entries').find('.fa-globe').removeClass('corworker-action').addClass('corworker-action-disable');
+        },
+
+        setCoWorkersView:function(View){
+            this.CoWorkersView = View;
         }
 
     });

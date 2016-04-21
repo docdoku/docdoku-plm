@@ -6,8 +6,19 @@ define(['backbone'], function (Backbone) {
             this.className = 'Workspace';
         }
     });
-    Workspace.getWorkspaces = function (success, error) {
-        $.getJSON(App.config.contextPath + '/api/workspaces', success, error);
+
+    Workspace.getWorkspaces = function () {
+        return $.getJSON(App.config.contextPath + '/api/workspaces');
     };
+
+    Workspace.createWorkspace = function (workspace) {
+        return $.ajax({
+            type: 'POST',
+            url: App.config.contextPath + '/api/workspaces',
+            data: JSON.stringify(workspace),
+            contentType: 'application/json; charset=utf-8'
+        });
+    };
+
     return Workspace;
 });

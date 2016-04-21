@@ -113,7 +113,13 @@ function (ContextResolver,  commonStrings, documentManagementStrings) {
 
     App.config.i18n = _.extend(commonStrings,documentManagementStrings);
 
-    ContextResolver.resolveUser(function(){
+
+    ContextResolver.resolveServerProperties()
+        .then(ContextResolver.resolveAccount)
+        .then(ContextResolver.resolveWorkspaces)
+        .then(ContextResolver.resolveGroups)
+        .then(ContextResolver.resolveUser)
+        .then(function buildView(){
         require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules,date_picker_lang){
             App.appView = new AppView().render();
             App.headerView = new HeaderView().render();

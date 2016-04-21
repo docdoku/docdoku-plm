@@ -1,0 +1,53 @@
+<div id="workspace-management-menu">
+    <ul class="nav well">
+        <li class="nav-header">
+            {{i18n.WORKSPACES_ADMINISTRATION}}
+        </li>
+        {{#workspaceId}}
+        <li class="nav-header">
+            <a href="#/">
+                {{i18n.BACK}}
+            </a>
+        </li>
+        <li class="header nav-list-entry {{#isEdition}}active{{/isEdition}}">
+            <a href="#/workspace/{{workspaceId}}/edit">
+                {{i18n.EDIT}}
+            </a>
+        </li>
+        <li  class="header nav-list-entry {{#isUsers}}active{{/isUsers}}">
+            <a href="#/workspace/{{workspaceId}}/users">
+                {{i18n.USERS}}
+            </a>
+        </li>
+        <li  class="header nav-list-entry {{#isDashboard}}active{{/isDashboard}}">
+            <a href="#/workspace/{{workspaceId}}/dashboard">
+                {{i18n.DASHBOARD}}
+            </a>
+        </li>
+        {{/workspaceId}}
+        {{^workspaceId}}
+            <li class="nav-header"> {{i18n.WORKSPACES}} </li>
+            {{^workspaces}}
+            <li  class="header nav-list-entry">
+                {{i18n.NO_ADMINISTRATED_WORKSPACES}}
+            </li>
+            {{/workspaces}}
+            {{#workspaces}}
+            <li  class="header nav-list-entry">
+                <a href="#/workspace/{{id}}">
+                    {{id}}
+                </a>
+            </li>
+            {{/workspaces}}
+            <li class="sep"></li>
+            <li  class="header nav-list-entry {{#isCreation}}active{{/isCreation}}">
+                <a href="#/create">
+                    <span class="icon plm-icon-nav-new-workspace"></span>
+                    {{i18n.CREATE_WORKSPACE}}
+                </a>
+            </li>
+        {{/workspaceId}}
+    </ul>
+</div>
+
+<div id="workspace-management-content"></div>
