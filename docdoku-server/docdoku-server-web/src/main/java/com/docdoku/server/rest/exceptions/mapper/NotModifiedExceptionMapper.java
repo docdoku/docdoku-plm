@@ -33,15 +33,16 @@ import java.util.logging.Logger;
 @Provider
 public class NotModifiedExceptionMapper implements ExceptionMapper<NotModifiedException> {
     private static final Logger LOGGER = Logger.getLogger(NotModifiedExceptionMapper.class.getName());
+
     public NotModifiedExceptionMapper() {
     }
 
     @Override
     public Response toResponse(NotModifiedException e) {
-        LOGGER.log(Level.FINE,null,e);
+        LOGGER.log(Level.FINE, null, e);
         return Response.status(Response.Status.NOT_MODIFIED)
-                       .expires(e.getExpireDate())
-                       .tag(e.getETag())
-                       .build();
+                .expires(e.getExpireDate())
+                .tag(e.getETag())
+                .build();
     }
 }

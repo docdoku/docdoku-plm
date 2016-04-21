@@ -34,17 +34,18 @@ import java.util.logging.Logger;
 @Provider
 public class NotAllowedExceptionMapper implements ExceptionMapper<NotAllowedException> {
     private static final Logger LOGGER = Logger.getLogger(NotAllowedExceptionMapper.class.getName());
+
     public NotAllowedExceptionMapper() {
     }
 
     @Override
     public Response toResponse(NotAllowedException e) {
-        LOGGER.log(Level.WARNING,e.getMessage());
-        LOGGER.log(Level.FINE,null,e);
+        LOGGER.log(Level.WARNING, e.getMessage());
+        LOGGER.log(Level.FINE, null, e);
         return Response.status(Response.Status.BAD_REQUEST)
-                       .header("Reason-Phrase", e.getMessage())
-                       .entity(e.toString())
-                       .type(MediaType.TEXT_PLAIN)
-                       .build();
+                .header("Reason-Phrase", e.getMessage())
+                .entity(e.toString())
+                .type(MediaType.TEXT_PLAIN)
+                .build();
     }
 }

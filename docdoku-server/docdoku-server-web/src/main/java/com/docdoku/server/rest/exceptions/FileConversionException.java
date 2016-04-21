@@ -25,7 +25,7 @@ package com.docdoku.server.rest.exceptions;
 public class FileConversionException extends RestApiException {
     private final Throwable cause;
 
-    public FileConversionException(Throwable cause){
+    public FileConversionException(Throwable cause) {
         super();
         this.cause = cause;
     }

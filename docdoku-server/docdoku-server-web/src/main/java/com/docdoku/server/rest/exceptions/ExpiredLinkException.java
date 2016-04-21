@@ -24,12 +24,12 @@ package com.docdoku.server.rest.exceptions;
  */
 public class ExpiredLinkException extends RestApiException {
 
-    public ExpiredLinkException(){
+    public ExpiredLinkException() {
         super();
     }
 
     @Override
-    public String getMessage(){
+    public String getMessage() {
         return "This resource can not be found. Maybe the link has expired.";
     }
 }

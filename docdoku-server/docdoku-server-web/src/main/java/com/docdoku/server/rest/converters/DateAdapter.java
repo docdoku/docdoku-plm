@@ -40,21 +40,23 @@ public class DateAdapter extends XmlAdapter<String, Date> implements ParamConver
     private static final Logger LOGGER = Logger.getLogger(DateAdapter.class.getName());
 
     private final static String PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
-    private final static SimpleDateFormat DF =  new SimpleDateFormat(PATTERN);
-    static{
+    private final static SimpleDateFormat DF = new SimpleDateFormat(PATTERN);
+
+    static {
         DF.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
-    public String marshal(Date date){
-        if(date == null) {
+
+    public String marshal(Date date) {
+        if (date == null) {
             return null;
         }
         return DF.format(date);
     }
 
-    public Date unmarshal(String dateString){
-        Date d=null;
+    public Date unmarshal(String dateString) {
+        Date d = null;
         try {
-            d= DF.parse(dateString);
+            d = DF.parse(dateString);
         } catch (ParseException e) {
             LOGGER.log(Level.SEVERE, "Error unmarshalling date", e);
         }

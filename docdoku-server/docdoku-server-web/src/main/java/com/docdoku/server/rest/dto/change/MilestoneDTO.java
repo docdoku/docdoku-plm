@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @XmlRootElement
-public class ChangeMilestoneDTO implements Serializable {
+public class MilestoneDTO implements Serializable {
 
     private int id;
     private String title;
@@ -39,13 +39,14 @@ public class ChangeMilestoneDTO implements Serializable {
     private ACLDTO acl;
     private boolean writable;
 
-    public ChangeMilestoneDTO() {
+    public MilestoneDTO() {
 
     }
 
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -53,6 +54,7 @@ public class ChangeMilestoneDTO implements Serializable {
     public String getTitle() {
         return title;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -60,6 +62,7 @@ public class ChangeMilestoneDTO implements Serializable {
     public Date getDueDate() {
         return dueDate;
     }
+
     public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
     }
@@ -67,6 +70,7 @@ public class ChangeMilestoneDTO implements Serializable {
     public String getDescription() {
         return description;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -74,6 +78,7 @@ public class ChangeMilestoneDTO implements Serializable {
     public String getWorkspaceId() {
         return workspaceId;
     }
+
     public void setWorkspaceId(String workspaceId) {
         this.workspaceId = workspaceId;
     }
@@ -81,6 +86,7 @@ public class ChangeMilestoneDTO implements Serializable {
     public int getNumberOfRequests() {
         return numberOfRequests;
     }
+
     public void setNumberOfRequests(int numberOfRequests) {
         this.numberOfRequests = numberOfRequests;
     }
@@ -88,6 +94,7 @@ public class ChangeMilestoneDTO implements Serializable {
     public int getNumberOfOrders() {
         return numberOfOrders;
     }
+
     public void setNumberOfOrders(int numberOfOrders) {
         this.numberOfOrders = numberOfOrders;
     }
@@ -95,6 +102,7 @@ public class ChangeMilestoneDTO implements Serializable {
     public ACLDTO getAcl() {
         return acl;
     }
+
     public void setAcl(ACLDTO acl) {
         this.acl = acl;
     }
@@ -102,6 +110,7 @@ public class ChangeMilestoneDTO implements Serializable {
     public boolean isWritable() {
         return writable;
     }
+
     public void setWritable(boolean writable) {
         this.writable = writable;
     }

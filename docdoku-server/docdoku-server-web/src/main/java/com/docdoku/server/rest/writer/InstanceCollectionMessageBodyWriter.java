@@ -40,7 +40,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 /**
- *
  * @author Florent Garin
  */
 @Provider
@@ -62,11 +61,11 @@ public class InstanceCollectionMessageBodyWriter implements MessageBodyWriter<In
 
     @Override
     public void writeTo(InstanceCollection instanceCollection, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws UnsupportedEncodingException {
-        String charSet="UTF-8";
+        String charSet = "UTF-8";
         JsonGenerator jg = Json.createGenerator(new OutputStreamWriter(entityStream, charSet));
         jg.writeStartArray();
 
-        Matrix4d gM=new Matrix4d();
+        Matrix4d gM = new Matrix4d();
         gM.setIdentity();
         InstanceBodyWriterTools.generateInstanceStreamWithGlobalMatrix(productService, null, gM, instanceCollection, new ArrayList<>(), jg);
         jg.writeEnd();

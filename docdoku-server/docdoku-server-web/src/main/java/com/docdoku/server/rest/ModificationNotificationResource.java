@@ -28,6 +28,7 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.ModificationNotificationDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -60,7 +61,9 @@ public class ModificationNotificationResource {
     @ApiOperation(value = "Acknowledge modification notification", response = Response.class)
     @Path("/{notificationId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response acknowledgeNotification(@PathParam("workspaceId") String workspaceId, @PathParam("notificationId") int notificationId, ModificationNotificationDTO notificationDTO)
+    public Response acknowledgeNotification(@PathParam("workspaceId") String workspaceId,
+                                            @PathParam("notificationId") int notificationId,
+                                            @ApiParam(required = true, value = "Modification notification to acknowledge") ModificationNotificationDTO notificationDTO)
             throws UserNotFoundException, AccessRightException, PartRevisionNotFoundException, WorkspaceNotFoundException {
 
         productService.updateModificationNotification(workspaceId, notificationId, notificationDTO.getAckComment());

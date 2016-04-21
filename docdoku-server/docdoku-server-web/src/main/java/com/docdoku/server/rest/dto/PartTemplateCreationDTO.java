@@ -38,12 +38,12 @@ public class PartTemplateCreationDTO implements Serializable {
     private boolean attributesLocked;
     private String workflowModelId;
 
-    public PartTemplateCreationDTO(){
+    public PartTemplateCreationDTO() {
     }
 
     public PartTemplateCreationDTO(String workspaceId, String partType) {
-        this.workspaceId=workspaceId;
-        this.partType=partType;
+        this.workspaceId = workspaceId;
+        this.partType = partType;
     }
 
     public String getPartType() {
@@ -74,6 +74,10 @@ public class PartTemplateCreationDTO implements Serializable {
         return workspaceId;
     }
 
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
+    }
+
     public String getAttachedFiles() {
         return attachedFiles;
     }
@@ -90,26 +94,21 @@ public class PartTemplateCreationDTO implements Serializable {
         this.idGenerated = idGenerated;
     }
 
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
+    public List<InstanceAttributeTemplateDTO> getAttributeTemplates() {
+        return attributeTemplates;
     }
 
     public void setAttributeTemplates(List<InstanceAttributeTemplateDTO> attributeTemplates) {
         this.attributeTemplates = attributeTemplates;
     }
 
-    public List<InstanceAttributeTemplateDTO> getAttributeTemplates() {
-        return attributeTemplates;
+    public List<InstanceAttributeTemplateDTO> getAttributeInstanceTemplates() {
+        return attributeInstanceTemplates;
     }
 
     public void setAttributeInstanceTemplates(List<InstanceAttributeTemplateDTO> attributeInstanceTemplates) {
         this.attributeInstanceTemplates = attributeInstanceTemplates;
     }
-
-    public List<InstanceAttributeTemplateDTO> getAttributeInstanceTemplates() {
-        return attributeInstanceTemplates;
-    }
-
 
     public boolean isAttributesLocked() {
         return attributesLocked;

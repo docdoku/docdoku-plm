@@ -45,7 +45,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Morgan Guimard
  */
 @Provider
@@ -67,11 +66,11 @@ public class VirtualInstanceCollectionMessageBodyWriter implements MessageBodyWr
 
     @Override
     public void writeTo(VirtualInstanceCollection virtualInstanceCollection, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws UnsupportedEncodingException {
-        String charSet="UTF-8";
+        String charSet = "UTF-8";
         JsonGenerator jg = Json.createGenerator(new OutputStreamWriter(entityStream, charSet));
         jg.writeStartArray();
 
-        Matrix4d gM=new Matrix4d();
+        Matrix4d gM = new Matrix4d();
         gM.setIdentity();
 
         PartLink virtualRootPartLink = getVirtualRootPartLink(virtualInstanceCollection);
@@ -83,8 +82,7 @@ public class VirtualInstanceCollectionMessageBodyWriter implements MessageBodyWr
     }
 
 
-
-    private PartLink getVirtualRootPartLink(VirtualInstanceCollection virtualInstanceCollection){
+    private PartLink getVirtualRootPartLink(VirtualInstanceCollection virtualInstanceCollection) {
         return new PartLink() {
             @Override
             public int getId() {
@@ -113,7 +111,7 @@ public class VirtualInstanceCollectionMessageBodyWriter implements MessageBodyWr
 
             @Override
             public String getComment() {
-                    return virtualInstanceCollection.getRootPart().getDescription();
+                return virtualInstanceCollection.getRootPart().getDescription();
             }
 
             @Override
@@ -138,7 +136,7 @@ public class VirtualInstanceCollectionMessageBodyWriter implements MessageBodyWr
 
             @Override
             public List<CADInstance> getCadInstances() {
-                CADInstance virtualInstance = new CADInstance(0,0,0,0,0,0);
+                CADInstance virtualInstance = new CADInstance(0, 0, 0, 0, 0, 0);
                 List<CADInstance> virtualCadInstances = new ArrayList<>();
                 virtualCadInstances.add(virtualInstance);
                 return virtualCadInstances;

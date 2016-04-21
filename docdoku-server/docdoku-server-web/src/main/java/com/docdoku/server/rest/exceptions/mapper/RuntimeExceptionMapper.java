@@ -43,10 +43,10 @@ public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException>
     public Response toResponse(RuntimeException e) {
 
         LOGGER.log(Level.SEVERE, e.getMessage());
-        LOGGER.log(Level.FINE,null,e);
+        LOGGER.log(Level.FINE, null, e);
 
         Throwable cause = e;
-        while(cause.getCause() != null) {
+        while (cause.getCause() != null) {
             cause = cause.getCause();
         }
 
@@ -58,20 +58,20 @@ public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException>
         String className = firstTraceElement.getClassName();
 
         String fullMessage = MESSAGE_PREFIX
-                            + " : "
-                            + className +"."+methodName
-                            + " threw "
-                            + cause.toString()
-                            + " in "
-                            + fileName
-                            + " at line "
-                            + lineNumber;
+                + " : "
+                + className + "." + methodName
+                + " threw "
+                + cause.toString()
+                + " in "
+                + fileName
+                + " at line "
+                + lineNumber;
 
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .header("Reason-Phrase",fullMessage)
-                    .entity(fullMessage)
-                    .type(MediaType.TEXT_PLAIN)
-                    .build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .header("Reason-Phrase", fullMessage)
+                .entity(fullMessage)
+                .type(MediaType.TEXT_PLAIN)
+                .build();
     }
 
 }

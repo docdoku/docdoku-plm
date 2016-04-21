@@ -24,7 +24,7 @@ package com.docdoku.server.rest.exceptions;
  */
 public class UnmatchingUuidException extends RestApiException {
 
-    public UnmatchingUuidException(){
+    public UnmatchingUuidException() {
         super();
     }
 }

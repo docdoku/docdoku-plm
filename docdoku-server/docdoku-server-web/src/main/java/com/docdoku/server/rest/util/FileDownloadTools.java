@@ -26,7 +26,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author Elisabel Généreux
  */
 public class FileDownloadTools {
@@ -36,6 +35,7 @@ public class FileDownloadTools {
 
     /**
      * Get the output name of file
+     *
      * @return Output name of file
      */
     public static String getFileName(String fullName, String outputFormat) {
@@ -44,11 +44,11 @@ public class FileDownloadTools {
         try {
             fileName = URLEncoder.encode(fileName, CHARSET).replace("+", " ");
         } catch (UnsupportedEncodingException e) {
-            LOGGER.log(Level.WARNING,null,e);
+            LOGGER.log(Level.WARNING, null, e);
         }
 
         if (outputFormat != null) {
-            fileName += "."+ outputFormat;
+            fileName += "." + outputFormat;
         }
 
         return fileName;
@@ -56,13 +56,14 @@ public class FileDownloadTools {
 
     /**
      * Get the Content disposition for this file
+     *
      * @return Http Response content disposition
      */
     // Todo check if we can have unencoding contentDisposition
     // Todo check accept request
     public static String getContentDisposition(String downloadType, String fileName) {
         String dispositionType = ("viewer".equals(downloadType)) ? "inline" : "attachement";
-        return dispositionType+"; filename=\""+ fileName +"\" ; filename*=\""+ fileName +"\"";
+        return dispositionType + "; filename=\"" + fileName + "\" ; filename*=\"" + fileName + "\"";
     }
 
 }

@@ -34,6 +34,7 @@ import com.docdoku.server.rest.dto.LightPartLinkListDTO;
 import com.docdoku.server.rest.dto.baseline.ProductConfigurationDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -52,7 +53,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author Morgan Guimard
  */
 @RequestScoped
@@ -81,16 +81,18 @@ public class ProductConfigurationsResource {
     @ApiOperation(value = "Get all product configurations", response = ProductConfigurationDTO.class, responseContainer = "List")
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllConfiguration(@PathParam("workspaceId") String workspaceId,  @PathParam("ciId") String ciId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
+    public Response getAllConfiguration(@PathParam("workspaceId") String workspaceId,
+                                        @PathParam("ciId") String ciId)
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
         List<ProductConfiguration> allProductConfigurations;
-        if(ciId != null) {
-            ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
+        if (ciId != null) {
+            ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             allProductConfigurations = productBaselineService.getAllProductConfigurationsByConfigurationItemId(ciKey);
-        }else{
+        } else {
             allProductConfigurations = productBaselineService.getAllProductConfigurations(workspaceId);
         }
         List<ProductConfigurationDTO> configurationDTOs = new ArrayList<>();
-        for(ProductConfiguration productConfiguration :allProductConfigurations){
+        for (ProductConfiguration productConfiguration : allProductConfigurations) {
             ProductConfigurationDTO productConfigurationDTO = mapper.map(productConfiguration, ProductConfigurationDTO.class);
             productConfigurationDTO.setConfigurationItemId(productConfiguration.getConfigurationItem().getId());
             configurationDTOs.add(productConfigurationDTO);
@@ -105,8 +107,11 @@ public class ProductConfigurationsResource {
     @ApiOperation(value = "Get product configuration", response = ProductConfigurationDTO.class)
     @Path("{productConfigurationId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductConfigurationDTO getConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("productConfigurationId") int productConfigurationId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, EntityConstraintException, NotAllowedException, AccessRightException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, PartMasterNotFoundException {
-        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
+    public ProductConfigurationDTO getConfiguration(@PathParam("workspaceId") String workspaceId,
+                                                    @PathParam("ciId") String ciId,
+                                                    @PathParam("productConfigurationId") int productConfigurationId)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, EntityConstraintException, NotAllowedException, AccessRightException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, PartMasterNotFoundException {
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         ProductConfiguration productConfiguration = productBaselineService.getProductConfiguration(ciKey, productConfigurationId);
         ProductConfigurationDTO productConfigurationDTO = mapper.map(productConfiguration, ProductConfigurationDTO.class);
         productConfigurationDTO.setConfigurationItemId(productConfiguration.getConfigurationItem().getId());
@@ -114,17 +119,17 @@ public class ProductConfigurationsResource {
         List<LightPartLinkListDTO> substitutesParts = new ArrayList<>();
         List<LightPartLinkListDTO> optionalParts = new ArrayList<>();
 
-        for(String path:productConfiguration.getSubstituteLinks()){
+        for (String path : productConfiguration.getSubstituteLinks()) {
             LightPartLinkListDTO partDTOs = new LightPartLinkListDTO();
-            for(PartLink partLink : productService.decodePath(ciKey, path)){
+            for (PartLink partLink : productService.decodePath(ciKey, path)) {
                 partDTOs.getPartLinks().add(new LightPartLinkDTO(partLink));
             }
             substitutesParts.add(partDTOs);
         }
 
-        for(String path:productConfiguration.getOptionalUsageLinks()){
+        for (String path : productConfiguration.getOptionalUsageLinks()) {
             LightPartLinkListDTO partDTOs = new LightPartLinkListDTO();
-            for(PartLink partLink : productService.decodePath(ciKey, path)){
+            for (PartLink partLink : productService.decodePath(ciKey, path)) {
                 partDTOs.getPartLinks().add(new LightPartLinkDTO(partLink));
             }
             optionalParts.add(partDTOs);
@@ -141,21 +146,24 @@ public class ProductConfigurationsResource {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductConfigurationDTO createConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, ProductConfigurationDTO pProductConfigurationDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, CreationException, AccessRightException {
+    public ProductConfigurationDTO createConfiguration(@PathParam("workspaceId") String workspaceId,
+                                                       @PathParam("ciId") String pCiId,
+                                                       @ApiParam(required = true, value = "Product configuration to create") ProductConfigurationDTO pProductConfigurationDTO)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, CreationException, AccessRightException {
         String ciId = (pCiId != null) ? pCiId : pProductConfigurationDTO.getConfigurationItemId();
-        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         String description = pProductConfigurationDTO.getDescription();
         String name = pProductConfigurationDTO.getName();
 
         ACLDTO acldto = pProductConfigurationDTO.getAcl();
-        Map<String,ACL.Permission> userEntries=new HashMap<>();
-        Map<String,ACL.Permission> grpEntries=new HashMap<>();
-        if(acldto != null){
+        Map<String, ACL.Permission> userEntries = new HashMap<>();
+        Map<String, ACL.Permission> grpEntries = new HashMap<>();
+        if (acldto != null) {
             userEntries = acldto.getUserEntries();
-            grpEntries= acldto.getGroupEntries();
+            grpEntries = acldto.getGroupEntries();
         }
 
-        ProductConfiguration productConfiguration = productBaselineService.createProductConfiguration(ciKey, name, description, pProductConfigurationDTO.getSubstituteLinks(), pProductConfigurationDTO.getOptionalUsageLinks(),userEntries,grpEntries);
+        ProductConfiguration productConfiguration = productBaselineService.createProductConfiguration(ciKey, name, description, pProductConfigurationDTO.getSubstituteLinks(), pProductConfigurationDTO.getOptionalUsageLinks(), userEntries, grpEntries);
         ProductConfigurationDTO productConfigurationDTO = mapper.map(productConfiguration, ProductConfigurationDTO.class);
         productConfigurationDTO.setConfigurationItemId(productConfiguration.getConfigurationItem().getId());
         return productConfigurationDTO;
@@ -166,13 +174,17 @@ public class ProductConfigurationsResource {
     @ApiOperation(value = "Update product configuration", response = Response.class)
     @Path("{productConfigurationId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateConfigurationACL(@PathParam("workspaceId") String workspaceId,@PathParam("ciId") String pCiId, @PathParam("productConfigurationId") int productConfigurationId, ACLDTO acl) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, AccessRightException {
-        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,pCiId);
+    public Response updateConfigurationACL(@PathParam("workspaceId") String workspaceId,
+                                           @PathParam("ciId") String pCiId,
+                                           @PathParam("productConfigurationId") int productConfigurationId,
+                                           @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, AccessRightException {
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, pCiId);
 
         if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
-            Map<String,String> userEntries = new HashMap<>();
-            Map<String,String> groupEntries = new HashMap<>();
+            Map<String, String> userEntries = new HashMap<>();
+            Map<String, String> groupEntries = new HashMap<>();
 
             for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
                 userEntries.put(entry.getKey(), entry.getValue().name());
@@ -183,7 +195,7 @@ public class ProductConfigurationsResource {
             }
 
             productBaselineService.updateACLForConfiguration(ciKey, productConfigurationId, userEntries, groupEntries);
-        }else{
+        } else {
             productBaselineService.removeACLFromConfiguration(ciKey, productConfigurationId);
         }
 
@@ -194,8 +206,11 @@ public class ProductConfigurationsResource {
     @ApiOperation(value = "Delete product configuration", response = Response.class)
     @Path("{productConfigurationId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteProductConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("productConfigurationId") int productConfigurationId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, AccessRightException {
-        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
+    public Response deleteProductConfiguration(@PathParam("workspaceId") String workspaceId,
+                                               @PathParam("ciId") String ciId,
+                                               @PathParam("productConfigurationId") int productConfigurationId)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, AccessRightException {
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         productBaselineService.deleteProductConfiguration(ciKey, productConfigurationId);
         return Response.ok().build();
     }

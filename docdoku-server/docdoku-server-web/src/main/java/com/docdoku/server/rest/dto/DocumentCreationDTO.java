@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
- *
  * @author Yassine Belouad
  */
 @XmlRootElement
@@ -49,8 +48,16 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getWorkspaceId() {
         return workspaceId;
+    }
+
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
     }
 
     public String getVersion() {
@@ -69,24 +76,16 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
         this.type = type;
     }
 
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
-    }
-
     public String getTitle() {
         return title;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public void setWorkspaceID(String workspaceID) {
         this.workspaceId = workspaceID;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getReference() {
@@ -96,7 +95,7 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
     public void setReference(String reference) {
         this.reference = reference;
     }
-        
+
     public String getTemplateId() {
         return templateId;
     }

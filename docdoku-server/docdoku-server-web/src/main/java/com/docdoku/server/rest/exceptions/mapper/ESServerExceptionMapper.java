@@ -34,17 +34,18 @@ import java.util.logging.Logger;
 @Provider
 public class ESServerExceptionMapper implements ExceptionMapper<ESServerException> {
     private static final Logger LOGGER = Logger.getLogger(ESServerExceptionMapper.class.getName());
+
     public ESServerExceptionMapper() {
     }
 
     @Override
     public Response toResponse(ESServerException e) {
-        LOGGER.log(Level.SEVERE,e.getMessage());
-        LOGGER.log(Level.FINE,null,e);
+        LOGGER.log(Level.SEVERE, e.getMessage());
+        LOGGER.log(Level.FINE, null, e);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                       .header("Reason-Phrase", e.getMessage())
-                       .entity(e.toString())
-                       .type(MediaType.TEXT_PLAIN)
-                       .build();
+                .header("Reason-Phrase", e.getMessage())
+                .entity(e.toString())
+                .type(MediaType.TEXT_PLAIN)
+                .build();
     }
 }

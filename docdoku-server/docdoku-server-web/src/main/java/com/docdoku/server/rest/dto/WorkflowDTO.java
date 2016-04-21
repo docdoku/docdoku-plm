@@ -42,12 +42,16 @@ public class WorkflowDTO implements Serializable, Comparable<WorkflowDTO> {
         return activities;
     }
 
+    public void setActivities(List<ActivityDTO> activities) {
+        this.activities = activities;
+    }
+
     public int getId() {
         return id;
     }
 
-    public void setActivities(List<ActivityDTO> activities) {
-        this.activities = activities;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getFinalLifeCycleState() {
@@ -60,12 +64,13 @@ public class WorkflowDTO implements Serializable, Comparable<WorkflowDTO> {
 
     public String getLifeCycleState() {
         ActivityDTO current = getCurrentActivity();
-        return (current==null)?finalLifeCycleState:current.getLifeCycleState();
+        return (current == null) ? finalLifeCycleState : current.getLifeCycleState();
     }
 
     public Date getAbortedDate() {
-        return (abortedDate!=null) ? (Date) abortedDate.clone() : null;
+        return (abortedDate != null) ? (Date) abortedDate.clone() : null;
     }
+
     public void setAbortedDate(Date abortedDate) {
         this.abortedDate = (abortedDate != null) ? (Date) abortedDate.clone() : null;
     }
@@ -76,10 +81,6 @@ public class WorkflowDTO implements Serializable, Comparable<WorkflowDTO> {
         } else {
             return null;
         }
-    }
-    
-    public void setId(int id) {
-        this.id = id;
     }
 
     public int getCurrentStep() {

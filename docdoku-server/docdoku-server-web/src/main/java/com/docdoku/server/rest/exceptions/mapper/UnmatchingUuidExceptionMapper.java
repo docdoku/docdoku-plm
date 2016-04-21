@@ -33,13 +33,14 @@ import java.util.logging.Logger;
 @Provider
 public class UnmatchingUuidExceptionMapper implements ExceptionMapper<UnmatchingUuidException> {
     private static final Logger LOGGER = Logger.getLogger(UnmatchingUuidExceptionMapper.class.getName());
+
     public UnmatchingUuidExceptionMapper() {
     }
 
     @Override
     public Response toResponse(UnmatchingUuidException e) {
-        LOGGER.log(Level.FINE,null,e);
+        LOGGER.log(Level.FINE, null, e);
         return Response.status(Response.Status.METHOD_NOT_ALLOWED)
-                       .build();
+                .build();
     }
 }

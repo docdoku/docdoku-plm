@@ -22,7 +22,7 @@ package com.docdoku.server.rest.exceptions;
 /**
  * @author Taylor LABEJOF
  */
-public class PreconditionFailedException extends RestApiException  {
+public class PreconditionFailedException extends RestApiException {
     private final String resource;
 
 
@@ -32,7 +32,7 @@ public class PreconditionFailedException extends RestApiException  {
     }
 
     @Override
-    public String getMessage(){
-        return "Http preconditions have failed for "+resource;
+    public String getMessage() {
+        return "Http preconditions have failed for " + resource;
     }
 }

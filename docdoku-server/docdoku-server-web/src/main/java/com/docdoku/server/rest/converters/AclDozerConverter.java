@@ -43,16 +43,16 @@ public class AclDozerConverter extends DozerConverter<ACL, ACLDTO> {
 
         aclDTO = new ACLDTO();
 
-        if(acl != null){
+        if (acl != null) {
 
-            for (Map.Entry<User,ACLUserEntry> entry : acl.getUserEntries().entrySet()) {
+            for (Map.Entry<User, ACLUserEntry> entry : acl.getUserEntries().entrySet()) {
                 ACLUserEntry aclEntry = entry.getValue();
-                aclDTO.addUserEntry(aclEntry.getPrincipalLogin(),aclEntry.getPermission());
+                aclDTO.addUserEntry(aclEntry.getPrincipalLogin(), aclEntry.getPermission());
             }
 
-            for (Map.Entry<UserGroup,ACLUserGroupEntry> entry : acl.getGroupEntries().entrySet()) {
+            for (Map.Entry<UserGroup, ACLUserGroupEntry> entry : acl.getGroupEntries().entrySet()) {
                 ACLUserGroupEntry aclEntry = entry.getValue();
-                aclDTO.addGroupEntry(aclEntry.getPrincipalId(),aclEntry.getPermission());
+                aclDTO.addGroupEntry(aclEntry.getPrincipalId(), aclEntry.getPermission());
             }
             return aclDTO;
         }

@@ -35,7 +35,7 @@ public class BaselinedDocumentDTO implements Serializable {
     public BaselinedDocumentDTO() {
     }
 
-    public BaselinedDocumentDTO(DocumentIteration partIteration){
+    public BaselinedDocumentDTO(DocumentIteration partIteration) {
         this.documentId = partIteration.getDocumentMasterId();
         this.version = partIteration.getVersion();
         this.iteration = partIteration.getIteration();
@@ -50,6 +50,7 @@ public class BaselinedDocumentDTO implements Serializable {
     public String getDocumentId() {
         return documentId;
     }
+
     public void setDocumentId(String documentId) {
         this.documentId = documentId;
     }
@@ -57,6 +58,7 @@ public class BaselinedDocumentDTO implements Serializable {
     public String getVersion() {
         return version;
     }
+
     public void setVersion(String version) {
         this.version = version;
     }
@@ -64,6 +66,7 @@ public class BaselinedDocumentDTO implements Serializable {
     public int getIteration() {
         return iteration;
     }
+
     public void setIteration(int iteration) {
         this.iteration = iteration;
     }

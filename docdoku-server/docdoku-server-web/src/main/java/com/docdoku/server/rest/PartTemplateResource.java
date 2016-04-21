@@ -31,6 +31,7 @@ import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.util.InstanceAttributeFactory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -47,7 +48,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author Morgan Guimard
  */
 @RequestScoped
@@ -77,32 +77,34 @@ public class PartTemplateResource {
             throws EntityNotFoundException, UserNotActiveException {
 
 
-        PartMasterTemplate[] partMsTemplates = productService.getPartMasterTemplates(workspaceId);
-        PartMasterTemplateDTO[] dtos = new PartMasterTemplateDTO[partMsTemplates.length];
+        PartMasterTemplate[] partMasterTemplates = productService.getPartMasterTemplates(workspaceId);
+        PartMasterTemplateDTO[] partMasterTemplateDTOs = new PartMasterTemplateDTO[partMasterTemplates.length];
 
-        for (int i = 0; i < partMsTemplates.length; i++) {
-            dtos[i] = mapper.map(partMsTemplates[i], PartMasterTemplateDTO.class);
+        for (int i = 0; i < partMasterTemplates.length; i++) {
+            partMasterTemplateDTOs[i] = mapper.map(partMasterTemplates[i], PartMasterTemplateDTO.class);
         }
 
-        return dtos;
+        return partMasterTemplateDTOs;
     }
 
     @GET
     @ApiOperation(value = "Get part master template", response = PartMasterTemplateDTO.class)
     @Path("{templateId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public PartMasterTemplateDTO getPartMasterTemplate(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
+    public PartMasterTemplateDTO getPartMasterTemplate(@PathParam("workspaceId") String workspaceId,
+                                                       @PathParam("templateId") String templateId)
             throws EntityNotFoundException, UserNotActiveException {
 
-        PartMasterTemplate partMsTemplate = productService.getPartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId));
-        return mapper.map(partMsTemplate, PartMasterTemplateDTO.class);
+        PartMasterTemplate partMasterTemplate = productService.getPartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId));
+        return mapper.map(partMasterTemplate, PartMasterTemplateDTO.class);
     }
-    
+
     @GET
     @ApiOperation(value = "Generate part master template id", response = TemplateGeneratedIdDTO.class)
     @Path("{templateId}/generate_id")
     @Produces(MediaType.APPLICATION_JSON)
-    public TemplateGeneratedIdDTO generatePartMasterTemplateId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
+    public TemplateGeneratedIdDTO generatePartMasterTemplateId(@PathParam("workspaceId") String workspaceId,
+                                                               @PathParam("templateId") String templateId)
             throws EntityNotFoundException, UserNotActiveException {
 
         String generatedId = productService.generateId(workspaceId, templateId);
@@ -113,10 +115,11 @@ public class PartTemplateResource {
     @ApiOperation(value = "Crate part master template", response = PartMasterTemplateDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PartMasterTemplateDTO createPartMasterTemplate(@PathParam("workspaceId") String workspaceId, PartTemplateCreationDTO templateCreationDTO)
+    public PartMasterTemplateDTO createPartMasterTemplate(@PathParam("workspaceId") String workspaceId,
+                                                          @ApiParam(required = true, value = "Part master template to create") PartTemplateCreationDTO templateCreationDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException {
 
-        String id =templateCreationDTO.getReference();
+        String id = templateCreationDTO.getReference();
         String partType = templateCreationDTO.getPartType();
         String workflowModelId = templateCreationDTO.getWorkflowModelId();
         String mask = templateCreationDTO.getMask();
@@ -124,49 +127,51 @@ public class PartTemplateResource {
         boolean attributesLocked = templateCreationDTO.isAttributesLocked();
 
         List<InstanceAttributeTemplateDTO> attributeTemplates = templateCreationDTO.getAttributeTemplates();
-        String[] lovNames=new String[attributeTemplates.size()];
-        for (int i=0;i<attributeTemplates.size();i++) {
+        String[] lovNames = new String[attributeTemplates.size()];
+        for (int i = 0; i < attributeTemplates.size(); i++) {
             lovNames[i] = attributeTemplates.get(i).getLovName();
         }
 
         List<InstanceAttributeTemplateDTO> attributeInstanceTemplates = templateCreationDTO.getAttributeInstanceTemplates();
         String[] instanceLovNames = new String[attributeInstanceTemplates.size()];
-        for (int i=0;i<attributeInstanceTemplates.size();i++) {
+        for (int i = 0; i < attributeInstanceTemplates.size(); i++) {
             instanceLovNames[i] = attributeInstanceTemplates.get(i).getLovName();
         }
         InstanceAttributeFactory attributeFactory = new InstanceAttributeFactory();
-        PartMasterTemplate template = productService.createPartMasterTemplate(workspaceId, id, partType, workflowModelId, mask, attributeFactory.createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, attributeFactory.createInstanceAttributeTemplateFromDto(attributeInstanceTemplates), instanceLovNames, idGenerated, attributesLocked);
+        PartMasterTemplate template = productService.createPartMasterTemplate(workspaceId, id, partType, workflowModelId, mask, attributeFactory.createInstanceAttributeTemplateFromDTO(attributeTemplates), lovNames, attributeFactory.createInstanceAttributeTemplateFromDTO(attributeInstanceTemplates), instanceLovNames, idGenerated, attributesLocked);
         return mapper.map(template, PartMasterTemplateDTO.class);
     }
-    
+
     @PUT
     @ApiOperation(value = "Update part master template", response = PartMasterTemplateDTO.class)
-    @Path("{templateId}") 
+    @Path("{templateId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PartMasterTemplateDTO updatePartMasterTemplate(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, PartMasterTemplateDTO partMsTemplateDTO)
+    public PartMasterTemplateDTO updatePartMasterTemplate(@PathParam("workspaceId") String workspaceId,
+                                                          @PathParam("templateId") String templateId,
+                                                          @ApiParam(required = true, value = "Part master template to update") PartMasterTemplateDTO partMasterTemplateDTO)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
-        String partType = partMsTemplateDTO.getPartType();
-        String mask = partMsTemplateDTO.getMask();
-        String workflowModelId = partMsTemplateDTO.getWorkflowModelId();
-        boolean idGenerated = partMsTemplateDTO.isIdGenerated();
-        boolean attributesLocked = partMsTemplateDTO.isAttributesLocked();
+        String partType = partMasterTemplateDTO.getPartType();
+        String mask = partMasterTemplateDTO.getMask();
+        String workflowModelId = partMasterTemplateDTO.getWorkflowModelId();
+        boolean idGenerated = partMasterTemplateDTO.isIdGenerated();
+        boolean attributesLocked = partMasterTemplateDTO.isAttributesLocked();
 
-        List<InstanceAttributeTemplateDTO> attributeTemplates = partMsTemplateDTO.getAttributeTemplates();
-        String[] lovNames=new String[attributeTemplates.size()];
-        for (int i=0;i<attributeTemplates.size();i++) {
-            lovNames[i]=attributeTemplates.get(i).getLovName();
+        List<InstanceAttributeTemplateDTO> attributeTemplates = partMasterTemplateDTO.getAttributeTemplates();
+        String[] lovNames = new String[attributeTemplates.size()];
+        for (int i = 0; i < attributeTemplates.size(); i++) {
+            lovNames[i] = attributeTemplates.get(i).getLovName();
         }
 
 
-        List<InstanceAttributeTemplateDTO> attributeInstanceTemplates = partMsTemplateDTO.getAttributeInstanceTemplates();
+        List<InstanceAttributeTemplateDTO> attributeInstanceTemplates = partMasterTemplateDTO.getAttributeInstanceTemplates();
         String[] instanceLovNames = new String[attributeInstanceTemplates.size()];
-        for (int i=0;i<attributeInstanceTemplates.size();i++) {
+        for (int i = 0; i < attributeInstanceTemplates.size(); i++) {
             instanceLovNames[i] = attributeInstanceTemplates.get(i).getLovName();
         }
         InstanceAttributeFactory attributeFactory = new InstanceAttributeFactory();
-        PartMasterTemplate template = productService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, workflowModelId, mask, attributeFactory.createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, attributeFactory.createInstanceAttributeTemplateFromDto(attributeInstanceTemplates) ,instanceLovNames,idGenerated, attributesLocked);
+        PartMasterTemplate template = productService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, workflowModelId, mask, attributeFactory.createInstanceAttributeTemplateFromDTO(attributeTemplates), lovNames, attributeFactory.createInstanceAttributeTemplateFromDTO(attributeInstanceTemplates), instanceLovNames, idGenerated, attributesLocked);
         return mapper.map(template, PartMasterTemplateDTO.class);
     }
 
@@ -174,13 +179,15 @@ public class PartTemplateResource {
     @ApiOperation(value = "Update part master template ACL", response = Response.class)
     @Path("{templateId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updatePartMasterTemplateACL(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, ACLDTO acl)
+    public Response updatePartMasterTemplateACL(@PathParam("workspaceId") String workspaceId,
+                                                @PathParam("templateId") String templateId,
+                                                @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
         if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
-            Map<String,String> userEntries = new HashMap<>();
-            Map<String,String> groupEntries = new HashMap<>();
+            Map<String, String> userEntries = new HashMap<>();
+            Map<String, String> groupEntries = new HashMap<>();
 
             for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
                 userEntries.put(entry.getKey(), entry.getValue().name());
@@ -191,7 +198,7 @@ public class PartTemplateResource {
             }
 
             productService.updateACLForPartMasterTemplate(workspaceId, templateId, userEntries, groupEntries);
-        }else{
+        } else {
             productService.removeACLFromPartMasterTemplate(workspaceId, templateId);
         }
 
@@ -201,7 +208,8 @@ public class PartTemplateResource {
     @DELETE
     @ApiOperation(value = "Delete part master template", response = Response.class)
     @Path("{templateId}")
-    public Response deletePartMasterTemplate(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
+    public Response deletePartMasterTemplate(@PathParam("workspaceId") String workspaceId,
+                                             @PathParam("templateId") String templateId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         productService.deletePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId));
@@ -212,7 +220,9 @@ public class PartTemplateResource {
     @ApiOperation(value = "Remove attached file from part master template", response = Response.class)
     @Path("{templateId}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId, @PathParam("fileName") String fileName)
+    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId,
+                                       @PathParam("templateId") String templateId,
+                                       @PathParam("fileName") String fileName)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         String fileFullName = workspaceId + "/part-templates/" + templateId + "/" + fileName;
@@ -225,12 +235,15 @@ public class PartTemplateResource {
     @Path("{templateId}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId, @PathParam("fileName") String fileName, FileDTO fileDTO)
+    public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId,
+                                      @PathParam("templateId") String templateId,
+                                      @PathParam("fileName") String fileName,
+                                      @ApiParam(required = true, value = "File to rename") FileDTO fileDTO)
             throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, AccessRightException, FileAlreadyExistsException, StorageException, NotAllowedException {
 
         String fileFullName = workspaceId + "/part-templates/" + templateId + "/" + fileName;
         BinaryResource binaryResource = productService.renameFileInTemplate(fileFullName, fileDTO.getShortName());
-        return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
+        return new FileDTO(true, binaryResource.getFullName(), binaryResource.getName());
     }
 
 }

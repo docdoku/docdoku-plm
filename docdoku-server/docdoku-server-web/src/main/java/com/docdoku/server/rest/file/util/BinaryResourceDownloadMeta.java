@@ -34,9 +34,8 @@ import java.util.logging.Logger;
  */
 public class BinaryResourceDownloadMeta {
     private static final Logger LOGGER = Logger.getLogger(BinaryResourceDownloadMeta.class.getName());
-    private static MimetypesFileTypeMap fileTypeMap = null;
     private static final String CHARSET = "UTF-8";
-
+    private static MimetypesFileTypeMap fileTypeMap = null;
     private String fullName;
     private String outputFormat;
     private String downloadType;
@@ -51,101 +50,16 @@ public class BinaryResourceDownloadMeta {
         this.downloadType = downloadType;
         this.length = binaryResource.getContentLength();
         this.lastModified = binaryResource.getLastModified();
-        if(fileTypeMap==null){
+        if (fileTypeMap == null) {
             BinaryResourceDownloadMeta.initFileTypeMap();
         }
     }
+
     public BinaryResourceDownloadMeta(BinaryResource binaryResource) {
-        this(binaryResource,null,null);
+        this(binaryResource, null, null);
     }
 
-    /**
-     * Get the full name of the file
-     * @return Full name of the file
-     */
-    public String getFullName(){
-        return fullName;
-    }
-
-    public boolean isConverted(){
-        return outputFormat!=null && !outputFormat.isEmpty();
-    }
-
-    /**
-     * Get the file size
-     * @return File size
-     */
-    public long getLength(){
-        return length;
-    }
-
-    /**
-     * Get the last modification date of the file
-     * @return Last modification date
-     */
-    public Date getLastModified(){
-        return (lastModified!=null) ? (Date) lastModified.clone() : null;
-    }
-
-    /**
-     * Get the last modification date of the file
-     * @return Last modification date
-     */
-    public long getLastModifiedTime(){
-        return (lastModified!=null) ? lastModified.getTime() : 0;
-    }
-
-    /**
-     * Get file entity tag
-     * @return Unique Entity Tag for the file
-     */
-    public EntityTag getETag(){
-        //Todo add iteration and version
-        //Todo remove special char from full Name
-        return new EntityTag(fullName + "_" + length + "_" + lastModified.getTime());
-    }
-
-    public void setSubResourceVirtualPath(String subResourceVirtualPath){
-        if(subResourceVirtualPath!=null && !subResourceVirtualPath.isEmpty()){
-            this.subResourceVirtualPath = subResourceVirtualPath;
-        }
-    }
-
-    /**
-     * Get the Content type for this file
-     * @return Http Response content type
-     */
-    public String getContentType(){
-        String contentType;
-        if (subResourceVirtualPath!=null) {
-            contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(subResourceVirtualPath);
-        } else {
-            if (outputFormat!=null) {
-                contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(fullName + "." + outputFormat);
-            } else {
-                contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(fullName);
-            }
-        }
-
-        if (contentType!=null && contentType.startsWith("text")) {
-            contentType += ";charset="+ CHARSET;
-        }
-
-        return (contentType != null) ? contentType : "application/octet-stream";
-    }
-
-    /**
-     * Get the Content disposition for this file
-     * @return Http Response content disposition
-     */
-    // Todo check if we can have unencoding contentDisposition
-    // Todo check accept request
-    public String getContentDisposition() {
-        String fileName = FileDownloadTools.getFileName(fullName, outputFormat);
-        return FileDownloadTools.getContentDisposition(downloadType, fileName);
-    }
-
-    private static void initFileTypeMap(){
+    private static void initFileTypeMap() {
         fileTypeMap = new MimetypesFileTypeMap();
 
         // Additional MIME types
@@ -178,5 +92,98 @@ public class BinaryResourceDownloadMeta {
         fileTypeMap.addMimeTypes("video/ogg ogg");
 
         FileTypeMap.setDefaultFileTypeMap(fileTypeMap);
+    }
+
+    /**
+     * Get the full name of the file
+     *
+     * @return Full name of the file
+     */
+    public String getFullName() {
+        return fullName;
+    }
+
+    public boolean isConverted() {
+        return outputFormat != null && !outputFormat.isEmpty();
+    }
+
+    /**
+     * Get the file size
+     *
+     * @return File size
+     */
+    public long getLength() {
+        return length;
+    }
+
+    /**
+     * Get the last modification date of the file
+     *
+     * @return Last modification date
+     */
+    public Date getLastModified() {
+        return (lastModified != null) ? (Date) lastModified.clone() : null;
+    }
+
+    /**
+     * Get the last modification date of the file
+     *
+     * @return Last modification date
+     */
+    public long getLastModifiedTime() {
+        return (lastModified != null) ? lastModified.getTime() : 0;
+    }
+
+    /**
+     * Get file entity tag
+     *
+     * @return Unique Entity Tag for the file
+     */
+    public EntityTag getETag() {
+        //Todo add iteration and version
+        //Todo remove special char from full Name
+        return new EntityTag(fullName + "_" + length + "_" + lastModified.getTime());
+    }
+
+    public void setSubResourceVirtualPath(String subResourceVirtualPath) {
+        if (subResourceVirtualPath != null && !subResourceVirtualPath.isEmpty()) {
+            this.subResourceVirtualPath = subResourceVirtualPath;
+        }
+    }
+
+    /**
+     * Get the Content type for this file
+     *
+     * @return Http Response content type
+     */
+    public String getContentType() {
+        String contentType;
+        if (subResourceVirtualPath != null) {
+            contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(subResourceVirtualPath);
+        } else {
+            if (outputFormat != null) {
+                contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(fullName + "." + outputFormat);
+            } else {
+                contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(fullName);
+            }
+        }
+
+        if (contentType != null && contentType.startsWith("text")) {
+            contentType += ";charset=" + CHARSET;
+        }
+
+        return (contentType != null) ? contentType : "application/octet-stream";
+    }
+
+    /**
+     * Get the Content disposition for this file
+     *
+     * @return Http Response content disposition
+     */
+    // Todo check if we can have unencoding contentDisposition
+    // Todo check accept request
+    public String getContentDisposition() {
+        String fileName = FileDownloadTools.getFileName(fullName, outputFormat);
+        return FileDownloadTools.getContentDisposition(downloadType, fileName);
     }
 }

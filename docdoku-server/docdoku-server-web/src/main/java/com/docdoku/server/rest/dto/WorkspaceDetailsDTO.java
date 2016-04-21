@@ -32,6 +32,7 @@ public class WorkspaceDetailsDTO implements Serializable {
 
     public WorkspaceDetailsDTO() {
     }
+
     public WorkspaceDetailsDTO(String id, String admin, String description) {
         this.id = id;
         this.admin = admin;
@@ -41,6 +42,7 @@ public class WorkspaceDetailsDTO implements Serializable {
     public String getId() {
         return id;
     }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -48,6 +50,7 @@ public class WorkspaceDetailsDTO implements Serializable {
     public String getAdmin() {
         return admin;
     }
+
     public void setAdmin(String admin) {
         this.admin = admin;
     }
@@ -55,6 +58,7 @@ public class WorkspaceDetailsDTO implements Serializable {
     public String getDescription() {
         return description;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }

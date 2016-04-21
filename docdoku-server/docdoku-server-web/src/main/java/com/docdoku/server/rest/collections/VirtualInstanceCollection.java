@@ -24,7 +24,6 @@ import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.product.PartRevision;
 
 /**
- *
  * @author Morgan Guimard
  */
 
@@ -36,7 +35,7 @@ public class VirtualInstanceCollection {
     public VirtualInstanceCollection() {
     }
 
-    public VirtualInstanceCollection(PartRevision rootPart, PSFilter filter){
+    public VirtualInstanceCollection(PartRevision rootPart, PSFilter filter) {
         this.rootPart = rootPart;
         this.filter = filter;
     }

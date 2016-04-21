@@ -49,6 +49,7 @@ public class ProductInstanceMasterDTO implements Serializable {
     public String getSerialNumber() {
         return serialNumber;
     }
+
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
@@ -56,6 +57,7 @@ public class ProductInstanceMasterDTO implements Serializable {
     public String getConfigurationItemId() {
         return configurationItemId;
     }
+
     public void setConfigurationItemId(String configurationItemId) {
         this.configurationItemId = configurationItemId;
     }
@@ -63,9 +65,11 @@ public class ProductInstanceMasterDTO implements Serializable {
     public List<ProductInstanceIterationDTO> getProductInstanceIterations() {
         return productInstanceIterations;
     }
+
     public void setProductInstanceIterations(List<ProductInstanceIterationDTO> productInstanceIterations) {
         this.productInstanceIterations = productInstanceIterations;
     }
+
     public ACLDTO getAcl() {
         return acl;
     }

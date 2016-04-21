@@ -587,7 +587,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Milestone getChangeMilestone(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException {
+    public Milestone getMilestone(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Milestone milestone = new MilestoneDAO(new Locale(user.getLanguage()), em).loadMilestone(pId);                  // Load the Milestone
         checkMilestoneReadAccess(milestone, user);                                                                      // Check if the user can access to the Milestone
@@ -596,7 +596,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Milestone getChangeMilestoneByTitle(String pWorkspaceId, String pTitle) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException {
+    public Milestone getMilestoneByTitle(String pWorkspaceId, String pTitle) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Milestone milestone = new MilestoneDAO(new Locale(user.getLanguage()), em).loadMilestone(pTitle, pWorkspaceId); // Load the Milestone
         checkMilestoneReadAccess(milestone, user);                                                                      // Check if the user can access to the Milestone
@@ -605,7 +605,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<Milestone> getChangeMilestones(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public List<Milestone> getMilestones(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         List<Milestone> allMilestones = new MilestoneDAO(new Locale(user.getLanguage()),
                 em).findAllMilestone(pWorkspaceId);                            // Load all the Milestones
@@ -623,7 +623,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Milestone createChangeMilestone(String pWorkspaceId, String title, String description, Date dueDate) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, MilestoneAlreadyExistsException {
+    public Milestone createMilestone(String pWorkspaceId, String title, String description, Date dueDate) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, MilestoneAlreadyExistsException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);                                                // Check the write access to the workspace
         Milestone milestone = new Milestone(title,                                                                      // Create the Milestone =>  The Milestone's title
                 dueDate,                                                                    //                          The Milestone's due date
@@ -635,7 +635,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Milestone updateChangeMilestone(int pId, String pWorkspaceId, String title, String description, Date dueDate) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException {
+    public Milestone updateMilestone(int pId, String pWorkspaceId, String title, String description, Date dueDate) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Milestone milestone = new MilestoneDAO(new Locale(user.getLanguage()), em).loadMilestone(pId);                   // Load the Milestone
         checkMilestoneWriteAccess(milestone, user);                                                                      // Check the write access to the milestone
@@ -647,7 +647,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deleteChangeMilestone(String pWorkspaceId, int pId) throws MilestoneNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, EntityConstraintException {
+    public void deleteMilestone(String pWorkspaceId, int pId) throws MilestoneNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, EntityConstraintException {
 
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         Locale userLocale = new Locale(user.getLanguage());

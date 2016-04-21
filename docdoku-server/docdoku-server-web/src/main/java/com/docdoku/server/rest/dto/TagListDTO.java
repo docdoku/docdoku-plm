@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
  * @author Morgan Guimard
  */
 @XmlRootElement
@@ -32,7 +31,7 @@ public class TagListDTO implements Serializable {
 
     private List<TagDTO> tags;
 
-    public TagListDTO(){
+    public TagListDTO() {
     }
 
     public List<TagDTO> getTags() {

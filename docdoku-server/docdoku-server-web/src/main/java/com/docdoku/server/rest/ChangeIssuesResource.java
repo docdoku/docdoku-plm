@@ -35,6 +35,7 @@ import com.docdoku.server.rest.dto.change.ChangeIssueDTO;
 import com.docdoku.server.rest.dto.change.ChangeItemDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -75,11 +76,11 @@ public class ChangeIssuesResource {
             responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getIssues(@PathParam("workspaceId") String workspaceId)
-            throws EntityNotFoundException, UserNotActiveException{
+            throws EntityNotFoundException, UserNotActiveException {
         List<ChangeIssue> changeIssues = changeManager.getChangeIssues(workspaceId);
         List<ChangeIssueDTO> changeIssueDTOs = new ArrayList<>();
-        for(ChangeIssue issue : changeIssues){
-            ChangeIssueDTO changeIssueDTO= mapper.map(issue, ChangeIssueDTO.class);
+        for (ChangeIssue issue : changeIssues) {
+            ChangeIssueDTO changeIssueDTO = mapper.map(issue, ChangeIssueDTO.class);
             changeIssueDTO.setWritable(changeManager.isChangeItemWritable(issue));
             changeIssueDTOs.add(changeIssueDTO);
         }
@@ -92,15 +93,16 @@ public class ChangeIssuesResource {
             response = ChangeIssueDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO createIssue(@PathParam("workspaceId") String workspaceId, ChangeIssueDTO changeIssueDTO)
+    public ChangeItemDTO createIssue(@PathParam("workspaceId") String workspaceId,
+                                     @ApiParam(required = true, value = "Change issue to create") ChangeIssueDTO changeIssueDTO)
             throws EntityNotFoundException, AccessRightException {
         ChangeIssue changeIssue = changeManager.createChangeIssue(workspaceId,
-                                                                changeIssueDTO.getName(),
-                                                                changeIssueDTO.getDescription(),
-                                                                changeIssueDTO.getInitiator(),
-                                                                changeIssueDTO.getPriority(),
-                                                                changeIssueDTO.getAssignee(),
-                                                                changeIssueDTO.getCategory());
+                changeIssueDTO.getName(),
+                changeIssueDTO.getDescription(),
+                changeIssueDTO.getInitiator(),
+                changeIssueDTO.getPriority(),
+                changeIssueDTO.getAssignee(),
+                changeIssueDTO.getCategory());
         ChangeIssueDTO ret = mapper.map(changeIssue, ChangeIssueDTO.class);
         ret.setWritable(true);
         return ret;
@@ -112,13 +114,14 @@ public class ChangeIssuesResource {
             responseContainer = "List")
     @Path("link")
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeIssueDTO[] searchIssuesToLink(@PathParam("workspaceId") String workspaceId,@QueryParam("q") String q)
-            throws EntityNotFoundException, UserNotActiveException{
+    public ChangeIssueDTO[] searchIssuesToLink(@PathParam("workspaceId") String workspaceId,
+                                               @QueryParam("q") String q)
+            throws EntityNotFoundException, UserNotActiveException {
         int maxResults = 8;
         List<ChangeIssue> issues = changeManager.getIssuesWithReference(workspaceId, q, maxResults);
         List<ChangeIssueDTO> issueDTOs = new ArrayList<>();
-        for(ChangeIssue issue : issues){
-            ChangeIssueDTO changeIssueDTO= mapper.map(issue, ChangeIssueDTO.class);
+        for (ChangeIssue issue : issues) {
+            ChangeIssueDTO changeIssueDTO = mapper.map(issue, ChangeIssueDTO.class);
             changeIssueDTO.setWritable(changeManager.isChangeItemWritable(issue));
             issueDTOs.add(changeIssueDTO);
         }
@@ -130,7 +133,8 @@ public class ChangeIssuesResource {
             response = ChangeIssueDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{issueId}")
-    public ChangeItemDTO getIssue(@PathParam("workspaceId") String workspaceId, @PathParam("issueId") int issueId)
+    public ChangeItemDTO getIssue(@PathParam("workspaceId") String workspaceId,
+                                  @PathParam("issueId") int issueId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         ChangeIssue changeIssue = changeManager.getChangeIssue(workspaceId, issueId);
         ChangeIssueDTO changeIssueDTO = mapper.map(changeIssue, ChangeIssueDTO.class);
@@ -144,14 +148,16 @@ public class ChangeIssuesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{issueId}")
-    public ChangeItemDTO updateIssue(@PathParam("workspaceId") String workspaceId, @PathParam("issueId") int issueId, ChangeIssueDTO pChangeIssueDTO)
+    public ChangeItemDTO updateIssue(@PathParam("workspaceId") String workspaceId,
+                                     @PathParam("issueId") int issueId,
+                                     @ApiParam(required = true, value = "Change issue to update") ChangeIssueDTO pChangeIssueDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         ChangeIssue changeIssue = changeManager.updateChangeIssue(issueId,
-                                                                workspaceId,
-                                                                pChangeIssueDTO.getDescription(),
-                                                                pChangeIssueDTO.getPriority(),
-                                                                pChangeIssueDTO.getAssignee(),
-                                                                pChangeIssueDTO.getCategory());
+                workspaceId,
+                pChangeIssueDTO.getDescription(),
+                pChangeIssueDTO.getPriority(),
+                pChangeIssueDTO.getAssignee(),
+                pChangeIssueDTO.getCategory());
         ChangeIssueDTO changeIssueDTO = mapper.map(changeIssue, ChangeIssueDTO.class);
         changeIssueDTO.setWritable(changeManager.isChangeItemWritable(changeIssue));
         return changeIssueDTO;
@@ -174,13 +180,15 @@ public class ChangeIssuesResource {
     @Path("{issueId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO saveTags(@PathParam("workspaceId") String workspaceId, @PathParam("issueId") int issueId, TagListDTO tagListDTO)
+    public ChangeItemDTO saveTags(@PathParam("workspaceId") String workspaceId,
+                                  @PathParam("issueId") int issueId,
+                                  @ApiParam(required = true, value = "Tag list to add") TagListDTO tagListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
 
-        List<TagDTO> tagDtos = tagListDTO.getTags();
-        String[] tagsLabel = new String[tagDtos.size()];
-        for (int i = 0; i < tagDtos.size(); i++) {
-            tagsLabel[i] = tagDtos.get(i).getLabel();
+        List<TagDTO> tagDTOs = tagListDTO.getTags();
+        String[] tagsLabel = new String[tagDTOs.size()];
+        for (int i = 0; i < tagDTOs.size(); i++) {
+            tagsLabel[i] = tagDTOs.get(i).getLabel();
         }
 
         ChangeIssue changeIssue = changeManager.saveChangeIssueTags(workspaceId, issueId, tagsLabel);
@@ -195,17 +203,19 @@ public class ChangeIssuesResource {
     @Path("{issueId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO addTag(@PathParam("workspaceId") String workspaceId, @PathParam("issueId") int issueId, TagListDTO tagListDTO)
+    public ChangeItemDTO addTag(@PathParam("workspaceId") String workspaceId,
+                                @PathParam("issueId") int issueId,
+                                @ApiParam(required = true, value = "Tag list to add") TagListDTO tagListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
-        ChangeIssue changeIssue = changeManager.getChangeIssue(workspaceId,issueId);
+        ChangeIssue changeIssue = changeManager.getChangeIssue(workspaceId, issueId);
         Set<Tag> tags = changeIssue.getTags();
         Set<String> tagLabels = new HashSet<>();
 
-        for(TagDTO tagDto:tagListDTO.getTags()){
-            tagLabels.add(tagDto.getLabel());
+        for (TagDTO tagDTO : tagListDTO.getTags()) {
+            tagLabels.add(tagDTO.getLabel());
         }
 
-        for(Tag tag : tags){
+        for (Tag tag : tags) {
             tagLabels.add(tag.getLabel());
         }
 
@@ -219,7 +229,9 @@ public class ChangeIssuesResource {
     @ApiOperation(value = "Delete a tag attached to an issue",
             response = ChangeIssueDTO.class)
     @Path("{issueId}/tags/{tagName}")
-    public Response removeTags(@PathParam("workspaceId") String workspaceId, @PathParam("issueId")int issueId, @PathParam("tagName") String tagName)
+    public Response removeTags(@PathParam("workspaceId") String workspaceId,
+                               @PathParam("issueId") int issueId,
+                               @PathParam("tagName") String tagName)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         changeManager.removeChangeIssueTag(workspaceId, issueId, tagName);
         return Response.ok().build();
@@ -231,11 +243,13 @@ public class ChangeIssuesResource {
     @Path("{issueId}/affected-documents")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO saveAffectedDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("issueId") int issueId, DocumentIterationListDTO documentListDto)
+    public ChangeItemDTO saveAffectedDocuments(@PathParam("workspaceId") String workspaceId,
+                                               @PathParam("issueId") int issueId,
+                                               @ApiParam(required = true, value = "Document list to save as affected") DocumentIterationListDTO documentListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
 
-        List<DocumentIterationDTO> documentLinkDtos = documentListDto.getDocuments();
-        DocumentIterationKey[] links = createDocumentIterationKeys(documentLinkDtos);
+        List<DocumentIterationDTO> documentIterationDTOs = documentListDTO.getDocuments();
+        DocumentIterationKey[] links = createDocumentIterationKeys(documentIterationDTOs);
 
         ChangeIssue changeIssue = changeManager.saveChangeIssueAffectedDocuments(workspaceId, issueId, links);
         ChangeIssueDTO changeIssueDTO = mapper.map(changeIssue, ChangeIssueDTO.class);
@@ -249,11 +263,13 @@ public class ChangeIssuesResource {
     @Path("{issueId}/affected-parts")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO saveAffectedParts(@PathParam("workspaceId") String workspaceId, @PathParam("issueId") int issueId, PartIterationListDTO partLinks)
+    public ChangeItemDTO saveAffectedParts(@PathParam("workspaceId") String workspaceId,
+                                           @PathParam("issueId") int issueId,
+                                           @ApiParam(required = true, value = "Part list to save as affected") PartIterationListDTO partIterationListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
 
-        List<PartIterationDTO> partLinkDtos = partLinks.getParts();
-        PartIterationKey[] links = createPartIterationKeys(partLinkDtos);
+        List<PartIterationDTO> partIterationDTOs = partIterationListDTO.getParts();
+        PartIterationKey[] links = createPartIterationKeys(partIterationDTOs);
 
         ChangeIssue changeIssue = changeManager.saveChangeIssueAffectedParts(workspaceId, issueId, links);
         ChangeIssueDTO changeIssueDTO = mapper.map(changeIssue, ChangeIssueDTO.class);
@@ -266,12 +282,14 @@ public class ChangeIssuesResource {
             response = Response.class)
     @Path("{issueId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("issueId") int issueId, ACLDTO acl)
+    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId,
+                              @PathParam("issueId") int issueId,
+                              @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
-            Map<String,String> userEntries = new HashMap<>();
-            Map<String,String> groupEntries = new HashMap<>();
+            Map<String, String> userEntries = new HashMap<>();
+            Map<String, String> groupEntries = new HashMap<>();
 
             for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
                 userEntries.put(entry.getKey(), entry.getValue().name());
@@ -282,7 +300,7 @@ public class ChangeIssuesResource {
             }
 
             changeManager.updateACLForChangeIssue(pWorkspaceId, issueId, userEntries, groupEntries);
-        }else{
+        } else {
             changeManager.removeACLFromChangeIssue(pWorkspaceId, issueId);
         }
         return Response.ok().build();

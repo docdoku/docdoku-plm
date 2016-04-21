@@ -41,6 +41,7 @@ public class BaselinedPartOptionDTO implements Serializable {
     public String getVersion() {
         return version;
     }
+
     public void setVersion(String version) {
         this.version = version;
     }
@@ -48,6 +49,7 @@ public class BaselinedPartOptionDTO implements Serializable {
     public int getLastIteration() {
         return lastIteration;
     }
+
     public void setLastIteration(int lastIteration) {
         this.lastIteration = lastIteration;
     }
@@ -55,6 +57,7 @@ public class BaselinedPartOptionDTO implements Serializable {
     public boolean isReleased() {
         return released;
     }
+
     public void setReleased(boolean released) {
         this.released = released;
     }

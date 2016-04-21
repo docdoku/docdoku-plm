@@ -30,7 +30,7 @@ import javax.inject.Inject;
 import javax.ws.rs.Path;
 
 @RequestScoped
-@Api(hidden = true, value = "change-items" , description = "Operations about change items")
+@Api(hidden = true, value = "change-items", description = "Operations about change items")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ChangeItemsResource {
@@ -42,7 +42,7 @@ public class ChangeItemsResource {
     @Inject
     private ChangeOrdersResource orders;
     @Inject
-    private ChangeMilestonesResource changeMilestones;
+    private MilestonesResource milestones;
 
     public ChangeItemsResource() {
     }
@@ -66,9 +66,9 @@ public class ChangeItemsResource {
     }
 
     @Path("/milestones")
-    @ApiOperation(value = "SubResource : ChangeMilestonesResource")
-    public ChangeMilestonesResource milestones() {
-        return changeMilestones;
+    @ApiOperation(value = "SubResource : MilestonesResource")
+    public MilestonesResource milestones() {
+        return milestones;
     }
 
 }

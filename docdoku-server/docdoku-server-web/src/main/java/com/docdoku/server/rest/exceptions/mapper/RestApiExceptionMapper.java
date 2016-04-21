@@ -33,14 +33,15 @@ import java.util.logging.Logger;
 @Provider
 public class RestApiExceptionMapper implements ExceptionMapper<RestApiException> {
     private static final Logger LOGGER = Logger.getLogger(RestApiExceptionMapper.class.getName());
+
     public RestApiExceptionMapper() {
     }
 
     @Override
     public Response toResponse(RestApiException e) {
-        LOGGER.log(Level.SEVERE,e.getMessage());
-        LOGGER.log(Level.FINE,null,e);
+        LOGGER.log(Level.SEVERE, e.getMessage());
+        LOGGER.log(Level.FINE, null, e);
         return Response.status(Response.Status.BAD_REQUEST)
-                       .build();
+                .build();
     }
 }

@@ -48,6 +48,7 @@ public class ProductInstanceCreationDTO implements Serializable {
     public String getSerialNumber() {
         return serialNumber;
     }
+
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
@@ -55,6 +56,7 @@ public class ProductInstanceCreationDTO implements Serializable {
     public String getConfigurationItemId() {
         return configurationItemId;
     }
+
     public void setConfigurationItemId(String configurationItemId) {
         this.configurationItemId = configurationItemId;
     }
@@ -62,6 +64,7 @@ public class ProductInstanceCreationDTO implements Serializable {
     public int getBaselineId() {
         return baselineId;
     }
+
     public void setBaselineId(int baselineId) {
         this.baselineId = baselineId;
     }

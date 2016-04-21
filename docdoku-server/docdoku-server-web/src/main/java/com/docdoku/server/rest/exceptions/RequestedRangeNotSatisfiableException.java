@@ -33,8 +33,8 @@ public class RequestedRangeNotSatisfiableException extends RestApiException {
     }
 
     @Override
-    public String getMessage(){
-        return "Http requested range is not satisfiable for "+resource;
+    public String getMessage() {
+        return "Http requested range is not satisfiable for " + resource;
     }
 
     public long getContentRange() {

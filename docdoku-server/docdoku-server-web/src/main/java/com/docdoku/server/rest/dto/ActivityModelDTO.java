@@ -37,10 +37,6 @@ public class ActivityModelDTO implements Serializable {
 
     private String lifeCycleState;
     private Type type;
-    public enum Type {
-        SERIAL, PARALLEL
-    }
-
     private Integer tasksToComplete;
 
     public ActivityModelDTO() {
@@ -92,12 +88,12 @@ public class ActivityModelDTO implements Serializable {
         this.tasksToComplete = tasksToComplete;
     }
 
-    public void setLifeCycleState(String lifeCycleState) {
-        this.lifeCycleState = lifeCycleState;
-    }
-
     public String getLifeCycleState() {
         return lifeCycleState;
+    }
+
+    public void setLifeCycleState(String lifeCycleState) {
+        this.lifeCycleState = lifeCycleState;
     }
 
     public Integer getRelaunchStep() {
@@ -106,5 +102,9 @@ public class ActivityModelDTO implements Serializable {
 
     public void setRelaunchStep(Integer relaunchStep) {
         this.relaunchStep = relaunchStep;
+    }
+
+    public enum Type {
+        SERIAL, PARALLEL
     }
 }

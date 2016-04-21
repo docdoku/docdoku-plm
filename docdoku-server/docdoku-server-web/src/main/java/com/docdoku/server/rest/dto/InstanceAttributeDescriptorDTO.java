@@ -24,11 +24,10 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
  * @author Morgan Guimard
  */
 @XmlRootElement
-public class InstanceAttributeDescriptorDTO implements Serializable{
+public class InstanceAttributeDescriptorDTO implements Serializable {
 
     private String name;
     private String type;

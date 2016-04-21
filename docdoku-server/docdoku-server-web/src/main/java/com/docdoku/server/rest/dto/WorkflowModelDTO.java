@@ -84,12 +84,16 @@ public class WorkflowModelDTO implements Serializable {
         return this.activityModels;
     }
 
-    public void setFinalLifeCycleState(String finalLifeCycleState) {
-        this.finalLifeCycleState = finalLifeCycleState;
+    public void setActivityModels(List<ActivityModelDTO> activityModels) {
+        this.activityModels = activityModels;
     }
 
     public String getFinalLifeCycleState() {
         return finalLifeCycleState;
+    }
+
+    public void setFinalLifeCycleState(String finalLifeCycleState) {
+        this.finalLifeCycleState = finalLifeCycleState;
     }
 
     public UserDTO getAuthor() {
@@ -108,10 +112,6 @@ public class WorkflowModelDTO implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public void setActivityModels(List<ActivityModelDTO> activityModels) {
-        this.activityModels = activityModels;
-    }
-
     public String getReference() {
         return reference;
     }
@@ -123,6 +123,7 @@ public class WorkflowModelDTO implements Serializable {
     public ACLDTO getAcl() {
         return acl;
     }
+
     public void setAcl(ACLDTO acl) {
         this.acl = acl;
     }

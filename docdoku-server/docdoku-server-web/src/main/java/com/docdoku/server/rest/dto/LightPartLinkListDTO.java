@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement
-public class LightPartLinkListDTO  implements Serializable {
+public class LightPartLinkListDTO implements Serializable {
 
     private List<LightPartLinkDTO> partLinks = new ArrayList<>();
 

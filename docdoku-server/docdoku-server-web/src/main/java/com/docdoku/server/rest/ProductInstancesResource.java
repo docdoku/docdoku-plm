@@ -43,6 +43,7 @@ import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 import com.docdoku.server.rest.util.InstanceAttributeFactory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -67,30 +68,24 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author Taylor LABEJOF
  */
 @RequestScoped
-@Api(hidden=true,value = "product-instances", description = "Operations about product-instances")
+@Api(hidden = true, value = "product-instances", description = "Operations about product-instances")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ProductInstancesResource {
 
+    private static final Logger LOGGER = Logger.getLogger(ProductInstancesResource.class.getName());
     @Inject
     private IProductInstanceManagerLocal productInstanceService;
-
     @Inject
     private IProductManagerLocal productService;
-
     @Inject
     private IPSFilterManagerLocal psFilterService;
-
     @Inject
     private IImporterManagerLocal importerService;
-
     private Mapper mapper;
-
-    private static final Logger LOGGER = Logger.getLogger(ProductInstancesResource.class.getName());
 
     public ProductInstancesResource() {
     }
@@ -103,19 +98,20 @@ public class ProductInstancesResource {
     @GET
     @ApiOperation(value = "Get product-instance with given configuration item", response = ProductInstanceMasterDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProductInstances(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
+    public Response getProductInstances(@PathParam("workspaceId") String workspaceId,
+                                        @PathParam("ciId") String ciId)
             throws EntityNotFoundException, UserNotActiveException {
 
         List<ProductInstanceMaster> productInstanceMasterList;
-        if(ciId != null) {
+        if (ciId != null) {
             ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId, ciId);
             productInstanceMasterList = productInstanceService.getProductInstanceMasters(configurationItemKey);
-        }else{
+        } else {
             productInstanceMasterList = productInstanceService.getProductInstanceMasters(workspaceId);
         }
         List<ProductInstanceMasterDTO> dtos = new ArrayList<>();
-        for(ProductInstanceMaster productInstanceMaster : productInstanceMasterList){
-            ProductInstanceMasterDTO productInstanceMasterDTO = mapper.map(productInstanceMaster,ProductInstanceMasterDTO.class);
+        for (ProductInstanceMaster productInstanceMaster : productInstanceMasterList) {
+            ProductInstanceMasterDTO productInstanceMasterDTO = mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
             productInstanceMasterDTO.setConfigurationItemId(productInstanceMaster.getInstanceOf().getId());
             dtos.add(productInstanceMasterDTO);
         }
@@ -127,21 +123,22 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Create product-instance", response = ProductInstanceMasterDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductInstanceMasterDTO createProductInstanceMaster(@PathParam("workspaceId") String workspaceId, ProductInstanceCreationDTO productInstanceCreationDTO)
+    public ProductInstanceMasterDTO createProductInstanceMaster(@PathParam("workspaceId") String workspaceId,
+                                                                @ApiParam(required = true, value = "Product instance master to create") ProductInstanceCreationDTO productInstanceCreationDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException, NotAllowedException, EntityConstraintException, UserNotActiveException {
 
         InstanceAttributeFactory factory = new InstanceAttributeFactory();
         ACLDTO acldto = productInstanceCreationDTO.getAcl();
-        Map<String,ACL.Permission> userEntries=new HashMap<>();
-        Map<String,ACL.Permission> grpEntries=new HashMap<>();
+        Map<String, ACL.Permission> userEntries = new HashMap<>();
+        Map<String, ACL.Permission> grpEntries = new HashMap<>();
         List<InstanceAttributeDTO> instanceAttributes = productInstanceCreationDTO.getInstanceAttributes();
         List<InstanceAttribute> attributes = new ArrayList<>();
         if (instanceAttributes != null) {
             attributes = factory.createInstanceAttributes(instanceAttributes);
         }
-        if(acldto != null){
+        if (acldto != null) {
             userEntries = acldto.getUserEntries();
-            grpEntries= acldto.getGroupEntries();
+            grpEntries = acldto.getGroupEntries();
         }
         Set<DocumentRevisionDTO> linkedDocs = productInstanceCreationDTO.getLinkedDocuments();
         DocumentRevisionKey[] links = null;
@@ -150,9 +147,9 @@ public class ProductInstancesResource {
             documentLinkComments = new String[linkedDocs.size()];
             links = createDocumentRevisionKeys(linkedDocs);
             int i = 0;
-            for (DocumentRevisionDTO docRevisionForLink : linkedDocs){
+            for (DocumentRevisionDTO docRevisionForLink : linkedDocs) {
                 String comment = docRevisionForLink.getCommentLink();
-                if (comment == null){
+                if (comment == null) {
                     comment = "";
                 }
                 documentLinkComments[i++] = comment;
@@ -168,7 +165,9 @@ public class ProductInstancesResource {
     @Path("{serialNumber}/iterations/{iteration}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductInstanceMasterDTO updateProductInstanceMaster(@PathParam("workspaceId") String workspaceId,@PathParam("iteration") int iteration, ProductInstanceIterationDTO productInstanceCreationDTO)
+    public ProductInstanceMasterDTO updateProductInstanceMaster(@PathParam("workspaceId") String workspaceId,
+                                                                @PathParam("iteration") int iteration,
+                                                                @ApiParam(required = true, value = "Product instance master to create") ProductInstanceIterationDTO productInstanceCreationDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException, UserNotActiveException {
 
         InstanceAttributeFactory factory = new InstanceAttributeFactory();
@@ -186,9 +185,9 @@ public class ProductInstancesResource {
             documentLinkComments = new String[linkedDocs.size()];
             links = createDocumentRevisionKeys(linkedDocs);
             int i = 0;
-            for (DocumentRevisionDTO docRevisionForLink : linkedDocs){
+            for (DocumentRevisionDTO docRevisionForLink : linkedDocs) {
                 String comment = docRevisionForLink.getCommentLink();
-                if (comment == null){
+                if (comment == null) {
                     comment = "";
                 }
                 documentLinkComments[i++] = comment;
@@ -208,14 +207,14 @@ public class ProductInstancesResource {
             throws EntityNotFoundException, UserNotActiveException {
 
         ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
-        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, configurationItemId);
         ProductInstanceMasterDTO dto = mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
 
 
         List<ProductInstanceIterationDTO> productInstanceIterationsDTO = dto.getProductInstanceIterations();
         List<ProductInstanceIteration> productInstanceIterations = productInstanceMaster.getProductInstanceIterations();
         Iterator<ProductInstanceIteration> iterationIterator = productInstanceIterations.iterator();
-        for(ProductInstanceIterationDTO productInstanceIterationDTO : productInstanceIterationsDTO){
+        for (ProductInstanceIterationDTO productInstanceIterationDTO : productInstanceIterationsDTO) {
 
             List<LightPartLinkListDTO> substitutesParts = new ArrayList<>();
             List<LightPartLinkListDTO> optionalParts = new ArrayList<>();
@@ -224,16 +223,16 @@ public class ProductInstancesResource {
             } catch (AccessRightException e) {
                 LOGGER.log(Level.FINEST, null, e);
             }
-            for(String path:productInstanceIterationDTO.getSubstituteLinks()){
+            for (String path : productInstanceIterationDTO.getSubstituteLinks()) {
                 LightPartLinkListDTO lightPartLinkDTO = new LightPartLinkListDTO();
-                for(PartLink partLink : productService.decodePath(ciKey, path)){
+                for (PartLink partLink : productService.decodePath(ciKey, path)) {
                     lightPartLinkDTO.getPartLinks().add(new LightPartLinkDTO(partLink));
                 }
                 substitutesParts.add(lightPartLinkDTO);
             }
-            for(String path:productInstanceIterationDTO.getOptionalUsageLinks()){
+            for (String path : productInstanceIterationDTO.getOptionalUsageLinks()) {
                 LightPartLinkListDTO lightPartLinkDTO = new LightPartLinkListDTO();
-                for(PartLink partLink : productService.decodePath(ciKey, path)){
+                for (PartLink partLink : productService.decodePath(ciKey, path)) {
                     lightPartLinkDTO.getPartLinks().add(new LightPartLinkDTO(partLink));
                 }
                 optionalParts.add(lightPartLinkDTO);
@@ -260,11 +259,11 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Remove attached file from product-instance", response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{serialNumber}/iterations/{iteration}/files/{fileName}")
-    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId,@PathParam("iteration") int iteration, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("fileName") String fileName)
+    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("iteration") int iteration, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("fileName") String fileName)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
-        String fullName = workspaceId + "/product-instances/" + serialNumber +"/iterations/" + iteration + "/" + fileName;
-        productInstanceService.removeFileFromProductInstanceIteration(workspaceId, iteration, fullName, new ProductInstanceMasterKey(serialNumber,workspaceId,configurationItemId));
+        String fullName = workspaceId + "/product-instances/" + serialNumber + "/iterations/" + iteration + "/" + fileName;
+        productInstanceService.removeFileFromProductInstanceIteration(workspaceId, iteration, fullName, new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
         return Response.ok().build();
     }
 
@@ -273,13 +272,13 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Update product-instance's ACL", response = Response.class)
     @Path("{serialNumber}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateProductInstanceACL(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber,ACLDTO acl)
+    public Response updateProductInstanceACL(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, ACLDTO acl)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
         if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
-            Map<String,String> userEntries = new HashMap<>();
-            Map<String,String> groupEntries = new HashMap<>();
+            Map<String, String> userEntries = new HashMap<>();
+            Map<String, String> groupEntries = new HashMap<>();
 
             for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
                 userEntries.put(entry.getKey(), entry.getValue().name());
@@ -289,9 +288,9 @@ public class ProductInstancesResource {
                 groupEntries.put(entry.getKey(), entry.getValue().name());
             }
 
-            productInstanceService.updateACLForProductInstanceMaster(workspaceId, configurationItemId,serialNumber, userEntries, groupEntries);
-        }else{
-            productInstanceService.removeACLFromProductInstanceMaster(workspaceId, configurationItemId,serialNumber);
+            productInstanceService.updateACLForProductInstanceMaster(workspaceId, configurationItemId, serialNumber, userEntries, groupEntries);
+        } else {
+            productInstanceService.removeACLFromProductInstanceMaster(workspaceId, configurationItemId, serialNumber);
         }
 
         return Response.ok().build();
@@ -355,9 +354,9 @@ public class ProductInstancesResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{serialNumber}/iterations/{iteration}/files/{fileName}")
     public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration, @PathParam("fileName") String fileName, FileDTO fileDTO) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, ProductInstanceMasterNotFoundException, AccessRightException, StorageException {
-        String fullName = workspaceId + "/product-instances/" + serialNumber +"/iterations/" + iteration + "/" + fileName;
+        String fullName = workspaceId + "/product-instances/" + serialNumber + "/iterations/" + iteration + "/" + fileName;
         BinaryResource binaryResource = productInstanceService.renameFileInProductInstance(fullName, fileDTO.getShortName(), serialNumber, configurationItemId, iteration);
-        return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
+        return new FileDTO(true, binaryResource.getFullName(), binaryResource.getName());
     }
 
     @GET
@@ -369,11 +368,11 @@ public class ProductInstancesResource {
 
         PathDataMasterDTO dto = pathDataMaster == null ? new PathDataMasterDTO(pathAsString) : mapper.map(pathDataMaster, PathDataMasterDTO.class);
 
-        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, configurationItemId);
 
         LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
         List<PartLink> path = productService.decodePath(ciKey, pathAsString);
-        for(PartLink partLink : path){
+        for (PartLink partLink : path) {
             partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink));
         }
         dto.setPartLinksList(partLinksList);
@@ -381,17 +380,17 @@ public class ProductInstancesResource {
         List<InstanceAttributeDTO> attributesDTO = new ArrayList<>();
         List<InstanceAttributeTemplateDTO> attributeTemplatesDTO = new ArrayList<>();
         PartLink partLink = path.get(path.size() - 1);
-        PSFilter filter = psFilterService.getPSFilter(ciKey,"pi-"+serialNumber, false);
+        PSFilter filter = psFilterService.getPSFilter(ciKey, "pi-" + serialNumber, false);
         List<PartIteration> partIterations = filter.filter(partLink.getComponent());
         PartIteration partIteration = partIterations.get(0);
 
-        if(partIteration != null){
-            for(InstanceAttribute instanceAttribute : partIteration.getInstanceAttributes()){
-                attributesDTO.add(mapper.map(instanceAttribute,InstanceAttributeDTO.class));
+        if (partIteration != null) {
+            for (InstanceAttribute instanceAttribute : partIteration.getInstanceAttributes()) {
+                attributesDTO.add(mapper.map(instanceAttribute, InstanceAttributeDTO.class));
             }
             dto.setPartAttributes(attributesDTO);
-            for(InstanceAttributeTemplate instanceAttributeTemplate : partIteration.getInstanceAttributeTemplates()){
-                attributeTemplatesDTO.add(mapper.map(instanceAttributeTemplate,InstanceAttributeTemplateDTO.class));
+            for (InstanceAttributeTemplate instanceAttributeTemplate : partIteration.getInstanceAttributeTemplates()) {
+                attributeTemplatesDTO.add(mapper.map(instanceAttributeTemplate, InstanceAttributeTemplateDTO.class));
             }
             dto.setPartAttributeTemplates(attributeTemplatesDTO);
         }
@@ -413,9 +412,9 @@ public class ProductInstancesResource {
                                                 @PathParam("fileName") String fileName,
                                                 FileDTO fileDTO) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, ProductInstanceMasterNotFoundException, AccessRightException, StorageException {
 
-        String fullName = workspaceId + "/product-instances/" + serialNumber +"/pathdata/" + pathDataId + "/iterations/" + iteration + "/" + fileName;
+        String fullName = workspaceId + "/product-instances/" + serialNumber + "/pathdata/" + pathDataId + "/iterations/" + iteration + "/" + fileName;
         BinaryResource binaryResource = productInstanceService.renameFileInPathData(workspaceId, configurationItemId, serialNumber, pathDataId, iteration, fullName, fileDTO.getShortName());
-        return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
+        return new FileDTO(true, binaryResource.getFullName(), binaryResource.getName());
     }
 
     @DELETE
@@ -424,14 +423,14 @@ public class ProductInstancesResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{serialNumber}/pathdata/{pathDataId}/iterations/{iteration}/files/{fileName}")
     public Response deleteAttachedFileInPathData(@PathParam("workspaceId") String workspaceId,
-                                                @PathParam("ciId") String configurationItemId,
-                                                @PathParam("serialNumber") String serialNumber,
-                                                @PathParam("pathDataId") int pathDataId,
-                                                @PathParam("iteration") int iteration,
-                                                @PathParam("fileName") String fileName
-                                               ) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, ProductInstanceMasterNotFoundException, AccessRightException {
+                                                 @PathParam("ciId") String configurationItemId,
+                                                 @PathParam("serialNumber") String serialNumber,
+                                                 @PathParam("pathDataId") int pathDataId,
+                                                 @PathParam("iteration") int iteration,
+                                                 @PathParam("fileName") String fileName
+    ) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, ProductInstanceMasterNotFoundException, AccessRightException {
 
-        String fullName = workspaceId + "/product-instances/" + serialNumber +"/pathdata/" + pathDataId + "/iterations/" + iteration + "/" + fileName;
+        String fullName = workspaceId + "/product-instances/" + serialNumber + "/pathdata/" + pathDataId + "/iterations/" + iteration + "/" + fileName;
         ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
         productInstanceService.removeFileFromPathData(workspaceId, configurationItemId, serialNumber, pathDataId, iteration, fullName, productInstanceMaster);
         return Response.ok().build();
@@ -467,9 +466,9 @@ public class ProductInstancesResource {
             documentLinkComments = new String[linkedDocs.size()];
             links = createDocumentRevisionKeys(linkedDocs);
             int i = 0;
-            for (DocumentRevisionDTO docRevisionForLink : linkedDocs){
+            for (DocumentRevisionDTO docRevisionForLink : linkedDocs) {
                 String comment = docRevisionForLink.getCommentLink();
-                if (comment == null){
+                if (comment == null) {
                     comment = "";
                 }
                 documentLinkComments[i++] = comment;
@@ -480,24 +479,24 @@ public class ProductInstancesResource {
         PathDataMaster pathDataMaster = productInstanceService.addNewPathDataIteration(workspaceId, configurationItemId, serialNumber, pathDataId, pathDataIterationCreationDTO.getPath(), attributes, pathDataIterationCreationDTO.getIterationNote(), links, documentLinkComments);
         PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
 
-        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, configurationItemId);
 
         LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
         List<PartLink> path = productService.decodePath(ciKey, pathDataIterationCreationDTO.getPath());
-        for(PartLink partLink : path){
+        for (PartLink partLink : path) {
             partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink));
         }
         dto.setPartLinksList(partLinksList);
 
         List<InstanceAttributeDTO> attributesDTO = new ArrayList<>();
         PartLink partLink = path.get(path.size() - 1);
-        PSFilter filter = psFilterService.getPSFilter(ciKey,"pi-"+serialNumber, false);
+        PSFilter filter = psFilterService.getPSFilter(ciKey, "pi-" + serialNumber, false);
         List<PartIteration> partIterations = filter.filter(partLink.getComponent());
         PartIteration partIteration = partIterations.get(0);
 
-        if(partIteration != null){
-            for(InstanceAttribute instanceAttribute : partIteration.getInstanceAttributes()){
-                attributesDTO.add(mapper.map(instanceAttribute,InstanceAttributeDTO.class));
+        if (partIteration != null) {
+            for (InstanceAttribute instanceAttribute : partIteration.getInstanceAttributes()) {
+                attributesDTO.add(mapper.map(instanceAttribute, InstanceAttributeDTO.class));
             }
             dto.setPartAttributes(attributesDTO);
         }
@@ -510,7 +509,7 @@ public class ProductInstancesResource {
     @Path("{serialNumber}/pathdata/{path}/new")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PathDataMasterDTO createPathDataMaster(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber,@PathParam("path") String pathAsString, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, FileAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+    public PathDataMasterDTO createPathDataMaster(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("path") String pathAsString, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, FileAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
 
         InstanceAttributeFactory factory = new InstanceAttributeFactory();
 
@@ -524,11 +523,11 @@ public class ProductInstancesResource {
 
         PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
 
-        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, configurationItemId);
 
         LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
         List<PartLink> path = productService.decodePath(ciKey, pathAsString);
-        for(PartLink partLink : path){
+        for (PartLink partLink : path) {
             partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink));
         }
         dto.setPartLinksList(partLinksList);
@@ -541,7 +540,7 @@ public class ProductInstancesResource {
     @Path("{serialNumber}/pathdata/{pathDataId}/iterations/{iteration}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PathDataMasterDTO updatePathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("iteration") int iteration,@PathParam("serialNumber") String serialNumber,@PathParam("pathDataId") int pathDataId, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+    public PathDataMasterDTO updatePathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("iteration") int iteration, @PathParam("serialNumber") String serialNumber, @PathParam("pathDataId") int pathDataId, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
 
         InstanceAttributeFactory factory = new InstanceAttributeFactory();
 
@@ -558,9 +557,9 @@ public class ProductInstancesResource {
             documentLinkComments = new String[linkedDocs.size()];
             links = createDocumentRevisionKeys(linkedDocs);
             int i = 0;
-            for (DocumentRevisionDTO docRevisionForLink : linkedDocs){
+            for (DocumentRevisionDTO docRevisionForLink : linkedDocs) {
                 String comment = docRevisionForLink.getCommentLink();
-                if (comment == null){
+                if (comment == null) {
                     comment = "";
                 }
                 documentLinkComments[i++] = comment;
@@ -572,11 +571,11 @@ public class ProductInstancesResource {
 
         PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
 
-        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, configurationItemId);
 
         LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
         List<PartLink> path = productService.decodePath(ciKey, dto.getPath());
-        for(PartLink partLink : path){
+        for (PartLink partLink : path) {
             partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink));
         }
         dto.setPartLinksList(partLinksList);
@@ -591,7 +590,7 @@ public class ProductInstancesResource {
     public Response getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
         List<String> pathToPathLinkTypes = productInstanceService.getPathToPathLinkTypes(workspaceId, configurationItemId, serialNumber);
         List<LightPathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
-        for(String type : pathToPathLinkTypes){
+        for (String type : pathToPathLinkTypes) {
             LightPathToPathLinkDTO pathToPathLinkDTO = new LightPathToPathLinkDTO();
             pathToPathLinkDTO.setType(type);
             pathToPathLinkDTOs.add(pathToPathLinkDTO);
@@ -599,19 +598,21 @@ public class ProductInstancesResource {
         return Response.ok(new GenericEntity<List<LightPathToPathLinkDTO>>((List<LightPathToPathLinkDTO>) pathToPathLinkDTOs) {
         }).build();
     }
+
     @GET
     @ApiOperation(value = "Get part from path-to-path link", response = LightPartMasterDTO.class)
     @Path("{serialNumber}/link-path-part/{pathPart}")
     @Produces(MediaType.APPLICATION_JSON)
-    public LightPartMasterDTO getPartFromPathLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber,@PathParam("pathPart") String partPath) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
+    public LightPartMasterDTO getPartFromPathLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathPart") String partPath) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException {
 
         PartMaster partMaster = productService.getPartMasterFromPath(workspaceId, configurationItemId, partPath);
         LightPartMasterDTO lightPartMasterDTO = new LightPartMasterDTO();
         lightPartMasterDTO.setPartName(partMaster.getName());
         lightPartMasterDTO.setPartNumber(partMaster.getNumber());
-       return lightPartMasterDTO;
+        return lightPartMasterDTO;
 
     }
+
     @GET
     @ApiOperation(value = "Get path-to-path links", response = LightPathToPathLinkDTO.class, responseContainer = "List")
     @Path("{serialNumber}/path-to-path-links")
@@ -619,7 +620,7 @@ public class ProductInstancesResource {
     public Response getPathToPathLinks(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
         List<PathToPathLink> pathToPathLinkTypes = productInstanceService.getPathToPathLinks(workspaceId, configurationItemId, serialNumber);
         List<LightPathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
-        for(PathToPathLink pathToPathLink : pathToPathLinkTypes){
+        for (PathToPathLink pathToPathLink : pathToPathLinkTypes) {
             pathToPathLinkDTOs.add(mapper.map(pathToPathLink, LightPathToPathLinkDTO.class));
 
         }
@@ -634,7 +635,7 @@ public class ProductInstancesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public LightPathToPathLinkDTO getPathToPathLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathToPathLinkId") int pathToPathLinkId) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathLinkNotFoundException {
         PathToPathLink pathToPathLink = productInstanceService.getPathToPathLink(workspaceId, configurationItemId, serialNumber, pathToPathLinkId);
-        return mapper.map(pathToPathLink,LightPathToPathLinkDTO.class);
+        return mapper.map(pathToPathLink, LightPathToPathLinkDTO.class);
     }
 
     @GET
@@ -644,22 +645,22 @@ public class ProductInstancesResource {
     public Response getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("sourcePath") String sourcePathAsString, @PathParam("targetPath") String targetPathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
         List<PathToPathLink> pathToPathLinks = productInstanceService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, serialNumber, sourcePathAsString, targetPathAsString);
         List<PathToPathLinkDTO> dtos = new ArrayList<>();
-        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, configurationItemId);
 
-        for(PathToPathLink pathToPathLink : pathToPathLinks) {
+        for (PathToPathLink pathToPathLink : pathToPathLinks) {
             PathToPathLinkDTO pathToPathLinkDTO = mapper.map(pathToPathLink, PathToPathLinkDTO.class);
             List<LightPartLinkDTO> sourceLightPartLinkDTOs = new ArrayList<>();
 
             List<PartLink> sourcePath = productService.decodePath(ciKey, pathToPathLink.getSourcePath());
             List<PartLink> targetPath = productService.decodePath(ciKey, pathToPathLink.getTargetPath());
 
-            for(PartLink partLink : sourcePath){
+            for (PartLink partLink : sourcePath) {
                 LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
                 sourceLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
             List<LightPartLinkDTO> targetLightPartLinkDTOs = new ArrayList<>();
-            for(PartLink partLink : targetPath){
+            for (PartLink partLink : targetPath) {
                 LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
                 targetLightPartLinkDTOs.add(lightPartLinkDTO);
             }
@@ -680,7 +681,7 @@ public class ProductInstancesResource {
     public Response getRootPathToPathLinks(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("type") String type) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
         List<PathToPathLink> pathToPathLinks = productInstanceService.getRootPathToPathLinks(workspaceId, configurationItemId, serialNumber, type);
         List<LightPathToPathLinkDTO> dtos = new ArrayList<>();
-        for(PathToPathLink pathToPathLink : pathToPathLinks) {
+        for (PathToPathLink pathToPathLink : pathToPathLinks) {
             dtos.add(mapper.map(pathToPathLink, LightPathToPathLinkDTO.class));
         }
         return Response.ok(new GenericEntity<List<LightPathToPathLinkDTO>>((List<LightPathToPathLinkDTO>) dtos) {
@@ -701,7 +702,7 @@ public class ProductInstancesResource {
 
         Collection<Part> parts = request.getParts();
 
-        if(parts.isEmpty() || parts.size() > 1){
+        if (parts.isEmpty() || parts.size() > 1) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
@@ -711,7 +712,7 @@ public class ProductInstancesResource {
 
         File importFile = Files.createTempFile("product-" + name, "-import.tmp" + (extension == null ? "" : "." + extension)).toFile();
         long length = BinaryResourceUpload.uploadBinary(new BufferedOutputStream(new FileOutputStream(importFile)), part);
-        importerService.importIntoPathData(workspaceId, importFile, name+"."+extension, revisionNote, autoFreezeAfterUpdate, permissiveUpdate);
+        importerService.importIntoPathData(workspaceId, importFile, name + "." + extension, revisionNote, autoFreezeAfterUpdate, permissiveUpdate);
 
         importFile.deleteOnExit();
 
@@ -739,13 +740,13 @@ public class ProductInstancesResource {
             List<PartLink> targetPath = productService.decodePath(productInstanceIteration.getBasedOn().getConfigurationItem().getKey(), pathToPathLink.getTargetPath());
 
             List<LightPartLinkDTO> sourceLightPartLinkDTOs = new ArrayList<>();
-            for(PartLink partLink : sourcePath){
+            for (PartLink partLink : sourcePath) {
                 LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
                 sourceLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
             List<LightPartLinkDTO> targetLightPartLinkDTOs = new ArrayList<>();
-            for(PartLink partLink : targetPath){
+            for (PartLink partLink : targetPath) {
                 LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
                 targetLightPartLinkDTOs.add(lightPartLinkDTO);
             }

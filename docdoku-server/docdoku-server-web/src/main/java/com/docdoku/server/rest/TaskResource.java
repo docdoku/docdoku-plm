@@ -33,6 +33,7 @@ import com.docdoku.server.rest.dto.DocumentRevisionDTO;
 import com.docdoku.server.rest.dto.TaskProcessDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -68,12 +69,12 @@ public class TaskResource {
 
     private Mapper mapper;
 
+    public TaskResource() {
+    }
+
     @PostConstruct
     public void init() {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
-    }
-
-    public TaskResource() {
     }
 
     @GET
@@ -84,13 +85,13 @@ public class TaskResource {
             @PathParam("workspaceId") String workspaceId,
             @PathParam("assignedUserLogin") String assignedUserLogin,
             @QueryParam("filter") String filter)
-                throws EntityNotFoundException, UserNotActiveException {
+            throws EntityNotFoundException, UserNotActiveException {
 
         DocumentRevision[] docRs;
 
-        if(filter == null){
+        if (filter == null) {
             docRs = documentService.getDocumentRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
-        }else{
+        } else {
             if ("in_progress".equals(filter)) {
                 docRs = documentService.getDocumentRevisionsWithOpenedTasksForGivenUser(workspaceId, assignedUserLogin);
             } else {
@@ -119,7 +120,12 @@ public class TaskResource {
     @ApiOperation(value = "Approve or reject task on document", response = Response.class)
     @Path("documents/process")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response processTaskForDocuments(@PathParam("workspaceId") String workspaceId, @QueryParam("activityWorkflowId") int activityWorkflowId, @QueryParam("activityStep") int activityStep, @QueryParam("index") int index, @QueryParam("action") String action, TaskProcessDTO taskProcessDTO)
+    public Response processTaskForDocuments(@PathParam("workspaceId") String workspaceId,
+                                            @QueryParam("activityWorkflowId") int activityWorkflowId,
+                                            @QueryParam("activityStep") int activityStep,
+                                            @QueryParam("index") int index,
+                                            @QueryParam("action") String action,
+                                            @ApiParam(required = true, value = "Task process data") TaskProcessDTO taskProcessDTO)
             throws EntityNotFoundException, NotAllowedException, UserNotActiveException {
 
         switch (action) {
@@ -140,7 +146,12 @@ public class TaskResource {
     @ApiOperation(value = "Approve or reject task on part", response = Response.class)
     @Path("parts/process")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response processTaskForParts(@PathParam("workspaceId") String workspaceId, @QueryParam("activityWorkflowId") int activityWorkflowId, @QueryParam("activityStep") int activityStep, @QueryParam("index") int index, @QueryParam("action") String action, TaskProcessDTO taskProcessDTO)
+    public Response processTaskForParts(@PathParam("workspaceId") String workspaceId,
+                                        @QueryParam("activityWorkflowId") int activityWorkflowId,
+                                        @QueryParam("activityStep") int activityStep,
+                                        @QueryParam("index") int index,
+                                        @QueryParam("action") String action,
+                                        @ApiParam(required = true, value = "Task process data") TaskProcessDTO taskProcessDTO)
             throws EntityNotFoundException, NotAllowedException, UserNotActiveException {
 
         switch (action) {

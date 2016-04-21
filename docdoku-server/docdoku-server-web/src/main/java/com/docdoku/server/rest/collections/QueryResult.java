@@ -28,20 +28,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Morgan Guimard
  */
 
-public class QueryResult{
+public class QueryResult {
 
     private Query query;
     private List<QueryResultRow> rows = new ArrayList<>();
 
     private ExportType exportType = ExportType.JSON;
-
-    public enum ExportType {
-        JSON, CSV,XLS
-    }
 
     public QueryResult() {
     }
@@ -53,7 +48,7 @@ public class QueryResult{
 
     public QueryResult(List<PartRevision> partRevisions, Query query) {
         this.query = query;
-        for(PartRevision partRevision:partRevisions){
+        for (PartRevision partRevision : partRevisions) {
             rows.add(new QueryResultRow(partRevision));
         }
     }
@@ -83,11 +78,11 @@ public class QueryResult{
     }
 
     public void mergeRows(List<QueryResultRow> rows) {
-        if (rows != null && !rows.isEmpty()){
+        if (rows != null && !rows.isEmpty()) {
             List<QueryResultRow> mergedRows = new ArrayList<>();
-            for (QueryResultRow row : rows){
-                for (QueryResultRow filteredRow : this.rows){
-                    if (filteredRow.getPartRevision().equals(row.getPartRevision())){
+            for (QueryResultRow row : rows) {
+                for (QueryResultRow filteredRow : this.rows) {
+                    if (filteredRow.getPartRevision().equals(row.getPartRevision())) {
                         mergedRows.add(row);
                         break;
                     }
@@ -96,6 +91,10 @@ public class QueryResult{
 
             this.rows = mergedRows;
         }
+    }
+
+    public enum ExportType {
+        JSON, CSV, XLS
     }
 
 

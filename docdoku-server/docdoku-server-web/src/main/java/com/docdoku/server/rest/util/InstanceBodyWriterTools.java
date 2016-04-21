@@ -42,7 +42,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author Taylor LABEJOF
  */
 public class InstanceBodyWriterTools {
@@ -54,20 +53,20 @@ public class InstanceBodyWriterTools {
 
         try {
 
-            if(currentPath == null){
+            if (currentPath == null) {
                 PartLink rootPartUsageLink = productService.getRootPartUsageLink(instanceCollection.getCiKey());
                 currentPath = new ArrayList<>();
                 currentPath.add(rootPartUsageLink);
             }
 
             Component component = productService.filterProductStructure(instanceCollection.getCiKey(),
-                    instanceCollection.getFilter(), currentPath,1);
+                    instanceCollection.getFilter(), currentPath, 1);
 
             PartLink partLink = component.getPartLink();
             PartIteration partI = component.getRetainedIteration();
 
             // Filter ACL on part
-            if(!productService.canAccess(partI.getPartRevision().getKey())){
+            if (!productService.canAccess(partI.getPartRevision().getKey())) {
                 return;
             }
 
@@ -83,11 +82,11 @@ public class InstanceBodyWriterTools {
                         combinedMatrix = combineTransformation(matrix, instanceTranslation, instanceRotation);
                         break;
                     case MATRIX:
-                        Matrix4d rotationMatrix = new Matrix4d(new Matrix3d(instance.getRotationMatrix().getValues()),instanceTranslation,1);
-                        combinedMatrix = combineTransformation(matrix,rotationMatrix);
+                        Matrix4d rotationMatrix = new Matrix4d(new Matrix3d(instance.getRotationMatrix().getValues()), instanceTranslation, 1);
+                        combinedMatrix = combineTransformation(matrix, rotationMatrix);
                         break;
                     default:
-                        LOGGER.log(Level.SEVERE,"Unknown rotation Type, matrix not calculated");
+                        LOGGER.log(Level.SEVERE, "Unknown rotation Type, matrix not calculated");
                         combinedMatrix = matrix;
                 }
 
@@ -112,16 +111,16 @@ public class InstanceBodyWriterTools {
     public static void generateInstanceStreamWithGlobalMatrix(IProductManagerLocal productService, List<PartLink> currentPath, Matrix4d matrix, VirtualInstanceCollection virtualInstanceCollection, List<Integer> instanceIds, JsonGenerator jg) {
         try {
 
-            PartLink partLink = currentPath.get(currentPath.size()-1);
+            PartLink partLink = currentPath.get(currentPath.size() - 1);
             PSFilter filter = virtualInstanceCollection.getFilter();
             List<PartIteration> filteredPartIterations = filter.filter(partLink.getComponent());
 
-            if(!filteredPartIterations.isEmpty()){
+            if (!filteredPartIterations.isEmpty()) {
 
                 PartIteration partI = filteredPartIterations.iterator().next();
 
                 // Filter ACL on part
-                if(!productService.canAccess(partI.getPartRevision().getKey())){
+                if (!productService.canAccess(partI.getPartRevision().getKey())) {
                     return;
                 }
 
@@ -152,9 +151,9 @@ public class InstanceBodyWriterTools {
 
     }
 
-    private static Matrix4d combineTransformation(Matrix4d matrix, Vector3d translation, Vector3d rotation){
-        Matrix4d gM=new Matrix4d(matrix);
-        Matrix4d m=new Matrix4d();
+    private static Matrix4d combineTransformation(Matrix4d matrix, Vector3d translation, Vector3d rotation) {
+        Matrix4d gM = new Matrix4d(matrix);
+        Matrix4d m = new Matrix4d();
 
         m.setIdentity();
         m.setTranslation(translation);
@@ -175,14 +174,14 @@ public class InstanceBodyWriterTools {
         return gM;
     }
 
-    private static Matrix4d combineTransformation(Matrix4d matrix, Matrix4d transformation){
-        Matrix4d gM=new Matrix4d(matrix);
+    private static Matrix4d combineTransformation(Matrix4d matrix, Matrix4d transformation) {
+        Matrix4d gM = new Matrix4d(matrix);
         gM.mul(transformation);
 
         return gM;
     }
 
-    private static void writeLeaf(List<PartLink> currentPath, List<Integer> copyInstanceIds, PartIteration partI, Matrix4d combinedMatrix, JsonGenerator jg){
+    private static void writeLeaf(List<PartLink> currentPath, List<Integer> copyInstanceIds, PartIteration partI, Matrix4d combinedMatrix, JsonGenerator jg) {
         String partIterationId = partI.toString();
         List<InstanceAttributeDTO> attributes = new ArrayList<>();
         for (InstanceAttribute attr : partI.getInstanceAttributes()) {
@@ -195,14 +194,14 @@ public class InstanceBodyWriterTools {
         jg.write("path", Tools.getPathAsString(currentPath));
 
         writeMatrix(combinedMatrix, jg);
-        writeGeometries(partI.getSortedGeometries(),jg);
-        writeAttributes(attributes,jg);
+        writeGeometries(partI.getSortedGeometries(), jg);
+        writeAttributes(attributes, jg);
 
         jg.writeEnd();
         jg.flush();
     }
 
-    private static void writeMatrix(Matrix4d matrix, JsonGenerator jg){
+    private static void writeMatrix(Matrix4d matrix, JsonGenerator jg) {
         jg.writeStartArray("matrix");
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
@@ -211,10 +210,11 @@ public class InstanceBodyWriterTools {
         }
         jg.writeEnd();
     }
-    private static void writeGeometries(List<Geometry> files,JsonGenerator jg){
-        jg.write("qualities",files.size());
 
-        if(!files.isEmpty()){
+    private static void writeGeometries(List<Geometry> files, JsonGenerator jg) {
+        jg.write("qualities", files.size());
+
+        if (!files.isEmpty()) {
             Geometry geometry = files.get(0);
             jg.write("xMin", geometry.getxMin());
             jg.write("yMin", geometry.getyMin());
@@ -234,7 +234,7 @@ public class InstanceBodyWriterTools {
         jg.writeEnd();
     }
 
-    private static void writeAttributes(List<InstanceAttributeDTO> attributes, JsonGenerator jg){
+    private static void writeAttributes(List<InstanceAttributeDTO> attributes, JsonGenerator jg) {
         jg.writeStartArray("attributes");
         for (InstanceAttributeDTO a : attributes) {
             jg.writeStartObject();

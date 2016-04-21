@@ -38,21 +38,22 @@ import java.util.logging.Logger;
 public class BinaryResourceUpload {
     private static final Logger LOGGER = Logger.getLogger(BinaryResourceUpload.class.getName());
 
-    private BinaryResourceUpload(){
+    private BinaryResourceUpload() {
         super();
     }
 
 
     /**
      * Upload a form file in a specific output
+     *
      * @param outputStream BinaryResource output stream (in server vault repository)
-     * @param formPart The form part list
+     * @param formPart     The form part list
      * @return The length of the file uploaded
      */
     public static long uploadBinary(OutputStream outputStream, Part formPart)
             throws IOException {
         long length;
-        try(InputStream in = formPart.getInputStream();OutputStream out=outputStream) {
+        try (InputStream in = formPart.getInputStream(); OutputStream out = outputStream) {
             length = ByteStreams.copy(in, out);
         }
         return length;
@@ -60,10 +61,11 @@ public class BinaryResourceUpload {
 
     /**
      * Log error & return a 500 error.
+     *
      * @param e The exception which cause the error.
      * @return A 500 error.
      */
-    public static Response uploadError(Exception e){
+    public static Response uploadError(Exception e) {
         String message = "Error while uploading the file(s).";
         LOGGER.log(Level.SEVERE, message, e);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -73,11 +75,11 @@ public class BinaryResourceUpload {
                 .build();
     }
 
-    public static Response tryToRespondCreated(String uri){
+    public static Response tryToRespondCreated(String uri) {
         try {
             return Response.created(new URI(uri)).build();
         } catch (URISyntaxException e) {
-            LOGGER.log(Level.WARNING,null,e);
+            LOGGER.log(Level.WARNING, null, e);
             return Response.ok().build();
         }
     }

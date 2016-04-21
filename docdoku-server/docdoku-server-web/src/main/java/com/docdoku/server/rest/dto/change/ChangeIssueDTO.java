@@ -34,6 +34,7 @@ public class ChangeIssueDTO extends ChangeItemDTO implements Serializable {
     public String getInitiator() {
         return initiator;
     }
+
     public void setInitiator(String initiator) {
         this.initiator = initiator;
     }

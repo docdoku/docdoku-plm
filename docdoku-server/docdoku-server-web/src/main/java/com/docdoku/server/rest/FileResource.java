@@ -56,34 +56,34 @@ public class FileResource {
 
     @ApiOperation(value = "documents")
     @Path("/{workspaceId}/documents/{documentId}/{version}")
-    public DocumentBinaryResource documentFile(){
+    public DocumentBinaryResource documentFile() {
         return documentBinaryResource;
     }
 
     @ApiOperation(value = "parts")
     @Path("/{workspaceId}/parts/{partNumber}/{version}")
-    public PartBinaryResource partFile(){
+    public PartBinaryResource partFile() {
         return partBinaryResource;
     }
 
     @ApiOperation(value = "document-templates")
     @Path("/{workspaceId}/document-templates/{templateId}/")
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public DocumentTemplateBinaryResource documentTemplateFile(){
+    public DocumentTemplateBinaryResource documentTemplateFile() {
         return documentTemplateBinaryResource;
     }
 
     @ApiOperation(value = "part-templates")
     @Path("/{workspaceId}/part-templates/{templateId}/")
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public PartTemplateBinaryResource partTemplateFile(){
+    public PartTemplateBinaryResource partTemplateFile() {
         return partTemplateBinaryResource;
     }
 
     @ApiOperation(value = "product-instances")
     @Path("/{workspaceId}/product-instances/{serialNumber}/{ciId}/")
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public ProductInstanceBinaryResource productInstanceFile(){
+    public ProductInstanceBinaryResource productInstanceFile() {
         return productInstanceBinaryResource;
     }
 

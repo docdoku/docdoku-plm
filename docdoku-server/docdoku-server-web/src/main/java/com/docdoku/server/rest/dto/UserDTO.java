@@ -67,8 +67,16 @@ public class UserDTO implements Serializable {
         return login;
     }
 
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
     public String getWorkspaceId() {
         return workspaceId;
+    }
+
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
     }
 
     public WorkspaceMembership getMembership() {
@@ -79,21 +87,12 @@ public class UserDTO implements Serializable {
         this.membership = membership;
     }
 
-
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
+    public String getEmail() {
+        return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
 }

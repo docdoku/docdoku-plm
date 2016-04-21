@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
-public class LightPathToPathLinkDTO implements Serializable{
+public class LightPathToPathLinkDTO implements Serializable {
 
     private Integer id;
     private String type;

@@ -72,31 +72,31 @@ public class PartTemplateBinaryResource {
     }
 
     @POST
-    @ApiOperation(value = "Upload part template files" , response = Response.class)
+    @ApiOperation(value = "Upload part template files", response = Response.class)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response uploadPartTemplateFiles(@Context HttpServletRequest request,
-                                                @PathParam("workspaceId") final String workspaceId,
-                                                @PathParam("templateId") final String templateId)
+                                            @PathParam("workspaceId") final String workspaceId,
+                                            @PathParam("templateId") final String templateId)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException {
 
         try {
             BinaryResource binaryResource;
-            String fileName=null;
+            String fileName = null;
             long length;
             PartMasterTemplateKey templatePK = new PartMasterTemplateKey(workspaceId, templateId);
             Collection<Part> formParts = request.getParts();
 
-            for(Part formPart : formParts){
+            for (Part formPart : formParts) {
                 fileName = Normalizer.normalize(formPart.getSubmittedFileName(), Normalizer.Form.NFC);
                 // Init the binary resource with a null length
-                binaryResource= productService.saveFileInTemplate(templatePK, fileName, 0);
+                binaryResource = productService.saveFileInTemplate(templatePK, fileName, 0);
                 OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
                 length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
                 productService.saveFileInTemplate(templatePK, fileName, length);
             }
 
-            if(formParts.size()==1) {
-                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI()+ URLEncoder.encode(fileName, "UTF-8"));
+            if (formParts.size() == 1) {
+                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI() + URLEncoder.encode(fileName, "UTF-8"));
             }
             return Response.ok().build();
 
@@ -106,7 +106,7 @@ public class PartTemplateBinaryResource {
     }
 
     @GET
-    @ApiOperation(value = "Download part template file" , response = Response.class)
+    @ApiOperation(value = "Download part template file", response = Response.class)
     @Path("/{fileName}")
     @Compress
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -124,7 +124,7 @@ public class PartTemplateBinaryResource {
 
         // Check cache precondition
         Response.ResponseBuilder rb = request.evaluatePreconditions(binaryResourceDownloadMeta.getLastModified(), binaryResourceDownloadMeta.getETag());
-        if(rb!= null){
+        if (rb != null) {
             return rb.build();
         }
 

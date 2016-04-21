@@ -25,7 +25,6 @@ import java.io.Serializable;
 
 /**
  * @author Emmanuel Nhan
- *
  */
 @XmlRootElement
 public class TaskModelDTO implements Serializable {
@@ -62,7 +61,7 @@ public class TaskModelDTO implements Serializable {
     public void setDuration(int duration) {
         this.duration = duration;
     }
-    
+
     public String getTitle() {
         return title;
     }

@@ -31,7 +31,7 @@ public class NameValuePairDTO implements Serializable {
     private String name;
     private String value;
 
-    public NameValuePairDTO(){
+    public NameValuePairDTO() {
     }
 
     public String getName() {

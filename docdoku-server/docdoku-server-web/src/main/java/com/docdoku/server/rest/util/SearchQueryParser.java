@@ -46,7 +46,11 @@ public class SearchQueryParser {
     private static final String FILTERS_DELIMITER = "=";
     private static final String QUERY_DELIMITER = "&";
 
-    public static DocumentSearchQuery parseDocumentStringQuery(String workspaceId , MultivaluedMap<String,String> query){
+    private SearchQueryParser() {
+        super();
+    }
+
+    public static DocumentSearchQuery parseDocumentStringQuery(String workspaceId, MultivaluedMap<String, String> query) {
         String fullText = null;
         String pDocMId = null;
         String pTitle = null;
@@ -62,69 +66,69 @@ public class SearchQueryParser {
         String pContent = null;
 
 
-        for(String filter : query.keySet()){
+        for (String filter : query.keySet()) {
             List<String> values = query.get(filter);
-            if(values.size() == 1){
+            if (values.size() == 1) {
                 String value = null;
                 try {
                     value = URLDecoder.decode(values.get(0), "UTF-8");
                 } catch (UnsupportedEncodingException e) {
-                    LOGGER.log(Level.FINEST,null,e);
+                    LOGGER.log(Level.FINEST, null, e);
                 }
-                switch (filter){
-                    case "q" :
+                switch (filter) {
+                    case "q":
                         fullText = value;
                         break;
-                    case "id" :
+                    case "id":
                         pDocMId = value;
                         break;
-                    case "title" :
+                    case "title":
                         pTitle = value;
                         break;
-                    case "version" :
+                    case "version":
                         pVersion = value;
                         break;
-                    case "author" :
+                    case "author":
                         pAuthor = value;
                         break;
-                    case "type" :
+                    case "type":
                         pType = value;
                         break;
-                    case "createdFrom" :
+                    case "createdFrom":
                         try {
-                            pCreationDateFrom =  SIMPLE_DATE_FORMAT.parse(value);
+                            pCreationDateFrom = SIMPLE_DATE_FORMAT.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
-                    case "createdTo" :
+                    case "createdTo":
                         try {
-                            pCreationDateTo =  SIMPLE_DATE_FORMAT.parse(value);
+                            pCreationDateTo = SIMPLE_DATE_FORMAT.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
-                    case "modifiedFrom" :
+                    case "modifiedFrom":
                         try {
-                            pModificationDateFrom =  SIMPLE_DATE_FORMAT.parse(value);
+                            pModificationDateFrom = SIMPLE_DATE_FORMAT.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
-                    case "modifiedTo" :
+                    case "modifiedTo":
                         try {
-                            pModificationDateTo =  SIMPLE_DATE_FORMAT.parse(value);
+                            pModificationDateTo = SIMPLE_DATE_FORMAT.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
-                    case "tags" :
+                    case "tags":
                         pTags = value.split(",");
                         break;
-                    case "content" :
+                    case "content":
                         pContent = value;
                         break;
-                    case "attributes" :
+                    case "attributes":
                         pAttributes = parseAttributeStringQuery(value);
                         break;
                     default:
@@ -137,13 +141,13 @@ public class SearchQueryParser {
 
         DocumentSearchQuery.AbstractAttributeQuery[] pAttributesArray = pAttributes.toArray(new DocumentSearchQuery.AbstractAttributeQuery[pAttributes.size()]);
 
-        return  new DocumentSearchQuery(workspaceId, fullText, pDocMId, pTitle, pVersion, pAuthor, pType,
+        return new DocumentSearchQuery(workspaceId, fullText, pDocMId, pTitle, pVersion, pAuthor, pType,
                 pCreationDateFrom, pCreationDateTo, pModificationDateFrom, pModificationDateTo,
                 pAttributesArray, pTags, pContent);
 
     }
 
-    public static PartSearchQuery parsePartStringQuery(String workspaceId , MultivaluedMap<String,String> query){
+    public static PartSearchQuery parsePartStringQuery(String workspaceId, MultivaluedMap<String, String> query) {
         String fullText = null;
         String pNumber = null;
         String pName = null;
@@ -159,66 +163,66 @@ public class SearchQueryParser {
         Boolean standardPart = null;
         String content = null;
 
-        for(String filter : query.keySet()){
+        for (String filter : query.keySet()) {
             List<String> values = query.get(filter);
-            if(values.size() == 1) {
+            if (values.size() == 1) {
                 String value = null;
                 try {
                     value = URLDecoder.decode(values.get(0), "UTF-8");
                 } catch (UnsupportedEncodingException e) {
-                    LOGGER.log(Level.FINEST,null,e);
+                    LOGGER.log(Level.FINEST, null, e);
                 }
                 switch (filter) {
-                    case "q" :
+                    case "q":
                         fullText = value;
                         break;
                     case "number":
                         pNumber = value;
                         break;
-                    case "name" :
+                    case "name":
                         pName = value;
                         break;
-                    case "version" :
+                    case "version":
                         pVersion = value;
                         break;
-                    case "author" :
+                    case "author":
                         pAuthor = value;
                         break;
-                    case "type" :
+                    case "type":
                         pType = value;
                         break;
-                    case "createdFrom" :
+                    case "createdFrom":
                         try {
-                            pCreationDateFrom =  SIMPLE_DATE_FORMAT.parse(value);
+                            pCreationDateFrom = SIMPLE_DATE_FORMAT.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
-                    case "createdTo" :
+                    case "createdTo":
                         try {
-                            pCreationDateTo =  SIMPLE_DATE_FORMAT.parse(value);
+                            pCreationDateTo = SIMPLE_DATE_FORMAT.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
-                    case "modifiedFrom" :
+                    case "modifiedFrom":
                         try {
-                            pModificationDateFrom =  SIMPLE_DATE_FORMAT.parse(value);
+                            pModificationDateFrom = SIMPLE_DATE_FORMAT.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
-                    case "modifiedTo" :
+                    case "modifiedTo":
                         try {
-                            pModificationDateTo =  SIMPLE_DATE_FORMAT.parse(value);
+                            pModificationDateTo = SIMPLE_DATE_FORMAT.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
-                    case "tags" :
+                    case "tags":
                         pTags = value.split(",");
                         break;
-                    case "standardPart" :
+                    case "standardPart":
                         standardPart = Boolean.valueOf(value);
                         break;
                     case "content":
@@ -233,32 +237,32 @@ public class SearchQueryParser {
 
         PartSearchQuery.AbstractAttributeQuery[] pAttributesArray = pAttributes.toArray(new PartSearchQuery.AbstractAttributeQuery[pAttributes.size()]);
 
-        return  new PartSearchQuery(workspaceId, fullText, pNumber, pName, pVersion, pAuthor, pType,
+        return new PartSearchQuery(workspaceId, fullText, pNumber, pName, pVersion, pAuthor, pType,
                 pCreationDateFrom, pCreationDateTo, pModificationDateFrom, pModificationDateTo,
-                pAttributesArray,pTags,standardPart,content);
+                pAttributesArray, pTags, standardPart, content);
 
     }
 
-    private static List<SearchQuery.AbstractAttributeQuery> parseAttributeStringQuery(String attributeQuery){
+    private static List<SearchQuery.AbstractAttributeQuery> parseAttributeStringQuery(String attributeQuery) {
         List<SearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<>();
         String[] attributesString = attributeQuery.split(ATTRIBUTES_DELIMITER);
 
-        for(String attributeString : attributesString){
+        for (String attributeString : attributesString) {
 
             int firstColon = attributeString.indexOf(ATTRIBUTES_SPLITTER);
-            String attributeType = attributeString.substring(0,firstColon);
-            attributeString = attributeString.substring(firstColon+1);
+            String attributeType = attributeString.substring(0, firstColon);
+            attributeString = attributeString.substring(firstColon + 1);
 
             int secondColon = attributeString.indexOf(ATTRIBUTES_SPLITTER);
-            String attributeName = attributeString.substring(0,secondColon);
-            String attributeValue = attributeString.substring(secondColon+1);
+            String attributeName = attributeString.substring(0, secondColon);
+            String attributeValue = attributeString.substring(secondColon + 1);
 
-            switch(attributeType){
-                case "BOOLEAN" :
-                    SearchQuery.BooleanAttributeQuery baq = new SearchQuery.BooleanAttributeQuery(attributeName,Boolean.valueOf(attributeValue));
+            switch (attributeType) {
+                case "BOOLEAN":
+                    SearchQuery.BooleanAttributeQuery baq = new SearchQuery.BooleanAttributeQuery(attributeName, Boolean.valueOf(attributeValue));
                     pAttributes.add(baq);
                     break;
-                case "DATE" :
+                case "DATE":
                     SearchQuery.DateAttributeQuery daq = new SearchQuery.DateAttributeQuery();
                     daq.setName(attributeName);
                     try {
@@ -268,14 +272,14 @@ public class SearchQueryParser {
                         daq.setDate(df.parse(attributeValue));
                         pAttributes.add(daq);
                     } catch (ParseException e) {
-                        LOGGER.log(Level.FINEST,null,e);
+                        LOGGER.log(Level.FINEST, null, e);
                     }
                     break;
-                case "TEXT" :
-                    SearchQuery.TextAttributeQuery taq = new SearchQuery.TextAttributeQuery(attributeName,attributeValue);
+                case "TEXT":
+                    SearchQuery.TextAttributeQuery taq = new SearchQuery.TextAttributeQuery(attributeName, attributeValue);
                     pAttributes.add(taq);
                     break;
-                case "NUMBER" :
+                case "NUMBER":
                     try {
                         SearchQuery.NumberAttributeQuery naq = new SearchQuery.NumberAttributeQuery(attributeName, NumberFormat.getInstance().parse(attributeValue).floatValue());
                         pAttributes.add(naq);
@@ -283,26 +287,22 @@ public class SearchQueryParser {
                         LOGGER.log(Level.INFO, null, e);
                     }
                     break;
-                case "URL" :
-                    SearchQuery.URLAttributeQuery uaq = new SearchQuery.URLAttributeQuery(attributeName,attributeValue);
+                case "URL":
+                    SearchQuery.URLAttributeQuery uaq = new SearchQuery.URLAttributeQuery(attributeName, attributeValue);
                     pAttributes.add(uaq);
                     break;
 
                 case "LOV":
-                    SearchQuery.LovAttributeQuery laq = new SearchQuery.LovAttributeQuery(attributeName,attributeValue);
+                    SearchQuery.LovAttributeQuery laq = new SearchQuery.LovAttributeQuery(attributeName, attributeValue);
                     pAttributes.add(laq);
                     break;
 
-                default :
+                default:
                     break;
             }
 
         }
-        return  pAttributes;
-    }
-
-    private SearchQueryParser(){
-        super();
+        return pAttributes;
     }
 
 }

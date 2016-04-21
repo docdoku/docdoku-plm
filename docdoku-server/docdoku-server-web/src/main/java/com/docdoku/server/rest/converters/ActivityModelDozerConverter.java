@@ -47,7 +47,7 @@ public class ActivityModelDozerConverter extends DozerConverter<ActivityModel, A
     public ActivityModelDTO convertTo(ActivityModel activityModel, ActivityModelDTO activityModelDTO) {
 
         List<TaskModelDTO> taskModelsDTO = new ArrayList<>();
-        for(int i=0; i<activityModel.getTaskModels().size(); i++){
+        for (int i = 0; i < activityModel.getTaskModels().size(); i++) {
             taskModelsDTO.add(mapper.map(activityModel.getTaskModels().get(i), TaskModelDTO.class));
         }
 
@@ -55,7 +55,7 @@ public class ActivityModelDozerConverter extends DozerConverter<ActivityModel, A
         Integer tasksToComplete = null;
         Integer relaunchStep = null;
 
-        if(activityModel.getRelaunchActivity() != null){
+        if (activityModel.getRelaunchActivity() != null) {
             relaunchStep = activityModel.getRelaunchActivity().getStep();
         }
 
@@ -68,32 +68,32 @@ public class ActivityModelDozerConverter extends DozerConverter<ActivityModel, A
             throw new IllegalArgumentException("ActivityModel type not supported");
         }
 
-        return new ActivityModelDTO(activityModel.getStep(), taskModelsDTO, activityModel.getLifeCycleState(), type, tasksToComplete,relaunchStep);
+        return new ActivityModelDTO(activityModel.getStep(), taskModelsDTO, activityModel.getLifeCycleState(), type, tasksToComplete, relaunchStep);
     }
 
     @Override
     public ActivityModel convertFrom(ActivityModelDTO activityModelDTO, ActivityModel pActivityModel) {
 
         List<TaskModel> taskModels = new ArrayList<>();
-        for(int i=0; i<activityModelDTO.getTaskModels().size(); i++){
+        for (int i = 0; i < activityModelDTO.getTaskModels().size(); i++) {
             taskModels.add(mapper.map(activityModelDTO.getTaskModels().get(i), TaskModel.class));
         }
 
         ActivityModel activityModel;
 
-        switch (activityModelDTO.getType()){
-            case SERIAL:{
+        switch (activityModelDTO.getType()) {
+            case SERIAL: {
                 activityModel = new SerialActivityModel();
                 activityModel.setTaskModels(taskModels);
                 break;
             }
-            case PARALLEL:{
+            case PARALLEL: {
                 activityModel = new ParallelActivityModel();
                 activityModel.setTaskModels(taskModels);
                 ((ParallelActivityModel) activityModel).setTasksToComplete(activityModelDTO.getTasksToComplete());
                 break;
             }
-            default:{
+            default: {
                 throw new IllegalArgumentException("ActivityModelDTO type not supported");
             }
         }

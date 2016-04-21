@@ -41,12 +41,12 @@ public class PathChoiceDTO implements Serializable {
     }
 
     public PathChoiceDTO(PathChoice choice) {
-        for(ResolvedPartLink resolvedPartLink:choice.getResolvedPath()){
+        for (ResolvedPartLink resolvedPartLink : choice.getResolvedPath()) {
             resolvedPath.add(new ResolvedPartLinkDTO(resolvedPartLink));
         }
 
         Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
-        partUsageLink = mapper.map(choice.getPartUsageLink(),PartUsageLinkDTO.class);
+        partUsageLink = mapper.map(choice.getPartUsageLink(), PartUsageLinkDTO.class);
     }
 
     public List<ResolvedPartLinkDTO> getResolvedPath() {

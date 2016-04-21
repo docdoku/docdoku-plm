@@ -73,7 +73,7 @@ public class UserResource {
         User[] users = userManager.getUsers(workspaceId);
         UserDTO[] dtos = new UserDTO[users.length];
 
-        for(int i=0; i<users.length; i++){
+        for (int i = 0; i < users.length; i++) {
             dtos[i] = mapper.map(users[i], UserDTO.class);
         }
 
@@ -87,7 +87,7 @@ public class UserResource {
     public UserDTO whoami(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
-        User  user = userManager.whoAmI(workspaceId);
+        User user = userManager.whoAmI(workspaceId);
         return mapper.map(user, UserDTO.class);
     }
 
@@ -96,12 +96,12 @@ public class UserResource {
     @Path("reachable")
     @Produces(MediaType.APPLICATION_JSON)
     public UserDTO[] getReachableUsersForCaller(@PathParam("workspaceId") String workspaceId)
-            throws EntityNotFoundException{
+            throws EntityNotFoundException {
 
         User[] users = userManager.getReachableUsers(workspaceId);
         UserDTO[] dtos = new UserDTO[users.length];
 
-        for(int i=0; i<users.length; i++){
+        for (int i = 0; i < users.length; i++) {
             dtos[i] = mapper.map(users[i], UserDTO.class);
         }
 
@@ -113,10 +113,10 @@ public class UserResource {
     @Path("admin")
     @Produces(MediaType.APPLICATION_JSON)
     public UserDTO getAdminInWorkspace(@PathParam("workspaceId") String workspaceId)
-            throws EntityNotFoundException{
+            throws EntityNotFoundException {
 
         Workspace workspace = userManager.getWorkspace(workspaceId);
-        return mapper.map(workspace.getAdmin(),UserDTO.class);
+        return mapper.map(workspace.getAdmin(), UserDTO.class);
     }
 }
 

@@ -26,7 +26,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @XmlRootElement
-public class ChangeRequestDTO extends ChangeItemDTO implements Serializable{
+public class ChangeRequestDTO extends ChangeItemDTO implements Serializable {
     private List<ChangeIssueDTO> addressedChangeIssues;
     @XmlElement(nillable = true)
     private int milestoneId;
@@ -38,6 +38,7 @@ public class ChangeRequestDTO extends ChangeItemDTO implements Serializable{
     public List<ChangeIssueDTO> getAddressedChangeIssues() {
         return addressedChangeIssues;
     }
+
     public void setAddressedChangeIssues(List<ChangeIssueDTO> addressedChangeRequests) {
         this.addressedChangeIssues = addressedChangeRequests;
     }
@@ -45,6 +46,7 @@ public class ChangeRequestDTO extends ChangeItemDTO implements Serializable{
     public int getMilestoneId() {
         return milestoneId;
     }
+
     public void setMilestoneId(int milestoneId) {
         this.milestoneId = milestoneId;
     }

@@ -33,6 +33,7 @@ import com.docdoku.server.rest.dto.GCMAccountDTO;
 import com.docdoku.server.rest.dto.WorkspaceDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -77,7 +78,7 @@ public class AccountResource {
     @Produces(MediaType.APPLICATION_JSON)
     public AccountDTO getAccount() throws AccountNotFoundException {
         Account account = accountManager.getMyAccount();
-        return mapper.map(account,AccountDTO.class);
+        return mapper.map(account, AccountDTO.class);
     }
 
 
@@ -85,7 +86,7 @@ public class AccountResource {
     @Path("/workspaces")
     @ApiOperation(value = "Get workspaces where authenticated user is active", response = WorkspaceDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getWorkspaces(){
+    public Response getWorkspaces() {
         Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
 
         List<WorkspaceDTO> workspaceDTOs = new ArrayList<>();
@@ -102,7 +103,7 @@ public class AccountResource {
     @Path("gcm")
     @ApiOperation(value = "Update GCM account for authenticated user", response = Response.class, code = 200)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response setGCMAccount(GCMAccountDTO data)
+    public Response setGCMAccount(@ApiParam(required = true, value = "GCM account to set") GCMAccountDTO data)
             throws EntityAlreadyExistsException, AccountNotFoundException, CreationException {
         accountManager.setGCMAccount(data.getGcmId());
         return Response.ok().build();

@@ -39,7 +39,7 @@ public class SharedDocumentDTO implements Serializable {
     private String documentMasterId;
     private String documentMasterVersion;
 
-    public SharedDocumentDTO(){
+    public SharedDocumentDTO() {
 
     }
 

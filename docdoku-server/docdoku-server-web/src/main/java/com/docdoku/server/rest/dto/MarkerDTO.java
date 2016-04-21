@@ -25,26 +25,26 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
-public class MarkerDTO implements Serializable{
+public class MarkerDTO implements Serializable {
 
     private int id;
-      
+
     private String title;
     private String description;
-    
+
     private double x;
     private double y;
     private double z;
-    
+
     public MarkerDTO() {
     }
 
     public MarkerDTO(String pTitle, String pDescription, double pX, double pY, double pZ) {
-        this.title=pTitle;
-        this.description=pDescription;
-        this.x=pX;
-        this.y=pY;
-        this.z=pZ;
+        this.title = pTitle;
+        this.description = pDescription;
+        this.x = pX;
+        this.y = pY;
+        this.z = pZ;
     }
 
     public MarkerDTO(int pId, String pTitle, String pDescription, double pX, double pY, double pZ) {
@@ -56,13 +56,12 @@ public class MarkerDTO implements Serializable{
         this.z = pZ;
     }
 
+    public String getDescription() {
+        return description;
+    }
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     public String getTitle() {
@@ -73,29 +72,28 @@ public class MarkerDTO implements Serializable{
         this.title = title;
     }
 
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
     public double getX() {
         return x;
     }
 
-    public void setY(double y) {
-        this.y = y;
+    public void setX(double x) {
+        this.x = x;
     }
 
     public double getY() {
         return y;
     }
 
-    public void setZ(double z) {
-        this.z = z;
+    public void setY(double y) {
+        this.y = y;
     }
 
     public double getZ() {
         return z;
+    }
+
+    public void setZ(double z) {
+        this.z = z;
     }
 
     public int getId() {

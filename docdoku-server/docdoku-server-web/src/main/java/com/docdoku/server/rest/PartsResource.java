@@ -45,6 +45,7 @@ import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 import com.docdoku.server.rest.util.SearchQueryParser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -79,13 +80,12 @@ public class PartsResource {
     @Inject
     private PartResource partResource;
 
-    @EJB    
+    @EJB
     private IImporterManagerLocal importerService;
+    private Mapper mapper;
 
     public PartsResource() {
     }
-
-    private Mapper mapper;
 
     @PostConstruct
     public void init() {
@@ -103,8 +103,10 @@ public class PartsResource {
     @ApiOperation(value = "Get part revisions", response = Response.class)
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPartRevisions(@PathParam("workspaceId") String workspaceId, @QueryParam("start") int start, @QueryParam("length") int length)
-        throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+    public Response getPartRevisions(@PathParam("workspaceId") String workspaceId,
+                                     @QueryParam("start") int start,
+                                     @QueryParam("length") int length)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         List<PartRevision> partRevisions = productService.getPartRevisions(Tools.stripTrailingSlash(workspaceId), start, length);
         List<PartRevisionDTO> partRevisionDTOs = new ArrayList<>();
@@ -135,7 +137,8 @@ public class PartsResource {
     @ApiOperation(value = "Get part revisions", response = PartRevisionDTO.class, responseContainer = "List")
     @Path("tags/{tagId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPartRevisions(@PathParam("workspaceId") String workspaceId, @PathParam("tagId") String tagId)
+    public Response getPartRevisions(@PathParam("workspaceId") String workspaceId,
+                                     @PathParam("tagId") String tagId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         PartRevision[] partRevisions = productService.findPartRevisionsByTag(Tools.stripTrailingSlash(workspaceId), tagId);
@@ -157,7 +160,8 @@ public class PartsResource {
     @ApiOperation(value = "Search part revisions", response = PartRevisionDTO.class, responseContainer = "List")
     @Path("search")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response searchPartRevisions(@Context UriInfo uri,@PathParam("workspaceId") String workspaceId)
+    public Response searchPartRevisions(@Context UriInfo uri,
+                                        @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, ESServerException, UserNotActiveException, AccessRightException {
 
         PartSearchQuery partSearchQuery = SearchQueryParser.parsePartStringQuery(workspaceId, uri.getQueryParameters());
@@ -183,7 +187,8 @@ public class PartsResource {
     @Path("queries")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getCustomQueries(@PathParam("workspaceId") String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public Response getCustomQueries(@PathParam("workspaceId") String workspaceId)
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         List<Query> queries = productService.getQueries(workspaceId);
         List<QueryDTO> queryDTOs = new ArrayList<>();
         for (Query query : queries) {
@@ -197,8 +202,12 @@ public class PartsResource {
     @ApiOperation(value = "Run custom queries", response = QueryResult.class, responseContainer = "List")
     @Path("queries")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_OCTET_STREAM})
-    public Response runCustomQuery(@PathParam("workspaceId") String workspaceId, @QueryParam("save") boolean save, @QueryParam("export") String exportType, QueryDTO queryDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
+    public Response runCustomQuery(@PathParam("workspaceId") String workspaceId,
+                                   @QueryParam("save") boolean save,
+                                   @QueryParam("export") String exportType,
+                                   @ApiParam(required = true, value = "Query to run") QueryDTO queryDTO)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
         Query query = mapper.map(queryDTO, Query.class);
         QueryResult queryResult = getQueryResult(workspaceId, query, exportType);
 
@@ -206,7 +215,7 @@ public class PartsResource {
             productService.createQuery(workspaceId, query);
         }
 
-        return Response.ok(new GenericEntity<QueryResult>((QueryResult)queryResult){
+        return Response.ok(new GenericEntity<QueryResult>((QueryResult) queryResult) {
         }).build();
     }
 
@@ -215,9 +224,13 @@ public class PartsResource {
     @Path("queries/{queryId}/format/{export}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/vnd.ms-excel")
-    public Response exportCustomQuery(@Context HttpServletRequest request, @PathParam("workspaceId") String workspaceId, @PathParam("queryId") String queryId, @PathParam("export") String exportType) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
+    public Response exportCustomQuery(@Context HttpServletRequest request,
+                                      @PathParam("workspaceId") String workspaceId,
+                                      @PathParam("queryId") String queryId,
+                                      @PathParam("export") String exportType)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        Locale locale = new Locale(user != null?user.getLanguage():"en");
+        Locale locale = new Locale(user != null ? user.getLanguage() : "en");
         Query query = productService.loadQuery(workspaceId, Integer.valueOf(queryId));
         QueryResult queryResult = getQueryResult(workspaceId, query, exportType);
         String url = request.getRequestURL().toString();
@@ -241,7 +254,7 @@ public class PartsResource {
         ExcelGenerator excelGenerator = new ExcelGenerator();
         String contentType = "application/vnd.ms-excel";
         String contentDisposition = "attachment; filename=export_parts.xls";
-        Response.ResponseBuilder responseBuilder = Response.ok((Object) excelGenerator.generateXLSResponse(queryResult,locale, baseURL));
+        Response.ResponseBuilder responseBuilder = Response.ok((Object) excelGenerator.generateXLSResponse(queryResult, locale, baseURL));
         responseBuilder
                 .header("Content-Type", contentType)
                 .header("Content-Disposition", contentDisposition);
@@ -253,7 +266,9 @@ public class PartsResource {
     @ApiOperation(value = "Delete custom query", response = Response.class)
     @Path("queries/{queryId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteQuery(@PathParam("workspaceId") String workspaceId, @PathParam("queryId") int queryId) throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+    public Response deleteQuery(@PathParam("workspaceId") String workspaceId,
+                                @PathParam("queryId") int queryId)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         productService.deleteQuery(workspaceId, queryId);
         return Response.ok().build();
     }
@@ -284,7 +299,8 @@ public class PartsResource {
     @ApiOperation(value = "Count checked out part revisions", response = CountDTO.class)
     @Path("countCheckedOut")
     @Produces(MediaType.APPLICATION_JSON)
-    public CountDTO getCheckedOutNumberOfItems(@PathParam("workspaceId") String workspaceId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
+    public CountDTO getCheckedOutNumberOfItems(@PathParam("workspaceId") String workspaceId)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
         return new CountDTO(productService.getCheckedOutPartRevisions(workspaceId).length);
     }
 
@@ -292,7 +308,8 @@ public class PartsResource {
     @ApiOperation(value = "Search part numbers", response = LightPartMasterDTO.class, responseContainer = "List")
     @Path("numbers")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response searchPartNumbers(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q)
+    public Response searchPartNumbers(@PathParam("workspaceId") String workspaceId,
+                                      @QueryParam("q") String q)
             throws EntityNotFoundException, AccessRightException {
 
         String search = "%" + q + "%";
@@ -312,7 +329,8 @@ public class PartsResource {
     @ApiOperation(value = "Create new part", response = PartRevisionDTO.class)
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public PartRevisionDTO createNewPart(@PathParam("workspaceId") String workspaceId, PartCreationDTO partCreationDTO)
+    public PartRevisionDTO createNewPart(@PathParam("workspaceId") String workspaceId,
+                                         @ApiParam(required = true, value = "Part to create") PartCreationDTO partCreationDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException {
 
         String pWorkflowModelId = partCreationDTO.getWorkflowModelId();
@@ -386,7 +404,7 @@ public class PartsResource {
 
         Collection<Part> parts = request.getParts();
 
-        if(parts.isEmpty() || parts.size() > 1){
+        if (parts.isEmpty() || parts.size() > 1) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
@@ -394,9 +412,9 @@ public class PartsResource {
         String name = FileIO.getFileNameWithoutExtension(part.getSubmittedFileName());
         String extension = FileIO.getExtension(part.getSubmittedFileName());
 
-        File importFile = Files.createTempFile("part-" + name, "-import.tmp" +  (extension==null?"":"." + extension)).toFile();
+        File importFile = Files.createTempFile("part-" + name, "-import.tmp" + (extension == null ? "" : "." + extension)).toFile();
         long length = BinaryResourceUpload.uploadBinary(new BufferedOutputStream(new FileOutputStream(importFile)), part);
-        importerService.importIntoParts(workspaceId, importFile, name+"."+extension, revisionNote, autoCheckout, autoCheckin, permissiveUpdate);
+        importerService.importIntoParts(workspaceId, importFile, name + "." + extension, revisionNote, autoCheckout, autoCheckin, permissiveUpdate);
 
         importFile.deleteOnExit();
 
@@ -411,8 +429,8 @@ public class PartsResource {
     public Response getImports(@PathParam("workspaceId") String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         List<Import> imports = productService.getImports(workspaceId);
         List<ImportDTO> importDTOs = new ArrayList<>();
-        for(Import i:imports){
-            importDTOs.add(mapper.map(i,ImportDTO.class));
+        for (Import i : imports) {
+            importDTOs.add(mapper.map(i, ImportDTO.class));
         }
         return Response.ok(new GenericEntity<List<ImportDTO>>((List<ImportDTO>) importDTOs) {
         }).build();
@@ -425,7 +443,7 @@ public class PartsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public ImportDTO getImport(@PathParam("workspaceId") String workspaceId, @PathParam("importId") String importId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
         Import anImport = productService.getImport(workspaceId, importId);
-        return mapper.map(anImport,ImportDTO.class);
+        return mapper.map(anImport, ImportDTO.class);
     }
 
     @DELETE

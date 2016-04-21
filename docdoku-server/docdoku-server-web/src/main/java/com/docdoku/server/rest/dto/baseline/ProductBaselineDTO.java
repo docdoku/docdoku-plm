@@ -96,6 +96,7 @@ public class ProductBaselineDTO implements Serializable {
     public String getConfigurationItemId() {
         return configurationItemId;
     }
+
     public void setConfigurationItemId(String configurationItemId) {
         this.configurationItemId = configurationItemId;
     }

@@ -24,7 +24,7 @@ package com.docdoku.server.rest.exceptions;
  */
 public class InterruptedStreamException extends RestApiException {
 
-    public InterruptedStreamException(){
+    public InterruptedStreamException() {
         super();
     }
 }

@@ -40,25 +40,26 @@ public class BinaryResourceDownloadResponseBuilder {
     private static final int CACHE_SECOND = 60 * 60 * 24;
 
 
-    private BinaryResourceDownloadResponseBuilder(){
+    private BinaryResourceDownloadResponseBuilder() {
         super();
     }
 
 
     /**
      * Set the header of the downloading response.
-     * @param binaryContentInputStream The stream of the binary content to download.
+     *
+     * @param binaryContentInputStream   The stream of the binary content to download.
      * @param binaryResourceDownloadMeta The header parameters for the binary content download.
-     * @param range The string of the queried range. Null if no range are specified
+     * @param range                      The string of the queried range. Null if no range are specified
      * @return A response builder with the header & the content.
      * @throws RequestedRangeNotSatisfiableException If the range is not satisfiable.
      */
-    public static Response prepareResponse(InputStream binaryContentInputStream,BinaryResourceDownloadMeta binaryResourceDownloadMeta, String range)
-            throws RequestedRangeNotSatisfiableException{
+    public static Response prepareResponse(InputStream binaryContentInputStream, BinaryResourceDownloadMeta binaryResourceDownloadMeta, String range)
+            throws RequestedRangeNotSatisfiableException {
 
         Response.ResponseBuilder responseBuilder;
 
-        if(range==null || range.isEmpty()){
+        if (range == null || range.isEmpty()) {
             long length = binaryResourceDownloadMeta.getLength();
             responseBuilder = Response.ok()
                     .header("Content-Disposition", binaryResourceDownloadMeta.getContentDisposition())
@@ -66,10 +67,10 @@ public class BinaryResourceDownloadResponseBuilder {
                     .entity(new BinaryResourceBinaryStreamingOutput(binaryContentInputStream, 0, length - 1, length));
 
             // Converting files modify its length so we don't specify the length on converted content
-            if(!binaryResourceDownloadMeta.isConverted()){
+            if (!binaryResourceDownloadMeta.isConverted()) {
                 responseBuilder.header("Content-Length", length);
             }
-        }else{
+        } else {
             responseBuilder = prepareStreamingDownloadResponse(binaryResourceDownloadMeta, binaryContentInputStream, range);
         }
 
@@ -82,16 +83,16 @@ public class BinaryResourceDownloadResponseBuilder {
 
         // Range header should match format "bytes=n-n,n-n,n-n...". If not, then return 416.
         if (!range.matches("^bytes=\\d*-\\d*(,\\d*-\\d*)*$")) {
-            throw new RequestedRangeNotSatisfiableException("",length);
+            throw new RequestedRangeNotSatisfiableException("", length);
         }
 
         String[] ranges = range.split("=")[1].split("-");
         final long from = Integer.parseInt(ranges[0]);
         long to;
-        if(ranges.length>1){
+        if (ranges.length > 1) {
             to = Integer.parseInt(ranges[1]);
-            to = (to> length -1) ? length-1 : to;
-        }else{
+            to = (to > length - 1) ? length - 1 : to;
+        } else {
             to = length - 1;
         }
 
@@ -108,12 +109,13 @@ public class BinaryResourceDownloadResponseBuilder {
 
     /**
      * Log error & return a 500 error.
-     * @param e The catched exception which cause the error.
+     *
+     * @param e        The catched exception which cause the error.
      * @param fullName The full name of the wanted file.
      * @return A 500 error.
      */
-    public static Response downloadError(Exception e, String fullName){
-        String message = "Error while downloading the file : "+fullName;
+    public static Response downloadError(Exception e, String fullName) {
+        String message = "Error while downloading the file : " + fullName;
         LOGGER.log(Level.SEVERE, message, e);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .header("Reason-Phrase", message)
@@ -124,12 +126,13 @@ public class BinaryResourceDownloadResponseBuilder {
 
     /**
      * Apply cache policy to a response.
-     * @param response The response builder.
-     * @param eTag The ETag of the resource.
+     *
+     * @param response     The response builder.
+     * @param eTag         The ETag of the resource.
      * @param lastModified The last modified date of the resource.
      * @return The response builder with the cache policy.
      */
-    private static Response.ResponseBuilder applyCachePolicyToResponse(Response.ResponseBuilder response, EntityTag eTag,Date lastModified){
+    private static Response.ResponseBuilder applyCachePolicyToResponse(Response.ResponseBuilder response, EntityTag eTag, Date lastModified) {
         CacheControl cc = new CacheControl();
         cc.setMaxAge(CACHE_SECOND);
         cc.setNoTransform(false);

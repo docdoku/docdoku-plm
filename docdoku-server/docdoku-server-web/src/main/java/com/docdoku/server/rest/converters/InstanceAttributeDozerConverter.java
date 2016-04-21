@@ -52,40 +52,39 @@ public class InstanceAttributeDozerConverter extends DozerConverter<InstanceAttr
         List<NameValuePairDTO> itemsDTO = null;
         if (source instanceof InstanceBooleanAttribute) {
             type = InstanceAttributeDTO.Type.BOOLEAN;
-            value=source.getValue()+"";
+            value = source.getValue() + "";
         } else if (source instanceof InstanceTextAttribute) {
             type = InstanceAttributeDTO.Type.TEXT;
-            value=source.getValue()+"";
+            value = source.getValue() + "";
         } else if (source instanceof InstanceNumberAttribute) {
             type = InstanceAttributeDTO.Type.NUMBER;
-            value=source.getValue()+"";
+            value = source.getValue() + "";
         } else if (source instanceof InstanceDateAttribute) {
             type = InstanceAttributeDTO.Type.DATE;
-            Date date = ((InstanceDateAttribute)source).getDateValue();
-            if(date != null) {
+            Date date = ((InstanceDateAttribute) source).getDateValue();
+            if (date != null) {
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 df.setTimeZone(TimeZone.getTimeZone("UTC"));
                 value = df.format(date);
             }
         } else if (source instanceof InstanceURLAttribute) {
             type = InstanceAttributeDTO.Type.URL;
-            value=source.getValue()+"";
-        } else if(source instanceof InstanceListOfValuesAttribute){
+            value = source.getValue() + "";
+        } else if (source instanceof InstanceListOfValuesAttribute) {
             type = InstanceAttributeDTO.Type.LOV;
-            value = ((InstanceListOfValuesAttribute) source).getIndexValue()+"";
+            value = ((InstanceListOfValuesAttribute) source).getIndexValue() + "";
 
             List<NameValuePair> items = null;
             items = ((InstanceListOfValuesAttribute) source).getItems();
             itemsDTO = new ArrayList<>();
-            for (NameValuePair item : items){
+            for (NameValuePair item : items) {
                 itemsDTO.add(mapper.map(item, NameValuePairDTO.class));
             }
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Instance attribute not supported");
         }
         InstanceAttributeDTO dto = new InstanceAttributeDTO(source.getName(), type, value, source.isMandatory(), source.isLocked());
-        if (itemsDTO != null){
+        if (itemsDTO != null) {
             dto.setItems(itemsDTO);
         }
         return dto;
@@ -94,7 +93,7 @@ public class InstanceAttributeDozerConverter extends DozerConverter<InstanceAttr
     @Override
     public InstanceAttribute convertFrom(InstanceAttributeDTO source, InstanceAttribute destination) {
         //TODO: complete method, should not be called, not taking into account LOV Attributes.
-        switch(source.getType()){
+        switch (source.getType()) {
             case BOOLEAN:
                 return new InstanceBooleanAttribute(source.getName(), Boolean.parseBoolean(source.getValue()), source.isMandatory());
             case DATE:
@@ -105,7 +104,7 @@ public class InstanceAttributeDozerConverter extends DozerConverter<InstanceAttr
                 return new InstanceTextAttribute(source.getName(), source.getValue(), source.isMandatory());
             case URL:
                 return new InstanceURLAttribute(source.getName(), source.getValue(), source.isMandatory());
-                      
+
         }
         throw new IllegalArgumentException("Instance attribute not supported");
     }

@@ -32,8 +32,8 @@ import java.util.List;
 
 /**
  * @author Asmae CHADID on 25/03/15.
- *
- * Should be replaced with DozerMapper.
+ *         <p>
+ *         Should be replaced with DozerMapper.
  * @see com.docdoku.server.rest.converters.InstanceAttributeDozerConverter
  */
 public class InstanceAttributeFactory {
@@ -74,12 +74,12 @@ public class InstanceAttributeFactory {
             case URL:
                 attr = new InstanceURLAttribute();
                 break;
-            case LOV :
+            case LOV:
                 attr = new InstanceListOfValuesAttribute();
                 List<NameValuePairDTO> itemsDTO = dto.getItems();
                 List<NameValuePair> items = new ArrayList<>();
-                if (itemsDTO!= null){
-                    for (NameValuePairDTO itemDTO : itemsDTO){
+                if (itemsDTO != null) {
+                    for (NameValuePairDTO itemDTO : itemsDTO) {
                         items.add(mapper.map(itemDTO, NameValuePair.class));
                     }
                 }
@@ -98,14 +98,13 @@ public class InstanceAttributeFactory {
 
     public InstanceAttributeTemplate createInstanceAttributeTemplateObject(InstanceAttributeTemplateDTO dto) {
         InstanceAttributeTemplate data;
-        if(dto.getLovName()==null || dto.getLovName().isEmpty()) {
+        if (dto.getLovName() == null || dto.getLovName().isEmpty()) {
             DefaultAttributeTemplate defaultIA = new DefaultAttributeTemplate();
             defaultIA.setAttributeType(InstanceAttributeTemplate.AttributeType.valueOf(dto.getAttributeType().name()));
-            data=defaultIA;
-        }
-        else {
+            data = defaultIA;
+        } else {
             ListOfValuesAttributeTemplate lovA = new ListOfValuesAttributeTemplate();
-            data=lovA;
+            data = lovA;
         }
 
         data.setName(dto.getName());
@@ -113,10 +112,11 @@ public class InstanceAttributeFactory {
         data.setLocked(dto.isLocked());
         return data;
     }
-    public List<InstanceAttributeTemplate> createInstanceAttributeTemplateFromDto(List<InstanceAttributeTemplateDTO> dtos) {
+
+    public List<InstanceAttributeTemplate> createInstanceAttributeTemplateFromDTO(List<InstanceAttributeTemplateDTO> DTOs) {
         List<InstanceAttributeTemplate> data = new ArrayList<>();
-        for (InstanceAttributeTemplateDTO dto: dtos) {
-            data.add(createInstanceAttributeTemplateObject(dto));
+        for (InstanceAttributeTemplateDTO instanceAttributeTemplateDTO : DTOs) {
+            data.add(createInstanceAttributeTemplateObject(instanceAttributeTemplateDTO));
         }
         return data;
     }

@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
-public class WorkspaceUserGroupMemberShipDTO implements Serializable{
+public class WorkspaceUserGroupMemberShipDTO implements Serializable {
 
     private String workspaceId;
     private String memberId;

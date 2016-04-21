@@ -46,7 +46,7 @@ public class ActivityDozerConverter extends DozerConverter<Activity, ActivityDTO
     public ActivityDTO convertTo(Activity activity, ActivityDTO activityDTO) {
         List<TaskDTO> tasksDTO = new ArrayList<>();
 
-        for(int i=0; i<activity.getTasks().size(); i++){
+        for (int i = 0; i < activity.getTasks().size(); i++) {
             tasksDTO.add(mapper.map(activity.getTasks().get(i), TaskDTO.class));
         }
 
@@ -54,7 +54,7 @@ public class ActivityDozerConverter extends DozerConverter<Activity, ActivityDTO
         Integer tasksToComplete = null;
         Integer relaunchStep = null;
 
-        if(activity.getRelaunchActivity() != null){
+        if (activity.getRelaunchActivity() != null) {
             relaunchStep = activity.getRelaunchActivity().getStep();
         }
 
@@ -73,13 +73,13 @@ public class ActivityDozerConverter extends DozerConverter<Activity, ActivityDTO
     @Override
     public Activity convertFrom(ActivityDTO activityDTO, Activity pActivity) {
         List<Task> tasks = new ArrayList<>();
-        for(int i=0; i<activityDTO.getTasks().size(); i++){
+        for (int i = 0; i < activityDTO.getTasks().size(); i++) {
             tasks.add(mapper.map(activityDTO.getTasks().get(i), Task.class));
         }
 
         Activity activity;
 
-        switch (activityDTO.getType()){
+        switch (activityDTO.getType()) {
             case SERIAL:
                 activity = new SerialActivity();
                 break;

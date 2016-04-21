@@ -75,6 +75,7 @@ public class DocumentBaselineDTO implements Serializable {
     public String getWorkspaceId() {
         return workspaceId;
     }
+
     public void setWorkspaceId(String workspaceId) {
         this.workspaceId = workspaceId;
     }
@@ -82,6 +83,7 @@ public class DocumentBaselineDTO implements Serializable {
     public List<FolderDTO> getBaselinedFolders() {
         return baselinedFolders;
     }
+
     public void setBaselinedFolders(List<FolderDTO> baselinedFolders) {
         this.baselinedFolders = baselinedFolders;
     }

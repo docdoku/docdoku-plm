@@ -33,14 +33,15 @@ import java.util.logging.Logger;
 @Provider
 public class PreconditionFailedExceptionMapper implements ExceptionMapper<PreconditionFailedException> {
     private static final Logger LOGGER = Logger.getLogger(PreconditionFailedExceptionMapper.class.getName());
+
     public PreconditionFailedExceptionMapper() {
     }
 
     @Override
     public Response toResponse(PreconditionFailedException e) {
-        LOGGER.log(Level.WARNING,e.getMessage());
-        LOGGER.log(Level.FINE,null,e);
+        LOGGER.log(Level.WARNING, e.getMessage());
+        LOGGER.log(Level.FINE, null, e);
         return Response.status(Response.Status.PRECONDITION_FAILED)
-                       .build();
+                .build();
     }
 }

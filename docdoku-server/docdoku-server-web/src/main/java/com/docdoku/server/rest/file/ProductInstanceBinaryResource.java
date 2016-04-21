@@ -80,7 +80,7 @@ public class ProductInstanceBinaryResource {
     private GuestProxy guestProxy;
 
     @POST
-    @ApiOperation(value = "Upload product instance files" , response = Response.class)
+    @ApiOperation(value = "Upload product instance files", response = Response.class)
     @Path("iterations/{iteration}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -112,7 +112,7 @@ public class ProductInstanceBinaryResource {
 
 
     @GET
-    @ApiOperation(value = "Download product instance file" , response = Response.class)
+    @ApiOperation(value = "Download product instance file", response = Response.class)
     @Path("iterations/{iteration}/{fileName}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadFileFromProductInstance(@Context Request request,
@@ -137,7 +137,7 @@ public class ProductInstanceBinaryResource {
             return rb.build();
         }
         InputStream binaryContentInputStream = null;
-        try  {
+        try {
             binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
         } catch (StorageException e) {
@@ -149,7 +149,7 @@ public class ProductInstanceBinaryResource {
 
 
     @POST
-    @ApiOperation(value = "Upload path data file" , response = Response.class)
+    @ApiOperation(value = "Upload path data file", response = Response.class)
     @Path("pathdata/{pathDataId}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -169,7 +169,7 @@ public class ProductInstanceBinaryResource {
             Collection<Part> formParts = request.getParts();
 
             for (Part formPart : formParts) {
-                fileName = uploadAFileToPathData(workspaceId, formPart, configurationItemId, serialNumber,pathDataId,iteration);
+                fileName = uploadAFileToPathData(workspaceId, formPart, configurationItemId, serialNumber, pathDataId, iteration);
             }
 
             if (formParts.size() == 1) {
@@ -184,7 +184,7 @@ public class ProductInstanceBinaryResource {
     }
 
     @POST
-    @ApiOperation(value = "Upload path data iteration file" , response = Response.class)
+    @ApiOperation(value = "Upload path data iteration file", response = Response.class)
     @Path("pathdata/{path}/iterations/{iteration}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -218,18 +218,18 @@ public class ProductInstanceBinaryResource {
     }
 
     @GET
-    @ApiOperation(value = "Download path data file" , response = Response.class)
+    @ApiOperation(value = "Download path data file", response = Response.class)
     @Path("pathdata/{pathDataId}/{fileName}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadFileFromPathData(@Context Request request,
-                                                    @HeaderParam("Range") String range,
-                                                    @PathParam("workspaceId") final String workspaceId,
-                                                    @PathParam("serialNumber") final String serialNumber,
-                                                    @PathParam("ciId") final String configurationItemId,
-                                                    @PathParam("pathDataId") final int pathDataId,
-                                                    @PathParam("fileName") final String fileName,
-                                                    @QueryParam("type") String type,
-                                                    @QueryParam("output") String output)
+                                             @HeaderParam("Range") String range,
+                                             @PathParam("workspaceId") final String workspaceId,
+                                             @PathParam("serialNumber") final String serialNumber,
+                                             @PathParam("ciId") final String configurationItemId,
+                                             @PathParam("pathDataId") final int pathDataId,
+                                             @PathParam("fileName") final String fileName,
+                                             @QueryParam("type") String type,
+                                             @QueryParam("output") String output)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, com.docdoku.core.exceptions.NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
 
 
@@ -254,22 +254,22 @@ public class ProductInstanceBinaryResource {
     }
 
     @GET
-    @ApiOperation(value = "Download path data iteration file" , response = Response.class)
+    @ApiOperation(value = "Download path data iteration file", response = Response.class)
     @Path("pathdata/{pathDataId}/iterations/{iteration}/{fileName}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadFileFromPathDataIteration(@Context Request request,
-                                                    @HeaderParam("Range") String range,
-                                                    @PathParam("workspaceId") final String workspaceId,
-                                                    @PathParam("serialNumber") final String serialNumber,
-                                                    @PathParam("pathDataId") String pathDataId,
-                                                    @PathParam("iteration") final int iteration,
-                                                    @PathParam("fileName") final String fileName,
-                                                    @QueryParam("type") String type,
-                                                    @QueryParam("output") String output)
+                                                      @HeaderParam("Range") String range,
+                                                      @PathParam("workspaceId") final String workspaceId,
+                                                      @PathParam("serialNumber") final String serialNumber,
+                                                      @PathParam("pathDataId") String pathDataId,
+                                                      @PathParam("iteration") final int iteration,
+                                                      @PathParam("fileName") final String fileName,
+                                                      @QueryParam("type") String type,
+                                                      @QueryParam("output") String output)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, com.docdoku.core.exceptions.NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
 
 
-        String fullName = workspaceId + "/product-instances/" + serialNumber + "/pathdata/" + pathDataId + "/iterations/" +iteration+'/'+ fileName;
+        String fullName = workspaceId + "/product-instances/" + serialNumber + "/pathdata/" + pathDataId + "/iterations/" + iteration + '/' + fileName;
         BinaryResource binaryResource = getPathDataBinaryResource(fullName);
         BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource, output, type);
 
@@ -299,6 +299,7 @@ public class ProductInstanceBinaryResource {
             return guestProxy.getBinaryResourceForProducInstance(fullName);
         }
     }
+
     private BinaryResource getPathDataBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
         if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
@@ -321,26 +322,27 @@ public class ProductInstanceBinaryResource {
         return fileName;
     }
 
-    private String uploadAFileToPathData(String workspaceId, Part formPart, String configurationItemId, String serialNumber, int pathDataId,int iteration)
+    private String uploadAFileToPathData(String workspaceId, Part formPart, String configurationItemId, String serialNumber, int pathDataId, int iteration)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException, UserNotActiveException, StorageException, IOException {
 
         String fileName = Normalizer.normalize(formPart.getSubmittedFileName(), Normalizer.Form.NFC);
         // Init the binary resource with a null length
-        BinaryResource binaryResource = productInstanceManagerLocal.saveFileInPathData(workspaceId, configurationItemId, serialNumber, pathDataId,iteration, fileName, 0);
+        BinaryResource binaryResource = productInstanceManagerLocal.saveFileInPathData(workspaceId, configurationItemId, serialNumber, pathDataId, iteration, fileName, 0);
         OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
         long length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
-        productInstanceManagerLocal.saveFileInPathData(workspaceId, configurationItemId, serialNumber, pathDataId,iteration, fileName, (int) length);
+        productInstanceManagerLocal.saveFileInPathData(workspaceId, configurationItemId, serialNumber, pathDataId, iteration, fileName, (int) length);
         return fileName;
     }
-    private String uploadAFileToPathDataIteration(String workspaceId, Part formPart, String configurationItemId, String serialNumber, int pathDataId,int iteration)
+
+    private String uploadAFileToPathDataIteration(String workspaceId, Part formPart, String configurationItemId, String serialNumber, int pathDataId, int iteration)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException, UserNotActiveException, StorageException, IOException {
 
         String fileName = Normalizer.normalize(formPart.getSubmittedFileName(), Normalizer.Form.NFC);
         // Init the binary resource with a null length
-        BinaryResource binaryResource = productInstanceManagerLocal.saveFileInPathDataIteration(workspaceId, configurationItemId, serialNumber, pathDataId,iteration, fileName, 0);
+        BinaryResource binaryResource = productInstanceManagerLocal.saveFileInPathDataIteration(workspaceId, configurationItemId, serialNumber, pathDataId, iteration, fileName, 0);
         OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
         long length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
-        productInstanceManagerLocal.saveFileInPathDataIteration(workspaceId, configurationItemId, serialNumber, pathDataId,iteration, fileName, (int) length);
+        productInstanceManagerLocal.saveFileInPathDataIteration(workspaceId, configurationItemId, serialNumber, pathDataId, iteration, fileName, (int) length);
         return fileName;
     }
 }

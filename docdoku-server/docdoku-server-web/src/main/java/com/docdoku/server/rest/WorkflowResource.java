@@ -32,6 +32,7 @@ import com.docdoku.server.rest.dto.ActivityModelDTO;
 import com.docdoku.server.rest.dto.WorkflowModelDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -48,7 +49,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author Yassine Belouad
  */
 @RequestScoped
@@ -69,7 +69,7 @@ public class WorkflowResource {
     public void init() {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
-    
+
     @GET
     @ApiOperation(value = "Get workflow models", response = WorkflowModelDTO.class, responseContainer = "List")
     @Path("/")
@@ -80,7 +80,7 @@ public class WorkflowResource {
         WorkflowModel[] workflowModels = workflowService.getWorkflowModels(workspaceId);
         WorkflowModelDTO[] dtos = new WorkflowModelDTO[workflowModels.length];
 
-        for(int i=0; i<workflowModels.length; i++){
+        for (int i = 0; i < workflowModels.length; i++) {
             dtos[i] = mapper.map(workflowModels[i], WorkflowModelDTO.class);
         }
 
@@ -91,7 +91,8 @@ public class WorkflowResource {
     @ApiOperation(value = "Get workflow model", response = WorkflowModelDTO.class)
     @Path("{workflowModelId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowModelDTO getWorkflowInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId)
+    public WorkflowModelDTO getWorkflowInWorkspace(@PathParam("workspaceId") String workspaceId,
+                                                   @PathParam("workflowModelId") String workflowModelId)
             throws EntityNotFoundException, UserNotActiveException {
 
         WorkflowModel workflowModel = workflowService.getWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
@@ -101,7 +102,8 @@ public class WorkflowResource {
     @DELETE
     @ApiOperation(value = "Delete workflow model", response = Response.class)
     @Path("{workflowModelId}")
-    public Response delWorkflowModel(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId)
+    public Response delWorkflowModel(@PathParam("workspaceId") String workspaceId,
+                                     @PathParam("workflowModelId") String workflowModelId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, EntityConstraintException {
         workflowService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
         return Response.status(Response.Status.OK).build();
@@ -111,7 +113,9 @@ public class WorkflowResource {
     @ApiOperation(value = "Update workflow model", response = WorkflowModelDTO.class)
     @Path("{workflowModelId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowModelDTO updateWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId, WorkflowModelDTO workflowModelDTOToPersist)
+    public WorkflowModelDTO updateWorkflowModel(@PathParam("workspaceId") String workspaceId,
+                                                @PathParam("workflowModelId") String workflowModelId,
+                                                @ApiParam(required = true, value = "Workflow model to update") WorkflowModelDTO workflowModelDTOToPersist)
             throws EntityNotFoundException, AccessRightException, EntityAlreadyExistsException, CreationException, UserNotActiveException, NotAllowedException {
 
         WorkflowModelKey workflowModelKey = new WorkflowModelKey(workspaceId, workflowModelId);
@@ -125,12 +129,14 @@ public class WorkflowResource {
     @ApiOperation(value = "Update workflow model ACL", response = Response.class)
     @Path("{workflowModelId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateWorkflowModelACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("workflowModelId") String workflowModelId, ACLDTO acl)
+    public Response updateWorkflowModelACL(@PathParam("workspaceId") String pWorkspaceId,
+                                           @PathParam("workflowModelId") String workflowModelId,
+                                           @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
-            Map<String,String> userEntries = new HashMap<>();
-            Map<String,String> groupEntries = new HashMap<>();
+            Map<String, String> userEntries = new HashMap<>();
+            Map<String, String> groupEntries = new HashMap<>();
 
             for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
                 userEntries.put(entry.getKey(), entry.getValue().name());
@@ -141,7 +147,7 @@ public class WorkflowResource {
             }
 
             workflowService.updateACLForWorkflow(pWorkspaceId, workflowModelId, userEntries, groupEntries);
-        }else{
+        } else {
             workflowService.removeACLFromWorkflow(pWorkspaceId, workflowModelId);
         }
         return Response.ok().build();
@@ -151,7 +157,8 @@ public class WorkflowResource {
     @ApiOperation(value = "Create workflow model", response = WorkflowModelDTO.class)
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowModelDTO createWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, WorkflowModelDTO workflowModelDTOToPersist)
+    public WorkflowModelDTO createWorkflowModel(@PathParam("workspaceId") String workspaceId,
+                                                @ApiParam(required = true, value = "Workflow model to create rules to set") WorkflowModelDTO workflowModelDTOToPersist)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, NotAllowedException, AccessRightException, CreationException {
         List<ActivityModelDTO> activityModelDTOsList = workflowModelDTOToPersist.getActivityModels();
         ActivityModel[] activityModels = extractActivityModelFromDTO(activityModelDTOsList);
@@ -160,15 +167,15 @@ public class WorkflowResource {
     }
 
     private ActivityModel[] extractActivityModelFromDTO(List<ActivityModelDTO> activityModelDTOsList) throws NotAllowedException {
-        Map<Integer,ActivityModel> activityModels = new HashMap<>();
+        Map<Integer, ActivityModel> activityModels = new HashMap<>();
 
-        for(int i=0; i<activityModelDTOsList.size(); i++){
+        for (int i = 0; i < activityModelDTOsList.size(); i++) {
             ActivityModelDTO activityModelDTO = activityModelDTOsList.get(i);
             ActivityModel activityModel = mapper.map(activityModelDTO, ActivityModel.class);
-            activityModels.put(activityModel.getStep(),activityModel);
+            activityModels.put(activityModel.getStep(), activityModel);
 
             Integer relaunchStep = activityModelDTO.getRelaunchStep();
-            if(relaunchStep != null && relaunchStep < i){
+            if (relaunchStep != null && relaunchStep < i) {
                 ActivityModel relaunchActivity = activityModels.get(relaunchStep);
                 activityModel.setRelaunchActivity(relaunchActivity);
             }
@@ -176,5 +183,5 @@ public class WorkflowResource {
 
         return activityModels.values().toArray(new ActivityModel[activityModels.size()]);
     }
-    
+
 }

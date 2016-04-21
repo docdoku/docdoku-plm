@@ -62,7 +62,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author Yassine Belouad
  */
 @RequestScoped
@@ -71,14 +70,11 @@ import java.util.logging.Logger;
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class TagResource {
 
+    private final static Logger LOGGER = Logger.getLogger(TagResource.class.getName());
     @Inject
     private IDocumentManagerLocal documentService;
-
     @Inject
     private IDocumentConfigSpecManagerLocal documentConfigSpecService;
-
-    private final static Logger LOGGER = Logger.getLogger(TagResource.class.getName());
-
     private Mapper mapper;
 
     public TagResource() {
@@ -93,13 +89,13 @@ public class TagResource {
     @ApiOperation(value = "Get tags in workspace", response = TagDTO.class, responseContainer = "List")
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTagsInWorkspace (@PathParam("workspaceId") String workspaceId)
+    public Response getTagsInWorkspace(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         String[] tagsName = documentService.getTags(workspaceId);
         List<TagDTO> tagsDTO = new ArrayList<>();
         for (String tagName : tagsName) {
-            tagsDTO.add(new TagDTO(tagName,workspaceId));
+            tagsDTO.add(new TagDTO(tagName, workspaceId));
         }
         return Response.ok(new GenericEntity<List<TagDTO>>((List<TagDTO>) tagsDTO) {
         }).build();
@@ -110,7 +106,8 @@ public class TagResource {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public TagDTO createTag(@PathParam("workspaceId") String workspaceId, @ApiParam(value = "Tag to create", required = true) TagDTO tag)
+    public TagDTO createTag(@PathParam("workspaceId") String workspaceId,
+                            @ApiParam(value = "Tag to create", required = true) TagDTO tag)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, CreationException {
 
         documentService.createTag(workspaceId, tag.getLabel());
@@ -121,10 +118,11 @@ public class TagResource {
     @ApiOperation(value = "Create tags in workspace", response = Response.class)
     @Path("/multiple")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createTags(@PathParam("workspaceId") String workspaceId, @ApiParam(value = "Tag list to create", required = true) TagListDTO tagList)
+    public Response createTags(@PathParam("workspaceId") String workspaceId,
+                               @ApiParam(value = "Tag list to create", required = true) TagListDTO tagList)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, CreationException {
 
-        for(TagDTO tagDTO : tagList.getTags()){
+        for (TagDTO tagDTO : tagList.getTags()) {
             documentService.createTag(workspaceId, tagDTO.getLabel());
         }
         return Response.ok().build();
@@ -133,7 +131,8 @@ public class TagResource {
     @DELETE
     @ApiOperation(value = "Delete tag in workspace", response = Response.class)
     @Path("{tagId}")
-    public Response deleteTag(@PathParam("workspaceId") String workspaceId, @PathParam("tagId") String tagId)
+    public Response deleteTag(@PathParam("workspaceId") String workspaceId,
+                              @PathParam("tagId") String tagId)
             throws EntityNotFoundException, AccessRightException {
 
         documentService.deleteTag(new TagKey(workspaceId, tagId));
@@ -152,9 +151,9 @@ public class TagResource {
 
         DocumentRevision[] docRs;
         TagKey tagKey = new TagKey(workspaceId, tagId);
-        if(configSpecType==null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
+        if (configSpecType == null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
             docRs = documentService.findDocumentRevisionsByTag(tagKey);
-        }else{
+        } else {
             DocumentConfigSpec configSpec = ConfigSpecHelper.getConfigSpec(workspaceId, configSpecType, documentConfigSpecService);
             docRs = documentConfigSpecService.getFilteredDocumentsByTag(workspaceId, configSpec, tagKey);
         }
@@ -168,7 +167,7 @@ public class TagResource {
                 docRsDTOs[i].setLifeCycleState(docRs[i].getLifeCycleState());
                 docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
                 docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
-            }else{
+            } else {
                 docRsDTOs[i].setWorkflow(null);
                 docRsDTOs[i].setTags(null);
             }
@@ -186,7 +185,8 @@ public class TagResource {
             @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document to create") DocumentCreationDTO docCreationDTO,
             @PathParam("tagId") String tagId,
-            @QueryParam("configSpec") String configSpecType) throws CreationException, FileAlreadyExistsException, DocumentRevisionAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, DocumentMasterAlreadyExistsException, RoleNotFoundException, FolderNotFoundException, WorkflowModelNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, ESServerException {
+            @QueryParam("configSpec") String configSpecType)
+            throws CreationException, FileAlreadyExistsException, DocumentRevisionAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, DocumentMasterAlreadyExistsException, RoleNotFoundException, FolderNotFoundException, WorkflowModelNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, ESServerException {
 
         String pDocMID = docCreationDTO.getReference();
         String pTitle = docCreationDTO.getTitle();
@@ -221,23 +221,23 @@ public class TagResource {
 
         Map<String, String> roleMappings = new HashMap<>();
 
-        if(rolesMappingDTO != null){
-            for(RoleMappingDTO roleMappingDTO : rolesMappingDTO){
-                roleMappings.put(roleMappingDTO.getRoleName(),roleMappingDTO.getUserLogin());
+        if (rolesMappingDTO != null) {
+            for (RoleMappingDTO roleMappingDTO : rolesMappingDTO) {
+                roleMappings.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogin());
             }
         }
 
-        DocumentRevision createdDocRs =  documentService.createDocumentMaster(decodedCompletePath, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries, roleMappings);
+        DocumentRevision createdDocRs = documentService.createDocumentMaster(decodedCompletePath, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries, roleMappings);
         documentService.saveTags(createdDocRs.getKey(), new String[]{tagId});
 
         DocumentRevisionDTO docRsDTO = mapper.map(createdDocRs, DocumentRevisionDTO.class);
         docRsDTO.setPath(createdDocRs.getLocation().getCompletePath());
         docRsDTO.setLifeCycleState(createdDocRs.getLifeCycleState());
 
-        try{
+        try {
             return Response.created(URI.create(URLEncoder.encode(pDocMID + "-" + createdDocRs.getVersion(), "UTF-8"))).entity(docRsDTO).build();
         } catch (UnsupportedEncodingException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
+            LOGGER.log(Level.WARNING, null, ex);
             return Response.ok().build();
         }
     }

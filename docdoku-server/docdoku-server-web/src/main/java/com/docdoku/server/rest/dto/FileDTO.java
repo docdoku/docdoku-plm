@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
-public class FileDTO  implements Serializable {
+public class FileDTO implements Serializable {
     private boolean created;
     private String fullName;
     private String shortName;

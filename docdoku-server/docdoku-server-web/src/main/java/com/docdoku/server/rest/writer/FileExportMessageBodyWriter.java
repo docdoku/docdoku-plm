@@ -54,16 +54,13 @@ import java.util.zip.ZipOutputStream;
 @Provider
 public class FileExportMessageBodyWriter implements MessageBodyWriter<FileExportEntity> {
 
+    private static final Logger LOGGER = Logger.getLogger(FileExportMessageBodyWriter.class.getName());
     @Inject
     private IDataManagerLocal dataManager;
-
     @Inject
     private IProductManagerLocal productService;
-
     @Inject
     private IProductInstanceManagerLocal productInstanceService;
-
-    private static final Logger LOGGER = Logger.getLogger(FileExportMessageBodyWriter.class.getName());
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -86,26 +83,26 @@ public class FileExportMessageBodyWriter implements MessageBodyWriter<FileExport
             Set<Map.Entry<String, Set<BinaryResource>>> entries = binariesInTree.entrySet();
             List<String> baselinedSourcesName = new ArrayList<>();
 
-            if (fileExportEntity.isExportDocumentLinks() && fileExportEntity.getBaselineId() !=  null) {
+            if (fileExportEntity.isExportDocumentLinks() && fileExportEntity.getBaselineId() != null) {
                 List<BinaryResource> baselinedSources = productService.getBinaryResourceFromBaseline(fileExportEntity.getBaselineId());
 
                 for (BinaryResource binaryResource : baselinedSources) {
                     String[] parts = binaryResource.getFullName().split("/");
-                    String folderName= parts[2] + "-" + parts[3] + "-" + parts[4];
+                    String folderName = parts[2] + "-" + parts[3] + "-" + parts[4];
                     baselinedSourcesName.add(folderName);
                     addToZipFile(binaryResource, "links/" + folderName, zs);
                 }
             }
 
-            for (Map.Entry<String, Set<BinaryResource>> entry:entries) {
+            for (Map.Entry<String, Set<BinaryResource>> entry : entries) {
                 String partNumberFolderName = entry.getKey();
                 String folderName;
                 Set<BinaryResource> files = entry.getValue();
 
                 for (BinaryResource binaryResource : files) {
                     try {
-                        String fileType=binaryResource.getFileType();
-                        folderName = partNumberFolderName + (fileType==null?"":"/"+fileType);
+                        String fileType = binaryResource.getFileType();
+                        folderName = partNumberFolderName + (fileType == null ? "" : "/" + fileType);
                         addToZipFile(binaryResource, folderName, zs);
 
                     } catch (StorageException e) {
@@ -149,7 +146,7 @@ public class FileExportMessageBodyWriter implements MessageBodyWriter<FileExport
 
     public void addToZipFile(BinaryResource binaryResource, String folderName, ZipOutputStream zos) throws IOException, StorageException {
 
-        try(InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource)) {
+        try (InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource)) {
 
             ZipEntry zipEntry = new ZipEntry(folderName + "/" + binaryResource.getName());
             zos.putNextEntry(zipEntry);

@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author Florent Garin
  */
 @XmlRootElement
@@ -62,16 +61,16 @@ public class DocumentIterationDTO implements Serializable {
         return author;
     }
 
+    public void setAuthor(UserDTO author) {
+        this.author = author;
+    }
+
     public String getId() {
-        return documentMasterId+"-"+version+"-"+iteration;
+        return documentMasterId + "-" + version + "-" + iteration;
     }
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public void setAuthor(UserDTO author) {
-        this.author = author;
     }
 
     public Date getCreationDate() {
@@ -98,24 +97,24 @@ public class DocumentIterationDTO implements Serializable {
         this.checkInDate = checkInDate;
     }
 
-    public void setRevisionNote(String pRevisionNote) {
-        revisionNote = pRevisionNote;
-    }
-
     public String getRevisionNote() {
         return revisionNote;
+    }
+
+    public void setRevisionNote(String pRevisionNote) {
+        revisionNote = pRevisionNote;
     }
 
     public List<String> getAttachedFiles() {
         return attachedFiles;
     }
 
-    public List<DocumentRevisionDTO> getLinkedDocuments() {
-        return linkedDocuments;
-    }
-
     public void setAttachedFiles(List<String> attachedFiles) {
         this.attachedFiles = attachedFiles;
+    }
+
+    public List<DocumentRevisionDTO> getLinkedDocuments() {
+        return linkedDocuments;
     }
 
     public void setLinkedDocuments(List<DocumentRevisionDTO> linkedDocuments) {
@@ -160,7 +159,7 @@ public class DocumentIterationDTO implements Serializable {
     }
 
     public DocumentRevisionDTO getDocumentRevision() {
-        return new DocumentRevisionDTO(workspaceId, id+"-"+version, version);
+        return new DocumentRevisionDTO(workspaceId, id + "-" + version, version);
     }
 
     public String getVersion() {

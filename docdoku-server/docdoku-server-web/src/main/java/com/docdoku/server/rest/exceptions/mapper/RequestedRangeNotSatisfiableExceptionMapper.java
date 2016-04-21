@@ -33,13 +33,14 @@ import java.util.logging.Logger;
 @Provider
 public class RequestedRangeNotSatisfiableExceptionMapper implements ExceptionMapper<RequestedRangeNotSatisfiableException> {
     private static final Logger LOGGER = Logger.getLogger(RequestedRangeNotSatisfiableExceptionMapper.class.getName());
+
     public RequestedRangeNotSatisfiableExceptionMapper() {
     }
 
     @Override
     public Response toResponse(RequestedRangeNotSatisfiableException e) {
-        LOGGER.log(Level.SEVERE,e.getMessage());
-        LOGGER.log(Level.FINE,null,e);
+        LOGGER.log(Level.SEVERE, e.getMessage());
+        LOGGER.log(Level.FINE, null, e);
         return Response.status(Response.Status.REQUESTED_RANGE_NOT_SATISFIABLE)
                 .header("Content-Range", "bytes */" + e.getContentRange())
                 .build();

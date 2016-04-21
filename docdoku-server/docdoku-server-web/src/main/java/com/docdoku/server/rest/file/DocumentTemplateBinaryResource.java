@@ -65,23 +65,20 @@ import java.util.logging.Logger;
 @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
 public class DocumentTemplateBinaryResource {
 
+    private static final Logger LOGGER = Logger.getLogger(DocumentTemplateBinaryResource.class.getName());
     @Inject
     private IDataManagerLocal dataManager;
-
     @Inject
     private IDocumentManagerLocal documentService;
-
     @Inject
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
-
-    private static final Logger LOGGER = Logger.getLogger(DocumentTemplateBinaryResource.class.getName());
 
 
     public DocumentTemplateBinaryResource() {
     }
 
     @POST
-    @ApiOperation(value = "Upload document template file" , response = Response.class)
+    @ApiOperation(value = "Upload document template file", response = Response.class)
     @Path("/")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response uploadDocumentTemplateFiles(@Context HttpServletRequest request,
@@ -91,22 +88,22 @@ public class DocumentTemplateBinaryResource {
 
         try {
             BinaryResource binaryResource;
-            String fileName=null;
+            String fileName = null;
             long length;
             DocumentMasterTemplateKey templatePK = new DocumentMasterTemplateKey(workspaceId, templateId);
             Collection<Part> formParts = request.getParts();
 
-            for(Part formPart : formParts){
+            for (Part formPart : formParts) {
                 fileName = Normalizer.normalize(formPart.getSubmittedFileName(), Normalizer.Form.NFC);
                 // Init the binary resource with a null length
-                binaryResource= documentService.saveFileInTemplate(templatePK, fileName, 0);
+                binaryResource = documentService.saveFileInTemplate(templatePK, fileName, 0);
                 OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
                 length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
                 documentService.saveFileInTemplate(templatePK, fileName, length);
             }
 
-            if(formParts.size()==1) {
-                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI()+ URLEncoder.encode(fileName, "UTF-8"));
+            if (formParts.size() == 1) {
+                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI() + URLEncoder.encode(fileName, "UTF-8"));
             }
             return Response.ok().build();
 
@@ -116,9 +113,8 @@ public class DocumentTemplateBinaryResource {
     }
 
 
-
     @GET
-    @ApiOperation(value = "Download document template file" , response = Response.class)
+    @ApiOperation(value = "Download document template file", response = Response.class)
     @Path("/{fileName}")
     @Compress
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -138,15 +134,15 @@ public class DocumentTemplateBinaryResource {
 
         // Check cache precondition
         Response.ResponseBuilder rb = request.evaluatePreconditions(binaryResourceDownloadMeta.getLastModified(), binaryResourceDownloadMeta.getETag());
-        if(rb!= null){
+        if (rb != null) {
             return rb.build();
         }
 
         InputStream binaryContentInputStream = null;
         try {
-            if(output!=null && !output.isEmpty()){
+            if (output != null && !output.isEmpty()) {
                 binaryContentInputStream = getConvertedBinaryResource(binaryResource, output);
-            }else{
+            } else {
                 binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
             }
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
@@ -158,8 +154,9 @@ public class DocumentTemplateBinaryResource {
 
     /**
      * Try to convert a binary resource to a specific format
+     *
      * @param binaryResource The binary resource
-     * @param output The wanted output
+     * @param output         The wanted output
      * @return The binary resource stream in the wanted output
      * @throws com.docdoku.server.rest.exceptions.FileConversionException
      */

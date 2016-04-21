@@ -31,6 +31,7 @@ import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.util.InstanceAttributeFactory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -47,7 +48,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author Yassine Belouad
  */
 
@@ -77,11 +77,11 @@ public class DocumentTemplateResource {
     public DocumentMasterTemplateDTO[] getDocumentMasterTemplates(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
-        DocumentMasterTemplate[] docMsTemplates = documentService.getDocumentMasterTemplates(workspaceId);
-        DocumentMasterTemplateDTO[] dtos = new DocumentMasterTemplateDTO[docMsTemplates.length];
+        DocumentMasterTemplate[] documentMasterTemplates = documentService.getDocumentMasterTemplates(workspaceId);
+        DocumentMasterTemplateDTO[] dtos = new DocumentMasterTemplateDTO[documentMasterTemplates.length];
 
-        for (int i = 0; i < docMsTemplates.length; i++) {
-            dtos[i] = mapper.map(docMsTemplates[i], DocumentMasterTemplateDTO.class);
+        for (int i = 0; i < documentMasterTemplates.length; i++) {
+            dtos[i] = mapper.map(documentMasterTemplates[i], DocumentMasterTemplateDTO.class);
         }
 
         return dtos;
@@ -91,18 +91,20 @@ public class DocumentTemplateResource {
     @ApiOperation(value = "Get document template", response = DocumentMasterTemplateDTO.class)
     @Path("{templateId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentMasterTemplateDTO getDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
+    public DocumentMasterTemplateDTO getDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId,
+                                                               @PathParam("templateId") String templateId)
             throws EntityNotFoundException, UserNotActiveException {
 
-        DocumentMasterTemplate docMsTemplate = documentService.getDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
-        return mapper.map(docMsTemplate, DocumentMasterTemplateDTO.class);
+        DocumentMasterTemplate documentMasterTemplate = documentService.getDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
+        return mapper.map(documentMasterTemplate, DocumentMasterTemplateDTO.class);
     }
-    
+
     @GET
     @ApiOperation(value = "Generate document template id", response = TemplateGeneratedIdDTO.class)
     @Path("{templateId}/generate_id")
     @Produces(MediaType.APPLICATION_JSON)
-    public TemplateGeneratedIdDTO generateDocMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
+    public TemplateGeneratedIdDTO generateDocumentMasterId(@PathParam("workspaceId") String workspaceId,
+                                                           @PathParam("templateId") String templateId)
             throws EntityNotFoundException, UserNotActiveException {
 
         String generateId = documentService.generateId(workspaceId, templateId);
@@ -114,46 +116,49 @@ public class DocumentTemplateResource {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentMasterTemplateDTO createDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, DocumentTemplateCreationDTO templateCreationDTO)
+    public DocumentMasterTemplateDTO createDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId,
+                                                                  @ApiParam(required = true, value = "Document master template to create") DocumentTemplateCreationDTO templateCreationDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException {
 
-        String id =templateCreationDTO.getReference();
+        String id = templateCreationDTO.getReference();
         String documentType = templateCreationDTO.getDocumentType();
-        String workflowModelId=templateCreationDTO.getWorkflowModelId();
+        String workflowModelId = templateCreationDTO.getWorkflowModelId();
         String mask = templateCreationDTO.getMask();
         boolean idGenerated = templateCreationDTO.isIdGenerated();
         boolean attributesLocked = templateCreationDTO.isAttributesLocked();
 
         List<InstanceAttributeTemplateDTO> attributeTemplates = templateCreationDTO.getAttributeTemplates();
-        String[] lovNames=new String[attributeTemplates.size()];
-        for (int i=0;i<attributeTemplates.size();i++)
-            lovNames[i]=attributeTemplates.get(i).getLovName();
+        String[] lovNames = new String[attributeTemplates.size()];
+        for (int i = 0; i < attributeTemplates.size(); i++)
+            lovNames[i] = attributeTemplates.get(i).getLovName();
 
-        DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, workflowModelId, mask, new InstanceAttributeFactory().createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, idGenerated, attributesLocked);
+        DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, workflowModelId, mask, new InstanceAttributeFactory().createInstanceAttributeTemplateFromDTO(attributeTemplates), lovNames, idGenerated, attributesLocked);
         DocumentMasterTemplateDTO response = mapper.map(template, DocumentMasterTemplateDTO.class);
         return response;
     }
-    
+
     @PUT
     @ApiOperation(value = "Update document template", response = DocumentMasterTemplateDTO.class)
-    @Path("{templateId}") 
+    @Path("{templateId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentMasterTemplateDTO updateDocMsTemplate(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, DocumentMasterTemplateDTO docMsTemplateDTO)
+    public DocumentMasterTemplateDTO updateDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId,
+                                                                  @PathParam("templateId") String templateId,
+                                                                  @ApiParam(required = true, value = "Document master template to update") DocumentMasterTemplateDTO documentMasterTemplateDTO)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
-        String documentType = docMsTemplateDTO.getDocumentType();
-        String workflowModelId = docMsTemplateDTO.getWorkflowModelId();
-        String mask = docMsTemplateDTO.getMask();
-        boolean idGenerated = docMsTemplateDTO.isIdGenerated();
-        boolean attributesLocked = docMsTemplateDTO.isAttributesLocked();
+        String documentType = documentMasterTemplateDTO.getDocumentType();
+        String workflowModelId = documentMasterTemplateDTO.getWorkflowModelId();
+        String mask = documentMasterTemplateDTO.getMask();
+        boolean idGenerated = documentMasterTemplateDTO.isIdGenerated();
+        boolean attributesLocked = documentMasterTemplateDTO.isAttributesLocked();
 
-        List<InstanceAttributeTemplateDTO> attributeTemplates = docMsTemplateDTO.getAttributeTemplates();
-        String[] lovNames=new String[attributeTemplates.size()];
-        for (int i=0;i<attributeTemplates.size();i++)
-            lovNames[i]=attributeTemplates.get(i).getLovName();
+        List<InstanceAttributeTemplateDTO> attributeTemplates = documentMasterTemplateDTO.getAttributeTemplates();
+        String[] lovNames = new String[attributeTemplates.size()];
+        for (int i = 0; i < attributeTemplates.size(); i++)
+            lovNames[i] = attributeTemplates.get(i).getLovName();
 
-        DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, workflowModelId, mask, new InstanceAttributeFactory().createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, idGenerated, attributesLocked);
+        DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, workflowModelId, mask, new InstanceAttributeFactory().createInstanceAttributeTemplateFromDTO(attributeTemplates), lovNames, idGenerated, attributesLocked);
         return mapper.map(template, DocumentMasterTemplateDTO.class);
     }
 
@@ -161,13 +166,15 @@ public class DocumentTemplateResource {
     @ApiOperation(value = "Update document template ACL", response = Response.class)
     @Path("{templateId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateDocMsTemplateACL(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, ACLDTO acl)
+    public Response updateDocumentMasterTemplateACL(@PathParam("workspaceId") String workspaceId,
+                                                    @PathParam("templateId") String templateId,
+                                                    @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
         if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
-            Map<String,String> userEntries = new HashMap<>();
-            Map<String,String> groupEntries = new HashMap<>();
+            Map<String, String> userEntries = new HashMap<>();
+            Map<String, String> groupEntries = new HashMap<>();
 
             for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
                 userEntries.put(entry.getKey(), entry.getValue().name());
@@ -178,7 +185,7 @@ public class DocumentTemplateResource {
             }
 
             documentService.updateACLForDocumentMasterTemplate(workspaceId, templateId, userEntries, groupEntries);
-        }else{
+        } else {
             documentService.removeACLFromDocumentMasterTemplate(workspaceId, templateId);
         }
 
@@ -199,7 +206,9 @@ public class DocumentTemplateResource {
     @ApiOperation(value = "Remove attached file from document template", response = Response.class)
     @Path("{templateId}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId, @PathParam("fileName") String fileName)
+    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId,
+                                       @PathParam("templateId") String templateId,
+                                       @PathParam("fileName") String fileName)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, StorageException {
 
         String fileFullName = workspaceId + "/document-templates/" + templateId + "/" + fileName;
@@ -213,10 +222,13 @@ public class DocumentTemplateResource {
     @Path("{templateId}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId, @PathParam("fileName") String fileName, FileDTO fileDTO)
+    public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId,
+                                      @PathParam("templateId") String templateId,
+                                      @PathParam("fileName") String fileName,
+                                      @ApiParam(required = true, value = "File to rename") FileDTO fileDTO)
             throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException, FileAlreadyExistsException, StorageException {
         String fileFullName = workspaceId + "/document-templates/" + templateId + "/" + fileName;
         BinaryResource binaryResource = documentService.renameFileInTemplate(fileFullName, fileDTO.getShortName());
-        return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
+        return new FileDTO(true, binaryResource.getFullName(), binaryResource.getName());
     }
 }

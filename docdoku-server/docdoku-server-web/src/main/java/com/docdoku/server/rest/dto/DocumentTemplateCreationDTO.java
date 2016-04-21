@@ -25,12 +25,11 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
  * @author Florent Garin
  */
 @XmlRootElement
-public class DocumentTemplateCreationDTO implements Serializable{
-    
+public class DocumentTemplateCreationDTO implements Serializable {
+
     private String workspaceId;
     private String reference;
     private String documentType;
@@ -41,16 +40,16 @@ public class DocumentTemplateCreationDTO implements Serializable{
     private List<String> attachedFiles;
     private List<InstanceAttributeTemplateDTO> attributeTemplates;
     private boolean attributesLocked;
-    
-    public DocumentTemplateCreationDTO(){
-        
+
+    public DocumentTemplateCreationDTO() {
+
     }
-    
+
     public DocumentTemplateCreationDTO(String workspaceId, String documentType) {
-        this.workspaceId=workspaceId;
-        this.documentType=documentType;
+        this.workspaceId = workspaceId;
+        this.documentType = documentType;
     }
-    
+
     public String getDocumentType() {
         return documentType;
     }
@@ -79,6 +78,10 @@ public class DocumentTemplateCreationDTO implements Serializable{
         return workspaceId;
     }
 
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
+    }
+
     public List<String> getAttachedFiles() {
         return attachedFiles;
     }
@@ -95,16 +98,12 @@ public class DocumentTemplateCreationDTO implements Serializable{
         this.idGenerated = idGenerated;
     }
 
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
+    public List<InstanceAttributeTemplateDTO> getAttributeTemplates() {
+        return attributeTemplates;
     }
 
     public void setAttributeTemplates(List<InstanceAttributeTemplateDTO> attributeTemplates) {
         this.attributeTemplates = attributeTemplates;
-    }
-
-    public List<InstanceAttributeTemplateDTO> getAttributeTemplates() {
-        return attributeTemplates;
     }
 
     public String getReference() {

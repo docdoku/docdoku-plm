@@ -31,6 +31,7 @@ import com.docdoku.server.rest.dto.LayerDTO;
 import com.docdoku.server.rest.dto.MarkerDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -43,7 +44,6 @@ import java.util.List;
 import java.util.Set;
 
 /**
- *
  * @author Florent Garin
  */
 
@@ -63,30 +63,33 @@ public class LayerResource {
     @ApiOperation(value = "Get layers", response = LayerDTO.class, responseContainer = "List")
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public LayerDTO[] getLayersInProduct(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
+    public LayerDTO[] getLayersInProduct(@PathParam("workspaceId") String workspaceId,
+                                         @PathParam("ciId") String ciId)
             throws EntityNotFoundException, UserNotActiveException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         List<Layer> layers = productService.getLayers(ciKey);
-        LayerDTO[] layerDtos = new LayerDTO[layers.size()];
+        LayerDTO[] layerDTOs = new LayerDTO[layers.size()];
         for (int i = 0; i < layers.size(); i++) {
-            layerDtos[i] = new LayerDTO(layers.get(i).getId(), layers.get(i).getName(),layers.get(i).getColor());
+            layerDTOs[i] = new LayerDTO(layers.get(i).getId(), layers.get(i).getName(), layers.get(i).getColor());
         }
-        return layerDtos;
+        return layerDTOs;
     }
 
-    
+
     @POST
     @ApiOperation(value = "Create layers", response = LayerDTO.class)
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public LayerDTO createLayer(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, LayerDTO layer)
+    public LayerDTO createLayer(@PathParam("workspaceId") String workspaceId,
+                                @PathParam("ciId") String ciId,
+                                @ApiParam(required = true, value = "Layer to create") LayerDTO layer)
             throws EntityNotFoundException, AccessRightException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        Layer l = productService.createLayer(ciKey, layer.getName(),layer.getColor());
-        return new LayerDTO(l.getId(), l.getName(),l.getColor());
+        Layer l = productService.createLayer(ciKey, layer.getName(), layer.getColor());
+        return new LayerDTO(l.getId(), l.getName(), l.getColor());
     }
 
     @PUT
@@ -94,38 +97,44 @@ public class LayerResource {
     @Path("{layerId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public LayerDTO updateLayer(@PathParam("layerId") int layerId, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, LayerDTO layer)
+    public LayerDTO updateLayer(@PathParam("layerId") int layerId,
+                                @PathParam("workspaceId") String workspaceId,
+                                @PathParam("ciId") String ciId,
+                                @ApiParam(required = true, value = "Layer to update") LayerDTO layer)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
-            ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-            Layer l = productService.updateLayer(ciKey, layerId, layer.getName(),layer.getColor());
-            return new LayerDTO(l.getId(), l.getName(),l.getColor());
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+        Layer l = productService.updateLayer(ciKey, layerId, layer.getName(), layer.getColor());
+        return new LayerDTO(l.getId(), l.getName(), l.getColor());
     }
 
     @DELETE
     @ApiOperation(value = "Delete layer", response = Response.class)
     @Path("{layerId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteLayer(@PathParam("layerId") int layerId, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
+    public Response deleteLayer(@PathParam("layerId") int layerId,
+                                @PathParam("workspaceId") String workspaceId,
+                                @PathParam("ciId") String ciId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
-            productService.deleteLayer(workspaceId,layerId);
-            return Response.ok().build();
+        productService.deleteLayer(workspaceId, layerId);
+        return Response.ok().build();
     }
 
     @GET
     @ApiOperation(value = "Get markers", response = MarkerDTO.class, responseContainer = "List")
     @Path("{layerId}/markers")
     @Produces(MediaType.APPLICATION_JSON)
-    public MarkerDTO[] getMarkersInLayer(@PathParam("workspaceId") String workspaceId, @PathParam("layerId") int layerId)
+    public MarkerDTO[] getMarkersInLayer(@PathParam("workspaceId") String workspaceId,
+                                         @PathParam("layerId") int layerId)
             throws EntityNotFoundException, UserNotActiveException {
 
         Layer layer = productService.getLayer(layerId);
         Set<Marker> markers = layer.getMarkers();
         Marker[] markersArray = markers.toArray(new Marker[markers.size()]);
-            MarkerDTO[] markersDTO = new MarkerDTO[markers.size()];
+        MarkerDTO[] markersDTO = new MarkerDTO[markers.size()];
         for (int i = 0; i < markersArray.length; i++) {
-            markersDTO[i] = new MarkerDTO(markersArray[i].getId(), markersArray[i].getTitle(),markersArray[i].getDescription(), markersArray[i].getX(), markersArray[i].getY(), markersArray[i].getZ());
+            markersDTO[i] = new MarkerDTO(markersArray[i].getId(), markersArray[i].getTitle(), markersArray[i].getDescription(), markersArray[i].getX(), markersArray[i].getY(), markersArray[i].getZ());
         }
         return markersDTO;
     }
@@ -135,7 +144,9 @@ public class LayerResource {
     @Path("{layerId}/markers")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public MarkerDTO createMarker(@PathParam("workspaceId") String workspaceId, @PathParam("layerId") int layerId, MarkerDTO markerDTO)
+    public MarkerDTO createMarker(@PathParam("workspaceId") String workspaceId,
+                                  @PathParam("layerId") int layerId,
+                                  @ApiParam(required = true, value = "Marker to create") MarkerDTO markerDTO)
             throws EntityNotFoundException, AccessRightException {
 
         Marker marker = productService.createMarker(layerId, markerDTO.getTitle(), markerDTO.getDescription(), markerDTO.getX(), markerDTO.getY(), markerDTO.getZ());
@@ -147,7 +158,9 @@ public class LayerResource {
     @Path("{layerId}/markers/{markerId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteMarker(@PathParam("workspaceId") String workspaceId, @PathParam("layerId") int layerId, @PathParam("markerId") int markerId)
+    public Response deleteMarker(@PathParam("workspaceId") String workspaceId,
+                                 @PathParam("layerId") int layerId,
+                                 @PathParam("markerId") int markerId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         productService.deleteMarker(layerId, markerId);

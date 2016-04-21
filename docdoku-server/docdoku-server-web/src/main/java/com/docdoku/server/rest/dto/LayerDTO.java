@@ -25,17 +25,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
-public class LayerDTO implements Serializable{
+public class LayerDTO implements Serializable {
 
     private int id;
     private String name;
     private String color;
-   
+
     public LayerDTO() {
     }
 
     public LayerDTO(String pName) {
-        this.name=pName;
+        this.name = pName;
     }
 
     public LayerDTO(int pId, String pName, String color) {
@@ -45,10 +45,10 @@ public class LayerDTO implements Serializable{
     }
 
 
-
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -56,6 +56,7 @@ public class LayerDTO implements Serializable{
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -63,6 +64,7 @@ public class LayerDTO implements Serializable{
     public String getColor() {
         return color;
     }
+
     public void setColor(String color) {
         this.color = color;
     }

@@ -41,22 +41,22 @@ public class BaselinedPartDTO implements Serializable {
     public BaselinedPartDTO() {
     }
 
-    public BaselinedPartDTO(PartIteration partIteration){
+    public BaselinedPartDTO(PartIteration partIteration) {
         this.number = partIteration.getPartNumber();
         this.version = partIteration.getVersion();
         this.name = partIteration.getPartRevision().getPartMaster().getName();
         this.iteration = partIteration.getIteration();
 
         this.availableIterations = new ArrayList<>();
-        for(PartRevision partRevision : partIteration.getPartRevision().getPartMaster().getPartRevisions()){
+        for (PartRevision partRevision : partIteration.getPartRevision().getPartMaster().getPartRevisions()) {
             BaselinedPartOptionDTO option = new BaselinedPartOptionDTO(partRevision.getVersion(),
-                                                                       partRevision.getLastIteration().getIteration(),
-                                                                       partRevision.isReleased());
+                    partRevision.getLastIteration().getIteration(),
+                    partRevision.isReleased());
             this.availableIterations.add(option);
         }
     }
 
-    public BaselinedPartDTO(List<PartIteration> availableParts){
+    public BaselinedPartDTO(List<PartIteration> availableParts) {
 
         PartIteration max = Collections.max(availableParts);
 
@@ -66,8 +66,8 @@ public class BaselinedPartDTO implements Serializable {
         this.iteration = max.getIteration();
 
         this.availableIterations = new ArrayList<>();
-        for(PartIteration partIteration : availableParts){
-            this.availableIterations.add(new BaselinedPartOptionDTO(partIteration.getVersion(),partIteration.getIteration(),partIteration.getPartRevision().isReleased()));
+        for (PartIteration partIteration : availableParts) {
+            this.availableIterations.add(new BaselinedPartOptionDTO(partIteration.getVersion(), partIteration.getIteration(), partIteration.getPartRevision().isReleased()));
         }
 
     }
@@ -81,6 +81,7 @@ public class BaselinedPartDTO implements Serializable {
     public String getNumber() {
         return number;
     }
+
     public void setNumber(String number) {
         this.number = number;
     }
@@ -96,6 +97,7 @@ public class BaselinedPartDTO implements Serializable {
     public String getVersion() {
         return version;
     }
+
     public void setVersion(String version) {
         this.version = version;
     }
@@ -103,6 +105,7 @@ public class BaselinedPartDTO implements Serializable {
     public int getIteration() {
         return iteration;
     }
+
     public void setIteration(int iteration) {
         this.iteration = iteration;
     }
@@ -111,6 +114,7 @@ public class BaselinedPartDTO implements Serializable {
     public List<BaselinedPartOptionDTO> getAvailableIterations() {
         return availableIterations;
     }
+
     public void setAvailableIterations(List<BaselinedPartOptionDTO> availableIterations) {
         this.availableIterations = availableIterations;
     }

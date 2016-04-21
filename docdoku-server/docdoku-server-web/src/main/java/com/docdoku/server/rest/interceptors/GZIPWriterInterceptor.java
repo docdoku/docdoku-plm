@@ -34,24 +34,24 @@ public class GZIPWriterInterceptor implements WriterInterceptor {
 
 
     @Override
-    public void aroundWriteTo(WriterInterceptorContext context) throws IOException{
-        MultivaluedMap<String,Object> headers = context.getHeaders();
+    public void aroundWriteTo(WriterInterceptorContext context) throws IOException {
+        MultivaluedMap<String, Object> headers = context.getHeaders();
         Object rangeHeader = headers.getFirst("Content-Range");
 
-        GZIPOutputStream gzipOutputStream=null;
+        GZIPOutputStream gzipOutputStream = null;
 
 
-        if(rangeHeader==null){
+        if (rangeHeader == null) {
             headers.add("Content-Encoding", "gzip");
             headers.remove("Content-Length");
-            gzipOutputStream = new GZIPOutputStream(context.getOutputStream(),DEFAULT_BUFFER_SIZE);
+            gzipOutputStream = new GZIPOutputStream(context.getOutputStream(), DEFAULT_BUFFER_SIZE);
             context.setOutputStream(gzipOutputStream);
         }
 
         try {
             context.proceed();
         } finally {
-            if(gzipOutputStream!=null){
+            if (gzipOutputStream != null) {
                 gzipOutputStream.finish();
             }
         }

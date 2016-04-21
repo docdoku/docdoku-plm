@@ -40,6 +40,7 @@ public class PathListDTO implements Serializable {
     public String getConfigSpec() {
         return configSpec;
     }
+
     public void setConfigSpec(String configSpec) {
         this.configSpec = configSpec;
     }
@@ -47,6 +48,7 @@ public class PathListDTO implements Serializable {
     public String[] getPaths() {
         return paths;
     }
+
     public void setPaths(String[] paths) {
         this.paths = paths;
     }

@@ -19,14 +19,11 @@
  */
 package com.docdoku.server.rest.dto.change;
 
-import com.docdoku.server.rest.dto.change.ChangeIssueDTO;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
 
 /**
- *
  * @author Morgan Guimard
  */
 

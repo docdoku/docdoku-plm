@@ -63,31 +63,24 @@ import java.util.logging.Logger;
 
 @RequestScoped
 @Api(hidden = true, value = "document-binary", description = "Operations about document files")
-@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
 public class DocumentBinaryResource {
 
+    private static final Logger LOGGER = Logger.getLogger(DocumentBinaryResource.class.getName());
     @Inject
     private IDataManagerLocal dataManager;
-
     @Inject
     private IDocumentManagerLocal documentService;
-
     @Inject
     private IContextManagerLocal contextManager;
-
     @Inject
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
-
     @Inject
     private IDocumentPostUploaderManagerLocal documentPostUploaderService;
-
     @Inject
     private IShareManagerLocal shareService;
-
     @Inject
     private GuestProxy guestProxy;
-
-    private static final Logger LOGGER = Logger.getLogger(DocumentBinaryResource.class.getName());
 
     public DocumentBinaryResource() {
     }
@@ -104,16 +97,16 @@ public class DocumentBinaryResource {
                                         @PathParam("iteration") final int iteration)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException {
         try {
-            String fileName=null;
+            String fileName = null;
             DocumentIterationKey docPK = new DocumentIterationKey(workspaceId, documentId, version, iteration);
             Collection<Part> formParts = request.getParts();
 
-            for(Part formPart : formParts){
-                fileName = uploadAFile(formPart,docPK);
+            for (Part formPart : formParts) {
+                fileName = uploadAFile(formPart, docPK);
             }
 
-            if(formParts.size()==1) {
-                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI()+ URLEncoder.encode(fileName, "UTF-8"));
+            if (formParts.size() == 1) {
+                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI() + URLEncoder.encode(fileName, "UTF-8"));
             }
             return Response.ok().build();
 
@@ -122,7 +115,7 @@ public class DocumentBinaryResource {
         }
     }
 
-    private String uploadAFile(Part formPart,DocumentIterationKey docPK)
+    private String uploadAFile(Part formPart, DocumentIterationKey docPK)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException, UserNotActiveException, StorageException, IOException {
 
         String fileName = Normalizer.normalize(formPart.getSubmittedFileName(), Normalizer.Form.NFC);
@@ -160,16 +153,16 @@ public class DocumentBinaryResource {
             SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
 
             // Check uuid & access right
-            checkUuidValidity(sharedEntity,workspaceId,documentId,version,iteration, referer);
+            checkUuidValidity(sharedEntity, workspaceId, documentId, version, iteration, referer);
 
             DocumentRevision documentRevision = ((SharedDocument) sharedEntity).getDocumentRevision();
             fullName = sharedEntity.getWorkspace().getId() +
                     "/documents/" +
                     documentRevision.getId() + "/" +
                     documentRevision.getVersion() + "/" +
-                    iteration + "/" +fileName;
+                    iteration + "/" + fileName;
 
-        }else {
+        } else {
             // Check access right
             DocumentIterationKey docIK = new DocumentIterationKey(workspaceId, documentId, version, iteration);
             if (!canAccess(docIK)) {
@@ -182,26 +175,25 @@ public class DocumentBinaryResource {
     }
 
 
-
     private Response downloadDocumentFile(Request request, String range, String fullName, String virtualSubResource, String type, String output)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, NotModifiedException, PreconditionFailedException, RequestedRangeNotSatisfiableException{
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, NotModifiedException, PreconditionFailedException, RequestedRangeNotSatisfiableException {
         BinaryResource binaryResource = getBinaryResource(fullName);
-        BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource,output,type);
+        BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource, output, type);
         binaryResourceDownloadMeta.setSubResourceVirtualPath(virtualSubResource);
 
         // Check cache precondition
         Response.ResponseBuilder rb = request.evaluatePreconditions(binaryResourceDownloadMeta.getLastModified(), binaryResourceDownloadMeta.getETag());
-        if(rb!= null){
+        if (rb != null) {
             return rb.build();
         }
 
         InputStream binaryContentInputStream = null;
         try {
-            if(virtualSubResource!=null && !virtualSubResource.isEmpty()){
-                binaryContentInputStream = dataManager.getBinarySubResourceInputStream(binaryResource, fullName+"/"+virtualSubResource);
-            }else if(output!=null && !output.isEmpty()){
+            if (virtualSubResource != null && !virtualSubResource.isEmpty()) {
+                binaryContentInputStream = dataManager.getBinarySubResourceInputStream(binaryResource, fullName + "/" + virtualSubResource);
+            } else if (output != null && !output.isEmpty()) {
                 binaryContentInputStream = getConvertedBinaryResource(binaryResource, output);
-            }else{
+            } else {
                 binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
             }
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
@@ -213,16 +205,17 @@ public class DocumentBinaryResource {
 
     /**
      * Try to convert a binary resource to a specific format
+     *
      * @param binaryResource The binary resource
-     * @param outputFormat The wanted output
+     * @param outputFormat   The wanted output
      * @return The binary resource stream in the wanted output
      * @throws com.docdoku.server.rest.exceptions.FileConversionException
      */
     private InputStream getConvertedBinaryResource(BinaryResource binaryResource, String outputFormat) throws FileConversionException {
         try {
-            if(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
+            if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
                 return documentResourceGetterService.getDocumentConvertedResource(outputFormat, binaryResource);
-            }else{
+            } else {
                 return guestProxy.getDocumentConvertedResource(outputFormat, binaryResource);
             }
         } catch (Exception e) {
@@ -231,25 +224,25 @@ public class DocumentBinaryResource {
     }
 
     private boolean canAccess(DocumentIterationKey docIKey) throws UserNotActiveException, EntityNotFoundException {
-        if(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
+        if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
             return documentService.canAccess(docIKey);
-        }else{
+        } else {
             return guestProxy.canAccess(docIKey);
         }
     }
 
     private BinaryResource getBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
-        if(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
+        if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
             return documentService.getBinaryResource(fullName);
-        }else{
+        } else {
             return guestProxy.getBinaryResourceForDocument(fullName);
         }
     }
 
     private void checkUuidValidity(SharedEntity sharedEntity, String workspaceId, String documentId, String version, int iteration, String referer)
             throws UnmatchingUuidException, ExpiredLinkException, NotAllowedException {
-        if(!(sharedEntity instanceof SharedDocument)){
+        if (!(sharedEntity instanceof SharedDocument)) {
             throw new UnmatchingUuidException();
         }
 
@@ -259,31 +252,31 @@ public class DocumentBinaryResource {
         String shareEntityWorkspaceId = sharedEntity.getWorkspace().getId();
         DocumentRevision documentRevision = ((SharedDocument) sharedEntity).getDocumentRevision();
         DocumentIteration lastCheckedInIteration = documentRevision.getLastCheckedInIteration();
-        if(!shareEntityWorkspaceId.equals(workspaceId) ||
+        if (!shareEntityWorkspaceId.equals(workspaceId) ||
                 !documentRevision.getDocumentMasterId().equals(documentId) ||
                 !documentRevision.getVersion().equals(version) ||
-                (null != lastCheckedInIteration && lastCheckedInIteration.getIteration() < iteration)){
+                (null != lastCheckedInIteration && lastCheckedInIteration.getIteration() < iteration)) {
             throw new UnmatchingUuidException();
         }
     }
 
     private void checkUuidExpiredDate(SharedEntity sharedEntity) throws ExpiredLinkException {
         // Check shared entity expired
-        if(sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()){
+        if (sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()) {
             shareService.deleteSharedEntityIfExpired(sharedEntity);
             throw new ExpiredLinkException();
         }
     }
 
-    private void checkUuidReferer(SharedEntity sharedEntity,String referer) throws NotAllowedException {
-        if(referer==null || referer.isEmpty()){
-            throw new NotAllowedException(Locale.getDefault(),"NotAllowedException18");
+    private void checkUuidReferer(SharedEntity sharedEntity, String referer) throws NotAllowedException {
+        if (referer == null || referer.isEmpty()) {
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException18");
         }
 
         String refererPath[] = referer.split("/");
-        String refererUUID = refererPath[refererPath.length-1];
-        if(sharedEntity.getPassword()!=null && !sharedEntity.getUuid().equals(refererUUID)){
-            throw new NotAllowedException(Locale.getDefault(),"NotAllowedException18");
+        String refererUUID = refererPath[refererPath.length - 1];
+        if (sharedEntity.getPassword() != null && !sharedEntity.getUuid().equals(refererUUID)) {
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException18");
         }
     }
 }

@@ -58,6 +58,7 @@ public class ChangeItemDTO implements Serializable {
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -65,6 +66,7 @@ public class ChangeItemDTO implements Serializable {
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -72,6 +74,7 @@ public class ChangeItemDTO implements Serializable {
     public String getWorkspaceId() {
         return workspaceId;
     }
+
     public void setWorkspaceId(String workspaceId) {
         this.workspaceId = workspaceId;
     }
@@ -79,6 +82,7 @@ public class ChangeItemDTO implements Serializable {
     public String getAuthor() {
         return author;
     }
+
     public void setAuthor(String author) {
         this.author = author;
     }
@@ -86,6 +90,7 @@ public class ChangeItemDTO implements Serializable {
     public String getAuthorName() {
         return authorName;
     }
+
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
     }
@@ -93,6 +98,7 @@ public class ChangeItemDTO implements Serializable {
     public String getAssignee() {
         return assignee;
     }
+
     public void setAssignee(String assignee) {
         this.assignee = assignee;
     }
@@ -100,20 +106,23 @@ public class ChangeItemDTO implements Serializable {
     public String getAssigneeName() {
         return assigneeName;
     }
+
     public void setAssigneeName(String assigneeName) {
         this.assigneeName = assigneeName;
     }
 
     public Date getCreationDate() {
-        return (creationDate!=null) ? (Date) creationDate.clone() : null;
+        return (creationDate != null) ? (Date) creationDate.clone() : null;
     }
+
     public void setCreationDate(Date creationDate) {
-        this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
+        this.creationDate = (creationDate != null) ? (Date) creationDate.clone() : null;
     }
 
     public String getDescription() {
         return description;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -121,6 +130,7 @@ public class ChangeItemDTO implements Serializable {
     public ChangeItem.Priority getPriority() {
         return priority;
     }
+
     public void setPriority(ChangeItem.Priority priority) {
         this.priority = priority;
     }
@@ -128,6 +138,7 @@ public class ChangeItemDTO implements Serializable {
     public ChangeItem.Category getCategory() {
         return category;
     }
+
     public void setCategory(ChangeItem.Category category) {
         this.category = category;
     }
@@ -135,6 +146,7 @@ public class ChangeItemDTO implements Serializable {
     public List<DocumentIterationDTO> getAffectedDocuments() {
         return affectedDocuments;
     }
+
     public void setAffectedDocuments(List<DocumentIterationDTO> affectedDocuments) {
         this.affectedDocuments = affectedDocuments;
     }
@@ -142,6 +154,7 @@ public class ChangeItemDTO implements Serializable {
     public List<PartIterationDTO> getAffectedParts() {
         return affectedParts;
     }
+
     public void setAffectedParts(List<PartIterationDTO> affectedParts) {
         this.affectedParts = affectedParts;
     }
@@ -149,6 +162,7 @@ public class ChangeItemDTO implements Serializable {
     public String[] getTags() {
         return tags;
     }
+
     public void setTags(String[] tags) {
         this.tags = tags;
     }
@@ -156,6 +170,7 @@ public class ChangeItemDTO implements Serializable {
     public ACLDTO getAcl() {
         return acl;
     }
+
     public void setAcl(ACLDTO acl) {
         this.acl = acl;
     }
@@ -163,6 +178,7 @@ public class ChangeItemDTO implements Serializable {
     public boolean isWritable() {
         return writable;
     }
+
     public void setWritable(boolean writable) {
         this.writable = writable;
     }

@@ -45,40 +45,40 @@ public class BinaryResourceBinaryStreamingOutput implements StreamingOutput {
     @Override
     public void write(OutputStream outputStream) throws IOException {
         try {
-            if(binaryContentInputStream==null){
-                LOGGER.log(Level.SEVERE,"The file input stream is null");
-            }else {
+            if (binaryContentInputStream == null) {
+                LOGGER.log(Level.SEVERE, "The file input stream is null");
+            } else {
                 copy(binaryContentInputStream, outputStream, fullRange.start, fullRange.length, fullRange.total);
             }
         } catch (InterruptedStreamException e) {
-            LOGGER.log(Level.WARNING,"Downloading file interrupted");
-            LOGGER.log(Level.FINE,"Streaming file interruption",e);
+            LOGGER.log(Level.WARNING, "Downloading file interrupted");
+            LOGGER.log(Level.FINE, "Streaming file interruption", e);
         }
     }
 
-    private void copy(final InputStream input, OutputStream output, long start, long length, long binaryLength) throws InterruptedStreamException{
-        if(start == 0 && binaryLength == length){
+    private void copy(final InputStream input, OutputStream output, long start, long length, long binaryLength) throws InterruptedStreamException {
+        if (start == 0 && binaryLength == length) {
             try {
                 ByteStreams.copy(input, output);
-            }catch (IOException e){
+            } catch (IOException e) {
                 // may be caused by a client side cancel
-                LOGGER.log(Level.FINE,"A downloading stream was interrupted.",e);
+                LOGGER.log(Level.FINE, "A downloading stream was interrupted.", e);
                 throw new InterruptedStreamException();
-            }finally {
+            } finally {
                 Streams.close(input);
             }
-        }else{
+        } else {
             // Slice the input stream considering offset and length
 
             try (InputStream slicedInputStream = ByteStreams.slice(new InputSupplier<InputStream>() {
-                public InputStream getInput(){
+                public InputStream getInput() {
                     return input;
                 }
             }, start, length).getInput()) {
                 ByteStreams.copy(slicedInputStream, output);
             } catch (IOException e) {
                 // may be caused by a client side cancel
-                LOGGER.log(Level.FINE,"A downloading stream was interrupted.",e);
+                LOGGER.log(Level.FINE, "A downloading stream was interrupted.", e);
                 throw new InterruptedStreamException();
             }
         }

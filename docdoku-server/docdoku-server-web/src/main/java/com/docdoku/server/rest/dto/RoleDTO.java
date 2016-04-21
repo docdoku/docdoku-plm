@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
- *
  * @author Yassine Belouad
  */
 @XmlRootElement
@@ -34,11 +33,11 @@ public class RoleDTO implements Serializable {
     private String workspaceId;
     private UserDTO defaultAssignee;
 
-    public RoleDTO(){
+    public RoleDTO() {
     }
 
-    public RoleDTO(String name){
-        this.name=name;
+    public RoleDTO(String name) {
+        this.name = name;
     }
 
     public String getId() {

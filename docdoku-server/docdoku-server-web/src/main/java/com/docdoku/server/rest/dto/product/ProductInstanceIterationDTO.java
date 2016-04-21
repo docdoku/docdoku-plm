@@ -59,6 +59,7 @@ public class ProductInstanceIterationDTO implements Serializable {
     public String getSerialNumber() {
         return serialNumber;
     }
+
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
@@ -66,6 +67,7 @@ public class ProductInstanceIterationDTO implements Serializable {
     public int getIteration() {
         return iteration;
     }
+
     public void setIteration(int iteration) {
         this.iteration = iteration;
     }
@@ -73,6 +75,7 @@ public class ProductInstanceIterationDTO implements Serializable {
     public String getIterationNote() {
         return iterationNote;
     }
+
     public void setIterationNote(String iterationNote) {
         this.iterationNote = iterationNote;
     }
@@ -80,6 +83,7 @@ public class ProductInstanceIterationDTO implements Serializable {
     public String getConfigurationItemId() {
         return configurationItemId;
     }
+
     public void setConfigurationItemId(String configurationItemId) {
         this.configurationItemId = configurationItemId;
     }
@@ -87,6 +91,7 @@ public class ProductInstanceIterationDTO implements Serializable {
     public String getUpdateAuthor() {
         return updateAuthor;
     }
+
     public void setUpdateAuthor(String updateAuthor) {
         this.updateAuthor = updateAuthor;
     }
@@ -94,6 +99,7 @@ public class ProductInstanceIterationDTO implements Serializable {
     public String getUpdateAuthorName() {
         return updateAuthorName;
     }
+
     public void setUpdateAuthorName(String updateAuthorName) {
         this.updateAuthorName = updateAuthorName;
     }
@@ -101,6 +107,7 @@ public class ProductInstanceIterationDTO implements Serializable {
     public Date getModificationDate() {
         return modificationDate;
     }
+
     public void setModificationDate(Date modificationDate) {
         this.modificationDate = modificationDate;
     }
@@ -212,6 +219,7 @@ public class ProductInstanceIterationDTO implements Serializable {
     public List<PathToPathLinkDTO> getPathToPathLinks() {
         return this.pathToPathLinks;
     }
+
     public void setPathToPathLinks(List<PathToPathLinkDTO> pathToPathLinks) {
         this.pathToPathLinks = pathToPathLinks;
     }

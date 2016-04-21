@@ -39,7 +39,7 @@ public class SharedPartDTO implements Serializable {
     private String partMasterNumber;
     private String partMasterVersion;
 
-    public SharedPartDTO(){
+    public SharedPartDTO() {
 
     }
 

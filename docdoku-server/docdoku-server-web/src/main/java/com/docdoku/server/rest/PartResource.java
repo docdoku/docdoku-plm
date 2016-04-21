@@ -46,6 +46,7 @@ import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
 import com.docdoku.server.rest.util.InstanceAttributeFactory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -92,15 +93,17 @@ public class PartResource {
     @ApiOperation(value = "Get part revision", response = PartRevisionDTO.class)
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPartDTO(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+    public Response getPartDTO(@PathParam("workspaceId") String pWorkspaceId,
+                               @PathParam("partNumber") String partNumber,
+                               @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
         PartRevisionKey revisionKey = new PartRevisionKey(pWorkspaceId, partNumber, partVersion);
         PartRevision partRevision = productService.getPartRevision(revisionKey);
         PartRevisionDTO partRevisionDTO = Tools.mapPartRevisionToPartDTO(partRevision);
 
         PartIterationKey iterationKey = new PartIterationKey(revisionKey, partRevision.getLastIterationNumber());
-        List<ModificationNotification> notifications=productService.getModificationNotifications(iterationKey);
-        List<ModificationNotificationDTO> notificationDTOs=Tools.mapModificationNotificationsToModificationNotificationDTO(notifications);
+        List<ModificationNotification> notifications = productService.getModificationNotifications(iterationKey);
+        List<ModificationNotificationDTO> notificationDTOs = Tools.mapModificationNotificationsToModificationNotificationDTO(notifications);
         partRevisionDTO.setNotifications(notificationDTOs);
 
         return Response.ok(partRevisionDTO).build();
@@ -110,7 +113,9 @@ public class PartResource {
     @ApiOperation(value = "Get product instance where part is in use", response = ProductInstanceMasterDTO.class, responseContainer = "List")
     @Path("/used-by-product-instance-masters")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProductInstanceMasterWherePartRevisionIsInUse(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+    public Response getProductInstanceMasters(@PathParam("workspaceId") String pWorkspaceId,
+                                              @PathParam("partNumber") String partNumber,
+                                              @PathParam("partVersion") String partVersion)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(pWorkspaceId, partNumber, partVersion);
@@ -132,14 +137,16 @@ public class PartResource {
     @ApiOperation(value = "Get part revisions where use as component", response = PartRevisionDTO.class, responseContainer = "List")
     @Path("/used-by-as-component")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPartRevisionsWherePartRevisionIsUsedAsComponent(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+    public Response getUsedByAsComponent(@PathParam("workspaceId") String pWorkspaceId,
+                                         @PathParam("partNumber") String partNumber,
+                                         @PathParam("partVersion") String partVersion)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
 
         List<PartIteration> partIterations = productService.getUsedByAsComponent(new PartRevisionKey(pWorkspaceId, partNumber, partVersion));
 
         Set<PartRevision> partRevisions = new HashSet<>();
 
-        for(PartIteration partIteration:partIterations){
+        for (PartIteration partIteration : partIterations) {
             partRevisions.add(partIteration.getPartRevision());
         }
         List<PartRevisionDTO> partRevisionDTOs = getPartRevisionDTO(partRevisions);
@@ -152,14 +159,16 @@ public class PartResource {
     @ApiOperation(value = "Get part revisions where use as substitute", response = PartRevisionDTO.class, responseContainer = "List")
     @Path("/used-by-as-substitute")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPartRevisionsWherePartRevisionIsUsedAsSubstitute(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+    public Response getUsedByAsSubstitute(@PathParam("workspaceId") String pWorkspaceId,
+                                          @PathParam("partNumber") String partNumber,
+                                          @PathParam("partVersion") String partVersion)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
 
-        List<PartIteration> partIterations = productService.getUsedByAsSubstitute(new PartRevisionKey(pWorkspaceId,partNumber,partVersion));
+        List<PartIteration> partIterations = productService.getUsedByAsSubstitute(new PartRevisionKey(pWorkspaceId, partNumber, partVersion));
 
         Set<PartRevision> partRevisions = new HashSet<>();
 
-        for(PartIteration partIteration:partIterations){
+        for (PartIteration partIteration : partIterations) {
             partRevisions.add(partIteration.getPartRevision());
         }
 
@@ -173,7 +182,11 @@ public class PartResource {
     @Path("/iterations/{partIteration}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updatePartIteration(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber , @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, PartIterationDTO data)
+    public Response updatePartIteration(@PathParam("workspaceId") String pWorkspaceId,
+                                        @PathParam("partNumber") String partNumber,
+                                        @PathParam("partVersion") String partVersion,
+                                        @PathParam("partIteration") int partIteration,
+                                        @ApiParam(required = true, value = "Part iteration to update") PartIterationDTO data)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, UserNotActiveException, NotAllowedException, CreationException, EntityConstraintException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(pWorkspaceId, partNumber, partVersion);
@@ -191,12 +204,12 @@ public class PartResource {
         List<InstanceAttributeTemplateDTO> instanceAttributeTemplates = data.getInstanceAttributeTemplates();
         List<InstanceAttributeTemplate> attributeTemplates = null;
         if (instanceAttributeTemplates != null) {
-            attributeTemplates = instanceAttributeFactory.createInstanceAttributeTemplateFromDto(instanceAttributeTemplates);
+            attributeTemplates = instanceAttributeFactory.createInstanceAttributeTemplateFromDTO(instanceAttributeTemplates);
         }
 
-        String[] lovNames=new String[instanceAttributeTemplates.size()];
-        for (int i=0;i<instanceAttributeTemplates.size();i++)
-            lovNames[i]=instanceAttributeTemplates.get(i).getLovName();
+        String[] lovNames = new String[instanceAttributeTemplates.size()];
+        for (int i = 0; i < instanceAttributeTemplates.size(); i++)
+            lovNames[i] = instanceAttributeTemplates.get(i).getLovName();
 
         List<PartUsageLinkDTO> components = data.getComponents();
         List<PartUsageLink> newComponents = null;
@@ -211,9 +224,9 @@ public class PartResource {
             documentLinkComments = new String[linkedDocs.size()];
             links = createDocumentRevisionKey(linkedDocs);
             int i = 0;
-            for (DocumentRevisionDTO docRevisionForLink : linkedDocs){
+            for (DocumentRevisionDTO docRevisionForLink : linkedDocs) {
                 String comment = docRevisionForLink.getCommentLink();
-                if (comment == null){
+                if (comment == null) {
                     comment = "";
                 }
                 documentLinkComments[i++] = comment;
@@ -232,7 +245,11 @@ public class PartResource {
     @ApiOperation(value = "Get conversion status", response = ConversionDTO.class)
     @Path("/iterations/{partIteration}/conversion")
     @Produces(MediaType.APPLICATION_JSON)
-    public ConversionDTO getConversionStatus(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration) throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, PartIterationNotFoundException, AccessRightException {
+    public ConversionDTO getConversionStatus(@PathParam("workspaceId") String pWorkspaceId,
+                                             @PathParam("partNumber") String partNumber,
+                                             @PathParam("partVersion") String partVersion,
+                                             @PathParam("partIteration") int partIteration)
+            throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, PartIterationNotFoundException, AccessRightException {
         PartIterationKey partIPK = new PartIterationKey(pWorkspaceId, partNumber, partVersion, partIteration);
         Conversion conversion = productService.getConversion(partIPK);
         if (conversion != null) {
@@ -265,7 +282,9 @@ public class PartResource {
     @Path("/checkin")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response checkIn(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+    public Response checkIn(@PathParam("workspaceId") String workspaceId,
+                            @PathParam("partNumber") String partNumber,
+                            @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, ESServerException, AccessRightException, NotAllowedException, EntityConstraintException, UserNotActiveException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
@@ -278,7 +297,9 @@ public class PartResource {
     @Path("/checkout")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response checkOut(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+    public Response checkOut(@PathParam("workspaceId") String workspaceId,
+                             @PathParam("partNumber") String partNumber,
+                             @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException, UserNotActiveException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
@@ -291,7 +312,9 @@ public class PartResource {
     @Path("/undocheckout")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response undoCheckOut(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+    public Response undoCheckOut(@PathParam("workspaceId") String workspaceId,
+                                 @PathParam("partNumber") String partNumber,
+                                 @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
@@ -304,7 +327,10 @@ public class PartResource {
     @Path("/acl")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateACL(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, ACLDTO acl)
+    public Response updateACL(@PathParam("workspaceId") String workspaceId,
+                              @PathParam("partNumber") String partNumber,
+                              @PathParam("partVersion") String partVersion,
+                              @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
@@ -334,7 +360,10 @@ public class PartResource {
     @Path("/newVersion")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createNewVersion(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, PartCreationDTO partCreationDTO)
+    public Response createNewVersion(@PathParam("workspaceId") String workspaceId,
+                                     @PathParam("partNumber") String partNumber,
+                                     @PathParam("partVersion") String partVersion,
+                                     @ApiParam(required = true, value = "New version of part to create") PartCreationDTO partCreationDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException {
 
         RoleMappingDTO[] rolesMappingDTO = partCreationDTO.getRoleMapping();
@@ -380,7 +409,9 @@ public class PartResource {
     @Path("/release")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response releasePartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+    public Response releasePartRevision(@PathParam("workspaceId") String workspaceId,
+                                        @PathParam("partNumber") String partNumber,
+                                        @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
@@ -394,7 +425,9 @@ public class PartResource {
     @Path("/obsolete")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response markPartRevisionAsObsolete(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+    public Response markPartRevisionAsObsolete(@PathParam("workspaceId") String workspaceId,
+                                               @PathParam("partNumber") String partNumber,
+                                               @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
@@ -419,7 +452,12 @@ public class PartResource {
     @ApiOperation(value = "Remove file from part iteration", response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/iterations/{partIteration}/files/{subType}/{fileName}")
-    public Response removeFile(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, @PathParam("subType") String subType, @PathParam("fileName") String fileName)
+    public Response removeFile(@PathParam("workspaceId") String workspaceId,
+                               @PathParam("partNumber") String partNumber,
+                               @PathParam("partVersion") String partVersion,
+                               @PathParam("partIteration") int partIteration,
+                               @PathParam("subType") String subType,
+                               @PathParam("fileName") String fileName)
             throws EntityNotFoundException, UserNotActiveException {
         PartIterationKey partIKey = new PartIterationKey(workspaceId, partNumber, partVersion, partIteration);
         String fileFullName = workspaceId + "/parts/" + partNumber + "/" + partVersion + "/" + partIteration + "/" + subType + "/" + fileName;
@@ -432,11 +470,17 @@ public class PartResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/iterations/{partIteration}/files/{subType}/{fileName}")
-    public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, @PathParam("subType") String subType, @PathParam("fileName") String fileName, FileDTO fileDTO)
+    public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId,
+                                      @PathParam("partNumber") String partNumber,
+                                      @PathParam("partVersion") String partVersion,
+                                      @PathParam("partIteration") int partIteration,
+                                      @PathParam("subType") String subType,
+                                      @PathParam("fileName") String fileName,
+                                      @ApiParam(required = true, value = "File to rename") FileDTO fileDTO)
             throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
-        String fileFullName = workspaceId + "/parts/" + partNumber + "/" + partVersion+ "/" + partIteration + "/" + subType + "/" + fileName;
+        String fileFullName = workspaceId + "/parts/" + partNumber + "/" + partVersion + "/" + partIteration + "/" + subType + "/" + fileName;
         BinaryResource binaryResource = productService.renameFileInPartIteration(subType, fileFullName, fileDTO.getShortName());
-        return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
+        return new FileDTO(true, binaryResource.getFullName(), binaryResource.getName());
     }
 
     @POST
@@ -444,7 +488,10 @@ public class PartResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/share")
-    public Response createSharedPart(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, SharedPartDTO pSharedPartDTO)
+    public Response createSharedPart(@PathParam("workspaceId") String workspaceId,
+                                     @PathParam("partNumber") String partNumber,
+                                     @PathParam("partVersion") String partVersion,
+                                     @ApiParam(required = true, value = "Shared part to create") SharedPartDTO pSharedPartDTO)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         String password = pSharedPartDTO.getPassword();
@@ -459,7 +506,9 @@ public class PartResource {
     @ApiOperation(value = "Publish part revision", response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/publish")
-    public Response publishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+    public Response publishPartRevision(@PathParam("workspaceId") String workspaceId,
+                                        @PathParam("partNumber") String partNumber,
+                                        @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId, partNumber, partVersion));
@@ -471,7 +520,9 @@ public class PartResource {
     @ApiOperation(value = "Unpublish part revision", response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/unpublish")
-    public Response unPublishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+    public Response unPublishPartRevision(@PathParam("workspaceId") String workspaceId,
+                                          @PathParam("partNumber") String partNumber,
+                                          @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId, partNumber, partVersion));
@@ -483,7 +534,9 @@ public class PartResource {
     @ApiOperation(value = "Get part's aborted workflows", response = WorkflowDTO.class, responseContainer = "List")
     @Path("/aborted-workflows")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAbortedWorkflows(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+    public Response getAbortedWorkflows(@PathParam("workspaceId") String workspaceId,
+                                        @PathParam("partNumber") String partNumber,
+                                        @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
@@ -504,18 +557,21 @@ public class PartResource {
     @Path("/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PartRevisionDTO savePartTags(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, TagListDTO tagListDto)
+    public PartRevisionDTO savePartTags(@PathParam("workspaceId") String workspaceId,
+                                        @PathParam("partNumber") String partNumber,
+                                        @PathParam("partVersion") String partVersion,
+                                        @ApiParam(required = true, value = "Tag list to add") TagListDTO tagListDTO)
             throws EntityNotFoundException, NotAllowedException, ESServerException, AccessRightException, UserNotActiveException {
 
-        List<TagDTO> tagDtos = tagListDto.getTags();
-        String[] tagLabels = new String[tagDtos.size()];
+        List<TagDTO> tagDTOs = tagListDTO.getTags();
+        String[] tagLabels = new String[tagDTOs.size()];
 
-        for (int i = 0; i < tagDtos.size(); i++) {
-            tagLabels[i] = tagDtos.get(i).getLabel();
+        for (int i = 0; i < tagDTOs.size(); i++) {
+            tagLabels[i] = tagDTOs.get(i).getLabel();
         }
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
 
-        PartRevision partRevision =  productService.saveTags(revisionKey,tagLabels);
+        PartRevision partRevision = productService.saveTags(revisionKey, tagLabels);
         PartRevisionDTO partRevisionDTO = mapper.map(partRevision, PartRevisionDTO.class);
 
         return partRevisionDTO;
@@ -526,7 +582,10 @@ public class PartResource {
     @Path("/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addPartTag(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, TagListDTO tagListDto)
+    public Response addPartTag(@PathParam("workspaceId") String workspaceId,
+                               @PathParam("partNumber") String partNumber,
+                               @PathParam("partVersion") String partVersion,
+                               @ApiParam(required = true, value = "Tag list to add") TagListDTO tagListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, ESServerException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
@@ -534,11 +593,11 @@ public class PartResource {
         Set<Tag> tags = partRevision.getTags();
         Set<String> tagLabels = new HashSet<>();
 
-        for(TagDTO tagDto:tagListDto.getTags()){
-            tagLabels.add(tagDto.getLabel());
+        for (TagDTO tagDTO : tagListDTO.getTags()) {
+            tagLabels.add(tagDTO.getLabel());
         }
 
-        for(Tag tag : tags){
+        for (Tag tag : tags) {
             tagLabels.add(tag.getLabel());
         }
 
@@ -549,7 +608,10 @@ public class PartResource {
     @DELETE
     @ApiOperation(value = "Delete tags from part", response = Response.class)
     @Path("/tags/{tagName}")
-    public Response removePartTags(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("tagName") String tagName)
+    public Response removePartTags(@PathParam("workspaceId") String workspaceId,
+                                   @PathParam("partNumber") String partNumber,
+                                   @PathParam("partVersion") String partVersion,
+                                   @PathParam("tagName") String tagName)
             throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, ESServerException {
         productService.removeTag(new PartRevisionKey(workspaceId, partNumber, partVersion), tagName);
         return Response.ok().build();
@@ -560,10 +622,13 @@ public class PartResource {
     @ApiOperation(value = "Get instances", response = VirtualInstanceCollection.class)
     @Path("/instances")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getInstances(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
-        PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId,partNumber,partVersion));
+    public Response getInstances(@PathParam("workspaceId") String workspaceId,
+                                 @PathParam("partNumber") String partNumber,
+                                 @PathParam("partVersion") String partVersion)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+        PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId, partNumber, partVersion));
         PSFilter filter = productService.getLatestCheckedInPSFilter(workspaceId);
-        VirtualInstanceCollection virtualInstanceCollection = new VirtualInstanceCollection(partRevision,filter);
+        VirtualInstanceCollection virtualInstanceCollection = new VirtualInstanceCollection(partRevision, filter);
         return Response.ok().entity(virtualInstanceCollection).build();
     }
 
@@ -586,7 +651,7 @@ public class PartResource {
                     for (CADInstanceDTO cadInstanceDTO : partUsageLinkDTO.getCadInstances()) {
                         CADInstance cadInstance = mapper.map(cadInstanceDTO, CADInstance.class);
                         cadInstance.setRotationMatrix(new RotationMatrix(cadInstanceDTO.getMatrix()));
-                        if(cadInstance.getRotationType() == null) {
+                        if (cadInstance.getRotationType() == null) {
                             cadInstance.setRotationType(CADInstance.RotationType.ANGLE);
                         }
                         cadInstances.add(cadInstance);
@@ -609,7 +674,7 @@ public class PartResource {
                                 subCADInstances.add(mapper.map(cadInstanceDTO, CADInstance.class));
                             }
                         } else if (substituteLinkDTO.getUnit() == null || substituteLinkDTO.getUnit().isEmpty()) {
-                            for (double i = 0; i <substituteLinkDTO.getAmount() ; i++) {
+                            for (double i = 0; i < substituteLinkDTO.getAmount(); i++) {
                                 subCADInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
                             }
                         } else {
@@ -653,7 +718,7 @@ public class PartResource {
         DocumentRevisionKey[] data = new DocumentRevisionKey[dtos.size()];
         int i = 0;
         for (DocumentRevisionDTO dto : dtos) {
-            data[i++] =new DocumentRevisionKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getVersion());
+            data[i++] = new DocumentRevisionKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getVersion());
         }
         return data;
     }
@@ -661,8 +726,8 @@ public class PartResource {
     private List<PartRevisionDTO> getPartRevisionDTO(Set<PartRevision> partRevisions) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException {
         List<PartRevisionDTO> partRevisionDTOs = new ArrayList<>();
 
-        for(PartRevision partRevision:partRevisions){
-            if(!productService.canAccess(partRevision.getKey())) {
+        for (PartRevision partRevision : partRevisions) {
+            if (!productService.canAccess(partRevision.getKey())) {
                 continue;
             }
             PartRevisionDTO partRevisionDTO = mapper.map(partRevision, PartRevisionDTO.class);

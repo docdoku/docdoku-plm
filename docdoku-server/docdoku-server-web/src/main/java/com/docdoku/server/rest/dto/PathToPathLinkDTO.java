@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @XmlRootElement
-public class PathToPathLinkDTO implements Serializable{
+public class PathToPathLinkDTO implements Serializable {
 
     private Integer id;
     private String type;

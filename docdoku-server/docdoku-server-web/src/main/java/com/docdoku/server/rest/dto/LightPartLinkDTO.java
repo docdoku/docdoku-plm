@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
-public class LightPartLinkDTO  implements Serializable {
+public class LightPartLinkDTO implements Serializable {
 
     private String number;
     private String name;

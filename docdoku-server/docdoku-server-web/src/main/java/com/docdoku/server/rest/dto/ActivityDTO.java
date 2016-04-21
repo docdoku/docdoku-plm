@@ -39,11 +39,6 @@ public class ActivityDTO implements Serializable {
     private boolean inProgress;
     private boolean toDo;
 
-    public enum Type {
-        SERIAL,
-        PARALLEL
-    }
-
     public ActivityDTO(int step, List<TaskDTO> tasks, String lifeCycleState, Type type, Integer tasksToComplete, boolean complete, boolean stopped, boolean inProgress, boolean toDo, Integer relaunchStep) {
         this.step = step;
         this.relaunchStep = relaunchStep;
@@ -139,5 +134,10 @@ public class ActivityDTO implements Serializable {
 
     public void setRelaunchStep(Integer relaunchStep) {
         this.relaunchStep = relaunchStep;
+    }
+
+    public enum Type {
+        SERIAL,
+        PARALLEL
     }
 }

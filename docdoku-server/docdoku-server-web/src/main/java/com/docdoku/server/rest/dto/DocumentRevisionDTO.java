@@ -28,7 +28,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author Florent Garin
  */
 @XmlRootElement
@@ -86,6 +85,7 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     public UserDTO getAuthor() {
         return author;
     }
+
     public void setAuthor(UserDTO author) {
         this.author = author;
     }
@@ -93,27 +93,31 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     public UserDTO getCheckOutUser() {
         return checkOutUser;
     }
+
     public void setCheckOutUser(UserDTO checkOutUser) {
         this.checkOutUser = checkOutUser;
     }
-        
+
     public Date getCheckOutDate() {
-        return (checkOutDate!=null) ? (Date) checkOutDate.clone() : null;
+        return (checkOutDate != null) ? (Date) checkOutDate.clone() : null;
     }
+
     public void setCheckOutDate(Date checkOutDate) {
-        this.checkOutDate = (checkOutDate!=null) ? (Date) checkOutDate.clone() : null;
+        this.checkOutDate = (checkOutDate != null) ? (Date) checkOutDate.clone() : null;
     }
 
     public Date getCreationDate() {
-        return (creationDate!=null) ? (Date) creationDate.clone() : null;
+        return (creationDate != null) ? (Date) creationDate.clone() : null;
     }
+
     public void setCreationDate(Date creationDate) {
-        this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
+        this.creationDate = (creationDate != null) ? (Date) creationDate.clone() : null;
     }
 
     public String getDescription() {
         return description;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -121,6 +125,7 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     public String getWorkspaceId() {
         return workspaceId;
     }
+
     public void setWorkspaceId(String workspaceId) {
         this.workspaceId = workspaceId;
     }
@@ -128,6 +133,7 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     public String getVersion() {
         return version;
     }
+
     public void setVersion(String version) {
         this.version = version;
     }
@@ -135,6 +141,7 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     public String getType() {
         return type;
     }
+
     public void setType(String type) {
         this.type = type;
     }
@@ -142,6 +149,7 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     public WorkflowDTO getWorkflow() {
         return workflow;
     }
+
     public void setWorkflow(WorkflowDTO workflow) {
         this.workflow = workflow;
     }
@@ -155,6 +163,7 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
         }
         return null;
     }
+
     public void setLifeCycleState(String lifeCycleState) {
         this.lifeCycleState = lifeCycleState;
     }
@@ -162,6 +171,7 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     public String[] getTags() {
         return tags;
     }
+
     public void setTags(String[] tags) {
         this.tags = tags;
     }
@@ -169,6 +179,7 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     public String getTitle() {
         return title;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -177,6 +188,7 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     public List<DocumentIterationDTO> getDocumentIterations() {
         return documentIterations;
     }
+
     public void setDocumentIterations(List<DocumentIterationDTO> documentIterations) {
         this.documentIterations = documentIterations;
     }
@@ -194,10 +206,11 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
             return null;
         }
     }
-    
+
     public String getId() {
-        return id+"-"+version;
+        return id + "-" + version;
     }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -205,6 +218,7 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     public String getDocumentMasterId() {
         return documentMasterId;
     }
+
     public void setDocumentMasterId(String documentMasterId) {
         this.documentMasterId = documentMasterId;
     }
@@ -220,6 +234,7 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     public boolean isIterationSubscription() {
         return iterationSubscription;
     }
+
     public void setIterationSubscription(boolean iterationSubscription) {
         this.iterationSubscription = iterationSubscription;
     }
@@ -227,6 +242,7 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     public boolean isStateSubscription() {
         return stateSubscription;
     }
+
     public void setStateSubscription(boolean stateSubscription) {
         this.stateSubscription = stateSubscription;
     }
@@ -234,13 +250,15 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     public String getPath() {
         return path;
     }
+
     public void setPath(String path) {
         this.path = path;
     }
-    
+
     public boolean isPublicShared() {
         return publicShared;
     }
+
     public void setPublicShared(boolean publicShared) {
         this.publicShared = publicShared;
     }
@@ -248,6 +266,7 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     public ACLDTO getAcl() {
         return acl;
     }
+
     public void setAcl(ACLDTO acl) {
         this.acl = acl;
     }
@@ -255,6 +274,7 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     public boolean isAttributesLocked() {
         return attributesLocked;
     }
+
     public void setAttributesLocked(boolean attributesLocked) {
         this.attributesLocked = attributesLocked;
     }

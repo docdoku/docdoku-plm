@@ -29,6 +29,7 @@ import com.docdoku.server.rest.dto.RoleDTO;
 import com.docdoku.server.rest.dto.UserDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -47,7 +48,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author Morgan Guimard
  */
 @RequestScoped
@@ -56,10 +56,9 @@ import java.util.logging.Logger;
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class RoleResource {
 
+    private static final Logger LOGGER = Logger.getLogger(RoleResource.class.getName());
     @Inject
     private IWorkflowManagerLocal roleService;
-
-    private static final Logger LOGGER = Logger.getLogger(RoleResource.class.getName());
     private Mapper mapper;
 
     public RoleResource() {
@@ -68,19 +67,19 @@ public class RoleResource {
     @PostConstruct
     public void init() {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
-    } 
+    }
 
     @GET
     @ApiOperation(value = "Get roles", response = RoleDTO.class, responseContainer = "List")
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public RoleDTO[] getRolesInWorkspace (@PathParam("workspaceId") String workspaceId)
+    public RoleDTO[] getRolesInWorkspace(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         Role[] roles = roleService.getRoles(workspaceId);
         RoleDTO[] rolesDTO = new RoleDTO[roles.length];
 
-        for(int i = 0 ; i< roles.length ; i++){
+        for (int i = 0; i < roles.length; i++) {
             rolesDTO[i] = mapRoleToDTO(roles[i]);
         }
 
@@ -92,13 +91,13 @@ public class RoleResource {
     @ApiOperation(value = "Get roles in use", response = RoleDTO.class, responseContainer = "List")
     @Path("inuse")
     @Produces(MediaType.APPLICATION_JSON)
-    public RoleDTO[] getRolesInUseInWorkspace (@PathParam("workspaceId") String workspaceId)
+    public RoleDTO[] getRolesInUseInWorkspace(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         Role[] roles = roleService.getRolesInUse(workspaceId);
         RoleDTO[] rolesDTO = new RoleDTO[roles.length];
 
-        for(int i = 0 ; i< roles.length ; i++){
+        for (int i = 0; i < roles.length; i++) {
             rolesDTO[i] = mapRoleToDTO(roles[i]);
         }
 
@@ -112,22 +111,22 @@ public class RoleResource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createRole(RoleDTO roleDTO)
+    public Response createRole(@ApiParam(required = true, value = "Role to create") RoleDTO roleDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, CreationException {
 
         UserDTO userDTO = roleDTO.getDefaultAssignee();
         String userLogin = null;
-        if(userDTO != null){
+        if (userDTO != null) {
             userLogin = userDTO.getLogin();
         }
 
-        Role roleCreated = roleService.createRole(roleDTO.getName(),roleDTO.getWorkspaceId(),userLogin);
+        Role roleCreated = roleService.createRole(roleDTO.getName(), roleDTO.getWorkspaceId(), userLogin);
         RoleDTO roleCreatedDTO = mapRoleToDTO(roleCreated);
 
         try {
             return Response.created(URI.create(URLEncoder.encode(roleCreatedDTO.getName(), "UTF-8"))).entity(roleCreatedDTO).build();
         } catch (UnsupportedEncodingException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
+            LOGGER.log(Level.WARNING, null, ex);
             return Response.ok().build();
         }
     }
@@ -137,21 +136,22 @@ public class RoleResource {
     @Path("{roleName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateRole(@PathParam("roleName") String roleName, RoleDTO roleDTO)
+    public Response updateRole(@PathParam("roleName") String roleName,
+                               @ApiParam(required = true, value = "Role to update") RoleDTO roleDTO)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         UserDTO userDTO = roleDTO.getDefaultAssignee();
         String userLogin = null;
-        if(userDTO != null){
+        if (userDTO != null) {
             userLogin = userDTO.getLogin();
         }
 
         Role roleUpdated = roleService.updateRole(new RoleKey(roleDTO.getWorkspaceId(), roleName), userLogin);
         RoleDTO roleUpdatedDTO = mapRoleToDTO(roleUpdated);
-        try{
+        try {
             return Response.created(URI.create(URLEncoder.encode(roleUpdatedDTO.getName(), "UTF-8"))).entity(roleUpdatedDTO).build();
         } catch (UnsupportedEncodingException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
+            LOGGER.log(Level.WARNING, null, ex);
             return Response.ok().build();
         }
     }
@@ -160,7 +160,8 @@ public class RoleResource {
     @ApiOperation(value = "Delete role", response = Response.class)
     @Path("{roleName}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteRole(@PathParam("workspaceId") String workspaceId, @PathParam("roleName") String roleName)
+    public Response deleteRole(@PathParam("workspaceId") String workspaceId,
+                               @PathParam("roleName") String roleName)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException {
 
         RoleKey roleKey = new RoleKey(workspaceId, roleName);
@@ -169,10 +170,10 @@ public class RoleResource {
     }
 
 
-    private RoleDTO mapRoleToDTO(Role role){
-        RoleDTO roleDTO = mapper.map(role,RoleDTO.class);
+    private RoleDTO mapRoleToDTO(Role role) {
+        RoleDTO roleDTO = mapper.map(role, RoleDTO.class);
         roleDTO.setWorkspaceId(role.getWorkspace().getId());
-        if(role.getDefaultAssignee() != null){
+        if (role.getDefaultAssignee() != null) {
             roleDTO.setDefaultAssignee(mapper.map(role.getDefaultAssignee(), UserDTO.class));
         }
         roleDTO.setId(role.getName());

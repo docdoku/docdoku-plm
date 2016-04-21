@@ -179,7 +179,7 @@ public class WorkspaceResource {
     public Response updateWorkspace(@PathParam("workspaceId") String workspaceId,
                                     @ApiParam(required = true, value = "Workspace values to update") WorkspaceDTO workspaceDTO)
             throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccountNotFoundException, AccessRightException {
-        Workspace workspace = userManager.updateWorkspace(workspaceId,workspaceDTO.getDescription(),workspaceDTO.isFolderLocked());
+        Workspace workspace = userManager.updateWorkspace(workspaceId, workspaceDTO.getDescription(), workspaceDTO.isFolderLocked());
         return Response.ok(mapper.map(workspace, WorkspaceDTO.class)).build();
     }
 
@@ -210,7 +210,7 @@ public class WorkspaceResource {
                                     @ApiParam(required = true, value = "UserGroup to create") UserGroupDTO userGroupDTO)
             throws UserGroupAlreadyExistsException, AccessRightException, AccountNotFoundException, CreationException, WorkspaceNotFoundException {
         UserGroup userGroup = userManager.createUserGroup(userGroupDTO.getId(), workspaceId);
-        return mapper.map(userGroup,UserGroupDTO.class);
+        return mapper.map(userGroup, UserGroupDTO.class);
     }
 
     @PUT
@@ -236,10 +236,11 @@ public class WorkspaceResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response setNewAdmin(@PathParam("workspaceId") String workspaceId,
                                 @ApiParam(required = true, value = "New admin user") UserDTO userDTO) throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException {
-        Workspace workspace = workspaceManager.changeAdmin(workspaceId,userDTO.getLogin());
+        Workspace workspace = workspaceManager.changeAdmin(workspaceId, userDTO.getLogin());
 
-        return Response.ok(mapper.map(workspace,WorkspaceDTO.class)).build();
+        return Response.ok(mapper.map(workspace, WorkspaceDTO.class)).build();
     }
+
     @POST
     @ApiOperation(value = "Create workspace", response = WorkspaceDTO.class)
     @Path("/")
@@ -247,14 +248,14 @@ public class WorkspaceResource {
     public WorkspaceDTO createWorkspace(@QueryParam("userLogin") String userLogin,
                                         @ApiParam(value = "Workspace to create", required = true) WorkspaceDTO workspaceDTO) throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException, AccountNotFoundException, ESIndexNamingException, IOException, com.docdoku.core.exceptions.NotAllowedException {
         Account account;
-        if(contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
+        if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
             account = accountManager.getAccount(userLogin);
-        }else{
+        } else {
             account = accountManager.getMyAccount();
         }
         Workspace workspace = userManager.createWorkspace(workspaceDTO.getId(), account, workspaceDTO.getDescription(), workspaceDTO.isFolderLocked());
 
-        return mapper.map(workspace,WorkspaceDTO.class);
+        return mapper.map(workspace, WorkspaceDTO.class);
     }
 
     @PUT
@@ -263,11 +264,11 @@ public class WorkspaceResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response setUserAccess(@PathParam("workspaceId") String workspaceId,
                                   @ApiParam(value = "User to grant access in workspace", required = true) UserDTO userDTO) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
-        if(userDTO.getMembership() == null) {
+        if (userDTO.getMembership() == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        WorkspaceUserMembership workspaceUserMembership = userManager.grantUserAccess(workspaceId , userDTO.getLogin(), userDTO.getMembership() == WorkspaceMembership.READ_ONLY ? true : false);
-        return Response.ok(mapper.map(workspaceUserMembership.getMember(),UserDTO.class)).build();
+        WorkspaceUserMembership workspaceUserMembership = userManager.grantUserAccess(workspaceId, userDTO.getLogin(), userDTO.getMembership() == WorkspaceMembership.READ_ONLY ? true : false);
+        return Response.ok(mapper.map(workspaceUserMembership.getMember(), UserDTO.class)).build();
     }
 
     @PUT
@@ -279,7 +280,7 @@ public class WorkspaceResource {
             throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
 
         WorkspaceUserGroupMembership membership = userManager.grantGroupAccess(workspaceId, workspaceUserGroupMemberShipDTO.getMemberId(), workspaceUserGroupMemberShipDTO.isReadOnly());
-        return Response.ok(mapper.map(membership,WorkspaceUserGroupMemberShipDTO.class)).build();
+        return Response.ok(mapper.map(membership, WorkspaceUserGroupMemberShipDTO.class)).build();
     }
 
     @PUT
@@ -289,9 +290,9 @@ public class WorkspaceResource {
     public Response removeUserFromGroup(@PathParam("workspaceId") String workspaceId,
                                         @PathParam("groupId") String groupId,
                                         @ApiParam(value = "User to remove from group", required = true) UserDTO userDTO)
-            throws AccessRightException, UserGroupNotFoundException, AccountNotFoundException, WorkspaceNotFoundException{
-        UserGroup userGroup = userManager.removeUserFromGroup(new UserGroupKey(workspaceId,groupId),userDTO.getLogin());
-        return Response.ok(mapper.map(userGroup,UserGroupDTO.class)).build();
+            throws AccessRightException, UserGroupNotFoundException, AccountNotFoundException, WorkspaceNotFoundException {
+        UserGroup userGroup = userManager.removeUserFromGroup(new UserGroupKey(workspaceId, groupId), userDTO.getLogin());
+        return Response.ok(mapper.map(userGroup, UserGroupDTO.class)).build();
     }
 
     @PUT
@@ -302,7 +303,7 @@ public class WorkspaceResource {
                                             @ApiParam(value = "User to remove from workspace", required = true) UserDTO userDTO)
             throws UserGroupNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, DocumentRevisionNotFoundException, UserNotActiveException, com.docdoku.core.exceptions.NotAllowedException {
         Workspace workspace = userManager.removeUser(workspaceId, userDTO.getLogin());
-        return Response.ok(mapper.map(workspace,WorkspaceDTO.class)).build();
+        return Response.ok(mapper.map(workspace, WorkspaceDTO.class)).build();
     }
 
     @PUT

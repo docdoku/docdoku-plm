@@ -36,10 +36,6 @@ public class InstanceAttributeTemplateDTO implements Serializable {
 
     private boolean locked;
 
-    public enum AttributeType {
-        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV
-    }
-
     public InstanceAttributeTemplateDTO() {
     }
 
@@ -50,7 +46,6 @@ public class InstanceAttributeTemplateDTO implements Serializable {
         this.locked = locked;
     }
 
-    
     public String getName() {
         return name;
     }
@@ -107,9 +102,13 @@ public class InstanceAttributeTemplateDTO implements Serializable {
         InstanceAttributeTemplateDTO attr = (InstanceAttributeTemplateDTO) pObj;
         return attr.name.equals(name);
     }
-    
+
     @Override
     public String toString() {
         return name + "-" + attributeType;
+    }
+
+    public enum AttributeType {
+        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV
     }
 }

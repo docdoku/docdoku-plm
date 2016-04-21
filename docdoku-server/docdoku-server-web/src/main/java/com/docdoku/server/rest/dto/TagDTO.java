@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
- *
  * @author Yassine Belouad
  */
 
@@ -37,12 +36,12 @@ public class TagDTO implements Serializable {
     private String label;
     @XmlElement(nillable = true)
     private String workspaceId;
-    
-    public TagDTO(){
+
+    public TagDTO() {
     }
-    
-    public TagDTO(String label){
-        this.label=label;
+
+    public TagDTO(String label) {
+        this.label = label;
     }
 
     public TagDTO(String label, String workspaceId) {
@@ -63,8 +62,12 @@ public class TagDTO implements Serializable {
         return workspaceId;
     }
 
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
+    }
+
     public String getId() {
-        id= this.label;
+        id = this.label;
         return id;
     }
 
@@ -72,10 +75,5 @@ public class TagDTO implements Serializable {
         this.id = id;
     }
 
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
-    }
-    
-    
-    
+
 }

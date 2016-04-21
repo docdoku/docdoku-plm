@@ -24,45 +24,40 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
  * @author Yassine Belouad
  */
 @XmlRootElement
-public class InstanceAttributeDTO  implements Serializable{
-    
+public class InstanceAttributeDTO implements Serializable {
+
     private String name;
     private boolean mandatory;
     private boolean locked;
 
     private Type type;
-    public enum Type {
-        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV
-    }
     private String value;
-
     private String lovName;
-
     private List<NameValuePairDTO> items;
 
-    public InstanceAttributeDTO(){
-    
+    public InstanceAttributeDTO() {
+
     }
 
-    public InstanceAttributeDTO(String pName, Type pType, String pValue, Boolean pMandatory, Boolean pLocked){
-        this.name=pName;
-        this.type=pType;
-        this.value=pValue;
-        this.mandatory=pMandatory;
+    public InstanceAttributeDTO(String pName, Type pType, String pValue, Boolean pMandatory, Boolean pLocked) {
+        this.name = pName;
+        this.type = pType;
+        this.value = pValue;
+        this.mandatory = pMandatory;
         this.locked = pLocked;
     }
-    
-    public InstanceAttributeDTO(String pName, String pType, String pValue, Boolean pMandatory, Boolean pLocked){
-        this(pName,InstanceAttributeDTO.Type.valueOf(pType),pValue,pMandatory,pLocked);
+
+    public InstanceAttributeDTO(String pName, String pType, String pValue, Boolean pMandatory, Boolean pLocked) {
+        this(pName, InstanceAttributeDTO.Type.valueOf(pType), pValue, pMandatory, pLocked);
     }
-    
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -70,13 +65,15 @@ public class InstanceAttributeDTO  implements Serializable{
     public String getValue() {
         return value;
     }
+
     public void setValue(String value) {
         this.value = value;
     }
 
-    public InstanceAttributeDTO.Type getType(){
+    public InstanceAttributeDTO.Type getType() {
         return type;
     }
+
     public void setType(InstanceAttributeDTO.Type type) {
         this.type = type;
     }
@@ -84,6 +81,7 @@ public class InstanceAttributeDTO  implements Serializable{
     public boolean isMandatory() {
         return mandatory;
     }
+
     public void setMandatory(boolean mandatory) {
         this.mandatory = mandatory;
     }
@@ -110,5 +108,9 @@ public class InstanceAttributeDTO  implements Serializable{
 
     public void setItems(List<NameValuePairDTO> items) {
         this.items = items;
+    }
+
+    public enum Type {
+        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV
     }
 }

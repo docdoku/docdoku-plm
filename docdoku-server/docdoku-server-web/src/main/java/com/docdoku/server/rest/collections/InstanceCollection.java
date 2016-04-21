@@ -28,7 +28,6 @@ import com.docdoku.core.util.Tools;
 import java.util.List;
 
 /**
- *
  * @author Florent Garin
  */
 
@@ -43,7 +42,7 @@ public class InstanceCollection {
     // All instances under these paths
     private List<List<PartLink>> paths;
 
-    public InstanceCollection(ConfigurationItemKey ciKey, PSFilter filter, List<List<PartLink>> paths){
+    public InstanceCollection(ConfigurationItemKey ciKey, PSFilter filter, List<List<PartLink>> paths) {
         this.ciKey = ciKey;
         this.filter = filter;
         this.paths = paths;
@@ -63,15 +62,15 @@ public class InstanceCollection {
     }
 
     public boolean isFiltered(List<PartLink> currentPath) {
-        for(List<PartLink> path : paths){
-            if(filter(path,currentPath)){
+        for (List<PartLink> path : paths) {
+            if (filter(path, currentPath)) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean filter(List<PartLink> path, List<PartLink> currentPath){
+    private boolean filter(List<PartLink> path, List<PartLink> currentPath) {
         return Tools.getPathAsString(currentPath).startsWith(Tools.getPathAsString(path));
     }
 }

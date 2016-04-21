@@ -29,38 +29,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 @XmlRootElement
-public class ACLDTO implements Serializable{
+public class ACLDTO implements Serializable {
 
     @XmlElement(nillable = true)
-    protected Map<String,ACL.Permission> userEntries=new HashMap<String,ACL.Permission>();
+    protected Map<String, ACL.Permission> userEntries = new HashMap<String, ACL.Permission>();
 
     @XmlElement(nillable = true)
-    protected Map<String,ACL.Permission> groupEntries=new HashMap<String,ACL.Permission>();
+    protected Map<String, ACL.Permission> groupEntries = new HashMap<String, ACL.Permission>();
 
-    public ACLDTO(){
+    public ACLDTO() {
     }
 
-    public void setUserEntries(Map<String, ACL.Permission> userEntries) {
-        this.userEntries = userEntries;
-    }
-
-    public void setGroupEntries(Map<String, ACL.Permission> groupEntries) {
-        this.groupEntries = groupEntries;
-    }
-
-    public void addUserEntry(String login, ACL.Permission perm){
+    public void addUserEntry(String login, ACL.Permission perm) {
         userEntries.put(login, perm);
     }
 
-    public void addGroupEntry(String groupId, ACL.Permission perm){
+    public void addGroupEntry(String groupId, ACL.Permission perm) {
         groupEntries.put(groupId, perm);
     }
 
-    public void removeUserEntry(String login){
+    public void removeUserEntry(String login) {
         userEntries.remove(login);
     }
 
-    public void removeGroupEntry(String groupId){
+    public void removeGroupEntry(String groupId) {
         groupEntries.remove(groupId);
     }
 
@@ -68,8 +60,16 @@ public class ACLDTO implements Serializable{
         return groupEntries;
     }
 
+    public void setGroupEntries(Map<String, ACL.Permission> groupEntries) {
+        this.groupEntries = groupEntries;
+    }
+
     public Map<String, ACL.Permission> getUserEntries() {
         return userEntries;
+    }
+
+    public void setUserEntries(Map<String, ACL.Permission> userEntries) {
+        this.userEntries = userEntries;
     }
 
 }

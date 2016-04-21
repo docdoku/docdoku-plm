@@ -29,6 +29,7 @@ import com.docdoku.server.rest.dto.FolderDTO;
 import com.docdoku.server.rest.dto.baseline.DocumentBaselineDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -50,7 +51,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author Taylor LABEJOF
  */
 
@@ -60,10 +60,9 @@ import java.util.logging.Logger;
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class DocumentBaselinesResource {
 
+    private static final Logger LOGGER = Logger.getLogger(DocumentBaselinesResource.class.getName());
     @Inject
     private IDocumentBaselineManagerLocal documentBaselineService;
-
-    private static final Logger LOGGER = Logger.getLogger(DocumentBaselinesResource.class.getName());
     private Mapper mapper;
 
     public DocumentBaselinesResource() {
@@ -77,6 +76,7 @@ public class DocumentBaselinesResource {
 
     /**
      * Get all document baselines of a specific workspace
+     *
      * @param workspaceId The id of the specific workspace
      * @return The list of baselines
      */
@@ -86,12 +86,12 @@ public class DocumentBaselinesResource {
             responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBaselines(@PathParam("workspaceId") String workspaceId)
-            throws EntityNotFoundException, UserNotActiveException{
+            throws EntityNotFoundException, UserNotActiveException {
         List<DocumentBaseline> documentBaselines;
         documentBaselines = documentBaselineService.getBaselines(workspaceId);
         List<DocumentBaselineDTO> baselinesDTO = new ArrayList<>();
-        for(DocumentBaseline documentBaseline : documentBaselines){
-            DocumentBaselineDTO documentBaselineDTO = mapper.map(documentBaseline,DocumentBaselineDTO.class);
+        for (DocumentBaseline documentBaseline : documentBaselines) {
+            DocumentBaselineDTO documentBaselineDTO = mapper.map(documentBaseline, DocumentBaselineDTO.class);
             documentBaselineDTO.setWorkspaceId(workspaceId);
             baselinesDTO.add(documentBaselineDTO);
         }
@@ -101,22 +101,25 @@ public class DocumentBaselinesResource {
 
     /**
      * Create a baseline
-     * @param workspaceId The current workspace
+     *
+     * @param workspaceId         The current workspace
      * @param documentBaselineDTO Description of the baseline to create
      * @return Reponse of the transaction
      */
     @POST
     @ApiOperation(value = "Create baseline", response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createBaseline(@PathParam("workspaceId") String workspaceId, DocumentBaselineDTO documentBaselineDTO)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException{
-        DocumentBaseline baseline = documentBaselineService.createBaseline(workspaceId,documentBaselineDTO.getName(),documentBaselineDTO.getDescription());
-        DocumentBaselineDTO baselineDTO= mapper.map(baseline,DocumentBaselineDTO.class);
+    public Response createBaseline(@PathParam("workspaceId") String workspaceId,
+                                   @ApiParam(required = true, value = "Document baseline to create") DocumentBaselineDTO documentBaselineDTO)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+        DocumentBaseline baseline = documentBaselineService.createBaseline(workspaceId, documentBaselineDTO.getName(), documentBaselineDTO.getDescription());
+        DocumentBaselineDTO baselineDTO = mapper.map(baseline, DocumentBaselineDTO.class);
         return prepareCreateResponse(baselineDTO);
     }
 
     /**
      * Try to put a document baseline in a response
+     *
      * @param baselineDTO The document baseline to add
      * @return The reponse with the document baseline
      */
@@ -124,13 +127,14 @@ public class DocumentBaselinesResource {
         try {
             return Response.created(URI.create(URLEncoder.encode(String.valueOf(baselineDTO.getId()), "UTF-8"))).entity(baselineDTO).build();
         } catch (UnsupportedEncodingException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
+            LOGGER.log(Level.WARNING, null, ex);
             return Response.ok().build();
         }
     }
 
     /**
      * Delete a specific document baseline
+     *
      * @param baselineId The id of the specific document baseline
      * @return A response if the baseline was deleted
      */
@@ -139,25 +143,27 @@ public class DocumentBaselinesResource {
     @Path("{baselineId}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteBaseline(@PathParam("baselineId") int baselineId)
-            throws EntityNotFoundException, AccessRightException, UserNotActiveException{
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
         documentBaselineService.deleteBaseline(baselineId);
         return Response.ok().build();
     }
 
     /**
      * Get a specific document baseline ( with document list and folder list )
+     *
      * @param workspaceId The workspace of the specific baseline
-     * @param baselineId The id of the specific document baseline
+     * @param baselineId  The id of the specific document baseline
      * @return The specif baseline
      */
     @GET
     @ApiOperation(value = "Get baseline", response = DocumentBaselineDTO.class)
     @Path("{baselineId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId)
-            throws EntityNotFoundException, UserNotActiveException{
+    public DocumentBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId,
+                                           @PathParam("baselineId") int baselineId)
+            throws EntityNotFoundException, UserNotActiveException {
         DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
-        DocumentBaselineDTO baselineDTO = getBaselineLight(workspaceId,baselineId);
+        DocumentBaselineDTO baselineDTO = getBaselineLight(workspaceId, baselineId);
         List<FolderDTO> folderDTOs = Tools.mapBaselinedFoldersToFolderDTO(documentBaseline);
         baselineDTO.setBaselinedFolders(folderDTOs);
         return baselineDTO;
@@ -165,17 +171,19 @@ public class DocumentBaselinesResource {
 
     /**
      * Get a specific document baseline
+     *
      * @param workspaceId The workspace of the specific baseline
-     * @param baselineId The id of the specific document baseline
+     * @param baselineId  The id of the specific document baseline
      * @return The specif baseline
      */
     @GET
     @ApiOperation(value = "Get baseline light format", response = DocumentBaselineDTO.class)
     @Path("{baselineId}-light")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentBaselineDTO getBaselineLight(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId)
-            throws EntityNotFoundException, UserNotActiveException{
+    public DocumentBaselineDTO getBaselineLight(@PathParam("workspaceId") String workspaceId,
+                                                @PathParam("baselineId") int baselineId)
+            throws EntityNotFoundException, UserNotActiveException {
         DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
-        return mapper.map(documentBaseline,DocumentBaselineDTO.class);
+        return mapper.map(documentBaseline, DocumentBaselineDTO.class);
     }
 }

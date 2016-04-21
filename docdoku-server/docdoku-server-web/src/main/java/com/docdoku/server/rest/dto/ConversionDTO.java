@@ -26,7 +26,7 @@ import java.util.Date;
 
 @XmlRootElement
 public class ConversionDTO implements Serializable {
-    
+
     private Date endDate;
     private Date startDate;
     private boolean succeed;

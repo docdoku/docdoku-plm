@@ -34,17 +34,18 @@ import java.util.logging.Logger;
 @Provider
 public class AccessRightExceptionMapper implements ExceptionMapper<AccessRightException> {
     private static final Logger LOGGER = Logger.getLogger(AccessRightExceptionMapper.class.getName());
+
     public AccessRightExceptionMapper() {
     }
 
     @Override
     public Response toResponse(AccessRightException e) {
-        LOGGER.log(Level.WARNING,e.getMessage());
-        LOGGER.log(Level.FINE,null,e);
+        LOGGER.log(Level.WARNING, e.getMessage());
+        LOGGER.log(Level.FINE, null, e);
         return Response.status(Response.Status.FORBIDDEN)
-                       .header("Reason-Phrase", e.getMessage())
-                       .entity(e.toString())
-                       .type(MediaType.TEXT_PLAIN)
-                       .build();
+                .header("Reason-Phrase", e.getMessage())
+                .entity(e.toString())
+                .type(MediaType.TEXT_PLAIN)
+                .build();
     }
 }

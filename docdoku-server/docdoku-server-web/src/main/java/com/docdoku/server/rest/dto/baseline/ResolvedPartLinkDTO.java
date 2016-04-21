@@ -39,7 +39,7 @@ public class ResolvedPartLinkDTO implements Serializable {
 
     public ResolvedPartLinkDTO(ResolvedPartLink resolvedPartLink) {
         PartIteration resolvedIteration = resolvedPartLink.getPartIteration();
-        this.partIteration = new PartIterationDTO(resolvedIteration.getWorkspaceId(),resolvedIteration.getName(),resolvedIteration.getNumber(),resolvedIteration.getVersion(),resolvedIteration.getIteration());
+        this.partIteration = new PartIterationDTO(resolvedIteration.getWorkspaceId(), resolvedIteration.getName(), resolvedIteration.getNumber(), resolvedIteration.getVersion(), resolvedIteration.getIteration());
         this.partLink = new LightPartLinkDTO(resolvedPartLink.getPartLink());
     }
 

@@ -21,7 +21,6 @@
 package com.docdoku.server.rest.dto;
 
 /**
- *
  * @author Florent Garin
  */
 public enum WorkspaceMembership {

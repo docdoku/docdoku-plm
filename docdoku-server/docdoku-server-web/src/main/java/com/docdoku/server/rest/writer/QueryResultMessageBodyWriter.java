@@ -66,16 +66,14 @@ import java.util.logging.Logger;
 
 
 @Provider
-@Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_OCTET_STREAM})
+@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
 public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResult> {
 
+    private static final Logger LOGGER = Logger.getLogger(QueryResultMessageBodyWriter.class.getName());
     private static SimpleDateFormat FORMAT = QueryResultMessageBodyWriter.getFormat();
     private ExcelGenerator excelGenerator = new ExcelGenerator();
-
     @Inject
     private IProductInstanceManagerLocal productInstanceService;
-
-    private static final Logger LOGGER = Logger.getLogger(QueryResultMessageBodyWriter.class.getName());
 
     private static SimpleDateFormat getFormat() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -96,17 +94,15 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
     @Override
     public void writeTo(QueryResult queryResult, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream outputStream) throws IOException, WebApplicationException {
 
-        if(queryResult.getExportType().equals(QueryResult.ExportType.JSON)){
-            httpHeaders.putSingle("Content-Type","application/json");
+        if (queryResult.getExportType().equals(QueryResult.ExportType.JSON)) {
+            httpHeaders.putSingle("Content-Type", "application/json");
             httpHeaders.putSingle("Content-Disposition", "inline");
             generateJSONResponse(outputStream, queryResult);
-        }
-        else if(queryResult.getExportType().equals(QueryResult.ExportType.XLS)){
-            httpHeaders.putSingle("Content-Type","application/octet-stream");
-            httpHeaders.putSingle("Content-Disposition","attachment; filename=\"TSR.csv\"");
+        } else if (queryResult.getExportType().equals(QueryResult.ExportType.XLS)) {
+            httpHeaders.putSingle("Content-Type", "application/octet-stream");
+            httpHeaders.putSingle("Content-Disposition", "attachment; filename=\"TSR.csv\"");
             excelGenerator.generateXLSResponse(queryResult, new Locale(queryResult.getQuery().getAuthor().getLanguage()), "");
-        }
-        else{
+        } else {
             throw new IllegalArgumentException();
         }
 
@@ -203,7 +199,7 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
 
                 StringBuilder sb = new StringBuilder();
 
-                if(null!= queryContext && null != queryContext.getSerialNumber()){
+                if (null != queryContext && null != queryContext.getSerialNumber()) {
                     try {
                         ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(queryContext.getSerialNumber(), queryContext.getWorkspaceId(), queryContext.getConfigurationItemId()));
                         ProductInstanceIteration lastIteration = productInstanceMaster.getLastIteration();
@@ -213,27 +209,27 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
                         Set<DocumentLink> linkedDocuments = targetPart.getLinkedDocuments();
                         DocumentCollection documentCollection = lastIteration.getDocumentCollection();
 
-                        for(DocumentLink documentLink:linkedDocuments){
+                        for (DocumentLink documentLink : linkedDocuments) {
                             DocumentRevision targetDocument = documentLink.getTargetDocument();
                             BaselinedDocument baselinedDocument = documentCollection.getBaselinedDocument(new BaselinedDocumentKey(documentCollection.getId(), queryContext.getWorkspaceId(), targetDocument.getDocumentMasterId(), targetDocument.getVersion()));
-                            if(null != baselinedDocument) {
+                            if (null != baselinedDocument) {
                                 DocumentIteration targetDocumentIteration = baselinedDocument.getTargetDocument();
                                 sb.append(targetDocumentIteration.toString() + ",");
                             }
                         }
 
                     } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | ProductInstanceMasterNotFoundException e) {
-                        LOGGER.log(Level.FINEST,null,e);
+                        LOGGER.log(Level.FINEST, null, e);
                     }
-                }else{
-                    if(lastCheckedInIteration != null){
+                } else {
+                    if (lastCheckedInIteration != null) {
                         Set<DocumentLink> linkedDocuments = lastCheckedInIteration.getLinkedDocuments();
 
-                        for(DocumentLink documentLink:linkedDocuments){
+                        for (DocumentLink documentLink : linkedDocuments) {
                             DocumentRevision targetDocument = documentLink.getTargetDocument();
                             DocumentIteration targetDocumentLastCheckedInIteration = targetDocument.getLastCheckedInIteration();
-                            if(targetDocumentLastCheckedInIteration != null){
-                                sb.append(targetDocumentLastCheckedInIteration.toString()+",");
+                            if (targetDocumentLastCheckedInIteration != null) {
+                                sb.append(targetDocumentLastCheckedInIteration.toString() + ",");
                             }
                         }
                     }
@@ -340,7 +336,7 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
                 jg.write(QueryField.CTX_SERIAL_NUMBER, serialNumber != null ? serialNumber : "");
             }
             if (selects.contains(QueryField.CTX_AMOUNT)) {
-                String amount = row.getAmount()+"";
+                String amount = row.getAmount() + "";
                 jg.write(QueryField.CTX_AMOUNT, amount);
             }
 
@@ -356,7 +352,7 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
                 jg.write(QueryField.CTX_P2P_TARGET, partLinksAsString);
             }
 
-            if(selects.contains(QueryField.PART_MASTER_IS_STANDARD)){
+            if (selects.contains(QueryField.PART_MASTER_IS_STANDARD)) {
                 boolean isStandard = row.getPartRevision().getPartMaster().isStandardPart();
                 jg.write(QueryField.PART_MASTER_IS_STANDARD, isStandard);
             }
@@ -370,10 +366,10 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
 
 
     private void writeDate(JsonGenerator jg, String key, Date date) {
-        if (date != null){
+        if (date != null) {
             String formattedDate = getFormattedDate(date);
             jg.write(key, formattedDate);
-        }else{
+        } else {
             jg.write(key, JsonValue.NULL);
         }
     }
@@ -384,8 +380,8 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
 
     public List<String> getPartIterationSelectedAttributes(List<String> selects) {
         List<String> attributesSelect = new ArrayList<>();
-        for(String select : selects){
-            if (select.contains(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)){
+        for (String select : selects) {
+            if (select.contains(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
                 attributesSelect.add(select);
             }
         }
@@ -394,8 +390,8 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
 
     public List<String> getPathDataSelectedAttributes(List<String> selects) {
         List<String> attributesSelect = new ArrayList<>();
-        for(String select : selects){
-            if (select.contains(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)){
+        for (String select : selects) {
+            if (select.contains(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)) {
                 attributesSelect.add(select);
             }
         }

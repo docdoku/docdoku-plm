@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
  * @author Florent Garin
  */
 @XmlRootElement
@@ -44,17 +43,17 @@ public class ConfigurationItemDTO implements Serializable {
     public ConfigurationItemDTO() {
     }
 
-    public ConfigurationItemDTO(UserDTO author,String id, String workspaceId, String description, String designItemNumber,
+    public ConfigurationItemDTO(UserDTO author, String id, String workspaceId, String description, String designItemNumber,
                                 String designItemName, String designItemLatestVersion) {
         this.id = id;
-        this.author =author;
+        this.author = author;
         this.workspaceId = workspaceId;
         this.description = description;
         this.designItemNumber = designItemNumber;
-        this.designItemName = designItemName ;
+        this.designItemName = designItemName;
         this.designItemLatestVersion = designItemLatestVersion;
     }
- 
+
     public String getId() {
         return id;
     }
@@ -62,7 +61,7 @@ public class ConfigurationItemDTO implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
-    
+
     public String getDescription() {
         return description;
     }

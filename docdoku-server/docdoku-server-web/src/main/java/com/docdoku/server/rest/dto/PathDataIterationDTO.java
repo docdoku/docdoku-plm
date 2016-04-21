@@ -114,19 +114,19 @@ public class PathDataIterationDTO implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o){
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()){
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
         PathDataIterationDTO dto = (PathDataIterationDTO) o;
 
-        if (iteration != dto.iteration){
+        if (iteration != dto.iteration) {
             return false;
         }
-        if (pathDataMasterId != dto.pathDataMasterId){
+        if (pathDataMasterId != dto.pathDataMasterId) {
             return false;
         }
         return true;

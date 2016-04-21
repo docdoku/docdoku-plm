@@ -44,13 +44,13 @@ public class PartMasterTemplateDTO implements Serializable {
     private String workflowModelId;
     private ACLDTO acl;
 
-    public PartMasterTemplateDTO(){
+    public PartMasterTemplateDTO() {
     }
 
     public PartMasterTemplateDTO(String workspaceId, String id, String partType) {
-        this.workspaceId=workspaceId;
-        this.id=id;
-        this.partType=partType;
+        this.workspaceId = workspaceId;
+        this.id = id;
+        this.partType = partType;
     }
 
     public UserDTO getAuthor() {
@@ -81,12 +81,24 @@ public class PartMasterTemplateDTO implements Serializable {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getWorkspaceId() {
         return workspaceId;
     }
 
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
+    }
+
     public Date getCreationDate() {
         return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     public Date getModificationDate() {
@@ -105,28 +117,12 @@ public class PartMasterTemplateDTO implements Serializable {
         this.attachedFile = attachedFile;
     }
 
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
     public boolean isIdGenerated() {
         return idGenerated;
     }
 
     public void setIdGenerated(boolean idGenerated) {
         this.idGenerated = idGenerated;
-    }
-
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setAttributeTemplates(List<InstanceAttributeTemplateDTO> attributeTemplates) {
-        this.attributeTemplates = attributeTemplates;
     }
 
     public List<InstanceAttributeTemplateDTO> getAttributeInstanceTemplates() {
@@ -139,6 +135,10 @@ public class PartMasterTemplateDTO implements Serializable {
 
     public List<InstanceAttributeTemplateDTO> getAttributeTemplates() {
         return attributeTemplates;
+    }
+
+    public void setAttributeTemplates(List<InstanceAttributeTemplateDTO> attributeTemplates) {
+        this.attributeTemplates = attributeTemplates;
     }
 
     public String getPartType() {

@@ -26,12 +26,11 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author Florent Garin
  */
 @XmlRootElement
-public class DocumentMasterTemplateDTO implements Serializable{
-    
+public class DocumentMasterTemplateDTO implements Serializable {
+
     private String workspaceId;
     private String id;
     private String documentType;
@@ -46,15 +45,15 @@ public class DocumentMasterTemplateDTO implements Serializable{
     private List<InstanceAttributeTemplateDTO> attributeTemplates;
     private boolean attributesLocked;
     private ACLDTO acl;
-    
-    public DocumentMasterTemplateDTO(){
-        
+
+    public DocumentMasterTemplateDTO() {
+
     }
-    
+
     public DocumentMasterTemplateDTO(String workspaceId, String id, String documentType) {
-        this.workspaceId=workspaceId;
-        this.id=id;
-        this.documentType=documentType;
+        this.workspaceId = workspaceId;
+        this.id = id;
+        this.documentType = documentType;
     }
 
     public UserDTO getAuthor() {
@@ -65,7 +64,7 @@ public class DocumentMasterTemplateDTO implements Serializable{
         this.author = author;
     }
 
-    
+
     public String getDocumentType() {
         return documentType;
     }
@@ -95,12 +94,24 @@ public class DocumentMasterTemplateDTO implements Serializable{
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getWorkspaceId() {
         return workspaceId;
     }
 
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
+    }
+
     public Date getCreationDate() {
         return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     public List<String> getAttachedFiles() {
@@ -109,10 +120,6 @@ public class DocumentMasterTemplateDTO implements Serializable{
 
     public void setAttachedFiles(List<String> attachedFiles) {
         this.attachedFiles = attachedFiles;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
     }
 
     public Date getModificationDate() {
@@ -129,14 +136,6 @@ public class DocumentMasterTemplateDTO implements Serializable{
 
     public void setIdGenerated(boolean idGenerated) {
         this.idGenerated = idGenerated;
-    }
-
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public List<InstanceAttributeTemplateDTO> getAttributeTemplates() {

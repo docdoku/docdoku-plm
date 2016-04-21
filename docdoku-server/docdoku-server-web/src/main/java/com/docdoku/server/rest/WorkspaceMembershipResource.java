@@ -49,7 +49,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Morgan Guimard
  */
 @RequestScoped
@@ -75,13 +74,13 @@ public class WorkspaceMembershipResource {
     @ApiOperation(value = "Get workspace's user memberships", response = WorkspaceUserMemberShipDTO.class, responseContainer = "List")
     @Path("users")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceUserMemberShipDTO[] getWorkspaceUserMemberShips (@PathParam("workspaceId") String workspaceId)
+    public WorkspaceUserMemberShipDTO[] getWorkspaceUserMemberShips(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         WorkspaceUserMembership[] workspaceUserMemberships = userManager.getWorkspaceUserMemberships(workspaceId);
         WorkspaceUserMemberShipDTO[] workspaceUserMemberShipDTO = new WorkspaceUserMemberShipDTO[workspaceUserMemberships.length];
-        for(int i = 0 ; i< workspaceUserMemberships.length ; i++){
-            workspaceUserMemberShipDTO[i] = mapper.map(workspaceUserMemberships[i],WorkspaceUserMemberShipDTO.class);
+        for (int i = 0; i < workspaceUserMemberships.length; i++) {
+            workspaceUserMemberShipDTO[i] = mapper.map(workspaceUserMemberships[i], WorkspaceUserMemberShipDTO.class);
         }
         return workspaceUserMemberShipDTO;
     }
@@ -90,24 +89,24 @@ public class WorkspaceMembershipResource {
     @ApiOperation(value = "Get workspace's user membership for current user", response = WorkspaceUserMemberShipDTO.class)
     @Path("users/me")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceUserMemberShipDTO getWorkspaceSpecificUserMemberShips (@PathParam("workspaceId") String workspaceId)
+    public WorkspaceUserMemberShipDTO getWorkspaceSpecificUserMemberShips(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         WorkspaceUserMembership workspaceUserMemberships = userManager.getWorkspaceSpecificUserMemberships(workspaceId);
-        return mapper.map(workspaceUserMemberships,WorkspaceUserMemberShipDTO.class);
+        return mapper.map(workspaceUserMemberships, WorkspaceUserMemberShipDTO.class);
     }
 
     @GET
     @ApiOperation(value = "Get workspace's group membership for current user", response = WorkspaceUserGroupMemberShipDTO.class, responseContainer = "List")
     @Path("usergroups")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceUserGroupMemberShipDTO[] getWorkspaceUserGroupMemberShips (@PathParam("workspaceId") String workspaceId)
+    public WorkspaceUserGroupMemberShipDTO[] getWorkspaceUserGroupMemberShips(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceUserGroupMemberships(workspaceId);
         WorkspaceUserGroupMemberShipDTO[] workspaceUserGroupMemberShipDTO = new WorkspaceUserGroupMemberShipDTO[workspaceUserGroupMemberships.length];
-        for(int i = 0 ; i< workspaceUserGroupMemberships.length ; i++){
-            workspaceUserGroupMemberShipDTO[i] = mapper.map(workspaceUserGroupMemberships[i],WorkspaceUserGroupMemberShipDTO.class);
+        for (int i = 0; i < workspaceUserGroupMemberships.length; i++) {
+            workspaceUserGroupMemberShipDTO[i] = mapper.map(workspaceUserGroupMemberships[i], WorkspaceUserGroupMemberShipDTO.class);
         }
         return workspaceUserGroupMemberShipDTO;
     }
@@ -116,14 +115,14 @@ public class WorkspaceMembershipResource {
     @ApiOperation(value = "Get workspace's group membership for current user", response = WorkspaceUserGroupMemberShipDTO.class, responseContainer = "List")
     @Path("usergroups/me")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getWorkspaceSpecificUserGroupMemberShips (@PathParam("workspaceId") String workspaceId)
+    public Response getWorkspaceSpecificUserGroupMemberShips(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceSpecificUserGroupMemberships(workspaceId);
         List<WorkspaceUserGroupMemberShipDTO> workspaceUserGroupMemberShipDTO = new ArrayList<>();
-        for(int i = 0 ; i< workspaceUserGroupMemberships.length ; i++){
-            if(workspaceUserGroupMemberships[i] != null){
-                workspaceUserGroupMemberShipDTO.add(mapper.map(workspaceUserGroupMemberships[i],WorkspaceUserGroupMemberShipDTO.class));
+        for (int i = 0; i < workspaceUserGroupMemberships.length; i++) {
+            if (workspaceUserGroupMemberships[i] != null) {
+                workspaceUserGroupMemberShipDTO.add(mapper.map(workspaceUserGroupMemberships[i], WorkspaceUserGroupMemberShipDTO.class));
             }
         }
 

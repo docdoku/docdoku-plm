@@ -25,7 +25,7 @@ import java.util.Date;
 /**
  * @author Taylor LABEJOF
  */
-public class NotModifiedException extends RestApiException  {
+public class NotModifiedException extends RestApiException {
     private static final int CACHE_SECOND = 60 * 60 * 24;
 
     private final String eTag;
@@ -38,7 +38,8 @@ public class NotModifiedException extends RestApiException  {
     public String getETag() {
         return eTag;
     }
-    public Date getExpireDate(){
+
+    public Date getExpireDate() {
         Calendar expirationDate = Calendar.getInstance();
         expirationDate.add(Calendar.SECOND, CACHE_SECOND);
         return expirationDate.getTime();

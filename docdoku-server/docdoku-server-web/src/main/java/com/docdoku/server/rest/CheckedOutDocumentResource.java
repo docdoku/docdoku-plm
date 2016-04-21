@@ -74,7 +74,7 @@ public class CheckedOutDocumentResource {
             docRsDTOs[i].setPath(docRs[i].getLocation().getCompletePath());
             docRsDTOs[i] = Tools.createLightDocumentRevisionDTO(docRsDTOs[i]);
             docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
-            docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docRs[i]));
+            docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
         }
 
         return docRsDTOs;

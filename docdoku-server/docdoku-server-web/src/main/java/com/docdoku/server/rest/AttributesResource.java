@@ -61,7 +61,7 @@ public class AttributesResource {
 
     private Mapper mapper;
 
-    public AttributesResource(){
+    public AttributesResource() {
     }
 
     @PostConstruct
@@ -79,8 +79,8 @@ public class AttributesResource {
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         List<InstanceAttributeDescriptor> attributes = productManager.getPartIterationsInstanceAttributesInWorkspace(workspaceId);
         List<InstanceAttributeDescriptorDTO> dtos = new ArrayList<>();
-        for (InstanceAttributeDescriptor descriptor:attributes){
-            dtos.add(mapper.map(descriptor,InstanceAttributeDescriptorDTO.class));
+        for (InstanceAttributeDescriptor descriptor : attributes) {
+            dtos.add(mapper.map(descriptor, InstanceAttributeDescriptorDTO.class));
         }
 
         return Response.ok(new GenericEntity<List<InstanceAttributeDescriptorDTO>>((List<InstanceAttributeDescriptorDTO>) dtos) {
@@ -97,8 +97,8 @@ public class AttributesResource {
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         List<InstanceAttributeDescriptor> attributes = productManager.getPathDataInstanceAttributesInWorkspace(workspaceId);
         List<InstanceAttributeDescriptorDTO> dtos = new ArrayList<>();
-        for (InstanceAttributeDescriptor descriptor:attributes){
-            dtos.add(mapper.map(descriptor,InstanceAttributeDescriptorDTO.class));
+        for (InstanceAttributeDescriptor descriptor : attributes) {
+            dtos.add(mapper.map(descriptor, InstanceAttributeDescriptorDTO.class));
         }
         return Response.ok(new GenericEntity<List<InstanceAttributeDescriptorDTO>>((List<InstanceAttributeDescriptorDTO>) dtos) {
         }).build();

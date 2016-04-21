@@ -34,17 +34,18 @@ import java.util.logging.Logger;
 @Provider
 public class ApplicationExceptionMapper implements ExceptionMapper<ApplicationException> {
     private static final Logger LOGGER = Logger.getLogger(ApplicationExceptionMapper.class.getName());
+
     public ApplicationExceptionMapper() {
     }
 
     @Override
     public Response toResponse(ApplicationException e) {
-        LOGGER.log(Level.SEVERE,e.getMessage());
-        LOGGER.log(Level.FINE,null,e);
+        LOGGER.log(Level.SEVERE, e.getMessage());
+        LOGGER.log(Level.FINE, null, e);
         return Response.status(Response.Status.BAD_REQUEST)
-                       .header("Reason-Phrase", e.getMessage())
-                       .entity(e.toString())
-                       .type(MediaType.TEXT_PLAIN)
-                       .build();
+                .header("Reason-Phrase", e.getMessage())
+                .entity(e.toString())
+                .type(MediaType.TEXT_PLAIN)
+                .build();
     }
 }

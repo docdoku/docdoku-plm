@@ -34,17 +34,18 @@ import java.util.logging.Logger;
 @Provider
 public class NotFoundExceptionMapper implements ExceptionMapper<EntityNotFoundException> {
     private static final Logger LOGGER = Logger.getLogger(NotFoundExceptionMapper.class.getName());
+
     public NotFoundExceptionMapper() {
     }
 
     @Override
     public Response toResponse(EntityNotFoundException e) {
-        LOGGER.log(Level.WARNING,e.getMessage());
-        LOGGER.log(Level.FINE,null,e);
+        LOGGER.log(Level.WARNING, e.getMessage());
+        LOGGER.log(Level.FINE, null, e);
         return Response.status(Response.Status.NOT_FOUND)
-                       .header("Reason-Phrase", e.getMessage())
-                       .entity(e.toString())
-                       .type(MediaType.TEXT_PLAIN)
-                       .build();
+                .header("Reason-Phrase", e.getMessage())
+                .entity(e.toString())
+                .type(MediaType.TEXT_PLAIN)
+                .build();
     }
 }

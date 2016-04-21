@@ -34,7 +34,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 /**
- *
  * @author Morgan Guimard
  */
 @RequestScoped

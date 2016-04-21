@@ -31,6 +31,8 @@ import java.util.List;
 @XmlRootElement
 public class PartRevisionDTO implements Serializable {
 
+    @XmlElement(nillable = true)
+    int lastIterationNumber;
     private String partKey;
     private String number;
     private String version;
@@ -57,8 +59,6 @@ public class PartRevisionDTO implements Serializable {
     private boolean attributesLocked;
     @XmlElement(nillable = true)
     private PartRevision.RevisionStatus status;
-    @XmlElement(nillable = true)
-    int lastIterationNumber;
     private String[] tags;
     private List<ModificationNotificationDTO> notifications;
     private Date obsoleteDate;
@@ -270,53 +270,53 @@ public class PartRevisionDTO implements Serializable {
         this.tags = tags;
     }
 
-    public void setObsoleteDate(Date obsoleteDate) {
-        this.obsoleteDate = obsoleteDate;
-    }
-
-    public void setObsoleteAuthor(UserDTO obsoleteAuthor) {
-        this.obsoleteAuthor = obsoleteAuthor;
-    }
-
-    public void setReleaseDate(Date releasedDate) {
-        this.releaseDate = releasedDate;
-    }
-
-    public void setReleaseAuthor(UserDTO releasedAuthor) {
-        this.releaseAuthor = releasedAuthor;
-    }
-
     public Date getObsoleteDate() {
         return obsoleteDate;
+    }
+
+    public void setObsoleteDate(Date obsoleteDate) {
+        this.obsoleteDate = obsoleteDate;
     }
 
     public UserDTO getObsoleteAuthor() {
         return obsoleteAuthor;
     }
 
+    public void setObsoleteAuthor(UserDTO obsoleteAuthor) {
+        this.obsoleteAuthor = obsoleteAuthor;
+    }
+
     public Date getReleaseDate() {
         return releaseDate;
+    }
+
+    public void setReleaseDate(Date releasedDate) {
+        this.releaseDate = releasedDate;
     }
 
     public UserDTO getReleaseAuthor() {
         return releaseAuthor;
     }
 
+    public void setReleaseAuthor(UserDTO releasedAuthor) {
+        this.releaseAuthor = releasedAuthor;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o){
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()){
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
         PartRevisionDTO partRevisionDTO = (PartRevisionDTO) o;
 
-        if (!number.equals(partRevisionDTO.number)){
+        if (!number.equals(partRevisionDTO.number)) {
             return false;
         }
-        if (!version.equals(partRevisionDTO.version)){
+        if (!version.equals(partRevisionDTO.version)) {
             return false;
         }
         return workspaceId.equals(partRevisionDTO.workspaceId);

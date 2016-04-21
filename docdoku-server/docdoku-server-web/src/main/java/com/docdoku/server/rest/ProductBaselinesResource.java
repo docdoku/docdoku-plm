@@ -38,6 +38,7 @@ import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -54,11 +55,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Taylor LABEJOF
  */
 @RequestScoped
-@Api(hidden=true,value = "product-baseline", description = "Operations about product-baseline")
+@Api(hidden = true, value = "product-baseline", description = "Operations about product-baseline")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ProductBaselinesResource {
@@ -82,18 +82,19 @@ public class ProductBaselinesResource {
     @GET
     @ApiOperation(value = "Get product-baseline with given configuration item", response = ProductBaselineDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
+    public Response getBaselines(@PathParam("workspaceId") String workspaceId,
+                                 @PathParam("ciId") String ciId)
             throws UserNotActiveException, EntityNotFoundException, AccessRightException {
         List<ProductBaseline> productBaselines;
-        if(ciId != null) {
+        if (ciId != null) {
             ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId, ciId);
             productBaselines = productBaselineService.getBaselines(configurationItemKey);
-        }else{
+        } else {
             productBaselines = productBaselineService.getAllBaselines(workspaceId);
         }
         List<ProductBaselineDTO> baselinesDTO = new ArrayList<>();
-        for(ProductBaseline productBaseline : productBaselines){
-            ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline,ProductBaselineDTO.class);
+        for (ProductBaseline productBaseline : productBaselines) {
+            ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline, ProductBaselineDTO.class);
             productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
             productBaselineDTO.setConfigurationItemLatestRevision(productBaseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
             productBaselineDTO.setHasObsoletePartRevisions(!productBaselineService.getObsoletePartRevisionsInBaseline(workspaceId, productBaseline.getId()).isEmpty());
@@ -107,23 +108,25 @@ public class ProductBaselinesResource {
     @ApiOperation(value = "Create product-baseline", response = ProductBaselineDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductBaselineDTO createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, ProductBaselineDTO productBaselineDTO)
+    public ProductBaselineDTO createBaseline(@PathParam("workspaceId") String workspaceId,
+                                             @PathParam("ciId") String pCiId,
+                                             @ApiParam(required = true, value = "Product baseline to create") ProductBaselineDTO productBaselineDTO)
             throws UserNotActiveException, EntityNotFoundException, NotAllowedException, AccessRightException, PartRevisionNotReleasedException, EntityConstraintException, CreationException, PathToPathLinkAlreadyExistsException {
 
         String ciId = (pCiId != null) ? pCiId : productBaselineDTO.getConfigurationItemId();
-        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         String description = productBaselineDTO.getDescription();
         String name = productBaselineDTO.getName();
         ProductBaseline.BaselineType type = productBaselineDTO.getType();
 
         List<BaselinedPartDTO> baselinedPartsDTO = productBaselineDTO.getBaselinedParts();
         List<PartIterationKey> partIterationKeys = new ArrayList<>();
-        for(BaselinedPartDTO part:baselinedPartsDTO){
-            partIterationKeys.add(new PartIterationKey(workspaceId,part.getNumber(),part.getVersion(),part.getIteration()));
+        for (BaselinedPartDTO part : baselinedPartsDTO) {
+            partIterationKeys.add(new PartIterationKey(workspaceId, part.getNumber(), part.getVersion(), part.getIteration()));
         }
 
         ProductBaseline baseline = productBaselineService.createBaseline(ciKey,
-                name, type, description, partIterationKeys, productBaselineDTO.getSubstituteLinks(),productBaselineDTO.getOptionalUsageLinks());
+                name, type, description, partIterationKeys, productBaselineDTO.getSubstituteLinks(), productBaselineDTO.getOptionalUsageLinks());
         ProductBaselineDTO dto = mapper.map(baseline, ProductBaselineDTO.class);
         dto.setConfigurationItemLatestRevision(baseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
         return dto;
@@ -133,7 +136,9 @@ public class ProductBaselinesResource {
     @ApiOperation(value = "Delete product-baseline", response = Response.class)
     @Path("{baselineId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId)
+    public Response deleteBaseline(@PathParam("workspaceId") String workspaceId,
+                                   @PathParam("ciId") String ciId,
+                                   @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, EntityConstraintException {
         productBaselineService.deleteBaseline(workspaceId, baselineId);
         return Response.ok().build();
@@ -143,10 +148,12 @@ public class ProductBaselinesResource {
     @ApiOperation(value = "Get product-baseline", response = ProductBaselineDTO.class)
     @Path("{baselineId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId)
+    public ProductBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId,
+                                          @PathParam("ciId") String ciId,
+                                          @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         ProductBaseline productBaseline = productBaselineService.getBaseline(baselineId);
-        ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline,ProductBaselineDTO.class);
+        ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline, ProductBaselineDTO.class);
         productBaselineDTO.setPathToPathLinks(getPathToPathLinksForGivenBaseline(productBaseline));
         productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
         productBaselineDTO.setConfigurationItemLatestRevision(productBaseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
@@ -156,16 +163,16 @@ public class ProductBaselinesResource {
         List<LightPartLinkListDTO> substitutesParts = new ArrayList<>();
         List<LightPartLinkListDTO> optionalParts = new ArrayList<>();
 
-        for(String path:productBaseline.getSubstituteLinks()){
+        for (String path : productBaseline.getSubstituteLinks()) {
             LightPartLinkListDTO lightPartLinkListDTO = new LightPartLinkListDTO();
-            for(PartLink partLink : productService.decodePath(ciKey, path)){
+            for (PartLink partLink : productService.decodePath(ciKey, path)) {
                 lightPartLinkListDTO.getPartLinks().add(new LightPartLinkDTO(partLink));
             }
             substitutesParts.add(lightPartLinkListDTO);
         }
-        for(String path:productBaseline.getOptionalUsageLinks()){
+        for (String path : productBaseline.getOptionalUsageLinks()) {
             LightPartLinkListDTO lightPartLinkListDTO = new LightPartLinkListDTO();
-            for(PartLink partLink : productService.decodePath(ciKey, path)){
+            for (PartLink partLink : productService.decodePath(ciKey, path)) {
                 lightPartLinkListDTO.getPartLinks().add(new LightPartLinkDTO(partLink));
             }
             optionalParts.add(lightPartLinkListDTO);
@@ -181,13 +188,16 @@ public class ProductBaselinesResource {
     @ApiOperation(value = "Get product-baseline's part", response = BaselinedPartDTO.class, responseContainer = "List")
     @Path("{baselineId}/parts")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBaselineParts(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId, @QueryParam("q") String q)
-            throws EntityNotFoundException, UserNotActiveException{
+    public Response getBaselineParts(@PathParam("workspaceId") String workspaceId,
+                                     @PathParam("ciId") String ciId,
+                                     @PathParam("baselineId") int baselineId,
+                                     @QueryParam("q") String q)
+            throws EntityNotFoundException, UserNotActiveException {
         int maxResults = 8;
         List<BaselinedPart> baselinedPartList = productBaselineService.getBaselinedPartWithReference(baselineId, q, maxResults);
 
         List<BaselinedPartDTO> baselinedPartDTOList = new ArrayList<>();
-        for(BaselinedPart baselinedPart:baselinedPartList){
+        for (BaselinedPart baselinedPart : baselinedPartList) {
             baselinedPartDTOList.add(Tools.mapBaselinedPartToBaselinedPartDTO(baselinedPart));
         }
         return Response.ok(new GenericEntity<List<BaselinedPartDTO>>((List<BaselinedPartDTO>) baselinedPartDTOList) {
@@ -198,10 +208,13 @@ public class ProductBaselinesResource {
     @ApiOperation(value = "Get product-baseline's path-to-path links", response = LightPathToPathLinkDTO.class, responseContainer = "List")
     @Path("{baselineId}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("baselineId") int baselineId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException {
+    public Response getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId,
+                                           @PathParam("ciId") String configurationItemId,
+                                           @PathParam("baselineId") int baselineId)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException {
         List<String> pathToPathLinkTypes = productBaselineService.getPathToPathLinkTypes(workspaceId, configurationItemId, baselineId);
         List<LightPathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
-        for(String type : pathToPathLinkTypes){
+        for (String type : pathToPathLinkTypes) {
             LightPathToPathLinkDTO pathToPathLinkDTO = new LightPathToPathLinkDTO();
             pathToPathLinkDTO.setType(type);
             pathToPathLinkDTOs.add(pathToPathLinkDTO);
@@ -214,25 +227,30 @@ public class ProductBaselinesResource {
     @ApiOperation(value = "Get product-baseline's path-to-path links for given source and target", response = LightPathToPathLinkDTO.class, responseContainer = "List")
     @Path("{baselineId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("baselineId") int baselineId, @PathParam("sourcePath") String sourcePathAsString, @PathParam("targetPath") String targetPathAsString) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+    public Response getPathToPathLinkFromSourceAndTarget(@PathParam("workspaceId") String workspaceId,
+                                                         @PathParam("ciId") String configurationItemId,
+                                                         @PathParam("baselineId") int baselineId,
+                                                         @PathParam("sourcePath") String sourcePathAsString,
+                                                         @PathParam("targetPath") String targetPathAsString)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
         List<PathToPathLink> pathToPathLinks = productBaselineService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, baselineId, sourcePathAsString, targetPathAsString);
         List<PathToPathLinkDTO> dtos = new ArrayList<>();
-        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, configurationItemId);
 
-        for(PathToPathLink pathToPathLink : pathToPathLinks) {
+        for (PathToPathLink pathToPathLink : pathToPathLinks) {
             PathToPathLinkDTO pathToPathLinkDTO = mapper.map(pathToPathLink, PathToPathLinkDTO.class);
             List<LightPartLinkDTO> sourceLightPartLinkDTOs = new ArrayList<>();
 
             List<PartLink> sourcePath = productService.decodePath(ciKey, pathToPathLink.getSourcePath());
             List<PartLink> targetPath = productService.decodePath(ciKey, pathToPathLink.getTargetPath());
 
-            for(PartLink partLink : sourcePath){
+            for (PartLink partLink : sourcePath) {
                 LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
                 sourceLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
             List<LightPartLinkDTO> targetLightPartLinkDTOs = new ArrayList<>();
-            for(PartLink partLink : targetPath){
+            for (PartLink partLink : targetPath) {
                 LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
                 targetLightPartLinkDTOs.add(lightPartLinkDTO);
             }
@@ -247,7 +265,7 @@ public class ProductBaselinesResource {
 
     }
 
-    private  List<PathToPathLinkDTO> getPathToPathLinksForGivenBaseline(ProductBaseline productBaseline) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, AccessRightException {
+    private List<PathToPathLinkDTO> getPathToPathLinksForGivenBaseline(ProductBaseline productBaseline) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, AccessRightException {
 
         List<PathToPathLink> pathToPathLinkTypes = productBaseline.getPathToPathLinks();
         List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
@@ -255,16 +273,16 @@ public class ProductBaselinesResource {
         for (PathToPathLink pathToPathLink : pathToPathLinkTypes) {
             PathToPathLinkDTO pathToPathLinkDTO = mapper.map(pathToPathLink, PathToPathLinkDTO.class);
             List<PartLink> sourcePath = productService.decodePath(productBaseline.getConfigurationItem().getKey(), pathToPathLink.getSourcePath());
-            List<PartLink> targetPath = productService.decodePath(productBaseline.getConfigurationItem().getKey(),pathToPathLink.getTargetPath());
+            List<PartLink> targetPath = productService.decodePath(productBaseline.getConfigurationItem().getKey(), pathToPathLink.getTargetPath());
 
             List<LightPartLinkDTO> sourceLightPartLinkDTOs = new ArrayList<>();
-            for(PartLink partLink : sourcePath){
+            for (PartLink partLink : sourcePath) {
                 LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
                 sourceLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
             List<LightPartLinkDTO> targetLightPartLinkDTOs = new ArrayList<>();
-            for(PartLink partLink : targetPath){
+            for (PartLink partLink : targetPath) {
                 LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
                 targetLightPartLinkDTOs.add(lightPartLinkDTO);
             }
