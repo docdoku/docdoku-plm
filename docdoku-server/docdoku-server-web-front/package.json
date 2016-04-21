@@ -7,7 +7,7 @@
     "connect-livereload": "~0.3.2",
     "grunt": "~0.4.1",
     "grunt-bower-requirejs": "~0.8.4",
-    "grunt-connect-proxy": "~0.1.11",
+    "grunt-connect-proxy": "~0.2.0",
     "grunt-contrib-clean": "~0.5.0",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-connect": "~0.6.0",
@@ -29,7 +29,10 @@
     "grunt-usemin": "~0.1.13",
     "jshint-stylish": "~0.1.5",
     "load-grunt-tasks": "~0.3.0",
-    "time-grunt": "~0.2.10"
+    "time-grunt": "~0.2.10",
+    "underscore": "^1.7.0",
+    "xml2js": "^0.4.9",
+    "del": "^1.2.0"
   },
   "engines": {
     "node": ">=0.10.0"
@@ -38,6 +41,8 @@
     "prestart": "npm install && bower install",
     "start": "grunt deploy",
     "clean": "npm install && grunt clean:dist",
-    "deploy": "npm install && bower install && grunt deploy"
+    "deploy": "npm install && bower install && grunt deploy",
+    "pretest":"npm install && bower install",
+    "test":"cd tests && node run.js"
   }
 }

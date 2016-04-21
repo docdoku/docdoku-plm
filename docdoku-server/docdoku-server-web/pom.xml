@@ -327,7 +327,7 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <workingDirectory>yo</workingDirectory>
+                                    <workingDirectory>../docdoku-server-web-front/</workingDirectory>
                                     <executable>npm</executable>
                                     <arguments>
                                         <argument>run</argument>
@@ -342,7 +342,7 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <workingDirectory>yo</workingDirectory>
+                                    <workingDirectory>../docdoku-server-web-front/</workingDirectory>
                                     <executable>npm</executable>
                                     <arguments>
                                         <argument>run</argument>
@@ -374,7 +374,7 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <workingDirectory>yo</workingDirectory>
+                                    <workingDirectory>../docdoku-server-web-front/</workingDirectory>
                                     <executable>npm</executable>
                                     <arguments>
                                         <argument>run</argument>
@@ -389,7 +389,7 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <workingDirectory>yo</workingDirectory>
+                                    <workingDirectory>../docdoku-server-web-front/</workingDirectory>
                                     <executable>npm</executable>
                                     <arguments>
                                         <argument>run</argument>

@@ -18,7 +18,7 @@ module.exports = function (grunt) {
     var yeoman = {
         app: 'app',
         dist: 'dist',
-	    webapp: '../target/docdoku-server-web',
+	    webapp: '../docdoku-server-web/target/docdoku-server-web',
         tests: 'tests'
     };
 
