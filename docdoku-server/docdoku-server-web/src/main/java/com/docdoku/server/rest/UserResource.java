@@ -65,7 +65,6 @@ public class UserResource {
 
     @GET
     @ApiOperation(value = "Get users", response = UserDTO.class, responseContainer = "List")
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public UserDTO[] getUsersInWorkspace(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {

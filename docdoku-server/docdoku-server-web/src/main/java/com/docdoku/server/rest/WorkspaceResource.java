@@ -140,7 +140,6 @@ public class WorkspaceResource {
 
     @GET
     @ApiOperation(value = "Get workspace list for authenticated user", response = WorkspaceListDTO.class)
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public WorkspaceListDTO getWorkspacesForConnectedUser() throws EntityNotFoundException {
 
@@ -243,7 +242,6 @@ public class WorkspaceResource {
 
     @POST
     @ApiOperation(value = "Create workspace", response = WorkspaceDTO.class)
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public WorkspaceDTO createWorkspace(@QueryParam("userLogin") String userLogin,
                                         @ApiParam(value = "Workspace to create", required = true) WorkspaceDTO workspaceDTO) throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException, AccountNotFoundException, ESIndexNamingException, IOException, com.docdoku.core.exceptions.NotAllowedException {

@@ -71,7 +71,6 @@ public class PartTemplateResource {
 
     @GET
     @ApiOperation(value = "Get part master templates", response = PartMasterTemplateDTO.class, responseContainer = "List")
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public PartMasterTemplateDTO[] getPartMasterTemplates(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {

@@ -193,7 +193,6 @@ public class FolderResource {
      */
     @GET
     @ApiOperation(value = "Get root folders", response = FolderDTO.class, responseContainer = "List")
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO[] getRootFolders(@PathParam("workspaceId") String workspaceId,
                                       @QueryParam("configSpec") String configSpecType)
@@ -328,7 +327,6 @@ public class FolderResource {
 
     @POST
     @ApiOperation(value = "Create root folder", response = FolderDTO.class)
-    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO createRootFolder(@PathParam("workspaceId") String workspaceId,

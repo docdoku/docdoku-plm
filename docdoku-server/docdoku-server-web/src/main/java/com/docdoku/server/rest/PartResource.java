@@ -91,7 +91,6 @@ public class PartResource {
 
     @GET
     @ApiOperation(value = "Get part revision", response = PartRevisionDTO.class)
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPartDTO(@PathParam("workspaceId") String pWorkspaceId,
                                @PathParam("partNumber") String partNumber,
@@ -438,7 +437,6 @@ public class PartResource {
 
     @DELETE
     @ApiOperation(value = "Delete part", response = Response.class)
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deletePartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, ESServerException, AccessRightException {

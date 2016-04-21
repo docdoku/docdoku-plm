@@ -85,7 +85,6 @@ public class DocumentsResource {
     @GET
     @ApiOperation(value = "Get documents in workspace", response = DocumentRevisionDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/")
     public DocumentRevisionDTO[] getDocumentsInWorkspace(@PathParam("workspaceId") String workspaceId,
                                                          @QueryParam("start") int start,
                                                          @QueryParam("configSpec") String configSpecType)

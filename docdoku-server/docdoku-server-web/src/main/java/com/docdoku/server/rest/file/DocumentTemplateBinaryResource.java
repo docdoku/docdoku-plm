@@ -79,7 +79,6 @@ public class DocumentTemplateBinaryResource {
 
     @POST
     @ApiOperation(value = "Upload document template file", response = Response.class)
-    @Path("/")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response uploadDocumentTemplateFiles(@Context HttpServletRequest request,
                                                 @PathParam("workspaceId") final String workspaceId,

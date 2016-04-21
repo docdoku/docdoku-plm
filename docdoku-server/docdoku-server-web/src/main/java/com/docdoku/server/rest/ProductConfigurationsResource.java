@@ -79,7 +79,6 @@ public class ProductConfigurationsResource {
 
     @GET
     @ApiOperation(value = "Get all product configurations", response = ProductConfigurationDTO.class, responseContainer = "List")
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllConfiguration(@PathParam("workspaceId") String workspaceId,
                                         @PathParam("ciId") String ciId)
@@ -143,7 +142,6 @@ public class ProductConfigurationsResource {
 
     @POST
     @ApiOperation(value = "Create product configuration", response = ProductConfigurationDTO.class)
-    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ProductConfigurationDTO createConfiguration(@PathParam("workspaceId") String workspaceId,

@@ -101,7 +101,6 @@ public class PartsResource {
 
     @GET
     @ApiOperation(value = "Get part revisions", response = Response.class)
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPartRevisions(@PathParam("workspaceId") String workspaceId,
                                      @QueryParam("start") int start,
@@ -327,7 +326,6 @@ public class PartsResource {
 
     @POST
     @ApiOperation(value = "Create new part", response = PartRevisionDTO.class)
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public PartRevisionDTO createNewPart(@PathParam("workspaceId") String workspaceId,
                                          @ApiParam(required = true, value = "Part to create") PartCreationDTO partCreationDTO)

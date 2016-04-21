@@ -61,7 +61,6 @@ public class LayerResource {
 
     @GET
     @ApiOperation(value = "Get layers", response = LayerDTO.class, responseContainer = "List")
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public LayerDTO[] getLayersInProduct(@PathParam("workspaceId") String workspaceId,
                                          @PathParam("ciId") String ciId)
@@ -79,7 +78,6 @@ public class LayerResource {
 
     @POST
     @ApiOperation(value = "Create layers", response = LayerDTO.class)
-    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public LayerDTO createLayer(@PathParam("workspaceId") String workspaceId,

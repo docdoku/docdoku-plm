@@ -72,7 +72,6 @@ public class DocumentTemplateResource {
 
     @GET
     @ApiOperation(value = "Get document templates", response = DocumentMasterTemplateDTO.class, responseContainer = "List")
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentMasterTemplateDTO[] getDocumentMasterTemplates(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
@@ -113,7 +112,6 @@ public class DocumentTemplateResource {
 
     @POST
     @ApiOperation(value = "Create document template", response = DocumentMasterTemplateDTO.class)
-    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentMasterTemplateDTO createDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId,

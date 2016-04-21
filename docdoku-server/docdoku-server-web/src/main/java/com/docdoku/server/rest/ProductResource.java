@@ -101,7 +101,6 @@ public class ProductResource {
 
     @GET
     @ApiOperation(value = "Get configuration items", response = ConfigurationItemDTO.class, responseContainer = "List")
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public ConfigurationItemDTO[] getConfigurationItems(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, NotAllowedException {
@@ -124,7 +123,6 @@ public class ProductResource {
 
     @POST
     @ApiOperation(value = "Create configuration item", response = ConfigurationItemDTO.class)
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response createConfigurationItem(@ApiParam(required = true, value = "Product to create") ConfigurationItemDTO configurationItemDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException {

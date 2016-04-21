@@ -73,7 +73,6 @@ public class LOVResource {
     @ApiOperation(value = "Get a list of  ListOfValues for given parameters",
             response = ListOfValuesDTO.class,
             responseContainer = "List")
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getLOVs(@PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
@@ -93,7 +92,6 @@ public class LOVResource {
     @ApiOperation(value = "Create ListOfValues",
             response = ListOfValuesDTO.class,
             responseContainer = "List")
-    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createLOV(@PathParam("workspaceId") String workspaceId,

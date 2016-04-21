@@ -71,7 +71,6 @@ public class RoleResource {
 
     @GET
     @ApiOperation(value = "Get roles", response = RoleDTO.class, responseContainer = "List")
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public RoleDTO[] getRolesInWorkspace(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
@@ -108,7 +107,6 @@ public class RoleResource {
 
     @POST
     @ApiOperation(value = "Create role", response = RoleDTO.class)
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createRole(@ApiParam(required = true, value = "Role to create") RoleDTO roleDTO)

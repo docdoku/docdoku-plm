@@ -72,7 +72,6 @@ public class WorkflowResource {
 
     @GET
     @ApiOperation(value = "Get workflow models", response = WorkflowModelDTO.class, responseContainer = "List")
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public WorkflowModelDTO[] getWorkflowsInWorkspace(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
@@ -155,7 +154,6 @@ public class WorkflowResource {
 
     @POST
     @ApiOperation(value = "Create workflow model", response = WorkflowModelDTO.class)
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public WorkflowModelDTO createWorkflowModel(@PathParam("workspaceId") String workspaceId,
                                                 @ApiParam(required = true, value = "Workflow model to create rules to set") WorkflowModelDTO workflowModelDTOToPersist)

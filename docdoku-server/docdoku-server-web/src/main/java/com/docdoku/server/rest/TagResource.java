@@ -87,7 +87,6 @@ public class TagResource {
 
     @GET
     @ApiOperation(value = "Get tags in workspace", response = TagDTO.class, responseContainer = "List")
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTagsInWorkspace(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
@@ -103,7 +102,6 @@ public class TagResource {
 
     @POST
     @ApiOperation(value = "Create tag in workspace", response = TagDTO.class)
-    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public TagDTO createTag(@PathParam("workspaceId") String workspaceId,

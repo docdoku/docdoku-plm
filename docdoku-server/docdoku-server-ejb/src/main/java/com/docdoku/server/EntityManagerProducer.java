@@ -20,8 +20,8 @@
 
 package com.docdoku.server;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
@@ -38,11 +38,18 @@ public class EntityManagerProducer {
     @PersistenceUnit
     private EntityManagerFactory entityManagerFactory;
 
+    private EntityManager em;
+
+    @PostConstruct
+    protected void postConstruct() {
+        em = entityManagerFactory.createEntityManager();
+    }
+
     @Produces
     @Default
-    @RequestScoped
+    @ApplicationScoped
     public EntityManager create() {
-        return this.entityManagerFactory.createEntityManager();
+        return em;
     }
 
     public void dispose(@Disposes @Default EntityManager entityManager){
