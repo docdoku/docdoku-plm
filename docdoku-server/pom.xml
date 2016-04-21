@@ -27,6 +27,7 @@
         <module>docdoku-server-web</module>
         <module>docdoku-server-web-api-java</module>
         <module>docdoku-server-web-api-js</module>
+        <module>docdoku-server-web-front</module>
         <module>docdoku-server-ear</module>
     </modules>
 </project>
