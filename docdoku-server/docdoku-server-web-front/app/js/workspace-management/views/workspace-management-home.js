@@ -18,7 +18,8 @@ define([
         render: function () {
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n,
-                workspaceId:App.config.workspaceId
+                workspaceId:App.config.workspaceId,
+                workspaces:App.config.workspaces
             }));
             return this;
         },

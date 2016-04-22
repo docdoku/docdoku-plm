@@ -1,34 +1,34 @@
 #document-management-content {
 
-  td {
-    a.dochandle {
-      font-size: 14px;
-      color: #aaa;
-      text-shadow: 0 1px 0 white;
+    td {
+        a.dochandle {
+            font-size: 14px;
+            color: #aaa;
+            text-shadow: 0 1px 0 white;
 
-      &:hover {
-        color: #555;
-        cursor: move;
-        text-decoration: none;
-      }
+            &:hover {
+                color: #555;
+                cursor: move;
+                text-decoration: none;
+            }
+        }
+
+        &.doc-ref > a {
+            color: #62697B;
+            &:hover {
+                text-decoration: none;
+                color: #333;
+            }
+        }
     }
 
-    &.doc-ref > a {
-      color: #62697B;
-      &:hover {
-        text-decoration: none;
-        color: #333;
-      }
-    }
-  }
+    tr.moving {
+        a.dochandle {
+            color: #555;
+        }
 
-  tr.moving {
-    a.dochandle {
-      color: #555;
+        td.doc-ref > a {
+            color: #333;
+        }
     }
-
-    td.doc-ref > a {
-      color: #333;
-    }
-  }
 }

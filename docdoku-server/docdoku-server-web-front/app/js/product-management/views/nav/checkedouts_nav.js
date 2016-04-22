@@ -30,8 +30,9 @@ define([
             }).success(function(data){
                 var numberOfItem = data.count;
                 var badge = that.$('.badge.nav-checkedOut-number-item');
+                badge.addClass('badge-info');
                 badge.html(numberOfItem);
-                if(numberOfItem === 0){
+                if(numberOfItem > 0){
                     badge.addClass('badge-success');
                     badge.removeClass('badge-info');
                 } else{

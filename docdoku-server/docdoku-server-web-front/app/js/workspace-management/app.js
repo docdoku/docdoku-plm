@@ -21,15 +21,18 @@ define([
         },
 
         render: function () {
-
+            var isEditionRegex = new RegExp('#/workspace/'+App.config.workspaceId+'/edit','g');
+            var isUsersRegex = new RegExp('#/workspace/'+App.config.workspaceId+'/users','g');
+            var isDashboardRegex = new RegExp('#/workspace/'+App.config.workspaceId+'/dashboard','g');
             this.$el.html(Mustache.render(template, {
-                workspaces:App.config.workspaces.administratedWorkspaces,
+                administratedWorkspaces:App.config.workspaces.administratedWorkspaces,
+                nonAdministratedWorkspaces:App.config.workspaces.nonAdministratedWorkspaces,
                 workspaceId:App.config.workspaceId,
                 i18n: App.config.i18n,
                 isCreation: window.location.hash === '#/create',
-                isEdition: window.location.hash.match(/#\/workspace\/([^/]+)\/edit/) != null,
-                isUsers: window.location.hash.match(/#\/workspace\/([^/]+)\/users/) != null,
-                isDashboard: window.location.hash.match(/#\/workspace\/([^/]+)\/dashboard/) != null,
+                isEdition: window.location.hash.match(isEditionRegex) != null,
+                isUsers: window.location.hash.match(isUsersRegex) != null,
+                isDashboard: window.location.hash.match(isDashboardRegex) != null,
             })).show();
             return this;
         },

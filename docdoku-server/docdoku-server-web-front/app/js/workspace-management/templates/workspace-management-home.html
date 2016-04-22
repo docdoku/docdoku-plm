@@ -4,4 +4,12 @@
     <h3>{{i18n.WORKSPACES_ADMINISTRATION}}</h3>
     <p>{{i18n.WORKSPACES_ADMINISTRATION_TEXT}}</p>
 
+    <div class="home-workspace-list-container">
+        {{#workspaces.allWorkspaces}}
+            <div class="well-large well home-workspace">
+                <h4>{{id}}</h4>
+            </div>
+        {{/workspaces.allWorkspaces}}
+    </div>
+
 </div>

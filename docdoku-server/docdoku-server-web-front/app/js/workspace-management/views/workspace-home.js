@@ -2,8 +2,9 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/workspace-home.html'
-], function (Backbone, Mustache, template) {
+    'text!templates/workspace-home.html',
+    'common-objects/models/workspace'
+], function (Backbone, Mustache, template, Workspace) {
     'use strict';
 
     var WorkspaceHomeView = Backbone.View.extend({
@@ -25,7 +26,7 @@ define([
 
         delete:function(){
             if(confirm(App.config.i18n.DELETE)){
-                Workspaces.deleteWorkspace(App.config.workspaceId)
+                Workspace.deleteWorkspace(App.config.workspaceId)
                     .then(function(){
                         console.log('Request sent, redirect')
                         window.location.hash = '#/';

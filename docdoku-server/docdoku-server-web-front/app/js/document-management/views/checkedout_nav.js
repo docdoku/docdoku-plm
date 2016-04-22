@@ -33,13 +33,13 @@ define([
                 var numberOfItem = data.count;
                 var badge = that.$('.badge.nav-checkedOut-number-item');
                 badge.html(numberOfItem);
-                if(numberOfItem === 0){
+               /* if(numberOfItem === 0){
                     badge.addClass('badge-success');
                     badge.removeClass('badge-info');
                 } else{
                     badge.addClass('badge-info');
                     badge.removeClass('badge-success');
-                }
+                }*/
             });
         },
 

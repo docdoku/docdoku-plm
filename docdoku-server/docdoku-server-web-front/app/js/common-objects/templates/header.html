@@ -74,7 +74,7 @@
                             {{i18n.OTHERS}}
                         </li>
 
-                        {{#otherWorkspaces}}
+                        {{#nonAdministratedWorkspaces}}
                         <li class="BreadcrumbSubMenuItem dropdown-submenu visible-desktop">
                             <a>
                                 {{#isCurrent}}<i class="fa fa-check"></i>{{/isCurrent}}
@@ -103,7 +103,7 @@
                                 <li><a href="{{contextPath}}/change-management/#{{id}}/workflows" title="{{i18n.CHANGES_MANAGEMENT}}"><i class="fa fa-refresh"></i></a></li>
                             </ul>
                         </li>
-                        {{/otherWorkspaces}}
+                        {{/nonAdministratedWorkspaces}}
                     </ul>
                 </li>
                 <!-- current workspace -->

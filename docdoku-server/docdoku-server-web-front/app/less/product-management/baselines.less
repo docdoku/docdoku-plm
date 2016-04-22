@@ -1,43 +1,43 @@
-ul.baselines-list{
+ul.baselines-list {
 
-  margin: 0;
+    margin: 0;
 
-  li.baseline-item{
+    li.baseline-item {
 
-    margin: 4px;
-    list-style: none;
+        margin: 4px;
+        list-style: none;
 
-    input[type=checkbox]{
-      margin: 0 3px 3px 0;
+        input[type=checkbox] {
+            margin: 0 3px 3px 0;
+        }
+
+        a {
+            &.stroke {
+                text-decoration: line-through;
+                color: red;
+            }
+        }
+
     }
-
-    a{
-      &.stroke{
-        text-decoration: line-through;
-        color: red;
-      }
-    }
-
-  }
 
 }
 
-ul.baselined-parts{
+ul.baselined-parts {
 
-  margin: 2px 4px;
+    margin: 2px 4px;
 
-  li.baselined-part-item{
-    list-style: none;
+    li.baselined-part-item {
+        list-style: none;
 
-      label{
-          display: inline-block;
-          line-height: 13px;
-          input[type=radio]{
-              margin: 0 4px;
-          }
-      }
+        label {
+            display: inline-block;
+            line-height: 13px;
+            input[type=radio] {
+                margin: 0 4px;
+            }
+        }
 
-  }
+    }
 }
 
 .baselines-filter-bar {
@@ -45,10 +45,10 @@ ul.baselined-parts{
     display: inline-block;
     padding: 8px 0 0px 0;
     margin: 0 8px;
-  label {
-   display: inline-block;
-  }
-    .typeahead{
+    label {
+        display: inline-block;
+    }
+    .typeahead {
         width: 218px;
     }
 }
@@ -56,11 +56,11 @@ ul.baselined-parts{
 .choices-list {
     .choices {
 
-        .not-retained{
+        .not-retained {
             opacity: 0.6;
         }
 
-        .fa-long-arrow-right{
+        .fa-long-arrow-right {
             color: #888888;
             font-size: 12px;
         }
@@ -68,14 +68,14 @@ ul.baselined-parts{
         .baseline-choice-item {
             list-style: none;
 
-            label{
-                input[type=checkbox]{
-                    float:left;
+            label {
+                input[type=checkbox] {
+                    float: left;
                     margin-left: -20px;
                 }
             }
 
-            .baseline-choice-details{
+            .baseline-choice-details {
                 font-size: 12px;
                 font-style: italic;
                 display: block;
@@ -87,8 +87,8 @@ ul.baselined-parts{
 }
 
 .optional {
-    .part-link{
-        color:#888888;
+    .part-link {
+        color: #888888;
     }
 }
 

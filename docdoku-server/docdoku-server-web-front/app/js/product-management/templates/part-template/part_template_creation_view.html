@@ -47,7 +47,7 @@
                         <div class="controls">
                             <input type="text" class="input-xlarge mask" id="part-template-mask"
                                    value="{{model.mask}}"/>
-                            <a id="mask-help" class="btn"><i class="fa fa-lightbulb-o"></i></a>
+                            <a id="mask-help" class="btn btn-default"><i class="fa fa-lightbulb-o"></i></a>
                         </div>
                     </div>
                     <div class="control-group">
@@ -85,7 +85,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
         <button class="btn btn-primary" form="part_template_creation_form">
             {{#model.id}}{{i18n.SAVE}}{{/model.id}}
             {{^model.id}}{{i18n.CREATE}}{{/model.id}}

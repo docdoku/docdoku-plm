@@ -30,7 +30,6 @@ define([
     };
 
     function onError(res) {
-        debugger
         var status = res.status;
         if(typeof errorStatusHandlers[status] === 'function'){
             errorStatusHandlers[status]();
@@ -68,7 +67,11 @@ define([
         return Workspace.getWorkspaces().then(function (workspaces) {
             App.config.workspaces = workspaces;
             App.config.workspaceAdmin = _.findWhere(App.config.workspaces.administratedWorkspaces,{id:App.config.workspaceId}) !== undefined;
+            App.config.workspaces.nonAdministratedWorkspaces = _.reject(App.config.workspaces.allWorkspaces,function(workspace){
+                return _.contains(_.pluck(App.config.workspaces.administratedWorkspaces,'id'),workspace.id);
+            });
             return workspaces;
+
         },onError);
     };
 

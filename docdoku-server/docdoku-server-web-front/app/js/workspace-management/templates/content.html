@@ -4,7 +4,7 @@
             {{i18n.WORKSPACES_ADMINISTRATION}}
         </li>
         {{#workspaceId}}
-        <li class="nav-header">
+        <li class="header nav-list-entry">
             <a href="#/">
                 {{i18n.BACK}}
             </a>
@@ -27,18 +27,22 @@
         {{/workspaceId}}
         {{^workspaceId}}
             <li class="nav-header"> {{i18n.WORKSPACES}} </li>
-            {{^workspaces}}
-            <li  class="header nav-list-entry">
-                {{i18n.NO_ADMINISTRATED_WORKSPACES}}
-            </li>
-            {{/workspaces}}
-            {{#workspaces}}
+
+            {{#administratedWorkspaces}}
             <li  class="header nav-list-entry">
                 <a href="#/workspace/{{id}}">
                     {{id}}
                 </a>
             </li>
-            {{/workspaces}}
+            {{/administratedWorkspaces}}
+
+            {{#nonAdministratedWorkspaces}}
+            <li  class="header nav-list-entry">
+                <a href="#/workspace/{{id}}">
+                    {{id}}
+                </a>
+            </li>
+            {{/nonAdministratedWorkspaces}}
             <li class="sep"></li>
             <li  class="header nav-list-entry {{#isCreation}}active{{/isCreation}}">
                 <a href="#/create">

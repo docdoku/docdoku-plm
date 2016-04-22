@@ -12,29 +12,29 @@
         float: right;
     }
 
-    .create-part-usage-link-menu{
+    .create-part-usage-link-menu {
         display: block;
     }
-    .create-part-substitute-link-menu{
+    .create-part-substitute-link-menu {
         display: none;
     }
-    &.component-selected{
-        .create-part-usage-link-menu{
+    &.component-selected {
+        .create-part-usage-link-menu {
             display: none;
         }
-        .create-part-substitute-link-menu{
+        .create-part-substitute-link-menu {
             display: block;
         }
     }
 
-    .components{
+    .components {
         margin-top: 20px;
     }
 
     .component {
 
         border: 2px solid transparent;
-        border-radius:2px;
+        border-radius: 2px;
         position: relative;
         float: left;
         padding: 9px;
@@ -61,8 +61,8 @@
             box-shadow: none;
         }
 
-        a.part-substitute-links-count{
-            display:table;
+        a.part-substitute-links-count {
+            display: table;
             margin: 8px 0 0 22px;
         }
 
@@ -111,16 +111,16 @@
 
         }
 
-        .selectize-control{
+        .selectize-control {
             display: inline-block;
             margin-bottom: 0;
             vertical-align: middle;
             width: 61px;
             margin-top: 14px;
-            >div{
+            > div {
                 padding: 4px;
             }
-           .selectize-input:after{
+            .selectize-input:after {
                 right: 6px;
             }
         }
@@ -133,7 +133,7 @@
             }
         }
 
-        >.toggle-cad-instances {
+        > .toggle-cad-instances {
             font-size: 18px;
             cursor: pointer;
             opacity: 0.5;
@@ -155,26 +155,26 @@
             }
         }
 
-        &.cad-instances-opened{
-            >.cad-instances{
+        &.cad-instances-opened {
+            > .cad-instances {
                 display: inline-table;
             }
-            >.toggle-cad-instances{
+            > .toggle-cad-instances {
                 transform: rotate(180deg);
             }
         }
 
-        >.part-substitute-links{
+        > .part-substitute-links {
             display: none;
         }
 
-        &.substitutes-opened{
-            >.part-substitute-links{
+        &.substitutes-opened {
+            > .part-substitute-links {
                 display: block;
             }
         }
 
-        >.cad-instances {
+        > .cad-instances {
 
             margin: 10px 0 0 21px;
             clear: both;
