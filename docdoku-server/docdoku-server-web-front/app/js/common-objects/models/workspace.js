@@ -19,6 +19,7 @@ define(['backbone'], function (Backbone) {
             contentType: 'application/json; charset=utf-8'
         });
     };
+
     Workspace.updateWorkspace = function (workspace) {
         return $.ajax({
             type: 'PUT',
@@ -32,6 +33,37 @@ define(['backbone'], function (Backbone) {
         return $.ajax({
             type: 'DELETE',
             url: App.config.contextPath + '/api/workspaces/'+workspaceId
+        });
+    };
+
+    Workspace.removeUserFromWorkspace = function (workspaceId, user) {
+        return $.ajax({
+            type: 'PUT',
+            url: App.config.contextPath + '/api/workspaces/'+workspaceId+'/remove-from-workspace',
+            data: JSON.stringify(user),
+            contentType: 'application/json; charset=utf-8'
+        });
+    };
+
+    Workspace.addUser = function (workspaceId, user) {
+        return $.ajax({
+            type: 'PUT',
+            url: App.config.contextPath + '/api/workspaces/'+workspaceId+'/add-user',
+            data: JSON.stringify(user),
+            contentType: 'application/json; charset=utf-8'
+        });
+    };
+
+    Workspace.getUsersMemberships = function (workspaceId) {
+        return $.getJSON(App.config.contextPath + '/api/workspaces/'+workspaceId+'/memberships/users');
+    };
+
+    Workspace.setUsersMembership = function (membership) {
+        return $.ajax({
+            type: 'PUT',
+            url: App.config.contextPath + '/api/workspaces/'+workspace.id+'/user-access',
+            data: JSON.stringify(membership),
+            contentType: 'application/json; charset=utf-8'
         });
     };
 

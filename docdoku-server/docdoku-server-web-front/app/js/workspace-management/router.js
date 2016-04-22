@@ -36,6 +36,7 @@ function (Backbone, singletonDecorator, ContextResolver) {
         workspaceUsers:function(workspaceId){
             App.config.workspaceId = workspaceId;
             this.refresh();
+            App.appView.workspaceUsers();
         },
 
         workspaceEdit:function(workspaceId){
@@ -47,6 +48,7 @@ function (Backbone, singletonDecorator, ContextResolver) {
         workspaceDashboard:function(workspaceId){
             App.config.workspaceId = workspaceId;
             this.refresh();
+            App.appView.workspaceDashboard();
         }
 
     });

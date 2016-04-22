@@ -58,8 +58,6 @@ define([
                         window.location.hash = '#/';
                     });
             }
-
-
         }
     });
 

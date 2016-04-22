@@ -27,10 +27,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserMembership;
-import com.docdoku.core.services.IAccountManagerLocal;
-import com.docdoku.core.services.IContextManagerLocal;
-import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.core.services.IWorkspaceManagerLocal;
+import com.docdoku.core.services.*;
 import com.docdoku.server.rest.dto.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -109,6 +106,12 @@ public class WorkspaceResource {
 
     @Inject
     private WorkspaceMembershipResource workspaceMemberships;
+
+    @Inject
+    private IDocumentManagerLocal documentService;
+
+    @Inject
+    private IProductManagerLocal productService;
 
     @Inject
     private IUserManagerLocal userManager;
@@ -347,6 +350,22 @@ public class WorkspaceResource {
         userManager.passivateUserGroup(workspaceId, userGroupDTO.getId());
         return Response.ok().build();
     }
+
+    @GET
+    @ApiOperation(value = "Get stats overview for workspace", response = StatsOverviewDTO.class)
+    @Path("/{workspaceId}/stats-overview")
+    @Produces(MediaType.APPLICATION_JSON)
+    public StatsOverviewDTO getStatsOverview(@PathParam("workspaceId") String workspaceId)
+            throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
+
+        StatsOverviewDTO statsOverviewDTO = new StatsOverviewDTO();
+        statsOverviewDTO.setDocuments(documentService.getTotalNumberOfDocuments(workspaceId));
+        statsOverviewDTO.setParts(productService.getTotalNumberOfParts(workspaceId));
+        statsOverviewDTO.setUsers(userManager.getUsers(workspaceId).length);
+        return new StatsOverviewDTO();
+    }
+
+
 
     // Sub resources
 
