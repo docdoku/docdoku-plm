@@ -25,31 +25,28 @@
             </a>
         </li>
         {{/workspaceId}}
+
         {{^workspaceId}}
+
+            <li  class="header nav-list-entry {{#isCreation}}active{{/isCreation}}">
+                <a href="#/create">
+                    <i class="fa fa-plus"></i>
+                    {{i18n.CREATE_WORKSPACE}}
+                </a>
+            </li>
+
             <li class="nav-header"> {{i18n.WORKSPACES}} </li>
 
             {{#administratedWorkspaces}}
             <li  class="header nav-list-entry">
-                <a href="#/workspace/{{id}}">
+                <a href="#/workspace/{{id}}/edit">
                     {{id}}
                 </a>
             </li>
             {{/administratedWorkspaces}}
 
-            {{#nonAdministratedWorkspaces}}
-            <li  class="header nav-list-entry">
-                <a href="#/workspace/{{id}}">
-                    {{id}}
-                </a>
-            </li>
-            {{/nonAdministratedWorkspaces}}
             <li class="sep"></li>
-            <li  class="header nav-list-entry {{#isCreation}}active{{/isCreation}}">
-                <a href="#/create">
-                    <span class="icon plm-icon-nav-new-workspace"></span>
-                    {{i18n.CREATE_WORKSPACE}}
-                </a>
-            </li>
+
         {{/workspaceId}}
     </ul>
 </div>

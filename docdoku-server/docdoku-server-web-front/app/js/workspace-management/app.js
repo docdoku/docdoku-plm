@@ -3,10 +3,10 @@ define([
     'backbone',
     'mustache',
     'text!templates/content.html',
+    'views/workspace-edit',
     'views/workspace-creation',
-    'views/workspace-home',
     'views/workspace-management-home'
-], function (Backbone, Mustache, template, WorkspaceCreationView, WorkspaceHomeView, WorkspaceManagementHomeView) {
+], function (Backbone, Mustache, template, WorkspaceEditView, WorkspaceCreationView, WorkspaceManagementHomeView) {
 	'use strict';
     var AppView = Backbone.View.extend({
 
@@ -57,8 +57,8 @@ define([
             this.$('#workspace-management-content').html(view.$el);
         },
 
-        workspaceHome : function(){
-            var view = new WorkspaceHomeView();
+        workspaceEdit : function(){
+            var view = new WorkspaceEditView();
             view.render();
             this.$('#workspace-management-content').html(view.$el);
         }

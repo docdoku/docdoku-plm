@@ -11,7 +11,6 @@ function (Backbone, singletonDecorator, ContextResolver) {
         routes: {
             '':   'workspaceManagementHome',
             'create':   'workspaceCreation',
-            'workspace/:workspaceId':   'workspaceHome',
             'workspace/:workspaceId/users':   'workspaceUsers',
             'workspace/:workspaceId/edit':   'workspaceEdit',
             'workspace/:workspaceId/dashboard':   'workspaceDashboard',
@@ -34,13 +33,6 @@ function (Backbone, singletonDecorator, ContextResolver) {
             App.appView.workspaceCreation();
         },
 
-        workspaceHome:function(workspaceId){
-            App.config.workspaceId = workspaceId;
-            this.refresh();
-            App.appView.workspaceHome();
-
-        },
-
         workspaceUsers:function(workspaceId){
             App.config.workspaceId = workspaceId;
             this.refresh();
@@ -49,6 +41,7 @@ function (Backbone, singletonDecorator, ContextResolver) {
         workspaceEdit:function(workspaceId){
             App.config.workspaceId = workspaceId;
             this.refresh();
+            App.appView.workspaceEdit();
         },
 
         workspaceDashboard:function(workspaceId){

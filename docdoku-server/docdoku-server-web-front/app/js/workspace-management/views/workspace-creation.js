@@ -33,7 +33,9 @@ define([
                 description:description,
                 folderLocked:folderLocked
             }).then(function(workspace){
-                window.location.hash = '#/workspace/'+workspace.id;
+                App.config.workspaces.administratedWorkspaces.push(workspace);
+                App.config.workspaces.allWorkspaces.push(workspace);
+                window.location.hash = '#/';
             },function(){
                 console.log('Error')
                 console.log(arguments)

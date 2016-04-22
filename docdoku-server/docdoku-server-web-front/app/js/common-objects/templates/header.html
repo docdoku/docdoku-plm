@@ -1,5 +1,5 @@
 <!-- Collapse Button For Responsive View -->
-<a id="collapseButton" class="Header-collapseBtn btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+<a id="collapseButton" class="Header-collapseBtn btn btn-navbar btn-primary" data-toggle="collapse" data-target=".nav-collapse">
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
@@ -47,7 +47,7 @@
                                        title="{{i18n.CHANGES_MANAGEMENT}}">{{i18n.CHANGES}}</a>
                                 </li>
                                 <li>
-                                    <a href="{{contextPath}}/workspace-management/#/workspace/{{id}}"
+                                    <a href="{{contextPath}}/workspace-management/#/workspace/{{id}}/edit"
                                        title="{{i18n.WORKSPACE_MANAGEMENT}}">{{i18n.WORKSPACE_MANAGEMENT}}</a>
                                 </li>
                             </ul>
@@ -55,14 +55,13 @@
                         <li class="BreadcrumbSubMenuItem hidden-desktop">
                             <div class="BreadcrumbSubMenuItem-title">
                                 {{#isCurrent}}<i class="fa fa-check"></i>{{/isCurrent}}
-                                <span>{{id}}</span>
-                                <i class="fa fa-graduation-cap"></i>
+                                <span><i class="fa fa-graduation-cap"></i> {{id}}</span>
                             </div>
                             <ul class="BreadcrumbSubMenuList">
                                 <li><a href="{{contextPath}}/document-management/#{{id}}/folders" title="{{i18n.DOCUMENTS_MANAGEMENT}}"><i class="fa fa-folder"></i></a></li>
                                 <li><a href="{{contextPath}}/product-management/#{{id}}/products" title="{{i18n.PRODUCTS_MANAGEMENT}}"><i class="fa fa-briefcase"></i></a></li>
                                 <li><a href="{{contextPath}}/change-management/#{{id}}/workflows" title="{{i18n.CHANGES_MANAGEMENT}}"><i class="fa fa-refresh"></i></a></li>
-                                <li><a href="{{contextPath}}/workspace-management/#/workspace/{{id}}" title="{{i18n.WORKSPACE_MANAGEMENT}}"><i class="fa fa-refresh"></i></a></li>
+                                <li><a href="{{contextPath}}/workspace-management/#/workspace/{{id}}" title="{{i18n.WORKSPACE_MANAGEMENT}}"><i class="fa fa-cog"></i></a></li>
                             </ul>
                         </li>
                         {{/administratedWorkspaces}}
@@ -148,7 +147,7 @@
                             {{/isChangeManagement}}
                             {{i18n.CHANGES}}
                         </a></li>
-                        <li><a href="{{contextPath}}/workspace-management/#/workspace/{{currentWorkspace}}">
+                        <li><a href="{{contextPath}}/workspace-management/#/workspace/{{currentWorkspace}}/edit">
                             {{#isWorkspaceManagement}}
                             <i class="fa fa-check"></i>
                             {{/isWorkspaceManagement}}
