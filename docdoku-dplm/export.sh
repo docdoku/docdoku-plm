@@ -2,7 +2,7 @@
 
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TMP_DIR=${BASE_DIR}/tmp
-OUT_DIR=${BASE_DIR}/../docdoku-server-web/target/docdoku-server-web/download/dplm
+OUT_DIR=${BASE_DIR}/../docdoku-server/docdoku-server-web-front/app/download/dplm
 mkdir -p ${OUT_DIR}
 
 echo "Copying zips for download in DocdokuPLM"
