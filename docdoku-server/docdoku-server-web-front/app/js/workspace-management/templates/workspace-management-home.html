@@ -1,15 +1,56 @@
-<div class="actions well"></div>
-
 <div class="margin">
+
     <h3>{{i18n.WORKSPACES_ADMINISTRATION}}</h3>
-    <p>{{i18n.WORKSPACES_ADMINISTRATION_TEXT}}</p>
+    <p><i class="fa fa-graduation-cap"></i> {{i18n.WORKSPACES_ADMINISTRATION_TEXT}}</p>
 
     <div class="home-workspace-list-container">
-        {{#workspaces.allWorkspaces}}
+
+        {{#workspaces.administratedWorkspaces}}
             <div class="well-large well home-workspace">
-                <h4>{{id}}</h4>
+                <h4>
+                    <i class="fa fa-graduation-cap"></i> {{id}}
+                    <small>{{description}}</small>
+                </h4>
+                <ul class="unstyled">
+                    <li>22 {{i18n.USERS}}</span></li>
+                    <li>12 {{i18n.PARTS}}</li>
+                    <li>32 {{i18n.DOCUMENTS}}</li>
+                    <li>2 {{i18n.PRODUCTS}}</li>
+                    <li>20 {{i18n.PRODUCT_INSTANCES}}</li>
+                </ul>
+                <div class="workspace-actions pull-left">
+                    <a href="#/workspace/{{id}}/edit"><i class="fa fa-pencil"></i></a>
+                    <a href="#/workspace/{{id}}/users"><i class="fa fa-users"></i></a>
+                    <a href="#/workspace/{{id}}/dashboard"><i class="fa fa-dashboard"></i></a>
+                    <a href="#/workspace/{{id}}/delete"><i class="fa fa-trash"></i></a>
+                </div>
+                <div class="workspace-actions pull-right">
+                    <a href="../document-management/#{{id}}"><i class="fa fa-folder-open"></i></a>
+                    <a href="../product-management/#{{id}}"><i class="fa fa-briefcase"></i></a>
+                    <a href="../change-management/#{{id}}"><i class="fa fa-history"></i></a>
+                </div>
             </div>
-        {{/workspaces.allWorkspaces}}
+        {{/workspaces.administratedWorkspaces}}
+        {{#workspaces.nonAdministratedWorkspaces}}
+        <div class="well-large well home-workspace">
+            <h4><i class="fa fa-user"></i> {{id}}
+                <small>{{description}}</small>
+            </h4>
+            <ul class="unstyled">
+                <li>22 {{i18n.USERS}}</span></li>
+                <li>12 {{i18n.PARTS}}</li>
+                <li>32 {{i18n.DOCUMENTS}}</li>
+                <li>2 {{i18n.PRODUCTS}}</li>
+                <li>20 {{i18n.PRODUCT_INSTANCES}}</li>
+            </ul>
+            <div class="workspace-actions pull-right">
+                <a href="../document-management/#{{id}}"><i class="fa fa-folder-open"></i></a>
+                <a href="../product-management/#{{id}}"><i class="fa fa-briefcase"></i></a>
+                <a href="../change-management/#{{id}}"><i class="fa fa-history"></i></a>
+            </div>
+        </div>
+        {{/workspaces.nonAdministratedWorkspaces}}
     </div>
+
 
 </div>

@@ -7,5 +7,5 @@ define({
     DASHBOARD:'Dashboard',
     FOLDER_LOCKED:'Geler la structure des répertoires (seul l\'administrateur peut modifier la structure dossier)',
     NO_ADMINISTRATED_WORKSPACES:'Aucun espace de travail administré',
-    WORKSPACES_ADMINISTRATION_TEXT:'TODO'
+    WORKSPACES_ADMINISTRATION_TEXT:'Seul le créateur de l\'espace de travail dispose des droits administrateur. Ces droits l\'autorisent à éditer les propriétés de l\'espace de travail et à y ajouter ou supprimer des utilisateurs.'
 });
