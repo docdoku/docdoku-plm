@@ -27,7 +27,6 @@ import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartRevision;
-import org.apache.commons.codec.binary.Base64;
 
 import javax.security.auth.login.LoginException;
 import java.io.*;
@@ -38,6 +37,7 @@ import java.net.URLEncoder;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Locale;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
@@ -87,7 +87,7 @@ public class FileHelper {
             conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestProperty("Accept-Encoding", "gzip");
             conn.setRequestMethod("GET");
-            byte[] encoded = Base64.encodeBase64((login + ":" + password).getBytes("ISO-8859-1"));
+            byte[] encoded = Base64.getEncoder().encode((login + ":" + password).getBytes("ISO-8859-1"));
             conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
             conn.connect();
             manageHTTPCode(conn);
@@ -113,7 +113,7 @@ public class FileHelper {
             out.flush();
 
             byte[] digest = md.digest();
-            return Base64.encodeBase64String(digest);
+            return Base64.getEncoder().encodeToString(digest);
         } finally {
             if(out!=null) {
                 out.close();
@@ -137,11 +137,11 @@ public class FileHelper {
             URL url = new URL(pURL);
 
             output.printInfo(
-                    LangHelper.getLocalizedMessage("UploadingFile",locale)
-                    + " : "
-                    + pLocalFile.getName() + " "
-                    + LangHelper.getLocalizedMessage("To",locale) + " "
-                    + url.getHost());
+                    LangHelper.getLocalizedMessage("UploadingFile", locale)
+                            + " : "
+                            + pLocalFile.getName() + " "
+                            + LangHelper.getLocalizedMessage("To", locale) + " "
+                            + url.getHost());
             performHeadHTTPMethod(url);
 
 
@@ -150,7 +150,7 @@ public class FileHelper {
             conn.setUseCaches(false);
             conn.setAllowUserInteraction(true);
             conn.setRequestProperty("Connection", "Keep-Alive");
-            byte[] encoded = Base64.encodeBase64((login + ":" + password).getBytes("ISO-8859-1"));
+            byte[] encoded = Base64.getEncoder().encode((login + ":" + password).getBytes("ISO-8859-1"));
             conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
 
             String lineEnd = "\r\n";
@@ -180,7 +180,7 @@ public class FileHelper {
             manageHTTPCode(conn);
 
             byte[] digest = md.digest();
-            return Base64.encodeBase64String(digest);
+            return Base64.getEncoder().encodeToString(digest);
         } finally {
             if(out!=null) {
                 out.close();
@@ -211,7 +211,7 @@ public class FileHelper {
         conn.setUseCaches(false);
         conn.setAllowUserInteraction(true);
         conn.setRequestProperty("Connection", "Keep-Alive");
-        byte[] encoded = Base64.encodeBase64((login + ":" + password).getBytes("ISO-8859-1"));
+        byte[] encoded = Base64.getEncoder().encode((login + ":" + password).getBytes("ISO-8859-1"));
         conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
         conn.setRequestMethod("HEAD");
         conn.connect();
