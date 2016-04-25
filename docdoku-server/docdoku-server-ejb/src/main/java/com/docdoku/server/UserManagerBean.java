@@ -621,10 +621,10 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public User[] getReachableUsers(String workspaceId) throws AccountNotFoundException {
+    public User[] getReachableUsers() throws AccountNotFoundException {
         String callerLogin = contextManager.getCallerPrincipalLogin();
         Account account = new AccountDAO(em).loadAccount(callerLogin);
-        return new UserDAO(new Locale(account.getLanguage()), em).findReachableUsersForCaller(callerLogin, workspaceId);
+        return new UserDAO(new Locale(account.getLanguage()), em).findReachableUsersForCaller(callerLogin);
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})

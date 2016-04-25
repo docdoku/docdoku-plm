@@ -91,23 +91,6 @@ public class UserResource {
     }
 
     @GET
-    @ApiOperation(value = "Get online users visible by current user", response = UserDTO.class, responseContainer = "List")
-    @Path("reachable")
-    @Produces(MediaType.APPLICATION_JSON)
-    public UserDTO[] getReachableUsersForCaller(@PathParam("workspaceId") String workspaceId)
-            throws EntityNotFoundException {
-
-        User[] users = userManager.getReachableUsers(workspaceId);
-        UserDTO[] dtos = new UserDTO[users.length];
-
-        for (int i = 0; i < users.length; i++) {
-            dtos[i] = mapper.map(users[i], UserDTO.class);
-        }
-
-        return dtos;
-    }
-
-    @GET
     @ApiOperation(value = "Get admin for workspace", response = UserDTO.class)
     @Path("admin")
     @Produces(MediaType.APPLICATION_JSON)

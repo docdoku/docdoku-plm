@@ -181,26 +181,31 @@ public class UserDAO {
         return users;
     }
 
-    public User[] findReachableUsersForCaller(String callerLogin, String workspaceId) {
+    public User[] findReachableUsersForCaller(String callerLogin) {
 
         Map<String,User> users = new TreeMap<>();
 
         List<String> listWorkspaceId = em.createQuery("SELECT u.workspaceId FROM User u WHERE u.login = :login", String.class)
                 .setParameter("login", callerLogin).getResultList();
 
-        List<User> listUsers = em.createQuery("SELECT u FROM User u where u.workspaceId IN :workspacesId", User.class)
-                .setParameter("workspacesId", listWorkspaceId).getResultList();
+        if(!listWorkspaceId.isEmpty()){
 
+            List<User> listUsers = em.createQuery("SELECT u FROM User u where u.workspaceId IN :workspacesId", User.class)
+                    .setParameter("workspacesId", listWorkspaceId).getResultList();
 
-        for (User listUser : listUsers) {
-            String loginUser = listUser.getLogin();
-            if (!users.keySet().contains(loginUser)) {
-                users.put(loginUser,listUser);
-            } else if(workspaceId.equals(listUser.getWorkspaceId())){
-                users.remove(loginUser);
-                users.put(loginUser,listUser);
+            for (User user : listUsers) {
+                String loginUser = user.getLogin();
+                if (!users.keySet().contains(loginUser)) {
+                    users.put(loginUser,user);
+                }
+                /*else if(workspaceId.equals(user.getWorkspaceId())){
+                    users.remove(loginUser);
+                    users.put(loginUser,user);
+                }*/
             }
+
         }
+
 
         return users.values().toArray(new User[users.size()]);
 

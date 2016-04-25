@@ -19,10 +19,7 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.common.Account;
-import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.common.UserGroupKey;
-import com.docdoku.core.common.Workspace;
+import com.docdoku.core.common.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
@@ -172,6 +169,23 @@ public class WorkspaceResource {
         }
         return Response.ok(new GenericEntity<List<WorkspaceDetailsDTO>>((List<WorkspaceDetailsDTO>) workspaceListDTO) {
         }).build();
+    }
+
+    @GET
+    @ApiOperation(value = "Get online users visible by current user", response = UserDTO.class, responseContainer = "List")
+    @Path("reachable-users")
+    @Produces(MediaType.APPLICATION_JSON)
+    public UserDTO[] getReachableUsersForCaller()
+            throws EntityNotFoundException {
+
+        User[] users = userManager.getReachableUsers();
+        UserDTO[] dtos = new UserDTO[users.length];
+
+        for (int i = 0; i < users.length; i++) {
+            dtos[i] = mapper.map(users[i], UserDTO.class);
+        }
+
+        return dtos;
     }
 
     @PUT
