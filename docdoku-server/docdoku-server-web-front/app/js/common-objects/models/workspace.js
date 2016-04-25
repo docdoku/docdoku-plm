@@ -57,6 +57,9 @@ define(['backbone'], function (Backbone) {
     Workspace.getUsersMemberships = function (workspaceId) {
         return $.getJSON(App.config.contextPath + '/api/workspaces/'+workspaceId+'/memberships/users');
     };
+    Workspace.getUserGroupsMemberships = function (workspaceId) {
+        return $.getJSON(App.config.contextPath + '/api/workspaces/'+workspaceId+'/memberships/usergroups');
+    };
 
     Workspace.setUsersMembership = function (membership) {
         return $.ajax({
@@ -69,6 +72,21 @@ define(['backbone'], function (Backbone) {
 
     Workspace.getStatsOverView = function (workspaceId) {
         return $.getJSON(App.config.contextPath + '/api/workspaces/'+workspaceId+'/stats-overview');
+    };
+
+    Workspace.getUsersInGroups = function (groups) {
+        var promiseArray = [];
+        _.each(groups, function(group){
+            promiseArray.push($.getJSON(App.config.contextPath + '/api/workspaces/'+group.workspaceId+'/groups/'+group.memberId + '/users')
+                .then(function(users){
+                    group.users = users;
+                    _.each(users,function(user){
+                        user.isCurrentAdmin = user.login === App.config.login;
+                    });
+                    return users;
+                }));
+        });
+        return $.when.apply(undefined, promiseArray);
     };
 
     return Workspace;
