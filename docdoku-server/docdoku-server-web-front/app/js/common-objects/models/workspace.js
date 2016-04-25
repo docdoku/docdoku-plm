@@ -67,5 +67,9 @@ define(['backbone'], function (Backbone) {
         });
     };
 
+    Workspace.getStatsOverView = function (workspaceId) {
+        return $.getJSON(App.config.contextPath + '/api/workspaces/'+workspaceId+'/stats-overview');
+    };
+
     return Workspace;
 });

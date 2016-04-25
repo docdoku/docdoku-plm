@@ -1,0 +1,20 @@
+<h4>
+    <i class="fa fa-graduation-cap"></i> {{workspace.id}}
+    <small>{{workspace.description}}</small>
+</h4>
+<ul class="unstyled">
+    <li><span class="users-count"></span> {{i18n.USERS}}</span></li>
+    <li><span class="documents-count"></span> {{i18n.DOCUMENTS}}</span></li>
+    <li><span class="parts-count"></span> {{i18n.PARTS}}</span></li>
+</ul>
+<div class="workspace-actions pull-left">
+    <a href="#/workspace/{{workspace.id}}/edit"><i class="fa fa-pencil"></i></a>
+    <a href="#/workspace/{{workspace.id}}/users"><i class="fa fa-users"></i></a>
+    <a href="#/workspace/{{workspace.id}}/dashboard"><i class="fa fa-dashboard"></i></a>
+    <a href="#/workspace/{{workspace.id}}/delete"><i class="fa fa-trash"></i></a>
+</div>
+<div class="workspace-actions pull-right">
+    <a href="../document-management/#{{workspace.id}}"><i class="fa fa-folder-open"></i></a>
+    <a href="../product-management/#{{workspace.id}}"><i class="fa fa-briefcase"></i></a>
+    <a href="../change-management/#{{workspace.id}}"><i class="fa fa-history"></i></a>
+</div>

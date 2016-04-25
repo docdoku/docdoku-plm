@@ -2,8 +2,10 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/workspace-management-home.html'
-], function (Backbone, Mustache, template) {
+    'text!templates/workspace-management-home.html',
+    'common-objects/models/workspace',
+    'views/workspace-item',
+], function (Backbone, Mustache, template, Workspace, WorkspaceItemView) {
     'use strict';
 
     var WorkspaceManagementHomeView = Backbone.View.extend({
@@ -16,11 +18,26 @@ define([
         },
 
         render: function () {
+
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n,
-                workspaceId:App.config.workspaceId,
-                workspaces:App.config.workspaces
+                workspaceId:App.config.workspaceId
             }));
+
+            var $administratedWorkspaces = this.$('.administrated-workspaces');
+            var $nonAdministratedWorkspaces  = this.$('.non-administrated-workspaces');
+            $administratedWorkspaces.empty();
+            $nonAdministratedWorkspaces.empty();
+            _.each(App.config.workspaces.administratedWorkspaces,function(workspace){
+                var view = new WorkspaceItemView({administrated:true,workspace:workspace});
+                $administratedWorkspaces.append(view.render().$el);
+            });
+
+            _.each(App.config.workspaces.nonAdministratedWorkspaces,function(workspace){
+                var view = new WorkspaceItemView({administrated:false,workspace:workspace});
+                $nonAdministratedWorkspaces.append(view.render().$el);
+            });
+
             return this;
         },
 

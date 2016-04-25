@@ -373,13 +373,20 @@ public class WorkspaceResource {
             throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
 
         StatsOverviewDTO statsOverviewDTO = new StatsOverviewDTO();
-        statsOverviewDTO.setDocuments(documentService.getTotalNumberOfDocuments(workspaceId));
-        statsOverviewDTO.setParts(productService.getTotalNumberOfParts(workspaceId));
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+
+        if(user.isAdministrator()){
+            statsOverviewDTO.setDocuments(documentService.getTotalNumberOfDocuments(workspaceId));
+            statsOverviewDTO.setParts(productService.getTotalNumberOfParts(workspaceId));
+        }else{
+            statsOverviewDTO.setDocuments(documentService.getDocumentsInWorkspaceCount(workspaceId));
+            statsOverviewDTO.setParts(productService.getPartsInWorkspaceCount(workspaceId));
+        }
+
         statsOverviewDTO.setUsers(userManager.getUsers(workspaceId).length);
-        return new StatsOverviewDTO();
+
+        return statsOverviewDTO;
     }
-
-
 
     // Sub resources
 

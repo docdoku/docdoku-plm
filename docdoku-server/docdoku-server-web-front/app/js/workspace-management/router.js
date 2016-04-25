@@ -1,10 +1,9 @@
 /*global define,App*/
 define([
     'backbone',
-    'common-objects/common/singleton_decorator',
-    'common-objects/contextResolver'
+    'common-objects/common/singleton_decorator'
 ],
-function (Backbone, singletonDecorator, ContextResolver) {
+function (Backbone, singletonDecorator) {
     'use strict';
     var Router = Backbone.Router.extend({
 
