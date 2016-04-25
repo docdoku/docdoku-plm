@@ -20,10 +20,9 @@
 
 package com.docdoku.server.rest.file.util;
 
+import com.docdoku.core.util.FileIO;
 import com.docdoku.server.helpers.Streams;
 import com.docdoku.server.rest.exceptions.InterruptedStreamException;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.InputSupplier;
 
 import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
@@ -48,7 +47,7 @@ public class BinaryResourceBinaryStreamingOutput implements StreamingOutput {
             if (binaryContentInputStream == null) {
                 LOGGER.log(Level.SEVERE, "The file input stream is null");
             } else {
-                copy(binaryContentInputStream, outputStream, fullRange.start, fullRange.length, fullRange.total);
+                copy(binaryContentInputStream, outputStream, fullRange.start, fullRange.length);
             }
         } catch (InterruptedStreamException e) {
             LOGGER.log(Level.WARNING, "Downloading file interrupted");
@@ -56,33 +55,26 @@ public class BinaryResourceBinaryStreamingOutput implements StreamingOutput {
         }
     }
 
-    private void copy(final InputStream input, OutputStream output, long start, long length, long binaryLength) throws InterruptedStreamException {
-        if (start == 0 && binaryLength == length) {
-            try {
-                ByteStreams.copy(input, output);
-            } catch (IOException e) {
-                // may be caused by a client side cancel
-                LOGGER.log(Level.FINE, "A downloading stream was interrupted.", e);
-                throw new InterruptedStreamException();
-            } finally {
-                Streams.close(input);
-            }
-        } else {
-            // Slice the input stream considering offset and length
-
-            try (InputStream slicedInputStream = ByteStreams.slice(new InputSupplier<InputStream>() {
-                public InputStream getInput() {
-                    return input;
+    private void copy(final InputStream input, OutputStream output, long start, long length) throws InterruptedStreamException {
+        // Slice the input stream considering offset and length
+        try (InputStream in=input) {
+            in.skip(start);
+            byte[] data = new byte[1024*8];
+            long remaining = length;
+            int nr;
+            while (remaining > 0) {
+                nr = in.read(data);
+                if (nr < 0) {
+                    break;
                 }
-            }, start, length).getInput()) {
-                ByteStreams.copy(slicedInputStream, output);
-            } catch (IOException e) {
-                // may be caused by a client side cancel
-                LOGGER.log(Level.FINE, "A downloading stream was interrupted.", e);
-                throw new InterruptedStreamException();
+                remaining -= nr;
+                output.write(data, 0, nr);
             }
+        } catch (IOException e) {
+            // may be caused by a client side cancel
+            LOGGER.log(Level.FINE, "A downloading stream was interrupted.", e);
+            throw new InterruptedStreamException();
         }
-
     }
 
     private static class Range {
