@@ -31,6 +31,7 @@ public class StatsOverviewDTO implements Serializable {
 
     private int documents;
     private int parts;
+    private int products;
     private int users;
 
     public StatsOverviewDTO() {
@@ -58,5 +59,13 @@ public class StatsOverviewDTO implements Serializable {
 
     public void setUsers(int users) {
         this.users = users;
+    }
+
+    public int getProducts() {
+        return products;
+    }
+
+    public void setProducts(int products) {
+        this.products = products;
     }
 }

@@ -35,7 +35,18 @@ require.config({
         bootstrapSwitch: { deps: ['jquery'], exports: 'jQuery'},
         bootstrapDatepicker: {deps: ['jquery','bootstrap'], exports: 'jQuery'},
         backbone: { deps: ['underscore', 'jquery'], exports: 'Backbone'},
-        date_picker_lang: { deps: ['bootstrapDatepicker'], exports: 'jQuery'}
+        date_picker_lang: { deps: ['bootstrapDatepicker'], exports: 'jQuery'},
+        d3:{deps:[],exports:'window'},
+        nvd3:{deps:['d3'],exports:'window'},
+        legend:{deps:['nvd3','d3']},
+        pie:{deps:['nvd3','d3']},
+        pieChart:{deps:['nvd3','d3']},
+        discreteBar:{deps:['nvd3','d3']},
+        discreteBarChart:{deps:['nvd3','d3']},
+        nvutils:{deps:['nvd3','d3']},
+        tooltip:{deps:['nvd3','d3'],exports:'window'},
+        fisheye:{deps:['nvd3','d3']},
+        helpers:{deps:['nvd3','d3']},
     },
 
     paths: {
@@ -68,7 +79,18 @@ require.config({
         utilsprototype: '../utils/utils.prototype',
         userPopover: 'modules/user-popover-module/app',
         async: '../../bower_components/async/lib/async',
-        date_picker_lang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr'
+        date_picker_lang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr',
+        d3:'../lib/charts/nv3d/lib/d3.v2',
+        nvd3:'../lib/charts/nv3d/nv.d3',
+        legend:'../lib/charts/nv3d/src/models/legend',
+        pie:'../lib/charts/nv3d/src/models/pie',
+        pieChart:'../lib/charts/nv3d/src/models/pieChart',
+        discreteBar:'../lib/charts/nv3d/src/models/discreteBar',
+        discreteBarChart:'../lib/charts/nv3d/src/models/discreteBarChart',
+        nvutils:'../lib/charts/nv3d/src/utils',
+        fisheye:'../lib/charts/nv3d/lib/fisheye',
+        tooltip:'../lib/charts/nv3d/custom/tooltip',
+        helpers:'../lib/charts/helpers'
     },
 
     deps: [
@@ -86,7 +108,18 @@ require.config({
         'datatablesOsortExt',
         'unmaskConfig',
         'utilsprototype',
-        'date_picker_lang'
+        'date_picker_lang',
+        'd3',
+        'nvd3',
+        'legend',
+        'pie',
+        'pieChart',
+        'discreteBar',
+        'discreteBarChart',
+        'nvutils',
+        'fisheye',
+        'tooltip',
+        'helpers'
     ],
     config: {
         i18n: {

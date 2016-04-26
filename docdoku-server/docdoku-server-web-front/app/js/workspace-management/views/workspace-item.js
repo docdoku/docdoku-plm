@@ -33,6 +33,7 @@ define([
                 _this.$('.documents-count').text(stats.documents);
                 _this.$('.parts-count').text(stats.parts);
                 _this.$('.users-count').text(stats.users);
+                _this.$('.products-count').text(stats.products);
             });
 
             return this;

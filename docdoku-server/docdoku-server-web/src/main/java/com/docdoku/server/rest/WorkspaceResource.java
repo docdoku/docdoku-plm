@@ -20,7 +20,9 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.common.*;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserMembership;
@@ -37,15 +39,17 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.ws.rs.*;
 import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RequestScoped
 @Api(value = "workspaces", description = "Operations about workspaces")
@@ -415,9 +419,108 @@ public class WorkspaceResource {
         }
 
         statsOverviewDTO.setUsers(userManager.getUsers(workspaceId).length);
+        statsOverviewDTO.setProducts(productService.getConfigurationItems(workspaceId).size());
 
         return statsOverviewDTO;
     }
+
+    @GET
+    @ApiOperation(value = "Get disk usage stats for workspace", response = DiskUsageSpaceDTO.class)
+    @Path("/{workspaceId}/disk-usage-stats")
+    @Produces(MediaType.APPLICATION_JSON)
+    public DiskUsageSpaceDTO getDiskSpaceUsageStats(@PathParam("workspaceId") String workspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+        DiskUsageSpaceDTO diskUsageSpaceDTO = new DiskUsageSpaceDTO();
+        diskUsageSpaceDTO.setDocuments(documentService.getDiskUsageForDocumentsInWorkspace(workspaceId));
+        diskUsageSpaceDTO.setParts(productService.getDiskUsageForPartsInWorkspace(workspaceId));
+        diskUsageSpaceDTO.setDocumentTemplates(documentService.getDiskUsageForDocumentTemplatesInWorkspace(workspaceId));
+        diskUsageSpaceDTO.setPartTemplates(productService.getDiskUsageForPartTemplatesInWorkspace(workspaceId));
+        return diskUsageSpaceDTO;
+    }
+
+    @GET
+    @ApiOperation(value = "Get checked out documents stats for workspace", response = JsonObject.class)
+    @Path("/{workspaceId}/checked-out-documents-stats")
+    @Produces(MediaType.APPLICATION_JSON)
+    public JsonObject getCheckedOutDocumentsStats(@PathParam("workspaceId") String workspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+
+        DocumentRevision[] checkedOutDocumentRevisions = documentService.getAllCheckedOutDocumentRevisions(workspaceId);
+        JsonObjectBuilder statsByUserBuilder = Json.createObjectBuilder();
+
+        Map<String, JsonArrayBuilder> userArrays=new HashMap<>();
+        for(DocumentRevision documentRevision : checkedOutDocumentRevisions){
+
+            String userLogin = documentRevision.getCheckOutUser().getLogin();
+            JsonArrayBuilder userArray=userArrays.get(userLogin);
+            if(userArray==null) {
+                userArray = Json.createArrayBuilder();
+                userArrays.put(userLogin, userArray);
+            }
+            userArray.add(Json.createObjectBuilder().add("date",documentRevision.getCheckOutDate().getTime()).build());
+        }
+
+        for(Map.Entry<String,JsonArrayBuilder> entry : userArrays.entrySet()){
+            statsByUserBuilder.add(entry.getKey(),entry.getValue().build());
+        }
+
+        return statsByUserBuilder.build();
+
+    }
+
+    @GET
+    @ApiOperation(value = "Get checked out parts stats for workspace", response = JsonObject.class)
+    @Path("/{workspaceId}/checked-out-parts-stats")
+    @Produces(MediaType.APPLICATION_JSON)
+    public JsonObject getCheckedOutPartsStats(@PathParam("workspaceId") String workspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+
+        PartRevision[] checkedOutPartRevisions = productService.getAllCheckedOutPartRevisions(workspaceId);
+        JsonObjectBuilder statsByUserBuilder = Json.createObjectBuilder();
+
+        Map<String, JsonArrayBuilder> userArrays=new HashMap<>();
+        for(PartRevision partRevision : checkedOutPartRevisions){
+
+            String userLogin = partRevision.getCheckOutUser().getLogin();
+            JsonArrayBuilder userArray=userArrays.get(userLogin);
+            if(userArray==null) {
+                userArray = Json.createArrayBuilder();
+                userArrays.put(userLogin, userArray);
+            }
+            userArray.add(Json.createObjectBuilder().add("date", partRevision.getCheckOutDate().getTime()).build());
+        }
+
+        for(Map.Entry<String,JsonArrayBuilder> entry : userArrays.entrySet()){
+            statsByUserBuilder.add(entry.getKey(),entry.getValue().build());
+        }
+
+        return statsByUserBuilder.build();
+
+    }
+
+    @GET
+    @ApiOperation(value = "Get user stats for workspace", response = JsonObject.class)
+    @Path("/{workspaceId}/users-stats")
+    @Produces(MediaType.APPLICATION_JSON)
+    public JsonObject getUsersStats(@PathParam("workspaceId") String workspaceId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException, AccessRightException {
+
+        WorkspaceUserMembership[] workspaceUserMemberships = userManager.getWorkspaceUserMemberships(workspaceId);
+        WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceUserGroupMemberships(workspaceId);
+
+        int usersCount = userManager.getUsers(workspaceId).length;
+        int activeUsersCount = workspaceUserMemberships.length;
+        int inactiveUsersCount = usersCount - activeUsersCount;
+
+        int groupsCount = userManager.getUserGroups(workspaceId).length;
+        int activeGroupsCount = workspaceUserGroupMemberships.length;
+        int inactiveGroupsCount = groupsCount - activeGroupsCount;
+
+        return Json.createObjectBuilder()
+                .add("users", usersCount)
+                .add("activeusers", activeUsersCount)
+                .add("inactiveusers", inactiveUsersCount)
+                .add("groups", groupsCount)
+                .add("activegroups", activeGroupsCount)
+                .add("inactivegroups", inactiveGroupsCount).build();
+    }
+
 
     // Sub resources
 

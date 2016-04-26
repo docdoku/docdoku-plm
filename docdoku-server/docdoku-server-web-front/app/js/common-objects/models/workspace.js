@@ -74,6 +74,24 @@ define(['backbone'], function (Backbone) {
         return $.getJSON(App.config.contextPath + '/api/workspaces/'+workspaceId+'/stats-overview');
     };
 
+    Workspace.getDiskUsageStats = function (workspaceId) {
+        return $.getJSON(App.config.contextPath + '/api/workspaces/'+workspaceId+'/disk-usage-stats');
+    };
+
+    Workspace.getCheckedOutDocumentsStats = function (workspaceId) {
+        return $.getJSON(App.config.contextPath + '/api/workspaces/'+workspaceId+'/checked-out-documents-stats');
+    };
+    Workspace.getCheckedOutPartsStats = function (workspaceId) {
+        return $.getJSON(App.config.contextPath + '/api/workspaces/'+workspaceId+'/checked-out-parts-stats');
+    };
+
+    Workspace.getUsersStats = function (workspaceId) {
+        return $.when.apply(undefined,[
+            $.getJSON(App.config.contextPath + '/api/workspaces/'+workspaceId+'/users').then(function(data){return data;}),
+            $.getJSON(App.config.contextPath + '/api/workspaces/'+workspaceId+'/users-stats').then(function(data){return data;})
+        ]);
+    };
+
     Workspace.getUsersInGroups = function (groups) {
         var promiseArray = [];
         _.each(groups, function(group){
