@@ -171,7 +171,7 @@ public class WorkspaceBean {
         ec.redirect(request.getContextPath() + "/change-management/#" + workspace.getId() + "/workflows");
     }
 
-    public void read() throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+    public void read() throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserGroupNotFoundException {
         if (!selectedLogins.isEmpty()) {
             userManager.grantUserAccess(adminState.getSelectedWorkspace(), getLogins(), true);
         }
@@ -199,7 +199,7 @@ public class WorkspaceBean {
         selectedLogins.clear();
     }
 
-    public void full() throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+    public void full() throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserGroupNotFoundException {
         if (!selectedLogins.isEmpty()) {
             userManager.grantUserAccess(adminState.getSelectedWorkspace(), getLogins(), false);
         }

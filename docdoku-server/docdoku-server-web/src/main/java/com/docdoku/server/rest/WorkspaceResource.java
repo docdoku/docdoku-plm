@@ -234,6 +234,15 @@ public class WorkspaceResource {
         return mapper.map(userGroup, UserGroupDTO.class);
     }
 
+    @DELETE
+    @ApiOperation(value = "Remove user group", response = UserGroupDTO.class)
+    @Path("/{workspaceId}/user-group/{groupId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeGroup(@PathParam("workspaceId") String workspaceId, @PathParam("groupId") String groupId) throws UserGroupNotFoundException, AccessRightException, EntityConstraintException, AccountNotFoundException, WorkspaceNotFoundException {
+        userManager.removeUserGroups(workspaceId, new String[]{groupId});
+        return Response.ok().build();
+    }
+
     @PUT
     @ApiOperation(value = "Add user to workspace", response = Response.class)
     @Path("/{workspaceId}/add-user")
@@ -297,7 +306,7 @@ public class WorkspaceResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response setGroupAccess(@PathParam("workspaceId") String workspaceId,
                                    @ApiParam(value = "User to grant access in group", required = true) WorkspaceUserGroupMemberShipDTO workspaceUserGroupMemberShipDTO)
-            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserGroupNotFoundException {
 
         WorkspaceUserGroupMembership membership = userManager.grantGroupAccess(workspaceId, workspaceUserGroupMemberShipDTO.getMemberId(), workspaceUserGroupMemberShipDTO.isReadOnly());
         return Response.ok(mapper.map(membership, WorkspaceUserGroupMemberShipDTO.class)).build();

@@ -81,8 +81,13 @@ public class UserGroupDAO {
         return groups;
     }
 
-    public WorkspaceUserGroupMembership loadUserGroupMembership(WorkspaceUserGroupMembershipKey pKey) {
-        return em.find(WorkspaceUserGroupMembership.class, pKey);
+    public WorkspaceUserGroupMembership loadUserGroupMembership(WorkspaceUserGroupMembershipKey pKey) throws UserGroupNotFoundException {
+        WorkspaceUserGroupMembership workspaceUserGroupMembership = em.find(WorkspaceUserGroupMembership.class, pKey);
+        if (workspaceUserGroupMembership == null) {
+            throw new UserGroupNotFoundException(mLocale,new UserGroupKey(pKey.getWorkspaceId(),pKey.getMemberId()));
+        } else {
+            return workspaceUserGroupMembership;
+        }
     }
 
     public void addUserGroupMembership(Workspace pWorkspace, UserGroup pMember) {

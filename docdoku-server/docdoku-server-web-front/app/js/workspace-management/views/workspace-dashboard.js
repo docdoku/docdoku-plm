@@ -59,6 +59,10 @@ define([
                 }
             }
 
+            if(diskUsageData.length === 0){
+                diskUsageData.push({key:'No Data available',y:100,f:'Nothing to show'})
+            }
+
             this.$("#disk_usage_chart span.total").html(bytesToSize(totalDiskUsage));
 
             // TODO translate keys

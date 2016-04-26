@@ -72,9 +72,9 @@ public interface IUserManagerLocal{
 
     WorkspaceUserMembership grantUserAccess(String pWorkspaceId, String login, boolean pReadOnly) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException;
 
-    WorkspaceUserGroupMembership grantGroupAccess(String pWorkspaceId, String groupId, boolean pReadOnly) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException;
+    WorkspaceUserGroupMembership grantGroupAccess(String pWorkspaceId, String groupId, boolean pReadOnly) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserGroupNotFoundException;
 
-    void grantGroupAccess(String pWorkspaceId, String[] pGroupIds, boolean pReadOnly) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException;
+    void grantGroupAccess(String pWorkspaceId, String[] pGroupIds, boolean pReadOnly) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserGroupNotFoundException;
 
     void activateUsers(String pWorkspaceId, String[] pLogins) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException;
     void passivateUsers(String pWorkspaceId, String[] pLogins) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException;
@@ -89,7 +89,7 @@ public interface IUserManagerLocal{
 
     WorkspaceUserMembership getWorkspaceSpecificUserMemberships(String workspaceId) throws AccountNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     WorkspaceUserMembership[] getWorkspaceUserMemberships(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccountNotFoundException;
-    WorkspaceUserGroupMembership[] getWorkspaceSpecificUserGroupMemberships(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    WorkspaceUserGroupMembership[] getWorkspaceSpecificUserGroupMemberships(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, UserGroupNotFoundException;
     WorkspaceUserGroupMembership[] getWorkspaceUserGroupMemberships(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccountNotFoundException;
 
     Account checkAdmin(String pWorkspaceId) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException;

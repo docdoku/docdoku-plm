@@ -15,6 +15,33 @@
         -webkit-border-radius: 0;
         -moz-border-radius: 0;
         border-radius: 0;
+
+        position: relative;
+
+        .group-readonly-switch{
+            position: absolute;
+            top: 12px;
+            right: 20px;
+            display: block; white-space: nowrap;
+            label{
+                padding: 0 12px;
+            }
+        }
     }
 
+}
+.user-readonly-switch{
+    display: block;
+}
+.actions {
+    .move-users-container {
+        position: relative;
+        .dropdown-menu {
+            width: 100%;
+            text-align: left;
+        }
+    }
+}
+.no-membership td:not(:last-child){
+    text-decoration: line-through;
 }
