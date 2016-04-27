@@ -1,0 +1,186 @@
+#account-management-menu {
+
+    position: relative;
+    /*-webkit-box-shadow: 0px 1px 3px #9b9b9b;
+    box-shadow: 0px 1px 3px #9b9b9b;*/
+    float: left;
+    background-color: #f5f5f5;
+    height: 100%;
+    min-height: 100%;
+    width: 15%;
+    min-width: 15%;
+    max-width: 55%;
+    border: none;
+    border-radius: none;
+    border-right: 1px solid rgba(63, 95, 153, 0.24);
+    padding: 0;
+    margin: 0;
+    z-index: 1;
+
+    .nav {
+        margin: 10px 0 5% 6px;
+        padding: 0;
+        height: 95%;
+        height: -moz-calc(~"95% - 68px");
+        height: -webkit-calc(~"95% - 68px");
+        height: calc(~"95% - 68px");
+        overflow: auto;
+    }
+
+    .well {
+        background: none;
+        box-shadow: none;
+        border: none;
+    }
+
+    .nav-header {
+        font-size: 12px;
+        padding: 3px 10px;
+        display: block;
+        font-weight: bold;
+        line-height: 18px;
+        color: #999999;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+        text-transform: uppercase;
+    }
+
+    .nav-list-entry {
+        position: relative;
+        padding: 0 40px 0 6px;
+        height: 26px;
+        display: block;
+
+        &.move-part-into {
+            border: 1px dashed #8fbc8f;
+            height: 25px;
+            margin-top: -1px;
+            padding-left: 5px;
+        }
+
+        .icon {
+            float: left;
+        }
+
+        > a {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 26px;
+            white-space: nowrap;
+            width: 100%;
+            float: left;
+
+            .status {
+                float: left;
+            }
+        }
+
+        > .btn-group {
+            right: 0;
+            position: absolute;
+        }
+
+        .dropdown-toggle {
+            border-radius: 0;
+            margin: 0 0 0 8px;
+            display: none;
+            border: none;
+            background: none;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+            padding: 3px 12px;
+            .caret {
+                border-top-color: #000000;
+                opacity: .5;
+            }
+        }
+
+        .dropdown-toggle:hover {
+            background: #CCC;
+            .caret {
+                opacity: 1;
+            }
+        }
+
+        .dropdown-menu {
+            border-radius: 0;
+            padding: 0 0 0 0;
+            margin: -1px 1px 0 0;
+            right: 0;
+            left: auto;
+            max-width: 250px;
+
+            > li {
+
+                width: 100%;
+                padding: 0;
+
+                > a {
+                    font-size: 13px;
+                    padding: 0;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    width: 100%;
+                }
+
+            }
+            li.new-folder .icon {
+                .plm-icon-menu-folder-new;
+                margin: 4px 6px 4px 6px;
+            }
+            li.edit .icon {
+                .plm-icon-menu-edit;
+                margin: 4px 6px 4px 6px;
+            }
+            li.delete .icon {
+                .plm-icon-menu-delete;
+                margin: 4px 6px 4px 6px;
+            }
+        }
+
+        .nav-checkedOut-number-item {
+            margin-top: -22px;
+        }
+    }
+
+    .nav-list-entry:hover {
+        > a {
+            text-decoration: none;
+        }
+        background-color: #EEE;
+        .dropdown-toggle {
+            display: block;
+        }
+    }
+
+    .nav-list-entry.active, .nav-list-entry.active > a {
+        /*text-shadow: 0 -1px 0 @grayLight;*/
+        color: #FFF;
+        background-color: @plm-secondary-color;
+        .badge {
+            background-color: #fff;
+            color: @plm-secondary-color;
+        }
+    }
+
+    .items {
+        overflow: visible;
+        list-style-type: none;
+        margin-left: 6px;
+        padding: 0;
+    }
+
+    .ui-resizable-handle {
+
+        opacity: 0;
+        position: absolute;
+        bottom: 65px;
+        right: 0;
+        top: 0;
+        z-index: 1000;
+        width: 8px;
+        cursor: e-resize;
+        display: block !important;
+
+    }
+}

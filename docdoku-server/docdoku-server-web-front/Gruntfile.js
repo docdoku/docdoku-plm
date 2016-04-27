@@ -33,6 +33,7 @@ module.exports = function (grunt) {
                 files: [
                     '<%= yeoman.app %>/document-management/*.html',
                     '<%= yeoman.app %>/workspace-management/*.html',
+                    '<%= yeoman.app %>/account-management/*.html',
                     '<%= yeoman.app %>/product-management/*.html',
                     '<%= yeoman.app %>/product-structure/*.html',
                     '<%= yeoman.app %>/visualization/*.html',
@@ -101,6 +102,7 @@ module.exports = function (grunt) {
             productFrame: ['<%= yeoman.dist %>/visualization/*'],
             changeManagement: ['<%= yeoman.dist %>/change-management/*'],
             workspaceManagement: ['<%= yeoman.dist %>/workspace-management/*'],
+            accountManagement: ['<%= yeoman.dist %>/account-management/*'],
             dist: ['.tmp', '<%= yeoman.dist %>/*'],
             server: '.tmp',
             webapp:[
@@ -116,6 +118,7 @@ module.exports = function (grunt) {
                 '<%= yeoman.webapp %>/visualization',
                 '<%= yeoman.webapp %>/change-management',
                 '<%= yeoman.webapp %>/workspace-management',
+                '<%= yeoman.webapp %>/account-management',
                 '<%= yeoman.webapp %>/product-structure/index.html',
                 '<%= yeoman.webapp %>/product-structure/main.js',
                 '<%= yeoman.webapp %>/product-structure/main.css',
@@ -218,6 +221,21 @@ module.exports = function (grunt) {
                     paths:{localization: 'empty:'},
                     findNestedDependencies: true
                 }
+            },
+            accountManagement: {
+                options: {
+                    name: '../../account-management/main',
+                    optimize: 'none',
+                    preserveLicenseComments: false,
+                    useStrict: true,
+                    wrap: true,
+                    inlineText: true,
+                    baseUrl: '<%= yeoman.app %>/js/account-management',
+                    mainConfigFile: '<%= yeoman.app %>/account-management/main.js',
+                    out: '<%= yeoman.dist %>/account-management/main.js',
+                    paths:{localization: 'empty:'},
+                    findNestedDependencies: true
+                }
             }
 
         },
@@ -251,6 +269,11 @@ module.exports = function (grunt) {
                 files: {
                     '<%= yeoman.dist %>/workspace-management/main.js': ['<%= yeoman.dist %>/workspace-management/main.js']
                 }
+            },
+            accountManagement: {
+                files: {
+                    '<%= yeoman.dist %>/account-management/main.js': ['<%= yeoman.dist %>/account-management/main.js']
+                }
             }
         },
         less: {
@@ -262,7 +285,8 @@ module.exports = function (grunt) {
                         '<%= yeoman.app %>/less/product-management/',
                         '<%= yeoman.app %>/less/product-structure/',
                         '<%= yeoman.app %>/less/change-management/',
-                        '<%= yeoman.app %>/less/workspace-management/'
+                        '<%= yeoman.app %>/less/workspace-management/',
+                        '<%= yeoman.app %>/less/account-management/'
                     ]
                 },
                 files: {
@@ -272,6 +296,7 @@ module.exports = function (grunt) {
                     '<%= yeoman.app %>/visualization/main.css': '<%= yeoman.app %>/less/product-structure/style_frame.less',
                     '<%= yeoman.app %>/change-management/main.css': '<%= yeoman.app %>/less/change-management/style.less',
                     '<%= yeoman.app %>/workspace-management/main.css': '<%= yeoman.app %>/less/workspace-management/style.less',
+                    '<%= yeoman.app %>/account-management/main.css': '<%= yeoman.app %>/less/account-management/style.less'
                 }
             }
         },
@@ -307,6 +332,11 @@ module.exports = function (grunt) {
             workspaceManagement: {
                 files: {
                     '<%= yeoman.dist %>/workspace-management/main.css': ['<%= yeoman.app %>/workspace-management/main.css']
+                }
+            },
+            accountManagement: {
+                files: {
+                    '<%= yeoman.dist %>/account-management/main.css': ['<%= yeoman.app %>/account-management/main.css']
                 }
             }
         },
@@ -351,6 +381,13 @@ module.exports = function (grunt) {
                 css: ['<%= yeoman.dist %>/workspace-management/main.css'],
                 options: {
                     dirs: ['<%= yeoman.dist %>/workspace-management']
+                }
+            },
+            accountManagement: {
+                html: ['<%= yeoman.dist %>/account-management/index.html'],
+                css: ['<%= yeoman.dist %>/account-management/main.css'],
+                options: {
+                    dirs: ['<%= yeoman.dist %>/account-management']
                 }
             }
         },
@@ -412,6 +449,16 @@ module.exports = function (grunt) {
                         cwd: '<%= yeoman.app %>/workspace-management',
                         src: 'index.html',
                         dest: '<%= yeoman.dist %>/workspace-management'
+                    }
+                ]
+            },
+            accountManagement: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: '<%= yeoman.app %>/account-management',
+                        src: 'index.html',
+                        dest: '<%= yeoman.dist %>/account-management'
                     }
                 ]
             }
