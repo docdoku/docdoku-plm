@@ -147,9 +147,14 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
             .then(ContextResolver.resolveWorkspaces)
             .then(function buildView(){
                 require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
+
                     App.appView = new AppView();
                     App.headerView = new HeaderView();
-                    App.headerView.setCoWorkersView(Modules.CoWorkersAccessModuleView);
+
+                    if(!App.config.admin){
+                        App.headerView.setCoWorkersView(Modules.CoWorkersAccessModuleView);
+                    }
+
                     App.router = Router.getInstance();
                     Backbone.history.start();
                 });

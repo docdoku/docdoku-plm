@@ -31,6 +31,7 @@ public class AccountDTO implements Serializable {
     private String email;
     private String language;
     private String timeZone;
+    private boolean admin;
 
     public AccountDTO() {
     }
@@ -73,5 +74,13 @@ public class AccountDTO implements Serializable {
 
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 }

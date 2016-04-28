@@ -27,6 +27,7 @@ import com.docdoku.core.exceptions.EntityAlreadyExistsException;
 import com.docdoku.core.exceptions.EntityNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
+import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.AccountDTO;
 import com.docdoku.server.rest.dto.GCMAccountDTO;
@@ -52,8 +53,8 @@ import java.util.List;
 @RequestScoped
 @Path("accounts")
 @Api(value = "accounts", description = "Operations about accounts")
-@DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
-@RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
 public class AccountResource {
 
     @Inject
@@ -61,6 +62,9 @@ public class AccountResource {
 
     @Inject
     private IUserManagerLocal userManager;
+
+    @Inject
+    private IContextManagerLocal contextManager;
 
     private Mapper mapper;
 
@@ -78,7 +82,11 @@ public class AccountResource {
     @Produces(MediaType.APPLICATION_JSON)
     public AccountDTO getAccount() throws AccountNotFoundException {
         Account account = accountManager.getMyAccount();
-        return mapper.map(account, AccountDTO.class);
+        AccountDTO accountDTO = mapper.map(account, AccountDTO.class);
+        if(contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
+            accountDTO.setAdmin(true);
+        }
+        return accountDTO;
     }
 
 

@@ -13,6 +13,7 @@
 
     <div class="nav-collapse collapse">
         <div class="HeaderFluidContent container-fluid">
+            {{^isAdmin}}
             <ul class="BreadcrumbMenu nav header-menu">
                 <li class="BreadcrumbMenuItem BreadcrumbMenu-item dropdown pull-left" id="workspace_container">
                     <a id="workspace_choose_menu" class="BreadcrumbMenuItem-link dropdown-toggle" data-toggle="dropdown">
@@ -159,8 +160,9 @@
                 {{/currentWorkspace}}
 
             </ul>
+            {{/isAdmin}}
             <ul class="HeaderMenu nav header-menu pull-right">
-
+                {{^isAdmin}}
                 <li class="HeaderMenu-item dropdown" id="coworkers_access_module" style="">
                     <a class="dropdown-toggle" id="coworkers_access_module_toggler" href="#" data-toggle="dropdown"
                        title="Coworkers">
@@ -171,6 +173,7 @@
                     <ul class="dropdown-menu" id="coworkers_access_module_entries">
                     </ul>
                 </li>
+                {{/isAdmin}}
                 <li class="HeaderMenu-item dropdown ">
                     <a href="#" class="dropdown-toggle" id="account_name_link" data-toggle="dropdown">
                         <i class="fa fa-user"></i>

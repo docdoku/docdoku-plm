@@ -156,6 +156,7 @@ define({
         DOCUMENT_REVISION_NOTE_PROMPT_LABEL: "Do you want to add a revision note to documents without one?",
 		DOCUMENT_S_REFERENCE: "Document ID",
 		DOCUMENT_S_TITLE: "Document title",
+		DOCUMENT_TEMPLATES: "Document templates",
 		DOCUMENT_TYPE_HELP: "Type of the document",
         DOCUMENT_VERSION_HELP: "Version of the document",
 		DOWNLOAD_DPLM_CLIENT: 'Download DPLM client',

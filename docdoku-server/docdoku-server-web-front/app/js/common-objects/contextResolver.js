@@ -25,7 +25,7 @@ define([
             forbiddenView.openModal();
         },
         404 : function(){
-            window.location.href = App.config.contextPath + '/workspace-management/?error=404';
+            window.location.href = App.config.contextPath + '/404';
         }
     };
 
@@ -51,6 +51,7 @@ define([
             App.config.login = account.login;
             App.config.userName = account.name;
             App.config.timeZone = account.timeZone;
+            App.config.admin = account.admin;
 
             if(window.localStorage.locale === 'unset'){
                 window.localStorage.locale = account.language || 'en';

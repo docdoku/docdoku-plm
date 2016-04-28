@@ -27,14 +27,14 @@
         {{/workspaceId}}
 
         {{^workspaceId}}
-
+            {{^isAdmin}}
             <li  class="header nav-list-entry {{#isCreation}}active{{/isCreation}}">
                 <a href="#/create">
                     <i class="fa fa-plus"></i>
                     {{i18n.CREATE_WORKSPACE}}
                 </a>
             </li>
-
+            {{/isAdmin}}
             <li class="nav-header"> {{i18n.WORKSPACES}} </li>
 
             {{#administratedWorkspaces}}

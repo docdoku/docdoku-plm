@@ -1998,7 +1998,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return filteredPartRevisions;
     }
 
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public int getPartsInWorkspaceCount(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);

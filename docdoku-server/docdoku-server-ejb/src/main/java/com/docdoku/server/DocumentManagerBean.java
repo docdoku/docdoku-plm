@@ -412,7 +412,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return documentRevisions.toArray(new DocumentRevision[documentRevisions.size()]);
     }
 
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public int getDocumentsInWorkspaceCount(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);

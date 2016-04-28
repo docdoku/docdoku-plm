@@ -5,7 +5,6 @@ define({
     CHART_AXIS_DAYS_NUMBER:'Jours',
     CHART_AXIS_DOCUMENTS_NUMBER:'Documents',
     CHART_AXIS_PARTS_NUMBER:'Articles',
-
     CREATE_GROUP:'Créer un groupe',
     CREATE_WORKSPACE:'Créer un espace de travail',
     CREATE_WORKSPACE_SUBTITLE:'Créez votre espace de travail',
@@ -29,6 +28,13 @@ define({
     NO_USER_TO_MANAGE:'Aucun utilisateur à gérer',
     READONLY:'Lecture seule',
     REMOVE_FROM_GROUP:'Enlever du groupe',
+    ROOT_ADMIN:'Super utilisateur',
+    ROOT_ADMIN_MESSAGE:'Informations et statistiques sur tous les espaces de travail du serveur',
+    ADMIN_DASHBOARD:'Tableau de bord super utilisateur',
     TOTAL:'Total',
+    ACTIVE_USERS:'Utilisateurs actifs',
+    INACTIVE_USERS:'Utilisateurs désactivés',
+    ACTIVE_GROUPS:'Groupes actifs',
+    INACTIVE_GROUPS:'Groupes désactivés',
     WORKSPACES_ADMINISTRATION_TEXT:'Seul le créateur de l\'espace de travail dispose des droits administrateur. Ces droits l\'autorisent à éditer les propriétés de l\'espace de travail et à y ajouter ou supprimer des utilisateurs.',
 });

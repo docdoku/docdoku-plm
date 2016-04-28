@@ -21,7 +21,8 @@ define([
 
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n,
-                workspaceId:App.config.workspaceId
+                workspaceId:App.config.workspaceId,
+                isAdmin:App.config.admin
             }));
 
             var $administratedWorkspaces = this.$('.administrated-workspaces');

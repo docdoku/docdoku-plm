@@ -10,6 +10,7 @@ function (Backbone, singletonDecorator) {
         routes: {
             '':   'workspaceManagementHome',
             'create':   'workspaceCreation',
+            'admin/dashboard':'adminDashboard',
             'workspace/:workspaceId/users':   'workspaceUsers',
             'workspace/:workspaceId/edit':   'workspaceEdit',
             'workspace/:workspaceId/dashboard':   'workspaceDashboard',
@@ -48,6 +49,11 @@ function (Backbone, singletonDecorator) {
             App.config.workspaceId = workspaceId;
             this.refresh();
             App.appView.workspaceDashboard();
+        },
+
+        adminDashboard:function(){
+            this.refresh();
+            App.appView.adminDashboard();
         }
 
     });

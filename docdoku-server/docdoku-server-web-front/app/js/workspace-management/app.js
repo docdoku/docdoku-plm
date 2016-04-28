@@ -7,8 +7,9 @@ define([
     'views/workspace-creation',
     'views/workspace-users',
     'views/workspace-dashboard',
-    'views/workspace-management-home'
-], function (Backbone, Mustache, template, WorkspaceEditView, WorkspaceCreationView, WorkspaceUsersView, WorkspaceDashboardView, WorkspaceManagementHomeView) {
+    'views/workspace-management-home',
+    'views/admin-dashboard'
+], function (Backbone, Mustache, template, WorkspaceEditView, WorkspaceCreationView, WorkspaceUsersView, WorkspaceDashboardView, WorkspaceManagementHomeView, AdminDashboardView) {
 	'use strict';
     var AppView = Backbone.View.extend({
 
@@ -27,6 +28,7 @@ define([
             var isUsersRegex = new RegExp('#/workspace/'+App.config.workspaceId+'/users','g');
             var isDashboardRegex = new RegExp('#/workspace/'+App.config.workspaceId+'/dashboard','g');
             this.$el.html(Mustache.render(template, {
+                isAdmin:App.config.admin,
                 administratedWorkspaces:App.config.workspaces.administratedWorkspaces,
                 nonAdministratedWorkspaces:App.config.workspaces.nonAdministratedWorkspaces,
                 workspaceId:App.config.workspaceId,
@@ -72,6 +74,12 @@ define([
             var view = new WorkspaceDashboardView();
             view.render();
             this.$('#workspace-management-content').html(view.$el);
+        },
+        adminDashboard:function(){
+            var view = new AdminDashboardView();
+            view.render();
+            this.$('#workspace-management-content').html(view.$el);
+
         }
 
     });

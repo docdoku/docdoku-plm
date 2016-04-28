@@ -32,6 +32,7 @@ define([
                 isProductStructure: window.location.pathname.match('/product-structure/'),
                 isChangeManagement: window.location.pathname.match('/change-management/'),
                 isWorkspaceManagement: window.location.pathname.match('/workspace-management/'),
+                isAdmin:App.config.admin
             }));
 
             $el.show().addClass('loaded');

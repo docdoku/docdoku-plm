@@ -1,0 +1,59 @@
+<h4>
+    {{#administrated}}
+        <a href="#/workspace/{{workspace.id}}/edit"><i class="fa fa-pencil"></i></a>
+        <i class="fa fa-graduation-cap"></i>
+    {{/administrated}}
+    {{^administrated}}
+        <i class="fa fa-user"></i>
+    {{/administrated}}
+    {{workspace.id}}
+    <small>{{workspace.description}}</small>
+</h4>
+<ul class="unstyled">
+    <li>
+        {{#administrated}}
+        <a href="#/workspace/{{workspace.id}}/users">
+        {{/administrated}}
+            <span class="users-count"></span> {{i18n.USERS}}</span>
+        {{#administrated}}
+        </a>
+        {{/administrated}}
+    </li>
+    <li>
+        {{^isAdmin}}
+        <a href="../document-management/#{{workspace.id}}">
+        {{/isAdmin}}
+            <span class="documents-count"></span> {{i18n.DOCUMENTS}}</span>
+        {{^isAdmin}}
+        </a>
+        {{/isAdmin}}
+    </li>
+    <li>
+        {{^isAdmin}}
+        <a href="../product-management/#{{workspace.id}}/parts">
+            {{/isAdmin}}
+            <span class="parts-count"></span> {{i18n.PARTS}}</span>
+            {{^isAdmin}}
+        </a>
+        {{/isAdmin}}
+    </li>
+    <li>
+        {{^isAdmin}}
+        <a href="../product-management/#{{workspace.id}}/products">
+            {{/isAdmin}}
+            <span class="products-count"></span> {{i18n.PRODUCTS}}</span>
+            {{^isAdmin}}
+        </a>
+        {{/isAdmin}}
+    </li>
+
+</ul>
+{{#administrated}}
+<div class="workspace-actions pull-left">
+    <a href="#/workspace/{{workspace.id}}/dashboard">{{i18n.DASHBOARD}}</a>
+</div>
+<div class="workspace-actions pull-right">
+    <a title="{{i18n.DELETE}}" href="#/workspace/{{workspace.id}}/delete"><i class="fa fa-trash"></i></a>
+
+</div>
+{{/administrated}}

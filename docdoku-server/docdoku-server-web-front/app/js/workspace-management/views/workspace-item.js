@@ -2,10 +2,9 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/workspace-administrated-item.html',
-    'text!templates/workspace-non-administrated-item.html',
+    'text!templates/workspace-item.html',
     'common-objects/models/workspace'
-], function (Backbone, Mustache, adminTemplate, nonAdminTemplate, Workspace) {
+], function (Backbone, Mustache, template,  Workspace) {
     'use strict';
 
     var WorkspaceItemView = Backbone.View.extend({
@@ -22,11 +21,11 @@ define([
 
             var _this = this;
 
-            var template = this.options.administrated ? adminTemplate : nonAdminTemplate;
-
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n,
-                workspace:this.options.workspace
+                workspace:this.options.workspace,
+                isAdmin:App.config.admin,
+                administrated:this.options.administrated
             }));
 
             Workspace.getStatsOverView(this.options.workspace.id).then(function(stats){

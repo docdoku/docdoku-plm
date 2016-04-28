@@ -583,7 +583,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         return userGroups.toArray(new UserGroup[userGroups.size()]);
     }
 
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public Workspace[] getWorkspacesWhereCallerIsActive() {
         String callerLogin = contextManager.getCallerPrincipalLogin();

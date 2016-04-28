@@ -21,15 +21,16 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Organization;
-import com.docdoku.core.common.User;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.IAccountManagerLocal;
+import com.docdoku.core.services.IAccountManagerWS;
+import com.docdoku.core.services.IContextManagerLocal;
+import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.server.dao.AccountDAO;
 import com.docdoku.server.dao.GCMAccountDAO;
 import com.docdoku.server.dao.OrganizationDAO;
-import com.docdoku.server.dao.UserDAO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -134,7 +135,7 @@ public class AccountManagerBean implements IAccountManagerLocal, IAccountManager
 
     }
 
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public void deleteGCMAccount() throws AccountNotFoundException, GCMAccountNotFoundException {
         String callerLogin = contextManager.getCallerPrincipalLogin();
@@ -144,7 +145,7 @@ public class AccountManagerBean implements IAccountManagerLocal, IAccountManager
         gcmAccountDAO.deleteGCMAccount(gcmAccount);
     }
 
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public Account getMyAccount() throws AccountNotFoundException {
         return getAccount(contextManager.getCallerPrincipalName());

@@ -10,6 +10,11 @@ define([
     'modules/webrtc-module/app'
 ], function (Backbone, Channel, ChannelListener, ChannelMessagesType, CoWorkersAccessModuleView, UserPopoverModule, chatListener, webRTCInvitationListener) {
 	'use strict';
+
+    if(App.config.admin){
+        return;
+    }
+
     var pageUnload = function () {
         App.mainChannel.ws.onclose = function () {
         };

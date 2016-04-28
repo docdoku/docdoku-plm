@@ -7,11 +7,11 @@ define([
 ], function (Backbone, Mustache, template, Workspace) {
     'use strict';
 
-    var maxDays = 30 ;
+    var MAX_DAYS = 30;
 
     function calculateDaysSinceTimestamp(timestamp){
         var days = parseInt(((((new Date().getTime() - timestamp)/1000)/60)/60)/24);
-        return days < maxDays ? days+1 : maxDays;
+        return days < MAX_DAYS ? days+1 : MAX_DAYS;
     }
 
     var WorkspaceDashboardView = Backbone.View.extend({
@@ -52,24 +52,40 @@ define([
             var diskUsageData = [];
             var totalDiskUsage = 0;
 
+            var translates = {
+                documents:App.config.i18n.DOCUMENTS,
+                documentTemplates:App.config.i18n.DOCUMENT_TEMPLATES,
+                parts:App.config.i18n.PARTS,
+                partTemplates:App.config.i18n.PART_TEMPLATES
+            };
+
             for(var key in diskUsage){
                 if(diskUsage[key]){
-                    diskUsageData.push({key:key,y:diskUsage[key],f:bytesToSize(diskUsage[key])});
+                    diskUsageData.push({key:translates[key],y:diskUsage[key],f:bytesToSize(diskUsage[key])});
                     totalDiskUsage+=diskUsage[key];
                 }
             }
 
             if(diskUsageData.length === 0){
-                diskUsageData.push({key:'No Data available',y:100,f:'Nothing to show'})
+                diskUsageData.push({key:App.config.i18n.NO_DATA,y:100,f:App.config.i18n.NO_DATA})
             }
 
-            this.$("#disk_usage_chart span.total").html(bytesToSize(totalDiskUsage));
+            var $chart = this.$('#disk_usage_chart');
+            var width = $chart.width();
+            var height = $chart.height();
+            $chart.find('svg')
+                .attr("width", '100%')
+                .attr("height", '100%')
+                .attr('viewBox','0 0 '+Math.min(width,height) +' '+Math.min(width,height) )
+                .attr('preserveAspectRatio','xMinYMin')
+                .attr('transform', 'translate(' + Math.min(width,height) / 2 + ',' + Math.min(width,height) / 2 + ')');
+
+            $chart.parent().find("span.total").html(bytesToSize(totalDiskUsage));
 
             // TODO translate keys
 
             nv.addGraph(function() {
                 var chart;
-                var width = 400, height = 200;
 
                 chart = nv.models.pieChart()
                     .x(function(d) { return d.key })
@@ -77,16 +93,13 @@ define([
                     .showLabels(false)
                     .values(function(d) { return d })
                     .color(d3.scale.category10().range())
-                    .width(width)
-                    .height(height)
+
                     .donut(false)
                     .tooltipContent(function(x, y, e, graph){return diskUsageTooltip(x, e.point.f)});
 
                 d3.select("#disk_usage_chart svg")
                     .datum([diskUsageData])
                     .transition().duration(1200)
-                    .attr('width', width)
-                    .attr('height', height)
                     .call(chart);
 
                 return chart;
@@ -103,20 +116,28 @@ define([
             var partsCount = entitiesCount.parts;
 
             // TODO translate
-            entitiesData.push({key:"Users",y:usersCount});
-            entitiesData.push({key:"Documents",y:documentsCount});
-            entitiesData.push({key:"Products",y:productsCount});
-            entitiesData.push({key:"Parts",y:partsCount});
+            entitiesData.push({key:App.config.i18n.USERS,y:usersCount});
+            entitiesData.push({key:App.config.i18n.DOCUMENTS,y:documentsCount});
+            entitiesData.push({key:App.config.i18n.PRODUCTS,y:productsCount});
+            entitiesData.push({key:App.config.i18n.PARTS,y:partsCount});
+
+
+            var $chart = this.$('#entities_chart');
+            var width = $chart.width();
+            var height = $chart.height();
+            $chart.find('svg')
+                .attr("width", '100%')
+                .attr("height", '100%')
+                .attr('viewBox','0 0 '+Math.min(width,height) +' '+Math.min(width,height) )
+                .attr('preserveAspectRatio','xMinYMin')
+                .attr('transform', 'translate(' + Math.min(width,height) / 2 + ',' + Math.min(width,height) / 2 + ')');
 
             nv.addGraph(function() {
-                var width = 400, height = 200;
                 var chart = nv.models.discreteBarChart()
                     .x(function(d) { return d.key })
                     .y(function(d) { return d.y })
                     .staggerLabels(true)
                     .tooltips(false)
-                    .width(width)
-                    .height(height)
                     .showValues(true);
 
                 chart.yAxis.tickFormat(d3.format('.f'));
@@ -126,16 +147,17 @@ define([
                     .transition().duration(500)
                     .call(chart);
 
+                nv.utils.windowResize(chart.update);
+
                 return chart;
             });
         },
 
         constructCheckedOutDocsCharts:function(cod){
 
-
-
             var codData = [];
             var totalCod = 0;
+
             for(var user in cod){
                 var documents = cod[user];
                 var mapDayDoc = {};
@@ -143,7 +165,7 @@ define([
                     key: user,
                     values: []
                 };
-                for(var i = 0 ; i < maxDays+1 ; i++){
+                for(var i = 0 ; i < MAX_DAYS+1 ; i++){
                     mapDayDoc[i]=0;
                 }
                 for(var i = 0; i < documents.length ; i++){
@@ -160,33 +182,48 @@ define([
                 codData.push(userData);
             }
 
-            nv.addGraph(function() {
-                var width = 900, height = 290;
-                var chart = nv.models.scatterChart()
-                    .showDistX(true)
-                    .showDistY(true)
-                    .width(width)
-                    .height(height)
-                    .forceX([0,maxDays])
-                    .forceY([0,null])
-                    .color(d3.scale.category10().range());
+            var $chart = this.$('#cod_chart');
+            var width = $chart.width();
+            var height = $chart.height();
 
-                chart.xAxis.tickFormat(d3.format('.f'));
-                chart.xAxis.axisLabel(App.config.i18n.CHART_AXIS_DAYS_NUMBER);
-                chart.yAxis.tickFormat(d3.format('.f'));
-                chart.yAxis.axisLabel(App.config.i18n.CHART_AXIS_DOCUMENTS_NUMBER);
+            $chart.find('svg')
+                .attr("width", '100%')
+                .attr("height", '100%')
+                .attr('viewBox','0 0 '+Math.min(width,height) +' '+Math.min(width,height) )
+                .attr('preserveAspectRatio','xMinYMin')
+                .attr('transform', 'translate(' + Math.min(width,height) / 2 + ',' + Math.min(width,height) / 2 + ')');
+            $chart.parent().find("span.total").html(totalCod);
 
-                d3.select('#cod_chart svg')
-                    .datum(codData)
-                    .transition().duration(500)
-                    .call(chart);
+            if(codData.length){
 
-                nv.utils.windowResize(chart.update);
+                nv.addGraph(function() {
+                    var chart = nv.models.scatterChart()
+                        .showDistX(true)
+                        .showDistY(true)
+                        .forceX([0,MAX_DAYS])
+                        .forceY([0,null])
+                        .color(d3.scale.category10().range());
 
-                return chart;
-            });
+                    chart.xAxis.tickFormat(d3.format('.f'));
+                    chart.xAxis.axisLabel(App.config.i18n.CHART_AXIS_DAYS_NUMBER);
+                    chart.yAxis.tickFormat(d3.format('.f'));
+                    chart.yAxis.axisLabel(App.config.i18n.CHART_AXIS_DOCUMENTS_NUMBER);
 
-            this.$("#cod_chart span.total").html(totalCod);
+                    d3.select('#cod_chart svg')
+                        .datum(codData)
+                        .transition().duration(500)
+                        .call(chart);
+
+                    nv.utils.windowResize(chart.update);
+
+                    return chart;
+                });
+
+            } else {
+                $chart.html(App.config.i18n.NO_DATA);
+            }
+
+
 
 
         },
@@ -202,7 +239,7 @@ define([
                     key: user,
                     values: []
                 };
-                for(var i = 0 ; i < maxDays+1 ; i++){
+                for(var i = 0 ; i < MAX_DAYS+1 ; i++){
                     mapDayPart[i]=0;
                 }
                 for(var i = 0; i < parts.length ; i++){
@@ -219,53 +256,69 @@ define([
                 copData.push(userData);
             }
 
+            var $chart = this.$('#cop_chart');
+            var width = $chart.width();
+            var height = $chart.height();
+            $chart.find('svg')
+                .attr("width", '100%')
+                .attr("height", '100%')
+                .attr('viewBox','0 0 '+Math.min(width,height) +' '+Math.min(width,height) )
+                .attr('preserveAspectRatio','xMinYMin')
+                .attr('transform', 'translate(' + Math.min(width,height) / 2 + ',' + Math.min(width,height) / 2 + ')');
 
-            nv.addGraph(function() {
-                var width = 900, height = 290;
-                var chart = nv.models.scatterChart()
-                    .showDistX(true)
-                    .showDistY(true)
-                    .width(width)
-                    .height(height)
-                    .forceX([0,maxDays])
-                    .forceY([0,null])
-                    .color(d3.scale.category10().range());
+            $chart.parent().find("span.total").html(totalCop);
 
-                chart.xAxis.tickFormat(d3.format('.f'));
-                chart.xAxis.axisLabel(App.config.i18n.CHART_AXIS_DAYS_NUMBER);
-                chart.yAxis.tickFormat(d3.format('.f'));
-                chart.yAxis.axisLabel(App.config.i18n.CHART_AXIS_PARTS_NUMBER);
+            if(copData.length){
+                nv.addGraph(function() {
+                    var chart = nv.models.scatterChart()
+                        .showDistX(true)
+                        .showDistY(true)
+                        .forceX([0,MAX_DAYS])
+                        .forceY([0,null])
+                        .color(d3.scale.category10().range());
 
-                d3.select('#cop_chart svg')
-                    .datum(copData)
-                    .transition().duration(500)
-                    .call(chart);
+                    chart.xAxis.tickFormat(d3.format('.f'));
+                    chart.xAxis.axisLabel(App.config.i18n.CHART_AXIS_DAYS_NUMBER);
+                    chart.yAxis.tickFormat(d3.format('.f'));
+                    chart.yAxis.axisLabel(App.config.i18n.CHART_AXIS_PARTS_NUMBER);
 
-                nv.utils.windowResize(chart.update);
+                    d3.select('#cop_chart svg')
+                        .datum(copData)
+                        .transition().duration(500)
+                        .call(chart);
 
-                return chart;
-            });
-            this.$("#cop_chart span.total").html(totalCop);
+                    nv.utils.windowResize(chart.update);
+
+                    return chart;
+                });
+
+            } else {
+                $chart.html(App.config.i18n.NO_DATA);
+            }
         },
 
         constructUsersCharts:function(usersInWorkspace, usersStats){
 
             var usersAndGroupData = [];
-
+            var translates = {
+                users:App.config.i18n.USERS,
+                activeusers:App.config.i18n.ACTIVE_USERS,
+                inactiveusers:App.config.i18n.INACTIVE_USERS,
+                groups:App.config.i18n.GROUPS,
+                activegroups:App.config.i18n.ACTIVE_GROUPS,
+                inactivegroups:App.config.i18n.INACTIVE_GROUPS
+            }
             // TODO translate keys
             for(var key in usersStats){
-                usersAndGroupData.push({key:key,y:usersStats[key]});
+                usersAndGroupData.push({key:translates[key],y:usersStats[key]});
             }
 
             nv.addGraph(function() {
-                var width = 800, height = 200;
                 var chart = nv.models.discreteBarChart()
                     .x(function(d) { return d.key })
                     .y(function(d) { return d.y })
                     .staggerLabels(true)
-                    .tooltips(false)
-                    .width(width)
-                    .height(height)
+                    .tooltips(true)
                     .showValues(true);
 
                 chart.yAxis.tickFormat(d3.format('.f'));
@@ -275,6 +328,7 @@ define([
                     .transition().duration(500)
                     .call(chart);
 
+                nv.utils.windowResize(chart.update);
                 return chart;
             });
 

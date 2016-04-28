@@ -54,8 +54,8 @@ import java.util.*;
 @RequestScoped
 @Api(value = "workspaces", description = "Operations about workspaces")
 @Path("workspaces")
-@DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
-@RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 public class WorkspaceResource {
 
     @Inject
@@ -417,9 +417,17 @@ public class WorkspaceResource {
             throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
 
         StatsOverviewDTO statsOverviewDTO = new StatsOverviewDTO();
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
 
-        if(user.isAdministrator()){
+        boolean admin = false;
+
+        if(contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
+            admin = true;
+        }else {
+            User user = userManager.checkWorkspaceReadAccess(workspaceId);
+            admin = user.isAdministrator();
+        }
+
+        if(admin){
             statsOverviewDTO.setDocuments(documentService.getTotalNumberOfDocuments(workspaceId));
             statsOverviewDTO.setParts(productService.getTotalNumberOfParts(workspaceId));
         }else{

@@ -155,6 +155,7 @@ define({
     DOCUMENT_REVISION_NOTE_PROMPT_LABEL: "Souhaitez-vous ajouter une note de révision aux documents qui n'en ont pas ?",
 	DOCUMENT_S_REFERENCE: "Référence du document",
 	DOCUMENT_S_TITLE: "Titre du document",
+    DOCUMENT_TEMPLATES: "Modèle de document",
 	DOCUMENT_TYPE_HELP: "Type du document",
     DOCUMENT_VERSION_HELP: "Version du document",
 	DOWNLOAD_DPLM_CLIENT: 'Télécharger le client DPLM',
