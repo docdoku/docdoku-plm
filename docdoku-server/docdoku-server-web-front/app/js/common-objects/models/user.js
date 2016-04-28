@@ -20,5 +20,14 @@ function (Backbone) {
         return $.getJSON(App.config.contextPath + '/api/accounts/me');
     };
 
+    UserModel.updateAccount = function (account) {
+        return $.ajax({
+            type: 'PUT',
+            url: App.config.contextPath + '/api/accounts/me',
+            data: JSON.stringify(account),
+            contentType: 'application/json; charset=utf-8'
+        });
+    };
+
     return UserModel;
 });

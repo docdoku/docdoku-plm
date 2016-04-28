@@ -80,7 +80,7 @@ public class AccountManagerBean implements IAccountManagerLocal, IAccountManager
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public void updateAccount(String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountNotFoundException {
+    public Account updateAccount(String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountNotFoundException {
         AccountDAO accountDAO = new AccountDAO(new Locale(pLanguage), em);
         Account account = accountDAO.loadAccount(contextManager.getCallerPrincipalLogin());
         account.setName(pName);
@@ -90,6 +90,7 @@ public class AccountManagerBean implements IAccountManagerLocal, IAccountManager
         if (pPassword != null) {
             accountDAO.updateCredential(account.getLogin(), pPassword);
         }
+        return account;
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})

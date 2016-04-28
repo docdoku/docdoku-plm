@@ -2,8 +2,9 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/content.html'
-], function (Backbone, Mustache, template) {
+    'text!templates/content.html',
+    'views/edit-account'
+], function (Backbone, Mustache, template, EditAccountView) {
 	'use strict';
     var AppView = Backbone.View.extend({
 
@@ -23,6 +24,8 @@ define([
         },
 
         editAccount:function(){
+            var view = new EditAccountView();
+            this.$('#account-management-content').html(view.render().el);
         }
 
     });

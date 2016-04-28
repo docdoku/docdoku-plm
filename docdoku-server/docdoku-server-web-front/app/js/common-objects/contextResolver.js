@@ -48,6 +48,7 @@ define([
     ContextResolver.prototype.resolveAccount = function(){
         return User.getAccount().then(function(account){
 
+            App.config.account = account;
             App.config.login = account.login;
             App.config.userName = account.name;
             App.config.timeZone = account.timeZone;

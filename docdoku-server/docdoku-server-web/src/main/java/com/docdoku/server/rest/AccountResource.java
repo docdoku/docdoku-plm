@@ -89,6 +89,14 @@ public class AccountResource {
         return accountDTO;
     }
 
+    @PUT
+    @Path("/me")
+    @ApiOperation(value = "Update user's account", response = AccountDTO.class)
+    @Produces(MediaType.APPLICATION_JSON)
+    public AccountDTO updateAccount(@ApiParam(required = true,value = "Updated account") AccountDTO accountDTO) throws AccountNotFoundException {
+        Account account = accountManager.updateAccount(accountDTO.getName(), accountDTO.getEmail(), accountDTO.getLanguage(), accountDTO.getNewPassword(), accountDTO.getTimeZone());
+        return mapper.map(account,AccountDTO.class);
+    }
 
     @GET
     @Path("/workspaces")

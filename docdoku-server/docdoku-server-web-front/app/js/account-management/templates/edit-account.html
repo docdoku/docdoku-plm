@@ -1,0 +1,82 @@
+<div class="actions well">
+    <button class="btn btn-default logout">{{i18n.LOGOUT}}</button>
+</div>
+<div class="notifications"></div>
+<div class="margin">
+    <h3>{{i18n.ACCOUNT_EDITION}}</h3>
+    <form id="account_edition_form" class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label">{{i18n.LOGIN}}</label>
+            <div class="controls">
+                {{account.login}}
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="account-name">{{i18n.ACCOUNT_NAME}}</label>
+            <div class="controls">
+                <input id="account-name" type="text" value="{{account.name}}" name="name" maxlength="50" size="20" required />
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="account-email">{{i18n.EMAIL}}</label>
+            <div class="controls">
+                <input id="account-email" type="email" value="{{account.email}}" name="email" required />
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="account-language" >{{i18n.LANG}}</label>
+            <div class="controls">
+               <select id="account-language" required>
+                   {{#languages}}
+                    <option value="{{.}}">{{.}}</option>
+                   {{/languages}}
+               </select>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="account-timezone">{{i18n.TIMEZONE}}</label>
+            <div class="controls">
+                <select id="account-timezone">
+                    {{#timeZones}}
+                        <option value="{{.}}">{{.}}</option>
+                    {{/timeZones}}
+                </select>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">
+                <a class="toggle-password-update">{{i18n.CHANGE_PASSWORD}}</a>
+            </label>
+        </div>
+
+        <div class="password-update hide">
+            <div class="control-group">
+                <label class="control-label" for="account-password">{{i18n.PASSWORD}}</label>
+                <div class="controls">
+                    <input type="password" id="account-password" />
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="account-confirm-password">{{i18n.CONFIRM_PASSWORD}}</label>
+                <div class="controls">
+                    <input type="password" id="account-confirm-password" />
+                </div>
+            </div>
+        </div>
+
+        <div class="actions-btn">
+            <div class="controls">
+                <input type="submit" value="{{i18n.SAVE}}" alt="{{i18n.SAVE}}" class="btn btn-primary" />
+            </div>
+        </div>
+
+    </form>
+
+
+</div>
