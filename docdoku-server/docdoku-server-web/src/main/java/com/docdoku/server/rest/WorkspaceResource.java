@@ -89,9 +89,6 @@ public class WorkspaceResource {
     private TaskResource tasks;
 
     @Inject
-    private SearchResource searches;
-
-    @Inject
     private WorkflowResource workflows;
 
     @Inject
@@ -587,12 +584,6 @@ public class WorkspaceResource {
     @Path("/{workspaceId}/checkedouts")
     public CheckedOutDocumentResource checkedOuts() {
         return checkedOutDocuments;
-    }
-
-    @ApiOperation(value = "WorkspaceSearch")
-    @Path("/{workspaceId}/search")
-    public SearchResource search() {
-        return searches;
     }
 
     @ApiOperation(value = "WorkspaceTasks")

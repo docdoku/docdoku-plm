@@ -3,8 +3,9 @@ define([
     'backbone',
     'mustache',
     'text!templates/workspace-item.html',
-    'common-objects/models/workspace'
-], function (Backbone, Mustache, template,  Workspace) {
+    'common-objects/models/workspace',
+    'common-objects/models/admin'
+], function (Backbone, Mustache, template, Workspace, Admin) {
     'use strict';
 
     var WorkspaceItemView = Backbone.View.extend({
@@ -12,6 +13,7 @@ define([
         className:'well-large well home-workspace',
 
         events: {
+            'click .index-workspace':'indexWorkspace'
         },
 
         initialize: function () {
@@ -40,7 +42,18 @@ define([
 
         newWorkspace:function(){
             window.location.href='#/create';
+        },
+
+        indexWorkspace:function(e){
+            var _this = this;
+            Admin.indexWorkspace(e.target.dataset.workspaceId)
+                .then(function(){
+                    _this.trigger('index-workspace-success', App.config.i18n.WORKSPACE_INDEXING);
+                },function(error){
+                    _this.trigger('index-workspace-error', error);
+                });
         }
+
     });
 
     return WorkspaceItemView;

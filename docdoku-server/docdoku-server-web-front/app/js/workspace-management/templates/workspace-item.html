@@ -51,5 +51,8 @@
 {{#administrated}}
 <div class="workspace-actions pull-left">
     <a href="#/workspace/{{workspace.id}}/dashboard">{{i18n.DASHBOARD}}</a>
+    {{#isAdmin}}
+    <a href="#" class="index-workspace" data-workspace-id="{{workspace.id}}">{{i18n.INDEX_WORKSPACE}}</a>
+    {{/isAdmin}}
 </div>
 {{/administrated}}

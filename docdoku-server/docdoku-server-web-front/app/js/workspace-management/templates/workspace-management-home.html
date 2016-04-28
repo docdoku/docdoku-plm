@@ -1,5 +1,5 @@
-{{#isAdmin}}
 <div class="notifications">
+    {{#isAdmin}}
     <div>
         <div class="Alert alert alert-info fade in">
             <a class="Alert-closeBtn close" data-dismiss="alert">×</a>
@@ -8,9 +8,8 @@
             <p class="Alert-message">{{i18n.ROOT_ADMIN_MESSAGE}}</p>
         </div>
     </div>
+    {{/isAdmin}}
 </div>
-{{/isAdmin}}
-
 
 <div class="margin">
     <h3>{{i18n.WORKSPACES_ADMINISTRATION}}</h3>

@@ -23,5 +23,19 @@ define(['backbone'], function (Backbone) {
         return $.getJSON(App.config.contextPath + '/api/admin/parts-stats');
     };
 
+    Admin.indexWorkspace = function (workspaceId) {
+        return $.ajax({
+            type: 'PUT',
+            url: App.config.contextPath +  '/api/admin/index/'+workspaceId
+        });
+    };
+
+    Admin.indexAllWorkspaces = function () {
+        return $.ajax({
+            type: 'PUT',
+            url: App.config.contextPath +  '/api/admin/index-all'
+        });
+    };
+
     return Admin;
 });

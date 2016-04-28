@@ -37,10 +37,9 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.Serializable;
 
 
@@ -62,6 +61,9 @@ public class AdminResource implements Serializable {
 
     @Inject
     private IUserManagerLocal userManager;
+
+    @Inject
+    private IWorkspaceManagerLocal workspaceManager;
 
     public AdminResource(){
 
@@ -139,6 +141,7 @@ public class AdminResource implements Serializable {
         return productsStats.build();
 
     }
+
     @GET
     @Path("parts-stats")
     @ApiOperation(value = "Get parts stats", response = JsonObject.class)
@@ -155,8 +158,26 @@ public class AdminResource implements Serializable {
         }
 
         return partsStats.build();
-
     }
 
 
+    @PUT
+    @ApiOperation(value = "Synchronize index for workspace")
+    @Path("index/{workspaceId}")
+    public Response indexWorkspace(@PathParam("workspaceId") String workspaceId){
+        workspaceManager.synchronizeIndexer(workspaceId);
+        return Response.ok().build();
+
+    }
+
+    @PUT
+    @ApiOperation(value = "Synchronize index for all workspaces")
+    @Path("index-all")
+    public Response indexAllWorkspaces() throws AccountNotFoundException {
+        Workspace[] administratedWorkspaces = userManager.getAdministratedWorkspaces();
+        for(Workspace workspace : administratedWorkspaces){
+            workspaceManager.synchronizeIndexer(workspace.getId());
+        }
+        return Response.ok().build();
+    }
 }

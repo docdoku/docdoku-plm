@@ -31,7 +31,9 @@ define({
         ADMIN_DASHBOARD:'Super administrator dashboard',
         TOTAL:'Total',
         WORKSPACES_ADMINISTRATION_TEXT:'Only the creator of the workspace has administrator rights. These rights allow to edit the workspace properties and add and remove users.',
-        WORKSPACE_DELETING:'Workspace deletion on progress. A report will be sent by mail to workspace administrator once finished.'
+        WORKSPACE_DELETING:'Workspace deletion on progress. A report will be sent by mail to workspace administrator once finished.',
+        WORKSPACE_INDEXING:'Workspace indexation on progress. A report will be sent by mail to workspace administrator once finished.',
+        INDEX_WORKSPACE:'Index data'
     },
     'fr': true,
     'es': true
