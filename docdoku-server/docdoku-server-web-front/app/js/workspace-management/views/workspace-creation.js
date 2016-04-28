@@ -3,8 +3,9 @@ define([
     'backbone',
     'mustache',
     'text!templates/workspace-creation.html',
-    'common-objects/models/workspace'
-], function (Backbone, Mustache, template, Workspace) {
+    'common-objects/models/workspace',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, template, Workspace, AlertView) {
     'use strict';
 
     var WorkspaceCreationView = Backbone.View.extend({
@@ -20,6 +21,7 @@ define([
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n
             }));
+            this.$notifications = this.$('.notifications');
             return this;
         },
 
@@ -36,13 +38,19 @@ define([
                 App.config.workspaces.administratedWorkspaces.push(workspace);
                 App.config.workspaces.allWorkspaces.push(workspace);
                 window.location.hash = '#/';
-            },function(){
-                console.log('Error')
-                console.log(arguments)
-            });
+            },this.onError.bind(this));
+
             e.preventDefault();
             return false;
+        },
+
+        onError:function(error){
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: error.responseText
+            }).render().$el);
         }
+
     });
 
     return WorkspaceCreationView;

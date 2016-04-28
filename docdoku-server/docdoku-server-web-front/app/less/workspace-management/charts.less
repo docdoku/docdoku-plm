@@ -15,50 +15,23 @@
         -webkit-border-radius: 0;
         -moz-border-radius: 0;
         border-radius: 0;
-    }
-}
-.charts.chart svg{
-    position: relative;
-}
-#admin_disk_usage_chart, #admin_users_chart{
-    height: 400px;
-    svg{
-        height: 100%;
-        width: 100%;
-    }
-}
-#disk_usage_chart{
-    height: 400px;
-    svg{
-        height: 100%;
-        width: 100%;
-    }
-}
-#entities_chart{
-    height: 400px;
-    svg{
-        height: 100%;
-        width: 100%;
-    }
-}
-#users_chart{
-    height: 400px;
-    svg{
-        height: 100%;
-        width: 100%;
-    }
-}
-#cod_chart{
-    height: 400px;
-    svg{
-        height: 100%;
-        width: 100%;
-    }
-}
-#cop_chart{
-    height: 400px;
-    svg{
-        height: 100%;
-        width: 100%;
+
+        &.large-chart{
+            width: 92%;
+        }
+
+        #admin_disk_usage_chart,
+        #disk_usage_chart,
+        #admin_users_chart,
+        #entities_chart,
+        #users_chart,
+        #cod_chart,
+        #cop_chart,{
+            height: 400px;
+            svg{
+                height: 100%;
+                width: 100%;
+            }
+        }
     }
 }

@@ -3,14 +3,15 @@ define([
     'backbone',
     'mustache',
     'text!templates/workspace-edit.html',
-    'common-objects/models/workspace'
-], function (Backbone, Mustache, template, Workspace) {
+    'common-objects/models/workspace',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, template, Workspace, AlertView) {
     'use strict';
 
     var WorkspaceEditView = Backbone.View.extend({
 
         events: {
-            'click .delete-workspace':'delete',
+            'click .delete-workspace':'deleteWorkspace',
             'submit #workspace_update_form':'onSubmit'
         },
 
@@ -22,6 +23,7 @@ define([
                 i18n: App.config.i18n,
                 workspace: _.findWhere(App.config.workspaces.administratedWorkspaces,{id:App.config.workspaceId})
             }));
+            this.$notifications = this.$('.notifications');
             return this;
         },
 
@@ -33,7 +35,7 @@ define([
             $success.hide();
 
             Workspace.updateWorkspace({
-                id:App.config.workspaceId,
+                id:App.config.workspaceId+'azdzadazd',
                 description:description,
                 folderLocked:folderLocked
             }).then(function(){
@@ -41,24 +43,30 @@ define([
                 var workspace = _.findWhere(App.config.workspaces.administratedWorkspaces,{id:App.config.workspaceId});
                 workspace.description=description;
                 workspace.folderLocked=folderLocked;
-            },this.onError);
+            },this.onError.bind(this));
             e.preventDefault();
             return false;
         },
-        onError:function(){
-            console.log('Error')
-            console.log(arguments)
-        },
 
-        delete:function(){
+        deleteWorkspace:function(){
             if(confirm(App.config.i18n.DELETE)){
                 Workspace.deleteWorkspace(App.config.workspaceId)
-                    .then(function(){
-                        console.log('Request sent, redirect')
-                        window.location.hash = '#/';
-                    });
+                    .then(this.onDeleteWorkspaceSuccess.bind(this),this.onError.bind(this));
             }
-        }
+        },
+
+        onError:function(error){
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: error.responseText
+            }).render().$el);
+        },
+        onDeleteWorkspaceSuccess:function(){
+            this.$notifications.append(new AlertView({
+                type: 'info',
+                message: App.config.i18n.WORKSPACE_DELETING
+            }).render().$el);
+        },
     });
 
     return WorkspaceEditView;

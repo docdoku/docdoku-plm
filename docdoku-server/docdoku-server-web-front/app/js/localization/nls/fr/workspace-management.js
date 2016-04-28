@@ -37,4 +37,5 @@ define({
     ACTIVE_GROUPS:'Groupes actifs',
     INACTIVE_GROUPS:'Groupes désactivés',
     WORKSPACES_ADMINISTRATION_TEXT:'Seul le créateur de l\'espace de travail dispose des droits administrateur. Ces droits l\'autorisent à éditer les propriétés de l\'espace de travail et à y ajouter ou supprimer des utilisateurs.',
+    WORKSPACE_DELETING:'La suppression de l\'espace de travail est en cours. Un email de rapport sera envoyé à l\'administrateur à la fin de l\'opération.',
 });

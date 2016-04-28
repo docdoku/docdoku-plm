@@ -30,7 +30,8 @@ define({
         ROOT_ADMIN_MESSAGE:'Infos and stats on all workspace content and users of the server',
         ADMIN_DASHBOARD:'Super administrator dashboard',
         TOTAL:'Total',
-        WORKSPACES_ADMINISTRATION_TEXT:'Only the creator of the workspace has administrator rights. These rights allow to edit the workspace properties and add and remove users.'
+        WORKSPACES_ADMINISTRATION_TEXT:'Only the creator of the workspace has administrator rights. These rights allow to edit the workspace properties and add and remove users.',
+        WORKSPACE_DELETING:'Workspace deletion on progress. A report will be sent by mail to workspace administrator once finished.'
     },
     'fr': true,
     'es': true
