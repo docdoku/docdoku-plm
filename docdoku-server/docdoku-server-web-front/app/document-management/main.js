@@ -11,7 +11,8 @@ var App = {
 		login: '',
 		groups: [],
 		contextPath: '',
-		locale: window.localStorage.getItem('locale') || 'en'
+		locale: window.localStorage.getItem('locale') || 'en',
+        needAuthentication:true
 	}
 };
 

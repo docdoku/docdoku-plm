@@ -10,15 +10,16 @@ define([
     var ContextResolver = function () {
     };
 
-    $.ajaxSetup({
-        statusCode: {
-            401: function(){
-                window.location.href = App.config.contextPath + '/faces/login.xhtml?originURL=' + window.location.pathname + window.location.hash;
+    if(App.config.needAuthentication){
+        $.ajaxSetup({
+            statusCode: {
+                401: function(){
+                    window.location.href = App.config.contextPath + '/faces/login.xhtml?originURL=' + window.location.pathname + window.location.hash;
+                }
             }
-        }
-    });
-
-    var errorStatusHandlers = {
+        });
+    }
+    /*var errorStatusHandlers = {
         403 : function(){
             var forbiddenView = new ForbiddenView().render();
             document.body.appendChild(forbiddenView.el);
@@ -27,17 +28,29 @@ define([
         404 : function(){
             window.location.href = App.config.contextPath + '/404';
         }
-    };
+    };*/
 
     function onError(res) {
         var status = res.status;
-        if(typeof errorStatusHandlers[status] === 'function'){
+        /*if(typeof errorStatusHandlers[status] === 'function'){
             errorStatusHandlers[status]();
         }
         else{
             window.location.href = App.config.contextPath + '/faces/admin/workspace/workspacesMenu.xhtml?error='+res.status;
-        }
+        }*/
+        return res;
     }
+
+    ContextResolver.prototype.needAuthentication = function () {
+        $.ajaxSetup({
+            statusCode: {
+                401: function(){
+                    window.location.href = App.config.contextPath + '/faces/login.xhtml?originURL=' + window.location.pathname + window.location.hash;
+                }
+            }
+        });
+    };
+
 
     ContextResolver.prototype.resolveServerProperties = function(){
         return $.getJSON('../server.properties.json').then(function (properties) {
@@ -47,7 +60,7 @@ define([
 
     ContextResolver.prototype.resolveAccount = function(){
         return User.getAccount().then(function(account){
-
+            App.config.connected = true;
             App.config.account = account;
             App.config.login = account.login;
             App.config.userName = account.name;
@@ -73,7 +86,6 @@ define([
                 return _.contains(_.pluck(App.config.workspaces.administratedWorkspaces,'id'),workspace.id);
             });
             return workspaces;
-
         },onError);
     };
 
@@ -91,9 +103,9 @@ define([
             },onError);
     };
 
-    ContextResolver.prototype.resolveUser = function () {
+   /* ContextResolver.prototype.resolveUser = function () {
         return User.whoami(App.config.workspaceId, onError);
-    };
+    };*/
 
     return new ContextResolver();
 });

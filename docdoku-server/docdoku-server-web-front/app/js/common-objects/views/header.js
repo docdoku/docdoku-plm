@@ -5,6 +5,9 @@ define([
     'text!common-objects/templates/header.html'
 ], function (Backbone, Mustache, template) {
     'use strict';
+
+
+
     var HeaderView = Backbone.View.extend({
         el: '#header',
 
@@ -17,14 +20,18 @@ define([
             function isCurrent(workspace){
                 workspace.isCurrent = workspace.id === App.config.workspaceId;
             }
-            _.each(workspaces.administratedWorkspaces, isCurrent);
-            _.each(workspaces.nonAdministratedWorkspaces, isCurrent);
+
+            if(workspaces){
+                _.each(workspaces.administratedWorkspaces, isCurrent);
+                _.each(workspaces.nonAdministratedWorkspaces, isCurrent);
+            }
 
             $el.html(Mustache.render(template, {
+                connected:App.config.connected,
                 currentWorkspace: App.config.workspaceId,
                 contextPath: App.config.contextPath,
-                administratedWorkspaces: workspaces.administratedWorkspaces,
-                nonAdministratedWorkspaces: workspaces.nonAdministratedWorkspaces,
+                administratedWorkspaces: workspaces ? workspaces.administratedWorkspaces: null,
+                nonAdministratedWorkspaces: workspaces ?  workspaces.nonAdministratedWorkspaces: null,
                 i18n: App.config.i18n,
                 userName: App.config.userName,
                 isDocumentManagement: window.location.pathname.match('/document-management/'),
