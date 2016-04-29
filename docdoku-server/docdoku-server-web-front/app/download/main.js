@@ -19,7 +19,7 @@ App.log=function(message){
 
 require.config({
 
-    baseUrl: '../js/download',
+    baseUrl: 'js',
 
     shim: {
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
@@ -36,8 +36,8 @@ require.config({
         text: '../../bower_components/requirejs-text/text',
         i18n: '../../bower_components/requirejs-i18n/i18n',
         bootstrap: '../../bower_components/bootstrap/docs/assets/js/bootstrap',
-        'common-objects': '../common-objects',
-        localization: '../localization'
+        'common-objects': '../../js/common-objects',
+        localization: '../../js/localization'
     },
 
     deps: [

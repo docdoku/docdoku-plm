@@ -29,7 +29,7 @@ module.exports = {
                 useStrict: true,
                 wrap: true,
                 inlineText: true,
-                baseUrl: 'app/js/document-management',
+                baseUrl: 'app/document-management/js',
                 mainConfigFile: 'app/document-management/main.js',
                 out: 'dist/document-management/main.js',
                 paths: {localization: 'empty:'},

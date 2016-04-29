@@ -29,7 +29,7 @@ module.exports = {
                     useStrict: true,
                     wrap: true,
                     inlineText: true,
-                    baseUrl: 'app/js/change-management',
+                    baseUrl: 'app/change-management/js',
                     mainConfigFile: 'app/change-management/main.js',
                     out: 'dist/change-management/main.js',
                     paths: {localization: 'empty:'},

@@ -26,7 +26,7 @@ App.log=function(message){
 
 require.config({
 
-    baseUrl: '../js/document-management',
+    baseUrl: 'js',
 
     shim: {
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
@@ -63,16 +63,16 @@ require.config({
         unorm:'../../bower_components/unorm/lib/unorm',
         moment:'../../bower_components/moment/min/moment-with-locales',
         momentTimeZone:'../../bower_components/moment-timezone/builds/moment-timezone-with-data',
-        unmaskConfig:'../utils/jquery.maskedinput-config',
-        localization: '../localization',
-        modules: '../modules',
-        'common-objects': '../common-objects',
-        effects: '../utils/effects',
-        popoverUtils: '../utils/popover.utils',
-        inputValidity: '../utils/input-validity',
-        datatablesOsortExt: '../utils/datatables.oSort.ext',
-        utilsprototype: '../utils/utils.prototype',
-        userPopover: 'modules/user-popover-module/app',
+        unmaskConfig:'../../js/utils/jquery.maskedinput-config',
+        localization: '../../js/localization',
+        modules: '../../js/modules',
+        'common-objects': '../../js/common-objects',
+        effects: '../../js/utils/effects',
+        popoverUtils: '../../js/utils/popover.utils',
+        inputValidity: '../../js/utils/input-validity',
+        datatablesOsortExt: '../../js/utils/datatables.oSort.ext',
+        utilsprototype: '../../js/utils/utils.prototype',
+        userPopover: '../../js/modules/user-popover-module/app',
         async: '../../bower_components/async/lib/async',
         date_picker_lang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr'
     },

@@ -29,7 +29,7 @@ module.exports = {
                     useStrict: true,
                     wrap: true,
                     inlineText: true,
-                    baseUrl: 'app/js/product-management',
+                    baseUrl: 'app/product-management/js',
                     mainConfigFile: 'app/product-management/main.js',
                     out: 'dist/product-management/main.js',
                     paths: {localization: 'empty:'},

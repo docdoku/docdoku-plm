@@ -67,7 +67,7 @@ App.log=function(message,colorType){
 };
 
 require.config({
-    baseUrl: '../js/product-structure',
+    baseUrl: '../product-structure/js',
     shim: {
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
         bootstrap: { deps: ['jquery', 'jqueryUI'], exports: 'jQuery' },
@@ -96,10 +96,10 @@ require.config({
         tween:'../../bower_components/tweenjs/src/Tween',
         date:'../../bower_components/date.format/date.format',
         dat:'../../bower_components/dat.gui/dat.gui',
-        localization: '../localization',
+        localization: '../../js/localization',
         moment:'../../bower_components/moment/min/moment-with-locales',
         momentTimeZone:'../../bower_components/moment-timezone/builds/moment-timezone-with-data',
-        'common-objects': '../common-objects',
+        'common-objects': '../../js/common-objects',
         pointerlockcontrols: 'dmu/controls/PointerLockControls',
         trackballcontrols: 'dmu/controls/TrackballControls',
         orbitcontrols: 'dmu/controls/OrbitControls',
@@ -110,7 +110,7 @@ require.config({
         objloader: 'dmu/loaders/OBJLoader',
         mtlloader: 'dmu/loaders/MTLLoader',
         stats:'dmu/utils/Stats',
-        utilsprototype:'../utils/utils.prototype'
+        utilsprototype:'../../js/utils/utils.prototype'
     },
 
     deps: [

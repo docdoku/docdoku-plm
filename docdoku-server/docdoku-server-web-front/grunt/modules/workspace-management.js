@@ -29,7 +29,7 @@ module.exports = {
                 useStrict: true,
                 wrap: true,
                 inlineText: true,
-                baseUrl: 'app/js/workspace-management',
+                baseUrl: 'app/workspace-management/js',
                 mainConfigFile: 'app/workspace-management/main.js',
                 out: 'dist/workspace-management/main.js',
                 paths: {localization: 'empty:'},

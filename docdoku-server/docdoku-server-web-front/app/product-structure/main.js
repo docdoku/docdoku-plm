@@ -83,7 +83,7 @@ App.log=function(message,colorType){
 };
 
 require.config({
-    baseUrl: '../js/product-structure',
+    baseUrl: 'js',
     shim: {
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
         effects: { deps: ['jquery'], exports: 'jQuery' },
@@ -131,15 +131,15 @@ require.config({
         bootstrapDatepicker:'../../bower_components/bootstrap-datepicker/js/bootstrap-datepicker',
         date:'../../bower_components/date.format/date.format',
         dat:'../../bower_components/dat.gui/dat.gui',
-        localization: '../localization',
-        modules: '../modules',
-        'common-objects': '../common-objects',
-        userPopover:'modules/user-popover-module/app',
-        effects:'../utils/effects',
-        popoverUtils: '../utils/popover.utils',
-        inputValidity: '../utils/input-validity',
-        datatablesOsortExt: '../utils/datatables.oSort.ext',
-        utilsprototype:'../utils/utils.prototype',
+        localization: '../../js/localization',
+        modules: '../../js/modules',
+        'common-objects': '../../js/common-objects',
+        userPopover:'../../js/modules/user-popover-module/app',
+        effects:'../../js/utils/effects',
+        popoverUtils: '../../js/utils/popover.utils',
+        inputValidity: '../../js/utils/input-validity',
+        datatablesOsortExt: '../../js/utils/datatables.oSort.ext',
+        utilsprototype:'../../js/utils/utils.prototype',
         pointerlockcontrols:'dmu/controls/PointerLockControls',
         trackballcontrols:'dmu/controls/TrackballControls',
         orbitcontrols:'dmu/controls/OrbitControls',
@@ -151,7 +151,7 @@ require.config({
         mtlloader:'dmu/loaders/MTLLoader',
         buffergeometryutils: 'dmu/utils/BufferGeometryUtils',
         stats:'dmu/utils/Stats',
-        typeface:'../lib/helvetiker_regular.typeface',
+        typeface:'../../js//lib/helvetiker_regular.typeface',
         selectize: '../../bower_components/selectize/dist/js/standalone/selectize',
         date_picker_lang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr'
     },

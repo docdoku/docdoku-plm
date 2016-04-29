@@ -29,7 +29,7 @@ module.exports = {
                     useStrict: true,
                     wrap: true,
                     inlineText: true,
-                    baseUrl: 'app/js/product-structure',
+                    baseUrl: 'app/product-structure/js',
                     mainConfigFile: 'app/product-structure/main.js',
                     out: 'dist/product-structure/main.js',
                     paths: {localization: 'empty:'},

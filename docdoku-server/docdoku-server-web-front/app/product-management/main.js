@@ -25,7 +25,7 @@ App.log=function(message){
 };
 
 require.config({
-    baseUrl: '../js/product-management',
+    baseUrl: 'js',
     shim: {
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
         effects: { deps: ['jquery'], exports: 'jQuery' },
@@ -64,18 +64,19 @@ require.config({
         moment:'../../bower_components/moment/min/moment-with-locales',
         momentTimeZone:'../../bower_components/moment-timezone/builds/moment-timezone-with-data',
         date:'../../bower_components/date.format/date.format',
-        unmaskConfig:'../utils/jquery.maskedinput-config',
-        localization: '../localization',
-        modules: '../modules',
-        'common-objects': '../common-objects',
-        userPopover:'modules/user-popover-module/app',
-        effects:'../utils/effects',
-        popoverUtils: '../utils/popover.utils',
-        inputValidity: '../utils/input-validity',
-        datatablesOsortExt: '../utils/datatables.oSort.ext',
-        utilsprototype:'../utils/utils.prototype',
+        unmaskConfig:'../../js/utils/jquery.maskedinput-config',
+        localization: '../../js/localization',
+        modules: '../../js/modules',
+        'common-objects': '../../js/common-objects',
+        userPopover:'../../js/modules/user-popover-module/app',
+        effects:'../../js/utils/effects',
+        popoverUtils: '../../js/utils/popover.utils',
+        inputValidity: '../../js/utils/input-validity',
+        datatablesOsortExt: '../../js/utils/datatables.oSort.ext',
+        utilsprototype:'../../js/utils/utils.prototype',
         async: '../../bower_components/async/lib/async',
         'query-builder': '../../bower_components/jQuery-QueryBuilder/dist/js/query-builder.standalone',
+        'query-builder-options': '../../js/utils/query-builder-options',
         selectize: '../../bower_components/selectize/dist/js/standalone/selectize',
         date_picker_lang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr'
     },

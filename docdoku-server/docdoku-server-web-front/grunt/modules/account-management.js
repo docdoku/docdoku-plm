@@ -29,7 +29,7 @@ module.exports = {
                 useStrict: true,
                 wrap: true,
                 inlineText: true,
-                baseUrl: 'app/js/account-management',
+                baseUrl: 'app/account-management/js',
                 mainConfigFile: 'app/account-management/main.js',
                 out: 'dist/account-management/main.js',
                 paths: {localization: 'empty:'},

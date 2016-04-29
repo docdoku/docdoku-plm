@@ -4,7 +4,7 @@ define([
     'mustache',
     'text!templates/query_builder.html',
     'selectize',
-    '../../utils/query-builder-options',
+    'query-builder-options',
     'common-objects/views/alert',
     'collections/configuration_items',
     'common-objects/collections/product_instances',

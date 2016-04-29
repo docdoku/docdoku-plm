@@ -29,7 +29,7 @@ module.exports = {
                 useStrict: true,
                 wrap: true,
                 inlineText: true,
-                baseUrl: 'app/js/download',
+                baseUrl: 'app/download/js',
                 mainConfigFile: 'app/download/main.js',
                 out: 'dist/download/main.js',
                 paths: {localization: 'empty:'},
