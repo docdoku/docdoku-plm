@@ -13,4 +13,9 @@
 */
 
 module.exports = {
+    domain: 'localhost',
+    workspace: 'test',
+    port: '8080',
+    login: 'test',
+    pass: 'test',
 };

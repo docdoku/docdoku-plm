@@ -23,13 +23,15 @@ module.exports = {
             'copy:assets',
             'copy:dmu',
             'copy:i18n',
+            'build-module:main',
+            'build-module:accountManagement',
+            'build-module:workspaceManagement',
+            'build-module:download',
             'build-module:documentManagement',
             'build-module:productManagement',
             'build-module:productStructure',
             'build-module:visualization',
-            'build-module:changeManagement',
-            'build-module:workspaceManagement',
-            'build-module:accountManagement',
+            'build-module:changeManagement'
         ]);
     }
 };

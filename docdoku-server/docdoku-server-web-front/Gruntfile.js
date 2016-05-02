@@ -37,6 +37,8 @@ module.exports = function (grunt) {
     initModule(require('./grunt/tasks/copy'));
     initModule(require('./grunt/tasks/build'));
     initModule(require('./grunt/tasks/deploy'));
+
+    initModule(require('./grunt/modules/main'));
     initModule(require('./grunt/modules/workspace-management'));
     initModule(require('./grunt/modules/account-management'));
     initModule(require('./grunt/modules/document-management'));

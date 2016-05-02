@@ -1,0 +1,73 @@
+<div class="well" id="general_presentation">
+    <div id="login_form_container">
+        <h3><i class="fa fa-lock"></i>#{i18nLogin['login.title']}</h3>
+            <c:if test="${sessionScope['hasLogout']}">
+                <div class="alert alert-info alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <span class='error'>#{i18nLogin['login.logouted']}</span>
+                </div>
+            </c:if>
+            <c:if test="${sessionScope['hasFail']}">
+                <div class="alert alert-error alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <span class='error'>#{i18nLogin['login.fail']}</span>
+                </div>
+            </c:if>
+        <h:form id="login_form">
+            <h:inputHidden value="#{connectionBean.originURL}" id="originURL"/>
+            <p>
+                <h:outputLabel value="#{i18nLogin['login.user']}" for="login"/>
+                <h:inputText id="login" value="#{connectionBean.login}" size="20" maxlength="50"/>
+            </p>
+
+            <p>
+                <h:outputLabel value="#{i18nLogin['login.password']}" for="password"/>
+                <h:inputSecret id="password" value="#{connectionBean.password}" size="20" maxlength="50"/>
+            </p>
+
+            <p id="login_button_container">
+                <h:commandButton styleClass="btn btn-custom" id="login_button" action="#{connectionBean.logIn}" value="#{i18nLogin['login.title']}" alt="#{i18nLogin['login.title']}"/>
+            </p>
+
+            <p>
+                <h:link value="#{i18nLogin['login.recovery']}" outcome="/recoveryRequestForm.xhtml"/>
+            </p>
+        </h:form>
+    </div>
+    <div id="demo-scene"></div>
+    </div>
+
+    <div id="detail_presentation">
+    <div id="slogan">
+        "Manage the entire lifecycle of your products from ideas to market."
+    </div>
+    <div class="well">
+        <h2>#{i18nLogin['panel1.title']}</h2>
+        <h:outputFormat value="#{i18nLogin['panel1.html']}" escape="false"/>
+    </div>
+    <div class="well">
+        <h2>#{i18nLogin['panel2.title']}</h2>
+        <h:outputFormat value="#{i18nLogin['panel2.html']}" escape="false"/>
+    </div>
+    <div class="well">
+        <h2>#{i18nLogin['panel3.title']}</h2>
+        <h:outputFormat value="#{i18nLogin['panel3.html']}" escape="false"/>
+    </div>
+    <div class="well">
+        <h2>#{i18nLogin['panel4.title']}</h2>
+        <h:outputFormat value="#{i18nLogin['panel4.html']}" escape="false"/>
+    </div>
+</div>
+    <script type="text/javascript">
+    if(window.location.hash){
+        var redirectInput = document.getElementById("login_form-originURL");
+        redirectInput.value=redirectInput.value + window.location.hash;
+    }
+    window.contextPath = "#{request.contextPath}";
+    console.log(window.contextPath)
+    </script>
+    <script type="text/javascript" src="#{request.contextPath}/bower_components/threejs/build/three.min.js"></script>
+    <script type="text/javascript" src="#{request.contextPath}/bower_components/tweenjs/src/Tween.js"></script>
+    <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/loaders/BinaryLoader.js"></script>
+    <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/controls/TrackballControls.js"></script>
+    <script type="text/javascript" src="#{request.contextPath}/js/home/main.js"></script>

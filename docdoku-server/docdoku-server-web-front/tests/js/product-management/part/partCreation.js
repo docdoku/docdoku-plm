@@ -124,7 +124,7 @@ casper.test.begin('Part creation tests suite', 8, function partCreationTestsSuit
     casper.then(function waitForPartToBeCreated() {
         this.waitFor(function check() {
             return this.evaluate(function () {
-                return $('#part_table tbody tr:first-child td.part_number span').text() == '000-AAA-CasperJsTestPart';
+                return $('#part_table tbody tr:first-child td.part_number span').text() === '000-AAA-CasperJsTestPart';
             });
         }, function partHasBeenCreated() {
             this.test.assertSelectorHasText('#part_table tbody tr:first-child td.part_number span', products.part1.number);
