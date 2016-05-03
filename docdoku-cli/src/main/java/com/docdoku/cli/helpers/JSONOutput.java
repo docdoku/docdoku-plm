@@ -44,8 +44,8 @@ import java.util.logging.Logger;
 public class JSONOutput extends CliOutput {
 
     private static final Logger LOGGER = Logger.getLogger(JSONOutput.class.getName());
-    private PrintStream ERROR_STREAM = System.err;
-    private PrintStream OUTPUT_STREAM = System.out;
+    private PrintStream errorStream = System.err;
+    private PrintStream outputStream = System.out;
 
     public JSONOutput() {
     }
@@ -58,7 +58,7 @@ public class JSONOutput extends CliOutput {
         } catch (JSONException e1) {
             LOGGER.log(Level.FINEST,null,e1);
         }
-        ERROR_STREAM.println(jsonObj.toString());
+        errorStream.println(jsonObj.toString());
     }
 
     @Override
@@ -73,12 +73,12 @@ public class JSONOutput extends CliOutput {
         } catch (JSONException e) {
             LOGGER.log(Level.FINEST,null,e);
         }
-        OUTPUT_STREAM.println(jsonObj.toString());
+        outputStream.println(jsonObj.toString());
     }
 
     @Override
     public void printUsage() {
-        ERROR_STREAM.println("{\"usage\":\"TODO\"}");
+        errorStream.println("{\"usage\":\"TODO\"}");
     }
 
     @Override
@@ -89,7 +89,7 @@ public class JSONOutput extends CliOutput {
         } catch (JSONException e1) {
             LOGGER.log(Level.FINEST,null,e1);
         }
-        OUTPUT_STREAM.println(jsonObj.toString());
+        outputStream.println(jsonObj.toString());
     }
 
     @Override
@@ -102,7 +102,7 @@ public class JSONOutput extends CliOutput {
                 LOGGER.log(Level.FINEST,null,e);
             }
         }
-        OUTPUT_STREAM.println(wks.toString());
+        outputStream.println(wks.toString());
     }
 
     @Override
@@ -113,7 +113,7 @@ public class JSONOutput extends CliOutput {
         } catch (JSONException e) {
             LOGGER.log(Level.FINEST,null,e);
         }
-        OUTPUT_STREAM.println(jsonObject.toString());
+        outputStream.println(jsonObject.toString());
     }
 
     @Override
@@ -122,7 +122,7 @@ public class JSONOutput extends CliOutput {
         for (PartRevision partRevision : partRevisions) {
             jsonArray.put(getPartRevision(partRevision, 0L));
         }
-        OUTPUT_STREAM.println(jsonArray.toString());
+        outputStream.println(jsonArray.toString());
     }
 
     @Override
@@ -139,12 +139,12 @@ public class JSONOutput extends CliOutput {
                 LOGGER.log(Level.FINEST,null,e);
             }
         }
-        OUTPUT_STREAM.println(jsonArray.toString());
+        outputStream.println(jsonArray.toString());
     }
 
     @Override
     public void printPartRevision(PartRevision pr, long lastModified) {
-        OUTPUT_STREAM.println(getPartRevision(pr, lastModified));
+        outputStream.println(getPartRevision(pr, lastModified));
     }
 
     @Override
@@ -160,7 +160,7 @@ public class JSONOutput extends CliOutput {
             LOGGER.log(Level.FINEST,null,e);
         }
 
-        OUTPUT_STREAM.println(getPartRevision(pm.getLastRevision(), lastModified));
+        outputStream.println(getPartRevision(pm.getLastRevision(), lastModified));
     }
 
     @Override
@@ -170,7 +170,7 @@ public class JSONOutput extends CliOutput {
         cv.put("succeed", conversion.isSucceed());
         cv.put("startDate", conversion.getStartDate());
         cv.put("endDate", conversion.getEndDate());
-        OUTPUT_STREAM.println(cv.toString());
+        outputStream.println(cv.toString());
     }
 
     @Override
@@ -180,12 +180,12 @@ public class JSONOutput extends CliOutput {
         cv.put("language", account.getLanguage());
         cv.put("email", account.getEmail());
         cv.put("timezone", account.getTimeZone());
-        OUTPUT_STREAM.println(cv.toString());
+        outputStream.println(cv.toString());
     }
 
     @Override
     public void printDocumentRevision(DocumentRevision documentRevision, long lastModified) {
-        OUTPUT_STREAM.println(getDocumentRevision(documentRevision, lastModified));
+        outputStream.println(getDocumentRevision(documentRevision, lastModified));
     }
 
     @Override
@@ -194,7 +194,7 @@ public class JSONOutput extends CliOutput {
         for (DocumentRevision documentRevision : documentRevisions) {
             jsonArray.put(getDocumentRevision(documentRevision, 0L));
         }
-        OUTPUT_STREAM.println(jsonArray.toString());
+        outputStream.println(jsonArray.toString());
     }
 
     @Override
@@ -203,7 +203,7 @@ public class JSONOutput extends CliOutput {
         for (String folder : folders) {
             jsonArray.put(folder);
         }
-        OUTPUT_STREAM.println(jsonArray.toString());
+        outputStream.println(jsonArray.toString());
     }
 
     @Override

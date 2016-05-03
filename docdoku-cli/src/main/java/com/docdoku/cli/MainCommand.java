@@ -35,9 +35,12 @@ import java.util.Arrays;
 
 public class MainCommand {
 
-
     private static final String PART = "part";
     private static final String DOCUMENT = "document";
+
+    private MainCommand() {
+        super();
+    }
 
     /**
      * Main function wrapper
@@ -174,10 +177,6 @@ public class MainCommand {
         } catch (Exception e) {
             execCommand(new HelpCommand(), args);
         }
-    }
-
-    private MainCommand() {
-        super();
     }
 
     private static void execCommand(CommandLine cl, String[] args) {
