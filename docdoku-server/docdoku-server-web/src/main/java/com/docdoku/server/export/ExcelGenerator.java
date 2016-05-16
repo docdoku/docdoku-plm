@@ -36,7 +36,6 @@ import com.docdoku.core.query.QueryResultRow;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.helpers.LangHelper;
 import com.docdoku.server.rest.collections.QueryResult;
-import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -66,7 +65,7 @@ public class ExcelGenerator {
         //Create a blank sheet
         XSSFSheet sheet = workbook.createSheet("Parts Data");
 
-        String header = StringUtils.join(queryResult.getQuery().getSelects(), ";");
+        String header = String.join(";", queryResult.getQuery().getSelects());
         String[] columns = header.split(";");
 
         Map<Integer, String[]> data = new HashMap<>();
@@ -365,7 +364,7 @@ public class ExcelGenerator {
 
         }
 
-        String rowData = StringUtils.join(data, ";");
+        String rowData = String.join(";", data);
         return rowData.split(";");
     }
 
@@ -439,7 +438,7 @@ public class ExcelGenerator {
 
         }
 
-        String commentsRowData = StringUtils.join(commentsData, ";");
+        String commentsRowData = String.join(";", commentsData);
         return commentsRowData.split(";");
     }
 
