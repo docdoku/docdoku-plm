@@ -32,6 +32,7 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.*;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -291,7 +292,7 @@ public abstract class TitleBlockGenerator {
 * */
     public InputStream generateBlockTitleToPDF(InputStream inputStream) throws IOException, DocumentException {
 
-        File tmpDir = com.google.common.io.Files.createTempDir();
+        File tmpDir = Files.createTempDirectory("docdoku-").toFile();
         File blockTitleFile = new File(tmpDir, inputStream.toString());
 
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
@@ -333,7 +334,7 @@ public abstract class TitleBlockGenerator {
     public static InputStream mergePdfDocuments(InputStream input1, InputStream input2){
 
         try {
-            File tmpDir = com.google.common.io.Files.createTempDir();
+            File tmpDir = Files.createTempDirectory("docdoku-").toFile();
             File tmpCopyFile = new File(tmpDir, TEMP_FILE_NAME);
             InputStream[] files = { input1, input2 };
 

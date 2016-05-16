@@ -32,7 +32,7 @@ import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
 import com.docdoku.server.converters.utils.GeometryParser;
 import com.docdoku.server.dao.PartIterationDAO;
-import com.google.common.io.Files;
+import java.nio.file.Files;
 
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
@@ -88,7 +88,7 @@ public class ConverterBean implements IConverterManagerLocal {
 
         boolean succeed = false;
 
-        File tempDir = Files.createTempDir();
+        File tempDir = Files.createTempDirectory("docdoku-").toFile();
 
         String ext = FileIO.getExtension(cadBinaryResource.getName());
 
@@ -205,7 +205,7 @@ public class ConverterBean implements IConverterManagerLocal {
         try {
             Geometry lod = (Geometry) productService.saveGeometryInPartIteration(partIPK, file.getName(), quality, file.length(), box);
             os = dataManager.getBinaryResourceOutputStream(lod);
-            Files.copy(file, os);
+            Files.copy(file.toPath(), os);
             LOGGER.log(Level.INFO, "Decimation and save done");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Cannot save geometry to part iteration", e);
@@ -231,7 +231,7 @@ public class ConverterBean implements IConverterManagerLocal {
         try {
             BinaryResource binaryResource = productService.saveFileInPartIteration(partIPK, file.getName(), "attachedfiles" ,file.length());
             os = dataManager.getBinaryResourceOutputStream(binaryResource);
-            Files.copy(file, os);
+            Files.copy(file.toPath(), os);
             LOGGER.log(Level.INFO, "Attached file copied");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Cannot save attached file to part iteration", e);

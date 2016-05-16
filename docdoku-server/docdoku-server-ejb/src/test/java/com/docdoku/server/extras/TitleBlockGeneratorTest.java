@@ -15,6 +15,7 @@ import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
 import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 import org.apache.commons.io.FileUtils;
+import java.nio.file.Files;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -47,7 +48,7 @@ public class TitleBlockGeneratorTest {
     @Before
     public void setup() throws Exception {
         initMocks(this);
-        tmpDir = com.google.common.io.Files.createTempDir();
+        tmpDir = Files.createTempDirectory("docdoku-").toFile();
         User user = Mockito.mock(User.class);
         Mockito.when(user.getLogin()).thenReturn("DocdokuTest");
         Mockito.when(user.getName()).thenReturn("DocdokuTest");
