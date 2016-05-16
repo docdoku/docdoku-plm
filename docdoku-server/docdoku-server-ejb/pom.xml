@@ -22,7 +22,6 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- declare dependency as pom and jar for transitive libs inclusion-->
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-converter-step</artifactId>
@@ -119,11 +118,6 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>3.12</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.api-client</groupId>
-            <artifactId>google-api-client</artifactId>
-            <version>1.14.1-beta</version>
         </dependency>
         <!-- JUNIT & Mockito -->
         <dependency>
