@@ -29,7 +29,6 @@ import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
-import org.codehaus.jettison.json.JSONException;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
@@ -152,7 +151,7 @@ public class HumanOutput extends CliOutput{
     }
 
     @Override
-    public void printAccount(Account account) throws JSONException {
+    public void printAccount(Account account) {
         OUTPUT_STREAM.println(account.getLogin());
         OUTPUT_STREAM.println(account.getEmail());
         OUTPUT_STREAM.println(account.getLanguage());

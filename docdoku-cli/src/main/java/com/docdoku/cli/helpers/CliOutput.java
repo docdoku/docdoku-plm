@@ -27,7 +27,6 @@ import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
-import org.codehaus.jettison.json.JSONException;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -71,11 +70,11 @@ public abstract class CliOutput {
     public abstract void printBaselines(List<ProductBaseline> productBaselines);
     public abstract void printPartRevision(PartRevision pr, long lastModified);
     public abstract void printPartMaster(PartMaster pm, long lastModified);
-    public abstract void printConversion(Conversion conversion) throws JSONException;
-    public abstract void printAccount(Account account) throws JSONException;
+    public abstract void printConversion(Conversion conversion);
+    public abstract void printAccount(Account account);
     public abstract void printDocumentRevision(DocumentRevision dr, long lastModified);
     public abstract void printDocumentRevisions(DocumentRevision[] documentRevisions);
-    public abstract void printFolders(String[] folders) throws JSONException;
+    public abstract void printFolders(String[] folders);
 
     public abstract FilterInputStream getMonitor(long maximum, InputStream in);
 

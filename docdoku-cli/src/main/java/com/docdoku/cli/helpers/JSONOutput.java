@@ -21,6 +21,7 @@
 package com.docdoku.cli.helpers;
 
 import com.docdoku.core.common.Account;
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
@@ -30,11 +31,9 @@ import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.kohsuke.args4j.CmdLineParser;
 
+import javax.json.*;
 import java.io.*;
 import java.util.Date;
 import java.util.List;
@@ -44,35 +43,29 @@ import java.util.logging.Logger;
 public class JSONOutput extends CliOutput {
 
     private static final Logger LOGGER = Logger.getLogger(JSONOutput.class.getName());
-    private PrintStream ERROR_STREAM = System.err;
-    private PrintStream OUTPUT_STREAM = System.out;
+    private final static PrintStream ERROR_STREAM = System.err;
+    private final static PrintStream OUTPUT_STREAM = System.out;
 
     public JSONOutput() {
     }
 
     @Override
     public void printException(Exception e) {
-        JSONObject jsonObj = new JSONObject();
-        try {
-            jsonObj.put("error", e.getMessage());
-        } catch (JSONException e1) {
-            LOGGER.log(Level.FINEST,null,e1);
-        }
+        JsonObject jsonObj = Json.createObjectBuilder()
+                .add("error", e.getMessage())
+                .build();
         ERROR_STREAM.println(jsonObj.toString());
     }
 
     @Override
     public void printCommandUsage(CommandLine cl) throws IOException {
-        JSONObject jsonObj = new JSONObject();
         CmdLineParser parser = new CmdLineParser(cl);
         ByteArrayOutputStream o = new ByteArrayOutputStream();
         parser.printUsage(o);
-        try {
-            jsonObj.put("description", cl.getDescription());
-            jsonObj.put("usage", o.toString());
-        } catch (JSONException e) {
-            LOGGER.log(Level.FINEST,null,e);
-        }
+        JsonObject jsonObj = Json.createObjectBuilder()
+                .add("description", cl.getDescription())
+                .add("usage", o.toString())
+                .build();
         OUTPUT_STREAM.println(jsonObj.toString());
     }
 
@@ -83,63 +76,50 @@ public class JSONOutput extends CliOutput {
 
     @Override
     public void printInfo(String s) {
-        JSONObject jsonObj = new JSONObject();
-        try {
-            jsonObj.put("info", s);
-        } catch (JSONException e1) {
-            LOGGER.log(Level.FINEST,null,e1);
-        }
+        JsonObject jsonObj = Json.createObjectBuilder()
+                .add("info", s)
+                .build();
         OUTPUT_STREAM.println(jsonObj.toString());
     }
 
     @Override
     public void printWorkspaces(Workspace[] workspaces) {
-        JSONArray wks = new JSONArray();
+        JsonArrayBuilder jsonArray = Json.createArrayBuilder();
         for (int i = 0; i < workspaces.length; i++) {
-            try {
-                wks.put(i, workspaces[i].getId());
-            } catch (JSONException e) {
-                LOGGER.log(Level.FINEST,null,e);
-            }
+            jsonArray.add(workspaces[i].getId());
         }
-        OUTPUT_STREAM.println(wks.toString());
+        OUTPUT_STREAM.println(jsonArray.build().toString());
     }
 
     @Override
     public void printPartRevisionsCount(int partMastersCount) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("count", partMastersCount);
-        } catch (JSONException e) {
-            LOGGER.log(Level.FINEST,null,e);
-        }
-        OUTPUT_STREAM.println(jsonObject.toString());
+        JsonObject jsonObj = Json.createObjectBuilder()
+                .add("count", partMastersCount)
+                .build();
+        OUTPUT_STREAM.println(jsonObj.toString());
     }
 
     @Override
     public void printPartRevisions(List<PartRevision> partRevisions) {
-        JSONArray jsonArray = new JSONArray();
+        JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
         for (PartRevision partRevision : partRevisions) {
-            jsonArray.put(getPartRevision(partRevision, 0L));
+            jsonArrayBuilder.add(getPartRevision(partRevision, 0L));
         }
-        OUTPUT_STREAM.println(jsonArray.toString());
+        OUTPUT_STREAM.println(jsonArrayBuilder.build().toString());
     }
 
     @Override
     public void printBaselines(List<ProductBaseline> productBaselines) {
-        JSONArray jsonArray = new JSONArray();
+        JsonArrayBuilder jsonArray = Json.createArrayBuilder();
         for (ProductBaseline productBaseline : productBaselines) {
-            try {
-                JSONObject baselineObject = new JSONObject();
-                baselineObject.put("id", productBaseline.hashCode());
-                baselineObject.put("name", productBaseline.getName());
-                baselineObject.put("configurationItem", productBaseline.getConfigurationItem().getId());
-                jsonArray.put(baselineObject);
-            } catch (JSONException e) {
-                LOGGER.log(Level.FINEST,null,e);
-            }
+            JsonObject jsonBaseline = Json.createObjectBuilder()
+                .add("id", productBaseline.hashCode())
+                .add("name", productBaseline.getName())
+                .add("configurationItem", productBaseline.getConfigurationItem().getId())
+                .build();
+            jsonArray.add(jsonBaseline);
         }
-        OUTPUT_STREAM.println(jsonArray.toString());
+        OUTPUT_STREAM.println(jsonArray.build().toString());
     }
 
     @Override
@@ -149,38 +129,38 @@ public class JSONOutput extends CliOutput {
 
     @Override
     public void printPartMaster(PartMaster pm, long lastModified) {
-        JSONObject partMaster = new JSONObject();
-        try {
-            JSONArray revisions = new JSONArray();
-            partMaster.put("revisions", revisions);
-            for (PartRevision pr : pm.getPartRevisions()) {
-                revisions.put(getPartRevision(pr, lastModified));
-            }
-        } catch (JSONException e) {
-            LOGGER.log(Level.FINEST,null,e);
-        }
+        JsonArrayBuilder jsonRevisions = Json.createArrayBuilder();
+        for (PartRevision pr : pm.getPartRevisions())
+            jsonRevisions.add(getPartRevision(pr, lastModified));
 
+        JsonObject jsonMaster = Json.createObjectBuilder()
+                .add("revisions", jsonRevisions.build()).build();
+
+        //Add jsonMaster ?
         OUTPUT_STREAM.println(getPartRevision(pm.getLastRevision(), lastModified));
     }
 
     @Override
-    public void printConversion(Conversion conversion) throws JSONException {
-        JSONObject cv = new JSONObject();
-        cv.put("pending", conversion.isPending());
-        cv.put("succeed", conversion.isSucceed());
-        cv.put("startDate", conversion.getStartDate());
-        cv.put("endDate", conversion.getEndDate());
-        OUTPUT_STREAM.println(cv.toString());
+    public void printConversion(Conversion conversion) {
+        JsonObject jsonObj = Json.createObjectBuilder()
+                .add("pending", conversion.isPending())
+                .add("succeed", conversion.isSucceed())
+                .add("startDate", conversion.getStartDate().toString())
+                .add("endDate", conversion.getEndDate().toString())
+                .build();
+        OUTPUT_STREAM.println(jsonObj.toString());
     }
 
     @Override
-    public void printAccount(Account account) throws JSONException {
-        JSONObject cv = new JSONObject();
-        cv.put("login", account.getLogin());
-        cv.put("language", account.getLanguage());
-        cv.put("email", account.getEmail());
-        cv.put("timezone", account.getTimeZone());
-        OUTPUT_STREAM.println(cv.toString());
+    public void printAccount(Account account) {
+        JsonObject jsonObj = Json.createObjectBuilder()
+                .add("login", account.getLogin())
+                .add("language", account.getLanguage())
+                .add("email", account.getEmail())
+                .add("timezone", account.getTimeZone())
+                .build();
+
+        OUTPUT_STREAM.println(jsonObj.toString());
     }
 
     @Override
@@ -190,20 +170,20 @@ public class JSONOutput extends CliOutput {
 
     @Override
     public void printDocumentRevisions(DocumentRevision[] documentRevisions) {
-        JSONArray jsonArray = new JSONArray();
+        JsonArrayBuilder jsonArray = Json.createArrayBuilder();
         for (DocumentRevision documentRevision : documentRevisions) {
-            jsonArray.put(getDocumentRevision(documentRevision, 0L));
+            jsonArray.add(getDocumentRevision(documentRevision, 0L));
         }
-        OUTPUT_STREAM.println(jsonArray.toString());
+        OUTPUT_STREAM.println(jsonArray.build().toString());
     }
 
     @Override
-    public void printFolders(String[] folders) throws JSONException {
-        JSONArray jsonArray = new JSONArray();
+    public void printFolders(String[] folders) {
+        JsonArrayBuilder jsonArray = Json.createArrayBuilder();
         for (String folder : folders) {
-            jsonArray.put(folder);
+            jsonArray.add(folder);
         }
-        OUTPUT_STREAM.println(jsonArray.toString());
+        OUTPUT_STREAM.println(jsonArray.build().toString());
     }
 
     @Override
@@ -211,91 +191,79 @@ public class JSONOutput extends CliOutput {
         return new JSONProgressMonitorInputStream(maximum, in);
     }
 
-    private JSONObject getPartRevision(PartRevision pr, long lastModified) {
+    private JsonObject getPartRevision(PartRevision pr, long lastModified) {
 
-        JSONObject status = new JSONObject();
+        JsonObjectBuilder jsonStatusBuilder = Json.createObjectBuilder();
 
         if (pr != null) {
+            User user = pr.getCheckOutUser();
+            String login = user != null ? user.getLogin() : "";
+            Date checkoutDate = pr.getCheckOutDate();
+            Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
+            jsonStatusBuilder.add("isReleased", pr.isReleased());
+            jsonStatusBuilder.add("isCheckedOut", pr.isCheckedOut());
+            jsonStatusBuilder.add("partNumber", pr.getPartMasterNumber());
+            jsonStatusBuilder.add("checkoutUser", login);
+            jsonStatusBuilder.add("checkoutDate", timeStamp);
+            jsonStatusBuilder.add("workspace", pr.getPartMasterWorkspaceId());
+            jsonStatusBuilder.add("version", pr.getVersion());
+            jsonStatusBuilder.add("description", pr.getDescription());
+            jsonStatusBuilder.add("lastModified", lastModified);
 
-            try {
-
-                User user = pr.getCheckOutUser();
-                String login = user != null ? user.getLogin() : "";
-                Date checkoutDate = pr.getCheckOutDate();
-                Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
-                status.put("isReleased", pr.isReleased());
-                status.put("isCheckedOut", pr.isCheckedOut());
-                status.put("partNumber", pr.getPartMasterNumber());
-                status.put("checkoutUser", login);
-                status.put("checkoutDate", timeStamp);
-                status.put("workspace", pr.getPartMasterWorkspaceId());
-                status.put("version", pr.getVersion());
-                status.put("description", pr.getDescription());
-                status.put("lastModified", lastModified);
-
-                if (pr.getLastIteration() != null && pr.getLastIteration().getNativeCADFile() != null) {
-                    String nativeCADFileName = pr.getLastIteration().getNativeCADFile().getName();
-                    status.put("cadFileName", nativeCADFileName);
-                }
-
-                List<PartIteration> partIterations = pr.getPartIterations();
-                JSONArray partIterationJSonArray;
-                if (partIterations != null) {
-                    partIterationJSonArray = new JSONArray();
-                    for (PartIteration partIteration : partIterations) {
-                        partIterationJSonArray.put(partIteration.getIteration());
-                    }
-                    status.put("iterations", partIterationJSonArray);
-                }
-
-            } catch (JSONException e) {
-                LOGGER.log(Level.FINEST,null,e);
+            if (pr.getLastIteration() != null && pr.getLastIteration().getNativeCADFile() != null) {
+                String nativeCADFileName = pr.getLastIteration().getNativeCADFile().getName();
+                jsonStatusBuilder.add("cadFileName", nativeCADFileName);
             }
+
+            List<PartIteration> partIterations = pr.getPartIterations();
+            if (partIterations != null) {
+                JsonArrayBuilder jsonIterationsBuilder = Json.createArrayBuilder();
+                for (PartIteration partIteration : partIterations) {
+                    jsonIterationsBuilder.add(partIteration.getIteration());
+                }
+                jsonStatusBuilder.add("iterations", jsonIterationsBuilder.build());
+            }
+
         }
 
-        return status;
+        return jsonStatusBuilder.build();
     }
 
-    private JSONObject getDocumentRevision(DocumentRevision dr, long lastModified) {
+    private JsonObject getDocumentRevision(DocumentRevision dr, long lastModified) {
 
-        JSONObject status = new JSONObject();
+        JsonObjectBuilder jsonStatusBuilder = Json.createObjectBuilder();
 
         if (dr != null) {
+            User user = dr.getCheckOutUser();
+            String login = user != null ? user.getLogin() : "";
+            Date checkoutDate = dr.getCheckOutDate();
+            Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
+            jsonStatusBuilder.add("isCheckedOut", dr.isCheckedOut());
+            jsonStatusBuilder.add("id", dr.getDocumentMasterId());
+            jsonStatusBuilder.add("checkoutUser", login);
+            jsonStatusBuilder.add("checkoutDate", timeStamp);
+            jsonStatusBuilder.add("workspace", dr.getDocumentMasterWorkspaceId());
+            jsonStatusBuilder.add("version", dr.getVersion());
+            jsonStatusBuilder.add("description", dr.getDescription());
+            jsonStatusBuilder.add("lastModified", lastModified);
 
-            try {
+            if (dr.getLastIteration() != null && dr.getLastIteration().getAttachedFiles() != null) {
+                JsonArrayBuilder jsonFilesBuilder = Json.createArrayBuilder();
+                for(BinaryResource bin:dr.getLastIteration().getAttachedFiles())
+                    jsonFilesBuilder.add(bin.toString());
 
-                User user = dr.getCheckOutUser();
-                String login = user != null ? user.getLogin() : "";
-                Date checkoutDate = dr.getCheckOutDate();
-                Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
-                status.put("isCheckedOut", dr.isCheckedOut());
-                status.put("id", dr.getDocumentMasterId());
-                status.put("checkoutUser", login);
-                status.put("checkoutDate", timeStamp);
-                status.put("workspace", dr.getDocumentMasterWorkspaceId());
-                status.put("version", dr.getVersion());
-                status.put("description", dr.getDescription());
-                status.put("lastModified", lastModified);
+                jsonStatusBuilder.add("files", jsonFilesBuilder.build());
+            }
 
-                if (dr.getLastIteration() != null && dr.getLastIteration().getAttachedFiles() != null) {
-                    JSONArray files = new JSONArray(dr.getLastIteration().getAttachedFiles());
-                    status.put("files", files);
+            List<DocumentIteration> documentIterations = dr.getDocumentIterations();
+            if (documentIterations != null) {
+                JsonArrayBuilder jsonIterationsBuilder = Json.createArrayBuilder();
+                for (DocumentIteration documentIteration : documentIterations) {
+                    jsonIterationsBuilder.add(documentIteration.getIteration());
                 }
-
-                List<DocumentIteration> documentIterations = dr.getDocumentIterations();
-                if (documentIterations != null) {
-                    JSONArray documentIterationsArray = new JSONArray();
-                    for (DocumentIteration documentIteration : documentIterations) {
-                        documentIterationsArray.put(documentIteration.getIteration());
-                    }
-                    status.put("iterations", documentIterationsArray);
-                }
-
-            } catch (JSONException e) {
-                LOGGER.log(Level.FINEST,null,e);
+                jsonStatusBuilder.add("iterations", jsonIterationsBuilder.build());
             }
         }
-
-        return status;
+        return jsonStatusBuilder.build();
     }
 }
