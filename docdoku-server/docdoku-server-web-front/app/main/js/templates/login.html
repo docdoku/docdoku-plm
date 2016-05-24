@@ -1,41 +1,60 @@
 <div class="well" id="general_presentation">
     <div id="login_form_container">
-        <h3><i class="fa fa-lock"></i>{{i18n.CONNEXION}}</h3>
+        <h3><i class="fa fa-lock"></i>{{i18n.CONNECTION}}</h3>
         <form id="login_form" name="login_form" method="post" action="/faces/login.xhtml" enctype="application/x-www-form-urlencoded">
             <input type="hidden" name="login_form" value="login_form">
             <input id="login_form-originURL" type="hidden" name="login_form-originURL">
-            <p><label for="login_form-login">Utilisateur :</label><input id="login_form-login" type="text" name="login_form-login" maxlength="50" size="20">
+            <p><label for="login_form-login">{{i18n.USER}} :</label><input id="login_form-login" type="text" name="login_form-login" maxlength="50" size="20">
             </p>
 
-            <p><label for="login_form-password">Mot de passe :</label><input id="login_form-password" type="password" name="login_form-password" value="" maxlength="50" size="20">
+            <p><label for="login_form-password">{{i18n.USER}} :</label><input id="login_form-password" type="password" name="login_form-password" value="" maxlength="50" size="20">
             </p>
 
-            <p id="login_button_container"><input id="login_form-login_button" type="submit" name="login_form-login_button" value="Connexion" alt="Connexion" class="btn btn-custom">
+            <p id="login_button_container"><input id="login_form-login_button" type="submit" name="login_form-login_button" value="{{i18n.CONNECTION}}" alt="{{i18n.CONNECTION}}" class="btn btn-custom">
             </p>
 
-            <p><a href="/faces/recoveryRequestForm.xhtml">Mot de passe oublié ?</a>
-            </p><input type="hidden" name="javax.faces.ViewState" id="j_id1-javax.faces.ViewState-1" value="g7rmO0B1z7uYO6QNENRvjJAFfHPZb+P4i9KVSI54vx+cwyYcR5ljLF9UTXNswbgF/QTV2+CX73b0Wo3RHdybGH/DzxyoBddvgUO8RRRXeG5LdgiCxAruPmCc62wII0zCySctURXCNkEnggZ4tA/RI+g6Fg8qWu9Rc7ufEcHnYbqLTjO0urxFOL1nqe0knEX3KejxEXH0Wv+TRzIxvs4cPa9eebcSr4RIah3uALHUujAmruWC5o5j0uEy7z+Nlux1U0GCNIOkRyH8BVkpTCtntk0yfLGVd0zOsjowXuNFyqGBI1L0hAKQlG86adEx+Njm9z6S57uJfawtYnNgNgAQybk97OEXUtTf6Kgm27vafDJUKLk3hiiGItm0EQTeDNvdmrIMOfJmbTXGxbFwKXZquHNZw+aXZI77RlsQXHslXZdXWqhszVB4wELIP4ya/ciMJBySWHhGr6wzEvui+1A9cAvjvQtjgn05EUyoigJjGuBw3C3BxI/WUFtRQtzapLYZiW9MSbhRXs1PPQtcokOSVkap9+2skWN7f9yxMV70lcZbH/1MPVHbrqHgHauT/JANqSLIiV2cMTOSRbkY33GkGCzCeNKJ3xHcfwC03wwbdIs=" autocomplete="off">
+            <p><a href="/faces/recoveryRequestForm.xhtml">{{i18n.RECOVERY}}</a></p>
+
         </form>
     </div>
     <div id="demo-scene"></div>
 </div>
 
 <div id="detail_presentation">
-    <div id="slogan">
-        "Manage the entire lifecycle of your products from ideas to market."
+    <div class="well">
+        <h2>{{i18n.MANAGE_DOCUMENTS}}</h2>
+        <ul>
+            {{#i18n.MANAGE_DOCUMENTS_STRINGS}}
+            <li>{{.}}</li>
+            {{/i18n.MANAGE_DOCUMENTS_STRINGS}}
+        </ul>
     </div>
     <div class="well">
-        <h2>Gérez vos documents</h2><ul> <li>Gérez les changements avec le contrôle de version</li> <li>Ajoutez des libellés et des attributs personnalisés</li> <li>Créez des modèles de documents</li> <li>Définissez des liens entre les documents</li> <li>Organisez, naviguez, recherchez des documents</li> </ul>
+        <h2>{{i18n.MANAGE_PRODUCTS}}</h2>
+        <ul>
+            {{#i18n.MANAGE_PRODUCTS_STRINGS}}
+            <li>{{.}}</li>
+            {{/i18n.MANAGE_PRODUCTS_STRINGS}}
+        </ul>
     </div>
     <div class="well">
-        <h2>Gérez vos produits</h2><ul> <li>Créez et gérez vos structures produit</li> <li>Définissez vos nomenclatures</li> <li>Visualisez les modélisations 3D de vos produits</li> </ul>
+        <h2>{{i18n.TRACK_CHANGES}}</h2>
+        <ul>
+            {{#i18n.TRACK_CHANGES_STRINGS}}
+            <li>{{.}}</li>
+            {{/i18n.TRACK_CHANGES_STRINGS}}
+        </ul>
     </div>
+
     <div class="well">
-        <h2>Tracez et organisez les changements</h2><ul> <li>Définissez vos processus métier</li> <li>Gérez les utilisateurs, leurs tâches</li> <li>Suivez la progression des travaux</li> <li>Soyez notifié des changements</li> </ul>
+        <h2>{{i18n.SOCIAL_FEATURES}}</h2>
+        <ul>
+            {{#i18n.SOCIAL_FEATURES_STRINGS}}
+            <li>{{.}}</li>
+            {{/i18n.SOCIAL_FEATURES_STRINGS}}
+        </ul>
     </div>
-    <div class="well">
-        <h2>Fonctionnalités sociales</h2><ul> <li>Comunication temps réel</li> <li>Chat, conversation audio et vidéo</li> <li>Créez vos espaces de travail, vos groupes d'utilisateurs</li> <li>Partagez la visualisation des articles</li> </ul>
-    </div>
+
 </div>
 
 <div id="footer">

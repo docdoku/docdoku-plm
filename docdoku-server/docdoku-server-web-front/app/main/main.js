@@ -81,11 +81,9 @@ require.config({
 
 require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/index'],
     function (ContextResolver, commonStrings, indexStrings) {
-
         'use strict';
 
         App.config.i18n = _.extend(commonStrings, indexStrings);
-
         ContextResolver.resolveServerProperties()
             .then(function buildView(){
                 require(['backbone','app','router','common-objects/views/header'],function(Backbone, AppView, Router,HeaderView){
