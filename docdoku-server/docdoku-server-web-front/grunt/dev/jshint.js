@@ -11,10 +11,7 @@ module.exports = {
                     'app/js/**/*.js',
                     'tests/js/**/*.js',
                     '!app/js/lib/**',
-                    '!app/js/product-structure/dmu/utils/**',
-                    '!app/js/product-structure/dmu/loaders/**',
-                    '!app/js/product-structure/dmu/controls/**',
-                    '!app/js/localization/**'
+                    '!app/js/dmu/**'
                 ]
             },
             current:{}

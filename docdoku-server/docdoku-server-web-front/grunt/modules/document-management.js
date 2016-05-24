@@ -4,9 +4,6 @@ module.exports = {
 
     loadConf:function(config, grunt){
 
-        config.watch.dev.files.push('app/document-management/index.html');
-        config.watch.dev.files.push('app/document-management/main.js');
-
         config.less.documentManagement = {
             options: {
                 strictImports: false,

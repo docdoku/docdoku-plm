@@ -64,14 +64,8 @@ module.exports = {
                     cwd: 'app',
                     dest: 'dist',
                     src: [
-                        /*
-                         * worker utils
-                         * */
-                        'js/product-structure/workers/*',
-                        'js/product-structure/dmu/loaders/*',
-                        'js/product-structure/dmu/utils/*',
-                        'js/product-structure/dmu/controls/*',
-                        'js/product-structure/permalinkApp.js'
+                        'product-structure/js/workers/*',
+                        'js/dmu/*'
                     ]
                 }
             ]

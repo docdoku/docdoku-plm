@@ -26,10 +26,7 @@ module.exports = {
                 },
                 files: [
                     'Gruntfile.js',
-                    'grunt/**/*.js',
-                    'app/images/**',
-                    '{.tmp,app}/js/**',
-                    'app/less/**'
+                    '{.tmp,app,grunt,tests}/**/*'
                 ]
             },
             tests: {

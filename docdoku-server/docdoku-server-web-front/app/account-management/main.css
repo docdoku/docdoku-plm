@@ -10292,6 +10292,15 @@ div.modal-header span.icon {
   z-index: 1030;
   min-height: 40px;
   border-width: 0;
+  opacity: 0;
+  -webkit-transition: opacity 0.15s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  -moz-transition: opacity 0.15s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  -ms-transition: opacity 0.15s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  -o-transition: opacity 0.15s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  transition: opacity 0.15s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+}
+#header.Header.loaded {
+  opacity: 1;
 }
 #header .Header-collapseBtn {
   position: absolute;

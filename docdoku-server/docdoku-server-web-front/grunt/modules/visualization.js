@@ -4,9 +4,6 @@ module.exports = {
 
     loadConf:function(config, grunt){
 
-        config.watch.dev.files.push('app/visualization/index.html');
-        config.watch.dev.files.push('app/visualization/main.js');
-
         config.less.visualization = {
             options: {
                 strictImports: false,

@@ -4,9 +4,6 @@ module.exports = {
 
     loadConf:function(config, grunt){
 
-        config.watch.dev.files.push('app/download/index.html');
-        config.watch.dev.files.push('app/download/main.js');
-
         config.less.download = {
             options: {
                 strictImports: false,

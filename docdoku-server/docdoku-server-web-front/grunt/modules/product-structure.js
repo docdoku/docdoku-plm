@@ -4,9 +4,6 @@ module.exports = {
 
     loadConf:function(config, grunt){
 
-        config.watch.dev.files.push('app/product-structure/index.html');
-        config.watch.dev.files.push('app/product-structure/main.js');
-
         config.less.productStructure = {
             options: {
                 strictImports: false,

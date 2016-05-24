@@ -1,73 +1,43 @@
 <div class="well" id="general_presentation">
     <div id="login_form_container">
-        <h3><i class="fa fa-lock"></i>#{i18nLogin['login.title']}</h3>
-            <c:if test="${sessionScope['hasLogout']}">
-                <div class="alert alert-info alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <span class='error'>#{i18nLogin['login.logouted']}</span>
-                </div>
-            </c:if>
-            <c:if test="${sessionScope['hasFail']}">
-                <div class="alert alert-error alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <span class='error'>#{i18nLogin['login.fail']}</span>
-                </div>
-            </c:if>
-        <h:form id="login_form">
-            <h:inputHidden value="#{connectionBean.originURL}" id="originURL"/>
-            <p>
-                <h:outputLabel value="#{i18nLogin['login.user']}" for="login"/>
-                <h:inputText id="login" value="#{connectionBean.login}" size="20" maxlength="50"/>
+        <h3><i class="fa fa-lock"></i>{{i18n.CONNEXION}}</h3>
+        <form id="login_form" name="login_form" method="post" action="/faces/login.xhtml" enctype="application/x-www-form-urlencoded">
+            <input type="hidden" name="login_form" value="login_form">
+            <input id="login_form-originURL" type="hidden" name="login_form-originURL">
+            <p><label for="login_form-login">Utilisateur :</label><input id="login_form-login" type="text" name="login_form-login" maxlength="50" size="20">
             </p>
 
-            <p>
-                <h:outputLabel value="#{i18nLogin['login.password']}" for="password"/>
-                <h:inputSecret id="password" value="#{connectionBean.password}" size="20" maxlength="50"/>
+            <p><label for="login_form-password">Mot de passe :</label><input id="login_form-password" type="password" name="login_form-password" value="" maxlength="50" size="20">
             </p>
 
-            <p id="login_button_container">
-                <h:commandButton styleClass="btn btn-custom" id="login_button" action="#{connectionBean.logIn}" value="#{i18nLogin['login.title']}" alt="#{i18nLogin['login.title']}"/>
+            <p id="login_button_container"><input id="login_form-login_button" type="submit" name="login_form-login_button" value="Connexion" alt="Connexion" class="btn btn-custom">
             </p>
 
-            <p>
-                <h:link value="#{i18nLogin['login.recovery']}" outcome="/recoveryRequestForm.xhtml"/>
-            </p>
-        </h:form>
+            <p><a href="/faces/recoveryRequestForm.xhtml">Mot de passe oublié ?</a>
+            </p><input type="hidden" name="javax.faces.ViewState" id="j_id1-javax.faces.ViewState-1" value="g7rmO0B1z7uYO6QNENRvjJAFfHPZb+P4i9KVSI54vx+cwyYcR5ljLF9UTXNswbgF/QTV2+CX73b0Wo3RHdybGH/DzxyoBddvgUO8RRRXeG5LdgiCxAruPmCc62wII0zCySctURXCNkEnggZ4tA/RI+g6Fg8qWu9Rc7ufEcHnYbqLTjO0urxFOL1nqe0knEX3KejxEXH0Wv+TRzIxvs4cPa9eebcSr4RIah3uALHUujAmruWC5o5j0uEy7z+Nlux1U0GCNIOkRyH8BVkpTCtntk0yfLGVd0zOsjowXuNFyqGBI1L0hAKQlG86adEx+Njm9z6S57uJfawtYnNgNgAQybk97OEXUtTf6Kgm27vafDJUKLk3hiiGItm0EQTeDNvdmrIMOfJmbTXGxbFwKXZquHNZw+aXZI77RlsQXHslXZdXWqhszVB4wELIP4ya/ciMJBySWHhGr6wzEvui+1A9cAvjvQtjgn05EUyoigJjGuBw3C3BxI/WUFtRQtzapLYZiW9MSbhRXs1PPQtcokOSVkap9+2skWN7f9yxMV70lcZbH/1MPVHbrqHgHauT/JANqSLIiV2cMTOSRbkY33GkGCzCeNKJ3xHcfwC03wwbdIs=" autocomplete="off">
+        </form>
     </div>
     <div id="demo-scene"></div>
-    </div>
+</div>
 
-    <div id="detail_presentation">
+<div id="detail_presentation">
     <div id="slogan">
         "Manage the entire lifecycle of your products from ideas to market."
     </div>
     <div class="well">
-        <h2>#{i18nLogin['panel1.title']}</h2>
-        <h:outputFormat value="#{i18nLogin['panel1.html']}" escape="false"/>
+        <h2>Gérez vos documents</h2><ul> <li>Gérez les changements avec le contrôle de version</li> <li>Ajoutez des libellés et des attributs personnalisés</li> <li>Créez des modèles de documents</li> <li>Définissez des liens entre les documents</li> <li>Organisez, naviguez, recherchez des documents</li> </ul>
     </div>
     <div class="well">
-        <h2>#{i18nLogin['panel2.title']}</h2>
-        <h:outputFormat value="#{i18nLogin['panel2.html']}" escape="false"/>
+        <h2>Gérez vos produits</h2><ul> <li>Créez et gérez vos structures produit</li> <li>Définissez vos nomenclatures</li> <li>Visualisez les modélisations 3D de vos produits</li> </ul>
     </div>
     <div class="well">
-        <h2>#{i18nLogin['panel3.title']}</h2>
-        <h:outputFormat value="#{i18nLogin['panel3.html']}" escape="false"/>
+        <h2>Tracez et organisez les changements</h2><ul> <li>Définissez vos processus métier</li> <li>Gérez les utilisateurs, leurs tâches</li> <li>Suivez la progression des travaux</li> <li>Soyez notifié des changements</li> </ul>
     </div>
     <div class="well">
-        <h2>#{i18nLogin['panel4.title']}</h2>
-        <h:outputFormat value="#{i18nLogin['panel4.html']}" escape="false"/>
+        <h2>Fonctionnalités sociales</h2><ul> <li>Comunication temps réel</li> <li>Chat, conversation audio et vidéo</li> <li>Créez vos espaces de travail, vos groupes d'utilisateurs</li> <li>Partagez la visualisation des articles</li> </ul>
     </div>
 </div>
-    <script type="text/javascript">
-    if(window.location.hash){
-        var redirectInput = document.getElementById("login_form-originURL");
-        redirectInput.value=redirectInput.value + window.location.hash;
-    }
-    window.contextPath = "#{request.contextPath}";
-    console.log(window.contextPath)
-    </script>
-    <script type="text/javascript" src="#{request.contextPath}/bower_components/threejs/build/three.min.js"></script>
-    <script type="text/javascript" src="#{request.contextPath}/bower_components/tweenjs/src/Tween.js"></script>
-    <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/loaders/BinaryLoader.js"></script>
-    <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/controls/TrackballControls.js"></script>
-    <script type="text/javascript" src="#{request.contextPath}/js/home/main.js"></script>
+
+<div id="footer">
+    <p>Copyright 2006-2015 - <a href="http://www.docdokuplm.com">DocDokuPLM</a> - </p>
+</div>

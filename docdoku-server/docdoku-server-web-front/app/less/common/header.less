@@ -7,7 +7,14 @@
         min-height: 40px;
         //  margin-bottom: 0;
         border-width: 0;
+        opacity: 0;
+        -webkit-transition: opacity .15s cubic-bezier(.17,.67,.83,.67);
+        -moz-transition: opacity .15s cubic-bezier(.17,.67,.83,.67);
+        -ms-transition: opacity .15s cubic-bezier(.17,.67,.83,.67);
+        -o-transition: opacity .15s cubic-bezier(.17,.67,.83,.67);
+        transition: opacity .15s cubic-bezier(.17,.67,.83,.67);
         &.loaded {
+            opacity: 1;
             //box-shadow:0px 1px 3px #9b9b9b;
         }
     }

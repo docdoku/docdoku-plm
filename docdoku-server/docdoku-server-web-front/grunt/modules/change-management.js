@@ -4,9 +4,6 @@ module.exports = {
 
     loadConf:function(config, grunt){
 
-        config.watch.dev.files.push('app/change-management/index.html');
-        config.watch.dev.files.push('app/change-management/main.js');
-
         config.less.changeManagement = {
             options: {
                 strictImports: false,

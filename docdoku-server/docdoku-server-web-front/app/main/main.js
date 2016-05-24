@@ -1,10 +1,20 @@
 /*global _,require,window*/
 
-
 var App = {
     debug:false,
     config:{
         locale: window.localStorage.getItem('locale') || 'en'
+    },
+    SceneOptions: {
+        zoomSpeed: 3,
+        rotateSpeed: 3.0,
+        panSpeed: 0.3,
+        cameraNear: 1,
+        cameraFar: 5E4,
+        defaultCameraPosition: {x: 0, y:0, z:0},
+        startCameraPosition: {x: 100, y: 2500, z: 2500},
+        endCameraPosition: {x: 0, y: 250, z: 250},
+        defaultTargetPosition: {x: 0, y: 0, z: 0}
     }
 };
 
@@ -22,7 +32,9 @@ require.config({
     shim: {
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
         bootstrap: { deps: ['jquery', 'jqueryUI'], exports: 'jQuery' },
-        backbone: { deps: ['underscore', 'jquery'], exports: 'Backbone'}
+        backbone: { deps: ['underscore', 'jquery'], exports: 'Backbone'},
+        trackballcontrols:{deps:['threecore'],exports:'THREE'},
+        binaryloader:{deps:['threecore'],exports:'THREE'}
     },
 
     paths: {
@@ -35,14 +47,23 @@ require.config({
         i18n: '../../bower_components/requirejs-i18n/i18n',
         bootstrap: '../../bower_components/bootstrap/docs/assets/js/bootstrap',
         'common-objects': '../../js/common-objects',
-        localization: '../../js/localization'
+        localization: '../../js/localization',
+        threecore:'../../bower_components/threejs/build/three',
+        tween:'../../bower_components/tweenjs/src/Tween',
+        trackballcontrols:'../../js/dmu/controls/TrackballControls',
+        binaryloader:'../../js/dmu/loaders/BinaryLoader',
+
     },
 
     deps: [
         'jquery',
         'underscore',
         'bootstrap',
-        'jqueryUI'
+        'jqueryUI',
+        'threecore',
+        'tween',
+        'trackballcontrols',
+        'binaryloader'
     ],
     config: {
         i18n: {

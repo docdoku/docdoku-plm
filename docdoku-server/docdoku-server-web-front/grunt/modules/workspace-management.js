@@ -4,9 +4,6 @@ module.exports = {
 
     loadConf:function(config, grunt){
 
-        config.watch.dev.files.push('app/workspace-management/index.html');
-        config.watch.dev.files.push('app/workspace-management/main.js');
-
         config.less.workspaceManagement = {
             options: {
                 strictImports: false,
