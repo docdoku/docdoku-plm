@@ -5,6 +5,7 @@ import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.jwt.JWTokenFactory;
 import com.docdoku.server.rest.dto.AccountDTO;
 import com.docdoku.server.rest.dto.LoginRequestDTO;
 import com.docdoku.server.rest.dto.PasswordRecoveryRequestDTO;
@@ -49,15 +50,18 @@ public class AuthResource {
 
     @POST
     @Path("/login")
-    @ApiOperation(value = "Try to authenticate", response = AccountDTO.class)
+    @ApiOperation(value = "Try to authenticate", response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public AccountDTO login(@Context HttpServletRequest request, LoginRequestDTO loginRequestDTO) throws ServletException, AccountNotFoundException {
+    public Response login(@Context HttpServletRequest request, LoginRequestDTO loginRequestDTO) throws ServletException, AccountNotFoundException {
         request.logout();
         request.login(loginRequestDTO.getLogin(),loginRequestDTO.getPassword());
         Account account = accountManager.getAccount(loginRequestDTO.getLogin());
         // Create JWT, send in headers
-        return mapper.map(account,AccountDTO.class);
+        return Response.ok()
+                .entity(mapper.map(account,AccountDTO.class))
+                .header("jwt", JWTokenFactory.createToken(account))
+                .build();
     }
 
     @POST

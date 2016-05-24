@@ -89,22 +89,32 @@ public class AuthFilter implements Filter {
             FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String remoteUser=httpRequest.getRemoteUser();
 
-        if(remoteUser == null){
-            remoteUser = authenticateUserWithHeaders(request);
-        }
+        String authHeaderVal = httpRequest.getHeader("Authorization");
 
-        if(isExcludedURL(httpRequest) && remoteUser==null) {
+        if(authHeaderVal.startsWith("Bearer")){
+            authenticateJWT(request);
             chain.doFilter(request, response);
         }
-        else if(isApiRequest(httpRequest) && remoteUser==null){
+        else if(authHeaderVal.startsWith("Basic")){
+            authenticateBasic(request);
+            chain.doFilter(request, response);
+        }
+        else if(isExcludedURL(httpRequest)) {
+            chain.doFilter(request, response);
+        }
+        else if(isApiRequest(httpRequest)){
             sendUnauthorized(response);
         }
-        else if (remoteUser==null) {
-            sendUnauthorized(response);
-        } else {
-            chain.doFilter(request, response);
+
+    }
+
+    private void authenticateJWT(ServletRequest pRequest) {
+        HttpServletRequest httpRequest = (HttpServletRequest) pRequest;
+        String authorization = httpRequest.getHeader("Authorization");
+        String[] splitAuthorization = authorization.split(" ");
+        if(splitAuthorization.length==2){
+            String jwt = splitAuthorization[1];
         }
 
     }
@@ -119,7 +129,7 @@ public class AuthFilter implements Filter {
         return Pattern.matches(apiPath, path);
     }
 
-    private String authenticateUserWithHeaders(ServletRequest pRequest) {
+    private String authenticateBasic(ServletRequest pRequest) {
 
         HttpServletRequest httpRequest = (HttpServletRequest) pRequest;
         String authorization = httpRequest.getHeader("Authorization");
