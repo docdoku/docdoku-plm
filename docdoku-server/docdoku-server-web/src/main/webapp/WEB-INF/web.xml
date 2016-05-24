@@ -12,151 +12,24 @@
         <param-name>javax.faces.SEPARATOR_CHAR</param-name>
         <param-value>-</param-value>
     </context-param>
-    <servlet>
-        <servlet-name>Faces Servlet</servlet-name>
-        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Faces Servlet</servlet-name>
-        <url-pattern>/faces/*</url-pattern>
-    </servlet-mapping>
-    <session-config>
-        <session-timeout>
-            180
-        </session-timeout>
-    </session-config>
-    <error-page>
-        <exception-type>java.lang.Exception</exception-type>
-        <location>/faces/error.xhtml</location>
-    </error-page>
-
-
     <filter>
         <filter-name>AuthFilter</filter-name>
         <filter-class>com.docdoku.server.filters.AuthFilter</filter-class>
         <async-supported>true</async-supported>
         <init-param>
             <param-name>excludedPaths</param-name>
-            <param-value>/api/files/*/documents/**,/api/files/*/parts/**</param-value>
+            <param-value>/api/auth/**,/api/files/*/documents/**,/api/files/*/parts/**</param-value>
         </init-param>
         <init-param>
             <param-name>apiPath</param-name>
             <param-value>/api/*</param-value>
         </init-param>
     </filter>
-    <filter>
-        <filter-name>AuthMayFilter</filter-name>
-        <filter-class>com.docdoku.server.filters.AuthMayFilter</filter-class>
-        <async-supported>true</async-supported>
-    </filter>
-    <filter>
-        <filter-name>PermalinkFilter</filter-name>
-        <filter-class>com.docdoku.server.filters.PermalinkFilter</filter-class>
-        <async-supported>true</async-supported>
-    </filter>
+
     <filter-mapping>
         <filter-name>AuthFilter</filter-name>
         <url-pattern>/api/*</url-pattern>
-        <url-pattern>/admin/*</url-pattern>
-        <url-pattern>/faces/admin/*</url-pattern>
-        <url-pattern>/document-management/*</url-pattern>
-        <url-pattern>/product-management/*</url-pattern>
-        <url-pattern>/product-structure/*</url-pattern>
-        <url-pattern>/change-management/*</url-pattern>
-        <url-pattern>/visualization/*</url-pattern>
-        <url-pattern>/home</url-pattern>
     </filter-mapping>
-    <filter-mapping>
-        <filter-name>AuthMayFilter</filter-name>
-        <url-pattern>/faces/download.xhtml</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>PermalinkFilter</filter-name>
-        <url-pattern>/documents/*</url-pattern>
-        <url-pattern>/parts/*</url-pattern>
-    </filter-mapping>
-    <servlet>
-        <servlet-name>VoteServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.VoteServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>DocumentPermalinkServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.DocumentPermalinkServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>PartPermalinkServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.PartPermalinkServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>PrivateShareServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.PrivateShareServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>VoteServlet</servlet-name>
-        <url-pattern>/action/vote</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DocumentPermalinkServlet</servlet-name>
-        <url-pattern>/documents/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PartPermalinkServlet</servlet-name>
-        <url-pattern>/parts/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PrivateShareServlet</servlet-name>
-        <url-pattern>/shared/*</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>DocumentManagement</servlet-name>
-        <jsp-file>document-management/index.html</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>DocumentManagement</servlet-name>
-        <url-pattern>/document-management/</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>ProductManagement</servlet-name>
-        <jsp-file>product-management/index.html</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ProductManagement</servlet-name>
-        <url-pattern>/product-management/</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>ProductStructure</servlet-name>
-        <jsp-file>product-structure/index.html</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ProductStructure</servlet-name>
-        <url-pattern>/product-structure/</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>ChangeManagement</servlet-name>
-        <jsp-file>change-management/index.html</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ChangeManagement</servlet-name>
-        <url-pattern>/change-management/</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>VisualizationServlet</servlet-name>
-        <jsp-file>visualization/index.html</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>VisualizationServlet</servlet-name>
-        <url-pattern>/visualization/</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>LogoutServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.LogoutServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>LogoutServlet</servlet-name>
-        <url-pattern>/logout</url-pattern>
-    </servlet-mapping>
 
     <servlet>
         <servlet-name>javax.ws.rs.core.Application</servlet-name>
@@ -170,17 +43,6 @@
         <servlet-name>javax.ws.rs.core.Application</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
-    <security-constraint>
-        <display-name>HTTP actions</display-name>
-        <web-resource-collection>
-            <web-resource-name>Action command</web-resource-name>
-            <url-pattern>/action/vote</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <description/>
-            <role-name>users</role-name>
-        </auth-constraint>
-    </security-constraint>
     <security-constraint>
         <display-name>WebSocket channels</display-name>
         <web-resource-collection>
@@ -200,9 +62,6 @@
         <description>All the regular users</description>
         <role-name>users</role-name>
     </security-role>
-    <welcome-file-list>
-        <welcome-file>home</welcome-file>
-    </welcome-file-list>
     <listener>
         <listener-class>
             com.docdoku.server.http.WebSessionListener

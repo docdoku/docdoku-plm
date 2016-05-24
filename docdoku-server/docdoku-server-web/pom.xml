@@ -149,11 +149,6 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <webResources>
                         <resource>
-                            <filtering>true</filtering>
-                            <targetPath>resources/default</targetPath>
-                            <directory>src/main/webapp/resources/default</directory>
-                        </resource>
-                        <resource>
                             <directory>src/main/webapp</directory>
                             <filtering>true</filtering>
                             <includes>

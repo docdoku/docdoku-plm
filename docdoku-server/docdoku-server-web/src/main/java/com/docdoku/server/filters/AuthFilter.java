@@ -26,33 +26,25 @@ import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IOrganizationManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.server.jsf.actions.AccountBean;
 
 import javax.ejb.EJB;
-import javax.el.PropertyNotFoundException;
 import javax.inject.Inject;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 public class AuthFilter implements Filter {
+
     private static final Logger LOGGER = Logger.getLogger(AuthFilter.class.getName());
-    private static final String ENCODING = "UTF-8";
 
     private String[] excludedPaths;
     private String apiPath;
-
-
-    @Inject
-    private AccountBean accountBean;
 
     @Inject
     private IUserManagerLocal userManager;
@@ -65,6 +57,32 @@ public class AuthFilter implements Filter {
 
     @EJB
     private IOrganizationManagerLocal organizationManager;
+
+    @Override
+    public void init(FilterConfig filterConfig) {
+        String parameter=filterConfig.getInitParameter("excludedPaths");
+        if(parameter !=null) {
+            excludedPaths = parameter.split(",");
+            for(int i=0;i<excludedPaths.length;i++) {
+                boolean endLess=false;
+                if(excludedPaths[i].endsWith("/**")) {
+                    excludedPaths[i]=excludedPaths[i].substring(0,excludedPaths[i].length()-2);
+                    endLess=true;
+                }
+                excludedPaths[i] = excludedPaths[i].replace("*", "[^/]+?");
+                if(endLess) {
+                    excludedPaths[i] += ".*";
+                }
+            }
+        } else {
+            excludedPaths = null;
+        }
+
+        String apiPathParam=filterConfig.getInitParameter("apiPath");
+        if(apiPathParam !=null) {
+            apiPath = apiPathParam.replace("*", ".*");
+        }
+    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
@@ -84,16 +102,9 @@ public class AuthFilter implements Filter {
             sendUnauthorized(response);
         }
         else if (remoteUser==null) {
-            redirectLogin(httpRequest,response);
+            sendUnauthorized(response);
         } else {
-            try {
-                FilterUtils.hookAccountBeanData(remoteUser, contextManager, userManager, accountManager, organizationManager, accountBean);
-                chain.doFilter(request, response);
-            } catch (AccountNotFoundException e) {
-                LOGGER.log(Level.FINEST,null,e);
-                redirectLogin(httpRequest, response);
-            }
-
+            chain.doFilter(request, response);
         }
 
     }
@@ -137,8 +148,7 @@ public class AuthFilter implements Filter {
 
     private boolean isExcludedURL(HttpServletRequest httpRequest){
         String path = httpRequest.getRequestURI();
-        String method=httpRequest.getMethod();
-        if(path!=null && excludedPaths !=null && "GET".equals(method)){
+        if(path!=null && excludedPaths !=null){
             for(String excludedPath: excludedPaths){
                 if(Pattern.matches(excludedPath, path)) {
                     return true;
@@ -148,49 +158,9 @@ public class AuthFilter implements Filter {
         return false;
     }
 
-    private void redirectLogin(HttpServletRequest httpRequest, ServletResponse response) throws IOException, ServletException {
-        String qs=httpRequest.getQueryString();
-        String originURL = httpRequest.getRequestURI() + (qs==null?"": "?" + qs);
-        HttpSession session = httpRequest.getSession();
-        session.setAttribute("hasFail", false);
-        session.setAttribute("hasLogout", false);
-        try {
-            httpRequest.getRequestDispatcher(httpRequest.getContextPath() + "/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, ENCODING))
-                       .forward(httpRequest, response);
-        }catch (PropertyNotFoundException e){
-            LOGGER.log(Level.SEVERE,"Cannot redirect to Login Page");
-            LOGGER.log(Level.FINER,null,e);
-        }
-    }
-
     @Override
     public void destroy() {
         // Nothing to do
     }
 
-    @Override
-    public void init(FilterConfig filterConfig) {
-        String parameter=filterConfig.getInitParameter("excludedPaths");
-        if(parameter !=null) {
-            excludedPaths = parameter.split(",");
-            for(int i=0;i<excludedPaths.length;i++) {
-                boolean endLess=false;
-                if(excludedPaths[i].endsWith("/**")) {
-                    excludedPaths[i]=excludedPaths[i].substring(0,excludedPaths[i].length()-2);
-                    endLess=true;
-                }
-                excludedPaths[i] = excludedPaths[i].replace("*", "[^/]+?");
-                if(endLess) {
-                    excludedPaths[i] += ".*";
-                }
-            }
-        } else {
-            excludedPaths = null;
-        }
-
-        String apiPathParam=filterConfig.getInitParameter("apiPath");
-        if(apiPathParam !=null) {
-            apiPath = apiPathParam.replace("*", ".*");
-        }
-    }
 }

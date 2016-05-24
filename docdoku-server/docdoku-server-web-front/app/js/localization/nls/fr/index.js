@@ -34,6 +34,7 @@ define({
         'Chat, conversation audio et vidéo',
         'Créez vos espaces de travail, vos groupes d\'utilisateurs',
         'Partagez la visualisation des articles'
-    ]
+    ],
+    ENTER_ID:'Entrez votre identifiant'
 
 });

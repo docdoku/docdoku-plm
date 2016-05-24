@@ -23,6 +23,7 @@ import com.docdoku.core.common.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.IContextManagerLocal;
+import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IUserManagerWS;
 import com.docdoku.core.util.NamingConvention;
@@ -64,6 +65,8 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @Inject
     private IContextManagerLocal contextManager;
 
+    @Inject
+    private IMailerLocal mailer;
 
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
@@ -487,9 +490,10 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     }
 
     @Override
-    public PasswordRecoveryRequest createPasswordRecoveryRequest(String login) {
-        PasswordRecoveryRequest passwdRR = PasswordRecoveryRequest.createPasswordRecoveryRequest(login);
+    public PasswordRecoveryRequest createPasswordRecoveryRequest(Account account) {
+        PasswordRecoveryRequest passwdRR = PasswordRecoveryRequest.createPasswordRecoveryRequest(account.getLogin());
         em.persist(passwdRR);
+        mailer.sendPasswordRecovery(account, passwdRR.getUuid());
         return passwdRR;
     }
 

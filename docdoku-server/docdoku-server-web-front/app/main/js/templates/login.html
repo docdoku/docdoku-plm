@@ -1,21 +1,66 @@
 <div class="well" id="general_presentation">
     <div id="login_form_container">
-        <h3><i class="fa fa-lock"></i>{{i18n.CONNECTION}}</h3>
-        <form id="login_form" name="login_form" method="post" action="/faces/login.xhtml" enctype="application/x-www-form-urlencoded">
-            <input type="hidden" name="login_form" value="login_form">
-            <input id="login_form-originURL" type="hidden" name="login_form-originURL">
-            <p><label for="login_form-login">{{i18n.USER}} :</label><input id="login_form-login" type="text" name="login_form-login" maxlength="50" size="20">
+        <form id="login_form">
+            <h3><i class="fa fa-lock"></i>{{i18n.CONNECTION}}</h3>
+
+            <p>
+                <label for="login_form-login">{{i18n.USER}} :</label>
+                <input id="login_form-login"
+                       type="text"
+                       name="login_form-login"
+                       maxlength="50"
+                       size="20" />
             </p>
 
-            <p><label for="login_form-password">{{i18n.USER}} :</label><input id="login_form-password" type="password" name="login_form-password" value="" maxlength="50" size="20">
+            <p>
+                <label for="login_form-password">{{i18n.USER}} :</label>
+                <input id="login_form-password"
+                       type="password"
+                       name="login_form-password"
+                       value=""
+                       maxlength="50"
+                       size="20" />
             </p>
 
-            <p id="login_button_container"><input id="login_form-login_button" type="submit" name="login_form-login_button" value="{{i18n.CONNECTION}}" alt="{{i18n.CONNECTION}}" class="btn btn-custom">
+            <p class="form_button_container">
+                <input id="login_form-login_button"
+                       type="submit"
+                       name="login_form-login_button"
+                       value="{{i18n.CONNECTION}}"
+                       alt="{{i18n.CONNECTION}}"
+                       class="btn btn-custom" />
             </p>
 
-            <p><a href="/faces/recoveryRequestForm.xhtml">{{i18n.RECOVERY}}</a></p>
-
+            <p><a class="recovery-link">{{i18n.RECOVERY}}</a></p>
         </form>
+
+        <form id="recovery_form">
+            <h3><i class="fa fa-lock"></i>{{i18n.RECOVERY}}</h3>
+            <hr />
+            <h4>{{i18n.ENTER_ID}}</h4>
+            <p>
+                <label for="recovery_form-login">{{i18n.USER}} :</label>
+                <input id="recovery_form-login"
+                       type="text"
+                       name="recovery_form-login"
+                       maxlength="50"
+                       size="20">
+
+            </p>
+
+            <p class="form_button_container">
+                <input
+                        type="submit"
+                        name="login_form-login_button"
+                        value="{{i18n.SEND}}"
+                        alt="{{i18n.SEND}}"
+                        class="btn btn-custom" />
+            </p>
+
+            <p><a class="login-form-link">{{i18n.BACK}}</a></p>
+        </form>
+
+
     </div>
     <div id="demo-scene"></div>
 </div>

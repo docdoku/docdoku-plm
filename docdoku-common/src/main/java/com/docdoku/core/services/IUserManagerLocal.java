@@ -34,7 +34,7 @@ import com.docdoku.core.security.WorkspaceUserMembership;
 public interface IUserManagerLocal{
 
     void recoverPassword(String pPasswdRRUuid, String pPassword) throws PasswordRecoveryRequestNotFoundException;
-    PasswordRecoveryRequest createPasswordRecoveryRequest(String login);
+    PasswordRecoveryRequest createPasswordRecoveryRequest(Account account);
 
     Workspace getWorkspace(String pWorkspaceId) throws WorkspaceNotFoundException, AccountNotFoundException;
     Workspace[] getWorkspacesWhereCallerIsActive();

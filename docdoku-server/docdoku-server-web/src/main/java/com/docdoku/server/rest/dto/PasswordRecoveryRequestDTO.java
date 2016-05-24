@@ -18,23 +18,24 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.http;
+package com.docdoku.server.rest.dto;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
-public class LogoutServlet extends HttpServlet {
-    @Override
-    protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
-        pRequest.logout();
-        pRequest.getSession().invalidate();
-        HttpSession newSession = pRequest.getSession(true);
-        newSession.setAttribute("hasFail", false);
-        newSession.setAttribute("hasLogout", true);
-        pResponse.sendRedirect(pRequest.getContextPath()+"/faces/login.xhtml");
+@XmlRootElement
+public class PasswordRecoveryRequestDTO implements Serializable {
+
+    private String login;
+
+    public PasswordRecoveryRequestDTO() {
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
     }
 }

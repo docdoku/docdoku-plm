@@ -34,7 +34,8 @@ define({
             'Chat, audio and video conference' ,
             'Create workspaces and user groups' ,
             'Share part visualizations'
-        ]
+        ],
+        ENTER_ID:'Enter your ID'
 
     },
     'fr': true,

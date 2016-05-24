@@ -54,7 +54,8 @@
     }
 }
 
-#login_form {
+#login_form,
+#recovery_form {
     margin-top: 15px;
     margin-bottom: 0px;
     text-align: left;
@@ -66,24 +67,31 @@
         width: 250px;
     }
 }
-
-#login_button_container {
+#recovery_form{
+    display:none;
+    h4 {
+        font-size: 16px;
+        color: #434C64;
+    }
+}
+.form_button_container {
     float: right;
     margin-bottom: 15px;
 }
 
 @media (max-width: 720px) {
-    #login_form_container {
+    #login_form_container,
+    #recovery_form_container {
         float: none;
-
         padding-right: 0;
         padding-left: 0;
         width: 100%;
     }
-    #login_form {
+    #login_form,
+    #recovery_form {
         text-align: center;
     }
-    #login_button_container {
+    .form_button_container {
         float: none;
     }
     #demo-scene {
