@@ -47,15 +47,12 @@ define([
         },
 
         back:function(){
-            //history.back();
-            //setTimeout(function(){
-            //    location.reload();
-            //},10);
-            window.location.href = App.config.contextPath + '/faces/admin/workspace/workspacesMenu.xhtml';
+            window.location.href = App.config.contextPath + '/workspace-management/';
         },
 
         disconnect:function(){
-            $.get(App.config.contextPath + '/logout').complete(function () {
+            delete localStorage.jwt;
+            $.get(App.config.contextPath + '/api/auth/logout').complete(function () {
                 location.reload();
             });
         }

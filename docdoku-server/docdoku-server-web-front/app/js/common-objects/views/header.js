@@ -11,6 +11,10 @@ define([
     var HeaderView = Backbone.View.extend({
         el: '#header',
 
+        events:{
+            'click #logout_link a':'logout'
+        },
+
         render: function () {
 
             var $el = this.$el;
@@ -61,6 +65,13 @@ define([
 
         setCoWorkersView:function(View){
             this.CoWorkersView = View;
+        },
+
+        logout:function(){
+            delete localStorage.jwt;
+            $.get(App.config.contextPath + '/api/auth/logout').complete(function () {
+                window.location.href = App.config.contextPath + '/?logout=true';
+            });
         }
 
     });

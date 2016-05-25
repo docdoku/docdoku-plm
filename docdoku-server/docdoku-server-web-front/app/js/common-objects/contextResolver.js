@@ -7,9 +7,6 @@ define([
 
     'use strict';
 
-    function redirectToLogin(){
-        window.location.href = App.config.contextPath + '/?originURL=' + window.location.pathname + window.location.hash;
-    }
 
     var ContextResolver = function () {
     };
@@ -22,42 +19,19 @@ define([
             }
         },
         statusCode: {
-            401: redirectToLogin
+            401: function(){
+                delete localStorage.jwt;
+                if(App.config.needAuthentication){
+                    window.location.href = App.config.contextPath + '/?denied=true&originURL=' + encodeURIComponent(window.location.pathname + window.location.hash);
+                }
+            }
         }
     });
 
-    /*var errorStatusHandlers = {
-        403 : function(){
-            var forbiddenView = new ForbiddenView().render();
-            document.body.appendChild(forbiddenView.el);
-            forbiddenView.openModal();
-        },
-        404 : function(){
-            window.location.href = App.config.contextPath + '/404';
-        }
-    };*/
-
     function onError(res) {
         var status = res.status;
-        /*if(typeof errorStatusHandlers[status] === 'function'){
-            errorStatusHandlers[status]();
-        }
-        else{
-            window.location.href = App.config.contextPath + '/faces/admin/workspace/workspacesMenu.xhtml?error='+res.status;
-        }*/
         return res;
     }
-
-    ContextResolver.prototype.needAuthentication = function () {
-        $.ajaxSetup({
-            statusCode: {
-                401: function(){
-                    window.location.href = App.config.contextPath + '/?originURL=' + window.location.pathname + window.location.hash;
-                }
-            }
-        });
-    };
-
 
     ContextResolver.prototype.resolveServerProperties = function(){
         return $.getJSON('../server.properties.json').then(function (properties) {
@@ -109,10 +83,6 @@ define([
                 App.config.user = user;
             },onError);
     };
-
-   /* ContextResolver.prototype.resolveUser = function () {
-        return User.whoami(App.config.workspaceId, onError);
-    };*/
 
     return new ContextResolver();
 });

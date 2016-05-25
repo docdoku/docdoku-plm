@@ -86,7 +86,6 @@ public class AuthResource {
     @ApiOperation(value = "Log out connected user", response = Response.class)
     @Produces(MediaType.APPLICATION_JSON)
     public Response logout(@Context HttpServletRequest request) throws ServletException {
-        //
         request.logout();
         return Response.ok().build();
     }

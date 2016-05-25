@@ -111,7 +111,7 @@ define([
         },
 
         logout:function(){
-            window.location.href = App.config.contextPath+'/logout';
+            window.location.href = App.config.contextPath+'/api/auth/logout';
         }
     });
 
