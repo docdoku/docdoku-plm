@@ -47,6 +47,7 @@ module.exports = function (grunt) {
     initModule(require('./grunt/modules/product-structure'));
     initModule(require('./grunt/modules/visualization'));
     initModule(require('./grunt/modules/download'));
+    initModule(require('./grunt/modules/documents'));
 
     grunt.initConfig(config);
 

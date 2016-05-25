@@ -27,6 +27,7 @@ module.exports = {
             'build-module:accountManagement',
             'build-module:workspaceManagement',
             'build-module:download',
+            'build-module:documents',
             'build-module:documentManagement',
             'build-module:productManagement',
             'build-module:productStructure',
