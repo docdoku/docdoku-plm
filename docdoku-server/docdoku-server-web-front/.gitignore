@@ -11,6 +11,7 @@ app/change-management/main.css
 app/workspace-management/main.css
 app/account-management/main.css
 app/documents/main.css
+app/parts/main.css
 app/main/main.css
 app/download/main.css
 app/download/dplm/

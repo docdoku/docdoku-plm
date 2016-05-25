@@ -28,6 +28,7 @@ module.exports = {
             'build-module:workspaceManagement',
             'build-module:download',
             'build-module:documents',
+            'build-module:parts',
             'build-module:documentManagement',
             'build-module:productManagement',
             'build-module:productStructure',
