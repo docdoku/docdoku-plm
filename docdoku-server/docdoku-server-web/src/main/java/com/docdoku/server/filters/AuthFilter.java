@@ -26,15 +26,23 @@ import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IOrganizationManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.http.UserRoleRequestWrapper;
+import com.docdoku.server.jwt.RsaJsonWebKeyFactory;
+import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.consumer.InvalidJwtException;
+import org.jose4j.jwt.consumer.JwtConsumer;
+import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
+import javax.xml.ws.WebServiceContext;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -54,6 +62,9 @@ public class AuthFilter implements Filter {
 
     @Inject
     private IAccountManagerLocal accountManager;
+
+    @Resource
+    private WebServiceContext context;
 
     @EJB
     private IOrganizationManagerLocal organizationManager;
@@ -89,33 +100,78 @@ public class AuthFilter implements Filter {
             FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String remoteUser = httpRequest.getRemoteUser();
 
+        // User has already an active session
+        if(remoteUser != null && !remoteUser.isEmpty()){
+            LOGGER.log(Level.INFO,"Has session !");
+            chain.doFilter(request, response);
+            return;
+        }
+
+        // Tries to parse authentication from headers
+        // Support JWT and basic auth
         String authHeaderVal = httpRequest.getHeader("Authorization");
 
-        if(authHeaderVal.startsWith("Bearer")){
-            authenticateJWT(request);
-            chain.doFilter(request, response);
+        if(authHeaderVal != null && !authHeaderVal.isEmpty()){
+            if(authHeaderVal.startsWith("Bearer")){
+                authenticateJWT(request,response,chain);
+            }
+            else if(authHeaderVal.startsWith("Basic")){
+                authenticateBasic(request,response,chain);
+            }else {
+                sendBadRequest(response);
+            }
+        } else {
+            // User is not authenticated, check if resource needs authentication
+            if(isExcludedURL(httpRequest)) {
+                chain.doFilter(request, response);
+            }
+            else if(isApiRequest(httpRequest)){
+                sendUnauthorized(response);
+            }
+            // should we handle last case ? (not recognized URL)
         }
-        else if(authHeaderVal.startsWith("Basic")){
-            authenticateBasic(request);
-            chain.doFilter(request, response);
-        }
-        else if(isExcludedURL(httpRequest)) {
-            chain.doFilter(request, response);
-        }
-        else if(isApiRequest(httpRequest)){
-            sendUnauthorized(response);
-        }
-
     }
 
-    private void authenticateJWT(ServletRequest pRequest) {
-        HttpServletRequest httpRequest = (HttpServletRequest) pRequest;
+    private void authenticateJWT(ServletRequest request, ServletResponse response,
+                                 FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
         String authorization = httpRequest.getHeader("Authorization");
         String[] splitAuthorization = authorization.split(" ");
         if(splitAuthorization.length==2){
             String jwt = splitAuthorization[1];
+            Account account = validateToken(jwt);
+            if(account != null){
+                chain.doFilter(new UserRoleRequestWrapper(account.getLogin(),accountManager.getRole(account.getLogin()),httpRequest),response);
+            }else {
+                sendUnauthorized(response);
+            }
+        }else{
+            sendBadRequest(response);
         }
+    }
+
+    private Account validateToken(String jwt) {
+        RsaJsonWebKey rsaJsonWebKey = RsaJsonWebKeyFactory.createKey();
+        JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+                .setRequireSubject()
+                .setVerificationKey(rsaJsonWebKey.getKey())
+                .build();
+
+        Account account = null;
+
+        try {
+            JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
+            String userLogin= (String) jwtClaims.getClaimValue("sub");
+            account = accountManager.getAccount(userLogin);
+        } catch (InvalidJwtException e) {
+            LOGGER.log(Level.SEVERE,null,e);
+        } catch (AccountNotFoundException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+
+        return account;
 
     }
 
@@ -124,36 +180,29 @@ public class AuthFilter implements Filter {
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
     }
 
+    private void sendBadRequest(ServletResponse pResponse) throws ServletException, IOException {
+        HttpServletResponse response = (HttpServletResponse) pResponse;
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+    }
+
     private boolean isApiRequest(HttpServletRequest httpRequest) {
         String path = httpRequest.getRequestURI();
         return Pattern.matches(apiPath, path);
     }
 
-    private String authenticateBasic(ServletRequest pRequest) {
-
+    private void authenticateBasic(ServletRequest pRequest, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest httpRequest = (HttpServletRequest) pRequest;
         String authorization = httpRequest.getHeader("Authorization");
-
-        if(authorization != null && !authorization.isEmpty()){
-            String[] splitAuthorization = authorization.split(" ");
-            if(splitAuthorization.length == 2){
-                byte[] decoded = DatatypeConverter.parseBase64Binary(splitAuthorization[1]);
-                try {
-                    String credentials = new String(decoded, "US-ASCII");
-                    String[] splitCredentials = credentials.split(":");
-                    String userLogin = splitCredentials[0];
-                    String userPassword = splitCredentials[1];
-                    httpRequest.login(userLogin, userPassword);
-                    Account account = accountManager.getAccount(userLogin);
-                    if(account!=null) {
-                        return account.getLogin();
-                    }
-                } catch (UnsupportedEncodingException | ServletException | AccountNotFoundException e) {
-                    LOGGER.log(Level.FINEST, null, e);
-                }
-            }
+        String[] splitAuthorization = authorization.split(" ");
+        if(splitAuthorization.length == 2){
+            byte[] decoded = DatatypeConverter.parseBase64Binary(splitAuthorization[1]);
+            String credentials = new String(decoded, "US-ASCII");
+            String[] splitCredentials = credentials.split(":");
+            String userLogin = splitCredentials[0];
+            String userPassword = splitCredentials[1];
+            httpRequest.login(userLogin, userPassword);
+            chain.doFilter(pRequest,response);
         }
-        return null;
     }
 
     private boolean isExcludedURL(HttpServletRequest httpRequest){

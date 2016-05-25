@@ -22,6 +22,16 @@ define([
         'Find out how to get it <a href="http://get.webgl.org/">here</a>.'
     ].join( '\n' );
 
+    function getParameterByName(name) {
+        var url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
     var AppView = Backbone.View.extend({
 
         el: '#content',
@@ -152,7 +162,7 @@ define([
         },
 
         onLoginFormSubmit:function(e){
-
+            delete localStorage.jwt;
             $.ajax({
                 type: 'POST',
                 url: App.config.contextPath + '/api/auth/login',
@@ -161,15 +171,19 @@ define([
                     password:this.$('#login_form-password').val()
                 }),
                 contentType: 'application/json; charset=utf-8'
-            }).then(function(){
-                debugger
-            }, function(){
-                debugger
-            });
+            }).then(function(account, status, xhr ){
+                var jwt = xhr.getResponseHeader('jwt');
+                localStorage.jwt = jwt;
+                var originURL = getParameterByName('originURL') || App.config.contextPath + '/workspace-management/';
+                window.location.href = originURL;
+            }, this.onLoginFailed.bind(this));
             e.preventDefault();
             return false;
-        }
+        },
 
+        onLoginFailed:function(err){
+
+        }
 
     });
 

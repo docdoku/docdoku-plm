@@ -19,6 +19,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -54,7 +55,12 @@ public class AuthResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@Context HttpServletRequest request, LoginRequestDTO loginRequestDTO) throws ServletException, AccountNotFoundException {
-        request.logout();
+
+        if (request.getUserPrincipal() != null)
+            request.logout();
+
+        HttpSession session = request.getSession();
+
         request.login(loginRequestDTO.getLogin(),loginRequestDTO.getPassword());
         Account account = accountManager.getAccount(loginRequestDTO.getLogin());
         // Create JWT, send in headers

@@ -7,18 +7,25 @@ define([
 
     'use strict';
 
+    function redirectToLogin(){
+        window.location.href = App.config.contextPath + '/?originURL=' + window.location.pathname + window.location.hash;
+    }
+
     var ContextResolver = function () {
     };
 
-    if(App.config.needAuthentication){
-        $.ajaxSetup({
-            statusCode: {
-                401: function(){
-                    window.location.href = App.config.contextPath + '/faces/login.xhtml?originURL=' + window.location.pathname + window.location.hash;
-                }
+
+    $.ajaxSetup({
+        beforeSend: function(xhr) {
+            if(localStorage.jwt){
+                xhr.setRequestHeader('Authorization', 'Bearer '+ localStorage.jwt);
             }
-        });
-    }
+        },
+        statusCode: {
+            401: redirectToLogin
+        }
+    });
+
     /*var errorStatusHandlers = {
         403 : function(){
             var forbiddenView = new ForbiddenView().render();
@@ -45,7 +52,7 @@ define([
         $.ajaxSetup({
             statusCode: {
                 401: function(){
-                    window.location.href = App.config.contextPath + '/faces/login.xhtml?originURL=' + window.location.pathname + window.location.hash;
+                    window.location.href = App.config.contextPath + '/?originURL=' + window.location.pathname + window.location.hash;
                 }
             }
         });

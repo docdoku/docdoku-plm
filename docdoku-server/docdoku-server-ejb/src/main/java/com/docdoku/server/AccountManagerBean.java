@@ -78,6 +78,15 @@ public class AccountManagerBean implements IAccountManagerLocal, IAccountManager
         return new AccountDAO(em).loadAccount(pLogin);
     }
 
+    public String getRole(String login) {
+        UserGroupMapping userGroupMapping = em.find(UserGroupMapping.class, login);
+        if(userGroupMapping == null){
+            return null;
+        }else{
+            return userGroupMapping.getGroupName();
+        }
+    }
+
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public Account updateAccount(String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountNotFoundException {

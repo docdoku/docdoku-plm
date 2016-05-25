@@ -36,6 +36,7 @@ public interface IAccountManagerLocal {
      * @throws AccountNotFoundException If no account was found
      */
     Account getAccount(String pLogin) throws AccountNotFoundException;
+    String getRole(String pLogin);
 
     Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountAlreadyExistsException, CreationException;
     Account updateAccount(String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountNotFoundException;
