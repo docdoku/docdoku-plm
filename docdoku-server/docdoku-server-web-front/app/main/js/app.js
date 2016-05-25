@@ -25,7 +25,8 @@ define([
         events:{
             'click .recovery-link':'showRecoveryForm',
             'click .login-form-link':'showLoginForm',
-            'submit #login_form':'onLoginFormSubmit'
+            'submit #login_form':'onLoginFormSubmit',
+            'submit #recovery_form':'onRecoveryFormSubmit',
         },
 
         render: function () {
@@ -64,6 +65,22 @@ define([
                 localStorage.jwt = jwt;
                 var originURL = getParameterByName('originURL');
                 window.location.href = originURL ? decodeURIComponent(originURL):App.config.contextPath + '/workspace-management/';
+            }, this.onLoginFailed.bind(this));
+            e.preventDefault();
+            return false;
+        },
+
+        onRecoveryFormSubmit:function(e){
+            var login = this.$('#recovery_form-login').val();
+            $.ajax({
+                type: 'POST',
+                url: App.config.contextPath + '/api/auth/recovery',
+                data: JSON.stringify({
+                    login:login
+                }),
+                contentType: 'application/json; charset=utf-8'
+            }).then(function(account, status, xhr ){
+                window.location.href = App.config.contextPath + '/?recoverySent='+login;
             }, this.onLoginFailed.bind(this));
             e.preventDefault();
             return false;
