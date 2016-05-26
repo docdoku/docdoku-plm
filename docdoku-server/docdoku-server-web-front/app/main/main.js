@@ -52,6 +52,7 @@ require.config({
         tween:'../../bower_components/tweenjs/src/Tween',
         trackballcontrols:'../../js/dmu/controls/TrackballControls',
         binaryloader:'../../js/dmu/loaders/BinaryLoader',
+        urlUtils:'../../js/utils/url-utils'
 
     },
 

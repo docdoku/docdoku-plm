@@ -4,7 +4,10 @@ define({
     USER:'Utilisateur',
     RECOVERY:'Mot de passe oublié ?',
     MANAGE_DOCUMENTS:'Gérez vos documents',
-
+    DISCONNECTED:'Vous avez bien été déconnecté',
+    FAILED_LOGIN:'La connexion au PLM a échoué',
+    RECOVERY_REQUEST_SENT:'Un email contenant les instructions nécessaires au changement de votre mot de passe vous a été envoyé.',
+    USER_NOT_FOUND:'Utilisateur non trouvé',
     MANAGE_DOCUMENTS_STRINGS:[
         'Gérez les changements avec le contrôle de version',
         'Ajoutez des libellés et des attributs personnalisés',

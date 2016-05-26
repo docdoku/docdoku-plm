@@ -5,6 +5,10 @@ define({
         USER:'User',
         RECOVERY:'Forgot your password?',
         MANAGE_DOCUMENTS:'Manage your documents',
+        DISCONNECTED:'You have been disconnected',
+        FAILED_LOGIN:'DocdokuPLM failed to connect',
+        RECOVERY_REQUEST_SENT:'An email with the instructions necessary to change your password has been sent to you',
+        USER_NOT_FOUND:'User not found',
         MANAGE_DOCUMENTS_STRINGS:[
             'Manage changes with version control' ,
             'Add tags and custom attributes' ,

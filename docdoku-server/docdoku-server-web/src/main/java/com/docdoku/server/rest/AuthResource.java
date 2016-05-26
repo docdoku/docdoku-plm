@@ -24,6 +24,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.logging.Logger;
 
 @RequestScoped
 @Path("auth")
@@ -39,6 +40,7 @@ public class AuthResource {
     @Inject
     private IContextManagerLocal contextManager;
 
+    private static final Logger LOGGER = Logger.getLogger(AuthResource.class.getName());
     private Mapper mapper;
 
     public AuthResource() {
@@ -54,20 +56,28 @@ public class AuthResource {
     @ApiOperation(value = "Try to authenticate", response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(@Context HttpServletRequest request, LoginRequestDTO loginRequestDTO) throws ServletException, AccountNotFoundException {
+    public Response login(@Context HttpServletRequest request, LoginRequestDTO loginRequestDTO) throws AccountNotFoundException {
 
-        if (request.getUserPrincipal() != null)
-            request.logout();
+        if (request.getUserPrincipal() != null){
+            try {
+                request.logout();
+            } catch (ServletException e) {
+                e.printStackTrace();
+            }
+        }
 
         HttpSession session = request.getSession();
 
-        request.login(loginRequestDTO.getLogin(),loginRequestDTO.getPassword());
-        Account account = accountManager.getAccount(loginRequestDTO.getLogin());
-        // Create JWT, send in headers
-        return Response.ok()
-                .entity(mapper.map(account,AccountDTO.class))
-                .header("jwt", JWTokenFactory.createToken(account))
-                .build();
+        try {
+            request.login(loginRequestDTO.getLogin(),loginRequestDTO.getPassword());
+            Account account = accountManager.getAccount(loginRequestDTO.getLogin());
+            return Response.ok()
+                    .entity(mapper.map(account,AccountDTO.class))
+                    .header("jwt", JWTokenFactory.createToken(account))
+                    .build();
+        } catch (ServletException e) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
     }
 
     @POST
