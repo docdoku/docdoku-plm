@@ -52,6 +52,7 @@ public class AuthFilter implements Filter {
     private static final Logger LOGGER = Logger.getLogger(AuthFilter.class.getName());
 
     private String[] excludedPaths;
+    private String apiPathMatcher;
     private String apiPath;
 
     @Inject
@@ -89,9 +90,11 @@ public class AuthFilter implements Filter {
             excludedPaths = null;
         }
 
-        String apiPathParam=filterConfig.getInitParameter("apiPath");
+        String apiPathParam = filterConfig.getInitParameter("apiPath");
+
         if(apiPathParam !=null) {
-            apiPath = apiPathParam.replace("*", ".*");
+            apiPath = apiPathParam.replace("/*", "");
+            apiPathMatcher = apiPathParam.replace("*", ".*");
         }
     }
 
@@ -115,7 +118,7 @@ public class AuthFilter implements Filter {
 
         if(authHeaderVal != null && !authHeaderVal.isEmpty()){
             if(authHeaderVal.startsWith("Bearer")){
-                authenticateJWT(request,response,chain);
+                authenticateJWT(request, response, chain);
             }
             else if(authHeaderVal.startsWith("Basic")){
                 authenticateBasic(request,response,chain);
@@ -123,8 +126,7 @@ public class AuthFilter implements Filter {
                 sendBadRequest(response);
             }
         } else {
-            // User is not authenticated, check if resource needs authentication
-            if(isExcludedURL(httpRequest)) {
+            if(isRootCall(httpRequest) || isExcludedURL(httpRequest)) {
                 chain.doFilter(request, response);
             }
             else if(isApiRequest(httpRequest)){
@@ -132,6 +134,11 @@ public class AuthFilter implements Filter {
             }
             // should we handle last case ? (not recognized URL)
         }
+    }
+
+    private boolean isRootCall(HttpServletRequest httpRequest){
+        String path = httpRequest.getRequestURI();
+        return path.equals(apiPath) || path.equals(apiPath+"/");
     }
 
     private void authenticateJWT(ServletRequest request, ServletResponse response,
@@ -143,6 +150,8 @@ public class AuthFilter implements Filter {
             String jwt = splitAuthorization[1];
             Account account = validateToken(jwt);
             if(account != null){
+                // Not working
+                // TODO : find a way to propagate role in security context
                 chain.doFilter(new UserRoleRequestWrapper(account.getLogin(),accountManager.getRole(account.getLogin()),httpRequest),response);
             }else {
                 sendUnauthorized(response);
@@ -187,7 +196,7 @@ public class AuthFilter implements Filter {
 
     private boolean isApiRequest(HttpServletRequest httpRequest) {
         String path = httpRequest.getRequestURI();
-        return Pattern.matches(apiPath, path);
+        return Pattern.matches(apiPathMatcher, path);
     }
 
     private void authenticateBasic(ServletRequest pRequest, ServletResponse response, FilterChain chain) throws ServletException, IOException {

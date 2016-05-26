@@ -21,14 +21,12 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.exceptions.AccountNotFoundException;
-import com.docdoku.core.exceptions.CreationException;
-import com.docdoku.core.exceptions.EntityAlreadyExistsException;
-import com.docdoku.core.exceptions.EntityNotFoundException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.jwt.JWTokenFactory;
 import com.docdoku.server.rest.dto.AccountDTO;
 import com.docdoku.server.rest.dto.GCMAccountDTO;
 import com.docdoku.server.rest.dto.WorkspaceDTO;
@@ -43,7 +41,11 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -96,6 +98,24 @@ public class AccountResource {
     public AccountDTO updateAccount(@ApiParam(required = true,value = "Updated account") AccountDTO accountDTO) throws AccountNotFoundException {
         Account account = accountManager.updateAccount(accountDTO.getName(), accountDTO.getEmail(), accountDTO.getLanguage(), accountDTO.getNewPassword(), accountDTO.getTimeZone());
         return mapper.map(account,AccountDTO.class);
+    }
+
+    @POST
+    @Path("/create")
+    @ApiOperation(value = "Create user's account", response = AccountDTO.class)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createAccount(@Context HttpServletRequest request, @ApiParam(required = true,value = "Account to create") AccountDTO accountDTO) throws AccountAlreadyExistsException, CreationException {
+        Account account = accountManager.createAccount(accountDTO.getLogin(), accountDTO.getName(), accountDTO.getEmail(), accountDTO.getLanguage(), accountDTO.getNewPassword(), accountDTO.getTimeZone());
+        HttpSession session = request.getSession();
+        try {
+            request.login(accountDTO.getLogin(), accountDTO.getNewPassword());
+            return Response.ok()
+                    .entity(mapper.map(account, AccountDTO.class))
+                    .header("jwt", JWTokenFactory.createToken(account))
+                    .build();
+        } catch (ServletException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GET

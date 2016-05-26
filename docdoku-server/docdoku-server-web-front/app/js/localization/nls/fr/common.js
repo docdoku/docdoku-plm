@@ -651,5 +651,9 @@ define({
     WORKSPACE_MANAGEMENT: "Administration de l'espace",
 	WORKSPACES: "Workspaces",
     YOU_CANNOT_CREATE_LINK_WITHOUT_TYPE: "Vous ne pouvez pas créer un lien sans type",
-	YOU_HAVE_BEEN_KICKED:"Vous avez été exclu de la salle collaborative"
+	YOU_HAVE_BEEN_KICKED:"Vous avez été exclu de la salle collaborative",
+    LANGUAGES:{
+        fr:'Français',
+        en:'Anglais'
+    }
 });

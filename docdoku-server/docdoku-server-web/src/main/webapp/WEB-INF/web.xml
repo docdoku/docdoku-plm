@@ -7,7 +7,7 @@
         <async-supported>true</async-supported>
         <init-param>
             <param-name>excludedPaths</param-name>
-            <param-value>/api/auth/**,/api/files/*/documents/**,/api/files/*/parts/**</param-value>
+            <param-value>/api/accounts/create,/api/languages,/api/timezones,/api/auth/**,/api/files/*/documents/**,/api/files/*/parts/**</param-value>
         </init-param>
         <init-param>
             <param-name>apiPath</param-name>

@@ -7,11 +7,7 @@ define({
         CHANGE_PASSWORD:'Change password',
         LANG:'Language',
         TIMEZONE:'Timezone',
-        NEED_PAGE_RELOAD_CHANGED_LANG:'The page needs to be refreshed to take new language settings',
-        LANGUAGES:{
-            fr:'French',
-            en:'English'
-        }
+        NEED_PAGE_RELOAD_CHANGED_LANG:'The page needs to be refreshed to take new language settings'
     },
     'fr': true,
     'es': true

@@ -7,7 +7,7 @@
 
 <div class="HeaderContent Header-content navbar-inner">
 
-    <a class="Brand" href="{{contextPath}}{{#connected}}/workspace-management/#{{/connected}}{{^connected}}/{{/connected}}">
+    <a class="Brand" href="{{contextPath}}{{#connected}}/workspace-management/{{/connected}}{{^connected}}/{{/connected}}#">
         <img class="Brand-logo" alt="docdoku_plm" src="../images/plm_logo2.png"/>
         <span class="Brand-name">DocDoku<strong>PLM</strong></span>
     </a>
@@ -230,7 +230,7 @@
         <div class="HeaderFluidContent container-fluid offline-menu">
             <ul class="HeaderMenu nav header-menu">
                 <li>
-                    <a href="{{contextPath}}/"><i class="fa fa-home"></i> Accueil</a>
+                    <a href="{{contextPath}}/#"><i class="fa fa-home"></i> Accueil</a>
                 </li>
                 <li>
                     <a href="http://www.docdokuplm.com/" target="_blank"><i class="fa fa-cloud"></i> Communauté PLM</a>
@@ -244,7 +244,7 @@
             </ul>
             <ul class="nav pull-right">
                 <li id="registration_link_container">Pas encore enregistré ?
-                    <a href="/#create-account">inscrivez-vous !</a>
+                    <a href="{{contextPath}}/#create-account">inscrivez-vous !</a>
                 </li>
             </ul>
         </div>

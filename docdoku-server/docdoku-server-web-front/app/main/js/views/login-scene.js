@@ -79,9 +79,10 @@ define([
             }
 
             function handleResize() {
-                camera.aspect = container.clientWidth / container.clientHeight;
+                container.parent.
+                camera.aspect = container.parent.clientWidth / container.clientHeight;
                 camera.updateProjectionMatrix();
-                renderer.setSize(container.clientWidth , container.clientHeight);
+                renderer.setSize(container.parent.clientWidth , container.clientHeight);
                 controls.handleResize();
             }
 
@@ -120,6 +121,7 @@ define([
             container.appendChild( renderer.domElement );
             window.addEventListener('resize', handleResize, false);
 
+            this.handleResize = handleResize;
         }
     });
 

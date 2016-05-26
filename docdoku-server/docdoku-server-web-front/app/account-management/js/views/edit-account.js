@@ -111,7 +111,10 @@ define([
         },
 
         logout:function(){
-            window.location.href = App.config.contextPath+'/api/auth/logout';
+            delete localStorage.jwt;
+            $.get(App.config.contextPath + '/api/auth/logout').complete(function () {
+                window.location.href = App.config.contextPath + '/?logout=true';
+            });
         }
     });
 

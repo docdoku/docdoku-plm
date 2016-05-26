@@ -26,12 +26,17 @@ module.exports = {
                 },
                 files: [
                     'Gruntfile.js',
-                    '{.tmp,app,grunt,tests}/**/*'
+                    '{app,grunt,tests}/**/*',
+                    '!app/less/**/*'
                 ]
             },
             tests: {
                 files: ['tests/js/**/*.js'],
                 tasks: ['execute:tests', 'watch:tests']
+            },
+            less: {
+                files: ['app/less/**/*.less'],
+                tasks: ['less', 'watch:less']
             }
         };
 
@@ -92,6 +97,10 @@ module.exports = {
                 return grunt.task.run(['build', 'open:server', 'connect:dist:keepalive']);
             }
 
+            if (target === 'less') {
+                return grunt.task.run(['less','watch:less']);
+            }
+
             if (target === 'noLiveReload') {
                 return grunt.task.run([
                     'clean:server',
@@ -116,9 +125,6 @@ module.exports = {
         // On watch events, configure jshint to only run on changed file, run less task if file is a less source file
 
         var filesTask = {
-            less: function () {
-                grunt.task.run(['less']);
-            },
             js: function (filepath) {
                 grunt.config('jshint.current.src', filepath);
                 grunt.task.run(['jshint:current']);

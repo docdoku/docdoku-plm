@@ -8,6 +8,8 @@ define({
     FAILED_LOGIN:'La connexion au PLM a échoué',
     RECOVERY_REQUEST_SENT:'Un email contenant les instructions nécessaires au changement de votre mot de passe vous a été envoyé.',
     USER_NOT_FOUND:'Utilisateur non trouvé',
+    LANGUAGE:'Langue',
+    TIMEZONE:'Fuseau horaire',
     MANAGE_DOCUMENTS_STRINGS:[
         'Gérez les changements avec le contrôle de version',
         'Ajoutez des libellés et des attributs personnalisés',
@@ -38,6 +40,12 @@ define({
         'Créez vos espaces de travail, vos groupes d\'utilisateurs',
         'Partagez la visualisation des articles'
     ],
-    ENTER_ID:'Entrez votre identifiant'
+    ENTER_ID:'Entrez votre identifiant',
+    USER_ID:'Identifiant utilisateur',
+    FIRSTNAME_NAME:'Prénom, nom',
+    REGISTRATION:'Enregistrement',
+    CREATE_ID:'Créez votre identifiant DocDokuPLM',
+    TERMS_OF_SERVICES:'Contrat de Service',
+    TERMS_OF_SERVICES_TEXT:'Vous vous enregistrez pour obtenir un compte gratuit, pour évaluer le logiciel. Il n\'y a par conséquent aucune garantie que votre compte ne soit pas désactivé un jour. Si vous souhaitez utiliser DocDokuPLM en production, contactez nous.'
 
 });

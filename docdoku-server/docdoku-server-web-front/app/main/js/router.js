@@ -7,13 +7,22 @@ function (Backbone, singletonDecorator) {
     'use strict';
     var Router = Backbone.Router.extend({
         routes: {
-            '':   'login'
+            '':   'login',
+            'create-account':   'createAccount',
+            'recovery':   'recovery',
         },
 
         login:function(){
-            App.appView.render();
-            App.headerView.render();
-	    }
+            App.appView.showLoginForm();
+	    },
+
+        createAccount:function(){
+            App.appView.showAccountCreationForm();
+        },
+        recovery:function(){
+            App.appView.showRecoveryForm();
+        }
+
     });
 
     return singletonDecorator(Router);

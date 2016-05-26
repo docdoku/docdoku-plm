@@ -7,7 +7,8 @@
     text-align: left;
 }
 #general_presentation {
-    display: inline-block;
+    display: flex;
+    flex-wrap: wrap;
     width: 100%;
     max-width: 848px;
     margin: 0 auto 30px auto;
@@ -22,10 +23,10 @@
     border: 1px solid #ccc;
 }
 #demo-scene {
-    display: inline-block;
-    float: left;
-    width: 490px;
-    height: 332px;
+    order: 2;
+    flex: 1 0 200px;
+    box-sizing: border-box;
+    height: 354px;
     margin: 0;
     line-height: 51px;
     canvas {
@@ -33,11 +34,10 @@
     }
 }
 
-#login_form_container {
-    display: inline-block;
-    float: right;
-    margin: 0;
-    padding: 20px 44px;
+#form_container {
+    flex: 1 0 200px;
+    box-sizing: border-box;
+
     background-color: white;
     line-height: 51px;
     h3 {
@@ -49,13 +49,59 @@
             margin-top: -2px;
         }
     }
-    .notifications{
-        .alert {
-            line-height: normal;
-            h4{
-                display: none;
+
+
+    &.put-right{
+        order:3;
+        float: right;
+        margin: 0;
+        padding: 20px 44px;
+        .notifications{
+            .alert {
+                line-height: normal;
+                h4{
+                    display: none;
+                }
+                margin-bottom: 12px;
+                max-width: 218px;
+                .Alert-message {
+                    max-width: 206px;
+                }
             }
-            margin-bottom: 12px;
+        }
+    }
+
+
+    &.put-above{
+        order: 1;
+        flex: 1 0 100%;
+        padding: 0 20px;
+        .notifications{
+            .alert {
+                line-height: normal;
+                h4{
+                    display: none;
+                }
+                margin-bottom: 12px;
+                max-width: 498px;
+                .Alert-message {
+                    max-width: 486px;
+                }
+            }
+        }
+    }
+
+    .form-inputs{
+        display: flex;
+        flex-wrap: wrap;
+        >p{
+            flex: 1 0 200px;
+            box-sizing: border-box;
+            /* background: #e0ddd5; */
+            color: #171e42;
+            padding: 0;
+            margin-left: 10px;
+            margin-top: 0px;
         }
     }
 }
@@ -75,11 +121,30 @@
     }
 }
 #recovery_form{
-    padding-bottom: 18px;
-    display:none;
     h4 {
         font-size: 16px;
         color: #434C64;
+    }
+}
+#account_creation_form{
+    text-align: left;
+    h3{
+        text-align: left;
+    }
+    h4 {
+        font-size: 16px;
+        color: #434C64;
+    }
+    .terms-of-service{
+        float: right;
+        width: 200px;
+        line-height: 16px;
+    }
+    .account-form-buttons{
+        input,a{
+            margin-top: 30px;
+            margin-right: 10px;
+        }
     }
 }
 .form_button_container {
@@ -88,7 +153,7 @@
 }
 
 @media (max-width: 720px) {
-    #login_form_container,
+    #form_container,
     #recovery_form_container {
         float: none;
         padding-right: 0;
@@ -188,6 +253,7 @@
         height: auto;
     }
 }
+
 
 #footer {
     border: none;

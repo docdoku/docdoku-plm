@@ -96,6 +96,8 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
                 require(['backbone','app','router','common-objects/views/header'],function(Backbone, AppView, Router,HeaderView){
                     App.appView = new AppView();
                     App.headerView = new HeaderView();
+                    App.appView.render();
+                    App.headerView.render();
                     App.router = Router.getInstance();
                     Backbone.history.start();
                 });

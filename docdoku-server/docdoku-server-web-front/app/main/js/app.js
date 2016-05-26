@@ -5,18 +5,14 @@ define([
     'text!templates/app.html',
     'views/login-form',
     'views/recovery-form',
+    'views/account-creation-form',
     'views/login-scene'
-], function (Backbone, Mustache, template, LoginFormView, RecoveryFormView, LoginSceneView ) {
+], function (Backbone, Mustache, template, LoginFormView, RecoveryFormView, AccountCreationFormView, LoginSceneView ) {
 	'use strict';
 
     var AppView = Backbone.View.extend({
 
         el: '#content',
-
-        events:{
-            'click .recovery-link':'showRecoveryForm',
-            'click .login-form-link':'showLoginForm'
-        },
 
         render: function () {
             this.$el.html(Mustache.render(template, {
@@ -24,25 +20,25 @@ define([
                 contextPath:App.config.contextPath
             })).show();
 
-            this.loginFormView = new LoginFormView().render();
-            this.recoveryFormView = new RecoveryFormView().render();
-            this.loginSceneView = new LoginSceneView({el:this.$('#demo-scene')[0]});
-
-            this.$loginFormContainer = this.$('#login_form_container');
-            this.$loginFormContainer.append(this.loginFormView.$el);
-            this.$loginFormContainer.append(this.recoveryFormView.$el);
-
+            this.sceneView = new LoginSceneView({el:this.$('#demo-scene')[0]});
+            this.$FormContainer = this.$('#form_container');
+            this.showLoginForm();
             return this;
         },
 
         showRecoveryForm:function(){
-            this.recoveryFormView.$el.show();
-            this.loginFormView.$el.hide();
+            this.$FormContainer.html(new RecoveryFormView().render().$el);
+            this.$FormContainer.attr('class','put-right');
         },
 
         showLoginForm:function(){
-            this.loginFormView.$el.show();
-            this.recoveryFormView.$el.hide();
+            this.$FormContainer.html(new LoginFormView().render().$el);
+            this.$FormContainer.attr('class','put-right');
+        },
+
+        showAccountCreationForm:function(){
+            this.$FormContainer.html(new AccountCreationFormView().render().$el);
+            this.$FormContainer.attr('class','put-above');
         }
 
 
