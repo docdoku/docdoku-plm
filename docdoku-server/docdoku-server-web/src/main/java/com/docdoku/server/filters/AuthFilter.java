@@ -34,14 +34,12 @@ import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
-import javax.xml.ws.WebServiceContext;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -64,8 +62,8 @@ public class AuthFilter implements Filter {
     @Inject
     private IAccountManagerLocal accountManager;
 
-    @Resource
-    private WebServiceContext context;
+    @Inject
+    private GuestProxy guestProxy;
 
     @EJB
     private IOrganizationManagerLocal organizationManager;
@@ -186,12 +184,12 @@ public class AuthFilter implements Filter {
 
     private void sendUnauthorized(ServletResponse pResponse) throws ServletException, IOException {
         HttpServletResponse response = (HttpServletResponse) pResponse;
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
     }
 
     private void sendBadRequest(ServletResponse pResponse) throws ServletException, IOException {
         HttpServletResponse response = (HttpServletResponse) pResponse;
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad request");
     }
 
     private boolean isApiRequest(HttpServletRequest httpRequest) {

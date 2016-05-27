@@ -7,12 +7,11 @@ function (Backbone, singletonDecorator) {
     'use strict';
     var Router = Backbone.Router.extend({
         routes: {
-            '':   'login'
+            ':workspaceId/:documentId/:documentVersion':   'showDocumentRevision'
         },
 
-        login:function(){
-            App.appView.render();
-            App.headerView.render();
+        showDocumentRevision:function(workspace, documentId, documentVersion){
+            App.appView.showDocumentRevision(workspace, documentId, documentVersion);
 	    }
     });
 
