@@ -35,14 +35,16 @@ require.config({
         i18n: '../../bower_components/requirejs-i18n/i18n',
         bootstrap: '../../bower_components/bootstrap/docs/assets/js/bootstrap',
         'common-objects': '../../js/common-objects',
-        localization: '../../js/localization'
+        localization: '../../js/localization',
+        pluginDetect:'../../js/lib/plugin-detect'
     },
 
     deps: [
         'jquery',
         'underscore',
         'bootstrap',
-        'jqueryUI'
+        'jqueryUI',
+        'pluginDetect'
     ],
     config: {
         i18n: {

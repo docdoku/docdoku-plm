@@ -1,3 +1,4 @@
+<h3 class="document-heading">{{document.documentMasterId}}-{{document.version}}</h3>
 <div class="tabs">
 
     <ul class="nav nav-tabs">
@@ -104,27 +105,20 @@
         </div>
 
         <div id="tab-document-files" class="tab-pane">
-
             <div id="files" class="accordion"></div>
-            <ul>
-            {{#lastIteration.attachedFiles}}
-                <li>
-                <a href="{{contextPath}}/api/files/{{.}}">{{.}}</a>
-                </li>
-                {{/lastIteration.attachedFiles}}
-            </ul>
         </div>
 
         <div id="tab-document-links" class="tab-pane">
-            <ul>
-                {{#lastIteration.linkedDocuments}}
-                <li>
-                    <a href="{{contextPath}}/documents/#{{workspaceId}}/{{documentMasterId}}/{{version}}">{{documentMasterId}}-{{version}}</a>
-                </li>
-                {{/lastIteration.linkedDocuments}}
-            </ul>
+            <div id="document-links">
+                <ul>
+                    {{#lastIteration.linkedDocuments}}
+                    <li>
+                        <a href="{{contextPath}}/documents/#{{workspaceId}}/{{documentMasterId}}/{{version}}">{{documentMasterId}}-{{version}}</a>
+                    </li>
+                    {{/lastIteration.linkedDocuments}}
+                </ul>
+            </div>
         </div>
-
     </div>
 
 </div>

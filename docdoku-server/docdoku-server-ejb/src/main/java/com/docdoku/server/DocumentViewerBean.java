@@ -20,6 +20,7 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IFileViewerManagerLocal;
 import com.docdoku.server.viewers.DocumentViewer;
@@ -28,6 +29,8 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 
+import javax.annotation.security.DeclareRoles;
+import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -39,6 +42,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+@Local(IFileViewerManagerLocal.class)
 @Stateless(name="DocumentViewerBean")
 public class DocumentViewerBean implements IFileViewerManagerLocal {
 
