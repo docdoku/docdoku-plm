@@ -205,7 +205,7 @@ define({
 		FOLDER_S_NAME: 'Folder name',
 		FOLD_TASK: 'Minimize task',
 		FORBIDDEN: 'Forbidden',
-        FORBIDDEN_MESSAGE:'You cannot access to this resource, you need to disconnect before continue',
+        FORBIDDEN_MESSAGE:'You cannot access to this resource, you need to log in before continue',
 		FORM_HELPER: 'Leave these inputs empty if you don\'t want to specify a password or an expiration date',
         FREEZE_CURRENT_ITERATION: 'Freeze current iteration',
         FREEZE_AFTER_MODIFICATION: 'Freeze iterations after modification',

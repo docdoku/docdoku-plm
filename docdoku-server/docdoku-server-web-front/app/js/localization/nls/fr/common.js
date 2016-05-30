@@ -205,7 +205,7 @@ define({
 	FOLDER_S_NAME: 'Nom du dossier',
 	FOLD_TASK: 'Réduire la tâche',
 	FORBIDDEN: 'Interdit',
-	FORBIDDEN_MESSAGE: 'Vous n\'avez pas accès à cette ressource, vous devez vous déconnecter pour continuer',
+	FORBIDDEN_MESSAGE: 'Vous n\'avez pas accès à cette ressource, vous devez vous connecter pour continuer',
 	FORM_HELPER: 'Laissez ces champs vides si vous ne voulez pas spécifier de mot de passe ou de date d\'expiration',
     FREEZE_CURRENT_ITERATION: 'Figer l\'itération en cours',
     FREEZE_AFTER_MODIFICATION: 'Geler les itérations après modifications',
