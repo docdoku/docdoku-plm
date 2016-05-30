@@ -35,7 +35,7 @@ define([
             $success.hide();
 
             Workspace.updateWorkspace({
-                id:App.config.workspaceId+'azdzadazd',
+                id:App.config.workspaceId,
                 description:description,
                 folderLocked:folderLocked
             }).then(function(){

@@ -31,7 +31,7 @@
                 </tr>
                 <tr>
                     <th scope="row">{{i18n.LIFECYCLE_STATE}}</th>
-                    <td>{{document.lifecycleState}}</td>
+                    <td>{{document.lifeCycleState}}</td>
                 </tr>
                 <tr>
                     <th scope="row">{{i18n.DESCRIPTION}}</th>
@@ -59,7 +59,16 @@
                 </tr>
                 <tr>
                     <th scope="row">{{i18n.REVISION_DATE}}</th>
-                    <td>{{lastIteration.revisionDate}}</td>
+                    <td>
+                    {{#document.checkOutUser}}
+                        {{lastIteration.creationDate}}
+                    {{/document.checkOutUser}}
+                    {{^document.checkOutUser}}
+                        {{lastIteration.checkInDate}}
+                    {{/document.checkOutUser}}
+                    </td>
+
+
                 </tr>
                 <tr>
                     <th scope="row">{{i18n.MODIFICATION_DATE}}</th>
@@ -94,19 +103,26 @@
             {{/lastIteration.instanceAttributes.length}}
         </div>
 
-        <div id="tab-document-files" class="tab-pane"><div id="files" class="accordion"></div>
-            {{#lastIteration.attachedFiles}}
+        <div id="tab-document-files" class="tab-pane">
 
-            {{/lastIteration.attachedFiles}}
+            <div id="files" class="accordion"></div>
+            <ul>
+            {{#lastIteration.attachedFiles}}
+                <li>
+                <a href="{{contextPath}}/api/files/{{.}}">{{.}}</a>
+                </li>
+                {{/lastIteration.attachedFiles}}
+            </ul>
         </div>
 
         <div id="tab-document-links" class="tab-pane">
-
+            <ul>
                 {{#lastIteration.linkedDocuments}}
-                <p>
+                <li>
                     <a href="{{contextPath}}/documents/#{{workspaceId}}/{{documentMasterId}}/{{version}}">{{documentMasterId}}-{{version}}</a>
-                </p>
+                </li>
                 {{/lastIteration.linkedDocuments}}
+            </ul>
         </div>
 
     </div>
