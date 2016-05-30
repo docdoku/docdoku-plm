@@ -62,23 +62,23 @@ public class GuestProxy{
     @Inject
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
 
-    public PartRevision getPublicPartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, LoginException, AccessRightException {
+    public PartRevision getPublicPartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
 
         PartRevision partRevision = productService.getPartRevision(partRevisionKey);
         if(partRevision.isPublicShared()){
             return partRevision;
         }else{
-            throw new LoginException();
+            return null;
         }
     }
 
-    public DocumentRevision getPublicDocumentRevision(DocumentRevisionKey documentRevisionKey) throws NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, AccessRightException, LoginException {
+    public DocumentRevision getPublicDocumentRevision(DocumentRevisionKey documentRevisionKey) throws NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, AccessRightException {
 
         DocumentRevision documentRevision =  documentService.getDocumentRevision(documentRevisionKey);
         if(documentRevision.isPublicShared()){
             return documentRevision;
         }else{
-            throw new LoginException();
+           return null;
         }
     }
 

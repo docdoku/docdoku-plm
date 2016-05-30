@@ -475,8 +475,7 @@ public class DocumentResource {
                                         @PathParam("documentId") String documentId,
                                         @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
-        DocumentRevision documentRevision = documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-        documentRevision.setPublicShared(true);
+        documentService.setDocumentPublicShared(new DocumentRevisionKey(workspaceId, documentId, documentVersion), true);
         return Response.ok().build();
     }
 
@@ -488,8 +487,7 @@ public class DocumentResource {
                                           @PathParam("documentId") String documentId,
                                           @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
-        DocumentRevision documentRevision = documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-        documentRevision.setPublicShared(false);
+        documentService.setDocumentPublicShared(new DocumentRevisionKey(workspaceId, documentId, documentVersion), false);
         return Response.ok().build();
     }
 

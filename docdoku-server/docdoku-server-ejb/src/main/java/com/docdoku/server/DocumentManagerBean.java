@@ -157,6 +157,13 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public void setDocumentPublicShared(DocumentRevisionKey pDocRPK, boolean isPublicShared) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException {
+        DocumentRevision documentRevision = getDocumentRevision(pDocRPK);
+        documentRevision.setPublicShared(isPublicShared);
+    }
+
     @LogDocument
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
     @Override

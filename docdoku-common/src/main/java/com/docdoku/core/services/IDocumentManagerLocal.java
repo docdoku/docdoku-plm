@@ -69,6 +69,8 @@ public interface IDocumentManagerLocal {
 
     BinaryResource saveFileInDocument(DocumentIterationKey pDocPK, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException;
 
+    void setDocumentPublicShared(DocumentRevisionKey pDocRPK, boolean isPublicShared) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException;
+
     /**
      * Returns the BinaryResource object given his Id. WARNING: You have to check access right before use it.
      *
