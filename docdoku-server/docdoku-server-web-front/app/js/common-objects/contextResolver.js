@@ -1,9 +1,9 @@
 /*global _,$,define,App*/
 define([
     'common-objects/models/user',
-    'common-objects/models/workspace',
-    'common-objects/views/forbidden'
-], function (User, Workspace, ForbiddenView) {
+    'common-objects/models/workspace'
+
+], function (User, Workspace) {
 
     'use strict';
 
@@ -29,7 +29,6 @@ define([
     });
 
     function onError(res) {
-        var status = res.status;
         return res;
     }
 
