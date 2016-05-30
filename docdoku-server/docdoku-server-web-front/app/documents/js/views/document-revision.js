@@ -13,6 +13,8 @@ define([
 
             var lastIteration = document.documentIterations[document.documentIterations.length-1];
 
+            document.encodedRoutePath = encodeURIComponent(document.routePath);
+
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n,
                 contextPath:App.config.contextPath,

@@ -552,6 +552,7 @@ define({
 		SEARCH: 'Search',
         SEARCHING: 'Searching...',
         SECONDS: 's',
+        SEE_IN_DOCUMENT_MANAGEMENT:'See the document in the document management module',
 		SELECT_FILE: 'Choose a file',
         SELECT_FILES: 'Choose one or more file(s)',
         SEND: 'Send',

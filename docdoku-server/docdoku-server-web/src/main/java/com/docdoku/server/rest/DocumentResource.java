@@ -111,6 +111,7 @@ public class DocumentResource {
 
         DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
         docRsDTO.setPath(docR.getLocation().getCompletePath());
+        docRsDTO.setRoutePath(docR.getLocation().getRoutePath());
 
         if (configSpecType == null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
             setDocumentRevisionDTOWorkflow(docR, docRsDTO);
