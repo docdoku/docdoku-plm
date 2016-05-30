@@ -74,7 +74,7 @@ define([
                             var version = idAndVersion.substr(lastDash+1);
 
                             result.push({
-                                link:'../documents/'+App.config.workspaceId+'/'+id+'/'+version,
+                                link:'../documents/#'+App.config.workspaceId+'/'+id+'/'+version,
                                 name:document
                             });
 
