@@ -132,6 +132,13 @@ public class GuestProxy{
 
 */
 
+    public BinaryResource getBinaryResourceForSharedDocument(String fullName) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, UserNotActiveException {
+        return documentService.getBinaryResource(fullName);
+    }
+
+    public BinaryResource getBinaryResourceForSharedPart(String fullName) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, UserNotActiveException {
+        return productService.getBinaryResource(fullName);
+    }
 
     public boolean canAccess(DocumentIterationKey docIKey) throws EntityNotFoundException, UserNotActiveException{
         return documentService.canAccess(docIKey);

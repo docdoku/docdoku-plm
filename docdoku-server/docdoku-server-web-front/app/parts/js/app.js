@@ -24,16 +24,28 @@ define([
         },
 
         showPartRevision:function(workspace, partNumber, partVersion){
-            this.options.workspace = workspace;
-            this.options.partNumber = partNumber;
-            this.options.partVersion = partVersion;
-            $.getJSON(App.config.contextPath + '/api/shared/' +  this.options.workspace + '/parts/'+this.options.partNumber+'-'+this.options.partVersion)
+            $.getJSON(App.config.contextPath + '/api/shared/' +  workspace + '/parts/'+partNumber+'-'+partVersion)
                 .then(this.onPartFetched.bind(this), this.onError.bind(this));
         },
 
+        showSharedEntity:function(uuid){
+            this.uuid = uuid;
+            $.getJSON(App.config.contextPath + '/api/shared/' + uuid + '/parts')
+                .then(this.onSharedPartFetched.bind(this), this.onSharedPartError.bind(this));
+        },
+
+        onSharedPartFetched:function(part){
+            this.$('.part-revision').html(new PartRevisionView().render(part, this.uuid).$el);
+        },
+
+        onSharedPartError:function(){
+            debugger
+        },
+
         onError:function(err){
+            debugger
             if(err.status === 403 || err.status === 401){
-                window.location.href = App.config.contextPath + '/?denied=true&originURL=' + encodeURIComponent(window.location.pathname + window.location.hash);
+                              // window.location.href = App.config.contextPath + '/?denied=true&originURL=' + encodeURIComponent(window.location.pathname + window.location.hash);
             }
         }
 

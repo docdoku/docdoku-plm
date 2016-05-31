@@ -14,18 +14,21 @@ define([
             setTimeout(this.handleResize.bind(this),50);
         },
 
-        render:function(fileName){
+        render:function(nativeCADFile, fileName, uuid){
 
-            var lastSlash = fileName.lastIndexOf('/');
-            var shortName = fileName.substr(lastSlash+1,fileName.length);
+            var extension = fileName.substr(fileName.lastIndexOf('.') + 1).toLowerCase();
+            var texturePath = fileName.substring(0, fileName.lastIndexOf('/'));
+
+            if(uuid){
+                fileName += '/uuid/'+uuid;
+                nativeCADFile += '/uuid/'+uuid;
+            }
 
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n,
                 contextPath:App.config.contextPath,
-                fileName:fileName,
-                shortName:shortName
+                nativeCADFile:nativeCADFile
             }));
-
 
             var $container = this.$('#cad-file');
 
@@ -36,8 +39,8 @@ define([
             var camera = new THREE.PerspectiveCamera(45, width / height, App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
             var control;
             var renderer = new THREE.WebGLRenderer({alpha: true});
-            var texturePath = fileName.substring(0, fileName.lastIndexOf('/'));
-            var extension = fileName.substr(fileName.lastIndexOf('.') + 1).toLowerCase();
+
+
 
             function calculateWith(){
                 var max = $container.innerWidth() - 20;

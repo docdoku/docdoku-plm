@@ -16,16 +16,19 @@ define([
         showCADFileView:function(){
             if(this.lastIteration.geometryFileURI){
                 if(!this.cadFileView){
-                    this.cadFileView =  new CADFileView().render(App.config.contextPath + this.lastIteration.geometryFileURI);
+                    var fileName = App.config.contextPath + this.lastIteration.geometryFileURI;
+                    var nativeCADFile = App.config.contextPath + '/api/files/' + this.lastIteration.nativeCADFile;
+                    this.cadFileView =  new CADFileView().render(nativeCADFile, fileName, this.uuid);
                     this.$('#tab-cad-file').html(this.cadFileView.$el);
                 }
                 this.cadFileView.resize();
             }
         },
 
-        render: function (part) {
+        render: function (part, uuid) {
 
             var _this = this;
+            this.uuid = uuid;
             this.part = part;
             var lastIteration = part.partIterations[part.partIterations.length-1];
             this.lastIteration = lastIteration;
@@ -40,7 +43,11 @@ define([
             this.$accordion = this.$('#tab-part-files > .accordion');
 
             _.each(lastIteration.attachedFiles,function(file){
-                $.get(App.config.contextPath+'/api/viewer?fileName='+encodeURIComponent(file)).then(function(data){
+                var url = App.config.contextPath+'/api/viewer?';
+                if(uuid){
+                    url+= 'uuid=' + encodeURIComponent(uuid) + '&'
+                }
+                $.get(url+'fileName='+encodeURIComponent(file)).then(function(data){
                     _this.$accordion.append(data);
                 });
             });
