@@ -42,7 +42,7 @@ define(['dmu/LoaderManager', 'async', 'backbone'],
             var timer = null;
             var evalRunning = false;
 
-            var worker = new Worker(App.config.contextPath + '/js/product-structure/workers/InstancesWorker.js');
+            var worker = new Worker(App.config.contextPath + '/product-structure/js/workers/InstancesWorker.js');
 
             var workerMessages = {
                 stats: function (stats) {

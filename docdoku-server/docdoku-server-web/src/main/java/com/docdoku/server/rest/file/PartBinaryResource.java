@@ -345,11 +345,11 @@ public class PartBinaryResource {
 
     private BinaryResource getBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
-        if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
-            return productService.getBinaryResource(fullName);
-        } else {
-            return guestProxy.getPublicBinaryResourceForPart(fullName);
+        BinaryResource publicBinaryResourceForPart = guestProxy.getPublicBinaryResourceForPart(fullName);
+        if (publicBinaryResourceForPart != null) {
+            return publicBinaryResourceForPart;
         }
+        return productService.getBinaryResource(fullName);
     }
 
     private void checkUuidValidity(SharedEntity sharedEntity, String workspaceId, String partNumber, String version, int iteration, String referer)
