@@ -337,11 +337,10 @@ public class PartBinaryResource {
     }
 
     private boolean canAccess(PartIterationKey partIKey) throws UserNotActiveException, EntityNotFoundException {
-        if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
-            return productService.canAccess(partIKey);
-        } else {
-            return guestProxy.canAccess(partIKey);
+        if(guestProxy.canAccess(partIKey)){
+            return true;
         }
+        return productService.canAccess(partIKey);
     }
 
     private BinaryResource getBinaryResource(String fullName)

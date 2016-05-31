@@ -81,8 +81,6 @@ public class GuestProxy{
         return documentRevision.isPublicShared() ? binaryResource : null;
     }
 
-
-
     public BinaryResource getPublicBinaryResourceForPart(String fullName)
             throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException{
 
@@ -135,12 +133,10 @@ public class GuestProxy{
 */
 
 
-    public boolean canAccess(DocumentIterationKey docIKey)
-            throws EntityNotFoundException, UserNotActiveException{
+    public boolean canAccess(DocumentIterationKey docIKey) throws EntityNotFoundException, UserNotActiveException{
         return documentService.canAccess(docIKey);
     }
-    public boolean canAccess(PartIterationKey partIKey)
-            throws EntityNotFoundException, UserNotActiveException{
+    public boolean canAccess(PartIterationKey partIKey) throws EntityNotFoundException, UserNotActiveException{
         return productService.canAccess(partIKey);
     }
 
