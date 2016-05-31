@@ -25,7 +25,7 @@ define([
             this.$accordion = this.$('#tab-document-files > .accordion');
 
             _.each(lastIteration.attachedFiles,function(file){
-                $.get(App.config.contextPath+'/api/viewer/document?fileName='+encodeURIComponent(file)).then(function(data){
+                $.get(App.config.contextPath+'/api/viewer?fileName='+encodeURIComponent(file)).then(function(data){
                     _this.$accordion.append(data);
                 });
             });

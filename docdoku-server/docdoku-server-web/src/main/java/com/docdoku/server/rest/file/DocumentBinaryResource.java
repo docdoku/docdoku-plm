@@ -64,6 +64,7 @@ import java.util.logging.Logger;
 @RequestScoped
 @Api(hidden = true, value = "document-binary", description = "Operations about document files")
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
 public class DocumentBinaryResource {
 
     private static final Logger LOGGER = Logger.getLogger(DocumentBinaryResource.class.getName());
@@ -223,20 +224,22 @@ public class DocumentBinaryResource {
         }
     }
 
-    private boolean canAccess(DocumentIterationKey docIKey) throws UserNotActiveException, EntityNotFoundException {
-        if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
-            return documentService.canAccess(docIKey);
-        } else {
-            return guestProxy.canAccess(docIKey);
+    private boolean canAccess(DocumentIterationKey docIKey) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException {
+        DocumentRevision publicDocumentRevision = guestProxy.getPublicDocumentRevision(docIKey.getDocumentRevision());
+        if(publicDocumentRevision!=null){
+            return true;
         }
+        return documentService.canAccess(docIKey);
     }
 
     private BinaryResource getBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
-        if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
+        BinaryResource binaryResource = guestProxy.getBinaryResourceForDocument(fullName);
+        if(binaryResource != null){
+            return binaryResource;
+        }
+        else{
             return documentService.getBinaryResource(fullName);
-        } else {
-            return guestProxy.getBinaryResourceForDocument(fullName);
         }
     }
 

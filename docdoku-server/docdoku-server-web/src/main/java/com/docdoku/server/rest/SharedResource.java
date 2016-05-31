@@ -3,6 +3,7 @@ package com.docdoku.server.rest;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.filters.GuestProxy;
 import com.docdoku.server.rest.dto.DocumentRevisionDTO;
 import io.swagger.annotations.Api;
@@ -29,6 +30,9 @@ public class SharedResource {
     @Inject
     private GuestProxy guestProxy;
 
+    @Inject
+    private IDocumentManagerLocal documentManager;
+
     private Mapper mapper;
 
     @PostConstruct
@@ -44,12 +48,21 @@ public class SharedResource {
                                                                @PathParam("documentId") String documentId,
                                                                @PathParam("documentVersion") String documentVersion) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, LoginException {
 
-        DocumentRevision documentRevision = guestProxy.getPublicDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+        // Tries public
+        DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
+        DocumentRevision documentRevision = guestProxy.getPublicDocumentRevision(docKey);
+
+        if(documentRevision == null) {
+            // Ties authenticated
+            documentRevision = documentManager.getDocumentRevision(docKey);
+        }
+
         if(documentRevision != null){
             return Response.ok().entity(mapper.map(documentRevision, DocumentRevisionDTO.class)).build();
-        }else {
+        }else{
             return Response.status(Response.Status.FORBIDDEN).build();
         }
+
     }
 
 }

@@ -62,9 +62,6 @@ public class AuthFilter implements Filter {
     @Inject
     private IAccountManagerLocal accountManager;
 
-    @Inject
-    private GuestProxy guestProxy;
-
     @EJB
     private IOrganizationManagerLocal organizationManager;
 

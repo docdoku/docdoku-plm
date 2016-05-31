@@ -63,7 +63,6 @@ public class GuestProxy{
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
 
     public PartRevision getPublicPartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
-
         PartRevision partRevision = productService.getPartRevision(partRevisionKey);
         if(partRevision.isPublicShared()){
             return partRevision;
@@ -73,7 +72,6 @@ public class GuestProxy{
     }
 
     public DocumentRevision getPublicDocumentRevision(DocumentRevisionKey documentRevisionKey) throws NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, AccessRightException {
-
         DocumentRevision documentRevision =  documentService.getDocumentRevision(documentRevisionKey);
         if(documentRevision.isPublicShared()){
             return documentRevision;
@@ -82,10 +80,33 @@ public class GuestProxy{
         }
     }
 
+    public BinaryResource getBinaryResourceForDocument(String fullName)
+            throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException{
+
+        BinaryResource binaryResource = documentService.getBinaryResource(fullName);
+        String workspaceId = binaryResource.getWorkspaceId();
+        String documentMasterId = binaryResource.getHolderId();
+        String documentVersion = binaryResource.getHolderRevision();
+        DocumentRevision documentRevision =  documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId,documentMasterId,documentVersion));
+
+        if(documentRevision.isPublicShared()){
+            return binaryResource;
+        }
+        else{
+            return null;
+        }
+    }
+
     public BinaryResource getPublicBinaryResourceForDocument(DocumentRevisionKey docRK, String fullName)
             throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException, LoginException{
-        getPublicDocumentRevision(docRK);
-        return documentService.getBinaryResource(fullName);
+
+        DocumentRevision documentRevision =  documentService.getDocumentRevision(docRK);
+        if(documentRevision.isPublicShared()){
+            return documentService.getBinaryResource(fullName);
+        }else{
+            return null;
+        }
+
     }
 
     public BinaryResource getPublicBinaryResourceForPart(PartRevisionKey partK, String fullName) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, LoginException, FileNotFoundException, NotAllowedException, AccessRightException {
@@ -119,10 +140,8 @@ public class GuestProxy{
             throws EntityNotFoundException, UserNotActiveException{
         return productService.canAccess(partIKey);
     }
-    public BinaryResource getBinaryResourceForDocument(String fullName)
-            throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException{
-        return documentService.getBinaryResource(fullName);
-    }
+
+
     public BinaryResource getBinaryResourceForPart(String fullName)
             throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException{
         return productService.getBinaryResource(fullName);
