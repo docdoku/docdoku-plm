@@ -10,11 +10,15 @@ define([
     var PartRevisionView = Backbone.View.extend({
 
         events : {
-            'click .nav.nav-tabs > li':'tabClicked'
+            'click a[href="#tab-cad-file"]':'showCADFileView'
         },
 
-        tabClicked:function(e){
-            if($(e.target).attr('href') === '#tab-cad-file'){
+        showCADFileView:function(){
+            if(this.lastIteration.geometryFileURI){
+                if(!this.cadFileView){
+                    this.cadFileView =  new CADFileView().render(App.config.contextPath + this.lastIteration.geometryFileURI);
+                    this.$('#tab-cad-file').html(this.cadFileView.$el);
+                }
                 this.cadFileView.resize();
             }
         },
@@ -22,8 +26,9 @@ define([
         render: function (part) {
 
             var _this = this;
-
+            this.part = part;
             var lastIteration = part.partIterations[part.partIterations.length-1];
+            this.lastIteration = lastIteration;
 
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n,
@@ -40,13 +45,7 @@ define([
                 });
             });
 
-            if(lastIteration.geometryFileURI){
-                this.cadFileView =  new CADFileView({partIteration:lastIteration}).render(App.config.contextPath + lastIteration.geometryFileURI);
-                this.$('#tab-cad-file').html(this.cadFileView.$el);
-            }else{
-                this.$('#tab-cad-file').html(App.config.i18n.NO_DATA);
-            }
-
+            console.log(lastIteration)
             return this;
         }
     });

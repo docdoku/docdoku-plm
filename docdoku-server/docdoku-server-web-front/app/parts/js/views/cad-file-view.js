@@ -8,6 +8,7 @@ define([
 
     var CADFileView = Backbone.View.extend({
 
+        id:'cad-file-view',
 
         resize:function(){
             setTimeout(this.handleResize.bind(this),50);
@@ -15,11 +16,14 @@ define([
 
         render:function(fileName){
 
+            var lastSlash = fileName.lastIndexOf('/');
+            var shortName = fileName.substr(lastSlash+1,fileName.length);
+
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n,
                 contextPath:App.config.contextPath,
                 fileName:fileName,
-                shortName:fileName
+                shortName:shortName
             }));
 
 
@@ -42,7 +46,7 @@ define([
 
             function calculateHeight(){
                 var fit = width / 16 * 9;
-                var max = window.innerHeight - 320;
+                var max = window.innerHeight - 340;
                 if(max <= 10){
                     max = 10
                 }

@@ -5,9 +5,13 @@
         <li class="active"><a href="#tab-part-general" data-toggle="tab">{{i18n.GENERAL}}</a></li>
         <li class=""><a href="#tab-part-iteration" data-toggle="tab">{{i18n.ITERATION}}</a></li>
         <li class=""><a href="#tab-part-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
+        {{#lastIteration.geometryFileURI}}
         <li class=""><a href="#tab-cad-file" data-toggle="tab">{{i18n.CAD_FILE}}</a></li>
+        {{/lastIteration.geometryFileURI}}
         <li class=""><a href="#tab-part-files" data-toggle="tab">{{i18n.ATTACHED_FILES}}</a></li>
+        {{#lastIteration.components.length}}
         <li class=""><a href="#tab-part-assembly" data-toggle="tab">{{i18n.SUB_PARTS}}</a></li>
+        {{/lastIteration.components.length}}
         <li class=""><a href="#tab-part-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
     </ul>
 
@@ -110,18 +114,21 @@
             </table>
             {{/lastIteration.instanceAttributes.length}}
         </div>
-
+        {{#lastIteration.geometryFileURI}}
         <div id="tab-cad-file" class="tab-pane">
 
         </div>
+        {{/lastIteration.geometryFileURI}}
 
          <div id="tab-part-files" class="tab-pane">
             <div id="files" class="accordion"></div>
         </div>
 
+        {{#lastIteration.components.length}}
         <div id="tab-part-assembly" class="tab-pane">
 
         </div>
+        {{/lastIteration.components.length}}
 
         <div id="tab-part-links" class="tab-pane">
             <div id="part-links">
