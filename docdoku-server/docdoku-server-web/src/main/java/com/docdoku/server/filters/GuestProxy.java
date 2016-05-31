@@ -21,8 +21,6 @@
 package com.docdoku.server.filters;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.common.User;
-import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
@@ -41,7 +39,6 @@ import javax.annotation.security.RunAs;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.security.auth.login.LoginException;
 import java.io.InputStream;
 
 @DeclareRoles(UserGroupMapping.GUEST_PROXY_ROLE_ID)
@@ -64,23 +61,15 @@ public class GuestProxy{
 
     public PartRevision getPublicPartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
         PartRevision partRevision = productService.getPartRevision(partRevisionKey);
-        if(partRevision.isPublicShared()){
-            return partRevision;
-        }else{
-            return null;
-        }
+        return partRevision.isPublicShared() ? partRevision : null;
     }
 
     public DocumentRevision getPublicDocumentRevision(DocumentRevisionKey documentRevisionKey) throws NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, AccessRightException {
         DocumentRevision documentRevision =  documentService.getDocumentRevision(documentRevisionKey);
-        if(documentRevision.isPublicShared()){
-            return documentRevision;
-        }else{
-           return null;
-        }
+        return documentRevision.isPublicShared() ? documentRevision : null;
     }
 
-    public BinaryResource getBinaryResourceForDocument(String fullName)
+    public BinaryResource getPublicBinaryResourceForDocument(String fullName)
             throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException{
 
         BinaryResource binaryResource = documentService.getBinaryResource(fullName);
@@ -89,13 +78,26 @@ public class GuestProxy{
         String documentVersion = binaryResource.getHolderRevision();
         DocumentRevision documentRevision =  documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId,documentMasterId,documentVersion));
 
-        if(documentRevision.isPublicShared()){
-            return binaryResource;
-        }
-        else{
-            return null;
-        }
+        return documentRevision.isPublicShared() ? binaryResource : null;
     }
+
+
+
+    public BinaryResource getPublicBinaryResourceForPart(String fullName)
+            throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException{
+
+        BinaryResource binaryResource = productService.getBinaryResource(fullName);
+        String workspaceId = binaryResource.getWorkspaceId();
+        String partNumber = binaryResource.getHolderId();
+        String partVersion = binaryResource.getHolderRevision();
+        PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId, partNumber, partVersion));
+
+        return partRevision.isPublicShared() ? binaryResource:null;
+    }
+
+
+/*
+
 
     public BinaryResource getPublicBinaryResourceForDocument(DocumentRevisionKey docRK, String fullName)
             throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException, LoginException{
@@ -130,6 +132,7 @@ public class GuestProxy{
         return productService.getBinaryResource(fullName);
     }
 
+*/
 
 
     public boolean canAccess(DocumentIterationKey docIKey)
@@ -140,13 +143,6 @@ public class GuestProxy{
             throws EntityNotFoundException, UserNotActiveException{
         return productService.canAccess(partIKey);
     }
-
-
-    public BinaryResource getBinaryResourceForPart(String fullName)
-            throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException{
-        return productService.getBinaryResource(fullName);
-    }
-
 
     public InputStream getDocumentConvertedResource(String outputFormat, BinaryResource binaryResource) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConvertedResourceException {
         return documentResourceGetterService.getDocumentConvertedResource(outputFormat, binaryResource);

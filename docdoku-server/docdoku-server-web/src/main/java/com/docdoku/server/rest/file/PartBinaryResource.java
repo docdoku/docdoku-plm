@@ -349,7 +349,7 @@ public class PartBinaryResource {
         if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
             return productService.getBinaryResource(fullName);
         } else {
-            return guestProxy.getBinaryResourceForPart(fullName);
+            return guestProxy.getPublicBinaryResourceForPart(fullName);
         }
     }
 

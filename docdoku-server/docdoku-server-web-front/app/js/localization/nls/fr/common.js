@@ -549,6 +549,7 @@ define({
     SEARCHING: 'Recherche en cours...',
     SECONDS: 's',
     SEE_IN_DOCUMENT_MANAGEMENT:'Voir le document dans la gestion des documents',
+    SEE_IN_PRODUCT_MANAGEMENT:'Voir l\'article dans la gestion des produits',
     SELECT_FILE: 'Choisissez un fichier',
 	SELECT_FILES: 'Choisissez un ou plusieurs fichier(s)',
 	SEND: 'Envoyer',

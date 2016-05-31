@@ -2,19 +2,18 @@ package com.docdoku.server.rest;
 
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.AccessRightException;
+import com.docdoku.core.exceptions.EntityNotFoundException;
+import com.docdoku.core.exceptions.NotAllowedException;
+import com.docdoku.core.exceptions.UserNotActiveException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IFileViewerManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.filters.GuestProxy;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -33,9 +32,11 @@ import javax.ws.rs.core.Response;
 @Path("viewer")
 public class HTMLViewerResource {
 
-
     @Inject
     private IFileViewerManagerLocal viewerManager;
+
+    @Inject
+    private IProductManagerLocal productManager;
 
     @Inject
     private IDocumentManagerLocal documentManager;
@@ -43,14 +44,7 @@ public class HTMLViewerResource {
     @Inject
     private GuestProxy guestProxy;
 
-    private Mapper mapper;
-
     public HTMLViewerResource() {
-    }
-
-    @PostConstruct
-    public void init() {
-        mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
     @GET
@@ -61,26 +55,33 @@ public class HTMLViewerResource {
 
         String holderType = BinaryResource.parseHolderType(fileName);
 
-        if("documents".equals(holderType)){
-
-            BinaryResource binaryResource = guestProxy.getBinaryResourceForDocument(fileName);
-            DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(binaryResource.getWorkspaceId(), binaryResource.getHolderId(), binaryResource.getHolderRevision());
-
-            DocumentRevision documentRevision = guestProxy.getPublicDocumentRevision(documentRevisionKey);
-            if(documentRevision != null){
-                return Response.ok().entity(viewerManager.getHtmlForViewer(binaryResource,null)).build();
-            }
-            else{
-                documentManager.getDocumentRevision(documentRevisionKey);
-                return Response.ok().entity(viewerManager.getHtmlForViewer(binaryResource, null)).build();
-            }
-
-        } else if("parts".equals(holderType)){
-            return Response.status(Response.Status.ACCEPTED).build();
-        }
-        else{
-            return Response.status(Response.Status.FORBIDDEN).build();
+        if ("documents".equals(holderType)) {
+            return getDocumentHTMLViewer(fileName);
+        } else if ("parts".equals(holderType)) {
+            return getPartHTMLViewer(fileName);
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 
+    private Response getPartHTMLViewer(String fileName) throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
+        BinaryResource binaryResource = guestProxy.getPublicBinaryResourceForPart(fileName);
+        if (binaryResource != null) {
+            return Response.ok().entity(viewerManager.getHtmlForViewer(binaryResource, null)).build();
+        } else {
+            binaryResource = productManager.getBinaryResource(fileName);
+            return Response.ok().entity(viewerManager.getHtmlForViewer(binaryResource, null)).build();
+        }
+    }
+
+
+    public Response getDocumentHTMLViewer(String fileName) throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
+        BinaryResource binaryResource = guestProxy.getPublicBinaryResourceForDocument(fileName);
+        if (binaryResource != null) {
+            return Response.ok().entity(viewerManager.getHtmlForViewer(binaryResource, null)).build();
+        } else {
+            binaryResource = documentManager.getBinaryResource(fileName);
+            return Response.ok().entity(viewerManager.getHtmlForViewer(binaryResource, null)).build();
+        }
+    }
 }

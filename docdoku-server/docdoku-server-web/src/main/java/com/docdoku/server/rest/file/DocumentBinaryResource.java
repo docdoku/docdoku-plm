@@ -234,7 +234,7 @@ public class DocumentBinaryResource {
 
     private BinaryResource getBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
-        BinaryResource binaryResource = guestProxy.getBinaryResourceForDocument(fullName);
+        BinaryResource binaryResource = guestProxy.getPublicBinaryResourceForDocument(fullName);
         if(binaryResource != null){
             return binaryResource;
         }
