@@ -471,7 +471,7 @@ public class DocumentResource {
     @ApiOperation(value = "Publish a document", response = Response.class)
     @Path("publish")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response publishPartRevision(@PathParam("workspaceId") String workspaceId,
+    public Response publishDocumentRevision(@PathParam("workspaceId") String workspaceId,
                                         @PathParam("documentId") String documentId,
                                         @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
@@ -483,7 +483,7 @@ public class DocumentResource {
     @ApiOperation(value = "Unpublish a document", response = Response.class)
     @Path("unpublish")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response unPublishPartRevision(@PathParam("workspaceId") String workspaceId,
+    public Response unPublishDocumentRevision(@PathParam("workspaceId") String workspaceId,
                                           @PathParam("documentId") String documentId,
                                           @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {

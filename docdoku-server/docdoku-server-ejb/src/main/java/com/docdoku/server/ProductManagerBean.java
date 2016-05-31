@@ -1625,6 +1625,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
+    public void setPublicSharedPart(PartRevisionKey pPartRPK, boolean isPublicShared) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+        PartRevision partRevision = getPartRevision(pPartRPK);
+        partRevision.setPublicShared(isPublicShared);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
     public PartMaster getPartMaster(PartMasterKey pPartMPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pPartMPK.getWorkspace());
         PartMaster partM = new PartMasterDAO(new Locale(user.getLanguage()), em).loadPartM(pPartMPK);
