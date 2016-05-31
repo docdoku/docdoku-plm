@@ -89,7 +89,6 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
             .then(function(){
                 ContextResolver.resolveAccount().then(function(){
                     window.location.href = App.config.contextPath + '/workspace-management/';
-                    return;
                 }, null);
             })
             .then(function buildView(){

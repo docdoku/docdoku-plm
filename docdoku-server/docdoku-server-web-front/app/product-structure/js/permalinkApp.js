@@ -1,20 +1,4 @@
 /*global define,THREE,requestAnimationFrame,_,$*/
-
-// Global Namespace for the application
-var App = {
-    SceneOptions: {
-        zoomSpeed: 1.2,
-        rotateSpeed: 1.0,
-        panSpeed: 0.3,
-        cameraNear: 0.1,
-        cameraFar: 5E4,
-        defaultCameraPosition: {x: 0, y: 50, z: 200},
-        ambientLightColor: 0xffffff,
-        cameraLight1Color: 0xbcbcbc,
-        cameraLight2Color: 0xffffff
-    }
-};
-
 define(function () {
 
     'use strict';

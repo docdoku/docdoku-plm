@@ -221,6 +221,10 @@ public class Tools {
         partIterationDTO.setNumber(partIteration.getPartRevision().getPartNumber());
         partIterationDTO.setVersion(partIteration.getPartRevision().getVersion());
 
+        if(!partIteration.getGeometries().isEmpty()){
+            partIterationDTO.setGeometryFileURI("/api/files/"+partIteration.getSortedGeometries().get(0).getFullName());
+        }
+
         return partIterationDTO;
     }
 

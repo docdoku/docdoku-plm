@@ -30,6 +30,7 @@ public class PartIterationDTO implements Serializable {
     private String workspaceId;
     private int iteration;
     private String nativeCADFile;
+    private String geometryFileURI;
     private String iterationNote;
     private UserDTO author;
 
@@ -184,4 +185,11 @@ public class PartIterationDTO implements Serializable {
         this.attachedFiles = attachedFiles;
     }
 
+    public String getGeometryFileURI() {
+        return geometryFileURI;
+    }
+
+    public void setGeometryFileURI(String geometryFileURI) {
+        this.geometryFileURI = geometryFileURI;
+    }
 }
