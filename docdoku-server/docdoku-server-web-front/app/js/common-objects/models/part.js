@@ -409,7 +409,7 @@ define([
                 return encodeURI(
                     window.location.origin +
                     App.config.contextPath +
-                    '/parts/' +
+                    '/parts/#' +
                     this.getWorkspace() +
                     '/' +
                     this.getNumber() +

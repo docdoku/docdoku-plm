@@ -24,7 +24,7 @@ define([ 'backbone', 'mustache', 'text!templates/part_meta_data.html'], function
         },
 
         render: function () {
-            var permalink = this.model.getPermalink ? this.model.getPermalink() : ('/parts/' + App.config.workspaceId + '/' + this.model.getNumber() + '/' + this.model.getVersion());
+            var permalink = this.model.getPermalink ? this.model.getPermalink() : ('/parts/#' + App.config.workspaceId + '/' + this.model.getNumber() + '/' + this.model.getVersion());
             this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n, permalink: permalink}));
             return this;
         },
