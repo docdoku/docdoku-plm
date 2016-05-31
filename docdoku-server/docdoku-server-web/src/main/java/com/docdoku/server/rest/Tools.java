@@ -151,6 +151,7 @@ public class Tools {
         partRevisionDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
         partRevisionDTO.setName(partRevision.getPartMaster().getName());
         partRevisionDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
+        partRevisionDTO.setType(partRevision.getPartMaster().getType());
 
         if (partRevision.isObsolete()) {
             partRevisionDTO.setObsoleteDate(partRevision.getObsoleteDate());

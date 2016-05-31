@@ -89,7 +89,7 @@ public class SharedResource {
         }
 
         if(partRevision != null){
-            return Response.ok().entity(mapper.map(partRevision, PartRevisionDTO.class)).build();
+            return Response.ok().entity(Tools.mapPartRevisionToPartDTO(partRevision)).build();
         }else{
             return Response.status(Response.Status.FORBIDDEN).build();
         }

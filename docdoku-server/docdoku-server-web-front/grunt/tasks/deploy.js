@@ -19,10 +19,13 @@ module.exports = {
             webapp+'/workspace-management',
             webapp+'/account-management',
             webapp+'/document-management',
+            webapp+'/documents',
             webapp+'/product-management',
+            webapp+'/product-structure',
             webapp+'/visualization',
-            webapp+'/change-management',
-            webapp+'/product-structure'
+            webapp+'/parts',
+            webapp+'/main',
+            webapp+'/change-management'
         ];
 
         config.copy.webapp = {

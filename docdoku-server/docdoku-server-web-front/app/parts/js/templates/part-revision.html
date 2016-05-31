@@ -1,11 +1,13 @@
-<h3 class="part-heading">{{part.partNumber}}-{{part.version}}</h3>
+<h3>{{part.partKey}}</h3>
 <div class="tabs">
 
     <ul class="nav nav-tabs">
         <li class="active"><a href="#tab-part-general" data-toggle="tab">{{i18n.GENERAL}}</a></li>
         <li class=""><a href="#tab-part-iteration" data-toggle="tab">{{i18n.ITERATION}}</a></li>
         <li class=""><a href="#tab-part-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
-        <li class=""><a href="#tab-part-files" data-toggle="tab">{{i18n.FILES}}</a></li>
+        <li class=""><a href="#tab-cad-files" data-toggle="tab">{{i18n.CAD_FILE}}</a></li>
+        <li class=""><a href="#tab-part-files" data-toggle="tab">{{i18n.ATTACHED_FILES}}</a></li>
+        <li class=""><a href="#tab-part-assembly" data-toggle="tab">{{i18n.SUB_PARTS}}</a></li>
         <li class=""><a href="#tab-part-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
     </ul>
 
@@ -23,8 +25,15 @@
                     <td>{{part.type}}</td>
                 </tr>
                 <tr>
-                    <th scope="row">{{i18n.TITLE}}</th>
-                    <td>{{part.title}}</td>
+                    <th scope="row">{{i18n.NAME}}</th>
+                    <td>{{part.name}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{{i18n.STANDARD_PART}}</th>
+                    <td>
+                        {{#part.standardPart}}{{i18n.STANDARD_PART_TRUE}}{{/part.standardPart}}
+                        {{^part.standardPart}}{{i18n.STANDARD_PART_FALSE}}{{/part.standardPart}}
+                    </td>
                 </tr>
                 <tr>
                     <th scope="row">{{i18n.AUTHOR}}</th>
@@ -56,7 +65,7 @@
                 </tr>
                 <tr>
                     <th scope="row">{{i18n.REVISION_NOTE}}</th>
-                    <td>{{lastIteration.revisionNote}}</td>
+                    <td>{{lastIteration.iterationNote}}</td>
                 </tr>
                 <tr>
                     <th scope="row">{{i18n.REVISION_DATE}}</th>
@@ -68,8 +77,6 @@
                         {{lastIteration.checkInDate}}
                     {{/part.checkOutUser}}
                     </td>
-
-
                 </tr>
                 <tr>
                     <th scope="row">{{i18n.MODIFICATION_DATE}}</th>
@@ -104,8 +111,16 @@
             {{/lastIteration.instanceAttributes.length}}
         </div>
 
-        <div id="tab-part-files" class="tab-pane">
+        <div id="tab-cad-file" class="tab-pane">
+
+        </div>
+
+         <div id="tab-part-files" class="tab-pane">
             <div id="files" class="accordion"></div>
+        </div>
+
+        <div id="tab-part-assembly" class="tab-pane">
+
         </div>
 
         <div id="tab-part-links" class="tab-pane">
