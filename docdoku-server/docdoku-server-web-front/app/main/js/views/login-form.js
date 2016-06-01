@@ -45,6 +45,7 @@ define([
         onLoginFormSubmit:function(e){
             delete localStorage.jwt;
             this.$notifications.empty();
+            this.$el.addClass('connecting');
             $.ajax({
                 type: 'POST',
                 url: App.config.contextPath + '/api/auth/login',
@@ -64,6 +65,7 @@ define([
         },
 
         onLoginFailed:function(){
+            this.$el.removeClass('connecting');
             this.$notifications.append(new AlertView({
                 type: 'error',
                 message: App.config.i18n.FAILED_LOGIN
