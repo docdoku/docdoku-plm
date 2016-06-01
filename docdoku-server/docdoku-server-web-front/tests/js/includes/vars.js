@@ -245,8 +245,8 @@ var urls = {
         homeUrl + 'services/account?wsdl'
     ],
 
-    documentPermalink: homeUrl + 'documents/' + workspace + '/' + documents.document1.number + '/A',
-    partPermalink: homeUrl + 'parts/' + workspace + '/' + products.part1.number + '/A',
+    documentPermalink: homeUrl + 'documents/#' + workspace + '/' + documents.document1.number + '/A',
+    partPermalink: homeUrl + 'parts/#' + workspace + '/' + products.part1.number + '/A',
 
     // Set on share creation
     privateDocumentPermalink: null,
