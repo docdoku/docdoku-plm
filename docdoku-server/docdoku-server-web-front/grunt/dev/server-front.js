@@ -26,7 +26,7 @@ module.exports = {
                 },
                 files: [
                     'Gruntfile.js',
-                    '{app,grunt,tests}/**/*',
+                    '{app,grunt}/**/*',
                     '!app/less/**/*'
                 ]
             },
@@ -99,6 +99,10 @@ module.exports = {
 
             if (target === 'less') {
                 return grunt.task.run(['less','watch:less']);
+            }
+
+            if (target === 'tests') {
+                return grunt.task.run(['execute:tests','watch:tests']);
             }
 
             if (target === 'noLiveReload') {
