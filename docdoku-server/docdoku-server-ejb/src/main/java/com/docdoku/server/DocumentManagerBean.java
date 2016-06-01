@@ -24,6 +24,7 @@ import com.docdoku.core.common.*;
 import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
+import com.docdoku.core.log.DocumentLog;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.DocumentSearchQuery;
@@ -1714,6 +1715,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
 
         return docRs.toArray(new DocumentRevision[docRs.size()]);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public void createDocumentLog(DocumentLog log) {
+        em.persist(log);
     }
 
     /**

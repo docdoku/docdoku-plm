@@ -22,14 +22,15 @@ package com.docdoku.server;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.log.DocumentLog;
+import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IContextManagerLocal;
+import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.dao.BinaryResourceDAO;
 
-import javax.ejb.SessionContext;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
-import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.logging.Level;
@@ -43,7 +44,10 @@ public class DocumentLoggerInterceptor implements Serializable{
     private EntityManagerProducer emf;
 
     @Inject
-    private SessionContextProducer scp;
+    private IDocumentManagerLocal documentManager;
+
+    @Inject
+    private IContextManagerLocal contextManager;
 
     private static final Logger LOGGER = Logger.getLogger(DocumentLoggerInterceptor.class.getName());
     private static final String EVENT = "DOWNLOAD";
@@ -52,15 +56,17 @@ public class DocumentLoggerInterceptor implements Serializable{
     public Object log(InvocationContext ctx) throws Exception {
 
         Object result = ctx.proceed();
+
         try {
-            SessionContext ejbCtx  = scp.create();
-            EntityManager em = emf.create();
-            if (ctx.getParameters() != null && ctx.getParameters().length > 0 && ctx.getParameters()[0] instanceof String) {
+            if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)
+                    && ctx.getParameters() != null && ctx.getParameters().length > 0 && ctx.getParameters()[0] instanceof String) {
                 String fullName = (String) ctx.getParameters()[0];
-                String userLogin = ejbCtx.getCallerPrincipal().toString();
-                BinaryResourceDAO binDAO = new BinaryResourceDAO(em);
+                String userLogin = contextManager.getCallerPrincipalLogin();
+
+                BinaryResourceDAO binDAO = new BinaryResourceDAO(emf.create());
                 BinaryResource file = binDAO.loadBinaryResource(fullName);
                 DocumentIteration document = binDAO.getDocumentHolder(file);
+
                 if (document != null) {
                     DocumentLog log = new DocumentLog();
                     log.setUserLogin(userLogin);
@@ -71,12 +77,13 @@ public class DocumentLoggerInterceptor implements Serializable{
                     log.setDocumentIteration(document.getIteration());
                     log.setEvent(EVENT);
                     log.setInfo(fullName);
-                    em.persist(log);
+                    documentManager.createDocumentLog(log);
                 }
             }
         } catch (Exception ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }
+
         return result;
     }
 }
