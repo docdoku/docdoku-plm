@@ -182,6 +182,8 @@ define({
     EMPTY_REVISION_NOTE:'Pas de note de résivision. Ajoutez en une ou décochez cette option',
 	ENTER_NAV: 'Commencer la navigation',
 	ERROR: 'Erreur',
+    ERROR_404:'Nous n\'avons pas pu trouver ce que vous cherchez ...',
+    ERROR_404_SORRY:'Désolé !',
 	EXISTING_TAGS: 'Libellé disponible',
 	EXIT: 'Quitter la revue de maquette',
 	EXPIRE_DATE: 'Date d\'expiration',

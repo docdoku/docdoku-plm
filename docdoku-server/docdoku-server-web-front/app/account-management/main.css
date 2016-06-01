@@ -12581,6 +12581,10 @@ div#iteration-modification-notifications div.comment-italic {
 .action-checkin-checkout .fa {
   padding-right: 10px;
 }
+#not-found-view {
+  text-align: center;
+  margin: 42px;
+}
 #chat_module {
   position: absolute;
   bottom: 1%;

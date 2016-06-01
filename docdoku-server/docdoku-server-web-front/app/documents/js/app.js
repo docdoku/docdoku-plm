@@ -3,8 +3,9 @@ define([
     'backbone',
     'mustache',
     'text!templates/document-permalink.html',
-    'views/document-revision'
-], function (Backbone, Mustache, template, DocumentRevisionView) {
+    'views/document-revision',
+    'common-objects/views/not-found'
+], function (Backbone, Mustache, template, DocumentRevisionView, NotFoundView) {
 	'use strict';
 
     var AppView = Backbone.View.extend({
@@ -38,14 +39,18 @@ define([
             this.$('.document-revision').html(new DocumentRevisionView().render(part, this.uuid).$el);
         },
 
-        onSharedEntityError:function(){
-            debugger
+        onSharedEntityError:function(err){
+            if(err.status == 404){
+                this.$el.html(new NotFoundView().render(err).$el);
+            }
         },
 
         onError:function(err){
-            debugger
-            if(err.status === 403 || err.status === 401){
-                // window.location.href = App.config.contextPath + '/?denied=true&originURL=' + encodeURIComponent(window.location.pathname + window.location.hash);
+            if(err.status == 404){
+                this.$el.html(new NotFoundView().render(err).$el);
+            }
+            else if(err.status === 403 || err.status === 401){
+                 window.location.href = App.config.contextPath + '/?denied=true&originURL=' + encodeURIComponent(window.location.pathname + window.location.hash);
             }
         }
 

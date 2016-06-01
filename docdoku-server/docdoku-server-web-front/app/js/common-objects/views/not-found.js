@@ -7,9 +7,12 @@ define([
     'use strict';
     var NotFoundView = Backbone.View.extend({
 
-        render: function () {
+        render: function (error, url) {
             this.$el.html(Mustache.render(template, {
-                url:'todo'
+                contextPath:App.config.contextPath,
+                i18n: App.config.i18n,
+                url:url,
+                reason:error.responseText
             }));
             return this;
         }

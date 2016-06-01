@@ -182,6 +182,8 @@ define({
         EMPTY_REVISION_NOTE:'Empty revision note.Please uncheck option or write note',
         ENTER_NAV: 'Start the navigation',
 		ERROR: 'Error',
+        ERROR_404:'We couldn\'t find what you are looking for ...',
+        ERROR_404_SORRY:'Sorry !',
 		EXISTING_TAGS: 'Tags available',
 		EXIT: 'Leave digital mockup review',
 		EXPIRE_DATE: 'Expiration date',
