@@ -38,7 +38,7 @@ casper.test.begin('Login tests suite', 3, function loginTestsSuite() {
      * Submit the login form
      */
     casper.then(function submitLoginForm() {
-        this.click('#login_button_container input');
+        this.click('#login_form-login_button');
     });
 
     /**

@@ -30,6 +30,7 @@ define([
 
             if ( ! hasWebGL() ){
                 container.innerHTML = errorMessage;
+                return this;
             }
             // standard global variables
             var scene, camera, renderer, controls;
