@@ -102,7 +102,6 @@ public class AuthFilter implements Filter {
 
         // User has already an active session
         if(remoteUser != null && !remoteUser.isEmpty()){
-            LOGGER.log(Level.INFO,"Has session !");
             chain.doFilter(request, response);
             return;
         }
