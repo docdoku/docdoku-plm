@@ -52,7 +52,6 @@ define([
                 });
             });
 
-            console.log(lastIteration)
             return this;
         }
     });

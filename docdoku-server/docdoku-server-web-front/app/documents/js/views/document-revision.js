@@ -7,7 +7,10 @@ define([
     'use strict';
 
     var DocumentRevisionView = Backbone.View.extend({
-        render: function (document) {
+        render: function (document, uuid) {
+
+            this.uuid = uuid;
+            this.document = document;
 
             var _this = this;
 
@@ -25,7 +28,11 @@ define([
             this.$accordion = this.$('#tab-document-files > .accordion');
 
             _.each(lastIteration.attachedFiles,function(file){
-                $.get(App.config.contextPath+'/api/viewer?fileName='+encodeURIComponent(file)).then(function(data){
+                var url = App.config.contextPath+'/api/viewer?';
+                if(uuid){
+                    url+= 'uuid=' + encodeURIComponent(uuid) + '&'
+                }
+                $.get(url+'fileName='+encodeURIComponent(file)).then(function(data){
                     _this.$accordion.append(data);
                 });
             });

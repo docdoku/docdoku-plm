@@ -20,20 +20,32 @@ define([
         },
 
         onDocumentFetched:function(document){
-            this.$('.document-revision').html(new DocumentRevisionView().render(document).$el);
+            this.$('.document-revision').html(new DocumentRevisionView().render(document).$el, null);
         },
 
         showDocumentRevision:function(workspace, documentId, documentVersion){
-            this.options.workspace = workspace;
-            this.options.documentId = documentId;
-            this.options.documentVersion = documentVersion;
-            $.getJSON(App.config.contextPath + '/api/shared/' +  this.options.workspace + '/documents/'+this.options.documentId+'-'+this.options.documentVersion)
+            $.getJSON(App.config.contextPath + '/api/shared/' +  workspace + '/documents/'+documentId+'-'+documentVersion)
                 .then(this.onDocumentFetched.bind(this), this.onError.bind(this));
         },
 
+        showSharedEntity:function(uuid){
+            this.uuid = uuid;
+            $.getJSON(App.config.contextPath + '/api/shared/' + uuid + '/documents')
+                .then(this.onSharedEntityFetched.bind(this), this.onSharedEntityError.bind(this));
+        },
+
+        onSharedEntityFetched:function(part){
+            this.$('.document-revision').html(new DocumentRevisionView().render(part, this.uuid).$el);
+        },
+
+        onSharedEntityError:function(){
+            debugger
+        },
+
         onError:function(err){
+            debugger
             if(err.status === 403 || err.status === 401){
-                window.location.href = App.config.contextPath + '/?denied=true&originURL=' + encodeURIComponent(window.location.pathname + window.location.hash);
+                // window.location.href = App.config.contextPath + '/?denied=true&originURL=' + encodeURIComponent(window.location.pathname + window.location.hash);
             }
         }
 

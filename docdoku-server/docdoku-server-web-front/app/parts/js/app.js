@@ -20,7 +20,7 @@ define([
         },
 
         onPartFetched:function(part){
-            this.$('.part-revision').html(new PartRevisionView().render(part).$el);
+            this.$('.part-revision').html(new PartRevisionView().render(part).$el, null);
         },
 
         showPartRevision:function(workspace, partNumber, partVersion){
@@ -31,14 +31,14 @@ define([
         showSharedEntity:function(uuid){
             this.uuid = uuid;
             $.getJSON(App.config.contextPath + '/api/shared/' + uuid + '/parts')
-                .then(this.onSharedPartFetched.bind(this), this.onSharedPartError.bind(this));
+                .then(this.onSharedEntityFetched.bind(this), this.onSharedEntityError.bind(this));
         },
 
-        onSharedPartFetched:function(part){
+        onSharedEntityFetched:function(part){
             this.$('.part-revision').html(new PartRevisionView().render(part, this.uuid).$el);
         },
 
-        onSharedPartError:function(){
+        onSharedEntityError:function(){
             debugger
         },
 
