@@ -414,6 +414,7 @@ define({
 		PRODUCTS_MANAGEMENT: 'Products management',
 		PRODUCTS: 'Products',
 		PRODUCT_STRUCTURE: 'Product structure',
+        PROTECTED_RESOURCE : 'This resource is password protected',
 		PUBLIC_ACCESS_TITLE: 'Public access to permalink',
 		PUBLIC_SHARE: 'Public share',
 		PUBLISH: 'Publish',

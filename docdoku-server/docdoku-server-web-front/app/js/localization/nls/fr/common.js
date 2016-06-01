@@ -411,6 +411,7 @@ define({
 	PRODUCTS_MANAGEMENT: 'Gestion des produits',
 	PRODUCTS: 'Produits',
 	PRODUCT_STRUCTURE: 'Structure du produit',
+    PROTECTED_RESOURCE : 'Cette resource est protégée par mot de passe',
 	PUBLIC_ACCESS_TITLE: 'Accès public au permalien',
 	PUBLIC_SHARE: 'Partage public',
 	PUBLISH: 'Publier',

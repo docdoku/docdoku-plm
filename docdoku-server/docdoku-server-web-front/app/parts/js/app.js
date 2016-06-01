@@ -4,8 +4,9 @@ define([
     'mustache',
     'text!templates/part-permalink.html',
     'views/part-revision',
-    'common-objects/views/not-found'
-], function (Backbone, Mustache, template, PartRevisionView, NotFoundView) {
+    'common-objects/views/not-found',
+    'common-objects/views/prompt'
+], function (Backbone, Mustache, template, PartRevisionView, NotFoundView, PromptView) {
 	'use strict';
 
     var AppView = Backbone.View.extend({
@@ -31,8 +32,16 @@ define([
 
         showSharedEntity:function(uuid){
             this.uuid = uuid;
-            $.getJSON(App.config.contextPath + '/api/shared/' + uuid + '/parts')
-                .then(this.onSharedEntityFetched.bind(this), this.onSharedEntityError.bind(this));
+            var password = this.password;
+            $.ajax({
+                type:'GET',
+                url:App.config.contextPath + '/api/shared/' + uuid + '/parts',
+                beforeSend: function setPassword(xhr) {
+                    if(password){
+                        xhr.setRequestHeader('password', password);
+                    }
+                }
+            }).then(this.onSharedEntityFetched.bind(this), this.onSharedEntityError.bind(this));
         },
 
         onSharedEntityFetched:function(part){
@@ -43,15 +52,35 @@ define([
             if(err.status == 404){
                 this.$el.html(new NotFoundView().render(err).$el);
             }
+            else if(err.status == 403 && err.getResponseHeader('Reason-Phrase') === 'password-protected'){
+                this.promptSharedEntityPassword();
+            }
         },
 
         onError:function(err){
             if(err.status == 404){
                 this.$el.html(new NotFoundView().render(err).$el);
             }
-            else if(err.status === 403 || err.status === 401){
+            else if(err.status == 403 || err.status === 401){
                 window.location.href = App.config.contextPath + '/?denied=true&originURL=' + encodeURIComponent(window.location.pathname + window.location.hash);
             }
+        },
+
+        promptSharedEntityPassword:function(){
+
+            var _this = this;
+            var promptView = new PromptView();
+            promptView.setPromptOptions(App.config.i18n.PROTECTED_RESOURCE,
+                null,App.config.i18n.OK,App.config.i18n.CANCEL, null, App.config.i18n.PASSWORD, 'password');
+            window.document.body.appendChild(promptView.render().el);
+            promptView.openModal();
+            this.listenTo(promptView, 'prompt-ok', function (args) {
+                _this.password = args[0];
+                _this.showSharedEntity(_this.uuid);
+            });
+            this.listenTo(promptView, 'prompt-cancel', function () {
+                _this.password = null;
+            });
         }
 
     });
