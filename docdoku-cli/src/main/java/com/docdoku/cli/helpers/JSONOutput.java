@@ -37,7 +37,6 @@ import javax.json.*;
 import java.io.*;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class JSONOutput extends CliOutput {
@@ -204,7 +203,11 @@ public class JSONOutput extends CliOutput {
             jsonStatusBuilder.add("isCheckedOut", pr.isCheckedOut());
             jsonStatusBuilder.add("partNumber", pr.getPartMasterNumber());
             jsonStatusBuilder.add("checkoutUser", login);
-            jsonStatusBuilder.add("checkoutDate", timeStamp);
+            if(timeStamp != null) {
+                jsonStatusBuilder.add("checkoutDate", timeStamp);
+            }else{
+                jsonStatusBuilder.add("checkoutDate", JsonValue.NULL);
+            }
             jsonStatusBuilder.add("workspace", pr.getPartMasterWorkspaceId());
             jsonStatusBuilder.add("version", pr.getVersion());
             jsonStatusBuilder.add("description", pr.getDescription());
@@ -241,7 +244,11 @@ public class JSONOutput extends CliOutput {
             jsonStatusBuilder.add("isCheckedOut", dr.isCheckedOut());
             jsonStatusBuilder.add("id", dr.getDocumentMasterId());
             jsonStatusBuilder.add("checkoutUser", login);
-            jsonStatusBuilder.add("checkoutDate", timeStamp);
+            if(timeStamp != null) {
+                jsonStatusBuilder.add("checkoutDate", timeStamp);
+            }else{
+                jsonStatusBuilder.add("checkoutDate", JsonValue.NULL);
+            }
             jsonStatusBuilder.add("workspace", dr.getDocumentMasterWorkspaceId());
             jsonStatusBuilder.add("version", dr.getVersion());
             jsonStatusBuilder.add("description", dr.getDescription());
