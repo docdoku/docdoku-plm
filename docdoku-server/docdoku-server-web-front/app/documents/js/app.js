@@ -36,6 +36,8 @@ define([
             $.ajax({
                 type:'GET',
                 url:App.config.contextPath + '/api/shared/' + uuid + '/documents',
+                contentType:'application/json',
+                dataType: "json",
                 beforeSend: function setPassword(xhr) {
                     if(password){
                         xhr.setRequestHeader('password', password);

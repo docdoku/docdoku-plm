@@ -12,7 +12,7 @@ define([
             var tmpContainer = document.createElement('div');
             var text = document.createTextNode(error.responseText);
             tmpContainer.appendChild(text);
-            var text =  tmpContainer.innerHTML;
+            text =  tmpContainer.innerHTML;
 
             this.$el.html(Mustache.render(template, {
                 contextPath:App.config.contextPath,
