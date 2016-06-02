@@ -156,11 +156,17 @@ public class SharedResource {
     }
 
     private Response createPasswordProtectedResponse() {
-        return Response.status(Response.Status.FORBIDDEN).header("Reason-Phrase", "password-protected").entity("").build();
+        return Response.status(Response.Status.FORBIDDEN)
+                .header("Reason-Phrase", "password-protected")
+                .entity("{\"forbidden\":\"password-protected\"}")
+                .build();
     }
 
     private Response createExpiredEntityResponse() {
-        return Response.status(Response.Status.NOT_FOUND).header("Reason-Phrase", "entity-expired").entity("").build();
+        return Response.status(Response.Status.NOT_FOUND).header("Reason-Phrase", "entity-expired")
+                .header("Reason-Phrase", "entity-expired")
+                .entity("{\"forbidden\":\"entity-expired\"}")
+                .build();
     }
 
     private String md5Sum(String pText) {
