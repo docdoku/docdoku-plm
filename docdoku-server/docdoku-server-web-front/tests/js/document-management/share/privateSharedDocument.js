@@ -2,6 +2,8 @@
 
 casper.test.begin('Private shared document tests suite', 3, function privateSharedDocumentTestsSuite() {
 
+    var titleSelector = '#content > .document-revision > div >  h3';
+
     'use strict';
 
     casper.open('');
@@ -33,8 +35,8 @@ casper.test.begin('Private shared document tests suite', 3, function privateShar
      */
 
     casper.then(function checkDocumentTitle() {
-        this.waitForSelector('#content > .document-revision > div >  h3', function titleDisplayed() {
-            this.test.assertSelectorHasText('#content > .document-revision > div >  h3', documents.document1.number + '-A');
+        this.waitForSelector(titleSelector, function titleDisplayed() {
+            this.test.assertSelectorHasText(titleSelector, documents.document1.number + '-A');
         }, function fail() {
             this.capture('screenshot/privateSharedDocument/checkDocumentTitle-error.png');
             this.test.assert(false, 'Title can not be found');
@@ -46,7 +48,7 @@ casper.test.begin('Private shared document tests suite', 3, function privateShar
      */
     casper.then(function checkIterationNote() {
         this.click('.nav-tabs a[href="#tab-document-iteration"]');
-        this.waitForSelector('#content > .document-revision > div >  h3', function iterationNoteDisplayed() {
+        this.waitForSelector(titleSelector, function iterationNoteDisplayed() {
             this.test.assertSelectorHasText('#tab-document-iteration > table > tbody > tr:nth-child(2) > td', documents.document1.iterationNote);
         }, function fail() {
             this.capture('screenshot/privateSharedDocument/checkIterationNote-error.png');

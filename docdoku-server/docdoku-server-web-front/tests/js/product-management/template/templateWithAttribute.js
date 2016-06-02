@@ -64,7 +64,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
      * add new attributes
      */
     casper.then(function addNewAttributes() {
-        var addAttributeButtonSelector = '.btn.add';
+        var addAttributeButtonSelector = '#attributes-list .btn.add';
         this.waitForSelector(addAttributeButtonSelector, function () {
             this.click(addAttributeButtonSelector);
         }, function () {
@@ -119,12 +119,12 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
      */
     casper.then(function () {
         this.click('.lock');
-        this.click('.btn.add');
+        this.click('#attributes-list .btn.add');
         this.waitForSelector('.list-item.well:nth-child(2)', function () {
             this.test.assertElementCount('.list-item.well', 2);
             this.sendKeys('#attributes-list .list-item:nth-child(1) input.name', products.part2.attributeName1, {reset: true});
             this.sendKeys('#attributes-list .list-item:nth-child(2) input.name', products.part2.attributeName1, {reset: true});
-            this.click('.btn.btn-primary');
+            this.click('#part_template_creation_modal .btn.btn-primary');
         }, function () {
             this.capture('screenshot/attributes/addAttribute-error.png');
             this.test.assert(false, 'Attribute not appearing in the list');
@@ -136,6 +136,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
         this.waitWhileSelector('#part_template_creation_modal', function () {
             this.test.assert(true, 'modal closed');
         }, function fail() {
+            this.capture('screenshot/attributes/closeModal-error.png');
             this.test.assert(false, 'could not close the modal');
         });
     });
@@ -260,7 +261,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
             this.click('#attributes-list .list-item:nth-child(2) .checkbox.attribute-mandatory');
             this.click('#attribute-product-instance-list .list-item.well .checkbox.attribute-locked');
             this.click('#attribute-product-instance-list .list-item.well .checkbox.attribute-mandatory');
-            this.click('.btn.btn-primary');
+            this.click('#part_template_creation_modal .btn.btn-primary');
         }, function () {
             this.capture('screenshot/attributes/addAttribute-error.png');
             this.test.assert(false, 'Attribute not appearing in the list');

@@ -2,6 +2,8 @@
 
 casper.test.begin('Private shared part tests suite', 3, function privateSharedPartTestsSuite() {
 
+    var titleSelector = '#content > .part-revision > div >  h3';
+
     'use strict';
 
     casper.open('');
@@ -18,9 +20,9 @@ casper.test.begin('Private shared part tests suite', 3, function privateSharedPa
      * We should be prompted for password
      */
     casper.then(function checkPasswordIsRequested() {
-        this.waitForSelector('#shared-entity-password-form input[type=password]', function passwordRequested() {
-            this.sendKeys('#shared-entity-password-form input[type=password]', products.part1.sharedPassword, {reset: true});
-            this.click('#shared-entity-password-form .btn-primary');
+        this.waitForSelector('#prompt_modal #prompt_input.ready', function passwordRequested() {
+            this.sendKeys('#prompt_modal #prompt_input', products.part1.sharedPassword, {reset: true});
+            this.click('#submitPrompt');
             this.test.assert(true, 'We are prompted for password');
         }, function fail() {
             this.capture('screenshot/privateSharedPart/checkPasswordIsRequested-error.png');
@@ -33,8 +35,8 @@ casper.test.begin('Private shared part tests suite', 3, function privateSharedPa
      */
 
     casper.then(function checkPartTitle() {
-        this.waitForSelector('#page > h3', function titleDisplayed() {
-            this.test.assertSelectorHasText('#page > h3', products.part1.number + '-A');
+        this.waitForSelector(titleSelector, function titleDisplayed() {
+            this.test.assertSelectorHasText(titleSelector, products.part1.number + '-A');
         }, function fail() {
             this.capture('screenshot/privateSharedPart/checkPartTitle-error.png');
             this.test.assert(false, 'Title can not be found');
@@ -46,7 +48,7 @@ casper.test.begin('Private shared part tests suite', 3, function privateSharedPa
      */
     casper.then(function checkIterationNote() {
         this.click('.nav-tabs a[href="#tab-part-iteration"]');
-        this.waitForSelector('#page > h3', function iterationNoteDisplayed() {
+        this.waitForSelector(titleSelector, function iterationNoteDisplayed() {
             this.test.assertSelectorHasText('#tab-part-iteration > table > tbody > tr:nth-child(2) > td', products.part1.iterationNote);
         }, function fail() {
             this.capture('screenshot/privateSharedPart/checkIterationNote-error.png');
