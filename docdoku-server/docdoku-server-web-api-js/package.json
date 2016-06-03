@@ -8,7 +8,8 @@
   },
   "scripts": {
     "clean": "npm install && grunt clean:dist",
-    "build": "npm install && bower install && grunt build"
+    "build": "npm install && bower install && grunt build",
+    "example" : "http-server -p 8585"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

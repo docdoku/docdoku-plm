@@ -26,6 +26,20 @@ module.exports = {
                 }
             ]
         };
+        config.copy.properties = {
+            files: [
+                {
+                    expand: true,
+                    dot: false,
+                    cwd: 'app',
+                    dest: 'dist',
+                    src: [
+                        'webapp.properties.json',
+                    ]
+                }
+            ]
+        };
+
 
         config.copy.assets = {
             files: [

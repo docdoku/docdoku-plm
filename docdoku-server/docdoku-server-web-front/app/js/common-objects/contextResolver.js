@@ -33,7 +33,7 @@ define([
     }
 
     ContextResolver.prototype.resolveServerProperties = function(){
-        return $.getJSON('../server.properties.json').then(function (properties) {
+        return $.getJSON('../webapp.properties.json').then(function (properties) {
             App.config.contextPath = properties.contextRoot;
         },onError);
     };

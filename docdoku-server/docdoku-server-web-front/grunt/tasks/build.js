@@ -21,6 +21,7 @@ module.exports = {
             'less',
             'copy:libs',
             'copy:assets',
+            'copy:properties',
             'copy:dmu',
             'copy:i18n',
             'build-module:main',

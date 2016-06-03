@@ -1,11 +1,10 @@
 <html>
     <head>
-        <script src="../dist/docdoku-plm-api.js" type="text/javascript"></script>
+        <script src="http://localhost:8080/web-api-js/docdoku-plm-api.js" type="text/javascript"></script>
     ​</head>
     <body>
         <script type="text/javascript">
-            // Specify web services definition
-           DocdokuPLMClient.loadAPI('docdoku-plm-api.json')
+           DocdokuPLMClient.loadAPI('http://localhost:8080/api')
                .then(function(api){
                     console.log(api);
                });
