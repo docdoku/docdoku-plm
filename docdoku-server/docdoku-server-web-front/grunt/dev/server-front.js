@@ -97,6 +97,10 @@ module.exports = {
                 return grunt.task.run(['build', 'open:server', 'connect:dist:keepalive']);
             }
 
+            if (target === 'dist-no-build') {
+                return grunt.task.run(['open:server', 'connect:dist:keepalive']);
+            }
+
             if (target === 'less') {
                 return grunt.task.run(['less','watch:less']);
             }

@@ -38,17 +38,17 @@ module.exports = function (grunt) {
     initModule(require('./grunt/tasks/build'));
     initModule(require('./grunt/tasks/deploy'));
 
-    initModule(require('./grunt/modules/main'));
-    initModule(require('./grunt/modules/workspace-management'));
     initModule(require('./grunt/modules/account-management'));
-    initModule(require('./grunt/modules/document-management'));
     initModule(require('./grunt/modules/change-management'));
+    initModule(require('./grunt/modules/document-management'));
+    initModule(require('./grunt/modules/documents'));
+    initModule(require('./grunt/modules/download'));
+    initModule(require('./grunt/modules/main'));
+    initModule(require('./grunt/modules/parts'));
     initModule(require('./grunt/modules/product-management'));
     initModule(require('./grunt/modules/product-structure'));
     initModule(require('./grunt/modules/visualization'));
-    initModule(require('./grunt/modules/download'));
-    initModule(require('./grunt/modules/documents'));
-    initModule(require('./grunt/modules/parts'));
+    initModule(require('./grunt/modules/workspace-management'));
 
     grunt.initConfig(config);
 

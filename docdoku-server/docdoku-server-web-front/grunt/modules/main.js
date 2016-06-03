@@ -28,7 +28,7 @@ module.exports = {
                 inlineText: true,
                 baseUrl: 'app/main/js',
                 mainConfigFile: 'app/main/main.js',
-                out: 'dist/main.js',
+                out: 'dist/main/main.js',
                 paths: {localization: 'empty:'},
                 findNestedDependencies: true
             }
@@ -36,18 +36,18 @@ module.exports = {
 
         config.uglify.main =  {
             files: {
-                'dist/main.js': ['dist/main.js']
+                'dist/main/main.js': ['dist/main/main.js']
             }
         };
 
         config.cssmin.main = {
             files: {
-                'dist/main.css': ['app/main/main.css']
+                'dist/main/main.css': ['app/main/main.css']
             }
         };
         config.usemin.main = {
             html: ['dist/index.html'],
-                css: ['dist/main.css'],
+                css: ['dist/main/main.css'],
                 options: {
                 dirs: ['dist']
             }
