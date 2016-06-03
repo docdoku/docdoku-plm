@@ -2,9 +2,9 @@
 
 casper.test.begin('Private shared document tests suite', 3, function privateSharedDocumentTestsSuite() {
 
-    var titleSelector = '#content > .document-revision > div >  h3';
-
     'use strict';
+
+    var titleSelector = '#content > .document-revision > div >  h3';
 
     casper.open('');
 
