@@ -91,7 +91,7 @@ public class InstanceAttributeDescriptor implements Serializable {
     }
 
     public String getStringType(){
-        String typeAsString = "";
+        String typeAsString;
         switch (type){
             case LOV:
                 typeAsString = "LOV";

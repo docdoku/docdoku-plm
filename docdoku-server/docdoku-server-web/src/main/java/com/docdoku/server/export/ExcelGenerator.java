@@ -300,7 +300,7 @@ public class ExcelGenerator {
                     if (select.startsWith(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
                         String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());
                         String attributeSelectName = select.substring(select.indexOf(".") + 1);
-                        String attributeValue = "";
+                        String attributeValue;
                         StringBuilder sbattr = new StringBuilder();
 
                         if (lastIteration != null) {
@@ -331,7 +331,7 @@ public class ExcelGenerator {
                     if (select.startsWith(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)) {
                         String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PATH_DATA_ATTRIBUTES_PREFIX.length());
                         String attributeSelectName = select.substring(select.indexOf(".") + 1);
-                        String attributeValue = "";
+                        String attributeValue;
                         PathDataIteration pdi = row.getPathDataIteration();
                         StringBuilder sbpdattr = new StringBuilder();
 

@@ -74,7 +74,7 @@ public class InstanceAttributeDozerConverter extends DozerConverter<InstanceAttr
             type = InstanceAttributeDTO.Type.LOV;
             value = ((InstanceListOfValuesAttribute) source).getIndexValue() + "";
 
-            List<NameValuePair> items = null;
+            List<NameValuePair> items;
             items = ((InstanceListOfValuesAttribute) source).getItems();
             itemsDTO = new ArrayList<>();
             for (NameValuePair item : items) {
