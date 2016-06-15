@@ -1,25 +1,31 @@
 /*global module*/
 module.exports = {
-    //if debug is at true
-    // will dump html on each remote.alert
+
+    // URL
+    protocol: 'http',
+    domain: 'localhost',
+    port: '8080',
+    contextPath: '/',
+
+    // Workspace authentication
+    workspace: 'test',
+    login: 'test',
+    pass: 'test',
+
+    // Configuration
     debug: false,
     verbose: true,
     failFast:true,
     logLevel: 'warning',
     xunit: 'results.xml',
-    protocol: 'http',
-    domain: 'val.docdoku.net',
-    workspace: 'test',
-    port: '8080',
-    login: 'test',
-    pass: 'testpassword',
-    contextPath: '/',
     waitOnRequest: true,
     debugResponses:false,
     debugRequests:false,
     requestTimeOut: 1000,
     globalTimeout: 20,
     soundOnTestsEnd:false,
+
+    // Files to test
     pre: [
         'js/pre/start.js'
     ],
