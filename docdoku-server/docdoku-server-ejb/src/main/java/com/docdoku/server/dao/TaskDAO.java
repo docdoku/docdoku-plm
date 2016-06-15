@@ -26,7 +26,6 @@ import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.TaskKey;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Locale;
@@ -67,5 +66,33 @@ public class TaskDAO {
         
         return tasks;
     }
-    
+
+    public Task[] findAssignedTasks(String workspaceId, String userLogin){
+        Task[] tasks;
+        TypedQuery<Task> query = em.createNamedQuery("Task.findAssignedTasks", Task.class);
+        query.setParameter("workspaceId",workspaceId);
+        query.setParameter("userLogin",userLogin);
+        List<Task> listTasks = query.getResultList();
+        tasks = new Task[listTasks.size()];
+        for(int i=0;i<listTasks.size();i++) {
+            tasks[i] = listTasks.get(i);
+        }
+
+        return tasks;
+    }
+
+    public Task[] findInProgressTasks(String workspaceId, String userLogin){
+        Task[] tasks;
+        TypedQuery<Task> query = em.createNamedQuery("Task.findInProgressTasks", Task.class);
+        query.setParameter("workspaceId",workspaceId);
+        query.setParameter("userLogin",userLogin);
+        List<Task> listTasks = query.getResultList();
+        tasks = new Task[listTasks.size()];
+        for(int i=0;i<listTasks.size();i++) {
+            tasks[i] = listTasks.get(i);
+        }
+
+        return tasks;
+    }
+
 }

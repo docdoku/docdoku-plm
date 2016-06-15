@@ -21,16 +21,15 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.PartRevisionAlreadyExistsException;
 import com.docdoku.core.exceptions.PartRevisionNotFoundException;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.*;
+import com.docdoku.core.workflow.Task;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.util.List;
 import java.util.Locale;
 
@@ -170,4 +169,14 @@ public class PartRevisionDAO {
         query.setParameter("tag", tag);
         return query.getResultList();
     }
+
+    public PartRevision getTaskHolder(Task task) {
+        try {
+            return em.createNamedQuery("PartRevision.findByTask", PartRevision.class).
+                    setParameter("task", task).getSingleResult();
+        }catch(NoResultException e){
+            return null;
+        }
+    }
+
 }

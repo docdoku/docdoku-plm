@@ -37,6 +37,10 @@ import java.util.Date;
 @Table(name = "TASK")
 @javax.persistence.IdClass(com.docdoku.core.workflow.TaskKey.class)
 @Entity
+@NamedQueries ({
+    @NamedQuery(name="Task.findInProgressTasks", query="SELECT DISTINCT t FROM Task t WHERE t.worker.workspaceId = :workspaceId AND t.worker.login = :userLogin AND t.status = com.docdoku.core.workflow.Task.Status.IN_PROGRESS"),
+    @NamedQuery(name="Task.findAssignedTasks", query="SELECT DISTINCT t FROM Task t WHERE t.worker.workspaceId = :workspaceId AND t.worker.login = :userLogin")
+})
 public class Task implements Serializable, Cloneable {
     @Id
     @ManyToOne(optional = false, fetch = FetchType.EAGER)

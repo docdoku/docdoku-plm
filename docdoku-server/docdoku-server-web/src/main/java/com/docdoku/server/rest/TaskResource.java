@@ -20,16 +20,18 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.exceptions.EntityNotFoundException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.exceptions.UserNotActiveException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentWorkflowManagerLocal;
 import com.docdoku.core.services.IPartWorkflowManagerLocal;
+import com.docdoku.core.services.ITaskManagerLocal;
 import com.docdoku.core.workflow.ActivityKey;
 import com.docdoku.core.workflow.TaskKey;
+import com.docdoku.core.workflow.TaskWrapper;
 import com.docdoku.server.rest.dto.DocumentRevisionDTO;
+import com.docdoku.server.rest.dto.TaskDTO;
 import com.docdoku.server.rest.dto.TaskProcessDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -67,6 +69,9 @@ public class TaskResource {
     @Inject
     private IPartWorkflowManagerLocal partWorkflowService;
 
+    @Inject
+    private ITaskManagerLocal taskManager;
+
     private Mapper mapper;
 
     public TaskResource() {
@@ -76,6 +81,28 @@ public class TaskResource {
     public void init() {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
+
+
+    @GET
+    @ApiOperation(value = "Get assigned tasks for given user", response = TaskDTO.class, responseContainer = "List")
+    @Path("{assignedUserLogin}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public TaskDTO[] getAssignedTasksForGivenUser(
+            @PathParam("workspaceId") String workspaceId,
+            @PathParam("assignedUserLogin") String assignedUserLogin) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        TaskWrapper[] runningTasksForGivenUser = taskManager.getAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
+        List<TaskDTO> taskDTOs = new ArrayList<>();
+        for(TaskWrapper taskWrapper:runningTasksForGivenUser){
+            TaskDTO taskDTO = mapper.map(taskWrapper.getTask(), TaskDTO.class);
+            taskDTO.setHolderType(taskWrapper.getHolderType());
+            taskDTO.setWorkspaceId(workspaceId);
+            taskDTO.setHolderReference(taskWrapper.getHolderReference());
+            taskDTO.setHolderVersion(taskWrapper.getHolderVersion());
+            taskDTOs.add(taskDTO);
+        }
+        return taskDTOs.toArray(new TaskDTO[taskDTOs.size()]);
+    }
+
 
     @GET
     @ApiOperation(value = "Get documents where user has assigned tasks", response = DocumentRevisionDTO.class, responseContainer = "List")

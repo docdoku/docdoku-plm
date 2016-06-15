@@ -52,7 +52,7 @@ import java.util.Map;
  * @author Yassine Belouad
  */
 @RequestScoped
-@Api(hidden = true, value = "workflows", description = "Operations about workflows")
+@Api(hidden = true, value = "workflows", description = "Operations about workflow entities and workflow models")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class WorkflowResource {
@@ -73,7 +73,7 @@ public class WorkflowResource {
     @GET
     @ApiOperation(value = "Get workflow models", response = WorkflowModelDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowModelDTO[] getWorkflowsInWorkspace(@PathParam("workspaceId") String workspaceId)
+    public WorkflowModelDTO[] getWorkflowModelsInWorkspace(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         WorkflowModel[] workflowModels = workflowService.getWorkflowModels(workspaceId);
@@ -90,7 +90,7 @@ public class WorkflowResource {
     @ApiOperation(value = "Get workflow model", response = WorkflowModelDTO.class)
     @Path("{workflowModelId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowModelDTO getWorkflowInWorkspace(@PathParam("workspaceId") String workspaceId,
+    public WorkflowModelDTO getWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId,
                                                    @PathParam("workflowModelId") String workflowModelId)
             throws EntityNotFoundException, UserNotActiveException {
 
