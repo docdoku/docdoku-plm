@@ -5,6 +5,7 @@
   "version": "1.1.0",
   "devDependencies": {
     "connect-livereload": "~0.3.2",
+    "del": "^1.2.0",
     "grunt": "~0.4.1",
     "grunt-bower-requirejs": "~0.8.4",
     "grunt-connect-proxy": "~0.2.0",
@@ -32,7 +33,7 @@
     "time-grunt": "~0.2.10",
     "underscore": "^1.7.0",
     "xml2js": "^0.4.9",
-    "del": "^1.2.0"
+    "yargs": "^4.7.1"
   },
   "engines": {
     "node": ">=0.10.0"
@@ -42,7 +43,6 @@
     "start": "grunt deploy",
     "clean": "npm install && grunt clean:dist",
     "deploy": "npm install && bower install && grunt deploy",
-    "pretest":"npm install && bower install",
-    "test":"cd tests && node run.js"
+    "pretest": "npm install && bower install"
   }
 }

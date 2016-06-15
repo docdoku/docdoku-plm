@@ -2,23 +2,24 @@
 /*
  * Node script wrapper to execute casper executable
  * execution : node run.js
- * configuration : config.ci.json (override it with config.local.json)
+ * configuration : config.js - override any arguments from command line
+ * node run.js --domain=foo.com --port=8383   ...
  * */
 
 'use strict';
 
-var sys = require('sys');
+var util = require('util');
 var fs = require('fs');
 var exec = require('child_process').exec;
 var _ = require('underscore');
-var ci = require('./config.ci');
-var local = require('./config.local');
+var config = require('./config');
 var xml2js = require('xml2js');
 var del = require('del');
+var argv = require('yargs').argv;
 
 del.sync(['screenshot/**']);
 
-var conf = _.extend(ci, local);
+var conf = _.extend(config, argv);
 
 var casperCommand = 'casperjs test' +
                     ' --ignore-ssl-errors=true '+
@@ -29,6 +30,12 @@ var casperCommand = 'casperjs test' +
                     ' --pass=' + conf.pass +
                     ' --workspace=' + conf.workspace +
                     ' --contextPath=' + conf.contextPath +
+                    ' --requestTimeOut=' + conf.requestTimeOut +
+                    ' --globalTimeout=' + conf.globalTimeout +
+                    (conf.debug ? ' --debug=true' : '') +
+                    (conf.debugRequests ? ' --debugRequests=true' : '') +
+                    (conf.waitOnRequest ? ' --waitOnRequest=true' : '') +
+                    (conf.debugResponses ? ' --debugResponses=true' : '') +
                     ' --pre=' + conf.pre.join(',') +
                     ' --post=' + conf.post.join(',') +
                     ' --includes=' + conf.includes.join(',') +
@@ -38,10 +45,10 @@ var casperCommand = 'casperjs test' +
                     ' --log-level='+conf.logLevel +
                     ' ' + conf.paths.join(' ');
 
-sys.print('Running DocdokuPLM tests. Command : \n ' + casperCommand + '\n\n');
+util.print('Running DocdokuPLM tests. Command : \n ' + casperCommand + '\n\n');
 
 var child = exec(casperCommand, {maxBuffer: 1024 * 1024}, function (error) {
-    sys.print(error||'');
+    util.print(error||'');
     if(conf.soundOnTestsEnd){
         var parser = new xml2js.Parser();
         fs.readFile(__dirname + '/results.xml', function(err, data) {
@@ -58,6 +65,5 @@ var child = exec(casperCommand, {maxBuffer: 1024 * 1024}, function (error) {
     }
 });
 
-child.stdout.on('data', sys.print);
-
-child.stderr.on('data', sys.print);
+child.stdout.on('data', util.print);
+child.stderr.on('data', util.print);

@@ -2,8 +2,6 @@
 
 'use strict';
 
-var ci = require('../../config.ci');
-var local = require('../../config.local');
 var extend = function (destination, source) {
     for (var property in source) {
         if (destination[property] && (typeof(destination[property]) === 'object') &&
@@ -17,7 +15,7 @@ var extend = function (destination, source) {
     return destination;
 };
 
-var conf = extend(ci, local);
+var conf = casper.cli.options;
 
 // This is the first file in the tests suite : use casper.start()
 casper.options.viewportSize = {
