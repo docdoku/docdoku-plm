@@ -3,13 +3,14 @@ define([
     'backbone',
     'common-objects/common/singleton_decorator',
     'views/nav/workflow_nav',
+    'views/nav/task_nav',
     'views/nav/milestone_nav',
     'views/nav/change_issue_nav',
     'views/nav/change_request_nav',
     'views/nav/change_order_nav',
     'views/workflows/workflow_model_editor'
 ],
-function (Backbone,singletonDecorator, WorkflowNavView, MilestoneNavView, ChangeIssueNavView, ChangeRequestNavView, ChangeOrderNavView, WorkflowModelEditorView) {
+function (Backbone,singletonDecorator, WorkflowNavView, TaskNavView, MilestoneNavView, ChangeIssueNavView, ChangeRequestNavView, ChangeOrderNavView, WorkflowModelEditorView) {
     'use strict';
     var Router = Backbone.Router.extend({
         routes: {
@@ -20,6 +21,8 @@ function (Backbone,singletonDecorator, WorkflowNavView, MilestoneNavView, Change
             ':workspaceId/orders': 'orders',
             ':workspaceId/workflow-model-editor/:workflowModelId': 'workflowModelEditor',
             ':workspaceId/workflow-model-editor': 'workflowModelEditorNew',
+            ':workspaceId/tasks': 'runningTasks',
+            ':workspaceId/tasks/:taskId': 'task',
             ':workspaceId': 'workflows'
         },
 
@@ -37,6 +40,7 @@ function (Backbone,singletonDecorator, WorkflowNavView, MilestoneNavView, Change
 		    ChangeIssueNavView.getInstance();
 		    ChangeOrderNavView.getInstance();
 		    ChangeRequestNavView.getInstance();
+		    TaskNavView.getInstance();
 	    },
 
 	    cleanContent: function () {
@@ -45,6 +49,7 @@ function (Backbone,singletonDecorator, WorkflowNavView, MilestoneNavView, Change
 		    ChangeIssueNavView.getInstance().cleanView();
 		    ChangeOrderNavView.getInstance().cleanView();
 		    ChangeRequestNavView.getInstance().cleanView();
+            TaskNavView.getInstance().cleanView();
 	    },
 
         workflows: function (workspaceId) {
@@ -107,7 +112,17 @@ function (Backbone,singletonDecorator, WorkflowNavView, MilestoneNavView, Change
 
 	            this.workflowModelEditorView.render();
             });
-        }
+        },
+
+        runningTasks:function(workspaceId){
+            this.executeOrReload(workspaceId,function(){
+                this.initNavViews();
+                this.cleanContent();
+                TaskNavView.getInstance().showContent();
+            });
+        },
+
+        task:function(workspaceId, taskId){},
     });
     Router = singletonDecorator(Router);
     return Router;
