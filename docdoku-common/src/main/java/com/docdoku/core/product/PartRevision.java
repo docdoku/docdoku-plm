@@ -47,7 +47,7 @@ import java.util.*;
         @NamedQuery(name="PartRevision.countByWorkspace.filterUserACLEntry", query="SELECT count(pr) FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId and (pr.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = pr.acl))"),
         @NamedQuery(name="PartRevision.countByWorkspace", query="SELECT count(pr) FROM PartRevision pr WHERE pr.partMasterWorkspaceId = :workspaceId"),
         @NamedQuery(name="PartRevision.findByReferenceOrName", query="SELECT pr FROM PartRevision pr WHERE (pr.partMaster.number LIKE :partNumber OR pr.partMaster.name LIKE :partName) AND pr.partMaster.workspace.id = :workspaceId"),
-        @NamedQuery(name="PartRevision.findByTask", query="SELECT pr FROM PartRevision pr, Task t WHERE (t.activity.workflow = pr.workflow OR t.activity.workflow member of pr.abortedWorkflows) AND t = :task")
+        @NamedQuery(name="PartRevision.findByWorkflow", query="SELECT p FROM PartRevision p WHERE p.workflow = :workflow")
 })
 public class PartRevision implements Serializable, Comparable<PartRevision> {
 

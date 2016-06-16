@@ -13,7 +13,7 @@
         {{#tasks}}
         <tr class="{{status}}">
             <td><input type="checkbox" class="toggle-item"/></td>
-            <td><a class="taskTitle">{{title}}</a></td>
+            <td><a href="{{contextPath}}/change-management/#{{workspaceId}}/tasks/{{workflowId}}-{{activityStep}}-{{num}}"class="taskTitle">{{title}}</a></td>
             <td>{{holderReference}}-{{holderVersion}}-{{targetIteration}}</td>
             <td>{{worker.name}}</td>
             <td>{{status}}</td>

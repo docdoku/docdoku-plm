@@ -19,10 +19,7 @@
  */
 package com.docdoku.core.services;
 
-import com.docdoku.core.exceptions.TaskNotFoundException;
-import com.docdoku.core.exceptions.UserNotActiveException;
-import com.docdoku.core.exceptions.UserNotFoundException;
-import com.docdoku.core.exceptions.WorkspaceNotFoundException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.workflow.TaskKey;
 import com.docdoku.core.workflow.TaskWrapper;
 
@@ -33,5 +30,7 @@ import com.docdoku.core.workflow.TaskWrapper;
 public interface ITaskManagerLocal {
     TaskWrapper[] getAssignedTasksForGivenUser(String workspaceId, String userLogin) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     TaskWrapper[] getInProgressTasksForGivenUser(String workspaceId, String userLogin) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
-    TaskWrapper getTask(String workspaceId, TaskKey taskKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException;
+    TaskWrapper getTask(String workspaceId, TaskKey taskKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, AccessRightException;
+
+    void processTask(String workspaceId, TaskKey taskKey, String action, String comment, String signature) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, WorkflowNotFoundException, AccessRightException;
 }

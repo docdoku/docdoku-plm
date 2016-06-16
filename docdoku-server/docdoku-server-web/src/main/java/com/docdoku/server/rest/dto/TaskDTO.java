@@ -39,9 +39,8 @@ public class TaskDTO implements Serializable {
     private String workspaceId;
 
     private int workflowId;
-    private int stepId;
-    private int activityId;
-    private int taskId;
+    private int activityStep;
+    private int num;
 
     private String holderType;
     private String holderReference;
@@ -130,28 +129,20 @@ public class TaskDTO implements Serializable {
         this.workflowId = workflowId;
     }
 
-    public int getStepId() {
-        return stepId;
+    public int getActivityStep() {
+        return activityStep;
     }
 
-    public void setStepId(int stepId) {
-        this.stepId = stepId;
+    public void setActivityStep(int activityStep) {
+        this.activityStep = activityStep;
     }
 
-    public int getActivityId() {
-        return activityId;
+    public int getNum() {
+        return num;
     }
 
-    public void setActivityId(int activityId) {
-        this.activityId = activityId;
-    }
-
-    public int getTaskId() {
-        return taskId;
-    }
-
-    public void setTaskId(int taskId) {
-        this.taskId = taskId;
+    public void setNum(int num) {
+        this.num = num;
     }
 
     public String getHolderType() {

@@ -89,7 +89,13 @@ public class WorkspaceResource {
     private TaskResource tasks;
 
     @Inject
-    private WorkflowResource workflows;
+    private WorkflowResource workflowInstances;
+
+    @Inject
+    private WorkflowModelResource workflowModels;
+
+    @Inject
+    private WorkspaceWorkflowResource workspaceWorkflows;
 
     @Inject
     private ChangeItemsResource changeItems;
@@ -598,10 +604,22 @@ public class WorkspaceResource {
         return notifications;
     }
 
-    @ApiOperation(value = "WorkspaceWorkflows")
+    @ApiOperation(value = "Workflows")
     @Path("/{workspaceId}/workflows")
-    public WorkflowResource workflows() {
-        return workflows;
+    public WorkflowModelResource workflowModels() {
+        return workflowModels;
+    }
+
+    @ApiOperation(value = "WorkspaceWorkflowsInstances")
+    @Path("/{workspaceId}/workflow-instances")
+    public WorkflowResource workflowsInstances() {
+        return workflowInstances;
+    }
+
+    @ApiOperation(value = "WorkspaceWorkflows")
+    @Path("/{workspaceId}/workspace-workflows")
+    public WorkspaceWorkflowResource workspaceWorkflows() {
+        return workspaceWorkflows;
     }
 
     @ApiOperation(value = "WorkspaceUsers")

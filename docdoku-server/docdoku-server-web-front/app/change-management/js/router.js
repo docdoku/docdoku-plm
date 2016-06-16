@@ -21,7 +21,6 @@ function (Backbone,singletonDecorator, WorkflowNavView, TaskNavView, MilestoneNa
             ':workspaceId/orders': 'orders',
             ':workspaceId/workflow-model-editor/:workflowModelId': 'workflowModelEditor',
             ':workspaceId/workflow-model-editor': 'workflowModelEditorNew',
-            ':workspaceId/tasks': 'runningTasks',
             ':workspaceId/tasks/:taskId': 'task',
             ':workspaceId': 'workflows'
         },
@@ -114,15 +113,13 @@ function (Backbone,singletonDecorator, WorkflowNavView, TaskNavView, MilestoneNa
             });
         },
 
-        runningTasks:function(workspaceId){
+        task:function(workspaceId, taskId){
             this.executeOrReload(workspaceId,function(){
                 this.initNavViews();
                 this.cleanContent();
-                TaskNavView.getInstance().showContent();
+                TaskNavView.getInstance().showContent(taskId);
             });
-        },
-
-        task:function(workspaceId, taskId){},
+        }
     });
     Router = singletonDecorator(Router);
     return Router;

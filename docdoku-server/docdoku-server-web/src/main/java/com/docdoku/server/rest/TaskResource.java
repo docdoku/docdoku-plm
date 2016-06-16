@@ -24,8 +24,6 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IDocumentWorkflowManagerLocal;
-import com.docdoku.core.services.IPartWorkflowManagerLocal;
 import com.docdoku.core.services.ITaskManagerLocal;
 import com.docdoku.core.workflow.ActivityKey;
 import com.docdoku.core.workflow.TaskKey;
@@ -61,13 +59,7 @@ import java.util.List;
 public class TaskResource {
 
     @Inject
-    private IDocumentWorkflowManagerLocal documentWorkflowService;
-
-    @Inject
     private IDocumentManagerLocal documentService;
-
-    @Inject
-    private IPartWorkflowManagerLocal partWorkflowService;
 
     @Inject
     private ITaskManagerLocal taskManager;
@@ -85,7 +77,7 @@ public class TaskResource {
 
     @GET
     @ApiOperation(value = "Get assigned tasks for given user", response = TaskDTO.class, responseContainer = "List")
-    @Path("{assignedUserLogin}")
+    @Path("{assignedUserLogin}/assigned")
     @Produces(MediaType.APPLICATION_JSON)
     public TaskDTO[] getAssignedTasksForGivenUser(
             @PathParam("workspaceId") String workspaceId,
@@ -103,10 +95,35 @@ public class TaskResource {
         return taskDTOs.toArray(new TaskDTO[taskDTOs.size()]);
     }
 
+    @GET
+    @ApiOperation(value = "Get task", response = TaskDTO.class)
+    @Path("{taskId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public TaskDTO getTask(
+            @PathParam("workspaceId") String workspaceId,
+            @PathParam("taskId") String taskId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, AccessRightException {
+
+        String[] split = taskId.split("-");
+
+        int workflowId = Integer.valueOf(split[0]);
+        int step = Integer.valueOf(split[1]);
+        int task = Integer.valueOf(split[2]);
+
+        TaskKey taskKey = new TaskKey(new ActivityKey(workflowId, step), task);
+        TaskWrapper taskWrapper = taskManager.getTask(workspaceId, taskKey);
+
+        TaskDTO taskDTO = mapper.map(taskWrapper.getTask(), TaskDTO.class);
+        taskDTO.setHolderType(taskWrapper.getHolderType());
+        taskDTO.setWorkspaceId(workspaceId);
+        taskDTO.setHolderReference(taskWrapper.getHolderReference());
+        taskDTO.setHolderVersion(taskWrapper.getHolderVersion());
+
+        return taskDTO;
+    }
 
     @GET
     @ApiOperation(value = "Get documents where user has assigned tasks", response = DocumentRevisionDTO.class, responseContainer = "List")
-    @Path("{assignedUserLogin}/documents/")
+    @Path("{assignedUserLogin}/documents")
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO[] getDocumentsWhereGivenUserHasAssignedTasks(
             @PathParam("workspaceId") String workspaceId,
@@ -143,55 +160,23 @@ public class TaskResource {
     }
 
 
-    @POST
+    @PUT
     @ApiOperation(value = "Approve or reject task on document", response = Response.class)
-    @Path("documents/process")
+    @Path("{taskId}/process/{action}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response processTaskForDocuments(@PathParam("workspaceId") String workspaceId,
-                                            @QueryParam("activityWorkflowId") int activityWorkflowId,
-                                            @QueryParam("activityStep") int activityStep,
-                                            @QueryParam("index") int index,
-                                            @QueryParam("action") String action,
+    public Response processTask(@PathParam("workspaceId") String workspaceId,
+                                            @PathParam("taskId") String taskId,
+                                            @PathParam("action") String action,
                                             @ApiParam(required = true, value = "Task process data") TaskProcessDTO taskProcessDTO)
-            throws EntityNotFoundException, NotAllowedException, UserNotActiveException {
+            throws EntityNotFoundException, NotAllowedException, UserNotActiveException, AccessRightException {
 
-        switch (action) {
-            case "approve":
-                documentWorkflowService.approveTaskOnDocument(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
-                break;
-            case "reject":
-                documentWorkflowService.rejectTaskOnDocument(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
-                break;
-            default:
-                return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+        String[] split = taskId.split("-");
+        int workflowId = Integer.valueOf(split[0]);
+        int step = Integer.valueOf(split[1]);
+        int index = Integer.valueOf(split[2]);
 
+        taskManager.processTask(workspaceId, new TaskKey(new ActivityKey(workflowId,step),index), action, taskProcessDTO.getComment(), taskProcessDTO.getSignature());
         return Response.ok().build();
     }
 
-    @POST
-    @ApiOperation(value = "Approve or reject task on part", response = Response.class)
-    @Path("parts/process")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response processTaskForParts(@PathParam("workspaceId") String workspaceId,
-                                        @QueryParam("activityWorkflowId") int activityWorkflowId,
-                                        @QueryParam("activityStep") int activityStep,
-                                        @QueryParam("index") int index,
-                                        @QueryParam("action") String action,
-                                        @ApiParam(required = true, value = "Task process data") TaskProcessDTO taskProcessDTO)
-            throws EntityNotFoundException, NotAllowedException, UserNotActiveException {
-
-        switch (action) {
-            case "approve":
-                partWorkflowService.approveTaskOnPart(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
-                break;
-            case "reject":
-                partWorkflowService.rejectTaskOnPart(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
-                break;
-            default:
-                return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-
-        return Response.ok().build();
-    }
 }

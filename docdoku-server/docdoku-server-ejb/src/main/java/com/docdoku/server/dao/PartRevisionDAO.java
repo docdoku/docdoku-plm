@@ -28,6 +28,7 @@ import com.docdoku.core.exceptions.PartRevisionNotFoundException;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.*;
 import com.docdoku.core.workflow.Task;
+import com.docdoku.core.workflow.Workflow;
 
 import javax.persistence.*;
 import java.util.List;
@@ -170,13 +171,12 @@ public class PartRevisionDAO {
         return query.getResultList();
     }
 
-    public PartRevision getTaskHolder(Task task) {
+    public PartRevision getWorkflowHolder(Workflow workflow) {
         try {
-            return em.createNamedQuery("PartRevision.findByTask", PartRevision.class).
-                    setParameter("task", task).getSingleResult();
+            return em.createNamedQuery("PartRevision.findByWorkflow", PartRevision.class).
+                    setParameter("workflow", workflow).getSingleResult();
         }catch(NoResultException e){
             return null;
         }
     }
-
 }

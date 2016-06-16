@@ -28,6 +28,7 @@ import com.docdoku.core.exceptions.DocumentRevisionAlreadyExistsException;
 import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.workflow.Task;
+import com.docdoku.core.workflow.Workflow;
 
 import javax.persistence.*;
 import java.util.List;
@@ -254,10 +255,10 @@ public class DocumentRevisionDAO {
                 .getSingleResult()).intValue();
     }
 
-    public DocumentRevision getTaskHolder(Task task) {
+    public DocumentRevision getWorkflowHolder(Workflow workflow) {
         try {
-            return em.createNamedQuery("DocumentRevision.findByTask", DocumentRevision.class).
-                    setParameter("task", task).getSingleResult();
+            return em.createNamedQuery("DocumentRevision.findByWorkflow", DocumentRevision.class).
+                    setParameter("workflow", workflow).getSingleResult();
         }catch(NoResultException e){
             return null;
         }

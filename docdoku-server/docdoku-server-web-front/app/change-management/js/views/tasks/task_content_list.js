@@ -14,7 +14,7 @@ define([
 
         render: function () {
             var _this = this;
-            $.getJSON(App.config.contextPath+'/api/workspaces/'+App.config.workspaceId+'/tasks/'+App.config.login)
+            $.getJSON(App.config.contextPath+'/api/workspaces/'+App.config.workspaceId+'/tasks/'+App.config.login+'/assigned')
                 .then(function(tasks){
                     _this.$el.html(Mustache.render(template, {tasks:tasks,i18n: App.config.i18n}));
                 });
