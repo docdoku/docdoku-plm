@@ -25,11 +25,10 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.core.workflow.ActivityModel;
+import com.docdoku.core.workflow.Workflow;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.WorkflowModelKey;
-import com.docdoku.server.rest.dto.ACLDTO;
-import com.docdoku.server.rest.dto.ActivityModelDTO;
-import com.docdoku.server.rest.dto.WorkflowModelDTO;
+import com.docdoku.server.rest.dto.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -162,6 +161,24 @@ public class WorkflowResource {
         ActivityModel[] activityModels = extractActivityModelFromDTO(activityModelDTOsList);
         WorkflowModel workflowModel = workflowService.createWorkflowModel(workspaceId, workflowModelDTOToPersist.getReference(), workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);
         return mapper.map(workflowModel, WorkflowModelDTO.class);
+    }
+
+    @POST
+    @Path("{workflowModelId}")
+    @ApiOperation(value = "Instantiate workflow model", response = WorkflowModelDTO.class)
+    @Produces(MediaType.APPLICATION_JSON)
+    public WorkflowDTO createWorkflowModel(@PathParam("workspaceId") String workspaceId,
+                                           @PathParam("workspaceId") String workflowModelId,
+                                           @ApiParam(required = true, value = "Role list to use in the workflow") RoleMappingDTO[] roleMapping)
+            throws RoleNotFoundException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, AccessRightException, WorkflowModelNotFoundException {
+              Map<String, String> roleMappings = new HashMap<>();
+
+              for (RoleMappingDTO roleMappingDTO : roleMapping) {
+                  roleMappings.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogin());
+              }
+
+              Workflow workflow = workflowService.instantiateWorkflow(workspaceId, workflowModelId, roleMappings);
+              return mapper.map(workflow,WorkflowDTO.class);
     }
 
     private ActivityModel[] extractActivityModelFromDTO(List<ActivityModelDTO> activityModelDTOsList) throws NotAllowedException {

@@ -261,6 +261,46 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
 
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public Workflow instantiateWorkflow(String workspaceId, String workflowModelId, Map<String, String> roleMappings) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, RoleNotFoundException, WorkflowModelNotFoundException, NotAllowedException {
+
+        User user = userManager.checkWorkspaceWriteAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        UserDAO userDAO = new UserDAO(locale, em);
+        RoleDAO roleDAO = new RoleDAO(locale, em);
+
+        Map<Role, User> roleUserMap = new HashMap<>();
+
+        for (Object o : roleMappings.entrySet()) {
+            Map.Entry pairs = (Map.Entry) o;
+            String roleName = (String) pairs.getKey();
+            String userLogin = (String) pairs.getValue();
+            User worker = userDAO.loadUser(new UserKey(workspaceId, userLogin));
+            Role role = roleDAO.loadRole(new RoleKey(workspaceId, roleName));
+            roleUserMap.put(role, worker);
+        }
+
+        WorkflowModel workflowModel = new WorkflowModelDAO(locale, em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), workflowModelId));
+        Workflow workflow = workflowModel.createWorkflow(roleUserMap);
+
+
+        for(Task task : workflow.getTasks()){
+            if(null == task.getWorker()){
+                throw new NotAllowedException(locale,"NotAllowedException56");
+            }
+        }
+
+        Collection<Task> runningTasks = workflow.getRunningTasks();
+        for (Task runningTask : runningTasks) {
+            runningTask.start();
+        }
+
+        //mailer.sendApproval(runningTasks, docR);
+
+        return null;
+    }
+
 
     private void checkWorkflowValidity(String workspaceId, String pId, Locale userLocale, ActivityModel[] pActivityModels) throws NotAllowedException {
 
