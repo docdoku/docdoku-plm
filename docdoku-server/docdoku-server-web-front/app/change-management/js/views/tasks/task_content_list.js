@@ -13,7 +13,11 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
+            var _this = this;
+            $.getJSON(App.config.contextPath+'/api/workspaces/'+App.config.workspaceId+'/tasks/'+App.config.login)
+                .then(function(tasks){
+                    _this.$el.html(Mustache.render(template, {tasks:tasks,i18n: App.config.i18n}));
+                });
             return this;
         }
 
