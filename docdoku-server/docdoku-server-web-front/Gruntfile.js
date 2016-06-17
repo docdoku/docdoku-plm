@@ -6,8 +6,7 @@ module.exports = function (grunt) {
         clean: {
             options: {
                 force: true
-            },
-            dist: ['.tmp', 'dist']
+            }
         },
         cssmin: {
             options: {

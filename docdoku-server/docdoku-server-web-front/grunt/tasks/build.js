@@ -1,6 +1,7 @@
 module.exports = {
 
     loadConf:function(config,grunt){
+        config.clean.dist=['.tmp', 'dist'];
     },
 
     loadTasks:function(grunt){
