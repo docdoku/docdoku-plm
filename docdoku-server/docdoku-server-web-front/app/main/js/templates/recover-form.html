@@ -1,0 +1,39 @@
+<h3><i class="fa fa-lock"></i>{{i18n.RECOVER}}</h3>
+<div class="notifications"></div>
+<hr />
+<div class="form-zone">
+    <h4>{{i18n.ENTER_NEW_PASSWORD}}</h4>
+
+    <p>
+        <label for="recover_form-password">{{i18n.PASSWORD}} :</label>
+        <input id="recover_form-password"
+               type="password"
+               name="recover_form-password"
+               value=""
+               maxlength="50"
+               size="20"
+               required />
+    </p>
+
+    <p>
+        <label for="recover_form-confirmPassword">{{i18n.CONFIRM_PASSWORD}} :</label>
+        <input id="recover_form-confirmPassword"
+               type="password"
+               name="recover_form-confirmPassword"
+               value=""
+               maxlength="50"
+               size="20"
+               required />
+    </p>
+
+    <p class="form_button_container">
+        <input
+            type="submit"
+            name="recover_form-save_button"
+            value="{{i18n.SAVE}}"
+            alt="{{i18n.SAVE}}"
+            class="btn btn-custom" />
+    </p>
+</div>
+<p><a href="#">{{i18n.BACK}}</a></p>
+

@@ -5,9 +5,10 @@ define([
     'text!templates/app.html',
     'views/login-form',
     'views/recovery-form',
+    'views/recover-form',
     'views/account-creation-form',
     'views/login-scene'
-], function (Backbone, Mustache, template, LoginFormView, RecoveryFormView, AccountCreationFormView, LoginSceneView ) {
+], function (Backbone, Mustache, template, LoginFormView, RecoveryFormView, RecoverFormView, AccountCreationFormView, LoginSceneView ) {
 	'use strict';
 
     var AppView = Backbone.View.extend({
@@ -28,6 +29,11 @@ define([
 
         showRecoveryForm:function(){
             this.$FormContainer.html(new RecoveryFormView().render().$el);
+            this.$FormContainer.attr('class','put-right');
+        },
+
+        showRecoverForm:function(uuid){
+            this.$FormContainer.html(new RecoverFormView().render(uuid).$el);
             this.$FormContainer.attr('class','put-right');
         },
 

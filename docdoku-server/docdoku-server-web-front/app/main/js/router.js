@@ -10,6 +10,7 @@ function (Backbone, singletonDecorator) {
             '':   'login',
             'create-account':   'createAccount',
             'recovery':   'recovery',
+            'recover/:uuid':   'recover',
         },
 
         login:function(){
@@ -19,8 +20,13 @@ function (Backbone, singletonDecorator) {
         createAccount:function(){
             App.appView.showAccountCreationForm();
         },
+
         recovery:function(){
             App.appView.showRecoveryForm();
+        },
+
+        recover:function(uuid){
+            App.appView.showRecoverForm(uuid);
         }
 
     });
