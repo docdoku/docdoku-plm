@@ -4,6 +4,8 @@ module.exports = {
 
     loadConf:function(config, grunt){
 
+        config.copy.productManagement=[];
+
         config.less.productManagement = {
             options: {
                 strictImports: false,

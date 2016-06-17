@@ -18,6 +18,18 @@ module.exports = {
 
         config.clean.download = ['dist/download/*'];
 
+        config.copy.download = {
+            files: [{
+                expand: true,
+                dot: false,
+                cwd: 'app',
+                dest: 'dist',
+                src: [
+                    'download/dplm/**'
+                ]
+            }]
+        };
+
         config.requirejs.download = {
             options: {
                 name: '../../download/main',

@@ -4,6 +4,8 @@ module.exports = {
 
     loadConf:function(config, grunt){
 
+        config.copy.main=[];
+
         config.less.main = {
             options: {
                 strictImports: false,

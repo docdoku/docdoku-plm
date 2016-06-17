@@ -4,6 +4,8 @@ module.exports = {
 
     loadConf:function(config, grunt){
 
+        config.copy.changeManagement=[];
+
         config.less.changeManagement = {
             options: {
                 strictImports: false,

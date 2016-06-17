@@ -12,7 +12,8 @@ module.exports = {
                 'uglify:'+module,
                 'cssmin:'+module,
                 'htmlmin:'+module,
-                'usemin:'+module
+                'usemin:'+module,
+                'copy:'+module
             ]);
         });
 

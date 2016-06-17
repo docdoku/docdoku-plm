@@ -4,6 +4,8 @@ module.exports = {
 
     loadConf:function(config, grunt){
 
+        config.copy.workspaceManagement=[];
+
         config.less.workspaceManagement = {
             options: {
                 strictImports: false,

@@ -4,6 +4,8 @@ module.exports = {
 
     loadConf:function(config, grunt){
 
+        config.copy.productStructure=[];
+
         config.less.productStructure = {
             options: {
                 strictImports: false,

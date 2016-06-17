@@ -4,6 +4,8 @@ module.exports = {
 
     loadConf:function(config, grunt){
 
+        config.copy.accountManagement=[];
+
         config.less.accountManagement = {
             options: {
                 strictImports: false,

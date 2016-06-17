@@ -4,6 +4,8 @@ module.exports = {
 
     loadConf:function(config, grunt){
 
+        config.copy.documentManagement=[];
+
         config.less.documentManagement = {
             options: {
                 strictImports: false,

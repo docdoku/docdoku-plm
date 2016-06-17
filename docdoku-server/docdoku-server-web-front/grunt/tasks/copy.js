@@ -53,7 +53,6 @@ module.exports = {
                         'images/**',
                         'sounds/**',
                         'fonts/**',
-                        'download/**',
                         'js/home/main.js',
                         'js/lib/plugin-detect.js',
                         'js/lib/empty.pdf',

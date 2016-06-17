@@ -4,6 +4,8 @@ module.exports = {
 
     loadConf:function(config, grunt){
 
+        config.copy.parts=[];
+
         config.less.parts = {
             options: {
                 strictImports: false,
