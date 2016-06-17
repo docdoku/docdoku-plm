@@ -8,6 +8,7 @@ import com.docdoku.server.api.models.WorkspaceListDTO;
 import com.docdoku.server.api.services.AccountsApi;
 import com.docdoku.server.api.services.WorkspacesApi;
 import junit.framework.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class DocdokuPLMClientTest {
 
     @Test
+    @Ignore
     public void connection() throws ApiException {
         DocdokuPLMClient docdokuPLMClient = new DocdokuPLMClient("http://localhost:8080/api", "foo", "bar", true);
         ApiClient client = docdokuPLMClient.getClient();
