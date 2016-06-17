@@ -833,7 +833,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             partIte.setSource(source);
 
         } else {
-            throw new NotAllowedException(locale, "NotAllowedException25");
+            throw new NotAllowedException(locale, "NotAllowedException25",partIte.getPartName());
         }
 
         return partRev;
@@ -994,7 +994,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartIteration getPartIteration(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException {
+    public PartIteration getPartIteration(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException, NotAllowedException {
 
         PartRevisionKey partRevisionKey = pPartIPK.getPartRevision();
         User user = checkPartRevisionReadAccess(partRevisionKey);
@@ -1007,7 +1007,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartIteration lastIteration = partR.getLastIteration();
 
         if (isCheckoutByAnotherUser(user, partR) && lastIteration.getKey().equals(pPartIPK)) {
-            throw new AccessRightException("NotAllowedException25");
+            throw new NotAllowedException(locale,"NotAllowedException25",partR.getPartName());
         }
 
         return partI;

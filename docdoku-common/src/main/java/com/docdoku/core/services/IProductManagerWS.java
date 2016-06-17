@@ -510,7 +510,7 @@ public interface IProductManagerWS{
      * @throws PartRevisionNotFoundException
      * @throws AccessRightException
      */
-    PartIteration getPartIteration(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartIterationNotFoundException, PartRevisionNotFoundException, AccessRightException;
+    PartIteration getPartIteration(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartIterationNotFoundException, PartRevisionNotFoundException, AccessRightException, NotAllowedException;
     
     /**
      * Finds part masters by their part number using like style query.
