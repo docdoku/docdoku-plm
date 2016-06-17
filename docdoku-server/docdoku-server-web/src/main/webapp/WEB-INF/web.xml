@@ -1,23 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app metadata-complete="false" version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
+    <!--Filter chain-->
+
+    <!-- First filter, is this a public resource ?-->
     <filter>
-        <filter-name>AuthFilter</filter-name>
-        <filter-class>com.docdoku.server.filters.AuthFilter</filter-class>
+        <filter-name>PublicFilter</filter-name>
+        <filter-class>com.docdoku.server.filters.PublicFilter</filter-class>
         <async-supported>true</async-supported>
         <init-param>
-            <param-name>excludedPaths</param-name>
-            <param-value>/api/accounts/create,/api/viewer,/api/shared/**,/api/languages,/api/timezones,/api/auth/**,/api/files/*/documents/**,/api/files/*/parts/**</param-value>
-        </init-param>
-        <init-param>
-            <param-name>apiPath</param-name>
-            <param-value>/api/*</param-value>
+            <param-name>publicPaths</param-name>
+            <param-value>/api,/api/accounts/create,/api/viewer,/api/shared/**,/api/languages,/api/timezones,/api/auth/**,/api/files/*/documents/**,/api/files/*/parts/**</param-value>
         </init-param>
     </filter>
     <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
+        <filter-name>PublicFilter</filter-name>
         <url-pattern>/api/*</url-pattern>
     </filter-mapping>
+
+    <!-- Auth with cookie -->
+    <filter>
+        <filter-name>SessionFilter</filter-name>
+        <filter-class>com.docdoku.server.filters.SessionFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+    <filter-mapping>
+        <filter-name>SessionFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Auth with JWT - Not functional yet-->
+    <!--
+    <filter>
+        <filter-name>JwtFilter</filter-name>
+        <filter-class>com.docdoku.server.filters.JwtFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+    <filter-mapping>
+        <filter-name>JwtFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>
+    -->
+
+    <!-- Auth with base 64 in headers -->
+    <filter>
+        <filter-name>BasicFilter</filter-name>
+        <filter-class>com.docdoku.server.filters.BasicFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+    <filter-mapping>
+        <filter-name>BasicFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Chain or reject depending on other filters result -->
+    <filter>
+        <filter-name>RequestFilter</filter-name>
+        <filter-class>com.docdoku.server.filters.RequestFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+    <filter-mapping>
+        <filter-name>RequestFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>
+
+    <!--/Filter chain-->
 
     <servlet>
         <servlet-name>javax.ws.rs.core.Application</servlet-name>

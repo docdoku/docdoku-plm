@@ -13,6 +13,7 @@ import com.docdoku.server.rest.dto.PasswordRecoverDTO;
 import com.docdoku.server.rest.dto.PasswordRecoveryRequestDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -55,10 +56,10 @@ public class AuthResource {
 
     @POST
     @Path("/login")
-    @ApiOperation(value = "Try to authenticate", response = Response.class)
+    @ApiOperation(value = "Try to authenticate", response = AccountDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(@Context HttpServletRequest request, LoginRequestDTO loginRequestDTO) throws AccountNotFoundException {
+    public Response login(@Context HttpServletRequest request, @ApiParam(required = true,value = "Login request") LoginRequestDTO loginRequestDTO) throws AccountNotFoundException {
 
         if (request.getUserPrincipal() != null){
             try {
