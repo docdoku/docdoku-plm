@@ -12,8 +12,7 @@ define([
         tagName:'form',
         id:'recovery_form',
         events:{
-            'submit':'onRecoverFormSubmit',
-            'input #recover_form-password':'updatePattern'
+            'submit':'onRecoverFormSubmit'
         },
 
         render: function (uuid) {
@@ -29,13 +28,19 @@ define([
             return this;
         },
 
-        updatePattern:function(){
-            this.$confirmPassword.removeAttr('pattern');
-            this.$confirmPassword.attr('pattern',this.$password.val());
-        },
 
         onRecoverFormSubmit:function(e){
             this.$notifications.empty();
+
+            if(this.$password.val() !== this.$confirmPassword.val()){
+                this.$notifications.append(new AlertView({
+                    type: 'error',
+                    message: App.config.i18n.PASSWORD_NOT_CONFIRMED
+                }).render().$el);
+                e.preventDefault();
+                return false;
+            }
+
             $.ajax({
                 type: 'POST',
                 url: App.config.contextPath + '/api/auth/recover',

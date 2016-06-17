@@ -14,8 +14,7 @@ define([
         tagName:'form',
         id:'account_creation_form',
         events:{
-            'submit':'onAccountCreationFormSubmit',
-            'input #account_creation_form-password':'updatePattern'
+            'submit':'onAccountCreationFormSubmit'
         },
 
         render: function () {
@@ -52,14 +51,18 @@ define([
             return this;
         },
 
-        updatePattern:function(){
-            this.$confirmPassword.removeAttr('pattern');
-            this.$confirmPassword.attr('pattern',this.$password.val());
-        },
-
         onAccountCreationFormSubmit:function(e){
 
             this.$notifications.empty();
+
+            if(this.$password.val() !== this.$confirmPassword.val()){
+                this.$notifications.append(new AlertView({
+                    type: 'error',
+                    message: App.config.i18n.PASSWORD_NOT_CONFIRMED
+                }).render().$el);
+                e.preventDefault();
+                return false;
+            }
 
             $.ajax({
                 type: 'POST',

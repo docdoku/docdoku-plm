@@ -14,8 +14,7 @@ define([
         events:{
             'click .toggle-password-update':'togglePasswordUpdate',
             'submit #account_edition_form':'onSubmitForm',
-            'click .logout':'logout',
-            'input #account-password':'updatePattern'
+            'click .logout':'logout'
         },
 
         render:function(){
@@ -67,6 +66,13 @@ define([
                 var confirmedPassword = this.$('#account-confirm-password').val().trim();
                 if(newPassword === confirmedPassword){
                     account.newPassword = newPassword;
+                }else{
+                    this.$notifications.append(new AlertView({
+                        type: 'error',
+                        message: App.config.i18n.PASSWORD_NOT_CONFIRMED
+                    }).render().$el);
+                    e.preventDefault();
+                    return false;
                 }
             }
 
@@ -102,12 +108,6 @@ define([
             this.$('.password-update').toggle(this.enablePasswordUpdate);
             this.$('#account-password').attr('required',this.enablePasswordUpdate);
             this.$('#account-confirm-password').attr('required',this.enablePasswordUpdate);
-            this.updatePattern();
-        },
-
-        updatePattern:function(){
-            this.$('#account-confirm-password').removeAttr('pattern');
-            this.$('#account-confirm-password').attr('pattern',this.$('#account-password').val());
         },
 
         logout:function(){
