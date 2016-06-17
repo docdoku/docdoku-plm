@@ -80,10 +80,9 @@ define([
             }
 
             function handleResize() {
-                container.parent.
-                camera.aspect = container.parent.clientWidth / container.clientHeight;
+                camera.aspect = container.clientWidth / container.clientHeight;
                 camera.updateProjectionMatrix();
-                renderer.setSize(container.parent.clientWidth , container.clientHeight);
+                renderer.setSize(container.clientWidth , container.clientHeight);
                 controls.handleResize();
             }
 
