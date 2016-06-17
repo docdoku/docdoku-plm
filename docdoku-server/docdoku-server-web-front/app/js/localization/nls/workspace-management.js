@@ -6,7 +6,7 @@ define({
         CREATE_GROUP:'Create group',
         CREATE_WORKSPACE:'Create workspace',
         CREATE_WORKSPACE_SUBTITLE:'Create your workspace',
-        CREATE_WORKSPACE_SIDE_TEXT:'TODO',
+        CREATE_WORKSPACE_SIDE_TEXT:'Only the creator of the workspace has administrator rights. These rights allow to edit the workspace properties and add and remove users.',
         CHECKED_OUT_DOCUMENTS:'Checked out documents',
         CHECKED_OUT_PARTS:'Checked out parts',
         DASHBOARD:'Dashboard',
