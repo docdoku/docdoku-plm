@@ -20,13 +20,18 @@ define([
                 contextPath:App.config.contextPath
             }));
             this.$notifications = this.$('.notifications');
+            this.$('#recovery_form-login').prop('disabled', false);
+            this.$('.form_button_container').show();
             return this;
         },
 
 
         onRecoveryFormSubmit:function(e){
             this.$notifications.empty();
-            var login = this.$('#recovery_form-login').val();
+            var $loginInput = this.$('#recovery_form-login');
+            var login = $loginInput.val();
+            $loginInput.prop('disabled', true);
+            this.$('.form_button_container').hide();
             $.ajax({
                 type: 'POST',
                 url: App.config.contextPath + '/api/auth/recovery',
@@ -51,6 +56,9 @@ define([
                     type: 'error',
                     message: err.responseText
             }).render().$el);
+
+            this.$('#recovery_form-login').prop('disabled', false);
+            this.$('.form_button_container').show();
         }
 
     });
