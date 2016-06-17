@@ -48,7 +48,7 @@ var casperCommand = 'casperjs test' +
 util.print('Running DocdokuPLM tests. Command : \n ' + casperCommand + '\n\n');
 
 var child = exec(casperCommand, {maxBuffer: 5 * 1024 * 1024}, function (error) {
-    sys.print(error||'');
+    util.print(error||'');
     if(conf.soundOnTestsEnd){
         var parser = new xml2js.Parser();
         fs.readFile(__dirname + '/results.xml', function(err, data) {
