@@ -1,12 +1,12 @@
+/*global App*/
 define([
     'backbone',
     'mustache',
     'text!templates/account-creation-form.html',
     'common-objects/views/alert',
     'common-objects/models/timezone',
-    'common-objects/models/language',
-    'common-objects/models/user',
-], function (Backbone, Mustache, template, AlertView, TimeZone, Language, User) {
+    'common-objects/models/language'
+], function (Backbone, Mustache, template, AlertView, TimeZone, Language) {
     'use strict';
 
     var AccountCreationFormView = Backbone.View.extend({
@@ -73,7 +73,7 @@ define([
                     newPassword:this.$('#account_creation_form-password').val()
                 }),
                 contentType: 'application/json; charset=utf-8'
-            }).then(function(account, status, xhr ){
+            }).then(function(/*account, status, xhr*/){
                 window.location.href =App.config.contextPath + '/workspace-management/?accountCreated=true';
             }, this.onAccountCreationFailed.bind(this));
             e.preventDefault();
@@ -84,7 +84,7 @@ define([
             this.$notifications.append(new AlertView({
                 type: 'error',
                 message: err.responseText
-            }).render().$el)
+            }).render().$el);
         }
     });
 

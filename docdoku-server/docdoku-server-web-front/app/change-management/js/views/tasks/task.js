@@ -31,7 +31,7 @@ define([
                         .render();
 
                     _this.lifecycleView.on('lifecycle:change', function () {
-                        console.log('CHANGED')
+                        window.location.reload();
                     });
 
                     _this.$('.workflow-detail').append(_this.lifecycleView.$el);

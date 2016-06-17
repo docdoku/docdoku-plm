@@ -1,3 +1,4 @@
+/*global App*/
 define([
     'backbone',
     'mustache',
@@ -31,14 +32,14 @@ define([
                 this.$notifications.append(new AlertView({
                     type: 'info',
                     message: App.config.i18n.DISCONNECTED
-                }).render().$el)
+                }).render().$el);
             }
             var denied = UrlUtils.getParameterByName('denied');
             if(denied){
                 this.$notifications.append(new AlertView({
                     type: 'error',
                     message: App.config.i18n.FORBIDDEN_MESSAGE
-                }).render().$el)
+                }).render().$el);
             }
         },
 
@@ -69,7 +70,7 @@ define([
             this.$notifications.append(new AlertView({
                 type: 'error',
                 message: App.config.i18n.FAILED_LOGIN
-            }).render().$el)
+            }).render().$el);
         }
     });
 

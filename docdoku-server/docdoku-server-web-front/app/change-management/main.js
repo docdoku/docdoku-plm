@@ -38,7 +38,7 @@ require.config({
         bootstrapSwitch: {deps: ['jquery'], exports: 'jQuery'},
         bootstrapDatepicker: {deps: ['jquery','bootstrap'], exports: 'jQuery'},
         backbone: {deps: ['underscore', 'jquery'],exports: 'Backbone'},
-        date_picker_lang: { deps: ['bootstrapDatepicker'], exports: 'jQuery'}
+        datePickerLang: { deps: ['bootstrapDatepicker'], exports: 'jQuery'}
     },
 
     paths: {
@@ -68,7 +68,7 @@ require.config({
         datatablesOsortExt: '../../js/utils/datatables.oSort.ext',
         utilsprototype: '../../js/utils/utils.prototype',
         inputValidity: '../../js/utils/input-validity',
-        date_picker_lang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr'
+        datePickerLang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr'
     },
 
     deps: [
@@ -85,7 +85,7 @@ require.config({
         'datatablesOsortExt',
         'utilsprototype',
         'inputValidity',
-        'date_picker_lang'
+        'datePickerLang'
     ],
     config: {
         i18n: {

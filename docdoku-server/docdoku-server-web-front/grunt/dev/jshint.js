@@ -8,8 +8,9 @@ module.exports = {
             all: {
                 src:[
                     'Gruntfile.js',
-                    'app/js/**/*.js',
+                    'app/**/*.js',
                     'tests/js/**/*.js',
+                    '!app/bower_components/**',
                     '!app/js/lib/**',
                     '!app/js/dmu/**'
                 ]

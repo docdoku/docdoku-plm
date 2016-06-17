@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global define,App,nv,d3,bytesToSize,diskUsageTooltip*/
 define([
     'backbone',
     'mustache',
@@ -9,9 +9,7 @@ define([
 
     var AdminDashboardView = Backbone.View.extend({
 
-        events: {
-
-        },
+        events: {},
 
         initialize: function () {
         },
@@ -24,7 +22,7 @@ define([
             Admin.getDiskSpaceUsageStats()
                 .then(this.constructDiskUsageChart.bind(this));
 
-            var onData = function(data){
+            var onData = function (data) {
                 return data;
             };
 
@@ -38,16 +36,16 @@ define([
             return this;
         },
 
-        constructDiskUsageChart:function(diskUsage){
+        constructDiskUsageChart: function (diskUsage) {
 
             var diskUsageData = [];
             var totalDiskUsage = 0;
 
-            for(var key in diskUsage){
+            for (var key in diskUsage) {
                 //if(diskUsage[key]){
-                    diskUsageData.push({key:key,y:diskUsage[key],f:bytesToSize(diskUsage[key])});
-                    totalDiskUsage+=diskUsage[key];
-               // }
+                diskUsageData.push({key: key, y: diskUsage[key], f: bytesToSize(diskUsage[key])});
+                totalDiskUsage += diskUsage[key];
+                // }
             }
 
             var $chart = this.$('#admin_disk_usage_chart');
@@ -57,22 +55,30 @@ define([
             $chart.find('svg')
                 .attr('width', '100%')
                 .attr('height', '100%')
-                .attr('viewBox','0 0 '+Math.min(width,height) +' '+Math.min(width,height) )
-                .attr('preserveAspectRatio','xMinYMin')
-                .attr('transform', 'translate(' + Math.min(width,height) / 2 + ',' + Math.min(width,height) / 2 + ')');
+                .attr('viewBox', '0 0 ' + Math.min(width, height) + ' ' + Math.min(width, height))
+                .attr('preserveAspectRatio', 'xMinYMin')
+                .attr('transform', 'translate(' + Math.min(width, height) / 2 + ',' + Math.min(width, height) / 2 + ')');
 
-            nv.addGraph(function() {
+            nv.addGraph(function () {
 
                 var chart;
 
                 chart = nv.models.pieChart()
-                    .x(function(d) { return d.key })
-                    .y(function(d) { return d.y})
+                    .x(function (d) {
+                        return d.key;
+                    })
+                    .y(function (d) {
+                        return d.y;
+                    })
                     .showLabels(false)
-                    .values(function(d) { return d })
+                    .values(function (d) {
+                        return d;
+                    })
                     .color(d3.scale.category10().range())
                     .donut(false)
-                    .tooltipContent(function(x, y, e, graph){return diskUsageTooltip(x, e.point.f)});
+                    .tooltipContent(function (x, y, e) {
+                        return diskUsageTooltip(x, e.point.f);
+                    });
 
                 d3.select('#admin_disk_usage_chart svg')
                     .datum([diskUsageData])
@@ -84,42 +90,46 @@ define([
             });
         },
 
-        constructEntitiesChart:function(usersStats, docsStats, productsStats, partsStats){
+        constructEntitiesChart: function (usersStats, docsStats, productsStats, partsStats) {
 
-            var usersData = [], docsData = [] , partsData = [], productsData = [];
+            var usersData = [], docsData = [], partsData = [], productsData = [];
 
             var total = 0;
-            var populate = function(stats, data){
-                for(var key in stats){
-                    if(stats[key]){
-                        usersData.push({key:key,y:stats[key]});
+            var populate = function (stats, data) {
+                for (var key in stats) {
+                    if (stats[key]) {
+                        data.push({key: key, y: stats[key]});
                         total++;
                     }
                 }
             };
 
-            populate(usersStats,usersData);
-            populate(docsStats,docsData);
-            populate(productsStats,productsData);
-            populate(partsStats,partsData);
+            populate(usersStats, usersData);
+            populate(docsStats, docsData);
+            populate(productsStats, productsData);
+            populate(partsStats, partsData);
 
-            if(total){
+            if (total) {
 
                 var $chart = this.$('#admin_users_chart');
                 var width = $chart.width();
                 var height = $chart.height();
                 $chart.find('svg')
-                    .attr("width", '100%')
-                    .attr("height", '100%')
-                    .attr('viewBox','0 0 '+Math.min(width,height) +' '+Math.min(width,height) )
-                    .attr('preserveAspectRatio','xMinYMin')
-                    .attr('transform', 'translate(' + Math.min(width,height) / 2 + ',' + Math.min(width,height) / 2 + ')');
+                    .attr('width', '100%')
+                    .attr('height', '100%')
+                    .attr('viewBox', '0 0 ' + Math.min(width, height) + ' ' + Math.min(width, height))
+                    .attr('preserveAspectRatio', 'xMinYMin')
+                    .attr('transform', 'translate(' + Math.min(width, height) / 2 + ',' + Math.min(width, height) / 2 + ')');
 
 
-                nv.addGraph(function() {
+                nv.addGraph(function () {
                     var chart = nv.models.multiBarHorizontalChart()
-                        .x(function(d) { return d.key })
-                        .y(function(d) { return d.y })
+                        .x(function (d) {
+                            return d.key;
+                        })
+                        .y(function (d) {
+                            return d.y;
+                        })
                         .showValues(true)
                         .tooltips(false)
                         .showControls(true);
@@ -129,10 +139,10 @@ define([
 
                     d3.select('#admin_users_chart svg')
                         .datum([
-                            {key:App.config.i18n.USERS,values:usersData},
-                            {key:App.config.i18n.PRODUCTS,values:productsData},
-                            {key:App.config.i18n.PARTS,values:partsData},
-                            {key:App.config.i18n.DOCUMENTS,values:docsData}
+                            {key: App.config.i18n.USERS, values: usersData},
+                            {key: App.config.i18n.PRODUCTS, values: productsData},
+                            {key: App.config.i18n.PARTS, values: partsData},
+                            {key: App.config.i18n.DOCUMENTS, values: docsData}
                         ])
                         .transition().duration(500)
                         .call(chart);

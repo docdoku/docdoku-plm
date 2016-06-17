@@ -34,9 +34,9 @@ define([
                 workspaceId:App.config.workspaceId,
                 i18n: App.config.i18n,
                 isCreation: window.location.hash === '#/create',
-                isEdition: window.location.hash.match(isEditionRegex) != null,
-                isUsers: window.location.hash.match(isUsersRegex) != null,
-                isDashboard: window.location.hash.match(isDashboardRegex) != null,
+                isEdition: window.location.hash.match(isEditionRegex) !== null,
+                isUsers: window.location.hash.match(isUsersRegex) !== null,
+                isDashboard: window.location.hash.match(isDashboardRegex) !== null,
             })).show();
             return this;
         },

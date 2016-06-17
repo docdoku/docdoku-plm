@@ -45,7 +45,7 @@ define([
             _.each(lastIteration.attachedFiles,function(file){
                 var url = App.config.contextPath+'/api/viewer?';
                 if(uuid){
-                    url+= 'uuid=' + encodeURIComponent(uuid) + '&'
+                    url+= 'uuid=' + encodeURIComponent(uuid) + '&';
                 }
                 $.get(url+'fileName='+encodeURIComponent(file)).then(function(data){
                     _this.$accordion.append(data);

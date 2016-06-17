@@ -49,19 +49,19 @@ define([
         },
 
         onSharedEntityError:function(err){
-            if(err.status == 404){
+            if(err.status === 404){
                 this.$el.html(new NotFoundView().render(err).$el);
             }
-            else if(err.status == 403 && err.getResponseHeader('Reason-Phrase') === 'password-protected'){
+            else if(err.status === 403 && err.getResponseHeader('Reason-Phrase') === 'password-protected'){
                 this.promptSharedEntityPassword();
             }
         },
 
         onError:function(err){
-            if(err.status == 404){
+            if(err.status === 404){
                 this.$el.html(new NotFoundView().render(err).$el);
             }
-            else if(err.status == 403 || err.status === 401){
+            else if(err.status === 403 || err.status === 401){
                 window.location.href = App.config.contextPath + '/?denied=true&originURL=' + encodeURIComponent(window.location.pathname + window.location.hash);
             }
         },

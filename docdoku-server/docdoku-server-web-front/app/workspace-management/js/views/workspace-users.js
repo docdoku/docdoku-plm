@@ -108,7 +108,7 @@ define([
                 var memberId = e.target.dataset.memberId;
                 var fullAccess = data.value;
                 Workspace.setGroupAccess(App.config.workspaceId,{memberId:memberId,readOnly:!fullAccess})
-                    .then(function(){console.log('changed ok')},_this.onError.bind(_this));
+                    .then(function(){},_this.onError.bind(_this));
             });
         },
 
@@ -120,7 +120,7 @@ define([
                 var login = e.target.dataset.login;
                 var fullAccess = data.value;
                 Workspace.setUsersMembership(App.config.workspaceId,{login:login,membership:fullAccess?'FULL_ACCESS':'READ_ONLY'})
-                    .then(function(){console.log('changed ok')},_this.onError.bind(_this));
+                    .then(function(){},_this.onError.bind(_this));
             });
         },
 
@@ -245,8 +245,7 @@ define([
                 .then(this.render.bind(this), this.onError.bind(this));
         },
 
-        toggleCheckboxChange:function(e){
-            console.log('change ' + e.target)
+        toggleCheckboxChange:function(){
         },
 
         toggleCheckbox:function(e){

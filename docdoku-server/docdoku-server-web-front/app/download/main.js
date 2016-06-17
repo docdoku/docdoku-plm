@@ -71,7 +71,7 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
                 App.appView = new AppView().render();
                 App.headerView = new HeaderView().render();
             });
-        }
+        };
         ContextResolver.resolveServerProperties()
             .then(ContextResolver.resolveAccount)
             .then(function(){

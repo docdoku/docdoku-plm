@@ -41,11 +41,11 @@ define([
                 }));
                 _this.$notifications = _this.$('.notifications');
                 _this.$('#account-language option').each(function(){
-                    $(this).attr('selected', $(this).val() === App.config.account.language)
+                    $(this).attr('selected', $(this).val() === App.config.account.language);
                     $(this).text(App.config.i18n.LANGUAGES[$(this).val()]);
                 });
                 _this.$('#account-timezone option').each(function(){
-                    $(this).attr('selected', $(this).val() === App.config.account.timeZone)
+                    $(this).attr('selected', $(this).val() === App.config.account.timeZone);
                 });
 
             });
@@ -107,7 +107,7 @@ define([
 
         updatePattern:function(){
             this.$('#account-confirm-password').removeAttr('pattern');
-            this.$('#account-confirm-password').attr('pattern',this.$('#account-password').val())
+            this.$('#account-confirm-password').attr('pattern',this.$('#account-password').val());
         },
 
         logout:function(){

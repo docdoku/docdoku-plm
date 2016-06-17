@@ -1,4 +1,4 @@
-/*global define,THREE,requestAnimationFrame,_,$*/
+/*global define,App,THREE,requestAnimationFrame,_,$*/
 define(function () {
 
     'use strict';

@@ -1,4 +1,4 @@
-/*global define,THREE,requestAnimationFrame,_,$*/
+/*global define,App,THREE,requestAnimationFrame,_*/
 define([
     'backbone',
     'mustache',
@@ -18,6 +18,7 @@ define([
 
             var extension = fileName.substr(fileName.lastIndexOf('.') + 1).toLowerCase();
             var texturePath = fileName.substring(0, fileName.lastIndexOf('/'));
+            var width, height;
 
             if(uuid){
                 fileName += '/uuid/'+uuid;
@@ -32,16 +33,6 @@ define([
 
             var $container = this.$('#cad-file');
 
-            var width = calculateWith();
-            var height = calculateHeight();
-
-            var scene = new THREE.Scene();
-            var camera = new THREE.PerspectiveCamera(45, width / height, App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
-            var control;
-            var renderer = new THREE.WebGLRenderer({alpha: true});
-
-
-
             function calculateWith(){
                 var max = $container.innerWidth() - 20;
                 return max > 10 ? max : 10;
@@ -51,10 +42,18 @@ define([
                 var fit = width / 16 * 9;
                 var max = window.innerHeight - 340;
                 if(max <= 10){
-                    max = 10
+                    max = 10;
                 }
                 return fit < max ? fit : max;
             }
+
+            width = calculateWith();
+            height = calculateHeight();
+
+            var scene = new THREE.Scene();
+            var camera = new THREE.PerspectiveCamera(45, width / height, App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
+            var control;
+            var renderer = new THREE.WebGLRenderer({alpha: true});
 
             function addLightsToCamera(camera) {
                 var dirLight1 = new THREE.DirectionalLight(App.SceneOptions.cameraLight1Color);
@@ -163,7 +162,7 @@ define([
             }
 
             function handleResize() {
-                width = calculateWith();;
+                width = calculateWith();
                 height = calculateHeight();
                 camera.aspect = width / height;
                 camera.updateProjectionMatrix();

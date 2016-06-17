@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global define,App,confirm*/
 define([
     'backbone',
     'mustache',

@@ -34,7 +34,7 @@ require.config({
         bootbox: { deps: ['jquery'], exports: 'jQuery' },
         datatables:{ deps: ['jquery'], exports: 'jQuery' },
         backbone: {deps: ['underscore', 'jquery'],exports: 'Backbone'},
-        bootstrapCombobox:{deps:["jquery"],exports:"jQuery"},
+        bootstrapCombobox:{deps:['jquery'],exports:'jQuery'},
         bootstrapSwitch:{deps:['jquery'],exports:'jQuery'},
         bootstrapDatepicker: {deps: ['jquery','bootstrap'], exports: 'jQuery'},
         unmask: { deps: ['jquery'], exports: 'jQuery' },
@@ -42,7 +42,7 @@ require.config({
         inputValidity: { deps: ['jquery'], exports: 'jQuery' },
         'query-builder': { deps: ['jquery'], exports: 'jQuery' },
         selectize: { deps: ['jquery'], exports: 'jQuery' },
-        date_picker_lang: { deps: ['bootstrapDatepicker'], exports: 'jQuery'}
+        datePickerLang: { deps: ['bootstrapDatepicker'], exports: 'jQuery'}
     },
     paths: {
         jquery: '../../bower_components/jquery/jquery',
@@ -78,7 +78,7 @@ require.config({
         'query-builder': '../../bower_components/jQuery-QueryBuilder/dist/js/query-builder.standalone',
         'query-builder-options': '../../js/utils/query-builder-options',
         selectize: '../../bower_components/selectize/dist/js/standalone/selectize',
-        date_picker_lang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr'
+        datePickerLang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr'
     },
 
     deps:[
@@ -99,7 +99,7 @@ require.config({
         'inputValidity',
         'query-builder',
         'selectize',
-        'date_picker_lang'
+        'datePickerLang'
     ],
     config: {
         i18n: {

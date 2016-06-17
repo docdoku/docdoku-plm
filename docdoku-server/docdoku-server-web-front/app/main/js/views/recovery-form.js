@@ -1,3 +1,4 @@
+/*global App*/
 define([
     'backbone',
     'mustache',
@@ -53,8 +54,8 @@ define([
 
         onError:function(err){
             this.$notifications.append(new AlertView({
-                    type: 'error',
-                    message: err.responseText
+                type: 'error',
+                message: err.responseText
             }).render().$el);
 
             this.$('#recovery_form-login').prop('disabled', false);
