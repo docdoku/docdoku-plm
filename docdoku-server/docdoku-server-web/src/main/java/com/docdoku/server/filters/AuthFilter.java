@@ -203,6 +203,8 @@ public class AuthFilter implements Filter {
             String[] splitCredentials = credentials.split(":");
             String userLogin = splitCredentials[0];
             String userPassword = splitCredentials[1];
+            // Recreate session will transmit JSESSIONID in headers
+            httpRequest.getSession(true);
             httpRequest.login(userLogin, userPassword);
             chain.doFilter(pRequest,response);
         }
