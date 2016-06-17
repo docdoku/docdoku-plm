@@ -73,6 +73,7 @@ public interface IProductManagerLocal {
 
     void removeFileInPartIteration(PartIterationKey pPartIPK, String pSubType, String pName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, FileNotFoundException;
 
+    void setPublicSharedPart(PartRevisionKey pPartRPK, boolean isPublicShared) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException;
     /**
      * Returns the BinaryResource object given his Id. WARNING: You have to check access right before use it.
      *

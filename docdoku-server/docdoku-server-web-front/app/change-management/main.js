@@ -1,7 +1,7 @@
 /*global _,require,window*/
 var workspace = /^#([^\/]+)/.exec(window.location.hash);
 if(!workspace){
-    location.href = '../faces/admin/workspace/workspacesMenu.xhtml';
+    location.href = '../404?url='+window.location.href;
     throw new Error('Cannot parse workspace in url');
 }
 var App = {
@@ -11,7 +11,8 @@ var App = {
 		login: '',
 		groups: [],
 		contextPath: '',
-		locale: window.localStorage.getItem('locale') || 'en'
+		locale: window.localStorage.getItem('locale') || 'en',
+        needAuthentication:true
 	}
 };
 
@@ -24,7 +25,7 @@ App.log=function(message){
 
 require.config({
 
-    baseUrl: '../js/change-management',
+    baseUrl: 'js',
 
     shim: {
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
@@ -58,15 +59,15 @@ require.config({
         unorm:'../../bower_components/unorm/lib/unorm',
         moment:'../../bower_components/moment/min/moment-with-locales',
         momentTimeZone:'../../bower_components/moment-timezone/builds/moment-timezone-with-data',
-        localization: '../localization',
-        modules: '../modules',
-        'common-objects': '../common-objects',
-        userPopover: 'modules/user-popover-module/app',
-        effects: '../utils/effects',
-        popoverUtils: '../utils/popover.utils',
-        datatablesOsortExt: '../utils/datatables.oSort.ext',
-        utilsprototype: '../utils/utils.prototype',
-        inputValidity: '../utils/input-validity',
+        localization: '../../js/localization',
+        modules: '../../js/modules',
+        'common-objects': '../../js/common-objects',
+        userPopover: '../../js/modules/user-popover-module/app',
+        effects: '../../js//utils/effects',
+        popoverUtils: '../../js/utils/popover.utils',
+        datatablesOsortExt: '../../js/utils/datatables.oSort.ext',
+        utilsprototype: '../../js/utils/utils.prototype',
+        inputValidity: '../../js/utils/input-validity',
         date_picker_lang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr'
     },
 
@@ -105,13 +106,18 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
 function (ContextResolver,  commonStrings, changeManagementStrings) {
     'use strict';
 	App.config.i18n = _.extend(commonStrings,changeManagementStrings);
-    ContextResolver.resolveUser(function(){
-        require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
-            App.appView = new AppView().render();
-            App.headerView = new HeaderView().render();
-            App.router = Router.getInstance();
-            App.coworkersView = new Modules.CoWorkersAccessModuleView().render();
-            Backbone.history.start();
+    ContextResolver.resolveServerProperties()
+        .then(ContextResolver.resolveAccount)
+        .then(ContextResolver.resolveWorkspaces)
+        .then(ContextResolver.resolveGroups)
+        .then(ContextResolver.resolveUser)
+        .then(function(){
+            require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
+                App.appView = new AppView().render();
+                App.headerView = new HeaderView().render();
+                App.router = Router.getInstance();
+                App.coworkersView = new Modules.CoWorkersAccessModuleView().render();
+                Backbone.history.start();
+            });
         });
-    });
 });

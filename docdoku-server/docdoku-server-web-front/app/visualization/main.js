@@ -8,7 +8,8 @@ var App = {
 		login: '',
 		groups: [],
 		contextPath: '',
-		locale: window.localStorage.getItem('locale') || 'en'
+		locale: window.localStorage.getItem('locale') || 'en',
+        needAuthentication:true
 	},
 
     WorkerManagedValues: {
@@ -66,7 +67,7 @@ App.log=function(message,colorType){
 };
 
 require.config({
-    baseUrl: '../js/product-structure',
+    baseUrl: '../product-structure/js',
     shim: {
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
         bootstrap: { deps: ['jquery', 'jqueryUI'], exports: 'jQuery' },
@@ -95,21 +96,21 @@ require.config({
         tween:'../../bower_components/tweenjs/src/Tween',
         date:'../../bower_components/date.format/date.format',
         dat:'../../bower_components/dat.gui/dat.gui',
-        localization: '../localization',
+        localization: '../../js/localization',
         moment:'../../bower_components/moment/min/moment-with-locales',
         momentTimeZone:'../../bower_components/moment-timezone/builds/moment-timezone-with-data',
-        'common-objects': '../common-objects',
-        pointerlockcontrols: 'dmu/controls/PointerLockControls',
-        trackballcontrols: 'dmu/controls/TrackballControls',
-        orbitcontrols: 'dmu/controls/OrbitControls',
-        binaryloader: 'dmu/loaders/BinaryLoader',
-        colladaloader: 'dmu/loaders/ColladaLoader',
-        buffergeometryutils: 'dmu/utils/BufferGeometryUtils',
-        stlloader: 'dmu/loaders/STLLoader',
-        objloader: 'dmu/loaders/OBJLoader',
-        mtlloader: 'dmu/loaders/MTLLoader',
-        stats:'dmu/utils/Stats',
-        utilsprototype:'../utils/utils.prototype'
+        'common-objects': '../../js/common-objects',
+        pointerlockcontrols: '../../js/dmu/controls/PointerLockControls',
+        trackballcontrols: '../../js/dmu/controls/TrackballControls',
+        orbitcontrols: '../../js/dmu/controls/OrbitControls',
+        binaryloader: '../../js/dmu/loaders/BinaryLoader',
+        colladaloader: '../../js/dmu/loaders/ColladaLoader',
+        buffergeometryutils: '../../js/dmu/utils/BufferGeometryUtils',
+        stlloader: '../../js/dmu/loaders/STLLoader',
+        objloader: '../../js/dmu/loaders/OBJLoader',
+        mtlloader: '../../js/dmu/loaders/MTLLoader',
+        stats:'../../js/dmu/utils/Stats',
+        utilsprototype:'../../js/utils/utils.prototype'
     },
 
     deps: [
@@ -147,14 +148,19 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
 function (ContextResolver,  commonStrings, productStructureStrings) {
     'use strict';
     App.config.i18n = _.extend(commonStrings,productStructureStrings);
-    ContextResolver.resolveUser(function(){
-        require(['backbone', 'frameRouter', 'dmu/SceneManager','dmu/InstancesManager'],function(Backbone,  Router,SceneManager,InstancesManager){
-            App.$SceneContainer = $('div#frameWorkspace');
-            App.instancesManager = new InstancesManager();
-            App.sceneManager = new SceneManager();
-            App.sceneManager.init();
-            App.router = Router.getInstance();
-            Backbone.history.start();
+    ContextResolver.resolveServerProperties()
+        .then(ContextResolver.resolveAccount)
+        .then(ContextResolver.resolveWorkspaces)
+        .then(ContextResolver.resolveGroups)
+        .then(ContextResolver.resolveUser)
+        .then(function(){
+            require(['backbone', 'frameRouter', 'dmu/SceneManager','dmu/InstancesManager'],function(Backbone,  Router,SceneManager,InstancesManager){
+                App.$SceneContainer = $('div#frameWorkspace');
+                App.instancesManager = new InstancesManager();
+                App.sceneManager = new SceneManager();
+                App.sceneManager.init();
+                App.router = Router.getInstance();
+                Backbone.history.start();
+            });
         });
-    });
 });

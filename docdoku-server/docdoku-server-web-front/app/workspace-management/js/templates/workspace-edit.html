@@ -1,0 +1,55 @@
+<div class="actions well">
+    <button class="btn btn-default workspace-management" title="{{i18n.CANCEL}}">
+        {{i18n.CANCEL}}
+    </button>
+    <button class="btn btn-warning delete-workspace" title="{{i18n.DELETE}}">
+        {{i18n.DELETE}}
+    </button>
+</div>
+<div class="notifications"></div>
+<div class="margin">
+    <h3>{{i18n.EDIT_WORKSPACE_SUBTITLE}}</h3>
+
+    <form id="workspace_update_form" class="form-horizontal">
+
+        <div class="control-group hide success-update">
+            <div class="controls">
+                <h4 class="">
+                <i class="fa fa-save"></i> {{i18n.SAVED}}
+            </h4>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label"> {{i18n.WORKSPACE}}</label>
+            <div class="controls">
+                {{workspace.id}}
+            </div>
+        </div>
+
+
+        <div class="control-group">
+            <label class="control-label" for="description"> {{i18n.DESCRIPTION}}</label>
+            <div class="controls">
+                <textarea id="description" placeholder="Description" rows="3">{{workspace.description}}</textarea>
+            </div>
+        </div>
+
+        <div class="control-group" id="inputPartNumberWrapper">
+            <label class="control-label">{{i18n.OPTIONS}}</label>
+            <div class="controls">
+                <label class="checkbox" for="folderLocked">
+                    <input id="folderLocked" type="checkbox" name="folderLocked" title="{{i18n.FOLDER_LOCKED}}" {{#workspace.folderLocked}}checked{{/workspace.folderLocked}}/>
+                    {{i18n.FOLDER_LOCKED}}
+                </label>
+            </div>
+
+        </div>
+
+        <div class="actions-btn">
+            <div class="controls">
+                <input type="submit" value="{{i18n.SAVE}}" alt="{{i18n.SAVE}}" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>

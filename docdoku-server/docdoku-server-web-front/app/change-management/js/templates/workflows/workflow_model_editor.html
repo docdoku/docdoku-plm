@@ -1,0 +1,39 @@
+<div class="actions well">
+    <input  id="workflow-name" type="text" placeholder="{{i18n.WORKFLOW_NAME_PLACEHOLDER}}"
+            {{#workflowId}}value="{{workflowId}}"  readonly {{/workflowId}} {{^workflowId}}autofocus required{{/workflowId}}/>
+    <button id="cancel-workflow" class="btn btn-default">
+        {{i18n.CANCEL}}
+    </button>
+    <button id="save-workflow" class="btn btn-primary">
+        {{#workflowId}}{{i18n.SAVE}}{{/workflowId}}
+        {{^workflowId}}{{i18n.CREATE}}{{/workflowId}}
+    </button>
+    {{#workflowId}}
+    <button id="copy-workflow" class="btn btn-default" title="{{i18n.DUPLICATE_WORKFLOW}}">
+        <i class="fa fa-files-o"></i>
+    </button>
+    {{/workflowId}}
+</div>
+<div class="notifications"></div>
+<div id="workflow-editor">
+    <ul id="activity-list">
+        <li class="section">
+            <div id="start">
+                <i class="fa fa-circle-o"></i>
+                <input type="text" value="{{i18n.START}}" disabled>
+            </div>
+        </li>
+        <li id="add-activity-section" class="section">
+            <button id="add-activity" title="{{i18n.ADD_ACTIVITY}}">
+                <i class="fa fa-plus"></i>
+            </button>
+        </li>
+        <li class="section">
+            <div id="end">
+                <i class="fa fa-circle"></i>
+                <input id="final-state" type="text" placeholder="{{i18n.FINAL_STATE_PLACEHOLDER}}"
+                       value="{{workflow.finalLifeCycleState}}"/>
+            </div>
+        </li>
+    </ul>
+</div>

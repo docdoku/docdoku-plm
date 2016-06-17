@@ -1,7 +1,7 @@
 /*global _,require,window*/
 var workspace = /^#([^\/]+)/.exec(window.location.hash);
 if(!workspace){
-    location.href = '../faces/admin/workspace/workspacesMenu.xhtml';
+    location.href = '../404?url='+window.location.href;
     throw new Error('Cannot parse workspace in url');
 }
 var App = {
@@ -11,7 +11,8 @@ var App = {
 		login: '',
 		groups: [],
 		contextPath: '',
-		locale: window.localStorage.getItem('locale') || 'en'
+		locale: window.localStorage.getItem('locale') || 'en',
+        needAuthentication:true
 	}
 };
 
@@ -25,7 +26,7 @@ App.log=function(message){
 
 require.config({
 
-    baseUrl: '../js/document-management',
+    baseUrl: 'js',
 
     shim: {
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
@@ -62,16 +63,16 @@ require.config({
         unorm:'../../bower_components/unorm/lib/unorm',
         moment:'../../bower_components/moment/min/moment-with-locales',
         momentTimeZone:'../../bower_components/moment-timezone/builds/moment-timezone-with-data',
-        unmaskConfig:'../utils/jquery.maskedinput-config',
-        localization: '../localization',
-        modules: '../modules',
-        'common-objects': '../common-objects',
-        effects: '../utils/effects',
-        popoverUtils: '../utils/popover.utils',
-        inputValidity: '../utils/input-validity',
-        datatablesOsortExt: '../utils/datatables.oSort.ext',
-        utilsprototype: '../utils/utils.prototype',
-        userPopover: 'modules/user-popover-module/app',
+        unmaskConfig:'../../js/utils/jquery.maskedinput-config',
+        localization: '../../js/localization',
+        modules: '../../js/modules',
+        'common-objects': '../../js/common-objects',
+        effects: '../../js/utils/effects',
+        popoverUtils: '../../js/utils/popover.utils',
+        inputValidity: '../../js/utils/input-validity',
+        datatablesOsortExt: '../../js/utils/datatables.oSort.ext',
+        utilsprototype: '../../js/utils/utils.prototype',
+        userPopover: '../../js/modules/user-popover-module/app',
         async: '../../bower_components/async/lib/async',
         date_picker_lang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr'
     },
@@ -113,7 +114,13 @@ function (ContextResolver,  commonStrings, documentManagementStrings) {
 
     App.config.i18n = _.extend(commonStrings,documentManagementStrings);
 
-    ContextResolver.resolveUser(function(){
+
+    ContextResolver.resolveServerProperties()
+        .then(ContextResolver.resolveAccount)
+        .then(ContextResolver.resolveWorkspaces)
+        .then(ContextResolver.resolveGroups)
+        .then(ContextResolver.resolveUser)
+        .then(function buildView(){
         require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules,date_picker_lang){
             App.appView = new AppView().render();
             App.headerView = new HeaderView().render();

@@ -1,7 +1,7 @@
 /*global _,require,window*/
 var workspace = /^#([^\/]+)/.exec(window.location.hash);
 if(!workspace){
-    location.href = '../faces/admin/workspace/workspacesMenu.xhtml';
+    location.href = '../404?url='+window.location.href;
     throw new Error('Cannot parse workspace in url');
 }
 
@@ -24,7 +24,8 @@ var App = {
 		login: '',
 		groups: [],
 		contextPath: '',
-		locale: window.localStorage.getItem('locale') || 'en'
+		locale: window.localStorage.getItem('locale') || 'en',
+        needAuthentication:true
 	},
 
     WorkerManagedValues: {
@@ -82,7 +83,7 @@ App.log=function(message,colorType){
 };
 
 require.config({
-    baseUrl: '../js/product-structure',
+    baseUrl: 'js',
     shim: {
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
         effects: { deps: ['jquery'], exports: 'jQuery' },
@@ -130,27 +131,27 @@ require.config({
         bootstrapDatepicker:'../../bower_components/bootstrap-datepicker/js/bootstrap-datepicker',
         date:'../../bower_components/date.format/date.format',
         dat:'../../bower_components/dat.gui/dat.gui',
-        localization: '../localization',
-        modules: '../modules',
-        'common-objects': '../common-objects',
-        userPopover:'modules/user-popover-module/app',
-        effects:'../utils/effects',
-        popoverUtils: '../utils/popover.utils',
-        inputValidity: '../utils/input-validity',
-        datatablesOsortExt: '../utils/datatables.oSort.ext',
-        utilsprototype:'../utils/utils.prototype',
-        pointerlockcontrols:'dmu/controls/PointerLockControls',
-        trackballcontrols:'dmu/controls/TrackballControls',
-        orbitcontrols:'dmu/controls/OrbitControls',
-        transformcontrols:'dmu/controls/TransformControls',
-        binaryloader:'dmu/loaders/BinaryLoader',
-        colladaloader:'dmu/loaders/ColladaLoader',
-        stlloader:'dmu/loaders/STLLoader',
-        objloader:'dmu/loaders/OBJLoader',
-        mtlloader:'dmu/loaders/MTLLoader',
-        buffergeometryutils: 'dmu/utils/BufferGeometryUtils',
-        stats:'dmu/utils/Stats',
-        typeface:'../lib/helvetiker_regular.typeface',
+        localization: '../../js/localization',
+        modules: '../../js/modules',
+        'common-objects': '../../js/common-objects',
+        userPopover:'../../js/modules/user-popover-module/app',
+        effects:'../../js/utils/effects',
+        popoverUtils: '../../js/utils/popover.utils',
+        inputValidity: '../../js/utils/input-validity',
+        datatablesOsortExt: '../../js/utils/datatables.oSort.ext',
+        utilsprototype:'../../js/utils/utils.prototype',
+        pointerlockcontrols:'../../js/dmu/controls/PointerLockControls',
+        trackballcontrols:'../../js/dmu/controls/TrackballControls',
+        orbitcontrols:'../../js/dmu/controls/OrbitControls',
+        transformcontrols:'../../js/dmu/controls/TransformControls',
+        binaryloader:'../../js/dmu/loaders/BinaryLoader',
+        colladaloader:'../../js/dmu/loaders/ColladaLoader',
+        stlloader:'../../js/dmu/loaders/STLLoader',
+        objloader:'../../js/dmu/loaders/OBJLoader',
+        mtlloader:'../../js/dmu/loaders/MTLLoader',
+        buffergeometryutils: '../../js/dmu/utils/BufferGeometryUtils',
+        stats:'../../js/dmu/utils/Stats',
+        typeface:'../../js//lib/helvetiker_regular.typeface',
         selectize: '../../bower_components/selectize/dist/js/standalone/selectize',
         date_picker_lang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr'
     },
@@ -205,14 +206,19 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
     function (ContextResolver,  commonStrings, productStructureStrings) {
 	    'use strict';
         App.config.i18n = _.extend(commonStrings,productStructureStrings);
-        ContextResolver.resolveUser(function(){
-            require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
-                App.appView = new AppView().render();
-                App.headerView = new HeaderView().render();
-                App.router = Router.getInstance();
-                App.coworkersView = new Modules.CoWorkersAccessModuleView().render();
-                Backbone.history.start();
-                App.appView.initModules();
+        ContextResolver.resolveServerProperties()
+            .then(ContextResolver.resolveAccount)
+            .then(ContextResolver.resolveWorkspaces)
+            .then(ContextResolver.resolveGroups)
+            .then(ContextResolver.resolveUser)
+            .then(function(){
+                require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
+                    App.appView = new AppView().render();
+                    App.headerView = new HeaderView().render();
+                    App.router = Router.getInstance();
+                    App.coworkersView = new Modules.CoWorkersAccessModuleView().render();
+                    Backbone.history.start();
+                    App.appView.initModules();
+                });
             });
-        });
     });

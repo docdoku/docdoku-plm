@@ -1,68 +1,86 @@
 /*global _,$,define,App*/
 define([
     'common-objects/models/user',
-    'common-objects/models/workspace',
-    'common-objects/views/forbidden'
-], function (User, Workspace, ForbiddenView) {
+    'common-objects/models/workspace'
+
+], function (User, Workspace) {
 
     'use strict';
+
 
     var ContextResolver = function () {
     };
 
+
     $.ajaxSetup({
+        beforeSend: function(xhr) {
+            if(localStorage.jwt){
+                xhr.setRequestHeader('Authorization', 'Bearer '+ localStorage.jwt);
+            }
+        },
         statusCode: {
             401: function(){
-                window.location.href = App.config.contextPath + '/faces/login.xhtml?originURL=' + window.location.pathname + window.location.hash;
+                delete localStorage.jwt;
+                if(App.config.needAuthentication){
+                    window.location.href = App.config.contextPath + '/?denied=true&originURL=' + encodeURIComponent(window.location.pathname + window.location.hash);
+                }
             }
         }
     });
 
-    ContextResolver.prototype.resolveUser = function (success) {
-        $.getJSON('../server.properties.json').success(function (properties) {
+    function onError(res) {
+        return res;
+    }
 
+    ContextResolver.prototype.resolveServerProperties = function(){
+        return $.getJSON('../webapp.properties.json').then(function (properties) {
             App.config.contextPath = properties.contextRoot;
+        },onError);
+    };
 
-            User.whoami(App.config.workspaceId, function (user, groups) {
-                Workspace.getWorkspaces(function (workspaces) {
+    ContextResolver.prototype.resolveAccount = function(){
+        return User.getAccount().then(function(account){
+            App.config.connected = true;
+            App.config.account = account;
+            App.config.login = account.login;
+            App.config.userName = account.name;
+            App.config.timeZone = account.timeZone;
+            App.config.admin = account.admin;
 
-                    App.config.login = user.login;
-                    App.config.userName = user.name;
-                    App.config.timeZone = user.timeZone;
-                    App.config.groups = groups;
-                    App.config.workspaces = workspaces;
-                    App.config.workspaceAdmin = _.select(App.config.workspaces.administratedWorkspaces, function (workspace) {
-                        return workspace.id === App.config.workspaceId;
-                    }).length === 1;
+            if(window.localStorage.locale === 'unset'){
+                window.localStorage.locale = account.language || 'en';
+                window.location.reload();
+            }else{
+                window.localStorage.locale = account.language || 'en';
+            }
 
-                    if(window.localStorage.locale === 'unset'){
-                        window.localStorage.locale = user.language || 'en';
-                        window.location.reload();
-                        return;
-                    }else{
-                        window.localStorage.locale = user.language || 'en';
-                    }
+            return account;
+        },onError);
+    };
 
-                    success();
-                });
-            }, function (res) {
-
-                // Connected but no access to given workspace
-                if(res.status === 403){
-                    var forbiddenView = new ForbiddenView().render();
-                    document.body.appendChild(forbiddenView.el);
-                    forbiddenView.openModal();
-                }
-                // Connected but the workspace doesn't exist
-                else if(res.status === 404){
-                    window.location.href = App.config.contextPath + '/faces/admin/workspace/workspacesMenu.xhtml';
-                }
-                // However, for dev purposes, if we catch an error, we just reset the url. Should happen only in dev env.
-                else{
-                    window.location.href = App.config.contextPath + '/faces/admin/workspace/workspacesMenu.xhtml';
-                }
+    ContextResolver.prototype.resolveWorkspaces = function () {
+        return Workspace.getWorkspaces().then(function (workspaces) {
+            App.config.workspaces = workspaces;
+            App.config.workspaceAdmin = _.findWhere(App.config.workspaces.administratedWorkspaces,{id:App.config.workspaceId}) !== undefined;
+            App.config.workspaces.nonAdministratedWorkspaces = _.reject(App.config.workspaces.allWorkspaces,function(workspace){
+                return _.contains(_.pluck(App.config.workspaces.administratedWorkspaces,'id'),workspace.id);
             });
-        });
+            return workspaces;
+        },onError);
+    };
+
+    ContextResolver.prototype.resolveGroups = function () {
+        return User.getGroups(App.config.workspaceId)
+            .then(function(groups){
+                App.config.groups = groups;
+            },onError);
+    };
+
+    ContextResolver.prototype.resolveUser = function () {
+        return User.whoami(App.config.workspaceId)
+            .then(function(user){
+                App.config.user = user;
+            },onError);
     };
 
     return new ContextResolver();

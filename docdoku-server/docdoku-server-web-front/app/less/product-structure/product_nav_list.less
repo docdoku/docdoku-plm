@@ -1,200 +1,199 @@
 #product_nav_list {
 
-  min-width: 500px;
+    min-width: 500px;
 
-    &.displayComment{
-        .fa-quote-right{
+    &.displayComment {
+        .fa-quote-right {
             opacity: 1;
         }
     }
 
-    .fa-quote-right{
-        color : green;
+    .fa-quote-right {
+        color: green;
         opacity: 0.5;
     }
-    .fa-refresh{
-         color : green;
+    .fa-refresh {
+        color: green;
     }
 
-    .fa-arrows-h{
+    .fa-arrows-h {
         padding-right: 5px;
     }
 
-    .fa-question{
+    .fa-question {
         padding-right: 5px;
     }
 
-    .fa-random{
+    .fa-random {
         padding-right: 5px;
     }
 
-  #product_title {
+    #product_title {
 
-    background: none;
-    font-weight: bold;
-    cursor: pointer;
-    line-height: 18px;
-    color: #434C64;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-    padding-top: 6px;
-
-    img.loader{
-      display:none;
-      height: 13px;
-    }
-
-    i {
-      margin-top: 3px;
-      margin-left: 5px;
-
-    }
-
-      .product_title{
-
-          padding-left: 5px;
-          padding-right: 2px;
-
-          &.active{
-              background-color: #CFD7E4;
-          }
-
-      }
-  }
-
-  .fa-cogs {
-    font-size: 15px;
-  }
-  .fa-cog {
-    font-size: 10px;
-  }
-
-  ul {
-    background-color: transparent;
-    margin-top: 0;
-
-    li {
-      margin-left: 0px;
-      width: 100%;
-
-      a {
-        display: inline-block;
+        background: none;
+        font-weight: bold;
         cursor: pointer;
+        line-height: 18px;
+        color: #434C64;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+        padding-top: 6px;
 
-        label {
-          color: #434C64;
-          font-size: 12px;
-          text-shadow: 0px 1px 0px white;
+        img.loader {
+            display: none;
+            height: 13px;
         }
 
         i {
-          background-image: none;
-        }
-
-        &:hover {
-          text-decoration: none;
-        }
-
-        label {
-          margin: 0;
-
-          &:hover {
-            background-color: #CFD7E4;
-          }
+            margin-top: 3px;
+            margin-left: 5px;
 
         }
-      }
 
-      &.resultPath {
-        >a>label {
-          background: #fc6;
+        .product_title {
+
+            padding-left: 5px;
+            padding-right: 2px;
+
+            &.active {
+                background-color: #CFD7E4;
+            }
+
         }
-      }
+    }
 
-      &.active {
-        >a>label {
-          text-shadow: 0px 1px 0px white;
-          color: #434C64;
-          background-color: #CFD7E4;
+    .fa-cogs {
+        font-size: 15px;
+    }
+    .fa-cog {
+        font-size: 10px;
+    }
+
+    ul {
+        background-color: transparent;
+        margin-top: 0;
+
+        li {
+            margin-left: 0px;
+            width: 100%;
+
+            a {
+                display: inline-block;
+                cursor: pointer;
+
+                label {
+                    color: #434C64;
+                    font-size: 12px;
+                    text-shadow: 0px 1px 0px white;
+                }
+
+                i {
+                    background-image: none;
+                }
+
+                &:hover {
+                    text-decoration: none;
+                }
+
+                label {
+                    margin: 0;
+
+                    &:hover {
+                        background-color: #CFD7E4;
+                    }
+
+                }
+            }
+
+            &.resultPath {
+                > a > label {
+                    background: #fc6;
+                }
+            }
+
+            &.active {
+                > a > label {
+                    text-shadow: 0px 1px 0px white;
+                    color: #434C64;
+                    background-color: #CFD7E4;
+                }
+            }
+
+            input[type=checkbox] {
+                padding-left: 5px;
+                margin: -5px 0 0 0;
+            }
+
+            .checkbox {
+                padding-left: 5px;
+            }
+
+            &.nav-header {
+                margin-top: 0px;
+                > label {
+                    color: #999;
+                    font-weight: bold;
+                    font-size: 11px;
+                }
+            }
+
         }
-      }
 
+        i.fa-file {
+            margin-left: 5px;
+            opacity: 0.4;
+            cursor: pointer;
 
-      input[type=checkbox] {
-        padding-left: 5px;
-        margin: -5px 0 0 0;
-      }
+            &:hover {
+                opacity: 0.8;
 
-      .checkbox {
-        padding-left: 5px;
-      }
+                + i.fa-lock,
+                + i.fa-pencil,
+                + i.fa-eye,
+                + i.fa-check,
+                + i.fa-key {
+                    margin-left: -2px;
+                    opacity: 1;
+                }
+            }
 
-      &.nav-header {
-        margin-top: 0px;
-        >label {
-          color: #999;
-          font-weight: bold;
-          font-size: 11px;
         }
-      }
 
-    }
-
-    i.fa-file {
-      margin-left: 5px;
-      opacity: 0.4;
-      cursor: pointer;
-
-      &:hover {
-        opacity: 0.8;
-
-        + i.fa-lock,
-        + i.fa-pencil,
-        + i.fa-eye,
-        + i.fa-check,
-        + i.fa-key{
-          margin-left: -2px;
-          opacity: 1;
+        i.fa-pencil {
+            color: #f89406;
         }
-      }
+
+        i.fa-lock {
+            color: #ee5f5b;
+        }
+
+        i.fa-check {
+            color: #51a351;
+        }
+
+        i.fa-exclamation {
+            color: #ee5f5b;
+        }
+
+        i.fa-key {
+            color: red;
+        }
+
+        i.fa-lock,
+        i.fa-pencil,
+        i.fa-eye,
+        i.fa-check,
+        i.fa-key {
+            &:hover {
+                cursor: pointer;
+            }
+        }
+        i.fa-lock,
+        i.fa-key {
+            + ul {
+                display: none;
+            }
+        }
 
     }
-
-    i.fa-pencil {
-      color:#f89406;
-    }
-
-    i.fa-lock {
-      color:#ee5f5b;
-    }
-
-    i.fa-check {
-      color:#51a351;
-    }
-
-    i.fa-exclamation {
-      color:#ee5f5b;
-    }
-
-    i.fa-key{
-      color: red;
-    }
-
-    i.fa-lock,
-    i.fa-pencil,
-    i.fa-eye,
-    i.fa-check,
-    i.fa-key{
-      &:hover{
-        cursor: pointer;
-      }
-    }
-    i.fa-lock,
-    i.fa-key{
-      + ul{
-        display: none;
-      }
-    }
-
-  }
 
 }

@@ -1,0 +1,87 @@
+<div id="baseline_creation_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>{{i18n.CREATE_BASELINE}}</h3>
+    </div>
+
+    <div class="modal-body">
+
+        <div class="notifications"></div>
+
+        <div class="ModalTabs ModalBody-tabs tabs">
+            <ul class="ModalTabs-nav nav nav-tabs">
+                <li class="active"><a href="#tab-baseline-general" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                <li><a href="#tab-configurations" data-toggle="tab">{{i18n.CONFIGURATIONS}}</a></li>
+                <li><a href="#tab-baseline-versions" data-toggle="tab">{{i18n.VERSIONS}}</a></li>
+                <li><a href="#tab-choices" data-toggle="tab">{{i18n.CHOICES}}</a></li>
+            </ul>
+
+            <form id="baseline_creation_form" class="ModalTabs-form form-horizontal">
+                <div class="ModalTabsContent tab-content form-horizontal">
+                    <div id="tab-baseline-general" class="ModalTabsPane tab-pane active">
+                        <div class="control-group">
+                            {{#model.getId}}
+                            <label class="control-label" for="inputConfigurationItem">{{i18n.PRODUCT_ID}}</label>
+                            <div class="controls">
+                                {{model.getId}}
+                            </div>
+                            {{/model.getId}}
+                            {{^model.getId}}
+                            <label class="control-label" for="inputConfigurationItem">{{i18n.PRODUCT}}</label>
+                            <div class="controls">
+                                <select id="inputConfigurationItem" required></select>
+                            </div>
+                            {{/model.getId}}
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="inputBaselineName">{{i18n.NAME}}</label>
+                            <div class="controls">
+                                <input type="text" id="inputBaselineName" placeholder="{{i18n.NAME}}" required/>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="inputBaselineDescription">{{i18n.DESCRIPTION}}</label>
+                            <div class="controls">
+                                <textarea id="inputBaselineDescription"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="inputBaselineType">{{i18n.TYPE}}</label>
+                            <div class="controls">
+                                <select id="inputBaselineType" {{^model.getId}}disabled{{/model.getId}}>
+                                <option value="LATEST">{{i18n.HEAD_CHECKIN}}</option>
+                                <option value="RELEASED">{{i18n.HEAD_RELEASED}}</option>
+                                </select>
+                                <i class="fa fa-spin fa-refresh loader"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-configurations" class="ModalTabsPane tab-pane baselinedConfigurationListArea">
+
+                    </div>
+
+                    <div id="tab-baseline-versions" class="ModalTabsPane tab-pane baselinedPartListArea">
+
+                    </div>
+
+                    <div id="tab-choices" class="ModalTabsPane tab-pane baselineChoicesListArea">
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CANCEL}}</button>
+        <button class="btn btn-primary" form="baseline_creation_form">{{i18n.CREATE_BASELINE}}</button>
+    </div>
+</div>

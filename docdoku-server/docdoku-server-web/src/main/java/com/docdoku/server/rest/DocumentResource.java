@@ -111,6 +111,7 @@ public class DocumentResource {
 
         DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
         docRsDTO.setPath(docR.getLocation().getCompletePath());
+        docRsDTO.setRoutePath(docR.getLocation().getRoutePath());
 
         if (configSpecType == null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
             setDocumentRevisionDTOWorkflow(docR, docRsDTO);
@@ -470,12 +471,11 @@ public class DocumentResource {
     @ApiOperation(value = "Publish a document", response = Response.class)
     @Path("publish")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response publishPartRevision(@PathParam("workspaceId") String workspaceId,
+    public Response publishDocumentRevision(@PathParam("workspaceId") String workspaceId,
                                         @PathParam("documentId") String documentId,
                                         @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
-        DocumentRevision documentRevision = documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-        documentRevision.setPublicShared(true);
+        documentService.setDocumentPublicShared(new DocumentRevisionKey(workspaceId, documentId, documentVersion), true);
         return Response.ok().build();
     }
 
@@ -483,12 +483,11 @@ public class DocumentResource {
     @ApiOperation(value = "Unpublish a document", response = Response.class)
     @Path("unpublish")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response unPublishPartRevision(@PathParam("workspaceId") String workspaceId,
+    public Response unPublishDocumentRevision(@PathParam("workspaceId") String workspaceId,
                                           @PathParam("documentId") String documentId,
                                           @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
-        DocumentRevision documentRevision = documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-        documentRevision.setPublicShared(false);
+        documentService.setDocumentPublicShared(new DocumentRevisionKey(workspaceId, documentId, documentVersion), false);
         return Response.ok().build();
     }
 

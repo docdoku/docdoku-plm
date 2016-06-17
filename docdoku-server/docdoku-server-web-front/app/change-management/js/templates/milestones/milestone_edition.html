@@ -1,0 +1,78 @@
+<div id="milestone_edition_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+        <i class="fa fa-clock-o"></i>
+        {{#model.isWritable}}<i class="fa fa-pencil"></i>{{/model.isWritable}}{{^model.isWritable}}<i
+            class="fa fa-lock"></i>{{/model.isWritable}}
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>{{#model.isWritable}}
+            {{i18n.EDIT_MILESTONE}} :
+            {{/model.isWritable}}
+            {{model.getTitle}}
+        </h3>
+    </div>
+
+    <div class="modal-body">
+        <div class="notifications"></div>
+        <div class="tabs">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                {{#hasRequest}}
+                <li><a href="#tab-affected-requests" data-toggle="tab">{{i18n.REQUESTS}}</a></li>
+                {{/hasRequest}}{{#hasOrder}}
+                <li><a href="#tab-affected-orders" data-toggle="tab">{{i18n.ORDERS}}</a></li>
+                {{/hasOrder}}
+            </ul>
+
+            <form id="milestone_edition_form" class="form-horizontal tab-content">
+                <div class="tab-pane active" id="tab-main">
+                    <div class="control-group">
+                        <label class="control-label" for="inputMilestoneTitle">{{i18n.TITLE}}</label>
+
+                        <div class="controls">
+                            <input type="text" id="inputMilestoneTitle" placeholder="{{i18n.TITLE}}" required
+                            {{^model.isWritable}} readonly {{/model.isWritable}}/>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputMilestoneDueDate">{{i18n.DUE_DATE}}</label>
+
+                        <div class="controls">
+                            <input type="text" id="inputMilestoneDueDate" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-language="{{language}}" data-date-today-highlight="true"  {{^model.isWritable}} readonly
+                                   {{/model.isWritable}}/>
+                            <p class="help-block"><i class="fa fa-clock-o"></i> {{timeZone}}</p>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputMilestoneDescription">{{i18n.DESCRIPTION}}</label>
+
+                        <div class="controls">
+                            <textarea id="inputMilestoneDescription" placeholder="{{i18n.DESCRIPTION}}" rows="3"
+                            {{^model.isWritable}} readonly {{/model.isWritable}}></textarea>
+                        </div>
+                    </div>
+                </div>
+                {{#hasRequest}}
+                <div id="tab-affected-requests" class="tab-pane">
+                    <div id="requests-affected-links" class="affected-links"></div>
+                </div>
+                {{/hasRequest}}{{#hasOrder}}
+                <div id="tab-affected-orders" class="tab-pane">
+                    <div id="orders-affected-links" class="affected-links"></div>
+                </div>
+                {{/hasOrder}}
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        {{#model.isWritable}}
+        <a id="cancel-iteration" class="btn cancel" data-dismiss="modal" aria-hidden="true">{{i18n.CANCEL}}</a>
+        <button class="btn btn-primary" form="milestone_edition_form">{{i18n.EDIT}}</button>
+        {{/model.isWritable}}
+        {{^model.isWritable}}
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+        {{/model.isWritable}}
+    </div>
+</div>

@@ -1,0 +1,65 @@
+<div id="product_details_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3><a href="{{model.getIndexUrl}}" target="_blank" title="{{i18n.PRODUCT_STRUCTURE}}"> {{model.getId}} <i
+                class="fa fa-sitemap"></i></a></h3>
+    </div>
+
+    <div class="modal-body">
+        <div class="notifications"></div>
+        <h4></h4>
+        <div class="tabs">
+
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                <li><a href="#tab-baselines" data-toggle="tab">{{i18n.BASELINES}}</a></li>
+            </ul>
+
+            <div class="tab-content form-horizontal">
+
+                <div class="tab-pane active" id="tab-main">
+
+                    <form id="product_details_form" class="form-horizontal">
+
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.PRODUCT_ID}}</label>
+
+                            <div class="controls">
+                                {{model.getId}}
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.DESCRIPTION}}</label>
+
+                            <div class="controls">
+                                {{model.getDescription}}
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.ROOT_PART}}</label>
+
+                            <div class="controls">
+                                {{model.getDesignItemName}} < {{model.getDesignItemNumber}} >
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="tab-pane" id="tab-baselines"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+        <button class="btn btn-primary" form="product_details_form">{{i18n.SAVE}}</button>
+    </div>
+
+</div>

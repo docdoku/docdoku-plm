@@ -57,6 +57,7 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     private List<DocumentIterationDTO> documentIterations;
     private WorkflowDTO workflow;
     private String path;
+    private String routePath;
     private String lifeCycleState;
     private boolean publicShared;
     private boolean attributesLocked;
@@ -191,6 +192,14 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
 
     public void setDocumentIterations(List<DocumentIterationDTO> documentIterations) {
         this.documentIterations = documentIterations;
+    }
+
+    public String getRoutePath() {
+        return routePath;
+    }
+
+    public void setRoutePath(String routePath) {
+        this.routePath = routePath;
     }
 
     @XmlTransient

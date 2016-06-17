@@ -1,0 +1,67 @@
+<div class="modal importer-view">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>{{i18n.IMPORT_PRODUCT_DATA}}</h3>
+    </div>
+
+
+    <div class="modal-body">
+
+        <h3>{{i18n.FILE}}</h3>
+
+        <div class="notifications"></div>
+
+        <div class="attachedFiles idle">
+
+            <div id="file-selected"><ul></ul>
+
+            </div>
+
+            <form enctype="multipart/form-data" class="upload-form">
+                <div class="droppable filedroparea">
+                    <input name="upload" type="file" class="input-xlarge droppable upload-btn" accept=".xls"/>
+                    <button class="btn btn-success droppable">{{i18n.SELECT_FILE}}</button>
+                    <span class="droppable">{{i18n.DROP_FILE_HERE}}</span>
+                    <p class="upload-file-shortname"></p>
+
+                </div>
+                <button type="button" class="btn cancel cancel-upload-btn">{{i18n.CANCEL}}</button>
+
+
+            </form>
+
+        </div>
+
+        <div class="form-horizontal import-status-views"></div>
+
+        <h3>{{i18n.OPTIONS}}</h3>
+
+        <div class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="revision_text_product">{{i18n.ADD_REVISION_NOTE}}</label>
+                <div class="controls">
+                    <textarea type="text" rows="1" id="revision_text_product"></textarea>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="checkbox">{{i18n.FREEZE_AFTER_MODIFICATION}} <input type="checkbox" id="freeze-checkbox"/></label>
+            </div>
+
+             <div class="control-group">
+                <label class="checkbox">{{i18n.PERMISSIVE_UPDATE_PATH_DATA}} <input type="checkbox" id="permissive_update_product_instance-checkbox"/></label>
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+        <button type="button" disabled class="btn btn-primary import-button">
+            {{i18n.IMPORT}}
+        </button>
+    </div>
+
+</div>

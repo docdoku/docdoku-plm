@@ -1,0 +1,94 @@
+<div id="part_template_creation_modal" class="modal">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>
+            {{model.id}}
+            {{^model.id}}<span class="icon plm-icon-action-template-new"></span>{{i18n.NEW_PART_TEMPLATE}}{{/model.id}}
+        </h3>
+    </div>
+    <div class="modal-body">
+        <div class="notifications"></div>
+        <h4></h4>
+        <div class="tabs">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                <li><a href="#tab-workflow" data-toggle="tab">{{i18n.WORKFLOW}}</a></li>
+                <li><a href="#tab-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
+                {{#model.id}}
+                <li>
+                    <a href="#tab-files" data-toggle="tab">{{i18n.FILES}}</a>
+                </li>
+                {{/model.id}}
+            </ul>
+            <form id="part_template_creation_form" class="tab-content form-horizontal">
+                <div id="tab-main" class="tab-pane active">
+                    <div class="control-group">
+                        <label class="control-label required" for="part-template-reference">{{i18n.REFERENCE}}</label>
+
+                        <div class="controls">
+                            <input type="text" class="input-xlarge reference" id="part-template-reference" required
+                                   value="{{model.id}}" {{#model.id}}disabled{{/model.id}}/>
+                            <p class="help-block"></p>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="part-template-type">{{i18n.TYPE}}</label>
+
+                        <div class="controls">
+                            <input type="text" class="input-xlarge type" id="part-template-type"
+                                   value="{{model.partType}}"/>
+
+                            <p class="help-block"></p>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="part-template-mask">{{i18n.MASK}}</label>
+
+                        <div class="controls">
+                            <input type="text" class="input-xlarge mask" id="part-template-mask"
+                                   value="{{model.mask}}"/>
+                            <a id="mask-help" class="btn btn-default"><i class="fa fa-lightbulb-o"></i></a>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="part-template-id-generated">{{i18n.ID_GENERATION}}</label>
+
+                        <div class="controls">
+                            <input type="checkbox" class="input-xlarge id-generated" id="part-template-id-generated"
+                                   {{#model.idGenerated}}checked{{/model.idGenerated}}/>
+                            <p class="help-block"></p>
+                        </div>
+                    </div>
+                    {{#model.id}}
+                    <div class="control-group">
+                        <label class="control-label">{{i18n.MODIFICATION_DATE}}</label>
+
+                        <div class="controls">
+                            <span class="help-inline"><a class="date-popover">{{modificationDate}}</a></span>
+                        </div>
+                    </div>
+                    {{/model.id}}
+                </div>
+                <div id="tab-workflow" class="tab-pane">
+                    <div id="workflows-list"></div>
+                </div>
+                <div class="tab-pane attributes attributes-edit" id="tab-attributes">
+                    <p>{{i18n.PART_ATTRIBUTES_TEMPLATES}}</p>
+                    <div id="attributes-list" class="attributes attributes-edit"></div>
+                    <p>{{i18n.PRODUCT_INSTANCE_DATA_ATTRIBUTES_TEMPLATES}}</p>
+                    <div id="attribute-product-instance-list" class="attributes attributes-edit"></div>
+                </div>
+                {{#model.id}}
+                <div class="tab-pane" id="tab-files"></div>
+                {{/model.id}}
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+        <button class="btn btn-primary" form="part_template_creation_form">
+            {{#model.id}}{{i18n.SAVE}}{{/model.id}}
+            {{^model.id}}{{i18n.CREATE}}{{/model.id}}
+        </button>
+    </div>
+</div>

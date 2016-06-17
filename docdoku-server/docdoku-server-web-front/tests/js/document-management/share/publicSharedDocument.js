@@ -19,8 +19,8 @@ casper.test.begin('Public shared document tests suite', 2, function publicShared
      */
 
     casper.then(function checkDocumentTitle() {
-        this.waitForSelector('#page > h3', function titleDisplayed() {
-            this.test.assertSelectorHasText('#page > h3', documents.document1.number + '-A');
+        this.waitForSelector('#content > .document-revision > div >  h3', function titleDisplayed() {
+            this.test.assertSelectorHasText('#content > .document-revision > div >  h3', documents.document1.number + '-A');
         }, function fail() {
             this.capture('screenshot/publicSharedDocument/checkDocumentTitle-error.png');
             this.test.assert(false, 'Title can not be found');
@@ -32,7 +32,7 @@ casper.test.begin('Public shared document tests suite', 2, function publicShared
      */
     casper.then(function checkIterationNote() {
         this.click('.nav-tabs a[href="#tab-document-iteration"]');
-        this.waitForSelector('#page > h3', function iterationNoteDisplayed() {
+        this.waitForSelector('#content > .document-revision > div >  h3', function iterationNoteDisplayed() {
             this.test.assertSelectorHasText('#tab-document-iteration > table > tbody > tr:nth-child(2) > td', documents.document1.iterationNote);
         }, function fail() {
             this.capture('screenshot/publicSharedDocument/checkIterationNote-error.png');

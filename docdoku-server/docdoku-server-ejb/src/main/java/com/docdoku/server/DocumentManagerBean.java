@@ -24,6 +24,7 @@ import com.docdoku.core.common.*;
 import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
+import com.docdoku.core.log.DocumentLog;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.DocumentSearchQuery;
@@ -157,13 +158,19 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public void setDocumentPublicShared(DocumentRevisionKey pDocRPK, boolean isPublicShared) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException {
+        DocumentRevision documentRevision = getDocumentRevision(pDocRPK);
+        documentRevision.setPublicShared(isPublicShared);
+    }
+
     @LogDocument
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
     @Override
     public BinaryResource getBinaryResource(String pFullName) throws WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
 
         if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
-            // Don't check access right because it is do before. (Is public or isShared)
             return new BinaryResourceDAO(em).loadBinaryResource(pFullName);
         }
 
@@ -412,7 +419,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return documentRevisions.toArray(new DocumentRevision[documentRevisions.size()]);
     }
 
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public int getDocumentsInWorkspaceCount(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
@@ -1708,6 +1715,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
 
         return docRs.toArray(new DocumentRevision[docRs.size()]);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public void createDocumentLog(DocumentLog log) {
+        em.persist(log);
     }
 
     /**

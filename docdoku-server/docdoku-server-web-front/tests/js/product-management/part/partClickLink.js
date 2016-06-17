@@ -80,7 +80,7 @@ casper.test.begin('Part add link tests suite', 2, function partClickLinkTestsSui
      * Wait for linked document modal
      */
     casper.then(function waitForLinkedDocumentDisplay() {
-        var modalTitle = '.document-modal > .modal-header > h3 > a[href="' + defaultUrl + '/documents/' + workspace + '/' + products.part1.documentLink +'/A"]';
+        var modalTitle = '.document-modal > .modal-header > h3 > a[href="' + defaultUrl + '/documents/#' + workspace + '/' + products.part1.documentLink +'/A"]';
 
         this.waitForSelector(modalTitle, function linkedModalOpened() {
             this.test.assert(true, 'Linked document modal opened');

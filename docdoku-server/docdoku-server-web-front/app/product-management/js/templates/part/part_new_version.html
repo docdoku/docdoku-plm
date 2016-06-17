@@ -1,0 +1,47 @@
+<div id="new-version-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+
+        <h3>{{i18n.NEW_VERSION_OF}} : {{model.getNumber}}</h3>
+    </div>
+    <div class="modal-body">
+        <div class="notifications"></div>
+        <h4></h4>
+
+        <div class="tabs">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                <li><a href="#tab-workflow" data-toggle="tab">{{i18n.WORKFLOW}}</a></li>
+                <li><a href="#tab-acl" data-toggle="tab">{{i18n.ACL}}</a></li>
+            </ul>
+
+            <div id="tab-main" class="tab-pane active">
+                <div class="control-group">
+                    <label class="control-label" for="new-version-description">{{i18n.DESCRIPTION}}</label>
+
+                    <div class="controls">
+                        <textarea type="text" class="input-xlarge description" id="new-version-description">{{model.getDescription}}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-workflow" class="tab-pane">
+                <div id="new-version-workflow"></div>
+                <div id="workflows-mapping" class="role-mapping"></div>
+            </div>
+
+            <div id="tab-acl" class="tab-pane">
+                <div id="acl-mapping"></div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <div class="modal-footer">
+        <button id="cancel-new-version-btn" href="#" class="btn btn-default">{{i18n.CANCEL}}</button>
+        <button id="create-new-version-btn" href="#" class="btn btn-primary">{{i18n.CREATE}}</button>
+    </div>
+</div>

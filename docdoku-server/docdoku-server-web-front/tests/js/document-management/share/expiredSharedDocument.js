@@ -19,7 +19,7 @@ casper.test.begin('Expired private shared document tests suite', 1, function exp
      */
 
     casper.then(function checkForExpiredPage() {
-        this.waitForSelector('#page.expired-resource', function () {
+        this.waitForSelector('#not-found-view > h1', function () {
             this.test.assert(true, 'Expired entity page displayed');
         }, function fail() {
             this.capture('screenshot/expiredSharedDocument/checkForExpiredPage-error.png');

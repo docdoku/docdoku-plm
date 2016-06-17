@@ -1,0 +1,91 @@
+<h3><i class="fa fa-lock"></i>{{i18n.REGISTRATION}}</h3>
+
+<div class="terms-of-service well">
+    <h4>{{i18n.TERMS_OF_SERVICES}}</h4>
+    <em>{{i18n.TERMS_OF_SERVICES_TEXT}}</em>
+</div>
+
+<h4>{{i18n.CREATE_ID}}</h4>
+
+<div class="notifications"></div>
+<div class="form-inputs">
+    <p>
+        <label for="account_creation_form-login">{{i18n.USER_ID}} :</label>
+        <input id="account_creation_form-login"
+               type="text"
+               name="account_creation_form-login"
+               maxlength="50"
+               size="20"
+               required />
+    </p>
+    <p>
+        <label for="account_creation_form-name">{{i18n.FIRSTNAME_NAME}} :</label>
+        <input id="account_creation_form-name"
+               type="text"
+               name="account_creation_form-name"
+               maxlength="50"
+               size="20"
+               required />
+    </p>
+    <p>
+        <label for="account_creation_form-name">{{i18n.EMAIL}} :</label>
+        <input id="account_creation_form-email"
+               type="text"
+               name="account_creation_form-email"
+               maxlength="50"
+               size="20"
+               required />
+    </p>
+    <p>
+        <label for="account_creation_form-language">{{i18n.LANGUAGE}} :</label>
+        <select id="account_creation_form-language" required>
+            {{#languages}}
+            <option value="{{.}}">{{.}}</option>
+            {{/languages}}
+        </select>
+    </p>
+    <p>
+        <label for="account_creation_form-timeZone">{{i18n.TIMEZONE}} :</label>
+        <select id="account_creation_form-timeZone">
+            {{#timeZones}}
+            <option value="{{.}}">{{.}}</option>
+            {{/timeZones}}
+        </select>
+    </p>
+</div>
+<div class="form-inputs">
+    <p>
+        <label for="account_creation_form-password">{{i18n.PASSWORD}} :</label>
+        <input id="account_creation_form-password"
+               type="password"
+               name="account_creation_form-password"
+               value=""
+               maxlength="50"
+               size="20"
+               required />
+    </p>
+
+    <p>
+        <label for="account_creation_form-confirmPassword">{{i18n.CONFIRM_PASSWORD}} :</label>
+        <input id="account_creation_form-confirmPassword"
+               type="password"
+               name="account_creation_form-confirmPassword"
+               value=""
+               maxlength="50"
+               size="20"
+               required />
+    </p>
+    <p class="account-form-buttons">
+        <a  href="#"
+            class="btn btn-default">
+            {{i18n.CANCEL}}
+        </a>
+
+        <input id="login_form-login_button"
+               type="submit"
+               name="login_form-login_button"
+               value="{{i18n.SAVE}}"
+               alt="{{i18n.SAVE}}"
+               class="btn btn-custom" />
+    </p>
+</div>

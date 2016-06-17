@@ -1,0 +1,57 @@
+<div id="product_instance_creation_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>{{i18n.NEW_PRODUCT_INSTANCE}}</h3>
+    </div>
+
+    <div class="modal-body">
+        <div class="notifications"></div>
+        <h4></h4>
+        <div class="tabs">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                <li class=""><a href="#tab-products-instances-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
+                <li><a href="#tab-products-instances-acl" data-toggle="tab">{{i18n.ACL}}</a></li>
+            </ul>
+
+            <form id="product_instance_creation_form" class="form-horizontal tab-content">
+                <div class="tab-pane active" id="tab-main">
+                    <div class="control-group">
+                        <label class="control-label" for="inputSerialNumber">{{i18n.SERIAL_NUMBER}}</label>
+
+                        <div class="controls">
+                            <input type="text" id="inputSerialNumber" placeholder="{{i18n.SERIAL_NUMBER}}" required/>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputConfigurationItem">{{i18n.PRODUCT_ID}}</label>
+
+                        <div class="controls">
+                            <select id="inputConfigurationItem" required></select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputBaseline">{{i18n.BASELINE}}</label>
+
+                        <div class="controls">
+                            <select id="inputBaseline" required disabled></select>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-products-instances-attributes" class="tab-pane attributes attributes-edit">
+                </div>
+                <div id="tab-products-instances-acl" class="tab-pane">
+                    <div id="acl-mapping"></div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+        <button class="btn btn-primary" form="product_instance_creation_form">{{i18n.CREATE}}</button>
+    </div>
+</div>

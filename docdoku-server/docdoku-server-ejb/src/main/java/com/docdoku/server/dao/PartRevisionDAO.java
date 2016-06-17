@@ -21,16 +21,16 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.PartRevisionAlreadyExistsException;
 import com.docdoku.core.exceptions.PartRevisionNotFoundException;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.*;
+import com.docdoku.core.workflow.Task;
+import com.docdoku.core.workflow.Workflow;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.util.List;
 import java.util.Locale;
 
@@ -169,5 +169,14 @@ public class PartRevisionDAO {
         TypedQuery<PartRevision> query = em.createQuery("SELECT DISTINCT d FROM PartRevision d WHERE :tag MEMBER OF d.tags", PartRevision.class);
         query.setParameter("tag", tag);
         return query.getResultList();
+    }
+
+    public PartRevision getWorkflowHolder(Workflow workflow) {
+        try {
+            return em.createNamedQuery("PartRevision.findByWorkflow", PartRevision.class).
+                    setParameter("workflow", workflow).getSingleResult();
+        }catch(NoResultException e){
+            return null;
+        }
     }
 }

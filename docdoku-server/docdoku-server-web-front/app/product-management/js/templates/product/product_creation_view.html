@@ -1,0 +1,47 @@
+<div id="product_creation_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>{{i18n.NEW_PRODUCT}}</h3>
+    </div>
+
+    <div class="modal-body">
+        <div class="notifications"></div>
+        <h4></h4>
+        <form id="product_creation_form" class="form-horizontal">
+
+            <div class="control-group">
+                <label class="control-label" for="inputProductId">{{i18n.PRODUCT_ID}}</label>
+
+                <div class="controls">
+                    <input type="text" id="inputProductId" placeholder="{{i18n.PRODUCT_ID}}" required/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="inputDescription">{{i18n.DESCRIPTION}}</label>
+
+                <div class="controls">
+                    <textarea id="inputDescription" placeholder="{{i18n.DESCRIPTION}}" rows="3"></textarea>
+                </div>
+            </div>
+
+            <div class="control-group" id="inputPartNumberWrapper">
+                <label class="control-label" for="inputPartNumber">{{i18n.ROOT_PART}}</label>
+
+                <div class="controls">
+                    <input type="text" id="inputPart" placeholder="{{i18n.PART_NUMBER}}" data-provide="typeahead"
+                           required/>
+                           <input type="hidden" id="inputPartName" value="">
+                           <input type="hidden" id="inputPartNumber" value="">
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+        <button class="btn btn-primary" form="product_creation_form">{{i18n.CREATE_PRODUCT}}</button>
+    </div>
+</div>

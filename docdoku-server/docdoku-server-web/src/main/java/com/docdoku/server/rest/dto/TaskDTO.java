@@ -35,7 +35,26 @@ public class TaskDTO implements Serializable {
     private String signature;
     private UserDTO worker;
     private Status status;
+
+    private String workspaceId;
+
+    private int workflowId;
+    private int activityStep;
+    private int num;
+
+    private String holderType;
+    private String holderReference;
+    private String holderVersion;
+
     public TaskDTO() {
+    }
+
+    public String getWorkspaceId() {
+        return workspaceId;
+    }
+
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
     }
 
     public String getClosureComment() {
@@ -100,6 +119,54 @@ public class TaskDTO implements Serializable {
 
     public void setSignature(String signature) {
         this.signature = signature;
+    }
+
+    public int getWorkflowId() {
+        return workflowId;
+    }
+
+    public void setWorkflowId(int workflowId) {
+        this.workflowId = workflowId;
+    }
+
+    public int getActivityStep() {
+        return activityStep;
+    }
+
+    public void setActivityStep(int activityStep) {
+        this.activityStep = activityStep;
+    }
+
+    public int getNum() {
+        return num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
+    }
+
+    public String getHolderType() {
+        return holderType;
+    }
+
+    public void setHolderType(String holderType) {
+        this.holderType = holderType;
+    }
+
+    public String getHolderReference() {
+        return holderReference;
+    }
+
+    public void setHolderReference(String holderReference) {
+        this.holderReference = holderReference;
+    }
+
+    public String getHolderVersion() {
+        return holderVersion;
+    }
+
+    public void setHolderVersion(String holderVersion) {
+        this.holderVersion = holderVersion;
     }
 
     public enum Status {

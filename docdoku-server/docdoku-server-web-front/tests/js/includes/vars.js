@@ -232,7 +232,7 @@ var urls = {
     productStructureForDeliverable: homeUrl + 'product-structure/#' + workspace + '/' + products.product1.number + '/config-spec/pi-' + productInstances.productInstance1.serialNumber + '/bom',
     documentManagement: homeUrl + 'document-management/#' + workspace,
     changeManagement: homeUrl + 'change-management/#' + workspace,
-    workspaceAdministration:homeUrl+'faces/admin/workspace/workspacesMenu.xhtml',
+    workspaceAdministration:homeUrl+'workspace-management/',
 
     WSDL:[
         homeUrl + 'services/product?wsdl',
@@ -245,8 +245,8 @@ var urls = {
         homeUrl + 'services/account?wsdl'
     ],
 
-    documentPermalink: homeUrl + 'documents/' + workspace + '/' + documents.document1.number + '/A',
-    partPermalink: homeUrl + 'parts/' + workspace + '/' + products.part1.number + '/A',
+    documentPermalink: homeUrl + 'documents/#' + workspace + '/' + documents.document1.number + '/A',
+    partPermalink: homeUrl + 'parts/#' + workspace + '/' + products.part1.number + '/A',
 
     // Set on share creation
     privateDocumentPermalink: null,

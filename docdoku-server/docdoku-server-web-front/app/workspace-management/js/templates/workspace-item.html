@@ -1,0 +1,62 @@
+<h4>
+    {{#administrated}}
+        <a href="#/workspace/{{workspace.id}}/edit"><i class="fa fa-pencil"></i></a>
+        <i class="fa fa-graduation-cap"></i>
+    {{/administrated}}
+    {{^administrated}}
+        <i class="fa fa-user"></i>
+    {{/administrated}}
+    {{workspace.id}}
+    <small>{{workspace.description}}</small>
+</h4>
+<ul class="unstyled">
+    <li>
+        {{#administrated}}
+        <a href="#/workspace/{{workspace.id}}/users">
+        {{/administrated}}
+         {{i18n.USERS}}
+        {{#administrated}}
+        </a>
+        (<span class="users-count"></span>)
+        {{/administrated}}
+    </li>
+    <li>
+        {{^isAdmin}}
+        <a href="../document-management/#{{workspace.id}}">
+        {{/isAdmin}}
+             {{i18n.DOCUMENTS}}
+        {{^isAdmin}}
+        </a>
+        {{/isAdmin}}
+        (<span class="documents-count"></span>)
+    </li>
+    <li>
+        {{^isAdmin}}
+        <a href="../product-management/#{{workspace.id}}/parts">
+        {{/isAdmin}}
+            {{i18n.PARTS}}
+        {{^isAdmin}}
+        </a>
+        {{/isAdmin}}
+        (<span class="parts-count"></span>)
+    </li>
+    <li>
+        {{^isAdmin}}
+        <a href="../product-management/#{{workspace.id}}/products">
+        {{/isAdmin}}
+            {{i18n.PRODUCTS}}
+        {{^isAdmin}}
+        </a>
+        {{/isAdmin}}
+        (<span class="products-count"></span>)
+    </li>
+
+</ul>
+{{#administrated}}
+<div class="workspace-actions pull-left">
+    <a href="#/workspace/{{workspace.id}}/dashboard">{{i18n.DASHBOARD}}</a>
+    {{#isAdmin}}
+    <a href="#" class="index-workspace" data-workspace-id="{{workspace.id}}">{{i18n.INDEX_WORKSPACE}}</a>
+    {{/isAdmin}}
+</div>
+{{/administrated}}

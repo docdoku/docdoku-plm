@@ -19,18 +19,14 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.common.Account;
-import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.common.UserGroupKey;
-import com.docdoku.core.common.Workspace;
+import com.docdoku.core.common.*;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserMembership;
-import com.docdoku.core.services.IAccountManagerLocal;
-import com.docdoku.core.services.IContextManagerLocal;
-import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.core.services.IWorkspaceManagerLocal;
+import com.docdoku.core.services.*;
 import com.docdoku.server.rest.dto.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -43,20 +39,23 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.ws.rs.*;
 import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RequestScoped
 @Api(value = "workspaces", description = "Operations about workspaces")
 @Path("workspaces")
-@DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
-@RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 public class WorkspaceResource {
 
     @Inject
@@ -90,10 +89,13 @@ public class WorkspaceResource {
     private TaskResource tasks;
 
     @Inject
-    private SearchResource searches;
+    private WorkflowResource workflowInstances;
 
     @Inject
-    private WorkflowResource workflows;
+    private WorkflowModelResource workflowModels;
+
+    @Inject
+    private WorkspaceWorkflowResource workspaceWorkflows;
 
     @Inject
     private ChangeItemsResource changeItems;
@@ -109,6 +111,12 @@ public class WorkspaceResource {
 
     @Inject
     private WorkspaceMembershipResource workspaceMemberships;
+
+    @Inject
+    private IDocumentManagerLocal documentService;
+
+    @Inject
+    private IProductManagerLocal productService;
 
     @Inject
     private IUserManagerLocal userManager;
@@ -171,6 +179,23 @@ public class WorkspaceResource {
         }).build();
     }
 
+    @GET
+    @ApiOperation(value = "Get online users visible by current user", response = UserDTO.class, responseContainer = "List")
+    @Path("reachable-users")
+    @Produces(MediaType.APPLICATION_JSON)
+    public UserDTO[] getReachableUsersForCaller()
+            throws EntityNotFoundException {
+
+        User[] users = userManager.getReachableUsers();
+        UserDTO[] dtos = new UserDTO[users.length];
+
+        for (int i = 0; i < users.length; i++) {
+            dtos[i] = mapper.map(users[i], UserDTO.class);
+        }
+
+        return dtos;
+    }
+
     @PUT
     @ApiOperation(value = "Update workspace", response = WorkspaceDTO.class)
     @Path("/{workspaceId}")
@@ -210,6 +235,15 @@ public class WorkspaceResource {
             throws UserGroupAlreadyExistsException, AccessRightException, AccountNotFoundException, CreationException, WorkspaceNotFoundException {
         UserGroup userGroup = userManager.createUserGroup(userGroupDTO.getId(), workspaceId);
         return mapper.map(userGroup, UserGroupDTO.class);
+    }
+
+    @DELETE
+    @ApiOperation(value = "Remove user group", response = UserGroupDTO.class)
+    @Path("/{workspaceId}/user-group/{groupId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeGroup(@PathParam("workspaceId") String workspaceId, @PathParam("groupId") String groupId) throws UserGroupNotFoundException, AccessRightException, EntityConstraintException, AccountNotFoundException, WorkspaceNotFoundException {
+        userManager.removeUserGroups(workspaceId, new String[]{groupId});
+        return Response.ok().build();
     }
 
     @PUT
@@ -275,7 +309,7 @@ public class WorkspaceResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response setGroupAccess(@PathParam("workspaceId") String workspaceId,
                                    @ApiParam(value = "User to grant access in group", required = true) WorkspaceUserGroupMemberShipDTO workspaceUserGroupMemberShipDTO)
-            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserGroupNotFoundException {
 
         WorkspaceUserGroupMembership membership = userManager.grantGroupAccess(workspaceId, workspaceUserGroupMemberShipDTO.getMemberId(), workspaceUserGroupMemberShipDTO.isReadOnly());
         return Response.ok(mapper.map(membership, WorkspaceUserGroupMemberShipDTO.class)).build();
@@ -348,6 +382,166 @@ public class WorkspaceResource {
         return Response.ok().build();
     }
 
+    @GET
+    @ApiOperation(value = "Get groups", response = Response.class)
+    @Path("/{workspaceId}/groups")
+    @Produces(MediaType.APPLICATION_JSON)
+    public UserGroupDTO[] getGroups(@PathParam("workspaceId") String workspaceId)
+            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        UserGroup[] userGroups = userManager.getUserGroups(workspaceId);
+        UserGroupDTO[] userGroupDTOs = new UserGroupDTO[userGroups.length];
+        for (int i = 0; i < userGroups.length; i++) {
+            userGroupDTOs[i] = mapper.map(userGroups[i],UserGroupDTO.class);
+        }
+        return userGroupDTOs;
+    }
+
+    @GET
+    @ApiOperation(value = "Get users of group", response = Response.class)
+    @Path("/{workspaceId}/groups/{groupId}/users")
+    @Produces(MediaType.APPLICATION_JSON)
+    public UserDTO[] getUsersInGroup(@PathParam("workspaceId") String workspaceId, @PathParam("groupId") String groupId)
+            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, UserGroupNotFoundException {
+        UserGroup userGroup = userManager.getUserGroup(new UserGroupKey(workspaceId, groupId));
+        Set<User> users = userGroup.getUsers();
+        User[] usersArray = users.toArray(new User[users.size()]);
+        UserDTO[] userDTOs = new UserDTO[users.size()];
+        for (int i = 0; i < usersArray.length; i++) {
+            userDTOs[i] = mapper.map(usersArray[i], UserDTO.class);
+        }
+        return userDTOs;
+    }
+
+    @GET
+    @ApiOperation(value = "Get stats overview for workspace", response = StatsOverviewDTO.class)
+    @Path("/{workspaceId}/stats-overview")
+    @Produces(MediaType.APPLICATION_JSON)
+    public StatsOverviewDTO getStatsOverview(@PathParam("workspaceId") String workspaceId)
+            throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
+
+        StatsOverviewDTO statsOverviewDTO = new StatsOverviewDTO();
+
+        boolean admin = false;
+
+        if(contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
+            admin = true;
+        }else {
+            User user = userManager.checkWorkspaceReadAccess(workspaceId);
+            admin = user.isAdministrator();
+        }
+
+        if(admin){
+            statsOverviewDTO.setDocuments(documentService.getTotalNumberOfDocuments(workspaceId));
+            statsOverviewDTO.setParts(productService.getTotalNumberOfParts(workspaceId));
+        }else{
+            statsOverviewDTO.setDocuments(documentService.getDocumentsInWorkspaceCount(workspaceId));
+            statsOverviewDTO.setParts(productService.getPartsInWorkspaceCount(workspaceId));
+        }
+
+        statsOverviewDTO.setUsers(userManager.getUsers(workspaceId).length);
+        statsOverviewDTO.setProducts(productService.getConfigurationItems(workspaceId).size());
+
+        return statsOverviewDTO;
+    }
+
+    @GET
+    @ApiOperation(value = "Get disk usage stats for workspace", response = DiskUsageSpaceDTO.class)
+    @Path("/{workspaceId}/disk-usage-stats")
+    @Produces(MediaType.APPLICATION_JSON)
+    public DiskUsageSpaceDTO getDiskSpaceUsageStats(@PathParam("workspaceId") String workspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+        DiskUsageSpaceDTO diskUsageSpaceDTO = new DiskUsageSpaceDTO();
+        diskUsageSpaceDTO.setDocuments(documentService.getDiskUsageForDocumentsInWorkspace(workspaceId));
+        diskUsageSpaceDTO.setParts(productService.getDiskUsageForPartsInWorkspace(workspaceId));
+        diskUsageSpaceDTO.setDocumentTemplates(documentService.getDiskUsageForDocumentTemplatesInWorkspace(workspaceId));
+        diskUsageSpaceDTO.setPartTemplates(productService.getDiskUsageForPartTemplatesInWorkspace(workspaceId));
+        return diskUsageSpaceDTO;
+    }
+
+    @GET
+    @ApiOperation(value = "Get checked out documents stats for workspace", response = JsonObject.class)
+    @Path("/{workspaceId}/checked-out-documents-stats")
+    @Produces(MediaType.APPLICATION_JSON)
+    public JsonObject getCheckedOutDocumentsStats(@PathParam("workspaceId") String workspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+
+        DocumentRevision[] checkedOutDocumentRevisions = documentService.getAllCheckedOutDocumentRevisions(workspaceId);
+        JsonObjectBuilder statsByUserBuilder = Json.createObjectBuilder();
+
+        Map<String, JsonArrayBuilder> userArrays=new HashMap<>();
+        for(DocumentRevision documentRevision : checkedOutDocumentRevisions){
+
+            String userLogin = documentRevision.getCheckOutUser().getLogin();
+            JsonArrayBuilder userArray=userArrays.get(userLogin);
+            if(userArray==null) {
+                userArray = Json.createArrayBuilder();
+                userArrays.put(userLogin, userArray);
+            }
+            userArray.add(Json.createObjectBuilder().add("date",documentRevision.getCheckOutDate().getTime()).build());
+        }
+
+        for(Map.Entry<String,JsonArrayBuilder> entry : userArrays.entrySet()){
+            statsByUserBuilder.add(entry.getKey(),entry.getValue().build());
+        }
+
+        return statsByUserBuilder.build();
+
+    }
+
+    @GET
+    @ApiOperation(value = "Get checked out parts stats for workspace", response = JsonObject.class)
+    @Path("/{workspaceId}/checked-out-parts-stats")
+    @Produces(MediaType.APPLICATION_JSON)
+    public JsonObject getCheckedOutPartsStats(@PathParam("workspaceId") String workspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+
+        PartRevision[] checkedOutPartRevisions = productService.getAllCheckedOutPartRevisions(workspaceId);
+        JsonObjectBuilder statsByUserBuilder = Json.createObjectBuilder();
+
+        Map<String, JsonArrayBuilder> userArrays=new HashMap<>();
+        for(PartRevision partRevision : checkedOutPartRevisions){
+
+            String userLogin = partRevision.getCheckOutUser().getLogin();
+            JsonArrayBuilder userArray=userArrays.get(userLogin);
+            if(userArray==null) {
+                userArray = Json.createArrayBuilder();
+                userArrays.put(userLogin, userArray);
+            }
+            userArray.add(Json.createObjectBuilder().add("date", partRevision.getCheckOutDate().getTime()).build());
+        }
+
+        for(Map.Entry<String,JsonArrayBuilder> entry : userArrays.entrySet()){
+            statsByUserBuilder.add(entry.getKey(),entry.getValue().build());
+        }
+
+        return statsByUserBuilder.build();
+
+    }
+
+    @GET
+    @ApiOperation(value = "Get user stats for workspace", response = JsonObject.class)
+    @Path("/{workspaceId}/users-stats")
+    @Produces(MediaType.APPLICATION_JSON)
+    public JsonObject getUsersStats(@PathParam("workspaceId") String workspaceId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException, AccessRightException {
+
+        WorkspaceUserMembership[] workspaceUserMemberships = userManager.getWorkspaceUserMemberships(workspaceId);
+        WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceUserGroupMemberships(workspaceId);
+
+        int usersCount = userManager.getUsers(workspaceId).length;
+        int activeUsersCount = workspaceUserMemberships.length;
+        int inactiveUsersCount = usersCount - activeUsersCount;
+
+        int groupsCount = userManager.getUserGroups(workspaceId).length;
+        int activeGroupsCount = workspaceUserGroupMemberships.length;
+        int inactiveGroupsCount = groupsCount - activeGroupsCount;
+
+        return Json.createObjectBuilder()
+                .add("users", usersCount)
+                .add("activeusers", activeUsersCount)
+                .add("inactiveusers", inactiveUsersCount)
+                .add("groups", groupsCount)
+                .add("activegroups", activeGroupsCount)
+                .add("inactivegroups", inactiveGroupsCount).build();
+    }
+
+
     // Sub resources
 
     @ApiOperation(value = "WorkspaceDocuments")
@@ -398,12 +592,6 @@ public class WorkspaceResource {
         return checkedOutDocuments;
     }
 
-    @ApiOperation(value = "WorkspaceSearch")
-    @Path("/{workspaceId}/search")
-    public SearchResource search() {
-        return searches;
-    }
-
     @ApiOperation(value = "WorkspaceTasks")
     @Path("/{workspaceId}/tasks")
     public TaskResource tasks() {
@@ -416,10 +604,22 @@ public class WorkspaceResource {
         return notifications;
     }
 
-    @ApiOperation(value = "WorkspaceWorkflows")
+    @ApiOperation(value = "Workflows")
     @Path("/{workspaceId}/workflows")
-    public WorkflowResource workflows() {
-        return workflows;
+    public WorkflowModelResource workflowModels() {
+        return workflowModels;
+    }
+
+    @ApiOperation(value = "WorkspaceWorkflowsInstances")
+    @Path("/{workspaceId}/workflow-instances")
+    public WorkflowResource workflowsInstances() {
+        return workflowInstances;
+    }
+
+    @ApiOperation(value = "WorkspaceWorkflows")
+    @Path("/{workspaceId}/workspace-workflows")
+    public WorkspaceWorkflowResource workspaceWorkflows() {
+        return workspaceWorkflows;
     }
 
     @ApiOperation(value = "WorkspaceUsers")

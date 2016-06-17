@@ -43,7 +43,8 @@ module.exports = {
         'js/pre/clean.js',
 
         // WSDL Check
-        'js/wsdl/wsdlCheck.js',
+        // Removed, we'll abandon it
+        // 'js/wsdl/wsdlCheck.js',
 
         // Content Type check
         'js/content-type/contentTypeCheck.js',

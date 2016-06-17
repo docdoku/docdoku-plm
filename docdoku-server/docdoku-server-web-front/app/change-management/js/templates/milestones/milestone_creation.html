@@ -1,0 +1,51 @@
+<div id="milestone_creation_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+        <i class="fa fa-clock-o"></i>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>{{i18n.NEW_MILESTONE}}</h3>
+    </div>
+
+    <div class="modal-body">
+        <div class="notifications"></div>
+        <div class="tabs">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+            </ul>
+
+            <form id="milestone_creation_form" class="form-horizontal tab-content">
+                <div class="tab-pane active" id="tab-main">
+                    <div class="control-group">
+                        <label class="control-label" for="inputMilestoneTitle">{{i18n.TITLE}}</label>
+
+                        <div class="controls">
+                            <input type="text" id="inputMilestoneTitle" placeholder="{{i18n.TITLE}}" required/>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputMilestoneDueDate">{{i18n.DUE_DATE}}</label>
+
+                        <div class="controls">
+                            <input type="text" id="inputMilestoneDueDate" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-language="{{language}}" data-date-today-highlight="true" required/>
+                            <p class="helper-block"><i class="fa fa-clock-o"></i> {{timeZone}}</p>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputMilestoneDescription">{{i18n.DESCRIPTION}}</label>
+
+                        <div class="controls">
+                            <textarea id="inputMilestoneDescription" placeholder="{{i18n.DESCRIPTION}}"
+                                      rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+        <button class="btn btn-primary" form="milestone_creation_form">{{i18n.CREATE}}</button>
+    </div>
+</div>

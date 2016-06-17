@@ -1,0 +1,47 @@
+.workspace-group-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    align-content: flex-start;
+
+    .well-large.workspace-group {
+        margin: 3px;
+        padding:0 8px 4px 10px;
+        width: 46%;
+        border:1px solid rgba(63, 95, 153, 0.24);
+        background-color: white;
+        -webkit-border-radius: 0;
+        -moz-border-radius: 0;
+        border-radius: 0;
+
+        position: relative;
+
+        .group-readonly-switch{
+            position: absolute;
+            top: 12px;
+            right: 20px;
+            display: block; white-space: nowrap;
+            label{
+                padding: 0 12px;
+            }
+        }
+    }
+
+}
+.user-readonly-switch{
+    display: block;
+}
+.actions {
+    .move-users-container {
+        position: relative;
+        .dropdown-menu {
+            width: 100%;
+            text-align: left;
+        }
+    }
+}
+.no-membership td:not(:last-child){
+    text-decoration: line-through;
+}

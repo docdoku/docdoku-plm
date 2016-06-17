@@ -1,0 +1,78 @@
+<div id="configuration_creation_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>{{i18n.NEW_CONFIGURATION}}</h3>
+    </div>
+
+    <div class="modal-body">
+        <div class="notifications"></div>
+
+        <div class="ModalTabs ModalBody-tabs tabs">
+            <ul class="ModalTabs-nav nav nav-tabs">
+                <li class="active"><a href="#tab-configuration-general" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                <li><a href="#tab-configuration-choices" data-toggle="tab">{{i18n.CONFIGURATION}}</a></li>
+                <li><a href="#tab-configuration-acl" data-toggle="tab">{{i18n.ACL}}</a></li>
+            </ul>
+
+            <form id="configuration_creation_form" class="form-horizontal">
+
+
+                <div class="ModalTabsContent tab-content form-horizontal">
+                    <div id="tab-configuration-general" class="ModalTabsPane tab-pane active">
+                        <div class="control-group">
+                            {{#model.getId}}
+                            <label class="control-label" for="inputConfigurationItem">{{i18n.PRODUCT}}</label>
+                            <div class="controls">
+                                {{model.getId}}
+                            </div>
+                            {{/model.getId}}
+                            {{^model.getId}}
+                            <label class="control-label" for="inputConfigurationItem">{{i18n.PRODUCT}}</label>
+                            <div class="controls">
+                                <select id="inputConfigurationItem" required></select>
+                            </div>
+                            {{/model.getId}}
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="inputName">{{i18n.NAME}}</label>
+                            <div class="controls">
+                                <input type="text" id="inputName" placeholder="{{i18n.NAME}}" required/>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="inputDescription">{{i18n.DESCRIPTION}}</label>
+                            <div class="controls">
+                                <textarea id="inputDescription" placeholder="{{i18n.DESCRIPTION}}" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="inputPSFilter">{{i18n.PARTS}}</label>
+                            <div class="controls">
+                                <select id="inputPSFilter">
+                                    <option value="LATEST">{{i18n.HEAD_CHECKIN}}</option>
+                                    <option value="RELEASED">{{i18n.HEAD_RELEASED}}</option>
+                                </select>
+                                <i class="fa fa-spin fa-refresh loader"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-configuration-choices" class="ModalTabsPane tab-pane choicesListArea">
+                    </div>
+                    <div id="tab-configuration-acl" class="tab-pane">
+                        <div id="acl-mapping"></div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+        <button class="btn btn-primary" form="configuration_creation_form">{{i18n.CREATE}}</button>
+    </div>
+</div>

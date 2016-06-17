@@ -1,0 +1,51 @@
+<div class="actions well">
+    <button class="btn btn-default workspace-management" title="{{i18n.BACK}}">
+        {{i18n.BACK}}
+    </button>
+</div>
+<div class="margin">
+    <h3>{{i18n.DASHBOARD}}</h3>
+
+    <div class="charts workspace-chart-container">
+
+        <div class="chart well-large well workspace-chart" >
+            <h3>{{i18n.DISK_USAGE}}</h3>
+            <div id="disk_usage_chart">
+                <svg></svg>
+            </div>
+            <p>{{i18n.DISK_USAGE_TOTAL}} <span class="total"></span></p>
+        </div>
+
+        <div class="chart well-large well workspace-chart">
+            <h3>{{i18n.ENTITIES}}</h3>
+            <div id="entities_chart">
+                <svg></svg>
+            </div>
+        </div>
+
+        <div class="chart well-large well workspace-chart">
+            <h3>{{i18n.USERS}}</h3>
+            <div id="users_chart">
+                <svg></svg>
+            </div>
+        </div>
+
+        <div class="chart well-large well workspace-chart large-chart">
+            <h3>{{i18n.CHECKED_OUT_DOCUMENTS}}</h3>
+            <div id="cod_chart">
+                <svg></svg>
+            </div>
+            <p>{{i18n.TOTAL}} <span class="total"></span></p>
+        </div>
+
+        <div class="chart well-large well workspace-chart large-chart">
+            <h3>{{i18n.CHECKED_OUT_PARTS}}</h3>
+            <div id="cop_chart">
+                <svg></svg>
+            </div>
+            <p>{{i18n.TOTAL}} <span class="total"></span></p>
+        </div>
+
+    </div>
+
+</div>

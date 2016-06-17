@@ -1,0 +1,54 @@
+<div id="workspace-management-menu">
+    <ul class="nav well">
+        <li class="nav-header">
+            {{i18n.WORKSPACES_ADMINISTRATION}}
+        </li>
+        {{#workspaceId}}
+        <li class="header nav-list-entry">
+            <a href="#/">
+                {{i18n.BACK}}
+            </a>
+        </li>
+        <li class="header nav-list-entry {{#isEdition}}active{{/isEdition}}">
+            <a href="#/workspace/{{workspaceId}}/edit">
+                {{i18n.EDIT}}
+            </a>
+        </li>
+        <li  class="header nav-list-entry {{#isUsers}}active{{/isUsers}}">
+            <a href="#/workspace/{{workspaceId}}/users">
+                {{i18n.USERS}}
+            </a>
+        </li>
+        <li  class="header nav-list-entry {{#isDashboard}}active{{/isDashboard}}">
+            <a href="#/workspace/{{workspaceId}}/dashboard">
+                {{i18n.DASHBOARD}}
+            </a>
+        </li>
+        {{/workspaceId}}
+
+        {{^workspaceId}}
+            {{^isAdmin}}
+            <li  class="header nav-list-entry {{#isCreation}}active{{/isCreation}}">
+                <a href="#/create">
+                    <i class="fa fa-plus"></i>
+                    {{i18n.CREATE_WORKSPACE}}
+                </a>
+            </li>
+            {{/isAdmin}}
+            <li class="nav-header"> {{i18n.WORKSPACES}} </li>
+
+            {{#administratedWorkspaces}}
+            <li  class="header nav-list-entry">
+                <a href="#/workspace/{{id}}/edit">
+                    {{id}}
+                </a>
+            </li>
+            {{/administratedWorkspaces}}
+
+            <li class="sep"></li>
+
+        {{/workspaceId}}
+    </ul>
+</div>
+
+<div id="workspace-management-content"></div>

@@ -508,9 +508,7 @@ public class PartResource {
                                         @PathParam("partNumber") String partNumber,
                                         @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
-
-        PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId, partNumber, partVersion));
-        partRevision.setPublicShared(true);
+        productService.setPublicSharedPart(new PartRevisionKey(workspaceId, partNumber, partVersion),true);
         return Response.ok().build();
     }
 
@@ -522,9 +520,7 @@ public class PartResource {
                                           @PathParam("partNumber") String partNumber,
                                           @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
-
-        PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId, partNumber, partVersion));
-        partRevision.setPublicShared(false);
+        productService.setPublicSharedPart(new PartRevisionKey(workspaceId, partNumber, partVersion),false);
         return Response.ok().build();
     }
 

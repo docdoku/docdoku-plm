@@ -26,33 +26,32 @@ import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IOrganizationManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.server.jsf.actions.AccountBean;
+import com.docdoku.server.http.UserRoleRequestWrapper;
+import com.docdoku.server.jwt.RsaJsonWebKeyFactory;
+import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.consumer.InvalidJwtException;
+import org.jose4j.jwt.consumer.JwtConsumer;
+import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 
 import javax.ejb.EJB;
-import javax.el.PropertyNotFoundException;
 import javax.inject.Inject;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 public class AuthFilter implements Filter {
+
     private static final Logger LOGGER = Logger.getLogger(AuthFilter.class.getName());
-    private static final String ENCODING = "UTF-8";
 
     private String[] excludedPaths;
+    private String apiPathMatcher;
     private String apiPath;
-
-
-    @Inject
-    private AccountBean accountBean;
 
     @Inject
     private IUserManagerLocal userManager;
@@ -65,108 +64,6 @@ public class AuthFilter implements Filter {
 
     @EJB
     private IOrganizationManagerLocal organizationManager;
-
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain chain) throws IOException, ServletException {
-
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String remoteUser=httpRequest.getRemoteUser();
-
-        if(remoteUser == null){
-            remoteUser = authenticateUserWithHeaders(request);
-        }
-
-        if(isExcludedURL(httpRequest) && remoteUser==null) {
-            chain.doFilter(request, response);
-        }
-        else if(isApiRequest(httpRequest) && remoteUser==null){
-            sendUnauthorized(response);
-        }
-        else if (remoteUser==null) {
-            redirectLogin(httpRequest,response);
-        } else {
-            try {
-                FilterUtils.hookAccountBeanData(remoteUser, contextManager, userManager, accountManager, organizationManager, accountBean);
-                chain.doFilter(request, response);
-            } catch (AccountNotFoundException e) {
-                LOGGER.log(Level.FINEST,null,e);
-                redirectLogin(httpRequest, response);
-            }
-
-        }
-
-    }
-
-    private void sendUnauthorized(ServletResponse pResponse) throws ServletException, IOException {
-        HttpServletResponse response = (HttpServletResponse) pResponse;
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-    }
-
-    private boolean isApiRequest(HttpServletRequest httpRequest) {
-        String path = httpRequest.getRequestURI();
-        return Pattern.matches(apiPath, path);
-    }
-
-    private String authenticateUserWithHeaders(ServletRequest pRequest) {
-
-        HttpServletRequest httpRequest = (HttpServletRequest) pRequest;
-        String authorization = httpRequest.getHeader("Authorization");
-
-        if(authorization != null && !authorization.isEmpty()){
-            String[] splitAuthorization = authorization.split(" ");
-            if(splitAuthorization.length == 2){
-                byte[] decoded = DatatypeConverter.parseBase64Binary(splitAuthorization[1]);
-                try {
-                    String credentials = new String(decoded, "US-ASCII");
-                    String[] splitCredentials = credentials.split(":");
-                    String userLogin = splitCredentials[0];
-                    String userPassword = splitCredentials[1];
-                    httpRequest.login(userLogin, userPassword);
-                    Account account = accountManager.getAccount(userLogin);
-                    if(account!=null) {
-                        return account.getLogin();
-                    }
-                } catch (UnsupportedEncodingException | ServletException | AccountNotFoundException e) {
-                    LOGGER.log(Level.FINEST, null, e);
-                }
-            }
-        }
-        return null;
-    }
-
-    private boolean isExcludedURL(HttpServletRequest httpRequest){
-        String path = httpRequest.getRequestURI();
-        String method=httpRequest.getMethod();
-        if(path!=null && excludedPaths !=null && "GET".equals(method)){
-            for(String excludedPath: excludedPaths){
-                if(Pattern.matches(excludedPath, path)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private void redirectLogin(HttpServletRequest httpRequest, ServletResponse response) throws IOException, ServletException {
-        String qs=httpRequest.getQueryString();
-        String originURL = httpRequest.getRequestURI() + (qs==null?"": "?" + qs);
-        HttpSession session = httpRequest.getSession();
-        session.setAttribute("hasFail", false);
-        session.setAttribute("hasLogout", false);
-        try {
-            httpRequest.getRequestDispatcher(httpRequest.getContextPath() + "/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, ENCODING))
-                       .forward(httpRequest, response);
-        }catch (PropertyNotFoundException e){
-            LOGGER.log(Level.SEVERE,"Cannot redirect to Login Page");
-            LOGGER.log(Level.FINER,null,e);
-        }
-    }
-
-    @Override
-    public void destroy() {
-        // Nothing to do
-    }
 
     @Override
     public void init(FilterConfig filterConfig) {
@@ -188,9 +85,144 @@ public class AuthFilter implements Filter {
             excludedPaths = null;
         }
 
-        String apiPathParam=filterConfig.getInitParameter("apiPath");
+        String apiPathParam = filterConfig.getInitParameter("apiPath");
+
         if(apiPathParam !=null) {
-            apiPath = apiPathParam.replace("*", ".*");
+            apiPath = apiPathParam.replace("/*", "");
+            apiPathMatcher = apiPathParam.replace("*", ".*");
         }
     }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response,
+            FilterChain chain) throws IOException, ServletException {
+
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String remoteUser = httpRequest.getRemoteUser();
+
+        // User has already an active session
+        if(remoteUser != null && !remoteUser.isEmpty()){
+            chain.doFilter(request, response);
+            return;
+        }
+
+        // Tries to parse authentication from headers
+        // Support JWT and basic auth
+        String authHeaderVal = httpRequest.getHeader("Authorization");
+
+        if(authHeaderVal != null && !authHeaderVal.isEmpty()){
+            if(authHeaderVal.startsWith("Bearer")){
+                authenticateJWT(request, response, chain);
+            }
+            else if(authHeaderVal.startsWith("Basic")){
+                authenticateBasic(request,response,chain);
+            }else {
+                sendBadRequest(response);
+            }
+        } else {
+            if(isRootCall(httpRequest) || isExcludedURL(httpRequest)) {
+                chain.doFilter(request, response);
+            }
+            else if(isApiRequest(httpRequest)){
+                sendUnauthorized(response);
+            }
+            // should we handle last case ? (not recognized URL)
+        }
+    }
+
+    private boolean isRootCall(HttpServletRequest httpRequest){
+        String path = httpRequest.getRequestURI();
+        return path.equals(apiPath) || path.equals(apiPath+"/");
+    }
+
+    private void authenticateJWT(ServletRequest request, ServletResponse response,
+                                 FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String authorization = httpRequest.getHeader("Authorization");
+        String[] splitAuthorization = authorization.split(" ");
+        if(splitAuthorization.length==2){
+            String jwt = splitAuthorization[1];
+            Account account = validateToken(jwt);
+            if(account != null){
+                // Not working
+                // TODO : find a way to propagate role in security context
+                chain.doFilter(new UserRoleRequestWrapper(account.getLogin(),accountManager.getRole(account.getLogin()),httpRequest),response);
+            }else {
+                sendUnauthorized(response);
+            }
+        }else{
+            sendBadRequest(response);
+        }
+    }
+
+    private Account validateToken(String jwt) {
+        RsaJsonWebKey rsaJsonWebKey = RsaJsonWebKeyFactory.createKey();
+        JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+                .setRequireSubject()
+                .setVerificationKey(rsaJsonWebKey.getKey())
+                .build();
+
+        Account account = null;
+
+        try {
+            JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
+            String userLogin= (String) jwtClaims.getClaimValue("sub");
+            account = accountManager.getAccount(userLogin);
+        } catch (InvalidJwtException e) {
+            LOGGER.log(Level.SEVERE,null,e);
+        } catch (AccountNotFoundException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+
+        return account;
+
+    }
+
+    private void sendUnauthorized(ServletResponse pResponse) throws ServletException, IOException {
+        HttpServletResponse response = (HttpServletResponse) pResponse;
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+    }
+
+    private void sendBadRequest(ServletResponse pResponse) throws ServletException, IOException {
+        HttpServletResponse response = (HttpServletResponse) pResponse;
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad request");
+    }
+
+    private boolean isApiRequest(HttpServletRequest httpRequest) {
+        String path = httpRequest.getRequestURI();
+        return Pattern.matches(apiPathMatcher, path);
+    }
+
+    private void authenticateBasic(ServletRequest pRequest, ServletResponse response, FilterChain chain) throws ServletException, IOException {
+        HttpServletRequest httpRequest = (HttpServletRequest) pRequest;
+        String authorization = httpRequest.getHeader("Authorization");
+        String[] splitAuthorization = authorization.split(" ");
+        if(splitAuthorization.length == 2){
+            byte[] decoded = DatatypeConverter.parseBase64Binary(splitAuthorization[1]);
+            String credentials = new String(decoded, "US-ASCII");
+            String[] splitCredentials = credentials.split(":");
+            String userLogin = splitCredentials[0];
+            String userPassword = splitCredentials[1];
+            httpRequest.login(userLogin, userPassword);
+            chain.doFilter(pRequest,response);
+        }
+    }
+
+    private boolean isExcludedURL(HttpServletRequest httpRequest){
+        String path = httpRequest.getRequestURI();
+        if(path!=null && excludedPaths !=null){
+            for(String excludedPath: excludedPaths){
+                if(Pattern.matches(excludedPath, path)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void destroy() {
+        // Nothing to do
+    }
+
 }

@@ -20,6 +20,7 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.WorkspaceWorkflow;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.workflow.*;
@@ -90,8 +91,8 @@ public class WorkflowDAO {
     }
 
     public DocumentRevision getDocumentTarget(Workflow pWorkflow) {
-        TypedQuery<DocumentRevision> query = em.createQuery("SELECT d FROM DocumentRevision d WHERE d.workflow = :workflow", DocumentRevision.class);
-        try{
+        TypedQuery<DocumentRevision> query = em.createNamedQuery("DocumentRevision.findByWorkflow", DocumentRevision.class);
+        try {
             return query.setParameter("workflow", pWorkflow).getSingleResult();
         }catch(NoResultException e){
             return null;
@@ -99,8 +100,8 @@ public class WorkflowDAO {
     }
 
     public PartRevision getPartTarget(Workflow pWorkflow) {
-        TypedQuery<PartRevision> query = em.createQuery("SELECT p FROM PartRevision p WHERE p.workflow = :workflow", PartRevision.class);
-        try{
+        TypedQuery<PartRevision> query = em.createNamedQuery("PartRevision.findByWorkflow", PartRevision.class);
+        try {
             return query.setParameter("workflow", pWorkflow).getSingleResult();
         }catch(NoResultException e){
             return null;
@@ -133,5 +134,45 @@ public class WorkflowDAO {
             }
         }
         em.flush();
+    }
+
+    public Workflow getWorkflow(int workflowId) {
+        return em.find(Workflow.class, workflowId);
+    }
+
+    public void createWorkspaceWorkflow(WorkspaceWorkflow workspaceWorkflow) {
+        em.persist(workspaceWorkflow);
+        em.flush();
+    }
+
+    public WorkspaceWorkflow getWorkspaceWorkflowTarget(String workspaceId, Workflow workflow) {
+        TypedQuery<WorkspaceWorkflow> query = em.createQuery("SELECT w FROM WorkspaceWorkflow w WHERE w.workflow = :workflow AND w.workspaceId = :workspaceId", WorkspaceWorkflow.class);
+        try{
+            return query.setParameter("workflow", workflow)
+                .setParameter("workspaceId", workspaceId)
+                .getSingleResult();
+        }catch(NoResultException e){
+            return null;
+        }
+    }
+
+    public WorkspaceWorkflow getWorkspaceWorkflow(String workspaceId, String workspaceWorkflowId) {
+        TypedQuery<WorkspaceWorkflow> query = em.createQuery("SELECT w FROM WorkspaceWorkflow w WHERE w.id = :workspaceWorkflowId AND w.workspaceId = :workspaceId", WorkspaceWorkflow.class);
+        try{
+            return query.setParameter("workspaceWorkflowId", workspaceWorkflowId)
+                    .setParameter("workspaceId", workspaceId)
+                    .getSingleResult();
+        }catch(NoResultException e){
+            return null;
+        }
+    }
+
+    public List<WorkspaceWorkflow> getWorkspaceWorkflowList(String workspaceId) {
+        TypedQuery<WorkspaceWorkflow> query = em.createQuery("SELECT w FROM WorkspaceWorkflow w WHERE w.workspaceId = :workspaceId", WorkspaceWorkflow.class);
+        try{
+            return query.setParameter("workspaceId", workspaceId).getResultList();
+        }catch(NoResultException e){
+            return null;
+        }
     }
 }

@@ -1,0 +1,23 @@
+<div class="notifications">
+    {{#isAdmin}}
+    <div>
+        <div class="Alert alert alert-info fade in">
+            <a class="Alert-closeBtn close" data-dismiss="alert">×</a>
+            <h4 class="Alert-title alert-heading"></h4>
+            <h4>{{i18n.ROOT_ADMIN}}</h4>
+            <p class="Alert-message">{{i18n.ROOT_ADMIN_MESSAGE}}</p>
+        </div>
+    </div>
+    {{/isAdmin}}
+</div>
+
+<div class="margin">
+    <h3>{{i18n.WORKSPACES_ADMINISTRATION}}</h3>
+    {{#isAdmin}}
+    <p><a href="#/admin/dashboard">{{i18n.ADMIN_DASHBOARD}}</a></p>
+    {{/isAdmin}}
+    <p><i class="fa fa-graduation-cap"></i> <em>{{i18n.WORKSPACES_ADMINISTRATION_TEXT}}</em></p>
+
+    <div class="home-workspace-list-container administrated-workspaces"></div>
+    <div class="home-workspace-list-container non-administrated-workspaces"></div>
+</div>

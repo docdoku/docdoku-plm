@@ -1,0 +1,80 @@
+<div id="part_creation_modal" class="modal">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>{{i18n.NEW_PART}}</h3>
+    </div>
+    <div class="modal-body">
+        <div class="notifications"></div>
+        <h4></h4>
+        <div class="tabs">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                <li><a href="#tab-workflow" data-toggle="tab">{{i18n.WORKFLOW}}</a></li>
+                <li><a href="#tab-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
+                <li><a href="#tab-acl" data-toggle="tab">{{i18n.ACL}}</a></li>
+            </ul>
+            <form id="part_creation_form" class="tab-content form-horizontal">
+                <div id="tab-main" class="tab-pane active">
+                    <div class="control-group">
+                        <label class="control-label" for="inputPartTemplate">{{i18n.PART_TEMPLATE}}</label>
+
+                        <div class="controls">
+                            <select id="inputPartTemplate">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputPartNumber">{{i18n.PART_NUMBER}}</label>
+
+                        <div class="controls">
+                            <input type="text" id="inputPartNumber" placeholder="{{i18n.PART_NUMBER}}" required/>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputPartName">{{i18n.PART_NAME}}</label>
+
+                        <div class="controls">
+                            <input type="text" id="inputPartName" placeholder="{{i18n.PART_NAME}}"/>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputPartDescription">{{i18n.DESCRIPTION}}</label>
+
+                        <div class="controls">
+                            <textarea id="inputPartDescription" placeholder="{{i18n.DESCRIPTION}}" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputPartStandard">{{i18n.STANDARD_PART}}</label>
+
+                        <div class="controls">
+                            <input type="checkbox" id="inputPartStandard"/>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-workflow" class="tab-pane">
+                    <div id="workflows-list"></div>
+                    <div id="workflows-mapping" class="role-mapping"></div>
+                </div>
+                <div id="tab-attributes" class="tab-pane">
+                    <p>{{i18n.PART_ATTRIBUTES}}</p>
+                    <div id="attributes-list" class="attributes attributes-edit"></div>
+                    <p>{{i18n.PRODUCT_INSTANCE_DATA_ATTRIBUTES_TEMPLATES}}</p>
+                    <div id="attribute-templates-list" class="attributes attributes-edit"></div>
+                </div>
+                <div id="tab-acl" class="tab-pane">
+                    <div id="acl-mapping"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+        <button class="btn btn-primary" form="part_creation_form">{{i18n.CREATE_PART}}</button>
+    </div>
+</div>

@@ -1,34 +1,34 @@
-#product-content{
+#product-content {
 
-    .mode-controls{
+    .mode-controls {
         display: inline-block;
     }
 
-    .dmu-controls,.bom-controls,#side_controls_container,#scene_container,#bom_table_container{
+    .dmu-controls, .bom-controls, #side_controls_container, #scene_container, #bom_table_container {
         display: none;
     }
 
-    .product-instance{
+    .product-instance {
         display: inline-block;
     }
 
-    .path_to_path_link{
+    .path_to_path_link {
         display: inline-block;
     }
 
-    &.bom-mode{
-        #bom_table_container{
+    &.bom-mode {
+        #bom_table_container {
             display: block;
         }
-        .bom-controls{
+        .bom-controls {
             display: inline-block;
         }
     }
-    &.scene-mode{
-        #side_controls_container,#scene_container{
+    &.scene-mode {
+        #side_controls_container, #scene_container {
             display: block;
         }
-        .dmu-controls{
+        .dmu-controls {
             display: inline;
         }
         .actions .cascade-checkout-group .btn-group button.checkout span.icon {
@@ -36,13 +36,13 @@
         }
     }
 
-    #side_controls_container{
-        .clear-measures-btn{
-            display:none;
+    #side_controls_container {
+        .clear-measures-btn {
+            display: none;
 
-            &.display{
-                display:inline-block;
-                float:right;
+            &.display {
+                display: inline-block;
+                float: right;
                 margin-top: -2px;
             }
         }
@@ -51,8 +51,6 @@
     .actions span.cascade-checkout-group {
         display: none;
     }
-
-
 
     .cascade-checkout-group .btn-group {
         span.caret {

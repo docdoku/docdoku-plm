@@ -53,6 +53,11 @@
             <artifactId>poi-ooxml</artifactId>
             <version>3.9</version>
         </dependency>
+        <dependency>
+            <groupId>org.bitbucket.b_c</groupId>
+            <artifactId>jose4j</artifactId>
+            <version>0.5.1</version>
+        </dependency>
         <!-- Build plugins -->
         <dependency>
             <groupId>org.codehaus.mojo</groupId>
@@ -110,25 +115,6 @@
         <!-- War name-->
         <finalName>${project.artifactId}</finalName>
         <plugins>
-            <!-- Load settings from property file -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>properties-maven-plugin</artifactId>
-                <version>1.0-alpha-2</version>
-                <executions>
-                    <execution>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>read-project-properties</goal>
-                        </goals>
-                        <configuration>
-                            <files>
-                                <file>../server.properties</file>
-                            </files>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <!-- Compile sources -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -140,29 +126,7 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-            <!-- Make war-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                    <webResources>
-                        <resource>
-                            <filtering>true</filtering>
-                            <targetPath>resources/default</targetPath>
-                            <directory>src/main/webapp/resources/default</directory>
-                        </resource>
-                        <resource>
-                            <directory>src/main/webapp</directory>
-                            <filtering>true</filtering>
-                            <includes>
-                                <include>server.properties.json</include>
-                            </includes>
-                        </resource>
-                    </webResources>
-                </configuration>
-            </plugin>
+
             <!-- Generate swagger.json in target directory -->
             <plugin>
                 <groupId>com.github.kongchen</groupId>
@@ -202,52 +166,8 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Generate java client sources in docdoku-server-web-api-java module -->
-            <plugin>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-codegen-maven-plugin</artifactId>
-                <version>2.1.5</version>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>${project.build.directory}/swagger/swagger.json</inputSpec>
-                            <language>java</language>
-                            <output>../docdoku-server-web-api-java/generated-sources/swagger</output>
-                            <apiPackage>com.docdoku.server.api.services</apiPackage>
-                            <invokerPackage>com.docdoku.server.api.client</invokerPackage>
-                            <modelPackage>com.docdoku.server.api.models</modelPackage>
-                            <library>jersey2</library>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- clean generated swagger sources -->
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>clear generated</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>../docdoku-server-web-api-java/generated-sources/swagger</directory>
-                        </fileset>
-                    </filesets>
-                </configuration>
-            </plugin>
 
-            <!-- Copy json file to js module-->
+            <!-- Rename json file in target -->
             <plugin>
                 <groupId>com.coderplus.maven.plugins</groupId>
                 <artifactId>copy-rename-maven-plugin</artifactId>
@@ -261,7 +181,7 @@
                         </goals>
                         <configuration>
                             <sourceFile>${project.build.directory}/swagger/swagger.json</sourceFile>
-                            <destinationFile>../docdoku-server-web-api-js/dist/docdoku-plm-api.json</destinationFile>
+                            <destinationFile>${project.build.directory}/swagger/docdoku-plm-api.json</destinationFile>
                         </configuration>
                     </execution>
                 </executions>

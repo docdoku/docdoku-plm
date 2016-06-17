@@ -1,0 +1,149 @@
+<h3>{{part.partKey}}</h3>
+<div class="tabs">
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#tab-part-general" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+        <li class=""><a href="#tab-part-iteration" data-toggle="tab">{{i18n.ITERATION}}</a></li>
+        <li class=""><a href="#tab-part-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
+        {{#lastIteration.geometryFileURI}}
+        <li class=""><a href="#tab-cad-file" data-toggle="tab">{{i18n.CAD_FILE}}</a></li>
+        {{/lastIteration.geometryFileURI}}
+        <li class=""><a href="#tab-part-files" data-toggle="tab">{{i18n.ATTACHED_FILES}}</a></li>
+        {{#lastIteration.components.length}}
+        <li class=""><a href="#tab-part-assembly" data-toggle="tab">{{i18n.SUB_PARTS}}</a></li>
+        {{/lastIteration.components.length}}
+        <li class=""><a href="#tab-part-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
+    </ul>
+
+    <div class="tab-content form-horizontal">
+        <div id="tab-part-general" class="tab-pane active">
+
+            <table class="table table-striped table-condensed">
+                <tbody>
+                <tr>
+                    <th scope="row">{{i18n.CREATION_DATE}}</th>
+                    <td>{{part.creationDate}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{{i18n.TYPE}}</th>
+                    <td>{{part.type}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{{i18n.NAME}}</th>
+                    <td>{{part.name}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{{i18n.STANDARD_PART}}</th>
+                    <td>
+                        {{#part.standardPart}}{{i18n.STANDARD_PART_TRUE}}{{/part.standardPart}}
+                        {{^part.standardPart}}{{i18n.STANDARD_PART_FALSE}}{{/part.standardPart}}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">{{i18n.AUTHOR}}</th>
+                    <td>{{part.author.name}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{{i18n.LIFECYCLE_STATE}}</th>
+                    <td>{{part.lifeCycleState}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{{i18n.DESCRIPTION}}</th>
+                    <td>{{part.description}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{{i18n.TAGS}}</th>
+                    <td>{{part.tags}}</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <div id="tab-part-iteration" class="tab-pane">
+            <table class="table table-striped table-condensed">
+                <tbody>
+                <tr>
+                    <th scope="row">{{i18n.ITERATION}}</th>
+                    <td>{{lastIteration.iteration}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{{i18n.REVISION_NOTE}}</th>
+                    <td>{{lastIteration.iterationNote}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{{i18n.REVISION_DATE}}</th>
+                    <td>
+                    {{#part.checkOutUser}}
+                        {{lastIteration.creationDate}}
+                    {{/part.checkOutUser}}
+                    {{^part.checkOutUser}}
+                        {{lastIteration.checkInDate}}
+                    {{/part.checkOutUser}}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">{{i18n.MODIFICATION_DATE}}</th>
+                    <td>{{lastIteration.modificationDate}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{{i18n.AUTHOR}}</th>
+                    <td>{{lastIteration.author.name}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="tab-part-attributes" class="tab-pane">
+            {{#lastIteration.instanceAttributes.length}}
+            <table class="table table-striped table-condensed">
+                <thead>
+                <tr>
+                    <th>{{i18n.NAME}}</th>
+                    <th>{{i18n.VALUE}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {{#lastIteration.instanceAttributes}}
+                    <tr>
+                        <td>{{name}}</td>
+                        <td>{{value}}</td>
+                    </tr>
+                    {{/lastIteration.instanceAttributes}}
+                </tbody>
+            </table>
+            {{/lastIteration.instanceAttributes.length}}
+        </div>
+
+        {{#lastIteration.geometryFileURI}}
+        <div id="tab-cad-file" class="tab-pane">
+
+        </div>
+        {{/lastIteration.geometryFileURI}}
+
+         <div id="tab-part-files" class="tab-pane">
+            <div id="files" class="accordion"></div>
+        </div>
+
+        {{#lastIteration.components.length}}
+        <div id="tab-part-assembly" class="tab-pane">
+            <iframe id="assembly-frame" src="{{contextPath}}/visualization/#assembly/{{part.workspaceId}}/{{part.partKey}}/0/0/0"></iframe>
+        </div>
+        {{/lastIteration.components.length}}
+
+        <div id="tab-part-links" class="tab-pane">
+            <div id="part-links">
+                <ul>
+                    {{#lastIteration.linkedDocuments}}
+                    <li>
+                        <a href="{{contextPath}}/documents/#{{workspaceId}}/{{documentMasterId}}/{{version}}">{{documentMasterId}}-{{version}}</a>
+                    </li>
+                    {{/lastIteration.linkedDocuments}}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<a href="{{contextPath}}/product-management/#foo/parts">{{i18n.SEE_IN_PRODUCT_MANAGEMENT}}</a>

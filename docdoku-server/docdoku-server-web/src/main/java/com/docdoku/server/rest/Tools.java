@@ -151,6 +151,7 @@ public class Tools {
         partRevisionDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
         partRevisionDTO.setName(partRevision.getPartMaster().getName());
         partRevisionDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
+        partRevisionDTO.setType(partRevision.getPartMaster().getType());
 
         if (partRevision.isObsolete()) {
             partRevisionDTO.setObsoleteDate(partRevision.getObsoleteDate());
@@ -219,6 +220,10 @@ public class Tools {
         partIterationDTO.setComponents(usageLinksDTO);
         partIterationDTO.setNumber(partIteration.getPartRevision().getPartNumber());
         partIterationDTO.setVersion(partIteration.getPartRevision().getVersion());
+
+        if(!partIteration.getGeometries().isEmpty()){
+            partIterationDTO.setGeometryFileURI("/api/files/"+partIteration.getSortedGeometries().get(0).getFullName());
+        }
 
         return partIterationDTO;
     }

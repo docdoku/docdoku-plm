@@ -1,4 +1,4 @@
-/*global casper,homeUrl,require*/
+/*global casper,homeUrl*/
 
 'use strict';
 
@@ -50,6 +50,7 @@ if (conf.debugResponses) {
     casper.options.onResourceReceived = function (C, response) {
         if(response.url.match('/api/')){
             console.log('#'+response.status + ' ' +response.statusText + ' ' + response.url);
+            console.log(JSON.stringify(response.headers));
         }
     };
 }

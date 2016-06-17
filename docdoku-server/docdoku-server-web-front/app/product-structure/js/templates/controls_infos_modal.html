@@ -1,0 +1,109 @@
+<div class="modal hide fade" id="controlsInfosModal" tabindex="-1">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3 id="markerTitle">{{i18n.CONTROLS_SHORTCUTS}}</h3>
+    </div>
+    <div class="modal-body">
+        {{#isPLC}}
+        <h4>{{i18n.KEYBOARD_SHORTCUTS}}</h4>
+
+        <div class="row">
+
+            <!-- First column -->
+            <div class="span2">
+                <dl class="keyboard-ps-controls">
+                    <dt>z</dt>
+                    <dd>{{i18n.MOVE_FORWARD}}</dd>
+                </dl>
+                <dl class="keyboard-ps-controls">
+                    <dt>s</dt>
+                    <dd>{{i18n.MOVE_BACKWARD}}</dd>
+                </dl>
+                <dl class="keyboard-ps-controls">
+                    <dt>q</dt>
+                    <dd>{{i18n.MOVE_LEFT}}</dd>
+                </dl>
+                <dl class="keyboard-ps-controls">
+                    <dt>d</dt>
+                    <dd>{{i18n.MOVE_RIGHT}}</dd>
+                </dl>
+            </div>
+
+            <!-- Second column -->
+            <div class="span2">
+                <dl class="keyboard-ps-controls">
+                    <dt>{{i18n.SPACE}}</dt>
+                    <dd>{{i18n.MOVE_UP}}</dd>
+                </dl>
+                <dl class="keyboard-ps-controls">
+                    <dt>ctrl</dt>
+                    <dd>{{i18n.MOVE_DOWN}}</dd>
+                </dl>
+                <dl class="keyboard-ps-controls">
+                    <dt>esc</dt>
+                    <dd>{{i18n.LEAVE_NAV}}</dd>
+                </dl>
+            </div>
+        </div>
+
+        <hr/>
+
+        <h4>{{i18n.MOUSE_CONTROLS}}</h4>
+        <dl class="keyboard-ps-controls">
+            <dt>{{i18n.DBL_CLICK}}</dt>
+            <dd>{{i18n.ENTER_NAV}}</dd>
+        </dl>
+        <dl class="keyboard-ps-controls">
+            <dt>{{i18n.MOVE}}</dt>
+            <dd>{{i18n.MOVE_SCENE}}</dd>
+        </dl>
+        <dl class="keyboard-ps-controls">
+            <dt>{{i18n.LEFT_CLICK}}</dt>
+            <dd>{{i18n.MARKER_INFO}}</dd>
+        </dl>
+        {{/isPLC}}
+
+        {{#isTBC}}
+        <h4>{{i18n.MOUSE_CONTROLS}}</h4>
+        <dl class="keyboard-ps-controls">
+            <dt>{{i18n.LEFT_CLICK}} <em>+</em> {{i18n.MOVE}}</dt>
+            <dd>{{i18n.ROTATE_SCENE}}</dd>
+        </dl>
+        <dl class="keyboard-ps-controls">
+            <dt>{{i18n.RIGHT_CLICK}} <em>+</em> {{i18n.MOVE}}</dt>
+            <dd>{{i18n.MOVE_SCENE}}</dd>
+        </dl>
+        <dl class="keyboard-ps-controls">
+            <dt>{{i18n.SCROLL_UP}}</dt>
+            <dd>{{i18n.MOVE_FORWARD}}</dd>
+        </dl>
+        <dl class="keyboard-ps-controls">
+            <dt>{{i18n.SCROLL_DOWN}}</dt>
+            <dd>{{i18n.MOVE_BACKWARD}}</dd>
+        </dl>
+        {{/isTBC}}
+
+        {{#isORC}}
+        <h4>{{i18n.MOUSE_CONTROLS}}</h4>
+        <dl class="keyboard-ps-controls">
+            <dt>{{i18n.LEFT_CLICK}} <em>+</em> {{i18n.MOVE}}</dt>
+            <dd>{{i18n.ROTATE_SCENE}}</dd>
+        </dl>
+        <dl class="keyboard-ps-controls">
+            <dt>{{i18n.RIGHT_CLICK}} <em>+</em> {{i18n.MOVE}}</dt>
+            <dd>{{i18n.MOVE_SCENE}}</dd>
+        </dl>
+        <dl class="keyboard-ps-controls">
+            <dt>{{i18n.SCROLL_UP}}</dt>
+            <dd>{{i18n.MOVE_FORWARD}}</dd>
+        </dl>
+        <dl class="keyboard-ps-controls">
+            <dt>{{i18n.SCROLL_DOWN}}</dt>
+            <dd>{{i18n.MOVE_BACKWARD}}</dd>
+        </dl>
+        {{/isORC}}
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn btn-default" data-dismiss="modal">{{i18n.CLOSE}}</a>
+    </div>
+</div>

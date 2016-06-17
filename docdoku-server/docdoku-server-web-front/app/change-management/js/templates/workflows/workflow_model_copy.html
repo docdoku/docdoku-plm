@@ -1,0 +1,16 @@
+<div id="modal-copy-workflow" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+        <i class="fa fa-files-o"></i>
+        <a class="close" data-dismiss="modal">×</a>
+
+        <h3>{{i18n.WORKFLOW_COPY}} : {{workflow.id}}</h3>
+    </div>
+    <div class="modal-body">
+        <label for="workflow-copy-name">{{i18n.RENAME_WORKFLOW_COPY}}</label>
+        <input id="workflow-copy-name" type="text" value="{{workflow.id}}" required/>
+    </div>
+    <div class="modal-footer">
+        <button id="cancel-copy-workflow-btn" class="btn btn-default">{{i18n.CANCEL}}</button>
+        <button id="save-copy-workflow-btn" class="btn btn-primary">{{i18n.COPY}}</button>
+    </div>
+</div>

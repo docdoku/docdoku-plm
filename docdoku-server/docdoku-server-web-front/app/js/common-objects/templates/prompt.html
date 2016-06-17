@@ -4,8 +4,8 @@
     </div>
     <div class="modal-body">
         <p>{{question}}</p>
-        <label class="control-label" for="prompt_input">{{title}}</label>
-        <{{#inputSpecified}}{{inputSpecified}}{{/inputSpecified}}{{^inputSpecified}}input{{/inputSpecified}} type="text" class="input-xlarge" id="prompt_input" value="{{defaultValue}}" />
+        <label class="control-label" for="prompt_input">{{label}}</label>
+        <{{#inputSpecified}}{{inputSpecified}}{{/inputSpecified}}{{^inputSpecified}}input{{/inputSpecified}} type="{{type}}" class="input-xlarge" id="prompt_input" value="{{defaultValue}}" />
     </div>
     <div class="modal-footer">
         <a href="#" id="cancelPrompt" class="btn .cancel">{{cancelButton}}</a>

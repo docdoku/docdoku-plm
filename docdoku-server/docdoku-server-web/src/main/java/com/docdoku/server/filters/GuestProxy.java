@@ -21,8 +21,6 @@
 package com.docdoku.server.filters;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.common.User;
-import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
@@ -41,7 +39,6 @@ import javax.annotation.security.RunAs;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.security.auth.login.LoginException;
 import java.io.InputStream;
 
 @DeclareRoles(UserGroupMapping.GUEST_PROXY_ROLE_ID)
@@ -62,30 +59,54 @@ public class GuestProxy{
     @Inject
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
 
-    public PartRevision getPublicPartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, LoginException, AccessRightException {
-
+    public PartRevision getPublicPartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
         PartRevision partRevision = productService.getPartRevision(partRevisionKey);
-        if(partRevision.isPublicShared()){
-            return partRevision;
-        }else{
-            throw new LoginException();
-        }
+        return partRevision.isPublicShared() ? partRevision : null;
     }
 
-    public DocumentRevision getPublicDocumentRevision(DocumentRevisionKey documentRevisionKey) throws NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, AccessRightException, LoginException {
-
+    public DocumentRevision getPublicDocumentRevision(DocumentRevisionKey documentRevisionKey) throws NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, AccessRightException {
         DocumentRevision documentRevision =  documentService.getDocumentRevision(documentRevisionKey);
-        if(documentRevision.isPublicShared()){
-            return documentRevision;
-        }else{
-            throw new LoginException();
-        }
+        return documentRevision.isPublicShared() ? documentRevision : null;
     }
+
+    public BinaryResource getPublicBinaryResourceForDocument(String fullName)
+            throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException{
+
+        BinaryResource binaryResource = documentService.getBinaryResource(fullName);
+        String workspaceId = binaryResource.getWorkspaceId();
+        String documentMasterId = binaryResource.getHolderId();
+        String documentVersion = binaryResource.getHolderRevision();
+        DocumentRevision documentRevision =  documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId,documentMasterId,documentVersion));
+
+        return documentRevision.isPublicShared() ? binaryResource : null;
+    }
+
+    public BinaryResource getPublicBinaryResourceForPart(String fullName)
+            throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException{
+
+        BinaryResource binaryResource = productService.getBinaryResource(fullName);
+        String workspaceId = binaryResource.getWorkspaceId();
+        String partNumber = binaryResource.getHolderId();
+        String partVersion = binaryResource.getHolderRevision();
+        PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId, partNumber, partVersion));
+
+        return partRevision.isPublicShared() ? binaryResource:null;
+    }
+
+
+/*
+
 
     public BinaryResource getPublicBinaryResourceForDocument(DocumentRevisionKey docRK, String fullName)
             throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException, LoginException{
-        getPublicDocumentRevision(docRK);
-        return documentService.getBinaryResource(fullName);
+
+        DocumentRevision documentRevision =  documentService.getDocumentRevision(docRK);
+        if(documentRevision.isPublicShared()){
+            return documentService.getBinaryResource(fullName);
+        }else{
+            return null;
+        }
+
     }
 
     public BinaryResource getPublicBinaryResourceForPart(PartRevisionKey partK, String fullName) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, LoginException, FileNotFoundException, NotAllowedException, AccessRightException {
@@ -109,25 +130,22 @@ public class GuestProxy{
         return productService.getBinaryResource(fullName);
     }
 
+*/
 
-
-    public boolean canAccess(DocumentIterationKey docIKey)
-            throws EntityNotFoundException, UserNotActiveException{
-        return documentService.canAccess(docIKey);
-    }
-    public boolean canAccess(PartIterationKey partIKey)
-            throws EntityNotFoundException, UserNotActiveException{
-        return productService.canAccess(partIKey);
-    }
-    public BinaryResource getBinaryResourceForDocument(String fullName)
-            throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException{
+    public BinaryResource getBinaryResourceForSharedDocument(String fullName) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, UserNotActiveException {
         return documentService.getBinaryResource(fullName);
     }
-    public BinaryResource getBinaryResourceForPart(String fullName)
-            throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException{
+
+    public BinaryResource getBinaryResourceForSharedPart(String fullName) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, UserNotActiveException {
         return productService.getBinaryResource(fullName);
     }
 
+    public boolean canAccess(DocumentIterationKey docIKey) throws EntityNotFoundException, UserNotActiveException{
+        return documentService.canAccess(docIKey);
+    }
+    public boolean canAccess(PartIterationKey partIKey) throws EntityNotFoundException, UserNotActiveException{
+        return productService.canAccess(partIKey);
+    }
 
     public InputStream getDocumentConvertedResource(String outputFormat, BinaryResource binaryResource) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConvertedResourceException {
         return documentResourceGetterService.getDocumentConvertedResource(outputFormat, binaryResource);

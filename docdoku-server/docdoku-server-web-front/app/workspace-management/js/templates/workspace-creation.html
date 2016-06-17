@@ -1,0 +1,43 @@
+<div class="actions well">
+    <button class="btn btn-default workspace-management" title="{{i18n.CANCEL}}">
+        {{i18n.CANCEL}}
+    </button>
+</div>
+<div class="notifications"></div>
+<div class="margin">
+    <h3>{{i18n.CREATE_WORKSPACE_SUBTITLE}}</h3>
+    <h3>{{i18n.ADMIN}}</h3>
+    <p>{{i18n.CREATE_WORKSPACE_SIDE_TEXT}}</p>
+    <form id="workspace_creation_form" class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="workspace-id">{{i18n.NAME}}</label>
+            <div class="controls">
+                <input id="workspace-id" type="text" name="workspace-id" maxlength="50" size="20" />
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="description">Description</label>
+            <div class="controls">
+                <textarea id="description" placeholder="Description" rows="3"></textarea>
+            </div>
+        </div>
+
+        <div class="control-group" id="inputPartNumberWrapper">
+            <label class="control-label">{{i18n.OPTIONS}}</label>
+            <div class="controls">
+                <label class="checkbox" for="folderLocked">
+                    <input id="folderLocked" type="checkbox" name="folderLocked" title="{{i18n.FOLDER_LOCKED}}" />
+                    {{i18n.FOLDER_LOCKED}}
+                </label>
+            </div>
+
+        </div>
+
+        <div class="actions-btn">
+            <div class="controls">
+                <input type="submit" value="{{i18n.CREATE}}" alt="{{i18n.CREATE}}" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>

@@ -239,8 +239,8 @@ public class PartBinaryResource {
 
         String fullName;
         if (pUuid != null && !pUuid.isEmpty()) {
-            String uuid = pUuid.split("/")[2];
-            SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
+
+            SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(pUuid);
 
             // Check uuid & access right
             checkUuidValidity(sharedEntity, workspaceId, partNumber, version, iteration, referer);
@@ -272,13 +272,21 @@ public class PartBinaryResource {
 
         fullName += (subType != null && !subType.isEmpty()) ? subType + "/" + decodedFileName : decodedFileName;
 
-        return downloadPartFile(request, range, fullName, subType, type, output);
+        return downloadPartFile(request, range, fullName, subType, type, output, pUuid);
     }
 
 
-    private Response downloadPartFile(Request request, String range, String fullName, String subType, String type, String output)
+    private Response downloadPartFile(Request request, String range, String fullName, String subType, String type, String output, String uuid)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException {
-        BinaryResource binaryResource = getBinaryResource(fullName);
+
+        BinaryResource binaryResource;
+
+        if(uuid != null && !uuid.isEmpty()){
+            binaryResource = guestProxy.getBinaryResourceForSharedPart(fullName);
+        }else {
+            binaryResource = getBinaryResource(fullName);
+        }
+
         BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource, output, type);
 
         // Check cache precondition
@@ -296,7 +304,7 @@ public class PartBinaryResource {
         try {
             if ("attachedfiles".equals(subType) && output != null && !output.isEmpty()) {
                 binaryResourceDownloadMeta.setSubResourceVirtualPath(null);
-                binaryContentInputStream = getConvertedBinaryResource(binaryResource, output);
+                binaryContentInputStream = getConvertedBinaryResource(binaryResource, output, uuid);
             } else {
                 binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
             }
@@ -315,8 +323,11 @@ public class PartBinaryResource {
      * @return The binary resource stream in the wanted output
      * @throws com.docdoku.server.rest.exceptions.FileConversionException
      */
-    private InputStream getConvertedBinaryResource(BinaryResource binaryResource, String outputFormat) throws FileConversionException {
+    private InputStream getConvertedBinaryResource(BinaryResource binaryResource, String outputFormat, String uuid) throws FileConversionException {
         try {
+            if(uuid != null && !uuid.isEmpty()){
+                return guestProxy.getPartConvertedResource(outputFormat, binaryResource);
+            }
             if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
                 return documentResourceGetterService.getPartConvertedResource(outputFormat, binaryResource);
             } else {
@@ -337,20 +348,19 @@ public class PartBinaryResource {
     }
 
     private boolean canAccess(PartIterationKey partIKey) throws UserNotActiveException, EntityNotFoundException {
-        if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
-            return productService.canAccess(partIKey);
-        } else {
-            return guestProxy.canAccess(partIKey);
+        if(guestProxy.canAccess(partIKey)){
+            return true;
         }
+        return productService.canAccess(partIKey);
     }
 
     private BinaryResource getBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
-        if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
-            return productService.getBinaryResource(fullName);
-        } else {
-            return guestProxy.getBinaryResourceForPart(fullName);
+        BinaryResource publicBinaryResourceForPart = guestProxy.getPublicBinaryResourceForPart(fullName);
+        if (publicBinaryResourceForPart != null) {
+            return publicBinaryResourceForPart;
         }
+        return productService.getBinaryResource(fullName);
     }
 
     private void checkUuidValidity(SharedEntity sharedEntity, String workspaceId, String partNumber, String version, int iteration, String referer)

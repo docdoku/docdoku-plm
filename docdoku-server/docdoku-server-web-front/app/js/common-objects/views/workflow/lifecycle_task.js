@@ -86,16 +86,11 @@ define([
 
         submitClosure: function (e) {
 
-            // documents / parts
-            var entityType = this.entityType;
-
             var processUrl = App.config.contextPath +
 	            '/api/workspaces/' +
-                App.config.workspaceId +
-                '/tasks/' + entityType + '/process?' +
-                'activityWorkflowId=' + this.task.parentWorkflowId +
-                '&index=' + this.task.index +
-                '&activityStep=' + this.task.parentActivityStep;
+                App.config.workspaceId + '/tasks/' +
+                this.task.parentWorkflowId + '-' +  this.task.parentActivityStep + '-' + this.task.index +
+                '/process/';
 
             var closureComment = this.$commentInput.val();
             var closureType = this.$closureTypeInput.val();
@@ -110,8 +105,8 @@ define([
 
                 $.ajax({
                     context: this,
-                    type: 'POST',
-                    url: processUrl + '&action=approve',
+                    type: 'PUT',
+                    url: processUrl + 'approve',
                     data: data,
                     contentType: 'application/json;charset=UTF-8',
                     success: function () {
@@ -130,8 +125,8 @@ define([
 
                 $.ajax({
                     context: this,
-                    type: 'POST',
-                    url: processUrl + '&action=reject',
+                    type: 'PUT',
+                    url: processUrl + 'reject',
                     data: data,
                     contentType: 'application/json;charset=UTF-8',
                     success: function () {

@@ -1,0 +1,58 @@
+<div id="baseline_detail_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>{{i18n.BASELINE}} : {{model.getName}}</h3>
+    </div>
+
+    <div class="modal-body">
+
+        <div class="notifications"></div>
+
+        <div class="ModalTabs ModalBody-tabs tabs">
+
+            <ul class="ModalTabs-nav nav nav-tabs">
+                <li class="active"><a href="#tab-baseline-general" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                <li><a href="#tab-baseline-choices" data-toggle="tab">{{i18n.CONFIGURATION}}</a></li>
+                <li><a href="#tab-path-to-path-links" data-toggle="tab">{{i18n.PATH_TO_PATH_LINKS}}</a></li>
+            </ul>
+
+            <div class="ModalTabsContent tab-content form-horizontal">
+                <div id="tab-baseline-general" class="ModalTabsPane tab-pane active">
+                    <div class="form-horizontal">
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.PRODUCT}}</label>
+                            <div class="controls">
+                                {{model.getConfigurationItemId}}
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.DESCRIPTION}}</label>
+                            <div class="controls">
+                                {{model.getDescription}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-baseline-choices" class="ModalTabsPane tab-pane">
+                    <div class="choices-list">
+                        <p><i class="fa fa-check"></i> {{i18n.CHOSEN_SUBSTITUTES}} : <span class="substitutes-count"></span></p>
+                        <div class="substitutes-list choices"></div>
+                        <p><i class="fa fa-check"></i> {{i18n.CHOSEN_OPTIONALS}} : <span class="optionals-count"></span></p>
+                        <div class="optionals-list choices"></div>
+                    </div>
+                </div>
+                <div id="tab-path-to-path-links" class="tab-pane links path-to-path-links">
+                    <div id="path-to-path-links"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+    </div>
+
+</div>

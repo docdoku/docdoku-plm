@@ -116,7 +116,7 @@ define([
         },
 
         generateUrlFromUUID: function (uuid) {
-            return window.location.origin + App.config.contextPath + '/shared/' + uuid;
+            return window.location.origin + App.config.contextPath + '/'+this.options.entityType+'/#' + uuid;
         }
 
     });

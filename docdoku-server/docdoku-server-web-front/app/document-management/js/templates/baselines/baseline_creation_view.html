@@ -1,0 +1,40 @@
+<div id="baseline_creation_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>
+            {{#isReleased}}{{i18n.CREATE_BASELINE_RELEASED}}{{/isReleased}}
+            {{^isReleased}}
+            {{#isLatest}}{{i18n.CREATE_BASELINE_LATEST}}{{/isLatest}}
+            {{^isLatest}}{{i18n.CREATE_BASELINE}}{{/isLatest}}
+            {{/isReleased}}
+        </h3>
+    </div>
+
+    <div class="modal-body">
+        <div class="notifications"></div>
+        <h4></h4>
+        <form id="baseline_creation_form" class="form-horizontal">
+
+            <div class="control-group">
+                <label class="control-label" for="inputBaselineName">{{i18n.NAME}}</label>
+
+                <div class="controls">
+                    <input type="text" id="inputBaselineName" placeholder="{{i18n.NAME}}" required/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="inputBaselineDescription">{{i18n.DESCRIPTION}}</label>
+
+                <div class="controls">
+                    <textarea id="inputBaselineDescription"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CANCEL}}</button>
+        <button class="btn btn-primary" form="baseline_creation_form">{{i18n.CREATE_BASELINE}}</button>
+    </div>
+</div>

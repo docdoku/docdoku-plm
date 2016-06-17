@@ -1,127 +1,125 @@
-.clear{
-  clear: both;
-  height: 0; overflow: hidden; // IE 7
+.clear {
+    clear: both;
+    height: 0;
+    overflow: hidden; // IE 7
 }
 
 #product-content {
-  width: 85%;
-  height:100%;
-  overflow-y: auto;
-  //background: white;
-  position: absolute;
-  right:0;
-  top:0;
-  z-index: 0;
-
-  -webkit-box-shadow: 0px 1px 3px #9b9b9b;
-  box-shadow: 0px 1px 3px #9b9b9b;
+    width: 85%;
+    height: 100%;
+    overflow-y: auto;
+    //background: white;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 0;
+    /*
+      -webkit-box-shadow: 0px 1px 3px #9b9b9b;
+      box-shadow: 0px 1px 3px #9b9b9b;*/
 
     button.active {
         color: white;
     }
 
     #dmu_container {
-      position: absolute;
-      top: 48px;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      margin: 0;
-      padding: 0.5% ;
-      .crashMessage{
-        position: relative;
-        top: 40%;
-        display: block;
-        text-align: center;
-        font-size: 18px;
-        text-shadow: 1px 1px 1px #fff;
-        color: #555;
-      }
+        position: absolute;
+        top: 48px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 0;
+        padding: 0.5%;
+        .crashMessage {
+            position: relative;
+            top: 40%;
+            display: block;
+            text-align: center;
+            font-size: 18px;
+            text-shadow: 1px 1px 1px #fff;
+            color: #555;
+        }
     }
 
     #side_controls_container {
-      top: 0;
-      right: 0;
-      background: #f5f5f5;
+        top: 0;
+        right: 0;
+        background: #f5f5f5;
 
-      -webkit-box-shadow: 0px 2px 3px #9b9b9b;
-      box-shadow: 0px 2px 3px #9b9b9b;
-      position: absolute;
-      width: 15%;
-      height: 100%;
-      margin:0;
-      padding:0 1%;
-      z-index: 1;
-      border: none;
-      border-radius: none;
-      overflow: auto;
+        /* -webkit-box-shadow: 0px 2px 3px #9b9b9b;
+         box-shadow: 0px 2px 3px #9b9b9b;*/
+        position: absolute;
+        width: 15%;
+        height: 100%;
+        margin: 0;
+        padding: 0 1%;
+        z-index: 1;
+        border: none;
+        border-radius: none;
+        overflow: auto;
 
-      button{
-        margin-bottom:3px;
-      }
-
-      .nav-header{
-        padding: 4px 0 0 0;
-        border-top: 1px solid rgba(155, 155, 155, 0.35);
-        margin-bottom: 4px;
-      }
-
-      div.side_control_group{
-        margin: 0 0 10px 0;
-        position: relative;
-        color:#62697B;
-      }
-
-
-      div.cut_plan_control{
-
-        .axis-buttons{
-          float:left;
-        }
-        .plan-switch{
-          float:right;
+        button {
+            margin-bottom: 3px;
         }
 
-        input#slider-cut-plan{
-          margin-top:8px;
+        .nav-header {
+            padding: 4px 0 0 0;
+            border-top: 1px solid rgba(155, 155, 155, 0.35);
+            margin-bottom: 4px;
         }
 
-        &.disabled{
-          .btn-group, input#slider-cut-plan {
-            -webkit-transition: opacity .4s ease;
-            -moz-transition: opacity .4s ease;
-            transition: opacity .4s ease;
-            opacity: 0.5;
-          }
+        div.side_control_group {
+            margin: 0 0 10px 0;
+            position: relative;
+            color: #62697B;
         }
 
-      }
+        div.cut_plan_control {
 
-      input#slider-explode,
-      input#slider-clipping,
-      input#slider-cut-plan
-      {
-        width:98%;
-        -webkit-appearance: none;
-        -webkit-border-radius: 0px;
-        outline:none;
-        box-shadow: 0 0 3px #9b9b9b;
-        background: #f9f9f9;
-        cursor:pointer;
-        &:hover{
-          background: #eee;
+            .axis-buttons {
+                float: left;
+            }
+            .plan-switch {
+                float: right;
+            }
+
+            input#slider-cut-plan {
+                margin-top: 8px;
+            }
+
+            &.disabled {
+                .btn-group, input#slider-cut-plan {
+                    -webkit-transition: opacity .4s ease;
+                    -moz-transition: opacity .4s ease;
+                    transition: opacity .4s ease;
+                    opacity: 0.5;
+                }
+            }
+
         }
-      }
 
-      input#slider-explode::-webkit-slider-thumb,
-      input#slider-cut-plan::-webkit-slider-thumb,
-      input#slider-clipping::-webkit-slider-thumb
-      {
-        -webkit-appearance: none;
-        background-image: linear-gradient(to bottom, #7a99c1, #2c4361);
-        width: 10px;
-        height: 18px;
-      }
+        input#slider-explode,
+        input#slider-clipping,
+        input#slider-cut-plan {
+            width: 98%;
+            -webkit-appearance: none;
+            -webkit-border-radius: 0px;
+            outline: none;
+            /*box-shadow: 0 0 3px #9b9b9b;*/
+            background: #f9f9f9;
+            cursor: pointer;
+            &:hover {
+                background: #eee;
+            }
+        }
+
+        input#slider-explode::-webkit-slider-thumb,
+        input#slider-cut-plan::-webkit-slider-thumb,
+        input#slider-clipping::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            background-image: linear-gradient(to bottom, #7a99c1, #2c4361);
+            width: 10px;
+            height: 18px;
+        }
 
     }
 
@@ -132,29 +130,29 @@
     td.modification_notification, td.part-revision-share, td.part-attached-files {
         i {
             cursor: pointer;
-            &:hover{
-                color:#333;
+            &:hover {
+                color: #333;
             }
         }
     }
 
     td.modification_notification {
         i.fa-exclamation {
-            color:#ee5f5b;
+            color: #ee5f5b;
         }
     }
 
     td.part_number {
         i.fa-pencil {
-            color:#f89406;
+            color: #f89406;
         }
 
         i.fa-lock {
-            color:#ee5f5b;
+            color: #ee5f5b;
         }
 
         i.fa-check {
-            color:#51a351;
+            color: #51a351;
         }
     }
 
