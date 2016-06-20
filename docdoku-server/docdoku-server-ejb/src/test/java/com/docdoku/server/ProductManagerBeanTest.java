@@ -48,6 +48,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.*;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ProductManagerBeanTest {
@@ -342,6 +343,25 @@ public class ProductManagerBeanTest {
         Assert.assertEquals(expect2, result2);
         Assert.assertEquals(expect3, result3);
 
+    }
+
+    @Test(expected = NotAllowedException.class)
+    public void getPartIterationCheckedOutByOther() throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException, NotAllowedException {
+        Mockito.when(userManager.checkWorkspaceReadAccess(partRevision.getKey().getPartMaster().getWorkspace())).thenReturn(user2);
+        Mockito.when(em.find(PartRevision.class, partRevision.getKey())).thenReturn(partRevision);
+        Mockito.when(em.find(PartIteration.class, partIteration.getKey())).thenReturn(partIteration);
+
+        productManagerBean.getPartIteration(partIteration.getKey());
+    }
+
+    @Test(expected = NotAllowedException.class)
+    public void updatePartIterationCheckedOutByOther() throws ListOfValuesNotFoundException, PartMasterNotFoundException, EntityConstraintException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, UserNotActiveException, PartUsageLinkNotFoundException, AccessRightException, PartRevisionNotFoundException {
+
+        Mockito.when(userManager.checkWorkspaceReadAccess(partRevision.getKey().getPartMaster().getWorkspace())).thenReturn(user2);
+        Mockito.when(em.find(PartRevision.class, partRevision.getKey())).thenReturn(partRevision);
+        Mockito.when(em.find(PartIteration.class, partIteration.getKey())).thenReturn(partIteration);
+
+        productManagerBean.updatePartIteration(partIteration.getKey(), null, null, null, null, null, null,null,null);
     }
 
 }
