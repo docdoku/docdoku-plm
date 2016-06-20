@@ -3,22 +3,7 @@
 
     <!--Filter chain-->
 
-    <!-- First filter, is this a public resource ?-->
-    <filter>
-        <filter-name>PublicFilter</filter-name>
-        <filter-class>com.docdoku.server.filters.PublicFilter</filter-class>
-        <async-supported>true</async-supported>
-        <init-param>
-            <param-name>publicPaths</param-name>
-            <param-value>/api,/api/accounts/create,/api/viewer,/api/shared/**,/api/languages,/api/timezones,/api/auth/**,/api/files/*/documents/**,/api/files/*/parts/**</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>PublicFilter</filter-name>
-        <url-pattern>/api/*</url-pattern>
-    </filter-mapping>
-
-    <!-- Auth with cookie -->
+    <!-- Auth with cookie first -->
     <filter>
         <filter-name>SessionFilter</filter-name>
         <filter-class>com.docdoku.server.filters.SessionFilter</filter-class>
@@ -50,6 +35,21 @@
     </filter>
     <filter-mapping>
         <filter-name>BasicFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Last filter, is this a public resource ?-->
+    <filter>
+        <filter-name>PublicFilter</filter-name>
+        <filter-class>com.docdoku.server.filters.PublicFilter</filter-class>
+        <async-supported>true</async-supported>
+        <init-param>
+            <param-name>publicPaths</param-name>
+            <param-value>/api,/api/accounts/create,/api/viewer,/api/shared/**,/api/languages,/api/timezones,/api/auth/**,/api/files/*/documents/**,/api/files/*/parts/**</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>PublicFilter</filter-name>
         <url-pattern>/api/*</url-pattern>
     </filter-mapping>
 
