@@ -69,11 +69,22 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-jersey2-jaxrs</artifactId>
-            <version>1.5.8</version>
+            <version>1.5.9</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.ws.rs</groupId>
                     <artifactId>jsr311-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.github.kongchen</groupId>
+            <artifactId>swagger-maven-plugin</artifactId>
+            <version>3.1.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.swagger</groupId>
+                    <artifactId>swagger-jersey-jaxrs</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -108,7 +119,6 @@
             <version>1.9.5</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -153,6 +163,7 @@
                             </securityDefinitions>
                             <!--<templatePath>${basedir}/src/main/resources/strapdown.html.hbs</templatePath>-->
                             <!--<outputPath>${basedir}/generated/document.html</outputPath>-->
+                            <swaggerApiReader>com.docdoku.server.swagger.JaxrsReader</swaggerApiReader>
                             <swaggerDirectory>${project.build.directory}/swagger</swaggerDirectory>
                         </apiSource>
                     </apiSources>
