@@ -56,7 +56,6 @@ public class HTMLViewerResource {
     }
 
     @GET
-    @Path("/")
     @Produces(MediaType.TEXT_HTML)
     @ApiOperation(value = "Get html viewer for document")
     public Response getHtmlViewerForFile(@QueryParam("uuid") final String uuid, @QueryParam("fileName") final String fileName) throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException, ExpiredLinkException, UnmatchingUuidException {

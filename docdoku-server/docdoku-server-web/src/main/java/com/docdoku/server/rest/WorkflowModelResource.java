@@ -19,7 +19,6 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.common.WorkspaceWorkflow;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.ACL;
@@ -28,7 +27,9 @@ import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.WorkflowModelKey;
-import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.dto.ACLDTO;
+import com.docdoku.server.rest.dto.ActivityModelDTO;
+import com.docdoku.server.rest.dto.WorkflowModelDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -153,6 +154,7 @@ public class WorkflowModelResource {
 
     @POST
     @ApiOperation(value = "Create workflow model", response = WorkflowModelDTO.class)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public WorkflowModelDTO createWorkflowModel(@PathParam("workspaceId") String workspaceId,
                                                 @ApiParam(required = true, value = "Workflow model to create rules to set") WorkflowModelDTO workflowModelDTOToPersist)
@@ -162,26 +164,6 @@ public class WorkflowModelResource {
         WorkflowModel workflowModel = workflowService.createWorkflowModel(workspaceId, workflowModelDTOToPersist.getReference(), workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);
         return mapper.map(workflowModel, WorkflowModelDTO.class);
     }
-
-    @POST
-    @Path("{workflowModelId}/workspace-workflow")
-    @ApiOperation(value = "Instantiate workspace workflow from workflow model", response = WorkspaceWorkflowDTO.class)
-    @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceWorkflowDTO createWorkspaceWorkflow(@PathParam("workspaceId") String workspaceId,
-                                                        @PathParam("workflowModelId") String workflowModelId,
-                                                        @ApiParam(required = true, value = "Workspace workflow to create") WorkflowCreationDTO workflowCreationDTO)
-            throws RoleNotFoundException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, AccessRightException, WorkflowModelNotFoundException {
-
-        Map<String, String> roleMappings = new HashMap<>();
-
-        for (RoleMappingDTO roleMappingDTO : workflowCreationDTO.getRoleMapping()) {
-          roleMappings.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogin());
-        }
-
-        WorkspaceWorkflow workspaceWorkflow = workflowService.instantiateWorkflow(workspaceId, workflowCreationDTO.getId(), workflowModelId, roleMappings);
-        return mapper.map(workspaceWorkflow, WorkspaceWorkflowDTO.class);
-    }
-
 
     private ActivityModel[] extractActivityModelFromDTO(List<ActivityModelDTO> activityModelDTOsList) throws NotAllowedException {
         Map<Integer, ActivityModel> activityModels = new HashMap<>();

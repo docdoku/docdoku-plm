@@ -51,14 +51,16 @@ import java.util.logging.Logger;
  * @author Morgan Guimard
  */
 @RequestScoped
-@Api(hidden = true, value = "roles", description = "Operations about roles")
+@Api(hidden=true, value = "roles", description = "Operations about roles")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class RoleResource {
 
     private static final Logger LOGGER = Logger.getLogger(RoleResource.class.getName());
+
     @Inject
     private IWorkflowManagerLocal roleService;
+
     private Mapper mapper;
 
     public RoleResource() {
@@ -70,7 +72,7 @@ public class RoleResource {
     }
 
     @GET
-    @ApiOperation(value = "Get roles", response = RoleDTO.class, responseContainer = "List")
+    @ApiOperation(hidden = false, value = "Get roles", response = RoleDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public RoleDTO[] getRolesInWorkspace(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
@@ -109,7 +111,9 @@ public class RoleResource {
     @ApiOperation(value = "Create role", response = RoleDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createRole(@ApiParam(required = true, value = "Role to create") RoleDTO roleDTO)
+    public Response createRole(
+            @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Role to create") RoleDTO roleDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, CreationException {
 
         UserDTO userDTO = roleDTO.getDefaultAssignee();

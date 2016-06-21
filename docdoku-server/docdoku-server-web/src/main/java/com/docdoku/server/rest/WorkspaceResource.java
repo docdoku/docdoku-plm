@@ -628,7 +628,7 @@ public class WorkspaceResource {
         return users;
     }
 
-    @ApiOperation(value = "WorkspaceRoles")
+    @ApiOperation(value = "WorkspaceRoles", hidden = false)
     @Path("/{workspaceId}/roles")
     public RoleResource roles() {
         return roles;
