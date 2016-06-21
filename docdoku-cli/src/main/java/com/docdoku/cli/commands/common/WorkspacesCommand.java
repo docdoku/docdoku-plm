@@ -23,10 +23,12 @@ package com.docdoku.cli.commands.common;
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.common.Workspace;
-import com.docdoku.core.services.IAccountManagerWS;
-import com.docdoku.core.services.IUserManagerWS;
+import com.docdoku.server.api.DocdokuPLMBasicClient;
+import com.docdoku.server.api.client.ApiClient;
+import com.docdoku.server.api.models.AccountDTO;
+import com.docdoku.server.api.models.WorkspaceListDTO;
+import com.docdoku.server.api.services.AccountsApi;
+import com.docdoku.server.api.services.WorkspacesApi;
 
 import java.io.IOException;
 
@@ -38,11 +40,14 @@ public class WorkspacesCommand extends BaseCommandLine {
 
     @Override
     public void execImpl() throws Exception {
-        IUserManagerWS userS = ScriptingTools.createUserManagerService(getServerURL(), user, password);
-        IAccountManagerWS accountS = ScriptingTools.createAccountManagerService(getServerURL(), user, password);
-        new AccountsManager().saveAccount(accountS.getMyAccount());
-        Workspace[] workspaces = userS.getWorkspacesWhereCallerIsActive();
-        output.printWorkspaces(workspaces);
+        ApiClient client = new DocdokuPLMBasicClient(apiBasePath, user, password, true).getClient();
+        AccountDTO accountDTO = new AccountsApi(client).getAccount();
+
+        AccountsManager accountsManager = new AccountsManager();
+        accountsManager.saveAccount(accountDTO);
+
+        WorkspaceListDTO workspaces = new WorkspacesApi(client).getWorkspacesForConnectedUser();
+        output.printWorkspaces(workspaces.getAllWorkspaces());
     }
 
     @Override

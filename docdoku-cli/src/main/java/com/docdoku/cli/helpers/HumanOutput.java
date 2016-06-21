@@ -20,8 +20,6 @@
 
 package com.docdoku.cli.helpers;
 
-import com.docdoku.core.common.Account;
-import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
@@ -29,6 +27,8 @@ import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
+import com.docdoku.server.api.models.AccountDTO;
+import com.docdoku.server.api.models.WorkspaceDTO;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
@@ -95,9 +95,9 @@ public class HumanOutput extends CliOutput{
     }
 
     @Override
-    public void printWorkspaces(Workspace[] workspaces) {
-        for(Workspace workspace:workspaces){
-            OUTPUT_STREAM.println(workspace.getId());
+    public void printWorkspaces(List<WorkspaceDTO> workspaceDTOs) {
+        for(WorkspaceDTO workspaceDTO :workspaceDTOs){
+            OUTPUT_STREAM.println(workspaceDTO.getId());
         }
     }
 
@@ -151,11 +151,11 @@ public class HumanOutput extends CliOutput{
     }
 
     @Override
-    public void printAccount(Account account) {
-        OUTPUT_STREAM.println(account.getLogin());
-        OUTPUT_STREAM.println(account.getEmail());
-        OUTPUT_STREAM.println(account.getLanguage());
-        OUTPUT_STREAM.println(account.getTimeZone());
+    public void printAccount(AccountDTO accountDTO) {
+        OUTPUT_STREAM.println(accountDTO.getLogin());
+        OUTPUT_STREAM.println(accountDTO.getEmail());
+        OUTPUT_STREAM.println(accountDTO.getLanguage());
+        OUTPUT_STREAM.println(accountDTO.getTimeZone());
     }
 
     @Override

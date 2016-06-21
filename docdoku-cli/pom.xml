@@ -52,6 +52,12 @@
             <type>jar</type>
         </dependency>
         <dependency>
+            <groupId>com.docdoku</groupId>
+            <artifactId>docdoku-server-web-api-java</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.json</artifactId>
             <version>1.0.4</version>
@@ -67,10 +73,9 @@
             <version>2.0.23</version>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
+            <groupId>com.github.stefanbirkner</groupId>
+            <artifactId>system-rules</artifactId>
+            <version>1.16.0</version>
         </dependency>
     </dependencies>
 </project>

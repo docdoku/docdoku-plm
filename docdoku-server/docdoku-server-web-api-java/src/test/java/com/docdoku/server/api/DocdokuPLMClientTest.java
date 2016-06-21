@@ -8,7 +8,6 @@ import com.docdoku.server.api.models.WorkspaceListDTO;
 import com.docdoku.server.api.services.AccountsApi;
 import com.docdoku.server.api.services.WorkspacesApi;
 import junit.framework.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -21,7 +20,7 @@ import java.util.UUID;
  */
 
 @RunWith(JUnit4.class)
-@Ignore
+
 public class DocdokuPLMClientTest {
 
     private final static String URL = "http://localhost:8080/api";

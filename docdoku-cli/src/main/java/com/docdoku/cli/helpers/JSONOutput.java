@@ -20,10 +20,8 @@
 
 package com.docdoku.cli.helpers;
 
-import com.docdoku.core.common.Account;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
-import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
@@ -31,6 +29,8 @@ import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
+import com.docdoku.server.api.models.AccountDTO;
+import com.docdoku.server.api.models.WorkspaceDTO;
 import org.kohsuke.args4j.CmdLineParser;
 
 import javax.json.*;
@@ -82,10 +82,10 @@ public class JSONOutput extends CliOutput {
     }
 
     @Override
-    public void printWorkspaces(Workspace[] workspaces) {
+    public void printWorkspaces(List<WorkspaceDTO> workspaceDTOs) {
         JsonArrayBuilder jsonArray = Json.createArrayBuilder();
-        for (int i = 0; i < workspaces.length; i++) {
-            jsonArray.add(workspaces[i].getId());
+        for(WorkspaceDTO workspaceDTO:workspaceDTOs){
+            jsonArray.add(workspaceDTO.getId());
         }
         OUTPUT_STREAM.println(jsonArray.build().toString());
     }
@@ -151,12 +151,12 @@ public class JSONOutput extends CliOutput {
     }
 
     @Override
-    public void printAccount(Account account) {
+    public void printAccount(AccountDTO accountDTO) {
         JsonObject jsonObj = Json.createObjectBuilder()
-                .add("login", account.getLogin())
-                .add("language", account.getLanguage())
-                .add("email", account.getEmail())
-                .add("timezone", account.getTimeZone())
+                .add("login", accountDTO.getLogin())
+                .add("language", accountDTO.getLanguage())
+                .add("email", accountDTO.getEmail())
+                .add("timezone", accountDTO.getTimeZone())
                 .build();
 
         OUTPUT_STREAM.println(jsonObj.toString());

@@ -20,13 +20,13 @@
 
 package com.docdoku.cli.helpers;
 
-import com.docdoku.core.common.Account;
-import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
+import com.docdoku.server.api.models.AccountDTO;
+import com.docdoku.server.api.models.WorkspaceDTO;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -64,14 +64,14 @@ public abstract class CliOutput {
     public abstract void printUsage();
     public abstract void printInfo(String s);
 
-    public abstract void printWorkspaces(Workspace[] workspaces);
+    public abstract void printWorkspaces(List<WorkspaceDTO> workspaceDTOs);
     public abstract void printPartRevisionsCount(int partRevisionsCount);
     public abstract void printPartRevisions(List<PartRevision> partRevisions);
     public abstract void printBaselines(List<ProductBaseline> productBaselines);
     public abstract void printPartRevision(PartRevision pr, long lastModified);
     public abstract void printPartMaster(PartMaster pm, long lastModified);
     public abstract void printConversion(Conversion conversion);
-    public abstract void printAccount(Account account);
+    public abstract void printAccount(AccountDTO accountDTO);
     public abstract void printDocumentRevision(DocumentRevision dr, long lastModified);
     public abstract void printDocumentRevisions(DocumentRevision[] documentRevisions);
     public abstract void printFolders(String[] folders);

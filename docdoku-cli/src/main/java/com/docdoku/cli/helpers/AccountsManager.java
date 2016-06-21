@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.helpers;
 
-import com.docdoku.core.common.Account;
+import com.docdoku.server.api.models.AccountDTO;
 
 import java.io.*;
 import java.util.Locale;
@@ -77,7 +77,7 @@ public class AccountsManager {
         }
     }
 
-    public void saveAccount(Account account) throws IOException {
-        setUserLanguage(account.getLogin(),account.getLanguage());
+    public void saveAccount(AccountDTO accountDTO) throws IOException {
+        setUserLanguage(accountDTO.getLogin(),accountDTO.getLanguage());
     }
 }

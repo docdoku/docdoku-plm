@@ -48,6 +48,8 @@ public abstract class BaseCommandLine extends AbstractCommandLine {
     @Option(name="-S", aliases = "--ssl", usage="use a ssl (tls) connection")
     protected boolean ssl;
 
+    protected String apiBasePath;
+
     private void promptForUser(Locale locale){
         Console c = System.console();
         if(c == null){
@@ -67,6 +69,8 @@ public abstract class BaseCommandLine extends AbstractCommandLine {
 
     @Override
     public void exec() throws Exception {
+
+        apiBasePath = getServerURL().toString() + "/api";
 
         Locale userLocale = new AccountsManager().getUserLocale(user);
         output = CliOutput.getOutput(format,userLocale);

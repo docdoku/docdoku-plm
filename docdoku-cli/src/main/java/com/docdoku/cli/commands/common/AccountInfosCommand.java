@@ -22,9 +22,10 @@ package com.docdoku.cli.commands.common;
 
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.common.Account;
-import com.docdoku.core.services.IAccountManagerWS;
+import com.docdoku.server.api.DocdokuPLMBasicClient;
+import com.docdoku.server.api.client.ApiClient;
+import com.docdoku.server.api.models.AccountDTO;
+import com.docdoku.server.api.services.AccountsApi;
 
 import java.io.IOException;
 
@@ -34,13 +35,11 @@ import java.io.IOException;
  */
 public class AccountInfosCommand extends BaseCommandLine {
 
-    private IAccountManagerWS accountS;
-
     @Override
     public void execImpl() throws Exception {
-        accountS = ScriptingTools.createAccountManagerService(getServerURL(),user,password);
-        Account account = accountS.getMyAccount();
-        output.printAccount(account);
+        ApiClient client = new DocdokuPLMBasicClient(apiBasePath, user, password, true).getClient();
+        AccountDTO accountDTO = new AccountsApi(client).getAccount();
+        output.printAccount(accountDTO);
     }
 
     @Override
