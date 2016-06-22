@@ -43,8 +43,8 @@ import java.util.Locale;
 public class HumanOutput extends CliOutput{
 
     private Locale locale;
-    private PrintStream ERROR_STREAM = System.err;
-    private PrintStream OUTPUT_STREAM = System.out;
+    private final static PrintStream ERROR_STREAM = System.err;
+    private final static PrintStream OUTPUT_STREAM = System.out;
     public HumanOutput(Locale pLocale) {
         locale = pLocale;
     }
