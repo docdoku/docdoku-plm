@@ -210,7 +210,13 @@ public class JSONOutput extends CliOutput {
             }
             jsonStatusBuilder.add("workspace", pr.getPartMasterWorkspaceId());
             jsonStatusBuilder.add("version", pr.getVersion());
-            jsonStatusBuilder.add("description", pr.getDescription());
+
+            if(pr.getDescription() != null) {
+                jsonStatusBuilder.add("description", pr.getDescription());
+            }else{
+                jsonStatusBuilder.add("description", JsonValue.NULL);
+            }
+
             jsonStatusBuilder.add("lastModified", lastModified);
 
             if (pr.getLastIteration() != null && pr.getLastIteration().getNativeCADFile() != null) {
@@ -251,7 +257,13 @@ public class JSONOutput extends CliOutput {
             }
             jsonStatusBuilder.add("workspace", dr.getDocumentMasterWorkspaceId());
             jsonStatusBuilder.add("version", dr.getVersion());
-            jsonStatusBuilder.add("description", dr.getDescription());
+
+            if(dr.getDescription() != null) {
+                jsonStatusBuilder.add("description", dr.getDescription());
+            }else{
+                jsonStatusBuilder.add("description", JsonValue.NULL);
+            }
+
             jsonStatusBuilder.add("lastModified", lastModified);
 
             if (dr.getLastIteration() != null && dr.getLastIteration().getAttachedFiles() != null) {
