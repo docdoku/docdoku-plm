@@ -92,7 +92,7 @@ public class PartResource {
     @GET
     @ApiOperation(value = "Get part revision", response = PartRevisionDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPartDTO(@PathParam("workspaceId") String pWorkspaceId,
+    public Response getPartRevision(@PathParam("workspaceId") String pWorkspaceId,
                                @PathParam("partNumber") String partNumber,
                                @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
