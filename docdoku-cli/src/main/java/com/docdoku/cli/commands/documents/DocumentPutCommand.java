@@ -21,17 +21,12 @@
 package com.docdoku.cli.commands.documents;
 
 import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.AccountsManager;
-import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.helpers.MetaDirectoryManager;
-import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.common.Version;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentIterationKey;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.services.IDocumentManagerWS;
+import com.docdoku.cli.helpers.*;
+import com.docdoku.server.api.models.DocumentIterationDTO;
+import com.docdoku.server.api.models.DocumentIterationKey;
+import com.docdoku.server.api.models.DocumentRevisionDTO;
+import com.docdoku.server.api.models.DocumentRevisionKey;
+import com.docdoku.server.api.services.DocumentApi;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -45,7 +40,7 @@ import java.io.IOException;
 public class DocumentPutCommand extends BaseCommandLine {
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the document to save ('A', 'B'...); if not specified the document identity (id and revision) corresponding to the file will be selected")
-    private Version revision;
+    private String revision;
 
     @Option(metaVar = "<id>", name = "-o", aliases = "--id", usage = "the id of the document to save; if not specified choose the document corresponding to the file if it has already been imported")
     private String id;
@@ -62,12 +57,17 @@ public class DocumentPutCommand extends BaseCommandLine {
             loadMetadata();
         }
 
-        IDocumentManagerWS documentS = ScriptingTools.createDocumentService(getServerURL(), user, password);
-        DocumentRevisionKey docRPK = new DocumentRevisionKey(workspace,id,revision.toString());
+        DocumentRevisionKey docRPK = new DocumentRevisionKey();
+        docRPK.setWorkspaceId(workspace);
+        docRPK.setDocumentMasterId(id);
+        docRPK.setVersion(revision);
 
-        DocumentRevision dr = documentS.getDocumentRevision(docRPK);
-        DocumentIteration di = dr.getLastIteration();
-        DocumentIterationKey docIPK = new DocumentIterationKey(docRPK,di.getIteration());
+        DocumentApi documentApi = new DocumentApi(client);
+        DocumentRevisionDTO dr = documentApi.getDocumentRevision(workspace,id,revision,null);
+        DocumentIterationDTO di = LastIterationHelper.getLastIteration(dr);
+        DocumentIterationKey docIPK = new DocumentIterationKey();
+        docIPK.setDocumentRevision(docRPK);
+        docIPK.setIteration(di.getIteration());
 
         FileHelper fh = new FileHelper(user,password,output, new AccountsManager().getUserLocale(user));
         fh.uploadDocumentFile(getServerURL(), file, docIPK);
@@ -81,7 +81,7 @@ public class DocumentPutCommand extends BaseCommandLine {
         if(id==null || strRevision==null){
             throw new IllegalArgumentException(LangHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified2",user));
         }
-        revision = new Version(strRevision);
+        revision = strRevision;
     }
     @Override
     public String getDescription() throws IOException {

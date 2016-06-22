@@ -21,17 +21,11 @@
 package com.docdoku.cli.commands.documents;
 
 import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.AccountsManager;
-import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.helpers.MetaDirectoryManager;
-import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.common.Version;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.exceptions.*;
-import com.docdoku.core.services.IDocumentManagerWS;
+import com.docdoku.cli.helpers.*;
+import com.docdoku.server.api.client.ApiException;
+import com.docdoku.server.api.models.DocumentIterationDTO;
+import com.docdoku.server.api.models.DocumentRevisionDTO;
+import com.docdoku.server.api.services.DocumentApi;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -47,7 +41,7 @@ import java.security.NoSuchAlgorithmException;
 public class DocumentGetCommand extends BaseCommandLine {
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the document to retrieve ('A', 'B'...); default is the latest")
-    private Version revision;
+    private String revision;
 
     @Option(name="-i", aliases = "--iteration", metaVar = "<iteration>", usage="specify iteration of the document to retrieve ('1','2', '24'...); default is the latest")
     private int iteration;
@@ -64,8 +58,6 @@ public class DocumentGetCommand extends BaseCommandLine {
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
-    private IDocumentManagerWS documenS;
-
     @Override
     public void execImpl() throws Exception {
 
@@ -73,9 +65,7 @@ public class DocumentGetCommand extends BaseCommandLine {
             loadMetadata();
         }
 
-        documenS = ScriptingTools.createDocumentService(getServerURL(), user, password);
-        String strRevision = revision==null?null:revision.toString();
-
+        String strRevision = revision==null?null:revision;
         getDocument(id,strRevision,iteration);
 
     }
@@ -91,23 +81,24 @@ public class DocumentGetCommand extends BaseCommandLine {
         if(id==null || strRevision==null){
             throw new IllegalArgumentException(LangHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified2",user));
         }
-        revision = new Version(strRevision);
+        revision = strRevision;
         iteration=0;
         path=path.getParentFile();
     }
 
-    private void getDocument(String pId, String pRevision, int pIteration) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, LoginException, NoSuchAlgorithmException, NotAllowedException, AccessRightException, DocumentRevisionNotFoundException {
+    private void getDocument(String pId, String pRevision, int pIteration) throws IOException, ApiException, LoginException, NoSuchAlgorithmException {
 
-        DocumentRevision dr = documenS.getDocumentRevision(new DocumentRevisionKey(workspace,pId,pRevision));
+        DocumentApi documentApi = new DocumentApi(client);
+        DocumentRevisionDTO dr = documentApi.getDocumentRevision(workspace,pId,pRevision,null);
 
-        DocumentIteration di;
+        DocumentIterationDTO di;
 
         if(pIteration == 0){
-            di = dr.getLastIteration();
-        }else if(pIteration > dr.getNumberOfIterations()){
+            di = LastIterationHelper.getLastIteration(dr);
+        }else if(pIteration > dr.getDocumentIterations().size()){
             throw new IllegalArgumentException(LangHelper.getLocalizedMessage("IterationNotExisting",user));
         }else{
-            di = dr.getIteration(pIteration);
+            di = dr.getDocumentIterations().get(pIteration);
         }
 
         if(di.getAttachedFiles().isEmpty()){

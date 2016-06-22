@@ -24,12 +24,9 @@ import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartRevisionKey;
-import com.docdoku.core.services.IProductManagerWS;
+import com.docdoku.cli.helpers.LastIterationHelper;
+import com.docdoku.server.api.models.*;
+import com.docdoku.server.api.services.PartsApi;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -62,11 +59,26 @@ public class PartCreationCommand extends BaseCommandLine {
 
     @Override
     public void execImpl() throws Exception {
-        IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        PartMaster partMaster = productS.createPartMaster(workspace, partNumber, partName, standardPart, null, description, null, null, null, null);
-        PartRevision pr = partMaster.getLastRevision();
-        PartRevisionKey partRPK = new PartRevisionKey(workspace, partNumber, pr.getVersion());
-        PartIterationKey partIPK = new PartIterationKey(partRPK, pr.getLastIteration().getIteration());
+
+        PartsApi partsApi = new PartsApi(client);
+        PartCreationDTO partCreationDTO = new PartCreationDTO();
+        partCreationDTO.setDescription(description);
+        partCreationDTO.setWorkspaceId(workspace);
+        partCreationDTO.setName(partName);
+        partCreationDTO.setNumber(partNumber);
+        partCreationDTO.setStandardPart(standardPart);
+        PartRevisionDTO pr = partsApi.createNewPart(workspace, partCreationDTO);
+
+        PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(pr);
+        PartRevisionKey partRPK = new PartRevisionKey();
+        partRPK.setWorkspaceId(workspace);
+        partRPK.setPartMasterNumber(partNumber);
+        partRPK.setVersion(pr.getVersion());
+
+        PartIterationKey partIPK = new PartIterationKey();
+        partIPK.setPartRevision(partRPK);
+        partIPK.setIteration(lastIteration.getIteration());
+
         FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
         fh.uploadNativeCADFile(getServerURL(), cadFile, partIPK);
     }

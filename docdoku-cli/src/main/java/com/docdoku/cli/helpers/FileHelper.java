@@ -20,13 +20,7 @@
 
 package com.docdoku.cli.helpers;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentIterationKey;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.product.PartRevision;
+import com.docdoku.server.api.models.*;
 
 import javax.security.auth.login.LoginException;
 import java.io.*;
@@ -38,8 +32,8 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 public class FileHelper {
@@ -275,11 +269,19 @@ public class FileHelper {
 
     }
 
-    public void downloadNativeCADFile(URL serverURL, File path, String workspace, String partNumber, PartRevision pr, PartIteration pi, boolean force) throws IOException, LoginException, NoSuchAlgorithmException {
-        BinaryResource bin = pi.getNativeCADFile();
-        String fileName =  bin.getName();
-        PartIterationKey partIPK = new PartIterationKey(workspace,partNumber,pr.getVersion(),pi.getIteration());
-        boolean writable = (pr.isCheckedOut()) && (pr.getCheckOutUser().getLogin().equals(login)) && (pr.getLastIteration().getIteration()==pi.getIteration());
+    public void downloadNativeCADFile(URL serverURL, File path, String workspace, String partNumber, PartRevisionDTO pr, PartIterationDTO pi, boolean force) throws IOException, LoginException, NoSuchAlgorithmException {
+        String bin = pi.getNativeCADFile();
+        // TODO check path : may break
+        String fileName =  bin;
+        UserDTO checkOutUser = pr.getCheckOutUser();
+        PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(pr);
+        PartIterationKey partIPK = new PartIterationKey();
+        partIPK.setWorkspaceId(workspace);
+        partIPK.setPartMasterNumber(partNumber);
+        partIPK.setPartRevisionVersion(pr.getVersion());
+        partIPK.setIteration(pi.getIteration());
+
+        boolean writable = (checkOutUser != null) && (checkOutUser.getLogin().equals(login)) && (lastIteration.getIteration()==pi.getIteration());
         File localFile = new File(path,fileName);
         MetaDirectoryManager meta = new MetaDirectoryManager(path);
 
@@ -316,14 +318,20 @@ public class FileHelper {
         meta.setLastModifiedDate(filePath, localFile.lastModified());
     }
 
-    public void downloadDocumentFiles(URL serverURL, File path, String workspace, String id, DocumentRevision dr, DocumentIteration di, boolean force) throws IOException, LoginException, NoSuchAlgorithmException {
-        Set<BinaryResource> bins = di.getAttachedFiles();
-        for(BinaryResource bin:bins){
-            String fileName =  bin.getName();
+    public void downloadDocumentFiles(URL serverURL, File path, String workspace, String id, DocumentRevisionDTO dr, DocumentIterationDTO di, boolean force) throws IOException, LoginException, NoSuchAlgorithmException {
+        List<String> bins = di.getAttachedFiles();
 
+        for(String bin:bins){
+            // TODO may break
+            String fileName =  bin;
+            UserDTO checkOutUser = dr.getCheckOutUser();
+            DocumentIterationKey docIPK = new DocumentIterationKey();
+            docIPK.setWorkspaceId(workspace);
+            docIPK.setDocumentMasterId(id);
+            docIPK.setDocumentRevisionVersion(dr.getVersion());
+            docIPK.setIteration(di.getIteration());
 
-            DocumentIterationKey docIPK = new DocumentIterationKey(workspace,id,dr.getVersion(),di.getIteration());
-            boolean writable = (dr.isCheckedOut()) && (dr.getCheckOutUser().getLogin().equals(login)) && (dr.getLastIteration().getIteration()==di.getIteration());
+            boolean writable = (checkOutUser != null) && (dr.getCheckOutUser().getLogin().equals(login)) && (dr.getLastIteration().getIteration()==di.getIteration());
             File localFile = new File(path,fileName);
             MetaDirectoryManager meta = new MetaDirectoryManager(path);
 

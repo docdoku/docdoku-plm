@@ -21,18 +21,11 @@
 package com.docdoku.cli.commands.documents;
 
 import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.AccountsManager;
-import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.helpers.MetaDirectoryManager;
-import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.common.Version;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentIterationKey;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.services.IDocumentManagerWS;
+import com.docdoku.cli.helpers.*;
+import com.docdoku.server.api.models.DocumentIterationDTO;
+import com.docdoku.server.api.models.DocumentIterationKey;
+import com.docdoku.server.api.models.DocumentRevisionDTO;
+import com.docdoku.server.api.services.DocumentApi;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -46,7 +39,7 @@ import java.io.IOException;
 public class DocumentCheckInCommand extends BaseCommandLine {
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the document to check in ('A', 'B'...); if not specified the document identity (id and revision) corresponding to the file will be selected")
-    private Version revision;
+    private String revision;
 
     @Option(metaVar = "<id>", name = "-o", aliases = "--id", usage = "the id of the document to check in; if not specified choose the document corresponding to the file")
     private String id;
@@ -70,20 +63,25 @@ public class DocumentCheckInCommand extends BaseCommandLine {
             loadMetadata();
         }
 
-        IDocumentManagerWS documentS = ScriptingTools.createDocumentService(getServerURL(),user,password);
-        DocumentRevisionKey docRPK = new DocumentRevisionKey(workspace,id,revision.toString());
+        DocumentApi documentApi = new DocumentApi(client);
+        DocumentRevisionDTO dr = documentApi.getDocumentRevision(workspace,id,revision,null);
 
-        DocumentRevision dr = documentS.getDocumentRevision(docRPK);
-        DocumentIteration di = dr.getLastIteration();
-        DocumentIterationKey docIPK = new DocumentIterationKey(docRPK,di.getIteration());
+        DocumentIterationDTO di = LastIterationHelper.getLastIteration(dr);
+        DocumentIterationKey docIPK = new DocumentIterationKey();
+        docIPK.setWorkspaceId(workspace);
+        docIPK.setDocumentMasterId(id);
+        docIPK.setDocumentRevisionVersion(revision);
+        docIPK.setIteration(di.getIteration());
 
         if(!noUpload && !di.getAttachedFiles().isEmpty()){
 
-            for(BinaryResource bin:di.getAttachedFiles()){
-                String fileName =  bin.getName();
+            for(String bin :di.getAttachedFiles()){
+                // TODO may break since refactor fullname / filename
+                String fileName =  bin;
                 File localFile = new File(path,fileName);
                 if(localFile.exists()){
                     FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
+
                     fh.uploadDocumentFile(getServerURL(), localFile, docIPK);
                     localFile.setWritable(false);
                 }
@@ -92,13 +90,14 @@ public class DocumentCheckInCommand extends BaseCommandLine {
         }
 
         if(message != null && !message.isEmpty()){
-            documentS.updateDocument(docIPK, message, null, null, null);
+            di.setRevisionNote(message);
+            documentApi.updateDocumentIteration(workspace, id, revision, String.valueOf(di.getIteration()), di);
         }
 
         output.printInfo(LangHelper.getLocalizedMessage("CheckingInDocument",user)  + " : " + id
                 + "-" + dr.getVersion() + "-" + di.getIteration() + " (" + workspace + ")");
 
-        documentS.checkInDocument(docRPK);
+        documentApi.checkInDocument(workspace,id, revision);
 
     }
 
@@ -113,7 +112,7 @@ public class DocumentCheckInCommand extends BaseCommandLine {
         if(id ==null || strRevision==null){
             throw new IllegalArgumentException(LangHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified2",user));
         }
-        revision = new Version(strRevision);
+        revision = strRevision;
         path=path.getParentFile();
     }
 

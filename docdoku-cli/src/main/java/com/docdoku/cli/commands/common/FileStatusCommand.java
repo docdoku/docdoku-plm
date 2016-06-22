@@ -23,15 +23,11 @@ package com.docdoku.cli.commands.common;
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
-import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
-import com.docdoku.core.exceptions.PartRevisionNotFoundException;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartRevisionKey;
-import com.docdoku.core.services.IDocumentManagerWS;
-import com.docdoku.core.services.IProductManagerWS;
+import com.docdoku.server.api.client.ApiException;
+import com.docdoku.server.api.models.DocumentRevisionDTO;
+import com.docdoku.server.api.models.PartRevisionDTO;
+import com.docdoku.server.api.services.DocumentApi;
+import com.docdoku.server.api.services.PartApi;
 import org.kohsuke.args4j.Argument;
 
 import java.io.File;
@@ -59,10 +55,10 @@ public class FileStatusCommand extends BaseCommandLine {
         if(meta.isDocumentRelated(filePath)){
             String ref = meta.getDocumentId(filePath);
             try {
-                IDocumentManagerWS documentS = ScriptingTools.createDocumentService(getServerURL(),user,password);
-                DocumentRevision documentRevision = documentS.getDocumentRevision(new DocumentRevisionKey(workspace,ref,strRevision));
+                DocumentApi documentApi = new DocumentApi(client);
+                DocumentRevisionDTO documentRevision = documentApi.getDocumentRevision(workspace,ref,strRevision,null);
                 output.printDocumentRevision(documentRevision,lastModified);
-            } catch (DocumentRevisionNotFoundException e) {
+            } catch (ApiException e) {
                 meta.deleteEntryInfo(file.getAbsolutePath());
                 output.printException(e);
             }
@@ -70,10 +66,10 @@ public class FileStatusCommand extends BaseCommandLine {
         else if(meta.isPartRelated(filePath)){
             String ref = meta.getPartNumber(filePath);
             try {
-                IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-                PartRevision partRevision = productS.getPartRevision(new PartRevisionKey(workspace, ref, strRevision));
+                PartApi partApi = new PartApi(client);
+                PartRevisionDTO partRevision = partApi.getPartRevision(workspace, ref, strRevision);
                 output.printPartRevision(partRevision, lastModified);
-            } catch (PartRevisionNotFoundException e) {
+            } catch (ApiException e) {
                 meta.deleteEntryInfo(file.getAbsolutePath());
                 output.printException(e);
             }

@@ -22,10 +22,8 @@ package com.docdoku.cli.commands.parts;
 
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.product.Conversion;
-import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.services.IProductManagerWS;
+import com.docdoku.server.api.models.ConversionDTO;
+import com.docdoku.server.api.services.PartApi;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
@@ -47,13 +45,10 @@ public class ConversionCommand extends BaseCommandLine {
 
     @Option(name="-i", aliases = "--iteration", metaVar = "<iteration>", usage="specify iteration of the part to retrieve ('1','2', '24'...); default is the latest")    private int iteration;
 
-    private IProductManagerWS productS;
-
     @Override
     public void execImpl() throws Exception {
-        productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        PartIterationKey pK = new PartIterationKey(workspace,number,revision, iteration);
-        Conversion conversion = productS.getConversion(pK);
+        PartApi partApi = new PartApi(client);
+        ConversionDTO conversion = partApi.getConversionStatus(workspace, number, revision, iteration);
         output.printConversion(conversion);
     }
 

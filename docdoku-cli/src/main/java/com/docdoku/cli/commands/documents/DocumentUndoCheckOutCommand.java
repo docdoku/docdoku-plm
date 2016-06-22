@@ -21,16 +21,10 @@
 package com.docdoku.cli.commands.documents;
 
 import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.AccountsManager;
-import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.helpers.MetaDirectoryManager;
-import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.common.Version;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.services.IDocumentManagerWS;
+import com.docdoku.cli.helpers.*;
+import com.docdoku.server.api.models.DocumentIterationDTO;
+import com.docdoku.server.api.models.DocumentRevisionDTO;
+import com.docdoku.server.api.services.DocumentApi;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -44,7 +38,7 @@ import java.io.IOException;
 public class DocumentUndoCheckOutCommand extends BaseCommandLine {
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the document to undo check out ('A', 'B'...); if not specified the document identity (id and revision) corresponding to the file will be selected")
-    private Version revision;
+    private String revision;
 
     @Option(metaVar = "<id>", name = "-o", aliases = "--id", usage = "the id of the document to undo check out; if not specified choose the document corresponding to the file")
     private String id;
@@ -66,9 +60,10 @@ public class DocumentUndoCheckOutCommand extends BaseCommandLine {
         if(id==null || revision==null){
             loadMetadata();
         }
-        IDocumentManagerWS documentS = ScriptingTools.createDocumentService(getServerURL(), user, password);
-        DocumentRevision dr = documentS.undoCheckOutDocument(new DocumentRevisionKey(workspace, id, revision.toString()));
-        DocumentIteration di = dr.getLastIteration();
+
+        DocumentApi documentApi = new DocumentApi(client);
+        DocumentRevisionDTO dr = documentApi.undoCheckOutDocument(workspace, id, revision);
+        DocumentIterationDTO di = LastIterationHelper.getLastIteration(dr);
 
         output.printInfo(LangHelper.getLocalizedMessage("UndoCheckoutDocument",user) + " : " + id + "-" + dr.getVersion() + "-" + di.getIteration()+1 + " (" + workspace + ")");
 
@@ -89,7 +84,7 @@ public class DocumentUndoCheckOutCommand extends BaseCommandLine {
         if(id==null || strRevision==null){
             throw new IllegalArgumentException(LangHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified2",user));
         }
-        revision = new Version(strRevision);
+        revision = strRevision;
         path=path.getParentFile();
     }
 

@@ -22,13 +22,12 @@ package com.docdoku.cli.commands.documents;
 
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.query.DocumentSearchQuery;
-import com.docdoku.core.services.IDocumentManagerWS;
+import com.docdoku.server.api.models.DocumentRevisionDTO;
+import com.docdoku.server.api.services.DocumentsApi;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  *
@@ -44,12 +43,8 @@ public class DocumentSearchCommand extends BaseCommandLine {
 
     @Override
     public void execImpl() throws Exception {
-        IDocumentManagerWS documentS = ScriptingTools.createDocumentService(getServerURL(), user, password);
-
-        DocumentRevision[] documentRevisions = documentS.searchDocumentRevisions(
-                new DocumentSearchQuery(workspace, searchValue, null, null, null, null, null, null, null, null, null, null, null, null)
-        );
-
+        DocumentsApi documentsApi = new DocumentsApi(client);
+        List<DocumentRevisionDTO> documentRevisions = documentsApi.searchDocumentRevision(workspace,searchValue);
         output.printDocumentRevisions(documentRevisions);
     }
 

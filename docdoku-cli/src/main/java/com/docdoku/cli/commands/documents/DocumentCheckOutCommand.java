@@ -21,17 +21,13 @@
 package com.docdoku.cli.commands.documents;
 
 import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.AccountsManager;
-import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.helpers.MetaDirectoryManager;
-import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.common.Version;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.exceptions.*;
-import com.docdoku.core.services.IDocumentManagerWS;
+import com.docdoku.cli.helpers.*;
+import com.docdoku.server.api.client.ApiException;
+import com.docdoku.server.api.models.DocumentIterationDTO;
+import com.docdoku.server.api.models.DocumentRevisionDTO;
+import com.docdoku.server.api.models.DocumentRevisionKey;
+import com.docdoku.server.api.models.UserDTO;
+import com.docdoku.server.api.services.DocumentApi;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -48,7 +44,7 @@ import java.util.Locale;
 public class DocumentCheckOutCommand extends BaseCommandLine {
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the document to check out ('A', 'B'...); if not specified the document identity (id and revision) corresponding to the file will be selected")
-    private Version revision;
+    private String revision;
 
     @Option(metaVar = "<id>", name = "-o", aliases = "--id", usage = "the id of the document to check out; if not specified choose the document corresponding to the file")
     private String id;
@@ -65,18 +61,13 @@ public class DocumentCheckOutCommand extends BaseCommandLine {
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
-
-    private IDocumentManagerWS documentS;
-
     @Override
     public void execImpl() throws Exception {
         if(id==null || revision==null){
             loadMetadata();
         }
-        documentS = ScriptingTools.createDocumentService(getServerURL(), user, password);
 
-        String strRevision = revision==null?null:revision.toString();
-
+        String strRevision = revision==null?null:revision;
         checkoutDocument(id, strRevision);
     }
 
@@ -91,29 +82,35 @@ public class DocumentCheckOutCommand extends BaseCommandLine {
         if(id==null || strRevision==null){
             throw new IllegalArgumentException(LangHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified2",user));
         }
-        revision = new Version(strRevision);
+        revision = strRevision;
         path=path.getParentFile();
     }
 
-    private void checkoutDocument(String id, String pRevision) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, LoginException, NoSuchAlgorithmException, NotAllowedException, FileAlreadyExistsException, AccessRightException, CreationException, DocumentRevisionNotFoundException {
+    private void checkoutDocument(String id, String pRevision) throws IOException, ApiException, LoginException, NoSuchAlgorithmException {
 
         Locale locale = new AccountsManager().getUserLocale(user);
 
-        DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(workspace, id, pRevision);
+        DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey();
+        documentRevisionKey.setWorkspaceId(workspace);
+        documentRevisionKey.setDocumentMasterId(id);
+        documentRevisionKey.setVersion(pRevision);
 
-        DocumentRevision dr = documentS.getDocumentRevision(documentRevisionKey);
-        DocumentIteration di = dr.getLastIteration();
+        DocumentApi documentApi = new DocumentApi(client);
+        DocumentRevisionDTO dr = documentApi.getDocumentRevision(workspace,id,pRevision,null);
+        DocumentIterationDTO di = LastIterationHelper.getLastIteration(dr);
 
         output.printInfo(
                 LangHelper.getLocalizedMessage("CheckingOutDocument",locale)
                         + " : "
                         + id + "-" + dr.getVersion() + "-" + di.getIteration() + " (" + workspace + ")");
 
-        if(!dr.isCheckedOut()) {
+        UserDTO checkOutUser = dr.getCheckOutUser();
+
+        if(checkOutUser == null) {
             try{
-                dr = documentS.checkOutDocument(documentRevisionKey);
-                di = dr.getLastIteration();
-            }catch (Exception e){
+                dr = documentApi.checkOutDocument(workspace,id,pRevision);
+                di = LastIterationHelper.getLastIteration(dr);
+            }catch (ApiException e){
                 output.printException(e);
             }
         }

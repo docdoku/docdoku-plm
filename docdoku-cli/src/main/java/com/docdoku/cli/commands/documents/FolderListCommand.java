@@ -22,11 +22,12 @@ package com.docdoku.cli.commands.documents;
 
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.services.IDocumentManagerWS;
+import com.docdoku.server.api.models.FolderDTO;
+import com.docdoku.server.api.services.FoldersApi;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  *
@@ -42,9 +43,9 @@ public class FolderListCommand extends BaseCommandLine {
 
     @Override
     public void execImpl() throws Exception {
-        IDocumentManagerWS documentS = ScriptingTools.createDocumentService(getServerURL(),user,password);
+        FoldersApi foldersApi = new FoldersApi(client);
         String decodedPath = folder == null ? workspace : workspace+"/"+folder;
-        String[] folders = documentS.getFolders(decodedPath);
+        List<FolderDTO> folders = foldersApi.getSubFolders(workspace,decodedPath,null);
         output.printFolders(folders);
     }
 

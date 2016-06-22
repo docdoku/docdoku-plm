@@ -20,13 +20,7 @@
 
 package com.docdoku.cli.helpers;
 
-import com.docdoku.core.configuration.ProductBaseline;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.product.Conversion;
-import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.server.api.models.AccountDTO;
-import com.docdoku.server.api.models.WorkspaceDTO;
+import com.docdoku.server.api.models.*;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -66,15 +60,15 @@ public abstract class CliOutput {
 
     public abstract void printWorkspaces(List<WorkspaceDTO> workspaceDTOs);
     public abstract void printPartRevisionsCount(int partRevisionsCount);
-    public abstract void printPartRevisions(List<PartRevision> partRevisions);
-    public abstract void printBaselines(List<ProductBaseline> productBaselines);
-    public abstract void printPartRevision(PartRevision pr, long lastModified);
+    public abstract void printPartRevisions(List<PartRevisionDTO> partRevisions);
+    public abstract void printBaselines(List<ProductBaselineDTO> productBaselines);
+    public abstract void printPartRevision(PartRevisionDTO pr, long lastModified);
     public abstract void printPartMaster(PartMaster pm, long lastModified);
-    public abstract void printConversion(Conversion conversion);
+    public abstract void printConversion(ConversionDTO conversion);
     public abstract void printAccount(AccountDTO accountDTO);
-    public abstract void printDocumentRevision(DocumentRevision dr, long lastModified);
-    public abstract void printDocumentRevisions(DocumentRevision[] documentRevisions);
-    public abstract void printFolders(String[] folders);
+    public abstract void printDocumentRevision(DocumentRevisionDTO dr, long lastModified);
+    public abstract void printDocumentRevisions(List<DocumentRevisionDTO> documentRevisions);
+    public abstract void printFolders(List<FolderDTO> folders);
 
     public abstract FilterInputStream getMonitor(long maximum, InputStream in);
 

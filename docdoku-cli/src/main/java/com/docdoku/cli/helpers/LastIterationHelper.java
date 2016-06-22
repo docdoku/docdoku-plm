@@ -1,0 +1,24 @@
+package com.docdoku.cli.helpers;
+
+
+import com.docdoku.server.api.models.DocumentIterationDTO;
+import com.docdoku.server.api.models.DocumentRevisionDTO;
+import com.docdoku.server.api.models.PartIterationDTO;
+import com.docdoku.server.api.models.PartRevisionDTO;
+
+public class LastIterationHelper {
+
+    private LastIterationHelper(){
+    }
+
+    public static DocumentIterationDTO getLastIteration(DocumentRevisionDTO documentRevisionDTO){
+        int iterations = documentRevisionDTO.getDocumentIterations().size();
+        return documentRevisionDTO.getDocumentIterations().get(iterations - 1);
+    }
+
+    public static PartIterationDTO getLastIteration(PartRevisionDTO partRevisionDTO){
+        int iterations = partRevisionDTO.getPartIterations().size();
+        return partRevisionDTO.getPartIterations().get(iterations - 1);
+    }
+
+}

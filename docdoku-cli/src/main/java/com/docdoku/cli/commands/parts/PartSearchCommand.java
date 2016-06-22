@@ -22,10 +22,8 @@ package com.docdoku.cli.commands.parts;
 
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.query.PartSearchQuery;
-import com.docdoku.core.services.IProductManagerWS;
+import com.docdoku.server.api.models.PartRevisionDTO;
+import com.docdoku.server.api.services.PartsApi;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
@@ -45,12 +43,8 @@ public class PartSearchCommand extends BaseCommandLine {
 
     @Override
     public void execImpl() throws Exception {
-        IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-
-        List<PartRevision> partRevisions = productS.searchPartRevisions(
-                new PartSearchQuery(workspace, searchValue, null, null, null, null, null, null, null, null, null, null, null,null,null)
-        );
-
+        PartsApi partsApi = new PartsApi(client);
+        List<PartRevisionDTO> partRevisions = partsApi.searchPartRevisions(workspace, searchValue);
         output.printPartRevisions(partRevisions);
     }
 

@@ -24,11 +24,10 @@ import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.document.DocumentIterationKey;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.services.IDocumentManagerWS;
+import com.docdoku.server.api.models.DocumentCreationDTO;
+import com.docdoku.server.api.models.DocumentIterationKey;
+import com.docdoku.server.api.models.DocumentRevisionKey;
+import com.docdoku.server.api.services.FoldersApi;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -58,10 +57,24 @@ public class DocumentCreationCommand extends BaseCommandLine {
 
     @Override
     public void execImpl() throws Exception {
-        IDocumentManagerWS documentS = ScriptingTools.createDocumentService(getServerURL(), user, password);
-        DocumentRevision dr = documentS.createDocumentMaster(workspace, id, title, description,null,null,null,null,null);
-        DocumentRevisionKey docRPK = new DocumentRevisionKey(workspace, id, dr.getVersion());
-        DocumentIterationKey docIPK = new DocumentIterationKey(docRPK, dr.getLastIteration().getIteration());
+
+        FoldersApi foldersApi = new FoldersApi(client);
+        DocumentCreationDTO documentCreationDTO = new DocumentCreationDTO();
+        documentCreationDTO.setTitle(title);
+        documentCreationDTO.setWorkspaceId(workspace);
+        documentCreationDTO.setDescription(description);
+        documentCreationDTO.setReference(id);
+
+        foldersApi.createDocumentMasterInFolder(workspace, documentCreationDTO, workspace, null);
+        DocumentRevisionKey docRPK = new DocumentRevisionKey();
+        docRPK.setWorkspaceId(workspace);
+        docRPK.setDocumentMasterId(id);
+        docRPK.setVersion("A");
+
+        DocumentIterationKey docIPK = new DocumentIterationKey();
+        docIPK.setDocumentRevision(docRPK);
+        docIPK.setIteration(1);
+
         FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
         fh.uploadDocumentFile(getServerURL(), file, docIPK);
     }

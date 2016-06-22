@@ -20,15 +20,7 @@
 
 package com.docdoku.cli.helpers;
 
-import com.docdoku.core.configuration.ProductBaseline;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.product.Conversion;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.server.api.models.AccountDTO;
-import com.docdoku.server.api.models.WorkspaceDTO;
+import com.docdoku.server.api.models.*;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
@@ -107,41 +99,43 @@ public class HumanOutput extends CliOutput{
     }
 
     @Override
-    public void printPartRevisions(List<PartRevision> partRevisions) {
-        for(PartRevision pr: partRevisions) {
+    public void printPartRevisions(List<PartRevisionDTO> partRevisions) {
+        for(PartRevisionDTO pr: partRevisions) {
             printRevisionStatus(1, pr);
         }
     }
 
     @Override
-    public void printBaselines(List<ProductBaseline> productBaselines) {
+    public void printBaselines(List<ProductBaselineDTO> productBaselines) {
         if(productBaselines.isEmpty()){
             OUTPUT_STREAM.println(LangHelper.getLocalizedMessage("NoBaseline",locale));
             return;
         }
-        for(ProductBaseline productBaseline : productBaselines) {
+        for(ProductBaselineDTO productBaseline : productBaselines) {
             OUTPUT_STREAM.println("#" + productBaseline.getId() + " : " + productBaseline.getName());
         }
     }
 
     @Override
-    public void printPartRevision(PartRevision pr, long lastModified) {
+    public void printPartRevision(PartRevisionDTO pr, long lastModified) {
         printRevisionStatus(1,pr);
     }
 
     @Override
     public void printPartMaster(PartMaster pm, long lastModified) {
+        // TODO : rewrite with DTO
+        /*
         int revColSize = pm.getLastRevision().getVersion().length();
         for(PartRevision pr:pm.getPartRevisions()){
             printRevisionStatus(revColSize,pr);
-        }
+        }*/
     }
 
     @Override
-    public void printConversion(Conversion conversion) {
-        if(conversion.isSucceed()){
+    public void printConversion(ConversionDTO conversion) {
+        if(conversion.getSucceed()){
             OUTPUT_STREAM.println(LangHelper.getLocalizedMessage("ConversionSucceed",locale));
-        }else if(conversion.isPending()){
+        }else if(conversion.getPending()){
             OUTPUT_STREAM.println(LangHelper.getLocalizedMessage("ConversionInProgress",locale));
         } else{
             OUTPUT_STREAM.println(LangHelper.getLocalizedMessage("ConversionFailed",locale));
@@ -159,21 +153,21 @@ public class HumanOutput extends CliOutput{
     }
 
     @Override
-    public void printDocumentRevision(DocumentRevision dr, long lastModified) {
-        printRevisionStatus(1,dr);
+    public void printDocumentRevision(DocumentRevisionDTO documentRevisionDTO, long lastModified) {
+        printRevisionStatus(1,documentRevisionDTO);
     }
 
     @Override
-    public void printDocumentRevisions(DocumentRevision[] documentRevisions) {
-        for(DocumentRevision dr: documentRevisions) {
+    public void printDocumentRevisions(List<DocumentRevisionDTO> documentRevisions) {
+        for(DocumentRevisionDTO dr: documentRevisions) {
             printDocumentRevision(dr, 1);
         }
     }
 
     @Override
-    public void printFolders(String[] folders) {
-        for (String folder : folders) {
-            OUTPUT_STREAM.println(folder);
+    public void printFolders(List<FolderDTO> folders) {
+        for (FolderDTO folder : folders) {
+            OUTPUT_STREAM.println(folder.getName());
         }
     }
 
@@ -191,15 +185,16 @@ public class HumanOutput extends CliOutput{
         return b.toString();
     }
 
-    private void printRevisionStatus(int revColSize, PartRevision pr){
+    private void printRevisionStatus(int revColSize, PartRevisionDTO pr){
 
         String revision = fillWithEmptySpace(pr.getVersion(),revColSize);
         DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT, Locale.US);
 
-        OUTPUT_STREAM.println("# "+pr.getPartMasterNumber());
+        OUTPUT_STREAM.println("# "+pr.getNumber());
 
+        UserDTO checkOutUser = pr.getCheckOutUser();
         String checkout = "";
-        if(pr.isCheckedOut()){
+        if(checkOutUser != null){
             checkout = " "
                     + LangHelper.getLocalizedMessage("CheckedOutBy",locale)
                     + " "
@@ -210,21 +205,22 @@ public class HumanOutput extends CliOutput{
                     + df.format(pr.getCheckOutDate());
         }
         OUTPUT_STREAM.println(LangHelper.getLocalizedMessage("Revision",locale) + " " + revision + checkout);
-        int iteColSize = (pr.getLastIteration().getIteration() +"").length();
+        int lastIteration = pr.getPartIterations().size() - 1;
+        int iteColSize = (lastIteration +"").length();
         int dateColSize=0;
         int authorColSize=0;
 
-        for(PartIteration pi:pr.getPartIterations()){
+        for(PartIterationDTO pi:pr.getPartIterations()){
             dateColSize = Math.max(dateColSize, df.format(pi.getCreationDate()).length());
             authorColSize = Math.max(authorColSize, pi.getAuthor().toString().length());
         }
-        for(PartIteration pi:pr.getPartIterations()){
+        for(PartIterationDTO pi:pr.getPartIterations()){
             printIterationStatus(pi, iteColSize, dateColSize +1, authorColSize+1);
         }
         OUTPUT_STREAM.println("");
     }
 
-    private void printIterationStatus(PartIteration pi, int iteColSize, int dateColSize, int authorColSize){
+    private void printIterationStatus(PartIterationDTO pi, int iteColSize, int dateColSize, int authorColSize){
         String iteration = fillWithEmptySpace(pi.getIteration()+"", iteColSize+1);
         DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT, Locale.US);
         String date = fillWithEmptySpace(df.format(pi.getCreationDate()), dateColSize);
@@ -234,15 +230,16 @@ public class HumanOutput extends CliOutput{
     }
 
 
-    private void printRevisionStatus(int revColSize, DocumentRevision dr){
+    private void printRevisionStatus(int revColSize, DocumentRevisionDTO dr){
 
         String revision = fillWithEmptySpace(dr.getVersion(),revColSize);
         DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT, Locale.US);
 
         OUTPUT_STREAM.println("# " + dr.getDocumentMasterId());
 
+        UserDTO checkOutUser = dr.getCheckOutUser();
         String checkout = "";
-        if(dr.isCheckedOut()){
+        if(checkOutUser != null){
             checkout = " "
                     + LangHelper.getLocalizedMessage("CheckedOutBy",locale)
                     + " "
@@ -253,21 +250,22 @@ public class HumanOutput extends CliOutput{
                     + df.format(dr.getCheckOutDate());
         }
         OUTPUT_STREAM.println(LangHelper.getLocalizedMessage("Revision",locale) + " " + revision + checkout);
-        int iteColSize = (dr.getLastIteration().getIteration() +"").length();
+        int lastIteration = dr.getDocumentIterations().size() - 1;
+        int iteColSize = (lastIteration +"").length();
         int dateColSize=0;
         int authorColSize=0;
 
-        for(DocumentIteration di:dr.getDocumentIterations()){
+        for(DocumentIterationDTO di:dr.getDocumentIterations()){
             dateColSize = Math.max(dateColSize, df.format(di.getCreationDate()).length());
             authorColSize = Math.max(authorColSize, di.getAuthor().toString().length());
         }
-        for(DocumentIteration di:dr.getDocumentIterations()){
+        for(DocumentIterationDTO di:dr.getDocumentIterations()){
             printIterationStatus(di, iteColSize, dateColSize +1, authorColSize+1);
         }
         OUTPUT_STREAM.println("");
     }
 
-    private void printIterationStatus(DocumentIteration di, int iteColSize, int dateColSize, int authorColSize){
+    private void printIterationStatus(DocumentIterationDTO di, int iteColSize, int dateColSize, int authorColSize){
         String iteration = fillWithEmptySpace(di.getIteration()+"", iteColSize+1);
         DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT, Locale.US);
         String date = fillWithEmptySpace(df.format(di.getCreationDate()), dateColSize);

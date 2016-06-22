@@ -21,18 +21,13 @@
 package com.docdoku.cli.commands.parts;
 
 import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.AccountsManager;
-import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.helpers.MetaDirectoryManager;
-import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.common.Version;
-import com.docdoku.core.configuration.PSFilter;
-import com.docdoku.core.exceptions.*;
-import com.docdoku.core.product.*;
-import com.docdoku.core.services.IPSFilterManagerWS;
-import com.docdoku.core.services.IProductManagerWS;
+import com.docdoku.cli.helpers.*;
+import com.docdoku.server.api.client.ApiException;
+import com.docdoku.server.api.models.PartIterationDTO;
+import com.docdoku.server.api.models.PartRevisionDTO;
+import com.docdoku.server.api.models.PartUsageLinkDTO;
+import com.docdoku.server.api.services.PartApi;
+import com.docdoku.server.api.services.PartsApi;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -40,7 +35,6 @@ import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 
 /**
  *
@@ -50,7 +44,7 @@ public class PartGetCommand extends BaseCommandLine {
 
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to retrieve ('A', 'B'...); default is the latest")
-    private Version revision;
+    private String revision;
 
     @Option(name="-i", aliases = "--iteration", metaVar = "<iteration>", usage="specify iteration of the part to retrieve ('1','2', '24'...); default is the latest")
     private int iteration;
@@ -73,9 +67,6 @@ public class PartGetCommand extends BaseCommandLine {
     @Option(name="-b", aliases = "--baseline", metaVar = "<baseline>", usage="baseline to filter")
     protected int baselineId;
 
-    private IProductManagerWS productS;
-    private IPSFilterManagerWS psFilterManager;
-
     @Override
     public void execImpl() throws Exception {
 
@@ -83,17 +74,10 @@ public class PartGetCommand extends BaseCommandLine {
             loadMetadata();
         }
 
-        productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        psFilterManager = ScriptingTools.createPSFilterService(getServerURL(), user, password);
-        String strRevision = revision==null?null:revision.toString();
+        String strRevision = revision==null?null:revision;
 
-        PSFilter filter = null;
 
-        if(baselineId != 0){
-            filter = psFilterManager.getBaselinePSFilter(baselineId);
-        }
-
-        getPart(partNumber, strRevision, iteration, filter);
+        getPart(partNumber, strRevision, iteration);
     }
 
     private void loadMetadata() throws IOException {
@@ -107,7 +91,7 @@ public class PartGetCommand extends BaseCommandLine {
         if(partNumber==null || strRevision==null){
             throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2",user));
         }
-        revision = new Version(strRevision);
+        revision = strRevision;
         //The part is inferred from the cad file, hence fetch the fresh (latest) iteration
         iteration=0;
         //once partNumber and revision have been inferred, set path to folder where files are stored
@@ -115,44 +99,25 @@ public class PartGetCommand extends BaseCommandLine {
         path=path.getParentFile();
     }
 
-    private void getPart(String pPartNumber, String pRevision, int pIteration, PSFilter filter) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException, AccessRightException {
-        PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, pPartNumber));
-        PartRevision pr;
-        PartIteration pi;
+    private void getPart(String pPartNumber, String pRevision, int pIteration) throws IOException, ApiException, LoginException, NoSuchAlgorithmException {
 
-        if(filter != null){
+        // TODO may break => unused parameter pIteration ?? should review algorithm and command specs
 
-            pi = filter.filter(pm).get(0);
+        PartsApi partsApi = new PartsApi(client);
+        PartApi partApi = new PartApi(client);
 
-            if(pi == null){
-                throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartIterationNotFoundForConfiguration",user));
-            }
+        PartRevisionDTO pr;
+        PartIterationDTO pi;
 
-            pr = pi.getPartRevision();
-
-            if(null != pRevision && !pr.getVersion().equals(pRevision)){
-                throw new IllegalArgumentException(LangHelper.getLocalizedMessage("ConfigSpecNotMatchingRevision",user));
-            }
-
+        if(baselineId != 0){
+            pi = partsApi.filterPartMasterInBaseline(workspace, pPartNumber, String.valueOf(baselineId));
+            pr = partApi.getPartRevision(workspace,pPartNumber,pi.getVersion());
         }else {
-
-            if(pRevision != null){
-                pr = productS.getPartRevision(new PartRevisionKey(workspace, pPartNumber, pRevision));
-                if(pIteration == 0){
-                    pi = pr.getLastIteration();
-                }else if(pIteration > pr.getNumberOfIterations()){
-                    throw new IllegalArgumentException(LangHelper.getLocalizedMessage("IterationNotExisting",user));
-                }else{
-                    pi = pr.getIteration(pIteration);
-                }
-            }else{
-                pr = pm.getLastRevision();
-                pi = pr.getLastIteration();
-            }
-
+            pr = partsApi.getPartRevision(workspace, pPartNumber, pRevision);
+            pi = LastIterationHelper.getLastIteration(pr);
         }
 
-        BinaryResource bin = pi.getNativeCADFile();
+        String bin = pi.getNativeCADFile();
 
         if(bin!=null){
             FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
@@ -162,12 +127,8 @@ public class PartGetCommand extends BaseCommandLine {
         }
 
         if(recursive){
-            PartIterationKey partIPK = new PartIterationKey(workspace,pPartNumber,pr.getVersion(),pi.getIteration());
-            List<PartUsageLink> usageLinks = productS.getComponents(partIPK);
-
-            for(PartUsageLink link:usageLinks){
-                PartMaster subPM = link.getComponent();
-                getPart(subPM.getNumber(),null,0,filter);
+            for(PartUsageLinkDTO link:pi.getComponents()){
+                getPart(link.getComponent().getNumber(),null,0);
             }
         }
 

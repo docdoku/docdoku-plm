@@ -22,9 +22,9 @@ package com.docdoku.cli.commands.parts;
 
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.services.IProductManagerWS;
+import com.docdoku.server.api.models.CountDTO;
+import com.docdoku.server.api.models.PartRevisionDTO;
+import com.docdoku.server.api.services.PartsApi;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
@@ -50,12 +50,12 @@ public class PartListCommand extends BaseCommandLine {
 
     @Override
     public void execImpl() throws Exception {
-        IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
+        PartsApi partsApi = new PartsApi(client);
         if(count){
-            int partRevisionsCount = productS.getPartsInWorkspaceCount(workspace);
-            output.printPartRevisionsCount(partRevisionsCount);
+            CountDTO countDTO = partsApi.getTotalNumberOfParts(workspace);
+            output.printPartRevisionsCount(countDTO.getCount());
         }else{
-            List<PartRevision> partRevisions = productS.getPartRevisions(workspace, start, max);
+            List<PartRevisionDTO> partRevisions = partsApi.getPartRevisions(workspace, start, max);
             output.printPartRevisions(partRevisions);
         }
     }

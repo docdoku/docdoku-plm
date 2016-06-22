@@ -20,7 +20,6 @@
 
 package com.docdoku.cli;
 
-import com.docdoku.cli.commands.VersionOptionHandler;
 import com.docdoku.cli.commands.common.AccountInfosCommand;
 import com.docdoku.cli.commands.common.FileStatusCommand;
 import com.docdoku.cli.commands.common.HelpCommand;
@@ -28,7 +27,6 @@ import com.docdoku.cli.commands.common.WorkspacesCommand;
 import com.docdoku.cli.commands.documents.*;
 import com.docdoku.cli.commands.parts.*;
 import com.docdoku.cli.helpers.CommandLine;
-import com.docdoku.core.common.Version;
 import org.kohsuke.args4j.CmdLineParser;
 
 import java.util.Arrays;
@@ -181,7 +179,6 @@ public class MainCommand {
     }
 
     private static void execCommand(CommandLine cl, String[] args) {
-        CmdLineParser.registerHandler(Version.class, VersionOptionHandler.class);
         CmdLineParser parser = new CmdLineParser(cl);
         try {
             parser.parseArgument(args);

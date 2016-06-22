@@ -21,18 +21,12 @@
 package com.docdoku.cli.commands.parts;
 
 import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.AccountsManager;
-import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.helpers.MetaDirectoryManager;
-import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.common.Version;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartRevisionKey;
-import com.docdoku.core.services.IProductManagerWS;
+import com.docdoku.cli.helpers.*;
+import com.docdoku.server.api.models.PartIterationDTO;
+import com.docdoku.server.api.models.PartIterationKey;
+import com.docdoku.server.api.models.PartRevisionDTO;
+import com.docdoku.server.api.models.PartRevisionKey;
+import com.docdoku.server.api.services.PartApi;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -46,7 +40,7 @@ import java.io.IOException;
 public class PartCheckInCommand extends BaseCommandLine {
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to check in ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
-    private Version revision;
+    private String revision;
 
     @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to check in; if not specified choose the part corresponding to the cad file")
     private String partNumber;
@@ -70,16 +64,25 @@ public class PartCheckInCommand extends BaseCommandLine {
             loadMetadata();
         }
 
-        IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        PartRevisionKey partRPK = new PartRevisionKey(workspace,partNumber,revision.toString());
-        PartRevision pr = productS.getPartRevision(partRPK);
-        PartIteration pi = pr.getLastIteration();
-        PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
+        PartApi partApi = new PartApi(client);
+
+        PartRevisionDTO pr = partApi.getPartRevision(workspace,partNumber,revision);
+        PartIterationDTO pi = LastIterationHelper.getLastIteration(pr);
+
+        PartRevisionKey partRPK = new PartRevisionKey();
+        partRPK.setWorkspaceId(workspace);
+        partRPK.setPartMasterNumber(partNumber);
+        partRPK.setVersion(revision);
+
+        PartIterationKey partIPK = new PartIterationKey();
+        partIPK.setPartRevision(partRPK);
+        partIPK.setIteration(pi.getIteration());
 
         if(!noUpload){
-            BinaryResource bin = pi.getNativeCADFile();
+            String bin = pi.getNativeCADFile();
             if(bin!=null){
-                String fileName =  bin.getName();
+                // TODO check file path may break
+                String fileName =  bin;
                 File localFile = new File(path,fileName);
                 if(localFile.exists()){
 
@@ -91,13 +94,14 @@ public class PartCheckInCommand extends BaseCommandLine {
         }
 
         if(message != null && !message.isEmpty()){
-            productS.updatePartIteration(partIPK,message,null,null,null,null, null,null,null);
+            pi.setIterationNote(message);
+            partApi.updatePartIteration(workspace,partNumber,revision, pi.getIteration(), pi);
         }
 
-        pr = productS.checkInPart(partRPK);
-        pi = pr.getLastIteration();
-
         output.printInfo(LangHelper.getLocalizedMessage("CheckingInPart",user)  + " : " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
+
+        partApi.checkIn(workspace,partNumber,revision);
+
     }
 
     private void loadMetadata() throws IOException {
@@ -111,7 +115,7 @@ public class PartCheckInCommand extends BaseCommandLine {
         if(partNumber==null || strRevision==null){
             throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2",user));
         }
-        revision = new Version(strRevision);
+        revision = strRevision;
         //once partNumber and revision have been inferred, set path to folder where files are stored
         //in order to implement perform the rest of the treatment
         path=path.getParentFile();

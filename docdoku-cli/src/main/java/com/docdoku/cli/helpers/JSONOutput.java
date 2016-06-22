@@ -20,17 +20,7 @@
 
 package com.docdoku.cli.helpers;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.ProductBaseline;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.product.Conversion;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.server.api.models.AccountDTO;
-import com.docdoku.server.api.models.WorkspaceDTO;
+import com.docdoku.server.api.models.*;
 import org.kohsuke.args4j.CmdLineParser;
 
 import javax.json.*;
@@ -99,22 +89,22 @@ public class JSONOutput extends CliOutput {
     }
 
     @Override
-    public void printPartRevisions(List<PartRevision> partRevisions) {
+    public void printPartRevisions(List<PartRevisionDTO> partRevisions) {
         JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
-        for (PartRevision partRevision : partRevisions) {
+        for (PartRevisionDTO partRevision : partRevisions) {
             jsonArrayBuilder.add(getPartRevision(partRevision, 0L));
         }
         OUTPUT_STREAM.println(jsonArrayBuilder.build().toString());
     }
 
     @Override
-    public void printBaselines(List<ProductBaseline> productBaselines) {
+    public void printBaselines(List<ProductBaselineDTO> productBaselines) {
         JsonArrayBuilder jsonArray = Json.createArrayBuilder();
-        for (ProductBaseline productBaseline : productBaselines) {
+        for (ProductBaselineDTO productBaseline : productBaselines) {
             JsonObject jsonBaseline = Json.createObjectBuilder()
                 .add("id", productBaseline.hashCode())
                 .add("name", productBaseline.getName())
-                .add("configurationItem", productBaseline.getConfigurationItem().getId())
+                .add("configurationItem", productBaseline.getConfigurationItemId())
                 .build();
             jsonArray.add(jsonBaseline);
         }
@@ -122,12 +112,14 @@ public class JSONOutput extends CliOutput {
     }
 
     @Override
-    public void printPartRevision(PartRevision pr, long lastModified) {
+    public void printPartRevision(PartRevisionDTO pr, long lastModified) {
         OUTPUT_STREAM.println(getPartRevision(pr, lastModified));
     }
 
     @Override
     public void printPartMaster(PartMaster pm, long lastModified) {
+        // TODO : rewrite with DTO
+        /*
         JsonArrayBuilder jsonRevisions = Json.createArrayBuilder();
         for (PartRevision pr : pm.getPartRevisions())
             jsonRevisions.add(getPartRevision(pr, lastModified));
@@ -137,13 +129,14 @@ public class JSONOutput extends CliOutput {
 
         //Add jsonMaster ?
         OUTPUT_STREAM.println(getPartRevision(pm.getLastRevision(), lastModified));
+        */
     }
 
     @Override
-    public void printConversion(Conversion conversion) {
+    public void printConversion(ConversionDTO conversion) {
         JsonObject jsonObj = Json.createObjectBuilder()
-                .add("pending", conversion.isPending())
-                .add("succeed", conversion.isSucceed())
+                .add("pending", conversion.getPending())
+                .add("succeed", conversion.getSucceed())
                 .add("startDate", conversion.getStartDate().toString())
                 .add("endDate", conversion.getEndDate().toString())
                 .build();
@@ -163,24 +156,24 @@ public class JSONOutput extends CliOutput {
     }
 
     @Override
-    public void printDocumentRevision(DocumentRevision documentRevision, long lastModified) {
-        OUTPUT_STREAM.println(getDocumentRevision(documentRevision, lastModified));
+    public void printDocumentRevision(DocumentRevisionDTO documentRevisionDTO, long lastModified) {
+        OUTPUT_STREAM.println(getDocumentRevision(documentRevisionDTO, lastModified));
     }
 
     @Override
-    public void printDocumentRevisions(DocumentRevision[] documentRevisions) {
+    public void printDocumentRevisions(List<DocumentRevisionDTO> documentRevisions) {
         JsonArrayBuilder jsonArray = Json.createArrayBuilder();
-        for (DocumentRevision documentRevision : documentRevisions) {
+        for (DocumentRevisionDTO documentRevision : documentRevisions) {
             jsonArray.add(getDocumentRevision(documentRevision, 0L));
         }
         OUTPUT_STREAM.println(jsonArray.build().toString());
     }
 
     @Override
-    public void printFolders(String[] folders) {
+    public void printFolders(List<FolderDTO> folders) {
         JsonArrayBuilder jsonArray = Json.createArrayBuilder();
-        for (String folder : folders) {
-            jsonArray.add(folder);
+        for (FolderDTO folder : folders) {
+            jsonArray.add(folder.getName());
         }
         OUTPUT_STREAM.println(jsonArray.build().toString());
     }
@@ -190,25 +183,25 @@ public class JSONOutput extends CliOutput {
         return new JSONProgressMonitorInputStream(maximum, in);
     }
 
-    private JsonObject getPartRevision(PartRevision pr, long lastModified) {
+    private JsonObject getPartRevision(PartRevisionDTO pr, long lastModified) {
 
         JsonObjectBuilder jsonStatusBuilder = Json.createObjectBuilder();
 
         if (pr != null) {
-            User user = pr.getCheckOutUser();
+            UserDTO user = pr.getCheckOutUser();
             String login = user != null ? user.getLogin() : "";
             Date checkoutDate = pr.getCheckOutDate();
             Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
-            jsonStatusBuilder.add("isReleased", pr.isReleased());
-            jsonStatusBuilder.add("isCheckedOut", pr.isCheckedOut());
-            jsonStatusBuilder.add("partNumber", pr.getPartMasterNumber());
+            jsonStatusBuilder.add("isReleased", pr.getStatus().equals(PartRevisionDTO.StatusEnum.RELEASED));
+            jsonStatusBuilder.add("isCheckedOut", user != null);
+            jsonStatusBuilder.add("partNumber", pr.getNumber());
             jsonStatusBuilder.add("checkoutUser", login);
             if(timeStamp != null) {
                 jsonStatusBuilder.add("checkoutDate", timeStamp);
             }else{
                 jsonStatusBuilder.add("checkoutDate", JsonValue.NULL);
             }
-            jsonStatusBuilder.add("workspace", pr.getPartMasterWorkspaceId());
+            jsonStatusBuilder.add("workspace", pr.getWorkspaceId());
             jsonStatusBuilder.add("version", pr.getVersion());
 
             if(pr.getDescription() != null) {
@@ -219,15 +212,18 @@ public class JSONOutput extends CliOutput {
 
             jsonStatusBuilder.add("lastModified", lastModified);
 
-            if (pr.getLastIteration() != null && pr.getLastIteration().getNativeCADFile() != null) {
-                String nativeCADFileName = pr.getLastIteration().getNativeCADFile().getName();
+            PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(pr);
+
+            if (lastIteration != null && lastIteration.getNativeCADFile() != null) {
+                String nativeCADFileName = lastIteration.getNativeCADFile();
                 jsonStatusBuilder.add("cadFileName", nativeCADFileName);
             }
 
-            List<PartIteration> partIterations = pr.getPartIterations();
+            List<PartIterationDTO> partIterations = pr.getPartIterations();
+
             if (partIterations != null) {
                 JsonArrayBuilder jsonIterationsBuilder = Json.createArrayBuilder();
-                for (PartIteration partIteration : partIterations) {
+                for (PartIterationDTO partIteration : partIterations) {
                     jsonIterationsBuilder.add(partIteration.getIteration());
                 }
                 jsonStatusBuilder.add("iterations", jsonIterationsBuilder.build());
@@ -238,51 +234,58 @@ public class JSONOutput extends CliOutput {
         return jsonStatusBuilder.build();
     }
 
-    private JsonObject getDocumentRevision(DocumentRevision dr, long lastModified) {
+    private JsonObject getDocumentRevision(DocumentRevisionDTO documentRevisionDTO, long lastModified) {
 
         JsonObjectBuilder jsonStatusBuilder = Json.createObjectBuilder();
 
-        if (dr != null) {
-            User user = dr.getCheckOutUser();
-            String login = user != null ? user.getLogin() : "";
-            Date checkoutDate = dr.getCheckOutDate();
+        if (documentRevisionDTO != null) {
+            UserDTO userDTO = documentRevisionDTO.getCheckOutUser();
+            String login = userDTO != null ? userDTO.getLogin() : "";
+            Date checkoutDate = documentRevisionDTO.getCheckOutDate();
             Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
-            jsonStatusBuilder.add("isCheckedOut", dr.isCheckedOut());
-            jsonStatusBuilder.add("id", dr.getDocumentMasterId());
+            jsonStatusBuilder.add("isCheckedOut", checkoutDate != null );
+            jsonStatusBuilder.add("id", documentRevisionDTO.getDocumentMasterId());
             jsonStatusBuilder.add("checkoutUser", login);
             if(timeStamp != null) {
                 jsonStatusBuilder.add("checkoutDate", timeStamp);
             }else{
                 jsonStatusBuilder.add("checkoutDate", JsonValue.NULL);
             }
-            jsonStatusBuilder.add("workspace", dr.getDocumentMasterWorkspaceId());
-            jsonStatusBuilder.add("version", dr.getVersion());
+            jsonStatusBuilder.add("workspace", documentRevisionDTO.getDocumentMasterId());
+            jsonStatusBuilder.add("version", documentRevisionDTO.getVersion());
 
-            if(dr.getDescription() != null) {
-                jsonStatusBuilder.add("description", dr.getDescription());
+            if(documentRevisionDTO.getDescription() != null) {
+                jsonStatusBuilder.add("description", documentRevisionDTO.getDescription());
             }else{
                 jsonStatusBuilder.add("description", JsonValue.NULL);
             }
 
             jsonStatusBuilder.add("lastModified", lastModified);
 
-            if (dr.getLastIteration() != null && dr.getLastIteration().getAttachedFiles() != null) {
+            DocumentIterationDTO lastIterationDTO = getDocumentRevisionDTOLastIteration(documentRevisionDTO);
+
+            if (lastIterationDTO != null && lastIterationDTO.getAttachedFiles() != null) {
                 JsonArrayBuilder jsonFilesBuilder = Json.createArrayBuilder();
-                for(BinaryResource bin:dr.getLastIteration().getAttachedFiles())
-                    jsonFilesBuilder.add(bin.toString());
+                for(String fileName:lastIterationDTO.getAttachedFiles())
+                    jsonFilesBuilder.add(fileName);
 
                 jsonStatusBuilder.add("files", jsonFilesBuilder.build());
             }
 
-            List<DocumentIteration> documentIterations = dr.getDocumentIterations();
+            List<DocumentIterationDTO> documentIterations = documentRevisionDTO.getDocumentIterations();
             if (documentIterations != null) {
                 JsonArrayBuilder jsonIterationsBuilder = Json.createArrayBuilder();
-                for (DocumentIteration documentIteration : documentIterations) {
+                for (DocumentIterationDTO documentIteration : documentIterations) {
                     jsonIterationsBuilder.add(documentIteration.getIteration());
                 }
                 jsonStatusBuilder.add("iterations", jsonIterationsBuilder.build());
             }
         }
         return jsonStatusBuilder.build();
+    }
+
+    private DocumentIterationDTO getDocumentRevisionDTOLastIteration(DocumentRevisionDTO documentRevisionDTO) {
+        int iterations = documentRevisionDTO.getDocumentIterations().size();
+        return documentRevisionDTO.getDocumentIterations().get(iterations-1);
     }
 }
