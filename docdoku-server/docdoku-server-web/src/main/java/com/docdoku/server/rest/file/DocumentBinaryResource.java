@@ -129,6 +129,8 @@ public class DocumentBinaryResource {
         return fileName;
     }
 
+    // TODO split method using query params for uuid and virtualSubResource
+    // TODO -> will simplify swagger json generation
     @GET
     @ApiOperation(value = "Download document file", response = Response.class)
     @Path("/{iteration}/{fileName}{uuid:(/uuid/[^/]+?)?}{virtualSubResource : (/[^/]+?)?}")

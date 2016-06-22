@@ -88,6 +88,9 @@ public class JaxrsReader extends AbstractReader implements ClassSwaggerReader {
             javax.ws.rs.Path methodPath = AnnotationUtils.findAnnotation(method, javax.ws.rs.Path.class);
 
             String operationPath = getPath(apiPath, methodPath, parentPath);
+            System.out.println("PATH : " + operationPath);
+            operationPath = cleanRegexPath(operationPath);
+            System.out.println("CLEAN : " + operationPath);
             if (operationPath != null && apiOperation != null) {
                 Map<String, String> regexMap = new HashMap<String, String>();
                 operationPath = parseOperationPath(operationPath, regexMap);
@@ -400,5 +403,10 @@ public class JaxrsReader extends AbstractReader implements ClassSwaggerReader {
         return null;
     }
 
-
+    private String cleanRegexPath(String dirty){
+       return dirty
+                .replace(": [^/].*","")
+                .replace(":[0-9]+","")
+                .replace(":[A-Z]+","");
+    }
 }
