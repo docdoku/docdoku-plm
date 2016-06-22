@@ -23,6 +23,8 @@ package com.docdoku.cli.commands;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.CliOutput;
 import com.docdoku.cli.helpers.LangHelper;
+import com.docdoku.cli.services.DocdokuClientFactory;
+import com.docdoku.server.api.client.ApiClient;
 import org.kohsuke.args4j.Option;
 
 import java.io.Console;
@@ -48,7 +50,7 @@ public abstract class BaseCommandLine extends AbstractCommandLine {
     @Option(name="-S", aliases = "--ssl", usage="use a ssl (tls) connection")
     protected boolean ssl;
 
-    protected String apiBasePath;
+    protected ApiClient client;
 
     private void promptForUser(Locale locale){
         Console c = System.console();
@@ -70,8 +72,6 @@ public abstract class BaseCommandLine extends AbstractCommandLine {
     @Override
     public void exec() throws Exception {
 
-        apiBasePath = getServerURL().toString() + "/api";
-
         Locale userLocale = new AccountsManager().getUserLocale(user);
         output = CliOutput.getOutput(format,userLocale);
         if(user==null && format.equals(CliOutput.formats.HUMAN)){
@@ -80,6 +80,10 @@ public abstract class BaseCommandLine extends AbstractCommandLine {
         if(password==null && format.equals(CliOutput.formats.HUMAN)){
             promptForPassword(userLocale);
         }
+
+        String apiBasePath = getServerURL().toString() + "/api";
+
+        client = DocdokuClientFactory.createClient(apiBasePath,user,password);
 
         execImpl();
 

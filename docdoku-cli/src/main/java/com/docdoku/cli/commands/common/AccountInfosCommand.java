@@ -22,8 +22,6 @@ package com.docdoku.cli.commands.common;
 
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.server.api.DocdokuPLMBasicClient;
-import com.docdoku.server.api.client.ApiClient;
 import com.docdoku.server.api.models.AccountDTO;
 import com.docdoku.server.api.services.AccountsApi;
 
@@ -37,7 +35,6 @@ public class AccountInfosCommand extends BaseCommandLine {
 
     @Override
     public void execImpl() throws Exception {
-        ApiClient client = new DocdokuPLMBasicClient(apiBasePath, user, password, true).getClient();
         AccountDTO accountDTO = new AccountsApi(client).getAccount();
         output.printAccount(accountDTO);
     }
