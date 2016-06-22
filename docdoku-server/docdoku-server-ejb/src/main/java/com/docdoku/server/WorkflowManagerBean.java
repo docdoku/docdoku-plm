@@ -30,7 +30,6 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IWorkflowManagerLocal;
-import com.docdoku.core.services.IWorkflowManagerWS;
 import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
@@ -41,7 +40,6 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
@@ -49,8 +47,7 @@ import java.util.*;
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @Local(IWorkflowManagerLocal.class)
 @Stateless(name = "WorkflowManagerBean")
-@WebService(endpointInterface = "com.docdoku.core.services.IWorkflowManagerWS")
-public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManagerLocal {
+public class WorkflowManagerBean implements IWorkflowManagerLocal {
 
     @PersistenceContext
     private EntityManager em;

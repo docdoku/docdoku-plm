@@ -61,8 +61,7 @@ import java.util.logging.Logger;
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
 @Local(IDocumentManagerLocal.class)
 @Stateless(name = "DocumentManagerBean")
-@WebService(endpointInterface = "com.docdoku.core.services.IDocumentManagerWS")
-public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManagerLocal {
+public class DocumentManagerBean implements IDocumentManagerLocal {
 
     @PersistenceContext
     private EntityManager em;

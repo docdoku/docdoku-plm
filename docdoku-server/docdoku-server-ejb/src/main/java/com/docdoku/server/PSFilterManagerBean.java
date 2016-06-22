@@ -26,7 +26,6 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IPSFilterManagerLocal;
-import com.docdoku.core.services.IPSFilterManagerWS;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.configuration.filter.LatestPSFilter;
 import com.docdoku.server.configuration.filter.LatestReleasedPSFilter;
@@ -42,15 +41,13 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
 @Local(IPSFilterManagerLocal.class)
 @Stateless(name = "PSFilterManagerBean")
-@WebService(endpointInterface = "com.docdoku.core.services.IPSFilterManagerWS")
-public class PSFilterManagerBean implements IPSFilterManagerLocal,IPSFilterManagerWS {
+public class PSFilterManagerBean implements IPSFilterManagerLocal {
 
     @PersistenceContext
     private EntityManager em;

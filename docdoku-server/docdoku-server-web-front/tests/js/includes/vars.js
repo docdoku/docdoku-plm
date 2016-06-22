@@ -234,17 +234,6 @@ var urls = {
     changeManagement: homeUrl + 'change-management/#' + workspace,
     workspaceAdministration:homeUrl+'workspace-management/',
 
-    WSDL:[
-        homeUrl + 'services/product?wsdl',
-        homeUrl + 'services/document?wsdl',
-        homeUrl + 'services/lov?wsdl',
-        homeUrl + 'services/productBaseline?wsdl',
-        homeUrl + 'services/user?wsdl',
-        homeUrl + 'services/workflow?wsdl',
-        homeUrl + 'services/psFilter?wsdl',
-        homeUrl + 'services/account?wsdl'
-    ],
-
     documentPermalink: homeUrl + 'documents/#' + workspace + '/' + documents.document1.number + '/A',
     partPermalink: homeUrl + 'parts/#' + workspace + '/' + products.part1.number + '/A',
 

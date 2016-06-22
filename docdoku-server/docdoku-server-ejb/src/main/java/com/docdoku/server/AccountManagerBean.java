@@ -25,7 +25,6 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
-import com.docdoku.core.services.IAccountManagerWS;
 import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.server.dao.AccountDAO;
@@ -37,7 +36,6 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Date;
@@ -47,8 +45,7 @@ import java.util.logging.Logger;
 @DeclareRoles({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IAccountManagerLocal.class)
 @Stateless(name = "AccountManagerBean")
-@WebService(endpointInterface = "com.docdoku.core.services.IAccountManagerWS")
-public class AccountManagerBean implements IAccountManagerLocal, IAccountManagerWS {
+public class AccountManagerBean implements IAccountManagerLocal {
 
     @PersistenceContext
     private EntityManager em;

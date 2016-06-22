@@ -25,7 +25,6 @@ import com.docdoku.core.security.*;
 import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.core.services.IUserManagerWS;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
@@ -38,7 +37,6 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
-import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
@@ -47,8 +45,7 @@ import java.util.Locale;
 @DeclareRoles({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IUserManagerLocal.class)
 @Stateless(name = "UserManagerBean")
-@WebService(endpointInterface = "com.docdoku.core.services.IUserManagerWS")
-public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
+public class UserManagerBean implements IUserManagerLocal {
 
     @PersistenceContext
     private EntityManager em;

@@ -74,9 +74,7 @@ import java.util.logging.Logger;
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
 @Local(IProductManagerLocal.class)
 @Stateless(name = "ProductManagerBean")
-@WebService(endpointInterface = "com.docdoku.core.services.IProductManagerWS")
-
-public class ProductManagerBean implements IProductManagerWS, IProductManagerLocal {
+public class ProductManagerBean implements IProductManagerLocal {
 
     @PersistenceContext
     private EntityManager em;

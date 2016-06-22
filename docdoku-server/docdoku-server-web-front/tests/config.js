@@ -42,10 +42,6 @@ module.exports = {
         'js/auth/login.js',
         'js/pre/clean.js',
 
-        // WSDL Check
-        // Removed, we'll abandon it
-        // 'js/wsdl/wsdlCheck.js',
-
         // Content Type check
         'js/content-type/contentTypeCheck.js',
 

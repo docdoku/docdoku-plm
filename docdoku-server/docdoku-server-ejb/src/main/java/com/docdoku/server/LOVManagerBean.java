@@ -30,15 +30,14 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ILOVManagerLocal;
-import com.docdoku.core.services.ILOVManagerWS;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.*;
 
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
@@ -47,10 +46,10 @@ import java.util.Locale;
 /**
  * @author Lebeau Julien on 03/03/15.
  */
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
 @Local(ILOVManagerLocal.class)
 @Stateless(name = "LOVManagerBean")
-@WebService(endpointInterface = "com.docdoku.core.services.ILOVManagerWS")
-public class LOVManagerBean implements ILOVManagerLocal, ILOVManagerWS {
+public class LOVManagerBean implements ILOVManagerLocal {
 
     @PersistenceContext
     private EntityManager em;
