@@ -24,6 +24,7 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.*;
@@ -35,6 +36,7 @@ import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IImporterManagerLocal;
+import com.docdoku.core.services.IPSFilterManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.util.FileIO;
@@ -80,6 +82,9 @@ public class PartsResource {
     @Inject
     private PartResource partResource;
 
+    @Inject
+    private IPSFilterManagerLocal filterService;
+
     @EJB
     private IImporterManagerLocal importerService;
     private Mapper mapper;
@@ -100,7 +105,7 @@ public class PartsResource {
     }
 
     @GET
-    @ApiOperation(value = "Get part revisions", response = Response.class)
+    @ApiOperation(value = "Get part revisions", response = PartRevisionDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPartRevisions(@PathParam("workspaceId") String workspaceId,
                                      @QueryParam("start") int start,
@@ -160,7 +165,8 @@ public class PartsResource {
     @Path("search")
     @Produces(MediaType.APPLICATION_JSON)
     public Response searchPartRevisions(@Context UriInfo uri,
-                                        @PathParam("workspaceId") String workspaceId)
+                                        @PathParam("workspaceId") String workspaceId,
+                                        @QueryParam("q") String q)
             throws EntityNotFoundException, ESServerException, UserNotActiveException, AccessRightException {
 
         PartSearchQuery partSearchQuery = SearchQueryParser.parsePartStringQuery(workspaceId, uri.getQueryParameters());
@@ -216,6 +222,25 @@ public class PartsResource {
 
         return Response.ok(new GenericEntity<QueryResult>((QueryResult) queryResult) {
         }).build();
+    }
+
+
+    @GET
+    @ApiOperation(value = "Filter part master with config spec", response = PartIterationDTO.class)
+    @Path("{partNumber}/filter/{baselineId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response filterPartMasterInBaseline(@PathParam("workspaceId") String workspaceId,
+                                             @PathParam("partNumber") String partNumber,
+                                             @PathParam("baselineId") String baselineId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, PartMasterNotFoundException {
+
+        PSFilter filter = filterService.getBaselinePSFilter(Integer.valueOf(baselineId));
+        PartMaster partMaster = productService.getPartMaster(new PartMasterKey(workspaceId, partNumber));
+        List<PartIteration> partIterations = filter.filter(partMaster);
+        if(!partIterations.isEmpty()){
+            return Response.ok().entity(Tools.mapPartIterationToPartIterationDTO(partIterations.get(0))).build();
+        }else{
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 
     @GET

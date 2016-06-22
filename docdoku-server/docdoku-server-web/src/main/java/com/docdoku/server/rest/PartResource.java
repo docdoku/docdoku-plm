@@ -22,6 +22,7 @@ package com.docdoku.server.rest;
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.*;
 import com.docdoku.core.configuration.PSFilter;
+import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.configuration.ProductInstanceMaster;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
@@ -42,6 +43,7 @@ import com.docdoku.core.sharing.SharedPart;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.collections.VirtualInstanceCollection;
 import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
 import com.docdoku.server.rest.util.InstanceAttributeFactory;
 import io.swagger.annotations.Api;
@@ -277,48 +279,48 @@ public class PartResource {
     }
 
     @PUT
-    @ApiOperation(value = "Checkin part", response = Response.class)
+    @ApiOperation(value = "Checkin part", response = PartRevisionDTO.class)
     @Path("/checkin")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response checkIn(@PathParam("workspaceId") String workspaceId,
+    public PartRevisionDTO checkIn(@PathParam("workspaceId") String workspaceId,
                             @PathParam("partNumber") String partNumber,
                             @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, ESServerException, AccessRightException, NotAllowedException, EntityConstraintException, UserNotActiveException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
-        productService.checkInPart(revisionKey);
-        return Response.ok().build();
+        PartRevision partRevision = productService.checkInPart(revisionKey);
+        return Tools.mapPartRevisionToPartDTO(partRevision);
     }
 
     @PUT
-    @ApiOperation(value = "Checkout part", response = Response.class)
+    @ApiOperation(value = "Checkout part", response = PartRevisionDTO.class)
     @Path("/checkout")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response checkOut(@PathParam("workspaceId") String workspaceId,
+    public PartRevisionDTO checkOut(@PathParam("workspaceId") String workspaceId,
                              @PathParam("partNumber") String partNumber,
                              @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException, UserNotActiveException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
-        productService.checkOutPart(revisionKey);
-        return Response.ok().build();
+        PartRevision partRevision = productService.checkOutPart(revisionKey);
+        return Tools.mapPartRevisionToPartDTO(partRevision);
     }
 
     @PUT
-    @ApiOperation(value = "Undo checkout part", response = Response.class)
+    @ApiOperation(value = "Undo checkout part", response = PartRevisionDTO.class)
     @Path("/undocheckout")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response undoCheckOut(@PathParam("workspaceId") String workspaceId,
+    public PartRevisionDTO undoCheckOut(@PathParam("workspaceId") String workspaceId,
                                  @PathParam("partNumber") String partNumber,
                                  @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
-        productService.undoCheckOutPart(revisionKey);
-        return Response.ok().build();
+        PartRevision partRevision = productService.undoCheckOutPart(revisionKey);
+        return Tools.mapPartRevisionToPartDTO(partRevision);
     }
 
     @PUT
@@ -624,6 +626,24 @@ public class PartResource {
         PSFilter filter = productService.getLatestCheckedInPSFilter(workspaceId);
         VirtualInstanceCollection virtualInstanceCollection = new VirtualInstanceCollection(partRevision, filter);
         return Response.ok().entity(virtualInstanceCollection).build();
+    }
+
+    @GET
+    @ApiOperation(value = "Get baselines where part revision is involved", response = ProductBaselineDTO.class, responseContainer = "List")
+    @Path("/baselines")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBaselinesWherePartRevisionHasIterations(@PathParam("workspaceId") String workspaceId,
+                                 @PathParam("partNumber") String partNumber,
+                                 @PathParam("partVersion") String partVersion)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException {
+
+        List<ProductBaseline> baselines = productService.findBaselinesWherePartRevisionHasIterations(new PartRevisionKey(workspaceId, partNumber, partVersion));
+        List<ProductBaselineDTO> productBaselineDTOs = new ArrayList<>();
+        for(ProductBaseline baseline :baselines){
+            productBaselineDTOs.add(mapper.map(baseline,ProductBaselineDTO.class));
+        }
+        return Response.ok(new GenericEntity<List<ProductBaselineDTO>>((List<ProductBaselineDTO>) productBaselineDTOs) {
+        }).build();
     }
 
 
