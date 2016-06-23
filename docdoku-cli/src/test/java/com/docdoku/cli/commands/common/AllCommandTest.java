@@ -197,5 +197,56 @@ public class AllCommandTest {
 
     }
 
+    @Test
+    public void partListTest(){
+        String[] args = {"l", "part", "-u", "foo", "-p", "bar", "-h" , "localhost" , "-P", "8080" , "-F", "json", "-w" ,"foo"};
+        MainCommand.main(args);
+        String programOutput = outContent.toString();
+        String programError = errContent.toString();
+
+        Assert.assertTrue(NO_ERRORS_EXPECTED, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        JsonReader reader = Json.createReader(new StringReader(programOutput));
+        JsonArray parts = reader.readArray();
+        reader.close();
+
+        Assert.assertNotNull(parts);
+    }
+
+    @Test
+    public void partListCountTest(){
+        String[] args = {"l", "part", "-u", "foo", "-p", "bar", "-h" , "localhost" , "-P", "8080" , "-F", "json", "-w" ,"foo", "-c"};
+        MainCommand.main(args);
+        String programOutput = outContent.toString();
+        String programError = errContent.toString();
+
+        Assert.assertTrue(NO_ERRORS_EXPECTED, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        JsonReader reader = Json.createReader(new StringReader(programOutput));
+        JsonObject partsCount = reader.readObject();
+        reader.close();
+        Assert.assertNotNull(partsCount);
+        Assert.assertTrue(partsCount.getInt("count") >= 0 );
+    }
+
+    @Test
+    public void partListTestWithLimit(){
+        String[] args = {"l", "part", "-u", "foo", "-p", "bar", "-h" , "localhost" , "-P", "8080" , "-F", "json", "-w" ,"foo", "-s", "0", "-m", "1" };
+        MainCommand.main(args);
+        String programOutput = outContent.toString();
+        String programError = errContent.toString();
+
+        Assert.assertTrue(NO_ERRORS_EXPECTED, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        JsonReader reader = Json.createReader(new StringReader(programOutput));
+        JsonArray parts = reader.readArray();
+        reader.close();
+
+        Assert.assertNotNull(parts);
+        Assert.assertTrue(parts.size() <= 1);
+    }
 
 }
