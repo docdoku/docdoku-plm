@@ -122,4 +122,44 @@ public class AllCommandTest {
 
     }
 
+    @Test
+    public void partCreationTest(){
+
+        URL resource = AllCommandTest.class.getClassLoader().getResource("com/docdoku/cli/commands/common/upload-part.txt");
+
+        String FILE_PATH = resource.getPath();
+        String PART_NUMBER  = "PART-"+UUID.randomUUID().toString().substring(0,6);
+        String PART_TITLE = "PartTitle";
+        String PART_DESCRIPTION = "PartDescription";
+
+        String[] args = {"cr", "part", "-u", "foo", "-p", "bar", "-h" , "localhost" , "-P", "8080" , "-F", "json",
+                "-w" ,"foo", "-o", PART_NUMBER, "-N", PART_TITLE, "-d", PART_DESCRIPTION, FILE_PATH};
+
+        MainCommand.main(args);
+
+        String programOutput = outContent.toString();
+        String programError = errContent.toString();
+
+        Assert.assertTrue(NO_ERRORS_EXPECTED, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        String[] splitOutput = programOutput.split("\n");
+        int linesCount = splitOutput.length;
+        Assert.assertTrue("Should have at least two lines", linesCount >= 2);
+
+        String firstLine = splitOutput[0];
+        JsonReader firstLineReader = Json.createReader(new StringReader(firstLine));
+        JsonObject infoLine = firstLineReader.readObject();
+        firstLineReader.close();
+
+        String uploadingFile = LangHelper.getLocalizedMessage("UploadingFile", new Locale("en"));
+        Assert.assertTrue(infoLine.getString("info").startsWith(uploadingFile));
+
+        String lastLine = splitOutput[linesCount-1];
+        JsonReader lastLineReader = Json.createReader(new StringReader(lastLine));
+        JsonObject progressLine = lastLineReader.readObject();
+        lastLineReader.close();
+        Assert.assertEquals(progressLine.getInt("progress"), 100);
+    }
+
 }

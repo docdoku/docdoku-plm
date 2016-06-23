@@ -75,7 +75,9 @@ public class PartCheckInCommand extends BaseCommandLine {
         partRPK.setVersion(revision);
 
         PartIterationKey partIPK = new PartIterationKey();
-        partIPK.setPartRevision(partRPK);
+        partIPK.setWorkspaceId(workspace);
+        partIPK.setPartMasterNumber(partNumber);
+        partIPK.setPartRevisionVersion(revision);
         partIPK.setIteration(pi.getIteration());
 
         if(!noUpload){

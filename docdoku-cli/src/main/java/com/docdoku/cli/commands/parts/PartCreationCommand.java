@@ -76,7 +76,9 @@ public class PartCreationCommand extends BaseCommandLine {
         partRPK.setVersion(pr.getVersion());
 
         PartIterationKey partIPK = new PartIterationKey();
-        partIPK.setPartRevision(partRPK);
+        partIPK.setWorkspaceId(workspace);
+        partIPK.setPartMasterNumber(partNumber);
+        partIPK.setPartRevisionVersion(pr.getVersion());
         partIPK.setIteration(lastIteration.getIteration());
 
         FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));

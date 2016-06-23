@@ -67,7 +67,9 @@ public class PartPutCommand extends BaseCommandLine {
         PartIterationDTO pi = LastIterationHelper.getLastIteration(pr);
 
         PartIterationKey partIPK = new PartIterationKey();
-        partIPK.setPartRevision(partRPK);
+        partIPK.setWorkspaceId(workspace);
+        partIPK.setPartMasterNumber(partNumber);
+        partIPK.setPartRevisionVersion(revision);
         partIPK.setIteration(pi.getIteration());
 
         FileHelper fh = new FileHelper(user,password,output, new AccountsManager().getUserLocale(user));

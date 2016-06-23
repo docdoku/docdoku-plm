@@ -217,7 +217,7 @@ public class FileHelper {
                 + URLEncoder.encode(pPartIPK.getWorkspaceId(), "UTF-8") + "/"
                 + "parts/"
                 + URLEncoder.encode(pPartIPK.getPartMasterNumber(), "UTF-8") + "/"
-                + pPartIPK.getPartRevision().getVersion() + "/"
+                + pPartIPK.getPartRevisionVersion() + "/"
                 + pPartIPK.getIteration() + "/nativecad/"
                 + pRemoteFileName;
     }
@@ -239,7 +239,7 @@ public class FileHelper {
                 + URLEncoder.encode(pPart.getWorkspaceId(), "UTF-8") + "/"
                 + "parts/"
                 + URLEncoder.encode(pPart.getPartMasterNumber(), "UTF-8") + "/"
-                + pPart.getPartRevision().getVersion() + "/"
+                + pPart.getPartRevisionVersion() + "/"
                 + pPart.getIteration() + "/nativecad/";
     }
 
@@ -303,7 +303,7 @@ public class FileHelper {
         meta.setDigest(filePath,digest);
         meta.setPartNumber(filePath,partIPK.getPartMasterNumber());
         meta.setWorkspace(filePath,partIPK.getWorkspaceId());
-        meta.setRevision(filePath,partIPK.getPartRevision().getVersion());
+        meta.setRevision(filePath,partIPK.getPartRevisionVersion());
         meta.setIteration(filePath,partIPK.getIteration());
         meta.setLastModifiedDate(filePath, localFile.lastModified());
     }
