@@ -46,9 +46,7 @@ import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
 import com.docdoku.server.rest.util.InstanceAttributeFactory;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -285,7 +283,8 @@ public class PartResource {
     @Produces(MediaType.APPLICATION_JSON)
     public PartRevisionDTO checkIn(@PathParam("workspaceId") String workspaceId,
                             @PathParam("partNumber") String partNumber,
-                            @PathParam("partVersion") String partVersion)
+                            @PathParam("partVersion") String partVersion,
+                            @ApiParam(name = "body") String body)
             throws EntityNotFoundException, ESServerException, AccessRightException, NotAllowedException, EntityConstraintException, UserNotActiveException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
@@ -300,7 +299,8 @@ public class PartResource {
     @Produces(MediaType.APPLICATION_JSON)
     public PartRevisionDTO checkOut(@PathParam("workspaceId") String workspaceId,
                              @PathParam("partNumber") String partNumber,
-                             @PathParam("partVersion") String partVersion)
+                             @PathParam("partVersion") String partVersion,
+                             @ApiParam(name = "body") String body)
             throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException, UserNotActiveException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
@@ -315,7 +315,8 @@ public class PartResource {
     @Produces(MediaType.APPLICATION_JSON)
     public PartRevisionDTO undoCheckOut(@PathParam("workspaceId") String workspaceId,
                                  @PathParam("partNumber") String partNumber,
-                                 @PathParam("partVersion") String partVersion)
+                                 @PathParam("partVersion") String partVersion,
+                                 @ApiParam(name = "body") String body)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
