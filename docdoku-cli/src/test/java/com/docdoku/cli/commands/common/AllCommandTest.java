@@ -8,19 +8,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
+import javax.json.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RunWith(JUnit4.class)
 public class AllCommandTest {
+
+    private final static Logger LOGGER = Logger.getLogger(AllCommandTest.class.getName());
 
     private final static String NO_ERRORS_EXPECTED = "Should be no errors";
     private final static String OUTPUT_EXPECTED = "Should have an output";
@@ -161,5 +162,40 @@ public class AllCommandTest {
         lastLineReader.close();
         Assert.assertEquals(progressLine.getInt("progress"), 100);
     }
+
+    @Test
+    public void documentListTest(){
+        String[] args = {"l", "document", "-u", "foo", "-p", "bar", "-h" , "localhost" , "-P", "8080" , "-F", "json", "-w" ,"foo"};
+        MainCommand.main(args);
+        String programOutput = outContent.toString();
+        String programError = errContent.toString();
+
+        Assert.assertTrue(NO_ERRORS_EXPECTED, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        JsonReader reader = Json.createReader(new StringReader(programOutput));
+        JsonArray documents = reader.readArray();
+        reader.close();
+
+        Assert.assertNotNull(documents);
+        int documentsCount = documents.size();
+
+        // Test first object only
+        if(documentsCount > 0){
+            LOGGER.log(Level.INFO, "Testing first document in documents array");
+            JsonValue jsonValue = documents.get(0);
+            JsonValue.ValueType valueType = jsonValue.getValueType();
+            Assert.assertEquals(valueType, JsonValue.ValueType.OBJECT);
+            JsonObject document = (JsonObject) jsonValue;
+            String id = document.getString("id");
+            Assert.assertNotNull(id);
+            Assert.assertFalse(id.isEmpty());
+        }
+        else {
+            LOGGER.log(Level.WARNING, "No document to test in documents array");
+        }
+
+    }
+
 
 }
