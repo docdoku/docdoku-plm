@@ -13,16 +13,21 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 @RunWith(JUnit4.class)
 public class AllCommandTest {
 
-    private final static Logger LOGGER = Logger.getLogger(AllCommandTest.class.getName());
+    String[] AUTH_ARGS = {"-u", "foo", "-p", "bar", "-h" , "localhost" , "-P", "8080" , "-F", "json"};
 
+    private final static Logger LOGGER = Logger.getLogger(AllCommandTest.class.getName());
+    private final static URL documentFile = AllCommandTest.class.getClassLoader().getResource("com/docdoku/cli/commands/common/upload-document.txt");
+    private final static URL partFile = AllCommandTest.class.getClassLoader().getResource("com/docdoku/cli/commands/common/upload-part.txt");
     private final static String NO_ERRORS_EXPECTED = "Should be no errors";
     private final static String OUTPUT_EXPECTED = "Should have an output";
 
@@ -43,8 +48,9 @@ public class AllCommandTest {
     @Test
     public void workspaceListTest() throws Exception {
 
-        String[] args = {"wl", "-u", "foo", "-p", "bar", "-h" ,"localhost" , "-P", "8080" , "-F", "json"};
-        MainCommand.main(args);
+        String[] command = {"wl"};
+        String[] args = {};
+        MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
         String programError = errContent.toString();
@@ -64,8 +70,9 @@ public class AllCommandTest {
     @Test
     public void accountInfoTest() throws Exception {
 
-        String[] args = {"a", "-u", "foo", "-p", "bar", "-h" ,"localhost" , "-P", "8080" , "-F", "json"};
-        MainCommand.main(args);
+        String[] command = {"a"};
+        String[] args = {};
+        MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
         String programError = errContent.toString();
@@ -85,17 +92,14 @@ public class AllCommandTest {
     @Test
     public void documentCreationTest() throws Exception {
 
-        URL resource = AllCommandTest.class.getClassLoader().getResource("com/docdoku/cli/commands/common/upload-document.txt");
+        String filePath = documentFile.getPath();
+        String documentId = "DOC-"+UUID.randomUUID().toString().substring(0,6);
+        String documentTitle = "DocTitle";
+        String documentDescription = "DocDescription";
 
-        String FILE_PATH = resource.getPath();
-        String DOCUMENT_ID = "DOC-"+UUID.randomUUID().toString().substring(0,6);
-        String DOCUMENT_TITLE = "DocTitle";
-        String DOCUMENT_DESCRIPTION = "DocDescription";
-
-        String[] args = {"cr", "document", "-u", "foo", "-p", "bar", "-h" , "localhost" , "-P", "8080" , "-F", "json",
-                        "-w" ,"foo", "-o", DOCUMENT_ID, "-N", DOCUMENT_TITLE, "-d", DOCUMENT_DESCRIPTION, FILE_PATH};
-
-        MainCommand.main(args);
+        String[] command = {"cr", "document"};
+        String[] args = {"-w" ,"foo", "-o", documentId, "-N", documentTitle, "-d", documentDescription, filePath};
+        MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
         String programError = errContent.toString();
@@ -126,17 +130,14 @@ public class AllCommandTest {
     @Test
     public void partCreationTest(){
 
-        URL resource = AllCommandTest.class.getClassLoader().getResource("com/docdoku/cli/commands/common/upload-part.txt");
+        String filePath = partFile.getPath();
+        String partNumber  = "PART-"+UUID.randomUUID().toString().substring(0,6);
+        String partTitle = "PartTitle";
+        String partDescription = "PartDescription";
 
-        String FILE_PATH = resource.getPath();
-        String PART_NUMBER  = "PART-"+UUID.randomUUID().toString().substring(0,6);
-        String PART_TITLE = "PartTitle";
-        String PART_DESCRIPTION = "PartDescription";
-
-        String[] args = {"cr", "part", "-u", "foo", "-p", "bar", "-h" , "localhost" , "-P", "8080" , "-F", "json",
-                "-w" ,"foo", "-o", PART_NUMBER, "-N", PART_TITLE, "-d", PART_DESCRIPTION, FILE_PATH};
-
-        MainCommand.main(args);
+        String[] command = {"cr", "part"};
+        String[] args = {"-w" ,"foo", "-o", partNumber, "-N", partTitle, "-d", partDescription, filePath};
+        MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
         String programError = errContent.toString();
@@ -165,8 +166,11 @@ public class AllCommandTest {
 
     @Test
     public void documentListTest(){
-        String[] args = {"l", "document", "-u", "foo", "-p", "bar", "-h" , "localhost" , "-P", "8080" , "-F", "json", "-w" ,"foo"};
-        MainCommand.main(args);
+
+        String[] command = {"l", "document"};
+        String[] args = {"-w" ,"foo"};
+        MainCommand.main(getArgs(command, args));
+
         String programOutput = outContent.toString();
         String programError = errContent.toString();
 
@@ -199,8 +203,10 @@ public class AllCommandTest {
 
     @Test
     public void partListTest(){
-        String[] args = {"l", "part", "-u", "foo", "-p", "bar", "-h" , "localhost" , "-P", "8080" , "-F", "json", "-w" ,"foo"};
-        MainCommand.main(args);
+        String[] command = {"l", "part"};
+        String[] args = {"-w", "foo"};
+        MainCommand.main(getArgs(command, args));
+
         String programOutput = outContent.toString();
         String programError = errContent.toString();
 
@@ -216,8 +222,11 @@ public class AllCommandTest {
 
     @Test
     public void partListCountTest(){
-        String[] args = {"l", "part", "-u", "foo", "-p", "bar", "-h" , "localhost" , "-P", "8080" , "-F", "json", "-w" ,"foo", "-c"};
-        MainCommand.main(args);
+
+        String[] command = {"l", "part"};
+        String[] args = {"-w", "foo", "-c"};
+        MainCommand.main(getArgs(command, args));
+
         String programOutput = outContent.toString();
         String programError = errContent.toString();
 
@@ -233,8 +242,13 @@ public class AllCommandTest {
 
     @Test
     public void partListTestWithLimit(){
-        String[] args = {"l", "part", "-u", "foo", "-p", "bar", "-h" , "localhost" , "-P", "8080" , "-F", "json", "-w" ,"foo", "-s", "0", "-m", "1" };
-        MainCommand.main(args);
+
+        createPart();
+
+        String[] command = {"l", "part"};
+        String[] args = {"-w" ,"foo", "-s", "0", "-m", "1" };
+        MainCommand.main(getArgs(command, args));
+
         String programOutput = outContent.toString();
         String programError = errContent.toString();
 
@@ -246,7 +260,93 @@ public class AllCommandTest {
         reader.close();
 
         Assert.assertNotNull(parts);
-        Assert.assertTrue(parts.size() <= 1);
+        Assert.assertTrue(parts.size() == 1);
+    }
+
+    @Test
+    public void checkInCheckOutDocumentTest(){
+
+        String partId = createPart();
+
+        String[] command = {"ci", "part"};
+        String[] args = {"-w" ,"foo", "-n", "-o", partId, "-r" , "A", "-m", "Checked in from junit tests"};
+        MainCommand.main(getArgs(command, args));
+
+        String programOutput = outContent.toString();
+        String programError = errContent.toString();
+
+        Assert.assertTrue(programError, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        JsonReader reader = Json.createReader(new StringReader(programOutput));
+        JsonObject checkinInfos = reader.readObject();
+        reader.close();
+
+        String checkingInFile = LangHelper.getLocalizedMessage("CheckingInPart", new Locale("en"));
+        Assert.assertTrue(checkinInfos.getString("info").startsWith(checkingInFile));
+
+        outContent.reset();
+        errContent.reset();
+
+        String[] checkoutCommand = {"co", "part"};
+        String[] checkoutArgs = {"-w" ,"foo", "-n", "-o", partId, "-r" , "A"};
+        MainCommand.main(getArgs(checkoutCommand, checkoutArgs));
+
+        programOutput = outContent.toString();
+        programError = errContent.toString();
+
+        Assert.assertTrue(programError, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        JsonReader checkoutReader = Json.createReader(new StringReader(programOutput));
+        JsonObject checkoutInfos = checkoutReader.readObject();
+        reader.close();
+
+        String checkingOutFile = LangHelper.getLocalizedMessage("CheckingOutPart", new Locale("en"));
+        Assert.assertTrue(checkoutInfos.getString("info").startsWith(checkingOutFile));
+
+        outContent.reset();
+        errContent.reset();
+
+        String[] undoCheckoutCommand = {"uco", "part"};
+        String[] undoCheckoutArgs = {"-w" ,"foo",  "-o", partId, "-r" , "A"};
+        MainCommand.main(getArgs(undoCheckoutCommand, undoCheckoutArgs));
+
+        programOutput = outContent.toString();
+        programError = errContent.toString();
+
+        Assert.assertTrue(programError, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        JsonReader undoCheckoutReader = Json.createReader(new StringReader(programOutput));
+        JsonObject undoCheckoutInfos = undoCheckoutReader.readObject();
+        reader.close();
+
+        String undoCheckingOutFile = LangHelper.getLocalizedMessage("UndoCheckoutPart", new Locale("en"));
+        Assert.assertTrue(undoCheckoutInfos.getString("info").startsWith(undoCheckingOutFile));
+
+    }
+
+    public String createPart(){
+
+        String filePath = partFile.getPath();
+        String partId = "Part-"+UUID.randomUUID().toString().substring(0,6);
+
+        String[] command = {"cr", "part"};
+        String[] args = {"-w" ,"foo", "-o", partId, filePath};
+        MainCommand.main(getArgs(command, args));
+
+        outContent.reset();
+        errContent.reset();
+
+        return partId;
+    }
+
+    private String[] getArgs(String[] command, String[] args) {
+        return Stream.concat(
+                Stream.concat(Arrays.stream(command), Arrays.stream(AUTH_ARGS)),
+                Arrays.stream(args)
+        ).toArray(String[]::new);
     }
 
 }
