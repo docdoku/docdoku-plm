@@ -302,7 +302,17 @@ public class QueryDAO {
     private Predicate getInstanceBooleanAttributePredicate(String field, String operator, String value, String type) {
         Root<InstanceBooleanAttribute> iba = cq.from(InstanceBooleanAttribute.class);
         Predicate memberPredicate = iba.in(pi.get("instanceAttributes"));
-        return cb.and(cb.equal(iba.get("name"),field),cb.equal(iba.get("booleanValue"),Boolean.parseBoolean(value)),memberPredicate);
+        switch(operator){
+            case "equal":
+                return cb.and(cb.equal(iba.get("name"),field),cb.equal(iba.get("booleanValue"),Boolean.parseBoolean(value)),memberPredicate);
+            case "not_equal":
+                return cb.and(cb.equal(iba.get("name"),field),cb.equal(iba.get("booleanValue"),Boolean.parseBoolean(value)).not(),memberPredicate);
+            default:
+                break;
+        }
+
+        throw new IllegalArgumentException();
+
     }
 
     private Predicate getInstanceNumberAttributePredicate(String field, String operator, String value, String type) {
@@ -316,7 +326,17 @@ public class QueryDAO {
         Root<InstanceListOfValuesAttribute> ila = cq.from(InstanceListOfValuesAttribute.class);
         Predicate valuePredicate = cb.equal(ila.get("indexValue"), Integer.parseInt(value));
         Predicate memberPredicate = ila.in(pi.get("instanceAttributes"));
-        return cb.and(cb.equal(ila.get("name"),field),valuePredicate, memberPredicate);
+        switch(operator) {
+            case "equal":
+                return cb.and(cb.equal(ila.get("name"), field), valuePredicate, memberPredicate);
+            case "not_equal":
+                return cb.and(cb.equal(ila.get("name"), field), valuePredicate.not(), memberPredicate);
+
+            default:
+                break;
+        }
+
+        throw new IllegalArgumentException();
     }
 
     private Predicate getInstanceDateAttributePredicate(String field, String operator, String value, String type) {
