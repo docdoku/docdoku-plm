@@ -404,7 +404,7 @@ public class JaxrsReader extends AbstractReader implements ClassSwaggerReader {
 
     private String cleanRegexPath(String dirty){
        return dirty
-                .replace(":[^/].*","")
+                .replace(": [^/].*","")
                 .replace(":[0-9]+","")
                 .replace(":[A-Z]+","");
     }
