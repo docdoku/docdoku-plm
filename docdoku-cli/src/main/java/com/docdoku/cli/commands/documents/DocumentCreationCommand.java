@@ -72,7 +72,9 @@ public class DocumentCreationCommand extends BaseCommandLine {
         docRPK.setVersion("A");
 
         DocumentIterationKey docIPK = new DocumentIterationKey();
-        docIPK.setDocumentRevision(docRPK);
+        docIPK.setWorkspaceId(workspace);
+        docIPK.setDocumentMasterId(id);
+        docIPK.setDocumentRevisionVersion("A");
         docIPK.setIteration(1);
 
         FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));

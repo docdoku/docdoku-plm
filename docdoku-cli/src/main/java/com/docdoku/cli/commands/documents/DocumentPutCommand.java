@@ -65,8 +65,11 @@ public class DocumentPutCommand extends BaseCommandLine {
         DocumentApi documentApi = new DocumentApi(client);
         DocumentRevisionDTO dr = documentApi.getDocumentRevision(workspace,id,revision,null);
         DocumentIterationDTO di = LastIterationHelper.getLastIteration(dr);
+
         DocumentIterationKey docIPK = new DocumentIterationKey();
-        docIPK.setDocumentRevision(docRPK);
+        docIPK.setWorkspaceId(workspace);
+        docIPK.setDocumentMasterId(id);
+        docIPK.setDocumentRevisionVersion(revision);
         docIPK.setIteration(di.getIteration());
 
         FileHelper fh = new FileHelper(user,password,output, new AccountsManager().getUserLocale(user));

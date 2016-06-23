@@ -228,7 +228,7 @@ public class FileHelper {
                 + URLEncoder.encode(pDocIPK.getWorkspaceId(), "UTF-8") + "/"
                 + "documents/"
                 + URLEncoder.encode(pDocIPK.getDocumentMasterId(), "UTF-8") + "/"
-                + pDocIPK.getDocumentRevision().getVersion() + "/"
+                + pDocIPK.getDocumentRevisionVersion()+ "/"
                 + pDocIPK.getIteration() + "/"
                 + pRemoteFileName;
     }
@@ -249,7 +249,7 @@ public class FileHelper {
                 + URLEncoder.encode(docIPK.getWorkspaceId(), "UTF-8") + "/"
                 + "documents/"
                 + URLEncoder.encode(docIPK.getDocumentMasterId(), "UTF-8") + "/"
-                + docIPK.getDocumentRevision().getVersion() + "/"
+                + docIPK.getDocumentRevisionVersion() + "/"
                 + docIPK.getIteration();
     }
 
@@ -313,7 +313,7 @@ public class FileHelper {
         meta.setDigest(filePath,digest);
         meta.setDocumentId(filePath,docIPK.getDocumentMasterId());
         meta.setWorkspace(filePath,docIPK.getWorkspaceId());
-        meta.setRevision(filePath,docIPK.getDocumentRevision().getVersion());
+        meta.setRevision(filePath,docIPK.getDocumentRevisionVersion());
         meta.setIteration(filePath,docIPK.getIteration());
         meta.setLastModifiedDate(filePath, localFile.lastModified());
     }
