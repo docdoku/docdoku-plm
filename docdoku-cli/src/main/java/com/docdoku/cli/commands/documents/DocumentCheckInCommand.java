@@ -97,7 +97,7 @@ public class DocumentCheckInCommand extends BaseCommandLine {
         output.printInfo(LangHelper.getLocalizedMessage("CheckingInDocument",user)  + " : " + id
                 + "-" + dr.getVersion() + "-" + di.getIteration() + " (" + workspace + ")");
 
-        documentApi.checkInDocument(workspace,id, revision);
+        documentApi.checkInDocument(workspace,id, revision,"");
 
     }
 

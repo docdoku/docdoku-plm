@@ -327,6 +327,72 @@ public class AllCommandTest {
 
     }
 
+
+    @Test
+    public void checkInCheckOutDocumentTest(){
+
+        String documentId = createDocument();
+
+        String[] command = {"ci", "document"};
+        String[] args = {"-w" ,"foo", "-n", "-o", documentId, "-r" , "A", "-m", "Checked in from junit tests"};
+        MainCommand.main(getArgs(command, args));
+
+        String programOutput = outContent.toString();
+        String programError = errContent.toString();
+
+        Assert.assertTrue(programError, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        JsonReader reader = Json.createReader(new StringReader(programOutput));
+        JsonObject checkinInfos = reader.readObject();
+        reader.close();
+
+        String checkingInFile = LangHelper.getLocalizedMessage("CheckingInDocument", new Locale("en"));
+        Assert.assertTrue(checkinInfos.getString("info").startsWith(checkingInFile));
+
+        outContent.reset();
+        errContent.reset();
+
+        String[] checkoutCommand = {"co", "document"};
+        String[] checkoutArgs = {"-w" ,"foo", "-n", "-o", documentId, "-r" , "A"};
+        MainCommand.main(getArgs(checkoutCommand, checkoutArgs));
+
+        programOutput = outContent.toString();
+        programError = errContent.toString();
+
+        Assert.assertTrue(programError, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        JsonReader checkoutReader = Json.createReader(new StringReader(programOutput));
+        JsonObject checkoutInfos = checkoutReader.readObject();
+        reader.close();
+
+        String checkingOutFile = LangHelper.getLocalizedMessage("CheckingOutDocument", new Locale("en"));
+        Assert.assertTrue(checkoutInfos.getString("info").startsWith(checkingOutFile));
+
+        outContent.reset();
+        errContent.reset();
+
+        String[] undoCheckoutCommand = {"uco", "document"};
+        String[] undoCheckoutArgs = {"-w" ,"foo",  "-o", documentId, "-r" , "A"};
+        MainCommand.main(getArgs(undoCheckoutCommand, undoCheckoutArgs));
+
+        programOutput = outContent.toString();
+        programError = errContent.toString();
+
+        Assert.assertTrue(programError, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        JsonReader undoCheckoutReader = Json.createReader(new StringReader(programOutput));
+        JsonObject undoCheckoutInfos = undoCheckoutReader.readObject();
+        reader.close();
+
+        String undoCheckingOutFile = LangHelper.getLocalizedMessage("UndoCheckoutDocument", new Locale("en"));
+        Assert.assertTrue(undoCheckoutInfos.getString("info").startsWith(undoCheckingOutFile));
+
+    }
+
+
     private String createPart(){
 
         String filePath = partFile.getPath();
@@ -340,6 +406,22 @@ public class AllCommandTest {
         errContent.reset();
 
         return partId;
+    }
+
+
+    private String createDocument(){
+
+        String filePath = partFile.getPath();
+        String documentId = "Doc-"+UUID.randomUUID().toString().substring(0,6);
+
+        String[] command = {"cr", "document"};
+        String[] args = {"-w" ,"foo", "-o", documentId, filePath};
+        MainCommand.main(getArgs(command, args));
+
+        outContent.reset();
+        errContent.reset();
+
+        return documentId;
     }
 
     private String[] getArgs(String[] command, String[] args) {

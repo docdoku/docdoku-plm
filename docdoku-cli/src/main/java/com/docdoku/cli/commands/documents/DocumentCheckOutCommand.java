@@ -108,7 +108,7 @@ public class DocumentCheckOutCommand extends BaseCommandLine {
 
         if(checkOutUser == null) {
             try{
-                dr = documentApi.checkOutDocument(workspace,id,pRevision);
+                dr = documentApi.checkOutDocument(workspace,id,pRevision,"");
                 di = LastIterationHelper.getLastIteration(dr);
             }catch (ApiException e){
                 output.printException(e);
