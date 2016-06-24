@@ -635,6 +635,30 @@ public class AllCommandTest {
 
     }
 
+
+    @Test
+    public void baselineListTest(){
+
+        String partNumber = createPart();
+
+        String[] command = {"bl"};
+        String[] args = {"-w" ,"foo", "-o", partNumber, "-r", "A"};
+        MainCommand.main(getArgs(command, args));
+
+        String programOutput = outContent.toString();
+        String programError = errContent.toString();
+
+        Assert.assertTrue(programError, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        JsonReader reader = Json.createReader(new StringReader(programOutput));
+        JsonArray baselines = reader.readArray();
+        reader.close();
+
+        Assert.assertTrue(baselines.isEmpty());
+
+    }
+
     private void testSubFolder(String parent, JsonArray folders){
 
         outContent.reset();
