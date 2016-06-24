@@ -251,7 +251,7 @@ public class JSONOutput extends CliOutput {
             }else{
                 jsonStatusBuilder.add("checkoutDate", JsonValue.NULL);
             }
-            jsonStatusBuilder.add("workspace", documentRevisionDTO.getDocumentMasterId());
+            jsonStatusBuilder.add("workspace", documentRevisionDTO.getWorkspaceId());
             jsonStatusBuilder.add("version", documentRevisionDTO.getVersion());
 
             if(documentRevisionDTO.getDescription() != null) {

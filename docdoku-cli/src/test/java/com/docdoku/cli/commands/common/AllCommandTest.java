@@ -527,6 +527,35 @@ public class AllCommandTest {
 
     }
 
+    @Test
+    public void documentStatusCommand(){
+        String documentId = createDocument();
+
+        String[] command = {"st", "document"};
+        String[] args = {"-w" ,"foo", "-o", documentId, "-r" , "A"};
+        MainCommand.main(getArgs(command, args));
+
+        String programOutput = outContent.toString();
+        String programError = errContent.toString();
+
+        Assert.assertTrue(programError, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        JsonReader reader = Json.createReader(new StringReader(programOutput));
+        JsonObject document = reader.readObject();
+        reader.close();
+
+        Assert.assertEquals(document.getString("id"),documentId);
+        Assert.assertTrue(document.getBoolean("isCheckedOut"));
+        Assert.assertEquals(document.getString("workspace"), "foo");
+        Assert.assertEquals(document.getString("version"), "A");
+        Assert.assertNotNull(document.getJsonArray("files"));
+        Assert.assertTrue(document.getJsonArray("files").size() == 1);
+
+    }
+
+
+
 
     private String createPart(){
 
