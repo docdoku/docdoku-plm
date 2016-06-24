@@ -140,7 +140,8 @@ public class DocumentResource {
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO checkInDocument(@PathParam("workspaceId") String workspaceId,
                                                @PathParam("documentId") String documentId,
-                                               @PathParam("documentVersion") String documentVersion)
+                                               @PathParam("documentVersion") String documentVersion,
+                                               @ApiParam(name = "body") String body)
             throws NotAllowedException, EntityNotFoundException, ESServerException, AccessRightException, UserNotActiveException {
         DocumentRevision docR = documentService.checkInDocument(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
         DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
@@ -155,7 +156,8 @@ public class DocumentResource {
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO checkOutDocument(@PathParam("workspaceId") String workspaceId,
                                                 @PathParam("documentId") String documentId,
-                                                @PathParam("documentVersion") String documentVersion)
+                                                @PathParam("documentVersion") String documentVersion,
+                                                @ApiParam(name = "body") String body)
             throws EntityNotFoundException, NotAllowedException, CreationException, AccessRightException, UserNotActiveException, EntityAlreadyExistsException {
         DocumentRevision docR = documentService.checkOutDocument(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
         DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
@@ -171,7 +173,8 @@ public class DocumentResource {
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO undoCheckOutDocument(@PathParam("workspaceId") String workspaceId,
                                                     @PathParam("documentId") String documentId,
-                                                    @PathParam("documentVersion") String documentVersion)
+                                                    @PathParam("documentVersion") String documentVersion,
+                                                    @ApiParam(name = "body") String body)
             throws EntityNotFoundException, NotAllowedException, UserNotActiveException, AccessRightException {
         DocumentRevision docR = documentService.undoCheckOutDocument(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
         DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
