@@ -29,6 +29,7 @@ public class AllCommandTest {
     private final static Logger LOGGER = Logger.getLogger(AllCommandTest.class.getName());
     private final static URL documentFile = AllCommandTest.class.getClassLoader().getResource("com/docdoku/cli/commands/common/upload-document.txt");
     private final static URL partFile = AllCommandTest.class.getClassLoader().getResource("com/docdoku/cli/commands/common/upload-part.txt");
+    private final static URL putDocumentFile = AllCommandTest.class.getClassLoader().getResource("com/docdoku/cli/commands/common/put-document.txt");
     private final static String NO_ERRORS_EXPECTED = "Should be no errors";
     private final static String OUTPUT_EXPECTED = "Should have an output";
 
@@ -443,6 +444,49 @@ public class AllCommandTest {
         tmpDir.deleteOnExit();
 
     }
+
+
+    @Test
+    public void documentPutTest() throws IOException {
+
+        String documentId = createDocument();
+
+        File tmpDir = Files.createTempDirectory("docdoku-cli-").toFile();
+
+        String[] command = {"put", "document"};
+        String[] args = {"-w" ,"foo", "-o", documentId, "-r" , "A", putDocumentFile.getPath()};
+        MainCommand.main(getArgs(command, args));
+
+        String programOutput = outContent.toString();
+        String programError = errContent.toString();
+
+        Assert.assertTrue(programError, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        String[] splitOutput = programOutput.split("\n");
+        int linesCount = splitOutput.length;
+
+        Assert.assertTrue(linesCount >= 2);
+
+        String firstLine = splitOutput[0];
+        JsonReader firstLineReader = Json.createReader(new StringReader(firstLine));
+        JsonObject infoLine = firstLineReader.readObject();
+        firstLineReader.close();
+
+        String uploadingFile = LangHelper.getLocalizedMessage("UploadingFile", new Locale("en"));
+        Assert.assertTrue(infoLine.getString("info").startsWith(uploadingFile));
+
+        String lastLine = splitOutput[linesCount-1];
+        JsonReader lastLineReader = Json.createReader(new StringReader(lastLine));
+        JsonObject progressLine = lastLineReader.readObject();
+        lastLineReader.close();
+        Assert.assertEquals(progressLine.getInt("progress"), 100);
+
+        tmpDir.deleteOnExit();
+
+    }
+
+
 
 
     private String createPart(){
