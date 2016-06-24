@@ -20,10 +20,7 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.common.User;
-import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.common.Workspace;
+import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.document.DocumentMaster;
@@ -40,7 +37,10 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
 public class WorkspaceDAO {
 
@@ -108,7 +108,7 @@ public class WorkspaceDAO {
                 .getResultList();
     }
 
-    public void removeWorkspace(Workspace workspace) throws IOException, StorageException {
+    public void removeWorkspace(Workspace workspace) throws IOException, StorageException, EntityConstraintException, FolderNotFoundException {
 
         String workspaceId = workspace.getId();
         String pathToMatch = workspaceId.replace("_","\\_").replace("%","\\%")+"/%";
@@ -257,6 +257,7 @@ public class WorkspaceDAO {
             em.remove(p);
         }
         em.flush();
+/*
 
         // Delete folders
         em.createQuery("DELETE FROM Folder f where f.parentFolder.completePath = :workspaceId OR f.parentFolder.completePath LIKE :pathToMatch")
@@ -264,6 +265,9 @@ public class WorkspaceDAO {
         em.createQuery("DELETE FROM Folder f where f.completePath = :workspaceId OR f.completePath LIKE :pathToMatch")
                 .setParameter("workspaceId",workspaceId).setParameter("pathToMatch",pathToMatch).executeUpdate();
 
+*/
+        FolderDAO folderDAO = new FolderDAO(em);
+        folderDAO.removeFolder(workspaceId);
 
         List<WorkflowModel> workflowModels =
                 em.createQuery("SELECT w FROM WorkflowModel w WHERE w.workspace = :workspace", WorkflowModel.class)
@@ -272,6 +276,16 @@ public class WorkspaceDAO {
         for (WorkflowModel w: workflowModels) {
             em.remove(w);
         }
+        em.flush();
+
+        List<WorkspaceWorkflow> workspaceWorkflows =
+                em.createQuery("SELECT ww FROM WorkspaceWorkflow ww WHERE ww.workspaceId = :workspaceId", WorkspaceWorkflow.class)
+                        .setParameter("workspaceId",workspaceId).getResultList();
+
+        for (WorkspaceWorkflow ww: workspaceWorkflows) {
+            em.remove(ww);
+        }
+
         em.flush();
 
 
