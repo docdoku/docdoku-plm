@@ -27,9 +27,14 @@ angular.module('dplm.menu', [])
         };
 
     })
-    .controller('WorkspaceMenuController', function ($scope) {
+    .controller('WorkspaceMenuController', function ($scope, WorkspaceService) {
 
         $scope.onDrop = function () {
+        };
+
+        $scope.refreshWorkspaces = function(){
+            WorkspaceService.reset();
+            WorkspaceService.getWorkspaces();
         };
 
     });
