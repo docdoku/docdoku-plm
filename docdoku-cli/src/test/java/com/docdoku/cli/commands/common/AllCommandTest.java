@@ -269,10 +269,10 @@ public class AllCommandTest {
     @Test
     public void checkInCheckOutPartTest(){
 
-        String partId = createPart();
+        String partNumber = createPart();
 
         String[] command = {"ci", "part"};
-        String[] args = {"-w" ,"foo", "-n", "-o", partId, "-r" , "A", "-m", "Checked in from junit tests"};
+        String[] args = {"-w" ,"foo", "-n", "-o", partNumber, "-r" , "A", "-m", "Checked in from junit tests"};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -292,7 +292,7 @@ public class AllCommandTest {
         errContent.reset();
 
         String[] checkoutCommand = {"co", "part"};
-        String[] checkoutArgs = {"-w" ,"foo", "-n", "-o", partId, "-r" , "A"};
+        String[] checkoutArgs = {"-w" ,"foo", "-n", "-o", partNumber, "-r" , "A"};
         MainCommand.main(getArgs(checkoutCommand, checkoutArgs));
 
         programOutput = outContent.toString();
@@ -312,7 +312,7 @@ public class AllCommandTest {
         errContent.reset();
 
         String[] undoCheckoutCommand = {"uco", "part"};
-        String[] undoCheckoutArgs = {"-w" ,"foo",  "-o", partId, "-r" , "A"};
+        String[] undoCheckoutArgs = {"-w" ,"foo",  "-o", partNumber, "-r" , "A"};
         MainCommand.main(getArgs(undoCheckoutCommand, undoCheckoutArgs));
 
         programOutput = outContent.toString();
@@ -424,12 +424,12 @@ public class AllCommandTest {
     @Test
     public void partGetTest() throws IOException {
 
-        String partId = createPart();
+        String partNumber = createPart();
 
         File tmpDir = Files.createTempDirectory("docdoku-cli-").toFile();
 
         String[] command = {"get", "part"};
-        String[] args = {"-w" ,"foo", "-o", partId, "-r" , "A", "-i", "1", tmpDir.getPath()};
+        String[] args = {"-w" ,"foo", "-o", partNumber, "-r" , "A", "-i", "1", tmpDir.getPath()};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -490,12 +490,12 @@ public class AllCommandTest {
     @Test
     public void partPutTest() throws IOException {
 
-        String partId = createPart();
+        String partNumber = createPart();
 
         File tmpDir = Files.createTempDirectory("docdoku-cli-").toFile();
 
         String[] command = {"put", "part"};
-        String[] args = {"-w" ,"foo", "-o", partId, "-r" , "A", putPartFile.getPath()};
+        String[] args = {"-w" ,"foo", "-o", partNumber, "-r" , "A", putPartFile.getPath()};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -529,6 +529,7 @@ public class AllCommandTest {
 
     @Test
     public void documentStatusCommand(){
+
         String documentId = createDocument();
 
         String[] command = {"st", "document"};
@@ -555,21 +556,49 @@ public class AllCommandTest {
     }
 
 
+    @Test
+    public void partStatusCommand(){
+
+        String partNumber = createPart();
+
+        String[] command = {"st", "part"};
+        String[] args = {"-w" ,"foo", "-o", partNumber, "-r" , "A"};
+        MainCommand.main(getArgs(command, args));
+
+        String programOutput = outContent.toString();
+        String programError = errContent.toString();
+
+        Assert.assertTrue(programError, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        JsonReader reader = Json.createReader(new StringReader(programOutput));
+        JsonObject part = reader.readObject();
+        reader.close();
+
+        Assert.assertEquals(part.getString("partNumber"),partNumber);
+        Assert.assertTrue(part.getBoolean("isCheckedOut"));
+        Assert.assertTrue(part.getString("cadFileName").endsWith(FileHelper.getFileName(partFile.getPath())));
+        Assert.assertEquals(part.getString("workspace"), "foo");
+        Assert.assertEquals(part.getString("version"), "A");
+
+    }
+
+
 
 
     private String createPart(){
 
         String filePath = partFile.getPath();
-        String partId = "Part-"+UUID.randomUUID().toString().substring(0,6);
+        String partNumber = "Part-"+UUID.randomUUID().toString().substring(0,6);
 
         String[] command = {"cr", "part"};
-        String[] args = {"-w" ,"foo", "-o", partId, filePath};
+        String[] args = {"-w" ,"foo", "-o", partNumber, filePath};
         MainCommand.main(getArgs(command, args));
 
         outContent.reset();
         errContent.reset();
 
-        return partId;
+        return partNumber;
     }
 
 
