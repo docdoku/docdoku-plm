@@ -264,7 +264,7 @@ public class AllCommandTest {
     }
 
     @Test
-    public void checkInCheckOutDocumentTest(){
+    public void checkInCheckOutPartTest(){
 
         String partId = createPart();
 
@@ -327,7 +327,7 @@ public class AllCommandTest {
 
     }
 
-    public String createPart(){
+    private String createPart(){
 
         String filePath = partFile.getPath();
         String partId = "Part-"+UUID.randomUUID().toString().substring(0,6);
