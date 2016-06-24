@@ -323,7 +323,7 @@ public class FileHelper {
 
         for(String bin:bins){
             // TODO may break
-            String fileName =  bin;
+            String fileName = FileHelper.getFileName(bin);
             UserDTO checkOutUser = dr.getCheckOutUser();
             DocumentIterationKey docIPK = new DocumentIterationKey();
             docIPK.setWorkspaceId(workspace);
@@ -331,7 +331,9 @@ public class FileHelper {
             docIPK.setDocumentRevisionVersion(dr.getVersion());
             docIPK.setIteration(di.getIteration());
 
-            boolean writable = (checkOutUser != null) && (dr.getCheckOutUser().getLogin().equals(login)) && (dr.getLastIteration().getIteration()==di.getIteration());
+            DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(dr);
+
+            boolean writable = (checkOutUser != null) && (checkOutUser.getLogin().equals(login)) && (lastIteration.getIteration()==di.getIteration());
             File localFile = new File(path,fileName);
             MetaDirectoryManager meta = new MetaDirectoryManager(path);
 
@@ -359,6 +361,14 @@ public class FileHelper {
         MetaDirectoryManager meta = new MetaDirectoryManager(path);
 
         saveMetadata(meta, docIPK, digest, file);
+    }
+
+    public static String getFileName(String path) {
+        if (path == null || path.isEmpty()) {
+            return null;
+        }
+        int lastSlash = path.lastIndexOf("/");
+        return path.substring(lastSlash+1, path.length());
     }
 
 }

@@ -98,7 +98,7 @@ public class DocumentGetCommand extends BaseCommandLine {
         }else if(pIteration > dr.getDocumentIterations().size()){
             throw new IllegalArgumentException(LangHelper.getLocalizedMessage("IterationNotExisting",user));
         }else{
-            di = dr.getDocumentIterations().get(pIteration);
+            di = dr.getDocumentIterations().get(pIteration-1);
         }
 
         if(di.getAttachedFiles().isEmpty()){

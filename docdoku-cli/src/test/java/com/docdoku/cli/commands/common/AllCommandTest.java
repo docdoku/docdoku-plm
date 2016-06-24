@@ -1,7 +1,9 @@
 package com.docdoku.cli.commands.common;
 
 import com.docdoku.cli.MainCommand;
+import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.LangHelper;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -9,10 +11,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import javax.json.*;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.io.StringReader;
+import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.UUID;
@@ -392,6 +393,32 @@ public class AllCommandTest {
 
     }
 
+    @Test
+    public void documentGetTest() throws IOException {
+
+        String documentId = createDocument();
+
+        File tmpDir = Files.createTempDirectory("docdoku-cli-").toFile();
+
+        String[] checkoutCommand = {"get", "document"};
+        String[] checkoutArgs = {"-w" ,"foo", "-o", documentId, "-r" , "A", "-i", "1", tmpDir.getPath()};
+        MainCommand.main(getArgs(checkoutCommand, checkoutArgs));
+
+
+        String programOutput = outContent.toString();
+        String programError = errContent.toString();
+
+        Assert.assertTrue(programError, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        File downloadedFile = new File(tmpDir.getAbsolutePath() + File.separator + FileHelper.getFileName(documentFile.getPath()));
+        Assert.assertTrue(downloadedFile.exists());
+        Assert.assertTrue("File content should be the same",FileUtils.contentEquals(downloadedFile, new File(documentFile.getPath())));
+
+        tmpDir.deleteOnExit();
+
+    }
+
 
     private String createPart(){
 
@@ -411,7 +438,7 @@ public class AllCommandTest {
 
     private String createDocument(){
 
-        String filePath = partFile.getPath();
+        String filePath = documentFile.getPath();
         String documentId = "Doc-"+UUID.randomUUID().toString().substring(0,6);
 
         String[] command = {"cr", "document"};
