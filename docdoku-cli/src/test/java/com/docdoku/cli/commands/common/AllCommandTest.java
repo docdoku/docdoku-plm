@@ -528,7 +528,7 @@ public class AllCommandTest {
     }
 
     @Test
-    public void documentStatusCommand(){
+    public void documentStatusTest(){
 
         String documentId = createDocument();
 
@@ -557,7 +557,7 @@ public class AllCommandTest {
 
 
     @Test
-    public void partStatusCommand(){
+    public void partStatusTest(){
 
         String partNumber = createPart();
 
