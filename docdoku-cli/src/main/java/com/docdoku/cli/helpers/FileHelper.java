@@ -271,8 +271,7 @@ public class FileHelper {
 
     public void downloadNativeCADFile(URL serverURL, File path, String workspace, String partNumber, PartRevisionDTO pr, PartIterationDTO pi, boolean force) throws IOException, LoginException, NoSuchAlgorithmException {
         String bin = pi.getNativeCADFile();
-        // TODO check path : may break
-        String fileName =  bin;
+        String fileName =  FileHelper.getFileName(bin);
         UserDTO checkOutUser = pr.getCheckOutUser();
         PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(pr);
         PartIterationKey partIPK = new PartIterationKey();

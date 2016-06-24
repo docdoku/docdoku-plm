@@ -400,9 +400,9 @@ public class AllCommandTest {
 
         File tmpDir = Files.createTempDirectory("docdoku-cli-").toFile();
 
-        String[] checkoutCommand = {"get", "document"};
-        String[] checkoutArgs = {"-w" ,"foo", "-o", documentId, "-r" , "A", "-i", "1", tmpDir.getPath()};
-        MainCommand.main(getArgs(checkoutCommand, checkoutArgs));
+        String[] command = {"get", "document"};
+        String[] args = {"-w" ,"foo", "-o", documentId, "-r" , "A", "-i", "1", tmpDir.getPath()};
+        MainCommand.main(getArgs(command, args));
 
 
         String programOutput = outContent.toString();
@@ -414,6 +414,31 @@ public class AllCommandTest {
         File downloadedFile = new File(tmpDir.getAbsolutePath() + File.separator + FileHelper.getFileName(documentFile.getPath()));
         Assert.assertTrue(downloadedFile.exists());
         Assert.assertTrue("File content should be the same",FileUtils.contentEquals(downloadedFile, new File(documentFile.getPath())));
+
+        tmpDir.deleteOnExit();
+
+    }
+
+    @Test
+    public void partGetTest() throws IOException {
+
+        String partId = createPart();
+
+        File tmpDir = Files.createTempDirectory("docdoku-cli-").toFile();
+
+        String[] command = {"get", "part"};
+        String[] args = {"-w" ,"foo", "-o", partId, "-r" , "A", "-i", "1", tmpDir.getPath()};
+        MainCommand.main(getArgs(command, args));
+
+        String programOutput = outContent.toString();
+        String programError = errContent.toString();
+
+        Assert.assertTrue(programError, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        File downloadedFile = new File(tmpDir.getAbsolutePath() + File.separator + FileHelper.getFileName(partFile.getPath()));
+        Assert.assertTrue(downloadedFile.exists());
+        Assert.assertTrue("File content should be the same",FileUtils.contentEquals(downloadedFile, new File(partFile.getPath())));
 
         tmpDir.deleteOnExit();
 
