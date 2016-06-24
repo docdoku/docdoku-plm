@@ -60,7 +60,7 @@ public class JSONOutput extends CliOutput {
 
     @Override
     public void printUsage() {
-        ERROR_STREAM.println("{\"usage\":\"TODO\"}");
+        ERROR_STREAM.println("{\"usage\":\"Not available for json output\"}");
     }
 
     @Override

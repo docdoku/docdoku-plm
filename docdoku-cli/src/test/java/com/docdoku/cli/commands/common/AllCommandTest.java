@@ -659,6 +659,30 @@ public class AllCommandTest {
 
     }
 
+
+    @Test
+    public void helpTest(){
+
+        String[] command = {"h","-F","json"};
+        MainCommand.main(command);
+
+        String programOutput = outContent.toString();
+        String programError = errContent.toString();
+
+        Assert.assertFalse(programError.isEmpty());
+        Assert.assertTrue(programOutput.isEmpty());
+
+        JsonReader reader = Json.createReader(new StringReader(programError));
+        JsonObject usage = reader.readObject();
+        reader.close();
+
+        Assert.assertNotNull(usage);
+        Assert.assertEquals(usage.getString("usage"), "Not available for json output");
+
+    }
+
+
+
     private void testSubFolder(String parent, JsonArray folders){
 
         outContent.reset();
