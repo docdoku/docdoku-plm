@@ -583,8 +583,59 @@ public class AllCommandTest {
 
     }
 
+    @Test
+    public void folderListTest(){
 
+        String[] command = {"f"};
+        String[] args = {"-w" ,"foo"};
+        MainCommand.main(getArgs(command, args));
 
+        String programOutput = outContent.toString();
+        String programError = errContent.toString();
+
+        Assert.assertTrue(programError, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        JsonReader reader = Json.createReader(new StringReader(programOutput));
+        JsonArray folders = reader.readArray();
+        reader.close();
+
+        Assert.assertNotNull(folders);
+
+        if(!folders.isEmpty()){
+            testSubFolder("", folders);
+        }
+
+    }
+
+    private void testSubFolder(String parent, JsonArray folders){
+
+        outContent.reset();
+        errContent.reset();
+
+        String subFolder = folders.getString(0);
+
+        String[] command = {"f"};
+        String[] args = {"-w" ,"foo", "-f", parent+subFolder};
+        MainCommand.main(getArgs(command, args));
+
+        String programOutput = outContent.toString();
+        String  programError = errContent.toString();
+
+        Assert.assertTrue(programError, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        JsonReader reader = Json.createReader(new StringReader(programOutput));
+        JsonArray subFolders = reader.readArray();
+        reader.close();
+
+        if(!subFolders.isEmpty()){
+            testSubFolder(parent+subFolder+":", subFolders);
+        }
+
+        Assert.assertNotNull(subFolders);
+
+    }
 
     private String createPart(){
 
