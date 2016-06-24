@@ -43,7 +43,8 @@ public class ConversionCommand extends BaseCommandLine {
     @Option(metaVar = "<revision>", required = true, name="-r", aliases = "--revision", usage="specify revision of the part to analyze ('A', 'B'...)")
     private String revision;
 
-    @Option(name="-i", aliases = "--iteration", metaVar = "<iteration>", usage="specify iteration of the part to retrieve ('1','2', '24'...); default is the latest")    private int iteration;
+    @Option(name="-i", required = true, aliases = "--iteration", metaVar = "<iteration>", usage="specify iteration of the part to retrieve ('1','2', '24'...); default is the latest")
+    private int iteration;
 
     @Override
     public void execImpl() throws Exception {

@@ -608,6 +608,33 @@ public class AllCommandTest {
 
     }
 
+    @Test
+    public void conversionTest() throws InterruptedException {
+
+        String partNumber = createPart();
+
+        String[] command = {"cv"};
+        String[] args = {"-w" ,"foo", "-o", partNumber, "-r", "A", "-i", "1"};
+        MainCommand.main(getArgs(command, args));
+
+        String programOutput = outContent.toString();
+        String programError = errContent.toString();
+
+        Assert.assertTrue(programError, programError.isEmpty());
+        Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
+
+        JsonReader reader = Json.createReader(new StringReader(programOutput));
+        JsonObject conversion = reader.readObject();
+        reader.close();
+
+        Assert.assertNotNull(conversion);
+        Assert.assertNotNull(conversion.getBoolean("pending"));
+        Assert.assertNotNull(conversion.getBoolean("succeed"));
+        Assert.assertNotNull(conversion.getString("startDate"));
+        Assert.assertNotNull(conversion.getString("endDate"));
+
+    }
+
     private void testSubFolder(String parent, JsonArray folders){
 
         outContent.reset();
