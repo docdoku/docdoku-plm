@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License  
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
-package com.docdoku.core.common;
+package com.docdoku.core.workflow;
 
 import com.docdoku.core.workflow.Workflow;
 

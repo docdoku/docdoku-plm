@@ -30,7 +30,7 @@ import java.util.*;
 
 /**
  * This class is the model used to create instances of
- * {@link Workflow} attached to documents or parts.
+ * {@link Workflow} attached to documents, parts or any objects.
  *
  * @author Florent Garin
  * @version 1.0, 02/06/08
@@ -248,24 +248,38 @@ public class WorkflowModel implements Serializable, Cloneable {
      */
     @Override
     public WorkflowModel clone() {
-        //TODO relaunchActivity reference should be changed!
         WorkflowModel clone;
         try {
             clone = (WorkflowModel) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }
+
+        Map<ActivityModel, ActivityModel> originalCopyMap=new IdentityHashMap<>();
         //perform a deep copy
         List<ActivityModel> clonedActivityModels = new LinkedList<>();
         for (ActivityModel activityModel : activityModels) {
             ActivityModel clonedActivityModel=activityModel.clone();
+            originalCopyMap.put(activityModel, clonedActivityModel);
             clonedActivityModel.setWorkflowModel(clone);
+
+            //set relaunchActivity to cloned reference
+            ActivityModel relaunchAM = activityModel.getRelaunchActivity();
+            if(relaunchAM!=null){
+                ActivityModel clonedRelaunchAM = originalCopyMap.get(relaunchAM);
+                clonedActivityModel.setRelaunchActivity(clonedRelaunchAM);
+            }
+
             clonedActivityModels.add(clonedActivityModel);
         }
         clone.activityModels = clonedActivityModels;
 
         if(creationDate!=null) {
             clone.creationDate = (Date) creationDate.clone();
+        }
+
+        if(acl!=null) {
+            clone.acl = acl.clone();
         }
         return clone;
     }
