@@ -180,4 +180,19 @@ public abstract class ActivityModel implements Serializable, Cloneable {
 
     public abstract Activity createActivity(Map<Role, User> roleUserMap);
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ActivityModel that = (ActivityModel) o;
+
+        return id == that.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
 }
