@@ -26,11 +26,11 @@ define([
 
             var switchModeTitle;
             switch (this.model.get('type')) {
-                case 'SERIAL':
+                case 'SEQUENTIAL':
                     switchModeTitle = App.config.i18n.GOTO_PARALLEL_MODE;
                     break;
                 case 'PARALLEL':
-                    switchModeTitle = App.config.i18n.GOTO_SERIAL_MODE;
+                    switchModeTitle = App.config.i18n.GOTO_SEQUENTIAL_MODE;
                     break;
             }
 
@@ -124,20 +124,20 @@ define([
 
         switchActivityAction: function () {
             switch (this.model.get('type')) {
-                case 'SERIAL':
+                case 'SEQUENTIAL':
                     this.model.set({
                         type: 'PARALLEL'
                     });
-                    this.activityDiv.removeClass('SERIAL');
+                    this.activityDiv.removeClass('SEQUENTIAL');
                     this.activityDiv.addClass('PARALLEL');
-                    this.buttonSwitchActivity.attr({title: App.config.i18n.GOTO_SERIAL_MODE});
+                    this.buttonSwitchActivity.attr({title: App.config.i18n.GOTO_SEQUENTIAL_MODE});
                     break;
                 case 'PARALLEL':
                     this.model.set({
-                        type: 'SERIAL'
+                        type: 'SEQUENTIAL'
                     });
                     this.activityDiv.removeClass('PARALLEL');
-                    this.activityDiv.addClass('SERIAL');
+                    this.activityDiv.addClass('SEQUENTIAL');
                     this.buttonSwitchActivity.attr({title: App.config.i18n.GOTO_PARALLEL_MODE});
                     break;
             }

@@ -137,7 +137,7 @@ public class ActivityDTO implements Serializable {
     }
 
     public enum Type {
-        SERIAL,
+        SEQUENTIAL,
         PARALLEL
     }
 }

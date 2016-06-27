@@ -41,7 +41,7 @@ import java.util.List;
  */
 @Table(name="ACTIVITY")
 @javax.persistence.IdClass(com.docdoku.core.workflow.ActivityKey.class)
-@XmlSeeAlso({SerialActivity.class, ParallelActivity.class})
+@XmlSeeAlso({SequentialActivity.class, ParallelActivity.class})
 @Inheritance()
 @Entity
 public abstract class Activity implements Serializable, Cloneable {

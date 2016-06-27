@@ -93,4 +93,24 @@ public class Role implements Serializable {
     public void setDefaultAssignee(User defaultAssignee) {
         this.defaultAssignee = defaultAssignee;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Role role = (Role) o;
+
+        if (name != null ? !name.equals(role.name) : role.name != null) return false;
+        return !(workspace != null ? !workspace.equals(role.workspace) : role.workspace != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (workspace != null ? workspace.hashCode() : 0);
+        return result;
+    }
 }

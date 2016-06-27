@@ -38,7 +38,7 @@ import java.util.Map;
  * @since   V1.0
  */
 @Table(name="ACTIVITYMODEL")
-@XmlSeeAlso({SerialActivityModel.class, ParallelActivityModel.class})
+@XmlSeeAlso({SequentialActivityModel.class, ParallelActivityModel.class})
 @Inheritance()
 @Entity
 public abstract class ActivityModel implements Serializable, Cloneable {

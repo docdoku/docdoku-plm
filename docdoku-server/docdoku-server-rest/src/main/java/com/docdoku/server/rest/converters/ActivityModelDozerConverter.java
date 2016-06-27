@@ -22,7 +22,7 @@ package com.docdoku.server.rest.converters;
 
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.ParallelActivityModel;
-import com.docdoku.core.workflow.SerialActivityModel;
+import com.docdoku.core.workflow.SequentialActivityModel;
 import com.docdoku.core.workflow.TaskModel;
 import com.docdoku.server.rest.dto.ActivityModelDTO;
 import com.docdoku.server.rest.dto.TaskModelDTO;
@@ -59,8 +59,8 @@ public class ActivityModelDozerConverter extends DozerConverter<ActivityModel, A
             relaunchStep = activityModel.getRelaunchActivity().getStep();
         }
 
-        if (activityModel instanceof SerialActivityModel) {
-            type = ActivityModelDTO.Type.SERIAL;
+        if (activityModel instanceof SequentialActivityModel) {
+            type = ActivityModelDTO.Type.SEQUENTIAL;
         } else if (activityModel instanceof ParallelActivityModel) {
             type = ActivityModelDTO.Type.PARALLEL;
             tasksToComplete = ((ParallelActivityModel) activityModel).getTasksToComplete();
@@ -82,8 +82,8 @@ public class ActivityModelDozerConverter extends DozerConverter<ActivityModel, A
         ActivityModel activityModel;
 
         switch (activityModelDTO.getType()) {
-            case SERIAL: {
-                activityModel = new SerialActivityModel();
+            case SEQUENTIAL: {
+                activityModel = new SequentialActivityModel();
                 activityModel.setTaskModels(taskModels);
                 break;
             }

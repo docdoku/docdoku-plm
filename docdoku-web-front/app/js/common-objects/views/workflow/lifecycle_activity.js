@@ -35,8 +35,8 @@ define([
             var that = this;
 
             switch (this.activity.type) {
-                case 'SERIAL':
-                    this.activityType = App.config.i18n.SERIAL_ACTIVITY;
+                case 'SEQUENTIAL':
+                    this.activityType = App.config.i18n.SEQUENTIAL_ACTIVITY;
                     break;
                 case 'PARALLEL':
                     this.activityType = App.config.i18n.PARALLEL_ACTIVITY + ' ' + this.activity.tasksToComplete;
