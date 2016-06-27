@@ -2,7 +2,6 @@
 
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TMP_DIR=${BASE_DIR}/tmp
-OUT_DIR=${BASE_DIR}/../docdoku-server/docdoku-server-web/src/main/webapp/download/dplm
 
 cd ${TMP_DIR};
 

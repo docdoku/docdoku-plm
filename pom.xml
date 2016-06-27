@@ -30,9 +30,13 @@
     </scm>
     <modules>
         <module>docdoku-common</module>
+        <module>docdoku-server</module>
+        <module>docdoku-api</module>
+        <module>docdoku-api-java</module>
+        <module>docdoku-api-js</module>
         <module>docdoku-cli</module>
         <module>docdoku-dplm</module>
-        <module>docdoku-server</module>
+        <module>docdoku-web-front</module>
     </modules>
     <build>
         <plugins>
