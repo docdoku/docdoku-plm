@@ -2,6 +2,19 @@ module.exports = {
 
     loadConf:function(config,grunt){
         config.clean.dist=['.tmp', 'dist'];
+
+        config.compress = {
+            dist: {
+                options: {
+                    archive: 'dist.zip'
+                },
+                files: [
+                    {expand: true, cwd: 'dist/', src: ['**'], dest: ''}
+                ]
+            }
+        };
+
+
     },
 
     loadTasks:function(grunt){
@@ -36,7 +49,8 @@ module.exports = {
             'build-module:productManagement',
             'build-module:productStructure',
             'build-module:visualization',
-            'build-module:changeManagement'
+            'build-module:changeManagement',
+            'compress:dist'
         ]);
     }
 };

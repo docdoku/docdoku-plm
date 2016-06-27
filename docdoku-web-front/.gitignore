@@ -1,6 +1,7 @@
 node_modules/
 bower_components/
 dist/
+dist.zip
 target/
 test/temp
 .sass-cache
