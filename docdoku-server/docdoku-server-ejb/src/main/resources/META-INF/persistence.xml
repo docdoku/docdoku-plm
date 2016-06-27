@@ -8,7 +8,7 @@
     <class>com.docdoku.core.common.User</class>
     <class>com.docdoku.core.common.UserGroup</class>
     <class>com.docdoku.core.common.Workspace</class>
-    <class>com.docdoku.core.common.WorkspaceWorkflow</class>
+    <class>com.docdoku.core.workflow.WorkspaceWorkflow</class>
     <class>com.docdoku.core.change.ChangeItem</class>
     <class>com.docdoku.core.change.ChangeIssue</class>
     <class>com.docdoku.core.change.ChangeOrder</class>

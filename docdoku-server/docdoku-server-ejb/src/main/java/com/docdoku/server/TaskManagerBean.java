@@ -20,7 +20,7 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.common.WorkspaceWorkflow;
+import com.docdoku.core.workflow.WorkspaceWorkflow;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartRevision;

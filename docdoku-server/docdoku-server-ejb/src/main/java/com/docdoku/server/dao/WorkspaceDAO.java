@@ -32,6 +32,7 @@ import com.docdoku.core.product.PartSubstituteLink;
 import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.core.workflow.WorkspaceWorkflow;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;

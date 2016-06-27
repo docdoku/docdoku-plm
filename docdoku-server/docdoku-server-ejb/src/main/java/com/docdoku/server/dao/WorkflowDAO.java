@@ -20,7 +20,7 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.common.WorkspaceWorkflow;
+import com.docdoku.core.workflow.WorkspaceWorkflow;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.workflow.*;

@@ -19,8 +19,6 @@
  */
 package com.docdoku.core.workflow;
 
-import com.docdoku.core.workflow.Workflow;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.LinkedList;
