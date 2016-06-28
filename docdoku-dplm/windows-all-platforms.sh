@@ -2,6 +2,7 @@
 
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TMP_DIR=${BASE_DIR}/tmp
+OUT_DIR=${BASE_DIR}/target
 
 cd ${TMP_DIR};
 
@@ -21,6 +22,7 @@ cp ${TMP_DIR}/node-webkit-v0.11.1-win-ia32/*.dll ${TMP_DIR}/win-ia32
 cp ${TMP_DIR}/node-webkit-v0.11.1-win-ia32/*.dat ${TMP_DIR}/win-ia32
 cd ${TMP_DIR}/win-ia32;
 zip dplm-win-32.zip *;
+mv dplm-win-32.zip ${OUT_DIR};
 
 echo "... done"
 echo "Building windows 64 bits app ...";
@@ -33,5 +35,6 @@ cp ${TMP_DIR}/node-webkit-v0.11.1-win-x64/*.dll ${TMP_DIR}/win-x64
 cp ${TMP_DIR}/node-webkit-v0.11.1-win-x64/*.dat ${TMP_DIR}/win-x64
 cd ${TMP_DIR}/win-x64;
 zip dplm-win-64.zip *;
+mv dplm-win-64.zip ${OUT_DIR};
 
 echo "... done"

@@ -10,6 +10,7 @@
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 mkdir -p tmp;
+mkdir -p target;
 
 bash build-cli.sh;
 [[ $? -eq 0 ]] || { echo "Build cli failed"; exit $?; }
@@ -25,6 +26,4 @@ bash windows-all-platforms.sh;
 [[ $? -eq 0 ]] || { echo "Windows build failed"; exit $?; }
 bash osx-all-platforms.sh;
 [[ $? -eq 0 ]] || { echo "OSX build failed"; exit $?; }
-bash export.sh;
-[[ $? -eq 0 ]] || { echo "Export built app failed"; exit $?; }
 

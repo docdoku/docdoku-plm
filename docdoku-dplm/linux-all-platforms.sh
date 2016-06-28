@@ -2,6 +2,7 @@
 
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TMP_DIR=${BASE_DIR}/tmp
+OUT_DIR=${BASE_DIR}/target
 
 cd ${TMP_DIR};
 
@@ -19,6 +20,7 @@ cp ${TMP_DIR}/node-webkit-v0.11.1-linux-ia32/nw.pak ${TMP_DIR}/linux-ia32
 cp ${TMP_DIR}/node-webkit-v0.11.1-linux-ia32/*.dat ${TMP_DIR}/linux-ia32
 cd ${TMP_DIR}/linux-ia32;
 zip dplm-linux-32.zip *;
+mv dplm-linux-32.zip ${OUT_DIR};
 
 echo "... done";
 
@@ -30,6 +32,7 @@ cp ${TMP_DIR}/node-webkit-v0.11.1-linux-x64/nw.pak ${TMP_DIR}/linux-x64
 cp ${TMP_DIR}/node-webkit-v0.11.1-linux-x64/*.dat ${TMP_DIR}/linux-x64
 cd ${TMP_DIR}/linux-x64;
 zip dplm-linux-64.zip *;
+mv dplm-linux-64.zip ${OUT_DIR};
 
 echo "... done"
 

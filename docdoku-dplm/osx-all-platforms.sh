@@ -3,6 +3,7 @@
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TMP_DIR=${BASE_DIR}/tmp
 SOURCE=${BASE_DIR}/ui/dist
+OUT_DIR=${BASE_DIR}/target
 
 cd ${TMP_DIR};
 
@@ -22,6 +23,7 @@ cp ${BASE_DIR}/nw.icns ${TMP_DIR}/osx-ia32/dplm.app/Contents/Resources
 chmod -R 0775 ${TMP_DIR}/osx-ia32/dplm.app
 cd ${TMP_DIR}/osx-ia32
 zip -r dplm-osx-32.zip dplm.app
+mv dplm-osx-32.zip ${OUT_DIR};
 
 echo "... done"
 
@@ -35,5 +37,6 @@ cp ${BASE_DIR}/nw.icns ${TMP_DIR}/osx-x64/dplm.app/Contents/Resources
 chmod -R 0775 ${TMP_DIR}/osx-x64/dplm.app
 cd ${TMP_DIR}/osx-x64
 zip -r dplm-osx-64.zip dplm.app
+mv dplm-osx-64.zip ${OUT_DIR};
 
 echo "... done"
