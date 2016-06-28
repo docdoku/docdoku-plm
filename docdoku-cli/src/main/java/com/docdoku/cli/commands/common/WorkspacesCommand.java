@@ -23,10 +23,10 @@ package com.docdoku.cli.commands.common;
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.server.api.models.AccountDTO;
-import com.docdoku.server.api.models.WorkspaceListDTO;
-import com.docdoku.server.api.services.AccountsApi;
-import com.docdoku.server.api.services.WorkspacesApi;
+import com.docdoku.api.models.AccountDTO;
+import com.docdoku.api.models.WorkspaceListDTO;
+import com.docdoku.api.services.AccountsApi;
+import com.docdoku.api.services.WorkspacesApi;
 
 import java.io.IOException;
 

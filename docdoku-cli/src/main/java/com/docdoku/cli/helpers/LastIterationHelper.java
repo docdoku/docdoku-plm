@@ -1,10 +1,10 @@
 package com.docdoku.cli.helpers;
 
 
-import com.docdoku.server.api.models.DocumentIterationDTO;
-import com.docdoku.server.api.models.DocumentRevisionDTO;
-import com.docdoku.server.api.models.PartIterationDTO;
-import com.docdoku.server.api.models.PartRevisionDTO;
+import com.docdoku.api.models.DocumentIterationDTO;
+import com.docdoku.api.models.DocumentRevisionDTO;
+import com.docdoku.api.models.PartIterationDTO;
+import com.docdoku.api.models.PartRevisionDTO;
 
 public class LastIterationHelper {
 

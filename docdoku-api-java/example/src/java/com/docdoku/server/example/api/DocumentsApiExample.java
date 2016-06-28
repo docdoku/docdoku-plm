@@ -1,9 +1,9 @@
 package com.docdoku.server.example.api;
 
-import com.docdoku.server.api.client.ApiException;
-import com.docdoku.server.api.models.CountDTO;
-import com.docdoku.server.api.models.DocumentRevisionDTO;
-import com.docdoku.server.api.services.DocumentsApi;
+import com.docdoku.api.client.ApiException;
+import com.docdoku.api.models.CountDTO;
+import com.docdoku.api.models.DocumentRevisionDTO;
+import com.docdoku.api.services.DocumentsApi;
 import com.docdoku.server.example.utils.ErrorHelper;
 
 import java.util.List;

@@ -22,9 +22,9 @@ package com.docdoku.cli.commands.parts;
 
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.server.api.models.CountDTO;
-import com.docdoku.server.api.models.PartRevisionDTO;
-import com.docdoku.server.api.services.PartsApi;
+import com.docdoku.api.models.CountDTO;
+import com.docdoku.api.models.PartRevisionDTO;
+import com.docdoku.api.services.PartsApi;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;

@@ -22,8 +22,8 @@ package com.docdoku.cli.commands.parts;
 
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.server.api.models.ConversionDTO;
-import com.docdoku.server.api.services.PartApi;
+import com.docdoku.api.models.ConversionDTO;
+import com.docdoku.api.services.PartApi;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;

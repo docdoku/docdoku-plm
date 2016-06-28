@@ -22,11 +22,11 @@ package com.docdoku.cli.commands.parts;
 
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.*;
-import com.docdoku.server.api.models.PartIterationDTO;
-import com.docdoku.server.api.models.PartIterationKey;
-import com.docdoku.server.api.models.PartRevisionDTO;
-import com.docdoku.server.api.models.PartRevisionKey;
-import com.docdoku.server.api.services.PartApi;
+import com.docdoku.api.models.PartIterationDTO;
+import com.docdoku.api.models.PartIterationKey;
+import com.docdoku.api.models.PartRevisionDTO;
+import com.docdoku.api.models.PartRevisionKey;
+import com.docdoku.api.services.PartApi;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 

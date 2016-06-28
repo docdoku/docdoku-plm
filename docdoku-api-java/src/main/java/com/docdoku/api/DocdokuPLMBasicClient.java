@@ -1,6 +1,6 @@
-package com.docdoku.server.api;
+package com.docdoku.api;
 
-import com.docdoku.server.api.client.ApiClient;
+import com.docdoku.api.client.ApiClient;
 import okhttp3.Credentials;
 
 import java.util.logging.Logger;

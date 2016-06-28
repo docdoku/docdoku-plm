@@ -1,9 +1,9 @@
-package com.docdoku.server.api;
+package com.docdoku.api;
 
-import com.docdoku.server.api.client.ApiClient;
-import com.docdoku.server.api.client.ApiException;
-import com.docdoku.server.api.models.AccountDTO;
-import com.docdoku.server.api.services.AccountsApi;
+import com.docdoku.api.client.ApiClient;
+import com.docdoku.api.client.ApiException;
+import com.docdoku.api.models.AccountDTO;
+import com.docdoku.api.services.AccountsApi;
 import okhttp3.Credentials;
 
 import java.util.List;

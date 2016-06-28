@@ -1,7 +1,7 @@
 package com.docdoku.cli.services;
 
-import com.docdoku.server.api.DocdokuPLMBasicClient;
-import com.docdoku.server.api.client.ApiClient;
+import com.docdoku.api.DocdokuPLMBasicClient;
+import com.docdoku.api.client.ApiClient;
 
 public class DocdokuClientFactory {
 

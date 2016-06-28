@@ -24,10 +24,10 @@ import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.server.api.models.DocumentCreationDTO;
-import com.docdoku.server.api.models.DocumentIterationKey;
-import com.docdoku.server.api.models.DocumentRevisionKey;
-import com.docdoku.server.api.services.FoldersApi;
+import com.docdoku.api.models.DocumentCreationDTO;
+import com.docdoku.api.models.DocumentIterationKey;
+import com.docdoku.api.models.DocumentRevisionKey;
+import com.docdoku.api.services.FoldersApi;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 

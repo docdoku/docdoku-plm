@@ -22,8 +22,8 @@ package com.docdoku.cli.commands.common;
 
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.server.api.models.AccountDTO;
-import com.docdoku.server.api.services.AccountsApi;
+import com.docdoku.api.models.AccountDTO;
+import com.docdoku.api.services.AccountsApi;
 
 import java.io.IOException;
 

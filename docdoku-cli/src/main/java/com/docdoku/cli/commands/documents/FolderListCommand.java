@@ -22,8 +22,8 @@ package com.docdoku.cli.commands.documents;
 
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.server.api.models.FolderDTO;
-import com.docdoku.server.api.services.FoldersApi;
+import com.docdoku.api.models.FolderDTO;
+import com.docdoku.api.services.FoldersApi;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;

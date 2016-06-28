@@ -22,12 +22,12 @@ package com.docdoku.cli.commands.parts;
 
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.*;
-import com.docdoku.server.api.client.ApiException;
-import com.docdoku.server.api.models.PartIterationDTO;
-import com.docdoku.server.api.models.PartRevisionDTO;
-import com.docdoku.server.api.models.PartUsageLinkDTO;
-import com.docdoku.server.api.services.PartApi;
-import com.docdoku.server.api.services.PartsApi;
+import com.docdoku.api.client.ApiException;
+import com.docdoku.api.models.PartIterationDTO;
+import com.docdoku.api.models.PartRevisionDTO;
+import com.docdoku.api.models.PartUsageLinkDTO;
+import com.docdoku.api.services.PartApi;
+import com.docdoku.api.services.PartsApi;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 

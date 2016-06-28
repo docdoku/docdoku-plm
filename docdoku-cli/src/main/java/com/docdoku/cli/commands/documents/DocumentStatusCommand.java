@@ -23,9 +23,9 @@ package com.docdoku.cli.commands.documents;
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
-import com.docdoku.server.api.client.ApiException;
-import com.docdoku.server.api.models.DocumentRevisionDTO;
-import com.docdoku.server.api.services.DocumentApi;
+import com.docdoku.api.client.ApiException;
+import com.docdoku.api.models.DocumentRevisionDTO;
+import com.docdoku.api.services.DocumentApi;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 

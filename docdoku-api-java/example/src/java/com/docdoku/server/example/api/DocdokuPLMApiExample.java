@@ -1,8 +1,8 @@
 package com.docdoku.server.example.api;
 
 
-import com.docdoku.server.api.DocdokuPLMBasicClient;
-import com.docdoku.server.api.DocdokuPLMClient;
+import com.docdoku.api.DocdokuPLMBasicClient;
+import com.docdoku.api.DocdokuPLMClient;
 
 /**
  * This class is a helper class to create some API calls tests

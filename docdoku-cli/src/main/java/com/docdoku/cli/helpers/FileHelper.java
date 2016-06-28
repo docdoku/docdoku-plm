@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.helpers;
 
-import com.docdoku.server.api.models.*;
+import com.docdoku.api.models.*;
 
 import javax.security.auth.login.LoginException;
 import java.io.*;

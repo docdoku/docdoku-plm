@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.helpers;
 
-import com.docdoku.server.api.models.*;
+import com.docdoku.api.models.*;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 

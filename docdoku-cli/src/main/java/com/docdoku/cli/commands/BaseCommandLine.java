@@ -24,7 +24,7 @@ import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.CliOutput;
 import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.services.DocdokuClientFactory;
-import com.docdoku.server.api.client.ApiClient;
+import com.docdoku.api.client.ApiClient;
 import org.kohsuke.args4j.Option;
 
 import java.io.Console;

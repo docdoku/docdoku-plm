@@ -144,9 +144,9 @@
                             <inputSpec>${project.parent.basedir}/docdoku-api/target/swagger/swagger.json</inputSpec>
                             <language>java</language>
                             <output>${project.build.directory}/generated-sources/swagger</output>
-                            <apiPackage>com.docdoku.server.api.services</apiPackage>
-                            <invokerPackage>com.docdoku.server.api.client</invokerPackage>
-                            <modelPackage>com.docdoku.server.api.models</modelPackage>
+                            <apiPackage>com.docdoku.api.services</apiPackage>
+                            <invokerPackage>com.docdoku.api.client</invokerPackage>
+                            <modelPackage>com.docdoku.api.models</modelPackage>
                             <library>jersey2</library>
                         </configuration>
                     </execution>

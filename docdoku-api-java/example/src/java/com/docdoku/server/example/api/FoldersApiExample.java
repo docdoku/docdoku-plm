@@ -1,11 +1,11 @@
 package com.docdoku.server.example.api;
 
 
-import com.docdoku.server.api.client.ApiException;
-import com.docdoku.server.api.models.DocumentCreationDTO;
-import com.docdoku.server.api.models.DocumentRevisionDTO;
-import com.docdoku.server.api.models.FolderDTO;
-import com.docdoku.server.api.services.FoldersApi;
+import com.docdoku.api.client.ApiException;
+import com.docdoku.api.models.DocumentCreationDTO;
+import com.docdoku.api.models.DocumentRevisionDTO;
+import com.docdoku.api.models.FolderDTO;
+import com.docdoku.api.services.FoldersApi;
 import com.docdoku.server.example.utils.ErrorHelper;
 
 import java.util.List;

@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.helpers;
 
-import com.docdoku.server.api.models.AccountDTO;
+import com.docdoku.api.models.AccountDTO;
 
 import java.io.*;
 import java.util.Locale;

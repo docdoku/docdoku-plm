@@ -1,6 +1,6 @@
 package com.docdoku.server.example.utils;
 
-import com.docdoku.server.api.client.ApiClient;
+import com.docdoku.api.client.ApiClient;
 
 import java.util.List;
 import java.util.logging.Level;

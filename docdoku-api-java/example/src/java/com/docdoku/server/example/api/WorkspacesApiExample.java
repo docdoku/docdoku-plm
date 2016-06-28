@@ -1,9 +1,9 @@
 package com.docdoku.server.example.api;
 
 
-import com.docdoku.server.api.client.ApiException;
-import com.docdoku.server.api.models.*;
-import com.docdoku.server.api.services.WorkspacesApi;
+import com.docdoku.api.client.ApiException;
+import com.docdoku.api.models.*;
+import com.docdoku.api.services.WorkspacesApi;
 import com.docdoku.server.example.utils.ErrorHelper;
 
 import java.util.List;

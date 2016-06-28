@@ -1,9 +1,9 @@
-package com.docdoku.server.api;
+package com.docdoku.api;
 
-import com.docdoku.server.api.client.ApiException;
-import com.docdoku.server.api.models.AccountDTO;
-import com.docdoku.server.api.models.LoginRequestDTO;
-import com.docdoku.server.api.services.AuthApi;
+import com.docdoku.api.client.ApiException;
+import com.docdoku.api.models.AccountDTO;
+import com.docdoku.api.models.LoginRequestDTO;
+import com.docdoku.api.services.AuthApi;
 
 import java.util.List;
 import java.util.Map;
