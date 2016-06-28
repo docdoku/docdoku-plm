@@ -24,13 +24,12 @@ import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.WorkflowModelAlreadyExistsException;
 import com.docdoku.core.exceptions.WorkflowModelNotFoundException;
 import com.docdoku.core.product.PartMasterTemplate;
-import com.docdoku.core.util.Tools;
-import com.docdoku.core.workflow.ActivityModel;
-import com.docdoku.core.workflow.TaskModel;
-import com.docdoku.core.workflow.WorkflowModel;
-import com.docdoku.core.workflow.WorkflowModelKey;
+import com.docdoku.core.workflow.*;
 
-import javax.persistence.*;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -72,6 +71,16 @@ public class WorkflowModelDAO {
     public List<WorkflowModel> findAllWorkflowModels(String pWorkspaceId) {
         TypedQuery<WorkflowModel> query = em.createQuery("SELECT DISTINCT w FROM WorkflowModel w WHERE w.workspaceId = :workspaceId",WorkflowModel.class);
         return query.setParameter("workspaceId", pWorkspaceId).getResultList();
+    }
+
+    public void removeWorkflowModelConstraints(WorkflowModel pWorkflowModel){
+        if(pWorkflowModel != null) {
+            List<ActivityModel> activityModels = pWorkflowModel.getActivityModels();
+            for(ActivityModel activityModel:activityModels){
+                activityModel.setRelaunchActivity(null);
+            }
+            em.flush();
+        }
     }
 
     public void createWorkflowModel(WorkflowModel pModel) throws WorkflowModelAlreadyExistsException, CreationException {
