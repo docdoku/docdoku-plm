@@ -833,7 +833,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             partIte.setSource(source);
 
         } else {
-            throw new NotAllowedException(locale, "NotAllowedException25", partIte.getPartNumber());
+            throw new NotAllowedException(locale, "NotAllowedException25", pKey.getPartRevision().toString());
         }
 
         return partRev;
@@ -1007,7 +1007,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartIteration lastIteration = partR.getLastIteration();
 
         if (isCheckoutByAnotherUser(user, partR) && lastIteration.getKey().equals(pPartIPK)) {
-            throw new NotAllowedException(locale, "NotAllowedException25", partR.getPartMaster().getNumber());
+            throw new NotAllowedException(locale, "NotAllowedException25", partRevisionKey.toString());
         }
 
         return partI;

@@ -1354,7 +1354,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             return docR;
 
         } else {
-            throw new NotAllowedException(userLocale, "NotAllowedException25");
+            throw new NotAllowedException(userLocale, "NotAllowedException25", rKey.toString());
         }
 
     }
