@@ -1,7 +1,6 @@
 node_modules/
 bower_components/
 dist/
-dist.zip
 target/
 test/temp
 .sass-cache
@@ -17,4 +16,3 @@ app/documents/main.css
 app/parts/main.css
 app/main/main.css
 app/download/main.css
-app/download/dplm/

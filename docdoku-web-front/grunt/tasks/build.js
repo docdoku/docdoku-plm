@@ -6,7 +6,7 @@ module.exports = {
         config.compress = {
             dist: {
                 options: {
-                    archive: 'dist.zip'
+                    archive: 'target/docdoku-web-front.zip'
                 },
                 files: [
                     {expand: true, cwd: 'dist/', src: ['**'], dest: ''}
