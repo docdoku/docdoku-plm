@@ -368,7 +368,7 @@ public class PartResource {
                                      @ApiParam(required = true, value = "New version of part to create") PartCreationDTO partCreationDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException {
 
-        RoleMappingDTO[] rolesMappingDTO = partCreationDTO.getRoleMapping();
+        RoleMappingDTO[] roleMappingDTOs = partCreationDTO.getRoleMapping();
         ACLDTO acl = partCreationDTO.getAcl();
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
         String description = partCreationDTO.getDescription();
@@ -393,15 +393,17 @@ public class PartResource {
             }
         }
 
-        Map<String, String> roleMappings = new HashMap<>();
+        Map<String, Collection<String>> userRoleMapping = new HashMap<>();
+        Map<String, Collection<String>> groupRoleMapping = new HashMap<>();
 
-        if (rolesMappingDTO != null) {
-            for (RoleMappingDTO roleMappingDTO : rolesMappingDTO) {
-                roleMappings.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogin());
+        if (roleMappingDTOs != null) {
+            for (RoleMappingDTO roleMappingDTO : roleMappingDTOs) {
+                userRoleMapping.put(roleMappingDTO.getRoleName(), Arrays.asList(roleMappingDTO.getUserLogins()));
+                groupRoleMapping.put(roleMappingDTO.getRoleName(), Arrays.asList(roleMappingDTO.getGroupIds()));
             }
         }
 
-        productService.createPartRevision(revisionKey, description, workflowModelId, userEntries, userGroupEntries, roleMappings);
+        productService.createPartRevision(revisionKey, description, workflowModelId, userEntries, userGroupEntries, userRoleMapping, groupRoleMapping);
 
         return Response.ok().build();
     }
@@ -725,7 +727,7 @@ public class PartResource {
         if (productService.partMasterExists(partMasterKey)) {
             return new PartMaster(userManager.getWorkspace(workspaceId), componentNumber);
         } else {
-            return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.isStandardPart(), null, componentDTO.getDescription(), null, null, null, null);
+            return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.isStandardPart(), null, componentDTO.getDescription(), null, null, null, null, null);
         }
     }
 

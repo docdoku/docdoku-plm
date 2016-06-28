@@ -357,13 +357,15 @@ public class PartsResource {
             throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException {
 
         String pWorkflowModelId = partCreationDTO.getWorkflowModelId();
-        RoleMappingDTO[] rolesMappingDTO = partCreationDTO.getRoleMapping();
+        RoleMappingDTO[] roleMappingDTOs = partCreationDTO.getRoleMapping();
 
-        Map<String, String> roleMappings = new HashMap<>();
+        Map<String, Collection<String>> userRoleMapping = new HashMap<>();
+        Map<String, Collection<String>> groupRoleMapping = new HashMap<>();
 
-        if (rolesMappingDTO != null) {
-            for (RoleMappingDTO roleMappingDTO : rolesMappingDTO) {
-                roleMappings.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogin());
+        if (roleMappingDTOs != null) {
+            for (RoleMappingDTO roleMappingDTO : roleMappingDTOs) {
+                userRoleMapping.put(roleMappingDTO.getRoleName(), Arrays.asList(roleMappingDTO.getUserLogins()));
+                groupRoleMapping.put(roleMappingDTO.getRoleName(), Arrays.asList(roleMappingDTO.getGroupIds()));
             }
         }
 
@@ -387,7 +389,7 @@ public class PartsResource {
             }
         }
 
-        PartMaster partMaster = productService.createPartMaster(workspaceId, partCreationDTO.getNumber(), partCreationDTO.getName(), partCreationDTO.isStandardPart(), pWorkflowModelId, partCreationDTO.getDescription(), partCreationDTO.getTemplateId(), roleMappings, userEntries, userGroupEntries);
+        PartMaster partMaster = productService.createPartMaster(workspaceId, partCreationDTO.getNumber(), partCreationDTO.getName(), partCreationDTO.isStandardPart(), pWorkflowModelId, partCreationDTO.getDescription(), partCreationDTO.getTemplateId(), userEntries, userGroupEntries, userRoleMapping, groupRoleMapping);
         return Tools.mapPartRevisionToPartDTO(partMaster.getLastRevision());
     }
 

@@ -30,7 +30,8 @@ import java.io.Serializable;
 public class RoleMappingDTO implements Serializable {
 
     private String roleName;
-    private String userLogin;
+    private String[] userLogins;
+    private String[] groupIds;
 
     public RoleMappingDTO() {
     }
@@ -47,11 +48,19 @@ public class RoleMappingDTO implements Serializable {
         this.roleName = roleName;
     }
 
-    public String getUserLogin() {
-        return userLogin;
+    public String[] getGroupIds() {
+        return groupIds;
     }
 
-    public void setUserLogin(String userLogin) {
-        this.userLogin = userLogin;
+    public void setGroupIds(String[] groupIds) {
+        this.groupIds = groupIds;
+    }
+
+    public String[] getUserLogins() {
+        return userLogins;
+    }
+
+    public void setUserLogins(String[] userLogins) {
+        this.userLogins = userLogins;
     }
 }

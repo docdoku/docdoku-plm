@@ -300,7 +300,7 @@ public class DocumentResource {
         String pTitle = docCreationDTO.getTitle();
         String pDescription = docCreationDTO.getDescription();
         String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
-        RoleMappingDTO[] rolesMappingDTO = docCreationDTO.getRoleMapping();
+        RoleMappingDTO[] roleMappingDTOs = docCreationDTO.getRoleMapping();
         ACLDTO acl = docCreationDTO.getAcl();
 
         ACLUserEntry[] userEntries = null;
@@ -322,15 +322,17 @@ public class DocumentResource {
             }
         }
 
-        Map<String, String> roleMappings = new HashMap<>();
+        Map<String, Collection<String>> userRoleMapping = new HashMap<>();
+        Map<String, Collection<String>> groupRoleMapping = new HashMap<>();
 
-        if (rolesMappingDTO != null) {
-            for (RoleMappingDTO roleMappingDTO : rolesMappingDTO) {
-                roleMappings.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogin());
+        if (roleMappingDTOs != null) {
+            for (RoleMappingDTO roleMappingDTO : roleMappingDTOs) {
+                userRoleMapping.put(roleMappingDTO.getRoleName(), Arrays.asList(roleMappingDTO.getUserLogins()));
+                groupRoleMapping.put(roleMappingDTO.getRoleName(), Arrays.asList(roleMappingDTO.getGroupIds()));
             }
         }
 
-        DocumentRevision[] docR = documentService.createDocumentRevision(new DocumentRevisionKey(pWorkspaceId, documentId, documentVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries, roleMappings);
+        DocumentRevision[] docR = documentService.createDocumentRevision(new DocumentRevisionKey(pWorkspaceId, documentId, documentVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries, userRoleMapping, groupRoleMapping);
         DocumentRevisionDTO[] dtos = new DocumentRevisionDTO[docR.length];
 
         for (int i = 0; i < docR.length; i++) {
