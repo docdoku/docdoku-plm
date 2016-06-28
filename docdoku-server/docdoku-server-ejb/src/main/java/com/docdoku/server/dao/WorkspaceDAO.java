@@ -243,7 +243,9 @@ public class WorkspaceDAO {
                 em.createQuery("SELECT d FROM DocumentMaster d WHERE d.workspace = :workspace", DocumentMaster.class)
                         .setParameter("workspace",workspace).getResultList();
 
+        WorkflowDAO workflowDAO = new WorkflowDAO(em);
         for (DocumentMaster d: documentsMaster) {
+            workflowDAO.removeWorkflowConstraints(d);
             em.remove(d);
         }
         em.flush();
@@ -254,6 +256,7 @@ public class WorkspaceDAO {
                         .setParameter("workspace",workspace).getResultList();
 
         for (PartMaster p: partsMaster) {
+            workflowDAO.removeWorkflowConstraints(p);
             em.remove(p);
         }
         em.flush();
@@ -273,21 +276,23 @@ public class WorkspaceDAO {
                 em.createQuery("SELECT w FROM WorkflowModel w WHERE w.workspace = :workspace", WorkflowModel.class)
                         .setParameter("workspace",workspace).getResultList();
 
+        WorkflowModelDAO workflowModelDAO = new WorkflowModelDAO(new Locale("en"),em);
         for (WorkflowModel w: workflowModels) {
+            workflowModelDAO.removeWorkflowModelConstraints(w);
             em.remove(w);
         }
         em.flush();
 
         List<WorkspaceWorkflow> workspaceWorkflows =
-                em.createQuery("SELECT ww FROM WorkspaceWorkflow ww WHERE ww.workspaceId = :workspaceId", WorkspaceWorkflow.class)
-                        .setParameter("workspaceId",workspaceId).getResultList();
+                em.createQuery("SELECT ww FROM WorkspaceWorkflow ww WHERE ww.workspace = :workspace", WorkspaceWorkflow.class)
+                        .setParameter("workspace",workspace).getResultList();
 
         for (WorkspaceWorkflow ww: workspaceWorkflows) {
+            workflowDAO.removeWorkflowConstraints(ww);
             em.remove(ww);
         }
 
         em.flush();
-
 
         // Tags
         em.createQuery("DELETE FROM Tag t where t.workspace = :workspace")

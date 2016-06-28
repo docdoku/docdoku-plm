@@ -21,7 +21,9 @@ package com.docdoku.server.dao;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.WorkspaceWorkflow;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.workflow.*;
 
@@ -105,6 +107,24 @@ public class WorkflowDAO {
             return query.setParameter("workflow", pWorkflow).getSingleResult();
         }catch(NoResultException e){
             return null;
+        }
+    }
+
+    public void removeWorkflowConstraints(WorkspaceWorkflow ww) {
+        List<Workflow> workflows = ww.getAbortedWorkflows();
+        Workflow workflow = ww.getWorkflow();
+        removeWorkflowConstraints(workflows,workflow);
+    }
+
+    public void removeWorkflowConstraints(DocumentMaster pDocM) {
+        for(DocumentRevision documentRevision : pDocM.getDocumentRevisions()){
+            removeWorkflowConstraints(documentRevision);
+        }
+    }
+
+    public void removeWorkflowConstraints(PartMaster pPartM) {
+        for(PartRevision partRevision : pPartM.getPartRevisions()){
+            removeWorkflowConstraints(partRevision);
         }
     }
 
