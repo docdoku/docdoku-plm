@@ -21,25 +21,26 @@
 package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
-import java.util.Date;
+import java.util.*;
 
 /**
  * Task is the smallest unit of work in a workflow.
  *
  * @author Florent Garin
- * @version 1.0, 02/06/08
+ * @version 2.5, 27/06/16
  * @since V1.0
  */
 @Table(name = "TASK")
 @javax.persistence.IdClass(com.docdoku.core.workflow.TaskKey.class)
 @Entity
 @NamedQueries ({
-    @NamedQuery(name="Task.findInProgressTasks", query="SELECT DISTINCT t FROM Task t WHERE t.worker.workspaceId = :workspaceId AND t.worker.login = :userLogin AND t.status = com.docdoku.core.workflow.Task.Status.IN_PROGRESS"),
-    @NamedQuery(name="Task.findAssignedTasks", query="SELECT DISTINCT t FROM Task t WHERE t.worker.workspaceId = :workspaceId AND t.worker.login = :userLogin")
+    @NamedQuery(name="Task.findInProgressTasks", query="SELECT DISTINCT t FROM Task t WHERE :worker MEMBER OF t.assignedUsers or :worker = ANY (SELECT u FROM UserGroup g JOIN g.users u where g MEMBER OF t.assignedGroups) AND t.worker.login = :userLogin AND t.status = com.docdoku.core.workflow.Task.Status.IN_PROGRESS"),
+    @NamedQuery(name="Task.findAssignedTasks", query="SELECT DISTINCT t FROM Task t WHERE :worker MEMBER OF t.assignedUsers or :worker = ANY (SELECT u FROM UserGroup g JOIN g.users u where g MEMBER OF t.assignedGroups)")
 })
 public class Task implements Serializable, Cloneable {
     @Id
@@ -63,12 +64,43 @@ public class Task implements Serializable, Cloneable {
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date startDate;
 
+    /**
+     * The user who effectively performed the task, which hence is in
+     * the {@link Status#APPROVED} or {@link Status#REJECTED} state.
+     */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumns({
             @JoinColumn(name = "WORKER_LOGIN", referencedColumnName = "LOGIN"),
             @JoinColumn(name = "WORKER_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
     private User worker;
+
+    @ManyToMany
+    @JoinTable(name="TASK_USER",
+    inverseJoinColumns={
+            @JoinColumn(name="USER_LOGIN", referencedColumnName="LOGIN"),
+            @JoinColumn(name="USER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+    },
+    joinColumns={
+            @JoinColumn(name="TASK_NUM", referencedColumnName="NUM"),
+            @JoinColumn(name="ACTIVITY_STEP", referencedColumnName="ACTIVITY_STEP"),
+            @JoinColumn(name="WORKFLOW_ID", referencedColumnName="WORKFLOW_ID")
+    })
+    private Set<User> assignedUsers=new HashSet<>();
+
+
+    @ManyToMany
+    @JoinTable(name="TASK_USERGROUP",
+    inverseJoinColumns={
+            @JoinColumn(name="USERGROUP_ID", referencedColumnName="ID"),
+            @JoinColumn(name="USERGROUP_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+    },
+    joinColumns={
+            @JoinColumn(name="TASK_NUM", referencedColumnName="NUM"),
+            @JoinColumn(name="ACTIVITY_STEP", referencedColumnName="ACTIVITY_STEP"),
+            @JoinColumn(name="WORKFLOW_ID", referencedColumnName="WORKFLOW_ID")
+    })
+    private Set<UserGroup> assignedGroups=new HashSet<>();
 
     private int targetIteration;
     private String closureComment;
@@ -81,6 +113,21 @@ public class Task implements Serializable, Cloneable {
 
     private Status status = Status.NOT_STARTED;
 
+    /**
+     * Enumeration for the possible status of a task.
+     *
+     * {@link Status#NOT_STARTED} indicates that the task is not started yet.
+     *
+     * {@link Status#IN_PROGRESS} indicates that the task has been started and is currently in progress.
+     *
+     * {@link Status#APPROVED} indicates that the task has been closed and its output status is approved.
+     *
+     * {@link Status#REJECTED} indicates that the task has been closed and its output status is rejected.
+     *
+     * {@link Status#NOT_TO_BE_DONE} indicates that the task has been marked as not to be done which means
+     * that the task will never be started. This status is notably used when a workflow has been relaunched
+     * to identify the tasks which are considered definitely done and thus not to be done again.
+     */
     public enum Status {
         NOT_STARTED, IN_PROGRESS, APPROVED, REJECTED, NOT_TO_BE_DONE
     }
@@ -88,10 +135,11 @@ public class Task implements Serializable, Cloneable {
 
     public Task() {
     }
-    public Task(int pNum, String pTitle, String pInstructions, User pWorker) {
+    public Task(int pNum, String pTitle, String pInstructions, Collection<User> assignedU, Collection<UserGroup> assignedG) {
         num = pNum;
         title = pTitle;
-        worker = pWorker;
+        if(assignedU!=null)assignedUsers.addAll(assignedU);
+        if(assignedG!=null)assignedGroups.addAll(assignedG);
         instructions = pInstructions;
     }
 
@@ -192,23 +240,24 @@ public class Task implements Serializable, Cloneable {
         this.signature = signature;
     }
 
-    public void reject(String pComment, int pTargetIteration) {
-        reject(pComment, pTargetIteration, null);
+    public void reject(User pWorker, String pComment, int pTargetIteration) {
+        reject(pWorker, pComment, pTargetIteration, null);
     }
-    public void reject(String pComment, int pTargetIteration, String pSignature) {
-        submit(pComment,pTargetIteration,pSignature);
+    public void reject(User pWorker, String pComment, int pTargetIteration, String pSignature) {
+        submit(pWorker, pComment,pTargetIteration,pSignature);
         status = Status.REJECTED;
     }
 
-    public void approve(String pComment, int pTargetIteration) {
-        approve(pComment, pTargetIteration, null);
+    public void approve(User pWorker, String pComment, int pTargetIteration) {
+        approve(pWorker, pComment, pTargetIteration, null);
     }
-    public void approve(String pComment, int pTargetIteration, String pSignature) {
-        submit(pComment,pTargetIteration,pSignature);
+    public void approve(User pWorker, String pComment, int pTargetIteration, String pSignature) {
+        submit(pWorker, pComment,pTargetIteration,pSignature);
         status = Status.APPROVED;
     }
 
-    private void submit(String pComment, int pTargetIteration, String pSignature){
+    private void submit(User pWorker, String pComment, int pTargetIteration, String pSignature){
+        worker=pWorker;
         closureDate = new Date();
         closureComment = pComment;
         signature = pSignature;
@@ -232,6 +281,30 @@ public class Task implements Serializable, Cloneable {
         setClosureComment(null);
         setClosureDate(null);
         setStartDate(null);
+    }
+
+    public boolean hasPotentialWorker(){
+        return !assignedUsers.isEmpty() || !assignedGroups.isEmpty();
+    }
+
+    public boolean isPotentialWorker(User user){
+        return assignedUsers.contains(user) || assignedGroups.stream().anyMatch(g->g.isMember(user));
+    }
+
+    public Set<User> getAssignedUsers() {
+        return assignedUsers;
+    }
+
+    public void setAssignedUsers(Set<User> assignedUsers) {
+        this.assignedUsers = assignedUsers;
+    }
+
+    public Set<UserGroup> getAssignedGroups() {
+        return assignedGroups;
+    }
+
+    public void setAssignedGroups(Set<UserGroup> assignedGroups) {
+        this.assignedGroups = assignedGroups;
     }
 
     public boolean isNotStarted() {

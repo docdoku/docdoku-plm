@@ -19,9 +19,7 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.common.User;
-import com.docdoku.core.common.UserKey;
-import com.docdoku.core.common.Workspace;
+import com.docdoku.core.common.*;
 import com.docdoku.core.workflow.WorkspaceWorkflow;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
@@ -263,31 +261,48 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public WorkspaceWorkflow instantiateWorkflow(String workspaceId, String id, String workflowModelId, Map<String, String> roleMappings) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, RoleNotFoundException, WorkflowModelNotFoundException, NotAllowedException {
+    public WorkspaceWorkflow instantiateWorkflow(String workspaceId, String id, String workflowModelId, Map<String, Collection<String>> userRoleMapping, Map<String, Collection<String>> groupRoleMapping) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, RoleNotFoundException, WorkflowModelNotFoundException, NotAllowedException, UserGroupNotFoundException {
 
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
 
         Locale locale = new Locale(user.getLanguage());
+
         UserDAO userDAO = new UserDAO(locale, em);
+        UserGroupDAO groupDAO = new UserGroupDAO(locale, em);
         RoleDAO roleDAO = new RoleDAO(locale, em);
         WorkflowDAO workflowDAO = new WorkflowDAO(em);
 
-        Map<Role, User> roleUserMap = new HashMap<>();
-
-        for (Object o : roleMappings.entrySet()) {
-            Map.Entry pairs = (Map.Entry) o;
-            String roleName = (String) pairs.getKey();
-            String userLogin = (String) pairs.getValue();
-            User worker = userDAO.loadUser(new UserKey(workspaceId, userLogin));
+        Map<Role, Collection<User>> roleUserMap = new HashMap<>();
+        for (Map.Entry<String, Collection<String>> pair : userRoleMapping.entrySet()) {
+            String roleName = pair.getKey();
+            Collection<String> userLogins = pair.getValue();
             Role role = roleDAO.loadRole(new RoleKey(workspaceId, roleName));
-            roleUserMap.put(role, worker);
+            Set<User> users=new HashSet<>();
+            roleUserMap.put(role, users);
+            for(String login:userLogins) {
+                User u = userDAO.loadUser(new UserKey(workspaceId, login));
+                users.add(u);
+            }
+        }
+
+        Map<Role, Collection<UserGroup>> roleGroupMap = new HashMap<>();
+        for (Map.Entry<String, Collection<String>> pair : groupRoleMapping.entrySet()) {
+            String roleName = pair.getKey();
+            Collection<String> groupIds = pair.getValue();
+            Role role = roleDAO.loadRole(new RoleKey(workspaceId, roleName));
+            Set<UserGroup> groups=new HashSet<>();
+            roleGroupMap.put(role, groups);
+            for(String groupId:groupIds) {
+                UserGroup g = groupDAO.loadUserGroup(new UserGroupKey(workspaceId, groupId));
+                groups.add(g);
+            }
         }
 
         WorkflowModel workflowModel = new WorkflowModelDAO(locale, em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), workflowModelId));
-        Workflow workflow = workflowModel.createWorkflow(roleUserMap);
+        Workflow workflow = workflowModel.createWorkflow(roleUserMap, roleGroupMap);
 
         for(Task task : workflow.getTasks()){
-            if(null == task.getWorker()){
+            if(!task.hasPotentialWorker()){
                 throw new NotAllowedException(locale,"NotAllowedException56");
             }
         }
@@ -298,7 +313,7 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
             runningTask.start();
         }
 
-        WorkspaceWorkflow workspaceWorkflow = new WorkspaceWorkflow(workspaceId, id, workflow);
+        WorkspaceWorkflow workspaceWorkflow = new WorkspaceWorkflow(user.getWorkspace(), id, workflow);
         workflowDAO.createWorkspaceWorkflow(workspaceWorkflow);
 
         //mailer.sendApproval(runningTasks, docR);
@@ -378,7 +393,7 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
         }
         // check holder
 
-        task.approve(comment, 0, signature);
+        task.approve(user,comment, 0, signature);
 
         Collection<Task> runningTasks = workflow.getRunningTasks();
         for (Task runningTask : runningTasks) {
@@ -401,7 +416,7 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
 
-        task.reject(comment, 0, signature);
+        task.reject(user, comment, 0, signature);
 
         // Relaunch Workflow ?
         Activity currentActivity = task.getActivity();

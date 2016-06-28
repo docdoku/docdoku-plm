@@ -24,7 +24,8 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * Workflows organize tasks around documents on which they're applied to.  
+ * Workflows organize tasks around documents, parts (or other objects)
+ * on which they are applied.
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08

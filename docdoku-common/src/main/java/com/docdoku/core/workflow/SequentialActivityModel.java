@@ -21,9 +21,11 @@
 package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -54,11 +56,11 @@ public class SequentialActivityModel extends ActivityModel {
     }
         
     @Override
-    public Activity createActivity(Map<Role, User> roleUserMap) {
+    public Activity createActivity(Map<Role,Collection<User>> roleUserMap, Map<Role,Collection<UserGroup>> roleGroupMap) {
         Activity activity = new SequentialActivity(step, lifeCycleState);
         List<Task> tasks = activity.getTasks();
         for(TaskModel model:taskModels){
-            Task task = model.createTask(roleUserMap);
+            Task task = model.createTask(roleUserMap, roleGroupMap);
             task.setActivity(activity);
             tasks.add(task);
         }

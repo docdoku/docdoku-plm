@@ -21,11 +21,13 @@
 package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -178,7 +180,7 @@ public abstract class ActivityModel implements Serializable, Cloneable {
         return clone;
     }
 
-    public abstract Activity createActivity(Map<Role, User> roleUserMap);
+    public abstract Activity createActivity(Map<Role,Collection<User>> roleUserMap, Map<Role,Collection<UserGroup>> roleGroupMap);
 
     @Override
     public boolean equals(Object o) {

@@ -638,7 +638,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevision createDocumentMaster(String pParentFolder, String pDocMId, String pTitle, String pDescription, String pDocMTemplateId, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String, String> roleMappings) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, NotAllowedException, FolderNotFoundException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, CreationException, DocumentRevisionAlreadyExistsException, RoleNotFoundException, WorkflowModelNotFoundException, DocumentMasterAlreadyExistsException {
+    public DocumentRevision createDocumentMaster(String pParentFolder, String pDocMId, String pTitle, String pDescription, String pDocMTemplateId, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String, Collection<String>> userRoleMapping, Map<String, Collection<String>> groupRoleMapping) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, NotAllowedException, FolderNotFoundException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, CreationException, DocumentRevisionAlreadyExistsException, RoleNotFoundException, WorkflowModelNotFoundException, DocumentMasterAlreadyExistsException, UserGroupNotFoundException {
 
         User user = userManager.checkWorkspaceWriteAccess(Folder.parseWorkspaceId(pParentFolder));
         Locale locale = new Locale(user.getLanguage());
@@ -704,25 +704,41 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         if (pWorkflowModelId != null) {
 
             UserDAO userDAO = new UserDAO(locale, em);
+            UserGroupDAO groupDAO = new UserGroupDAO(locale, em);
             RoleDAO roleDAO = new RoleDAO(locale, em);
 
-            Map<Role, User> roleUserMap = new HashMap<>();
-
-            for (Object o : roleMappings.entrySet()) {
-                Map.Entry pairs = (Map.Entry) o;
-                String roleName = (String) pairs.getKey();
-                String userLogin = (String) pairs.getValue();
-                User worker = userDAO.loadUser(new UserKey(Folder.parseWorkspaceId(pParentFolder), userLogin));
+            Map<Role, Collection<User>> roleUserMap = new HashMap<>();
+            for (Map.Entry<String, Collection<String>> pair : userRoleMapping.entrySet()) {
+                String roleName = pair.getKey();
+                Collection<String> userLogins = pair.getValue();
                 Role role = roleDAO.loadRole(new RoleKey(Folder.parseWorkspaceId(pParentFolder), roleName));
-                roleUserMap.put(role, worker);
+                Set<User> users=new HashSet<>();
+                roleUserMap.put(role, users);
+                for(String login:userLogins) {
+                    User u = userDAO.loadUser(new UserKey(Folder.parseWorkspaceId(pParentFolder), login));
+                    users.add(u);
+                }
+            }
+
+            Map<Role, Collection<UserGroup>> roleGroupMap = new HashMap<>();
+            for (Map.Entry<String, Collection<String>> pair : groupRoleMapping.entrySet()) {
+                String roleName = pair.getKey();
+                Collection<String> groupIds = pair.getValue();
+                Role role = roleDAO.loadRole(new RoleKey(Folder.parseWorkspaceId(pParentFolder), roleName));
+                Set<UserGroup> groups=new HashSet<>();
+                roleGroupMap.put(role, groups);
+                for(String groupId:groupIds) {
+                    UserGroup g = groupDAO.loadUserGroup(new UserGroupKey(Folder.parseWorkspaceId(pParentFolder), groupId));
+                    groups.add(g);
+                }
             }
 
             WorkflowModel workflowModel = new WorkflowModelDAO(locale, em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
-            Workflow workflow = workflowModel.createWorkflow(roleUserMap);
+            Workflow workflow = workflowModel.createWorkflow(roleUserMap, roleGroupMap);
             docR.setWorkflow(workflow);
 
             for(Task task : workflow.getTasks()){
-                if(null == task.getWorker()){
+                if(!task.hasPotentialWorker()){
                     throw new NotAllowedException(locale,"NotAllowedException56");
                 }
             }
@@ -1391,7 +1407,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevision[] createDocumentRevision(DocumentRevisionKey pOriginalDocRPK, String pTitle, String pDescription, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String, String> roleMappings) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, NotAllowedException, DocumentRevisionAlreadyExistsException, CreationException, WorkflowModelNotFoundException, RoleNotFoundException, DocumentRevisionNotFoundException, FileAlreadyExistsException {
+    public DocumentRevision[] createDocumentRevision(DocumentRevisionKey pOriginalDocRPK, String pTitle, String pDescription, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String, Collection<String>> userRoleMapping, Map<String, Collection<String>> groupRoleMapping) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, NotAllowedException, DocumentRevisionAlreadyExistsException, CreationException, WorkflowModelNotFoundException, RoleNotFoundException, DocumentRevisionNotFoundException, FileAlreadyExistsException, UserGroupNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pOriginalDocRPK.getDocumentMaster().getWorkspace());
         Locale locale = new Locale(user.getLanguage());
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(locale, em);
@@ -1449,25 +1465,41 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         if (pWorkflowModelId != null) {
 
             UserDAO userDAO = new UserDAO(locale, em);
+            UserGroupDAO groupDAO = new UserGroupDAO(locale, em);
             RoleDAO roleDAO = new RoleDAO(locale, em);
 
-            Map<Role, User> roleUserMap = new HashMap<>();
-
-            for (Object o : roleMappings.entrySet()) {
-                Map.Entry pairs = (Map.Entry) o;
-                String roleName = (String) pairs.getKey();
-                String userLogin = (String) pairs.getValue();
-                User worker = userDAO.loadUser(new UserKey(pOriginalDocRPK.getDocumentMaster().getWorkspace(), userLogin));
+            Map<Role, Collection<User>> roleUserMap = new HashMap<>();
+            for (Map.Entry<String, Collection<String>> pair : userRoleMapping.entrySet()) {
+                String roleName = pair.getKey();
+                Collection<String> userLogins = pair.getValue();
                 Role role = roleDAO.loadRole(new RoleKey(pOriginalDocRPK.getDocumentMaster().getWorkspace(), roleName));
-                roleUserMap.put(role, worker);
+                Set<User> users=new HashSet<>();
+                roleUserMap.put(role, users);
+                for(String login:userLogins) {
+                    User u = userDAO.loadUser(new UserKey(pOriginalDocRPK.getDocumentMaster().getWorkspace(), login));
+                    users.add(u);
+                }
+            }
+
+            Map<Role, Collection<UserGroup>> roleGroupMap = new HashMap<>();
+            for (Map.Entry<String, Collection<String>> pair : groupRoleMapping.entrySet()) {
+                String roleName = pair.getKey();
+                Collection<String> groupIds = pair.getValue();
+                Role role = roleDAO.loadRole(new RoleKey(pOriginalDocRPK.getDocumentMaster().getWorkspace(), roleName));
+                Set<UserGroup> groups=new HashSet<>();
+                roleGroupMap.put(role, groups);
+                for(String groupId:groupIds) {
+                    UserGroup g = groupDAO.loadUserGroup(new UserGroupKey(pOriginalDocRPK.getDocumentMaster().getWorkspace(), groupId));
+                    groups.add(g);
+                }
             }
 
             WorkflowModel workflowModel = new WorkflowModelDAO(locale, em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
-            Workflow workflow = workflowModel.createWorkflow(roleUserMap);
+            Workflow workflow = workflowModel.createWorkflow(roleUserMap,roleGroupMap);
             docR.setWorkflow(workflow);
 
             for(Task task : workflow.getTasks()){
-                if(null == task.getWorker()){
+                if(!task.hasPotentialWorker()){
                     throw new NotAllowedException(locale,"NotAllowedException56");
                 }
             }

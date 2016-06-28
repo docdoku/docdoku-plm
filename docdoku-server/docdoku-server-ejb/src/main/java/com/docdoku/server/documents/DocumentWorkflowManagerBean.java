@@ -105,7 +105,7 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
         DocumentRevision docR = checkTaskAccess(user,task);
 
         int previousStep = workflow.getCurrentStep();
-        task.approve(pComment, docR.getLastIteration().getIteration(), pSignature);
+        task.approve(user, pComment, docR.getLastIteration().getIteration(), pSignature);
         int currentStep = workflow.getCurrentStep();
 
         if (previousStep != currentStep){
@@ -139,7 +139,7 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
         DocumentRevision docR = checkTaskAccess(user,task);
 
-        task.reject(pComment, docR.getLastIteration().getIteration(), pSignature);
+        task.reject(user, pComment, docR.getLastIteration().getIteration(), pSignature);
 
         // Relaunch Workflow ?
         Activity currentActivity = task.getActivity();
@@ -174,7 +174,7 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
         if(!task.isInProgress()){
             throw new NotAllowedException(locale,"NotAllowedException15");
         }
-        if (!task.getWorker().equals(user)) {
+        if (!task.isPotentialWorker(user)) {
             throw new NotAllowedException(locale, "NotAllowedException14");
         }
         if (!workflow.getRunningTasks().contains(task)) {

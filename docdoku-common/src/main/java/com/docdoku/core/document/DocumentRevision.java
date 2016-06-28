@@ -99,6 +99,7 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     @OneToOne(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private Workflow workflow;
 
+    @OrderBy("abortedDate")
     @OneToMany(orphanRemoval=true, cascade= CascadeType.ALL, fetch= FetchType.EAGER)
     @JoinTable(name="DOCUMENT_ABORTED_WORKFLOW",
         inverseJoinColumns={

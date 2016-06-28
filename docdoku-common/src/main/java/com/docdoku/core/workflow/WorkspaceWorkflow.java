@@ -17,32 +17,50 @@
  * You should have received a copy of the GNU Affero General Public License  
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
+
 package com.docdoku.core.workflow;
+
+import com.docdoku.core.common.Workspace;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Workflows held by workspace
+ * {@link Workflow}s are intended to be attached to a business object like
+ * a document or a part for instance.
+ * However sometimes we just need to start a workflow not linked to a particular document or part.
+ * This especially happens when we want to use a workflow to manage an object living in an external
+ * system.
+ * Hence this class wraps the necessary data for managing a running workflow virtually attached to
+ * an external object like the ordered list of aborted workflows. Moreover for convenience access,
+ * instances of this class have a string based id, unique in the context of a specific workspace.
+ *
+ *
+ * @version 2.5, 27/06/16
+ * @since   V2.5
  *
  * @author Morgan Guimard
  */
 @Table(name="WORKSPACE_WORKFLOW")
+@IdClass(WorkspaceWorkflowKey.class)
 @javax.persistence.Entity
 public class WorkspaceWorkflow implements Serializable {
 
+    @Column(name="ID", length=100)
     @Id
-    @Column(name = "WORKSPACE_ID")
-    private String workspaceId;
+    private String id="";
 
     @Id
-    private String id;
+    @ManyToOne(optional=false, fetch=FetchType.EAGER)
+    private Workspace workspace;
     
     @OneToOne(orphanRemoval=true, cascade= CascadeType.ALL, fetch=FetchType.EAGER)
     private Workflow workflow;    
-    
+
+
+    @OrderBy("abortedDate")
     @OneToMany(orphanRemoval=true, cascade= CascadeType.ALL, fetch= FetchType.EAGER)
     @JoinTable(name="WORKSPACE_ABORTED_WORKFLOW",
             inverseJoinColumns={
@@ -52,23 +70,28 @@ public class WorkspaceWorkflow implements Serializable {
                     @JoinColumn(name="WORKSPACE_WORKFLOW_ID", referencedColumnName="ID"),
                     @JoinColumn(name="WORKSPACE_WORKFLOW_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
             })
-    private List<Workflow> abortedWorkflows = new LinkedList<>();
+    private List<Workflow> abortedWorkflows = new ArrayList<>();
 
     public WorkspaceWorkflow(){
     }
 
-    public WorkspaceWorkflow(String workspaceId, String id, Workflow workflow) {
-        this.workspaceId = workspaceId;
+    public WorkspaceWorkflow(Workspace workspace, String id, Workflow workflow) {
+        setWorkspace(workspace);
         this.id = id;
         this.workflow = workflow;
     }
 
-    public String getWorkspaceId() {
-        return workspaceId;
+
+    public Workspace getWorkspace() {
+        return workspace;
     }
 
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
+    public void setWorkspace(Workspace workspace) {
+        this.workspace = workspace;
+    }
+
+    public String getWorkspaceId() {
+        return workspace == null ? "" : workspace.getId();
     }
 
     public String getId() {

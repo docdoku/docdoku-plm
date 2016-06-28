@@ -21,6 +21,7 @@
 package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.security.ACL;
 
@@ -136,11 +137,11 @@ public class WorkflowModel implements Serializable, Cloneable {
         this.acl = acl;
     }
 
-    public Workflow createWorkflow(Map<Role, User> roleUserMap) {
+    public Workflow createWorkflow(Map<Role,Collection<User>> roleUserMap, Map<Role,Collection<UserGroup>> roleGroupMap) {
         Workflow workflow = new Workflow(finalLifeCycleState);
         List<Activity> activities = workflow.getActivities();
         for(ActivityModel model:activityModels){
-            Activity activity = model.createActivity(roleUserMap);
+            Activity activity = model.createActivity(roleUserMap, roleGroupMap);
             activity.setWorkflow(workflow);
             if(model.getRelaunchActivity()!=null){
                 activity.setRelaunchActivity(activities.get(model.getRelaunchActivity().getStep()));
