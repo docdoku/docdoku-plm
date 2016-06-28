@@ -257,17 +257,17 @@ public class WorkspaceDAO {
             em.remove(p);
         }
         em.flush();
-/*
 
         // Delete folders
-        em.createQuery("DELETE FROM Folder f where f.parentFolder.completePath = :workspaceId OR f.parentFolder.completePath LIKE :pathToMatch")
-                .setParameter("workspaceId",workspaceId).setParameter("pathToMatch",pathToMatch).executeUpdate();
+        em.createQuery("UPDATE Folder f SET f.parentFolder = NULL WHERE f.parentFolder.completePath = :workspaceId OR f.parentFolder.completePath LIKE :pathToMatch")
+                .setParameter("workspaceId",workspaceId)
+                .setParameter("pathToMatch",pathToMatch)
+                .executeUpdate();
         em.createQuery("DELETE FROM Folder f where f.completePath = :workspaceId OR f.completePath LIKE :pathToMatch")
-                .setParameter("workspaceId",workspaceId).setParameter("pathToMatch",pathToMatch).executeUpdate();
-
-*/
-        FolderDAO folderDAO = new FolderDAO(em);
-        folderDAO.removeFolder(workspaceId);
+                .setParameter("workspaceId",workspaceId)
+                .setParameter("pathToMatch",pathToMatch)
+                .executeUpdate();
+        em.flush();
 
         List<WorkflowModel> workflowModels =
                 em.createQuery("SELECT w FROM WorkflowModel w WHERE w.workspace = :workspace", WorkflowModel.class)
