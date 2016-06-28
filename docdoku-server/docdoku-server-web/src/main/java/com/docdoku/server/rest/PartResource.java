@@ -226,7 +226,7 @@ public class PartResource {
 
     @PUT
     @Path("/iterations/{partIteration}/conversion")
-    public Response retryConversion(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int iteration) throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, PartIterationNotFoundException, AccessRightException {
+    public Response retryConversion(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int iteration) throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, PartIterationNotFoundException, AccessRightException, NotAllowedException {
 
         PartIterationKey partIPK = new PartIterationKey(pWorkspaceId, partNumber, partVersion, iteration);
         PartIteration partIteration = productService.getPartIteration(partIPK);

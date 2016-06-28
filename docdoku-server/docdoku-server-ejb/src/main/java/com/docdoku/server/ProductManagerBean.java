@@ -225,9 +225,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             Workflow workflow = workflowModel.createWorkflow(roleUserMap);
             newRevision.setWorkflow(workflow);
 
-            for(Task task : workflow.getTasks()){
-                if(null == task.getWorker()){
-                    throw new NotAllowedException(locale,"NotAllowedException56");
+            for (Task task : workflow.getTasks()) {
+                if (null == task.getWorker()) {
+                    throw new NotAllowedException(locale, "NotAllowedException56");
                 }
             }
 
@@ -313,7 +313,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         PartRevisionDAO partRDAO = new PartRevisionDAO(locale, em);
         PartRevision partR = partRDAO.loadPartR(pPartRPK);
-        if(partR.getACL() == null) {
+        if (partR.getACL() == null) {
             userManager.checkWorkspaceWriteAccess(pPartRPK.getWorkspaceId());
         }
 
@@ -374,17 +374,17 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(locale, em);
         List<ConfigurationItem> configurationItems = configurationItemDAO.findAllConfigurationItems(workspaceId);
 
-        for(ConfigurationItem configurationItem:configurationItems){
+        for (ConfigurationItem configurationItem : configurationItems) {
             List<PathToPathLink> pathToPathLinks = new ArrayList<>(configurationItem.getPathToPathLinks());
-            for(PathToPathLink pathToPathLink:pathToPathLinks){
+            for (PathToPathLink pathToPathLink : pathToPathLinks) {
                 try {
-                    decodePath(configurationItem.getKey(),pathToPathLink.getSourcePath());
-                    decodePath(configurationItem.getKey(),pathToPathLink.getTargetPath());
+                    decodePath(configurationItem.getKey(), pathToPathLink.getSourcePath());
+                    decodePath(configurationItem.getKey(), pathToPathLink.getTargetPath());
                 } catch (PartUsageLinkNotFoundException e) {
                     configurationItem.removePathToPathLink(pathToPathLink);
                 } catch (ConfigurationItemNotFoundException e) {
                     // Should not be thrown
-                    LOGGER.log(Level.SEVERE,null,e);
+                    LOGGER.log(Level.SEVERE, null, e);
                 }
             }
         }
@@ -399,7 +399,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         PartRevisionDAO partRDAO = new PartRevisionDAO(locale, em);
         PartRevision partR = partRDAO.loadPartR(pPartRPK);
-        if(partR.getACL() == null) {
+        if (partR.getACL() == null) {
             userManager.checkWorkspaceWriteAccess(pPartRPK.getWorkspaceId());
         }
         //Check access rights on partR
@@ -499,7 +499,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         PartRevisionDAO partRDAO = new PartRevisionDAO(locale, em);
         PartRevision partR = partRDAO.loadPartR(pPartRPK);
-        if(partR.getACL() == null) {
+        if (partR.getACL() == null) {
             userManager.checkWorkspaceWriteAccess(pPartRPK.getWorkspaceId());
         }
 
@@ -741,7 +741,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         PartRevisionDAO partRDAO = new PartRevisionDAO(locale, em);
         PartRevision partRev = partRDAO.loadPartR(pKey.getPartRevision());
-        if(partRev.getACL() == null) {
+        if (partRev.getACL() == null) {
             userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
         }
         //check access rights on partRevision
@@ -778,10 +778,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
 
             //should move that
-            if(pAttributes != null) {
+            if (pAttributes != null) {
                 List<InstanceAttribute> currentAttrs = partRev.getLastIteration().getInstanceAttributes();
-                boolean valid = AttributesConsistencyUtils.hasValidChange(pAttributes,partRev.isAttributesLocked(),currentAttrs);
-                if(!valid) {
+                boolean valid = AttributesConsistencyUtils.hasValidChange(pAttributes, partRev.isAttributesLocked(), currentAttrs);
+                if (!valid) {
                     throw new NotAllowedException(locale, "NotAllowedException59");
                 }
                 partRev.getLastIteration().setInstanceAttributes(pAttributes);
@@ -803,7 +803,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                         lovAttr.setLov(lovDAO.loadLOV(lovKey));
                     }
                 }
-                if(!AttributesConsistencyUtils.isTemplateAttributesValid(templateAttrs,false)) {
+                if (!AttributesConsistencyUtils.isTemplateAttributesValid(templateAttrs, false)) {
                     throw new NotAllowedException(locale, "NotAllowedException59");
                 }
                 partIte.setInstanceAttributeTemplates(pAttributeTemplates);
@@ -833,7 +833,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             partIte.setSource(source);
 
         } else {
-            throw new NotAllowedException(locale, "NotAllowedException25");
+            throw new NotAllowedException(locale, "NotAllowedException25", partIte.getPartNumber());
         }
 
         return partRev;
@@ -994,7 +994,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartIteration getPartIteration(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException {
+    public PartIteration getPartIteration(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException, NotAllowedException {
 
         PartRevisionKey partRevisionKey = pPartIPK.getPartRevision();
         User user = checkPartRevisionReadAccess(partRevisionKey);
@@ -1007,7 +1007,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartIteration lastIteration = partR.getLastIteration();
 
         if (isCheckoutByAnotherUser(user, partR) && lastIteration.getKey().equals(pPartIPK)) {
-            throw new AccessRightException("NotAllowedException25");
+            throw new NotAllowedException(locale, "NotAllowedException25", partR.getPartMaster().getNumber());
         }
 
         return partI;
@@ -1163,7 +1163,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     public Import createImport(String workspaceId, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
-        Import importToCreate = new Import(user,fileName);
+        Import importToCreate = new Import(user, fileName);
         ImportDAO importDAO = new ImportDAO(locale, em);
         importDAO.createImport(importToCreate);
         return importToCreate;
@@ -1185,9 +1185,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         Locale locale = new Locale(user.getLanguage());
         ImportDAO importDAO = new ImportDAO(locale, em);
         Import anImport = importDAO.findImport(user, id);
-        if(anImport.getUser().equals(user)){
+        if (anImport.getUser().equals(user)) {
             return anImport;
-        }else{
+        } else {
             throw new AccessRightException(locale, user);
         }
     }
@@ -1202,11 +1202,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         Import anImport = importDAO.findImport(user, id);
         anImport.setPending(false);
         anImport.setEndDate(new Date());
-        if(importResult != null) {
+        if (importResult != null) {
             anImport.setErrors(importResult.getErrors());
             anImport.setWarnings(importResult.getWarnings());
             anImport.setSucceed(importResult.isSucceed());
-        } else{
+        } else {
             anImport.setSucceed(false);
         }
     }
@@ -1218,9 +1218,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         Locale locale = new Locale(user.getLanguage());
         ImportDAO importDAO = new ImportDAO(locale, em);
         Import anImport = importDAO.findImport(user, id);
-        if(anImport.getUser().equals(user)){
+        if (anImport.getUser().equals(user)) {
             importDAO.deleteImport(anImport);
-        }else{
+        } else {
             throw new AccessRightException(locale, user);
         }
     }
@@ -1747,7 +1747,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         List<InstanceAttributeTemplate> attrs = new ArrayList<>();
         for (int i = 0; i < pAttributeTemplates.length; i++) {
-            if(attributesLocked) {
+            if (attributesLocked) {
                 pAttributeTemplates[i].setLocked(attributesLocked);
             }
             attrs.add(pAttributeTemplates[i]);
@@ -1757,7 +1757,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 lovAttr.setLov(lovDAO.loadLOV(lovKey));
             }
         }
-        if(!AttributesConsistencyUtils.isTemplateAttributesValid(attrs,attributesLocked)) {
+        if (!AttributesConsistencyUtils.isTemplateAttributesValid(attrs, attributesLocked)) {
             throw new NotAllowedException(locale, "NotAllowedException59");
         }
         template.setAttributeTemplates(attrs);
@@ -1771,7 +1771,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 lovAttr.setLov(lovDAO.loadLOV(lovKey));
             }
         }
-        if(!AttributesConsistencyUtils.isTemplateAttributesValid(instanceAttrs,false)) {
+        if (!AttributesConsistencyUtils.isTemplateAttributesValid(instanceAttrs, false)) {
             throw new NotAllowedException(locale, "NotAllowedException59");
         }
         template.setAttributeInstanceTemplates(instanceAttrs);
@@ -1807,7 +1807,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         List<InstanceAttributeTemplate> attrs = new ArrayList<>();
         for (int i = 0; i < pAttributeTemplates.length; i++) {
-            if(attributesLocked) {
+            if (attributesLocked) {
                 pAttributeTemplates[i].setLocked(attributesLocked);
             }
             attrs.add(pAttributeTemplates[i]);
@@ -1817,7 +1817,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 lovAttr.setLov(lovDAO.loadLOV(lovKey));
             }
         }
-        if(!AttributesConsistencyUtils.isTemplateAttributesValid(attrs,attributesLocked)) {
+        if (!AttributesConsistencyUtils.isTemplateAttributesValid(attrs, attributesLocked)) {
             throw new NotAllowedException(locale, "NotAllowedException59");
         }
         template.setAttributeTemplates(attrs);
@@ -1831,7 +1831,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 lovAttr.setLov(lovDAO.loadLOV(lovKey));
             }
         }
-        if(!AttributesConsistencyUtils.isTemplateAttributesValid(instanceAttrs,false)) {
+        if (!AttributesConsistencyUtils.isTemplateAttributesValid(instanceAttrs, false)) {
             throw new NotAllowedException(locale, "NotAllowedException59");
         }
         template.setAttributeInstanceTemplates(instanceAttrs);
@@ -1883,7 +1883,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         BinaryResource bin = template.getAttachedFile();
         if (bin != null && bin.getFullName().equals(fullName)) {
             binaryResource = bin;
-        } else if(bin != null && !bin.getFullName().equals(fullName)) {
+        } else if (bin != null && !bin.getFullName().equals(fullName)) {
             try {
                 dataManager.deleteData(bin);
             } catch (StorageException e) {
@@ -2283,9 +2283,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             Workflow workflow = workflowModel.createWorkflow(roleUserMap);
             partR.setWorkflow(workflow);
 
-            for(Task task : workflow.getTasks()){
-                if(null == task.getWorker()){
-                    throw new NotAllowedException(locale,"NotAllowedException56");
+            for (Task task : workflow.getTasks()) {
+                if (null == task.getWorker()) {
+                    throw new NotAllowedException(locale, "NotAllowedException56");
                 }
             }
 
@@ -2464,7 +2464,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         User user = userManager.checkWorkspaceReadAccess(workspace);
 
-        if(user.isAdministrator()){
+        if (user.isAdministrator()) {
             return true;
         }
 
@@ -2472,21 +2472,21 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         try {
             partRevision = getPartRevision(partRKey);
-        }catch(AccessRightException e){
+        } catch (AccessRightException e) {
             return false;
         }
 
-        if(partRevision.getACL() != null){
-            if(partRevision.getACL().hasWriteAccess(user)){
+        if (partRevision.getACL() != null) {
+            if (partRevision.getACL().hasWriteAccess(user)) {
                 return true;
             }
             return false;
         }
 
-        try{
+        try {
             userManager.checkWorkspaceWriteAccess(workspace);
             return true;
-        } catch(AccessRightException e){
+        } catch (AccessRightException e) {
             return false;
         }
 
@@ -2541,7 +2541,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         if (path == null) {
             ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(ciKey);
             psFilterVisitor.visit(ci.getDesignItem(), pDepth);
-        }else{
+        } else {
             psFilterVisitor.visit(path, pDepth);
         }
 
@@ -2578,7 +2578,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 int baselineId = 0;
                 try {
                     baselineId = Integer.parseInt(configSpecType);
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     LOGGER.log(Level.FINEST, null, e);
                 }
                 ProductBaseline pb = new ProductBaselineDAO(locale, em).loadBaseline(baselineId);
@@ -2690,7 +2690,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     int baselineId = 0;
                     try {
                         baselineId = Integer.parseInt(configSpecType);
-                    } catch(NumberFormatException e) {
+                    } catch (NumberFormatException e) {
                         LOGGER.log(Level.FINEST, null, e);
                     }
                     productBaseline = productBaselineDAO.loadBaseline(baselineId);
@@ -3230,7 +3230,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
                             DocumentIteration lastCheckedInIteration = documentLink.getTargetDocument().getLastCheckedInIteration();
 
-                            if(null != lastCheckedInIteration){
+                            if (null != lastCheckedInIteration) {
 
                                 String linkedDocumentFolderName = "links/" + lastCheckedInIteration.toString();
 
@@ -3347,7 +3347,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
                 String pathAsString = Tools.getPathAsString(path);
                 row.setPath(pathAsString);
-                int depth = parts.size() -1;
+                int depth = parts.size() - 1;
                 PartMaster part = parts.get(parts.size() - 1);
                 List<PartIteration> partIterations = filter.filter(part);
                 if (!partIterations.isEmpty()) {
@@ -3357,20 +3357,20 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     row.setContext(queryContext);
                     row.setAmount(totalAmount);
 
-                    for(PathToPathLink pathToPathLink:pathToPathLinks){
-                        try{
-                            if(pathToPathLink.getSourcePath().equals(pathAsString)){
+                    for (PathToPathLink pathToPathLink : pathToPathLinks) {
+                        try {
+                            if (pathToPathLink.getSourcePath().equals(pathAsString)) {
                                 row.addSource(pathToPathLink.getType(), decodePath(ciKey, pathToPathLink.getTargetPath()));
                             }
-                            if(pathToPathLink.getTargetPath().equals(pathAsString)){
+                            if (pathToPathLink.getTargetPath().equals(pathAsString)) {
                                 row.addTarget(pathToPathLink.getType(), decodePath(ciKey, pathToPathLink.getTargetPath()));
                             }
-                        } catch (WorkspaceNotFoundException |UserNotFoundException | ConfigurationItemNotFoundException | PartUsageLinkNotFoundException | UserNotActiveException e) {
-                            LOGGER.log(Level.SEVERE,null,e);
+                        } catch (WorkspaceNotFoundException | UserNotFoundException | ConfigurationItemNotFoundException | PartUsageLinkNotFoundException | UserNotActiveException e) {
+                            LOGGER.log(Level.SEVERE, null, e);
                         }
                     }
 
-                    if(finalProductInstanceIteration != null) {
+                    if (finalProductInstanceIteration != null) {
                         PathDataIteration pathDataIteration = pathDataIterationDAO.getLastPathDataIteration(pathAsString, finalProductInstanceIteration);
 
                         if (null != pathDataIteration) {
@@ -3467,7 +3467,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new NotAllowedException(locale, "NotAllowedException54");
         }
 
-        if(pathFrom != null && pathTo != null && pathFrom.equals(pathTo)){
+        if (pathFrom != null && pathTo != null && pathFrom.equals(pathTo)) {
             throw new NotAllowedException(locale, "NotAllowedException57");
         }
 
@@ -3479,7 +3479,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartLink sourceLink = sourcePath.get(sourcePath.size() - 1);
         PartLink targetLink = targetPath.get(targetPath.size() - 1);
 
-        if(sourceLink.getSubstitutes() != null && sourceLink.getSubstitutes().contains(targetLink) || targetLink.getSubstitutes() != null && targetLink.getSubstitutes().contains(sourceLink)){
+        if (sourceLink.getSubstitutes() != null && sourceLink.getSubstitutes().contains(targetLink) || targetLink.getSubstitutes() != null && targetLink.getSubstitutes().contains(sourceLink)) {
             throw new NotAllowedException(locale, "NotAllowedException58");
         }
 
@@ -3514,7 +3514,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
         PathToPathLink pathToPathLink = pathToPathLinkDAO.loadPathToPathLink(pathToPathLinkId);
 
-        if(!ci.getPathToPathLinks().contains(pathToPathLink)){
+        if (!ci.getPathToPathLinks().contains(pathToPathLink)) {
             throw new NotAllowedException(locale, "NotAllowedException60");
         }
 
@@ -3580,10 +3580,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
 
-        PartIterationDAO partIterationDAO = new PartIterationDAO(locale,em);
+        PartIterationDAO partIterationDAO = new PartIterationDAO(locale, em);
         PartIteration partIteration = partIterationDAO.loadPartI(partIterationKey);
 
-        if(null == configSpec){
+        if (null == configSpec) {
             throw new IllegalArgumentException("Config spec cannot be null");
         }
 
@@ -3591,7 +3591,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         if (configSpec.startsWith("pi-")) {
             String serialNumber = configSpec.substring(3);
-            ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale,em);
+            ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
             ProductInstanceMaster productInstanceMaster = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
             baseline = productInstanceMaster.getLastIteration().getBasedOn();
         } else {
@@ -3604,12 +3604,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         Map<BaselinedDocumentKey, BaselinedDocument> baselinedDocuments = documentCollection.getBaselinedDocuments();
         List<DocumentIterationLink> documentIterationLinks = new ArrayList<>();
 
-        for(Map.Entry<BaselinedDocumentKey, BaselinedDocument> map : baselinedDocuments.entrySet()){
+        for (Map.Entry<BaselinedDocumentKey, BaselinedDocument> map : baselinedDocuments.entrySet()) {
             BaselinedDocument baselinedDocument = map.getValue();
             DocumentIteration targetDocument = baselinedDocument.getTargetDocument();
-            for(DocumentLink documentLink : partIteration.getLinkedDocuments() ){
-                if(documentLink.getTargetDocument().getKey().equals(targetDocument.getDocumentRevisionKey())){
-                    documentIterationLinks.add(new DocumentIterationLink(documentLink,targetDocument));
+            for (DocumentLink documentLink : partIteration.getLinkedDocuments()) {
+                if (documentLink.getTargetDocument().getKey().equals(targetDocument.getDocumentRevisionKey())) {
+                    documentIterationLinks.add(new DocumentIterationLink(documentLink, targetDocument));
                 }
             }
         }
@@ -3626,7 +3626,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             binaryResourceDAO = new BinaryResourceDAO(em);
         } else {
             User user = userManager.checkWorkspaceReadAccess(binaryResource.getWorkspaceId());
-            binaryResourceDAO = new BinaryResourceDAO(new Locale(user.getLanguage()),em);
+            binaryResourceDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         }
         return binaryResourceDAO.getPartOwner(binaryResource);
     }
