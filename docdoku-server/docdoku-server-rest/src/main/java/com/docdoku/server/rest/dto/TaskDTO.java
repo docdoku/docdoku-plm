@@ -22,7 +22,9 @@ package com.docdoku.server.rest.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @XmlRootElement
 public class TaskDTO implements Serializable {
@@ -33,6 +35,10 @@ public class TaskDTO implements Serializable {
     private int targetIteration;
     private Date closureDate;
     private String signature;
+
+    private List<UserDTO> assignedUsers = new ArrayList<>();
+    private List<UserGroupDTO> assignedGroups = new ArrayList<>();
+
     private UserDTO worker;
     private Status status;
 
@@ -167,6 +173,22 @@ public class TaskDTO implements Serializable {
 
     public void setHolderVersion(String holderVersion) {
         this.holderVersion = holderVersion;
+    }
+
+    public List<UserDTO> getAssignedUsers() {
+        return assignedUsers;
+    }
+
+    public void setAssignedUsers(List<UserDTO> assignedUsers) {
+        this.assignedUsers = assignedUsers;
+    }
+
+    public List<UserGroupDTO> getAssignedGroups() {
+        return assignedGroups;
+    }
+
+    public void setAssignedGroups(List<UserGroupDTO> assignedGroups) {
+        this.assignedGroups = assignedGroups;
     }
 
     public enum Status {

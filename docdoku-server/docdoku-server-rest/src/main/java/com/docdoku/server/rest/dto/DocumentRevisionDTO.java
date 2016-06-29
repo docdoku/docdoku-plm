@@ -56,6 +56,7 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     private boolean stateSubscription;
     private List<DocumentIterationDTO> documentIterations;
     private WorkflowDTO workflow;
+    private Integer workflowId;
     private String path;
     private String routePath;
     private String lifeCycleState;
@@ -81,6 +82,14 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
         this.documentMasterId = id;
         this.title = title;
         this.version = version;
+    }
+
+    public Integer getWorkflowId() {
+        return workflowId;
+    }
+
+    public void setWorkflowId(Integer workflowId) {
+        this.workflowId = workflowId;
     }
 
     public UserDTO getAuthor() {

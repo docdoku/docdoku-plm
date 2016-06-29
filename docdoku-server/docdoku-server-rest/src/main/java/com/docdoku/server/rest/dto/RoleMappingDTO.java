@@ -21,6 +21,8 @@ package com.docdoku.server.rest.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Morgan Guimard
@@ -30,8 +32,8 @@ import java.io.Serializable;
 public class RoleMappingDTO implements Serializable {
 
     private String roleName;
-    private String[] userLogins;
-    private String[] groupIds;
+    private List<String> userLogins = new ArrayList<>();
+    private List<String> groupIds = new ArrayList<>();
 
     public RoleMappingDTO() {
     }
@@ -48,19 +50,19 @@ public class RoleMappingDTO implements Serializable {
         this.roleName = roleName;
     }
 
-    public String[] getGroupIds() {
-        return groupIds;
-    }
-
-    public void setGroupIds(String[] groupIds) {
-        this.groupIds = groupIds;
-    }
-
-    public String[] getUserLogins() {
+    public List<String> getUserLogins() {
         return userLogins;
     }
 
-    public void setUserLogins(String[] userLogins) {
+    public void setUserLogins(List<String> userLogins) {
         this.userLogins = userLogins;
+    }
+
+    public List<String> getGroupIds() {
+        return groupIds;
+    }
+
+    public void setGroupIds(List<String> groupIds) {
+        this.groupIds = groupIds;
     }
 }

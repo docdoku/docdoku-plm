@@ -54,7 +54,6 @@ import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -167,8 +166,8 @@ public class FolderResource {
 
         if (roleMappingDTOs != null) {
             for (RoleMappingDTO roleMappingDTO : roleMappingDTOs) {
-                userRoleMapping.put(roleMappingDTO.getRoleName(), Arrays.asList(roleMappingDTO.getUserLogins()));
-                groupRoleMapping.put(roleMappingDTO.getRoleName(), Arrays.asList(roleMappingDTO.getGroupIds()));
+                userRoleMapping.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogins());
+                groupRoleMapping.put(roleMappingDTO.getRoleName(), roleMappingDTO.getGroupIds());
             }
         }
         DocumentRevision createdDocRs = documentService.createDocumentMaster(decodedCompletePath, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries, userRoleMapping, groupRoleMapping);

@@ -107,8 +107,8 @@ public class WorkspaceWorkflowResource {
 
         if (roleMappingDTOs != null) {
             for (RoleMappingDTO roleMappingDTO : roleMappingDTOs) {
-                userRoleMapping.put(roleMappingDTO.getRoleName(), Arrays.asList(roleMappingDTO.getUserLogins()));
-                groupRoleMapping.put(roleMappingDTO.getRoleName(), Arrays.asList(roleMappingDTO.getGroupIds()));
+                userRoleMapping.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogins());
+                groupRoleMapping.put(roleMappingDTO.getRoleName(), roleMappingDTO.getGroupIds());
             }
         }
 

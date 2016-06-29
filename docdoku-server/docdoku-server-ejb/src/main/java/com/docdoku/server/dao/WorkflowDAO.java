@@ -168,7 +168,7 @@ public class WorkflowDAO {
     }
 
     public WorkspaceWorkflow getWorkspaceWorkflowTarget(String workspaceId, Workflow workflow) {
-        TypedQuery<WorkspaceWorkflow> query = em.createQuery("SELECT w FROM WorkspaceWorkflow w WHERE w.workflow = :workflow AND w.workspaceId = :workspaceId", WorkspaceWorkflow.class);
+        TypedQuery<WorkspaceWorkflow> query = em.createQuery("SELECT w FROM WorkspaceWorkflow w WHERE w.workflow = :workflow AND w.workspace.id = :workspaceId", WorkspaceWorkflow.class);
         try{
             return query.setParameter("workflow", workflow)
                 .setParameter("workspaceId", workspaceId)

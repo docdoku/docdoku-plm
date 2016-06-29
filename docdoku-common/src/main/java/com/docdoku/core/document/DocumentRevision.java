@@ -232,6 +232,11 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     public void setWorkflow(Workflow pWorkflow) {
         workflow = pWorkflow;
     }
+
+    public Integer getWorkflowId(){
+        return hasWorkflow() ? workflow.getId() : null;
+    }
+
     public boolean hasWorkflow() {
         return workflow != null;
     }
