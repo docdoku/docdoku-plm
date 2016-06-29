@@ -11,14 +11,14 @@ casper.test.begin('Change order creation tests suite', 3, function changeOrderCr
      * */
 
     casper.then(function () {
-        this.open(urls.changeManagement);
+        return this.open(urls.changeManagement);
     });
 
     /**
      * Open change orders nav
      */
     casper.then(function waitForChangeOrdersNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/orders"]', function clickOnChangeOrderNavLink() {
+        return this.waitForSelector('a[href="#' + workspace + '/orders"]', function clickOnChangeOrderNavLink() {
             this.click('a[href="#' + workspace + '/orders"]');
         }, function fail() {
             this.capture('screenshot/orderCreation/waitForChangeOrdersNavLink-error.png');
@@ -30,7 +30,7 @@ casper.test.begin('Change order creation tests suite', 3, function changeOrderCr
      * Open order creation modal
      */
     casper.then(function openNewChangeOrderModal() {
-        this.waitForSelector('.actions .new-order',
+        return this.waitForSelector('.actions .new-order',
             function clickOnChangeOrderCreationLink() {
                 this.click('.actions .new-order');
             }, function fail() {
@@ -45,7 +45,7 @@ casper.test.begin('Change order creation tests suite', 3, function changeOrderCr
      * Try to create an order without a name
      */
     casper.then(function waitForChangeOrderCreationModal() {
-        this.waitForSelector('#order_creation_modal .modal-footer .btn-primary', function createOrderWithoutName() {
+        return this.waitForSelector('#order_creation_modal .modal-footer .btn-primary', function createOrderWithoutName() {
             this.click('#order_creation_modal .modal-footer .btn-primary');
             this.test.assertExists('#order_creation_modal #inputOrderName:invalid', 'Should not create an order without a name');
         }, function fail() {
@@ -58,7 +58,7 @@ casper.test.begin('Change order creation tests suite', 3, function changeOrderCr
      * Fill the form and create the order
      */
     casper.then(function fillAndSubmitChangeOrderCreationModal() {
-        this.waitForSelector('#order_creation_modal input#inputOrderName', function fillForm() {
+        return this.waitForSelector('#order_creation_modal input#inputOrderName', function fillForm() {
             this.sendKeys('#order_creation_modal input#inputOrderName', changeItems.changeOrder1.number, {reset: true});
             this.click('#order_creation_modal .modal-footer .btn-primary');
         }, function fail() {
@@ -71,7 +71,7 @@ casper.test.begin('Change order creation tests suite', 3, function changeOrderCr
      * Wait for modal to close
      */
     casper.then(function waitForChangeOrderCreationModalToBeClosed() {
-        this.waitWhileSelector('#order_creation_modal', function modalClosed() {
+        return this.waitWhileSelector('#order_creation_modal', function modalClosed() {
             this.test.assert(true, 'Modal is closed');
         }, function fail() {
             this.capture('screenshot/orderCreation/checkForChangeOrderCreation-error.png');
@@ -83,7 +83,7 @@ casper.test.begin('Change order creation tests suite', 3, function changeOrderCr
      * Verify the order is in the list
      */
     casper.then(function checkOrderIsCreated() {
-        this.waitForSelector('#order_table tr td.reference', function modalClosed() {
+        return this.waitForSelector('#order_table tr td.reference', function modalClosed() {
             this.test.assertSelectorHasText('#order_table tr td.reference', changeItems.changeOrder1.number);
         }, function fail() {
             this.capture('screenshot/orderCreation/checkForChangeOrderCreation-error.png');
@@ -92,6 +92,6 @@ casper.test.begin('Change order creation tests suite', 3, function changeOrderCr
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

@@ -11,7 +11,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
      * */
 
     casper.then(function () {
-        this.open(urls.documentManagement);
+        return this.open(urls.documentManagement);
     });
 
     /**
@@ -19,7 +19,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
      */
 
     casper.then(function waitForFolderNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
+        return this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
             this.click('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]');
         }, function fail() {
             this.capture('screenshot/documentCreationWithWorkflow/waitForFolderNavLink-error.png');
@@ -40,7 +40,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
      */
 
     casper.then(function waitForDocumentCreationModal() {
-        this.waitForSelector('.modal.document-modal.new-document', function () {
+        return this.waitForSelector('.modal.document-modal.new-document', function () {
             this.sendKeys('.modal.document-modal.new-document input.reference', documents.documentWithWorkflow.number);
             this.click('.modal.document-modal.new-document .nav.nav-tabs > li:nth-child(2) > a');
         }, function fail() {
@@ -54,7 +54,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
      */
 
     casper.then(function waitForWorkflowSelector() {
-        this.waitForSelector('.modal.document-modal.new-document .workflow-selector option:nth-child(2)', function () {
+        return this.waitForSelector('.modal.document-modal.new-document .workflow-selector option:nth-child(2)', function () {
             this.evaluate(function () {
                 document.querySelector('.modal.document-modal.new-document .workflow-selector').selectedIndex = 1;
                 $('.modal.document-modal.new-document .workflow-selector').change();
@@ -71,7 +71,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
      */
 
     casper.then(function waitForRoleItem() {
-        this.waitForSelector('.modal.document-modal.new-document .role-mapping .roles-item', function () {
+        return this.waitForSelector('.modal.document-modal.new-document .role-mapping .roles-item', function () {
             this.test.assertElementCount('.modal.document-modal.new-document .role-mapping .roles-item', 1, 'There should be one role item in role mapping list');
         }, function fail() {
             this.capture('screenshot/documentCreationWithWorkflow/waitForRoleItem-error.png');
@@ -102,7 +102,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
      */
 
     casper.then(function checkForDocumentCreation() {
-        this.waitForSelector('#document-management-content table.dataTable tr[title="' + documents.documentWithWorkflow.number + '"] td.reference', function documentHasBeenCreated() {
+        return this.waitForSelector('#document-management-content table.dataTable tr[title="' + documents.documentWithWorkflow.number + '"] td.reference', function documentHasBeenCreated() {
             this.test.assertSelectorHasText('#document-management-content table.dataTable tr[title="' + documents.documentWithWorkflow.number + '"] td.reference a', documents.documentWithWorkflow.number);
             this.test.assertSelectorHasText('#document-management-content table.dataTable tr[title="' + documents.documentWithWorkflow.number + '"] td.life-cycle-state', workflows.workflow1.activities.activity1.name);
         }, function fail() {
@@ -117,7 +117,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
     casper.then(function openCreatedDocument() {
         this.click('#document-management-content table.dataTable tr[title="' + documents.documentWithWorkflow.number + '"] td.reference');
         var modalTab = '.document-modal .tabs li a[href="#tab-iteration-files"]';
-        this.waitForSelector(modalTab, function modalOpened() {
+        return this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
             this.capture('screenshot/documentCreationWithWorkflow/openCreatedDocument-error.png');
@@ -130,7 +130,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
      * Wait the modal tab
      */
     casper.then(function waitForDocumentModalTab() {
-        this.waitForSelector('.document-modal .upload-btn', function tabSelected() {
+        return this.waitForSelector('.document-modal .upload-btn', function tabSelected() {
             this.test.assert(true, 'File upload tab opened');
         }, function fail() {
             this.capture('screenshot/documentCreationWithWorkflow/waitForDocumentModalTab-error.png');
@@ -147,7 +147,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
             'upload': 'res/document-upload.txt'
         }, false);
 
-        casper.waitFor(function check() {
+        return this.waitFor(function check() {
             return this.evaluate(function () {
                 return document.querySelectorAll('.document-modal .attachedFiles ul.file-list li').length === 1;
             });
@@ -165,7 +165,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
      */
     casper.then(function openIterationTab() {
         var modalTab = '.document-modal .tabs li a[href="#tab-iteration-iteration"]';
-        this.waitForSelector(modalTab, function tabOpened() {
+        return this.waitForSelector(modalTab, function tabOpened() {
             this.click(modalTab);
         }, function fail() {
             this.capture('screenshot/documentCreationWithWorkflow/openIterationTab-error.png');
@@ -178,7 +178,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
      */
     casper.then(function checkinDocument() {
         var checkinButton = '#tab-iteration-iteration .action-checkin';
-        this.waitForSelector(checkinButton, function buttonFound() {
+        return this.waitForSelector(checkinButton, function buttonFound() {
             this.click(checkinButton);
         }, function fail() {
             this.capture('screenshot/documentCreationWithWorkflow/checkinDocument-error.png');
@@ -191,7 +191,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
      */
     casper.then(function documentCheckedIn() {
         var checkoutButton = '#tab-iteration-iteration .action-checkout';
-        this.waitForSelector(checkoutButton, function buttonFound() {
+        return this.waitForSelector(checkoutButton, function buttonFound() {
             this.test.assert(true, 'File has been checked in');
         }, function fail() {
             this.capture('screenshot/documentCreationWithWorkflow/documentCheckedIn-error.png');
@@ -204,7 +204,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
      */
     casper.then(function openFileTab() {
         var modalTab = '.document-modal .tabs li a[href="#tab-iteration-files"]';
-        this.waitForSelector(modalTab, function modalOpened() {
+        return this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
             this.capture('screenshot/documentCreationWithWorkflow/openFileTab-error.png');
@@ -217,7 +217,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
      */
     casper.then(function downloadDocumentFile() {
         var modalTab = '.document-modal .tabs li a[href="#tab-iteration-files"]';
-        this.waitForSelector(modalTab, function modalOpened() {
+        return this.waitForSelector(modalTab, function modalOpened() {
             var fileLink = '#iteration-files > div > ul > li > a[href="/api/files/'+workspace+'/documents/'+documents.documentWithWorkflow.number +'/A/1/document-upload.txt"]';
             this.test.assertSelectorExist(fileLink, 'A link should be present to download the document');
             this.click(fileLink);
@@ -232,7 +232,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
      */
     casper.then(function openLifecycleTab() {
         var modalTab = '.document-modal .tabs li a[href="#tab-iteration-lifecycle"]';
-        this.waitForSelector(modalTab, function modalOpened() {
+        return this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
             this.capture('screenshot/documentCreationWithWorkflow/openLifecycleTab-error.png');
@@ -245,7 +245,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
      */
     casper.then(function approveTask() {
         var activityElement = '#lifecycle-activities-wrapper #lifecycle-activities .activity.in_progress';
-        this.waitForSelector(activityElement, function modalOpened() {
+        return this.waitForSelector(activityElement, function modalOpened() {
             this.test.assertSelectorExist(activityElement, 'An activity should be present and marked in_progress');
             this.click(activityElement+' .approve-task');
             this.click(activityElement+' .closure-comment-form > div.task-buttons > input');
@@ -260,7 +260,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
      */
     casper.then(function waitTaskBeingCompleted() {
         var activityElement = '#lifecycle-activities-wrapper #lifecycle-activities .activity.complete';
-        this.waitForSelector(activityElement, function taskCompleted() {
+        return this.waitForSelector(activityElement, function taskCompleted() {
             this.test.assert(true, 'An activity should be present and marked as completed');
         }, function fail() {
             this.capture('screenshot/documentCreationWithWorkflow/waitTaskBeingCompleted-error.png');
@@ -274,7 +274,7 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
     casper.then(function checkoutDocument() {
         this.click('.document-modal .tabs li a[href="#tab-iteration-iteration"]');
         var checkoutButton = '#tab-iteration-iteration .action-checkout';
-        this.waitForSelector(checkoutButton, function buttonFound() {
+        return this.waitForSelector(checkoutButton, function buttonFound() {
             this.click(checkoutButton);
         }, function fail() {
             this.capture('screenshot/documentCreationWithWorkflow/checkoutDocument-error.png');
@@ -283,6 +283,6 @@ casper.test.begin('Document creation with workflow tests suite', 9, function doc
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

@@ -11,14 +11,14 @@ casper.test.begin('Milestone deletion tests suite', 2, function milestoneDeletio
      * */
 
     casper.then(function () {
-        this.open(urls.changeManagement);
+        return this.open(urls.changeManagement);
     });
 
     /**
      * Open milestones nav
      */
     casper.then(function waitForMilestonesNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/milestones"]', function clickOnMilestoneNavLink() {
+        return this.waitForSelector('a[href="#' + workspace + '/milestones"]', function clickOnMilestoneNavLink() {
             this.click('a[href="#' + workspace + '/milestones"]');
         }, function fail() {
             this.capture('screenshot/milestoneDeletion/waitForMilestonesNavLink-error.png');
@@ -30,7 +30,7 @@ casper.test.begin('Milestone deletion tests suite', 2, function milestoneDeletio
      * Click the 'select all' checkbox
      */
     casper.then(function waitForSelectAllCheckbox() {
-        this.waitForSelector('#milestone_table thead tr:first-child  th:first-child input', function clickOnSelectAllCheckbox() {
+        return this.waitForSelector('#milestone_table thead tr:first-child  th:first-child input', function clickOnSelectAllCheckbox() {
             this.click('#milestone_table thead tr:first-child  th:first-child input');
         }, function fail() {
             this.capture('screenshot/milestoneDeletion/waitForSelectAllCheckbox-error.png');
@@ -42,7 +42,7 @@ casper.test.begin('Milestone deletion tests suite', 2, function milestoneDeletio
      * Wait for the delete button to appear
      */
     casper.then(function waitForDeleteButton() {
-        this.waitForSelector('.actions .delete', function clickOnDeleteButton() {
+        return this.waitForSelector('.actions .delete', function clickOnDeleteButton() {
             this.click('.actions .delete');
             this.test.assert(true, 'Delete button available');
         }, function fail() {
@@ -55,7 +55,7 @@ casper.test.begin('Milestone deletion tests suite', 2, function milestoneDeletio
      * Wait for the confirmation modal
      */
     casper.then(function waitForConfirmationModal() {
-        this.waitForSelector('.bootbox', function confirmDeletion() {
+        return this.waitForSelector('.bootbox', function confirmDeletion() {
             this.click('.bootbox .modal-footer .btn-primary');
         }, function fail() {
             this.capture('screenshot/milestoneDeletion/waitForConfirmationModal-error.png');
@@ -67,7 +67,7 @@ casper.test.begin('Milestone deletion tests suite', 2, function milestoneDeletio
      * Assert that there's no more entries in the table
      **/
     casper.then(function waitForTableToBeEmpty() {
-        this.waitWhileSelector('#milestone_table tbody tr:first-child  td:first-child input', function onBaselineTableEmpty() {
+        return this.waitWhileSelector('#milestone_table tbody tr:first-child  td:first-child input', function onBaselineTableEmpty() {
             this.test.assert(true, 'No more issues in the list');
         }, function fail() {
             this.capture('screenshot/milestoneDeletion/waitForTableToBeEmpty-error.png');
@@ -77,6 +77,6 @@ casper.test.begin('Milestone deletion tests suite', 2, function milestoneDeletio
 
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

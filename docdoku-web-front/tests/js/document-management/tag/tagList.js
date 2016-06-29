@@ -11,7 +11,7 @@ casper.test.begin('Document tag list tests suite', 1, function documentTagListTe
      * */
 
     casper.then(function () {
-        this.open(urls.documentManagement);
+        return this.open(urls.documentManagement);
     });
 
     /**
@@ -19,7 +19,7 @@ casper.test.begin('Document tag list tests suite', 1, function documentTagListTe
      */
 
     casper.then(function waitForTagNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/tags"]', function () {
+        return this.waitForSelector('a[href="#' + workspace + '/tags"]', function () {
             this.click('a[href="#' + workspace + '/tags"]');
         }, function fail() {
             this.capture('screenshot/tagList/waitForFolderNavLink-error.png');
@@ -32,7 +32,7 @@ casper.test.begin('Document tag list tests suite', 1, function documentTagListTe
      */
 
     casper.then(function countTags() {
-        this.waitForSelector('#tag-nav > ul > li.tag', function () {
+        return this.waitForSelector('#tag-nav > ul > li.tag', function () {
             this.test.assertElementCount('#tag-nav > ul > li.tag', 2, 'Should have 2 tags created');
         }, function fail() {
             this.capture('screenshot/tagList/countTags-error.png');
@@ -42,6 +42,6 @@ casper.test.begin('Document tag list tests suite', 1, function documentTagListTe
 
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

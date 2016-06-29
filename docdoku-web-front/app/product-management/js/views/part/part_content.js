@@ -277,10 +277,8 @@ define([
                             part.checkin().success(callback);
                         });
 
-                    }, function(err) {
-                        if (!err) {
-                            _this.allCheckinDone();
-                        }
+                    }, function() {
+                        _this.allCheckinDone();
                     });
 
                 });
@@ -300,10 +298,8 @@ define([
                         part.checkin().success(callback);
                     });
 
-                }, function(err) {
-                    if (!err) {
-                        _this.allCheckinDone();
-                    }
+                }, function() {
+                    _this.allCheckinDone();
                 });
             }
         },

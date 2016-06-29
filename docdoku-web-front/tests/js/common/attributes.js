@@ -8,7 +8,7 @@ casper.test.begin('Document creation with attributes', 2, function documentCreat
      * Open document management URL
      * */
     casper.then(function () {
-        this.open(urls.documentManagement);
+        return this.open(urls.documentManagement);
     });
 
     /**
@@ -16,7 +16,7 @@ casper.test.begin('Document creation with attributes', 2, function documentCreat
      */
     casper.then(function () {
         var newDocumentButtonSelector = '#document-management-content .new-document';
-        this.waitForSelector(newDocumentButtonSelector, function () {
+        return this.waitForSelector(newDocumentButtonSelector, function () {
             this.click(newDocumentButtonSelector);
         }, function () {
             this.capture('screenshot/attributes/clickOnNewDocument-error.png');
@@ -27,7 +27,7 @@ casper.test.begin('Document creation with attributes', 2, function documentCreat
 
     casper.then(function openModal() {
         var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
-        this.waitForSelector(attributesTabSelector, function () {
+        return this.waitForSelector(attributesTabSelector, function () {
             this.click(attributesTabSelector);
 
         }, function () {
@@ -39,7 +39,7 @@ casper.test.begin('Document creation with attributes', 2, function documentCreat
      * Add Attribute
      */
     casper.then(function () {
-        this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
+        return this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
             this.click('.btn.add');
         }, function () {
             this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
@@ -48,7 +48,7 @@ casper.test.begin('Document creation with attributes', 2, function documentCreat
     });
 
     casper.then(function () {
-        this.waitForSelector('.list-item.well', function () {
+        return this.waitForSelector('.list-item.well', function () {
             this.test.assertElementCount('.list-item.well', 1);
             this.click('.btn.btn-default.cancel');
         }, function () {
@@ -64,14 +64,14 @@ casper.test.begin('Document creation with attributes', 2, function documentCreat
 
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
      * Go to part nav
      */
     casper.then(function waitForPartNavLink() {
-        this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
+        return this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/partCreation/waitForPartNavLink-error.png');
@@ -83,7 +83,7 @@ casper.test.begin('Document creation with attributes', 2, function documentCreat
      * Open the part creation modal
      */
     casper.then(function waitForNewPartButton() {
-        this.waitForSelector('.actions .new-part', function clickNewPartButton() {
+        return this.waitForSelector('.actions .new-part', function clickNewPartButton() {
             this.click('.actions .new-part');
         }, function fail() {
             this.capture('screenshot/partCreation/waitForNewPartButton-error.png');
@@ -93,7 +93,7 @@ casper.test.begin('Document creation with attributes', 2, function documentCreat
 
     casper.then(function openModal() {
         var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
-        this.waitForSelector(attributesTabSelector, function () {
+        return this.waitForSelector(attributesTabSelector, function () {
             this.click(attributesTabSelector);
 
         }, function () {
@@ -105,7 +105,7 @@ casper.test.begin('Document creation with attributes', 2, function documentCreat
      * Add Attribute
      */
     casper.then(function () {
-        this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
+        return this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
             this.click('.btn.add');
         }, function () {
             this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
@@ -115,7 +115,7 @@ casper.test.begin('Document creation with attributes', 2, function documentCreat
 
 
     casper.then(function () {
-        this.waitForSelector('.list-item.well', function () {
+        return this.waitForSelector('.list-item.well', function () {
             this.test.assertElementCount('.list-item.well', 1);
             this.click('.btn[data-dismiss="modal"]');
         }, function () {
@@ -126,6 +126,6 @@ casper.test.begin('Document creation with attributes', 2, function documentCreat
 
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

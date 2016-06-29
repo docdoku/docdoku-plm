@@ -11,14 +11,14 @@ casper.test.begin('Change issue creation tests suite', 3, function changeIssueCr
      * */
 
     casper.then(function () {
-        this.open(urls.changeManagement);
+        return this.open(urls.changeManagement);
     });
 
     /**
      * Open change issues nav
      */
     casper.then(function waitForChangeIssuesNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/issues"]', function clickOnChangeIssueNavLink() {
+        return this.waitForSelector('a[href="#' + workspace + '/issues"]', function clickOnChangeIssueNavLink() {
             this.click('a[href="#' + workspace + '/issues"]');
         }, function fail() {
             this.capture('screenshot/issueCreation/waitForChangeIssuesNavLink-error.png');
@@ -30,7 +30,7 @@ casper.test.begin('Change issue creation tests suite', 3, function changeIssueCr
      * Open issue creation modal
      */
     casper.then(function openNewChangeIssueModal() {
-        this.waitForSelector('.actions .new-issue',
+        return this.waitForSelector('.actions .new-issue',
             function clickOnChangeIssueCreationLink() {
                 this.click('.actions .new-issue');
             }, function fail() {
@@ -44,7 +44,7 @@ casper.test.begin('Change issue creation tests suite', 3, function changeIssueCr
      * Try to create an issue without a name
      */
     casper.then(function waitForChangeIssueCreationModal() {
-        this.waitForSelector('#issue_creation_modal .modal-footer .btn-primary', function createIssueWithoutName() {
+        return this.waitForSelector('#issue_creation_modal .modal-footer .btn-primary', function createIssueWithoutName() {
             this.click('#issue_creation_modal .modal-footer .btn-primary');
             this.test.assertExists('#issue_creation_modal #inputIssueName:invalid', 'Should not create an issue without a name');
         }, function fail() {
@@ -70,7 +70,7 @@ casper.test.begin('Change issue creation tests suite', 3, function changeIssueCr
      * Wait for modal to close
      */
     casper.then(function waitForChangeIssueCreationModalToBeClosed() {
-        this.waitWhileSelector('#issue_creation_modal', function modalClosed() {
+        return this.waitWhileSelector('#issue_creation_modal', function modalClosed() {
             this.test.assert(true, 'Modal is closed');
         }, function fail() {
             this.capture('screenshot/issueCreation/checkForChangeIssueCreation-error.png');
@@ -82,7 +82,7 @@ casper.test.begin('Change issue creation tests suite', 3, function changeIssueCr
      * Verify the issue is in the list
      */
     casper.then(function checkIssueIsCreated() {
-        this.waitForSelector('#issue_table tr td.reference', function modalClosed() {
+        return this.waitForSelector('#issue_table tr td.reference', function modalClosed() {
             this.test.assertSelectorHasText('#issue_table tr td.reference', changeItems.changeIssue1.number);
         }, function fail() {
             this.capture('screenshot/issueCreation/checkForChangeIssueCreation-error.png');
@@ -91,6 +91,6 @@ casper.test.begin('Change issue creation tests suite', 3, function changeIssueCr
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

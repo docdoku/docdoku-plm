@@ -9,7 +9,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
      * */
 
     casper.then(function () {
-        this.open(urls.documentManagement);
+        return this.open(urls.documentManagement);
     });
 
     /**
@@ -17,7 +17,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
      */
 
     casper.then(function waitForFolderNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
+        return this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
             this.click('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]');
         }, function fail() {
             this.capture('screenshot/documentFilesRemove/waitForFolderNavLink-error.png');
@@ -30,7 +30,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
      */
 
     casper.then(function waitForDocumentDisplayed() {
-        this.waitForSelector('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference', function documentIsDisplayed() {
+        return this.waitForSelector('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference', function documentIsDisplayed() {
             this.click('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference');
         }, function fail() {
             this.capture('screenshot/documentFilesRemove/waitForDocumentDisplayed-error.png');
@@ -44,7 +44,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
 
     casper.then(function waitForDocumentModal() {
         var modalTab = '.document-modal .tabs li a[href="#tab-iteration-files"]';
-        this.waitForSelector(modalTab, function modalOpened() {
+        return this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
             this.capture('screenshot/documentFilesRemove/waitForDocumentModal-error.png');
@@ -56,7 +56,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
      * Wait the modal tab
      */
     casper.then(function waitForDocumentModalTab() {
-        this.waitForSelector('.document-modal .upload-btn', function tabSelected() {
+        return this.waitForSelector('.document-modal .upload-btn', function tabSelected() {
             this.test.assert(true, 'File upload tab opened');
         }, function fail() {
             this.capture('screenshot/documentFilesRemove/waitForDocumentModalTab-error.png');
@@ -68,7 +68,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
      */
     casper.then(function setFileAndUpload() {
 
-        casper.waitFor(function check() {
+        return this.waitFor(function check() {
             return this.evaluate(function () {
                 return document.querySelectorAll('.document-modal .attachedFiles ul.file-list li').length === 1;
             });
@@ -85,7 +85,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
      */
     casper.then(function removeFile() {
         this.click('ul.file-list li.file input.file-check');
-        this.waitForSelector('input.file-check:checked', function then() {
+        return this.waitForSelector('input.file-check:checked', function then() {
                 this.test.assert(true,'File is set to be removed');
             }, function fail() {
                 this.capture('screenshot/documentFilesRemove/setFileToRemove-error.png');
@@ -98,7 +98,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
      */
     casper.then(function saveChanged() {
         this.click('#save-iteration');
-        this.waitWhileSelector('div.document-modal', function then () {
+        return this.waitWhileSelector('div.document-modal', function then () {
             this.test.assert(true,'Modal closed');
         }, function fail() {
             this.capture('screenshot/documentFilesRemove/closeModal-error.png');
@@ -113,7 +113,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
     casper.then(function waitForDocumentModal() {
         this.click('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference');
         var modalTab = '.document-modal .tabs li a[href="#tab-iteration-files"]';
-        this.waitForSelector(modalTab, function modalOpened() {
+        return this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
             this.capture('screenshot/documentFilesRemove/waitForDocumentModal-error.png');
@@ -125,7 +125,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
      * Wait the modal tab
      */
     casper.then(function waitForDocumentModalTab() {
-        this.waitForSelector('.document-modal .upload-btn', function tabSelected() {
+        return this.waitForSelector('.document-modal .upload-btn', function tabSelected() {
             this.test.assert(true, 'File upload tab opened');
         }, function fail() {
             this.capture('screenshot/documentFilesRemove/waitForDocumentModalTab-error.png');
@@ -141,7 +141,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
             'upload': 'res/document-upload.txt'
         }, false);
 
-        casper.waitFor(function check() {
+        return this.waitFor(function check() {
             return this.evaluate(function () {
                 return document.querySelectorAll('.document-modal .attachedFiles ul.file-list li').length === 1;
             });
@@ -162,7 +162,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
             'upload': 'res/document-upload2.txt'
         }, false);
 
-        casper.waitFor(function check() {
+        return this.waitFor(function check() {
             return this.evaluate(function () {
                 return document.querySelectorAll('.document-modal .attachedFiles ul.file-list li').length === 2;
             });
@@ -186,7 +186,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
      * Wait for the modal to close
      */
     casper.then(function waitForClosingModal() {
-        this.waitWhileSelector('div.document-modal', function then () {
+        return this.waitWhileSelector('div.document-modal', function then () {
             this.test.assert(true,'Modal closed');
         }, function fail() {
             this.capture('screenshot/documentFilesRemove/closeModal-error.png');
@@ -201,7 +201,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
     casper.then(function waitForDocumentModal() {
         this.click('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference');
         var modalTab = '.document-modal .tabs li a[href="#tab-iteration-files"]';
-        this.waitForSelector(modalTab, function modalOpened() {
+        return this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
             this.capture('screenshot/documentFilesRemove/waitForDocumentModal-error.png');
@@ -213,7 +213,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
      * Wait the modal tab
      */
     casper.then(function waitForDocumentModalTab() {
-        this.waitForSelector('.document-modal .upload-btn', function tabSelected() {
+        return this.waitForSelector('.document-modal .upload-btn', function tabSelected() {
             this.test.assert(true, 'File upload tab opened');
         }, function fail() {
             this.capture('screenshot/documentFilesRemove/waitForDocumentModalTab-error.png');
@@ -225,7 +225,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
      * Assert that the 2 files are present in the modal
      */
     casper.then(function assertFilesUploaded() {
-        casper.waitFor(function check() {
+        return this.waitFor(function check() {
             return this.evaluate(function () {
                 return document.querySelectorAll('.document-modal .attachedFiles ul.file-list li').length === 2;
             });
@@ -242,7 +242,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
      */
     casper.then(function checkAll() {
         this.click('a.toggle-checkAll');
-        this.waitFor(function checkAll() {
+        return this.waitFor(function checkAll() {
             return this.evaluate(function() {
                 return document.querySelectorAll('input.file-check:checked').length === 2;
             });
@@ -259,7 +259,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
      */
     casper.then(function saveChanged() {
         this.click('#save-iteration');
-        this.waitWhileSelector('div.document-modal', function then () {
+        return this.waitWhileSelector('div.document-modal', function then () {
             this.test.assert(true,'Modal closed');
         }, function fail() {
             this.capture('screenshot/documentFilesRemove/closeModal-error.png');
@@ -273,7 +273,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
     casper.then(function waitForDocumentModal() {
         this.click('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference');
         var modalTab = '.document-modal .tabs li a[href="#tab-iteration-files"]';
-        this.waitForSelector(modalTab, function modalOpened() {
+        return this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
             this.capture('screenshot/documentFilesRemove/waitForDocumentModal-error.png');
@@ -285,7 +285,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
      * Wait the modal tab
      */
     casper.then(function waitForDocumentModalTab() {
-        this.waitForSelector('.document-modal .upload-btn', function tabSelected() {
+        return this.waitForSelector('.document-modal .upload-btn', function tabSelected() {
             this.test.assert(true, 'File upload tab opened');
         }, function fail() {
             this.capture('screenshot/documentFilesRemove/waitForDocumentModalTab-error.png');
@@ -301,7 +301,7 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

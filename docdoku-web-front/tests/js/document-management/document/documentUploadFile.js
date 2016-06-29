@@ -9,7 +9,7 @@ casper.test.begin('Document upload  file tests suite', 2, function documentUploa
      * */
 
     casper.then(function () {
-        this.open(urls.documentManagement);
+        return this.open(urls.documentManagement);
     });
 
     /**
@@ -17,7 +17,7 @@ casper.test.begin('Document upload  file tests suite', 2, function documentUploa
      */
 
     casper.then(function waitForFolderNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
+        return this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
             this.click('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]');
         }, function fail() {
             this.capture('screenshot/documentUpload/waitForFolderNavLink-error.png');
@@ -30,7 +30,7 @@ casper.test.begin('Document upload  file tests suite', 2, function documentUploa
      */
 
     casper.then(function waitForDocumentDisplayed() {
-        this.waitForSelector('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference', function documentIsDisplayed() {
+        return this.waitForSelector('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference', function documentIsDisplayed() {
             this.click('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference');
         }, function fail() {
             this.capture('screenshot/documentUpload/waitForDocumentDisplayed-error.png');
@@ -44,7 +44,7 @@ casper.test.begin('Document upload  file tests suite', 2, function documentUploa
 
     casper.then(function waitForDocumentModal() {
         var modalTab = '.document-modal .tabs li a[href="#tab-iteration-files"]';
-        this.waitForSelector(modalTab, function modalOpened() {
+        return this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
             this.capture('screenshot/documentUpload/waitForDocumentModal-error.png');
@@ -56,7 +56,7 @@ casper.test.begin('Document upload  file tests suite', 2, function documentUploa
      * Wait the modal tab
      */
     casper.then(function waitForDocumentModalTab() {
-        this.waitForSelector('.document-modal .upload-btn', function tabSelected() {
+        return this.waitForSelector('.document-modal .upload-btn', function tabSelected() {
             this.test.assert(true, 'File upload tab opened');
         }, function fail() {
             this.capture('screenshot/documentUpload/waitForDocumentModalTab-error.png');
@@ -71,7 +71,7 @@ casper.test.begin('Document upload  file tests suite', 2, function documentUploa
             'upload': 'res/document-upload.txt'
         }, false);
 
-        casper.waitFor(function checkFileHasBeenUploaded () {
+        return this.waitFor(function checkFileHasBeenUploaded () {
             return this.evaluate(function () {
                 return document.querySelectorAll('.document-modal .attachedFiles ul.file-list li').length === 1;
             });
@@ -85,7 +85,7 @@ casper.test.begin('Document upload  file tests suite', 2, function documentUploa
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

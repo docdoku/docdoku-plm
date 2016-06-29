@@ -13,7 +13,7 @@ casper.test.begin('Public shared part tests suite', 2, function publicSharedPart
      * */
 
     casper.then(function () {
-        this.open(urls.partPermalink);
+        return this.open(urls.partPermalink);
     });
 
     /**
@@ -21,7 +21,7 @@ casper.test.begin('Public shared part tests suite', 2, function publicSharedPart
      */
 
     casper.then(function checkPartTitle() {
-        this.waitForSelector(titleSelector, function titleDisplayed() {
+        return this.waitForSelector(titleSelector, function titleDisplayed() {
             this.test.assertSelectorHasText(titleSelector, products.part1.number + '-A');
         }, function fail() {
             this.capture('screenshot/publicSharedPart/checkPartTitle-error.png');
@@ -34,7 +34,7 @@ casper.test.begin('Public shared part tests suite', 2, function publicSharedPart
      */
     casper.then(function checkIterationNote() {
         this.click('.nav-tabs a[href="#tab-part-iteration"]');
-        this.waitForSelector(titleSelector, function iterationNoteDisplayed() {
+        return this.waitForSelector(titleSelector, function iterationNoteDisplayed() {
             this.test.assertSelectorHasText('#tab-part-iteration > table > tbody > tr:nth-child(2) > td', products.part1.iterationNote);
         }, function fail() {
             this.capture('screenshot/publicSharedPart/checkIterationNote-error.png');
@@ -43,6 +43,6 @@ casper.test.begin('Public shared part tests suite', 2, function publicSharedPart
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

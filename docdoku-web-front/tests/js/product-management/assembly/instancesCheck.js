@@ -17,7 +17,7 @@ casper.test.begin('Instances tests suite', 1, function instancesCheckTestsSuite(
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

@@ -41,7 +41,7 @@ casper.options.onResourceRequested = function (casper, requestData) {
                 this.log('AJAX request returned: ' + requestData.url, 'info');
             }, function () {
                 this.log('AJAX request didn\'t return after wait period: ' + requestData.url, 'warning');
-            }, conf.requestTimeOut);
+            }, conf.requestTimeOut || 100);
         }
     }
 };

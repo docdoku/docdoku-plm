@@ -11,7 +11,7 @@ casper.test.begin('LOV creation tests suite', 5, function documentLOVCreationTes
      * */
 
     casper.then(function () {
-        this.open(urls.documentManagement);
+        return this.open(urls.documentManagement);
     });
 
     /**
@@ -19,7 +19,7 @@ casper.test.begin('LOV creation tests suite', 5, function documentLOVCreationTes
      */
 
     casper.then(function waitForTemplateNavLink() {
-        this.waitForSelector('#template-nav > .nav-list-entry > a', function clickTemplateNavLink() {
+        return this.waitForSelector('#template-nav > .nav-list-entry > a', function clickTemplateNavLink() {
             this.click('#template-nav > .nav-list-entry > a');
         });
     });
@@ -29,7 +29,7 @@ casper.test.begin('LOV creation tests suite', 5, function documentLOVCreationTes
      */
 
     casper.then(function waitForLOVCreationLink() {
-        this.waitForSelector('.actions .list-lov', function clickOnLOVCreationLink() {
+        return this.waitForSelector('.actions .list-lov', function clickOnLOVCreationLink() {
             this.click('.actions .list-lov');
         });
     });
@@ -39,7 +39,7 @@ casper.test.begin('LOV creation tests suite', 5, function documentLOVCreationTes
      */
 
     casper.then(function waitForLOVCreationModal() {
-        this.waitForSelector('.list-lov', function lovItemCreationModalDisplayed() {
+        return this.waitForSelector('.list-lov', function lovItemCreationModalDisplayed() {
             this.click('.addLOVButton');
             this.test.assertExists('.lovItem', 'An item should be added to the list');
         });
@@ -86,7 +86,7 @@ casper.test.begin('LOV creation tests suite', 5, function documentLOVCreationTes
 
     casper.then(function tryCreateLOV() {
         this.click('.btn-saveLovs');
-        this.waitWhileSelector('.modal', function () {
+        return this.waitWhileSelector('.modal', function () {
             this.test.assert(true, 'modal closed');
         });
     });
@@ -95,7 +95,7 @@ casper.test.begin('LOV creation tests suite', 5, function documentLOVCreationTes
      * Re-open the modal to check
      */
     casper.then(function reopenModal() {
-        this.waitForSelector('.actions .list-lov', function clickOnLOVCreationLink() {
+        return this.waitForSelector('.actions .list-lov', function clickOnLOVCreationLink() {
             this.click('.actions .list-lov');
         });
     });
@@ -105,7 +105,7 @@ casper.test.begin('LOV creation tests suite', 5, function documentLOVCreationTes
      */
 
     casper.then(function waitForLOVCreationModal() {
-        this.waitForSelector('.modal.list_lov .list_of_lov .lovItem', function checkLOVPersistence() {
+        return this.waitForSelector('.modal.list_lov .list_of_lov .lovItem', function checkLOVPersistence() {
             this.test.assertElementCount('.list_of_lov .lovItem', 1, 'One element should be in the list of LOV');
         }, function(){
             this.capture('screenshot/lovCreation/waitForLOVCreationModal-error.png');
@@ -114,6 +114,6 @@ casper.test.begin('LOV creation tests suite', 5, function documentLOVCreationTes
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

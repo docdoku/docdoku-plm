@@ -11,14 +11,14 @@ casper.test.begin('Change request deletion tests suite', 2, function changeReque
      * */
 
     casper.then(function () {
-        this.open(urls.changeManagement);
+        return this.open(urls.changeManagement);
     });
 
     /**
      * Open change requests nav
      */
     casper.then(function waitForChangeRequestsNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/requests"]', function clickOnChangeRequestNavLink() {
+        return this.waitForSelector('a[href="#' + workspace + '/requests"]', function clickOnChangeRequestNavLink() {
             this.click('a[href="#' + workspace + '/requests"]');
         }, function fail() {
             this.capture('screenshot/requestDeletion/waitForChangeRequestsNavLink-error.png');
@@ -30,7 +30,7 @@ casper.test.begin('Change request deletion tests suite', 2, function changeReque
      * Click the 'select all' checkbox
      */
     casper.then(function waitForSelectAllCheckbox() {
-        this.waitForSelector('#request_table thead tr:first-child  th:first-child input', function clickOnSelectAllCheckbox() {
+        return this.waitForSelector('#request_table thead tr:first-child  th:first-child input', function clickOnSelectAllCheckbox() {
             this.click('#request_table thead tr:first-child  th:first-child input');
         }, function fail() {
             this.capture('screenshot/requestDeletion/waitForSelectAllCheckbox-error.png');
@@ -42,7 +42,7 @@ casper.test.begin('Change request deletion tests suite', 2, function changeReque
      * Wait for the delete button to appear
      */
     casper.then(function waitForDeleteButton() {
-        this.waitForSelector('.actions .delete', function clickOnDeleteButton() {
+        return this.waitForSelector('.actions .delete', function clickOnDeleteButton() {
             this.click('.actions .delete');
             this.test.assert(true, 'Delete button available');
         }, function fail() {
@@ -55,7 +55,7 @@ casper.test.begin('Change request deletion tests suite', 2, function changeReque
      * Wait for the confirmation modal
      */
     casper.then(function waitForConfirmationModal() {
-        this.waitForSelector('.bootbox', function confirmDeletion() {
+        return this.waitForSelector('.bootbox', function confirmDeletion() {
             this.click('.bootbox .modal-footer .btn-primary');
         }, function fail() {
             this.capture('screenshot/requestDeletion/waitForConfirmationModal-error.png');
@@ -67,7 +67,7 @@ casper.test.begin('Change request deletion tests suite', 2, function changeReque
      * Assert that there's no more entries in the table
      **/
     casper.then(function waitForTableToBeEmpty() {
-        this.waitWhileSelector('#request_table tbody tr:first-child  td:first-child input', function onBaselineTableEmpty() {
+        return this.waitWhileSelector('#request_table tbody tr:first-child  td:first-child input', function onBaselineTableEmpty() {
             this.test.assert(true, 'No more requests in the list');
         }, function fail() {
             this.capture('screenshot/requestDeletion/waitForTableToBeEmpty-error.png');
@@ -76,6 +76,6 @@ casper.test.begin('Change request deletion tests suite', 2, function changeReque
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

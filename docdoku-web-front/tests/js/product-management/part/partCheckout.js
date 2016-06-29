@@ -10,14 +10,14 @@ casper.test.begin('Part checkout tests suite', 3, function partCheckoutTestsSuit
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
      * Go to part nav
      */
     casper.then(function waitForPartNavLink() {
-        this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
+        return this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/partCheckout/waitForPartNavLink-error.png');
@@ -29,7 +29,7 @@ casper.test.begin('Part checkout tests suite', 3, function partCheckoutTestsSuit
      * Select the first part with checkbox
      */
     casper.then(function waitForPartTable() {
-        this.waitForSelector('#part_table tbody tr:first-child  td:nth-child(2) input', function clickOnPartCheckbox() {
+        return this.waitForSelector('#part_table tbody tr:first-child  td:nth-child(2) input', function clickOnPartCheckbox() {
             this.click('#part_table tbody tr:first-child  td:nth-child(2) input');
             this.test.assertSelectorHasText('.nav-checkedOut-number-item', 0, 'checkout number at 0 in nav');
         }, function fail() {
@@ -42,7 +42,7 @@ casper.test.begin('Part checkout tests suite', 3, function partCheckoutTestsSuit
      * Click on checkout button
      */
     casper.then(function waitForCheckoutButton() {
-        this.waitForSelector('.actions .checkout', function clickOnCheckoutButton() {
+        return this.waitForSelector('.actions .checkout', function clickOnCheckoutButton() {
             this.click('.actions .checkout');
         }, function fail() {
             this.capture('screenshot/partCheckout/waitForCheckoutButton-error.png');
@@ -54,7 +54,7 @@ casper.test.begin('Part checkout tests suite', 3, function partCheckoutTestsSuit
      * Wait for the checkout button to be disabled
      */
     casper.then(function waitForCheckoutButtonDisabled() {
-        this.waitForSelector('.actions .checkout:disabled', function partIsCheckout() {
+        return this.waitForSelector('.actions .checkout:disabled', function partIsCheckout() {
             this.test.assert(true, 'Part has been checkout');
         }, function fail() {
             this.capture('screenshot/partCheckout/waitForCheckoutButtonDisabled-error.png');
@@ -66,7 +66,7 @@ casper.test.begin('Part checkout tests suite', 3, function partCheckoutTestsSuit
      * Wait for the checked out number to be updated
      */
     casper.then(function waitForCheckedOutNumberUpdated() {
-        this.waitFor(function check() {
+        return this.waitFor(function check() {
             return this.evaluate(function () {
                 return $('.nav-checkedOut-number-item').text() === '1';
             });
@@ -79,7 +79,7 @@ casper.test.begin('Part checkout tests suite', 3, function partCheckoutTestsSuit
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

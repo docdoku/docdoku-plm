@@ -11,14 +11,14 @@ casper.test.begin('Document tag deletion tests suite', 5, function documentTagDe
      * */
 
     casper.then(function () {
-        this.open(urls.documentManagement);
+        return this.open(urls.documentManagement);
     });
 
     /**
      * Click on the tag button
      * */
     casper.then(function openTagCreationModal() {
-        this.waitForSelector('.actions .tags', function buttonDisplayed() {
+        return this.waitForSelector('.actions .tags', function buttonDisplayed() {
             this.click('.actions .tags');
         }, function fail() {
             this.capture('screenshot/documentTagDeletion/openTagCreationModal-error.png');
@@ -31,7 +31,7 @@ casper.test.begin('Document tag deletion tests suite', 5, function documentTagDe
      * Wait for the modal to be opened
      * */
     casper.then(function waitTagCreationModal() {
-        this.waitForSelector('.modal.tag-management .newTag', function modalOpened() {
+        return this.waitForSelector('.modal.tag-management .newTag', function modalOpened() {
             this.test.assert(true, 'Tag deletion modal opened');
         }, function fail() {
             this.capture('screenshot/documentTagDeletion/waitTagCreationModal-error.png');
@@ -43,7 +43,7 @@ casper.test.begin('Document tag deletion tests suite', 5, function documentTagDe
      * Wait for the modal to be opened
      * */
     casper.then(function waitTagCreationModal() {
-        this.waitForSelector('.modal.tag-management ul.existing-tags-list li', function modalOpened() {
+        return this.waitForSelector('.modal.tag-management ul.existing-tags-list li', function modalOpened() {
             this.test.assert(true, 'Tag modal opened');
 
             this.click('.modal.tag-management ul.existing-tags-list li a');
@@ -61,9 +61,10 @@ casper.test.begin('Document tag deletion tests suite', 5, function documentTagDe
     /**
      *
      * Save the tags
+     * TODO : remove wait(100) find other solution with wait for selector
      * */
     casper.then(function saveTags() {
-        this.wait(100, function () {
+        return this.wait(100, function () {
             this.click('.modal.tag-management .modal-footer .btn-primary');
             this.waitWhileSelector('.modal.tag-management', function modalClosed() {
                 this.test.assert(true, 'Tag modal has been closed');
@@ -75,6 +76,6 @@ casper.test.begin('Document tag deletion tests suite', 5, function documentTagDe
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

@@ -9,7 +9,7 @@ casper.test.begin('Document add link tests suite', 3, function documentAddLinkTe
      * */
 
     casper.then(function () {
-        this.open(urls.documentManagement);
+        return this.open(urls.documentManagement);
     });
 
     /**
@@ -17,7 +17,7 @@ casper.test.begin('Document add link tests suite', 3, function documentAddLinkTe
      */
 
     casper.then(function waitForFolderNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
+        return this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
             this.click('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]');
         }, function fail() {
             this.capture('screenshot/documentAddLink/waitForFolderNavLink-error.png');
@@ -30,7 +30,7 @@ casper.test.begin('Document add link tests suite', 3, function documentAddLinkTe
      */
 
     casper.then(function waitForDocumentDisplayed() {
-        this.waitForSelector('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference', function documentIsDisplayed() {
+        return this.waitForSelector('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference', function documentIsDisplayed() {
             this.click('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference');
         }, function fail() {
             this.capture('screenshot/documentAddLink/waitForDocumentDisplayed-error.png');
@@ -45,7 +45,7 @@ casper.test.begin('Document add link tests suite', 3, function documentAddLinkTe
     casper.then(function waitForDocumentModal() {
         var modalTab = '.document-modal .tabs li a[href="#tab-iteration-links"]';
 
-        this.waitForSelector(modalTab, function modalOpened() {
+        return this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
             this.capture('screenshot/documentAddLink/waitForDocumentModal-error.png');
@@ -57,7 +57,7 @@ casper.test.begin('Document add link tests suite', 3, function documentAddLinkTe
      * Wait for Links modal tab
      */
     casper.then(function waitForDocumentModalLinksTab() {
-        this.waitForSelector('.document-modal .linked-items-reference-typehead', function tabOpened() {
+        return this.waitForSelector('.document-modal .linked-items-reference-typehead', function tabOpened() {
             this.test.assert(true, 'Links tab opened');
         }, function fail() {
             this.capture('screenshot/documentAddLink/waitForDocumentModalLinksTab-error.png');
@@ -71,7 +71,7 @@ casper.test.begin('Document add link tests suite', 3, function documentAddLinkTe
     casper.then(function waitForDocumentsSelectList() {
         this.sendKeys('.document-modal .linked-items-reference-typehead', documents.document1.documentLink, {reset: true});
 
-        this.waitForSelector('#iteration-links > div > ul.typeahead.dropdown-menu > li:first-child > a', function documentsSelectListDisplayed() {
+        return this.waitForSelector('#iteration-links > div > ul.typeahead.dropdown-menu > li:first-child > a', function documentsSelectListDisplayed() {
             this.click('#iteration-links > div > ul.typeahead.dropdown-menu > li:first-child > a');
         }, function fail() {
             this.capture('screenshot/documentAddLink/waitForDocumentsSelectList-error.png');
@@ -83,7 +83,7 @@ casper.test.begin('Document add link tests suite', 3, function documentAddLinkTe
      * Wait for linked document display
      */
     casper.then(function waitForLinkedDocumentDisplay() {
-        this.waitForSelector('.document-modal .linked-items-view > ul.linked-items > li:first-child > a.reference', function linkDocumentDisplayed() {
+        return this.waitForSelector('.document-modal .linked-items-view > ul.linked-items > li:first-child > a.reference', function linkDocumentDisplayed() {
             this.test.assert(true, 'Link added');
         }, function fail() {
             this.capture('screenshot/documentAddLink/waitForLinkedDocumentDisplay-error.png');
@@ -99,7 +99,7 @@ casper.test.begin('Document add link tests suite', 3, function documentAddLinkTe
         var descriptionButton = '.document-modal .linked-items-view > ul.linked-items > li:first-child > a.edit-linked-item-comment';
         var descriptionInput = '.document-modal .linked-items-view > ul.linked-items > li:first-child .commentInput';
         this.click(descriptionButton);
-        this.waitForSelector(descriptionInput,function openDescription(){
+        return this.waitForSelector(descriptionInput,function openDescription(){
             this.sendKeys(descriptionInput,documents.document1.documentLinkComment,{reset:true});
             this.click('.document-modal .linked-items-view > ul.linked-items > li:first-child .validate-comment');
         },function fail(){
@@ -114,7 +114,7 @@ casper.test.begin('Document add link tests suite', 3, function documentAddLinkTe
 
     casper.then(function savePartIteration(){
         this.click('#save-iteration');
-        this.waitWhileSelector('.document-modal', function modalClosed() {
+        return this.waitWhileSelector('.document-modal', function modalClosed() {
             this.test.assert(true, 'Document modal has been closed');
         }, function fail() {
             this.capture('screenshot/documentAddLink/waitForModalToBeClosed-error.png');
@@ -123,7 +123,7 @@ casper.test.begin('Document add link tests suite', 3, function documentAddLinkTe
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

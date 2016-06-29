@@ -10,14 +10,14 @@ casper.test.begin('Milestone creation tests suite', 5, function milestoneCreatio
      * */
 
     casper.then(function () {
-        this.open(urls.changeManagement);
+        return this.open(urls.changeManagement);
     });
 
     /**
      * Open milestones nav
      */
     casper.then(function waitForMilestonesNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/milestones"]', function clickOnMilestoneNavLink() {
+        return this.waitForSelector('a[href="#' + workspace + '/milestones"]', function clickOnMilestoneNavLink() {
             this.click('a[href="#' + workspace + '/milestones"]');
         }, function fail() {
             this.capture('screenshot/milestoneCreation/waitForMilestonesNavLink-error.png');
@@ -29,7 +29,7 @@ casper.test.begin('Milestone creation tests suite', 5, function milestoneCreatio
      * Open milestone creation modal
      */
     casper.then(function openNewMilestoneModal() {
-        this.waitForSelector('.actions .new-milestone',
+        return this.waitForSelector('.actions .new-milestone',
             function clickOnMilestoneCreationLink() {
                 this.click('.actions .new-milestone');
             }, function fail() {
@@ -43,7 +43,7 @@ casper.test.begin('Milestone creation tests suite', 5, function milestoneCreatio
      * Try to create an milestone without a title
      */
     casper.then(function waitForMilestoneCreationModal() {
-        this.waitForSelector('#milestone_creation_modal.ready', function createMilestoneWithoutName() {
+        return this.waitForSelector('#milestone_creation_modal.ready', function createMilestoneWithoutName() {
             this.click('#milestone_creation_modal .modal-footer .btn-primary');
             this.test.assertExists('#milestone_creation_modal #inputMilestoneTitle:invalid', 'Should not create a milestone without a name');
         }, function fail() {
@@ -57,7 +57,7 @@ casper.test.begin('Milestone creation tests suite', 5, function milestoneCreatio
      */
 
     casper.then(function waitForMilestoneCreationModal() {
-        this.waitForSelector('#milestone_creation_modal .modal-footer .btn-primary', function createMilestoneWithoutDate() {
+        return this.waitForSelector('#milestone_creation_modal .modal-footer .btn-primary', function createMilestoneWithoutDate() {
             this.sendKeys('#milestone_creation_modal input#inputMilestoneTitle', changeItems.milestone1.title, {reset: true});
             this.click('#milestone_creation_modal .modal-footer .btn-primary');
             this.test.assertExists('#milestone_creation_modal #inputMilestoneDueDate:invalid', 'Should not create a milestone without a date');
@@ -71,7 +71,7 @@ casper.test.begin('Milestone creation tests suite', 5, function milestoneCreatio
      * Fill the form and create the milestone
      */
     casper.then(function fillAndSubmitMilestoneCreationModal() {
-        this.waitForSelector('#milestone_creation_modal.ready', function fillForm() {
+        return this.waitForSelector('#milestone_creation_modal.ready', function fillForm() {
             this.sendKeys('#milestone_creation_modal input#inputMilestoneTitle', changeItems.milestone1.title, {reset: true});
             this.sendKeys('#milestone_creation_modal input#inputMilestoneDueDate', changeItems.milestone1.date, {reset: true});
             this.waitWhileSelector('#milestone_creation_modal input:invalid', function submit() {
@@ -91,7 +91,7 @@ casper.test.begin('Milestone creation tests suite', 5, function milestoneCreatio
      * Wait for modal to close
      */
     casper.then(function waitForMilestoneCreationModalToBeClosed() {
-        this.waitWhileSelector('#milestone_creation_modal', function modalClosed() {
+        return this.waitWhileSelector('#milestone_creation_modal', function modalClosed() {
             this.test.assert(true, 'Modal is closed');
         }, function fail() {
             this.capture('screenshot/milestoneCreation/waitForMilestoneCreationModalToBeClosed-error.png');
@@ -103,7 +103,7 @@ casper.test.begin('Milestone creation tests suite', 5, function milestoneCreatio
      * Verify the milestone is in the list
      */
     casper.then(function checkMilestoneIsCreated() {
-        this.waitForSelector('#milestone_table tr td.reference', function modalClosed() {
+        return this.waitForSelector('#milestone_table tr td.reference', function modalClosed() {
             this.test.assertSelectorHasText('#milestone_table tr td.reference', changeItems.milestone1.title);
         }, function fail() {
             this.capture('screenshot/milestoneCreation/checkMilestoneIsCreated-error.png');
@@ -112,6 +112,6 @@ casper.test.begin('Milestone creation tests suite', 5, function milestoneCreatio
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

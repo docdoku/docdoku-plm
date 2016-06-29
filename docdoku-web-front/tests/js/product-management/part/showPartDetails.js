@@ -11,7 +11,7 @@ casper.test.begin('Part details tests suite', 3, function partDetailsTestsSuite(
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
@@ -19,7 +19,7 @@ casper.test.begin('Part details tests suite', 3, function partDetailsTestsSuite(
      */
 
     casper.then(function waitForPartNavLink() {
-        this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
+        return this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
         });
     });
@@ -29,7 +29,7 @@ casper.test.begin('Part details tests suite', 3, function partDetailsTestsSuite(
      */
 
     casper.then(function waitForPartInList() {
-        this.waitForSelector('#part_table tbody tr:first-child td.part_number', function clickOnPartCheckbox() {
+        return this.waitForSelector('#part_table tbody tr:first-child td.part_number', function clickOnPartCheckbox() {
             this.click('#part_table tbody tr:first-child td.part_number span');
         });
     });
@@ -38,7 +38,7 @@ casper.test.begin('Part details tests suite', 3, function partDetailsTestsSuite(
      * Wait for part modal
      */
     casper.then(function waitForModalDisplay() {
-        this.waitForSelector('#part-modal', function testPartModal() {
+        return this.waitForSelector('#part-modal', function testPartModal() {
             this.test.assertSelectorHasText('#form-part div:first-child div span', products.part1.number);
             this.test.assertSelectorHasText('#form-part div:nth-child(2) div span', products.part1.name);
         });
@@ -49,19 +49,19 @@ casper.test.begin('Part details tests suite', 3, function partDetailsTestsSuite(
      */
 
     casper.then(function waitForCancelButton() {
-        this.waitForSelector('#part-modal button.close', function closePartModal() {
+        return this.waitForSelector('#part-modal button.close', function closePartModal() {
             this.click('#part-modal button.close');
         });
     });
 
     casper.then(function waitForModalToBeClosed() {
-        this.waitWhileSelector('#part-modal', function onPartModalClosed() {
+        return this.waitWhileSelector('#part-modal', function onPartModalClosed() {
             this.test.assert(true, 'Part modal has been closed');
         });
     });
 
     casper.run(function () {
-        this.test.done();
+        return this.test.done();
     });
 
 });

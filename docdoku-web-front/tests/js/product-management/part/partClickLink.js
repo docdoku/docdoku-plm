@@ -9,14 +9,14 @@ casper.test.begin('Part add link tests suite', 2, function partClickLinkTestsSui
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
      * Go to part nav
      */
     casper.then(function waitForPartNavLink() {
-        this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
+        return this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/partClickLink/waitForPartNavLink-error.png');
@@ -29,7 +29,7 @@ casper.test.begin('Part add link tests suite', 2, function partClickLinkTestsSui
      */
 
     casper.then(function waitForPartInList() {
-        this.waitForSelector('#part_table tbody tr:first-child td.part_number', function clickOnPartCheckbox() {
+        return this.waitForSelector('#part_table tbody tr:first-child td.part_number', function clickOnPartCheckbox() {
             this.click('#part_table tbody tr:first-child td.part_number span');
         }, function fail() {
             this.capture('screenshot/partClickLink/waitForPartList-error.png');
@@ -44,7 +44,7 @@ casper.test.begin('Part add link tests suite', 2, function partClickLinkTestsSui
     casper.then(function waitForPartModal() {
         var modalTab = '#part-modal .tabs li a[href="#tab-part-links"]';
 
-        this.waitForSelector(modalTab, function modalOpened() {
+        return this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
             this.capture('screenshot/partClickLink/waitForPartModal-error.png');
@@ -56,7 +56,7 @@ casper.test.begin('Part add link tests suite', 2, function partClickLinkTestsSui
      * Wait for Links modal tab
      */
     casper.then(function waitForPartModalLinksTab() {
-        this.waitForSelector('#part-modal .linked-items-reference-typehead', function tabOpened() {
+        return this.waitForSelector('#part-modal .linked-items-reference-typehead', function tabOpened() {
             this.test.assert(true, 'Links tab opened');
         }, function fail() {
             this.capture('screenshot/partClickLink/waitForPartModalLinksTab-error.png');
@@ -68,7 +68,7 @@ casper.test.begin('Part add link tests suite', 2, function partClickLinkTestsSui
      * Wait for linked document display
      */
     casper.then(function waitForLinkedDocumentDisplay() {
-        this.waitForSelector('#iteration-links > .linked-items-view > ul.linked-items > li:first-child', function linkDocumentDisplayed() {
+        return this.waitForSelector('#iteration-links > .linked-items-view > ul.linked-items > li:first-child', function linkDocumentDisplayed() {
             this.click('#iteration-links > .linked-items-view > ul.linked-items > li:first-child > a.reference');
         }, function fail() {
             this.capture('screenshot/partClickLink/waitForLinkedDocumentDisplay-error.png');
@@ -82,7 +82,7 @@ casper.test.begin('Part add link tests suite', 2, function partClickLinkTestsSui
     casper.then(function waitForLinkedDocumentDisplay() {
         var modalTitle = '.document-modal > .modal-header > h3 > a[href="' + defaultUrl + '/documents/#' + workspace + '/' + products.part1.documentLink +'/A"]';
 
-        this.waitForSelector(modalTitle, function linkedModalOpened() {
+        return this.waitForSelector(modalTitle, function linkedModalOpened() {
             this.test.assert(true, 'Linked document modal opened');
         }, function fail() {
             this.capture('screenshot/partClickLink/waitForLinkedDocumentModal-error.png');
@@ -91,7 +91,7 @@ casper.test.begin('Part add link tests suite', 2, function partClickLinkTestsSui
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

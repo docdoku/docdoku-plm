@@ -10,14 +10,14 @@ casper.test.begin('Part upload attached file tests suite', 3, function partUploa
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
      * Go to part nav
      */
     casper.then(function waitForPartNavLink() {
-        this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
+        return this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/partUpload/waitForPartNavLink-error.png');
@@ -30,7 +30,7 @@ casper.test.begin('Part upload attached file tests suite', 3, function partUploa
      */
     casper.then(function waitForPartList() {
         var link = '#part_table tbody tr:first-child td.part_number';
-        this.waitForSelector(link, function clickPartNavLink() {
+        return this.waitForSelector(link, function clickPartNavLink() {
             this.click(link);
         }, function fail() {
             this.capture('screenshot/partUpload/waitForPartList-error.png');
@@ -43,7 +43,7 @@ casper.test.begin('Part upload attached file tests suite', 3, function partUploa
      */
     casper.then(function waitForPartModal() {
         var modalTab = '#part-modal .tabs li a[href="#tab-part-files"]';
-        this.waitForSelector(modalTab, function modalOpened() {
+        return this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
             this.capture('screenshot/partUpload/waitForPartModal-error.png');
@@ -55,7 +55,7 @@ casper.test.begin('Part upload attached file tests suite', 3, function partUploa
      * Wait the modal tab
      */
     casper.then(function waitForPartModalTab() {
-        this.waitForSelector('#part-modal .upload-btn', function tabSelected() {
+        return this.waitForSelector('#part-modal .upload-btn', function tabSelected() {
             this.test.assert(true, ' file upload tab opened');
         }, function fail() {
             this.capture('screenshot/partUpload/waitForPartModalTab-error.png');
@@ -71,7 +71,7 @@ casper.test.begin('Part upload attached file tests suite', 3, function partUploa
             'upload': 'res/part-upload.obj'
         }, false);
 
-        casper.waitFor(function check() {
+        return this.waitFor(function check() {
             return this.evaluate(function () {
                 return document.querySelectorAll('#iteration-files div:nth-child(2) ul.file-list li').length === 1;
             });
@@ -88,14 +88,14 @@ casper.test.begin('Part upload attached file tests suite', 3, function partUploa
      */
 
     casper.then(function checkCADFileIconsSet() {
-        this.waitForSelector('#part_table .fa.fa-paperclip', function check() {
+        return this.waitForSelector('#part_table .fa.fa-paperclip', function check() {
             this.test.assertElementCount('#part_table .fa.fa-paperclip', 1, 'found 1 part with CAD file');
         });
     });
 
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

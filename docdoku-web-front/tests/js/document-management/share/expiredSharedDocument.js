@@ -11,7 +11,7 @@ casper.test.begin('Expired private shared document tests suite', 1, function exp
      * */
 
     casper.then(function () {
-        this.open(urls.privateDocumentPermalinkExpired);
+        return this.open(urls.privateDocumentPermalinkExpired);
     });
 
     /**
@@ -19,7 +19,7 @@ casper.test.begin('Expired private shared document tests suite', 1, function exp
      */
 
     casper.then(function checkForExpiredPage() {
-        this.waitForSelector('#not-found-view > h1', function () {
+        return this.waitForSelector('#not-found-view > h1', function () {
             this.test.assert(true, 'Expired entity page displayed');
         }, function fail() {
             this.capture('screenshot/expiredSharedDocument/checkForExpiredPage-error.png');
@@ -28,6 +28,6 @@ casper.test.begin('Expired private shared document tests suite', 1, function exp
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

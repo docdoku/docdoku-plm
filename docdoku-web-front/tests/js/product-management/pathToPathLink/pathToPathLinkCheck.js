@@ -11,7 +11,7 @@ casper.test.begin('Path to path link check tests suite', 26, function pathToPath
      * */
 
     casper.then(function () {
-        this.open(urls.productStructure);
+        return this.open(urls.productStructure);
     });
 
     /**
@@ -19,7 +19,7 @@ casper.test.begin('Path to path link check tests suite', 26, function pathToPath
      */
 
     casper.then(function waitTree() {
-        this.waitForSelector('#product_nav_list_container > .treeview > ul > li', function treeDisplayed() {
+        return this.waitForSelector('#product_nav_list_container > .treeview > ul > li', function treeDisplayed() {
             this.test.assert(true, 'Tree is displayed');
         }, function fail() {
             this.capture('screenshot/pathToPathLinkCheck/waitTree-error.png');
@@ -31,7 +31,7 @@ casper.test.begin('Path to path link check tests suite', 26, function pathToPath
      * Expand tree
      */
     casper.then(function expandTree() {
-        this.waitForSelector('#product_nav_list > ul > li > .hitarea', function expandButtonAvailable() {
+        return this.waitForSelector('#product_nav_list > ul > li > .hitarea', function expandButtonAvailable() {
             this.test.assert(true, 'Expand button is available');
             this.click('#product_nav_list > ul > li > .hitarea');
         }, function fail() {
@@ -44,7 +44,7 @@ casper.test.begin('Path to path link check tests suite', 26, function pathToPath
      * Click on two checkboxes parts
      */
     casper.then(function selectParts() {
-        this.waitForSelector('#product_nav_list > ul > li > ul > li > .selectable-part-checkbox', function selectParts() {
+        return this.waitForSelector('#product_nav_list > ul > li > ul > li > .selectable-part-checkbox', function selectParts() {
             this.click('#product_nav_list > ul > li > ul > li:first-child > .selectable-part-checkbox');
             this.click('#product_nav_list > ul > li > ul > li:nth-child(2) > .selectable-part-checkbox');
         }, function fail() {
@@ -58,7 +58,7 @@ casper.test.begin('Path to path link check tests suite', 26, function pathToPath
      */
     casper.then(function openCreationModal() {
         this.click('#path_to_path_link_btn');
-        this.waitForSelector('.modal.path-to-path-link-modal #path-to-path-links > .well', function modalIsDisplayed() {
+        return this.waitForSelector('.modal.path-to-path-link-modal #path-to-path-links > .well', function modalIsDisplayed() {
             this.test.assertElementCount('#path-to-path-links > .well', 1, 'One path to path link should be present');
         });
     });
@@ -67,7 +67,7 @@ casper.test.begin('Path to path link check tests suite', 26, function pathToPath
      * Assert that we can add some new links in wip mode, then close modal
      */
     casper.then(function verifyWeCanAddPathToPathLink() {
-        this.waitForSelector('.modal.path-to-path-link-modal .btn.add-path-to-path-link-btn', function verifyWeCanAddPathToPathLink() {
+        return this.waitForSelector('.modal.path-to-path-link-modal .btn.add-path-to-path-link-btn', function verifyWeCanAddPathToPathLink() {
             this.test.assert(true, 'We should be able to add new links');
             this.click('.modal.path-to-path-link-modal .modal-footer button.cancel-button');
         });
@@ -77,7 +77,7 @@ casper.test.begin('Path to path link check tests suite', 26, function pathToPath
      * Wait for the modal to be closed
      */
     casper.then(function waitModalToBeClosed() {
-        this.waitWhileSelector('.modal.path-to-path-link-modal', function waitModalToBeClosed() {
+        return this.waitWhileSelector('.modal.path-to-path-link-modal', function waitModalToBeClosed() {
             this.test.assert(true, 'Modal should be closed');
         });
     });

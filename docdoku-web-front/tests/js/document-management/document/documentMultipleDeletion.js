@@ -18,7 +18,7 @@ casper.test.begin('Document multiple deletion tests suite', 1, function document
      */
 
     casper.then(function waitForFolderNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
+        return this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
             this.click('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]');
         }, function fail() {
             this.capture('screenshot/documentMultipleDeletion/waitForFolderNavLink-error.png');
@@ -31,7 +31,7 @@ casper.test.begin('Document multiple deletion tests suite', 1, function document
      */
     casper.then(function waitForDocumentTable() {
         var checkbox = '#document-management-content table.dataTable thead tr th input[type="checkbox"]';
-        this.waitForSelector(checkbox, function clickOnDocumentCheckbox() {
+        return this.waitForSelector(checkbox, function clickOnDocumentCheckbox() {
             this.click(checkbox);
         }, function fail() {
             this.capture('screenshot/documentMultipleDeletion/waitForDocumentTable-error.png');
@@ -44,7 +44,7 @@ casper.test.begin('Document multiple deletion tests suite', 1, function document
      */
 
     casper.then(function waitForDeleteButtonDisplayed() {
-        this.waitForSelector('.actions .delete', function deleteButtonIsDisplayed() {
+        return this.waitForSelector('.actions .delete', function deleteButtonIsDisplayed() {
             this.click('.actions .delete');
 
         }, function fail() {
@@ -59,7 +59,7 @@ casper.test.begin('Document multiple deletion tests suite', 1, function document
      */
 
     casper.then(function confirmDocumentsDeletion() {
-        this.waitForSelector('.bootbox', function confirmBoxAppeared() {
+        return this.waitForSelector('.bootbox', function confirmBoxAppeared() {
             this.click('.bootbox .modal-footer .btn-primary');
 
         }, function fail() {
@@ -73,7 +73,7 @@ casper.test.begin('Document multiple deletion tests suite', 1, function document
      */
 
     casper.then(function waitForDocumentsDeletion() {
-        this.waitWhileSelector('#document-management-content table.dataTable tbody tr td.reference', function documentDeleted() {
+        return this.waitWhileSelector('#document-management-content table.dataTable tbody tr td.reference', function documentDeleted() {
             this.test.assert(true, 'Documents have been deleted');
 
         }, function fail() {
@@ -83,6 +83,6 @@ casper.test.begin('Document multiple deletion tests suite', 1, function document
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

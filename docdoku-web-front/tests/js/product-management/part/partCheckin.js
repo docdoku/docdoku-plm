@@ -10,14 +10,14 @@ casper.test.begin('Part checkin tests suite', 3, function partCheckinTestsSuite(
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
      * Go to part nav
      */
     casper.then(function waitForPartNavLink() {
-        this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
+        return this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/partCheckin/waitForPartNavLink-error.png');
@@ -29,7 +29,7 @@ casper.test.begin('Part checkin tests suite', 3, function partCheckinTestsSuite(
      * Select the first part with checkbox
      */
     casper.then(function waitForPartTable() {
-        this.waitForSelector('#part_table tbody tr:first-child  td:nth-child(2) input', function clickOnPartCheckbox() {
+        return this.waitForSelector('#part_table tbody tr:first-child  td:nth-child(2) input', function clickOnPartCheckbox() {
             this.click('#part_table tbody tr:first-child  td:nth-child(2) input');
         }, function fail() {
             this.capture('screenshot/partCheckin/waitForPartTable-error.png');
@@ -41,8 +41,8 @@ casper.test.begin('Part checkin tests suite', 3, function partCheckinTestsSuite(
      * Click on checkin button
      */
     casper.then(function waitForCheckinButton() {
-        this.waitForSelector('.actions .checkin', function clickOnCheckinButton() {
-            this.test.assertSelectorHasText('.nav-checkedOut-number-item', 1, 'checkout number at 1 in nav');
+        this.test.assertSelectorHasText('.nav-checkedOut-number-item', 1, 'checkout number at 1 in nav');
+        return this.waitForSelector('.actions .checkin:not([disabled])', function clickOnCheckinButton() {
             this.click('.actions .checkin');
         }, function fail() {
             this.capture('screenshot/partCheckin/waitForCheckinButton-error.png');
@@ -54,7 +54,7 @@ casper.test.begin('Part checkin tests suite', 3, function partCheckinTestsSuite(
      * Set an iteration note
      */
     casper.then(function waitForIterationNotePrompt() {
-        this.waitForSelector('#prompt_modal #prompt_input.ready', function fillIterationNote() {
+        return this.waitForSelector('#prompt_modal #prompt_input.ready', function fillIterationNote() {
             this.sendKeys('#prompt_modal #prompt_input', products.part1.iterationNote, {reset: true});
             this.click('#prompt_modal .modal-footer .btn-primary');
         }, function fail() {
@@ -67,18 +67,18 @@ casper.test.begin('Part checkin tests suite', 3, function partCheckinTestsSuite(
      * Wait for the checkin button to be disabled
      */
     casper.then(function waitForCheckinButtonDisabled() {
-        this.waitForSelector('.actions .checkin:disabled', function partIsCheckin() {
+        return this.waitForSelector('.actions .checkin[disabled]', function partIsCheckin() {
             this.test.assert(true, 'Part has been checkin');
             this.test.assertSelectorHasText('.nav-checkedOut-number-item', 0, 'checkout number updated in nav');
         }, function fail() {
-            this.capture('screenshot/baselineCreation/waitForCheckinButtonDisabled-error.png');
+            this.capture('screenshot/partCheckin/waitForCheckinButtonDisabled-error.png');
             this.test.assert(false, 'Part has not been checkin');
         });
     });
 
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

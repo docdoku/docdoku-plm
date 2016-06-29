@@ -10,7 +10,7 @@ casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuit
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
@@ -18,7 +18,7 @@ casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuit
      */
 
     casper.then(function waitForPartNavLink() {
-        this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
+        return this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/partDeletion/waitForPartNavLink-error.png');
@@ -31,7 +31,7 @@ casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuit
      */
 
     casper.then(function waitForPartInList() {
-        this.waitForSelector('#part_table tbody tr:first-child td.part_number', function clickOnPartCheckbox() {
+        return this.waitForSelector('#part_table tbody tr:first-child td.part_number', function clickOnPartCheckbox() {
             this.click('#part_table tbody tr:first-child td:nth-child(2) input');
         }, function fail() {
             this.capture('screenshot/partDeletion/waitForPartInList-error.png');
@@ -41,10 +41,11 @@ casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuit
 
     casper.then(function clickOnDeletePartButton() {
         this.click('.actions .checkout');
-        this.waitForSelector('.actions .checkout[disabled]', function then() {
+        return this.waitForSelector('.actions .checkout[disabled]', function then() {
             this.test.assertSelectorHasText('.nav-checkedOut-number-item', 1, 'checkout number updated');
             this.click('.actions .delete');
             // Confirm deletion
+            // TODO split wait for selector callback
             this.waitForSelector('.bootbox', function confirmPartDeletion() {
                 this.click('.bootbox .modal-footer .btn-primary');
             }, function fail() {
@@ -58,7 +59,7 @@ casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuit
     });
 
     casper.then(function waitForPartDiseapear() {
-        casper.waitFor(function check() {
+        return this.waitFor(function check() {
             return this.evaluate(function () {
                 return document.querySelectorAll('#part_table tbody tr').length === 4;
             });
@@ -71,7 +72,7 @@ casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuit
     });
 
     casper.then(function waitForNavUpdate() {
-        this.waitFor(function check() {
+        return this.waitFor(function check() {
             return this.evaluate(function () {
                 return $('.nav-checkedOut-number-item').text() === '0';
             });
@@ -84,7 +85,7 @@ casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuit
     });
 
     casper.run(function () {
-        this.test.done();
+        return this.test.done();
     });
 
 });

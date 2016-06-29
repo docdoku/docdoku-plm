@@ -10,14 +10,14 @@ casper.test.begin('Product instance creation tests suite', 5, function productIn
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
      * Go to product instances nav
      */
     casper.then(function waitForProductInstanceNavLink() {
-        this.waitForSelector('#product-instances-nav > .nav-list-entry > a', function clickProductInstanceNavLink() {
+        return this.waitForSelector('#product-instances-nav > .nav-list-entry > a', function clickProductInstanceNavLink() {
             this.click('#product-instances-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/productInstanceCreation/waitForProductInstanceNavLink-error.png');
@@ -29,7 +29,7 @@ casper.test.begin('Product instance creation tests suite', 5, function productIn
      * Find the new product instance button
      */
     casper.then(function waitForNewProductInstanceButton() {
-        this.waitForSelector('.actions .new-product-instance', function clickOnNewProductInstanceButton() {
+        return this.waitForSelector('.actions .new-product-instance', function clickOnNewProductInstanceButton() {
             this.click('.actions .new-product-instance');
         }, function fail() {
             this.capture('screenshot/productInstanceCreation/waitForNewProductInstanceButton-error.png');
@@ -41,7 +41,7 @@ casper.test.begin('Product instance creation tests suite', 5, function productIn
      * Wait for the modal to be opened
      */
     casper.then(function waitForNewProductInstanceModal() {
-        this.waitForSelector('#product_instance_creation_modal', function modalOpened() {
+        return this.waitForSelector('#product_instance_creation_modal', function modalOpened() {
             this.test.assert(true, 'Product instance creation modal opened');
         }, function fail() {
             this.capture('screenshot/productInstanceCreation/waitForNewProductInstanceModal-error.png');
@@ -53,7 +53,7 @@ casper.test.begin('Product instance creation tests suite', 5, function productIn
      * Wait for the selects to be loaded
      */
     casper.then(function waitForData() {
-        this.waitForSelector('#product_instance_creation_modal #inputBaseline > option', function dataReady() {
+        return this.waitForSelector('#product_instance_creation_modal #inputBaseline > option', function dataReady() {
             this.test.assert(true, 'Product instance ready to create');
         }, function fail() {
             this.capture('screenshot/productInstanceCreation/waitForData-error.png');
@@ -73,7 +73,7 @@ casper.test.begin('Product instance creation tests suite', 5, function productIn
      * Try to create the product instance
      */
     casper.then(function tryToCreateProductInstance() {
-        this.waitForSelector('#product_instance_creation_modal', function fillForm() {
+        return this.waitForSelector('#product_instance_creation_modal', function fillForm() {
             this.sendKeys('#product_instance_creation_modal #inputSerialNumber', productInstances.productInstance1.serialNumber, {reset: true});
             this.click('#product_instance_creation_modal .modal-footer .btn.btn-primary');
         }, function fail() {
@@ -86,7 +86,7 @@ casper.test.begin('Product instance creation tests suite', 5, function productIn
      * Wait for the modal to be closed
      */
     casper.then(function waitForProductInstanceModalToBeClosed() {
-        this.waitWhileSelector('#product_instance_creation_modal', function onModalClosed() {
+        return this.waitWhileSelector('#product_instance_creation_modal', function onModalClosed() {
             this.test.assert(true, 'Product instance creation modal closed');
         }, function fail() {
             this.capture('screenshot/productInstanceCreation/waitForProductInstanceModalToBeClosed-error.png');
@@ -98,7 +98,7 @@ casper.test.begin('Product instance creation tests suite', 5, function productIn
      * Wait for the line in the table
      */
     casper.then(function waitForProductInstanceToBeCreated() {
-        this.waitForSelector('#product_instances_table > tbody > tr > td.reference', function onProductInstanceCreated() {
+        return this.waitForSelector('#product_instances_table > tbody > tr > td.reference', function onProductInstanceCreated() {
             this.test.assert(true, 'Product instance created');
         }, function fail() {
             this.capture('screenshot/productInstanceCreation/waitForProductInstanceToBeCreated-error.png');
@@ -108,6 +108,6 @@ casper.test.begin('Product instance creation tests suite', 5, function productIn
 
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

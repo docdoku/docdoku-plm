@@ -13,14 +13,14 @@ casper.test.begin('Private shared document tests suite', 3, function privateShar
      * */
 
     casper.then(function () {
-        this.open(urls.privateDocumentPermalink);
+        return this.open(urls.privateDocumentPermalink);
     });
 
     /**
      * We should be prompted for password
      */
     casper.then(function checkPasswordIsRequested() {
-        this.waitForSelector('#prompt_modal #prompt_input.ready', function passwordRequested() {
+        return this.waitForSelector('#prompt_modal #prompt_input.ready', function passwordRequested() {
             this.sendKeys('#prompt_modal #prompt_input', documents.document1.sharedPassword, {reset: true});
             this.click('#submitPrompt');
             this.test.assert(true, 'We are prompted for password');
@@ -35,7 +35,7 @@ casper.test.begin('Private shared document tests suite', 3, function privateShar
      */
 
     casper.then(function checkDocumentTitle() {
-        this.waitForSelector(titleSelector, function titleDisplayed() {
+        return this.waitForSelector(titleSelector, function titleDisplayed() {
             this.test.assertSelectorHasText(titleSelector, documents.document1.number + '-A');
         }, function fail() {
             this.capture('screenshot/privateSharedDocument/checkDocumentTitle-error.png');
@@ -48,7 +48,7 @@ casper.test.begin('Private shared document tests suite', 3, function privateShar
      */
     casper.then(function checkIterationNote() {
         this.click('.nav-tabs a[href="#tab-document-iteration"]');
-        this.waitForSelector(titleSelector, function iterationNoteDisplayed() {
+        return this.waitForSelector(titleSelector, function iterationNoteDisplayed() {
             this.test.assertSelectorHasText('#tab-document-iteration > table > tbody > tr:nth-child(2) > td', documents.document1.iterationNote);
         }, function fail() {
             this.capture('screenshot/privateSharedDocument/checkIterationNote-error.png');
@@ -57,6 +57,6 @@ casper.test.begin('Private shared document tests suite', 3, function privateShar
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

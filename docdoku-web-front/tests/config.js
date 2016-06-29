@@ -13,16 +13,16 @@ module.exports = {
     pass: 'test',
 
     // Configuration
+    logLevel: 'warning',
     debug: false,
     verbose: true,
     failFast:true,
-    logLevel: 'warning',
     xunit: 'results.xml',
-    waitOnRequest: true,
+    waitOnRequest: false,
     debugResponses:false,
     debugRequests:false,
-    requestTimeOut: 1000,
-    globalTimeout: 20,
+    requestTimeOut: 1000, // ms
+    globalTimeout: 20, // minutes
     soundOnTestsEnd:false,
 
     // Files to test

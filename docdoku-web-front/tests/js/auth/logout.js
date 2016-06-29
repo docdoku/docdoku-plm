@@ -10,14 +10,14 @@ casper.test.begin('Logout tests suite', 1, function logoutTestsSuite() {
      * */
 
     casper.then(function () {
-        this.open(urls.documentManagement);
+        return  this.open(urls.documentManagement);
     });
 
     /**
      *  Wait for disconnect link, and click it
      */
     casper.then(function () {
-        this.waitForSelector('#logout_link a', function onLogoutLinkReady() {
+        return  this.waitForSelector('#logout_link a', function onLogoutLinkReady() {
             this.click('#logout_link a');
         });
     });
@@ -26,7 +26,7 @@ casper.test.begin('Logout tests suite', 1, function logoutTestsSuite() {
      * Test to find the login form
      */
     casper.then(function checkForLoginForm() {
-        this.waitForSelector('form[id="login_form"]', function loginFormFound() {
+        return  this.waitForSelector('form[id="login_form"]', function loginFormFound() {
             this.test.assert(true, 'Login form found');
         });
     });
@@ -43,6 +43,6 @@ casper.test.begin('Logout tests suite', 1, function logoutTestsSuite() {
     });
      */
     casper.run(function () {
-        this.test.done();
+        return this.test.done();
     });
 });

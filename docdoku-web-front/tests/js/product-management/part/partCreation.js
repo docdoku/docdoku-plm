@@ -10,14 +10,14 @@ casper.test.begin('Part creation tests suite', 8, function partCreationTestsSuit
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
      * Go to part nav
      */
     casper.then(function waitForPartNavLink() {
-        this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
+        return this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/partCreation/waitForPartNavLink-error.png');
@@ -29,7 +29,7 @@ casper.test.begin('Part creation tests suite', 8, function partCreationTestsSuit
      * Open the part creation modal
      */
     casper.then(function waitForNewPartButton() {
-        this.waitForSelector('.actions .new-part', function clickNewPartButton() {
+        return this.waitForSelector('.actions .new-part', function clickNewPartButton() {
             this.click('.actions .new-part');
         }, function fail() {
             this.capture('screenshot/partCreation/waitForNewPartButton-error.png');
@@ -41,7 +41,7 @@ casper.test.begin('Part creation tests suite', 8, function partCreationTestsSuit
      * Create a part without a part number
      * */
     casper.then(function waitForNewPartModal() {
-        this.waitForSelector('#part_creation_modal .btn-primary', function createEmptyPart() {
+        return this.waitForSelector('#part_creation_modal .btn-primary', function createEmptyPart() {
             this.click('#part_creation_modal .btn-primary');
             this.test.assertExists('#part_creation_modal input#inputPartNumber:invalid', 'Should not create part without a part number');
         }, function fail() {
@@ -55,7 +55,7 @@ casper.test.begin('Part creation tests suite', 8, function partCreationTestsSuit
      * wait for the input to be loaded
      */
     casper.then(function waitForPartNumberInput() {
-        this.waitForSelector('#part_creation_modal input#inputPartNumber', function onNewPartFormReady() {
+        return this.waitForSelector('#part_creation_modal input#inputPartNumber', function onNewPartFormReady() {
             this.test.assert(true, 'partNumber input loaded');
 
         }, function fail() {
@@ -68,7 +68,7 @@ casper.test.begin('Part creation tests suite', 8, function partCreationTestsSuit
      * Create a part with its partNumber and its partName
      */
     casper.then(function fillNewPartModalForm() {
-        this.waitForSelector('#inputPartTemplate option:nth-child(3)', function injectTemplate() {
+        return this.waitForSelector('#inputPartTemplate option:nth-child(3)', function injectTemplate() {
             this.test.assertElementCount('#inputPartTemplate option', 3, 'template options are present');
             this.evaluate(function () {
                 document.querySelector('#inputPartTemplate').selectedIndex = 2;
@@ -86,7 +86,7 @@ casper.test.begin('Part creation tests suite', 8, function partCreationTestsSuit
 
     casper.then(function openAttributesTab() {
         var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
-        this.waitForSelector(attributesTabSelector, function () {
+        return this.waitForSelector(attributesTabSelector, function () {
             this.click(attributesTabSelector);
         }, function fail() {
             this.capture('screenshot/partCreation/clickOnAttributeTab-error.png');
@@ -99,7 +99,7 @@ casper.test.begin('Part creation tests suite', 8, function partCreationTestsSuit
      */
 
     casper.then(function assertAttributesTabActive() {
-        this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function openTab() {
+        return this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function openTab() {
             this.test.assert(true, 'attribute tab open');
         }, function fail() {
             this.test.assert(false, 'could not set attribute tab to active');
@@ -122,7 +122,7 @@ casper.test.begin('Part creation tests suite', 8, function partCreationTestsSuit
      * Wait for the part to be created, will appears in the list
      */
     casper.then(function waitForPartToBeCreated() {
-        this.waitFor(function check() {
+        return this.waitFor(function check() {
             return this.evaluate(function () {
                 return $('#part_table tbody tr:first-child td.part_number span').text() === '000-AAA-CasperJsTestPart';
             });
@@ -137,7 +137,7 @@ casper.test.begin('Part creation tests suite', 8, function partCreationTestsSuit
 
     casper.then(function waitForCountUpdate() {
         //check if the nav button with the number of checkout part has been updated
-        this.waitFor(function check() {
+        return this.waitFor(function check() {
             return this.evaluate(function () {
                 return $('.nav-checkedOut-number-item').text() === '1';
             });
@@ -150,7 +150,7 @@ casper.test.begin('Part creation tests suite', 8, function partCreationTestsSuit
     });
 
     casper.then(function waitForModalToBeClosed() {
-        this.waitWhileSelector('#part_creation_modal', function onPartModalClosed() {
+        return this.waitWhileSelector('#part_creation_modal', function onPartModalClosed() {
             this.test.assert(true, 'Part modal has been closed');
         }, function fail() {
             this.capture('screenshot/partCreation/waitForModalToBeClosed-error.png');
@@ -159,7 +159,7 @@ casper.test.begin('Part creation tests suite', 8, function partCreationTestsSuit
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

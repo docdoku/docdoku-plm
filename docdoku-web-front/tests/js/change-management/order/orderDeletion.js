@@ -11,14 +11,14 @@ casper.test.begin('Change order deletion tests suite', 2, function changeOrderDe
      * */
 
     casper.then(function () {
-        this.open(urls.changeManagement);
+        return this.open(urls.changeManagement);
     });
 
     /**
      * Open change orders nav
      */
     casper.then(function waitForChangeOrdersNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/orders"]', function clickOnChangeOrderNavLink() {
+        return this.waitForSelector('a[href="#' + workspace + '/orders"]', function clickOnChangeOrderNavLink() {
             this.click('a[href="#' + workspace + '/orders"]');
         }, function fail() {
             this.capture('screenshot/orderDeletion/waitForChangeOrdersNavLink-error.png');
@@ -30,7 +30,7 @@ casper.test.begin('Change order deletion tests suite', 2, function changeOrderDe
      * Click the 'select all' checkbox
      */
     casper.then(function waitForSelectAllCheckbox() {
-        this.waitForSelector('#order_table thead tr:first-child  th:first-child input', function clickOnSelectAllCheckbox() {
+        return this.waitForSelector('#order_table thead tr:first-child  th:first-child input', function clickOnSelectAllCheckbox() {
             this.click('#order_table thead tr:first-child  th:first-child input');
         }, function fail() {
             this.capture('screenshot/orderDeletion/waitForSelectAllCheckbox-error.png');
@@ -42,7 +42,7 @@ casper.test.begin('Change order deletion tests suite', 2, function changeOrderDe
      * Wait for the delete button to appear
      */
     casper.then(function waitForDeleteButton() {
-        this.waitForSelector('.actions .delete', function clickOnDeleteButton() {
+        return this.waitForSelector('.actions .delete', function clickOnDeleteButton() {
             this.click('.actions .delete');
             this.test.assert(true, 'Delete button available');
         }, function fail() {
@@ -67,7 +67,7 @@ casper.test.begin('Change order deletion tests suite', 2, function changeOrderDe
      * Assert that there's no more entries in the table
      **/
     casper.then(function waitForTableToBeEmpty() {
-        this.waitWhileSelector('#order_table tbody tr:first-child  td:first-child input', function onBaselineTableEmpty() {
+        return this.waitWhileSelector('#order_table tbody tr:first-child  td:first-child input', function onBaselineTableEmpty() {
             this.test.assert(true, 'No more orders in the list');
         }, function fail() {
             this.capture('screenshot/orderDeletion/waitForTableToBeEmpty-error.png');
@@ -76,6 +76,6 @@ casper.test.begin('Change order deletion tests suite', 2, function changeOrderDe
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

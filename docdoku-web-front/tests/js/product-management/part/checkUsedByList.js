@@ -11,7 +11,7 @@ casper.test.begin('Used by tab tests suite', 2, function usedByTabTestsSuite() {
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
@@ -19,7 +19,7 @@ casper.test.begin('Used by tab tests suite', 2, function usedByTabTestsSuite() {
      */
 
     casper.then(function waitForPartNavLink() {
-        this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
+        return this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
         });
     });
@@ -29,7 +29,7 @@ casper.test.begin('Used by tab tests suite', 2, function usedByTabTestsSuite() {
      */
 
     casper.then(function waitForPartInList() {
-        this.waitForSelector('#part_table tbody tr:first-child td.part_number', function openPartModal() {
+        return this.waitForSelector('#part_table tbody tr:first-child td.part_number', function openPartModal() {
             this.click('#part_table tbody tr:first-child td.part_number span');
         });
     });
@@ -38,7 +38,7 @@ casper.test.begin('Used by tab tests suite', 2, function usedByTabTestsSuite() {
      * Wait for part modal
      */
     casper.then(function waitForModalDisplay() {
-        this.waitForSelector('#part-modal li a[href="#tab-iteration-used-by"]', function openUsedByTab() {
+        return this.waitForSelector('#part-modal li a[href="#tab-iteration-used-by"]', function openUsedByTab() {
             this.click('#part-modal li a[href="#tab-iteration-used-by"]');
         });
     });
@@ -47,7 +47,7 @@ casper.test.begin('Used by tab tests suite', 2, function usedByTabTestsSuite() {
      * Wait for used by tab
      */
     casper.then(function waitForUsedByDisplay() {
-        this.waitForSelector('#used-by-group-list-view > div > div > div > div.group-title', function checkValues() {
+        return this.waitForSelector('#used-by-group-list-view > div > div > div > div.group-title', function checkValues() {
             this.test.assertSelectorHasText('#used-by-group-list-view > div > div > div > div.group-title', '< '+products.product1.number+' >', 'Part must be present in product "< '+products.product1.number+' >"');
             this.test.assertSelectorHasText('#used-by-product-instances > li.used-by-item > div.reference', productInstances.productInstance1.serialNumber, 'Part must be present in product instance "'+productInstances.productInstance1.serialNumber+'"');
         });
@@ -55,7 +55,7 @@ casper.test.begin('Used by tab tests suite', 2, function usedByTabTestsSuite() {
 
 
     casper.run(function () {
-        this.test.done();
+        return this.test.done();
     });
 
 });

@@ -11,7 +11,7 @@ casper.test.begin('Workflow duplication tests suite', 6, function workflowDuplic
      * */
 
     casper.then(function () {
-        this.open(urls.changeManagement);
+        return this.open(urls.changeManagement);
     });
 
     /**
