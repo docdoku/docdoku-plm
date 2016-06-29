@@ -11,7 +11,8 @@ function (Backbone, Mustache, template) {
 
         events: {
             'click .fa-times': 'removeAndNotify',
-            'change select': 'changeModel'
+            'change select.role-default-assigned-users': 'updateAssignedUsers',
+            'change select.role-default-assigned-groups': 'updateAssignedGroups'
         },
 
         initialize: function () {
@@ -24,23 +25,59 @@ function (Backbone, Mustache, template) {
                 model: this.model,
                 required: !this.options.nullable
             }));
-            this.$select = this.$('select');
+            this.$usersSelect = this.$('select.role-default-assigned-users');
+            this.$groupsSelect = this.$('select.role-default-assigned-groups');
             this.fillUserList();
+            this.fillGroupList();
             return this;
         },
 
         fillUserList: function () {
-            var self = this;
 
-            this.$select.append('<option value=""></option>');
-
-            this.options.userList.each(function (user) {
-                var selected = '';
-                if (self.model.getMappedUserLogin() === user.get('login')) {
-                    selected = ' selected';
-                }
-                self.$select.append('<option value="' + user.get('login') + '"' + selected + '>' + user.get('name') + '</option>');
+            this.$usersSelect.selectize({
+                plugins: ['remove_button'],
+                valueField: 'login',
+                searchField: ['name'],
+                render: {
+                    item: function(item, escape) {
+                        return '<div><span class="name">' + escape(item.name) + '</span></div>';
+                    },
+                    option: function(item, escape) {
+                        return '<div><span class="label">' + escape(item.name) + '</span></div>';
+                    }
+                },
+                options:this.options.userList.models.map(function(user){
+                    return {login:user.getLogin(), name:user.getName()};
+                })
             });
+
+            _.each(this.model.getDefaultAssignedUsers(),function(user){
+                this.$usersSelect[0].selectize.addItem(user.login);
+            },this);
+        },
+
+        fillGroupList: function () {
+
+            this.$groupsSelect.selectize({
+                plugins: ['remove_button'],
+                valueField: 'id',
+                searchField: ['id'],
+                render: {
+                    item: function(item, escape) {
+                        return '<div><span class="name">' + escape(item.id) + '</span></div>';
+                    },
+                    option: function(item, escape) {
+                        return '<div><span class="label">' + escape(item.id) + '</span></div>';
+                    }
+                },
+                options:this.options.groupList.models.map(function(group){
+                    return {id:group.id};
+                })
+            });
+
+            _.each(this.model.getDefaultAssignedGroups(),function(group){
+                this.$groupsSelect[0].selectize.addItem(group.id);
+            },this);
 
         },
 
@@ -57,12 +94,16 @@ function (Backbone, Mustache, template) {
             }
         },
 
-        changeModel: function () {
-            var user;
-            if (this.$select.val()) {
-                user = {login: this.$select.val()};
-            }
-            this.model.set({defaultAssignee: user});
+        updateAssignedUsers: function () {
+            this.model.setDefaultAssignedUsers((this.$usersSelect.val()||[]).map(function(login){
+                return {login:login};
+            }));
+        },
+
+        updateAssignedGroups:function(){
+            this.model.setDefaultAssignedGroups((this.$groupsSelect.val()||[]).map(function(id){
+                return {id:id};
+            }));
         }
 
     });

@@ -5,6 +5,9 @@ function (Backbone) {
     var UserModel = Backbone.Model.extend({
         getLogin: function () {
             return this.get('login');
+        },
+        getName: function () {
+            return this.get('name');
         }
     });
 

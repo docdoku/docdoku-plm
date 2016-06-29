@@ -1,4 +1,4 @@
-/*global define,_*/
+/*global define,_,App*/
 define([
     'common-objects/views/base',
     'common-objects/collections/users',
@@ -48,7 +48,12 @@ define([
         toList: function () {
             var list = [];
             _.each(this.rolesItemViews, function (view) {
-                list.push({roleName: view.model.get('name'), userLogin: view.model.get('defaultAssignee').login });
+                list.push({
+                    workspaceId: App.config.workspaceId,
+                    roleName: view.model.getName(),
+                    defaultAssignedUsers: view.model.getDefaultAssignedUsers(),
+                    defaultAssignedGroups: view.model.getDefaultAssignedGroups()
+                });
             });
             return list;
         }

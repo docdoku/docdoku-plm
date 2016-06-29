@@ -111,7 +111,8 @@ define([
                     selectedRole = new Role({
                         workspaceId: App.config.workspaceId,
                         name: roleName,
-                        defaultAssignee: null
+                        defaultAssignedUsers: [],
+                        defaultAssignedGroups: []
                     });
                     this.newRoles.push(selectedRole);
                     this.roles.add(selectedRole);

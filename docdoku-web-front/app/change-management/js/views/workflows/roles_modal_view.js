@@ -8,8 +8,9 @@ define([
 	'collections/roles_in_use',
 	'common-objects/views/workflow/role_item_view',
     'common-objects/views/alert',
-	'common-objects/collections/users'
-],function (Mustache, ModalView, template, Role, RolesList, RoleInUseList, RoleItemView, AlertView, UserList) {
+	'common-objects/collections/users',
+	'common-objects/collections/user_groups'
+],function (Mustache, ModalView, template, Role, RolesList, RoleInUseList, RoleItemView, AlertView, UserList, UserGroupList) {
 	'use strict';
     var RolesModalView = ModalView.extend({
         initialize: function () {
@@ -32,14 +33,19 @@ define([
             this.$newRoleName.customValidity(App.config.i18n.REQUIRED_FIELD);
 
             this.userList = new UserList();
+            this.groupList = new UserGroupList();
+
             if(!this.collection){
                 this.collection = new RolesList();
             }
+
             this.rolesInUse = new RoleInUseList();
 
-            this.userList.fetch({reset: true, success: function () {
-                _this.createRoleViews();
-                _this.rolesInUse.fetch({reset: true});
+            this.groupList.fetch({reset: true, success: function () {
+                _this.userList.fetch({reset: true, success: function () {
+                    _this.createRoleViews();
+                    _this.rolesInUse.fetch({reset: true});
+                }});
             }});
 
             this.rolesToDelete = [];
@@ -68,7 +74,8 @@ define([
                 this.collection.add({
                     workspaceId: App.config.workspaceId,
                     name: this.$newRoleName.val(),
-                    defaultAssignee: null
+                    defaultAssignedUsers: [],
+                    defaultAssignedGroups: []
                 });
                 this.resetNewRoleForm();
             }
@@ -150,6 +157,7 @@ define([
             var view = new RoleItemView({
                 model: model,
                 userList: this.userList,
+                groupList: this.groupList,
                 nullable: true,
                 removable: modelCanBeRemoved,
                 onError: _this.onError
