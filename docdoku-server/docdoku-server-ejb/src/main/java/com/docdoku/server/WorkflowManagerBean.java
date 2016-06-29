@@ -169,33 +169,56 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
 
     @Override
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    public Role createRole(String roleName, String workspaceId, String userLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, RoleAlreadyExistsException, CreationException {
+    public Role createRole(String roleName, String workspaceId, List<String> userLogins, List<String> userGroupIds) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, RoleAlreadyExistsException, CreationException, UserGroupNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
         Workspace wks = new WorkspaceDAO(locale, em).loadWorkspace(workspaceId);
-        Role role = new Role(roleName, wks);
 
-        if (userLogin != null) {
-            User userMapped = new UserDAO(locale, em).loadUser(new UserKey(workspaceId, userLogin));
-            role.setDefaultAssignee(userMapped);
+        Set<User> users = new HashSet<>();
+        Set<UserGroup> groups = new HashSet<>();
+
+        if (userLogins != null) {
+            for(String userLogin :userLogins) {
+                users.add(new UserDAO(locale, em).loadUser(new UserKey(workspaceId, userLogin)));
+            }
         }
 
+        if (userGroupIds != null) {
+            for(String id :userGroupIds) {
+                groups.add(new UserGroupDAO(locale, em).loadUserGroup(new UserGroupKey(workspaceId, id)));
+            }
+        }
+
+        Role role = new Role(roleName, wks, users, groups);
         new RoleDAO(locale, em).createRole(role);
+
         return role;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Role updateRole(RoleKey roleKey, String userLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, RoleNotFoundException {
+    public Role updateRole(RoleKey roleKey, List<String> userLogins, List<String> userGroupIds) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, RoleNotFoundException, UserGroupNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(roleKey.getWorkspace());
+        Locale locale = new Locale(user.getLanguage());
+
         RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()), em);
         Role role = roleDAO.loadRole(roleKey);
 
-        if (userLogin != null) {
-            User userMapped = new UserDAO(new Locale(user.getLanguage()), em).loadUser(new UserKey(roleKey.getWorkspace(), userLogin));
-            role.setDefaultAssignee(userMapped);
-        } else {
-            role.setDefaultAssignee(null);
+        Set<User> users = new HashSet<>();
+        Set<UserGroup> groups = new HashSet<>();
+
+        if (userLogins != null) {
+            for(String userLogin :userLogins) {
+                users.add(new UserDAO(locale, em).loadUser(new UserKey(roleKey.getWorkspace(), userLogin)));
+            }
+            role.setDefaultAssignedUsers(users);
+        }
+
+        if (userGroupIds != null) {
+            for(String id :userGroupIds) {
+                groups.add(new UserGroupDAO(locale, em).loadUserGroup(new UserGroupKey(roleKey.getWorkspace(), id)));
+            }
+            role.setDefaultAssignedGroups(groups);
         }
 
         return role;

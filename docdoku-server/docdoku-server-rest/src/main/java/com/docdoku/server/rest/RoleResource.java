@@ -27,6 +27,7 @@ import com.docdoku.core.workflow.Role;
 import com.docdoku.core.workflow.RoleKey;
 import com.docdoku.server.rest.dto.RoleDTO;
 import com.docdoku.server.rest.dto.UserDTO;
+import com.docdoku.server.rest.dto.UserGroupDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -44,6 +45,8 @@ import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -116,13 +119,22 @@ public class RoleResource {
             @ApiParam(required = true, value = "Role to create") RoleDTO roleDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, CreationException {
 
-        UserDTO userDTO = roleDTO.getDefaultAssignee();
-        String userLogin = null;
-        if (userDTO != null) {
-            userLogin = userDTO.getLogin();
+        List<UserDTO> userDTOs = roleDTO.getDefaultAssignedUsers();
+        List<UserGroupDTO> groupDTOs = roleDTO.getDefaultAssignedGroups();
+        List<String> userLogins = new ArrayList<>();
+        List<String> userGroupIds = new ArrayList<>();
+        if (userDTOs != null) {
+           for(UserDTO userDTO:userDTOs){
+               userLogins.add(userDTO.getLogin());
+           }
+        }
+        if (groupDTOs != null) {
+            for(UserGroupDTO groupDTO:groupDTOs){
+                userGroupIds.add(groupDTO.getId());
+            }
         }
 
-        Role roleCreated = roleService.createRole(roleDTO.getName(), roleDTO.getWorkspaceId(), userLogin);
+        Role roleCreated = roleService.createRole(roleDTO.getName(), roleDTO.getWorkspaceId(), userLogins, userGroupIds);
         RoleDTO roleCreatedDTO = mapRoleToDTO(roleCreated);
 
         try {
@@ -142,13 +154,22 @@ public class RoleResource {
                                @ApiParam(required = true, value = "Role to update") RoleDTO roleDTO)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
-        UserDTO userDTO = roleDTO.getDefaultAssignee();
-        String userLogin = null;
-        if (userDTO != null) {
-            userLogin = userDTO.getLogin();
+        List<UserDTO> userDTOs = roleDTO.getDefaultAssignedUsers();
+        List<UserGroupDTO> groupDTOs = roleDTO.getDefaultAssignedGroups();
+        List<String> userLogins = new ArrayList<>();
+        List<String> userGroupIds = new ArrayList<>();
+        if (userDTOs != null) {
+            for(UserDTO userDTO:userDTOs){
+                userLogins.add(userDTO.getLogin());
+            }
+        }
+        if (groupDTOs != null) {
+            for(UserGroupDTO groupDTO:groupDTOs){
+                userGroupIds.add(groupDTO.getId());
+            }
         }
 
-        Role roleUpdated = roleService.updateRole(new RoleKey(roleDTO.getWorkspaceId(), roleName), userLogin);
+        Role roleUpdated = roleService.updateRole(new RoleKey(roleDTO.getWorkspaceId(), roleName), userLogins, userGroupIds);
         RoleDTO roleUpdatedDTO = mapRoleToDTO(roleUpdated);
         try {
             return Response.created(URI.create(URLEncoder.encode(roleUpdatedDTO.getName(), "UTF-8"))).entity(roleUpdatedDTO).build();
@@ -174,11 +195,11 @@ public class RoleResource {
 
     private RoleDTO mapRoleToDTO(Role role) {
         RoleDTO roleDTO = mapper.map(role, RoleDTO.class);
-        roleDTO.setWorkspaceId(role.getWorkspace().getId());
+        /*roleDTO.setWorkspaceId(role.getWorkspace().getId());
         if (role.getDefaultAssignee() != null) {
             roleDTO.setDefaultAssignee(mapper.map(role.getDefaultAssignee(), UserDTO.class));
         }
-        roleDTO.setId(role.getName());
+        roleDTO.setId(role.getName());*/
 
         return roleDTO;
     }

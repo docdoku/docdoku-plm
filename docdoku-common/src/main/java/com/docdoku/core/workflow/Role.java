@@ -22,10 +22,14 @@ package com.docdoku.core.workflow;
 
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This class is the model used to create roles in a workspace
@@ -48,12 +52,29 @@ public class Role implements Serializable {
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Workspace workspace;
 
-    @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumns({
-            @JoinColumn(name="DEFAULT_ASSIGNEE_LOGIN", referencedColumnName="LOGIN"),
-            @JoinColumn(name="DEFAULT_ASSIGNEE_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+    @ManyToMany(fetch=FetchType.EAGER)
+    @JoinTable(name="ROLE_USER",
+    inverseJoinColumns={
+            @JoinColumn(name="USER_LOGIN", referencedColumnName="LOGIN"),
+            @JoinColumn(name="USER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+    },
+    joinColumns={
+            @JoinColumn(name="ROLE_NAME", referencedColumnName="NAME"),
+            @JoinColumn(name="ROLE_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
     })
-    private User defaultAssignee;
+    private Set<User> defaultAssignedUsers=new HashSet<>();
+
+    @ManyToMany(fetch=FetchType.EAGER)
+    @JoinTable(name="ROLE_USERGROUP",
+    inverseJoinColumns={
+            @JoinColumn(name="USERGROUP_ID", referencedColumnName="ID"),
+            @JoinColumn(name="USERGROUP_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+    },
+    joinColumns={
+            @JoinColumn(name="ROLE_NAME", referencedColumnName="NAME"),
+            @JoinColumn(name="ROLE_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+    })
+    private Set<UserGroup> defaultAssignedGroups=new HashSet<>();
 
     public Role(){
     }
@@ -63,12 +84,12 @@ public class Role implements Serializable {
         this.workspace = workspace;
     }
 
-    public Role(String name, Workspace workspace, User defaultAssignee){
+    public Role(String name, Workspace workspace, Set<User> defaultAssignedUsers, Set<UserGroup> defaultAssignedGroups){
         this.name = name;
         this.workspace = workspace;
-        this.defaultAssignee = defaultAssignee;
+        this.defaultAssignedUsers = defaultAssignedUsers;
+        this.defaultAssignedGroups = defaultAssignedGroups;
     }
-
 
     public String getName() {
         return name;
@@ -86,14 +107,21 @@ public class Role implements Serializable {
         this.workspace = workspace;
     }
 
-    public User getDefaultAssignee() {
-        return defaultAssignee;
+    public Set<User> getDefaultAssignedUsers() {
+        return defaultAssignedUsers;
     }
 
-    public void setDefaultAssignee(User defaultAssignee) {
-        this.defaultAssignee = defaultAssignee;
+    public void setDefaultAssignedUsers(Set<User> defaultAssignedUsers) {
+        this.defaultAssignedUsers = defaultAssignedUsers;
     }
 
+    public Set<UserGroup> getDefaultAssignedGroups() {
+        return defaultAssignedGroups;
+    }
+
+    public void setDefaultAssignedGroups(Set<UserGroup> defaultAssignedGroups) {
+        this.defaultAssignedGroups = defaultAssignedGroups;
+    }
 
     @Override
     public boolean equals(Object o) {
