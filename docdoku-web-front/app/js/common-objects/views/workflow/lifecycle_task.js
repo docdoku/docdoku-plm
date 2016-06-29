@@ -37,11 +37,23 @@ define([
             }
 
             this.task.isAcceptableOrRejectable = (
-                this.task.worker.login === App.config.login &&
+                this.isPotentialWorker() &&
                 this.task.status.toLowerCase() === 'in_progress'
                 );
 
             return this;
+        },
+
+        isPotentialWorker: function(){
+            var isAssignedFromGroup = _.intersection(App.config.groups.map(function(membership){
+                return membership.memberId;
+            }),this.task.assignedGroups.map(function(group){
+                return group.id;
+            })).length > 0;
+
+            var isAssignedAsUser = _.where(this.task.assignedUsers,{login:App.config.login}).length === 1;
+
+            return isAssignedAsUser || isAssignedFromGroup;
         },
 
         setEntityType: function (entityType) {
@@ -52,7 +64,13 @@ define([
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n, task: this.task}));
             this.$el.addClass(this.task.status.toLowerCase());
-            this.$('.user-popover').userPopover(this.task.worker.login, this.task.title, 'left');
+            if(this.task.worker){
+                this.$('.worker-popover').userPopover(this.task.worker.login, this.task.title, 'left');
+            }
+            var title = this.task.title;
+            this.$('.assigned-users-popover').each(function(){
+                $(this).userPopover($(this).attr('data-login'), title, 'left');
+            });
             this.bindDomElements();
             this.lifecycleTaskSigningView = new LifecycleTaskSigningView().render();
             this.$tasksigning.append(this.lifecycleTaskSigningView.$el);

@@ -362,11 +362,11 @@ define([
 
                 this.lifecycleView = new LifecycleView({
                     el: '#tab-iteration-lifecycle'
-                }).setAbortedWorkflowsUrl(this.model.getUrl() + '/aborted-workflows').setWorkflow(this.model.get('workflow')).setEntityType('parts').render();
+                }).setWorkflow(this.model.get('workflow')).setEntityType('parts').render();
 
                 this.lifecycleView.on('lifecycle:change', function () {
                     that.model.fetch({success: function () {
-                        that.lifecycleView.setAbortedWorkflowsUrl(that.model.getUrl() + '/aborted-workflows').setWorkflow(that.model.get('workflow')).setEntityType('parts').render();
+                        that.lifecycleView.setWorkflow(that.model.get('workflow')).setEntityType('parts').render();
                     }});
                 });
 

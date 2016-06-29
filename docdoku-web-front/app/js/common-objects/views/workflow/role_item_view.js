@@ -54,6 +54,8 @@ function (Backbone, Mustache, template) {
             _.each(this.model.getDefaultAssignedUsers(),function(user){
                 this.$usersSelect[0].selectize.addItem(user.login);
             },this);
+
+            this.validate();
         },
 
         fillGroupList: function () {
@@ -79,6 +81,8 @@ function (Backbone, Mustache, template) {
                 this.$groupsSelect[0].selectize.addItem(group.id);
             },this);
 
+            this.validate();
+
         },
 
         removeAndNotify: function () {
@@ -98,12 +102,36 @@ function (Backbone, Mustache, template) {
             this.model.setDefaultAssignedUsers((this.$usersSelect.val()||[]).map(function(login){
                 return {login:login};
             }));
+            this.validate();
         },
 
         updateAssignedGroups:function(){
             this.model.setDefaultAssignedGroups((this.$groupsSelect.val()||[]).map(function(id){
                 return {id:id};
             }));
+            this.validate();
+        },
+
+        validate:function(){
+            if(!this.options.nullable){
+                if(!this.hasSelectedGroups() && !this.hasSelectedUsers()){
+                    this.isValid = false;
+                    this.$el.addClass('invalid');
+                    this.$('select').prop('required',true);
+                }else{
+                    this.isValid = true;
+                    this.$el.removeClass('invalid');
+                    this.$('select').prop('required',false);
+                }
+            }
+        },
+
+        hasSelectedUsers:function(){
+            return this.$usersSelect.val() && this.$usersSelect.val().length;
+        },
+
+        hasSelectedGroups:function(){
+            return this.$groupsSelect.val() && this.$groupsSelect.val().length;
         }
 
     });

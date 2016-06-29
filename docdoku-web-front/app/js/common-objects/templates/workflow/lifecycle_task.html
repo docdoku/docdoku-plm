@@ -7,8 +7,26 @@
     <i class="toggle-comment fa fa-comment" title="{{i18n.COMMENT}}"></i>
     {{/task.closureDate}}
 </h5>
+
 <p class="task-instructions">{{task.instructions}}</p>
-<a class="user-popover">{{task.worker.name}}</a>
+
+{{#task.worker}}
+<p>
+    {{i18n.TASK_WORKER}} <a class="worker-popover">{{task.worker.name}}</a>
+</p>
+{{/task.worker}}
+
+{{i18n.ASSIGNMENTS}}
+
+{{#task.assignedUsers}}
+    <i class="fa fa-user"></i> <a class="assigned-users-popover" data-login="{{login}}">{{name}}</a>
+{{/task.assignedUsers}}
+
+{{#task.assignedGroups}}
+    <i class="fa fa-users"></i> <a class="group-popover">{{id}}</a>
+{{/task.assignedGroups}}
+
+
 {{#task.closureDate}}
 <div class="task-comment">
     <p>

@@ -1,4 +1,5 @@
 <p><a class="fa fa-times"></a> <b>{{model.getName}}</b> </p>
-<p>{{i18n.ASSIGNED_ROLE_PRE_FILL}}</p>
+{{^required}}<p>{{i18n.ASSIGNED_ROLE_PRE_FILL}}</p>{{/required}}
 <select placeholder="{{i18n.ASSIGNED_USERS}}" multiple="multiple" class="role-default-assigned-users"></select>
 <select placeholder="{{i18n.ASSIGNED_USERGROUPS}}" multiple="multiple" class="role-default-assigned-groups"></select>
+<p class="required-message">{{i18n.ASSIGNED_ROLE_REQUIRED}}</p>

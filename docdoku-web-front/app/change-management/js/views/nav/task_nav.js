@@ -22,14 +22,21 @@ define([
             }
         },
 
-        showContent: function (taskId) {
+        showTaskContent: function (taskId) {
             this.setActive();
             this.cleanView();
             this.contentView = new TaskView();
-            this.contentView.render(taskId);
+            this.contentView.renderTask(taskId);
             App.appView.$content.html(this.contentView.el);
         },
 
+        showWorkflowContent: function (workflowId) {
+            this.setActive();
+            this.cleanView();
+            this.contentView = new TaskView();
+            this.contentView.renderWorkflow(workflowId);
+            App.appView.$content.html(this.contentView.el);
+        },
         cleanView: function () {
             if (this.contentView) {
                 this.contentView.remove();
