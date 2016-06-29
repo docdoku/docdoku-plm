@@ -10,7 +10,7 @@ casper.test.begin('Product deletion tests suite', 1, function productDeletionTes
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
@@ -18,7 +18,7 @@ casper.test.begin('Product deletion tests suite', 1, function productDeletionTes
      */
 
     casper.then(function waitForProductNavLink() {
-        this.waitForSelector('#product-nav > .nav-list-entry > a', function clickProductNavLink() {
+        return this.waitForSelector('#product-nav > .nav-list-entry > a', function clickProductNavLink() {
             this.click('#product-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/productDeletion/waitForProductNavLink-error.png');
@@ -31,7 +31,7 @@ casper.test.begin('Product deletion tests suite', 1, function productDeletionTes
      */
 
     casper.then(function waitForProductInList() {
-        this.waitForSelector('#product_table tbody tr:first-child td.product_id', function clickOnProductCheckbox() {
+        return this.waitForSelector('#product_table tbody tr:first-child td.product_id', function clickOnProductCheckbox() {
             this.click('#product_table tbody tr:first-child td:first-child input');
         }, function fail() {
             this.capture('screenshot/productDeletion/waitForProductInList-error.png');
@@ -42,7 +42,7 @@ casper.test.begin('Product deletion tests suite', 1, function productDeletionTes
     casper.then(function clickOnDeleteProductButton() {
         this.click('.actions .delete');
         // Confirm deletion
-        this.waitForSelector('.bootbox', function confirmProductDeletion() {
+        return this.waitForSelector('.bootbox', function confirmProductDeletion() {
             this.click('.bootbox .modal-footer .btn-primary');
         }, function fail() {
             this.capture('screenshot/productDeletion/waitForDeletionConfirmationModal-error.png');
@@ -51,7 +51,7 @@ casper.test.begin('Product deletion tests suite', 1, function productDeletionTes
     });
 
     casper.then(function waitForProductDisappear() {
-        this.waitWhileSelector('#product_table tbody tr:first-child td.product_id', function productHasBeenDeleted() {
+        return this.waitWhileSelector('#product_table tbody tr:first-child td.product_id', function productHasBeenDeleted() {
             casper.test.assert(true, 'Product has been deleted');
         }, function fail() {
             this.capture('screenshot/productDeletion/waitForProductDiseapear-error.png');
@@ -60,7 +60,7 @@ casper.test.begin('Product deletion tests suite', 1, function productDeletionTes
     });
 
     casper.run(function () {
-        this.test.done();
+        return this.test.done();
     });
 
 });

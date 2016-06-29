@@ -9,7 +9,7 @@ casper.test.begin('LOV creation and use in template', 5, function LOVTemplateCre
      * Open document management URL
      * */
     casper.then(function () {
-        this.open(urls.documentManagement);
+        return this.open(urls.documentManagement);
     });
 
     function cantFindElement(selector) {
@@ -21,17 +21,18 @@ casper.test.begin('LOV creation and use in template', 5, function LOVTemplateCre
      */
     casper.then(function () {
         var templateMenuItemSelecor = '#template-nav > .nav-list-entry > a';
-        this.waitForSelector(templateMenuItemSelecor, function clickTemplateNavLink() {
+        return this.waitForSelector(templateMenuItemSelecor, function clickTemplateNavLink() {
             this.click(templateMenuItemSelecor);
         }, cantFindElement.bind(this, templateMenuItemSelecor));
     });
 
     /**
      * Open LOV creation modal and create a lov Color
+     * TODO : Split this 'wait selectors' into unit functions
      */
     casper.then(function () {
         var actionNewLovButtonSelector = '.actions .list-lov';
-        this.waitForSelector(actionNewLovButtonSelector, function () {
+        return this.waitForSelector(actionNewLovButtonSelector, function () {
             this.click(actionNewLovButtonSelector);
             var modalSelector = '.modal.list_lov';
             this.waitForSelector(modalSelector, function () {
@@ -62,9 +63,10 @@ casper.test.begin('LOV creation and use in template', 5, function LOVTemplateCre
 
     /**
      * Open the new model template modal and fill ID
+     * TODO : Split this 'wait selectors' into unit functions
      */
     casper.then(function () {
-        this.waitWhileSelector('.modal.list_lov', function () {
+        return this.waitWhileSelector('.modal.list_lov', function () {
             this.click('.actions .new-template');
             this.waitForSelector('.modal.new-template', function () {
                 this.waitForSelector('.modal.new-template input.reference', function () {
@@ -77,10 +79,12 @@ casper.test.begin('LOV creation and use in template', 5, function LOVTemplateCre
         });
 
     });
-
+    /*
+    * * TODO : Split this 'wait selectors' into unit functions
+     */
     casper.then(function () {
         var templateTabSelector = '.modal.new-template .tabs > ul > li:nth-child(3) > a';
-        this.waitForSelector(templateTabSelector, function () {
+        return this.waitForSelector(templateTabSelector, function () {
             this.click(templateTabSelector);
             //wait until the tab Attributes is display
             var attributViewSelector = '.tab-pane.attributes.attributes-edit.active';
@@ -102,7 +106,7 @@ casper.test.begin('LOV creation and use in template', 5, function LOVTemplateCre
      */
     casper.then(function () {
         var selector = '.tab-pane.attributes.attributes-edit.active .list-item select.type option[value="' + documents.lov.color.itemName + '"]';
-        this.waitForSelector(selector, function () {
+        return this.waitForSelector(selector, function () {
             this.evaluate(function (pOptionSelector) {
                 var option = document.querySelector(pOptionSelector);
                 $(option).attr('selected', 'selected').change();
@@ -115,10 +119,11 @@ casper.test.begin('LOV creation and use in template', 5, function LOVTemplateCre
 
     /**
      * Check if the template has been created and open the modal
+     * TODO : Split this 'wait selectors' into unit functions
      */
     casper.then(function () {
         var modalOfTemplateCreationSelector = '.modal.new-template';
-        this.waitWhileSelector(modalOfTemplateCreationSelector, function () {
+        return this.waitWhileSelector(modalOfTemplateCreationSelector, function () {
             var templateReferenceInListSelector = '#document-management-content table.dataTable tr td.reference';
             this.waitForSelector(templateReferenceInListSelector, function templateHasBeenCreated() {
                 this.test.assertSelectorHasText(templateReferenceInListSelector, documents.lov.template.number);
@@ -135,11 +140,12 @@ casper.test.begin('LOV creation and use in template', 5, function LOVTemplateCre
     });
 
     /**
-     * Check the type of the attribut
+     * Check the type of the attribute
+     * TODO : Split this 'wait selectors' into unit functions
      */
     casper.then(function () {
         var templateAttributTabSelector = '.modal.new-template .tabs > ul > li:nth-child(3) > a';
-        this.waitForSelector(templateAttributTabSelector, function () {
+        return this.waitForSelector(templateAttributTabSelector, function () {
             this.click(templateAttributTabSelector);
             var attributViewSelector = '.tab-pane.attributes.attributes-edit.active';
             this.waitForSelector(attributViewSelector, function () {
@@ -157,7 +163,7 @@ casper.test.begin('LOV creation and use in template', 5, function LOVTemplateCre
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

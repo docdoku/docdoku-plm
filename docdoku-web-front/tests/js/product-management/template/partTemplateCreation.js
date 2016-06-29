@@ -10,14 +10,14 @@ casper.test.begin('Part template creation tests suite', 5, function partTemplate
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
      * Go to part template nav
      */
     casper.then(function waitForPartTemplateNavLink() {
-        this.waitForSelector('#part-template-nav > .nav-list-entry > a', function clickPartTemplateNavLink() {
+        return this.waitForSelector('#part-template-nav > .nav-list-entry > a', function clickPartTemplateNavLink() {
             this.click('#part-template-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/partTemplateCreation/waitForPartTemplateNavLink-error.png');
@@ -29,7 +29,7 @@ casper.test.begin('Part template creation tests suite', 5, function partTemplate
      * Wait for the creation button
      */
     casper.then(function waitForPartTemplateCreationButton() {
-        this.waitForSelector('.actions .new-template', function clickPartTemplateCreationButton() {
+        return this.waitForSelector('.actions .new-template', function clickPartTemplateCreationButton() {
             this.click('.actions .new-template');
         }, function fail() {
             this.capture('screenshot/partTemplateCreation/waitForPartTemplateCreationButton-error.png');
@@ -41,7 +41,7 @@ casper.test.begin('Part template creation tests suite', 5, function partTemplate
      * Wait for the creation modal
      */
     casper.then(function waitForPartTemplateCreationModal() {
-        this.waitForSelector('#part_template_creation_modal', function modalOpened() {
+        return this.waitForSelector('#part_template_creation_modal', function modalOpened() {
 
             this.click('#part_template_creation_modal .modal-footer .btn-primary');
             this.test.assertExists('#part_template_creation_modal #part-template-reference:invalid', 'Should not create template without a reference');
@@ -68,7 +68,7 @@ casper.test.begin('Part template creation tests suite', 5, function partTemplate
      * Wait for the modal to close
      */
     casper.then(function waitForModalToClose() {
-        this.waitWhileSelector('#part_template_creation_modal', function modalClosed() {
+        return this.waitWhileSelector('#part_template_creation_modal', function modalClosed() {
             this.test.assert(true, 'Part template creation modal closed');
         }, function fail() {
             this.capture('screenshot/partTemplateCreation/waitForModalToClose-error.png');
@@ -80,7 +80,7 @@ casper.test.begin('Part template creation tests suite', 5, function partTemplate
      * Check if template has been created in the list
      */
     casper.then(function checkForTemplateCreated() {
-        this.waitForSelector('#part_template_table .reference', function tableDisplayed() {
+        return this.waitForSelector('#part_template_table .reference', function tableDisplayed() {
             this.test.assertSelectorHasText('#part_template_table tbody tr:first-child td.reference', products.template1.number);
             this.test.assertSelectorHasText('#part_template_table tbody tr:first-child td:nth-child(3)', products.template1.type);
             this.test.assertSelectorHasText('#part_template_table tbody tr:first-child td:nth-child(4)', products.template1.mask);
@@ -91,6 +91,6 @@ casper.test.begin('Part template creation tests suite', 5, function partTemplate
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

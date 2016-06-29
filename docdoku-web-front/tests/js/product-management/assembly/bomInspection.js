@@ -11,7 +11,7 @@ casper.test.begin('Bom inspection tests suite', 13, function bomInspectionTestsS
      * */
 
     casper.then(function () {
-        this.open(urls.productStructure);
+        return this.open(urls.productStructure);
     });
 
     /**
@@ -19,7 +19,7 @@ casper.test.begin('Bom inspection tests suite', 13, function bomInspectionTestsS
      */
 
     casper.then(function waitTree() {
-        this.waitForSelector('#product_nav_list_container > .treeview > ul > li', function treeDisplayed() {
+        return this.waitForSelector('#product_nav_list_container > .treeview > ul > li', function treeDisplayed() {
             this.test.assert(true, 'Tree is displayed');
             this.test.assertSelectorHasText('#product_nav_list_container > .treeview > ul > li > a > label', products.part1.name + ' < ' + products.part1.number + '-A-2 > (1)', 'The first node is correctly named');
         }, function fail() {
@@ -41,7 +41,7 @@ casper.test.begin('Bom inspection tests suite', 13, function bomInspectionTestsS
      * */
 
     casper.then(function openBom() {
-        this.waitForSelector('#bom_view_btn', function clickOnBomModeButton() {
+        return this.waitForSelector('#bom_view_btn', function clickOnBomModeButton() {
             this.click('#bom_view_btn');
             this.test.assert(true, 'Bom button found');
         }, function fail() {
@@ -55,7 +55,7 @@ casper.test.begin('Bom inspection tests suite', 13, function bomInspectionTestsS
      * */
 
     casper.then(function waitForBomTable() {
-        this.waitForSelector('#bom_table', function bomDisplayed() {
+        return this.waitForSelector('#bom_table', function bomDisplayed() {
             this.test.assert(true, 'Bom list displayed');
         }, function fail() {
             this.capture('screenshot/assembly/waitForBomTable-error.png');
@@ -70,7 +70,7 @@ casper.test.begin('Bom inspection tests suite', 13, function bomInspectionTestsS
      * */
 
     casper.then(function countBomTableRows() {
-        this.waitForSelector('#bom_table > tbody > tr:nth-child(4)', function rowsAvailable() {
+        return this.waitForSelector('#bom_table > tbody > tr:nth-child(4)', function rowsAvailable() {
             this.test.assert(true, '4 entries in the bom list');
         }, function fail() {
             this.capture('screenshot/assembly/countBomTableRows-error.png');
@@ -83,7 +83,7 @@ casper.test.begin('Bom inspection tests suite', 13, function bomInspectionTestsS
      */
     casper.then(function openStructureInTree() {
         this.click('#product_nav_list_container > .treeview > ul > li > .hitarea');
-        this.waitForSelector('#product_nav_list_container > .treeview > ul > li > ul > li', function childNodesDisplayed() {
+        return this.waitForSelector('#product_nav_list_container > .treeview > ul > li > ul > li', function childNodesDisplayed() {
             this.test.assert(true, 'Child nodes are shown');
         }, function fail() {
             this.capture('screenshot/assembly/openStructureInTree-error.png');
@@ -111,7 +111,7 @@ casper.test.begin('Bom inspection tests suite', 13, function bomInspectionTestsS
      *
      * */
     casper.then(function countBomTableRows() {
-        this.waitForSelector('#bom_table > tbody > tr:only-child', function rowsAvailabled() {
+        return this.waitForSelector('#bom_table > tbody > tr:only-child', function rowsAvailabled() {
             this.test.assert(true, '1 entry in the bom list');
         }, function fail() {
             this.capture('screenshot/assembly/countBomTableRows-error.png');
@@ -154,7 +154,7 @@ casper.test.begin('Bom inspection tests suite', 13, function bomInspectionTestsS
 
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

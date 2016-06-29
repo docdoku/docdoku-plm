@@ -32,6 +32,7 @@ import com.docdoku.core.product.PartSubstituteLink;
 import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.core.workflow.WorkspaceWorkflow;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
@@ -284,8 +285,8 @@ public class WorkspaceDAO {
         em.flush();
 
         List<WorkspaceWorkflow> workspaceWorkflows =
-                em.createQuery("SELECT ww FROM WorkspaceWorkflow ww WHERE ww.workspaceId = :workspaceId", WorkspaceWorkflow.class)
-                        .setParameter("workspaceId",workspaceId).getResultList();
+                em.createQuery("SELECT ww FROM WorkspaceWorkflow ww WHERE ww.workspace = :workspace", WorkspaceWorkflow.class)
+                        .setParameter("workspace",workspace).getResultList();
 
         for (WorkspaceWorkflow ww: workspaceWorkflows) {
             workflowDAO.removeWorkflowConstraints(ww);

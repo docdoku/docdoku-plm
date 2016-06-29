@@ -35,6 +35,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -252,7 +253,8 @@ public abstract class TitleBlockGenerator {
                     cell = new PdfPCell(new Phrase(simpleFormat.format(task.getClosureDate()), NORMAL_12));
                     lifeCycleTable.addCell(cell);
 
-                    cell = new PdfPCell(new Phrase(task.getWorker().getName(), NORMAL_12));
+                    String workerName = task.getWorker()!=null?task.getWorker().getName():"";
+                    cell = new PdfPCell(new Phrase(workerName, NORMAL_12));
                     lifeCycleTable.addCell(cell);
 
                     cell = new PdfPCell(new Phrase(task.getClosureComment(), NORMAL_12));

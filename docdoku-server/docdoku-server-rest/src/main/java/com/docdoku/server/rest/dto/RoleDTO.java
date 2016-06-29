@@ -21,6 +21,7 @@ package com.docdoku.server.rest.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Yassine Belouad
@@ -31,7 +32,8 @@ public class RoleDTO implements Serializable {
     private String id;
     private String name;
     private String workspaceId;
-    private UserDTO defaultAssignee;
+    private List<UserDTO> defaultAssignedUsers;
+    private List<UserGroupDTO> defaultAssignedGroups;
 
     public RoleDTO() {
     }
@@ -64,11 +66,19 @@ public class RoleDTO implements Serializable {
         this.workspaceId = workspaceId;
     }
 
-    public UserDTO getDefaultAssignee() {
-        return defaultAssignee;
+    public List<UserDTO> getDefaultAssignedUsers() {
+        return defaultAssignedUsers;
     }
 
-    public void setDefaultAssignee(UserDTO defaultAssignee) {
-        this.defaultAssignee = defaultAssignee;
+    public void setDefaultAssignedUsers(List<UserDTO> defaultAssignedUsers) {
+        this.defaultAssignedUsers = defaultAssignedUsers;
+    }
+
+    public List<UserGroupDTO> getDefaultAssignedGroups() {
+        return defaultAssignedGroups;
+    }
+
+    public void setDefaultAssignedGroups(List<UserGroupDTO> defaultAssignedGroups) {
+        this.defaultAssignedGroups = defaultAssignedGroups;
     }
 }

@@ -11,7 +11,7 @@ casper.test.begin('Document creation from template tests suite', 2, function doc
      * */
 
     casper.then(function () {
-        this.open(urls.documentManagement);
+        return this.open(urls.documentManagement);
     });
 
     /**
@@ -19,7 +19,7 @@ casper.test.begin('Document creation from template tests suite', 2, function doc
      */
 
     casper.then(function waitForFolderNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
+        return this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
             this.click('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]');
         }, function fail() {
             this.capture('screenshot/documentCreationFromTemplate/waitForFolderNavLink-error.png');
@@ -40,7 +40,7 @@ casper.test.begin('Document creation from template tests suite', 2, function doc
      */
 
     casper.then(function waitForDocumentCreationModal() {
-        this.waitForSelector('.modal.document-modal.new-document .template-selector', function () {
+        return this.waitForSelector('.modal.document-modal.new-document .template-selector', function () {
 
             this.evaluate(function () {
                 document.querySelector('.modal.document-modal.new-document .template-selector').selectedIndex = 1;
@@ -64,7 +64,7 @@ casper.test.begin('Document creation from template tests suite', 2, function doc
      */
 
     casper.then(function checkForDocumentCreation() {
-        this.waitForSelector('#document-management-content table.dataTable tr[title="' + documents.template1.maskGenerated + '"] td.reference', function documentHasBeenCreated() {
+        return this.waitForSelector('#document-management-content table.dataTable tr[title="' + documents.template1.maskGenerated + '"] td.reference', function documentHasBeenCreated() {
             this.test.assertSelectorHasText('#document-management-content table.dataTable tr[title="' + documents.template1.maskGenerated + '"] td.reference a', documents.template1.maskGenerated);
             this.test.assertSelectorHasText('#document-management-content table.dataTable tr[title="' + documents.template1.maskGenerated + '"] td.type', documents.template1.type);
         }, function fail() {
@@ -74,6 +74,6 @@ casper.test.begin('Document creation from template tests suite', 2, function doc
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

@@ -30,7 +30,6 @@ import com.docdoku.core.workflow.RoleKey;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
-import javax.persistence.Query;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -102,7 +101,12 @@ public class RoleDAO {
     }
 
     public void removeUserFromRoles(User pUser) {
-        Query query = em.createQuery("UPDATE Role r SET r.defaultAssignee = NULL WHERE r.defaultAssignee = :user");
-        query.setParameter("user", pUser).executeUpdate();
+        List<Role> roles = em.createNamedQuery("Role.findRolesWhereUserIsAssigned", Role.class)
+                .setParameter("user", pUser)
+                .getResultList();
+        for(Role role:roles){
+            role.removeUser(pUser);
+        }
+        em.flush();
     }
 }

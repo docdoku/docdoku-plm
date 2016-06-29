@@ -10,7 +10,7 @@ casper.test.begin('Product instance data path tests suite', 22, function product
      * */
 
     casper.then(function () {
-        this.open(urls.productStructureForDeliverable);
+        return this.open(urls.productStructureForDeliverable);
     });
 
 
@@ -18,7 +18,7 @@ casper.test.begin('Product instance data path tests suite', 22, function product
      * click on the checkbox from the bom
      */
     casper.then(function waitForBOM() {
-        this.waitForSelector('.selectable-part-checkbox', function loadDataButton() {
+        return this.waitForSelector('.selectable-part-checkbox', function loadDataButton() {
             this.click('.selectable-part-checkbox');
             this.test.assert(true, 'click on product-instance checkbox');
         }, function fail() {
@@ -31,8 +31,7 @@ casper.test.begin('Product instance data path tests suite', 22, function product
      * Wait for the Deliverable Data button
      */
     casper.then(function openDataModal() {
-
-        this.waitFor(function checkVisible() {
+        return this.waitFor(function checkVisible() {
             return this.evaluate(function() {
                 return $('#path_data_btn').is(':visible');
             });
@@ -47,7 +46,7 @@ casper.test.begin('Product instance data path tests suite', 22, function product
     });
 
     casper.then(function openDataModal() {
-        this.waitForSelector('.product-instance-data-modal', function waitForModal() {
+        return this.waitForSelector('.product-instance-data-modal', function waitForModal() {
             this.test.assert(true, 'modal opened');
         }, function fail() {
             this.capture('screenshot/product-instance/ModalNotFound.png');
@@ -59,7 +58,7 @@ casper.test.begin('Product instance data path tests suite', 22, function product
      * Count the part attributes present in the modal
      */
     casper.then(function countPartAttribute() {
-        this.waitForSelector('#partAttributes .list-item', function countAttributes() {
+        return this.waitForSelector('#partAttributes .list-item', function countAttributes() {
             this.test.assertElementCount('#partAttributes .list-item', 2, '2 parts attributes present');
         }, function fail() {
             this.capture('screenshot/product-instance/CouldNotLoadPartAttributes.png');
@@ -69,7 +68,7 @@ casper.test.begin('Product instance data path tests suite', 22, function product
     });
 
     casper.then(function countPathDataAttr() {
-        this.waitForSelector('#pathDataAttributes', function countDataPath() {
+        return this.waitForSelector('#pathDataAttributes', function countDataPath() {
             this.test.assertElementCount('#pathDataAttributes .list-item', 1, '1 data path attr present');
         }, function fail() {
             this.test.assert(false, 'could not load the data path attributes');
@@ -99,7 +98,7 @@ casper.test.begin('Product instance data path tests suite', 22, function product
      * close the modal
      */
     casper.then(function reopenModal() {
-        this.waitWhileSelector('.product-instance-data-modal', function waitCloseModal() {
+        return this.waitWhileSelector('.product-instance-data-modal', function waitCloseModal() {
             this.test.assert(true, 'modal closed');
         }, function fail() {
             this.capture('screenshot/product-instance/ModalNotClosing.png');
@@ -111,7 +110,7 @@ casper.test.begin('Product instance data path tests suite', 22, function product
      * Check for icon in PS
      */
     casper.then(function waitForPathDataIcon() {
-        this.waitForSelector('#product_nav_list_container > .treeview > ul > li >  i.fa-asterisk', function iconShown() {
+        return this.waitForSelector('#product_nav_list_container > .treeview > ul > li >  i.fa-asterisk', function iconShown() {
             this.test.assert(true, 'Should refresh the treeview and show the path data icon');
         }, function fail() {
             this.capture('screenshot/product-instance/ModalNotClosing.png');
@@ -123,7 +122,7 @@ casper.test.begin('Product instance data path tests suite', 22, function product
     * click on the checkbox from the bom
     */
     casper.then(function waitForBOM() {
-        this.waitForSelector('.selectable-part-checkbox', function loadDataButton() {
+        return this.waitForSelector('.selectable-part-checkbox', function loadDataButton() {
             this.click('.selectable-part-checkbox');
             this.test.assert(true, 'click on product-instance checkbox');
         }, function fail() {
@@ -136,7 +135,7 @@ casper.test.begin('Product instance data path tests suite', 22, function product
      * re-open the modal
      */
     casper.then(function reopenModal() {
-        this.waitForSelector('#path_data_btn', function openModal() {
+        return this.waitForSelector('#path_data_btn', function openModal() {
             this.click('#path_data_btn');
             this.test.assert(true, 'deliverable data button present');
         }, function fail() {
@@ -146,7 +145,7 @@ casper.test.begin('Product instance data path tests suite', 22, function product
     });
 
     casper.then(function waitForModal() {
-        this.waitForSelector('.product-instance-data-modal', function modalOpened() {
+        return this.waitForSelector('.product-instance-data-modal', function modalOpened() {
             this.test.assert(true, 'deliverable data modal opened');
         }, function fail() {
             this.capture('screenshot/product-instance/NoDeliverableModal.png');
@@ -158,7 +157,7 @@ casper.test.begin('Product instance data path tests suite', 22, function product
      * Now there should be 4 tab present and an iteration note.
      */
     casper.then(function countTab() {
-        this.waitForSelector('#tab-attributes', function waitForModal() {
+        return this.waitForSelector('#tab-attributes', function waitForModal() {
             this.test.assertElementCount('ul.nav.nav-tabs li', 4, '2 tabs present in the modal');
             this.test.assertExists('.product-instance-data-modal div.path-description');
             this.test.assertExists('input.description-input[value="' + productInstances.productInstance1.iterationNote + '"]');
@@ -175,7 +174,7 @@ casper.test.begin('Product instance data path tests suite', 22, function product
      */
     casper.then(function assertIterationNote() {
         //Wait for the input value to be injected, can take some time.
-        this.waitForSelector('#pathDataAttributes input.value[value="' + productInstances.productInstance1.pathDataValue + '"]', function found() {
+        return this.waitForSelector('#pathDataAttributes input.value[value="' + productInstances.productInstance1.pathDataValue + '"]', function found() {
             this.test.assert(true, 'the input value is given to the view');
         }, function fail() {
             this.test.assert(false, 'the previously given value is not printed in the input');
@@ -187,7 +186,7 @@ casper.test.begin('Product instance data path tests suite', 22, function product
      * Go to the tab attributes
      */
     casper.then(function waitForModal() {
-        this.waitForSelector('.product-instance-data-modal #tab-attributes', function waitModal() {
+        return this.waitForSelector('.product-instance-data-modal #tab-attributes', function waitModal() {
             this.click('ul.nav.nav-tabs li:nth-child(2) a');
         }, function fail() {
             this.test.assert(false, 'could not open modal');
@@ -198,7 +197,7 @@ casper.test.begin('Product instance data path tests suite', 22, function product
      * Test the attributes
      */
     casper.then(function testDataAttributes() {
-        this.waitForSelector('ul.nav.nav-tabs li:nth-child(2).active', function () {
+        return this.waitForSelector('ul.nav.nav-tabs li:nth-child(2).active', function () {
             this.test.assertElementCount('#partAttributes input.name[disabled]', 2,
                 'the two part attributes name should be disabled in partAttributes');
             this.test.assertDoesntExist('#partAttributes input.value',
@@ -219,6 +218,6 @@ casper.test.begin('Product instance data path tests suite', 22, function product
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

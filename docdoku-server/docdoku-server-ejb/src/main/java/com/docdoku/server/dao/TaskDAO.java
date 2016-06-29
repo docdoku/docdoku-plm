@@ -21,6 +21,7 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserKey;
 import com.docdoku.core.exceptions.TaskNotFoundException;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.TaskKey;
@@ -70,8 +71,7 @@ public class TaskDAO {
     public Task[] findAssignedTasks(String workspaceId, String userLogin){
         Task[] tasks;
         TypedQuery<Task> query = em.createNamedQuery("Task.findAssignedTasks", Task.class);
-        query.setParameter("workspaceId",workspaceId);
-        query.setParameter("userLogin",userLogin);
+        query.setParameter("worker",em.getReference(User.class, new UserKey(workspaceId,userLogin)));
         List<Task> listTasks = query.getResultList();
         tasks = new Task[listTasks.size()];
         for(int i=0;i<listTasks.size();i++) {
@@ -84,8 +84,7 @@ public class TaskDAO {
     public Task[] findInProgressTasks(String workspaceId, String userLogin){
         Task[] tasks;
         TypedQuery<Task> query = em.createNamedQuery("Task.findInProgressTasks", Task.class);
-        query.setParameter("workspaceId",workspaceId);
-        query.setParameter("userLogin",userLogin);
+        query.setParameter("worker",em.getReference(User.class, new UserKey(workspaceId,userLogin)));
         List<Task> listTasks = query.getResultList();
         tasks = new Task[listTasks.size()];
         for(int i=0;i<listTasks.size();i++) {

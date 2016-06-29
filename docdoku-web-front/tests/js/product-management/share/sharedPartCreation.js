@@ -11,14 +11,14 @@ casper.test.begin('Shared part creation tests suite', 7, function sharedPartCrea
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
      * Go to part nav
      */
     casper.then(function waitForPartNavLink() {
-        this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
+        return this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/sharedPartCreation/waitForPartNavLink-error.png');
@@ -32,7 +32,7 @@ casper.test.begin('Shared part creation tests suite', 7, function sharedPartCrea
 
     casper.then(function waitForPartList() {
         var link = '#part_table tbody tr:first-child td.part-revision-share i';
-        this.waitForSelector(link, function onLinkFound() {
+        return this.waitForSelector(link, function onLinkFound() {
             this.click(link);
         }, function fail() {
             this.capture('screenshot/sharedPartCreation/waitForPartList-error.png');
@@ -44,7 +44,7 @@ casper.test.begin('Shared part creation tests suite', 7, function sharedPartCrea
      * Wait for modal
      */
     casper.then(function waitForSharedPartCreationModal() {
-        this.waitForSelector('#share-modal', function modalOpened() {
+        return this.waitForSelector('#share-modal', function modalOpened() {
             this.test.assert(true, 'Shared part modal is opened');
         }, function fail() {
             this.capture('screenshot/sharedPartCreation/waitForSharedPartCreationModal-error.png');
@@ -57,7 +57,7 @@ casper.test.begin('Shared part creation tests suite', 7, function sharedPartCrea
      */
     casper.then(function setPartAsPublicShared() {
         this.click('#share-modal .public-shared-switch .switch-off input');
-        this.waitForSelector('#share-modal .public-shared-switch .switch-on', function publicSharedCreated() {
+        return this.waitForSelector('#share-modal .public-shared-switch .switch-on', function publicSharedCreated() {
             this.test.assert(true, 'Part is now public shared');
         }, function fail() {
             this.capture('screenshot/sharedPartCreation/setPartAsPublicShared-error.png');
@@ -76,7 +76,7 @@ casper.test.begin('Shared part creation tests suite', 7, function sharedPartCrea
         this.sendKeys('#private-share .expire-date', products.part1.expireDate, {reset: true});
         this.click('#private-share #generate-private-share');
 
-        this.waitForSelector('#private-share > div > div > a', function onLinkGenerated() {
+        return this.waitForSelector('#private-share > div > div > a', function onLinkGenerated() {
             var url = this.fetchText('#private-share > div > div > a');
             urls.privatePartPermalink = url;
             this.test.assert(true, 'Private share created expiring tomorrow : ' + url);
@@ -95,7 +95,7 @@ casper.test.begin('Shared part creation tests suite', 7, function sharedPartCrea
 
         this.click('#share-modal > div.modal-header > button');
 
-        this.waitWhileSelector('#share-modal', function modalClosed() {
+        return this.waitWhileSelector('#share-modal', function modalClosed() {
             this.test.assert(true, 'Shared part modal closed');
         }, function fail() {
             this.capture('screenshot/sharedPartCreation/closeSharedPartModal-error.png');
@@ -109,7 +109,7 @@ casper.test.begin('Shared part creation tests suite', 7, function sharedPartCrea
      */
     casper.then(function waitForPartList() {
         var link = '#part_table tbody tr:first-child td.part-revision-share i';
-        this.waitForSelector(link, function onLinkFound() {
+        return this.waitForSelector(link, function onLinkFound() {
             this.click(link);
         }, function fail() {
             this.capture('screenshot/sharedPartCreation/waitForPartList-error.png');
@@ -121,7 +121,7 @@ casper.test.begin('Shared part creation tests suite', 7, function sharedPartCrea
      * Wait for modal
      */
     casper.then(function waitForSharedPartCreationModal() {
-        this.waitForSelector('#share-modal', function modalOpened() {
+        return  this.waitForSelector('#share-modal', function modalOpened() {
 
             this.test.assert(true, 'Shared part modal is opened');
 
@@ -140,7 +140,7 @@ casper.test.begin('Shared part creation tests suite', 7, function sharedPartCrea
      * Save the generated url for test later
      */
     casper.then(function createPartPrivateShare() {
-        this.waitForSelector('#private-share > div > div > a', function onLinkGenerated() {
+        return this.waitForSelector('#private-share > div > div > a', function onLinkGenerated() {
             var url = this.fetchText('#private-share > div > div > a');
             urls.privatePartPermalinkExpired = url;
             this.test.assert(true, 'Private share created expiring yesterday : ' + url);
@@ -158,7 +158,7 @@ casper.test.begin('Shared part creation tests suite', 7, function sharedPartCrea
 
         this.click('#share-modal > div.modal-header > button');
 
-        this.waitWhileSelector('#share-modal', function modalClosed() {
+        return this.waitWhileSelector('#share-modal', function modalClosed() {
             this.test.assert(true, 'Shared part modal closed');
         }, function fail() {
             this.capture('screenshot/sharedPartCreation/closeSharedPartModal-error.png');
@@ -169,7 +169,7 @@ casper.test.begin('Shared part creation tests suite', 7, function sharedPartCrea
 
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

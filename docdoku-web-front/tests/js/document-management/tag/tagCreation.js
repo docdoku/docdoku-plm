@@ -11,14 +11,14 @@ casper.test.begin('Document tag creation tests suite', 7, function documentTagCr
      * */
 
     casper.then(function () {
-        this.open(urls.documentManagement);
+        return this.open(urls.documentManagement);
     });
 
     /**
      * Click on the tag button
      * */
     casper.then(function openTagCreationModal() {
-        this.waitForSelector('.actions .tags', function buttonDisplayed() {
+        return this.waitForSelector('.actions .tags', function buttonDisplayed() {
             this.click('.actions .tags');
         }, function fail() {
             this.capture('screenshot/documentTagCreation/openTagCreationModal-error.png');
@@ -31,7 +31,7 @@ casper.test.begin('Document tag creation tests suite', 7, function documentTagCr
      * Wait for the modal to be opened
      * */
     casper.then(function waitTagCreationModal() {
-        this.waitForSelector('.modal.tag-management .newTag', function modalOpened() {
+        return this.waitForSelector('.modal.tag-management .newTag', function modalOpened() {
 
             this.test.assert(true, 'Tag creation modal opened');
         }, function fail() {
@@ -44,7 +44,7 @@ casper.test.begin('Document tag creation tests suite', 7, function documentTagCr
      * Try to add a empty tag
      * */
     casper.then(function createEmptyTag() {
-        this.waitFor(function checkHidden() {
+        return this.waitFor(function checkHidden() {
             return this.evaluate(function() {
                 return $('.modal.tag-management .newTag-button').is(':hidden');
             });
@@ -60,7 +60,7 @@ casper.test.begin('Document tag creation tests suite', 7, function documentTagCr
      */
     casper.then(function sendKey() {
         this.sendKeys('.modal.tag-management .newTag', documents.tags.tag1,{reset:true});
-        this.waitFor(function checkVisible() {
+        return this.waitFor(function checkVisible() {
             return this.evaluate(function() {
                 return $('.modal.tag-management .newTag-button').is(':visible');
             });
@@ -76,7 +76,7 @@ casper.test.begin('Document tag creation tests suite', 7, function documentTagCr
      * */
     casper.then(function createTags() {
         this.click('.modal.tag-management .newTag-button');
-        this.waitForSelector('.modal.tag-management ul.existing-tags-list li',function tagAdded(){
+        return this.waitForSelector('.modal.tag-management ul.existing-tags-list li',function tagAdded(){
             this.test.assertElementCount('.modal.tag-management ul.existing-tags-list li', 1, 'Should add a tag');
         },function fail(){
             this.capture('screenshot/documentTagCreation/createTags-error.png');
@@ -104,9 +104,10 @@ casper.test.begin('Document tag creation tests suite', 7, function documentTagCr
     /**
      *
      * Save the tags
+     * TODO : remove wait(100), use wait selector instead
      * */
     casper.then(function saveTags() {
-        this.wait(100, function () {
+        return this.wait(100, function () {
             this.click('.modal.tag-management .modal-footer .btn-primary');
             this.waitWhileSelector('.modal.tag-management', function modalClosed() {
                 this.test.assert(true, 'Tag modal has been closed');
@@ -118,6 +119,6 @@ casper.test.begin('Document tag creation tests suite', 7, function documentTagCr
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

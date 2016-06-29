@@ -54,10 +54,7 @@ import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -184,7 +181,7 @@ public class TagResource {
             @ApiParam(required = true, value = "Document to create") DocumentCreationDTO docCreationDTO,
             @PathParam("tagId") String tagId,
             @QueryParam("configSpec") String configSpecType)
-            throws CreationException, FileAlreadyExistsException, DocumentRevisionAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, DocumentMasterAlreadyExistsException, RoleNotFoundException, FolderNotFoundException, WorkflowModelNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, ESServerException {
+            throws CreationException, FileAlreadyExistsException, DocumentRevisionAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, DocumentMasterAlreadyExistsException, RoleNotFoundException, FolderNotFoundException, WorkflowModelNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, ESServerException, UserGroupNotFoundException {
 
         String pDocMID = docCreationDTO.getReference();
         String pTitle = docCreationDTO.getTitle();
@@ -193,7 +190,7 @@ public class TagResource {
         String decodedCompletePath = getPathFromUrlParams(workspaceId, workspaceId);
 
         String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
-        RoleMappingDTO[] rolesMappingDTO = docCreationDTO.getRoleMapping();
+        RoleMappingDTO[] roleMappingDTOs = docCreationDTO.getRoleMapping();
         String pDocMTemplateId = docCreationDTO.getTemplateId();
 
         ACLDTO acl = docCreationDTO.getAcl();
@@ -217,15 +214,18 @@ public class TagResource {
             }
         }
 
-        Map<String, String> roleMappings = new HashMap<>();
+        Map<String, Collection<String>> userRoleMapping = new HashMap<>();
+        Map<String, Collection<String>> groupRoleMapping = new HashMap<>();
 
-        if (rolesMappingDTO != null) {
-            for (RoleMappingDTO roleMappingDTO : rolesMappingDTO) {
-                roleMappings.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogin());
+        if (roleMappingDTOs != null) {
+            for (RoleMappingDTO roleMappingDTO : roleMappingDTOs) {
+                userRoleMapping.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogins());
+                groupRoleMapping.put(roleMappingDTO.getRoleName(), roleMappingDTO.getGroupIds());
             }
         }
 
-        DocumentRevision createdDocRs = documentService.createDocumentMaster(decodedCompletePath, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries, roleMappings);
+
+        DocumentRevision createdDocRs = documentService.createDocumentMaster(decodedCompletePath, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries, userRoleMapping, groupRoleMapping);
         documentService.saveTags(createdDocRs.getKey(), new String[]{tagId});
 
         DocumentRevisionDTO docRsDTO = mapper.map(createdDocRs, DocumentRevisionDTO.class);

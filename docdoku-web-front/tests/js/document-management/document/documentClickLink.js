@@ -9,7 +9,7 @@ casper.test.begin('Document click link tests suite', 2, function documentClickLi
      * */
 
     casper.then(function () {
-        this.open(urls.documentManagement);
+        return this.open(urls.documentManagement);
     });
 
     /**
@@ -17,7 +17,7 @@ casper.test.begin('Document click link tests suite', 2, function documentClickLi
      */
 
     casper.then(function waitForFolderNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
+        return this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
             this.click('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]');
         }, function fail() {
             this.capture('screenshot/documentClickLink/waitForFolderNavLink-error.png');
@@ -30,7 +30,7 @@ casper.test.begin('Document click link tests suite', 2, function documentClickLi
      */
 
     casper.then(function waitForDocumentDisplayed() {
-        this.waitForSelector('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference', function documentIsDisplayed() {
+        return this.waitForSelector('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference', function documentIsDisplayed() {
             this.click('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference');
         }, function fail() {
             this.capture('screenshot/documentClickLink/waitForDocumentDisplayed-error.png');
@@ -45,7 +45,7 @@ casper.test.begin('Document click link tests suite', 2, function documentClickLi
     casper.then(function waitForDocumentModal() {
         var modalTab = '.document-modal .tabs li a[href="#tab-iteration-links"]';
 
-        this.waitForSelector(modalTab, function modalOpened() {
+        return this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
             this.capture('screenshot/documentClickLink/waitForDocumentModal-error.png');
@@ -57,7 +57,7 @@ casper.test.begin('Document click link tests suite', 2, function documentClickLi
      * Wait for Links modal tab
      */
     casper.then(function waitForDocumentModalLinksTab() {
-        this.waitForSelector('.document-modal .linked-items-reference-typehead', function tabOpened() {
+        return this.waitForSelector('.document-modal .linked-items-reference-typehead', function tabOpened() {
             this.test.assert(true, 'Links tab opened');
         }, function fail() {
             this.capture('screenshot/documentClickLink/waitForDocumentModalLinksTab-error.png');
@@ -69,7 +69,7 @@ casper.test.begin('Document click link tests suite', 2, function documentClickLi
      * Wait for linked document display
      */
     casper.then(function waitForLinkedDocumentDisplay() {
-        this.waitForSelector('#iteration-links > .linked-items-view > ul.linked-items > li:first-child', function linkDocumentDisplayed() {
+        return this.waitForSelector('#iteration-links > .linked-items-view > ul.linked-items > li:first-child', function linkDocumentDisplayed() {
             this.click('#iteration-links > .linked-items-view > ul.linked-items > li:first-child > a.reference');
         }, function fail() {
             this.capture('screenshot/documentClickLink/waitForLinkedDocumentDisplay-error.png');
@@ -83,7 +83,7 @@ casper.test.begin('Document click link tests suite', 2, function documentClickLi
     casper.then(function waitForLinkedDocumentDisplay() {
         var modalTitle = '.document-modal > .modal-header > h3 > a[href="' + defaultUrl + '/documents/#' + workspace + '/' + documents.document1.documentLink +'/A"]';
 
-        this.waitForSelector(modalTitle, function linkedModalOpened() {
+        return this.waitForSelector(modalTitle, function linkedModalOpened() {
             this.test.assert(true, 'Linked document modal opened');
         }, function fail() {
             this.capture('screenshot/documentClickLink/waitForLinkedDocumentModal-error.png');
@@ -92,7 +92,7 @@ casper.test.begin('Document click link tests suite', 2, function documentClickLi
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

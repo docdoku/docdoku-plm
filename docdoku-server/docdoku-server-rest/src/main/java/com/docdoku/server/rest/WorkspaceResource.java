@@ -226,10 +226,25 @@ public class WorkspaceResource {
         return Response.ok().build();
     }
 
+    @GET
+    @ApiOperation(value = "Get user groups", response = UserGroupDTO.class, responseContainer = "List")
+    @Path("/{workspaceId}/user-group")
+    @Produces(MediaType.APPLICATION_JSON)
+    public UserGroupDTO[] getUserGroups(@PathParam("workspaceId") String workspaceId)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException {
+        UserGroup[] userGroups = userManager.getUserGroups(workspaceId);
+        UserGroupDTO[] userGroupDTOs = new UserGroupDTO[userGroups.length];
+        for(int i = 0 ; i < userGroups.length; i++){
+            userGroupDTOs[i]=mapper.map(userGroups[i], UserGroupDTO.class);
+        }
+        return userGroupDTOs;
+    }
+
     @POST
     @ApiOperation(value = "Create user group", response = UserGroupDTO.class)
     @Path("/{workspaceId}/user-group")
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public UserGroupDTO createGroup(@PathParam("workspaceId") String workspaceId,
                                     @ApiParam(required = true, value = "UserGroup to create") UserGroupDTO userGroupDTO)
             throws UserGroupAlreadyExistsException, AccessRightException, AccountNotFoundException, CreationException, WorkspaceNotFoundException {
@@ -250,6 +265,7 @@ public class WorkspaceResource {
     @ApiOperation(value = "Add user to workspace", response = Response.class)
     @Path("/{workspaceId}/add-user")
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response addUser(@PathParam("workspaceId") String workspaceId,
                             @QueryParam("group") String group,
                             @ApiParam(required = true, value = "User to add") UserDTO userDTO) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, UserGroupNotFoundException, com.docdoku.core.exceptions.NotAllowedException, AccountNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {

@@ -11,14 +11,14 @@ casper.test.begin('Assembly creation tests suite', 13, function assemblyCreation
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
      * Go to part nav
      */
     casper.then(function waitForPartNavLink() {
-        this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
+        return this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/assemblyCreation/waitForPartNavLink-error.png');
@@ -31,7 +31,7 @@ casper.test.begin('Assembly creation tests suite', 13, function assemblyCreation
      */
     casper.then(function waitForPartList() {
         var link = '#part_table tbody tr:first-child td.part_number';
-        this.waitForSelector(link, function clickPartNavLink() {
+        return this.waitForSelector(link, function clickPartNavLink() {
             this.click(link);
         }, function fail() {
             this.capture('screenshot/assemblyCreation/waitForPartList-error.png');
@@ -44,7 +44,7 @@ casper.test.begin('Assembly creation tests suite', 13, function assemblyCreation
      */
     casper.then(function waitForPartModal() {
         var modalTab = '#part-modal .tabs li a[href="#tab-assembly"]';
-        this.waitForSelector(modalTab, function modalOpened() {
+        return this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
             this.capture('screenshot/assemblyCreation/waitForPartModal-error.png');
@@ -56,7 +56,7 @@ casper.test.begin('Assembly creation tests suite', 13, function assemblyCreation
      * Wait the modal tab
      */
     casper.then(function waitForPartModalTab() {
-        this.waitForSelector('#part-modal #tab-assembly .components', function tabSelected() {
+        return this.waitForSelector('#part-modal #tab-assembly .components', function tabSelected() {
             this.test.assert(true, 'Assembly tab opened');
         }, function fail() {
             this.capture('screenshot/assemblyCreation/waitForPartModalTab-error.png');
@@ -104,7 +104,7 @@ casper.test.begin('Assembly creation tests suite', 13, function assemblyCreation
      * Wait for modal to be closed
      */
     casper.then(function closePartsModal() {
-        this.waitWhileSelector('#part-modal', function modalClosed() {
+        return this.waitWhileSelector('#part-modal', function modalClosed() {
             this.test.assert(true, 'Modal has been closed');
         }, function fail() {
             this.capture('screenshot/assemblyCreation/waitModalToBeClosed-error.png');
@@ -117,7 +117,7 @@ casper.test.begin('Assembly creation tests suite', 13, function assemblyCreation
      */
 
     casper.then(function checkIfPartsInAssemblyAreCreated() {
-        casper.waitFor(function check() {
+        return this.waitFor(function check() {
             return this.evaluate(function () {
                 return document.querySelectorAll('#part_table tbody tr').length === 5;
             });
@@ -134,7 +134,7 @@ casper.test.begin('Assembly creation tests suite', 13, function assemblyCreation
      */
 
     casper.then(function checkAssemblyIconsSet() {
-        this.waitForSelector('#part_table .fa.fa-cube', function check() {
+        return this.waitForSelector('#part_table .fa.fa-cube', function check() {
             this.test.assertElementCount('#part_table .fa.fa-cube', 4, 'found 4 leaf parts');
             this.test.assertElementCount('#part_table .fa.fa-cubes', 1, 'found 1 assembly part');
         });
@@ -157,7 +157,7 @@ casper.test.begin('Assembly creation tests suite', 13, function assemblyCreation
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

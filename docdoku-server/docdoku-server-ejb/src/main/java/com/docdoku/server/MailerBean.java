@@ -39,10 +39,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -283,32 +280,40 @@ public class MailerBean implements IMailerLocal {
     }
 
     private void sendApproval(Task task, DocumentRevision pDocumentRevision) throws MessagingException {
-        try {
-            User worker = task.getWorker();
-            Locale locale = new Locale(worker.getLanguage());
-            sendMessage(new InternetAddress(worker.getEmail(), worker.getName()),
-                    getApprovalRequiredSubject(locale),
-                    getApprovalRequiredMessage(task, pDocumentRevision, locale));
-            LOGGER.info("Sending approval required emails \n\tfor the document " + pDocumentRevision.getLastIteration());
-        } catch (UnsupportedEncodingException pUEEx) {
-            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.warning(message);
-            LOGGER.log(Level.FINER, message, pUEEx);
+        Set<User> workers=new HashSet<>();
+        workers.addAll(task.getAssignedUsers());
+        task.getAssignedGroups().forEach(g->workers.addAll(g.getUsers()));
+        for(User worker:workers) {
+            try {
+                Locale locale = new Locale(worker.getLanguage());
+                sendMessage(new InternetAddress(worker.getEmail(), worker.getName()),
+                        getApprovalRequiredSubject(locale),
+                        getApprovalRequiredMessage(task, pDocumentRevision, locale));
+                LOGGER.info("Sending approval required emails \n\tfor the document " + pDocumentRevision.getLastIteration());
+            } catch (UnsupportedEncodingException pUEEx) {
+                String message = "Mail address format error. \n\t" + pUEEx.getMessage();
+                LOGGER.warning(message);
+                LOGGER.log(Level.FINER, message, pUEEx);
+            }
         }
     }
 
     private void sendApproval(Task task, PartRevision partRevision) throws MessagingException {
-        try {
-            User worker = task.getWorker();
-            Locale locale = new Locale(worker.getLanguage());
+        Set<User> workers=new HashSet<>();
+        workers.addAll(task.getAssignedUsers());
+        task.getAssignedGroups().forEach(g->workers.addAll(g.getUsers()));
+        for(User worker:workers) {
+            try {
+                Locale locale = new Locale(worker.getLanguage());
+                sendMessage(new InternetAddress(worker.getEmail(), worker.getName()),
+                        getApprovalRequiredSubject(locale),
+                        getApprovalRequiredMessage(task, partRevision, locale));
 
-            sendMessage(new InternetAddress(worker.getEmail(), worker.getName()),
-                    getApprovalRequiredSubject(locale),
-                    getApprovalRequiredMessage(task, partRevision, locale));
-        } catch (UnsupportedEncodingException pUEEx) {
-            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.warning(message);
-            LOGGER.log(Level.FINER, message, pUEEx);
+            } catch (UnsupportedEncodingException pUEEx) {
+                String message = "Mail address format error. \n\t" + pUEEx.getMessage();
+                LOGGER.warning(message);
+                LOGGER.log(Level.FINER, message, pUEEx);
+            }
         }
     }
 

@@ -10,14 +10,14 @@ casper.test.begin('Part template deletion tests suite', 2, function partTemplate
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
      * Go to part template nav
      */
     casper.then(function waitForPartTemplateNavLink() {
-        this.waitForSelector('#part-template-nav > .nav-list-entry > a', function clickPartTemplateNavLink() {
+        return this.waitForSelector('#part-template-nav > .nav-list-entry > a', function clickPartTemplateNavLink() {
             this.click('#part-template-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/partTemplateDeletion/waitForPartTemplateNavLink-error.png');
@@ -30,7 +30,7 @@ casper.test.begin('Part template deletion tests suite', 2, function partTemplate
      * Click the 'select all' checkbox
      */
     casper.then(function waitForSelectAllCheckbox() {
-        this.waitForSelector('#part_template_table thead tr:first-child  th:first-child input', function clickOnSelectAllCheckbox() {
+        return this.waitForSelector('#part_template_table thead tr:first-child  th:first-child input', function clickOnSelectAllCheckbox() {
             this.click('#part_template_table thead tr:first-child  th:first-child input');
         }, function fail() {
             this.capture('screenshot/partTemplateDeletion/waitForSelectAllCheckbox-error.png');
@@ -42,7 +42,7 @@ casper.test.begin('Part template deletion tests suite', 2, function partTemplate
      * Wait for the delete button to appear
      */
     casper.then(function waitForDeleteButton() {
-        this.waitForSelector('.actions .delete', function clickOnDeleteButton() {
+        return this.waitForSelector('.actions .delete', function clickOnDeleteButton() {
             this.click('.actions .delete');
             this.test.assert(true, 'Delete button available');
         }, function fail() {
@@ -55,7 +55,7 @@ casper.test.begin('Part template deletion tests suite', 2, function partTemplate
      * Wait for the confirmation modal
      */
     casper.then(function waitForConfirmationModal() {
-        this.waitForSelector('.bootbox', function confirmDeletion() {
+        return this.waitForSelector('.bootbox', function confirmDeletion() {
             this.click('.bootbox .modal-footer .btn-primary');
         }, function fail() {
             this.capture('screenshot/partTemplateDeletion/waitForConfirmationModal-error.png');
@@ -67,7 +67,7 @@ casper.test.begin('Part template deletion tests suite', 2, function partTemplate
      * Assert that there's no more entries in the table
      **/
     casper.then(function waitForTableToBeEmpty() {
-        this.waitWhileSelector('#part_template_table tbody tr:first-child  td:first-child input', function onBaselineTableEmpty() {
+        return this.waitWhileSelector('#part_template_table tbody tr:first-child  td:first-child input', function onBaselineTableEmpty() {
             this.test.assert(true, 'No more part templates in the list');
         }, function fail() {
             this.capture('screenshot/partTemplateDeletion/waitForTableToBeEmpty-error.png');
@@ -76,6 +76,6 @@ casper.test.begin('Part template deletion tests suite', 2, function partTemplate
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

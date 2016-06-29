@@ -9,14 +9,14 @@ casper.test.begin('Login tests suite', 3, function loginTestsSuite() {
      * Open app home page
      */
     casper.then(function () {
-        this.open(homeUrl);
+        return this.open(homeUrl);
     });
 
     /**
      * Test to find the login form
      */
     casper.then(function waitForLoginForm() {
-        this.waitForSelector('form[id="login_form"]', function loginFormFound() {
+        return this.waitForSelector('form[id="login_form"]', function loginFormFound() {
             this.test.assert(true, 'Login form found');
         }, function fail() {
             this.capture('screenshot/login/waitForLoginForm-error.png');
@@ -45,7 +45,7 @@ casper.test.begin('Login tests suite', 3, function loginTestsSuite() {
      * We should be redirected on workspace menu
      */
     casper.then(function waitForLogoutButton() {
-        this.waitForSelector('#logout_link',function(){
+        return this.waitForSelector('#logout_link',function(){
             this.test.assert(true,'Logout link should be displayed');
         },function(){
             this.capture('screenshot/auth/login.png');
@@ -57,13 +57,13 @@ casper.test.begin('Login tests suite', 3, function loginTestsSuite() {
      * Check if we are connected to the api
      */
     casper.then(function checkSessionState() {
-        this.open(apiUrls.userInfo).then(function(response){
+        return this.open(apiUrls.userInfo).then(function(response){
             this.test.assertEqual(response.status, 200, 'User "' + login + '" should log in');
         });
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

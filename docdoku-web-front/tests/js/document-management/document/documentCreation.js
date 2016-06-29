@@ -11,7 +11,7 @@ casper.test.begin('Document creation tests suite', 2, function documentCreationT
      * */
 
     casper.then(function () {
-        this.open(urls.documentManagement);
+        return this.open(urls.documentManagement);
     });
 
     /**
@@ -19,7 +19,7 @@ casper.test.begin('Document creation tests suite', 2, function documentCreationT
      */
 
     casper.then(function waitForFolderNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
+        return this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
             this.click('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]');
         }, function fail() {
             this.capture('screenshot/documentCreation/waitForFolderNavLink-error.png');
@@ -40,7 +40,7 @@ casper.test.begin('Document creation tests suite', 2, function documentCreationT
      */
 
     casper.then(function waitForDocumentCreationModal() {
-        this.waitForSelector('.modal.document-modal.new-document', function () {
+        return this.waitForSelector('.modal.document-modal.new-document', function () {
             this.click('.modal.document-modal.new-document .btn.btn-primary');
             this.test.assertExists('.modal.document-modal.new-document input.reference:invalid', 'Should not create document without a reference');
         }, function fail() {
@@ -54,7 +54,7 @@ casper.test.begin('Document creation tests suite', 2, function documentCreationT
      */
 
     casper.then(function fillAndSubmitDocumentCreationModal() {
-        this.waitForSelector('.modal.document-modal.new-document input.reference', function () {
+        return this.waitForSelector('.modal.document-modal.new-document input.reference', function () {
             this.sendKeys('.modal.document-modal.new-document input.reference', documents.document1.number);
             this.click('.modal.document-modal.new-document .btn.btn-primary');
         }, function fail() {
@@ -68,7 +68,7 @@ casper.test.begin('Document creation tests suite', 2, function documentCreationT
      */
 
     casper.then(function checkForDocumentCreation() {
-        this.waitForSelector('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference', function documentHasBeenCreated() {
+        return this.waitForSelector('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference', function documentHasBeenCreated() {
             this.test.assertSelectorHasText('#document-management-content table.dataTable tr[title="'+documents.document1.number+'"] td.reference a', documents.document1.number);
         }, function fail() {
             this.capture('screenshot/documentCreation/checkForDocumentCreation-error.png');
@@ -77,6 +77,6 @@ casper.test.begin('Document creation tests suite', 2, function documentCreationT
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

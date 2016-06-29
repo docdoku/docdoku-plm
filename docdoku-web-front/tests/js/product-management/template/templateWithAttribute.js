@@ -10,11 +10,11 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     casper.then(function waitForPartTemplateNavLink() {
-        this.waitForSelector('#part-template-nav > .nav-list-entry > a', function clickPartTemplateNavLink() {
+        return this.waitForSelector('#part-template-nav > .nav-list-entry > a', function clickPartTemplateNavLink() {
             this.click('#part-template-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/partTemplateCreation/waitForPartTemplateNavLink-error.png');
@@ -27,7 +27,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
      */
     casper.then(function waitForPartTemplateContent() {
         //should select the one created
-        this.waitForSelector('#part_template_table tbody tr:first-child td.reference', function clickPartTemplateCreationButton() {
+        return this.waitForSelector('#part_template_table tbody tr:first-child td.reference', function clickPartTemplateCreationButton() {
             this.click('#part_template_table tbody tr:first-child td.reference');
         }, function fail() {
             this.capture('screenshot/partTemplateCreation/waitForPartTemplateCreationButton-error.png');
@@ -40,7 +40,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
      */
     casper.then(function () {
         var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
-        this.waitForSelector(attributesTabSelector, function openTab() {
+        return this.waitForSelector(attributesTabSelector, function openTab() {
             this.click(attributesTabSelector);
         }, function fail() {
             this.capture('screenshot/attributes/clickOnAttributeTab-error.png');
@@ -52,7 +52,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
      * wait for tab to be active
      */
     casper.then(function assertTabActive() {
-        this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
+        return this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
             this.test.assert(true, 'attributes tab active');
         }, function () {
             this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
@@ -65,7 +65,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
      */
     casper.then(function addNewAttributes() {
         var addAttributeButtonSelector = '#attributes-list .btn.add';
-        this.waitForSelector(addAttributeButtonSelector, function () {
+        return this.waitForSelector(addAttributeButtonSelector, function () {
             this.click(addAttributeButtonSelector);
         }, function () {
             this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
@@ -77,7 +77,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
      * Test the lock/freeze/mandatory checkbox present
      */
     casper.then(function testLockAttributePresent() {
-        this.waitForSelector('.lock', function () {
+        return this.waitForSelector('.lock', function () {
             this.test.assert(true, 'lock checkbox present');
             this.test.assertExists('.attribute-locked', 'attribute-locked present');
             this.test.assertExists('.attribute-mandatory', 'attribute-mandatory present');
@@ -92,7 +92,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
      */
     casper.then(function testAttrLockRemoved() {
         this.click('.lock');
-        this.waitWhileSelector('.attribute-locked', function removingAttrLock() {
+        return this.waitWhileSelector('.attribute-locked', function removingAttrLock() {
             this.test.assert(true, 'attribute-locked removed');
             this.test.assertExists('.attribute-mandatory', 'attribute-mandatory present');
         }, function fail() {
@@ -107,7 +107,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
      */
     casper.then(function testAttrLockPresent() {
         this.click('.lock');
-        this.waitForSelector('.attribute-locked', function () {
+        return this.waitForSelector('.attribute-locked', function () {
             this.test.assert(true, 'attribute-locked exist');
         }, function fail() {
             this.test.assert(false, 'attribute-locked should exist');
@@ -120,7 +120,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
     casper.then(function () {
         this.click('.lock');
         this.click('#attributes-list .btn.add');
-        this.waitForSelector('.list-item.well:nth-child(2)', function () {
+        return this.waitForSelector('.list-item.well:nth-child(2)', function () {
             this.test.assertElementCount('.list-item.well', 2);
             this.sendKeys('#attributes-list .list-item:nth-child(1) input.name', products.part2.attributeName1, {reset: true});
             this.sendKeys('#attributes-list .list-item:nth-child(2) input.name', products.part2.attributeName1, {reset: true});
@@ -133,7 +133,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
     });
 
     casper.then(function closeModal() {
-        this.waitWhileSelector('#part_template_creation_modal', function () {
+        return this.waitWhileSelector('#part_template_creation_modal', function () {
             this.test.assert(true, 'modal closed');
         }, function fail() {
             this.capture('screenshot/attributes/closeModal-error.png');
@@ -145,7 +145,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
      * Check if the template has been created and open the edit modal
      */
     casper.then(function openEditModal() {
-        this.waitForSelector('#part_template_table tbody tr:first-child td.reference', function clickPartTemplateCreationButton() {
+        return this.waitForSelector('#part_template_table tbody tr:first-child td.reference', function clickPartTemplateCreationButton() {
             this.click('#part_template_table tbody tr:first-child td.reference');
 
         }, function fail() {
@@ -159,7 +159,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
      */
     casper.then(function openAttrTab() {
         var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
-        this.waitForSelector(attributesTabSelector, function openTab() {
+        return this.waitForSelector(attributesTabSelector, function openTab() {
             this.click(attributesTabSelector);
         }, function fail() {
             this.capture('screenshot/attributes/clickOnAttributeTab-error.png');
@@ -169,7 +169,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
 
 
     casper.then(function () {
-        this.waitForSelector('#attributes-list .list-item.well:nth-child(2)', function () {
+        return this.waitForSelector('#attributes-list .list-item.well:nth-child(2)', function () {
             this.test.assertElementCount('#attributes-list .list-item.well', 2);
         }, function fail() {
             this.capture('screenshot/partTemplateCreation/waitForAttrTab-error.png');
@@ -182,7 +182,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
      */
     casper.then(function () {
         this.click('.btn[data-dismiss="modal"]');
-        this.waitWhileSelector('#part_template_creation_modal', function () {
+        return this.waitWhileSelector('#part_template_creation_modal', function () {
                 this.test.assert(true, 'modal closed');
             },
             function fai() {
@@ -195,7 +195,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
      * Wait for the creation button
      */
     casper.then(function waitForPartTemplateCreationButton() {
-        this.waitForSelector('.actions .new-template', function clickPartTemplateCreationButton() {
+        return this.waitForSelector('.actions .new-template', function clickPartTemplateCreationButton() {
             this.click('.actions .new-template');
         }, function fail() {
             this.capture('screenshot/partTemplateCreation/waitForPartTemplateCreationButton-error.png');
@@ -208,7 +208,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
      * Fill template form
      */
     casper.then(function fillTheForm() {
-        this.waitForSelector('#part_template_creation_modal', function modalOpened() {
+        return this.waitForSelector('#part_template_creation_modal', function modalOpened() {
             this.sendKeys('#part_template_creation_modal #part-template-reference', products.template2.number, {reset: true});
             this.sendKeys('#part_template_creation_modal #part-template-type', products.template2.type, {reset: true});
         }, function fail() {
@@ -224,7 +224,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
      */
     casper.then(function goToAttributesTab() {
         this.click('.nav.nav-tabs > li:nth-child(3) > a');
-        this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
+        return this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
             this.test.assert(true, 'Attribute Tab active');
         }, function fail() {
             this.capture('screenshot/attributes/attributeTabBecomeActive-error.png');
@@ -235,7 +235,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
     casper.then(function addAttributes() {
         var addAttributeButtonSelector = '#attributes-list .btn.add';
         var addInstanceAttributeButtonSelector = '#attribute-product-instance-list .btn.add';
-        this.waitForSelector(addAttributeButtonSelector, function () {
+        return this.waitForSelector(addAttributeButtonSelector, function () {
             this.click(addAttributeButtonSelector);
             this.click(addAttributeButtonSelector);
             //add an instance attribute
@@ -251,7 +251,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
      */
     casper.then(function fillTemplateAttributes() {
 
-        this.waitForSelector('#attribute-product-instance-list .list-item.well', function () {
+        return this.waitForSelector('#attribute-product-instance-list .list-item.well', function () {
             this.test.assertElementCount('.list-item.well', 3, '3 elements should have been created, 2 attributes and' +
             ' 1 instance attribute');
             this.sendKeys('#attributes-list .list-item:nth-child(1) input.name', products.part2.attributeName1, {reset: true});
@@ -271,7 +271,7 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
 
 
     casper.then(function saveTemplate() {
-        this.waitWhileSelector('#part_template_creation_modal', function () {
+        return this.waitWhileSelector('#part_template_creation_modal', function () {
             this.test.assert(true, 'modal closed');
         }, function fail() {
             this.test.assert(false, 'could not close the modal');
@@ -279,6 +279,6 @@ casper.test.begin('Part template attributes tests suite', 14, function partTempl
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

@@ -10,14 +10,14 @@ casper.test.begin('Parts  multiple checkout tests suite', 1, function partsMulti
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
      * Go to part nav
      */
     casper.then(function waitForPartNavLink() {
-        this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
+        return this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/partUndoCheckout/waitForPartNavLink-error.png');
@@ -29,7 +29,7 @@ casper.test.begin('Parts  multiple checkout tests suite', 1, function partsMulti
      * Select the parts with checkbox
      */
     casper.then(function waitForPartTable() {
-        this.waitForSelector('#part_table tbody tr:nth-child(2)  td:nth-child(2) input', function clickOnPartCheckbox() {
+        return this.waitForSelector('#part_table tbody tr:nth-child(2)  td:nth-child(2) input', function clickOnPartCheckbox() {
             this.click('#part_table tbody tr:nth-child(2)  td:nth-child(2) input');
         }, function fail() {
             this.capture('screenshot/partUndoCheckout/waitForPartTable-error.png');
@@ -37,7 +37,7 @@ casper.test.begin('Parts  multiple checkout tests suite', 1, function partsMulti
         });
     });
     casper.then(function waitForPartTable() {
-        this.waitForSelector('#part_table tbody tr:nth-child(3)  td:nth-child(2) input', function clickOnPartCheckbox() {
+        return this.waitForSelector('#part_table tbody tr:nth-child(3)  td:nth-child(2) input', function clickOnPartCheckbox() {
             this.click('#part_table tbody tr:nth-child(3)  td:nth-child(2) input');
         }, function fail() {
             this.capture('screenshot/partUndoCheckout/waitForPartTable-error.png');
@@ -45,7 +45,7 @@ casper.test.begin('Parts  multiple checkout tests suite', 1, function partsMulti
         });
     });
     casper.then(function waitForPartTable() {
-        this.waitForSelector('#part_table tbody tr:nth-child(5)  td:nth-child(2) input', function clickOnPartCheckbox() {
+        return this.waitForSelector('#part_table tbody tr:nth-child(5)  td:nth-child(2) input', function clickOnPartCheckbox() {
             this.click('#part_table tbody tr:nth-child(5)  td:nth-child(2) input');
         }, function fail() {
             this.capture('screenshot/partUndoCheckout/waitForPartTable-error.png');
@@ -58,7 +58,7 @@ casper.test.begin('Parts  multiple checkout tests suite', 1, function partsMulti
      * Click on checkout button
      */
     casper.then(function waitForUndoCheckoutButton() {
-        this.waitForSelector('.actions .undocheckout', function clickOnUndoCheckoutButton() {
+        return this.waitForSelector('.actions .undocheckout', function clickOnUndoCheckoutButton() {
             this.click('.actions .undocheckout');
         }, function fail() {
             this.capture('screenshot/partUndoCheckout/waitForUndoCheckoutButton-error.png');
@@ -70,8 +70,7 @@ casper.test.begin('Parts  multiple checkout tests suite', 1, function partsMulti
      * Wait for confirmation box
      */
     casper.then(function waitForConfirmationBox() {
-
-        this.waitForSelector('div.modal-body', function fillIterationNote() {
+        return this.waitForSelector('div.modal-body', function fillIterationNote() {
             this.click('.modal-footer a[data-handler="1"]');
         }, function fail() {
             this.capture('screenshot/MultiplePartsCheckin/waitForIterationNotePrompt-error.png');
@@ -83,7 +82,7 @@ casper.test.begin('Parts  multiple checkout tests suite', 1, function partsMulti
      * Wait for the checkout button to be disabled
      */
     casper.then(function waitForCheckoutButtonDisabled() {
-        this.waitForSelector('.actions .undocheckout:disabled', function partIsCheckout() {
+        return this.waitForSelector('.actions .undocheckout:disabled', function partIsCheckout() {
             this.test.assert(true, 'Parts have been undocheckout');
         }, function fail() {
             this.capture('screenshot/partUndoCheckout/waitForCheckoutButtonDisabled-error.png');
@@ -93,7 +92,7 @@ casper.test.begin('Parts  multiple checkout tests suite', 1, function partsMulti
 
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

@@ -19,7 +19,7 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.common.WorkspaceWorkflow;
+import com.docdoku.core.workflow.WorkspaceWorkflow;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
@@ -42,10 +42,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Morgan Guimard
@@ -102,15 +99,20 @@ public class WorkspaceWorkflowResource {
     @Produces(MediaType.APPLICATION_JSON)
     public WorkspaceWorkflowDTO createWorkspaceWorkflow(@PathParam("workspaceId") String workspaceId,
                                                         @ApiParam(required = true, value = "Workspace workflow to create") WorkflowCreationDTO workflowCreationDTO)
-            throws RoleNotFoundException, WorkspaceNotFoundException, UserNotFoundException, AccessRightException, WorkflowModelNotFoundException, NotAllowedException {
+            throws RoleNotFoundException, WorkspaceNotFoundException, UserNotFoundException, AccessRightException, WorkflowModelNotFoundException, NotAllowedException, UserGroupNotFoundException {
 
-        Map<String, String> roleMappings = new HashMap<>();
+        Map<String, Collection<String>> userRoleMapping = new HashMap<>();
+        Map<String, Collection<String>> groupRoleMapping = new HashMap<>();
+        RoleMappingDTO[] roleMappingDTOs = workflowCreationDTO.getRoleMapping();
 
-        for (RoleMappingDTO roleMappingDTO : workflowCreationDTO.getRoleMapping()) {
-            roleMappings.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogin());
+        if (roleMappingDTOs != null) {
+            for (RoleMappingDTO roleMappingDTO : roleMappingDTOs) {
+                userRoleMapping.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogins());
+                groupRoleMapping.put(roleMappingDTO.getRoleName(), roleMappingDTO.getGroupIds());
+            }
         }
 
-        WorkspaceWorkflow workspaceWorkflow = workflowService.instantiateWorkflow(workspaceId, workflowCreationDTO.getId(), workflowCreationDTO.getWorkflowModelId(), roleMappings);
+        WorkspaceWorkflow workspaceWorkflow = workflowService.instantiateWorkflow(workspaceId, workflowCreationDTO.getId(), workflowCreationDTO.getWorkflowModelId(), userRoleMapping, groupRoleMapping);
         return mapper.map(workspaceWorkflow, WorkspaceWorkflowDTO.class);
     }
 

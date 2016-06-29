@@ -11,7 +11,7 @@ casper.test.begin('Document approve task tests suite', 7, function documentAppro
      * */
 
     casper.then(function () {
-        this.open(urls.documentManagement);
+        return this.open(urls.documentManagement);
     });
 
     /**
@@ -19,7 +19,7 @@ casper.test.begin('Document approve task tests suite', 7, function documentAppro
      */
 
     casper.then(function waitForFolderNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
+        return this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
             this.click('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]');
         }, function fail() {
             this.capture('screenshot/approveTask/waitForFolderNavLink-error.png');
@@ -33,7 +33,7 @@ casper.test.begin('Document approve task tests suite', 7, function documentAppro
     casper.then(function openCreatedDocument() {
         this.click('#document-management-content table.dataTable tr[title="' + documents.documentWithWorkflow.number + '"] td.reference');
         var modalTab = '.document-modal .tabs li a[href="#tab-iteration-files"]';
-        this.waitForSelector(modalTab, function modalOpened() {
+        return this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
             this.capture('screenshot/approveTask/openCreatedDocument-error.png');
@@ -42,7 +42,7 @@ casper.test.begin('Document approve task tests suite', 7, function documentAppro
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

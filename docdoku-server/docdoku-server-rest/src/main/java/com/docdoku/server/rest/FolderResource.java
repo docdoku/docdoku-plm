@@ -54,6 +54,7 @@ import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -136,7 +137,7 @@ public class FolderResource {
         String decodedCompletePath = getPathFromUrlParams(workspaceId, folderId);
 
         String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
-        RoleMappingDTO[] rolesMappingDTO = docCreationDTO.getRoleMapping();
+        RoleMappingDTO[] roleMappingDTOs = docCreationDTO.getRoleMapping();
         String pDocMTemplateId = docCreationDTO.getTemplateId();
 
         ACLDTO acl = docCreationDTO.getAcl();
@@ -160,14 +161,16 @@ public class FolderResource {
             }
         }
 
-        Map<String, String> roleMappings = new HashMap<>();
+        Map<String, Collection<String>> userRoleMapping = new HashMap<>();
+        Map<String, Collection<String>> groupRoleMapping = new HashMap<>();
 
-        if (rolesMappingDTO != null) {
-            for (RoleMappingDTO roleMappingDTO : rolesMappingDTO) {
-                roleMappings.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogin());
+        if (roleMappingDTOs != null) {
+            for (RoleMappingDTO roleMappingDTO : roleMappingDTOs) {
+                userRoleMapping.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogins());
+                groupRoleMapping.put(roleMappingDTO.getRoleName(), roleMappingDTO.getGroupIds());
             }
         }
-        DocumentRevision createdDocRs = documentService.createDocumentMaster(decodedCompletePath, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries, roleMappings);
+        DocumentRevision createdDocRs = documentService.createDocumentMaster(decodedCompletePath, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries, userRoleMapping, groupRoleMapping);
 
         DocumentRevisionDTO docRsDTO = mapper.map(createdDocRs, DocumentRevisionDTO.class);
         docRsDTO.setPath(createdDocRs.getLocation().getCompletePath());

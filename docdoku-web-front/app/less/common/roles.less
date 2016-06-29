@@ -44,8 +44,22 @@
         input {
             margin: 0 3px;
         }
+
         select {
             margin: 0 3px;
+        }
+
+        .required-message{
+            display: none;
+            color:#9c5d5d;
+            margin:0 0 0 2px;
+        }
+
+        &.invalid{
+            border-color: #9c5d5d;
+            .required-message{
+                display: block;
+            }
         }
     }
 }

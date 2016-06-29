@@ -9,14 +9,14 @@ casper.test.begin('Part from template creation tests suite', 19, function partCr
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
      * Go to part nav
      */
     casper.then(function waitForPartNavLink() {
-        this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
+        return this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/partCreation/waitForPartNavLink-error.png');
@@ -28,7 +28,7 @@ casper.test.begin('Part from template creation tests suite', 19, function partCr
      * Open the part creation modal
      */
     casper.then(function waitForNewPartButton() {
-        this.waitForSelector('.actions .new-part', function clickNewPartButton() {
+        return this.waitForSelector('.actions .new-part', function clickNewPartButton() {
             this.click('.actions .new-part');
         }, function fail() {
             this.capture('screenshot/parteaCreation/waitForNewPartButton-error.png');
@@ -40,7 +40,7 @@ casper.test.begin('Part from template creation tests suite', 19, function partCr
      * open new modal
      */
     casper.then(function openModal() {
-        this.waitForSelector('#part_creation_modal input#inputPartNumber', function onNewPartFormReady() {
+        return this.waitForSelector('#part_creation_modal input#inputPartNumber', function onNewPartFormReady() {
             this.test.assert(true, 'modal opened');
         }, function fail() {
             this.capture('screenshot/partCreation/onNewPartFormReady-error.png');
@@ -51,7 +51,7 @@ casper.test.begin('Part from template creation tests suite', 19, function partCr
     casper.then(function selectTemplate() {
         //wait for the third option to be loaded, sometimes the modal is created, but the template
         //are still to be injected.
-        this.waitForSelector('#inputPartTemplate option:nth-child(3)', function succeed() {
+        return this.waitForSelector('#inputPartTemplate option:nth-child(3)', function succeed() {
             this.test.assert(true, 'The template are loaded in the creation modal');
             this.evaluate(function () {
                 document.querySelector('#inputPartTemplate').selectedIndex = 1;
@@ -76,7 +76,7 @@ casper.test.begin('Part from template creation tests suite', 19, function partCr
      */
     casper.then(function goToAttributeTab() {
         this.click('.nav.nav-tabs > li:nth-child(3) > a');
-        this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
+        return this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
             this.test.assert(true, 'Attribute tab found');
         }, function () {
             this.capture('screenshot/attributes/clickOnAttributeTab-error.png');
@@ -85,7 +85,7 @@ casper.test.begin('Part from template creation tests suite', 19, function partCr
     });
 
     casper.then(function countAttributeFromTemplate() {
-        this.waitForSelector('#attributes-list .list-item', function () {
+        return this.waitForSelector('#attributes-list .list-item', function () {
             this.test.assertElementCount('#attributes-list input.name[disabled=disabled]', 2,
                 'The attributes name input should be disabled');
             this.test.assertElementCount('#attributes-list select.type', 0,
@@ -106,7 +106,7 @@ casper.test.begin('Part from template creation tests suite', 19, function partCr
      */
     casper.then(function () {
         this.click('.nav.nav-tabs > li:nth-child(1) > a');
-        this.waitForSelector('.nav.nav-tabs > li:nth-child(1).active', function () {
+        return this.waitForSelector('.nav.nav-tabs > li:nth-child(1).active', function () {
             this.test.assert(true, 'Main tab found');
 
         }, function () {
@@ -120,7 +120,7 @@ casper.test.begin('Part from template creation tests suite', 19, function partCr
      */
 
     casper.then(function fillNewPartModalForm() {
-        this.waitForSelector('#part_creation_modal input#inputPartNumber', function onNewPartFormReady() {
+        return this.waitForSelector('#part_creation_modal input#inputPartNumber', function onNewPartFormReady() {
             this.test.assertElementCount('#inputPartTemplate option', 3, 'there should be two template available');
             this.evaluate(function () {
                 document.querySelector('#inputPartTemplate').selectedIndex = 2;
@@ -138,7 +138,7 @@ casper.test.begin('Part from template creation tests suite', 19, function partCr
      */
     casper.then(function () {
         this.click('.nav.nav-tabs > li:nth-child(3) > a');
-        this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
+        return this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function () {
             this.test.assert(true, 'Attribute tab found');
 
         }, function () {
@@ -152,7 +152,7 @@ casper.test.begin('Part from template creation tests suite', 19, function partCr
      */
     casper.then(function countAttributeFromTemplate() {
 
-        this.waitForSelector('#attributes-list .list-item', function () {
+        return this.waitForSelector('#attributes-list .list-item', function () {
             this.test.assertElementCount('#attributes-list input.name[disabled=disabled]', 1,
                 'The attributes name input should be disabled');
             this.test.assertElementCount('#attributes-list select.type', 1,
@@ -177,7 +177,7 @@ casper.test.begin('Part from template creation tests suite', 19, function partCr
      */
     casper.then(function waitForModalToBeClosed() {
         this.click('.btn[data-dismiss="modal"]');
-        this.waitWhileSelector('#part_creation_modal', function onPartModalClosed() {
+        return this.waitWhileSelector('#part_creation_modal', function onPartModalClosed() {
             this.test.assert(true, 'Part modal has been closed');
         }, function fail() {
             this.capture('screenshot/partCreation/waitForModalToBeClosed-error.png');
@@ -187,7 +187,7 @@ casper.test.begin('Part from template creation tests suite', 19, function partCr
 
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

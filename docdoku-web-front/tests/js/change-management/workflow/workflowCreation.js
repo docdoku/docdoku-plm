@@ -11,14 +11,14 @@ casper.test.begin('Workflow creation tests suite', 8, function workflowCreationT
      * */
 
     casper.then(function () {
-        this.open(urls.changeManagement);
+        return this.open(urls.changeManagement);
     });
 
     /**
      * Open change workflow nav
      */
     casper.then(function waitForChangeWorkflowNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/workflows"]', function clickOnChangeWorkflowNavLink() {
+        return this.waitForSelector('a[href="#' + workspace + '/workflows"]', function clickOnChangeWorkflowNavLink() {
             this.click('a[href="#' + workspace + '/workflows"]');
         }, function fail() {
             this.capture('screenshot/workflowCreation/waitForChangeWorkflowNavLink-error.png');
@@ -30,7 +30,7 @@ casper.test.begin('Workflow creation tests suite', 8, function workflowCreationT
      * Wait for workflow button
      */
     casper.then(function waitForNewWorkflowButton() {
-        this.waitForSelector('.actions .new:enabled', function clickOnNewWorkflowButton() {
+        return this.waitForSelector('.actions .new:enabled', function clickOnNewWorkflowButton() {
             this.click('.actions .new');
             this.test.assert(true, 'New Workflow button is displayed');
         }, function fail() {
@@ -44,7 +44,7 @@ casper.test.begin('Workflow creation tests suite', 8, function workflowCreationT
      * Wait for workflow editor
      */
     casper.then(function waitForWorkflowEditor() {
-        this.waitForSelector('#workflow-editor', function editorDisplayed() {
+        return this.waitForSelector('#workflow-editor', function editorDisplayed() {
             this.test.assert(true, 'Editor displayed');
         }, function fail() {
             this.capture('screenshot/workflowCreation/waitForWorkflowEditor-error.png');
@@ -56,7 +56,7 @@ casper.test.begin('Workflow creation tests suite', 8, function workflowCreationT
      * Try to create a workflow without a name
      */
     casper.then(function tryToCreateWorkflowWithoutName() {
-        this.waitForSelector('.actions #save-workflow', function clickOnSaveWorkflowButton() {
+        return this.waitForSelector('.actions #save-workflow', function clickOnSaveWorkflowButton() {
             this.click('.actions #save-workflow');
             this.test.assertExists('.actions #workflow-name:invalid', 'Should not create a workflow without a name');
             this.sendKeys('.actions #workflow-name', workflows.workflow1.name, {reset: true});
@@ -71,7 +71,7 @@ casper.test.begin('Workflow creation tests suite', 8, function workflowCreationT
      * Try to create an activity
      */
     casper.then(function createActivity() {
-        this.waitForSelector('#workflow-editor #add-activity', function clickOnNewActivityButton() {
+        return this.waitForSelector('#workflow-editor #add-activity', function clickOnNewActivityButton() {
             this.click('#workflow-editor #add-activity');
             this.test.assertExists('#activity-list .activity-section .activity', 'Should create an activity');
             this.sendKeys('#activity-list .activity-section .activity .activity-topbar .activity-state', workflows.workflow1.activities.activity1.name, {reset: true});
@@ -86,8 +86,7 @@ casper.test.begin('Workflow creation tests suite', 8, function workflowCreationT
      * Try to create a task
      */
     casper.then(function createTask() {
-        this.waitForSelector('#activity-list .activity-section .activity .add-task', function clickOnNewTaskButton() {
-
+        return this.waitForSelector('#activity-list .activity-section .activity .add-task', function clickOnNewTaskButton() {
             this.click('#activity-list .activity-section .activity .add-task');
             this.test.assertExists('#activity-list .activity-section .activity .task-list .task', 'Should create an task');
             this.click('#activity-list .activity-section .activity .task-list .task p.task-name');
@@ -104,7 +103,7 @@ casper.test.begin('Workflow creation tests suite', 8, function workflowCreationT
      */
     casper.then(function saveWorkflow() {
         this.click('.actions #save-workflow');
-        this.waitWhileSelector('#workflow-editor', function workflowEditorClosed() {
+        return this.waitWhileSelector('#workflow-editor', function workflowEditorClosed() {
             this.test.assert(true, 'Workflow editor has been closed');
         }, function fail() {
             this.capture('screenshot/workflowCreation/saveWorkflow-error.png');
@@ -116,7 +115,7 @@ casper.test.begin('Workflow creation tests suite', 8, function workflowCreationT
      * Check if workflow is now in the list
      */
     casper.then(function checkForWorkflowToBeCreated() {
-        this.waitForSelector('.workflow-table', function workflowTableDisplayed() {
+        return this.waitForSelector('.workflow-table', function workflowTableDisplayed() {
             this.test.assertSelectorHasText('.workflow-table tbody tr:first-child td.reference', workflows.workflow1.name);
         }, function fail() {
             this.capture('screenshot/workflowCreation/checkForWorkflowToBeCreated-error.png');
@@ -125,6 +124,6 @@ casper.test.begin('Workflow creation tests suite', 8, function workflowCreationT
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

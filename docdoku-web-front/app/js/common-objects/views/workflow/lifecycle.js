@@ -22,14 +22,9 @@ define([
         initialize: function () {
             Backbone.Events.on('task:errorDisplay', this.onError.bind(this));
         },
-
-        setAbortedWorkflowsUrl: function (url) {
-            this.abortedWorkflowsUrl = url;
-            return this;
-        },
-
         setWorkflow: function (workflow) {
             this.workflow = workflow;
+            this.abortedWorkflowsUrl = App.config.contextPath+'/api/workspaces/'+App.config.workspaceId+'/workflow-instances/'+workflow.id+'/aborted';
             return this;
         },
 
@@ -115,6 +110,7 @@ define([
             _.each(workflow.activities, function (activity) {
                 if (activity && activity.toDo) {
                     activity.parentWorkflowId = that.workflow.id;
+                    activity.relaunchActivityState = activity.relaunchStep >= 0 ? workflow.activities[activity.relaunchStep].lifeCycleState:null;
                     var lifecycleActivityView = new LifecycleActivityView().setActivity(activity).setEntityType(that.entityType).render();
                     that.$lifecycleActivities.append(lifecycleActivityView.$el);
                     lifecycleActivityView.on('activity:change', function () {

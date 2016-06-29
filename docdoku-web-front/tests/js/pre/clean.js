@@ -7,7 +7,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     // Roles
     casper.then(function cleanupRoles() {
         var that = this;
-        this.open(apiUrls.getRoles, {method: 'GET'}).then(function (response) {
+        return this.open(apiUrls.getRoles, {method: 'GET'}).then(function (response) {
             if (response.status === 200) {
                 var roles = JSON.parse(this.getPageContent());
                 roles.forEach(function (role) {
@@ -25,7 +25,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     // Workflows
     casper.then(function cleanupWorkflows() {
         var that = this;
-        this.open(apiUrls.getWorkflows, {method: 'GET'}).then(function (response) {
+        return this.open(apiUrls.getWorkflows, {method: 'GET'}).then(function (response) {
             if (response.status === 200) {
                 var workflows = JSON.parse(this.getPageContent());
                 workflows.forEach(function (workflow) {
@@ -43,7 +43,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     // Tags
     casper.then(function cleanupTags() {
         var that = this;
-        this.open(apiUrls.getTags, {method: 'GET'}).then(function (response) {
+        return this.open(apiUrls.getTags, {method: 'GET'}).then(function (response) {
             if (response.status === 200) {
                 var tags = JSON.parse(this.getPageContent());
                 tags.forEach(function (tag) {
@@ -60,7 +60,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
 
     // Product instances
     casper.then(function cleanupProductInstances() {
-        this.open(apiUrls.deleteProductInstance, {method: 'DELETE'}).then(function (response) {
+        return this.open(apiUrls.deleteProductInstance, {method: 'DELETE'}).then(function (response) {
             if (response.status === 200) {
                 this.log('Product instance has been deleted', 'info');
             } else {
@@ -73,7 +73,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     // Baselines
     casper.then(function cleanupBaselines() {
         var that = this;
-        this.open(apiUrls.getBaselines, {method: 'GET'}).then(function (response) {
+        return this.open(apiUrls.getBaselines, {method: 'GET'}).then(function (response) {
             if (response.status === 200) {
                 var baselines = JSON.parse(this.getPageContent());
                 baselines.forEach(function (baseline) {
@@ -91,7 +91,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
 
     // Products
     casper.then(function cleanupProducts() {
-        this.open(apiUrls.deleteProduct, {method: 'DELETE'}).then(function (response) {
+        return this.open(apiUrls.deleteProduct, {method: 'DELETE'}).then(function (response) {
             if (response.status === 200) {
                 this.log('Test products has been deleted', 'info');
             } else {
@@ -102,7 +102,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
 
     // Parts
     casper.then(function cleanupParts() {
-        this.open(apiUrls.deletePart, {method: 'DELETE'}).then(function (response) {
+        return this.open(apiUrls.deletePart, {method: 'DELETE'}).then(function (response) {
             if (response.status === 200) {
                 this.log('Test parts has been deleted', 'info');
             } else {
@@ -113,29 +113,29 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
 
     // Assembly parts
     var partNumbers = Object.keys(products.assembly.parts);
-
     partNumbers.forEach(function (partNumber) {
-        casper.then(function cleanupParts() {
-            this.open(homeUrl + 'api/workspaces/' + workspace + '/parts/' + partNumber + '-A', {method: 'DELETE'}).then(function (response) {
-                if (response.status === 200) {
-                    this.log('Part deleted');
-                } else {
-                    this.log('Cannot delete part, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
-                }
-            });
+        casper.open(homeUrl + 'api/workspaces/' + workspace + '/parts/' + partNumber + '-A', {method: 'DELETE'}).then(function (response) {
+            if (response.status === 200) {
+                this.log('Part deleted');
+            } else {
+                this.log('Cannot delete part, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+            }
         });
     });
 
     // Part templates
     casper.then(function cleanupPartTemplates() {
-        this.open(apiUrls.deletePartTemplate, {method: 'DELETE'}).then(function (response) {
+        return this.open(apiUrls.deletePartTemplate, {method: 'DELETE'}).then(function (response) {
             if (response.status === 200) {
                 this.log('Test part templates has been deleted', 'info');
             } else {
                 this.log('Cannot delete test part templates, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
             }
         });
-        this.open(apiUrls.deletePartTemplate2, {method: 'DELETE'}).then(function (response) {
+    });
+
+    casper.then(function cleanupPartTemplates2() {
+        return this.open(apiUrls.deletePartTemplate2, {method: 'DELETE'}).then(function (response) {
             if (response.status === 200) {
                 this.log('Test part templates2 has been deleted', 'info');
             } else {
@@ -146,7 +146,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
 
     // Part templates
     casper.then(function cleanupDocumentTemplates() {
-        this.open(apiUrls.deleteDocumentTemplate, {method: 'DELETE'}).then(function (response) {
+        return this.open(apiUrls.deleteDocumentTemplate, {method: 'DELETE'}).then(function (response) {
             if (response.status === 200) {
                 this.log('Test document template has been deleted', 'info');
             } else {
@@ -159,7 +159,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     casper.then(function cleanupDocuments() {
         var that = this;
         that.log('Deleting documents', 'info');
-        this.open(apiUrls.getDocuments, {method: 'GET'}).then(function (response) {
+        return this.open(apiUrls.getDocuments, {method: 'GET'}).then(function (response) {
             that.log(response);
             if (response.status === 200) {
                 var documents = JSON.parse(this.getPageContent());
@@ -177,7 +177,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
 
     // Folders
     casper.then(function cleanupFolders() {
-        this.open(apiUrls.deleteFolder, {method: 'DELETE'}).then(function (response) {
+        return this.open(apiUrls.deleteFolder, {method: 'DELETE'}).then(function (response) {
             if (response.status === 200) {
                 this.log('Test folders has been deleted', 'info');
             } else {
@@ -188,7 +188,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
 
     // LOV
     casper.then(function cleanupLovs() {
-        this.open(apiUrls.deleteLov1, {method: 'DELETE'}).then(function (response) {
+        return this.open(apiUrls.deleteLov1, {method: 'DELETE'}).then(function (response) {
             if (response.status === 200) {
                 this.log('Lov has been deleted', 'info');
             } else {
@@ -198,7 +198,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     });
 
     casper.then(function cleanupLovs() {
-        this.open(apiUrls.deleteLov2, {method: 'DELETE'}).then(function (response) {
+        return this.open(apiUrls.deleteLov2, {method: 'DELETE'}).then(function (response) {
             if (response.status === 200) {
                 this.log('Lov has been deleted', 'info');
             } else {
@@ -210,7 +210,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     // delete all milestone
     casper.then(function cleanupMilestones() {
         var that = this;
-        this.open(apiUrls.milestones, {method: 'GET'}).then(function (response) {
+        return this.open(apiUrls.milestones, {method: 'GET'}).then(function (response) {
             if (response.status === 200) {
                 var milestones = JSON.parse(this.getPageContent());
                 milestones.forEach(function (milestone) {
@@ -228,7 +228,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     // Queries
     casper.then(function cleanupQueries() {
         var that = this;
-        this.open(apiUrls.queries, {method: 'GET'}).then(function (response) {
+        return this.open(apiUrls.queries, {method: 'GET'}).then(function (response) {
             if (response.status === 200) {
                 var queries = JSON.parse(this.getPageContent());
                 queries.forEach(function (query) {
@@ -244,6 +244,6 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

@@ -22,6 +22,7 @@ function (Backbone,singletonDecorator, WorkflowNavView, TaskNavView, MilestoneNa
             ':workspaceId/workflow-model-editor/:workflowModelId': 'workflowModelEditor',
             ':workspaceId/workflow-model-editor': 'workflowModelEditorNew',
             ':workspaceId/tasks/:taskId': 'task',
+            ':workspaceId/workflow/:workflowId': 'workflow',
             ':workspaceId': 'workflows'
         },
 
@@ -117,7 +118,15 @@ function (Backbone,singletonDecorator, WorkflowNavView, TaskNavView, MilestoneNa
             this.executeOrReload(workspaceId,function(){
                 this.initNavViews();
                 this.cleanContent();
-                TaskNavView.getInstance().showContent(taskId);
+                TaskNavView.getInstance().showTaskContent(taskId);
+            });
+        },
+
+        workflow:function(workspaceId, workflowId){
+            this.executeOrReload(workspaceId,function(){
+                this.initNavViews();
+                this.cleanContent();
+                TaskNavView.getInstance().showWorkflowContent(workflowId);
             });
         }
     });

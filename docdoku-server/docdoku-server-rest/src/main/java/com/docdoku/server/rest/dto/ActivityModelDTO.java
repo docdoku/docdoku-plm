@@ -105,6 +105,6 @@ public class ActivityModelDTO implements Serializable {
     }
 
     public enum Type {
-        SERIAL, PARALLEL
+        SEQUENTIAL, PARALLEL
     }
 }

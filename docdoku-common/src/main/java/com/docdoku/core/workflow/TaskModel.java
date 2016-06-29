@@ -21,10 +21,12 @@
 package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -83,9 +85,10 @@ public class TaskModel implements Serializable, Cloneable {
 
     }
 
-    public Task createTask(Map<Role,User> roleUserMap) {
-        User worker = roleUserMap.get(role);
-        return new Task(num, title,instructions,worker);
+    public Task createTask(Map<Role,Collection<User>> roleUserMap, Map<Role,Collection<UserGroup>> roleGroupMap) {
+        Collection<User> assignedUsers = roleUserMap.get(role);
+        Collection<UserGroup> assignedGroups = roleGroupMap.get(role);
+        return new Task(num, title,instructions,assignedUsers,assignedGroups);
     }
     
     public String getTitle() {

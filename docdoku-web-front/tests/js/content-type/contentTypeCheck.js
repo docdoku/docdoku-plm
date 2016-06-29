@@ -28,7 +28,7 @@ casper.test.begin('Content type check tests suite', 6, function contentTypeCheck
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

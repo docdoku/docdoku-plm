@@ -12,15 +12,20 @@ define(['backbone'], function (Backbone) {
             return this.get('name');
         },
 
-        getMappedUser: function () {
-            return this.get('defaultAssignee');
+        getDefaultAssignedUsers: function () {
+            return this.get('defaultAssignedUsers');
         },
 
-        getMappedUserLogin: function () {
-            if (this.getMappedUser()) {
-                return this.getMappedUser().login;
-            }
-            return '';
+        setDefaultAssignedUsers: function (users) {
+            return this.set('defaultAssignedUsers',users);
+        },
+
+        getDefaultAssignedGroups: function () {
+            return this.get('defaultAssignedGroups');
+        },
+
+        setDefaultAssignedGroups: function (groups) {
+            return this.set('defaultAssignedGroups',groups);
         }
     });
     return Role;

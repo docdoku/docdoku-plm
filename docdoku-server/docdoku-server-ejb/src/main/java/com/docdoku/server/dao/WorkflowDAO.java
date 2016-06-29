@@ -20,7 +20,7 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.common.WorkspaceWorkflow;
+import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartMaster;
@@ -31,6 +31,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -51,14 +52,14 @@ public class WorkflowDAO {
         pWf.setActivities(activities);
     }
 
-    public Workflow createWorkflow(WorkflowModel workflowModel,Map<Role, User> roleUserMap){
+    public Workflow createWorkflow(WorkflowModel workflowModel,Map<Role, Collection<User>> roleUserMap, Map<Role, Collection<UserGroup>> roleGroupMap){
         Workflow workflow = new Workflow(workflowModel.getFinalLifeCycleState());
         em.persist(workflow);
         em.flush();
 
         List<Activity> activities = new ArrayList<>();
         for(ActivityModel model:workflowModel.getActivityModels()){
-            Activity activity = model.createActivity(roleUserMap);
+            Activity activity = model.createActivity(roleUserMap, roleGroupMap);
             activity.setWorkflow(workflow);
             Activity relaunchActivity = activity.getRelaunchActivity();
             if(relaunchActivity!=null){
@@ -166,7 +167,7 @@ public class WorkflowDAO {
     }
 
     public WorkspaceWorkflow getWorkspaceWorkflowTarget(String workspaceId, Workflow workflow) {
-        TypedQuery<WorkspaceWorkflow> query = em.createQuery("SELECT w FROM WorkspaceWorkflow w WHERE w.workflow = :workflow AND w.workspaceId = :workspaceId", WorkspaceWorkflow.class);
+        TypedQuery<WorkspaceWorkflow> query = em.createQuery("SELECT w FROM WorkspaceWorkflow w WHERE w.workflow = :workflow AND w.workspace.id = :workspaceId", WorkspaceWorkflow.class);
         try{
             return query.setParameter("workflow", workflow)
                 .setParameter("workspaceId", workspaceId)

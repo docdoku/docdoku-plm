@@ -10,14 +10,14 @@ casper.test.begin('Baseline creation tests suite', 2, function baselineCreationT
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
      * Go to product nav
      */
     casper.then(function waitForProductNavLink() {
-        this.waitForSelector('#product-nav > .nav-list-entry > a', function clickProductNavLink() {
+        return this.waitForSelector('#product-nav > .nav-list-entry > a', function clickProductNavLink() {
             this.click('#product-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/baselineCreation/waitForProductNavLink-error.png');
@@ -29,7 +29,7 @@ casper.test.begin('Baseline creation tests suite', 2, function baselineCreationT
      * Select the first product with checkbox
      */
     casper.then(function waitForProductTable() {
-        this.waitForSelector('#product_table tbody tr:first-child  td:first-child input', function clickOnProductCheckbox() {
+        return this.waitForSelector('#product_table tbody tr:first-child  td:first-child input', function clickOnProductCheckbox() {
             this.click('#product_table tbody tr:first-child  td:first-child input');
         }, function fail() {
             this.capture('screenshot/baselineCreation/waitForProductTable-error.png');
@@ -41,7 +41,7 @@ casper.test.begin('Baseline creation tests suite', 2, function baselineCreationT
      * Click on baseline creation button
      */
     casper.then(function waitForBaselineCreationButton() {
-        this.waitForSelector('.actions .new-baseline', function openBaselineCreationModal() {
+        return this.waitForSelector('.actions .new-baseline', function openBaselineCreationModal() {
             this.click('.actions .new-baseline');
         }, function fail() {
             this.capture('screenshot/baselineCreation/waitForBaselineCreationButton-error.png');
@@ -53,7 +53,7 @@ casper.test.begin('Baseline creation tests suite', 2, function baselineCreationT
      * Try to create a baseline without a name
      */
     casper.then(function waitForBaselineCreationModal() {
-        this.waitForSelector('#baseline_creation_modal .modal-footer .btn-primary', function baselineCreationModalOpened() {
+        return this.waitForSelector('#baseline_creation_modal .modal-footer .btn-primary', function baselineCreationModalOpened() {
             this.click('#baseline_creation_modal .modal-footer .btn-primary');
             this.test.assertExists('#baseline_creation_modal #inputBaselineName:invalid', 'Should not create baseline without a name');
         }, function fail() {
@@ -66,7 +66,7 @@ casper.test.begin('Baseline creation tests suite', 2, function baselineCreationT
      * Try to create the baseline
      */
     casper.then(function tryToCreateABaseline() {
-        this.waitForSelector('#baseline_creation_modal #inputBaselineName', function fillBaselineCreationForm() {
+        return this.waitForSelector('#baseline_creation_modal #inputBaselineName', function fillBaselineCreationForm() {
             this.sendKeys('#baseline_creation_modal #inputBaselineName', baselines.baseline1.name, {reset: true});
             this.sendKeys('#baseline_creation_modal #inputBaselineDescription', baselines.baseline1.description, {reset: true});
             this.click('#baseline_creation_modal .modal-footer .btn-primary');
@@ -80,7 +80,7 @@ casper.test.begin('Baseline creation tests suite', 2, function baselineCreationT
      * Wait for the modal to be closed
      */
     casper.then(function waitForModalToBeClosed() {
-        this.waitWhileSelector('#baseline_creation_modal', function onBaselineCreationModalClosed() {
+        return this.waitWhileSelector('#baseline_creation_modal', function onBaselineCreationModalClosed() {
             this.test.assert(true, 'Baseline creation modal has been closed');
         }, function fail() {
             this.capture('screenshot/baselineCreation/waitForModalToBeClosed-error.png');
@@ -89,7 +89,7 @@ casper.test.begin('Baseline creation tests suite', 2, function baselineCreationT
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 
 });

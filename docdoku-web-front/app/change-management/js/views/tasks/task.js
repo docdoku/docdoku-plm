@@ -7,38 +7,44 @@ define([
 ], function (Backbone, Mustache, template, LifecycleView) {
     'use strict';
     var TaskView = Backbone.View.extend({
-        events: {},
 
         initialize: function () {
 
         },
 
-        render: function (taskId) {
+        renderTask: function (taskId) {
             var _this = this;
             $.getJSON(App.config.contextPath+'/api/workspaces/'+App.config.workspaceId+'/tasks/'+taskId)
                 .then(function(task){
                     _this.task = task;
-                    return  $.getJSON(App.config.contextPath+'/api/workspaces/'+App.config.workspaceId+'/workflow-instances/'+task.workflowId);
-                })
-                .then(function(workflow){
-
-                    _this.$el.html(Mustache.render(template, {task:_this.task, i18n: App.config.i18n}));
-
-                    _this.lifecycleView = new LifecycleView()
-                        .setAbortedWorkflowsUrl(App.config.contextPath+'/api/workspaces/'+App.config.workspaceId+'/workflow-instances/'+_this.task.workflowId+'/aborted')
-                        .setWorkflow(workflow)
-                        .setEntityType(_this.task.holderType)
-                        .render();
-
-                    _this.lifecycleView.on('lifecycle:change', function () {
-                        window.location.reload();
-                    });
-
-                    _this.$('.workflow-detail').append(_this.lifecycleView.$el);
+                    _this.renderWorkflow(task.workflowId);
                 });
-
-
             return this;
+        },
+
+        renderWorkflow:function(workflowId){
+            var _this = this;
+            $.getJSON(App.config.contextPath+'/api/workspaces/'+App.config.workspaceId+'/workflow-instances/'+workflowId)
+                .then(function(workflow){
+                    _this.workflow = workflow;
+                    _this.render();
+                });
+        },
+
+        render:function(){
+            this.$el.html(Mustache.render(template, {task:this.task, workflow:this.workflow, i18n: App.config.i18n}));
+
+            this.lifecycleView = new LifecycleView()
+                .setWorkflow(this.workflow)
+                .render();
+
+            var _this = this;
+            this.lifecycleView.on('lifecycle:change', function () {
+                _this.lifecycleView.displayWorkflow(_this.workflow);
+                _this.renderWorkflow(_this.workflow.id);
+            });
+
+            this.$('.workflow-detail').append(this.lifecycleView.$el);
         }
 
     });

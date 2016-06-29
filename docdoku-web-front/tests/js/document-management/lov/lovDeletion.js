@@ -15,7 +15,7 @@ casper.test.begin('LOV deletion tests suite', 3, function documentLOVDeletionTes
      * */
 
     casper.then(function () {
-        this.open(urls.documentManagement);
+        return this.open(urls.documentManagement);
     });
 
     /**
@@ -23,7 +23,7 @@ casper.test.begin('LOV deletion tests suite', 3, function documentLOVDeletionTes
      */
 
     casper.then(function waitForTemplateNavLink() {
-        this.waitForSelector('#template-nav > .nav-list-entry > a', function clickTemplateNavLink() {
+        return this.waitForSelector('#template-nav > .nav-list-entry > a', function clickTemplateNavLink() {
             this.click('#template-nav > .nav-list-entry > a');
         });
     });
@@ -33,7 +33,7 @@ casper.test.begin('LOV deletion tests suite', 3, function documentLOVDeletionTes
      */
 
     casper.then(function waitForLOVCreationLink() {
-        this.waitForSelector('.actions .list-lov', function clickOnLOVCreationLink() {
+        return this.waitForSelector('.actions .list-lov', function clickOnLOVCreationLink() {
             this.click('.actions .list-lov');
         });
     });
@@ -43,7 +43,7 @@ casper.test.begin('LOV deletion tests suite', 3, function documentLOVDeletionTes
      */
 
     casper.then(function waitForLOVCreationModal() {
-        this.waitForSelector('.modal.list_lov .lovItem', function checkLOVPersistence() {
+        return this.waitForSelector('.modal.list_lov .lovItem', function checkLOVPersistence() {
             this.test.assertElementCount('.lovItem', 1, 'One element should be in the list of LOV');
         }, function(){
             this.capture('screenshot/lovDeletion/waitForLOVCreationModal-error.png');
@@ -56,7 +56,7 @@ casper.test.begin('LOV deletion tests suite', 3, function documentLOVDeletionTes
     casper.then(function deleteItem() {
         this.click('.deleteLovItem');
         this.click('.btn-saveLovs');
-        this.waitWhileSelector('.modal', function () {
+        return this.waitWhileSelector('.modal', function () {
             this.test.assert(true, 'modal closed');
         });
     });
@@ -75,12 +75,12 @@ casper.test.begin('LOV deletion tests suite', 3, function documentLOVDeletionTes
      */
 
     casper.then(function waitForLOVCreationModal() {
-        this.waitForSelector('.modal.list_lov .list_of_lov', function checkDeletion() {
+        return this.waitForSelector('.modal.list_lov .list_of_lov', function checkDeletion() {
             this.test.assertDoesntExist('.lovItem', 'LOV should be deleted');
         });
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

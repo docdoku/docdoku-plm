@@ -11,14 +11,14 @@ casper.test.begin('Assembly check tests suite', 29, function assemblyCheckTestsS
      * */
 
     casper.then(function () {
-        this.open(urls.productManagement);
+        return this.open(urls.productManagement);
     });
 
     /**
      * Go to part nav
      */
     casper.then(function waitForPartNavLink() {
-        this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
+        return this.waitForSelector('#part-nav > .nav-list-entry > a', function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
         }, function fail() {
             this.capture('screenshot/assemblyCheck/waitForPartNavLink-error.png');
@@ -31,7 +31,7 @@ casper.test.begin('Assembly check tests suite', 29, function assemblyCheckTestsS
      */
     casper.then(function waitForPartList() {
         var link = '#part_table tbody tr:first-child td.part_number';
-        this.waitForSelector(link, function clickPartNavLink() {
+        return this.waitForSelector(link, function clickPartNavLink() {
             this.click(link);
         }, function fail() {
             this.capture('screenshot/assemblyCheck/waitForPartList-error.png');
@@ -44,7 +44,7 @@ casper.test.begin('Assembly check tests suite', 29, function assemblyCheckTestsS
      */
     casper.then(function waitForPartModal() {
         var modalTab = '#part-modal .tabs li a[href="#tab-assembly"]';
-        this.waitForSelector(modalTab, function modalOpened() {
+        return this.waitForSelector(modalTab, function modalOpened() {
             this.click(modalTab);
         }, function fail() {
             this.capture('screenshot/assemblyCheck/waitForPartModal-error.png');
@@ -56,7 +56,7 @@ casper.test.begin('Assembly check tests suite', 29, function assemblyCheckTestsS
      * Wait the modal tab
      */
     casper.then(function waitForPartModalTab() {
-        this.waitForSelector('#part-modal .component', function tabSelected() {
+        return this.waitForSelector('#part-modal .component', function tabSelected() {
             this.test.assert(true, 'Assembly tab opened');
         }, function fail() {
             this.capture('screenshot/assemblyCheck/waitForPartModalTab-error.png');

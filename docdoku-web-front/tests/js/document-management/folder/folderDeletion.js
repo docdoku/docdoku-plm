@@ -11,7 +11,7 @@ casper.test.begin('Folder deletion tests suite', 1, function folderDeletionTests
      * */
 
     casper.then(function () {
-        this.open(urls.documentManagement);
+        return this.open(urls.documentManagement);
     });
 
     /**
@@ -19,7 +19,7 @@ casper.test.begin('Folder deletion tests suite', 1, function folderDeletionTests
      */
 
     casper.then(function waitForDeleteFolderLink() {
-        this.waitForSelector('#folder-nav .items a[title="' + documents.folder1 + '"] + .btn-group .delete a', function clickFolderDeleteLink() {
+        return this.waitForSelector('#folder-nav .items a[title="' + documents.folder1 + '"] + .btn-group .delete a', function clickFolderDeleteLink() {
             this.click('#folder-nav .items a[title="' + documents.folder1 + '"] + .btn-group .delete a');
         }, function fail() {
             this.capture('screenshot/folderDeletion/waitForDeleteFolderLink-error.png');
@@ -33,7 +33,7 @@ casper.test.begin('Folder deletion tests suite', 1, function folderDeletionTests
      */
 
     casper.then(function confirmFolderDeletion() {
-        this.waitForSelector('.bootbox', function confirmBoxAppeared() {
+        return this.waitForSelector('.bootbox', function confirmBoxAppeared() {
             this.click('.bootbox .modal-footer .btn-primary');
         }, function fail() {
             this.capture('screenshot/folderDeletion/confirmFolderDeletion-error.png');
@@ -46,7 +46,7 @@ casper.test.begin('Folder deletion tests suite', 1, function folderDeletionTests
      */
 
     casper.then(function waitForFolderDisappear() {
-        this.waitWhileSelector('#folder-nav .items a[title=' + documents.folder1 + ']', function folderHasBEenDeleted() {
+        return this.waitWhileSelector('#folder-nav .items a[title=' + documents.folder1 + ']', function folderHasBEenDeleted() {
             this.test.assert(true, 'Folder deleted');
         }, function fail() {
             this.capture('screenshot/folderDeletion/waitForFolderDisappear-error.png');
@@ -55,6 +55,6 @@ casper.test.begin('Folder deletion tests suite', 1, function folderDeletionTests
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

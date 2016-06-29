@@ -8,7 +8,7 @@
     <class>com.docdoku.core.common.User</class>
     <class>com.docdoku.core.common.UserGroup</class>
     <class>com.docdoku.core.common.Workspace</class>
-    <class>com.docdoku.core.common.WorkspaceWorkflow</class>
+    <class>com.docdoku.core.workflow.WorkspaceWorkflow</class>
     <class>com.docdoku.core.change.ChangeItem</class>
     <class>com.docdoku.core.change.ChangeIssue</class>
     <class>com.docdoku.core.change.ChangeOrder</class>
@@ -84,8 +84,8 @@
     <class>com.docdoku.core.workflow.ActivityModel</class>
     <class>com.docdoku.core.workflow.ParallelActivity</class>
     <class>com.docdoku.core.workflow.ParallelActivityModel</class>
-    <class>com.docdoku.core.workflow.SerialActivity</class>
-    <class>com.docdoku.core.workflow.SerialActivityModel</class>
+    <class>com.docdoku.core.workflow.SequentialActivity</class>
+    <class>com.docdoku.core.workflow.SequentialActivityModel</class>
     <class>com.docdoku.core.workflow.Task</class>
     <class>com.docdoku.core.workflow.TaskModel</class>
     <class>com.docdoku.core.workflow.Workflow</class>

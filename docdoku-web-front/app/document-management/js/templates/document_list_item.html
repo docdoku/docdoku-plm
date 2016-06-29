@@ -14,7 +14,7 @@
 <td>{{model.title}}</td>
 <td><a class="author-popover">{{model.author.name}}</a></td>
 <td><a class="date-popover">{{model.lastIteration.modificationDate}}</a></td>
-<td class="life-cycle-state">{{model.lifeCycleState}}</td>
+<td class="life-cycle-state"><a target="_blank" href="{{contextPath}}/change-management/#{{model.workspaceId}}/workflow/{{model.workflowId}}">{{model.lifeCycleState}}</a></td>
 <td><a class="checkout-user-popover">{{model.checkOutUser.name}}</a></td>
 <td class="document-acl-info">
     {{#model.isReadOnly}}

@@ -1,6 +1,6 @@
 /*global casper,urls,workspace,roles*/
 
-casper.test.begin('Role creation tests suite', 6, function roleCreationTestsSuite() {
+casper.test.begin('Role creation tests suite', 7, function roleCreationTestsSuite() {
 
     'use strict';
 
@@ -11,14 +11,14 @@ casper.test.begin('Role creation tests suite', 6, function roleCreationTestsSuit
      * */
 
     casper.then(function () {
-        this.open(urls.changeManagement);
+        return this.open(urls.changeManagement);
     });
 
     /**
      * Open change workflow nav
      */
     casper.then(function waitForChangeWorkflowNavLink() {
-        this.waitForSelector('a[href="#' + workspace + '/workflows"]', function clickOnChangeWorkflowNavLink() {
+        return this.waitForSelector('a[href="#' + workspace + '/workflows"]', function clickOnChangeWorkflowNavLink() {
             this.click('a[href="#' + workspace + '/workflows"]');
         }, function fail() {
             this.capture('screenshot/roleCreation/waitForChangeWorkflowNavLink-error.png');
@@ -30,7 +30,7 @@ casper.test.begin('Role creation tests suite', 6, function roleCreationTestsSuit
      * Wait for role button
      */
     casper.then(function waitForRoleButton() {
-        this.waitForSelector('.actions .roles', function clickOnRolesButton() {
+        return this.waitForSelector('.actions .roles', function clickOnRolesButton() {
             this.click('.actions .roles');
             this.test.assert(true, 'Role button is displayed');
         }, function fail() {
@@ -43,7 +43,7 @@ casper.test.begin('Role creation tests suite', 6, function roleCreationTestsSuit
      * Wait for role modal
      */
     casper.then(function waitForRoleModal() {
-        this.waitForSelector('#roles-modal', function roleModalDisplayed() {
+        return this.waitForSelector('#roles-modal', function roleModalDisplayed() {
             this.test.assert(true, 'Role modal is displayed');
         }, function fail() {
             this.capture('screenshot/roleCreation/waitForRoleButton-error.png');
@@ -67,11 +67,30 @@ casper.test.begin('Role creation tests suite', 6, function roleCreationTestsSuit
         this.sendKeys('#roles-modal #form-new-role .role-name', roles.role1.name, {reset: true});
         this.click('#new-role');
 
-        this.waitForSelector('#form-roles > div > input[value="' + roles.role1.name + '"]', function roleAdded() {
+        return  this.waitForSelector('#form-roles > div.roles-item > p > b', function roleAdded() {
             this.test.assert(true, 'Role added');
         }, function fail() {
             this.capture('screenshot/roleCreation/tryToAddRole-error.png');
             this.test.assert(false, 'Role can not be added');
+        });
+    });
+
+    /**
+     * Add user to default assigned users
+     */
+    casper.then(function tryToAddDefaultAssignedUsers() {
+        this.evaluate(function () {
+            var selectize = $('select.role-default-assigned-users')[0].selectize;
+            var _login = Object.keys(selectize.options)[0];
+            selectize.addItem(_login);
+            return true;
+        });
+
+        return this.waitForSelector('#form-roles > div > .role-default-assigned-users > div.selectize-input > div', function(){
+            this.test.assert(true, 'Default user added');
+        }, function fail() {
+            this.capture('screenshot/roleCreation/tryToCreateRole-error.png');
+            this.test.assert(false, 'Modal not closed');
         });
     });
 
@@ -81,7 +100,7 @@ casper.test.begin('Role creation tests suite', 6, function roleCreationTestsSuit
     casper.then(function tryToCreateRole() {
         this.click('#save-roles');
 
-        this.waitWhileSelector('#roles-modal', function modalClosed() {
+        return this.waitWhileSelector('#roles-modal', function modalClosed() {
             this.test.assert(true, 'Modal closed');
         }, function fail() {
             this.capture('screenshot/roleCreation/tryToCreateRole-error.png');
@@ -93,7 +112,7 @@ casper.test.begin('Role creation tests suite', 6, function roleCreationTestsSuit
      * Wait to new worflow button enabling
      */
     casper.then(function waitForNewWorkflowButtonEnabling() {
-        this.waitForSelector('.actions .new:enabled', function clickOnNewWorkflowButton() {
+        return this.waitForSelector('.actions .new:enabled', function clickOnNewWorkflowButton() {
             this.test.assert(true, 'New Workflow button is enabled');
         }, function fail() {
             this.capture('screenshot/roleCreation/waitForNewButtonEnabling-error.png');
@@ -102,6 +121,6 @@ casper.test.begin('Role creation tests suite', 6, function roleCreationTestsSuit
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

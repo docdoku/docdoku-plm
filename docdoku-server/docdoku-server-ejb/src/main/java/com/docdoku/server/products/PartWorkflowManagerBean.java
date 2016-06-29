@@ -115,7 +115,7 @@ public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
         Workflow workflow = task.getActivity().getWorkflow();
         PartRevision partRevision = checkTaskAccess(user,task);
 
-        task.approve(pComment, partRevision.getLastIteration().getIteration(), pSignature);
+        task.approve(user,pComment, partRevision.getLastIteration().getIteration(), pSignature);
 
         Collection<Task> runningTasks = workflow.getRunningTasks();
         for (Task runningTask : runningTasks) {
@@ -133,7 +133,7 @@ public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
         PartRevision partR = checkTaskAccess(user,task);
 
-        task.reject(pComment, partR.getLastIteration().getIteration(), pSignature);
+        task.reject(user,pComment, partR.getLastIteration().getIteration(), pSignature);
 
         // Relaunch Workflow ?
         Activity currentActivity = task.getActivity();
@@ -168,7 +168,7 @@ public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
         if(!task.isInProgress()){
             throw new NotAllowedException(locale,"NotAllowedException15");
         }
-        if (!task.getWorker().equals(user)) {
+        if (!task.isPotentialWorker(user)) {
             throw new NotAllowedException(locale, "NotAllowedException14");
         }
         if (!workflow.getRunningTasks().contains(task)) {

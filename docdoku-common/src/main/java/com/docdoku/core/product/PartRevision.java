@@ -108,6 +108,7 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
     @OneToOne(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private Workflow workflow;
 
+    @OrderBy("abortedDate")
     @OneToMany(orphanRemoval=true, cascade= CascadeType.ALL, fetch= FetchType.EAGER)
     @JoinTable(name="PART_ABORTED_WORKFLOW",
         inverseJoinColumns={

@@ -11,7 +11,7 @@ casper.test.begin('Expired private shared part tests suite', 1, function expired
      * */
 
     casper.then(function () {
-        this.open(urls.privatePartPermalinkExpired);
+        return this.open(urls.privatePartPermalinkExpired);
     });
 
     /**
@@ -19,7 +19,7 @@ casper.test.begin('Expired private shared part tests suite', 1, function expired
      */
 
     casper.then(function checkForExpiredPage() {
-        this.waitForSelector('#not-found-view > h1', function () {
+        return this.waitForSelector('#not-found-view > h1', function () {
             this.test.assert(true, 'Expired entity page displayed');
         }, function fail() {
             this.capture('screenshot/expiredSharedPart/checkForExpiredPage-error.png');
@@ -28,6 +28,6 @@ casper.test.begin('Expired private shared part tests suite', 1, function expired
     });
 
     casper.run(function allDone() {
-        this.test.done();
+        return this.test.done();
     });
 });

@@ -201,12 +201,12 @@ define([
 
                 this.lifecycleView = new LifecycleView({
                     el: '#tab-iteration-lifecycle'
-                }).setAbortedWorkflowsUrl(this.model.getAbortedWorkflowsUrl()).setWorkflow(this.model.get('workflow')).setEntityType('documents').render();
+                }).setWorkflow(this.model.get('workflow')).setEntityType('documents').render();
 
                 this.lifecycleView.on('lifecycle:change', function () {
                     that.model.fetch({
                         success: function () {
-                            that.lifecycleView.setAbortedWorkflowsUrl(that.model.getAbortedWorkflowsUrl()).setWorkflow(that.model.get('workflow')).setEntityType('documents').render();
+                            that.lifecycleView.setWorkflow(that.model.get('workflow')).setEntityType('documents').render();
                         }
                     });
                 });

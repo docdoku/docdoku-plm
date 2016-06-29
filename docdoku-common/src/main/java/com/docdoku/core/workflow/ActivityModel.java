@@ -21,11 +21,13 @@
 package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +40,7 @@ import java.util.Map;
  * @since   V1.0
  */
 @Table(name="ACTIVITYMODEL")
-@XmlSeeAlso({SerialActivityModel.class, ParallelActivityModel.class})
+@XmlSeeAlso({SequentialActivityModel.class, ParallelActivityModel.class})
 @Inheritance()
 @Entity
 public abstract class ActivityModel implements Serializable, Cloneable {
@@ -178,6 +180,21 @@ public abstract class ActivityModel implements Serializable, Cloneable {
         return clone;
     }
 
-    public abstract Activity createActivity(Map<Role, User> roleUserMap);
+    public abstract Activity createActivity(Map<Role,Collection<User>> roleUserMap, Map<Role,Collection<UserGroup>> roleGroupMap);
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ActivityModel that = (ActivityModel) o;
+
+        return id == that.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
 }

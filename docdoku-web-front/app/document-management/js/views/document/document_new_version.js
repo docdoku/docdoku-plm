@@ -59,8 +59,13 @@ define([
         },
 
         createNewVersionAction: function () {
-            this.model.createNewVersion(this.inputNewVersionTitle.val(), this.textAreaNewVersionDescription.val(), this.workflowsView.selected(), this.workflowsMappingView.toList(), this.aclView.toList());
-            this.closeModalAction();
+            if(this.workflowsMappingView.isValid()){
+                this.model.createNewVersion(this.inputNewVersionTitle.val(), this.textAreaNewVersionDescription.val(), this.workflowsView.selected(), this.workflowsMappingView.toResolvedList(), this.aclView.toList());
+                this.closeModalAction();
+            }else{
+                this.$('.tabs').find('li:eq(2) a').tab('show');
+            }
+
         },
 
         openModal:function(){

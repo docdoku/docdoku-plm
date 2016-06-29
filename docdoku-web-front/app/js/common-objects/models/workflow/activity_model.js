@@ -8,7 +8,7 @@ define([
 
         defaults: function () {
             return {
-                type: 'SERIAL',
+                type: 'SEQUENTIAL',
                 tasksToComplete: 0,
                 taskModels: new TaskModels()
             };
