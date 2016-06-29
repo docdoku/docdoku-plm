@@ -284,8 +284,8 @@ public class WorkspaceDAO {
         em.flush();
 
         List<WorkspaceWorkflow> workspaceWorkflows =
-                em.createQuery("SELECT ww FROM WorkspaceWorkflow ww WHERE ww.workspace = :workspace", WorkspaceWorkflow.class)
-                        .setParameter("workspace",workspace).getResultList();
+                em.createQuery("SELECT ww FROM WorkspaceWorkflow ww WHERE ww.workspaceId = :workspaceId", WorkspaceWorkflow.class)
+                        .setParameter("workspaceId",workspaceId).getResultList();
 
         for (WorkspaceWorkflow ww: workspaceWorkflows) {
             workflowDAO.removeWorkflowConstraints(ww);
