@@ -40,7 +40,9 @@ import java.util.Set;
 @IdClass(RoleKey.class)
 @javax.persistence.Entity
 @NamedQueries({
-        @NamedQuery(name="Role.findByWorkspace", query="SELECT r FROM Role r WHERE r.workspace.id = :workspaceId")
+        @NamedQuery(name="Role.findByWorkspace", query="SELECT r FROM Role r WHERE r.workspace.id = :workspaceId"),
+        @NamedQuery(name="Role.findRolesWhereUserIsAssigned", query="SELECT r FROM Role r WHERE :user member of r.defaultAssignedUsers"),
+        @NamedQuery(name="Role.findRolesWhereGroupIsAssigned", query="SELECT r FROM Role r WHERE :userGroup member of r.defaultAssignedUsers")
 })
 public class Role implements Serializable {
 
@@ -121,6 +123,22 @@ public class Role implements Serializable {
 
     public void setDefaultAssignedGroups(Set<UserGroup> defaultAssignedGroups) {
         this.defaultAssignedGroups = defaultAssignedGroups;
+    }
+
+    public void addUser(User user){
+        this.defaultAssignedUsers.add(user);
+    }
+
+    public void removeUser(User user){
+        this.defaultAssignedUsers.remove(user);
+    }
+
+    public void addUserGroup(UserGroup userGroup){
+        this.defaultAssignedGroups.add(userGroup);
+    }
+
+    public void removeUserGroup(UserGroup userGroup){
+        this.defaultAssignedGroups.remove(userGroup);
     }
 
     @Override

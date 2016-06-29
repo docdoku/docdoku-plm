@@ -195,11 +195,12 @@ public class RoleResource {
 
     private RoleDTO mapRoleToDTO(Role role) {
         RoleDTO roleDTO = mapper.map(role, RoleDTO.class);
-        /*roleDTO.setWorkspaceId(role.getWorkspace().getId());
-        if (role.getDefaultAssignee() != null) {
-            roleDTO.setDefaultAssignee(mapper.map(role.getDefaultAssignee(), UserDTO.class));
-        }
-        roleDTO.setId(role.getName());*/
+        roleDTO.setWorkspaceId(role.getWorkspace().getId());
+//
+//        if (role.getDefaultAssignee() != null) {
+//            roleDTO.setDefaultAssignee(mapper.map(role.getDefaultAssignee(), UserDTO.class));
+//        }
+        roleDTO.setId(role.getName());
 
         return roleDTO;
     }
