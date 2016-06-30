@@ -238,7 +238,10 @@ public class MainChannelApplication {
             Room.removeUserFromAllRoom(userLogin);
             CollaborativeRoomController.removeSessionFromCollaborativeRoom(session);
             // remove the session from the user hash map
-            CHANNELS.get(userLogin).remove(sessionId);
+            Map<String, Session> userChannels = CHANNELS.get(userLogin);
+            if(userChannels != null) {
+                userChannels.remove(sessionId);
+            }
             // clean from memory when no more channel left
             if(!hasChannels(userLogin)){
                 CHANNELS.remove(userLogin);
