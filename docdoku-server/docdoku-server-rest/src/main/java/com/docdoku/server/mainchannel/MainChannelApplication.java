@@ -43,7 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Stateless
-@ServerEndpoint(value = "/mainChannelSocket", decoders = {MessageDecoder.class}, encoders = {WebRTCMessageEncoder.class, StatusMessageEncoder.class, ChatMessageEncoder.class, CollaborativeMessageEncoder.class})
+@ServerEndpoint(value = "/ws", decoders = {MessageDecoder.class}, encoders = {WebRTCMessageEncoder.class, StatusMessageEncoder.class, ChatMessageEncoder.class, CollaborativeMessageEncoder.class})
 public class MainChannelApplication {
 
     @Inject

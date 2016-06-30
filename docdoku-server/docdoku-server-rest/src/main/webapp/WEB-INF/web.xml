@@ -82,7 +82,7 @@
         <display-name>WebSocket channels</display-name>
         <web-resource-collection>
             <web-resource-name>Main Channel</web-resource-name>
-            <url-pattern>/mainChannelSocket</url-pattern>
+            <url-pattern>/ws</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <description/>
