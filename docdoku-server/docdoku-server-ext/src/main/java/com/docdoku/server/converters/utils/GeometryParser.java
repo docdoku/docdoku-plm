@@ -25,6 +25,7 @@ import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import java.io.*;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Properties;
@@ -42,11 +43,14 @@ public class GeometryParser {
 
     public static double[] calculateBox(File file) {
 
+        String result = "";
+        String nodeServerUrl = "";
+
         try (InputStream inputStream = GeometryParser.class.getResourceAsStream(CONF_PROPERTIES)){
 
             CONF.load(inputStream);
 
-            String nodeServerUrl = CONF.getProperty("nodeServerUrl");
+            nodeServerUrl = CONF.getProperty("nodeServerUrl");
 
             URL url = new URL(nodeServerUrl+"/box");
 
@@ -70,7 +74,7 @@ public class GeometryParser {
             }
             in.close();
 
-            String result = response.toString();
+            result = response.toString();
 
             JsonObject box = Json.createReader(new StringReader(result)).readObject();
 
@@ -87,8 +91,15 @@ public class GeometryParser {
                     max.getJsonNumber("z").doubleValue()
             };
 
-        } catch (IOException | JsonException e) {
+        }
+        catch (ConnectException e){
+            LOGGER.log(Level.WARNING, "Communication with server failed. Is it listening on '"+nodeServerUrl+"' ?");
+        }
+        catch (IOException e){
             LOGGER.log(Level.SEVERE, null, e);
+        }
+        catch(JsonException e) {
+            LOGGER.log(Level.SEVERE, "Cannot parse program output : \n "+  result  , e);
         }
 
         return new double[6];
