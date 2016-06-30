@@ -25,6 +25,7 @@ import com.docdoku.server.mainchannel.util.ChannelMessagesType;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
@@ -39,7 +40,8 @@ public class MessageDecoder implements Decoder.Text<AbstractMessage>{
         JsonObject jsObj = Json.createReader(new StringReader(s)).readObject();
         String remoteUser = jsObj.getString("remoteUser");
         String type = jsObj.getString("type");
-        String context = jsObj.containsKey("context")?jsObj.getString("context"):null;
+        JsonValue jsonValue = jsObj.get("context");
+        String context = JsonValue.NULL.equals(jsonValue) ? null : jsonValue.toString();
         AbstractMessage message=null;
         switch(type){
 

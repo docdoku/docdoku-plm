@@ -42,7 +42,7 @@ public class ChatMessage extends AbstractMessage{
         super(type,remoteUser);
         this.sender = sender;
         this.message = message;
-        this.context = context;
+        this.context = context != null ? context : "";
         this.error = error;
     }
 
