@@ -11,7 +11,7 @@ define([
         },
 
         urlRoot: function () {
-            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/workflows';
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/workflow-models';
         },
 
         defaults: function () {

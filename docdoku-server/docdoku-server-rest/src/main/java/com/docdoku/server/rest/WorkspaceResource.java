@@ -560,121 +560,121 @@ public class WorkspaceResource {
 
     // Sub resources
 
-    @ApiOperation(value = "WorkspaceDocuments")
+    @ApiOperation(value = "DocumentsResource")
     @Path("/{workspaceId}/documents")
     public DocumentsResource documents() {
         return documents;
     }
 
-    @ApiOperation(value = "WorkspaceFolders")
+    @ApiOperation(value = "FolderResource")
     @Path("/{workspaceId}/folders")
     public FolderResource folders() {
         return folders;
     }
 
-    @ApiOperation(value = "WorkspaceDocumentTemplates")
+    @ApiOperation(value = "DocumentTemplateResource")
     @Path("/{workspaceId}/document-templates")
     public DocumentTemplateResource docTemplates() {
         return docTemplates;
     }
 
-    @ApiOperation(value = "WorkspacePartTemplates")
+    @ApiOperation(value = "PartTemplateResource")
     @Path("/{workspaceId}/part-templates")
     public PartTemplateResource partTemplates() {
         return partTemplates;
     }
 
-    @ApiOperation(value = "WorkspaceProducts")
+    @ApiOperation(value = "ProductResource")
     @Path("/{workspaceId}/products")
     public ProductResource products() {
         return products;
     }
 
-    @ApiOperation(value = "WorkspaceParts")
+    @ApiOperation(value = "PartsResource")
     @Path("/{workspaceId}/parts")
     public PartsResource parts() {
         return parts;
     }
 
-    @ApiOperation(value = "WorkspaceTags")
+    @ApiOperation(value = "TagResource")
     @Path("/{workspaceId}/tags")
     public TagResource tags() {
         return tags;
     }
 
-    @ApiOperation(value = "WorkspaceCheckedOut")
+    @ApiOperation(value = "CheckedOutDocumentResource")
     @Path("/{workspaceId}/checkedouts")
     public CheckedOutDocumentResource checkedOuts() {
         return checkedOutDocuments;
     }
 
-    @ApiOperation(value = "WorkspaceTasks")
+    @ApiOperation(value = "TaskResource")
     @Path("/{workspaceId}/tasks")
     public TaskResource tasks() {
         return tasks;
     }
 
-    @ApiOperation(value = "WorkspaceModificationNotifications")
+    @ApiOperation(value = "ModificationNotificationResource")
     @Path("/{workspaceId}/notifications")
     public ModificationNotificationResource notifications() {
         return notifications;
     }
 
-    @ApiOperation(value = "Workflows")
-    @Path("/{workspaceId}/workflows")
+    @ApiOperation(value = "WorkflowModelResource")
+    @Path("/{workspaceId}/workflow-models")
     public WorkflowModelResource workflowModels() {
         return workflowModels;
     }
 
-    @ApiOperation(value = "WorkspaceWorkflowsInstances")
+    @ApiOperation(value = "WorkflowResource")
     @Path("/{workspaceId}/workflow-instances")
     public WorkflowResource workflowsInstances() {
         return workflowInstances;
     }
 
-    @ApiOperation(value = "WorkspaceWorkflows")
+    @ApiOperation(value = "WorkspaceWorkflowResource")
     @Path("/{workspaceId}/workspace-workflows")
     public WorkspaceWorkflowResource workspaceWorkflows() {
         return workspaceWorkflows;
     }
 
-    @ApiOperation(value = "WorkspaceUsers")
+    @ApiOperation(value = "UserResource")
     @Path("/{workspaceId}/users")
     public UserResource users() {
         return users;
     }
 
-    @ApiOperation(value = "WorkspaceRoles", hidden = false)
+    @ApiOperation(value = "RoleResource", hidden = false)
     @Path("/{workspaceId}/roles")
     public RoleResource roles() {
         return roles;
     }
 
-    @ApiOperation(value = "WorkspaceWorkspaceMemberships")
+    @ApiOperation(value = "WorkspaceMembershipResource")
     @Path("/{workspaceId}/memberships")
     public WorkspaceMembershipResource workspaceMemberships() {
         return workspaceMemberships;
     }
 
-    @ApiOperation(value = "WorkspaceChangeItems")
+    @ApiOperation(value = "ChangeItemsResource")
     @Path("/{workspaceId}/changes")
     public ChangeItemsResource changeItems() {
         return changeItems;
     }
 
-    @ApiOperation(value = "WorkspaceDocumentBaselines")
+    @ApiOperation(value = "DocumentBaselinesResource")
     @Path("/{workspaceId}/document-baselines")
     public DocumentBaselinesResource documentBaselines() {
         return documentBaselines;
     }
 
-    @ApiOperation(value = "WorkspaceLOVs")
+    @ApiOperation(value = "LOVResource")
     @Path("/{workspaceId}/lov")
     public LOVResource lov() {
         return lov;
     }
 
-    @ApiOperation(hidden = true, value = "WorkspaceAttributes")
+    @ApiOperation(hidden = true, value = "AttributesResource")
     @Path("/{workspaceId}/attributes")
     public AttributesResource attributes() {
         return attributes;
