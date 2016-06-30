@@ -242,8 +242,7 @@ public class ESIndexer {
         try {
             generateIndex(ESTools.formatIndexName(workspaceId));
         } catch (NoNodeAvailableException e) {
-            LOGGER.log(Level.WARNING, "Error on creating: " + workspaceId + " index");
-            LOGGER.log(Level.FINER, null, e);
+            LOGGER.log(Level.WARNING, "Cannot create index for : " + workspaceId + " : : The ElasticSearch server doesn't seem to respond");
         }
     }
 
@@ -257,7 +256,7 @@ public class ESIndexer {
             client.admin().indices().prepareDelete(ESTools.formatIndexName(workspaceId))
                     .execute().actionGet();
         } catch (NoNodeAvailableException e) {
-            LOGGER.log(Level.WARNING, "Error on deleting: " + workspaceId + " index", e);
+            LOGGER.log(Level.WARNING, "Cannot delete index : The ElasticSearch server doesn't seem to respond");
         }
     }
 
