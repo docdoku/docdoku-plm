@@ -282,7 +282,7 @@ public class ESIndexer {
             }
         } catch (NoNodeAvailableException | ESIndexNamingException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_INDEX_ERROR_2);
-            LOGGER.log(Level.WARNING, logMessage, e);
+            LOGGER.log(Level.WARNING, logMessage);
         }
     }
 
@@ -339,12 +339,12 @@ public class ESIndexer {
                     .actionGet();
         } catch (NoNodeAvailableException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_INDEX_ERROR_1);
-            LOGGER.log(Level.WARNING, doc + ES_INDEX_FAIL + logMessage, e);
+            LOGGER.log(Level.WARNING, doc + ES_INDEX_FAIL + logMessage);
         } catch (ESIndexNamingException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_INDEX_CREATION_ERROR_2);
             LOGGER.log(Level.WARNING, doc + ES_INDEX_FAIL + logMessage + " " + workspaceId, e);
         } catch (ElasticsearchIllegalArgumentException e){
-            LOGGER.log(Level.SEVERE, null, e);
+            LOGGER.log(Level.SEVERE, ES_INDEX_FAIL + e.getMessage() , e);
         }
     }
 
@@ -362,12 +362,12 @@ public class ESIndexer {
                     .actionGet();
         } catch (NoNodeAvailableException  e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_INDEX_ERROR_1);
-            LOGGER.log(Level.WARNING, part + ES_INDEX_FAIL + logMessage, e);
+            LOGGER.log(Level.WARNING, part + ES_INDEX_FAIL + logMessage);
         } catch (ESIndexNamingException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_INDEX_CREATION_ERROR_2);
             LOGGER.log(Level.WARNING, part + ES_INDEX_FAIL + logMessage + " " + workspaceId, e);
         } catch (ElasticsearchIllegalArgumentException e){
-            LOGGER.log(Level.SEVERE, null, e);
+            LOGGER.log(Level.SEVERE, ES_INDEX_FAIL + e.getMessage(), e);
         }
     }
 
@@ -383,7 +383,7 @@ public class ESIndexer {
                     .actionGet();
         } catch (NoNodeAvailableException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_DELETE_ERROR_1);
-            LOGGER.log(Level.WARNING, logMessage, e);
+            LOGGER.log(Level.WARNING, logMessage);
         }
     }
 
@@ -399,7 +399,7 @@ public class ESIndexer {
                     .actionGet();
         } catch (NoNodeAvailableException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_DELETE_ERROR_1);
-            LOGGER.log(Level.WARNING, logMessage, e);
+            LOGGER.log(Level.WARNING, logMessage);
         }
     }
 
@@ -418,7 +418,7 @@ public class ESIndexer {
             hasSuccess = false;
             failureMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString("ES_DeleteError2");
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString("ES_DeleteError3");
-            LOGGER.log(Level.WARNING, logMessage + " \n " + failureMessage, e);
+            LOGGER.log(Level.WARNING, logMessage + " \n " + failureMessage);
         }
         sendNotification(workspaceId,hasSuccess,failureMessage);
     }
@@ -430,7 +430,7 @@ public class ESIndexer {
             mailer.sendIndexerResult(account, workspaceId, hasSuccess, failureMessage);
         } catch (AccountNotFoundException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString("ES_MailError1");
-            LOGGER.log(Level.WARNING, logMessage, e);
+            LOGGER.log(Level.SEVERE, logMessage, e);
         }
     }
 
@@ -439,9 +439,9 @@ public class ESIndexer {
         try {
             generateIndex(ESTools.formatIndexName(workspaceId));
         } catch (ESIndexAlreadyExistsException e) {
-            LOGGER.log(Level.FINEST, null, e);
+            LOGGER.log(Level.WARNING, "Cannot generate Workspace index : already exists");
         } catch (ESIndexNamingException e) {
-            LOGGER.log(Level.FINEST, null, e);
+            LOGGER.log(Level.SEVERE, null, e);
             if (!silent) {
                 throw e;
             }
@@ -485,7 +485,7 @@ public class ESIndexer {
             try (InputStream in = dataManager.getBinaryResourceInputStream(bin)){
                 binaryList.put(bin.getName(), ESTools.streamToString(bin.getFullName(), in));
             } catch (StorageException | IOException e) {
-                LOGGER.log(Level.FINEST, null, e);
+                LOGGER.log(Level.SEVERE, "Cannot read file " + bin.getFullName(), e);
             }
         }
         XContentBuilder jsonDoc = ESMapper.documentRevisionToJSON(doc, binaryList);
@@ -507,7 +507,7 @@ public class ESIndexer {
             try (InputStream in = dataManager.getBinaryResourceInputStream(bin)){
                 binaryList.put(bin.getName(),ESTools.streamToString(bin.getFullName(), in));
             } catch (StorageException | IOException e) {
-                LOGGER.log(Level.FINEST, null, e);
+                LOGGER.log(Level.SEVERE, "Cannot read file " + bin.getFullName(), e);
             }
         }
         XContentBuilder json = ESMapper.partRevisionToJson(part, binaryList);
