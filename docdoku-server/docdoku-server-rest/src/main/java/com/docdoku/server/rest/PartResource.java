@@ -284,7 +284,7 @@ public class PartResource {
     public PartRevisionDTO checkIn(@PathParam("workspaceId") String workspaceId,
                             @PathParam("partNumber") String partNumber,
                             @PathParam("partVersion") String partVersion,
-                            @ApiParam(name = "body") String body)
+                            @ApiParam(name = "body", defaultValue = "") String body)
             throws EntityNotFoundException, ESServerException, AccessRightException, NotAllowedException, EntityConstraintException, UserNotActiveException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);

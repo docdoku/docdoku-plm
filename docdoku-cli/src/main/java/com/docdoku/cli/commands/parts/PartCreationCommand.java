@@ -20,13 +20,13 @@
 
 package com.docdoku.cli.commands.parts;
 
+import com.docdoku.api.models.*;
+import com.docdoku.api.services.PartsApi;
+import com.docdoku.api.models.utils.LastIterationHelper;
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.helpers.LastIterationHelper;
-import com.docdoku.api.models.*;
-import com.docdoku.api.services.PartsApi;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 

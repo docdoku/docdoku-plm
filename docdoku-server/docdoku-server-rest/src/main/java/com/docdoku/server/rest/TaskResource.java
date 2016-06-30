@@ -162,11 +162,10 @@ public class TaskResource {
 
     @PUT
     @ApiOperation(value = "Approve or reject task on document", response = Response.class)
-    @Path("{taskId}/process/{action}")
+    @Path("{taskId}/process")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response processTask(@PathParam("workspaceId") String workspaceId,
                                             @PathParam("taskId") String taskId,
-                                            @PathParam("action") String action,
                                             @ApiParam(required = true, value = "Task process data") TaskProcessDTO taskProcessDTO)
             throws EntityNotFoundException, NotAllowedException, UserNotActiveException, AccessRightException {
 
@@ -175,7 +174,7 @@ public class TaskResource {
         int step = Integer.valueOf(split[1]);
         int index = Integer.valueOf(split[2]);
 
-        taskManager.processTask(workspaceId, new TaskKey(new ActivityKey(workflowId,step),index), action, taskProcessDTO.getComment(), taskProcessDTO.getSignature());
+        taskManager.processTask(workspaceId, new TaskKey(new ActivityKey(workflowId,step),index), taskProcessDTO.getAction().name(), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
         return Response.ok().build();
     }
 

@@ -108,7 +108,7 @@ define([
 	            '/api/workspaces/' +
                 App.config.workspaceId + '/tasks/' +
                 this.task.parentWorkflowId + '-' +  this.task.parentActivityStep + '-' + this.task.index +
-                '/process/';
+                '/process';
 
             var closureComment = this.$commentInput.val();
             var closureType = this.$closureTypeInput.val();
@@ -120,11 +120,11 @@ define([
             });
 
             if (closureType === this.APPROVE_MODE) {
-
+                data.action = 'APPROVE';
                 $.ajax({
                     context: this,
                     type: 'PUT',
-                    url: processUrl + 'approve',
+                    url: processUrl,
                     data: data,
                     contentType: 'application/json;charset=UTF-8',
                     success: function () {
@@ -140,11 +140,11 @@ define([
                 });
 
             } else if (closureType === this.REJECT_MODE) {
-
+                data.action = 'REJECT';
                 $.ajax({
                     context: this,
                     type: 'PUT',
-                    url: processUrl + 'reject',
+                    url: processUrl,
                     data: data,
                     contentType: 'application/json;charset=UTF-8',
                     success: function () {

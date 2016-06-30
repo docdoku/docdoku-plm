@@ -65,7 +65,7 @@ public class DocumentCreationCommand extends BaseCommandLine {
         documentCreationDTO.setDescription(description);
         documentCreationDTO.setReference(id);
 
-        foldersApi.createDocumentMasterInFolder(workspace, documentCreationDTO, workspace, null);
+        foldersApi.createDocumentMasterInFolder(workspace, documentCreationDTO, workspace);
         DocumentRevisionKey docRPK = new DocumentRevisionKey();
         docRPK.setWorkspaceId(workspace);
         docRPK.setDocumentMasterId(id);

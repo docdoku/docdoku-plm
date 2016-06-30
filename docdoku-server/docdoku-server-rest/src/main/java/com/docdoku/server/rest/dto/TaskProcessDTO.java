@@ -26,10 +26,12 @@ import java.io.Serializable;
 @XmlRootElement
 public class TaskProcessDTO implements Serializable {
 
+    private Action action;
     private String comment;
     private String signature;
 
-    public TaskProcessDTO(String comment, String signature) {
+    public TaskProcessDTO(Action action, String comment, String signature) {
+        this.action = action;
         this.comment = comment;
         this.signature = signature;
     }
@@ -51,5 +53,18 @@ public class TaskProcessDTO implements Serializable {
 
     public void setSignature(String signature) {
         this.signature = signature;
+    }
+
+    public Action getAction() {
+        return action;
+    }
+
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
+    public enum Action {
+        APPROVE,
+        REJECT
     }
 }

@@ -14,6 +14,12 @@ public class DocdokuPLMClient {
     protected String host;
     protected boolean debug;
 
+    public DocdokuPLMClient(String host, boolean debug) {
+        this.host = host;
+        this.debug = debug;
+        createClient();
+    }
+
     public void connect(String login, String password){}
 
     protected void createClient() {

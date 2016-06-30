@@ -25,9 +25,7 @@ public class DocdokuPLMJWTClient extends DocdokuPLMClient{
     }
 
     public DocdokuPLMJWTClient(String host, String login, String password, boolean debug)  {
-        this.host = host;
-        this.debug = debug;
-        createClient();
+        super(host,debug);
         connect(login, password);
     }
 

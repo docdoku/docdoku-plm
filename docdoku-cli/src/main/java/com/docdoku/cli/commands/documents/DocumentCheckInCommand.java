@@ -20,12 +20,16 @@
 
 package com.docdoku.cli.commands.documents;
 
-import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.*;
 import com.docdoku.api.models.DocumentIterationDTO;
 import com.docdoku.api.models.DocumentIterationKey;
 import com.docdoku.api.models.DocumentRevisionDTO;
 import com.docdoku.api.services.DocumentApi;
+import com.docdoku.api.models.utils.LastIterationHelper;
+import com.docdoku.cli.commands.BaseCommandLine;
+import com.docdoku.cli.helpers.AccountsManager;
+import com.docdoku.cli.helpers.FileHelper;
+import com.docdoku.cli.helpers.LangHelper;
+import com.docdoku.cli.helpers.MetaDirectoryManager;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 

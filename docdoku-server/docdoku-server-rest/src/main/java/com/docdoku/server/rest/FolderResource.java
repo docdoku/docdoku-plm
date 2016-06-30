@@ -120,14 +120,13 @@ public class FolderResource {
 
     @POST
     @Path("{folderId}/documents/")
-    @ApiOperation(value = "Create document", response = Response.class)
+    @ApiOperation(value = "Create document", response = DocumentRevisionDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createDocumentMasterInFolder(
             @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document to create") DocumentCreationDTO docCreationDTO,
-            @PathParam("folderId") String folderId,
-            @QueryParam("configSpec") String configSpecType)
+            @PathParam("folderId") String folderId)
             throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, CreationException, AccessRightException {
 
         String pDocMID = docCreationDTO.getReference();

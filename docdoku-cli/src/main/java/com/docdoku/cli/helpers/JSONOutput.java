@@ -21,6 +21,7 @@
 package com.docdoku.cli.helpers;
 
 import com.docdoku.api.models.*;
+import com.docdoku.api.models.utils.LastIterationHelper;
 import org.kohsuke.args4j.CmdLineParser;
 
 import javax.json.*;

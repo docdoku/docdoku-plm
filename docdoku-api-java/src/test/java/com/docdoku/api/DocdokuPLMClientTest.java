@@ -21,30 +21,21 @@ import java.util.UUID;
  */
 
 @RunWith(JUnit4.class)
-
 public class DocdokuPLMClientTest {
-
-    private final static String URL = "http://localhost:8080/api";
-    private final static String LOGIN = "foo";
-    private final static String PASSWORD = "bar";
-
     @Test
     public void basicTests() throws ApiException {
-        DocdokuPLMClient docdokuPLMClient = new DocdokuPLMBasicClient(URL, LOGIN, PASSWORD, true);
-        runTest(docdokuPLMClient.getClient());
+        runTest(TestConfig.BASIC_CLIENT);
     }
 
     @Test
     public void cookieTests() throws ApiException {
-        DocdokuPLMClient docdokuPLMClient = new DocdokuPLMCookieClient(URL, LOGIN, PASSWORD, true);
-        runTest(docdokuPLMClient.getClient());
+        runTest(TestConfig.COOKIE_CLIENT);
     }
 
     @Test
     @Ignore
     public void jwtTests() throws ApiException {
-        DocdokuPLMClient docdokuPLMClient = new DocdokuPLMJWTClient(URL, LOGIN, PASSWORD, true);
-        runTest(docdokuPLMClient.getClient());
+        runTest(TestConfig.JWT_CLIENT);
     }
 
 
@@ -53,12 +44,12 @@ public class DocdokuPLMClientTest {
         AccountsApi accountsApi = new AccountsApi(client);
 
         AccountDTO account = accountsApi.getAccount();
-        Assert.assertEquals(LOGIN, account.getLogin());
+        Assert.assertEquals(TestConfig.LOGIN, account.getLogin());
 
         WorkspaceDTO workspace = new WorkspaceDTO();
         workspace.setId(UUID.randomUUID().toString());
 
-        workspacesApi.createWorkspace(workspace, LOGIN);
+        workspacesApi.createWorkspace(workspace, TestConfig.LOGIN);
 
         WorkspaceListDTO workspacesForConnectedUser = workspacesApi.getWorkspacesForConnectedUser();
         Assert.assertNotNull(workspacesForConnectedUser);

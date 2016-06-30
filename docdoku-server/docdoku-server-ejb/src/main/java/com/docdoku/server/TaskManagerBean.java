@@ -117,15 +117,15 @@ public class TaskManagerBean implements ITaskManagerLocal {
         TaskWrapper taskWrapper = wrapTask(task, workspaceId);
         switch (taskWrapper.getHolderType()){
             case "documents":
-                    if("approve".equals(action)){
+                    if("APPROVE".equals(action)){
                         documentWorkflowService.approveTaskOnDocument(workspaceId,taskKey,comment,signature);
                     }
-                    else if("reject".equals(action)){
+                    else if("REJECT".equals(action)){
                         documentWorkflowService.rejectTaskOnDocument(workspaceId, taskKey, comment, signature);
                     }
                 break;
             case "parts":
-                if("approve".equals(action)){
+                if("APPROVE".equals(action)){
                     partWorkflowService.approveTaskOnPart(workspaceId,taskKey,comment,signature);
                 }
                 else if("reject".equals(action)){
@@ -133,10 +133,10 @@ public class TaskManagerBean implements ITaskManagerLocal {
                 }
                 break;
             case "workspace-workflows":
-                if("approve".equals(action)){
+                if("APPROVE".equals(action)){
                     workflowService.approveTaskOnWorkspaceWorkflow(workspaceId, taskKey, comment, signature);
                 }
-                else if("reject".equals(action)){
+                else if("REJECT".equals(action)){
                     workflowService.rejectTaskOnWorkspaceWorkflow(workspaceId, taskKey, comment, signature);
                 }
                 break;

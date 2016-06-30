@@ -27,13 +27,13 @@ import java.io.Serializable;
  * @author Morgan Guimard
  */
 @XmlRootElement
-public class WorkflowCreationDTO implements Serializable {
+public class WorkspaceWorkflowCreationDTO implements Serializable {
 
     private String id;
     private String workflowModelId;
     private RoleMappingDTO[] roleMapping;
 
-    public WorkflowCreationDTO() {
+    public WorkspaceWorkflowCreationDTO() {
     }
 
     public String getId() {
@@ -43,7 +43,6 @@ public class WorkflowCreationDTO implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
-
 
     public RoleMappingDTO[] getRoleMapping() {
         return roleMapping;

@@ -25,7 +25,7 @@ import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.server.rest.dto.RoleMappingDTO;
-import com.docdoku.server.rest.dto.WorkflowCreationDTO;
+import com.docdoku.server.rest.dto.WorkspaceWorkflowCreationDTO;
 import com.docdoku.server.rest.dto.WorkspaceWorkflowDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -98,7 +98,7 @@ public class WorkspaceWorkflowResource {
     @ApiOperation(value = "Instantiate workspace workflow from workflow model", response = WorkspaceWorkflowDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
     public WorkspaceWorkflowDTO createWorkspaceWorkflow(@PathParam("workspaceId") String workspaceId,
-                                                        @ApiParam(required = true, value = "Workspace workflow to create") WorkflowCreationDTO workflowCreationDTO)
+                                                        @ApiParam(required = true, value = "Workspace workflow to create") WorkspaceWorkflowCreationDTO workflowCreationDTO)
             throws RoleNotFoundException, WorkspaceNotFoundException, UserNotFoundException, AccessRightException, WorkflowModelNotFoundException, NotAllowedException, UserGroupNotFoundException {
 
         Map<String, Collection<String>> userRoleMapping = new HashMap<>();
