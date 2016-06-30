@@ -1,3 +1,5 @@
+{{#workspace}}
+
 <div class="actions well">
     <button class="btn btn-default workspace-management" title="{{i18n.CANCEL}}">
         {{i18n.CANCEL}}
@@ -7,6 +9,7 @@
     </button>
 </div>
 <div class="notifications"></div>
+
 <div class="margin">
     <h3>{{i18n.EDIT_WORKSPACE_SUBTITLE}}</h3>
 
@@ -53,3 +56,7 @@
         </div>
     </form>
 </div>
+{{/workspace}}
+{{#deleting}}
+<div class="margin"><h4>{{i18n.WORKSPACE_DELETING_TITLE}}</h4><p>{{i18n.WORKSPACE_DELETING_TEXT}}</p></div>
+{{/deleting}}

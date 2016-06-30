@@ -10,6 +10,8 @@ define({
         CHECKED_OUT_DOCUMENTS:'Checked out documents',
         CHECKED_OUT_PARTS:'Checked out parts',
         DASHBOARD:'Dashboard',
+        DELETE_WORKSPACE_TEXT:'This cannot be undone, all its data will be deleted.',
+        DELETE_WORKSPACE_QUESTION:'Are you sure to want to delete this workspace ?',
         DISABLE_USER:'Disable',
         DISK_USAGE:'Disk usage',
         DISK_USAGE_TOTAL:'Total disk usage',
@@ -31,7 +33,8 @@ define({
         ADMIN_DASHBOARD:'Super administrator dashboard',
         TOTAL:'Total',
         WORKSPACES_ADMINISTRATION_TEXT:'Only the creator of the workspace has administrator rights. These rights allow to edit the workspace properties and add and remove users.',
-        WORKSPACE_DELETING:'Workspace deletion on progress. A report will be sent by mail to workspace administrator once finished.',
+        WORKSPACE_DELETING_TITLE:'Workspace deletion on progress.',
+        WORKSPACE_DELETING_TEXT:'A report will be sent by mail to workspace administrator once finished.',
         WORKSPACE_INDEXING:'Workspace indexation on progress. A report will be sent by mail to workspace administrator once finished.',
         INDEX_WORKSPACE:'Index data'
     },

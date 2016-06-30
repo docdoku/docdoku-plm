@@ -1,4 +1,4 @@
-/*global define,App,confirm*/
+/*global define,App,confirm,bootbox*/
 define([
     'backbone',
     'mustache',
@@ -49,10 +49,18 @@ define([
         },
 
         deleteWorkspace:function(){
-            if(confirm(App.config.i18n.DELETE)){
-                Workspace.deleteWorkspace(App.config.workspaceId)
-                    .then(this.onDeleteWorkspaceSuccess.bind(this),this.onError.bind(this));
-            }
+            var _this = this;
+            bootbox.confirm(
+                '<h4>'+App.config.i18n.DELETE_WORKSPACE_QUESTION+'</h4>'+
+                '<p><i class="fa fa-warning"></i> '+App.config.i18n.DELETE_WORKSPACE_TEXT+'</p>',
+                App.config.i18n.CANCEL,
+                App.config.i18n.DELETE,
+                function(result){
+                if(result){
+                    Workspace.deleteWorkspace(App.config.workspaceId)
+                        .then(_this.onDeleteWorkspaceSuccess.bind(_this),_this.onError.bind(_this));
+                }
+            });
         },
 
         onError:function(error){
@@ -61,12 +69,13 @@ define([
                 message: error.responseText
             }).render().$el);
         },
+
         onDeleteWorkspaceSuccess:function(){
-            this.$notifications.append(new AlertView({
-                type: 'info',
-                message: App.config.i18n.WORKSPACE_DELETING
-            }).render().$el);
-        },
+            this.$el.html(Mustache.render(template, {
+                i18n: App.config.i18n,
+                deleting: true
+            }));
+        }
     });
 
     return WorkspaceEditView;
