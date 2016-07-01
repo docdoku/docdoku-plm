@@ -15,7 +15,7 @@
     "tests"
   ],
   "dependencies": {
-    "angularjs": "~1.3.2",
+    "angular": "~1.3.0",
     "angular-material": "~0.5.1",
     "angular-route": "~1.3.3",
     "angular-translate": "~2.4.2",
