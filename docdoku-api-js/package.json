@@ -10,15 +10,13 @@
     "clean": "npm install && grunt clean",
     "build": "npm install && grunt build"
   },
-  "dependencies": {
-    "swagger-client": "^2.1.15"
-  },
   "devDependencies": {
     "chai": "^3.5.0",
     "grunt": "~0.4.1",
     "grunt-browserify": "^5.0.0",
     "grunt-contrib-clean": "~0.5.0",
     "grunt-contrib-copy": "~0.5.0",
-    "load-grunt-tasks": "~0.3.0"
+    "load-grunt-tasks": "~0.3.0",
+    "swagger-client": "^2.1.15"
   }
 }
