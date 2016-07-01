@@ -1,0 +1,18 @@
+<html>
+<head>
+    <script src="docdoku-api.js"></script>
+    <script>
+        var client = new DocdokuPlmClient({url:'http://localhost:8080/api'});
+
+        client.getApi().then(function(api){
+            api.languages.getLanguages().then(function(response){
+                var languages = response.obj;
+                languages.forEach(function(lang){
+                    console.log('Available ' + lang);
+                });
+            });
+        });
+    </script>
+</head>
+<body></body>
+</html>

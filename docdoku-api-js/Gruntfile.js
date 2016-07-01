@@ -5,26 +5,15 @@ module.exports = function (grunt) {
     require('load-grunt-tasks')(grunt);
 
     grunt.initConfig({
-        concat: {
-            options: {
-                separator: ';'
+        copy:{
+            spec:{
+                files : {
+                    'lib/spec.json':'../docdoku-api/target/swagger/swagger.json'
+                }
             },
-            dist: {
-                src: [
-                    'bower_components/swagger-js/browser/swagger-client.js',
-                    'js/docdokuplm-client.js'
-                ],
-                dest: 'dist/docdoku-plm-api.js'
-            }
-        }
-        ,
-        uglify:{
-            options: {
-                mangle: false
-            },
-            my_target: {
-                files: {
-                    'dist/docdoku-plm-api.min.js': ['dist/docdoku-plm-api.js']
+            browser:{
+                files : {
+                    'dist/index.html':'example/browser.html'
                 }
             }
         },
@@ -32,27 +21,21 @@ module.exports = function (grunt) {
             options: {
                 force: true
             },
-            dist: ['dist/*']
+            files:['lib/spec.json', 'dist']
         },
-        copy:{
-            swaggerUi : {
-                files: [{
-                    expand: true,
-                    cwd: 'bower_components/swagger-ui/dist/',
-                    src: ['**'],
-                    dest: 'dist/swagger-ui/'
-                }]
+
+        browserify: {
+            options:{
+                standalone:true
             },
-            example : {
-                files: [{
-                    expand: true,
-                    cwd: 'example/',
-                    src: ['**'],
-                    dest: 'dist/example/'
-                }]
+            dist: {
+                files: {
+                    'dist/docdoku-api.js': ['lib/*.js']
+                }
             }
         }
+
     });
 
-    grunt.registerTask('build',['copy:swaggerUi','concat','uglify']);
+    grunt.registerTask('build',['clean', 'copy:spec','browserify:dist', 'copy:browser']);
 };

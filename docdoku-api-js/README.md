@@ -1,7 +1,22 @@
 # Docdoku API JS
 
-Generates a war and a static directory that contains swagger ui and DocodkuPLM JavaScript API
+Generate a node module to integrate in your nodejs and/or browser application
 
 ## Documentation
 
-TODO
+### Development guide
+
+Package folders description
+
+* `lib` : main module sources
+* `test` : test sources. Uses mocha (command : `mocha run test`)
+
+Build 
+    
+* Run `mvn clean install` in docdoku-api module
+* Run `npm run build` in this module directory
+
+Tests
+
+* Run `npm install && grunt test`. Some tests need a running server.
+
