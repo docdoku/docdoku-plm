@@ -8,7 +8,8 @@
   },
   "scripts": {
     "clean": "npm install && grunt clean",
-    "build": "npm install && grunt build"
+    "build": "npm install && grunt build",
+    "test":"mocha test/*.test.js"
   },
   "devDependencies": {
     "chai": "^3.5.0",

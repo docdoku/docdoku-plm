@@ -1,4 +1,5 @@
 var SwaggerClient = require('swagger-client');
+var auth = require('swagger-client/lib/auth');
 var spec = require('./spec');
 
 var DocdokuPLMClient = module.exports = function(options){
@@ -6,19 +7,22 @@ var DocdokuPLMClient = module.exports = function(options){
 };
 
 DocdokuPLMClient.prototype.setOptions = function(options){
+
     this.options = options || {};
-    return this;
-};
+    this.authorizations = this.options.authorizations || {};
 
-DocdokuPLMClient.prototype.setBasicAuth = function(login,password){
-    this.options.authorizations = {
-        easyapi_basic: new SwaggerClient.PasswordAuthorization(login,password)
-    };
-    return this;
-};
+    if(this.options.basicAuth){
+        this.authorizations.basicAuth = new SwaggerClient.PasswordAuthorization(this.options.login,this.options.password);
+    }
 
-DocdokuPLMClient.prototype.removeAuth = function(){
-    this.options.authorizations = {};
+    if(this.options.cookie){
+        this.authorizations.cookieAuth = new SwaggerClient.ApiKeyAuthorization('Cookie', this.options.cookie, 'header');
+    }
+
+    if(this.options.jwt){
+        this.authorizations.jwtAuth = new SwaggerClient.ApiKeyAuthorization('Authorization', 'Bearer ' + this.options.jwt, 'header');
+    }
+
     return this;
 };
 
