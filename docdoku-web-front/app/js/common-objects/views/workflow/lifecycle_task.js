@@ -116,11 +116,11 @@ define([
 
             var data = JSON.stringify({
                 comment: closureComment,
-                signature: signature
+                signature: signature,
+                action : closureType === this.APPROVE_MODE ? 'APPROVE' : 'REJECT'
             });
 
             if (closureType === this.APPROVE_MODE) {
-                data.action = 'APPROVE';
                 $.ajax({
                     context: this,
                     type: 'PUT',
@@ -140,7 +140,6 @@ define([
                 });
 
             } else if (closureType === this.REJECT_MODE) {
-                data.action = 'REJECT';
                 $.ajax({
                     context: this,
                     type: 'PUT',
