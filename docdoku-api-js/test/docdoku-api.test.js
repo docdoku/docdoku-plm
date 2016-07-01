@@ -18,11 +18,12 @@ describe('Api client creation', function() {
         expect(client.options.url).to.equal(url);
     });
 
-    it('Should load the spec and give an api object', function() {
+    it('Should load the spec and give an api object', function(done) {
         var client = new DocdokuPlmClient({url:url});
         client.getApi().then(function(api){
             expect(api).to.be.defined;
             expect(api).to.be.an.object;
+            done();
         });
     });
 
