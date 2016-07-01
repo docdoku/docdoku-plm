@@ -98,7 +98,9 @@ public class UserResource {
             throws EntityNotFoundException {
 
         Workspace workspace = userManager.getWorkspace(workspaceId);
-        return mapper.map(workspace.getAdmin(), UserDTO.class);
+        UserDTO userDTO = mapper.map(workspace.getAdmin(), UserDTO.class);
+        userDTO.setWorkspaceId(workspaceId);
+        return userDTO;
     }
 }
 
