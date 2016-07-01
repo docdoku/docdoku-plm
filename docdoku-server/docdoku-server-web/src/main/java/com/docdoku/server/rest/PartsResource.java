@@ -411,6 +411,37 @@ public class PartsResource {
         return Response.noContent().build();
     }
 
+    @GET
+    @Path("importPreview")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<LightPartRevisionDTO> getCheckoutPartToImport(@Context HttpServletRequest request,@PathParam("workspaceId") String workspaceId) throws Exception {
+
+        Collection<Part> parts = request.getParts();
+
+        if(parts.isEmpty() || parts.size() > 1){
+            return null;
+        }
+
+        Part part = parts.iterator().next();
+        String name = FileIO.getFileNameWithoutExtension(part.getSubmittedFileName());
+        String extension = FileIO.getExtension(part.getSubmittedFileName());
+
+        File importFile = Files.createTempFile("part-" + name, "-import.tmp" +  (extension==null?"":"." + extension)).toFile();
+        long length = BinaryResourceUpload.uploadBinary(new BufferedOutputStream(new FileOutputStream(importFile)), part);
+        ImportPreview importPreview = importerService.getCheckoutPartToImport(workspaceId,importFile,name+"."+extension);
+
+        importFile.deleteOnExit();
+
+        List<LightPartRevisionDTO> result = new ArrayList<>();
+        for(PartRevision partRevision : importPreview.getPartRevisions()){
+            result.add(mapper.map(partRevision,LightPartRevisionDTO.class));
+        }
+
+        return result;
+
+    }
+
     /**
      * Return a list of ModificationNotificationDTO matching with a given PartRevision
      *
