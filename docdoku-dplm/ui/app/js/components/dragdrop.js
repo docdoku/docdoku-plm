@@ -3,44 +3,45 @@
     'use strict';
 
     angular.module('ngDragDrop', [])
-        .directive('uiDraggable', [
+            .directive('uiDraggable', [
             '$parse',
             '$rootScope',
             function ($parse, $rootScope) {
-                return function (scope, element, attrs) {
-                    if (window.jQuery && !window.jQuery.event.props.dataTransfer) {
-                        window.jQuery.event.props.push('dataTransfer');
-                    }
-                    element.attr('draggable', false);
-                    attrs.$observe('uiDraggable', function (newValue) {
-                        element.attr('draggable', newValue);
-                    });
-                    var dragData = '';
-                    scope.$watch(attrs.drag, function (newValue) {
-                        dragData = newValue;
-                    });
-                    element.bind('dragstart', function (e) {
-                        var sendData = angular.toJson(dragData);
-                        var sendChannel = attrs.dragChannel || 'defaultchannel';
-                        e.dataTransfer.setData('Text', sendData);
-                        $rootScope.$broadcast('ANGULAR_DRAG_START', sendChannel);
-
-                    });
-
-                    element.bind('dragend', function (e) {
-                        var sendChannel = attrs.dragChannel || 'defaultchannel';
-                        $rootScope.$broadcast('ANGULAR_DRAG_END', sendChannel);
-                        if (e.dataTransfer && e.dataTransfer.dropEffect !== 'none') {
-                            if (attrs.onDropSuccess) {
-                                var fn = $parse(attrs.onDropSuccess);
-                                scope.$apply(function () {
-                                    fn(scope, {$event: e});
-                                });
-                            }
+                return {
+                    restrict: 'A',
+                    link: function (scope, element, attrs) {
+                        if (window.jQuery && !window.jQuery.event.props.dataTransfer) {
+                            window.jQuery.event.props.push('dataTransfer');
                         }
-                    });
+                        element.attr('draggable', false);
+                        attrs.$observe('uiDraggable', function (newValue) {
+                            element.attr('draggable', newValue);
+                        });
+                        var dragData = '';
+                        scope.$watch(attrs.drag, function (newValue) {
+                            dragData = newValue;
+                        });
+                        element.bind('dragstart', function (e) {
+                            var sendData = angular.toJson(dragData);
+                            var sendChannel = attrs.dragChannel || 'defaultchannel';
+                            e.dataTransfer.setData('Text', sendData);
+                            $rootScope.$broadcast('ANGULAR_DRAG_START', sendChannel);
 
+                        });
 
+                        element.bind('dragend', function (e) {
+                            var sendChannel = attrs.dragChannel || 'defaultchannel';
+                            $rootScope.$broadcast('ANGULAR_DRAG_END', sendChannel);
+                            if (e.dataTransfer && e.dataTransfer.dropEffect !== 'none') {
+                                if (attrs.onDropSuccess) {
+                                    var fn = $parse(attrs.onDropSuccess);
+                                    scope.$apply(function () {
+                                        fn(scope, {$event: e});
+                                    });
+                                }
+                            }
+                        });
+                    }
                 };
             }
         ])
@@ -123,14 +124,13 @@
                         }
                     });
 
-
-                    attr.$observe('dropChannel', function (value) {
-                        if (value) {
-                            dropChannel = value;
-                        }
-                    });
-
-
+                    if (attr.dropChannel){
+                        attr.$observe('dropChannel', function (value) {
+                            if (value) {
+                                dropChannel = value;
+                            }
+                        });
+                    }
                 };
             }
         ]);
