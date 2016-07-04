@@ -399,7 +399,7 @@ public class WorkspaceResource {
     }
 
     @GET
-    @ApiOperation(value = "Get groups", response = Response.class)
+    @ApiOperation(value = "Get groups", response = UserGroupDTO.class, responseContainer = "List")
     @Path("/{workspaceId}/groups")
     @Produces(MediaType.APPLICATION_JSON)
     public UserGroupDTO[] getGroups(@PathParam("workspaceId") String workspaceId)
@@ -413,7 +413,7 @@ public class WorkspaceResource {
     }
 
     @GET
-    @ApiOperation(value = "Get users of group", response = Response.class)
+    @ApiOperation(value = "Get users of group", response = UserDTO.class, responseContainer = "List")
     @Path("/{workspaceId}/groups/{groupId}/users")
     @Produces(MediaType.APPLICATION_JSON)
     public UserDTO[] getUsersInGroup(@PathParam("workspaceId") String workspaceId, @PathParam("groupId") String groupId)

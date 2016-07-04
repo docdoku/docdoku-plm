@@ -107,7 +107,7 @@ public class DocumentBaselinesResource {
      * @return Reponse of the transaction
      */
     @POST
-    @ApiOperation(value = "Create baseline", response = Response.class)
+    @ApiOperation(value = "Create baseline", response = DocumentBaselineDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createBaseline(@PathParam("workspaceId") String workspaceId,
                                    @ApiParam(required = true, value = "Document baseline to create") DocumentBaselineDTO documentBaselineDTO)

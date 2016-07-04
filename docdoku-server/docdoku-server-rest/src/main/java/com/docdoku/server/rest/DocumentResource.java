@@ -570,7 +570,7 @@ public class DocumentResource {
     }
 
     @GET
-    @ApiOperation(value = "Get inverse parts links", response = Response.class)
+    @ApiOperation(value = "Get inverse parts links", response = PartRevisionDTO.class, responseContainer = "List")
     @Path("{iteration}/inverse-part-link")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getInversePartsLinks(@PathParam("workspaceId") String workspaceId,

@@ -22,14 +22,15 @@ package com.docdoku.api;
 
 
 import com.docdoku.api.client.ApiException;
-import com.docdoku.api.models.WorkspaceDTO;
-import com.docdoku.api.models.WorkspaceListDTO;
+import com.docdoku.api.models.*;
+import com.docdoku.api.services.AccountsApi;
 import com.docdoku.api.services.WorkspacesApi;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.List;
 import java.util.UUID;
 
 @RunWith(JUnit4.class)
@@ -73,6 +74,50 @@ public class WorkspacesApiTest {
         WorkspaceDTO updatedWorkspace = workspacesApi.updateWorkspace(workspaceId, createdWorkspace);
         Assert.assertEquals(updatedWorkspace.getDescription(),newDescription);
         Assert.assertEquals(updatedWorkspace,createdWorkspace);
+    }
+
+    @Test
+    public void addUserInWorkspace() throws ApiException {
+        AccountDTO newAccount = createAccount();
+        UserDTO userToAdd = new UserDTO();
+        userToAdd.setLogin(newAccount.getLogin());
+        WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.BASIC_CLIENT);
+        workspacesApi.addUser(TestConfig.WORKSPACE, userToAdd, null);
+        List<UserDTO> usersInWorkspace = workspacesApi.getUsersInWorkspace(TestConfig.WORKSPACE);
+        Assert.assertEquals(usersInWorkspace.stream().filter(userDTO -> userDTO.getLogin().equals(userToAdd.getLogin())).count(), 1);
+    }
+
+    @Test
+    public void addUserInGroup() throws ApiException {
+        AccountDTO newAccount = createAccount();
+        UserDTO userToAdd = new UserDTO();
+        userToAdd.setLogin(newAccount.getLogin());
+        UserGroupDTO group = createGroup();
+        WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.BASIC_CLIENT);
+        workspacesApi.addUser(TestConfig.WORKSPACE, userToAdd, group.getId());
+        List<UserDTO> usersInGroup = workspacesApi.getUsersInGroup(TestConfig.WORKSPACE, group.getId());
+        Assert.assertEquals(usersInGroup.stream().filter(userDTO -> userDTO.getLogin().equals(userToAdd.getLogin())).count(),1);
+    }
+
+    private UserGroupDTO createGroup() throws ApiException {
+        String groupId = UUID.randomUUID().toString().substring(0,6);
+        UserGroupDTO group = new UserGroupDTO();
+        group.setWorkspaceId(TestConfig.WORKSPACE);
+        group.setId(groupId);
+        return new WorkspacesApi(TestConfig.BASIC_CLIENT).createGroup(TestConfig.WORKSPACE, group);
+    }
+
+
+    private AccountDTO createAccount() throws ApiException {
+        String login = "USER-"+ UUID.randomUUID().toString().substring(0,6);
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setLogin(login);
+        accountDTO.setEmail("my@email.com");
+        accountDTO.setNewPassword("password");
+        accountDTO.setLanguage("en");
+        accountDTO.setName("Mr " + login);
+        accountDTO.setTimeZone("CET");
+        return new AccountsApi(TestConfig.GUEST_CLIENT).createAccount(accountDTO);
     }
 
 }

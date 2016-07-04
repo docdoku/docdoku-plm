@@ -216,7 +216,7 @@ public class DocumentTemplateResource {
     }
 
     @PUT
-    @ApiOperation(value = "Rename attached file in document template", response = Response.class)
+    @ApiOperation(value = "Rename attached file in document template", response = FileDTO.class)
     @Path("{templateId}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
