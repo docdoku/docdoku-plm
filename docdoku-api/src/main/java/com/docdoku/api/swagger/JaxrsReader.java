@@ -1,5 +1,24 @@
-package com.docdoku.api.swagger;
+/*
+ * DocDoku, Professional Open Source
+ * Copyright 2006 - 2015 DocDoku SARL
+ *
+ * This file is part of DocDokuPLM.
+ *
+ * DocDokuPLM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
+package com.docdoku.api.swagger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.kongchen.swagger.docgen.LogAdapter;
@@ -29,16 +48,23 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The JaxrsReader class is used to generated the spec from docdoku-server-rest classes and annotations.
+ *
+ * The original reader has been taken from github and modified to fit our configuration.
+ * See https://github.com/kongchen/swagger-maven-plugin for more details
+ *
+ * @author Morgan Guimard
+ */
 public class JaxrsReader extends AbstractReader implements ClassSwaggerReader {
-    Logger LOGGER = Logger.getLogger(JaxrsReader.class.getName());
 
+    private static final Logger LOGGER = Logger.getLogger(JaxrsReader.class.getName());
     static ObjectMapper m = Json.mapper();
 
     public JaxrsReader(Swagger swagger, LogAdapter LOG) {
         super(swagger, LOG);
     }
 
-    // @Override
     public Swagger read(Set<Class<?>> classes) {
         for (Class cls : classes)
             read(cls);
@@ -54,32 +80,23 @@ public class JaxrsReader extends AbstractReader implements ClassSwaggerReader {
     }
 
     protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
-        if (swagger == null)
+        if (swagger == null) {
             swagger = new Swagger();
-        Api api = AnnotationUtils.findAnnotation(cls, Api.class);
-        Map<String, SecurityScope> globalScopes = new HashMap<String, SecurityScope>();
+        }
 
+        Api api = AnnotationUtils.findAnnotation(cls, Api.class);
         javax.ws.rs.Path apiPath = AnnotationUtils.findAnnotation(cls, javax.ws.rs.Path.class);
 
-        // only read if allowing hidden apis OR api is not marked as hidden
         if (!canReadApi(readHidden, api)) {
             return swagger;
         }
 
         Map<String, Tag> tags = updateTagsForApi(parentTags, api);
-
         List<SecurityRequirement> securities = getSecurityRequirements(api);
 
-        // merge consumes, produces
-
-        // look for method-level annotated properties
-
-        // handle subresources by looking at return type
-
-        // parse the method
         Method methods[] = cls.getMethods();
-        for (Method method : methods) {
 
+        for (Method method : methods) {
             ApiOperation apiOperation = AnnotationUtils.findAnnotation(method, ApiOperation.class);
             if (apiOperation == null || apiOperation.hidden()) {
                 continue;
@@ -116,12 +133,10 @@ public class JaxrsReader extends AbstractReader implements ClassSwaggerReader {
 
                 handleSubResource(apiConsumes, httpMethod, apiProduces, tags, method, operationPath, operation);
 
-                // can't continue without a valid http method
                 httpMethod = httpMethod == null ? parentMethod : httpMethod;
                 updateTagsForOperation(operation, apiOperation);
                 updateOperation(apiConsumes, apiProduces, tags, securities, operation);
                 updatePath(operationPath, httpMethod, operation);
-
             }
         }
 
@@ -147,10 +162,9 @@ public class JaxrsReader extends AbstractReader implements ClassSwaggerReader {
     }
 
     String getPath(javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath, String parentPath) {
+        // Fix for empty path in sub resources. Should be fixed in a cleaner way ...
         if (classLevelPath == null && methodLevelPath == null) {
-            // Fix for empty path in sub resources. Should be fixed in a cleaner way ...
             return parentPath;
-            // return null;
         }
         StringBuilder b = new StringBuilder();
         if (parentPath != null && !"".equals(parentPath) && !"/".equals(parentPath)) {
@@ -401,10 +415,10 @@ public class JaxrsReader extends AbstractReader implements ClassSwaggerReader {
         return null;
     }
 
-    private String cleanRegexPath(String dirty){
+    private String cleanRegexPath(String dirty) {
         return dirty
-                .replace(": [^/].*","")
-                .replace(":[0-9]+","")
-                .replace(":[A-Z]+","");
+                .replace(": [^/].*", "")
+                .replace(":[0-9]+", "")
+                .replace(":[A-Z]+", "");
     }
 }
