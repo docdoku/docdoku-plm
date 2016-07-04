@@ -49,7 +49,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * The JaxrsReader class is used to generated the spec from docdoku-server-rest classes and annotations.
+ * The JaxrsReader class is used to generate the spec from docdoku-server-rest classes and annotations.
  *
  * The original reader has been taken from github and modified to fit our configuration.
  * See https://github.com/kongchen/swagger-maven-plugin for more details
@@ -236,7 +236,9 @@ public class JaxrsReader extends AbstractReader implements ClassSwaggerReader {
                 responseClass = apiOperation.response();
             if (!"".equals(apiOperation.responseContainer()))
                 responseContainer = apiOperation.responseContainer();
-            if (apiOperation.authorizations() != null) {
+            // Not using "authorizations" annotation in docdoku-server-rest
+            // Unused code + remove deprecated call
+            /*if (apiOperation.authorizations() != null) {
                 List<SecurityRequirement> securities = new ArrayList<SecurityRequirement>();
                 for (Authorization auth : apiOperation.authorizations()) {
                     if (auth.value() != null && !"".equals(auth.value())) {
@@ -255,7 +257,7 @@ public class JaxrsReader extends AbstractReader implements ClassSwaggerReader {
                     for (SecurityRequirement sec : securities)
                         operation.security(sec);
                 }
-            }
+            }*/
         }
 
         if (responseClass == null) {
