@@ -1,7 +1,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var DocdokuPlmClient = require('../lib/docdoku-api');
-var config = require('./config');
+var config = require('yargs').argv;
 
 describe('Languages API tests', function() {
 

@@ -54,5 +54,8 @@ Build
 
 Tests
 
-* Run `npm install && grunt test`. Some tests need a running server.
+* Run `npm install` before. Change with your credentials (needs a running server). 
+    
+    mocha test/*.test.js  --url=http://localhost:8080/api --login=foo --password=bar --workspace=foo
+    
 * Browser testing : run `npm run build`, then launch a static server in dist folder `http-server -p 8086` to see results in browser

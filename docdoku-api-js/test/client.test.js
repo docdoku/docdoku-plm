@@ -1,7 +1,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var DocdokuPlmClient = require('../lib/docdoku-api');
-var config = require('./config');
+var config = require('yargs').argv;
 
 describe('Api client creation', function() {
     it('Should affect options to client when using constructor', function() {
