@@ -146,12 +146,13 @@ casper.test.begin('Assembly creation tests suite', 13, function assemblyCreation
      */
 
     partNumbers.forEach(function (partNumber) {
-        casper.then(function checkoutPart() {
+        casper.then(function checkinPart() {
             // Run xhrs, more convenient here.
             this.open(homeUrl + 'api/workspaces/' + workspace + '/parts/' + partNumber + '-A/checkin', {method: 'PUT'}).then(function (response) {
                 this.test.assertEquals(response.status, 200, 'Part ' + partNumber + ' should be checkin');
             }, function () {
                 this.test.assert(false, 'Part ' + partNumber + ' has not been checkin');
+                this.capture('screenshot/assemblyCreation/checkinPart-'+partNumber+'-error.png');
             });
         });
     });
