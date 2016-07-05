@@ -72,6 +72,7 @@ define({
 		CHECKOUT_BY: "Checked out by",
 		CHECKOUT: "Check out",
 		CHECKOUT_DATE: "Checkout date",
+        CHECKOUT_PART_LIST:"Following parts will be checked out",
 		CHECKOUTS: "Checked out",
         CHOICES:"Choices",
 		CHOOSE_A_PRODUCT: "Choose a product",

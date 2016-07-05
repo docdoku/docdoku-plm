@@ -8,10 +8,6 @@ define([
     var ImportStatusView = Backbone.View.extend({
         className:'import-status',
 
-        events:{
-            'click .delete':'deleteImport'
-        },
-
         initialize:function(){
             _.bindAll(this);
             this.$el.on('remove', this.stopRefresh);
