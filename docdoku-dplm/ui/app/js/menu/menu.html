@@ -1,25 +1,32 @@
-<md-toolbar>
-    <h1 class="md-toolbar-tools">
-        <img src="img/icon.png" style="width: 36px; height:36px;">
-        <a href="#/">{{title}}</a>
-        <md-button aria-label="" href="#/settings">
-          <i class="fa fa-cog"></i>
+<md-toolbar layout="row" layout-align="space-between center">
+    <div>
+        <h1 class="md-toolbar-tools brand-logo">
+            <a href="#/">{{title}}</a>
+        </h1>
+    </div>
+    <div>
+        <md-button class="md-icon-button" aria-label="{{'SETTINGS' | translate }}" href="#/settings">
+            <md-icon md-svg-icon="img/more_vert.svg"></md-icon>
             <md-tooltip>
                 {{'SETTINGS' | translate }}
             </md-tooltip>
         </md-button>
-    </h1>
+    </div>
 </md-toolbar>
 
-<md-content class="md-padding">
+<div layout="row">
+    <div><p><b>{{configuration.user}}</b>@<b>{{configuration.host}}</b></p></div>
+</div>
 
+
+<md-content layout-padding>
     <div class="row menu-file-input-wrapper">
        <h3 class="subtitle">
         <i class="fa fa-folder-open"></i>
         {{ 'FOLDERS' | translate }}
         </h3>
         <div class="file-input-container">
-            <md-button class="file-input md-raised md-primary" md-theme="default" aria-label="Profile">
+            <md-button class="file-input md-raised md-primary" md-theme="default" aria-label="{{'ADD_FOLDER' | translate }}">
                 <input file-change="addFolder($event,files)" type="file" webkitdirectory/>
                         <i class="fa fa-plus"></i>
                         <md-tooltip>
@@ -33,7 +40,7 @@
     <md-item ng-repeat="folder in folders | orderBy:'-favorite'" ng-controller="FolderMenuController">
       <md-item-content>
             <div class="md-tile-content small">
-                <md-button ng-class="{'md-raised':isSelectedFolder(folder.uuid)}"  aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">
+                <md-button ng-class="{'md-raised':isSelectedFolder(folder.uuid)}"  href="#/folder/{{folder.uuid}}" class="md-primary">
                   <i ng-if="isSelectedFolder(folder.uuid)" class="fa fa-folder-open"></i>
                   <i ng-if="folder.newStuff" class="fa fa-download" title="{{'NEW_STUFF'|translate}}"></i>
                   {{folder.path | fileshortname}}
@@ -51,7 +58,7 @@
   <h3 ng-if="configuration.host" class="subtitle" ng-controller="WorkspaceMenuController">
     <i class="fa fa-globe"></i> 
     {{ configuration.host + ':' + configuration.port }}
-    <md-button no-ink aria-label="Refresh workspaces" ng-click="refreshWorkspaces()" class="right" >
+    <md-button no-ink title="Refresh workspaces" ng-click="refreshWorkspaces()" class="right" >
       <i class="fa fa-refresh"></i>
       <md-tooltip>
         {{'REFRESH_WORKSPACES'|translate}}
@@ -67,7 +74,7 @@
           ui-on-drop="onDrop($data,$event)"
           drag-hover-class="dropzone-selected">
               <div class="md-tile-content small">
-                <md-button ng-class="{'md-raised': isSelectedWorkspace(workspace)}" aria-label="" href="#/workspace/{{workspace}}" class="md-primary">
+                <md-button ng-class="{'md-raised': isSelectedWorkspace(workspace)}"  href="#/workspace/{{workspace}}" class="md-primary">
                     <i ng-if="isSelectedWorkspace(workspace)" class="fa fa-globe"></i>
                     {{workspace}}
                 </md-button>

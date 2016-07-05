@@ -1,26 +1,26 @@
-<div class="row list-header" layout="horizontal">
+<div class="row list-header" layout="row">
     <div flex>
-        <md-text-float style="margin: 0 18px;" label="{{'SEARCH' | translate}} ({{count}} {{'ITEMS' | translate}})"
+        <md-text-float label="{{'SEARCH' | translate}} ({{count}} {{'ITEMS' | translate}})"
                        ng-model="filters.search" type="text"></md-text-float>
     </div>
 
-    <div style="padding-right:8px;">
-        <md-checkbox ng-model="filters.checkoutable" aria-label="" title="{{'AVAILABLE' | translate}}">
+    <div>
+        <md-checkbox ng-model="filters.checkoutable"  title="{{'AVAILABLE' | translate}}">
             <i class="fa fa-eye"></i>
         </md-checkbox>
-        <md-checkbox ng-model="filters.checkedOutByMe" aria-label="" title="{{'CHECKED_OUT_BY_ME' | translate}}">
+        <md-checkbox ng-model="filters.checkedOutByMe"  title="{{'CHECKED_OUT_BY_ME' | translate}}">
             <i class="fa fa-pencil"></i>
         </md-checkbox>
-        <md-checkbox ng-model="filters.isReleased" aria-label="" title="{{'RELEASED' | translate}}">
+        <md-checkbox ng-model="filters.isReleased"  title="{{'RELEASED' | translate}}">
             <i class="fa fa-check"></i>
         </md-checkbox>
-        <md-checkbox ng-model="filters.checkedOut" aria-label="" title="{{'LOCKED' | translate}}">
+        <md-checkbox ng-model="filters.checkedOut"  title="{{'LOCKED' | translate}}">
             <i class="fa fa-lock"></i>
         </md-checkbox>
     </div>
 </div>
 
-<md-content class="md-padding">
+<md-content layout-padding>
     <div class="output" ng-if="error">
         <output entry="error"></output>
     </div>
@@ -44,7 +44,7 @@
                 <div class="md-tile-content">
 
                     <div class="cursor" ng-click="toggleOpenedPart()">
-                        <i style="float:right" class="fa"
+                        <i class="fa"
                            ng-class="{'fa-angle-down': openedPart, 'fa-angle-up': openedPart}"></i>
 
                         <h3>

@@ -1,2 +1,2 @@
 #!/bin/sh
-nw ui/app
+tmp/node-webkit-v0.11.1-linux-x64/nw ui/app

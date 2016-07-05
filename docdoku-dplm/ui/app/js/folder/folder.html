@@ -1,27 +1,27 @@
 <md-toolbar scroll-shrink>
     <div class="md-toolbar-tools">
         <h3>
-            <md-button aria-label="" ng-click="openMenu()" hide-md><i class="fa fa-bars"></i></md-button>
-            <md-button aria-label="" ng-click="reveal()">
+            <md-button  ng-click="openMenu()" hide-md><i class="fa fa-bars"></i></md-button>
+            <md-button  ng-click="reveal()">
                 <i class="fa fa-folder-open"></i> {{'FOLDER' | translate}} :
                 {{ folder.path | fileshortname }} ({{counts.totalFiles}} {{'FILES' |translate}})
                 <md-tooltip>
                     {{'OPEN_IN_EXPLORER'|translate}}
                 </md-tooltip>
             </md-button>
-            <md-button aria-label="" ng-click="toggleFavorite()" class="right">
+            <md-button  ng-click="toggleFavorite()" class="right">
                 <i class="fa fa-star" ng-class="{favorite:folder.favorite}"></i>
                 <md-tooltip>
                     {{'FAVORITE'|translate}}
                 </md-tooltip>
             </md-button>
-            <md-button aria-label="" ng-click="refresh(true)" class="right">
+            <md-button  ng-click="refresh(true)" class="right">
                 <i class="fa fa-refresh"></i>
                 <md-tooltip>
                     {{'REFRESH_FOLDER'|translate}}
                 </md-tooltip>
             </md-button>
-            <md-button aria-label="" ng-click="delete($event)" class="right">
+            <md-button  ng-click="delete($event)" class="right">
                 <i class="fa fa-times"></i>
                 <md-tooltip>
                     {{'DELETE_FOLDER'|translate}}
@@ -34,7 +34,7 @@
 
 <div on-scroll-end="onScrollEnd()" class="fullscreen-wrapper offset-toolbar">
 
-    <div class="tabs default" layout="horizontal">
+    <div class="tabs default" layout="row">
         <div flex ng-class="{selected:tabs.selected == tabs.documents}">
             <a ng-href="#/folder/{{folder.uuid}}/documents">{{'DOCUMENTS' | translate}} ({{counts.documents}})</a>
         </div>
@@ -46,29 +46,28 @@
         </div>
     </div>
 
-    <div class="row list-header" layout="horizontal">
+    <div class="row list-header" layout="row">
         <div flex>
-            <md-text-float style="margin: 0 18px;"
-                           label="{{'SEARCH' | translate}} ({{files.length}} {{'ITEMS' | translate}})" ng-model="search"
+            <md-text-float layout-padding label="{{'SEARCH' | translate}} ({{files.length}} {{'ITEMS' | translate}})" ng-model="search"
                            type="text"></md-text-float>
         </div>
-        <div style="padding-right:8px;">
-            <md-checkbox ng-model="filters.sync" aria-label="" title="{{'UP_TO_DATE' | translate}}">
+        <div layout-padding>
+            <md-checkbox ng-model="filters.sync"  title="{{'UP_TO_DATE' | translate}}">
                 <i class="fa fa-check-circle-o file-sync"></i>
             </md-checkbox>
-            <md-checkbox ng-model="filters.modified" aria-label="" title="{{'MODIFIED' | translate}}">
+            <md-checkbox ng-model="filters.modified"  title="{{'MODIFIED' | translate}}">
                 <i class="fa fa-cloud-upload file-modified"></i>
             </md-checkbox>
         </div>
     </div>
 
 
-    <md-content class="md-padding">
+    <md-content layout-padding>
 
         <md-button
                 ng-if="!loadingFiles && hasUploadableFiles()"
                 class="md-margin md-raised md-primary"
-                aria-label=""
+
                 ng-click="syncAll()">
             <i class="fa fa-refresh"></i>
             {{'SYNC_ALL'|translate}}

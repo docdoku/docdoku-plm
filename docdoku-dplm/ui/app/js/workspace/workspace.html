@@ -3,19 +3,19 @@
         <h3>
             <menu-button></menu-button>
 
-            <md-button aria-label="" ng-click="showInBrowser()">
+            <md-button  ng-click="showInBrowser()">
                 <i class="fa fa-globe"></i> {{'WORKSPACE' | translate}} : {{workspace}}
                 <md-tooltip>
                     {{'OPEN_IN_BROWSER'|translate}}
                 </md-tooltip>
             </md-button>
         </h3>
-        <md-button aria-label="" ng-click="refresh()"><i class="fa fa-refresh fa-lg"></i></md-button>
+        <md-button  ng-click="refresh()"><i class="fa fa-refresh fa-lg"></i></md-button>
     </div>
 </md-toolbar>
 
 <div class="fullscreen-wrapper offset-toolbar">
-<div class="tabs default" layout="horizontal">
+<div class="tabs default" layout="row">
     <div flex ng-class="{selected:tabs.selected == tabs.documents}">
         <a ng-href="#/workspace/{{workspace}}/documents/folders">{{'DOCUMENTS' | translate}}</a>
     </div>

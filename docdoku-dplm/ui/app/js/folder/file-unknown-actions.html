@@ -1,8 +1,8 @@
 <md-progress-linear ng-if="file.busy" mode="determinate" ng-value="file.progress"></md-progress-linear>
 
-<div class="md-actions md-padding" ng-if="!file.busy" layout="vertical">
+<div class="md-actions md-padding" ng-if="!file.busy" layout="column">
 
-    <div class="row" layout="horizontal">
+    <div class="row" layout="row">
         <div flex>
             <span class="clickable subtitle" ng-class="{selected: form.selected===form.part}"  ng-click="form.selected=form.part">
                 <i class="fa fa fa-arrow-circle-right" ng-if="form.selected===form.part"></i> {{'CREATE_PART'|translate}}
@@ -32,12 +32,12 @@
 
                 <md-text-float label="{{'PART_DESCRIPTION' | translate}}" ng-model="newPart.description"></md-text-float>
 
-                <md-checkbox ng-model="newPart.standard" aria-label="">
+                <md-checkbox ng-model="newPart.standard" >
                     {{'STANDARD'|translate}}
                 </md-checkbox>
             </div>
             <div class="row">
-                <md-button aria-label="" class="md-raised md-primary">
+                <md-button  class="md-raised md-primary">
                     {{'SAVE'|translate}}
                 </md-button>
             </div>
@@ -60,7 +60,7 @@
                 <md-text-float label="{{'DOCUMENT_DESCRIPTION' | translate}}" ng-model="newDocument.description"></md-text-float>
             </div>
             <div class="row">
-                <md-button aria-label="" class="md-raised md-primary">
+                <md-button  class="md-raised md-primary">
                     {{'SAVE'|translate}}
                 </md-button>
             </div>

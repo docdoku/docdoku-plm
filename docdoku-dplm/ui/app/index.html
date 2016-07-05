@@ -5,9 +5,8 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1" />
 
     <!-- build:css app.css -->
-    <link rel="stylesheet" type="text/css" href="bower_components/angular-material/themes/blue-theme.css"/>
+    <link rel="stylesheet" type="text/css" href="bower_components/angular-material/angular-material.css"/>
     <link rel="stylesheet" type="text/css" href="bower_components/fontawesome/css/font-awesome.css"/>
-    <link rel="stylesheet" type="text/css" href="css/angular-material.mod.css"/>
     <link rel="stylesheet" type="text/css" href="css/inputs.css"/>
     <link rel="stylesheet" type="text/css" href="css/lists.css"/>
     <link rel="stylesheet" type="text/css" href="css/droppables.css"/>
@@ -21,14 +20,19 @@
     <link rel="stylesheet" type="text/css" href="css/folders.css"/>
     <link rel="stylesheet" type="text/css" href="css/buttons.css"/>
     <link rel="stylesheet" type="text/css" href="css/output.css"/>
+    <link rel="stylesheet" type="text/css" href="css/general.css"/>
     <!-- endbuild -->
 
 </head>
 <body>
 
-    <div layout="vertical" layout-fill>
-        <section layout="horizontal" flex >
-            <md-sidenav class="md-sidenav-left md-whiteframe-z2" component-id="menu" is-locked-open="$media('md')" ng-controller="MenuController" ng-include="'js/menu/menu.html'">
+    <div layout="column" layout-fill>
+        <section layout="row" flex >
+            <md-sidenav class="md-sidenav-left"
+                        md-component-id="menu"
+                        md-is-locked-open="$mdMedia('gt-sm')"
+                        ng-controller="MenuController"
+                        ng-include="'js/menu/menu.html'">
             </md-sidenav>
             <md-content flex ng-view></md-content>
         </section>

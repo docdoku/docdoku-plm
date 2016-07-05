@@ -1,12 +1,13 @@
-#brand-icon{
-	width: 36px; 
-	height:36px;
+.brand-logo{
+	background: url(../img/icon.png) no-repeat 10px 14px;
+	padding: 0 0 0 60px;
 }
+
 
 .right{
 	float:right;
 }
-
+/*
 h3{
 	width: 100%;
-}
+}*/

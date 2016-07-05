@@ -1,22 +1,18 @@
 <md-toolbar scroll-shrink>
     <div class="md-toolbar-tools">
         <h3>
-            <md-button aria-label="" ng-click="openMenu()" hide-md>
+            <md-button  ng-click="openMenu()" hide-md>
                 <i class="fa fa-bars"></i>
             </md-button>
-            <md-button aria-label="">
+            <md-button >
                 <i class="fa fa-home"></i> {{'HOME' | translate}}
             </md-button>
         </h3>
     </div>
 </md-toolbar>
-<div layout="vertical" class="settings">
+<div layout="column" class="settings">
 
-    <md-content class="md-padding">
-        {{'GREETINGS'|translate}} <b>{{configuration.user}}</b>, {{'CONNECTED_TO' | translate}} <b>{{configuration.host}}</b>
-    </md-content>
-
-    <md-content class="md-padding">
+    <md-content layout-padding>
         <h3 class="subtitle"><i class="fa fa-star favorite"></i> {{'FAVORITE_FOLDERS' | translate}}</h3>
         <md-list>
             <md-item ng-if="!folders.length">
@@ -28,7 +24,7 @@
                 <md-item-content ng-controller="FolderDetailsController">
                     <div class="md-tile-content">
                         <h3>
-                            <md-button aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">  <i class="fa fa-folder-open"></i> {{folder.path | fileshortname}}</md-button>
+                            <md-button  href="#/folder/{{folder.uuid}}" class="md-primary">  <i class="fa fa-folder-open"></i> {{folder.path | fileshortname}}</md-button>
                         </h3>
                     </div>
                     <div class="md-tile-right">
@@ -40,7 +36,7 @@
         </md-list>
     </md-content>
 
-    <md-content class="md-padding">
+    <md-content layout-padding>
         <h3 class="subtitle"><i class="fa fa-star favorite"></i> {{'LAST_WORKSPACES_VISITED' | translate}}</h3>
         <md-list>
             <md-item ng-if="!workspaces.length">
@@ -51,7 +47,7 @@
             <md-item ng-repeat="workspace in workspaces">
                 <md-item-content>
                     <div class="md-tile-content">
-                        <md-button aria-label="" href="#/workspace/{{workspace}}" class="md-primary">  <i class="fa fa-globe"></i> {{workspace}}</md-button>
+                        <md-button  href="#/workspace/{{workspace}}" class="md-primary">  <i class="fa fa-globe"></i> {{workspace}}</md-button>
                     </div>
                     <div class="md-tile-right">
                        <i class="fa fa-arrow-circle-right"></i>

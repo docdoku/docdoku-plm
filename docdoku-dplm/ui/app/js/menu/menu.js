@@ -6,7 +6,8 @@ angular.module('dplm.menu', [])
             scope:false
         };
     })
-    .controller('MenuController', function ($scope,FolderService) {
+    .controller('MenuController', function ($scope,FolderService,ConfigurationService) {
+        $scope.configuration = ConfigurationService.configuration;
         $scope.toggleFolders = function(){
             $scope.foldersExpanded=!$scope.foldersExpanded;
         };

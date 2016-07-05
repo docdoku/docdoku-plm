@@ -1,4 +1,4 @@
-<div class="tabs default" layout="horizontal">
+<div class="tabs default" layout="row">
     <div flex ng-class="{selected:action.selected == action.folders}">
         <a ng-href="#/workspace/{{workspace}}/documents/folders">{{'FOLDERS' | translate}}</a>
     </div>
@@ -7,14 +7,14 @@
     </div>
 </div>
 
-<md-content class="md-padding">
+<md-content layout-padding>
 
     <div ng-if="action.selected == action.folders">
         <folders></folders>
     </div>
     <div ng-if="action.selected == action.checkedOut && !loadingDocuments && documents.length">
         <div class="row">
-            <md-button class="md-raised md-primary" ng-click="downloadAll()" aria-label="">{{'DOWNLOAD_ALL' | translate}}</md-button>
+            <md-button class="md-raised md-primary" ng-click="downloadAll()" >{{'DOWNLOAD_ALL' | translate}}</md-button>
             <span>
             <label>{{'SAVE_TO' | translate}}</label>
             <i class="fa fa-folder-open"></i>
@@ -53,7 +53,7 @@
                 <div class="md-tile-content">
 
                     <div class="cursor" ng-click="toggleOpenedDocument()">
-                        <i style="float:right" class="fa"
+                        <i class="fa"
                            ng-class="{'fa-angle-down': !openedDocument, 'fa-angle-up': openedDocument}"></i>
 
                         <h3>

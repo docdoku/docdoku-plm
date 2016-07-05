@@ -7,10 +7,10 @@
     </md-content>
 
     <div class="md-actions" ng-if="!part.busy">
-        <md-button aria-label="" ng-click="action('download')" class="md-primary">
+        <md-button  ng-click="action('download')" class="md-primary">
             {{'DOWNLOAD' | translate}}
         </md-button>
-        <md-button ng-if="!part.isReleased && !part.checkoutUser" aria-label="" ng-click="action('checkout')"
+        <md-button ng-if="!part.isReleased && !part.checkoutUser"  ng-click="action('checkout')"
                    class="md-primary">
             {{'CHECKOUT' | translate}}
         </md-button>

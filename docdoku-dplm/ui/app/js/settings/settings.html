@@ -2,38 +2,47 @@
     <div class="md-toolbar-tools">
         <h3>
             <menu-button></menu-button>
-            <md-button aria-label="">
+            <md-button >
                 <i class="fa fa-cog"></i> {{'SETTINGS' | translate}}
             </md-button>
         </h3>
     </div>
 </md-toolbar>
 
-<div layout="vertical" class="settings">
+<div layout="column" class="settings">
 
-    <md-content class="md-padding">
+    <md-content layout-padding>
         <div class="output" ng-if="output.error">
             <output entry="output.error"></output>
         </div>
+        <md-content layout-gt-sm="row" layout-padding>
         <form ng-submit="save()">
-            <div class="row">
-                <md-text-float label="{{'USER' | translate}}" ng-model="configuration.user" required></md-text-float>
-                <md-text-float label="{{'PASSWORD' | translate}}" ng-model="configuration.password" type="password"
-                               required></md-text-float>
+            <div>
+                <md-input-container>
+                    <label>{{'USER' | translate}}</label>
+                    <input ng-model="configuration.user">
+                </md-input-container>
+                <md-input-container>
+                    <label>{{'PASSWORD' | translate}}</label>
+                    <input ng-model="configuration.password" type="password">
+                </md-input-container>
+            </div>
+            <div>
+                <md-input-container>
+                    <label>{{'HOST' | translate}}</label>
+                    <input ng-model="configuration.host">
+                </md-input-container>
+                <md-input-container>
+                    <label>{{'PORT' | translate}}</label>
+                    <input ng-model="configuration.port" type="number">
+                </md-input-container>
             </div>
             <div class="row">
-                <md-text-float label="{{'HOST' | translate}}" ng-model="configuration.host"></md-text-float>
-                <md-text-float label="{{'PORT' | translate}}" ng-model="configuration.port"
-                               type="number"></md-text-float>
-                <md-checkbox ng-model="configuration.ssl" ng-change="onSslChange()" aria-label="">
-                    {{'SSL'|translate}}
-                </md-checkbox>
-            </div>
-            <div class="row">
-                <md-button aria-label="" class="md-raised md-primary">{{'SAVE'|translate}}
+                <md-button  class="md-raised md-primary">{{'SAVE'|translate}}
                 </md-button>
             </div>
         </form>
+        </md-content>
     </md-content>
 
 </div>

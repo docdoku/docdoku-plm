@@ -53,8 +53,16 @@
 
     ])
 
-        .config(function ($routeProvider) {
+        .config(function ($routeProvider,$mdThemingProvider) {
             $routeProvider.otherwise('/');
+
+            var themeMap = $mdThemingProvider.extendPalette('blue', {
+                '500': '#1A658A'
+            });
+            $mdThemingProvider.definePalette('dplm-palette', themeMap);
+            $mdThemingProvider.theme('default')
+                .primaryPalette('dplm-palette')
+                .accentPalette('blue');
         })
 
         .controller('AppCtrl', function ($scope, $location, $mdSidenav, $filter, NotificationService, ConfigurationService, CliService, WorkspaceService, FolderService) {

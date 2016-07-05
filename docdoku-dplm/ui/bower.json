@@ -15,17 +15,14 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "~1.3.1",
-    "angular-material": "~0.5.1",
-    "angular-route": "~1.3.3",
+    "angular": "^1.5.0",
+    "angular-aria": "~1.5.0",
+    "angular-material": "~1.1.0",
     "angular-translate": "~2.4.2",
     "angular-uuid4": "~0.3.0",
     "fontawesome": "~4.2.0",
-    "angular-aria": "~1.3.3",
-    "threejs": "r67"
-  },
-  "resolutions": {
-    "angular": "1.3.1",
-    "angular-aria": "~1.3.3"
+    "threejs": "r67",
+    "angular-route": "^1.5.7",
+    "hammerjs": "^2.0.8"
   }
 }
