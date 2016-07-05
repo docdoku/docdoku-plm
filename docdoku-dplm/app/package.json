@@ -8,7 +8,6 @@
     "recursive-readdir": "^1.2.0"
   },
   "window": {
-    "toolbar": true,
     "position": "center",
     "width": 960,
     "height": 500,

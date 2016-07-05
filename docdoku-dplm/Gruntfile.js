@@ -4,6 +4,8 @@ module.exports = function(grunt){
 
     require('load-grunt-tasks')(grunt);
 
+    var nwjsVersion = '0.15.4';
+
     grunt.initConfig ({
 
         jshint: {
@@ -155,7 +157,7 @@ module.exports = function(grunt){
 
         nwjs: {
             options: {
-                version:'0.15.4',
+                version: nwjsVersion,
                 platforms: ['linux', 'win', 'osx64'],
                 buildDir: 'target',
             },
@@ -203,6 +205,13 @@ module.exports = function(grunt){
                     {expand: true, cwd: 'target/DPLM/win64', src: ['**'], dest:''}
                 ]
             }
+        },
+        exec: {
+            linux32: 'cache/'+nwjsVersion+'/linux32/nw app',
+            linux64: 'cache/'+nwjsVersion+'/linux64/nw app',
+            osx64: 'cache/'+nwjsVersion+'/osx64/nw app',
+            win32: 'cache/'+nwjsVersion+'/win32/nw.exe app',
+            win64: 'cache/'+nwjsVersion+'/osx64/nw.exe app'
         }
     });
 
@@ -222,5 +231,15 @@ module.exports = function(grunt){
         'nwjs',
         'compress'
     ]);
+
+    var platforms = ['linux32','linux64','osx64','win32','win64'];
+
+    grunt.registerTask('dev',function(platform){
+        if(!platform || platforms.indexOf(platform) === -1){
+            return grunt.fail.warn('Usage : `grunt dev:<platform>` \nAvailable platforms : ' + platforms.join(', '));
+        }else{
+            return grunt.task.run('exec:'+platform);
+        }
+    });
 
 };
