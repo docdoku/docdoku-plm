@@ -1,4 +1,5 @@
 tmp
-ui/dist
-ui/tmp
-ui/app/docdoku-cli-jar-with-dependencies.jar
+dist
+cache
+target
+app/docdoku-cli-jar-with-dependencies.jar

@@ -2,16 +2,7 @@ module.exports = function(grunt){
 
     'use strict';
 
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-html2js');
-    grunt.loadNpmTasks('grunt-ng-annotate');
-    grunt.loadNpmTasks('grunt-usemin');
-    grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-text-replace');
+    require('load-grunt-tasks')(grunt);
 
     grunt.initConfig ({
 
@@ -62,6 +53,11 @@ module.exports = function(grunt){
         },
 
         copy:{
+            jar:{
+                files:{
+                    'app/docdoku-cli-jar-with-dependencies.jar':'../docdoku-cli/target/docdoku-cli-jar-with-dependencies.jar'
+                }
+            },
             dist: {
                 files: [{
                         expand: true,
@@ -155,13 +151,65 @@ module.exports = function(grunt){
                     to: 'fonts'
                 }]
             }
-        }
+        },
 
+        nwjs: {
+            options: {
+                version:'0.15.4',
+                platforms: ['linux', 'win', 'osx64'],
+                buildDir: 'target',
+            },
+            src: ['dist/**/*']
+        },
+
+        compress:{
+            linux32: {
+                options: {
+                    archive: 'target/dplm-linux-32.zip'
+                },
+                files: [
+                    {expand: true, cwd: 'target/DPLM/linux32', src: ['**'], dest:''}
+                ]
+            },
+            linux64: {
+                options: {
+                    archive: 'target/dplm-linux-64.zip'
+                },
+                files: [
+                    {expand: true, cwd: 'target/DPLM/linux64', src: ['**'], dest:''}
+                ]
+            },
+            osx64: {
+                options: {
+                    archive: 'target/dplm-osx-64.zip'
+                },
+                files: [
+                    {expand: true, cwd: 'target/DPLM/osx64', src: ['**'], dest:''}
+                ]
+            },
+            win32: {
+                options: {
+                    archive: 'target/dplm-win-32.zip'
+                },
+                files: [
+                    {expand: true, cwd: 'target/DPLM/win32', src: ['**'], dest:''}
+                ]
+            },
+            win64: {
+                options: {
+                    archive: 'target/dplm-win-64.zip'
+                },
+                files: [
+                    {expand: true, cwd: 'target/DPLM/win64', src: ['**'], dest:''}
+                ]
+            }
+        }
     });
 
     grunt.registerTask('build',[
         'jshint',
         'clean:dist',
+        'copy:jar',
         'copy:dist',
         'html2js:dist',
         'concat:js',
@@ -170,7 +218,9 @@ module.exports = function(grunt){
         'uglify:dist',
         'replace:dist',
         'cssmin:dist',
-        'usemin'
+        'usemin',
+        'nwjs',
+        'compress'
     ]);
 
 };

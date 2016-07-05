@@ -1,5 +1,6 @@
 {
   "name": "DPLM",
+  "version":"0.2.0",
   "main": "index.html",
   "locale": "fr_FR",
   "dependencies": {
