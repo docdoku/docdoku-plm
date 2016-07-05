@@ -5,7 +5,8 @@
     angular.module('dplm.home', [])
         .config(function ($routeProvider) {
             $routeProvider.when('/', {
-                controller: function ($scope, $filter, ConfigurationService,FolderService,WorkspaceService) {
+                controller: function ($scope, $filter, $mdMedia, ConfigurationService,FolderService,WorkspaceService) {
+                    $scope.$mdMedia = $mdMedia;
                     $scope.configuration = ConfigurationService.configuration;
                     $scope.save = ConfigurationService.save;
                     $scope.folders = $filter('filter')(FolderService.folders,{favorite:true});

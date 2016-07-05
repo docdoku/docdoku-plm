@@ -1,0 +1,153 @@
+.dplm-sidenav {
+	background: #1A658A;
+}
+.dplm-sidenav md-content {
+	background: transparent;
+}
+.dplm-sidenav,
+.dplm-sidenav.md-locked-open-add-active,
+.dplm-sidenav.md-locked-open {
+	width:     272px;
+	min-width: 272px;
+	max-width: 272px;
+}
+.dplm-sidenav > * {
+	min-width: 218px;
+}
+
+.menu,
+.menu ul {
+	list-style: none;
+	padding: 0;
+	max-width: 100%;
+	overflow-x: hidden;
+}
+.menu li {
+	margin: 0;
+}
+.menu > li:nth-child(1) {
+	border-top: none;
+}
+.md-whiteframe-glow-z1 {
+	box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.14),
+	0px 0px 2px 2px rgba(0, 0, 0, 0.098),
+	0px 0px 5px 1px rgba(0, 0, 0, 0.084);
+}
+.menu > li {
+	border-bottom: 1px solid #267ED5;
+}
+
+.menu .md-button {
+	border-radius: 0;
+	color: white;
+	cursor: pointer;
+	display: block;
+	align-items: inherit;
+	line-height: 40px;
+	margin: 0;
+	max-height: 40px;
+	overflow: hidden;
+	padding: 0px 16px;
+	text-align: left;
+	text-decoration: none;
+	white-space: normal;
+	width: 100%;
+}
+
+html[dir=rtl] .menu .md-button,
+body[dir=rtl] .menu .md-button {
+	unicode-bidi: embed;
+	text-align: right;
+}
+
+
+.menu .md-button:hover,
+.menu .md-button:focus {
+	background: #267ED5 !important;
+}
+.menu .md-button md-icon {
+	color: white;
+}
+
+.menu md-select {
+
+	/* Override md-select margins.  With margins the menu will look incorrect and causes mobile list
+       to not be scrollable.
+     */
+	margin: 0;
+	width: 100%;
+}
+
+.menu md-select md-select-label {
+	justify-content: flex-end;
+	padding-top: 10px;
+}
+
+.menu md-select md-select-label span {
+	margin-right: auto;
+	padding-left: 13px;
+}
+
+.menu md-select .md-select-icon {
+	margin-right: 28px;
+}
+
+.menu button.md-button::-moz-focus-inner {
+	padding: 0;
+}
+.menu .md-button.active {
+	background: #267ED5;
+}
+.menu-heading {
+	display: block;
+	line-height: 32px;
+	margin: 0;
+	padding: 8px 16px 0;
+	text-align: left;
+	width: 100%;
+	color: rgba(255, 255, 255, 0.54)
+}
+
+.menu li.parentActive,
+.menu li.parentActive .menu-toggle-list {
+	/*background-color: #2C80D2 !important;*/
+}
+.menu-toggle-list {
+	overflow: hidden;
+	position: relative;
+	z-index: 1;
+	-webkit-transition: 0.75s cubic-bezier(0.35, 0, 0.25, 1);
+	-webkit-transition-property: height;
+	-moz-transition: 0.75s cubic-bezier(0.35, 0, 0.25, 1);
+	-moz-transition-property: height;
+	transition: 0.75s cubic-bezier(0.35, 0, 0.25, 1);
+	transition-property: height;
+}
+.menu .menu-toggle-list a.md-button {
+	display: block;
+	padding: 0 16px 0 32px;
+	text-transform: none;
+	text-rendering: optimizeLegibility;
+	font-weight: 500;
+}
+
+.parent-list-item:last-child {
+	margin-bottom: 20px;
+
+	/* Prevent the hidden License link from causing a double bottom-border */
+	border-bottom: none;
+}
+.md-button-toggle .md-toggle-icon {
+	display: block;
+	margin-left: auto;
+	speak: none;
+	vertical-align: middle;
+	transform: rotate(180deg);
+	-webkit-transform: rotate(180deg);
+	transition: transform 0.3s ease-in-out;
+	-webkit-transition: -webkit-transform 0.3s ease-in-out;
+}
+.md-button-toggle .md-toggle-icon.toggled {
+	transform: rotate(0deg);
+	-webkit-transform: rotate(0deg);
+}

@@ -1,16 +1,39 @@
-<md-toolbar scroll-shrink>
-    <div class="md-toolbar-tools">
-        <h3>
-            <menu-button></menu-button>
-
-            <md-button  ng-click="showInBrowser()">
-                <i class="fa fa-globe"></i> {{'WORKSPACE' | translate}} : {{workspace}}
-                <md-tooltip>
-                    {{'OPEN_IN_BROWSER'|translate}}
-                </md-tooltip>
+<md-toolbar>
+    <div class="md-toolbar-tools" layout="row" layout-align="start center">
+        <div>
+            <md-button class="md-icon-button" hide-gt-sm aria-label="{{'MENU' | translate}}" ng-click="openMenu()">
+                <i class="fa fa-bars"></i>
             </md-button>
-        </h3>
-        <md-button  ng-click="refresh()"><i class="fa fa-refresh fa-lg"></i></md-button>
+        </div>
+        <div>
+            <md-menu>
+                <md-button aria-label="{{'MENU'}}" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                    <i class="fa fa-bars"></i>
+                </md-button>
+
+                <md-menu-content width="4">
+                    <md-menu-item>
+                        <md-button aria-label="{{'OPEN_IN_BROWSER'|translate}}" ng-click="showInBrowser()">
+                            {{'OPEN_IN_BROWSER'|translate}}
+                        </md-button>
+                    </md-menu-item>
+
+                    <md-menu-item>
+                        <md-button aria-label="{{'REFRESH'|translate}}" ng-click="refresh()" >
+                            {{'REFRESH'|translate}}
+                        </md-button>
+                    </md-menu-item>
+
+                </md-menu-content>
+            </md-menu>
+        </div>
+        <div>
+            <h2>
+                <span>
+                    <i class="fa fa-globe"></i> {{'WORKSPACE' | translate}} : {{workspace}}
+                </span>
+            </h2>
+        </div>
     </div>
 </md-toolbar>
 

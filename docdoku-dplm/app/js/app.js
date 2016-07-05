@@ -53,13 +53,15 @@
 
     ])
 
-        .config(function ($routeProvider,$mdThemingProvider) {
+        .config(function ($routeProvider,$mdThemingProvider,$compileProvider) {
             $routeProvider.otherwise('/');
 
-            var themeMap = $mdThemingProvider.extendPalette('blue', {
+            $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
+
+            $mdThemingProvider.definePalette('dplm-palette', $mdThemingProvider.extendPalette('blue', {
                 '500': '#1A658A'
-            });
-            $mdThemingProvider.definePalette('dplm-palette', themeMap);
+            }));
+
             $mdThemingProvider.theme('default')
                 .primaryPalette('dplm-palette')
                 .accentPalette('blue');

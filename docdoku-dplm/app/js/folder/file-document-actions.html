@@ -1,23 +1,23 @@
 
 <div class="row" ng-if="!file.busy">
-    <md-checkbox ng-model="options.force" >
+    <md-checkbox aria-label="{{'FORCE'|translate}}" ng-model="options.force" >
     {{'FORCE'|translate}}
     </md-checkbox>
 </div>
 <div class="md-actions" ng-if="!file.busy">
-    <md-button ng-if="!file.document.checkoutUser"  ng-click="checkout()"
+    <md-button aria-label="{{'CHECKOUT' | translate}}" ng-if="!file.document.checkoutUser"  ng-click="checkout()"
     class="md-raised md-primary">
     {{'CHECKOUT' | translate}}
     </md-button>
-    <md-button ng-if="file.document.checkoutUser === configuration.user"  ng-click="checkin()"
+    <md-button aria-label="{{'CHECKIN' | translate}}" ng-if="file.document.checkoutUser === configuration.user"  ng-click="checkin()"
     class="md-raised md-primary">
     {{'CHECKIN' | translate}}
     </md-button>
-    <md-button ng-if="file.document.checkoutUser === configuration.user"  ng-click="undoCheckout()"
+    <md-button aria-label="{{'UNDO_CHECKOUT' | translate}}" ng-if="file.document.checkoutUser === configuration.user"  ng-click="undoCheckout()"
     class="md-raised md-primary">
     {{'UNDO_CHECKOUT' | translate}}
     </md-button>
-    <md-button ng-if="file.document.checkoutUser === configuration.user"  ng-click="put()" class="md-raised md-primary">
+    <md-button aria-label="{{'PUT' | translate}}" ng-if="file.document.checkoutUser === configuration.user"  ng-click="put()" class="md-raised md-primary">
     {{'PUT' | translate}}
     </md-button>
 </div>

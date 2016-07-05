@@ -32,12 +32,12 @@
 
                 <md-text-float label="{{'PART_DESCRIPTION' | translate}}" ng-model="newPart.description"></md-text-float>
 
-                <md-checkbox ng-model="newPart.standard" >
+                <md-checkbox aria-label="{{'STANDARD'|translate}}" ng-model="newPart.standard" >
                     {{'STANDARD'|translate}}
                 </md-checkbox>
             </div>
             <div class="row">
-                <md-button  class="md-raised md-primary">
+                <md-button aria-label="{{'SAVE'|translate}}" class="md-raised md-primary">
                     {{'SAVE'|translate}}
                 </md-button>
             </div>
@@ -60,7 +60,7 @@
                 <md-text-float label="{{'DOCUMENT_DESCRIPTION' | translate}}" ng-model="newDocument.description"></md-text-float>
             </div>
             <div class="row">
-                <md-button  class="md-raised md-primary">
+                <md-button aria-label="{{'SAVE'|translate}}" class="md-raised md-primary">
                     {{'SAVE'|translate}}
                 </md-button>
             </div>

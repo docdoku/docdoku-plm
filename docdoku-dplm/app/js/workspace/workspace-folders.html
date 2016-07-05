@@ -1,7 +1,7 @@
 <md-content layout-padding>
     <div layout="row" layout-padding>
         
-        <md-button class="md-margin md-raised md-primary"  href="#/workspace/{{workspace}}/documents/folders/~{{configuration.user}}">
+        <md-button aria-label="" class="md-margin md-raised md-primary"  href="#/workspace/{{workspace}}/documents/folders/~{{configuration.user}}">
             <i class="path fa fa-home" ng-class="{selected:path==='~'+configuration.user}"></i>
             {{'HOME_FOLDER'|translate}}
             <md-tooltip>
@@ -9,7 +9,7 @@
             </md-tooltip>
         </md-button>
 
-        <md-button class="md-margin md-raised md-primary"  href="#/workspace/{{workspace}}/documents/folders">
+        <md-button aria-label="" class="md-margin md-raised md-primary"  href="#/workspace/{{workspace}}/documents/folders">
             <i class="fa fa-globe path" ng-class="{selected:!path}"></i>
             {{'ROOT_FOLDER'|translate}}
             <md-tooltip>
@@ -17,7 +17,7 @@
             </md-tooltip>
         </md-button>
 
-        <md-button ng-repeat="pathPart in pathParts" class="md-margin md-raised md-primary"  href="#/workspace/{{workspace}}/documents/folders/{{pathPart}}">
+        <md-button aria-label="" ng-repeat="pathPart in pathParts" class="md-margin md-raised md-primary"  href="#/workspace/{{workspace}}/documents/folders/{{pathPart}}">
             <i class="path" ng-class="{'fa fa-folder-open-o':$last, 'fa fa-folder-o':!$last,'selected':$last}"></i>
             {{pathPart | folderShortName}}
             <md-tooltip>
@@ -29,7 +29,7 @@
 
     <div layout="row">
 
-        <md-button  ng-repeat="remoteFolder in remoteFolders" class="md-margin md-raised md-primary"  href="#/workspace/{{workspace}}/documents/folders/{{remoteFolder}}">
+        <md-button aria-label="" ng-repeat="remoteFolder in remoteFolders" class="md-margin md-raised md-primary"  href="#/workspace/{{workspace}}/documents/folders/{{remoteFolder}}">
             <i class="fa fa-folder"></i>
             {{remoteFolder | folderShortName}}
         </md-button>

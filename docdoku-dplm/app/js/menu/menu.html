@@ -14,10 +14,21 @@
     </div>
 </md-toolbar>
 
-<div layout="row">
-    <div><p><b>{{configuration.user}}</b>@<b>{{configuration.host}}</b></p></div>
-</div>
+<md-content layout-padding>
+<!--
+   <p>
+       <b>{{configuration.user}}</b>@<b>{{configuration.host}}</b>
+   </p>-->
 
+    <ul class="menu">
+        <li ng-repeat="section in menu.sections"
+            class="parent-list-item {{section.className || ''}}"
+            ng-class="{'parentActive' : openedSection === section}">
+            <menu-toggle ng-if="section.type === 'toggle' && !section.hidden"></menu-toggle>
+        </li>
+    </ul>
+</md-content>
+<!--
 
 <md-content layout-padding>
     <div class="row menu-file-input-wrapper">
@@ -37,8 +48,8 @@
     </div>
   <md-content class="menu-list" ng-class="{expanded: foldersExpanded}" droppable on-file-dropped="onFileDropped(path)">
    <md-list>
-    <md-item ng-repeat="folder in folders | orderBy:'-favorite'" ng-controller="FolderMenuController">
-      <md-item-content>
+    <md-list-item ng-repeat="folder in folders | orderBy:'-favorite'" ng-controller="FolderMenuController">
+      <md-list-item-content>
             <div class="md-tile-content small">
                 <md-button ng-class="{'md-raised':isSelectedFolder(folder.uuid)}"  href="#/folder/{{folder.uuid}}" class="md-primary">
                   <i ng-if="isSelectedFolder(folder.uuid)" class="fa fa-folder-open"></i>
@@ -49,8 +60,8 @@
                     </md-tooltip>
               </md-button>
             </div>
-      </md-item-content>
-    </md-item>
+      </md-list-item-content>
+    </md-list-item>
   </md-list>
   </md-content>
   <i class="list-toggle fa" ng-class="{'fa-caret-up': foldersExpanded,'fa-caret-down': !foldersExpanded}" ng-click="toggleFolders()"></i>
@@ -68,8 +79,8 @@
 
   <md-content ng-if="configuration.host" class="menu-list" ng-class="{expanded: workspacesExpanded}">
     <md-list>
-      <md-item ng-repeat="workspace in workspaces" ng-controller="WorkspaceMenuController">
-        <md-item-content
+      <md-list-item ng-repeat="workspace in workspaces" ng-controller="WorkspaceMenuController">
+        <md-list-item-content
           drag-enter-class="dropzone"
           ui-on-drop="onDrop($data,$event)"
           drag-hover-class="dropzone-selected">
@@ -79,11 +90,11 @@
                     {{workspace}}
                 </md-button>
               </div>
-        </md-item-content>
-      </md-item>
+        </md-list-item-content>
+      </md-list-item>
     </md-list>
   </md-content>
   <i ng-if="configuration.host" class="list-toggle fa" ng-class="{'fa-caret-up': workspacesExpanded,'fa-caret-down': !workspacesExpanded}" ng-click="toggleWorkspaces()"></i>
 
 
-</md-content>
+</md-content>-->

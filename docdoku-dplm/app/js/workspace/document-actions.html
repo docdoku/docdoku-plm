@@ -14,21 +14,21 @@
 </div>
 
 <div class="md-actions" ng-if="!document.busy">
-    <md-checkbox ng-model="options.force" >
+    <md-checkbox aria-label="" ng-model="options.force" >
         {{'FORCE'|translate}}
     </md-checkbox>
-    <md-button  ng-click="download()" class="md-primary md-raised">
+    <md-button aria-label="" ng-click="download()" class="md-primary md-raised">
         <i class="fa fa-download"></i> {{'DOWNLOAD' | translate}}
     </md-button>
-    <md-button ng-if="!document.isReleased && !document.checkoutUser"  ng-click="checkout()"
+    <md-button aria-label="" ng-if="!document.isReleased && !document.checkoutUser"  ng-click="checkout()"
                class="md-primary md-raised">
         <i class="fa fa-sign-out"></i> {{'CHECKOUT' | translate}}
     </md-button>
-    <md-button ng-if="document.checkoutUser === configuration.user"  ng-click="checkin()"
+    <md-button aria-label="" ng-if="document.checkoutUser === configuration.user"  ng-click="checkin()"
                class="md-primary md-raised">
         <i class="fa fa-sign-in"></i> {{'CHECKIN' | translate}}
     </md-button>
-    <md-button ng-if="document.checkoutUser === configuration.user && document.iterations.length > 1" ng-click="undoCheckout()"
+    <md-button aria-label="" ng-if="document.checkoutUser === configuration.user && document.iterations.length > 1" ng-click="undoCheckout()"
                class="md-primary">
         <i class="fa fa-remove"></i> {{'UNDO_CHECKOUT' | translate}}
     </md-button>

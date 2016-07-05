@@ -22,26 +22,26 @@
         </option>
     </select>
 
-    <md-checkbox ng-model="options.force" >
+    <md-checkbox aria-label="" ng-model="options.force" >
         {{'FORCE'|translate}}
     </md-checkbox>
-    <md-checkbox ng-model="options.recursive" >
+    <md-checkbox aria-label="" ng-model="options.recursive" >
         {{'RECURSIVE'|translate}}
     </md-checkbox>
 </div>
 <div class="md-actions" ng-if="!part.busy">
-    <md-button  ng-click="download()" class="md-primary md-raised">
+    <md-button aria-label="" ng-click="download()" class="md-primary md-raised">
         {{'DOWNLOAD' | translate}}
     </md-button>
-    <md-button ng-if="!part.isReleased && !part.checkoutUser"  ng-click="checkout()"
+    <md-button aria-label="" ng-if="!part.isReleased && !part.checkoutUser"  ng-click="checkout()"
                class="md-primary md-raised">
         {{'CHECKOUT' | translate}}
     </md-button>
-    <md-button ng-if="part.checkoutUser === configuration.user"  ng-click="checkin()"
+    <md-button aria-label="" ng-if="part.checkoutUser === configuration.user"  ng-click="checkin()"
                class="md-primary md-raised">
         {{'CHECKIN' | translate}}
     </md-button>
-    <md-button ng-if="part.checkoutUser === configuration.user" ng-click="undoCheckout()"
+    <md-button aria-label="" ng-if="part.checkoutUser === configuration.user" ng-click="undoCheckout()"
                class="md-primary md-raised">
         {{'UNDO_CHECKOUT' | translate}}
     </md-button>
