@@ -20,8 +20,11 @@
 
 package com.docdoku.cli.helpers;
 
+import javax.json.*;
 import java.io.*;
+import java.util.Enumeration;
 import java.util.Properties;
+import java.util.Set;
 
 public class MetaDirectoryManager {
 
@@ -30,7 +33,7 @@ public class MetaDirectoryManager {
 
 
     private static final String META_DIRECTORY_NAME = ".dplm";
-    private static final String INDEX_FILE_NAME = "index.xml";
+    private static final String INDEX_FILE_NAME = "index.json";
 
     private static final String PART_NUMBER_PROP = "partNumber";
     private static final String REVISION_PROP = "revision";
@@ -45,16 +48,8 @@ public class MetaDirectoryManager {
         if(!metaDirectory.exists()) {
             metaDirectory.mkdir();
         }
-
         File indexFile = new File(metaDirectory,INDEX_FILE_NAME);
-        indexProps = new Properties();
-        if(indexFile.exists()){
-            try{
-                indexProps.loadFromXML(new BufferedInputStream(new FileInputStream(indexFile)));
-            }catch(IOException ex){
-                indexFile.delete();
-            }
-        }
+        indexProps = loadPropertiesFromIndexFile(indexFile);
     }
 
     private void saveIndex() throws IOException {
@@ -62,9 +57,9 @@ public class MetaDirectoryManager {
         if(!indexFile.exists()) {
             indexFile.createNewFile();
         }
-
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(indexFile));
-        indexProps.storeToXML(out, null);
+        JsonWriter writer = Json.createWriter(new FileOutputStream(indexFile));
+        writer.write(getPropertiesAsJsonObject());
+        writer.close();
     }
 
     public void setPartNumber(String filePath, String partNumber) throws IOException {
@@ -143,5 +138,40 @@ public class MetaDirectoryManager {
 
     public boolean isPartRelated(String filePath) {
         return getPartNumber(filePath) != null;
+    }
+
+    private JsonObject getPropertiesAsJsonObject(){
+        JsonObjectBuilder json = Json.createObjectBuilder();
+        Enumeration keys = indexProps.keys();
+        while (keys.hasMoreElements()) {
+            String key = (String)keys.nextElement();
+            String value = (String)indexProps.get(key);
+            json.add(key,value);
+        }
+        return json.build();
+    }
+
+    private Properties loadPropertiesFromIndexFile(File file) {
+
+        Properties props = new Properties();
+
+        if(!file.exists()) {
+            return props;
+        }
+
+        try{
+            JsonReader reader = Json.createReader(new FileInputStream(file));
+            JsonObject json = reader.readObject();
+            Set<String> keys = json.keySet();
+            for(String key : keys){
+                props.setProperty(key,json.getString(key));
+            }
+            return props;
+
+        } catch(IOException ex){
+            file.delete();
+            return props;
+        }
+
     }
 }
