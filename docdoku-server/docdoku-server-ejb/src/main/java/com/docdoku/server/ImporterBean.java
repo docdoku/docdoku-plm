@@ -88,7 +88,7 @@ public class ImporterBean implements IImporterManagerLocal {
     }
 
     @Override
-    public ImportPreview getCheckoutPartToImport(String workspaceId, File file, String originalFileName) throws Exception {
+    public ImportPreview dryRunCheckout(String workspaceId, File file, String originalFileName) throws Exception {
 
         PartImporter selectedImporter = null;
 
@@ -103,7 +103,7 @@ public class ImporterBean implements IImporterManagerLocal {
 
         if (selectedImporter != null) {
             result = new ImportPreview();
-            result.setPartRevisions(selectedImporter.getCheckoutPartToImport(workspaceId,file,originalFileName));
+            result.setPartRevisions(selectedImporter.dryRunCheckout(workspaceId,file,originalFileName));
         }
 
         return result;

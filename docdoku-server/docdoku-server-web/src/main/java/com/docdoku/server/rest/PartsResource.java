@@ -415,7 +415,7 @@ public class PartsResource {
     @Path("importPreview")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public List<LightPartRevisionDTO> getCheckoutPartToImport(@Context HttpServletRequest request,@PathParam("workspaceId") String workspaceId) throws Exception {
+    public List<LightPartRevisionDTO> dryRunCheckout(@Context HttpServletRequest request,@PathParam("workspaceId") String workspaceId) throws Exception {
 
         Collection<Part> parts = request.getParts();
 
@@ -429,7 +429,7 @@ public class PartsResource {
 
         File importFile = Files.createTempFile("part-" + name, "-import.tmp" +  (extension==null?"":"." + extension)).toFile();
         long length = BinaryResourceUpload.uploadBinary(new BufferedOutputStream(new FileOutputStream(importFile)), part);
-        ImportPreview importPreview = importerService.getCheckoutPartToImport(workspaceId,importFile,name+"."+extension);
+        ImportPreview importPreview = importerService.dryRunCheckout(workspaceId,importFile,name+"."+extension);
 
         importFile.deleteOnExit();
 
