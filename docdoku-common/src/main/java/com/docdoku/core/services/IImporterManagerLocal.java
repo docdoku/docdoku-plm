@@ -19,6 +19,7 @@
  */
 package com.docdoku.core.services;
 
+import com.docdoku.core.product.ImportPreview;
 import com.docdoku.core.product.ImportResult;
 
 import java.io.File;
@@ -33,5 +34,7 @@ public interface IImporterManagerLocal {
 
     Future<ImportResult> importIntoParts(String workspaceId, File file, String originalFileName, String revisionNote, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate) throws Exception;
     Future<ImportResult>  importIntoPathData(String workspaceId, File file, String originalFileName, String revisionNote, boolean autoFreezeAfterUpdate, boolean permissiveUpdate) throws Exception;
+    ImportPreview dryRunCheckout(String workspaceId, File file, String originalFileName) throws Exception;
+
 
 }

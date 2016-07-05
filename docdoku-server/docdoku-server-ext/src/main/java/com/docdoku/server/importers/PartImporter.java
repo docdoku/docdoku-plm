@@ -21,12 +21,15 @@
 package com.docdoku.server.importers;
 
 import com.docdoku.core.product.ImportResult;
+import com.docdoku.core.product.PartRevision;
 
 import java.io.File;
+import java.util.List;
 
 public interface PartImporter {
 
     ImportResult importFile(String workspaceId, File file, String revisionNote, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate);
     boolean canImportFile(String importFileName);
+    List<PartRevision> dryRunCheckout(String workspaceId, File file, String originalFileName);
 
 }

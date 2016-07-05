@@ -21,6 +21,7 @@
 package com.docdoku.server;
 
 
+import com.docdoku.core.product.ImportPreview;
 import com.docdoku.core.product.ImportResult;
 import com.docdoku.core.services.IImporterManagerLocal;
 import com.docdoku.server.importers.PartImporter;
@@ -104,6 +105,29 @@ public class ImporterBean implements IImporterManagerLocal {
         }
 
         return new AsyncResult<>(result);
+    }
+
+    @Override
+    public ImportPreview dryRunCheckout(String workspaceId, File file, String originalFileName) throws Exception {
+
+        PartImporter selectedImporter = null;
+
+        for (PartImporter importer : partImporters) {
+            if (importer.canImportFile(file.getName())) {
+                selectedImporter = importer;
+                break;
+            }
+        }
+
+        ImportPreview result = null;
+
+        if (selectedImporter != null) {
+            result = new ImportPreview();
+            result.setPartRevisions(selectedImporter.dryRunCheckout(workspaceId,file,originalFileName));
+        }
+
+        return result;
+
     }
 
     public ImportResult getNoImporterAvailableError(File file, String fileName) {
