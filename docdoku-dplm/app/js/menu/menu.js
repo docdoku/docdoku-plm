@@ -6,7 +6,7 @@ angular.module('dplm.menu', [])
             scope:false
         };
     })
-    .controller('MenuController', function ($scope,$filter,FolderService,ConfigurationService,WorkspaceService) {
+    .controller('MenuController', function ($scope,$filter, FolderService,ConfigurationService,WorkspaceService) {
         $scope.workspaces = WorkspaceService.workspaces;
 
         function buildMenu(){

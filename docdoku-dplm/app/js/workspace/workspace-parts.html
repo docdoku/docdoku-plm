@@ -35,9 +35,9 @@
                     <i class="fa fa-check fa-lg" ng-show="part.isReleased"></i>
                     <i class="fa fa-eye fa-lg" ng-show="!part.isReleased
           && !part.checkoutUser"></i>
-                    <i class="fa fa-pencil fa-lg" ng-show="part.checkoutUser === configuration.user"></i>
+                    <i class="fa fa-pencil fa-lg" ng-show="part.checkoutUser === configuration.login"></i>
                     <i class="fa fa-lock"
-                       ng-show="part.checkoutUser && part.checkoutUser !== configuration.user"></i>
+                       ng-show="part.checkoutUser && part.checkoutUser !== configuration.login"></i>
                 </div>
 
                 <div class="md-tile-content">

@@ -9,9 +9,9 @@
             <i class="fa fa-check" ng-show="file.document && file.document.isReleased"></i>
             <i class="fa fa-eye" ng-show="file.document && !file.document.isReleased && !file.document.checkoutUser"></i>
             <i class="fa fa-pencil"
-               ng-show="file.document && file.document.checkoutUser === configuration.user"></i>
+               ng-show="file.document && file.document.checkoutUser === configuration.login"></i>
             <i class="fa fa-lock"
-               ng-show="file.document && file.document.checkoutUser && file.document.checkoutUser !== configuration.user"></i>
+               ng-show="file.document && file.document.checkoutUser && file.document.checkoutUser !== configuration.login"></i>
 
             {{file.path | fileshortname}}
             <small class="subtitle" ng-if="file.document.id">

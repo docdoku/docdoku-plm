@@ -129,11 +129,11 @@
                         return false;
                     }
 
-                    if (!filters.checkedOut && part.checkoutUser && part.checkoutUser !== ConfigurationService.configuration.user) {
+                    if (!filters.checkedOut && part.checkoutUser && part.checkoutUser !== ConfigurationService.configuration.login) {
                         return false;
                     }
 
-                    if (!filters.checkedOutByMe && part.checkoutUser && part.checkoutUser === ConfigurationService.configuration.user) {
+                    if (!filters.checkedOutByMe && part.checkoutUser && part.checkoutUser === ConfigurationService.configuration.login) {
                         return false;
                     }
 

@@ -24,11 +24,11 @@
                class="md-primary md-raised">
         <i class="fa fa-sign-out"></i> {{'CHECKOUT' | translate}}
     </md-button>
-    <md-button aria-label="" ng-if="document.checkoutUser === configuration.user"  ng-click="checkin()"
+    <md-button aria-label="" ng-if="document.checkoutUser === configuration.login"  ng-click="checkin()"
                class="md-primary md-raised">
         <i class="fa fa-sign-in"></i> {{'CHECKIN' | translate}}
     </md-button>
-    <md-button aria-label="" ng-if="document.checkoutUser === configuration.user && document.iterations.length > 1" ng-click="undoCheckout()"
+    <md-button aria-label="" ng-if="document.checkoutUser === configuration.login && document.iterations.length > 1" ng-click="undoCheckout()"
                class="md-primary">
         <i class="fa fa-remove"></i> {{'UNDO_CHECKOUT' | translate}}
     </md-button>

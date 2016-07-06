@@ -5,19 +5,32 @@
         </h1>
     </div>
     <div>
-        <md-button class="md-icon-button" aria-label="{{'SETTINGS' | translate }}" href="#/settings">
-            <md-icon md-svg-icon="img/more_vert.svg"></md-icon>
-            <md-tooltip>
-                {{'SETTINGS' | translate }}
-            </md-tooltip>
-        </md-button>
+        <md-menu>
+            <md-button aria-label="{{'MENU'}}" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                <md-icon md-svg-icon="img/more_vert.svg"></md-icon>
+            </md-button>
+
+            <md-menu-content width="4">
+                <md-menu-item>
+                    <md-button aria-label="{{'SETTINGS'|translate}}" href="#/settings">
+                        {{'SETTINGS'|translate}}
+                    </md-button>
+                </md-menu-item>
+                <md-menu-item>
+                    <md-button aria-label="{{'LOGOUT'|translate}}" ng-click="logout()">
+                        {{'LOGOUT'|translate}}
+                    </md-button>
+                </md-menu-item>
+
+            </md-menu-content>
+        </md-menu>
     </div>
 </md-toolbar>
 
 <md-content layout-padding>
 <!--
    <p>
-       <b>{{configuration.user}}</b>@<b>{{configuration.host}}</b>
+       <b>{{configuration.login}}</b>@<b>{{configuration.host}}</b>
    </p>-->
 
     <ul class="menu">

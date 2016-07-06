@@ -97,7 +97,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password
                 ];
 
@@ -112,7 +112,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password
                 ];
 
@@ -126,7 +126,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     file.path
                 ];
@@ -160,7 +160,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', part.workspace,
                     '-o', part.partNumber,
@@ -180,7 +180,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', part.workspace,
                     '-o', part.partNumber,
@@ -211,7 +211,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', part.workspace,
                     '-o', part.partNumber,
@@ -238,7 +238,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', part.workspace,
                     '-o', part.partNumber,
@@ -255,7 +255,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', part.workspace,
                     '-o', part.partNumber,
@@ -286,7 +286,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', workspace
                 ];
@@ -304,7 +304,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', part.workspace,
                     '-o', part.partNumber
@@ -336,7 +336,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', workspace,
                     '-c'
@@ -353,7 +353,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-s', Number(start).toString(),
                     '-m', Number(max).toString(),
@@ -371,7 +371,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', workspace,
                     '-s', search
@@ -386,7 +386,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', part.workspace,
                     '-o', part.partNumber,
@@ -403,7 +403,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', part.workspace,
                     '-o', part.partNumber,
@@ -425,7 +425,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', workspace
                 ];
@@ -444,7 +444,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', workspace
                 ];
@@ -463,7 +463,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', workspace,
                     '-c'
@@ -479,7 +479,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', document.workspace,
                     '-o', document.id,
@@ -502,7 +502,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', document.workspace,
                     '-o', document.id,
@@ -522,7 +522,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', document.workspace,
                     '-o', document.id,
@@ -546,7 +546,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', document.workspace,
                     '-o', document.id,
@@ -573,7 +573,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', document.workspace,
                     '-o', document.id,
@@ -590,7 +590,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', workspace
                 ];
@@ -608,7 +608,7 @@
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
-                    '-u', configuration.user,
+                    '-u', configuration.login,
                     '-p', configuration.password,
                     '-w', document.workspace,
                     '-o', document.id

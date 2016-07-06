@@ -25,8 +25,11 @@
         'dplm.home',
         'dplm.settings',
         'dplm.workspace',
-
         'dplm.folder',
+
+        // login dialog
+        'dplm.login',
+
         // Components
         'dplm.services.cli',
         'dplm.services.configuration',
@@ -37,6 +40,8 @@
         'dplm.services.confirm',
         'dplm.services.prompt',
         'dplm.services.output',
+        'dplm.services.auth',
+        'dplm.services.api',
 
         'dplm.services.3d',
         'dplm.directives.filechange',
@@ -54,7 +59,6 @@
     ])
 
         .config(function ($routeProvider,$mdThemingProvider,$compileProvider) {
-            $routeProvider.otherwise('/');
 
             $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
 
@@ -65,25 +69,55 @@
             $mdThemingProvider.theme('default')
                 .primaryPalette('dplm-palette')
                 .accentPalette('blue');
+
+            $routeProvider.otherwise('/');
         })
 
-        .controller('AppCtrl', function ($scope, $location, $mdSidenav, $filter, NotificationService, ConfigurationService, CliService, WorkspaceService, FolderService) {
+        .controller('AppCtrl', function ($scope, $location, $mdMedia, $mdDialog, $mdSidenav, $filter,
+                                         AuthService, NotificationService, ConfigurationService, CliService, WorkspaceService, FolderService) {
 
             $scope.title = 'DocDoku DPLM';
+
+            $scope.user = AuthService.user;
+            $scope.configuration = ConfigurationService.configuration;
+            $scope.workspaces = WorkspaceService.workspaces;
+            $scope.folders = FolderService.folders;
+
+            var showLoginPage = function(data){
+
+                if(data){
+                    console.error(arguments)
+                }
+
+                $mdDialog.show({
+                    templateUrl: 'js/login/login.html',
+                    clickOutsideToClose:false,
+                    fullscreen: true,
+                    controller:'LoginCtrl'
+                });
+
+            };
+
+            if(ConfigurationService.hasAuth()){
+                AuthService.login().then(null, showLoginPage);
+            }else{
+                showLoginPage();
+            }
+
+            $scope.logout = function(){
+                AuthService.logout().then(showLoginPage);
+            };
 
             $scope.openMenu = function () {
                 $mdSidenav('menu').open();
             };
-
-            $scope.configuration = ConfigurationService.configuration;
-            $scope.workspaces = WorkspaceService.workspaces;
-            $scope.folders = FolderService.folders;
 
             $scope.addFolder = function ($event, files) {
                 if (files && files.length === 1) {
                     FolderService.add(files[0].path);
                 }
             };
+
 
             $scope.isSelectedWorkspace = function(workspace){
                 var currentParts = $location.path().split('/');
@@ -94,6 +128,7 @@
                 var currentParts = $location.path().split('/');
                 return currentParts[1] === 'folder'  && folderUuid === currentParts[2];
             };
+
         });
 
 })();

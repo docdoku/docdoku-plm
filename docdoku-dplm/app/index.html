@@ -27,8 +27,8 @@
 </head>
 <body>
 
-    <div layout="column" layout-fill>
-        <section layout="row" flex >
+    <div layout="column" layout-fill ng-if="user.login">
+        <section layout="row" flex>
             <md-sidenav class="md-sidenav-left dplm-sidenav"
                         md-component-id="menu"
                         md-is-locked-open="$mdMedia('gt-sm')"
@@ -80,8 +80,11 @@
     <script src="js/components/join.js"></script>
     <script src="js/components/output/output.js"></script>
     <script src="js/components/file-size.js"></script>
+    <script src="js/components/auth.js"></script>
+    <script src="js/components/docdoku-api.js"></script>
 
     <script src="js/home/home.js"></script>
+    <script src="js/login/login.js"></script>
     <script src="js/workspace/workspace.js"></script>
     <script src="js/workspace/workspace-documents.js"></script>
     <script src="js/workspace/workspace-parts.js"></script>

@@ -9,9 +9,9 @@
             <i class="fa fa-check" ng-show="file.part && file.part.isReleased"></i>
             <i class="fa fa-eye" ng-show="file.part && !file.part.isReleased && !file.part.checkoutUser"></i>
             <i class="fa fa-pencil"
-               ng-show="file.part && file.part.checkoutUser === configuration.user"></i>
+               ng-show="file.part && file.part.checkoutUser === configuration.login"></i>
             <i class="fa fa-lock"
-               ng-show="file.part && file.part.checkoutUser && file.part.checkoutUser !== configuration.user"></i>
+               ng-show="file.part && file.part.checkoutUser && file.part.checkoutUser !== configuration.login"></i>
 
             {{file.path | fileshortname}}
             <small class="cad-file-name" ng-if="file.part.partNumber">

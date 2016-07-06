@@ -11,6 +11,7 @@
         })
 
         .controller('SettingsController', function ($scope, $location, $translate, ConfigurationService, WorkspaceService) {
+
             $scope.configuration = ConfigurationService.configuration;
             $scope.output = WorkspaceService.output;
 
@@ -20,11 +21,6 @@
                 WorkspaceService.reset();
                 $location.path('home');
             };
-
-            $scope.onSslChange = function() {
-                $scope.configuration.port = $scope.configuration.ssl === true ? 443 : $scope.configuration.port;
-            };
-
 
         });
 })();

@@ -37,11 +37,11 @@
                class="md-primary md-raised">
         {{'CHECKOUT' | translate}}
     </md-button>
-    <md-button aria-label="" ng-if="part.checkoutUser === configuration.user"  ng-click="checkin()"
+    <md-button aria-label="" ng-if="part.checkoutUser === configuration.login"  ng-click="checkin()"
                class="md-primary md-raised">
         {{'CHECKIN' | translate}}
     </md-button>
-    <md-button aria-label="" ng-if="part.checkoutUser === configuration.user" ng-click="undoCheckout()"
+    <md-button aria-label="" ng-if="part.checkoutUser === configuration.login" ng-click="undoCheckout()"
                class="md-primary md-raised">
         {{'UNDO_CHECKOUT' | translate}}
     </md-button>

@@ -9,15 +9,15 @@
     class="md-raised md-primary">
     {{'CHECKOUT' | translate}}
     </md-button>
-    <md-button aria-label="{{'CHECKIN' | translate}}" ng-if="file.document.checkoutUser === configuration.user"  ng-click="checkin()"
+    <md-button aria-label="{{'CHECKIN' | translate}}" ng-if="file.document.checkoutUser === configuration.login"  ng-click="checkin()"
     class="md-raised md-primary">
     {{'CHECKIN' | translate}}
     </md-button>
-    <md-button aria-label="{{'UNDO_CHECKOUT' | translate}}" ng-if="file.document.checkoutUser === configuration.user"  ng-click="undoCheckout()"
+    <md-button aria-label="{{'UNDO_CHECKOUT' | translate}}" ng-if="file.document.checkoutUser === configuration.login"  ng-click="undoCheckout()"
     class="md-raised md-primary">
     {{'UNDO_CHECKOUT' | translate}}
     </md-button>
-    <md-button aria-label="{{'PUT' | translate}}" ng-if="file.document.checkoutUser === configuration.user"  ng-click="put()" class="md-raised md-primary">
+    <md-button aria-label="{{'PUT' | translate}}" ng-if="file.document.checkoutUser === configuration.login"  ng-click="put()" class="md-raised md-primary">
     {{'PUT' | translate}}
     </md-button>
 </div>

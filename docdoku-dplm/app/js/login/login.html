@@ -1,0 +1,50 @@
+<md-content layout-padding>
+    <div>
+        <p class="md-headline">
+             {{'GREETINGS' | translate}}
+        </p>
+        <span class="md-subhead description">
+             {{'PLEASE_LOG_IN' | translate}}
+        </span>
+    </div>
+
+    <div class="output" ng-if="error">
+        {{error}}
+    </div>
+
+    <md-content layout-gt-sm="row" layout-padding>
+        <form ng-submit="connect()">
+            <div>
+                <md-input-container>
+                    <label>{{'USER' | translate}}</label>
+                    <input ng-model="configuration.login" required>
+                </md-input-container>
+                <md-input-container>
+                    <label>{{'PASSWORD' | translate}}</label>
+                    <input ng-model="configuration.password" type="password" required>
+                </md-input-container>
+            </div>
+            <div>
+                <md-input-container>
+                    <label>{{'HOST' | translate}}</label>
+                    <input ng-model="configuration.host" required>
+                </md-input-container>
+                <md-input-container>
+                    <label>{{'PORT' | translate}}</label>
+                    <input ng-model="configuration.port" type="number" required>
+                </md-input-container>
+                <md-input-container>
+                    <md-checkbox ng-model="configuration.ssl" aria-label="{{'SSL'|translate}}">
+                        {{'SSL'|translate}}
+                    </md-checkbox>
+                </md-input-container>
+            </div>
+
+            <div>
+                <md-button type="submit" aria-label="" class="md-raised md-primary">{{'CONNECT'|translate}}
+                </md-button>
+            </div>
+
+        </form>
+    </md-content>
+</md-content>
