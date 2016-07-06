@@ -5,10 +5,10 @@
     <div flex layout="row">
         {{section.name}}
         <span flex></span>
-    <span aria-hidden="true" class="md-toggle-icon"
-          ng-class="{'toggled' : isOpened(section)}">
-      <md-icon md-svg-icon="md-toggle-arrow"></md-icon>
-    </span>
+      <md-icon class="md-toggle-icon"
+               ng-class="{'toggled' : isOpened(section)}"
+               md-svg-icon="md-toggle-arrow">
+      </md-icon>
     </div>
   <span class="md-visually-hidden">
     Toggle {{isOpened(section) ? 'expanded' : 'collapsed'}}

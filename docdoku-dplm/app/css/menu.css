@@ -69,29 +69,6 @@ body[dir=rtl] .menu .md-button {
 	color: white;
 }
 
-.menu md-select {
-
-	/* Override md-select margins.  With margins the menu will look incorrect and causes mobile list
-       to not be scrollable.
-     */
-	margin: 0;
-	width: 100%;
-}
-
-.menu md-select md-select-label {
-	justify-content: flex-end;
-	padding-top: 10px;
-}
-
-.menu md-select md-select-label span {
-	margin-right: auto;
-	padding-left: 13px;
-}
-
-.menu md-select .md-select-icon {
-	margin-right: 28px;
-}
-
 .menu button.md-button::-moz-focus-inner {
 	padding: 0;
 }
