@@ -171,7 +171,7 @@ define([
                 this.checkboxAutoCheckin.prop('disabled', false);
             } else {
                 this.checkboxAutoCheckin.prop('disabled', true);
-                this.checkboxAutoCheckin.is('checked', false);
+                this.checkboxAutoCheckin.prop('checked', false);
             }
         },
 
@@ -183,13 +183,13 @@ define([
             this.autocheckout = this.checkboxAutoCheckout.is(':checked');
             this.permissive = this.$('#permissive_update_part').is(':checked');
             this.revisionNote = this.$('#revision_text_part').val().trim();
-            debugger;
+
             this.options = this.autocheckin || this.autocheckout || this.permissive || this.revisionNote!== "";
 
             if (this.file) {
 
                 if (this.autocheckout) {
-                    var previewUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/importPreview+';
+                    var previewUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/importPreview';
 
                     var xhr = new XMLHttpRequest();
                     xhr.open('POST', previewUrl, true);
