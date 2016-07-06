@@ -56,7 +56,13 @@
 
     {{#importPreview}}
 
-    <h2>{{i18n.CONFIRM_IMPORT}} ?</h2>
+    {{#options}}
+    <h5>{{i18n.CONFIRM_IMPORT_WITH_OPTION}}</h5>
+    {{/options}}
+    {{^options}}
+    <h5>{{i18n.CONFIRM_IMPORT}} ?</h5>
+    {{/options}}
+
     {{#checkout}}
     <p>{{i18n.AUTO_CHECKOUT}}</p>
     {{/checkout}}

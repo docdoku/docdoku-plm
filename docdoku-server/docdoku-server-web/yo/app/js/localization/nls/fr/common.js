@@ -94,7 +94,7 @@ define({
 	CONFIGURATION: "Configuration",
 	CONFIGURATIONS: "Configurations",
 	CONFIRM: "Confirmer",
-    CONFIRM_IMPORT:"Confirmer import",
+    CONFIRM_IMPORT:"Confirmer l'import",
     CONFIRM_IMPORT_WITH_OPTION:"Confirmer l'import avec les options suivantes :",
 	CONFIRM_PASSWORD: "Confirmer le mot de passe",
 	CONNECTED: "Connecté",

@@ -127,7 +127,8 @@ define([
                 permissive: this.permissive,
                 revisionNote: this.revisionNote,
                 partList:this.partCheckoutList,
-                i18n: App.config.i18n
+                i18n: App.config.i18n,
+                options:this.options
             }));
 
             //this.delegateEvents();
@@ -182,11 +183,13 @@ define([
             this.autocheckout = this.checkboxAutoCheckout.is(':checked');
             this.permissive = this.$('#permissive_update_part').is(':checked');
             this.revisionNote = this.$('#revision_text_part').val().trim();
+            debugger;
+            this.options = this.autocheckin || this.autocheckout || this.permissive || this.revisionNote!== "";
 
             if (this.file) {
 
                 if (this.autocheckout) {
-                    var previewUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/importPreview';
+                    var previewUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/importPreview+';
 
                     var xhr = new XMLHttpRequest();
                     xhr.open('POST', previewUrl, true);
