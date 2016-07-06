@@ -194,10 +194,17 @@ define([
                     var xhr = new XMLHttpRequest();
                     xhr.open('POST', previewUrl, true);
                     var formData = new window.FormData();
+                    var _this = this;
+                    xhr.onreadystatechange = function() {
+                        if(xhr.readyState == 4 && xhr.status == 200){
+                            _this.partCheckoutList = jQuery.parseJSON(xhr.response);
+                            _this.importForm = false;
+                            _this.importPreview = true;
+                            _this.rerender();
+                        }
+                    };
                     formData.append('upload', this.file);
                     xhr.send(formData);
-                    this.partCheckoutList = xhr.response;
-
                 }
 
                 this.importForm = false;

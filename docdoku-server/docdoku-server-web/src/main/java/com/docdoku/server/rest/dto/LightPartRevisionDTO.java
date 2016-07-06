@@ -6,15 +6,15 @@ package com.docdoku.server.rest.dto;
 public class LightPartRevisionDTO {
 
     private String workspaceId;
-    private String number;
+    private String partNumber;
     private String version;
 
     public LightPartRevisionDTO() {
     }
 
-    public LightPartRevisionDTO(String workspaceId, String number, String version){
+    public LightPartRevisionDTO(String workspaceId, String partNumber, String version){
         this.workspaceId = workspaceId;
-        this.number = number;
+        this.partNumber = partNumber;
         this.version = version;
     }
 
@@ -26,12 +26,12 @@ public class LightPartRevisionDTO {
         this.workspaceId = workspaceId;
     }
 
-    public String getNumber() {
-        return number;
+    public String getPartNumber() {
+        return partNumber;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    public void setPartNumber(String partNumber) {
+        this.partNumber = partNumber;
     }
 
     public String getVersion() {

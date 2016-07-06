@@ -66,10 +66,15 @@
     {{#checkout}}
     <p>{{i18n.AUTO_CHECKOUT}}</p>
     {{/checkout}}
+
+    {{#partList.length}}
+    <p>{{i18n.CHECKOUT_PART_LIST}}</p><ul>
     {{#partList}}
-    <p>{{i18n.CHECKOUT_PART_LIST}}</p>
-    {{number}}
+    <li>{{partNumber}}</li>
     {{/partList}}
+    </ul>
+    {{/partList.length}}
+
     {{#checkin}}
     <p>{{i18n.AUTO_CHECKIN}}</p>
     {{/checkin}}
