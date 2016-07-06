@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "author": "",
+  "main":"lib/docdoku-api.js",
   "directories": {
     "example": "example"
   },
