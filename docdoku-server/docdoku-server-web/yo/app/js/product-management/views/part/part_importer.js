@@ -186,11 +186,14 @@ define([
             if (this.file) {
 
                 if (this.autocheckout) {
-                    var previewUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/import';
+                    var previewUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/importPreview';
 
-                    $.get(previewUrl, {upload : this.file }, function(data){
-                        this.partCheckoutList = data;
-                    });
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', previewUrl, true);
+                    var formData = new window.FormData();
+                    formData.append('upload', this.file);
+                    xhr.send(formData);
+                    this.partCheckoutList = xhr.response;
 
                 }
 
