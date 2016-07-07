@@ -50,7 +50,6 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import javax.ws.rs.*;
@@ -61,7 +60,6 @@ import javax.ws.rs.core.UriInfo;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 
@@ -417,7 +415,12 @@ public class PartsResource {
     @Path("importPreview")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public List<LightPartRevisionDTO> dryRunCheckout(@Context HttpServletRequest request,@PathParam("workspaceId") String workspaceId) throws Exception {
+    public List<LightPartRevisionDTO> getImportPreview(@Context HttpServletRequest request,
+                                                     @PathParam("workspaceId") String workspaceId,
+                                                     @QueryParam("autoCheckout") boolean autoCheckout,
+                                                     @QueryParam("autoCheckin") boolean autoCheckin,
+                                                     @QueryParam("permissiveUpdate") boolean permissiveUpdate)
+            throws Exception {
 
         Collection<Part> parts = request.getParts();
 
@@ -431,12 +434,12 @@ public class PartsResource {
 
         File importFile = Files.createTempFile("part-" + name, "-import.tmp" +  (extension==null?"":"." + extension)).toFile();
         long length = BinaryResourceUpload.uploadBinary(new BufferedOutputStream(new FileOutputStream(importFile)), part);
-        ImportPreview importPreview = importerService.dryRunCheckout(workspaceId,importFile,name+"."+extension);
+        ImportPreview importPreview = importerService.dryRunImportIntoParts(workspaceId,importFile,name+"."+extension,autoCheckout, autoCheckin, permissiveUpdate);
 
         importFile.deleteOnExit();
 
         List<LightPartRevisionDTO> result = new ArrayList<>();
-        for(PartRevision partRevision : importPreview.getPartRevisions()){
+        for(PartRevision partRevision : importPreview.getPartRevsToCheckout()){
             result.add(mapper.map(partRevision,LightPartRevisionDTO.class));
         }
 

@@ -189,8 +189,15 @@ define([
             if (this.file) {
 
                 if (this.autocheckout) {
-                    var previewUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/importPreview';
 
+                    var params = {
+                        autoCheckout: this.autocheckout,
+                        autoCheckin: this.autocheckin,
+                        permissiveUpdate: this.permissive
+                    };
+
+                    var previewBaseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/importPreview';
+                    var previewUrl = previewBaseUrl + '?' + $.param(params);
                     var xhr = new XMLHttpRequest();
                     xhr.open('POST', previewUrl, true);
                     var formData = new window.FormData();
