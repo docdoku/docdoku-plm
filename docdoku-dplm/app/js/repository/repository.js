@@ -62,11 +62,11 @@
             };
 
             this.getRepositoryIndex = function(repository){
-                return $q(function(resolve,reject) {
+                return $q(function(resolve) {
                     try{
                         resolve($window.require(repository+'/.dplm/index.json'));
                     }catch(e){
-                        reject(e);
+                        resolve({});
                     }
                 });
             };

@@ -1,23 +1,25 @@
-<md-toolbar>
-    <div class="md-toolbar-tools">
-        <md-button class="md-icon-button" hide-gt-sm aria-label="{{'MENU' | translate}}" ng-click="openMenu()">
-            <i class="fa fa-bars"></i>
-        </md-button>
-        <h2>
-          <span>
-              <i class="fa fa-home"></i> {{'HOME' | translate}}
-            </span>
-        </h2>
-    </div>
-</md-toolbar>
-<div layout="column" class="settings">
+<div layout-fill layout="column">
 
-    <md-content layout-padding>
+    <md-toolbar md-scroll-shrink>
+        <div class="md-toolbar-tools">
+            <md-button class="md-icon-button" hide-gt-sm aria-label="{{'MENU' | translate}}" ng-click="openMenu()">
+                <i class="fa fa-bars"></i>
+            </md-button>
+            <h2>
+              <span>
+                  <i class="fa fa-home"></i> {{'HOME' | translate}}
+                </span>
+            </h2>
+        </div>
+    </md-toolbar>
+
+    <md-content flex>
 
         <h3>
             <i class="fa fa-star favorite"></i>
             {{'FAVORITE_FOLDERS' | translate}}
         </h3>
+
         <md-list>
             <md-list-item ng-if="!folders.length">
                     {{'NO_FOLDERS' | translate}}

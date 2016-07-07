@@ -39,13 +39,6 @@
     <span class="connected-as">
        <i class="fa fa-user"></i> {{configuration.login}}@{{configuration.host}}
     </span>
-</md-content>
-<md-content>
-<!--
-   <p>
-       <b>{{configuration.login}}</b>@<b>{{configuration.host}}</b>
-   </p>-->
-
     <ul class="menu">
         <li ng-repeat="section in menu.sections"
             class="parent-list-item {{section.className || ''}}"
@@ -54,73 +47,3 @@
         </li>
     </ul>
 </md-content>
-<!--
-
-<md-content layout-padding>
-    <div class="row menu-file-input-wrapper">
-       <h3 class="subtitle">
-        <i class="fa fa-folder-open"></i>
-        {{ 'FOLDERS' | translate }}
-        </h3>
-        <div class="file-input-container">
-            <md-button class="file-input md-raised md-primary" md-theme="default" aria-label="{{'ADD_FOLDER' | translate }}">
-                <input file-change="addFolder($event,files)" type="file" webkitdirectory/>
-                        <i class="fa fa-plus"></i>
-                        <md-tooltip>
-                            {{'ADD_FOLDER'|translate}}
-                        </md-tooltip>
-            </md-button>
-        </div>
-    </div>
-  <md-content class="menu-list" ng-class="{expanded: foldersExpanded}" droppable on-file-dropped="onFileDropped(path)">
-   <md-list>
-    <md-list-item ng-repeat="folder in folders | orderBy:'-favorite'" ng-controller="FolderMenuController">
-      <md-list-item-content>
-            <div class="md-tile-content small">
-                <md-button ng-class="{'md-raised':isSelectedFolder(folder.uuid)}"  href="#/folder/{{folder.uuid}}" class="md-primary">
-                  <i ng-if="isSelectedFolder(folder.uuid)" class="fa fa-folder-open"></i>
-                  <i ng-if="folder.newStuff" class="fa fa-download" title="{{'NEW_STUFF'|translate}}"></i>
-                  {{folder.path | fileshortname}}
-                    <md-tooltip>
-                        {{folder.path}}
-                    </md-tooltip>
-              </md-button>
-            </div>
-      </md-list-item-content>
-    </md-list-item>
-  </md-list>
-  </md-content>
-  <i class="list-toggle fa" ng-class="{'fa-caret-up': foldersExpanded,'fa-caret-down': !foldersExpanded}" ng-click="toggleFolders()"></i>
-
-  <h3 ng-if="configuration.host" class="subtitle" ng-controller="WorkspaceMenuController">
-    <i class="fa fa-globe"></i> 
-    {{ configuration.host + ':' + configuration.port }}
-    <md-button no-ink title="Refresh workspaces" ng-click="refreshWorkspaces()" class="right" >
-      <i class="fa fa-refresh"></i>
-      <md-tooltip>
-        {{'REFRESH_WORKSPACES'|translate}}
-      </md-tooltip>
-    </md-button>
-  </h3>
-
-  <md-content ng-if="configuration.host" class="menu-list" ng-class="{expanded: workspacesExpanded}">
-    <md-list>
-      <md-list-item ng-repeat="workspace in workspaces" ng-controller="WorkspaceMenuController">
-        <md-list-item-content
-          drag-enter-class="dropzone"
-          ui-on-drop="onDrop($data,$event)"
-          drag-hover-class="dropzone-selected">
-              <div class="md-tile-content small">
-                <md-button ng-class="{'md-raised': isSelectedWorkspace(workspace)}"  href="#/workspace/{{workspace}}" class="md-primary">
-                    <i ng-if="isSelectedWorkspace(workspace)" class="fa fa-globe"></i>
-                    {{workspace}}
-                </md-button>
-              </div>
-        </md-list-item-content>
-      </md-list-item>
-    </md-list>
-  </md-content>
-  <i ng-if="configuration.host" class="list-toggle fa" ng-class="{'fa-caret-up': workspacesExpanded,'fa-caret-down': !workspacesExpanded}" ng-click="toggleWorkspaces()"></i>
-
-
-</md-content>-->

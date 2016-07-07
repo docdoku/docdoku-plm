@@ -368,7 +368,6 @@
 
                     };
 
-
                     $scope.undoCheckout = function () {
                         $scope.file.busy = true;
                         CliService.undoCheckoutDocument($scope.file.document, onOutput).then(function () {
@@ -380,50 +379,30 @@
 
             };
         })
-        .directive('fileUnknownActions', function () {
+
+        .directive('outOfIndex', function () {
 
             return {
+                restrict:'A',
+                templateUrl: 'js/folder/out-of-index.html',
+                scope:{
+                    file:'=outOfIndex'
+                },
+                controller: function () {
 
-                templateUrl: 'js/folder/file-unknown-actions.html',
-                scope:false,
-                controller: function ($scope, $element, $attrs, $transclude, $timeout, $filter, CliService, WorkspaceService, NotificationService) {
+                }
 
-                    $scope.options = {force: true,recursive:true};
-                    $scope.workspaces = WorkspaceService.workspaces;
-                    $scope.newPart = {workspace: $scope.workspaces[0]};
-                    $scope.newDocument = {workspace: $scope.workspaces[0]};
+            };
+        })
+        .directive('inIndex', function () {
 
-                    $scope.form={
-                        selected:0,
-                        part:0,
-                        document:1
-                    };
-
-                    var onError = function(error){
-                        $scope.error = error;
-                    };
-
-                    $scope.output = [];
-
-                    var onOutput = function(o){
-                        $scope.output.push(o);
-                    };
-
-                    $scope.createPart = function () {
-                        $scope.file.busy = true;
-                        CliService.createPart($scope.newPart, $scope.file.path, onOutput).then(function () {
-                            $scope.newPart = {workspace: $scope.workspaces[0]};
-                            return $scope.fetchStatus();
-                        }, onError, $scope.onProgress).then($scope.onFinish);
-                    };
-
-                    $scope.createDocument = function () {
-                        $scope.file.busy = true;
-                        CliService.createDocument($scope.newDocument, $scope.file.path, onOutput).then(function () {
-                            $scope.newDocument = {workspace: $scope.workspaces[0]};
-                            return $scope.fetchStatus();
-                        }, onError, $scope.onProgress).then($scope.onFinish);
-                    };
+            return {
+                restrict:'A',
+                templateUrl: 'js/folder/in-index.html',
+                scope:{
+                    file:'=inIndex'
+                },
+                controller: function () {
 
                 }
 

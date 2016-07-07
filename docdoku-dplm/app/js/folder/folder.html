@@ -50,13 +50,38 @@
     </div>
 </md-toolbar>
 
-<md-content>
+<md-content layout-padding>
+<!--
+    <pre>repositoryIndex = {{repositoryIndex | json}}</pre>
+    <pre>inIndexFiles = {{inIndexFiles | json}}</pre>
+    <pre>outOfIndexFiles = {{outOfIndexFiles | json}}</pre>-->
 
-    <pre>{{repositoryIndex | json}}</pre>
-    <pre>{{inIndexFiles | json}}</pre>
-    <pre>{{outOfIndexFiles | json}}</pre>
+    <md-grid-list
+            md-cols-gt-md="12" md-cols="3" md-cols-md="8"
+            md-row-height-gt-md="1:1" md-row-height="4:3"
+            md-gutter-gt-md="16px" md-gutter-md="8px" md-gutter="4px">
+        <md-grid-tile
+                ng-repeat="file in inIndexFiles"
+                md-colspan-gt-sm="1"
+                md-rowspan-gt-sm="1">
+            <div in-index="file" in-index-spec="repositoryIndex"></div>
+        </md-grid-tile>
+
+    <md-grid-list
+            md-cols-gt-md="12" md-cols="3" md-cols-md="8"
+            md-row-height-gt-md="1:1" md-row-height="4:3"
+            md-gutter-gt-md="16px" md-gutter-md="8px" md-gutter="4px">
+        <md-grid-tile
+                ng-repeat="file in outOfIndexFiles"
+                md-colspan-gt-sm="1"
+                md-rowspan-gt-sm="1">
+            <div out-of-index="file"></div>
+        </md-grid-tile>
+
+    </md-grid-list>
 
 </md-content>
+<!--
 
 <div on-scroll-end="onScrollEnd()" class="fullscreen-wrapper offset-toolbar">
 
@@ -77,6 +102,9 @@
 
 
     <md-content layout-padding>
+
+
+
 
         <md-button
                 ng-if="!loadingFiles && hasUploadableFiles()"
@@ -114,4 +142,4 @@
         </md-list>
         <p class="empty-list" ng-show="!loadingFiles && !files.length">{{'NO_FILES'|translate}}</p>
     </md-content>
-</div>
+</div>-->
