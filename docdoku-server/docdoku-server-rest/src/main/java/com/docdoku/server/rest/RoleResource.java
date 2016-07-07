@@ -150,7 +150,8 @@ public class RoleResource {
     @Path("{roleName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateRole(@PathParam("roleName") String roleName,
+    public Response updateRole(@PathParam("workspaceId") String workspaceId,
+                               @PathParam("roleName") String roleName,
                                @ApiParam(required = true, value = "Role to update") RoleDTO roleDTO)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
