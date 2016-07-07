@@ -65,7 +65,7 @@
     <div class="workspace-group-container">
         {{#groupMemberships}}
         <div class="workspace-group half well well-large">
-            <span data-member-id="{{memberId}}" class="pull-right group-readonly-switch switch switch-small"
+            <span data-member-id="{{memberId}}" class="pull-right group-readonly-switch readonly-switch switch switch-small"
                 data-on-label="{{i18n.FULL_ACCESS}}"
                 data-off-label="{{i18n.READ_ONLY}}"
                 data-on="success" data-off="warning">
@@ -125,7 +125,7 @@
                     <th>{{i18n.LOGIN}}</th>
                     <th>{{i18n.NAME}}</th>
                     <th>{{i18n.EMAIL}}</th>
-                    <th>{{i18n.FULL_ACCESS}} / {{i18n.READONLY}}</th>
+                    <th>{{i18n.ACCESS_RIGHTS}}</th>
                 </tr>
                 </thead>
                 <tbody class="items">
@@ -139,7 +139,7 @@
                         <td>
                             {{^isCurrentAdmin}}
                             {{#membership}}
-                            <div data-login="{{login}}" class="user-readonly-switch switch switch-small"
+                            <div data-login="{{login}}" class="user-readonly-switch readonly-switch switch switch-small"
                                   data-on="success" data-off="warning">
                                 <input type="checkbox" {{^readOnly}}checked{{/readOnly}}/>
                             </div>

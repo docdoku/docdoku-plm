@@ -3,6 +3,7 @@ define({
 	ABOUT_DOCDOKUPLM: 'A propos de DocdokuPLM',
 	ABSOLUTE: 'Absolu',
 	ACCEPT_VIDEO_INVITE: 'Accepter',
+    ACCESS_RIGHTS: 'Droits d\'accès',
 	ACL: 'ACL',
 	ACTIVITY_STATE_PLACEHOLDER: 'Nouvel état',
 	ADD_ACTIVITY: 'Ajouter une activité',

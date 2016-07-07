@@ -116,6 +116,8 @@ define([
             var _this = this;
             this.$userSwitch = this.$('.user-readonly-switch');
             this.$userSwitch.bootstrapSwitch();
+            this.$userSwitch.bootstrapSwitch('setOnLabel', App.config.i18n.FULL_ACCESS);
+            this.$userSwitch.bootstrapSwitch('setOffLabel', App.config.i18n.READONLY);
             this.$userSwitch.on('switch-change', function (e,data) {
                 var login = e.target.dataset.login;
                 var fullAccess = data.value;

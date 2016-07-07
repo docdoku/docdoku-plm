@@ -4,6 +4,7 @@ define({
 		ABOUT_DOCDOKUPLM: 'About DocdokuPLM',
 		ABSOLUTE: 'Absolute',
 		ACCEPT_VIDEO_INVITE: 'Accept',
+        ACCESS_RIGHTS: 'Access rights',
 		ACL: 'ACL',
 		ACTIVITY_STATE_PLACEHOLDER: 'New state',
 		ADD_ACTIVITY: 'Add activity',
