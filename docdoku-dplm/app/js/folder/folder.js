@@ -42,8 +42,11 @@
             };
 
             $scope.folder = FolderService.getFolder({uuid:$routeParams.uuid});
-            $scope.outOfIndexFiles = [];
+
             var path = $scope.folder.path;
+
+            $scope.outOfIndexFiles = [];
+            $scope.inIndexFiles = [];
 
             RepositoryService.getRepositoryIndex(path)
                 .then(function(repositoryIndex){
@@ -53,10 +56,15 @@
                     // should stat files non in index
                     return FolderService.recursiveReadDir(path)
                 }).then(function(files){
+
+                    $scope.inIndexFiles.length = 0;
                     $scope.outOfIndexFiles.length = 0;
+
                     angular.forEach(files, function(file){
                         if(!$scope.repositoryIndex[file+'.digest']){
                             $scope.outOfIndexFiles.push(file);
+                        }else{
+                            $scope.inIndexFiles.push(file);
                         }
                     });
                 });

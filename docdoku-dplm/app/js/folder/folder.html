@@ -51,10 +51,11 @@
 </md-toolbar>
 
 <md-content>
-    {{repositoryIndex}}
-    <hr/>
-    {{outOfIndexFiles}}
-    <hr/>
+
+    <pre>{{repositoryIndex | json}}</pre>
+    <pre>{{inIndexFiles | json}}</pre>
+    <pre>{{outOfIndexFiles | json}}</pre>
+
 </md-content>
 
 <div on-scroll-end="onScrollEnd()" class="fullscreen-wrapper offset-toolbar">
