@@ -178,7 +178,7 @@ public class WorkflowDAO {
     }
 
     public WorkspaceWorkflow getWorkspaceWorkflow(String workspaceId, String workspaceWorkflowId) {
-        TypedQuery<WorkspaceWorkflow> query = em.createQuery("SELECT w FROM WorkspaceWorkflow w WHERE w.id = :workspaceWorkflowId AND w.workspaceId = :workspaceId", WorkspaceWorkflow.class);
+        TypedQuery<WorkspaceWorkflow> query = em.createQuery("SELECT w FROM WorkspaceWorkflow w WHERE w.id = :workspaceWorkflowId AND w.workspace.id = :workspaceId", WorkspaceWorkflow.class);
         try{
             return query.setParameter("workspaceWorkflowId", workspaceWorkflowId)
                     .setParameter("workspaceId", workspaceId)
@@ -189,7 +189,7 @@ public class WorkflowDAO {
     }
 
     public List<WorkspaceWorkflow> getWorkspaceWorkflowList(String workspaceId) {
-        TypedQuery<WorkspaceWorkflow> query = em.createQuery("SELECT w FROM WorkspaceWorkflow w WHERE w.workspaceId = :workspaceId", WorkspaceWorkflow.class);
+        TypedQuery<WorkspaceWorkflow> query = em.createQuery("SELECT w FROM WorkspaceWorkflow w WHERE w.workspace.id = :workspaceId", WorkspaceWorkflow.class);
         try{
             return query.setParameter("workspaceId", workspaceId).getResultList();
         }catch(NoResultException e){
