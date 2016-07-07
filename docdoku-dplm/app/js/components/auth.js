@@ -10,17 +10,18 @@
 
             this.user = {};
 
-            var data ={
+            var options = {
+                url:ConfigurationService.resolveUrl(),
                 cookie:null
             };
 
-            this.data = data;
+            this.options = options;
 
             this.login = function() {
 
                 var deferred = $q.defer();
 
-                client.setOptions({url:ConfigurationService.resolveUrl()});
+                client.setOptions(options);
 
                 client.getApi()
                     .then(function(api){
@@ -33,7 +34,8 @@
                     }, deferred.reject).then(function(response){
 
                         var headers = response.headers;
-                        data.cookie = headers['set-cookie'][0];
+                        options.cookie = headers['set-cookie'][0];
+                        client.setOptions(options);
                         angular.copy(response.obj,self.user);
                         deferred.resolve(self.user);
 
