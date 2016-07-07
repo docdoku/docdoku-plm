@@ -7,35 +7,28 @@
     <!-- build:css app.css -->
     <link rel="stylesheet" type="text/css" href="bower_components/angular-material/angular-material.css"/>
     <link rel="stylesheet" type="text/css" href="bower_components/fontawesome/css/font-awesome.css"/>
-    <link rel="stylesheet" type="text/css" href="css/inputs.css"/>
-    <link rel="stylesheet" type="text/css" href="css/lists.css"/>
     <link rel="stylesheet" type="text/css" href="css/droppables.css"/>
     <link rel="stylesheet" type="text/css" href="css/fullscreen-wrapper.css"/>
     <link rel="stylesheet" type="text/css" href="css/scrollbars.css"/>
-    <link rel="stylesheet" type="text/css" href="css/animations.css"/>
     <link rel="stylesheet" type="text/css" href="css/states.css"/>
-    <link rel="stylesheet" type="text/css" href="css/fixes.css"/>
-    <link rel="stylesheet" type="text/css" href="css/model-viewer.css"/>
-    <link rel="stylesheet" type="text/css" href="css/tabs.css"/>
-    <link rel="stylesheet" type="text/css" href="css/folders.css"/>
-    <link rel="stylesheet" type="text/css" href="css/buttons.css"/>
     <link rel="stylesheet" type="text/css" href="css/output.css"/>
     <link rel="stylesheet" type="text/css" href="css/general.css"/>
     <link rel="stylesheet" type="text/css" href="css/menu.css"/>
+    <link rel="stylesheet" type="text/css" href="css/login.css"/>
     <!-- endbuild -->
 
 </head>
-<body>
+<body ng-class="{'app-background': !user.login}">
 
-    <div layout="column" layout-fill ng-if="user.login">
+    <div layout="column" layout-fill>
         <section layout="row" flex>
-            <md-sidenav class="md-sidenav-left dplm-sidenav"
+            <md-sidenav ng-if="user.login" class="md-sidenav-left dplm-sidenav"
                         md-component-id="menu"
                         md-is-locked-open="$mdMedia('gt-sm')"
                         ng-controller="MenuController"
                         ng-include="'js/menu/menu.html'">
             </md-sidenav>
-            <md-content flex ng-view></md-content>
+            <md-content ng-if="user.login" flex ng-view></md-content>
         </section>
     </div>
 
@@ -91,6 +84,7 @@
     <script src="js/workspace/workspace.js"></script>
     <script src="js/settings/settings.js"></script>
     <script src="js/folder/folder.js"></script>
+    <script src="js/repository/repository.js"></script>
     <script src="js/menu/menu.js"></script>
     <script src="js/app.js"></script>
     <!-- endbuild -->

@@ -36,7 +36,10 @@
 .menu > li {
 	border-bottom: 1px solid #267ED5;
 }
-
+.connected-as{
+	color: white;
+	margin-left: 16px;
+}
 .menu .md-button {
 	border-radius: 0;
 	color: white;

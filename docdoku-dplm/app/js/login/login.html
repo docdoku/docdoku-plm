@@ -1,4 +1,4 @@
-<md-content layout-padding>
+<md-content layout-padding id="login-container">
     <div>
         <p class="md-headline">
              {{'GREETINGS' | translate}}
@@ -8,11 +8,19 @@
         </span>
     </div>
 
-    <div class="output" ng-if="error">
-        {{error}}
+    <!--
+    <pre>{{xhrFrom | json}}</pre>
+    -->
+
+    <div ng-if="xhrFrom.errObj.code" class="md-caption md-error">
+        {{xhrFrom.errObj.code | translate}}
     </div>
 
-    <md-content layout-gt-sm="row" layout-padding>
+    <div ng-if="!xhrFrom.errObj.code && xhrFrom.status" class="md-caption md-error">
+        {{ 'LOGIN_STATUS_'+xhrFrom.status | translate }}
+    </div>
+
+    <div layout-gt-sm="row" layout-padding>
         <form ng-submit="connect()">
             <div>
                 <md-input-container>
@@ -41,10 +49,12 @@
             </div>
 
             <div>
-                <md-button type="submit" aria-label="" class="md-raised md-primary">{{'CONNECT'|translate}}
+                <md-progress-circular ng-if="loggingIn" class="md-hue-2" md-diameter="20px"></md-progress-circular>
+                <md-button ng-if="!loggingIn" type="submit" aria-label="" class="md-raised md-primary">
+                    {{'CONNECT'|translate}}
                 </md-button>
             </div>
 
         </form>
-    </md-content>
+    </div>
 </md-content>

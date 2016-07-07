@@ -6,49 +6,72 @@ angular.module('dplm.menu', [])
             scope:false
         };
     })
-    .controller('MenuController', function ($scope,$filter, FolderService,ConfigurationService,WorkspaceService) {
-        $scope.workspaces = WorkspaceService.workspaces;
+    .controller('MenuController', function ($scope,$filter,$mdDialog,
+                                            FolderService,ConfigurationService,WorkspaceService) {
 
-        function buildMenu(){
-            $scope.menu = {
-                sections : [{
-                    id:'folders',
-                    name: 'Folders',
-                    type: 'toggle',
-                    pages: FolderService.folders.map(function(folder){
-                        return {
-                            name: $filter('fileshortname')(folder.path),
-                            type: 'link',
-                            url:'#/folder/'+folder.uuid
-                        };
-                    })
-                },{
-                    id:'workspaces',
-                    name: 'Workspaces',
-                    type: 'toggle',
-                    pages: $scope.workspaces.map(function(workspace){
-                        return {
-                            name: workspace,
-                            type: 'link',
-                            url:'#/workspace/'+workspace
-                        };
-                    })
-                }]
-            };
-        }
+        $scope.workspaces = WorkspaceService.workspaces;
+        $scope.folders = FolderService.folders;
+        $scope.configuration = ConfigurationService.configuration;
         $scope.openedSection = null;
+
         $scope.isOpened = function(section){
             return $scope.openedSection === section;
         };
+
         $scope.open = function(section){
             return $scope.openedSection = $scope.isOpened(section) ? null : section;
         };
-        $scope.$watchCollection('workspaces',function(){
-            buildMenu();
-        });
 
-        $scope.configuration = ConfigurationService.configuration;
+        var folderSection = {
+            id:'folders',
+            name: 'Folders',
+            type: 'toggle',
+            pages: []
+        };
 
+        var workspaceSection = {
+            id:'workspaces',
+            name: 'Workspaces',
+            type: 'toggle',
+            pages: []
+        };
+
+        $scope.menu = {
+            sections : [folderSection,workspaceSection]
+        };
+
+        var updateFolders = function(){
+            folderSection.pages = $scope.folders.map(function(folder){
+                return {
+                    name: $filter('fileshortname')(folder.path),
+                    type: 'link',
+                    url:'#/folder/'+folder.uuid
+                };
+            });
+        };
+
+        var updateWorkspaces = function(){
+            workspaceSection.pages = $scope.workspaces.map(function(workspace){
+                return {
+                    name: workspace,
+                    type: 'link',
+                    url:'#/workspace/'+workspace
+                };
+            });
+        };
+
+        $scope.$watchCollection('folders',updateFolders);
+        $scope.$watchCollection('workspaces',updateWorkspaces);
+
+        $scope.searchRepositories = function(){
+            $mdDialog.show({
+                templateUrl: 'js/repository/repository-search.html',
+                fullscreen: true,
+                controller:'RepositorySearchCtrl'
+            });
+        };
+
+        // TODO check if used
         $scope.onFileDropped = function(path){
             if(path){
                 FolderService.add(path);

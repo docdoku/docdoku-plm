@@ -15,12 +15,7 @@
                 })
                 .when('/workspace/:workspace/:entity/:action/:path?', {
                     controller: 'WorkspaceController',
-                    templateUrl: 'js/workspace/workspace.html',
-                    resolve:{
-                        conf:function(ConfigurationService,WorkspaceService){
-                            return ConfigurationService.checkAtStartup().then(WorkspaceService.getWorkspaces);
-                        }
-                    }
+                    templateUrl: 'js/workspace/workspace.html'
                 });
         })
 

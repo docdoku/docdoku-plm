@@ -42,6 +42,7 @@
         'dplm.services.output',
         'dplm.services.auth',
         'dplm.services.api',
+        'dplm.services.repository',
 
         'dplm.services.3d',
         'dplm.directives.filechange',
@@ -76,30 +77,35 @@
         .controller('AppCtrl', function ($scope, $location, $mdMedia, $mdDialog, $mdSidenav, $filter,
                                          AuthService, NotificationService, ConfigurationService, CliService, WorkspaceService, FolderService) {
 
+
             $scope.title = 'DocDoku DPLM';
 
             $scope.user = AuthService.user;
             $scope.configuration = ConfigurationService.configuration;
             $scope.workspaces = WorkspaceService.workspaces;
+
+            $scope.syncFolders = function(){
+                FolderService.syncFolders().then(function(foldersFound){
+                    $scope.foldersFound = foldersFound;
+                });
+            };
+
             $scope.folders = FolderService.folders;
 
-            var showLoginPage = function(data){
-
-                if(data){
-                    console.error(arguments)
-                }
-
+            var showLoginPage = function(xhrFrom){
                 $mdDialog.show({
                     templateUrl: 'js/login/login.html',
                     clickOutsideToClose:false,
                     fullscreen: true,
+                    locals : {
+                        xhrFrom : xhrFrom
+                    },
                     controller:'LoginCtrl'
                 });
-
             };
 
             if(ConfigurationService.hasAuth()){
-                AuthService.login().then(null, showLoginPage);
+                AuthService.login().then(WorkspaceService.getWorkspaces, showLoginPage);
             }else{
                 showLoginPage();
             }
@@ -112,23 +118,6 @@
                 $mdSidenav('menu').open();
             };
 
-            $scope.addFolder = function ($event, files) {
-                if (files && files.length === 1) {
-                    FolderService.add(files[0].path);
-                }
-            };
-
-
-            $scope.isSelectedWorkspace = function(workspace){
-                var currentParts = $location.path().split('/');
-                return currentParts[1] === 'workspace'  && workspace === currentParts[2];
-            };
-
-            $scope.isSelectedFolder = function(folderUuid) {
-                var currentParts = $location.path().split('/');
-                return currentParts[1] === 'folder'  && folderUuid === currentParts[2];
-            };
-
-        });
+    });
 
 })();

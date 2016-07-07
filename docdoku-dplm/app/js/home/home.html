@@ -13,13 +13,17 @@
 <div layout="column" class="settings">
 
     <md-content layout-padding>
-        <h3 class="subtitle"><i class="fa fa-star favorite"></i> {{'FAVORITE_FOLDERS' | translate}}</h3>
+
+        <h3>
+            <i class="fa fa-star favorite"></i>
+            {{'FAVORITE_FOLDERS' | translate}}
+        </h3>
         <md-list>
             <md-list-item ng-if="!folders.length">
                     {{'NO_FOLDERS' | translate}}
             </md-list-item>
 
-            <md-list-item ng-repeat="folder in folders" ng-controller="FolderDetailsController">
+            <md-list-item ng-repeat="folder in folders | filter:{favorite:true}" ng-controller="FolderDetailsController">
 
                 <md-button aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">
                     <i class="fa fa-folder-open"></i> {{folder.path | fileshortname}}
@@ -33,7 +37,12 @@
     </md-content>
 
     <md-content layout-padding>
-        <h3 class="subtitle"><i class="fa fa-star favorite"></i> {{'LAST_WORKSPACES_VISITED' | translate}}</h3>
+
+        <h3>
+            <i class="fa fa-star favorite"></i>
+            {{'LAST_WORKSPACES_VISITED' | translate}}
+        </h3>
+
         <md-list>
             <md-list-item ng-if="!workspaces.length">
                     {{'NOTHING_TO_SHOW' | translate}}

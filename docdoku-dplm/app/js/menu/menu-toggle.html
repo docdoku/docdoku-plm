@@ -3,7 +3,7 @@
            aria-controls="section-{{section.name | nospace}}"
            aria-expanded="{{isOpened(section)}}">
     <div flex layout="row">
-        {{section.name}}
+        {{section.pages.length}} {{section.name}}
         <span flex></span>
       <md-icon class="md-toggle-icon"
                ng-class="{'toggled' : isOpened(section)}"

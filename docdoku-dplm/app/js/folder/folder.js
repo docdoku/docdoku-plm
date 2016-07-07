@@ -15,30 +15,53 @@
             })
             .when('/folder/:uuid/:entity', {
                 templateUrl: 'js/folder/folder.html',
-                controller: 'FolderController',
-                resolve:{
-                    conf:function(ConfigurationService,WorkspaceService){
-                        return ConfigurationService.checkAtStartup().then(WorkspaceService.getWorkspaces);
-                    }
-                }
+                controller: 'FolderController'
             });
         })
 
-        .controller('FolderController', function ($scope, $q, $location, $routeParams, $filter, ConfirmService, ConfigurationService, FolderService, NotificationService) {
+        .controller('FolderController', function ($scope, $q, $location, $routeParams, $filter, ConfirmService, ConfigurationService, FolderService, RepositoryService, NotificationService) {
 
-            $scope.tabs={
-                selected:
-                    $routeParams.entity==='documents' ? 0 :
-                        $routeParams.entity==='parts' ? 1 :
-                        $routeParams.entity==='unknown' ? 2 :
-                            0,
-                documents:0,
-                parts:1,
-                unknown:2
+            $scope.reveal = function ($event) {
+                FolderService.reveal($scope.folder.path);
+                $event.stopPropagation();
+            };
+
+            $scope.toggleFavorite = function () {
+                $scope.folder.favorite = !$scope.folder.favorite;
+                FolderService.save();
+            };
+
+            $scope.delete = function(ev){
+                ConfirmService.confirm(ev,{
+                    content:$filter('translate')('DELETE_FOLDER_CONFIRM_TITLE')
+                }).then(function(){
+                    FolderService.delete($scope.folder);
+                    NotificationService.toast($filter('translate')('DELETE_FOLDER_CONFIRMED'));
+                    $location.path('/');
+                });
             };
 
             $scope.folder = FolderService.getFolder({uuid:$routeParams.uuid});
+            $scope.outOfIndexFiles = [];
+            var path = $scope.folder.path;
 
+            RepositoryService.getRepositoryIndex(path)
+                .then(function(repositoryIndex){
+                    $scope.repositoryIndex = repositoryIndex;
+                })
+                .then(function(){
+                    // should stat files non in index
+                    return FolderService.recursiveReadDir(path)
+                }).then(function(files){
+                    $scope.outOfIndexFiles.length = 0;
+                    angular.forEach(files, function(file){
+                        if(!$scope.repositoryIndex[file+'.digest']){
+                            $scope.outOfIndexFiles.push(file);
+                        }
+                    });
+                });
+
+            /*
             $scope.configuration = ConfigurationService.configuration;
             $scope.files = [];
 
@@ -151,7 +174,7 @@
                 $scope.$broadcast('sync:all');
             };
 
-            $scope.refresh();
+            $scope.refresh();*/
 
         })
 

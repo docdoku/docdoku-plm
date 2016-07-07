@@ -102,7 +102,19 @@
                     DOWNLOAD_ALL:'Download all files',
                     FILE_ANALYSIS:'Files analysis',
                     DOWNLOADING:'Download in progress',
-                    SIZE:'Size'
+                    SIZE:'Size',
+                    SEARCH_FOR_REPO:'Scan repositories in local folders',
+                    SELECT_FOLDER_TO_BROWSE:'Select a folder',
+                    ADD_ALL_REPO:'Add all',
+                    CLOSE:'Close',
+                    NO_REPO_MESSAGE:'Sorry, nothing found in',
+                    REPOSITORIES_FOUND:'Repositories found',
+                    LOGOUT:'Log out',
+                    SEARCH_REPO:'Repositories search',
+                    ECONNREFUSED:'Connection to server refused. Please check server settings.',
+                    ENOTFOUND:'No server available for given host',
+                    LOGIN_STATUS_403:'Wrong login/password',
+                    LOGIN_STATUS_200:'Successfully logged out'
                 })
                 .translations('fr', {
                     CUT: 'Couper',
@@ -201,7 +213,19 @@
                     DOWNLOAD_ALL:'Télécharger tous les fichiers',
                     FILE_ANALYSIS:'Analyse des fichiers',
                     DOWNLOADING:'Téléchargement en cours',
-                    SIZE:'Taille'
+                    SIZE:'Taille',
+                    SEARCH_FOR_REPO:'Rechercher des dépots plm dans un dossier local',
+                    SELECT_FOLDER_TO_BROWSE:'Séléctionner un dossier',
+                    ADD_ALL_REPO:'Tout ajouter',
+                    CLOSE:'Fermer',
+                    NO_REPO_MESSAGE:'Désolé, aucun dépôt trouvé dans',
+                    REPOSITORIES_FOUND:'Dépots trouvés',
+                    LOGOUT:'Déconnexion',
+                    SEARCH_REPO:'Chercher un dépot',
+                    ECONNREFUSED:'Le serveur a refusé la connection. Vérifier les paramètres serveur.',
+                    ENOTFOUND:'Aucun serveur disponible pour la configuration donnée',
+                    LOGIN_STATUS_403:'Mauvais identifiant/mot de passe',
+                    LOGIN_STATUS_200:'Vous avez bien été déconnecté'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

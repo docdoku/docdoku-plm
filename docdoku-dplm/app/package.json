@@ -1,9 +1,10 @@
 {
   "name": "DPLM",
-  "version":"0.2.0",
+  "version": "0.2.0",
   "main": "index.html",
   "locale": "fr_FR",
   "dependencies": {
+    "glob": "^7.0.5",
     "moment": "^2.8.3",
     "recursive-readdir": "^1.2.0"
   },

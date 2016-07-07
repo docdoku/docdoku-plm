@@ -7,3 +7,7 @@
 .right{
 	float:right;
 }
+
+body.app-background{
+	background:#1A658A;
+}

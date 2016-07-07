@@ -3,14 +3,14 @@
     'use strict';
 
     angular.module('dplm.services.folders', [])
-        .service('FolderService', function (uuid4, $q, $filter, CliService) {
+        .service('FolderService', function ($window, uuid4, $q, $filter, CliService) {
 
             var _this = this;
 
+            var glob = $window.require("glob");
+            var home = process.env.HOME;
+            var pathsForGlobalResearch ='**/.dplm/index.xml';
             var ignoreList = ['.dplm'];
-
-            // HashMap for cache by folder id
-            this.cache={};
 
             this.folders = angular.fromJson(localStorage.folders || '[]');
 
@@ -78,7 +78,7 @@
                             resolve(files);
                         }
                     });
-                }).then(statFiles);
+                });
             };
 
             this.getFilesCount = function(path){

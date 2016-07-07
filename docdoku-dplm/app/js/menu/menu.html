@@ -11,11 +11,19 @@
             </md-button>
 
             <md-menu-content width="4">
+
                 <md-menu-item>
                     <md-button aria-label="{{'SETTINGS'|translate}}" href="#/settings">
                         {{'SETTINGS'|translate}}
                     </md-button>
                 </md-menu-item>
+                <md-menu-item>
+                    <md-button aria-label="{{'SEARCH_REPO'|translate}}" ng-click="searchRepositories()">
+                        {{'SEARCH_REPO'|translate}}
+                    </md-button>
+                </md-menu-item>
+
+
                 <md-menu-item>
                     <md-button aria-label="{{'LOGOUT'|translate}}" ng-click="logout()">
                         {{'LOGOUT'|translate}}
@@ -23,11 +31,16 @@
                 </md-menu-item>
 
             </md-menu-content>
+
         </md-menu>
     </div>
 </md-toolbar>
-
-<md-content layout-padding>
+<md-content>
+    <span class="connected-as">
+       <i class="fa fa-user"></i> {{configuration.login}}@{{configuration.host}}
+    </span>
+</md-content>
+<md-content>
 <!--
    <p>
        <b>{{configuration.login}}</b>@<b>{{configuration.host}}</b>

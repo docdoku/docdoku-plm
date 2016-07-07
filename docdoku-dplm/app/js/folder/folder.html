@@ -51,40 +51,13 @@
 </md-toolbar>
 
 <md-content>
-    <div ng-cloak>
-        <md-content>
-            <md-tabs md-dynamic-height md-border-bottom>
-                <md-tab label="{{'DOCUMENTS' | translate}} ({{counts.documents}})">
-                    <md-content class="md-padding">
-                    </md-content>
-                </md-tab>
-                <md-tab label="{{'PARTS' | translate}} ({{counts.parts}})">
-                    <md-content class="md-padding">
-                      </md-content>
-                </md-tab>
-                <md-tab label="{{'UNKNOWN' | translate}} ({{counts.unknown}})">
-                    <md-content class="md-padding">
-                    </md-content>
-                </md-tab>
-            </md-tabs>
-        </md-content>
-    </div>
+    {{repositoryIndex}}
+    <hr/>
+    {{outOfIndexFiles}}
+    <hr/>
 </md-content>
 
-
 <div on-scroll-end="onScrollEnd()" class="fullscreen-wrapper offset-toolbar">
-
-    <div class="tabs default" layout="row">
-        <div flex ng-class="{selected:tabs.selected == tabs.documents}">
-            <a ng-href="#/folder/{{folder.uuid}}/documents">{{'DOCUMENTS' | translate}} ({{counts.documents}})</a>
-        </div>
-        <div flex ng-class="{selected:tabs.selected == tabs.parts}">
-            <a ng-href="#/folder/{{folder.uuid}}/parts">{{'PARTS' | translate}} ({{counts.parts}})</a>
-        </div>
-        <div flex ng-class="{selected:tabs.selected == tabs.unknown}">
-            <a ng-href="#/folder/{{folder.uuid}}/unknown">{{'UNKNOWN' | translate}} ({{counts.unknown}})</a>
-        </div>
-    </div>
 
     <div class="row list-header" layout="row">
         <div flex>
