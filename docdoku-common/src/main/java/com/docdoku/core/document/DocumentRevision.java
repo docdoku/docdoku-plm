@@ -141,6 +141,46 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
 
     private boolean publicShared;
 
+    private RevisionStatus status=RevisionStatus.WIP;
+
+
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(
+                    name="statusModificationDate",
+                    column=@Column(name="RELEASE_DATE"))
+    })
+    @AssociationOverrides({
+            @AssociationOverride(
+                    name="statusChangeAuthor",
+                    joinColumns={
+                            @JoinColumn(name="RELEASE_USER_LOGIN", referencedColumnName = "LOGIN"),
+                            @JoinColumn(name="RELEASE_USER_WORKSPACE", referencedColumnName = "WORKSPACE_ID")
+                    })
+    })
+    private StatusChange releaseStatusChange;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(
+                    name="statusModificationDate",
+                    column=@Column(name="OBSOLETE_DATE"))
+    })
+    @AssociationOverrides({
+            @AssociationOverride(
+                    name="statusChangeAuthor",
+                    joinColumns={
+                            @JoinColumn(name="OBSOLETE_USER_LOGIN", referencedColumnName = "LOGIN"),
+                            @JoinColumn(name="OBSOLETE_USER_WORKSPACE", referencedColumnName = "WORKSPACE_ID")
+                    })
+    })
+    private StatusChange obsoleteStatusChange;
+
+    public enum RevisionStatus {
+        WIP, RELEASED, OBSOLETE
+    }
+
     public DocumentRevision() {
     }
     public DocumentRevision(DocumentMaster pDocumentMaster,
@@ -368,6 +408,46 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
         this.publicShared = publicShared;
     }
 
+    public RevisionStatus getStatus() {
+        return status;
+    }
+    public void setStatus(RevisionStatus status) {
+        this.status = status;
+    }
+
+    public boolean isReleased(){
+        return status==RevisionStatus.RELEASED;
+    }
+    public boolean isObsolete(){
+        return status==RevisionStatus.OBSOLETE;
+    }
+    public boolean release(User user){
+        if(this.status==RevisionStatus.WIP){
+            this.status=RevisionStatus.RELEASED;
+            StatusChange statusChange = new StatusChange();
+            statusChange.setStatusChangeAuthor(user);
+            statusChange.setStatusModificationDate(new Date());
+            this.setReleaseStatusChange(statusChange);
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+    public boolean markAsObsolete(User user){
+        if(this.status==RevisionStatus.RELEASED){
+            this.status=RevisionStatus.OBSOLETE;
+            StatusChange statusChange = new StatusChange();
+            statusChange.setStatusChangeAuthor(user);
+            statusChange.setStatusModificationDate(new Date());
+            this.setObsoleteStatusChange(statusChange);
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
     public void setTitle(String pTitle) {
         title = pTitle;
     }
@@ -399,6 +479,37 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
             return this.documentMaster.isAttributesLocked();
         }
         return false;
+    }
+
+    public StatusChange getObsoleteStatusChange() {
+        return obsoleteStatusChange;
+    }
+
+    public void setObsoleteStatusChange(StatusChange statusChange) {
+        this.obsoleteStatusChange = statusChange;
+    }
+
+    public StatusChange getReleaseStatusChange() {
+        return releaseStatusChange;
+    }
+
+    public void setReleaseStatusChange(StatusChange statusChange) {
+        this.releaseStatusChange = statusChange;
+    }
+
+    public User getObsoleteAuthor() {
+        return obsoleteStatusChange == null ? null : obsoleteStatusChange.getStatusChangeAuthor();
+    }
+
+    public Date getObsoleteDate() {
+        return obsoleteStatusChange == null ? null : obsoleteStatusChange.getStatusModificationDate();
+    }
+    public User getReleaseAuthor() {
+        return releaseStatusChange == null ? null : releaseStatusChange.getStatusChangeAuthor();
+    }
+
+    public Date getReleaseDate() {
+        return releaseStatusChange == null ? null : releaseStatusChange.getStatusModificationDate();
     }
 
     @Override
