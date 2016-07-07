@@ -184,7 +184,7 @@ define([
             this.permissive = this.$('#permissive_update_part').is(':checked');
             this.revisionNote = this.$('#revision_text_part').val().trim();
 
-            this.options = this.autocheckin || this.autocheckout || this.permissive || this.revisionNote!== "";
+            this.options = this.autocheckin || this.autocheckout || this.permissive || this.revisionNote!== '';
 
             if (this.file) {
 
@@ -203,7 +203,7 @@ define([
                     var formData = new window.FormData();
                     var _this = this;
                     xhr.onreadystatechange = function() {
-                        if(xhr.readyState == 4 && xhr.status == 200){
+                        if(xhr.readyState === 4 && xhr.status === 200){
                             _this.partCheckoutList = jQuery.parseJSON(xhr.response);
                             _this.importForm = false;
                             _this.importPreview = true;
@@ -234,8 +234,7 @@ define([
                 };
 
                 this.deleteImportStatus();
-                this.deleteImportStatus();
-
+                
                 var importUrl = baseUrl + '?' + $.param(params);
 
                 var xhr = new XMLHttpRequest();
