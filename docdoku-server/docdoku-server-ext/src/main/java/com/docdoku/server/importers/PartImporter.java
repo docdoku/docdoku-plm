@@ -30,6 +30,6 @@ public interface PartImporter {
 
     ImportResult importFile(String workspaceId, File file, String revisionNote, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate);
     boolean canImportFile(String importFileName);
-    List<PartRevision> dryRunCheckout(String workspaceId, File file, String originalFileName);
+    List<PartRevision> dryRunImport(String workspaceId, File file, String originalFileName, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate);
 
 }

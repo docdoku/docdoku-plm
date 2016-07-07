@@ -34,7 +34,7 @@ public interface IImporterManagerLocal {
 
     Future<ImportResult> importIntoParts(String workspaceId, File file, String originalFileName, String revisionNote, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate) throws Exception;
     Future<ImportResult>  importIntoPathData(String workspaceId, File file, String originalFileName, String revisionNote, boolean autoFreezeAfterUpdate, boolean permissiveUpdate) throws Exception;
-    ImportPreview dryRunCheckout(String workspaceId, File file, String originalFileName) throws Exception;
+    ImportPreview dryRunImportIntoParts(String workspaceId, File file, String originalFileName, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate) throws Exception;
 
 
 }
