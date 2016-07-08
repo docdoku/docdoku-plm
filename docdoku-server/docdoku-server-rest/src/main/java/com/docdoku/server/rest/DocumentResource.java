@@ -348,6 +348,38 @@ public class DocumentResource {
     }
 
     @PUT
+    @ApiOperation(value = "Release document", response = Response.class)
+    @Path("/release")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response releaseDocumentRevision(@PathParam("workspaceId") String workspaceId,
+                                            @PathParam("documentId") String documentId,
+                                            @PathParam("documentVersion") String documentVersion)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
+
+        DocumentRevisionKey revisionKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
+
+        documentService.releaseDocumentRevision(revisionKey);
+        return Response.ok().build();
+    }
+
+    @PUT
+    @ApiOperation(value = "Set document as obsolete", response = Response.class)
+    @Path("/obsolete")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response markDocumentRevisionAsObsolete(@PathParam("workspaceId") String workspaceId,
+                                                   @PathParam("documentId") String documentId,
+                                                   @PathParam("documentVersion") String documentVersion)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
+
+        DocumentRevisionKey revisionKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
+
+        documentService.markDocumentRevisionAsObsolete(revisionKey);
+        return Response.ok().build();
+    }
+
+    @PUT
     @ApiOperation(value = "Set the tags of the document", response = DocumentRevisionDTO.class)
     @Path("/tags")
     @Consumes(MediaType.APPLICATION_JSON)

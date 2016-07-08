@@ -20,6 +20,8 @@
 
 package com.docdoku.server.rest.dto;
 
+import com.docdoku.core.document.DocumentRevision;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -62,6 +64,15 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     private String lifeCycleState;
     private boolean publicShared;
     private boolean attributesLocked;
+
+    @XmlElement(nillable = true)
+    private DocumentRevision.RevisionStatus status;
+    private Date obsoleteDate;
+    @XmlElement(nillable = true)
+    private UserDTO obsoleteAuthor;
+    private Date releaseDate;
+    @XmlElement(nillable = true)
+    private UserDTO releaseAuthor;
 
     @XmlElement(nillable = true)
     private ACLDTO acl;
@@ -295,6 +306,46 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
 
     public void setAttributesLocked(boolean attributesLocked) {
         this.attributesLocked = attributesLocked;
+    }
+
+    public DocumentRevision.RevisionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(DocumentRevision.RevisionStatus status) {
+        this.status = status;
+    }
+
+    public Date getObsoleteDate() {
+        return obsoleteDate;
+    }
+
+    public void setObsoleteDate(Date obsoleteDate) {
+        this.obsoleteDate = obsoleteDate;
+    }
+
+    public UserDTO getObsoleteAuthor() {
+        return obsoleteAuthor;
+    }
+
+    public void setObsoleteAuthor(UserDTO obsoleteAuthor) {
+        this.obsoleteAuthor = obsoleteAuthor;
+    }
+
+    public Date getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(Date releasedDate) {
+        this.releaseDate = releasedDate;
+    }
+
+    public UserDTO getReleaseAuthor() {
+        return releaseAuthor;
+    }
+
+    public void setReleaseAuthor(UserDTO releasedAuthor) {
+        this.releaseAuthor = releasedAuthor;
     }
 
     @Override
