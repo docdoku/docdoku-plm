@@ -21,6 +21,7 @@ package com.docdoku.server.dao;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserKey;
 import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.DocumentIterationNotFoundException;
@@ -164,13 +165,19 @@ public class DocumentRevisionDAO {
     }
 
     public List<DocumentRevision> findDocsWithAssignedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) {
-        return em.createNamedQuery("DocumentRevision.findWithAssignedTasksForUser",DocumentRevision.class).
-                setParameter("workspaceId", pWorkspaceId).setParameter("assignedUserLogin", assignedUserLogin).getResultList();
+        return em.createNamedQuery("DocumentRevision.findWithAssignedTasksForUser", DocumentRevision.class)
+                .setParameter("workspaceId", pWorkspaceId)
+                .setParameter("login", assignedUserLogin)
+                .setParameter("user", em.getReference(User.class, new UserKey(pWorkspaceId, assignedUserLogin)))
+                .getResultList();
     }
 
     public List<DocumentRevision> findDocsWithOpenedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) {
-        return em.createNamedQuery("DocumentRevision.findWithOpenedTasksForUser",DocumentRevision.class).
-                setParameter("workspaceId", pWorkspaceId).setParameter("assignedUserLogin", assignedUserLogin).getResultList();
+        return em.createNamedQuery("DocumentRevision.findWithOpenedTasksForUser",DocumentRevision.class)
+                .setParameter("workspaceId", pWorkspaceId)
+                .setParameter("login", assignedUserLogin)
+                .setParameter("user", em.getReference(User.class, new UserKey(pWorkspaceId, assignedUserLogin)))
+                .getResultList();
     }
 
     public List<DocumentRevision> findDocsRevisionsWithReferenceOrTitleLike(String pWorkspaceId, String search, int maxResults) {
