@@ -42,7 +42,9 @@
   "scripts": {
     "preclean": "npm install && bower install",
     "prebuild": "npm install && bower install",
+    "predev": "npm install && bower install",
     "clean": "grunt clean",
-    "build": "grunt build"
+    "build": "grunt build",
+    "dev":"grunt serve"
   }
 }
