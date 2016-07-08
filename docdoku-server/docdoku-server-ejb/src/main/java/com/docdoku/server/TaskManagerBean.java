@@ -77,7 +77,10 @@ public class TaskManagerBean implements ITaskManagerLocal {
         Task[] assignedTasks = taskDAO.findAssignedTasks(workspaceId, userLogin);
         List<TaskWrapper> taskWrappers = new ArrayList<>();
         for(Task task : assignedTasks){
-            taskWrappers.add(wrapTask(task,workspaceId));
+            TaskWrapper taskWrapper = wrapTask(task, workspaceId);
+            if(taskWrapper != null) {
+                taskWrappers.add(taskWrapper);
+            }
         }
         return taskWrappers.toArray(new TaskWrapper[taskWrappers.size()]);
     }
@@ -90,7 +93,10 @@ public class TaskManagerBean implements ITaskManagerLocal {
         Task[] inProgressTasks = taskDAO.findInProgressTasks(workspaceId, userLogin);
         List<TaskWrapper> taskWrappers = new ArrayList<>();
         for(Task task : inProgressTasks){
-            taskWrappers.add(wrapTask(task,workspaceId));
+            TaskWrapper taskWrapper = wrapTask(task, workspaceId);
+            if(taskWrapper != null) {
+                taskWrappers.add(taskWrapper);
+            }
         }
         return taskWrappers.toArray(new TaskWrapper[taskWrappers.size()]);
     }
@@ -115,6 +121,9 @@ public class TaskManagerBean implements ITaskManagerLocal {
         TaskDAO taskDAO = new TaskDAO(new Locale(user.getLanguage()), em);
         Task task = taskDAO.loadTask(taskKey);
         TaskWrapper taskWrapper = wrapTask(task, workspaceId);
+        if(taskWrapper == null){
+            throw new AccessRightException(new Locale(user.getLanguage()),user);
+        }
         switch (taskWrapper.getHolderType()){
             case "documents":
                     if("APPROVE".equals(action)){
