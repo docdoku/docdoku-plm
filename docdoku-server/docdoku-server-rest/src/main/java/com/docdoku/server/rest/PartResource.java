@@ -409,35 +409,35 @@ public class PartResource {
     }
 
     @PUT
-    @ApiOperation(value = "Release part", response = Response.class)
+    @ApiOperation(value = "Release part", response = PartRevisionDTO.class)
     @Path("/release")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response releasePartRevision(@PathParam("workspaceId") String workspaceId,
+    public PartRevisionDTO releasePartRevision(@PathParam("workspaceId") String workspaceId,
                                         @PathParam("partNumber") String partNumber,
-                                        @PathParam("partVersion") String partVersion)
+                                        @PathParam("partVersion") String partVersion,
+                                        @ApiParam(name = "body", defaultValue = "") String body)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
-
-        productService.releasePartRevision(revisionKey);
-        return Response.ok().build();
+        PartRevision partRevision = productService.releasePartRevision(revisionKey);
+        return Tools.mapPartRevisionToPartDTO(partRevision);
     }
 
     @PUT
-    @ApiOperation(value = "Set part as obsolete", response = Response.class)
+    @ApiOperation(value = "Set part as obsolete", response = PartRevisionDTO.class)
     @Path("/obsolete")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response markPartRevisionAsObsolete(@PathParam("workspaceId") String workspaceId,
+    public PartRevisionDTO markPartRevisionAsObsolete(@PathParam("workspaceId") String workspaceId,
                                                @PathParam("partNumber") String partNumber,
-                                               @PathParam("partVersion") String partVersion)
+                                               @PathParam("partVersion") String partVersion,
+                                               @ApiParam(name = "body", defaultValue = "") String body)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
-
-        productService.markPartRevisionAsObsolete(revisionKey);
-        return Response.ok().build();
+        PartRevision partRevision = productService.markPartRevisionAsObsolete(revisionKey);
+        return Tools.mapPartRevisionToPartDTO(partRevision);
     }
 
     @DELETE

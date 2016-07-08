@@ -84,7 +84,15 @@ public class DocumentApiTest {
 
         // Check in
         checkedInDocument = documentApi.checkInDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
-        Assert.assertEquals(checkedInDocument.getDocumentIterations().size(),2);
+        Assert.assertNull(checkedInDocument.getCheckOutUser());
+
+        // Release
+        DocumentRevisionDTO releasedDocument = documentApi.releaseDocumentRevision(TestConfig.WORKSPACE, checkedInDocument.getDocumentMasterId(), checkedInDocument.getVersion(), "");
+        Assert.assertEquals(releasedDocument.getStatus(), DocumentRevisionDTO.StatusEnum.RELEASED);
+
+        // Mark as obsolete
+        DocumentRevisionDTO obsoleteDocument = documentApi.markDocumentRevisionAsObsolete(TestConfig.WORKSPACE, releasedDocument.getDocumentMasterId(), releasedDocument.getVersion(), "");
+        Assert.assertEquals(obsoleteDocument.getStatus(), DocumentRevisionDTO.StatusEnum.OBSOLETE);
 
     }
 

@@ -348,35 +348,35 @@ public class DocumentResource {
     }
 
     @PUT
-    @ApiOperation(value = "Release document", response = Response.class)
+    @ApiOperation(value = "Release document", response = DocumentRevisionDTO.class)
     @Path("/release")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response releaseDocumentRevision(@PathParam("workspaceId") String workspaceId,
+    public DocumentRevisionDTO releaseDocumentRevision(@PathParam("workspaceId") String workspaceId,
                                             @PathParam("documentId") String documentId,
-                                            @PathParam("documentVersion") String documentVersion)
+                                            @PathParam("documentVersion") String documentVersion,
+                                            @ApiParam(name = "body", defaultValue = "") String body)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         DocumentRevisionKey revisionKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
-
-        documentService.releaseDocumentRevision(revisionKey);
-        return Response.ok().build();
+        DocumentRevision docR = documentService.releaseDocumentRevision(revisionKey);
+        return mapper.map(docR, DocumentRevisionDTO.class);
     }
 
     @PUT
-    @ApiOperation(value = "Set document as obsolete", response = Response.class)
+    @ApiOperation(value = "Set document as obsolete", response = DocumentRevisionDTO.class)
     @Path("/obsolete")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response markDocumentRevisionAsObsolete(@PathParam("workspaceId") String workspaceId,
+    public DocumentRevisionDTO markDocumentRevisionAsObsolete(@PathParam("workspaceId") String workspaceId,
                                                    @PathParam("documentId") String documentId,
-                                                   @PathParam("documentVersion") String documentVersion)
+                                                   @PathParam("documentVersion") String documentVersion,
+                                                   @ApiParam(name = "body", defaultValue = "") String body)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         DocumentRevisionKey revisionKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
-
-        documentService.markDocumentRevisionAsObsolete(revisionKey);
-        return Response.ok().build();
+        DocumentRevision docR = documentService.markDocumentRevisionAsObsolete(revisionKey);
+        return mapper.map(docR, DocumentRevisionDTO.class);
     }
 
     @PUT

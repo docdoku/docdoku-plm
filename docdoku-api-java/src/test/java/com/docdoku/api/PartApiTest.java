@@ -87,9 +87,17 @@ public class PartApiTest {
         lastIteration.setModificationDate(updatedIteration.getModificationDate());
         Assert.assertEquals(lastIteration,updatedIteration);
 
-        // Checkin
+        // Check in
         checkedInPart = partApi.checkIn(TestConfig.WORKSPACE, createdPart.getNumber(), createdPart.getVersion(), "");
-        Assert.assertEquals(checkedInPart.getPartIterations().size(),2);
+        Assert.assertNull(checkedInPart.getCheckOutUser());
+
+        // Release
+        PartRevisionDTO releasedPart = partApi.releasePartRevision(TestConfig.WORKSPACE, checkedInPart.getNumber(), checkedInPart.getVersion(), "");
+        Assert.assertEquals(releasedPart.getStatus(), PartRevisionDTO.StatusEnum.RELEASED);
+
+        // Mark as obsolete
+        PartRevisionDTO obsoletePart = partApi.markPartRevisionAsObsolete(TestConfig.WORKSPACE, releasedPart.getNumber(), releasedPart.getVersion(), "");
+        Assert.assertEquals(obsoletePart.getStatus(), PartRevisionDTO.StatusEnum.OBSOLETE);
 
     }
 
