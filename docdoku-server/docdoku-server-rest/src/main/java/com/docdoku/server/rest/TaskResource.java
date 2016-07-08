@@ -133,14 +133,10 @@ public class TaskResource {
 
         DocumentRevision[] docRs;
 
-        if (filter == null) {
-            docRs = documentService.getDocumentRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
+        if ("in_progress".equals(filter)) {
+            docRs = documentService.getDocumentRevisionsWithOpenedTasksForGivenUser(workspaceId, assignedUserLogin);
         } else {
-            if ("in_progress".equals(filter)) {
-                docRs = documentService.getDocumentRevisionsWithOpenedTasksForGivenUser(workspaceId, assignedUserLogin);
-            } else {
-                docRs = documentService.getDocumentRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
-            }
+            docRs = documentService.getDocumentRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
         }
 
         List<DocumentRevisionDTO> docRsDTOs = new ArrayList<>();
