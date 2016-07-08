@@ -168,7 +168,6 @@ public class DocumentRevisionDAO {
         return em.createNamedQuery("DocumentRevision.findWithAssignedTasksForUser", DocumentRevision.class)
                 .setParameter("workspaceId", pWorkspaceId)
                 .setParameter("login", assignedUserLogin)
-                .setParameter("user", em.getReference(User.class, new UserKey(pWorkspaceId, assignedUserLogin)))
                 .getResultList();
     }
 
@@ -176,7 +175,6 @@ public class DocumentRevisionDAO {
         return em.createNamedQuery("DocumentRevision.findWithOpenedTasksForUser",DocumentRevision.class)
                 .setParameter("workspaceId", pWorkspaceId)
                 .setParameter("login", assignedUserLogin)
-                .setParameter("user", em.getReference(User.class, new UserKey(pWorkspaceId, assignedUserLogin)))
                 .getResultList();
     }
 

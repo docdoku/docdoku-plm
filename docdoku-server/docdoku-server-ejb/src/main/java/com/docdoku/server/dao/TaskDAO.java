@@ -71,7 +71,6 @@ public class TaskDAO {
     public Task[] findAssignedTasks(String workspaceId, String userLogin){
         Task[] tasks;
         TypedQuery<Task> query = em.createNamedQuery("Task.findAssignedTasks", Task.class);
-        query.setParameter("user",em.getReference(User.class, new UserKey(workspaceId,userLogin)));
         query.setParameter("login", userLogin);
         query.setParameter("workspaceId",workspaceId);
         List<Task> listTasks = query.getResultList();
@@ -86,7 +85,6 @@ public class TaskDAO {
     public Task[] findInProgressTasks(String workspaceId, String userLogin){
         Task[] tasks;
         TypedQuery<Task> query = em.createNamedQuery("Task.findInProgressTasks", Task.class);
-        query.setParameter("user",em.getReference(User.class, new UserKey(workspaceId,userLogin)));
         query.setParameter("login", userLogin);
         query.setParameter("workspaceId",workspaceId);
         List<Task> listTasks = query.getResultList();
