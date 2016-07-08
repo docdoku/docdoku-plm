@@ -208,4 +208,8 @@ public interface IDocumentManagerLocal {
     DocumentRevision[] getDocumentRevisionsWithOpenedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
 
     void createDocumentLog(DocumentLog log);
+
+    DocumentRevision releaseDocumentRevision(DocumentRevisionKey pRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, AccessRightException, NotAllowedException;
+    DocumentRevision markDocumentRevisionAsObsolete(DocumentRevisionKey pRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, AccessRightException, NotAllowedException;
+
 }

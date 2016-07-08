@@ -49,7 +49,6 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -1752,6 +1751,50 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
     @Override
     public void createDocumentLog(DocumentLog log) {
         em.persist(log);
+    }
+
+
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public DocumentRevision releaseDocumentRevision(DocumentRevisionKey pRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, AccessRightException, NotAllowedException {
+        User user = checkDocumentRevisionWriteAccess(pRevisionKey); // Check if the user can write the document
+        Locale locale = new Locale(user.getLanguage());
+
+        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(locale, em);
+        DocumentRevision documentRevision = documentRevisionDAO.loadDocR(pRevisionKey);
+
+        if (documentRevision.isCheckedOut()) {
+            throw new NotAllowedException(locale, "NotAllowedException63");
+        }
+
+        if (documentRevision.getNumberOfIterations() == 0) {
+            throw new NotAllowedException(locale, "NotAllowedException27");
+        }
+
+        if (documentRevision.isObsolete()) {
+            throw new NotAllowedException(locale, "NotAllowedException64");
+        }
+
+        documentRevision.release(user);
+        return documentRevision;
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public DocumentRevision markDocumentRevisionAsObsolete(DocumentRevisionKey pRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, AccessRightException, NotAllowedException {
+        User user = checkDocumentRevisionWriteAccess(pRevisionKey); // Check if the user can write the document
+        Locale locale = new Locale(user.getLanguage());
+
+        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(locale, em);
+        DocumentRevision documentRevision = documentRevisionDAO.loadDocR(pRevisionKey);
+
+        if (!documentRevision.isReleased()) {
+            throw new NotAllowedException(locale, "NotAllowedException65");
+        }
+
+        documentRevision.markAsObsolete(user);
+        return documentRevision;
     }
 
     /**
