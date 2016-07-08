@@ -1,145 +1,69 @@
-<md-toolbar>
-    <div class="md-toolbar-tools" layout="row" layout-align="start center">
-        <div>
-            <md-button class="md-icon-button" hide-gt-sm aria-label="{{'MENU' | translate}}" ng-click="openMenu()">
-                <i class="fa fa-bars"></i>
-            </md-button>
-        </div>
-        <div>
-            <md-menu>
-                <md-button aria-label="{{'MENU'}}" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+<div layout-fill layout="column">
+    <md-toolbar md-scroll-shrink>
+        <div class="md-toolbar-tools" layout="row" layout-align="start center">
+            <div>
+                <md-button class="md-icon-button" hide-gt-sm aria-label="{{'MENU' | translate}}" ng-click="openMenu()">
                     <i class="fa fa-bars"></i>
                 </md-button>
+            </div>
+            <div>
+                <md-menu>
+                    <md-button aria-label="{{'MENU'}}" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                        <i class="fa fa-bars"></i>
+                    </md-button>
 
-                <md-menu-content width="4">
-                    <md-menu-item>
-                        <md-button aria-label="{{'OPEN_IN_EXPLORER'|translate}}" ng-click="reveal()">
-                            {{'OPEN_IN_EXPLORER'|translate}}
-                        </md-button>
-                    </md-menu-item>
+                    <md-menu-content width="4">
+                        <md-menu-item>
+                            <md-button aria-label="{{'OPEN_IN_EXPLORER'|translate}}" ng-click="reveal()">
+                                {{'OPEN_IN_EXPLORER'|translate}}
+                            </md-button>
+                        </md-menu-item>
 
-
-                    <md-menu-item>
-                        <md-button aria-label="{{'FAVORITE'|translate}}" ng-click="toggleFavorite()">
+                        <md-menu-item>
+                            <md-button aria-label="{{'FAVORITE'|translate}}" ng-click="toggleFavorite()">
                                 {{'FAVORITE'|translate}}
-                        </md-button>
-                    </md-menu-item>
+                            </md-button>
+                        </md-menu-item>
 
-                    <md-menu-item>
-                        <md-button aria-label="{{'REFRESH_FOLDER'|translate}}" ng-click="refresh(true)" >
-                            {{'REFRESH_FOLDER'|translate}}
-                        </md-button>
-                    </md-menu-item>
+                        <md-menu-item>
+                            <md-button aria-label="{{'REFRESH_FOLDER'|translate}}" ng-click="refresh(true)">
+                                {{'REFRESH_FOLDER'|translate}}
+                            </md-button>
+                        </md-menu-item>
 
-                    <md-menu-item>
-                        <md-button aria-label="{{'DELETE_FOLDER'|translate}}" ng-click="delete($event)">
+                        <md-menu-item>
+                            <md-button aria-label="{{'DELETE_FOLDER'|translate}}" ng-click="delete($event)">
                                 {{'DELETE_FOLDER'|translate}}
-                        </md-button>
-                    </md-menu-item>
+                            </md-button>
+                        </md-menu-item>
 
-                </md-menu-content>
-            </md-menu>
+                    </md-menu-content>
+                </md-menu>
+            </div>
+            <div>
+                <h2>
+                    <span>
+                        <i class="fa fa-folder-open"></i>
+                        <i class="fa fa-star favorite" ng-if="folder.favorite"></i>
+                        {{ folder.path | fileshortname }}
+                    </span>
+                </h2>
+            </div>
+        </div>
+    </md-toolbar>
+
+    <md-content layout-padding ng-if="display.type === 'flat'">
+        <div>
+            <h3>{{'INDEXED' | translate}} ({{inIndexFiles.length}})</h3>
+            <div ng-repeat="file in inIndexFiles">
+               {{file}}
+            </div>
         </div>
         <div>
-        <h2>
-          <span>
-              <i class="fa fa-folder-open"></i>  <i class="fa fa-star favorite" ng-if="folder.favorite"></i> {{ folder.path | fileshortname }}
-            </span>
-        </h2>
+            <h3>{{'NOT_INDEXED' | translate}} ({{outOfIndexFiles.length}})</h3>
+            <div ng-repeat="file in outOfIndexFiles">
+               {{file}}
+            </div>
         </div>
-    </div>
-</md-toolbar>
-
-<md-content layout-padding>
-<!--
-    <pre>repositoryIndex = {{repositoryIndex | json}}</pre>
-    <pre>inIndexFiles = {{inIndexFiles | json}}</pre>
-    <pre>outOfIndexFiles = {{outOfIndexFiles | json}}</pre>-->
-
-    <md-grid-list
-            md-cols-gt-md="12" md-cols="3" md-cols-md="8"
-            md-row-height-gt-md="1:1" md-row-height="4:3"
-            md-gutter-gt-md="16px" md-gutter-md="8px" md-gutter="4px">
-        <md-grid-tile
-                ng-repeat="file in inIndexFiles"
-                md-colspan-gt-sm="1"
-                md-rowspan-gt-sm="1">
-            <div in-index="file" in-index-spec="repositoryIndex"></div>
-        </md-grid-tile>
-
-    <md-grid-list
-            md-cols-gt-md="12" md-cols="3" md-cols-md="8"
-            md-row-height-gt-md="1:1" md-row-height="4:3"
-            md-gutter-gt-md="16px" md-gutter-md="8px" md-gutter="4px">
-        <md-grid-tile
-                ng-repeat="file in outOfIndexFiles"
-                md-colspan-gt-sm="1"
-                md-rowspan-gt-sm="1">
-            <div out-of-index="file"></div>
-        </md-grid-tile>
-
-    </md-grid-list>
-
-</md-content>
-<!--
-
-<div on-scroll-end="onScrollEnd()" class="fullscreen-wrapper offset-toolbar">
-
-    <div class="row list-header" layout="row">
-        <div flex>
-            <md-text-float layout-padding label="{{'SEARCH' | translate}} ({{files.length}} {{'ITEMS' | translate}})" ng-model="search"
-                           type="text"></md-text-float>
-        </div>
-        <div layout-padding>
-            <md-checkbox aria-label="{{'UP_TO_DATE' | translate}}" ng-model="filters.sync"  title="{{'UP_TO_DATE' | translate}}">
-                <i class="fa fa-check-circle-o file-sync"></i>
-            </md-checkbox>
-            <md-checkbox aria-label="{{'MODIFIED' | translate}}" ng-model="filters.modified"  title="{{'MODIFIED' | translate}}">
-                <i class="fa fa-cloud-upload file-modified"></i>
-            </md-checkbox>
-        </div>
-    </div>
-
-
-    <md-content layout-padding>
-
-
-
-
-        <md-button
-                ng-if="!loadingFiles && hasUploadableFiles()"
-                class="md-margin md-raised md-primary"
-                ng-click="syncAll()">
-            <i class="fa fa-refresh"></i>
-            {{'SYNC_ALL'|translate}}
-            <md-tooltip>
-                {{'SYNC_ALL'|translate}}
-            </md-tooltip>
-        </md-button>
-
-
-        <span ng-show="loadingFiles">{{'FILE_ANALYSIS' | translate}} ... {{counts.inProgress}}/{{counts.totalFiles}}</span>
-        <md-progress-linear ng-show="loadingFiles" mode="indeterminate"></md-progress-linear>
-
-        <md-list>
-            <md-list-item ng-repeat="file in files | filter:search | filterFiles:filters"
-                        ng-controller="FileController" layout-align="start start" ng-class="{opened:openedFile}">
-                    <div class="md-tile-left md-tile-top" align="center" ng-if="loading">
-                        <i class="fa fa-spinner fa-spin"></i>
-                    </div>
-                    <div class="md-tile-left md-tile-top" align="center" ng-if="!loading">
-                        <i class="fa fa-spinner fa-spin" ng-show="loading"></i>
-                        <i class="fa fa-check-circle-o fa-lg file-sync" ng-show="file.sync"></i>
-                        <i class="fa fa-cloud-upload fa-lg file-modified" ng-show="file.modified"></i>
-                        <i class="fa fa-plus-circle fa-lg file-notSync" ng-show="file.notSync"></i>
-                    </div>
-
-                    <div class="file" ng-if="file.part" ng-include="'js/folder/folder-part.html'"></div>
-                    <div class="file" ng-if="file.document" ng-include="'js/folder/folder-document.html'"></div>
-                    <div class="file" ng-if="!file.document && !file.part" ng-include="'js/folder/folder-unknown.html'"></div>
-                <md-divider ng-if="!$last"></md-divider>
-            </md-list-item>
-        </md-list>
-        <p class="empty-list" ng-show="!loadingFiles && !files.length">{{'NO_FILES'|translate}}</p>
     </md-content>
-</div>-->
+</div>

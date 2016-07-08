@@ -1,0 +1,24 @@
+<div layout-padding>
+    <div>
+        <p class="md-headline">
+            {{'ADD_FOLDER' | translate}}
+        </p>
+    </div>
+    <div>
+
+        <label ng-click="close()" class="md-button md-raised md-default">
+            {{'CLOSE'|translate}}
+        </label>
+
+        <label for="folder-search-input" class="md-button md-raised md-primary">
+            {{'SELECT_FOLDER'|translate}}
+        </label>
+
+        <input class="ng-hide"
+               id="folder-search-input"
+               class="md-primary"
+               file-change="search($event,files)" type="file" nwdirectory />
+
+    </div>
+
+</div>

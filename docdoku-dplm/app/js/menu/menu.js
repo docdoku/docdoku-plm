@@ -71,6 +71,14 @@ angular.module('dplm.menu', [])
             });
         };
 
+        $scope.addFolder = function(){
+            $mdDialog.show({
+                templateUrl: 'js/folder/add-folder.html',
+                fullscreen: true,
+                controller:'AddFolderCtrl'
+            });
+        };
+
         // TODO check if used
         $scope.onFileDropped = function(path){
             if(path){

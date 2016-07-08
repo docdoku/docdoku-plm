@@ -40,7 +40,6 @@
 
             $scope.workspace = $routeParams.workspace;
 
-            WorkspaceService.addLastVisited($scope.workspace);
 
         });
 

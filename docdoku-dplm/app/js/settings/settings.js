@@ -10,7 +10,7 @@
             });
         })
 
-        .controller('SettingsController', function ($scope, $location, $translate, ConfigurationService, WorkspaceService) {
+        .controller('SettingsController', function ($scope, $location, $translate, ConfigurationService, WorkspaceService, FolderService) {
 
             $scope.configuration = ConfigurationService.configuration;
             $scope.output = WorkspaceService.output;
@@ -20,6 +20,11 @@
                 ConfigurationService.reset();
                 WorkspaceService.reset();
                 $location.path('home');
+            };
+
+            $scope.clearFolders = function(){
+                FolderService.folders.length = 0;
+                FolderService.save();
             };
 
         });

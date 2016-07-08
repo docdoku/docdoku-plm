@@ -11,24 +11,24 @@
     </div>
 </md-toolbar>
 
-<div layout="column" class="settings">
+<div layout="column" layout-padding>
 
-    <md-content layout-padding>
-        <div class="output" ng-if="output.error">
-            <output entry="output.error"></output>
-        </div>
-        <md-content layout-gt-sm="row" layout-padding>
+    <div>
+        <md-button aria-label="" class="md-raised md-primary" ng-click="clearFolders();">
+            {{'CLEAR_FOLDERS'|translate}}
+        </md-button>
+    </div>
+    <div>
         <form ng-submit="save()">
 
             <p><em>No settings to configure yet</em></p>
 
             <div class="row">
-                <md-button aria-label="" class="md-raised md-primary">
+                <md-button ng-disabled="true" aria-label="" class="md-raised md-primary">
                     {{'SAVE'|translate}}
                 </md-button>
             </div>
         </form>
-        </md-content>
-    </md-content>
+    </div>
 
 </div>
