@@ -42,6 +42,26 @@
                     <th scope="row">{{i18n.TAGS}}</th>
                     <td>{{document.tags}}</td>
                 </tr>
+                {{#document.releaseAuthor}}
+                <tr>
+                    <th scope="row">{{i18n.RELEASED_BY}}</th>
+                    <td>{{document.releaseAuthor.name}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{{i18n.RELEASE_DATE}}</th>
+                    <td>{{document.releaseDate}}</td>
+                </tr>
+                {{/document.releaseAuthor}}
+                {{#document.obsoleteAuthor}}
+                <tr>
+                    <th scope="row">{{i18n.OBSOLETE_AUTHOR}}</th>
+                    <td>{{document.obsoleteAuthor.name}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{{i18n.OBSOLETE_DATE}}</th>
+                    <td>{{document.obsoleteDate}}</td>
+                </tr>
+                {{/document.obsoleteAuthor}}
                 </tbody>
             </table>
 
