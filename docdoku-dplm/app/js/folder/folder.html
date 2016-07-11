@@ -58,7 +58,18 @@
             <div class="md-inline-form">
                 <md-input-container>
                     <label>{{'SEARCH'|translate}}</label>
-                    <input type="text" ng-change="search(pattern)" ng-model="pattern" />
+                    <input type="text" ng-change="search()" ng-model="pattern" />
+                </md-input-container>
+            </div>
+
+            <div>
+                <md-input-container>
+                    <label>{{'FILTERS'|translate}}</label>
+                    <md-select md-container-class="hidden-value" ng-change="search()" ng-model="selectedFilters" multiple>
+                        <md-optgroup label="{{'FILTERS'|translate}}">
+                            <md-option ng-value="filter.value" ng-repeat="filter in filters">{{filter.name}}</md-option>
+                        </md-optgroup>
+                    </md-select>
                 </md-input-container>
             </div>
 
@@ -73,7 +84,9 @@
                         md-page-select>
                 </md-table-pagination>
             </div>
+
         </div>
+
 
         <div>
             <md-table-container>

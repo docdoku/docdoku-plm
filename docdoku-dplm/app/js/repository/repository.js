@@ -71,13 +71,35 @@
                 });
             };
 
+            var getIndexValue = function(index,path,key){
+                return index[path+'.'+key];
+            };
+
+            var setIndexValue = function(index,path,key,value){
+                return index[path+'.'+key] = value;
+            };
+
             this.getFileIndex = function(index,path){
 
-                if(index[path+'.digest']){
-                    return{
-                        digest:index[path+'.digest']
+                var digest = getIndexValue(index,path,'digest');
+
+                if(digest){
+                    var fileIndex ={
+                        digest:digest,
+                        workspace:getIndexValue(index,path,'workspace'),
+                        id:getIndexValue(index,path,'id'),
+                        partNumber:getIndexValue(index,path,'partNumber'),
+                        revision:getIndexValue(index,path,'revision'),
+                        iteration:getIndexValue(index,path,'iteration'),
+                        lastModifiedDate:getIndexValue(index,path,'lastModifiedDate')
+                    };
+                    if(index[path+'.id']){
+                        fileIndex.id = index[path+'.id'];
                     }
+                    return fileIndex;
                 }
+
+                return null;
             };
 
         })

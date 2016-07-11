@@ -31,6 +31,22 @@
             var repositoryIndex;
 
             $scope.selected = [];
+            var translate = $filter('translate');
+            $scope.filters = [
+                { name: translate('CHECKED_OUT') , value:'CHECKED_OUT'},
+                { name: translate('CHECKED_IN'), value:'CHECKED_IN'},
+                { name: translate('DOCUMENTS') , value:'DOCUMENTS'},
+                { name: translate('PARTS') , value:'PARTS'},
+                { name: translate('OUT_OF_INDEX'), value:'OUT_OF_INDEX' }
+            ];
+
+            var hasFilter = function(value){
+                return $scope.selectedFilters.indexOf(value) !== -1;
+            };
+
+            $scope.selectedFilters = $scope.filters.map(function(filter){
+                return filter.value;
+            });
 
             $scope.query = {
                 limit: 10,
@@ -69,9 +85,37 @@
                 $scope.displayedFiles = filteredFiles.slice(start, end);
             };
 
-            $scope.search = function(pattern){
-                filteredFiles = allFiles.filter(function(file){
-                    return file.match(pattern);
+            $scope.search = function(){
+
+                filteredFiles = allFiles.filter(function(path){
+                    var file = FolderService.createFileObject(path);
+                    var index = RepositoryService.getFileIndex(repositoryIndex, path) ;
+
+                    if($scope.pattern && !file.path.match($scope.pattern)){
+                       return false;
+                    }
+
+                    if(!hasFilter('OUT_OF_INDEX') && !index){
+                        return false;
+                    }
+
+                    if(!hasFilter('DOCUMENTS') && index.id){
+                        return false;
+                    }
+
+                    if(!hasFilter('PARTS') && index.partNumber){
+                        return false;
+                    }
+
+                    if(!hasFilter('DOCUMENTS') && index && index.id) {
+                        return false;
+                    }
+
+                    if(!hasFilter('PARTS') && index && index.number){
+                        return false;
+                    }
+
+                    return true;
                 })
                 .map(function(path){
                     var file = FolderService.createFileObject(path);
