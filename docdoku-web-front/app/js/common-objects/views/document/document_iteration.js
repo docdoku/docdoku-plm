@@ -103,6 +103,8 @@ define([
                 isCheckoutByConnectedUser: this.model.isCheckoutByConnectedUser(),
                 isLocked: this.model.isLocked(),
                 isCheckout: this.model.isCheckout(),
+                isReleased: this.model.isReleased(),
+                isObsolete: this.model.isObsolete(),
                 editMode: editMode,
                 docRevision: this.model.toJSON(),
                 i18n: App.config.i18n,
@@ -116,6 +118,8 @@ define([
                 App.config.i18n._DATE_FORMAT,
                 data.docRevision.creationDate
             );
+            data.docRevision.releaseDate = this.model.getReleaseDate();
+            data.docRevision.obsoleteDate = this.model.getObsoleteDate();
 
 
             var fullPath = data.docRevision.path;
@@ -215,17 +219,30 @@ define([
                 this.$('a[href=#tab-iteration-lifecycle]').hide();
             }
 
-            this.$('.author-popover').userPopover(this.model.attributes.author.login, this.model.id, 'right');
-
-            if (this.model.isCheckout()) {
-                this.$('.checkout-user-popover').userPopover(this.model.getCheckoutUser().login, this.model.id, 'right');
-            }
+            this.$authorLink = this.$('.author-popover');
+            this.$checkoutUserLink = this.$('.checkout-user-popover');
+            this.$releaseUserLink = this.$('.release-user-popover');
+            this.$obsoleteUserLink = this.$('.obsolete-user-popover');
+            this.bindUserPopover();
 
             date.dateHelper(this.$('.date-popover'));
 
             this.tagsManagement(editMode);
 
             return this;
+        },
+
+        bindUserPopover: function () {
+            this.$authorLink.userPopover(this.model.attributes.author.login, this.model.id, 'right');
+            if (this.model.isCheckout()) {
+                this.$checkoutUserLink.userPopover(this.model.getCheckOutUser().login, this.model.id, 'right');
+            }
+            if (this.model.getReleaseAuthor()) {
+                this.$releaseUserLink.userPopover(this.model.getReleaseAuthorLogin(), this.model.id, 'right');
+            }
+            if (this.model.isObsolete()) {
+                this.$obsoleteUserLink.userPopover(this.model.getObsoleteAuthorLogin(), this.model.id, 'right');
+            }
         },
 
         interceptSubmit: function () {

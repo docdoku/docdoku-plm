@@ -99,7 +99,20 @@ define([
                 } else {
                     this.updateActionsButton(false, false, false);
                 }
+            } else if (document.getReleaseAuthor()) {
+                this.newVersionButton.prop('disabled', false);
+
+                // TODO: hide update actions buttons
+                this.updateActionsButton(false, false, false);
+
+                // TODO: hide release button
+
+                if (document.isObsolete()) {
+                    // TODO: hide obsolete button
+                }
             } else {
+                // TODO: show release button
+
                 this.newVersionButton.prop('disabled', false);
                 this.updateActionsButton(true, false, false);
             }

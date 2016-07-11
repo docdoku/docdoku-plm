@@ -1,9 +1,10 @@
 /*global $,_,define,App,window*/
 define([
     'backbone',
+    'common-objects/utils/date',
     'common-objects/collections/document_iteration',
     'common-objects/utils/acl-checker'
-], function (Backbone, DocumentIterationList, ACLChecker) {
+], function (Backbone, Date, DocumentIterationList, ACLChecker) {
 	'use strict';
 	var DocumentRevision = Backbone.Model.extend({
 
@@ -73,6 +74,64 @@ define([
 		getCheckoutUser: function () {
 			return this.get('checkOutUser');
 		},
+
+        isReleased: function () {
+            return this.get('status') === 'RELEASED';
+        },
+
+        isObsolete : function(){
+            return this.get('status') === 'OBSOLETE';
+        },
+
+        getObsoleteDate: function() {
+            return Date.formatTimestamp(
+                App.config.i18n._DATE_FORMAT,
+                this.get('obsoleteDate')
+            );
+        },
+
+        getObsoleteAuthor: function() {
+            return this.get('obsoleteAuthor');
+        },
+
+        getObsoleteAuthorLogin: function () {
+            if (this.isObsolete()) {
+                return this.getObsoleteAuthor().login;
+            }
+            return null;
+        },
+
+        getObsoleteAuthorName: function () {
+            if (this.isObsolete()) {
+                return this.getObsoleteAuthor().name;
+            }
+            return null;
+        },
+
+        getReleaseDate: function() {
+            return Date.formatTimestamp(
+                App.config.i18n._DATE_FORMAT,
+                this.get('releaseDate')
+            );
+        },
+
+        getReleaseAuthor: function() {
+            return this.get('releaseAuthor');
+        },
+
+        getReleaseAuthorLogin: function () {
+            if (this.getReleaseAuthor()) {
+                return this.getReleaseAuthor().login;
+            }
+            return null;
+        },
+
+        getReleaseAuthorName: function () {
+            if (this.getReleaseAuthor()) {
+                return this.getReleaseAuthor().name;
+            }
+            return null;
+        },
 
 		isCheckoutByConnectedUser: function () {
 			return this.isCheckout() ? this.getCheckoutUser().login === App.config.login : false;

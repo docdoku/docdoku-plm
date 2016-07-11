@@ -57,6 +57,9 @@ define([
                 data.hasAttachedFiles = this.model.getLastIteration().getAttachedFiles().length;
             }
 
+            data.isReleased = this.model.isReleased();
+            data.isObsolete = this.model.isObsolete();
+
             return data;
         },
 

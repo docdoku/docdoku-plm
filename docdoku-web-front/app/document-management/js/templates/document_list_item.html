@@ -3,8 +3,10 @@
 <td class="reference doc-ref">
     <a title="{{model.path}}/{{model.id}}">{{#model.isCheckout}}{{#model.isCheckoutByConnectedUser}}<i
             class="fa fa-pencil"></i>{{/model.isCheckoutByConnectedUser}}{{^model.isCheckoutByConnectedUser}}<i
-            class="fa fa-lock"></i>{{/model.isCheckoutByConnectedUser}}{{/model.isCheckout}}{{^model.isCheckout}}<i
-            class="fa fa-eye"></i>{{/model.isCheckout}}{{model.reference}}</a>
+            class="fa fa-lock"></i>{{/model.isCheckoutByConnectedUser}}{{/model.isCheckout}}{{^model.isCheckout}}{{#model.isReleased}}<i
+            class="fa fa-check"></i>{{/model.isReleased}}{{^model.isReleased}}{{#model.isObsolete}}<i
+            class="fa fa-frown-o"></i>{{/model.isObsolete}}{{^model.isObsolete}}<i
+            class="fa fa-eye"></i>{{/model.isObsolete}}{{/model.isReleased}}{{/model.isCheckout}}{{model.reference}}</a>
 </td>
 <td>{{model.version}}</td>
 <td>

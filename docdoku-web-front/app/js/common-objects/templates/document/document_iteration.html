@@ -5,7 +5,13 @@
         {{^isCheckoutByConnectedUser}}<i class="fa fa-lock"></i>{{/isCheckoutByConnectedUser}}
         {{/isCheckout}}
         {{^isCheckout}}
-        <i class="ModalHeader-icon fa fa-eye"></i>
+        {{#isReleased}}
+        <i class="fa fa-check"></i>
+        {{/isReleased}}
+        {{^isReleased}}
+        {{#isObsolete}}<i class="fa fa-frown-o"></i>{{/isObsolete}}
+        {{^isObsolete}}<i class="fa fa-eye"></i>{{/isObsolete}}
+        {{/isReleased}}
         {{/isCheckout}}
 
         <a class="close" data-dismiss="modal">×</a>
@@ -16,6 +22,8 @@
                 <a target="_blank" href="{{permalink}}">
             {{/hasIterations}}
                     {{docRevision.title}} < {{docRevision.id}} >
+                    {{#isObsolete}}({{i18n.OBSOLETE}}){{/isObsolete}}
+                    {{#isReleased}}({{i18n.RELEASED}}){{/isReleased}}
                     {{#isCheckoutByConnectedUser}}({{i18n.IN_PROGRESS}}){{/isCheckoutByConnectedUser}}
                     {{#isLocked}}({{i18n.LOCKED}}){{/isLocked}}
             {{#hasIterations}}
@@ -132,6 +140,34 @@
                                 </div>
                             </div>
                         {{/isForBaseline}}
+                        {{#docRevision.releaseAuthor}}
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.RELEASED_BY}}</label>
+                            <div class="controls">
+                                <span class="help-inline"><a class="release-user-popover">{{docRevision.releaseAuthor.name}}</a></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.RELEASE_DATE}}</label>
+                            <div class="controls">
+                                <span class="help-inline"><a class="date-popover">{{docRevision.releaseDate}}</a></span>
+                            </div>
+                        </div>
+                        {{/docRevision.releaseAuthor}}
+                        {{#isObsolete}}
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.OBSOLETE_AUTHOR}}</label>
+                            <div class="controls">
+                                <span class="help-inline"><a class="obsolete-user-popover">{{docRevision.obsoleteAuthor.name}}</a></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.OBSOLETE_DATE}}</label>
+                            <div class="controls">
+                                <span class="help-inline"><a class="date-popover">{{docRevision.obsoleteDate}}</a></span>
+                            </div>
+                        </div>
+                        {{/isObsolete}}
                     </div>
                     {{#hasIterations}}
                     <div id="tab-iteration-iteration" class="ModalTabsPane tab-pane">
@@ -147,6 +183,8 @@
                             <div class="controls">
                                 <textarea type="text" id="inputRevisionNote" {{^editMode}}disabled="disabled"{{/editMode}} >{{iteration.revisionNote}}</textarea>
                             </div>
+                            {{^isReleased}}
+                            {{^isObsolete}}
                             {{^isLocked}}
                             <div class="action-checkin-checkout" >
                                 {{^isCheckout}}<button type="button" class="btn btn-small btn-warning action-checkout"> <i class="fa fa-pencil"></i> {{i18n.CHECKOUT}}</button>{{/isCheckout}}
@@ -155,6 +193,8 @@
 
                             </div>
                             {{/isLocked}}
+                            {{/isObsolete}}
+                            {{/isReleased}}
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.REVISION_DATE}}</label>
