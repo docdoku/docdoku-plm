@@ -235,7 +235,7 @@ define([
         bindUserPopover: function () {
             this.$authorLink.userPopover(this.model.attributes.author.login, this.model.id, 'right');
             if (this.model.isCheckout()) {
-                this.$checkoutUserLink.userPopover(this.model.getCheckOutUser().login, this.model.id, 'right');
+                this.$checkoutUserLink.userPopover(this.model.getCheckoutUser().login, this.model.id, 'right');
             }
             if (this.model.getReleaseAuthor()) {
                 this.$releaseUserLink.userPopover(this.model.getReleaseAuthorLogin(), this.model.id, 'right');
