@@ -20,12 +20,12 @@
 
 package com.docdoku.api.models.utils;
 
-import com.docdoku.api.models.ActivityDTO;
-import com.docdoku.api.models.TaskDTO;
-import com.docdoku.api.models.WorkflowDTO;
+import com.docdoku.api.models.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class helps to manipulate workflow objects
@@ -59,6 +59,10 @@ public class WorkflowHelper {
     }
 
 
+    public static List<TaskDTO> getRunningTasks(WorkflowDTO workflowDTO) {
+        return getRunningTasks(getCurrentActivity(workflowDTO));
+    }
+
     public static List<TaskDTO> getRunningTasks(ActivityDTO currentActivity) {
         List<TaskDTO> tasks = new ArrayList<>();
         for(TaskDTO task : currentActivity.getTasks()){
@@ -69,4 +73,13 @@ public class WorkflowHelper {
         return tasks;
     }
 
+    public static Set<RoleDTO> getRolesInvolved(WorkflowModelDTO workflowModel) {
+        Set<RoleDTO> roles = new HashSet<>();
+        for(ActivityModelDTO activityModelDTO:workflowModel.getActivityModels()){
+            for(TaskModelDTO taskModelDTO : activityModelDTO.getTaskModels()){
+                roles.add(taskModelDTO.getRole());
+            }
+        }
+        return roles;
+    }
 }

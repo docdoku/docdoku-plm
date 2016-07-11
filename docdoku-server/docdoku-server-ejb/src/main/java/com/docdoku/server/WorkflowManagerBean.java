@@ -337,6 +337,7 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
         }
 
         WorkspaceWorkflow workspaceWorkflow = new WorkspaceWorkflow(user.getWorkspace(), id, workflow);
+        workflowDAO.createWorkflow(workspaceWorkflow.getWorkflow());
         workflowDAO.createWorkspaceWorkflow(workspaceWorkflow);
 
         //mailer.sendApproval(runningTasks, docR);
@@ -414,7 +415,6 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
         if(workspaceWorkflowTarget == null){
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
-        // check holder
 
         task.approve(user,comment, 0, signature);
 

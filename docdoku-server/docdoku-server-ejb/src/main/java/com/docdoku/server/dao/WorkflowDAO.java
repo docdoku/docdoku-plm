@@ -178,14 +178,7 @@ public class WorkflowDAO {
     }
 
     public WorkspaceWorkflow getWorkspaceWorkflow(String workspaceId, String workspaceWorkflowId) {
-        TypedQuery<WorkspaceWorkflow> query = em.createQuery("SELECT w FROM WorkspaceWorkflow w WHERE w.id = :workspaceWorkflowId AND w.workspace.id = :workspaceId", WorkspaceWorkflow.class);
-        try{
-            return query.setParameter("workspaceWorkflowId", workspaceWorkflowId)
-                    .setParameter("workspaceId", workspaceId)
-                    .getSingleResult();
-        }catch(NoResultException e){
-            return null;
-        }
+        return em.find(WorkspaceWorkflow.class, new WorkspaceWorkflowKey(workspaceId, workspaceWorkflowId));
     }
 
     public List<WorkspaceWorkflow> getWorkspaceWorkflowList(String workspaceId) {
