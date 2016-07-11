@@ -23,6 +23,7 @@ package com.docdoku.api;
 
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.*;
+import com.docdoku.api.models.utils.WorkflowHelper;
 import com.docdoku.api.services.*;
 import org.junit.Assert;
 import org.junit.Test;
@@ -120,6 +121,21 @@ public class TaskApiTest {
         Assert.assertEquals(assignedTasks.stream()
                 .filter(taskDTO -> taskDTO.getWorkflowId() == workspaceWorkflow.getWorkflow().getId())
                 .count(),1);
+
+        ActivityDTO currentActivity = WorkflowHelper.getCurrentActivity(workspaceWorkflow.getWorkflow());
+        List<TaskDTO> runningTasks = WorkflowHelper.getRunningTasks(currentActivity);
+        TaskDTO firstRunningTasks = runningTasks.get(0);
+        Assert.assertNotNull(firstRunningTasks);
+
+        String taskId = workspaceWorkflow.getWorkflow().getId() + "-" + currentActivity.getStep() + "-" + firstRunningTasks.getNum();
+
+
+        TaskProcessDTO taskProcessDTO = new TaskProcessDTO();
+        taskProcessDTO.setAction(TaskProcessDTO.ActionEnum.APPROVE);
+        taskProcessDTO.setComment("Test are passing !");
+        tasksApi.processTask(TestConfig.WORKSPACE, taskId, taskProcessDTO);
+
+
     }
 
 
