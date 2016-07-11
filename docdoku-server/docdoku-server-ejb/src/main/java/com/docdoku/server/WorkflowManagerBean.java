@@ -462,6 +462,19 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
         return workspaceWorkflows.toArray(new WorkspaceWorkflow[workspaceWorkflows.size()]);
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public void deleteWorkspaceWorkflow(String workspaceId, String workspaceWorkflowId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceWriteAccess(workspaceId);
+        WorkflowDAO workflowDAO = new WorkflowDAO(em);
+        WorkspaceWorkflow workspaceWorkflow = workflowDAO.getWorkspaceWorkflow(workspaceId,workspaceWorkflowId);
+        if(workspaceWorkflow != null){
+            workflowDAO.deleteWorkspaceWorkflow(workspaceWorkflow);
+        }else{
+            throw new AccessRightException(new Locale(user.getLanguage()),user);
+        }
+    }
+
     private void relaunchWorkflow(WorkspaceWorkflow workspaceWorkflow, int activityStep){
         Workflow workflow = workspaceWorkflow.getWorkflow();
         // Clone new workflow

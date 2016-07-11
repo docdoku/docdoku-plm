@@ -71,17 +71,8 @@ public class WorkflowApiTest {
         Assert.assertEquals(workspaceWorkflow.getWorkspaceId(),TestConfig.WORKSPACE);
         runAsserts(workspaceWorkflow.getWorkflow(), workflowModel);
         processTask(workspaceWorkflow.getWorkflow(), workflowModel);
-    }
 
-    private void runAsserts(WorkflowDTO workflowDTO, WorkflowModelDTO workflowModel) {
-        Assert.assertNotNull(workflowDTO);
-        Assert.assertEquals(workflowDTO.getFinalLifeCycleState(),workflowModel.getFinalLifeCycleState());
-        Assert.assertNotNull(workflowDTO.getActivities());
-        Assert.assertEquals(workflowDTO.getActivities().size(), workflowModel.getActivityModels().size());
-        Assert.assertEquals(workflowDTO.getActivities().get(0).getLifeCycleState(), workflowModel.getActivityModels().get(0).getLifeCycleState());
-        Assert.assertEquals(workflowDTO.getActivities().get(0).getTasks().size(), workflowModel.getActivityModels().get(0).getTaskModels().size());
-        Assert.assertEquals(workflowDTO.getActivities().get(0).getTasks().get(0).getTitle(), workflowModel.getActivityModels().get(0).getTaskModels().get(0).getTitle());
-        Assert.assertEquals(workflowDTO.getActivities().get(0).getTasks().get(1).getTitle(), workflowModel.getActivityModels().get(0).getTaskModels().get(1).getTitle());
+        workspaceWorkflowsApi.deleteWorkspaceWorkflow(TestConfig.WORKSPACE, workspaceWorkflow.getId());
     }
 
     @Test
@@ -146,6 +137,17 @@ public class WorkflowApiTest {
 
     }
 
+    private void runAsserts(WorkflowDTO workflowDTO, WorkflowModelDTO workflowModel) {
+        Assert.assertNotNull(workflowDTO);
+        Assert.assertEquals(workflowDTO.getFinalLifeCycleState(),workflowModel.getFinalLifeCycleState());
+        Assert.assertNotNull(workflowDTO.getActivities());
+        Assert.assertEquals(workflowDTO.getActivities().size(), workflowModel.getActivityModels().size());
+        Assert.assertEquals(workflowDTO.getActivities().get(0).getLifeCycleState(), workflowModel.getActivityModels().get(0).getLifeCycleState());
+        Assert.assertEquals(workflowDTO.getActivities().get(0).getTasks().size(), workflowModel.getActivityModels().get(0).getTaskModels().size());
+        Assert.assertEquals(workflowDTO.getActivities().get(0).getTasks().get(0).getTitle(), workflowModel.getActivityModels().get(0).getTaskModels().get(0).getTitle());
+        Assert.assertEquals(workflowDTO.getActivities().get(0).getTasks().get(1).getTitle(), workflowModel.getActivityModels().get(0).getTaskModels().get(1).getTitle());
+    }
+
     private void processTask(WorkflowDTO createdWorkflow, WorkflowModelDTO createdFrom) throws ApiException {
 
         UserDTO me = usersApi.whoami(TestConfig.WORKSPACE);
@@ -182,7 +184,6 @@ public class WorkflowApiTest {
         Assert.assertEquals(createdFrom.getActivityModels().get(0).getTaskModels().get(1).getTitle(),nextTask.getTitle());
 
     }
-
 
     private List<RoleMappingDTO> resolveDefaultRoles(WorkflowModelDTO workflowModel) {
         Set<RoleDTO> rolesInvolved = WorkflowHelper.getRolesInvolved(workflowModel);

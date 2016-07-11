@@ -116,4 +116,14 @@ public class WorkspaceWorkflowResource {
         return mapper.map(workspaceWorkflow, WorkspaceWorkflowDTO.class);
     }
 
+
+    @DELETE
+    @Path("{workspaceWorkflowId}")
+    @ApiOperation(value = "Delete a workspace workflow ", response = Response.class)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteWorkspaceWorkflow(@PathParam("workspaceId") String workspaceId,
+                                            @PathParam("workspaceWorkflowId") String workspaceWorkflowId) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException {
+        workflowService.deleteWorkspaceWorkflow(workspaceId,workspaceWorkflowId);
+        return Response.ok().build();
+    }
 }

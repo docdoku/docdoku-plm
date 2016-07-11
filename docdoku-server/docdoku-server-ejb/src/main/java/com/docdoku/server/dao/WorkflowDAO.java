@@ -189,4 +189,10 @@ public class WorkflowDAO {
             return null;
         }
     }
+
+    public void deleteWorkspaceWorkflow(WorkspaceWorkflow workspaceWorkflow) {
+        removeWorkflowConstraints(workspaceWorkflow);
+        em.remove(workspaceWorkflow);
+        em.flush();
+    }
 }
