@@ -175,7 +175,7 @@ public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
             throw new NotAllowedException(locale, "NotAllowedException15");
         }
         if (partR.isCheckedOut()) {
-            throw new NotAllowedException(locale, "NotAllowedException16");
+            throw new NotAllowedException(locale, "NotAllowedException17");
         }
         return partR;
     }
