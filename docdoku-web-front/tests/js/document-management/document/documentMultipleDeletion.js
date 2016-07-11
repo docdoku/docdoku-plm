@@ -35,7 +35,7 @@ casper.test.begin('Document multiple deletion tests suite', 1, function document
             this.click(checkbox);
         }, function fail() {
             this.capture('screenshot/documentMultipleDeletion/waitForDocumentTable-error.png');
-            this.test.assert(false, 'Document can not be found');
+            this.test.assert(false, 'Document table can not be found');
         });
     });
 
@@ -55,7 +55,7 @@ casper.test.begin('Document multiple deletion tests suite', 1, function document
 
 
     /**
-     * Confirm document deletion
+     * Confirm documents deletion
      */
 
     casper.then(function confirmDocumentsDeletion() {
@@ -69,11 +69,11 @@ casper.test.begin('Document multiple deletion tests suite', 1, function document
     });
 
     /**
-     * Wait for document to be removed
+     * Wait for documents to be removed
      */
 
     casper.then(function waitForDocumentsDeletion() {
-        return this.waitWhileSelector('#document-management-content table.dataTable tbody tr td.reference', function documentDeleted() {
+        return this.waitWhileSelector('#document-management-content table.dataTable tbody tr td.reference', function documentsDeleted() {
             this.test.assert(true, 'Documents have been deleted');
 
         }, function fail() {
