@@ -19,10 +19,29 @@
             });
         })
 
-        .controller('FolderController', function ($scope, $q, $location, $routeParams, $filter, ConfirmService, ConfigurationService, FolderService, RepositoryService, NotificationService) {
+        .controller('FolderController', function ($scope, $q, $location, $routeParams, $filter,
+                                                  ConfirmService, ConfigurationService, FolderService,
+                                                  RepositoryService, NotificationService) {
+
+            $scope.folder = FolderService.getFolder({uuid:$routeParams.uuid});
+            var path = $scope.folder.path;
+            var inIndexFiles = [];
+            var outOfIndexFiles = [];
+            var repositoryIndex;
+
+
+            $scope.display = {type:'flat'};
+
+            $scope.selected = [];
+
+            $scope.query = {
+                limit: 5,
+                limits: [5,10,15,50,100],
+                page: 1
+            };
 
             $scope.reveal = function ($event) {
-                FolderService.reveal($scope.folder.path);
+                FolderService.reveal(path);
                 $event.stopPropagation();
             };
 
@@ -40,32 +59,39 @@
                     $location.path('/');
                 });
             };
-            $scope.display = {type:'flat'};
-            $scope.folder = FolderService.getFolder({uuid:$routeParams.uuid});
 
-            var path = $scope.folder.path;
+            $scope.onPaginateOutOfIndexFiles = function(page, count){
+                var start = (page - 1)*count;
+                var end  = start + count;
+                $scope.outOfIndexFiles = outOfIndexFiles.slice(start, end);
+            };
 
-            $scope.outOfIndexFiles = [];
-            $scope.inIndexFiles = [];
+            $scope.onPaginateInIndexFiles = function(page, count){
+                var start = (page - 1)*count;
+                var end  = start + count;
+                $scope.outOfIndexFiles = outOfIndexFiles.slice(start, end);
+                $scope.outOfIndexFilesSize = outOfIndexFiles.length;
+            };
 
             RepositoryService.getRepositoryIndex(path)
-                .then(function(index){
-                    $scope.repositoryIndex = index;
-                    return path;
-                })
-                .then(FolderService.recursiveReadDir)
-                .then(function(files){
-                    $scope.inIndexFiles.length = 0;
-                    $scope.outOfIndexFiles.length = 0;
-
-                    angular.forEach(files, function(file){
-                        if(!$scope.repositoryIndex[file+'.digest']){
-                            $scope.outOfIndexFiles.push(file);
-                        }else{
-                            $scope.inIndexFiles.push(file);
-                        }
-                    });
+            .then(function(index){
+                repositoryIndex = index;
+                return path;
+            })
+            .then(FolderService.recursiveReadDir)
+            .then(function(files){
+                inIndexFiles.length = 0;
+                outOfIndexFiles.length = 0;
+                angular.forEach(files, function(file){
+                    if(!repositoryIndex[file+'.digest']){
+                        outOfIndexFiles.push(FolderService.createFileObject(file));
+                    }else{
+                        inIndexFiles.push(FolderService.createFileObject(file));
+                    }
                 });
+            })
+            .then($scope.onPaginateOutOfIndexFiles);
+
         })
         .controller('AddFolderCtrl', function ($scope, $mdDialog, FolderService) {
 

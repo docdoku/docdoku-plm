@@ -17,6 +17,7 @@
         'ngDragDrop',
         'ngAnimate',
         'ngAria',
+        'md.data.table',
 
         // Templates
         'dplm.templates',

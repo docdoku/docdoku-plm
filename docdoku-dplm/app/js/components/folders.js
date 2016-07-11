@@ -145,6 +145,12 @@
 
             };
 
+            this.createFileObject = function(path){
+                return {
+                    path:path
+                };
+            };
+
         });
 
 })();
