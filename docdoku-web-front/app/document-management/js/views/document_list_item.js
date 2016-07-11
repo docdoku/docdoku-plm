@@ -88,7 +88,7 @@ define([
         },
 
         bindDescriptionPopover: function() {
-            if(this.model.getDescription() !== null && this.model.getDescription() !== '') {
+            if(this.model.getDescription() !== undefined && this.model.getDescription() !== null && this.model.getDescription() !== '') {
                 var self = this;
                 this.$('.reference.doc-ref')
                     .popover({
