@@ -45,52 +45,54 @@
                     <span>
                         <i class="fa fa-folder-open"></i>
                         <i class="fa fa-star favorite" ng-if="folder.favorite"></i>
-                        {{ folder.path | fileshortname }}
+                        {{ folder.path | fileshortname }} ({{totalFilesInFolder}} {{'FILES'|translate}})
                     </span>
                 </h2>
             </div>
         </div>
     </md-toolbar>
-<!--
-    <md-content layout-padding ng-if="display.type === 'flat'">
-        <div>
-            <h3>{{'INDEXED' | translate}} ({{inIndexFiles.length}})</h3>
-            <div ng-repeat="file in inIndexFiles">
-               {{file}}
-            </div>
-        </div>
-        <div>
-            <h3>{{'NOT_INDEXED' | translate}} ({{outOfIndexFiles.length}})</h3>
-            <div ng-repeat="file in outOfIndexFiles">
-               {{file}}
-            </div>
-        </div>
-    </md-content>-->
     <md-content>
-        <md-table-container ng-if="outOfIndexFiles.length">
-            <table md-table md-row-select multiple ng-model="selected">
-                <thead md-head>
-                    <tr md-row>
-                        <th md-column><span>FILE</span></th>
-                    </tr>
-                </thead>
-                <tbody md-body>
-                    <tr md-row md-select="file" md-select-id="path" md-auto-select ng-repeat="file in outOfIndexFiles">
-                        <td md-cell>{{file}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </md-table-container>
 
-        <md-table-pagination
-                md-boundary-links="true"
-                md-limit="query.limit"
-                md-limit-options="query.limits"
-                md-page="query.page"
-                md-total="{{outOfIndexFilesSize}}"
-                md-on-paginate="onPaginateOutOfIndexFiles"
-                md-page-select>
-        </md-table-pagination>
+        <div layout="row" layout-align="space-between start" layout-padding>
+
+            <div class="md-inline-form">
+                <md-input-container>
+                    <label>{{'SEARCH'|translate}}</label>
+                    <input type="text" ng-change="search(pattern)" ng-model="pattern" />
+                </md-input-container>
+            </div>
+
+            <div>
+                <md-table-pagination
+                        md-boundary-links="true"
+                        md-limit="query.limit"
+                        md-limit-options="query.limits"
+                        md-page="query.page"
+                        md-total="{{filteredFilesCount}}"
+                        md-on-paginate="paginate"
+                        md-page-select>
+                </md-table-pagination>
+            </div>
+        </div>
+
+        <div>
+            <md-table-container>
+                <table md-table md-row-select multiple ng-model="selected">
+                    <thead md-head>
+                        <tr md-row>
+                            <th md-column><span>{{'NAME'|translate}}</span></th>
+                            <th md-column><span></span></th>
+                        </tr>
+                    </thead>
+                    <tbody md-body>
+                        <tr md-row md-select="file" md-select-id="path" ng-repeat="file in displayedFiles">
+                            <td md-cell>{{file.path | fileshortname}}</td>
+                            <td md-cell>{{file.index}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </md-table-container>
+
+        </div>
     </md-content>
-
 </div>

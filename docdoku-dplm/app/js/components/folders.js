@@ -20,26 +20,6 @@
                     }).length > 0;
             };
 
-            var statFiles = function (fileNames) {
-                var promises = [];
-                var fs = require('fs');
-                var isWindows = require('os').type() === 'Windows_NT';
-                angular.forEach(fileNames, function (fileName) {
-                    promises.push($q(function (resolve, reject) {
-                        fs.stat(fileName, function (err, stats) {
-                            if(isWindows){
-                                fileName =  fileName.charAt(0).toUpperCase()+ fileName.slice(1);
-                            }
-                            var file = {path: fileName};
-
-                            if (err) reject(file);
-                            else resolve(angular.extend(stats, file));
-                        });
-                    }));
-                });
-                return $q.all(promises);
-            };
-
             this.getFolder = function (params) {
                 return $filter('filter')(_this.folders, params)[0];
             };
@@ -92,21 +72,6 @@
                             resolve(files.length);
                         }
                     });
-                });
-            };
-
-            this.fetchFileStatus = function (file) {
-                return CliService.getStatusForFile(file).then(function () {
-                    var userModif = parseInt(file.mtime.getTime() / 1000);
-                    var lastModified = file.part ? file.part.lastModified : file.document ? file.document.lastModified:0;
-                    var dplmModif = parseInt(lastModified / 1000);
-                    file.modified = userModif > dplmModif;
-                    file.sync = !file.modified;
-                    file.notSync = false;
-                }, function () {
-                    file.sync = false;
-                    file.modified = false;
-                    file.notSync = true;
                 });
             };
 

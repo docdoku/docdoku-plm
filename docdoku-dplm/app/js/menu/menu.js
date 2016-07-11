@@ -1,11 +1,5 @@
 angular.module('dplm.menu', [])
-    .directive('menuButton',function(){
-        return {
-            restrict:'E',
-            templateUrl:'js/menu/menu-button.html',
-            scope:false
-        };
-    })
+
     .controller('MenuController', function ($scope,$filter,$mdDialog,
                                             FolderService,ConfigurationService,WorkspaceService) {
 

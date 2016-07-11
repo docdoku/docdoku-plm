@@ -71,6 +71,15 @@
                 });
             };
 
+            this.getFileIndex = function(index,path){
+
+                if(index[path+'.digest']){
+                    return{
+                        digest:index[path+'.digest']
+                    }
+                }
+            };
+
         })
 
         .filter('repositoryBasePath',function(){
