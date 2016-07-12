@@ -405,16 +405,13 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void approveTaskOnWorkspaceWorkflow(String workspaceId, TaskKey taskKey, String comment, String signature) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, AccessRightException {
+    public void approveTaskOnWorkspaceWorkflow(String workspaceId, TaskKey taskKey, String comment, String signature) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, AccessRightException, WorkflowNotFoundException, NotAllowedException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
 
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(taskKey);
         Workflow workflow = task.getActivity().getWorkflow();
 
-        WorkspaceWorkflow workspaceWorkflowTarget = new WorkflowDAO(em).getWorkspaceWorkflowTarget(workspaceId,workflow);
-        if(workspaceWorkflowTarget == null){
-            throw new AccessRightException(new Locale(user.getLanguage()), user);
-        }
+        checkTaskAccess(user,task);
 
         task.approve(user,comment, 0, signature);
 
@@ -428,16 +425,12 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void rejectTaskOnWorkspaceWorkflow(String workspaceId, TaskKey taskKey, String comment, String signature) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, AccessRightException {
+    public void rejectTaskOnWorkspaceWorkflow(String workspaceId, TaskKey taskKey, String comment, String signature) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, AccessRightException, WorkflowNotFoundException, NotAllowedException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
 
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(taskKey);
-        Workflow workflow = task.getActivity().getWorkflow();
 
-        WorkspaceWorkflow workspaceWorkflowTarget = new WorkflowDAO(em).getWorkspaceWorkflowTarget(workspaceId,workflow);
-        if(workspaceWorkflowTarget == null){
-            throw new AccessRightException(new Locale(user.getLanguage()), user);
-        }
+        WorkspaceWorkflow workspaceWorkflow = checkTaskAccess(user, task);
 
         task.reject(user, comment, 0, signature);
 
@@ -446,10 +439,10 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
         Activity relaunchActivity = currentActivity.getRelaunchActivity();
 
         if(currentActivity.isStopped() && relaunchActivity != null){
-            relaunchWorkflow(workspaceWorkflowTarget,relaunchActivity.getStep());
-            // Send mails for running tasks
+            relaunchWorkflow(workspaceWorkflow,relaunchActivity.getStep());
+            // TODO Send mails for running tasks
             //mailer.sendApproval(workspaceWorkflowTarget);
-            // Send notification for relaunch
+            // TODO Send notification for relaunch
             //mailer.sendWorkspaceWorkflowRelaunchedNotification(workspaceWorkflowTarget);
         }
     }
@@ -473,6 +466,38 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
         }else{
             throw new AccessRightException(new Locale(user.getLanguage()),user);
         }
+    }
+
+
+
+    /**
+     * Check if a user can approve or reject a task
+     * @param user The specific user
+     * @param task The specific task
+     * @return The part concern by the task
+     * @throws WorkflowNotFoundException If no workflow was find for this task
+     * @throws NotAllowedException If you can not make this task
+     */
+    private WorkspaceWorkflow checkTaskAccess(User user, Task task) throws WorkflowNotFoundException, NotAllowedException {
+
+        Workflow workflow = task.getActivity().getWorkflow();
+        WorkspaceWorkflow workspaceWorkflowTarget = new WorkflowDAO(em).getWorkspaceWorkflowTarget(user.getWorkspaceId(), workflow);
+        Locale locale = new Locale(user.getLanguage());
+
+        if(workspaceWorkflowTarget == null){
+            throw new WorkflowNotFoundException(locale,workflow.getId());
+        }
+        if(!task.isInProgress()){
+            throw new NotAllowedException(locale,"NotAllowedException15");
+        }
+        if (!task.isPotentialWorker(user)) {
+            throw new NotAllowedException(locale, "NotAllowedException14");
+        }
+        if (!workflow.getRunningTasks().contains(task)) {
+            throw new NotAllowedException(locale, "NotAllowedException15");
+        }
+
+        return workspaceWorkflowTarget;
     }
 
     private void relaunchWorkflow(WorkspaceWorkflow workspaceWorkflow, int activityStep){
