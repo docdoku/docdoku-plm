@@ -42,6 +42,9 @@
 
         .service('RepositoryService', function ($q,$window) {
 
+            var fs = $window.require('fs');
+            var crypto = $window.require('crypto');
+
             this.search = function(folder){
                 return $q(function(resolve,reject) {
                     var glob = $window.require("glob");
@@ -72,34 +75,32 @@
             };
 
             var getIndexValue = function(index,path,key){
-                return index[path+'.'+key];
+                return index[path+'.'+key] || null;
             };
 
             var setIndexValue = function(index,path,key,value){
                 return index[path+'.'+key] = value;
             };
 
+            var getHashFromFile = function(path){
+              return crypto.createHash('MD5').update(fs.readFileSync(path)).digest('base64');
+            };
+
             this.getFileIndex = function(index,path){
 
                 var digest = getIndexValue(index,path,'digest');
 
-                if(digest){
-                    var fileIndex ={
-                        digest:digest,
-                        workspace:getIndexValue(index,path,'workspace'),
-                        id:getIndexValue(index,path,'id'),
-                        partNumber:getIndexValue(index,path,'partNumber'),
-                        revision:getIndexValue(index,path,'revision'),
-                        iteration:getIndexValue(index,path,'iteration'),
-                        lastModifiedDate:getIndexValue(index,path,'lastModifiedDate')
-                    };
-                    if(index[path+'.id']){
-                        fileIndex.id = index[path+'.id'];
-                    }
-                    return fileIndex;
-                }
+                return digest ? {
+                    digest:digest,
+                    workspace:getIndexValue(index,path,'workspace'),
+                    id:getIndexValue(index,path,'id'),
+                    partNumber:getIndexValue(index,path,'partNumber'),
+                    revision:getIndexValue(index,path,'revision'),
+                    iteration:getIndexValue(index,path,'iteration'),
+                    lastModifiedDate:getIndexValue(index,path,'lastModifiedDate'),
+                    hash:getHashFromFile(path)
+                } : null;
 
-                return null;
             };
 
         })

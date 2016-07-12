@@ -93,6 +93,7 @@
                     DOCUMENTS:'Documents',
                     UNKNOWN:'Unknown',
                     CHECKED_OUT:'Checked out',
+                    CHECKED_IN:'Checked in',
                     HOME_FOLDER:'Home folder',
                     ROOT_FOLDER:'Root folder',
                     NO_DOCUMENTS:'No documents',
@@ -114,7 +115,9 @@
                     ECONNREFUSED:'Connection to server refused. Please check server settings.',
                     ENOTFOUND:'No server available for given host',
                     LOGIN_STATUS_403:'Wrong login/password',
-                    LOGIN_STATUS_200:'Successfully logged out'
+                    LOGIN_STATUS_200:'Successfully logged out',
+                    OUT_OF_INDEX:'Out of index',
+                    FILTERS:'Filters'
                 })
                 .translations('fr', {
                     CUT: 'Couper',
@@ -205,6 +208,7 @@
                     NO_DOCUMENTS:'Aucun document',
                     UNKNOWN:'Inconnus',
                     CHECKED_OUT:'Réservés',
+                    CHECKED_IN:'Libérés',
                     HOME_FOLDER:'Dossier personnel',
                     ROOT_FOLDER:'Dossier racine',
                     DOWNLOADS_FINISHED:'Tous les téléchargements sont terminés',
@@ -225,7 +229,9 @@
                     ECONNREFUSED:'Le serveur a refusé la connection. Vérifier les paramètres serveur.',
                     ENOTFOUND:'Aucun serveur disponible pour la configuration donnée',
                     LOGIN_STATUS_403:'Mauvais identifiant/mot de passe',
-                    LOGIN_STATUS_200:'Vous avez bien été déconnecté'
+                    LOGIN_STATUS_200:'Vous avez bien été déconnecté',
+                    OUT_OF_INDEX:'Non versionnés',
+                    FILTERS:'Filtres'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

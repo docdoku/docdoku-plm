@@ -29,6 +29,9 @@
             var allFiles = [];
             var filteredFiles = [];
             var repositoryIndex;
+            var crypto = require('crypto');
+            var fs = require('fs');
+
 
             $scope.selected = [];
             var translate = $filter('translate');
