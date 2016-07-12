@@ -1,0 +1,67 @@
+<div layout-padding>
+
+    <div>
+        <p class="md-headline">
+            {{'CREATE_DOCUMENT' | translate}}
+        </p>
+        <span class="md-subhead description">
+             {{file.path | fileshortname}}
+        </span>
+    </div>
+
+    <div>
+
+        <form ng-submit="create()">
+
+            <div>
+                <md-input-container>
+                    <label>{{'WORKSPACE' | translate}}</label>
+                    <md-select ng-model="document.workspaceId">
+                        <md-option ng-repeat="workspace in workspaces" value="{{workspace}}">
+                            {{workspace}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+
+            <div>
+                <md-input-container>
+                    <label>{{'DOCUMENT_ID' | translate}}</label>
+                    <input ng-model="document.reference" required>
+                </md-input-container>
+                <md-input-container>
+                    <label>{{'DOCUMENT_TITLE' | translate}}</label>
+                    <input ng-model="document.title">
+                </md-input-container>
+            </div>
+
+            <div>
+
+                <md-input-container>
+                    <label>{{'DESCRIPTION' | translate}}</label>
+                    <textarea ng-model="document.description"></textarea>
+                </md-input-container>
+
+            </div>
+
+            <div>
+
+                <md-button ng-if="!creating" type="button" aria-label="" ng-click="close()" class="md-raised md-default">
+                    {{'CLOSE'|translate}}
+                </md-button>
+
+                <md-progress-circular ng-if="creating" class="md-hue-2" md-diameter="20px"></md-progress-circular>
+
+                <md-button ng-if="!creating" type="submit" aria-label="" class="md-raised md-primary">
+                    {{'CREATE'|translate}}
+                </md-button>
+            </div>
+
+        </form>
+
+
+
+
+    </div>
+
+</div>

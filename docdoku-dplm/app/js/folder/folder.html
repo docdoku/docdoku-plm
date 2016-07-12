@@ -100,6 +100,7 @@
                             <th md-column><span>{{'VERSION'|translate}}</span></th>
                             <th md-column><span>{{'ITERATION'|translate}}</span></th>
                             <th md-column><span>{{'LAST_MODIFIED'|translate}}</span></th>
+                            <th md-column><span></span></th>
                         </tr>
                     </thead>
                     <tbody md-body>
@@ -117,11 +118,49 @@
                             <td md-cell>{{file.index.revision}}</td>
                             <td md-cell>{{file.index.iteration}}</td>
                             <td md-cell>{{file.index.lastModifiedDate | date:'medium'}}</td>
+                            <td md-cell>
+
+                                <md-menu>
+
+                                    <md-button aria-label="{{'MENU'}}" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                                        <md-icon md-svg-icon="img/more_vert.svg"></md-icon>
+                                    </md-button>
+
+                                    <md-menu-content>
+
+                                        <md-menu-item  ng-if="!file.index">
+                                            <md-button aria-label="{{'CREATE_PART'|translate}}" ng-click="createPart(file)">
+                                                {{'CREATE_PART'|translate}}
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item  ng-if="!file.index">
+                                            <md-button aria-label="{{'CREATE_DOCUMENT'|translate}}" ng-click="createDocument(file)">
+                                                {{'CREATE_DOCUMENT'|translate}}
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item ng-if="file.index">
+                                            <md-button aria-label="{{'CHECKIN'|translate}}" ng-click="checkin(file)">
+                                                {{'CHECKIN'|translate}}
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item ng-if="file.index">
+                                            <md-button aria-label="{{'CHECKOUT'|translate}}" ng-click="checkout(file)">
+                                                {{'CHECKOUT'|translate}}
+                                            </md-button>
+                                        </md-menu-item>
+
+                                    </md-menu-content>
+
+                                </md-menu>
+
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </md-table-container>
-
         </div>
     </md-content>
 </div>

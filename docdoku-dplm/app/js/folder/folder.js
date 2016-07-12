@@ -19,7 +19,7 @@
             });
         })
 
-        .controller('FolderController', function ($scope, $q, $location, $routeParams, $filter,
+        .controller('FolderController', function ($scope, $q, $location, $routeParams, $filter, $mdDialog,
                                                   ConfirmService, ConfigurationService, FolderService,
                                                   RepositoryService, NotificationService) {
 
@@ -141,9 +141,32 @@
                     });
             };
 
+            $scope.createPart = function(file){
+                $mdDialog.show({
+                    templateUrl: 'js/folder/create-part.html',
+                    fullscreen: true,
+                    controller:'PartCreationCtrl',
+                    locals:{
+                        file:file
+                    }
+                });
+            };
+
+            $scope.createDocument = function(file){
+                $mdDialog.show({
+                    templateUrl: 'js/folder/create-document.html',
+                    fullscreen: true,
+                    controller:'DocumentCreationCtrl',
+                    locals:{
+                        file:file
+                    }
+                });
+            };
+
             $scope.fetchFolder();
 
         })
+
         .controller('AddFolderCtrl', function ($scope, $mdDialog, FolderService) {
 
             $scope.search = function($ev,files){
@@ -157,6 +180,49 @@
             $scope.close = function(){
                 $mdDialog.hide();
             };
+
+        })
+
+        .controller('DocumentCreationCtrl', function ($scope,$mdDialog, WorkspaceService, file) {
+
+            $scope.file = file;
+            $scope.workspaces = WorkspaceService.workspaces;
+
+            $scope.close = function(){
+                $mdDialog.hide();
+            };
+
+            $scope.create = function(){
+                $scope.creating = true;
+                WorkspaceService.createDocumentInWorkspace($scope.document).then(function(newDocument){
+                    console.log('DONE')
+                }, function(response){
+                    console.log('DONE')
+                    console.log(arguments)
+                });
+            };
+
+        })
+
+        .controller('PartCreationCtrl', function ($scope, $mdDialog, WorkspaceService, file) {
+
+            $scope.file = file;
+            $scope.workspaces = WorkspaceService.workspaces;
+
+            $scope.close = function(){
+                $mdDialog.hide();
+            };
+
+            $scope.create = function(){
+                $scope.creating = true;
+
+                WorkspaceService.createPartInWorkspace($scope.part).then(function(newPart){
+                    // index newPart
+                }, function(response){
+
+                });
+            };
         });
+
 
 })();

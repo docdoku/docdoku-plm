@@ -19,7 +19,7 @@
                 });
         })
 
-        .controller('WorkspaceController', function ($scope,$routeParams,WorkspaceService) {
+        .controller('WorkspaceController', function ($scope, $routeParams) {
 
             $scope.tabs={
                 selected:

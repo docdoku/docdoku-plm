@@ -39,10 +39,9 @@
                     REQUIREMENTS_MISSING: 'Requirements not satisfied',
                     PART_NUMBER: 'Part number',
                     PART_NAME: 'Part name',
-                    PART_DESCRIPTION: 'Description',
+                    DESCRIPTION: 'Description',
                     DOCUMENT_ID: 'Document id',
                     DOCUMENT_TITLE: 'Document title',
-                    DOCUMENT_DESCRIPTION: 'Description',
                     SEARCH: 'Search',
                     USER: 'User login',
                     PASSWORD: 'Password',
@@ -59,8 +58,6 @@
                     NO_FILES:'Folder is empty',
                     FOLDER:'Folder',
                     CONFIGURATION_MISSING:'Configuration missing, please fill in the required fields',
-                    CHECKING_FOR_JAVA:'Looking for suitable Java version ...',
-                    NO_SUITABLE_JAVA:'No suitable Java version found',
                     FETCHING_WORKSPACES:'Receiving workspaces list',
                     LATEST:'Latest',
                     BASELINE:'Baseline',
@@ -117,7 +114,11 @@
                     LOGIN_STATUS_403:'Wrong login/password',
                     LOGIN_STATUS_200:'Successfully logged out',
                     OUT_OF_INDEX:'Out of index',
-                    FILTERS:'Filters'
+                    FILTERS:'Filters',
+                    VERSION:'Version',
+                    ITERATION:'Iteration',
+                    NAME:'Name',
+                    TYPE:'Type'
                 })
                 .translations('fr', {
                     CUT: 'Couper',
@@ -153,10 +154,9 @@
                     REQUIREMENTS_MISSING: 'Prérequis non satisfaits',
                     PART_NUMBER: 'Identifiant de l\'article',
                     PART_NAME: 'Nom de l\'article',
-                    PART_DESCRIPTION: 'Description',
+                    DESCRIPTION: 'Description',
                     DOCUMENT_ID: 'Identifiant du document',
                     DOCUMENT_TITLE: 'Titre du document',
-                    DOCUMENT_DESCRIPTION: 'Description',
                     SEARCH: 'Rechercher',
                     USER: 'Identifiant',
                     PASSWORD: 'Mot de passe',
@@ -173,8 +173,6 @@
                     NO_FILES:'Le dossier est vide',
                     FOLDER:'Dossier',
                     CONFIGURATION_MISSING:'Configuration incomplète, veuillez renseigner les champs obligatoires',
-                    CHECKING_FOR_JAVA:'Recherche de java ...',
-                    NO_SUITABLE_JAVA:'Pas de version de Java trouvée',
                     FETCHING_WORKSPACES:'Récupération de la liste des espaces de travail ...',
                     LATEST:'Dernière',
                     BASELINE:'Baseline',
@@ -231,7 +229,11 @@
                     LOGIN_STATUS_403:'Mauvais identifiant/mot de passe',
                     LOGIN_STATUS_200:'Vous avez bien été déconnecté',
                     OUT_OF_INDEX:'Non versionnés',
-                    FILTERS:'Filtres'
+                    FILTERS:'Filtres',
+                    VERSION:'Version',
+                    ITERATION:'Itération',
+                    NAME:'Nom',
+                    TYPE:'Type'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

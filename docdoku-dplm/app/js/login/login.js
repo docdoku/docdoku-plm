@@ -1,7 +1,7 @@
 (function(){
     'use strict';
     angular.module('dplm.login',[])
-        .controller('LoginCtrl',function($scope, $mdDialog, ConfigurationService, AuthService, WorkspaceService,xhrFrom){
+        .controller('LoginCtrl',function($scope, $mdDialog, ConfigurationService, AuthService, WorkspaceService, xhrFrom){
 
             $scope.configuration = ConfigurationService.configuration;
             $scope.xhrFrom = xhrFrom;
