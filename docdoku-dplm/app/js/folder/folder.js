@@ -29,9 +29,6 @@
             var allFiles = [];
             var filteredFiles = [];
             var repositoryIndex;
-            var crypto = require('crypto');
-            var fs = require('fs');
-
 
             $scope.selected = [];
             var translate = $filter('translate');
@@ -92,7 +89,7 @@
 
                 filteredFiles = allFiles.filter(function(path){
                     var file = FolderService.createFileObject(path);
-                    var index = RepositoryService.getFileIndex(repositoryIndex, path) ;
+                    var index = RepositoryService.getFileIndex(repositoryIndex, path);
 
                     if($scope.pattern && !file.path.match($scope.pattern)){
                        return false;
@@ -106,7 +103,7 @@
                         return false;
                     }
 
-                    if(!hasFilter('PARTS') && index.partNumber){
+                    if(!hasFilter('PARTS') && index && index.partNumber){
                         return false;
                     }
 
