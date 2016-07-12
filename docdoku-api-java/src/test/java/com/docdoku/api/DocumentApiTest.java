@@ -21,17 +21,20 @@
 package com.docdoku.api;
 
 import com.docdoku.api.client.ApiException;
-import com.docdoku.api.models.DocumentCreationDTO;
-import com.docdoku.api.models.DocumentIterationDTO;
-import com.docdoku.api.models.DocumentRevisionDTO;
+import com.docdoku.api.models.*;
 import com.docdoku.api.models.utils.LastIterationHelper;
+import com.docdoku.api.models.utils.UploadDownloadHelper;
 import com.docdoku.api.services.DocumentApi;
 import com.docdoku.api.services.FoldersApi;
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.UUID;
 
 @RunWith(JUnit4.class)
@@ -85,6 +88,31 @@ public class DocumentApiTest {
 
     }
 
+    @Test
+    public void uploadDownloadAttachedFilesToDocumentTest() throws ApiException, IOException {
+
+        // Create a document
+        DocumentCreationDTO documentCreation = new DocumentCreationDTO();
+        documentCreation.setReference(UUID.randomUUID().toString().substring(0, 6));
+        documentCreation.setTitle("GeneratedDoc");
+
+        DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreation, TestConfig.WORKSPACE);
+
+        URL fileURL = DocumentApiTest.class.getClassLoader().getResource("com/docdoku/api/attached-file.md");
+        File file = new File(fileURL.getPath());
+
+        DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(document);
+        UploadDownloadHelper.uploadAttachedFile(lastIteration, TestConfig.BASIC_CLIENT, file);
+
+        document = documentApi.getDocumentRevision(TestConfig.WORKSPACE, document.getDocumentMasterId(), document.getVersion(), null);
+
+        lastIteration = LastIterationHelper.getLastIteration(document);
+        Assert.assertFalse(lastIteration.getAttachedFiles().isEmpty());
+
+        File downloadedFile = UploadDownloadHelper.downloadFile(lastIteration.getAttachedFiles().get(0), TestConfig.BASIC_CLIENT);
+        Assert.assertTrue(FileUtils.contentEquals(file, downloadedFile));
+
+    }
 
 
 }
