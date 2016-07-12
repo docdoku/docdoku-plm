@@ -44,6 +44,7 @@
         'dplm.services.auth',
         'dplm.services.api',
         'dplm.services.repository',
+        'dplm.services.upload',
 
         'dplm.services.3d',
         'dplm.directives.filechange',

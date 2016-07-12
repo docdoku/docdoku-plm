@@ -103,6 +103,10 @@
 
             };
 
+            this.updateIndex = function(){
+
+            };
+
         })
 
         .filter('repositoryBasePath',function(){

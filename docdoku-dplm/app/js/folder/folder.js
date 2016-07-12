@@ -25,7 +25,7 @@
 
             $scope.folder = FolderService.getFolder({uuid:$routeParams.uuid});
 
-            var path = $scope.folder.path;
+            var folderPath = $scope.folder.path;
             var allFiles = [];
             var filteredFiles = [];
             var repositoryIndex;
@@ -60,7 +60,7 @@
             };
 
             $scope.reveal = function ($event) {
-                FolderService.reveal(path);
+                FolderService.reveal(folderPath);
                 $event.stopPropagation();
             };
 
@@ -128,10 +128,10 @@
             };
 
             $scope.fetchFolder = function(){
-                RepositoryService.getRepositoryIndex(path)
+                RepositoryService.getRepositoryIndex(folderPath)
                     .then(function(index){
                         repositoryIndex = index;
-                        return path;
+                        return folderPath;
                     })
                     .then(FolderService.recursiveReadDir)
                     .then(function(files){
@@ -147,7 +147,8 @@
                     fullscreen: true,
                     controller:'PartCreationCtrl',
                     locals:{
-                        file:file
+                        file:file,
+                        folderPath:folderPath
                     }
                 });
             };
@@ -158,7 +159,8 @@
                     fullscreen: true,
                     controller:'DocumentCreationCtrl',
                     locals:{
-                        file:file
+                        file:file,
+                        folderPath:folderPath
                     }
                 });
             };
@@ -188,41 +190,44 @@
             $scope.file = file;
             $scope.workspaces = WorkspaceService.workspaces;
 
-            $scope.close = function(){
-                $mdDialog.hide();
-            };
+            $scope.close = $mdDialog.hide;
 
             $scope.create = function(){
                 $scope.creating = true;
-                WorkspaceService.createDocumentInWorkspace($scope.document).then(function(newDocument){
+                WorkspaceService.createDocumentInWorkspace($scope.document).then(function(document){
                     console.log('DONE')
                 }, function(response){
-                    console.log('DONE')
+                    console.log('FAIL')
                     console.log(arguments)
                 });
             };
 
         })
 
-        .controller('PartCreationCtrl', function ($scope, $mdDialog, WorkspaceService, file) {
+        .controller('PartCreationCtrl', function ($scope, $mdDialog,
+                                                  WorkspaceService, UploadService, file, folderPath) {
 
             $scope.file = file;
             $scope.workspaces = WorkspaceService.workspaces;
 
-            $scope.close = function(){
-                $mdDialog.hide();
+            var onError = function(error){
+                console.log('FAIL')
+                console.log(arguments)
+                $scope.creating = false;
+                $scope.error = error;
             };
+
+            $scope.close = $mdDialog.hide;
 
             $scope.create = function(){
                 $scope.creating = true;
-
-                WorkspaceService.createPartInWorkspace($scope.part).then(function(newPart){
-                    // index newPart
-                }, function(response){
-
-                });
+                WorkspaceService.createPartInWorkspace($scope.part).then(function(part){
+                    return UploadService.uploadNativeCADFile(folderPath, file.path, part);
+                }).then(function(){
+                    $scope.creating = false;
+                })
+                .catch(onError);
             };
         });
-
 
 })();
