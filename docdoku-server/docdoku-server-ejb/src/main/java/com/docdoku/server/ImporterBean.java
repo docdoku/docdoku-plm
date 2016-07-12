@@ -21,14 +21,17 @@
 package com.docdoku.server;
 
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.product.ImportPreview;
 import com.docdoku.core.product.ImportResult;
 import com.docdoku.core.services.IImporterManagerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.importers.PartImporter;
 import com.docdoku.server.importers.PathDataImporter;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -36,6 +39,8 @@ import javax.inject.Inject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
@@ -59,6 +64,9 @@ public class ImporterBean implements IImporterManagerLocal {
     @Any
     private Instance<PathDataImporter> pathDataImporters;
 
+    @EJB
+    private IUserManagerLocal userManager;
+
     @Override
     @Asynchronous
     @FileImport
@@ -74,10 +82,13 @@ public class ImporterBean implements IImporterManagerLocal {
 
         ImportResult result;
 
+        User user = userManager.whoAmI(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+
         if (selectedImporter != null) {
             result = selectedImporter.importFile(workspaceId, file, revisionNote, autoCheckout, autoCheckin, permissiveUpdate);
         } else {
-            result = getNoImporterAvailableError(file, originalFileName);
+            result = getNoImporterAvailableError(file, originalFileName,locale);
         }
 
         return new AsyncResult<>(result);
@@ -101,7 +112,10 @@ public class ImporterBean implements IImporterManagerLocal {
         if (selectedImporter != null) {
             result = selectedImporter.importFile(workspaceId, file, revisionNote, autoFreezeAfterUpdate, permissiveUpdate);
         } else {
-            result = getNoImporterAvailableError(file, originalFileName);
+
+            User user = userManager.whoAmI(workspaceId);
+            Locale locale = new Locale(user.getLanguage());
+            result = getNoImporterAvailableError(file, originalFileName,locale);
         }
 
         return new AsyncResult<>(result);
@@ -130,10 +144,10 @@ public class ImporterBean implements IImporterManagerLocal {
 
     }
 
-    public ImportResult getNoImporterAvailableError(File file, String fileName) {
+    public ImportResult getNoImporterAvailableError(File file, String fileName, Locale locale) {
         List<String> errors = new ArrayList<>();
         List<String> warnings = new ArrayList<>();
-        errors.add("No importer available");
+        errors.add(ResourceBundle.getBundle("com.docdoku.core.i18n.LocalStrings", locale).getString("NoImporterAvailable"));
         ImportResult result = new ImportResult(file, fileName, warnings, errors);
         return result;
     }
