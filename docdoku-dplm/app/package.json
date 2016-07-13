@@ -4,6 +4,7 @@
   "main": "index.html",
   "locale": "fr_FR",
   "dependencies": {
+    "form-data": "^1.0.0-rc4",
     "glob": "^7.0.5",
     "moment": "^2.8.3",
     "recursive-readdir": "^1.2.0"

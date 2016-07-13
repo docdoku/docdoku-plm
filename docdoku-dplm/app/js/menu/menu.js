@@ -13,7 +13,8 @@ angular.module('dplm.menu', [])
         };
 
         $scope.open = function(section){
-            return $scope.openedSection = $scope.isOpened(section) ? null : section;
+            $scope.openedSection = $scope.isOpened(section) ? null : section;
+            return $scope.openedSection;
         };
 
         var folderSection = {

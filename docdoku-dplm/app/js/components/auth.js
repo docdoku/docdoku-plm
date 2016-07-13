@@ -11,7 +11,7 @@
             this.user = {};
 
             var options = {
-                url:ConfigurationService.resolveUrl(),
+                url:ConfigurationService.getHostApiURL(),
                 cookie:null
             };
 
@@ -30,7 +30,7 @@
                                 login:ConfigurationService.configuration.login,
                                 password:ConfigurationService.configuration.password
                             }
-                        })
+                        });
                     }, deferred.reject).then(function(response){
 
                         var headers = response.headers;

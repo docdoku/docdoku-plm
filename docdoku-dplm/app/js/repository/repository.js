@@ -3,8 +3,10 @@
     'use strict';
 
     angular.module('dplm.services.repository', [])
+        .constant('indexLocation','/.dplm/index.json')
         .controller('RepositorySearchCtrl', function ($timeout,$scope,$mdDialog,
-                                                      RepositoryService, FolderService) {
+                                                      RepositoryService, FolderService, indexLocation) {
+
 
             $scope.search = function($ev,files){
                 var file = files[0];
@@ -13,10 +15,10 @@
                     $scope.folder = path;
                     RepositoryService.search(path).then(function(repositories){
                         $scope.repositories = repositories.map(function(repository){
-                            return $scope.folder + '/' + repository.replace('/.dplm/index.xml','').replace('/.dplm/index.json','');
+                            return $scope.folder + '/' + repository.replace('/.dplm/index.xml','').replace(indexLocation,'');
                         });
                     }, function(err){
-                        $scope.repositories = err
+                        $scope.repositories = err;
                     });
                 }
             };
@@ -40,8 +42,9 @@
             };
         })
 
-        .service('RepositoryService', function ($q,$window) {
+        .service('RepositoryService', function ($q,$window,indexLocation) {
 
+            var _this = this;
             var fs = $window.require('fs');
             var crypto = $window.require('crypto');
 
@@ -58,7 +61,7 @@
                         else {
                             resolve(files.map(function(file){
                                 return file;
-                            }))
+                            }));
                         }
                     });
                 });
@@ -67,7 +70,7 @@
             this.getRepositoryIndex = function(repository){
                 return $q(function(resolve) {
                     try{
-                        resolve($window.require(repository+'/.dplm/index.json'));
+                        resolve($window.require(repository+indexLocation));
                     }catch(e){
                         resolve({});
                     }
@@ -79,7 +82,7 @@
             };
 
             var setIndexValue = function(index,path,key,value){
-                return index[path+'.'+key] = value;
+                index[path+'.'+key] = value;
             };
 
             var getHashFromFile = function(path){
@@ -100,20 +103,44 @@
                     lastModifiedDate:getIndexValue(index,path,'lastModifiedDate'),
                     hash:getHashFromFile(path)
                 } : null;
-
             };
 
-            this.updateIndex = function(){
+            var writeIndex = function(indexPath, index){
+                fs.writeFileSync(indexPath,index);
+            };
 
+            this.savePartToIndex = function(indexFolder,path,part){
+                var indexPath = indexFolder + indexLocation;
+                var index = require(indexPath);
+                setIndexValue(index, path, 'digest',getHashFromFile(path));
+                setIndexValue(index, path, 'workspace',part.workspaceId);
+                setIndexValue(index, path, 'partNumber',part.number);
+                setIndexValue(index, path, 'revision', part.version);
+                setIndexValue(index, path, 'iteration', part.partIterations.length);
+                setIndexValue(index, path, 'lastModifiedDate',Date.now());
+                writeIndex(indexPath,index);
+                return index;
+            };
+
+            this.saveDocumentToIndex = function(indexFolder,path,document){
+                var indexPath = indexFolder + indexLocation;
+                var index = require(indexPath);
+                setIndexValue(index, path, 'digest',getHashFromFile(path));
+                setIndexValue(index, path, 'workspace',document.workspaceId);
+                setIndexValue(index, path, 'id',document.id);
+                setIndexValue(index, path, 'revision', document.version);
+                setIndexValue(index, path, 'iteration', document.documentIterations.length);
+                setIndexValue(index, path, 'lastModifiedDate',Date.now());
+                writeIndex(indexPath,index);
             };
 
         })
 
-        .filter('repositoryBasePath',function(){
+        .filter('repositoryBasePath',function(indexLocation){
             return function(arg){
                 return arg.replace('/.dplm/index.xml','')
-                .replace('/.dplm/index.json','');
-            }
-        })
-    ;
+                .replace(indexLocation,'');
+            };
+        });
+
 })();

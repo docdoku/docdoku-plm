@@ -19,7 +19,7 @@
                             .then(function(response){
                                 angular.copy(response.obj.allWorkspaces.map(function(workspace){return workspace.id;}),_this.workspaces);
                                 resolve(_this.workspaces);
-                        },reject)
+                        },reject);
                     },reject);
                 });
             };

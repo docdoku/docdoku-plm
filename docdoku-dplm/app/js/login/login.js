@@ -15,7 +15,7 @@
                         .then(WorkspaceService.getWorkspaces)
                         .then($mdDialog.hide)
                         .catch(function(xhr){
-                            $scope.xhrFrom = xhr
+                            $scope.xhrFrom = xhr;
                         })
                         .finally(function(){
                             $scope.loggingIn = false;

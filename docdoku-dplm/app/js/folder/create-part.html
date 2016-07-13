@@ -13,6 +13,8 @@
 
         <form ng-submit="create()">
 
+            <p ng-if="error">{{error.statusText}}</p>
+
             <div>
                 <md-input-container>
                     <label>{{'WORKSPACE' | translate}}</label>

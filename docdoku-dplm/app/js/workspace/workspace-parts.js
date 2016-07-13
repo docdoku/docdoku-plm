@@ -61,7 +61,7 @@
             };
 
             var showInBrowser = function () {
-                $window.open(ConfigurationService.resolveUrl() + '/product-management/#' + $scope.workspace);
+                $window.open(ConfigurationService.getHostUrl() + '/product-management/#' + $scope.workspace);
             };
 
             var searchTimeout;

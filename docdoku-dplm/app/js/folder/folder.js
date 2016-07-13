@@ -120,6 +120,7 @@
                 .map(function(path){
                     var file = FolderService.createFileObject(path);
                     file.index = RepositoryService.getFileIndex(repositoryIndex, path);
+                    file.stat = FolderService.getFileSize(path);
                     return file;
                 });
 
@@ -185,34 +186,12 @@
 
         })
 
-        .controller('DocumentCreationCtrl', function ($scope,$mdDialog, WorkspaceService, file) {
-
-            $scope.file = file;
-            $scope.workspaces = WorkspaceService.workspaces;
-
-            $scope.close = $mdDialog.hide;
-
-            $scope.create = function(){
-                $scope.creating = true;
-                WorkspaceService.createDocumentInWorkspace($scope.document).then(function(document){
-                    console.log('DONE')
-                }, function(response){
-                    console.log('FAIL')
-                    console.log(arguments)
-                });
-            };
-
-        })
-
-        .controller('PartCreationCtrl', function ($scope, $mdDialog,
-                                                  WorkspaceService, UploadService, file, folderPath) {
+        .controller('DocumentCreationCtrl', function ($scope,$mdDialog, WorkspaceService, UploadService, RepositoryService, file, folderPath) {
 
             $scope.file = file;
             $scope.workspaces = WorkspaceService.workspaces;
 
             var onError = function(error){
-                console.log('FAIL')
-                console.log(arguments)
                 $scope.creating = false;
                 $scope.error = error;
             };
@@ -221,10 +200,41 @@
 
             $scope.create = function(){
                 $scope.creating = true;
+                WorkspaceService.createDocumentInWorkspace($scope.document).then(function(document){
+                    $scope.document = document;
+                    return UploadService.uploadFileToDocument(folderPath, file.path, document);
+                }).then(function(){
+                    var newIndex = RepositoryService.saveDocumentToIndex(folderPath,file.path,$scope.document);
+                    file.index = RepositoryService.getFileIndex(newIndex,file.path);
+                    $mdDialog.hide();
+                }).catch(onError);
+            };
+
+        })
+
+        .controller('PartCreationCtrl', function ($scope, $mdDialog,
+                                                  WorkspaceService, UploadService, RepositoryService, file, folderPath) {
+
+            $scope.file = file;
+            $scope.workspaces = WorkspaceService.workspaces;
+
+            var onError = function(error){
+                $scope.creating = false;
+                $scope.error = error;
+            };
+
+            $scope.close = $mdDialog.hide;
+
+            $scope.create = function(){
+                $scope.creating = true;
+                $scope.error = null;
                 WorkspaceService.createPartInWorkspace($scope.part).then(function(part){
+                    $scope.part = part;
                     return UploadService.uploadNativeCADFile(folderPath, file.path, part);
                 }).then(function(){
-                    $scope.creating = false;
+                    var newIndex = RepositoryService.savePartToIndex(folderPath,file.path,$scope.part);
+                    file.index = RepositoryService.getFileIndex(newIndex,file.path);
+                    $mdDialog.hide();
                 })
                 .catch(onError);
             };

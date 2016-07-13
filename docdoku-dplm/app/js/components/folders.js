@@ -7,9 +7,8 @@
 
             var _this = this;
 
-            var glob = $window.require("glob");
-            var home = process.env.HOME;
-            var pathsForGlobalResearch ='**/.dplm/index.xml';
+            var glob = $window.require('glob');
+            var fs = $window.require('fs');
             var ignoreList = ['.dplm'];
 
             this.folders = angular.fromJson(localStorage.folders || '[]');
@@ -107,13 +106,16 @@
                         }
                     });
                 });
-
             };
 
             this.createFileObject = function(path){
                 return {
                     path:path
                 };
+            };
+
+            this.getFileSize = function(path){
+                return fs.statSync(path);
             };
 
         });

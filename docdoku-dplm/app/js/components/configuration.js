@@ -1,4 +1,4 @@
-(function(){
+(function () {
 
     'use strict';
 
@@ -13,23 +13,41 @@
             this.configuration = JSON.parse(localStorage.configuration || '{"port":443,"host":"docdokuplm.net","ssl":true}');
 
             this.save = function () {
+                _this.configuration.protocol = _this.configuration.ssl ?
+                    'https' : 'http';
+                _this.configuration.port = _this.configuration.port ?
+                    _this.configuration.port : _this.configuration.ssl ?
+                    '443' : '80';
                 localStorage.configuration = JSON.stringify(_this.configuration);
             };
 
-            this.hasAuth = function(){
-                return this.configuration.login && this.configuration.password && this.configuration.host;
+            this.hasAuth = function () {
+                return _this.configuration.login && _this.configuration.password && _this.configuration.host;
             };
 
-            this.deleteAuth = function(){
-                delete this.configuration.login;
-                delete this.configuration.password;
+            this.deleteAuth = function () {
+                delete _this.configuration.login;
+                delete _this.configuration.password;
                 this.save();
             };
 
-            this.resolveUrl = function () {
-                var protocol = this.configuration.ssl ? 'https' : 'http';
-                return protocol + '://' + this.configuration.host + ':' + this.configuration.port + '/api';
+            this.getHostUrl = function () {
+                return _this.configuration.protocol + '://' + _this.configuration.host + ':' + _this.configuration.port;
             };
 
+
+            this.getHostApiURL = function () {
+                return _this.getHostUrl() + '/api';
+            };
+
+
+            this.getHttpFormRequestOpts = function () {
+                return {
+                    hostname: _this.configuration.host,
+                    port: _this.configuration.port,
+                    protocol: _this.configuration.protocol + ':',
+                    auth: _this.configuration.login + ':' + _this.configuration.password
+                };
+            };
         });
 })();

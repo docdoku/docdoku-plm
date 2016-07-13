@@ -106,18 +106,19 @@
                     <tbody md-body>
                         <tr md-row md-select="file" md-select-id="path" ng-repeat="file in displayedFiles">
                             <td md-cell>{{file.path | fileshortname}}</td>
+                            <td md-cell>{{file.stat.size | humanreadablesize}}</td>
 
                             <td md-cell>
                                 <span ng-if="file.index.id">{{ 'DOCUMENTS' | translate }}</span>
                                 <span ng-if="file.index.partNumber">{{ 'PARTS' | translate }}</span>
-                                <span ng-if="!file.index.partNumber && !file.index.id">{{ 'OUT_OF_INDEX' | translate }}</span>
+                                <span ng-if="!file.index.partNumber && !file.index.id"> - </span>
                             </td>
 
-                            <td md-cell>{{file.index.workspace}}</td>
-                            <td md-cell>{{file.index.id || file.index.partNumber}}</td>
-                            <td md-cell>{{file.index.revision}}</td>
-                            <td md-cell>{{file.index.iteration}}</td>
-                            <td md-cell>{{file.index.lastModifiedDate | date:'medium'}}</td>
+                            <td md-cell>{{file.index.workspace || '-' }}</td>
+                            <td md-cell>{{file.index.id || file.index.partNumber || '-' }}</td>
+                            <td md-cell>{{file.index.revision || '-' }}</td>
+                            <td md-cell>{{file.index.iteration || '-'  }}</td>
+                            <td md-cell>{{file.index.lastModifiedDate | date:'medium' || '-' }}</td>
                             <td md-cell>
 
                                 <md-menu>
