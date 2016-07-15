@@ -481,6 +481,42 @@ public class PartsResource {
         return Response.noContent().build();
     }
 
+    @POST
+    @Path("importPreview")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<LightPartRevisionDTO> getImportPreview(@Context HttpServletRequest request,
+                                                     @PathParam("workspaceId") String workspaceId,
+                                                     @QueryParam("autoCheckout") boolean autoCheckout,
+                                                     @QueryParam("autoCheckin") boolean autoCheckin,
+                                                     @QueryParam("permissiveUpdate") boolean permissiveUpdate)
+            throws Exception {
+
+        Collection<Part> parts = request.getParts();
+
+        if(parts.isEmpty() || parts.size() > 1){
+            return null;
+        }
+
+        Part part = parts.iterator().next();
+        String name = FileIO.getFileNameWithoutExtension(part.getSubmittedFileName());
+        String extension = FileIO.getExtension(part.getSubmittedFileName());
+
+        File importFile = Files.createTempFile("part-" + name, "-import.tmp" +  (extension==null?"":"." + extension)).toFile();
+        long length = BinaryResourceUpload.uploadBinary(new BufferedOutputStream(new FileOutputStream(importFile)), part);
+        ImportPreview importPreview = importerService.dryRunImportIntoParts(workspaceId,importFile,name+"."+extension,autoCheckout, autoCheckin, permissiveUpdate);
+
+        importFile.deleteOnExit();
+
+        List<LightPartRevisionDTO> result = new ArrayList<>();
+        for(PartRevision partRevision : importPreview.getPartRevsToCheckout()){
+            result.add(mapper.map(partRevision,LightPartRevisionDTO.class));
+        }
+
+        return result;
+
+    }
+
     /**
      * Return a list of ModificationNotificationDTO matching with a given PartRevision
      *

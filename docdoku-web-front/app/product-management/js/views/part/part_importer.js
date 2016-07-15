@@ -127,7 +127,8 @@ define([
                 permissive: this.permissive,
                 revisionNote: this.revisionNote,
                 partList:this.partCheckoutList,
-                i18n: App.config.i18n
+                i18n: App.config.i18n,
+                options:this.options
             }));
 
             //this.delegateEvents();
@@ -170,7 +171,7 @@ define([
                 this.checkboxAutoCheckin.prop('disabled', false);
             } else {
                 this.checkboxAutoCheckin.prop('disabled', true);
-                this.checkboxAutoCheckin.is('checked', false);
+                this.checkboxAutoCheckin.prop('checked', false);
             }
         },
 
@@ -183,15 +184,36 @@ define([
             this.permissive = this.$('#permissive_update_part').is(':checked');
             this.revisionNote = this.$('#revision_text_part').val().trim();
 
+            this.options = this.autocheckin || this.autocheckout || this.permissive || this.revisionNote!== '';
+
             if (this.file) {
 
                 if (this.autocheckout) {
-                    var previewUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/import';
 
-                    $.get(previewUrl, {upload : this.file }, function(data){
-                        this.partCheckoutList = data;
-                    });
+                    var params = {
+                        autoCheckout: this.autocheckout,
+                        autoCheckin: this.autocheckin,
+                        permissiveUpdate: this.permissive
+                    };
 
+                    var previewBaseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/importPreview';
+                    var previewUrl = previewBaseUrl + '?' + $.param(params);
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', previewUrl, true);
+                    var formData = new window.FormData();
+                    var _this = this;
+                    xhr.onreadystatechange = function() {
+                        if(xhr.readyState === 4 && xhr.status === 200){
+                            _this.partCheckoutList = jQuery.parseJSON(xhr.response);
+                            _this.importForm = false;
+                            _this.importPreview = true;
+                            _this.rerender();
+                        }
+                    };
+                    formData.append('upload', this.file);
+                    xhr.send(formData);
+                } else {
+                    this.partCheckoutList = null;
                 }
 
                 this.importForm = false;
@@ -213,7 +235,6 @@ define([
                     revisionNote: this.revisionNote
                 };
 
-                this.deleteImportStatus();
                 this.deleteImportStatus();
 
                 var importUrl = baseUrl + '?' + $.param(params);

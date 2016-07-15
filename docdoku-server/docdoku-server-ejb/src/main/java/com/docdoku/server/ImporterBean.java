@@ -64,7 +64,7 @@ public class ImporterBean implements IImporterManagerLocal {
     @Any
     private Instance<PathDataImporter> pathDataImporters;
 
-    @EJB
+    @Inject
     private IUserManagerLocal userManager;
 
     @Override

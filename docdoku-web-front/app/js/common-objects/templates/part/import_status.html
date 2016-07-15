@@ -11,19 +11,26 @@
         {{/succeed}}
 
         <p class="file-name">
-            {{i18n.FILE}} :  {{fileName}}
+            {{i18n.FILE}}:  {{fileName}}
         </p>
         <p class="start-date">
-            {{i18n.DATE}} : {{startDate}}
+            {{i18n.DATE}}: {{startDate}}
         </p>
 
+
+        {{#errors.length}}
+            <p class="error">{{i18n.ERRORS}}</p>
         {{#errors}}
             <p class="error">{{.}}</p>
         {{/errors}}
+        {{/errors.length}}
 
+        {{#warnings.length}}
+            <p class="warning">{{i18n.WARNINGS}}</p>
         {{#warnings}}
             <p class="warning">{{.}}</p>
         {{/warnings}}
+        {{/warnings.length}}
 
     {{/pending}}
 {{/status}}

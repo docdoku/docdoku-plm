@@ -7,13 +7,15 @@ define([
     'common-objects/models/file/attached_file',
     'common-objects/views/file/file',
     'common-objects/views/alert',
+    'text!templates/product-instances/product_instances_import_modal.html',
     'text!templates/product-instances/product_instances_import_form.html',
     'common-objects/views/part/import_status_view'
-], function (Backbone, Mustache, unorm, ModalView, AttachedFile, FileView, AlertView, template, ImportStatusView) {
+], function (Backbone, Mustache, unorm, ModalView, AttachedFile, FileView, AlertView,modalTemplate, template, ImportStatusView) {
     'use strict';
     var ProductInstanceImportView = Backbone.View.extend({
 
         template: template,
+        modalTemplate: modalTemplate,
 
         tagName: 'div',
         className: 'attachedFiles idle',
@@ -24,7 +26,10 @@ define([
             'dragover .droppable':'fileDragHover',
             'dragleave .droppable':'fileDragHover',
             'drop .droppable':'fileDropHandler',
-            'click .import-button':'formSubmit'
+            'click .import-preview-button': 'showPreview',
+            'click .back-button': 'backToForm',
+            'click .import-button':'formSubmit',
+            'hidden.bs.modal .modal.importer-view':'deleteImportStatus'
         },
 
         initialize: function () {
@@ -43,6 +48,9 @@ define([
             }, false);
 
             this.$el.on('remove', this.removeSubviews);
+
+            this.importForm = true;
+            this.importPreview = false;
         },
 
         // cancel event and hover styling
@@ -79,11 +87,38 @@ define([
 
         render: function () {
 
-            this.$el.html(Mustache.render(template, {
-                i18n: App.config.i18n
+            this.$el.html(Mustache.render(modalTemplate, {i18n: App.config.i18n}));
+            this.$el.find('#import-contain').append(Mustache.render(template, {
+                importForm: this.importForm,
+                importPreview: this.importPreview,
+                freeze:this.freeze,
+                permissive: this.permissive,
+                revisionNote: this.revisionNote,
+                i18n: App.config.i18n,
+                options: this.options
             }));
             this.bindDomElements();
             this.fetchImports();
+
+            return this;
+        },
+
+        rerender: function () {
+
+            this.$el.find('#import-contain').html(Mustache.render(template, {
+                importForm: this.importForm,
+                importPreview: this.importPreview,
+                freeze:this.freeze,
+                permissive: this.permissive,
+                revisionNote: this.revisionNote,
+                i18n: App.config.i18n,
+                options: this.options
+            }));
+            this.bindDomElements();
+
+            this.$('#revision_text_part').val(this.revisionNote);
+            if(this.freeze){ this.$('#freeze-checkbox').prop('checked', true); }
+            if(this.permissive){ this.$('#permissive_update_product_instance-checkbox').prop('checked', true); }
 
             return this;
         },
@@ -103,7 +138,7 @@ define([
 
         addOneFile: function (attachedFile) {
             this.filedisplay.html('<li>' + attachedFile.getShortName() + '</li>');
-            this.$('.import-button').removeAttr('disabled');
+            this.$('.import-preview-button').removeAttr('disabled');
         },
 
         bindDomElements: function () {
@@ -115,23 +150,34 @@ define([
             this.notifications = this.$('div.notifications');
         },
 
+        showPreview: function(){
+            this.freeze = this.$('#freeze-checkbox').is(':checked');
+            this.permissive = this.$('#permissive_update_product_instance-checkbox').is(':checked');
+            this.revisionNote = this.$('#revision_text_product').val().trim();
+
+            this.options = this.freeze || this.permissive || this.revisionNote!== '';
+
+            this.importForm = false;
+            this.importPreview = true;
+            this.rerender();
+
+        },
+
         formSubmit: function () {
 
             this.clearNotifications();
-
-            var freeze = this.$('#freeze-checkbox').is(':checked');
-            var permissive = this.$('#permissive_update_product_instance-checkbox').is(':checked');
-            var revisionNote = this.$('#revision_text_product').val().trim();
 
             if (this.file) {
 
                 var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/product-instances/import';
 
                 var params = {
-                    autoFreezeAfterUpdate: freeze,
-                    permissiveUpdate: permissive,
-                    revisionNote: revisionNote
+                    autoFreezeAfterUpdate: this.freeze,
+                    permissiveUpdate: this.permissive,
+                    revisionNote: this.revisionNote
                 };
+
+                this.deleteImportStatus();
 
                 var importUrl = baseUrl + '?' + $.param(params);
 
@@ -146,6 +192,7 @@ define([
                 this.printNotifications('error', App.config.i18n.NO_FILE_TO_IMPORT);
             }
 
+            this.backToForm();
             return false;
         },
 
@@ -190,6 +237,19 @@ define([
 
         onHidden: function () {
             this.remove();
+        },
+
+        backToForm: function () {
+            this.importPreview = false;
+            this.importForm = true;
+            this.rerender();
+            this.loadNewFile(this.file);
+        },
+
+        deleteImportStatus: function (){
+            _.each(this.importStatusViews, function(importSV){
+                importSV.deleteImport();
+            });
         }
 
     });

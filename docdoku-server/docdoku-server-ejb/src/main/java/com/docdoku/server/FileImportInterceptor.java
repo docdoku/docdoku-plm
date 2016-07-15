@@ -24,6 +24,7 @@ import com.docdoku.core.product.ImportResult;
 import com.docdoku.core.services.IProductManagerLocal;
 
 import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
@@ -38,7 +39,7 @@ import java.util.logging.Logger;
 @Interceptor
 public class FileImportInterceptor {
 
-    @EJB
+    @Inject
     private IProductManagerLocal productService;
 
     private static final Logger LOGGER = Logger.getLogger(FileImportInterceptor.class.getName());

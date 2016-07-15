@@ -13,7 +13,7 @@
 
         <form enctype="multipart/form-data" class="upload-form">
             <div class="droppable filedroparea">
-                <input name="upload" type="file" class="input-xlarge droppable upload-btn" accept=".xls"/>
+                <input name="upload" type="file" class="input-xlarge droppable upload-btn" />
                 <button class="btn btn-success droppable">{{i18n.SELECT_FILE}}</button>
                 <span class="droppable">{{i18n.DROP_FILE_HERE}}</span>
                 <p class="upload-file-shortname"></p>
@@ -56,14 +56,25 @@
 
     {{#importPreview}}
 
-    <h2>{{i18n.CONFIRM_IMPORT}} ?</h2>
+    {{#options}}
+    <h5>{{i18n.CONFIRM_IMPORT_WITH_OPTION}}</h5>
+    {{/options}}
+    {{^options}}
+    <h5>{{i18n.CONFIRM_IMPORT}}</h5>
+    {{/options}}
+
     {{#checkout}}
     <p>{{i18n.AUTO_CHECKOUT}}</p>
     {{/checkout}}
+
+    {{#partList.length}}
+    <p>{{i18n.CHECKOUT_PART_LIST}}</p><ul>
     {{#partList}}
-    <p>{{i18n.CHECKOUT_PART_LIST}}</p>
-    {{.}}
+    <li>{{partNumber}}</li>
     {{/partList}}
+    </ul>
+    {{/partList.length}}
+
     {{#checkin}}
     <p>{{i18n.AUTO_CHECKIN}}</p>
     {{/checkin}}
@@ -71,7 +82,7 @@
     <p>{{i18n.PERMISSIVE_UPDATE_PART}}</p>
     {{/permissive}}
     {{#revisionNote}}
-    <p>{{i18n.REVISION_NOTE}} : {{revisionNote}}</p>
+    <p>{{i18n.REVISION_NOTE}}: {{revisionNote}}</p>
     {{/revisionNote}}
 
     {{/importPreview}}
