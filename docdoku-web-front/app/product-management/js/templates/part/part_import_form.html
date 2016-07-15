@@ -1,66 +1,93 @@
-<div class="modal importer-view">
-    <div class="modal-header">
-        <a class="close" data-dismiss="modal">×</a>
+<div class="modal-body">
 
-        <h3>{{i18n.IMPORT_PART_DATA}}</h3>
-    </div>
-    <div class="modal-body">
+    {{#importForm}}
+    <h3>{{i18n.FILE}}</h3>
 
-        <h3>{{i18n.FILE}}</h3>
+    <div class="notifications"></div>
 
-        <div class="notifications"></div>
+    <div class="attachedFiles idle">
 
-        <div class="attachedFiles idle">
-
-            <div id="file-selected">
-                <ul></ul>
-            </div>
-
-            <form enctype="multipart/form-data" class="upload-form">
-                <div class="droppable filedroparea">
-                    <input name="upload" type="file" class="input-xlarge droppable upload-btn" accept=".xls"/>
-                    <button class="btn btn-success droppable">{{i18n.SELECT_FILE}}</button>
-                    <span class="droppable">{{i18n.DROP_FILE_HERE}}</span>
-                    <p class="upload-file-shortname"></p>
-                </div>
-                <button type="button" class="btn cancel cancel-upload-btn">{{i18n.CANCEL}}</button>
-            </form>
-
+        <div id="file-selected">
+            <ul></ul>
         </div>
 
-        <div class="form-horizontal import-status-views">
-        </div>
-
-        <h3>{{i18n.OPTIONS}}</h3>
-
-        <div class="form-horizontal">
-
-            <div class="control-group">
-                <label class="control-label" for="revision_text_part">{{i18n.ADD_REVISION_NOTE}}</label>
-                <div class="controls">
-                    <textarea type="text" rows="1" id="revision_text_part"></textarea>
-                </div>
+        <form enctype="multipart/form-data" class="upload-form">
+            <div class="droppable filedroparea">
+                <input name="upload" type="file" class="input-xlarge droppable upload-btn" accept=".xls"/>
+                <button class="btn btn-success droppable">{{i18n.SELECT_FILE}}</button>
+                <span class="droppable">{{i18n.DROP_FILE_HERE}}</span>
+                <p class="upload-file-shortname"></p>
             </div>
-
-            <div class="control-group">
-                <label class="checkbox">{{i18n.AUTO_CHECKOUT}} <input type="checkbox" id="auto_checkout_part"/></label>
-            </div>
-
-            <div class="control-group">
-                <label class="checkbox">{{i18n.AUTO_CHECKIN}} <input type="checkbox" disabled="disabled" id="auto_checkin_part"/></label>
-            </div>
-
-            <div class="control-group">
-                <label class="checkbox">{{i18n.PERMISSIVE_UPDATE_PART}} <input type="checkbox" id="permissive_update_part"/></label>
-            </div>
-
-        </div>
+            <button type="button" class="btn cancel cancel-upload-btn">{{i18n.CANCEL}}</button>
+        </form>
 
     </div>
-    <div class="modal-footer">
-        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
-        <button type="button" disabled class="btn btn-primary import-button">
-            {{i18n.IMPORT}}
-        </button>
+
+    <div class="form-horizontal import-status-views">
     </div>
+
+    <h3>{{i18n.OPTIONS}}</h3>
+
+    <div class="form-horizontal">
+
+        <div class="control-group">
+            <label class="control-label" for="revision_text_part">{{i18n.ADD_REVISION_NOTE}}</label>
+            <div class="controls">
+                <textarea type="text" rows="1" id="revision_text_part"></textarea>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="checkbox">{{i18n.AUTO_CHECKOUT}} <input type="checkbox" id="auto_checkout_part"/></label>
+        </div>
+
+        <div class="control-group">
+            <label class="checkbox">{{i18n.AUTO_CHECKIN}} <input type="checkbox" disabled="disabled"
+                                                                 id="auto_checkin_part"/></label>
+        </div>
+
+        <div class="control-group">
+            <label class="checkbox">{{i18n.PERMISSIVE_UPDATE_PART}} <input type="checkbox"
+                                                                           id="permissive_update_part"/></label>
+        </div>
+    </div>
+
+    {{/importForm}}
+
+    {{#importPreview}}
+
+    <h2>{{i18n.CONFIRM_IMPORT}} ?</h2>
+    {{#checkout}}
+    <p>{{i18n.AUTO_CHECKOUT}}</p>
+    {{/checkout}}
+    {{#partList}}
+    <p>{{i18n.CHECKOUT_PART_LIST}}</p>
+    {{.}}
+    {{/partList}}
+    {{#checkin}}
+    <p>{{i18n.AUTO_CHECKIN}}</p>
+    {{/checkin}}
+    {{#permissive}}
+    <p>{{i18n.PERMISSIVE_UPDATE_PART}}</p>
+    {{/permissive}}
+    {{#revisionNote}}
+    <p>{{i18n.REVISION_NOTE}} : {{revisionNote}}</p>
+    {{/revisionNote}}
+
+    {{/importPreview}}
+
+</div>
+<div class="modal-footer">
+    {{#importForm}}
+    <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+    <button type="button" disabled class="btn btn-primary import-preview-button">
+        {{i18n.IMPORT}}
+    </button>
+    {{/importForm}}
+    {{#importPreview}}
+    <button type="button" class="btn btn-default back-button">{{i18n.CANCEL}}</button>
+    <button type="button" class="btn btn-primary import-button">
+        {{i18n.IMPORT}}
+    </button>
+    {{/importPreview}}
 </div>
