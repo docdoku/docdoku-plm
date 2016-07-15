@@ -32,21 +32,22 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Logger;
 
 
 public abstract class PSFilterVisitor {
 
-    // Context
+    private static final Logger LOGGER = Logger.getLogger(PSFilterVisitor.class.getName());
+
     private User user;
     private Locale locale;
+    private String workspaceId;
     private PSFilter filter;
     private EntityManager em;
     private PartMasterDAO partMasterDAO;
     private Component component;
     private int stopAtDepth = -1;
     private boolean stopped = false;
-
-    private String workspaceId;
 
     public PSFilterVisitor(EntityManager pEm, User pUser, PSFilter pFilter)
             throws PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
@@ -57,121 +58,55 @@ public abstract class PSFilterVisitor {
         workspaceId = user.getWorkspaceId();
         locale = new Locale(user.getLanguage());
         partMasterDAO = new PartMasterDAO(locale, em);
+    }
+
+    /**
+     * Start the visitor with given part master
+     * */
+    public void visit(PartMaster pNodeFrom, Integer pStopAtDepth) throws PartMasterNotFoundException, EntityConstraintException, NotAllowedException {
+
+        setDepth(pStopAtDepth);
+        List<PartLink> currentPath = new ArrayList<>();
+        List<PartMaster> currentPathParts = new ArrayList<>();
+        List<PartIteration> currentPathPartIterations = new ArrayList<>();
+
+        PartLink virtualLink = createVirtualRootLink(pNodeFrom);
+        currentPathParts.add(pNodeFrom);
+        currentPath.add(virtualLink);
+
+        component = new Component(pNodeFrom.getAuthor(),pNodeFrom,currentPath,null);
+        List<Component> result = getComponentRecurs(component, currentPathPartIterations, currentPathParts, currentPath);
+        component.setComponents(result);
 
     }
 
-    public void visit(PartMaster pNodeFrom, Integer pDepth) throws PartMasterNotFoundException, EntityConstraintException, NotAllowedException {
-        if(pNodeFrom != null){
-            startVisit(pNodeFrom,pDepth);
-        }else{
-            throw new IllegalArgumentException("Provide either a node from which starting visit or a resolved part links list");
-        }
-    }
+    /**
+     * Start the visitor with given path
+     * */
+    public void visit(List<PartLink> pStartingPath, Integer pStopAtDepth) throws PartMasterNotFoundException, EntityConstraintException, NotAllowedException {
 
-    public void visit(List<PartLink> pStartingPath, Integer pDepth) throws PartMasterNotFoundException, EntityConstraintException, NotAllowedException {
-        if(pStartingPath != null){
-            startVisit(pStartingPath,pDepth);
-        }else{
-            throw new IllegalArgumentException("Provide either a node from which starting visit or a resolved part links list");
-        }
+        setDepth(pStopAtDepth);
+        List<PartLink> currentPath = pStartingPath;
+        List<PartMaster> currentPathParts = new ArrayList<>();
+        List<PartIteration> currentPathPartIterations = new ArrayList<>();
+
+        PartMaster rootNode = currentPath.get(currentPath.size() - 1).getComponent();
+        currentPathParts.add(rootNode);
+
+        component = new Component(rootNode.getAuthor(),rootNode,currentPath,null);
+        List<Component> result = getComponentRecurs(component, currentPathPartIterations, currentPathParts, currentPath);
+        component.setComponents(result);
     }
 
     public void stop(){
         stopped = true;
     }
 
-    private void startVisit(List<PartLink> pStartingPath, Integer pDepth) throws NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
-        List<PartLink> currentPath = pStartingPath;
-        List<PartMaster> currentPathParts = new ArrayList<>();
-        List<PartIteration> currentPathPartIterations = new ArrayList<>();
-
-        // Visit last
-        PartMaster rootNode = currentPath.get(currentPath.size() - 1).getComponent();
-        currentPathParts.add(rootNode);
-
-        stopAtDepth = (pDepth == null) ? -1 : pDepth + currentPath.size();
-
-        component = new Component(rootNode.getAuthor(),rootNode,currentPath,null);
-        component.setComponents(visit(component,currentPathPartIterations, currentPathParts, currentPath));
-
+    private void setDepth(Integer pDepth){
+        stopAtDepth = pDepth == null ? -1 : pDepth;
     }
 
-    private void startVisit(PartMaster pNodeFrom, Integer pDepth) throws NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
-
-        List<PartLink> currentPath = new ArrayList<>();
-        List<PartMaster> currentPathParts = new ArrayList<>();
-        List<PartIteration> currentPathPartIterations = new ArrayList<>();
-
-        PartMaster rootNode = pNodeFrom;
-
-        // Add root node and its virtual link
-        currentPathParts.add(rootNode);
-        currentPath.add(new PartLink() {
-            @Override
-            public int getId() {
-                return 1;
-            }
-
-            @Override
-            public double getAmount() {
-                return 1;
-            }
-
-            @Override
-            public String getUnit() {
-                return null;
-            }
-
-            @Override
-            public String getComment() {
-                return "";
-            }
-
-            @Override
-            public boolean isOptional() {
-                return false;
-            }
-
-            @Override
-            public PartMaster getComponent() {
-                return rootNode;
-            }
-
-            @Override
-            public List<PartSubstituteLink> getSubstitutes() {
-                return null;
-            }
-
-            @Override
-            public String getReferenceDescription() {
-                return null;
-            }
-
-            @Override
-            public Character getCode() {
-                return '-';
-            }
-
-            @Override
-            public String getFullId() {
-                return "-1";
-            }
-
-            @Override
-            public List<CADInstance> getCadInstances() {
-                return null;
-            }
-        });
-
-        stopAtDepth = (pDepth == null) ? -1 : pDepth;
-
-        component = new Component(rootNode.getAuthor(),rootNode,currentPath,null);
-        component.setComponents(visit(component,currentPathPartIterations, currentPathParts, currentPath));
-    }
-
-
-    private List<Component> visit(Component currentComponent, List<PartIteration> pCurrentPathPartIterations, List<PartMaster> pCurrentPathParts, List<PartLink> pCurrentPath) throws PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
-
+    private List<Component> getComponentRecurs(Component currentComponent, List<PartIteration> pCurrentPathPartIterations, List<PartMaster> pCurrentPathParts, List<PartLink> pCurrentPath) throws PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
         List<Component> components = new ArrayList<>();
 
         if(stopped){
@@ -182,13 +117,11 @@ public abstract class PSFilterVisitor {
             return components;
         }
 
-
-
         // Current depth
-        int depth = pCurrentPathParts.size() - 1;
+        int currentDepth = pCurrentPathParts.size();
 
         // Current part master is the last from pCurrentPathParts
-        PartMaster currentUsagePartMaster = pCurrentPathParts.get(depth);
+        PartMaster currentUsagePartMaster = pCurrentPathParts.get(pCurrentPathParts.size()-1);
 
         // Find filtered iterations to visit
         List<PartIteration> partIterations = filter.filter(currentUsagePartMaster);
@@ -242,8 +175,7 @@ public abstract class PSFilterVisitor {
                     List<PartLink> nextPath = new ArrayList<>(pCurrentPath);
                     nextPath.add(link);
 
-                    // Stop if depth reached
-                    if (stopAtDepth == -1 || stopAtDepth >= pCurrentPathParts.size()) {
+                    if (stopAtDepth == -1 || stopAtDepth >= currentDepth) {
 
                         // Going on a new path
                         PartMaster pm = loadPartMaster(link.getComponent().getNumber());
@@ -261,7 +193,7 @@ public abstract class PSFilterVisitor {
 
                         // Recursive
                         Component subComponent= new Component(pm.getAuthor(), pm, copyPath, null);
-                        subComponent.setComponents(visit(subComponent,copyPartIterations, copyPathParts, copyPath));
+                        subComponent.setComponents(getComponentRecurs(subComponent, copyPartIterations, copyPathParts, copyPath));
                         components.add(subComponent);
                     }
 
@@ -277,6 +209,66 @@ public abstract class PSFilterVisitor {
 
     private PartMaster loadPartMaster(String partNumber) throws PartMasterNotFoundException {
         return partMasterDAO.loadPartM(new PartMasterKey(workspaceId, partNumber));
+    }
+
+    private PartLink createVirtualRootLink(PartMaster pNodeFrom) {
+
+        return new PartLink() {
+            @Override
+            public int getId() {
+                return 1;
+            }
+
+            @Override
+            public double getAmount() {
+                return 1;
+            }
+
+            @Override
+            public String getUnit() {
+                return null;
+            }
+
+            @Override
+            public String getComment() {
+                return "";
+            }
+
+            @Override
+            public boolean isOptional() {
+                return false;
+            }
+
+            @Override
+            public PartMaster getComponent() {
+                return pNodeFrom;
+            }
+
+            @Override
+            public List<PartSubstituteLink> getSubstitutes() {
+                return null;
+            }
+
+            @Override
+            public String getReferenceDescription() {
+                return null;
+            }
+
+            @Override
+            public Character getCode() {
+                return '-';
+            }
+
+            @Override
+            public String getFullId() {
+                return "-1";
+            }
+
+            @Override
+            public List<CADInstance> getCadInstances() {
+                return null;
+            }
+        };
     }
 
     /**

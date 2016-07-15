@@ -209,7 +209,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
             }
         };
 
-        psFilterVisitor.visit(startPath, null);
+        psFilterVisitor.visit(startPath, -1);
 
         PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(new Locale(user.getLanguage()), em);
         List<PathToPathLink> links = pathToPathLinkDAO.getPathToPathLinkFromPathList(configurationItem,visitedPaths);

@@ -47,19 +47,9 @@ public class PathDataIterationDAO {
         }
     }
 
-    public List<PathDataIteration> getPathDataIterations(String path, ProductInstanceIteration productInstanceIteration){
-        return em.createNamedQuery("PathDataIteration.findFromPathAndProductInstanceIteration",PathDataIteration.class)
-                .setParameter("path", path)
+    public List<PathDataIteration> getLastPathDataIterations(ProductInstanceIteration productInstanceIteration){
+        return em.createNamedQuery("PathDataIteration.findLastIterationFromProductInstanceIteration",PathDataIteration.class)
                 .setParameter("productInstanceIteration", productInstanceIteration)
                 .getResultList();
     }
-
-    public PathDataIteration getLastPathDataIteration(String path, ProductInstanceIteration productInstanceIteration){
-        List<PathDataIteration> pathDataIterations = getPathDataIterations(path, productInstanceIteration);
-        if(pathDataIterations.isEmpty()){
-            return null;
-        }
-        return pathDataIterations.get(pathDataIterations.size()-1);
-    }
-
 }

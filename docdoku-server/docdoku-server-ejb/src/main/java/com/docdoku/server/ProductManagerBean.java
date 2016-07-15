@@ -3139,9 +3139,10 @@ public class ProductManagerBean implements IProductManagerLocal {
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public List<QueryResultRow> filterProductBreakdownStructure(String workspaceId, Query query) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, PartMasterNotFoundException, EntityConstraintException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
         List<QueryResultRow> rows = new ArrayList<>();
         for (QueryContext queryContext : query.getContexts()) {
-            rows.addAll(filterPBS(workspaceId, queryContext));
+            rows.addAll(filterPBS(workspaceId, queryContext, user));
         }
         return rows;
     }
@@ -3292,8 +3293,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         return queryDAO.loadQuery(queryId);
     }
 
-    private List<QueryResultRow> filterPBS(String workspaceId, QueryContext queryContext) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+    private List<QueryResultRow> filterPBS(String workspaceId, QueryContext queryContext, User user) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
 
         String configurationItemId = queryContext.getConfigurationItemId();
         String serialNumber = queryContext.getSerialNumber();
@@ -3317,7 +3317,15 @@ public class ProductManagerBean implements IProductManagerLocal {
         List<PathToPathLink> pathToPathLinks = ci.getPathToPathLinks();
         PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(em);
 
+        List<PathDataIteration> lastPathDataIterations = pathDataIterationDAO.getLastPathDataIterations(productInstanceIteration);
+        Map<String,PathDataIteration> lastPathDataIterationsMap = new HashMap<>();
+
+        for(PathDataIteration iteration: lastPathDataIterations){
+            lastPathDataIterationsMap.put(iteration.getPathDataMaster().getPath(),iteration);
+        }
+
         final ProductInstanceIteration finalProductInstanceIteration = productInstanceIteration;
+        final Integer[] count = {0};
 
         PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em, user, filter) {
             @Override
@@ -3366,6 +3374,7 @@ public class ProductManagerBean implements IProductManagerLocal {
                     row.setContext(queryContext);
                     row.setAmount(totalAmount);
 
+                    // try block and decodePath method are time consuming (db access) May need refactor
                     for(PathToPathLink pathToPathLink:pathToPathLinks){
                         try{
                             if(pathToPathLink.getSourcePath().equals(pathAsString)){
@@ -3380,15 +3389,11 @@ public class ProductManagerBean implements IProductManagerLocal {
                     }
 
                     if(finalProductInstanceIteration != null) {
-                        PathDataIteration pathDataIteration = pathDataIterationDAO.getLastPathDataIteration(pathAsString, finalProductInstanceIteration);
-
-                        if (null != pathDataIteration) {
-                            row.setPathDataIteration(pathDataIteration);
-                        }
+                        row.setPathDataIteration(lastPathDataIterationsMap.get(pathAsString));
                     }
-
                     rows.add(row);
                 }
+                count[0]++;
                 return true;
             }
 
@@ -3399,7 +3404,6 @@ public class ProductManagerBean implements IProductManagerLocal {
         };
 
         psFilterVisitor.visit(root, -1);
-
         return rows;
     }
 

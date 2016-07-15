@@ -762,7 +762,7 @@ public class ProductResource {
         PartRevision partR = retainedIteration.getPartRevision();
 
         // Filter ACL on partR
-        if (!component.isVirtual() && !productService.canAccess(partR.getKey())) {
+        if(!component.isVirtual() && !productService.canAccess(partR.getKey())){
             return null;
         }
 
