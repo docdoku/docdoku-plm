@@ -75,7 +75,7 @@ public abstract class PSFilterVisitor {
         currentPath.add(virtualLink);
 
         component = new Component(pNodeFrom.getAuthor(),pNodeFrom,currentPath,null);
-        List<Component> result = getComponentRecurs(component, currentPathPartIterations, currentPathParts, currentPath);
+        List<Component> result = getComponentsRecursively(component, currentPathPartIterations, currentPathParts, currentPath);
         component.setComponents(result);
 
     }
@@ -94,7 +94,7 @@ public abstract class PSFilterVisitor {
         currentPathParts.add(rootNode);
 
         component = new Component(rootNode.getAuthor(),rootNode,currentPath,null);
-        List<Component> result = getComponentRecurs(component, currentPathPartIterations, currentPathParts, currentPath);
+        List<Component> result = getComponentsRecursively(component, currentPathPartIterations, currentPathParts, currentPath);
         component.setComponents(result);
     }
 
@@ -106,7 +106,7 @@ public abstract class PSFilterVisitor {
         stopAtDepth = pDepth == null ? -1 : pDepth;
     }
 
-    private List<Component> getComponentRecurs(Component currentComponent, List<PartIteration> pCurrentPathPartIterations, List<PartMaster> pCurrentPathParts, List<PartLink> pCurrentPath) throws PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
+    private List<Component> getComponentsRecursively(Component currentComponent, List<PartIteration> pCurrentPathPartIterations, List<PartMaster> pCurrentPathParts, List<PartLink> pCurrentPath) throws PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
         List<Component> components = new ArrayList<>();
 
         if(stopped){
@@ -193,7 +193,7 @@ public abstract class PSFilterVisitor {
 
                         // Recursive
                         Component subComponent= new Component(pm.getAuthor(), pm, copyPath, null);
-                        subComponent.setComponents(getComponentRecurs(subComponent, copyPartIterations, copyPathParts, copyPath));
+                        subComponent.setComponents(getComponentsRecursively(subComponent, copyPartIterations, copyPathParts, copyPath));
                         components.add(subComponent);
                     }
 

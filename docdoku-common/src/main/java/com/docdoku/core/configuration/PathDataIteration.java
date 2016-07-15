@@ -37,9 +37,8 @@ import java.util.*;
 @Entity
 @IdClass(PathDataIterationKey.class)
 @NamedQueries({
-    @NamedQuery(name = "PathDataIteration.findDistinctInstanceAttributes", query = "SELECT DISTINCT i FROM InstanceAttribute i LEFT JOIN PathDataIteration pdi LEFT JOIN PathDataMaster pdm LEFT JOIN ProductInstanceIteration pi WHERE pdi member of pdm.pathDataIterations AND pdm member of pi.pathDataMasterList AND  pi.productInstanceMaster.instanceOf.workspace.id = :workspaceId AND i member of pdi.instanceAttributes"),
-    @NamedQuery(name = "PathDataIteration.findFromPathAndProductInstanceIteration", query = "SELECT DISTINCT pdi FROM PathDataIteration pdi LEFT JOIN PathDataMaster pdm LEFT JOIN ProductInstanceIteration pi WHERE pi = :productInstanceIteration AND pi.pathDataMasterList = pdm AND pdi member of pdm.pathDataIterations AND pdm.path = :path"),
-    @NamedQuery(name = "PathDataIteration.findLastIterationFromProductInstanceIteration", query = "SELECT DISTINCT pdi FROM PathDataIteration pdi LEFT JOIN PathDataMaster pdm LEFT JOIN ProductInstanceIteration pi WHERE pi = :productInstanceIteration AND pi.pathDataMasterList = pdm AND pdi.iteration = (select max(otherPdi.iteration) from pdm.pathDataIterations otherPdi)")
+    @NamedQuery(name = "PathDataIteration.findDistinctInstanceAttributes", query = "SELECT DISTINCT i FROM ProductInstanceMaster pim JOIN pim.productInstanceIterations pi JOIN pi.pathDataMasterList pdm JOIN pdm.pathDataIterations pdi JOIN pdi.instanceAttributes i WHERE pim.instanceOf.workspace.id = :workspaceId"),
+    @NamedQuery(name = "PathDataIteration.findLastIterationFromProductInstanceIteration", query = "SELECT DISTINCT pdi FROM ProductInstanceIteration pi JOIN pi.pathDataMasterList pdm JOIN pdm.pathDataIterations pdi WHERE pi = :productInstanceIteration AND pdi.iteration = (select max(otherPdi.iteration) from pdm.pathDataIterations otherPdi)")
 })
 public class PathDataIteration implements Serializable, FileHolder {
 
