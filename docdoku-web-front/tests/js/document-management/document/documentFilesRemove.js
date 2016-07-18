@@ -297,7 +297,9 @@ casper.test.begin('Document Files Remove tests suite', 14, function documentUplo
      * Assert that no files are present
      */
     casper.then(function assertAllFilesRemoved() {
-        this.test.assertDoesntExist('.document-modal .attachedFiles ul.file-list li','There should be no file present');
+        return this.waitForSelector('.document-modal .attachedFiles ul.file-list', function checkNoFile() {
+            this.test.assertDoesntExist('.document-modal .attachedFiles ul.file-list li','There should be no file present');
+        });
     });
 
     casper.run(function allDone() {

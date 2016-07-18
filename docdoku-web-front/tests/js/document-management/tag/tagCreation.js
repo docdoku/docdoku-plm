@@ -32,7 +32,6 @@ casper.test.begin('Document tag creation tests suite', 7, function documentTagCr
      * */
     casper.then(function waitTagCreationModal() {
         return this.waitForSelector('.modal.tag-management .newTag', function modalOpened() {
-
             this.test.assert(true, 'Tag creation modal opened');
         }, function fail() {
             this.capture('screenshot/documentTagCreation/waitTagCreationModal-error.png');
@@ -72,10 +71,21 @@ casper.test.begin('Document tag creation tests suite', 7, function documentTagCr
     });
 
     /**
+     * Click on the add tag button
+     * */
+    casper.then(function addTag() {
+        return this.waitForSelector('.modal.tag-management .newTag-button', function buttonIsVisible() {
+            this.click('.modal.tag-management .newTag-button');
+        }, function fail() {
+            this.capture('screenshot/documentTagCreation/addTagButtonNotVisible-error.png');
+            this.test.assert(false, 'Tag add button can not be found');
+        });
+    });
+
+    /**
      * Try to add a tag
      * */
     casper.then(function createTags() {
-        this.click('.modal.tag-management .newTag-button');
         return this.waitForSelector('.modal.tag-management ul.existing-tags-list li',function tagAdded(){
             this.test.assertElementCount('.modal.tag-management ul.existing-tags-list li', 1, 'Should add a tag');
         },function fail(){

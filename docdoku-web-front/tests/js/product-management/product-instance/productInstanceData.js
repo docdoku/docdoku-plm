@@ -15,7 +15,24 @@ casper.test.begin('Product instance data path tests suite', 22, function product
 
 
     /**
-     * click on the checkbox from the bom
+     * Wait for Serial Number selected
+     */
+    casper.then(function waitForSerialNumber() {
+        return this.waitForSelector('#config_spec_type_selector_list', function loadConfiguration() {
+            return this.evaluate(function () {
+                var selectedIndex = document.querySelector('#config_spec_type_selector_list').selectedIndex;
+                return selectedIndex === 2;
+            }, function then() {
+                this.test.assert(true, 'Serial number config selected');
+            }, function fail() {
+                this.capture('screenshot/product-instance/SerialNumberConfigNotYetSelected.png');
+                this.test.assert(false, 'Serial number config is not selected');
+            });
+        });
+    });
+
+    /**
+     * Click on the checkbox from the bom
      */
     casper.then(function waitForBOM() {
         return this.waitForSelector('.selectable-part-checkbox', function loadDataButton() {
@@ -31,7 +48,7 @@ casper.test.begin('Product instance data path tests suite', 22, function product
      * Wait for the Deliverable Data button
      */
     casper.then(function openDataModal() {
-        return this.waitFor(function checkVisible() {
+        return this.waitForSelector('#path_data_btn', function checkVisible() {
             return this.evaluate(function() {
                 return $('#path_data_btn').is(':visible');
             });

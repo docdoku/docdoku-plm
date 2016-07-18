@@ -1,6 +1,6 @@
 /*global casper,urls,products,homeUrl,workspace*/
 
-casper.test.begin('Assembly creation tests suite', 13, function assemblyCreationTestsSuite() {
+casper.test.begin('Assembly creation tests suite', 14, function assemblyCreationTestsSuite() {
 
     'use strict';
 
@@ -27,11 +27,12 @@ casper.test.begin('Assembly creation tests suite', 13, function assemblyCreation
     });
 
     /**
-     * Wait the part list
+     * Open the first item modal view
      */
     casper.then(function waitForPartList() {
         var link = '#part_table tbody tr:first-child td.part_number';
         return this.waitForSelector(link, function clickPartNavLink() {
+            this.test.assertElementCount('#part_table tbody tr', 1, 'There should be only 1 entry in the table');
             this.click(link);
         }, function fail() {
             this.capture('screenshot/assemblyCreation/waitForPartList-error.png');
@@ -138,20 +139,19 @@ casper.test.begin('Assembly creation tests suite', 13, function assemblyCreation
             this.test.assertElementCount('#part_table .fa.fa-cube', 4, 'found 4 leaf parts');
             this.test.assertElementCount('#part_table .fa.fa-cubes', 1, 'found 1 assembly part');
         });
-
     });
 
     /**
      * Checkin all parts
      */
 
-    partNumbers.forEach(function (partNumber) {
+    partNumbers.forEach(function(partNumber) {
         casper.then(function checkinPart() {
             // Run xhrs, more convenient here.
-            this.open(homeUrl + 'api/workspaces/' + workspace + '/parts/' + partNumber + '-A/checkin', {method: 'PUT'}).then(function (response) {
-                this.test.assertEquals(response.status, 200, 'Part ' + partNumber + ' should be checkin');
+            return this.open(apiUrls.getParts + '/' + partNumber + '-A/checkin', {method: 'PUT'}).then(function (response) {
+                this.test.assertEquals(response.status, 200, 'Part ' + partNumber + ' is checked in');
             }, function () {
-                this.test.assert(false, 'Part ' + partNumber + ' has not been checkin');
+                this.test.assert(false, 'Part ' + partNumber + ' has not been checked in');
                 this.capture('screenshot/assemblyCreation/checkinPart-'+partNumber+'-error.png');
             });
         });

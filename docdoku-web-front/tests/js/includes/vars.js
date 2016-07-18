@@ -247,7 +247,8 @@ var urls = {
 
 var apiUrls = {
     userInfo: homeUrl + 'api/workspaces/' + workspace + '/users/me',
-    deletePart: homeUrl + 'api/workspaces/' + workspace + '/parts/' + products.part1.number + '-A',
+    deletePart1: homeUrl + 'api/workspaces/' + workspace + '/parts/' + products.part1.number + '-A',
+    deletePart2: homeUrl + 'api/workspaces/' + workspace + '/parts/' + products.part2.number + '-A',
     deletePartTemplate: homeUrl + 'api/workspaces/' + workspace + '/part-templates/' + products.template1.number,
     deletePartTemplate2: homeUrl + 'api/workspaces/' + workspace + '/part-templates/' + products.template2.number,
     deleteDocumentTemplate: homeUrl + 'api/workspaces/' + workspace + '/document-templates/' + documents.lov.template.number,
@@ -264,6 +265,7 @@ var apiUrls = {
     getRoles: homeUrl + 'api/workspaces/' + workspace + '/roles',
     getTags: homeUrl + 'api/workspaces/' + workspace + '/tags',
     getDocuments: homeUrl + 'api/workspaces/' + workspace + '/documents',
+    getParts: homeUrl + 'api/workspaces/' + workspace + '/parts',
     milestones: homeUrl + 'api/workspaces/' + workspace + '/changes/milestones',
     queries: homeUrl + 'api/workspaces/' + workspace + '/parts/queries'
 };
