@@ -31,20 +31,10 @@
             var repositoryIndex;
             var translate = $filter('translate');
 
-            $scope.selected = [];
-
-            $scope.filters = [
-                { name: translate('CHECKED_OUT') , code:'CHECKED_OUT', value:true},
-                { name: translate('CHECKED_IN'), code:'CHECKED_IN', value:true},
-                { name: translate('DOCUMENTS') , code:'DOCUMENTS', value:true},
-                { name: translate('PARTS') , code:'PARTS', value:true},
-                { name: translate('OUT_OF_INDEX'), code:'OUT_OF_INDEX', value:true }
-            ];
-
             var hasFilter = function(code){
-               return $scope.filters.filter(function(filter){
+                return $scope.filters.filter(function(filter){
                         return filter.code === code && filter.value;
-                }).length>0;
+                    }).length>0;
             };
 
             $scope.query = {
@@ -57,6 +47,16 @@
                 }],
                 page: 1
             };
+
+            $scope.selected = [];
+
+            $scope.filters = [
+                { name: translate('CHECKED_OUT') , code:'CHECKED_OUT', value:true},
+                { name: translate('CHECKED_IN'), code:'CHECKED_IN', value:true},
+                { name: translate('DOCUMENTS') , code:'DOCUMENTS', value:true},
+                { name: translate('PARTS') , code:'PARTS', value:true},
+                { name: translate('OUT_OF_INDEX'), code:'OUT_OF_INDEX', value:true }
+            ];
 
             $scope.reveal = function ($event) {
                 FolderService.reveal(folderPath);
@@ -87,12 +87,12 @@
             $scope.search = function(){
 
                 filteredFiles = allFiles.filter(function(path){
-                    var file = FolderService.createFileObject(path);
-                    var index = RepositoryService.getFileIndex(repositoryIndex, path);
 
-                    if($scope.pattern && !file.path.match($scope.pattern)){
-                       return false;
+                    if($scope.pattern && !path.match($scope.pattern)){
+                        return false;
                     }
+
+                    var index = RepositoryService.getFileIndex(repositoryIndex, path);
 
                     if(!hasFilter('OUT_OF_INDEX') && !index){
                         return false;
@@ -125,6 +125,10 @@
 
                 $scope.filteredFilesCount = filteredFiles.length;
                 $scope.paginate(1,10);
+            };
+
+            $scope.prevent = function($event){
+                $event.preventDefault(); $event.stopPropagation(); return false;
             };
 
             $scope.fetchFolder = function(){
@@ -162,6 +166,13 @@
                         file:file,
                         folderPath:folderPath
                     }
+                });
+            };
+
+            $scope.updateIndex = function(){
+                RepositoryService.syncIndex(folderPath).then($scope.fetchFolder).catch(function(){
+                    console.log('OUPS')
+                    console.log(arguments)
                 });
             };
 

@@ -43,6 +43,7 @@
         'dplm.services.output',
         'dplm.services.auth',
         'dplm.services.api',
+        'dplm.repository',
         'dplm.services.repository',
         'dplm.services.upload',
 

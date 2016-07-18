@@ -119,7 +119,15 @@
                     VERSION:'Version',
                     ITERATION:'Iteration',
                     NAME:'Name',
-                    TYPE:'Type'
+                    TYPE:'Type',
+                    FILE:'File',
+                    INDEX:'Index',
+                    SELECTION:'Selection',
+                    UPDATE_INDEX:'Update index',
+                    DOWNLOAD_LATEST:'Download latest version',
+                    PUSH_UPDATES:'Push updates',
+                    SELECT_ALL:'Select all',
+                    UNSELECT_ALL:'Unselect all'
                 })
                 .translations('fr', {
                     CUT: 'Couper',
@@ -235,7 +243,15 @@
                     VERSION:'Version',
                     ITERATION:'Itération',
                     NAME:'Nom',
-                    TYPE:'Type'
+                    TYPE:'Type',
+                    FILE:'Fichier',
+                    INDEX:'Index',
+                    SELECTION:'Sélection',
+                    UPDATE_INDEX:'Mettre à jour l\'index',
+                    DOWNLOAD_LATEST:'Télécharger les dernières versions',
+                    PUSH_UPDATES:'Envoyer les modifications',
+                    SELECT_ALL:'Tout sélectionner',
+                    UNSELECT_ALL:'Tout déselectionner'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

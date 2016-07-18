@@ -1,86 +1,154 @@
 <div layout-fill layout="column">
-    <md-toolbar md-scroll-shrink class="md-whiteframe-6dp">
+    <md-toolbar md-scroll-shrink>
         <div class="md-toolbar-tools" layout="row" layout-align="start center">
-            <div>
-                <md-button class="md-icon-button" hide-gt-sm aria-label="{{'MENU' | translate}}" ng-click="openMenu()">
-                    <i class="fa fa-bars"></i>
-                </md-button>
-            </div>
-            <div>
+            <h2>
+                <span>
+                    <i class="fa fa-folder-open"></i>
+                    <i class="fa fa-star favorite" ng-if="folder.favorite"></i>
+                    {{ folder.path | fileshortname }} ({{totalFilesInFolder}} {{'FILES'|translate}})
+                </span>
+            </h2>
+        </div>
+
+    </md-toolbar>
+
+    <md-content>
+
+        <div layout="row" layout-align="space-between start">
+
+            <md-menu-bar>
                 <md-menu>
-                    <md-button aria-label="{{'MENU'}}" class="md-icon-button" ng-click="$mdOpenMenu($event)">
-                        <i class="fa fa-bars"></i>
-                    </md-button>
+                    <button ng-click="$mdOpenMenu()">
+                        {{'FILE' | translate}}
+                    </button>
 
-                    <md-menu-content width="4">
+                    <md-menu-content>
                         <md-menu-item>
-                            <md-button aria-label="{{'OPEN_IN_EXPLORER'|translate}}" ng-click="reveal()">
-                                {{'OPEN_IN_EXPLORER'|translate}}
-                            </md-button>
-                        </md-menu-item>
-
-                        <md-menu-item>
-                            <md-button aria-label="{{'FAVORITE'|translate}}" ng-click="toggleFavorite()">
-                                {{'FAVORITE'|translate}}
-                            </md-button>
-                        </md-menu-item>
-
-                        <md-menu-item>
-                            <md-button aria-label="{{'REFRESH_FOLDER'|translate}}" ng-click="refresh(true)">
+                            <md-button aria-label="{{'REFRESH_FOLDER'|translate}}" ng-click="fetchFolder()">
+                                <md-icon md-svg-icon="img/cached.svg"></md-icon>
                                 {{'REFRESH_FOLDER'|translate}}
                             </md-button>
                         </md-menu-item>
-
+                        <md-menu-item>
+                            <md-button ng-click="reveal()">
+                                <md-icon md-svg-icon="img/folder-open.svg"></md-icon>
+                                {{'OPEN_IN_EXPLORER' | translate}}
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button aria-label="{{'FAVORITE'|translate}}" ng-click="toggleFavorite()">
+                                <md-icon md-svg-icon="img/star-border.svg"></md-icon>
+                                {{'FAVORITE'|translate}}
+                            </md-button>
+                        </md-menu-item>
                         <md-menu-item>
                             <md-button aria-label="{{'DELETE_FOLDER'|translate}}" ng-click="delete($event)">
+                                <md-icon md-svg-icon="img/delete.svg"></md-icon>
                                 {{'DELETE_FOLDER'|translate}}
+                            </md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+
+                <md-menu>
+                    <button ng-click="$mdOpenMenu()">
+                        {{'INDEX' | translate}}
+                    </button>
+                    <md-menu-content>
+                        <md-menu-item>
+                            <md-button ng-click="updateIndex()">
+                                <md-icon md-svg-icon="img/index-update.svg"></md-icon>
+                                {{'UPDATE_INDEX' | translate}}
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button ng-click="downloadLatest()">
+                                <md-icon md-svg-icon="img/system-update.svg"></md-icon>
+                                {{'DOWNLOAD_LATEST' | translate}}
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button ng-click="pushUpdates()">
+                                <md-icon md-svg-icon="img/put.svg"></md-icon>
+                                {{'PUSH_UPDATES' | translate}}
+                            </md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+
+                <md-menu>
+                    <button ng-click="$mdOpenMenu()">
+                        {{'FILTERS' | translate}}
+                    </button>
+                    <md-menu-content >
+
+                        <md-menu-item>
+                            <md-button ng-click="selectAllFilters()">
+                                <md-icon md-svg-icon="img/check.svg"></md-icon>
+                                {{'SELECT_ALL' | translate}}
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button ng-click="unselectAllFilters()">
+                                <md-icon md-svg-icon="img/clear.svg"></md-icon>
+                                {{'UNSELECT_ALL' | translate}}
+                            </md-button>
+                        </md-menu-item>
+
+                        <md-menu-divider></md-menu-divider>
+
+                        <md-menu-item ng-repeat="filter in filters">
+                            <md-input-container>
+                                <md-checkbox ng-change="search()" ng-model="filter.value" aria-label="{{filter.name}}">
+                                    {{filter.name}}
+                                </md-checkbox>
+                            </md-input-container>
+                        </md-menu-item>
+
+                    </md-menu-content>
+                </md-menu>
+
+                <md-menu>
+                    <button ng-click="$mdOpenMenu()">
+                        {{'SELECTION' | translate}}
+                    </button>
+                    <md-menu-content >
+
+                        <md-menu-item>
+                            <md-button ng-click="checkinSelection()">
+                                <md-icon md-svg-icon="img/done.svg"></md-icon>
+                                {{'CHECKIN' | translate}}
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button ng-click="checkoutSelection()">
+                                <md-icon md-svg-icon="img/edit.svg"></md-icon>
+                                {{'CHECKOUT' | translate}}
                             </md-button>
                         </md-menu-item>
 
                     </md-menu-content>
                 </md-menu>
-            </div>
-            <div>
-                <h2>
-                    <span>
-                        <i class="fa fa-folder-open"></i>
-                        <i class="fa fa-star favorite" ng-if="folder.favorite"></i>
-                        {{ folder.path | fileshortname }} ({{totalFilesInFolder}} {{'FILES'|translate}})
-                    </span>
-                </h2>
-            </div>
+
+            </md-menu-bar>
+
         </div>
-    </md-toolbar>
-    <md-content>
 
-        <div layout-wrap layout="row" layout-align="space-between start" layout-padding>
+        <div layout="row" layout-wrap layout-align="space-around start">
+            <md-input-container class="md-block">
+                <label>{{'SEARCH'|translate}}</label>
+                <input type="text" ng-change="search()" ng-model="pattern" />
+            </md-input-container>
 
-            <div class="md-inline-form">
-                <md-input-container>
-                    <label>{{'SEARCH'|translate}}</label>
-                    <input type="text" ng-change="search()" ng-model="pattern" />
-                </md-input-container>
-            </div>
-
-            <div layout="row" layout-wrap layout-align="space-between start">
-                <md-input-container ng-repeat="filter in filters">
-                    <md-checkbox ng-change="search()" ng-model="filter.value" aria-label="{{filter.name}}">
-                        {{filter.name}}
-                    </md-checkbox>
-                </md-input-container>
-            </div>
-
-            <div layout="row">
-                <md-table-pagination
-                        md-boundary-links="true"
-                        md-limit="query.limit"
-                        md-limit-options="query.limits"
-                        md-page="query.page"
-                        md-total="{{filteredFilesCount}}"
-                        md-on-paginate="paginate"
-                        md-page-select>
-                </md-table-pagination>
-            </div>
+          <md-table-pagination
+                    md-boundary-links="true"
+                    md-limit="query.limit"
+                    md-limit-options="query.limits"
+                    md-page="query.page"
+                    md-total="{{filteredFilesCount}}"
+                    md-on-paginate="paginate"
+                    md-page-select>
+            </md-table-pagination>
         </div>
 
         <div>
@@ -158,6 +226,7 @@
                     </tbody>
                 </table>
             </md-table-container>
+
         </div>
     </md-content>
 </div>
