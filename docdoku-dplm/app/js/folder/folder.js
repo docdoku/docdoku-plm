@@ -29,24 +29,23 @@
             var allFiles = [];
             var filteredFiles = [];
             var repositoryIndex;
+            var translate = $filter('translate');
 
             $scope.selected = [];
-            var translate = $filter('translate');
+
             $scope.filters = [
-                { name: translate('CHECKED_OUT') , value:'CHECKED_OUT'},
-                { name: translate('CHECKED_IN'), value:'CHECKED_IN'},
-                { name: translate('DOCUMENTS') , value:'DOCUMENTS'},
-                { name: translate('PARTS') , value:'PARTS'},
-                { name: translate('OUT_OF_INDEX'), value:'OUT_OF_INDEX' }
+                { name: translate('CHECKED_OUT') , code:'CHECKED_OUT', value:true},
+                { name: translate('CHECKED_IN'), code:'CHECKED_IN', value:true},
+                { name: translate('DOCUMENTS') , code:'DOCUMENTS', value:true},
+                { name: translate('PARTS') , code:'PARTS', value:true},
+                { name: translate('OUT_OF_INDEX'), code:'OUT_OF_INDEX', value:true }
             ];
 
-            var hasFilter = function(value){
-                return $scope.selectedFilters.indexOf(value) !== -1;
+            var hasFilter = function(code){
+               return $scope.filters.filter(function(filter){
+                        return filter.code === code && filter.value;
+                }).length>0;
             };
-
-            $scope.selectedFilters = $scope.filters.map(function(filter){
-                return filter.value;
-            });
 
             $scope.query = {
                 limit: 10,
@@ -99,7 +98,7 @@
                         return false;
                     }
 
-                    if(!hasFilter('DOCUMENTS') && index.id){
+                    if(!hasFilter('DOCUMENTS') && index && index.id){
                         return false;
                     }
 

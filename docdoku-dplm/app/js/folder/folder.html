@@ -1,5 +1,5 @@
 <div layout-fill layout="column">
-    <md-toolbar md-scroll-shrink>
+    <md-toolbar md-scroll-shrink class="md-whiteframe-6dp">
         <div class="md-toolbar-tools" layout="row" layout-align="start center">
             <div>
                 <md-button class="md-icon-button" hide-gt-sm aria-label="{{'MENU' | translate}}" ng-click="openMenu()">
@@ -53,7 +53,7 @@
     </md-toolbar>
     <md-content>
 
-        <div layout="row" layout-align="space-between start" layout-padding>
+        <div layout-wrap layout="row" layout-align="space-between start" layout-padding>
 
             <div class="md-inline-form">
                 <md-input-container>
@@ -62,18 +62,15 @@
                 </md-input-container>
             </div>
 
-            <div>
-                <md-input-container>
-                    <label>{{'FILTERS'|translate}}</label>
-                    <md-select md-container-class="hidden-value" ng-change="search()" ng-model="selectedFilters" multiple>
-                        <md-optgroup label="{{'FILTERS'|translate}}">
-                            <md-option ng-value="filter.value" ng-repeat="filter in filters">{{filter.name}}</md-option>
-                        </md-optgroup>
-                    </md-select>
+            <div layout="row" layout-wrap layout-align="space-between start">
+                <md-input-container ng-repeat="filter in filters">
+                    <md-checkbox ng-change="search()" ng-model="filter.value" aria-label="{{filter.name}}">
+                        {{filter.name}}
+                    </md-checkbox>
                 </md-input-container>
             </div>
 
-            <div>
+            <div layout="row">
                 <md-table-pagination
                         md-boundary-links="true"
                         md-limit="query.limit"
@@ -84,9 +81,7 @@
                         md-page-select>
                 </md-table-pagination>
             </div>
-
         </div>
-
 
         <div>
             <md-table-container>
@@ -94,6 +89,7 @@
                     <thead md-head>
                         <tr md-row>
                             <th md-column><span>{{'NAME'|translate}}</span></th>
+                            <th md-column><span>{{'SIZE'|translate}}</span></th>
                             <th md-column><span>{{'TYPE'|translate}}</span></th>
                             <th md-column><span>{{'WORKSPACE'|translate}}</span></th>
                             <th md-column><span>{{'ID'|translate}}</span></th>
@@ -118,7 +114,7 @@
                             <td md-cell>{{file.index.id || file.index.partNumber || '-' }}</td>
                             <td md-cell>{{file.index.revision || '-' }}</td>
                             <td md-cell>{{file.index.iteration || '-'  }}</td>
-                            <td md-cell>{{file.index.lastModifiedDate | date:'medium' || '-' }}</td>
+                            <td md-cell>{{(file.index.lastModifiedDate | date:'medium') || '-' }}</td>
                             <td md-cell>
 
                                 <md-menu>

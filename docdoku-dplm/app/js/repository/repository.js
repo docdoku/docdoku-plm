@@ -106,7 +106,7 @@
             };
 
             var writeIndex = function(indexPath, index){
-                fs.writeFileSync(indexPath,index);
+                fs.writeFileSync(indexPath,JSON.stringify(index));
             };
 
             this.savePartToIndex = function(indexFolder,path,part){
