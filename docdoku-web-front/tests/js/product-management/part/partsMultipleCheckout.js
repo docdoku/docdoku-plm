@@ -1,6 +1,6 @@
 /*global casper,urls*/
 
-casper.test.begin('Parts  multiple checkout tests suite', 3, function partsMultipleCheckoutTestsSuite() {
+casper.test.begin('Parts multiple checkout tests suite', 3, function partsMultipleCheckoutTestsSuite() {
     'use strict';
 
     casper.open('');

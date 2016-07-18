@@ -1,5 +1,5 @@
 /*global casper,urls,workspace,products,defaultUrl*/
-casper.test.begin('Part add link tests suite', 2, function partClickLinkTestsSuite() {
+casper.test.begin('Part click link tests suite', 2, function partClickLinkTestsSuite() {
     'use strict';
 
     casper.open('');
