@@ -47,9 +47,9 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
             if (response.status === 200) {
                 var tags = JSON.parse(this.getPageContent());
                 tags.forEach(function (tag) {
-                    that.log('Deleting tag ' + tag.id, 'info');
+                    that.log('Deleting tag ' + tag.id, 'warning');
                     that.open(apiUrls.getTags + '/' + tag.id, {method: 'DELETE'}).then(function () {
-                        that.log('Tag ' + tag.id + ' deleted', 'info');
+                        that.log('Tag ' + tag.id + ' deleted', 'warning');
                     });
                 });
             } else {
@@ -101,25 +101,36 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     });
 
     // Parts
-    casper.then(function cleanupParts() {
-        return this.open(apiUrls.deletePart, {method: 'DELETE'}).then(function (response) {
+    casper.then(function cleanupPart1() {
+        return this.open(apiUrls.deletePart1, {method: 'DELETE'}).then(function (response) {
             if (response.status === 200) {
-                this.log('Test parts has been deleted', 'info');
+                this.log('Test part1 has been deleted', 'warning');
             } else {
-                this.log('Cannot delete test parts, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+                this.log('Cannot delete test part1, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+            }
+        });
+    });
+    casper.then(function cleanupPart2() {
+        return this.open(apiUrls.deletePart2, {method: 'DELETE'}).then(function (response) {
+            if (response.status === 200) {
+                this.log('Test part2 has been deleted', 'warning');
+            } else {
+                this.log('Cannot delete test part2, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
             }
         });
     });
 
     // Assembly parts
-    var partNumbers = Object.keys(products.assembly.parts);
-    partNumbers.forEach(function (partNumber) {
-        casper.open(homeUrl + 'api/workspaces/' + workspace + '/parts/' + partNumber + '-A', {method: 'DELETE'}).then(function (response) {
-            if (response.status === 200) {
-                this.log('Part deleted');
-            } else {
-                this.log('Cannot delete part, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
-            }
+    casper.then(function test() {
+        var partNumbers = Object.keys(products.assembly.parts);
+        return partNumbers.forEach(function (partNumber) {
+            return casper.open(homeUrl + 'api/workspaces/' + workspace + '/parts/' + partNumber + '-A', {method: 'DELETE'}).then(function (response) {
+                if (response.status === 200) {
+                    this.log('Part ' + partNumber + ' deleted', 'warning');
+                } else {
+                    this.log('Cannot delete part ' + partNumber + ', reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+                }
+            });
         });
     });
 
