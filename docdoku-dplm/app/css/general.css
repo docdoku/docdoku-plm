@@ -12,4 +12,6 @@ body.app-background{
 	background:#1A658A;
 }
 
+.no-margin{margin:0;}
+
 .md-table-pagination{border-top:none;}

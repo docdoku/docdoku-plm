@@ -1,6 +1,6 @@
 <div layout-fill layout="column">
     <md-toolbar md-scroll-shrink>
-        <div class="md-toolbar-tools" layout="row" layout-align="start center">
+        <div class="md-toolbar-tools" layout="row" layout-align="space-between center">
             <h2>
                 <span>
                     <i class="fa fa-folder-open"></i>
@@ -15,7 +15,6 @@
     <md-content>
 
         <div layout="row" layout-align="space-between start">
-
             <md-menu-bar>
                 <md-menu>
                     <button ng-click="$mdOpenMenu()">
@@ -83,13 +82,13 @@
                     <md-menu-content >
 
                         <md-menu-item>
-                            <md-button ng-click="selectAllFilters()">
+                            <md-button ng-click="toggleFilters(true)">
                                 <md-icon md-svg-icon="img/check.svg"></md-icon>
                                 {{'SELECT_ALL' | translate}}
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
-                            <md-button ng-click="unselectAllFilters()">
+                            <md-button ng-click="toggleFilters(false)">
                                 <md-icon md-svg-icon="img/clear.svg"></md-icon>
                                 {{'UNSELECT_ALL' | translate}}
                             </md-button>
@@ -112,7 +111,7 @@
                     <button ng-click="$mdOpenMenu()">
                         {{'SELECTION' | translate}}
                     </button>
-                    <md-menu-content >
+                    <md-menu-content>
 
                         <md-menu-item>
                             <md-button ng-click="checkinSelection()">
@@ -134,54 +133,65 @@
 
         </div>
 
-        <div layout="row" layout-wrap layout-align="space-around start">
-            <md-input-container class="md-block">
+        <div layout-padding layout="row" layout-align="space-between start">
+            <md-input-container class="no-margin md-block">
                 <label>{{'SEARCH'|translate}}</label>
                 <input type="text" ng-change="search()" ng-model="pattern" />
             </md-input-container>
-
-          <md-table-pagination
-                    md-boundary-links="true"
-                    md-limit="query.limit"
-                    md-limit-options="query.limits"
-                    md-page="query.page"
-                    md-total="{{filteredFilesCount}}"
-                    md-on-paginate="paginate"
-                    md-page-select>
-            </md-table-pagination>
         </div>
 
-        <div>
+        <div layout-padding layout="column">
+
+            <div layout="row" layout-wrap layout-align="space-between center">
+
+                <div ng-if="!sync.running">
+                    <span class="md-caption">{{'LAST_SYNC_DATE' | translate}} {{ folder.lastSync | date:'medium'}}</span>
+                </div>
+                <div ng-if="sync.running">
+                    <span class="md-caption">{{'SYNCING_INDEX' | translate}} {{ sync.progress }} / {{ sync.total }}</span>
+                </div>
+
+                <md-table-pagination
+                        md-boundary-links="true"
+                        md-limit="query.limit"
+                        md-limit-options="query.limits"
+                        md-page="query.page"
+                        md-total="{{filteredFilesCount}}"
+                        md-on-paginate="paginate"
+                        md-page-select>
+                </md-table-pagination>
+
+            </div>
+
             <md-table-container>
                 <table md-table md-row-select multiple ng-model="selected">
                     <thead md-head>
                         <tr md-row>
                             <th md-column><span>{{'NAME'|translate}}</span></th>
-                            <th md-column><span>{{'SIZE'|translate}}</span></th>
-                            <th md-column><span>{{'TYPE'|translate}}</span></th>
                             <th md-column><span>{{'WORKSPACE'|translate}}</span></th>
                             <th md-column><span>{{'ID'|translate}}</span></th>
                             <th md-column><span>{{'VERSION'|translate}}</span></th>
-                            <th md-column><span>{{'ITERATION'|translate}}</span></th>
+                            <th md-column><span>{{'SIZE'|translate}}</span></th>
                             <th md-column><span>{{'LAST_MODIFIED'|translate}}</span></th>
                             <th md-column><span></span></th>
                         </tr>
                     </thead>
                     <tbody md-body>
                         <tr md-row md-select="file" md-select-id="path" ng-repeat="file in displayedFiles">
-                            <td md-cell>{{file.path | fileshortname}}</td>
-                            <td md-cell>{{file.stat.size | humanreadablesize}}</td>
 
                             <td md-cell>
-                                <span ng-if="file.index.id">{{ 'DOCUMENTS' | translate }}</span>
-                                <span ng-if="file.index.partNumber">{{ 'PARTS' | translate }}</span>
-                                <span ng-if="!file.index.partNumber && !file.index.id"> - </span>
+                                <i ng-if="file.index.id"  class="fa fa-file"></i>
+                                <i ng-if="file.index.number"  class="fa fa-cube"></i>
+                                <i ng-if="!file.index.number && !file.index.id"  class="fa fa-question"></i>
+                                <span layout-margin>{{file.path | fileshortname}}</span>
                             </td>
 
+
                             <td md-cell>{{file.index.workspace || '-' }}</td>
-                            <td md-cell>{{file.index.id || file.index.partNumber || '-' }}</td>
-                            <td md-cell>{{file.index.revision || '-' }}</td>
-                            <td md-cell>{{file.index.iteration || '-'  }}</td>
+                            <td md-cell>{{file.index.id || file.index.number || '-' }}</td>
+                            <td md-cell>{{file.index.revision}}-{{file.index.iteration}}</td>
+                            <td md-cell>{{file.stat.size | humanreadablesize}}</td>
+
                             <td md-cell>{{(file.index.lastModifiedDate | date:'medium') || '-' }}</td>
                             <td md-cell>
 

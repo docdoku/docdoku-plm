@@ -35,7 +35,7 @@ public class MetaDirectoryManager {
     private static final String META_DIRECTORY_NAME = ".dplm";
     private static final String INDEX_FILE_NAME = "index.json";
 
-    private static final String PART_NUMBER_PROP = "partNumber";
+    private static final String PART_NUMBER_PROP = "number";
     private static final String REVISION_PROP = "revision";
     private static final String ITERATION_PROP = "iteration";
     private static final String WORKSPACE_PROP = "workspace";

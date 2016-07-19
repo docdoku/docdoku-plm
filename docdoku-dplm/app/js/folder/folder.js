@@ -58,6 +58,12 @@
                 { name: translate('OUT_OF_INDEX'), code:'OUT_OF_INDEX', value:true }
             ];
 
+            $scope.sync = {
+                running:false,
+                progress:0,
+                total:0
+            };
+
             $scope.reveal = function ($event) {
                 FolderService.reveal(folderPath);
                 $event.stopPropagation();
@@ -102,7 +108,7 @@
                         return false;
                     }
 
-                    if(!hasFilter('PARTS') && index && index.partNumber){
+                    if(!hasFilter('PARTS') && index && index.number){
                         return false;
                     }
 
@@ -141,7 +147,7 @@
                     .then(function(files){
                         $scope.totalFilesInFolder = files.length;
                         allFiles = files;
-                        $scope.search('');
+                        $scope.search();
                     });
             };
 
@@ -170,10 +176,27 @@
             };
 
             $scope.updateIndex = function(){
-                RepositoryService.syncIndex(folderPath).then($scope.fetchFolder).catch(function(){
-                    console.log('OUPS')
-                    console.log(arguments)
+                $scope.sync.running = true;
+                RepositoryService.syncIndex(folderPath)
+                    .then($scope.fetchFolder, function(){
+                        // todo handle error
+                    },function(sync){
+                        $scope.sync.total = sync.total;
+                        $scope.sync.progress = sync.progress;
+                    }).catch(function(){
+                        // todo handle error
+                    }).finally(function(){
+                        $scope.sync.running = false;
+                        $scope.sync.total = 0;
+                        $scope.sync.progress = 0;
+                    });
+            };
+
+            $scope.toggleFilters = function(state){
+                angular.forEach($scope.filters,function(filter){
+                    filter.value = state;
                 });
+                $scope.search();
             };
 
             $scope.fetchFolder();
@@ -230,7 +253,11 @@
 
             var onError = function(error){
                 $scope.creating = false;
-                $scope.error = error;
+                if(typeof error === 'object' && error.statusText){
+                    $scope.error =error.statusText;
+                }else if(typeof error === 'string'){
+                    $scope.error = error;
+                }
             };
 
             $scope.close = $mdDialog.hide;

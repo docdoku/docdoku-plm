@@ -3,7 +3,7 @@
     'use strict';
 
     angular.module('dplm.services.folders', [])
-        .service('FolderService', function ($window, uuid4, $q, $filter, CliService) {
+        .service('FolderService', function ($window, uuid4, $q, $filter) {
 
             var _this = this;
 

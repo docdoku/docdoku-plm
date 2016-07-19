@@ -5,9 +5,8 @@
     angular.module('dplm.services.repository', [])
         .constant('indexLocation','/.dplm/index.json')
         .constant('indexPatternSearch','**/.dplm/index.json')
-        .service('RepositoryService', function ($q,$window,indexLocation,indexPatternSearch, DocdokuAPIService) {
+        .service('RepositoryService', function ($q,$timeout,$window,indexLocation,indexPatternSearch, DocdokuAPIService, FolderService) {
 
-            var _this = this;
             var fs = $window.require('fs');
             var crypto = $window.require('crypto');
             var glob = $window.require("glob");
@@ -71,7 +70,7 @@
                     digest:digest,
                     workspace:getIndexValue(index,path,'workspace'),
                     id:getIndexValue(index,path,'id'),
-                    partNumber:getIndexValue(index,path,'partNumber'),
+                    number:getIndexValue(index,path,'number'),
                     revision:getIndexValue(index,path,'revision'),
                     iteration:getIndexValue(index,path,'iteration'),
                     lastModifiedDate:getIndexValue(index,path,'lastModifiedDate'),
@@ -84,27 +83,41 @@
             };
 
             var updateIndexForPart = function(index, path, part){
-                setIndexValue(index, path, 'digest',getHashFromFile(path));
+                setIndexValue(index, path, 'hash', getHashFromFile(path));
                 setIndexValue(index, path, 'workspace',part.workspaceId);
-                setIndexValue(index, path, 'partNumber',part.number);
+                setIndexValue(index, path, 'number',part.number);
                 setIndexValue(index, path, 'revision', part.version);
                 setIndexValue(index, path, 'iteration', part.partIterations.length);
-                setIndexValue(index, path, 'lastModifiedDate',Date.now());
             };
 
             var updateIndexForDocument = function(index, path, document){
-                setIndexValue(index, path, 'digest',getHashFromFile(path));
+                setIndexValue(index, path, 'hash',getHashFromFile(path));
                 setIndexValue(index, path, 'workspace',document.workspaceId);
-                setIndexValue(index, path, 'id',document.documentMasterId);
+                setIndexValue(index, path, 'id', document.documentMasterId);
                 setIndexValue(index, path, 'revision', document.version);
                 setIndexValue(index, path, 'iteration', document.documentIterations.length);
+            };
+
+            var updateFile = function(index,path){
+                setIndexValue(index, path, 'digest', getHashFromFile(path));
                 setIndexValue(index, path, 'lastModifiedDate',Date.now());
+            };
+
+            var removeFromIndex = function(index,path){
+                delete index[path+'.digest'];
+                delete index[path+'.workspace'];
+                delete index[path+'.number'];
+                delete index[path+'.id'];
+                delete index[path+'.revision'];
+                delete index[path+'.iteration'];
+                delete index[path+'.lastModifiedDate'];
             };
 
             this.savePartToIndex = function(indexFolder,path, part){
                 var indexPath = indexFolder + indexLocation;
                 var index = getOrCreateIndex(indexFolder);
                 updateIndexForPart(index, path, part);
+                updateFile(index,path);
                 writeIndex(indexPath,index);
                 return index;
             };
@@ -113,6 +126,7 @@
                 var indexPath = indexFolder + indexLocation;
                 var index = getOrCreateIndex(indexFolder);
                 updateIndexForDocument(index, path, document);
+                updateFile(index,path);
                 writeIndex(indexPath,index);
                 return index;
             };
@@ -147,6 +161,10 @@
 
             this.syncIndex = function(indexFolder){
 
+                var deferred = $q.defer();
+
+                var promise = deferred.promise;
+
                 var indexPath = indexFolder + indexLocation;
                 var index = getOrCreateIndex(indexFolder);
                 var keys = Object.keys(index);
@@ -156,12 +174,21 @@
                 });
 
                 var parts = keys.filter(function(key){
-                    return key.endsWith('.partNumber');
+                    return key.endsWith('.number');
                 });
+
+                var progress = 0;
+                var total = documents.length+parts.length;
+
+                var notify = function(){
+                    deferred.notify({total:total,progress:++progress})
+                };
+
+                deferred.notify({total:total,progress:0});
 
                 var chain = $q.when();
 
-                return DocdokuAPIService.client.getApi().then(function(api){
+                DocdokuAPIService.client.getApi().then(function(api){
 
                     documents.forEach(function(id){
                         var filePath = id.substr(0,id.length-3);
@@ -170,24 +197,33 @@
                         chain = chain.then(documentRequest(api,workspaceId,index[id],version)).then(function(document){
                             updateIndexForDocument(index, filePath, document);
                             return document;
-                        });
+                        },function(){
+                            removeFromIndex(index,filePath);
+                        }).then(notify);
                     });
 
                     parts.forEach(function(number){
-                        var filePath = number.substr(0,number.length-11);
+                        var filePath = number.substr(0,number.length-7);
                         var version = getIndexValue(index,filePath,'revision');
                         var workspaceId = getIndexValue(index,filePath,'workspace');
                         chain = chain.then(partRequest(api,workspaceId,index[number],version)).then(function(part){
                             updateIndexForPart(index, filePath, part);
                             return part;
-                        });
+                        },function(){
+                            removeFromIndex(index,filePath);
+                        }).then(notify);
                     });
 
                     return chain;
 
                 }).then(function(){
+                    FolderService.getFolder({path:indexFolder}).lastSync = Date.now();
+                    FolderService.save();
                     writeIndex(indexPath,index);
+                    deferred.resolve();
                 });
+
+                return promise;
 
             };
 
