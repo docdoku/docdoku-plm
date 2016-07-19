@@ -48,8 +48,12 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
                 var tags = JSON.parse(this.getPageContent());
                 tags.forEach(function (tag) {
                     that.log('Deleting tag ' + tag.id, 'warning');
-                    that.open(apiUrls.getTags + '/' + tag.id, {method: 'DELETE'}).then(function () {
-                        that.log('Tag ' + tag.id + ' deleted', 'warning');
+                    return that.open(apiUrls.getTags + '/' + tag.id, {method: 'DELETE'}).then(function (response) {
+                        if (response.status === 200) {
+                            that.log('Tag ' + tag.id + ' deleted', 'warning');
+                        } else {
+                            that.log('Cannot delete tag ' + tag.id + ', reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+                        }
                     });
                 });
             } else {

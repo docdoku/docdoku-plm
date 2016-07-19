@@ -1,6 +1,6 @@
 /*global casper,urls,documents,$*/
 
-casper.test.begin('Document tag creation tests suite', 7, function documentTagCreationTestsSuite() {
+casper.test.begin('Document tag creation tests suite', 8, function documentTagCreationTestsSuite() {
 
     'use strict';
 
@@ -39,6 +39,21 @@ casper.test.begin('Document tag creation tests suite', 7, function documentTagCr
         });
     });
 
+
+
+    /**
+     * Check the tags list is empty
+     * */
+    casper.then(function checkNoTag() {
+        return this.waitForSelector('.modal.tag-management ul.existing-tags-list', function tagsListDisplayed() {
+            this.test.assertElementCount('.modal.tag-management ul.existing-tags-list li', 0, 'Should find no tag');
+        }, function fail() {
+            this.capture('screenshot/documentTagCreation/tagsList-error.png');
+            this.test.assert(false, 'Tags list contains tags already');
+        });
+    });
+
+
     /**
      * Try to add a empty tag
      * */
@@ -66,7 +81,7 @@ casper.test.begin('Document tag creation tests suite', 7, function documentTagCr
         }, function success() {
             this.test.assert(true, 'add tag button visible');
         }, function fail() {
-            this.test.assert(false, 'add tab button not visible');
+            this.test.assert(false, 'add tag button not visible');
         });
     });
 

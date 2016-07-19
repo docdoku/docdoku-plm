@@ -1,6 +1,6 @@
 /*global casper,urls,products*/
 
-casper.test.begin('Part multiple checkin tests suite', 4, function partsMultipleCheckinTestsSuite() {
+casper.test.begin('Part multiple checkin tests suite', 5, function partsMultipleCheckinTestsSuite() {
     'use strict';
 
     casper.open('');
@@ -73,7 +73,7 @@ casper.test.begin('Part multiple checkin tests suite', 4, function partsMultiple
      * Send keys for an iteration note
      */
     casper.then(function waitForIterationNotePrompt() {
-        return  this.waitForSelector('#prompt_modal #prompt_input.ready', function fillIterationNote() {
+        return  this.waitForSelector('#prompt_modal #prompt_input.ready', function promptIterationNoteModal() {
             this.sendKeys('#prompt_modal #prompt_input', products.part1.iterationNote, {reset: true});
         }, function fail() {
             this.capture('screenshot/MultiplePartsCheckin/waitForIterationNotePrompt-error.png');
@@ -88,20 +88,20 @@ casper.test.begin('Part multiple checkin tests suite', 4, function partsMultiple
         return this.waitForSelector('#prompt_modal #prompt_input.ready', function fillIterationNote() {
             this.click('#prompt_modal .modal-footer .btn-primary');
         }, function fail() {
-            this.capture('screenshot/MultiplePartsCheckin/waitForIterationNoteGone-error.png');
-            this.test.assert(false, 'Iteration note modal still visible');
+            this.capture('screenshot/MultiplePartsCheckin/waitForIterationNoteSent-error.png');
+            this.test.assert(false, 'Iteration note cannot be sent');
         });
     });
 
     /**
-     * Wait for all button to be checked in
+     * Wait for iteration note modal disappear
      */
-    casper.then(function waitForDisplayCheckin() {
-        return this.waitWhileSelector('tbody > tr > td.part_number > i.fa.fa-pencil', function () {
-            this.test.assert(true, 'Part retrieved');
+    casper.then(function waitForIterationNoteHidden() {
+        return this.waitWhileSelector('#prompt_modal #prompt_input.ready', function hideIterationNoteModal() {
+            this.test.assert(true, 'Iteration note modal has disappeared');
         }, function fail() {
-            this.capture('screenshot/MultiplePartsCheckin/waitForCheckinParts-error.png');
-            this.test.assert(false, 'Part has not been checkin');
+            this.capture('screenshot/MultiplePartsCheckin/waitForIterationNoteGone-error.png');
+            this.test.assert(false, 'Iteration note modal still visible');
         });
     });
 
@@ -109,11 +109,26 @@ casper.test.begin('Part multiple checkin tests suite', 4, function partsMultiple
      * Wait for the checkin button to be disabled
      */
     casper.then(function waitForCheckinButtonDisabled() {
-        return this.waitForSelector('.actions .checkin[disabled]', function partIsCheckin() {
-            this.test.assert(true, 'Parts have been checked in');
+        return this.waitForSelector('.actions .checkin[disabled]', function partsCheckinInProgress() {
+            this.test.assert(true, 'Parts checkin is in progress...');
         }, function fail() {
             this.capture('screenshot/MultiplePartsCheckin/waitForCheckinButtonDisabled-error.png');
-            this.test.assert(false, 'Parts havent been checked in');
+            this.test.assert(false, 'Parts checkin has not begun');
+        });
+    });
+
+    /**
+     * Wait for the parts to be all checked in
+     */
+    casper.then(function waitForPartsCheckedIn() {
+        return this.waitForSelector('tbody > tr > td.part_number', function partsAreCheckedIn() {
+            var nbPart = this.evaluate(function () {
+                return document.querySelectorAll('i.fa.fa-pencil').length;
+            });
+            this.test.assertEquals(nbPart, 0, 'All parts checked in');
+        }, function fail() {
+            this.capture('screenshot/MultiplePartsCheckin/waitForCheckedInParts-error.png');
+            this.test.assert(false, 'All parts have not been checked in');
         });
     });
 
