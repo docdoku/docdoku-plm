@@ -89,10 +89,11 @@ public class DocumentsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO[] getDocumentsInWorkspace(@PathParam("workspaceId") String workspaceId,
                                                          @QueryParam("start") int start,
+                                                         @QueryParam("max") int max,
                                                          @QueryParam("configSpec") String configSpecType)
             throws UserNotActiveException, ESServerException, WorkspaceNotFoundException, UserNotFoundException, BaselineNotFoundException, DocumentRevisionNotFoundException {
 
-        int maxResult = 20;
+        int maxResult = max != 0 ? max : 20;
 
         DocumentRevision[] docRs;
         if (configSpecType == null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
