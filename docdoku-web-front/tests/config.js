@@ -97,6 +97,8 @@ module.exports = {
         'js/product-management/part/partsMultipleCheckin.js',
         'js/product-management/part/partsMultipleCheckout.js',
         'js/product-management/part/partsMultipleUndoCheckout.js',
+        'js/product-management/part/partRelease.js',
+        'js/product-management/part/partObsolete.js',
 
         // Part sharing
         'js/product-management/share/sharedPartCreation.js',
