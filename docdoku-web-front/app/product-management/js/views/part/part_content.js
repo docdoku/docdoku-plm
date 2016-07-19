@@ -509,7 +509,7 @@ define([
         },
         markAsObsolete:function(){
             var _this = this;
-            bootbox.confirm(App.config.i18n.MARK_AS_OBSOLETE_QUESTION, function(result){
+            bootbox.confirm(App.config.i18n.MARK_PART_AS_OBSOLETE_QUESTION, function(result){
                 if(result){
                     _(_this.partListView.getSelectedParts()).each(function (part) {
                         part.markAsObsolete();

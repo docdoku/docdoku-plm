@@ -214,6 +214,28 @@ define([
 			});
 		},
 
+        release: function () {
+            return $.ajax({
+                context: this,
+                type: 'PUT',
+                url: this.baseUrl() + '/release',
+                success: function () {
+                    this.fetch();
+                }
+            });
+        },
+
+        markAsObsolete: function () {
+            return $.ajax({
+                context: this,
+                type: 'PUT',
+                url: this.baseUrl() + '/obsolete',
+                success: function () {
+                    this.fetch();
+                }
+            });
+        },
+
 		toggleStateSubscribe: function (oldState) {
 
 			var action = oldState ? 'unsubscribe' : 'subscribe';

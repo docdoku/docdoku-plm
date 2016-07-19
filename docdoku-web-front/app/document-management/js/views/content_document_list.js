@@ -22,6 +22,8 @@ define([
             this.events['click .actions .delete'] = 'actionDelete';
             this.events['click .actions .tags'] = 'actionTags';
             this.events['click .actions .new-version'] = 'actionNewVersion';
+            this.events['click .actions .new-release'] = 'releaseDocuments';
+            this.events['click .actions .mark-as-obsolete'] = 'markAsObsolete';
             this.events['submit .actions #document-search-form'] = 'onQuickSearch';
             this.events['click .actions .advanced-search-button'] = 'onAdvancedSearchButton';
             this.events['click .actions .edit-acl'] = 'onEditAcl';
@@ -37,6 +39,8 @@ define([
             this.deleteButton = this.$('.actions .delete');
             this.tagsButton = this.$('.actions .tags');
             this.newVersionButton = this.$('.actions .new-version');
+            this.releaseButton = this.$('.actions .new-release');
+            this.obsoleteButton = this.$('.actions .mark-as-obsolete');
             this.aclButton = this.$('.actions .edit-acl');
             this.notifications = this.$('>.notifications');
 
@@ -82,39 +86,37 @@ define([
             this.deleteButton.hide();
             this.checkoutGroup.hide();
             //this.tagsButton.show();
-            this.newVersionButton.hide();
+            this.newVersionButton.toggle(false);
+            this.changeReleaseButtonDisplay(false);
+            this.changeObsoleteButtonDisplay(false);
             this.aclButton.hide();
         },
 
         onOneDocumentSelected: function (document) {
             this.deleteButton.show();
             this.checkoutGroup.css('display', 'inline-block');
-            this.newVersionButton.show();
 
             if (document.isCheckout()) {
-                this.newVersionButton.prop('disabled', true);
+                this.newVersionButton.toggle(false);
                 if (document.isCheckoutByConnectedUser()) {
                     var canUndo = document.getLastIteration().get('iteration') > 1;
-                    this.updateActionsButton(false, canUndo, true);
+                    this.updateCheckoutGroupButtons(false, canUndo, true);
                 } else {
-                    this.updateActionsButton(false, false, false);
+                    this.updateCheckoutGroupButtons(false, false, false);
                 }
             } else if (document.getReleaseAuthor()) {
-                this.newVersionButton.prop('disabled', false);
-
-                // TODO: hide update actions buttons
-                this.updateActionsButton(false, false, false);
-
-                // TODO: hide release button
-
+                this.newVersionButton.toggle(true);
+                this.changeCheckoutGroupDisplay(false);
+                this.changeReleaseButtonDisplay(false);
                 if (document.isObsolete()) {
-                    // TODO: hide obsolete button
+                    this.changeObsoleteButtonDisplay(false);
+                } else {
+                    this.changeObsoleteButtonDisplay(true);
                 }
             } else {
-                // TODO: show release button
-
-                this.newVersionButton.prop('disabled', false);
-                this.updateActionsButton(true, false, false);
+                this.changeReleaseButtonDisplay(true);
+                this.newVersionButton.toggle(true);
+                this.updateCheckoutGroupButtons(true, false, false);
             }
 
 
@@ -159,33 +161,72 @@ define([
             });
             return notFirstIteration;
         },
-        showCheckinCheckoutUndoCheckoutButtons: function () {
+
+        areSelectedDocumentsReleasable: function () {
+            var areAllDocumentsReleasable = true;
+            this.listView.eachChecked(function (view) {
+                if (view.model.isCheckout() || view.model.isReleased() || view.model.isObsolete()) {
+                    areAllDocumentsReleasable = false;
+                }
+            });
+            return areAllDocumentsReleasable;
+        },
+        areSelectedDocumentsCheckoutable: function () {
+            var areAllDocumentsCheckoutable = true;
+            this.listView.eachChecked(function (view) {
+                if (view.model.isReleased() || view.model.isCheckout() || view.model.isObsolete()) {
+                    areAllDocumentsCheckoutable = false;
+                }
+            });
+            return areAllDocumentsCheckoutable;
+        },
+
+        updateActionButtonsDisplay: function () {
             if (this.areAllDocumentsCheckedOut()) {
                 if (this.areAllDocumentsCheckedOutByConnectedUser()) {
-                    this.updateActionsButton(false, this.isNotThefirstIteration(), true);
+                    this.updateCheckoutGroupButtons(false, this.isNotThefirstIteration(), true);
                 } else {
-                    this.updateActionsButton(false, false, false);
+                    this.updateCheckoutGroupButtons(false, false, false);
+                }
+            } else if (this.areAllDocumentsNotCheckedOut()) {
+                this.changeObsoleteButtonDisplay(false);
+                this.changeReleaseButtonDisplay(this.areSelectedDocumentsReleasable());
+                if (this.areSelectedDocumentsCheckoutable()) {
+                    this.updateCheckoutGroupButtons(true, false, false);
+                } else {
+                    this.changeCheckoutGroupDisplay(false);
                 }
             } else {
-                if (this.areAllDocumentsNotCheckedOut()) {
-                    this.updateActionsButton(true, false, false);
-                } else {
-                    this.updateActionsButton(false, false, false);
-                }
+                this.updateCheckoutGroupButtons(false, false, false);
+                this.changeReleaseButtonDisplay(false);
+                this.changeObsoleteButtonDisplay(false);
             }
         },
         onSeveralDocumentsSelected: function () {
             this.deleteButton.show();
-            this.newVersionButton.hide();
+            this.newVersionButton.toggle(false);
             this.checkoutGroup.css('display', 'inline-block');
-            this.showCheckinCheckoutUndoCheckoutButtons();
+            this.updateActionButtonsDisplay();
             this.aclButton.hide();
         },
 
-        updateActionsButton: function (canCheckout, canUndo, canCheckin) {
+        updateCheckoutGroupButtons: function (canCheckout, canUndo, canCheckin) {
+            this.changeCheckoutGroupDisplay(true);
             this.checkoutButton.prop('disabled', !canCheckout);
             this.undoCheckoutButton.prop('disabled', !canUndo);
             this.checkinButton.prop('disabled', !canCheckin);
+        },
+
+        changeCheckoutGroupDisplay: function (state) {
+            this.checkoutGroup.toggle(state);
+        },
+
+        changeReleaseButtonDisplay: function (state) {
+            this.releaseButton.toggle(state);
+        },
+
+        changeObsoleteButtonDisplay: function(state) {
+            this.obsoleteButton.toggle(state);
         },
 
         actionCheckout: function () {
@@ -401,6 +442,28 @@ define([
 
             return false;
 
+        },
+
+        releaseDocuments: function () {
+            var that = this;
+            bootbox.confirm(App.config.i18n.RELEASE_SELECTION_QUESTION, function (result) {
+                if (result) {
+                    that.listView.eachChecked(function (view) {
+                        view.model.release();
+                    });
+                }
+            });
+        },
+
+        markAsObsolete: function () {
+            var that = this;
+            bootbox.confirm(App.config.i18n.MARK_DOCUMENT_AS_OBSOLETE_QUESTION, function(result){
+                if(result){
+                    that.listView.eachChecked(function (view) {
+                        view.model.markAsObsolete();
+                    });
+                }
+            });
         },
 
         onQuickSearch: function (e) {

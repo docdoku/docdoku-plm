@@ -6,11 +6,13 @@ define([
     'text!common-objects/templates/buttons/checkout_button_group.html',
     'text!common-objects/templates/buttons/tags_button.html',
     'text!common-objects/templates/buttons/new_version_button.html',
+    'text!common-objects/templates/buttons/release_button.html',
+    'text!common-objects/templates/buttons/obsolete_button.html',
     'text!common-objects/templates/buttons/ACL_button.html',
     'text!templates/search_document_form.html',
     'text!templates/tag_document_list.html',
     'views/document/document_new'
-], function (TagDocumentList, ContentDocumentListView, deleteButton, checkoutButtonGroup, tagsButton, newVersionButton, aclButton, searchForm, template, DocumentNewView) {
+], function (TagDocumentList, ContentDocumentListView, deleteButton, checkoutButtonGroup, tagsButton, newVersionButton, releaseButton, obsoleteButton, aclButton, searchForm, template, DocumentNewView) {
 	'use strict';
 	var TagDocumentListView = ContentDocumentListView.extend({
 
@@ -21,6 +23,8 @@ define([
             checkoutButtonGroup: checkoutButtonGroup,
             tagsButton: tagsButton,
             newVersionButton: newVersionButton,
+            releaseButton: releaseButton,
+            obsoleteButton:obsoleteButton,
             searchForm: searchForm,
             aclButton: aclButton
         },
