@@ -118,9 +118,11 @@ public class TaskApiTest {
 
         WorkspaceWorkflowDTO workspaceWorkflow = workspaceWorkflowsApi.createWorkspaceWorkflow(TestConfig.WORKSPACE, workspaceWorkflowCreationDTO);
         List<TaskDTO> assignedTasks = tasksApi.getAssignedTasksForGivenUser(TestConfig.WORKSPACE, TestConfig.LOGIN);
-        Assert.assertEquals(assignedTasks.stream()
-                .filter(taskDTO -> taskDTO.getWorkflowId() == workspaceWorkflow.getWorkflow().getId())
-                .count(),1);
+        Assert.assertEquals(1,
+                assignedTasks.stream()
+                .filter(taskDTO -> taskDTO.getWorkflowId() != null &&
+                        taskDTO.getWorkflowId().equals(workspaceWorkflow.getWorkflow().getId()))
+                .count());
 
         ActivityDTO currentActivity = WorkflowHelper.getCurrentActivity(workspaceWorkflow.getWorkflow());
         List<TaskDTO> runningTasks = WorkflowHelper.getRunningTasks(currentActivity);
