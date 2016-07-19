@@ -74,6 +74,7 @@ public class DocdokuPLMClientTest {
         WorkspaceListDTO workspacesForConnectedUser = workspacesApi.getWorkspacesForConnectedUser();
         Assert.assertNotNull(workspacesForConnectedUser);
         Assert.assertTrue("Should contain created workspace", workspacesForConnectedUser.getAllWorkspaces().contains(workspace));
+        workspacesApi.deleteWorkspace(workspace.getId());
     }
 
 }
