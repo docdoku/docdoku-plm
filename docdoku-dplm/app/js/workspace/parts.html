@@ -1,0 +1,26 @@
+<md-table-container>
+    <table md-table md-row-select multiple ng-model="selected">
+        <thead md-head>
+        <tr md-row>
+            <th md-column><span>{{'NUMBER'|translate}}</span></th>
+            <th md-column><span>{{'NATIVE_CAD_FILE'|translate}}</span></th>
+        </tr>
+        </thead>
+        <tbody md-body>
+        <tr md-row md-select="item" md-select-id="path" ng-repeat="item in displayedItems">
+            <td md-cell>
+
+                <i class="fa fa-check fa-lg" ng-show="item.releaseAuthor && !item.obsoleteAuthor"></i>
+                <i class="fa fa-frown-o fa-lg" ng-show="item.obsoleteAuthor"></i>
+                <i class="fa fa-eye fa-lg" ng-show="!item.obsoleteAuthor && !item.releaseAuthor && !item.checkOutUser"></i>
+                <i class="fa fa-pencil fa-lg" ng-show="item.checkOutUser.login === configuration.login"></i>
+                <i class="fa fa-lock fa-lg" ng-show="item.checkOutUser && item.checkOutUser.login !== configuration.login"></i>
+
+                 {{item.partKey}}
+            </td>
+            <td md-cell>{{item.lastIteration.nativeCADFile}}</td>
+        </tr>
+        </tbody>
+    </table>
+</md-table-container>
+

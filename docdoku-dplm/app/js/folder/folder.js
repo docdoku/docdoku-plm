@@ -8,12 +8,6 @@
 
             $routeProvider
             .when('/folder/:uuid', {
-                template: '',
-                controller: function($location,$routeParams){
-                    $location.path('folder/'+$routeParams.uuid+'/documents');
-                }
-            })
-            .when('/folder/:uuid/:entity', {
                 templateUrl: 'js/folder/folder.html',
                 controller: 'FolderController'
             });
@@ -53,6 +47,9 @@
             $scope.filters = [
                 { name: translate('CHECKED_OUT') , code:'CHECKED_OUT', value:true},
                 { name: translate('CHECKED_IN'), code:'CHECKED_IN', value:true},
+                { name: translate('RELEASED'), code:'RELEASED', value:true},
+                { name: translate('OBSOLETE'), code:'OBSOLETE', value:true},
+                { name: translate('LOCKED'), code:'LOCKED', value:true},
                 { name: translate('DOCUMENTS') , code:'DOCUMENTS', value:true},
                 { name: translate('PARTS') , code:'PARTS', value:true},
                 { name: translate('OUT_OF_INDEX'), code:'OUT_OF_INDEX', value:true }
@@ -105,14 +102,6 @@
                     }
 
                     if(!hasFilter('DOCUMENTS') && index && index.id){
-                        return false;
-                    }
-
-                    if(!hasFilter('PARTS') && index && index.number){
-                        return false;
-                    }
-
-                    if(!hasFilter('DOCUMENTS') && index && index.id) {
                         return false;
                     }
 

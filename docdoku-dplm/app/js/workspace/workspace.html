@@ -1,57 +1,129 @@
-<md-toolbar>
-    <div class="md-toolbar-tools" layout="row" layout-align="start center">
-        <div>
-            <md-button class="md-icon-button" hide-gt-sm aria-label="{{'MENU' | translate}}" ng-click="openMenu()">
-                <i class="fa fa-bars"></i>
-            </md-button>
-        </div>
-        <div>
-            <md-menu>
-                <md-button aria-label="{{'MENU'}}" class="md-icon-button" ng-click="$mdOpenMenu($event)">
-                    <i class="fa fa-bars"></i>
-                </md-button>
+<div layout-fill layout="column">
 
-                <md-menu-content width="4">
-                    <md-menu-item>
-                        <md-button aria-label="{{'OPEN_IN_BROWSER'|translate}}" ng-click="showInBrowser()">
-                            {{'OPEN_IN_BROWSER'|translate}}
-                        </md-button>
-                    </md-menu-item>
-
-                    <md-menu-item>
-                        <md-button aria-label="{{'REFRESH'|translate}}" ng-click="refresh()" >
-                            {{'REFRESH'|translate}}
-                        </md-button>
-                    </md-menu-item>
-
-                </md-menu-content>
-            </md-menu>
-        </div>
-        <div>
+    <md-toolbar md-scroll-shrink>
+        <div class="md-toolbar-tools" layout="row" layout-align="space-between center">
             <h2>
                 <span>
-                    <i class="fa fa-globe"></i> {{'WORKSPACE' | translate}} : {{workspace}}
+                    <i class="fa fa-globe"></i>
+                    {{'WORKSPACE' | translate}} : {{workspace}}
                 </span>
             </h2>
         </div>
-    </div>
-</md-toolbar>
 
-<div class="fullscreen-wrapper offset-toolbar">
-<div class="tabs default" layout="row">
-    <div flex ng-class="{selected:tabs.selected == tabs.documents}">
-        <a ng-href="#/workspace/{{workspace}}/documents/folders">{{'DOCUMENTS' | translate}}</a>
-    </div>
-    <div flex ng-class="{selected:tabs.selected == tabs.parts}">
-        <a ng-href="#/workspace/{{workspace}}/parts/list">{{'PARTS' | translate}}</a>
-    </div>
+    </md-toolbar>
+
+    <md-content>
+
+        <div layout="row" layout-align="space-between start">
+            <md-menu-bar>
+
+                <md-menu>
+                    <button ng-click="$mdOpenMenu()">
+                        {{'WORKSPACE' | translate}}
+                    </button>
+                    <md-menu-content>
+                        <md-menu-item>
+                            <md-button aria-label="{{'REFRESH'|translate}}" ng-click="refresh()">
+                                <md-icon md-svg-icon="img/cached.svg"></md-icon>
+                                {{'REFRESH'|translate}}
+                            </md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+
+                <md-menu>
+                    <button ng-click="$mdOpenMenu()">
+                        {{'VIEW' | translate}}
+                    </button>
+
+                    <md-menu-content>
+                        <md-menu-item type="radio" ng-model="view.type" value="documents">  {{'DOCUMENTS' | translate}} ({{totalDocuments}})</md-menu-item>
+                        <md-menu-item type="radio" ng-model="view.type" value="parts">{{'PARTS' | translate}} ({{totalParts}})</md-menu-item>
+                    </md-menu-content>
+
+                </md-menu>
+
+                <md-menu>
+                    <button ng-click="$mdOpenMenu()">
+                        {{'FILTERS' | translate}}
+                    </button>
+                    <md-menu-content >
+
+                        <md-menu-item>
+                            <md-button ng-click="toggleFilters(true)">
+                                <md-icon md-svg-icon="img/check.svg"></md-icon>
+                                {{'SELECT_ALL' | translate}}
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button ng-click="toggleFilters(false)">
+                                <md-icon md-svg-icon="img/clear.svg"></md-icon>
+                                {{'UNSELECT_ALL' | translate}}
+                            </md-button>
+                        </md-menu-item>
+
+                        <md-menu-divider></md-menu-divider>
+
+                        <md-menu-item ng-repeat="filter in filters">
+                            <md-input-container>
+                                <md-checkbox ng-change="search()" ng-model="filter.value" aria-label="{{filter.name}}">
+                                    {{filter.name}}
+                                </md-checkbox>
+                            </md-input-container>
+                        </md-menu-item>
+
+                    </md-menu-content>
+                </md-menu>
+
+                <md-menu>
+                    <button ng-click="$mdOpenMenu()">
+                        {{'SELECTION' | translate}} ({{selected.length}})
+                    </button>
+                    <md-menu-content>
+
+                        <md-menu-item>
+                            <md-button ng-click="checkinSelection()">
+                                <md-icon md-svg-icon="img/done.svg"></md-icon>
+                                {{'CHECKIN' | translate}}
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button ng-click="checkoutSelection()">
+                                <md-icon md-svg-icon="img/edit.svg"></md-icon>
+                                {{'CHECKOUT' | translate}}
+                            </md-button>
+                        </md-menu-item>
+
+                    </md-menu-content>
+                </md-menu>
+
+            </md-menu-bar>
+        </div>
+
+        <div  ng-hide="sync.running" layout-padding layout="row" layout-align="space-between start">
+            <md-input-container class="no-margin md-block">
+                <label>{{'SEARCH'|translate}}</label>
+                <input type="text" ng-change="search()" ng-model="pattern" />
+            </md-input-container>
+        </div>
+
+        <div ng-if="sync.running">
+            {{'WORKSPACE_SYNC_RUNNING' | translate}}
+        </div>
+
+        <div ng-if="!sync.running" layout-padding layout="row" layout-align="space-between start">
+            <md-table-pagination
+                    md-boundary-links="true"
+                    md-limit="query.limit"
+                    md-limit-options="query.limits"
+                    md-page="query.page"
+                    md-total="{{filteredItemsCount}}"
+                    md-on-paginate="paginate"
+                    md-page-select>
+            </md-table-pagination>
+        </div>
+
+        <div ng-include="view.include" ng-if="!sync.running" layout-padding layout="row" layout-align="space-between start"></div>
+    </md-content>
 </div>
 
-<div ng-if="tabs.selected == tabs.documents">
-    <div ng-controller="WorkspaceDocumentsController" ng-include="'js/workspace/workspace-documents.html'"></div>
-</div>
-
-<div ng-if="tabs.selected == tabs.parts">
-    <div ng-controller="WorkspacePartsController" ng-include="'js/workspace/workspace-parts.html'"></div>
-</div>
-</div>
