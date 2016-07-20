@@ -32,7 +32,6 @@
         'dplm.login',
 
         // Components
-        'dplm.services.cli',
         'dplm.services.configuration',
         'dplm.services.translations',
         'dplm.services.notification',
@@ -46,6 +45,7 @@
         'dplm.repository',
         'dplm.services.repository',
         'dplm.services.upload',
+        'dplm.services.db',
 
         'dplm.services.3d',
         'dplm.directives.filechange',
@@ -62,7 +62,7 @@
 
     ])
 
-        .config(function ($routeProvider,$mdThemingProvider,$compileProvider) {
+        .config(function ($routeProvider,$mdThemingProvider,$compileProvider,$mdIconProvider) {
 
             $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
 
@@ -75,10 +75,13 @@
                 .accentPalette('blue');
 
             $routeProvider.otherwise('/');
+            $mdIconProvider
+                .defaultIconSet('img/core-icons.svg', 24);
+
         })
 
         .controller('AppCtrl', function ($scope, $location, $mdMedia, $mdDialog, $mdSidenav, $filter,
-                                         AuthService, NotificationService, ConfigurationService, CliService, WorkspaceService, FolderService) {
+                                         AuthService, NotificationService, ConfigurationService, WorkspaceService, FolderService) {
 
 
             $scope.title = 'DocDoku DPLM';
