@@ -14,7 +14,6 @@
         'ngRoute',
         'pascalprecht.translate',
         'uuid4',
-        'ngDragDrop',
         'ngAnimate',
         'ngAria',
         'md.data.table',
@@ -22,16 +21,15 @@
         // Templates
         'dplm.templates',
 
-        // Routes
+        // Main components
         'dplm.home',
         'dplm.settings',
         'dplm.workspace',
         'dplm.folder',
-
-        // login dialog
+        'dplm.repository',
         'dplm.login',
 
-        // Components
+        // Other components
         'dplm.services.configuration',
         'dplm.services.translations',
         'dplm.services.notification',
@@ -42,22 +40,17 @@
         'dplm.services.output',
         'dplm.services.auth',
         'dplm.services.api',
-        'dplm.repository',
         'dplm.services.repository',
         'dplm.services.upload',
         'dplm.services.db',
 
         'dplm.services.3d',
-        'dplm.directives.filechange',
-        'dplm.directives.scrollend',
-        'dplm.directives.filedrop',
         'dplm.filters.fileshortname',
         'dplm.filters.timeago',
         'dplm.filters.last',
         'dplm.filters.join',
         'dplm.filters.humanreadablesize',
 
-        'dplm.contextmenu',
         'dplm.menu'
 
     ])

@@ -2,9 +2,9 @@
     'use strict';
 
     angular.module('dplm.filters.timeago', [])
-        .filter('timeago', function () {
+        .filter('timeago', function ($window) {
             return function (date) {
-                var moment = require('moment');
+                var moment = $window.require('moment');
                 moment.locale(localStorage.lang);
                 return moment(date).fromNow();
             };

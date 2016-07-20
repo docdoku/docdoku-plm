@@ -72,7 +72,7 @@
                     return _this.fetchParts(workspace,0,totalParts);
                 }).then(function(){
                     // TODO split with 20 elements by request
-                    return _this.fetchDocuments(workspace,0,totalDocuments)
+                    return _this.fetchDocuments(workspace,0,totalDocuments);
                 });
             };
 

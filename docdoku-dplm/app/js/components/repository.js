@@ -181,7 +181,7 @@
                 var total = documents.length+parts.length;
 
                 var notify = function(){
-                    deferred.notify({total:total,progress:++progress})
+                    deferred.notify({total:total,progress:++progress});
                 };
 
                 deferred.notify({total:total,progress:0});

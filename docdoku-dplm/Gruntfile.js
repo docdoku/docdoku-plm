@@ -18,14 +18,13 @@ module.exports = function(grunt){
                 ],
                 strict:false,
                 globals: {
-                    angular: true,
-                    localStorage:true
+                    angular: true
                 }
             }
         },
 
         clean:  {
-            dist: ['tmp', 'dist']
+            dist: ['tmp', 'dist', 'target']
         },
 
         usemin: {
@@ -55,11 +54,6 @@ module.exports = function(grunt){
         },
 
         copy:{
-            jar:{
-                files:{
-                    'app/docdoku-cli-jar-with-dependencies.jar':'../docdoku-cli/target/docdoku-cli-jar-with-dependencies.jar'
-                }
-            },
             dist: {
                 files: [{
                         expand: true,
@@ -68,7 +62,6 @@ module.exports = function(grunt){
                             'index.html',
                             'package.json',
                             'node_modules/**',
-                            'docdoku-cli-jar-with-dependencies.jar',
                             'img/**'
                         ],
                         dest: 'dist/'
@@ -84,7 +77,8 @@ module.exports = function(grunt){
                         'bower_components/angular-material/angular-material.js',
                         'bower_components/angular-route/angular-route.js',
                         'bower_components/angular-translate/angular-translate.js',
-                        'bower_components/angular-uuid4/angular-uuid4.js'
+                        'bower_components/angular-uuid4/angular-uuid4.js',
+                        'bower_components/angular-material-data-table/dist/md-data-table.js'
                     ],
                     dest: 'tmp/libs/'
                 },{
@@ -114,9 +108,10 @@ module.exports = function(grunt){
             },
             css:{
                 src:[
-                    'app/css/*.css',
-                    'app/bower_components/angular-material/themes/blue-theme.css',
-                    'app/bower_components/fontawesome/css/font-awesome.css'
+                    'app/bower_components/angular-material/angular-material.css',
+                    'app/bower_components/fontawesome/css/font-awesome.css',
+                    'app/bower_components/angular-material-data-table/dist/md-data-table.min.css',
+                    'app/css/*.css'
                 ],
                 dest: 'dist/app.css'
             }
@@ -218,7 +213,6 @@ module.exports = function(grunt){
     grunt.registerTask('build',[
         'jshint',
         'clean:dist',
-        'copy:jar',
         'copy:dist',
         'html2js:dist',
         'concat:js',

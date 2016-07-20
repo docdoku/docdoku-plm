@@ -66,7 +66,7 @@
             var getData = function(){
                 return WorkspaceService.getDocuments(workspace).then(function(documents){
                     allDocuments = documents;
-                    return WorkspaceService.getParts(workspace)
+                    return WorkspaceService.getParts(workspace);
                 }).then(function(parts){
                     allParts = parts;
                 }).then(function(){
