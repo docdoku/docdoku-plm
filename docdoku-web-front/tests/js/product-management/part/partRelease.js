@@ -37,29 +37,15 @@ casper.test.begin('Part release tests suite', 3, function partReleaseTestsSuite(
     });
 
     /**
-     * Check release button display
+     * Check and click on the release part button
      */
     casper.then(function waitForReleaseButton() {
-        return this.waitFor(function checkVisible() {
-            return this.evaluate(function() {
-                return $('.actions .new-release').is(':visible');
-            });
-        }, function success() {
-            this.test.assert(true, 'Release button visible');
-        }, function fail() {
-            this.test.assert(false, 'Release button not visible');
-        });
-    });
-
-    /**
-     * Click on the release part button
-     * */
-    casper.then(function releasePart() {
-        return this.waitForSelector('.actions .new-release', function buttonIsVisible() {
+        return this.waitForSelector('.actions .new-release', function checkVisible() {
+            this.test.assertVisible('.actions .new-release', 'Release button visible');
             this.click('.actions .new-release');
         }, function fail() {
             this.capture('screenshot/partRelease/waitForReleaseButton-error.png');
-            this.test.assert(false, 'Release button can not be found');
+            this.test.assert(false, 'Release button not visible');
         });
     });
 
@@ -79,13 +65,10 @@ casper.test.begin('Part release tests suite', 3, function partReleaseTestsSuite(
      * Wait for the release button to be disabled
      */
     casper.then(function waitForReleaseButtonDisabled() {
-        return this.waitFor(function checkHidden() {
-            return this.evaluate(function() {
-                return $('.actions .new-release').is(':hidden');
-            });
-        }, function success() {
-            this.test.assert(true, 'Release button hidden');
+        return this.waitForSelector('.actions .new-release', function checkHidden() {
+            this.test.assertNotVisible('.actions .new-release', 'Release button hidden');
         }, function fail() {
+            this.capture('screenshot/partRelease/waitForReleaseButtonDisabled-error.png');
             this.test.assert(false, 'Release button not hidden');
         });
     });

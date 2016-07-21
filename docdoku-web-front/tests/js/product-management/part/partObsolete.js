@@ -37,29 +37,15 @@ casper.test.begin('Part obsolete tests suite', 3, function partObsoleteTestsSuit
     });
 
     /**
-     * Check Mark as obsolete button display
+     * Check and click on Mark as obsolete button
      */
     casper.then(function waitForMarkAsObsoleteButton() {
-        return this.waitFor(function checkVisible() {
-            return this.evaluate(function() {
-                return $('.actions .mark-as-obsolete').is(':visible');
-            });
-        }, function success() {
-            this.test.assert(true, 'Mark as obsolete button visible');
-        }, function fail() {
-            this.test.assert(false, 'Mark as obsolete button not visible');
-        });
-    });
-
-    /**
-     * Click on Mark as obsolete button
-     */
-    casper.then(function markPartAsObsoleteButton() {
-        return this.waitForSelector('.actions .mark-as-obsolete', function buttonIsVisible() {
+        return this.waitForSelector('.actions .mark-as-obsolete', function checkVisible() {
+            this.test.assertVisible('.actions .mark-as-obsolete', 'Mark as obsolete button visible');
             this.click('.actions .mark-as-obsolete');
         }, function fail() {
             this.capture('screenshot/partObsolete/waitForMarkAsObsoleteButton-error.png');
-            this.test.assert(false, 'Mark as obsolete button can not be found');
+            this.test.assert(false, 'Mark as obsolete button not visible');
         });
     });
 
@@ -79,13 +65,10 @@ casper.test.begin('Part obsolete tests suite', 3, function partObsoleteTestsSuit
      * Wait for the Mark as obsolete button to be disabled
      */
     casper.then(function waitForMarkAsObsoleteButtonDisabled() {
-        return this.waitFor(function checkHidden() {
-            return this.evaluate(function() {
-                return $('.actions .mark-as-obsolete').is(':hidden');
-            });
-        }, function success() {
-            this.test.assert(true, 'Mark as obsolete button hidden');
+        return this.waitForSelector('.actions .mark-as-obsolete', function checkHidden() {
+            this.test.assertNotVisible('.actions .mark-as-obsolete', 'Mark as obsolete button hidden');
         }, function fail() {
+            this.capture('screenshot/partObsolete/waitForMarkAsObsoleteButtonDisabled-error.png');
             this.test.assert(false, 'Mark as obsolete button not hidden');
         });
     });
