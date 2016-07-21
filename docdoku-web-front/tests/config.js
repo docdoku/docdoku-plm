@@ -74,6 +74,7 @@ module.exports = {
         'js/document-management/document/documentCheckin.js',
         'js/document-management/document/documentRelease.js',
         'js/document-management/document/documentObsolete.js',
+        'js/document-management/document/documentMultipleRelease.js',
 
         // Document sharing
         'js/document-management/share/sharedDocumentCreation.js',
@@ -103,6 +104,7 @@ module.exports = {
         'js/product-management/part/partsMultipleUndoCheckout.js',
         'js/product-management/part/partRelease.js',
         'js/product-management/part/partObsolete.js',
+        'js/product-management/part/partsMultipleRelease.js',
 
         // Part sharing
         'js/product-management/share/sharedPartCreation.js',
