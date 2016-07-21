@@ -30,8 +30,12 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
                 var workflows = JSON.parse(this.getPageContent());
                 workflows.forEach(function (workflow) {
                     that.log('Deleting workflow ' + workflow.id, 'info');
-                    that.open(apiUrls.getWorkflows + '/' + workflow.id, {method: 'DELETE'}).then(function () {
-                        that.log('Workflow ' + workflow.id + ' deleted', 'info');
+                    that.open(apiUrls.getWorkflows + '/' + workflow.id, {method: 'DELETE'}).then(function (response) {
+                        if (response.status === 200) {
+                            that.log('Workflow ' + workflow.id + ' deleted', 'info');
+                        } else {
+                            that.log('Cannot delete workflow ' + workflow.id + ', reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+                        }
                     });
                 });
             } else {
@@ -47,10 +51,10 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
             if (response.status === 200) {
                 var tags = JSON.parse(this.getPageContent());
                 tags.forEach(function (tag) {
-                    that.log('Deleting tag ' + tag.id, 'warning');
+                    that.log('Deleting tag ' + tag.id, 'info');
                     return that.open(apiUrls.getTags + '/' + tag.id, {method: 'DELETE'}).then(function (response) {
                         if (response.status === 200) {
-                            that.log('Tag ' + tag.id + ' deleted', 'warning');
+                            that.log('Tag ' + tag.id + ' deleted', 'info');
                         } else {
                             that.log('Cannot delete tag ' + tag.id + ', reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
                         }
@@ -108,7 +112,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     casper.then(function cleanupPart1() {
         return this.open(apiUrls.deletePart1, {method: 'DELETE'}).then(function (response) {
             if (response.status === 200) {
-                this.log('Test part1 has been deleted', 'warning');
+                this.log('Test part1 has been deleted', 'info');
             } else {
                 this.log('Cannot delete test part1, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
             }
@@ -117,7 +121,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     casper.then(function cleanupPart2() {
         return this.open(apiUrls.deletePart2, {method: 'DELETE'}).then(function (response) {
             if (response.status === 200) {
-                this.log('Test part2 has been deleted', 'warning');
+                this.log('Test part2 has been deleted', 'info');
             } else {
                 this.log('Cannot delete test part2, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
             }
@@ -130,7 +134,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
         return partNumbers.forEach(function (partNumber) {
             return casper.open(homeUrl + 'api/workspaces/' + workspace + '/parts/' + partNumber + '-A', {method: 'DELETE'}).then(function (response) {
                 if (response.status === 200) {
-                    this.log('Part ' + partNumber + ' deleted', 'warning');
+                    this.log('Part ' + partNumber + ' deleted', 'info');
                 } else {
                     this.log('Cannot delete part ' + partNumber + ', reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
                 }
@@ -180,8 +184,12 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
                 var documents = JSON.parse(this.getPageContent());
                 documents.forEach(function (document) {
                     that.log('Deleting document' + document.id, 'info');
-                    that.open(apiUrls.getDocuments + '/' + document.id, {method: 'DELETE'}).then(function () {
-                        that.log('Document ' + document.id + ' deleted', 'warning');
+                    that.open(apiUrls.getDocuments + '/' + document.id, {method: 'DELETE'}).then(function (response) {
+                        if (response.status === 200) {
+                            that.log('Document ' + document.id + ' deleted', 'info');
+                        } else {
+                            that.log('Cannot delete test document ' + document.id + ', reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+                        }
                     });
                 });
             } else {
