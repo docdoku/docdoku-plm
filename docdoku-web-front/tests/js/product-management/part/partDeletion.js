@@ -39,34 +39,38 @@ casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuit
         });
     });
 
-    casper.then(function clickOnDeletePartButton() {
-        this.click('.actions .checkout');
-        return this.waitForSelector('.actions .checkout[disabled]', function then() {
-            this.test.assertSelectorHasText('.nav-checkedOut-number-item', 1, 'checkout number updated');
+    casper.then(function waitForDeleteButton() {
+        return this.waitForSelector('.actions .delete', function clickOnDeleteButton() {
             this.click('.actions .delete');
-            // Confirm deletion
-            // TODO split wait for selector callback
-            this.waitForSelector('.bootbox', function confirmPartDeletion() {
-                this.click('.bootbox .modal-footer .btn-primary');
-            }, function fail() {
-                this.capture('screenshot/partDeletion/waitForDeletionConfirmationModal-error.png');
-                this.test.assert(false, 'Part deletion confirmation modal can not be found');
-            });
         }, function fail() {
-            this.capture('screenshot/partDeletion/waitForCheckoutToDisable.png');
-            this.test.assert(false, 'checkout button did not set to disabled');
+            this.capture('screenshot/partDeletion/waitForDeleteButton.png');
+            this.test.assert(false, 'Delete button is not displayed');
         });
     });
 
-    casper.then(function waitForPartDiseapear() {
-        return this.waitFor(function check() {
-            return this.evaluate(function () {
-                return document.querySelectorAll('#part_table tbody tr').length === 4;
-            });
-        }, function then() {
-            this.test.assert(true, 'Part has been deleted');
+    casper.then(function waitForDeletionConfirmationModal() {
+        this.waitForSelector('.bootbox', function confirmPartDeletion() {
+            this.click('.bootbox .modal-footer .btn-primary');
         }, function fail() {
-            this.capture('screenshot/partDeletion/waitForPartDiseapear-error.png');
+            this.capture('screenshot/partDeletion/waitForDeletionConfirmationModal-error.png');
+            this.test.assert(false, 'Part deletion confirmation modal can not be found');
+        });
+    });
+
+    casper.then(function waitForDeletionConfirmationModalDisappear() {
+        this.waitWhileSelector('.bootbox', function confirmPartDeletion() {
+            this.test.assert(true, 'Deletion confirmation modal has disappeared');
+        }, function fail() {
+            this.capture('screenshot/partDeletion/waitForDeletionConfirmationModalDisappear-error.png');
+            this.test.assert(false, 'Part deletion confirmation modal still displayed');
+        });
+    });
+
+    casper.then(function waitForPartDisappear() {
+        return this.waitForSelector('#part_table tbody tr', function check() {
+            this.test.assertElementCount('#part_table tbody tr', 4, 'Part has been deleted');
+        }, function fail() {
+            this.capture('screenshot/partDeletion/waitForPartDisappear-error.png');
             this.test.assert(false, 'Part has not been deleted');
         });
     });
