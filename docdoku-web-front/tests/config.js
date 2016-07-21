@@ -72,6 +72,8 @@ module.exports = {
         'js/document-management/document/documentMultipleUndoCheckout.js',
         'js/document-management/document/documentCheckout.js',
         'js/document-management/document/documentCheckin.js',
+        'js/document-management/document/documentRelease.js',
+        'js/document-management/document/documentObsolete.js',
 
         // Document sharing
         'js/document-management/share/sharedDocumentCreation.js',
