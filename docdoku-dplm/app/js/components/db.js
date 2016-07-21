@@ -94,5 +94,9 @@
                 });
             };
 
+            this.removeDb = function(){
+                indexedDB.deleteDatabase('Workspaces');
+            };
+
         });
 })();

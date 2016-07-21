@@ -3,7 +3,7 @@
     'use strict';
 
     angular.module('dplm.services.auth', [])
-        .service('AuthService',function($q, ConfigurationService, DocdokuAPIService){
+        .service('AuthService',function($q, ConfigurationService, DocdokuAPIService, DBService){
 
             var self = this;
             var client = DocdokuAPIService.client;
@@ -47,6 +47,7 @@
             this.logout = function(){
                 var deferred = $q.defer();
                 ConfigurationService.deleteAuth();
+                DBService.removeDb();
                 client.getApi().then(function(api){
                     angular.copy({},self.user);
                     api.auth.logout().then(deferred.resolve,deferred.reject);
