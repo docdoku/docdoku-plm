@@ -36,7 +36,6 @@ define([
         },
 
         bindDomElements:function(){
-            this.$objectsNav = this.$('.nav-header.objects-nav');
             this.$linksNav = this.$('.nav-header.links-nav');
         },
 
