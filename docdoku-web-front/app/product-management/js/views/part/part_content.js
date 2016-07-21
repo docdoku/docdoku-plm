@@ -261,7 +261,6 @@ define([
                     if (_.isEqual(iterationNote, '')) {
                         iterationNote = null;
                     }
-
                     Async.each(selectedParts, function(part, callback) {
                         var revisionNote;
                         if (iterationNote) {
@@ -273,12 +272,18 @@ define([
 
                         part.getLastIteration().save({
                             iterationNote: revisionNote
-                        }).success(function () {
-                            part.checkin().success(callback);
+                        }).then(function () {
+                            return part.checkin();
+                        }).then(function(){
+                            callback();
                         });
 
-                    }, function() {
-                        _this.allCheckinDone();
+                    }, function(err) {
+                        if (err) {
+                            _this.onError(undefined, err);
+                        } else {
+                            _this.allCheckinDone();
+                        }
                     });
 
                 });
@@ -298,8 +303,12 @@ define([
                         part.checkin().success(callback);
                     });
 
-                }, function() {
-                    _this.allCheckinDone();
+                }, function(err) {
+                    if (err) {
+                        _this.onError(undefined, err);
+                    } else {
+                        _this.allCheckinDone();
+                    }
                 });
             }
         },

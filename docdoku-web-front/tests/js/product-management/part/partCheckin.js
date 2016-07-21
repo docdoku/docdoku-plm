@@ -80,14 +80,12 @@ casper.test.begin('Part checkin tests suite', 3, function partCheckinTestsSuite(
      */
     casper.then(function waitForBadgeDisplayed() {
         this.waitForSelector('.badge.nav-checkedOut-number-item.badge-info', function badgeDisplayed() {
-            this.test.assertSelectorHasText('.nav-checkedOut-number-item', 0, 'checkout number updated in nav');
+            this.test.assertSelectorHasText('.nav-checkedOut-number-item', 0, 'Checkout number updated in nav');
         }, function fail() {
-            this.capture('screenshot/partCheckin/waitForCheckinButtonDisabled-error.png');
-            this.test.assert(false, 'Part has not been checkin');
+            this.capture('screenshot/partCheckin/waitForBadgeDisplayed-error.png');
+            this.test.assert(false, 'Checkout number not updated in nav');
         });
     });
-
-
 
     casper.run(function allDone() {
         return this.test.done();
