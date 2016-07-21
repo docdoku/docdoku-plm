@@ -70,6 +70,8 @@ module.exports = {
         'js/document-management/document/documentAddLink.js',
         'js/document-management/document/documentClickLink.js',
         'js/document-management/document/documentMultipleUndoCheckout.js',
+        'js/document-management/document/documentCheckout.js',
+        'js/document-management/document/documentCheckin.js',
 
         // Document sharing
         'js/document-management/share/sharedDocumentCreation.js',

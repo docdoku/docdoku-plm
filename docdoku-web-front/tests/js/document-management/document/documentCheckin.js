@@ -9,7 +9,6 @@ casper.test.begin('Document checkin tests suite', 1, function documentCheckinTes
     /**
      * Open document management URL
      * */
-
     casper.then(function () {
         return this.open(urls.documentManagement);
     });
@@ -17,7 +16,6 @@ casper.test.begin('Document checkin tests suite', 1, function documentCheckinTes
     /**
      * Open folder nav
      */
-
     casper.then(function waitForFolderNavLink() {
         return this.waitForSelector('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]', function () {
             this.click('a[href="#' + workspace + '/folders/' + documents.folder1 + '"]');
