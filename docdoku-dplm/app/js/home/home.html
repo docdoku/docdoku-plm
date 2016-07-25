@@ -1,13 +1,17 @@
 <div layout-fill layout="column">
 
     <md-toolbar md-scroll-shrink class="md-whiteframe-6dp">
-        <div class="md-toolbar-tools">
+        <div class="md-toolbar-tools" layout="row" layout-align="start center">
+
             <md-button class="md-icon-button" hide-gt-sm aria-label="{{'MENU' | translate}}" ng-click="openMenu()">
-                <i class="fa fa-bars"></i>
+                <i class="material-icons">menu</i>
             </md-button>
+
+            <i class="material-icons">home</i>
+
             <h2>
               <span>
-                  <i class="fa fa-home"></i> {{'HOME' | translate}}
+                    {{'HOME' | translate}}
                 </span>
             </h2>
         </div>
@@ -16,7 +20,7 @@
     <md-content layout-padding flex>
 
         <h3>
-            <i class="fa fa-star favorite"></i>
+            <i class="material-icons favorite">star</i>
             {{'FAVORITE_FOLDERS' | translate}}
         </h3>
 
@@ -28,7 +32,8 @@
             <md-list-item ng-repeat="folder in folders | filter:{favorite:true}" ng-controller="FolderDetailsController">
 
                 <md-button aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">
-                    <i class="fa fa-folder-open"></i> {{folder.path | fileshortname}}
+                    <i class="material-icons">folder_open</i>
+                    {{folder.path | fileshortname}}
                 </md-button>
                 {{details.count}} {{'FILES' | translate }}
 
@@ -38,7 +43,7 @@
         </md-list>
 
         <h3>
-            <i class="fa fa-star favorite"></i>
+            <i class="material-icons favorite">star</i>
             {{'LAST_WORKSPACES_VISITED' | translate}}
         </h3>
 
@@ -49,10 +54,9 @@
             <md-list-item ng-repeat="workspace in workspaces">
 
                 <md-button aria-label="" href="#/workspace/{{workspace}}" class="md-primary">
-                    <i class="fa fa-globe"></i> {{workspace}}
+                    <i class="material-icons">cloud</i>
+                    {{workspace}}
                 </md-button>
-
-               <i class="fa fa-arrow-circle-right"></i>
 
                 <md-divider ng-if="!$last"></md-divider>
             </md-list-item>

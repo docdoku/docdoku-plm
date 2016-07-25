@@ -94,6 +94,38 @@
                 });
             };
 
+            this.getItem = function(itemIndex){
+                return $q(function(resolve,reject){
+                    return openDb().then(function(db){
+
+                        var tx, store, request;
+
+                        if(itemIndex.id){
+                            tx = db.transaction('Documents', 'readwrite');
+                            store = tx.objectStore('Documents');
+                            //var index = store.index('WorkspaceIndex');
+                            request = store.get([itemIndex.workspace,itemIndex.id+'-'+itemIndex.revision]);
+                        }
+                        else if(itemIndex.number){
+                            tx =  db.transaction('Parts', 'readwrite');
+                            store = tx.objectStore('Parts');
+                            request = store.get([itemIndex.workspace,itemIndex.number+'-'+itemIndex.revision]);
+                        }else{
+                            reject();
+                        }
+
+                        tx.oncomplete = function() {
+                            db.close();
+                        };
+
+                        request.onsuccess = function() {
+                            resolve(request.result);
+                        };
+                        request.onerror = reject;
+                    });
+                });
+            };
+
             this.removeDb = function(){
                 indexedDB.deleteDatabase('Workspaces');
             };

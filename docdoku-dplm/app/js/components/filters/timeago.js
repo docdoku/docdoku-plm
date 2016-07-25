@@ -5,7 +5,7 @@
         .filter('timeago', function ($window) {
             return function (date) {
                 var moment = $window.require('moment');
-                moment.locale(localStorage.lang);
+                moment.locale($window.localStorage.lang);
                 return moment(date).fromNow();
             };
         });

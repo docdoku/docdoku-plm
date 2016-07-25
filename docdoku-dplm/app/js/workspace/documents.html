@@ -2,7 +2,9 @@
     <table md-table md-row-select multiple ng-model="selected">
         <thead md-head>
             <tr md-row>
+                <th md-column></th>
                 <th md-column><span>{{'ID'|translate}}</span></th>
+                <th md-column><span>{{'ITERATION'|translate}}</span></th>
                 <th md-column><span>{{'ATTACHED_FILES'|translate}}</span></th>
             </tr>
         </thead>
@@ -10,15 +12,22 @@
             <tr md-row md-select="item" md-select-id="id" ng-repeat="item in displayedItems">
                 <td md-cell>
 
-                    <i class="fa fa-check fa-lg" ng-show="item.releaseAuthor && !item.obsoleteAuthor"></i>
-                    <i class="fa fa-frown-o fa-lg" ng-show="item.obsoleteAuthor"></i>
-                    <i class="fa fa-eye fa-lg" ng-show="!item.obsoleteAuthor && !item.releaseAuthor && !item.checkOutUser"></i>
-                    <i class="fa fa-pencil fa-lg" ng-show="item.checkOutUser.login === configuration.login"></i>
-                    <i class="fa fa-lock fa-lg" ng-show="item.checkOutUser && item.checkOutUser.login !== configuration.login"></i>
-
+                    <i ng-if="item.releaseAuthor && !item.obsoleteAuthor" class="material-icons">check</i>
+                    <i ng-if="item.obsoleteAuthor" class="material-icons">broken_image</i>
+                    <i ng-if="!item.obsoleteAuthor && !item.releaseAuthor && !item.checkOutUser" class="material-icons">remove_red_eye</i>
+                    <i ng-if="item.checkOutUser && item.checkOutUser.login === configuration.login" class="material-icons">mode_edit</i>
+                    <i ng-if="item.checkOutUser && item.checkOutUser.login !== configuration.login" class="material-icons">lock_outline</i>
+                </td>
+                <td md-cell>
                     {{item.id}}
                 </td>
-                <td md-cell>{{item.lastIteration.attachedFiles}}</td>
+                <td md-cell>{{item.documentIterations.length}}</td>
+
+                <td md-cell>
+                    <div ng-repeat="f in item.lastIteration.attachedFiles">
+                        <a  href="" ng-click="previewFile(f)">{{f|fileshortname}}</a>
+                    </div>
+                </td>
             </tr>
         </tbody>
     </table>

@@ -41,8 +41,9 @@
         'dplm.services.auth',
         'dplm.services.api',
         'dplm.services.repository',
-        'dplm.services.upload',
+        'dplm.services.file-transfer',
         'dplm.services.db',
+        'dplm.dialogs.download',
 
         'dplm.services.3d',
         'dplm.filters.fileshortname',
@@ -77,20 +78,6 @@
                                          AuthService, NotificationService, ConfigurationService, WorkspaceService, FolderService) {
 
 
-            $scope.title = 'DocDoku DPLM';
-
-            $scope.user = AuthService.user;
-            $scope.configuration = ConfigurationService.configuration;
-            $scope.workspaces = WorkspaceService.workspaces;
-
-            $scope.syncFolders = function(){
-                FolderService.syncFolders().then(function(foldersFound){
-                    $scope.foldersFound = foldersFound;
-                });
-            };
-
-            $scope.folders = FolderService.folders;
-
             var showLoginPage = function(xhrFrom){
                 $mdDialog.show({
                     templateUrl: 'js/login/login.html',
@@ -103,14 +90,33 @@
                 });
             };
 
+            // Auto connect
             if(ConfigurationService.hasAuth()){
                 AuthService.login().then(WorkspaceService.getWorkspaces, showLoginPage);
-            }else{
-                showLoginPage();
             }
 
+            $scope.title = 'DocDoku DPLM';
+
+            $scope.user = AuthService.user;
+            $scope.configuration = ConfigurationService.configuration;
+            $scope.workspaces = WorkspaceService.workspaces;
+
+            $scope.$watch('user.login',function(login){
+                if(!login){
+                    showLoginPage();
+                }
+            });
+
+            $scope.syncFolders = function(){
+                FolderService.syncFolders().then(function(foldersFound){
+                    $scope.foldersFound = foldersFound;
+                });
+            };
+
+            $scope.folders = FolderService.folders;
+
             $scope.logout = function(){
-                AuthService.logout().then(showLoginPage);
+                AuthService.logout();
             };
 
             $scope.openMenu = function () {

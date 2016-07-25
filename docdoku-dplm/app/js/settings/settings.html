@@ -1,11 +1,12 @@
 <md-toolbar scroll-shrink>
     <div class="md-toolbar-tools">
         <md-button class="md-icon-button" hide-gt-sm aria-label="{{'MENU' | translate}}" ng-click="openMenu()">
-            <i class="fa fa-bars"></i>
+            <i class="material-icons">menu</i>
         </md-button>
         <h2>
           <span>
-              <i class="fa fa-cog"></i> {{'SETTINGS' | translate}}
+              <i class="material-icons">settings</i>
+              {{'SETTINGS' | translate}}
             </span>
         </h2>
     </div>
@@ -13,11 +14,6 @@
 
 <div layout="column" layout-padding>
 
-    <div>
-        <md-button aria-label="" class="md-raised md-primary" ng-click="clearFolders();">
-            {{'CLEAR_FOLDERS'|translate}}
-        </md-button>
-    </div>
     <div>
         <form ng-submit="save()">
 

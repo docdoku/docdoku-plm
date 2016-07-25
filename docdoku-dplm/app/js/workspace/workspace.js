@@ -12,8 +12,8 @@
                 });
         })
 
-        .controller('WorkspaceController', function ($scope, $routeParams, $filter,
-                                                     WorkspaceService, ConfigurationService) {
+        .controller('WorkspaceController', function ($scope, $routeParams, $filter, $mdDialog,
+                                                     WorkspaceService, DBService, ConfigurationService) {
 
             var workspace = $routeParams.workspace;
             var allParts = [];
@@ -30,7 +30,6 @@
             $scope.view = { type : 'documents', include:'js/workspace/documents.html'};
 
             $scope.$watch('view.type', function(type){
-                $scope.selected.length = 0;
                 $scope.view.include = 'js/workspace/'+type+'.html';
                 $scope.search();
             });
@@ -41,7 +40,9 @@
                 { name: translate('RELEASED'), code:'RELEASED', value:true},
                 { name: translate('OBSOLETE'), code:'OBSOLETE', value:true},
                 { name: translate('LOCKED'), code:'LOCKED', value:true},
-                { name: translate('SHOW_EMPTY_DATA'), code:'SHOW_EMPTY_DATA', value:true}
+                { name: translate('SHOW_EMPTY_DATA'), code:'SHOW_EMPTY_DATA', value:true},
+                { name: translate('LEAVES') , code:'LEAVES', value:true},
+                { name: translate('ASSEMBLIES') , code:'ASSEMBLIES', value:true}
             ];
 
             $scope.toggleFilters = function(state){
@@ -57,6 +58,12 @@
                 page: 1
             };
 
+            $scope.paginationLabels = {
+                page: translate('PAGINATION_LABELS_PAGE'),
+                rowsPerPage: translate('PAGINATION_LABELS_ROWS_PER_PAGE'),
+                of: translate('PAGINATION_LABELS_OF')
+            };
+
             var hasFilter = function(code){
                 return $scope.filters.filter(function(filter){
                     return filter.code === code && filter.value;
@@ -64,9 +71,9 @@
             };
 
             var getData = function(){
-                return WorkspaceService.getDocuments(workspace).then(function(documents){
+                return DBService.getDocuments(workspace).then(function(documents){
                     allDocuments = documents;
-                    return WorkspaceService.getParts(workspace);
+                    return DBService.getParts(workspace);
                 }).then(function(parts){
                     allParts = parts;
                 }).then(function(){
@@ -128,6 +135,14 @@
                     return false;
                 }
 
+                if(!hasFilter('LEAVES') && !lastIteration.components.length){
+                    return false;
+                }
+
+                if(!hasFilter('ASSEMBLIES') && lastIteration.components.length){
+                    return false;
+                }
+
                 return commonFilter(item);
             };
 
@@ -162,6 +177,23 @@
                     getData().then($scope.search);
                 });
             };
+
+            $scope.actions = {
+                download: function(selection){
+                    $mdDialog.show({
+                        templateUrl: 'js/components/download/download.html',
+                        clickOutsideToClose:false,
+                        fullscreen: true,
+                        locals : {
+                            items : selection
+                        },
+                        controller:'DownloadCtrl'
+                    });
+                }
+            };
+
+
+
 
             getData().then($scope.search);
 

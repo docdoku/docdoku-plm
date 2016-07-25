@@ -4,13 +4,13 @@
 
     angular.module('dplm.services.configuration', [])
 
-        .service('ConfigurationService', function () {
+        .service('ConfigurationService', function ($window) {
 
             var _this = this;
 
             this.error = 'CONFIG_SERVICE_ERROR';
 
-            this.configuration = JSON.parse(localStorage.configuration || '{"port":443,"host":"docdokuplm.net","ssl":true}');
+            this.configuration = JSON.parse($window.localStorage.configuration || '{"port":443,"host":"docdokuplm.net","ssl":true}');
 
             this.save = function () {
                 _this.configuration.protocol = _this.configuration.ssl ?
@@ -18,7 +18,7 @@
                 _this.configuration.port = _this.configuration.port ?
                     _this.configuration.port : _this.configuration.ssl ?
                     '443' : '80';
-                localStorage.configuration = JSON.stringify(_this.configuration);
+                $window.localStorage.configuration = JSON.stringify(_this.configuration);
             };
 
             this.hasAuth = function () {
@@ -28,7 +28,7 @@
             this.deleteAuth = function () {
                 delete _this.configuration.login;
                 delete _this.configuration.password;
-                this.save();
+                _this.save();
             };
 
             this.getHostUrl = function () {

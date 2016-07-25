@@ -14,7 +14,7 @@
         })
 
         .controller('FolderController', function ($scope, $q, $location, $routeParams, $filter, $mdDialog,
-                                                  ConfirmService, ConfigurationService, FolderService,
+                                                  ConfirmService, ConfigurationService, FolderService, DBService,
                                                   RepositoryService, NotificationService) {
 
             $scope.folder = FolderService.getFolder({uuid:$routeParams.uuid});
@@ -24,6 +24,7 @@
             var filteredFiles = [];
             var repositoryIndex;
             var translate = $filter('translate');
+            var getFileName = $filter('fileshortname');
 
             var hasFilter = function(code){
                 return $scope.filters.filter(function(filter){
@@ -33,13 +34,14 @@
 
             $scope.query = {
                 limit: 10,
-                limits: [10,20,50,100, {
-                    label: 'All',
-                    value: function () {
-                        return filteredFiles.length;
-                    }
-                }],
+                limits: [10,20,50,100],
                 page: 1
+            };
+
+            $scope.paginationLabels = {
+                page: translate('PAGINATION_LABELS_PAGE'),
+                rowsPerPage: translate('PAGINATION_LABELS_ROWS_PER_PAGE'),
+                of: translate('PAGINATION_LABELS_OF')
             };
 
             $scope.selected = [];
@@ -61,9 +63,8 @@
                 total:0
             };
 
-            $scope.reveal = function ($event) {
+            $scope.reveal = function () {
                 FolderService.reveal(folderPath);
-                $event.stopPropagation();
             };
 
             $scope.toggleFavorite = function () {
@@ -91,7 +92,9 @@
 
                 filteredFiles = allFiles.filter(function(path){
 
-                    if($scope.pattern && !path.match($scope.pattern)){
+                    var fileName = getFileName(path);
+
+                    if($scope.pattern && !fileName.match($scope.pattern)){
                         return false;
                     }
 
@@ -109,24 +112,34 @@
                         return false;
                     }
 
+                    if($scope.pattern && index){
+                        if($filter('filter')(index,$scope.pattern).length){
+                            return false;
+                        }
+                    }
+
                     return true;
                 })
                 .map(function(path){
                     var file = FolderService.createFileObject(path);
                     file.index = RepositoryService.getFileIndex(repositoryIndex, path);
                     file.stat = FolderService.getFileSize(path);
+
+                    if(file.index){
+                        DBService.getItem(file.index).then(function(item){
+                            file.item = item;
+                        });
+                    }
+
                     return file;
                 });
 
                 $scope.filteredFilesCount = filteredFiles.length;
-                $scope.paginate(1,10);
-            };
-
-            $scope.prevent = function($event){
-                $event.preventDefault(); $event.stopPropagation(); return false;
+                $scope.paginate(1,$scope.query.limit);
             };
 
             $scope.fetchFolder = function(){
+                $scope.sync.running = true;
                 RepositoryService.getRepositoryIndex(folderPath)
                     .then(function(index){
                         repositoryIndex = index;
@@ -137,6 +150,7 @@
                         $scope.totalFilesInFolder = files.length;
                         allFiles = files;
                         $scope.search();
+                        $scope.sync.running = false;
                     });
             };
 
@@ -175,7 +189,6 @@
                     }).catch(function(){
                         // todo handle error
                     }).finally(function(){
-                        $scope.sync.running = false;
                         $scope.sync.total = 0;
                         $scope.sync.progress = 0;
                     });
@@ -190,11 +203,16 @@
 
             $scope.fetchFolder();
 
+
+            $scope.$on("$destroy", function() {
+
+            });
+
         })
 
         .controller('AddFolderCtrl', function ($scope, $mdDialog, FolderService) {
 
-            $scope.search = function($ev,files){
+            $scope.search = function(files){
                 var file = files[0];
                 if(file){
                     FolderService.add(file.path);

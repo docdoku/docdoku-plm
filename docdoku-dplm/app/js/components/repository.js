@@ -7,6 +7,7 @@
         .constant('indexPatternSearch','**/.dplm/index.json')
         .service('RepositoryService', function ($q,$timeout,$window,indexLocation,indexPatternSearch, DocdokuAPIService, FolderService) {
 
+            var _this = this;
             var fs = $window.require('fs');
             var crypto = $window.require('crypto');
             var glob = $window.require("glob");
@@ -23,6 +24,8 @@
                     return {};
                 }
             };
+
+            this.getOrCreateIndex = getOrCreateIndex;
 
             this.search = function(folder){
                 return $q(function(resolve,reject) {
@@ -82,6 +85,12 @@
                 fs.writeFileSync(indexPath,JSON.stringify(index));
             };
 
+            this.writeIndex = writeIndex;
+
+            this.getIndexPath = function(folder){
+                return folder + indexLocation;
+            };
+
             var updateIndexForPart = function(index, path, part){
                 setIndexValue(index, path, 'hash', getHashFromFile(path));
                 setIndexValue(index, path, 'workspace',part.workspaceId);
@@ -113,6 +122,23 @@
                 delete index[path+'.lastModifiedDate'];
             };
 
+            this.updateItemInIndex = function(index, item, path){
+                if(item.number){
+                    updateIndexForPart(index, path, item);
+                }else if(item.id){
+                    updateIndexForDocument(index, path, item);
+                }
+                updateFile(index,path);
+            };
+
+            this.saveItemToIndex = function(indexFolder,path,item){
+                if(item.number){
+                    _this.savePartToIndex(index, path, item);
+                }else if(item.id){
+                    _this.saveDocumentToIndex(index, path, item);
+                }
+            };
+
             this.savePartToIndex = function(indexFolder,path, part){
                 var indexPath = indexFolder + indexLocation;
                 var index = getOrCreateIndex(indexFolder);
@@ -122,7 +148,7 @@
                 return index;
             };
 
-            this.saveDocumentToIndex = function(indexFolder,path,document){
+            this.saveDocumentToIndex = function(indexFolder,path, document){
                 var indexPath = indexFolder + indexLocation;
                 var index = getOrCreateIndex(indexFolder);
                 updateIndexForDocument(index, path, document);
@@ -130,6 +156,8 @@
                 writeIndex(indexPath,index);
                 return index;
             };
+
+
 
             var documentRequest = function(api,workspaceId, documentId,version){
                 return function(){
@@ -188,7 +216,7 @@
 
                 var chain = $q.when();
 
-                DocdokuAPIService.client.getApi().then(function(api){
+                DocdokuAPIService.getClient().getApi().then(function(api){
 
                     documents.forEach(function(id){
                         var filePath = id.substr(0,id.length-3);

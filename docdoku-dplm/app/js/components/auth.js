@@ -3,27 +3,22 @@
     'use strict';
 
     angular.module('dplm.services.auth', [])
-        .service('AuthService',function($q, ConfigurationService, DocdokuAPIService, DBService){
+        .service('AuthService',function($q, $translate,
+                                        ConfigurationService, DocdokuAPIService, DBService, WorkspaceService){
 
             var self = this;
-            var client = DocdokuAPIService.client;
 
-            this.user = {};
-
-            var options = {
-                url:ConfigurationService.getHostApiURL(),
-                cookie:null
+            this.user = {
+                login:ConfigurationService.configuration.login
             };
-
-            this.options = options;
 
             this.login = function() {
 
+                WorkspaceService.reset();
+
                 var deferred = $q.defer();
 
-                client.setOptions(options);
-
-                client.getApi()
+                DocdokuAPIService.getClient().getApi()
                     .then(function(api){
                         return api.auth.login({
                             body:{
@@ -32,11 +27,15 @@
                             }
                         });
                     }, deferred.reject).then(function(response){
-
                         var headers = response.headers;
-                        options.cookie = headers['set-cookie'][0];
-                        client.setOptions(options);
+
+                        var cookie = headers['set-cookie'][0];
+                        DocdokuAPIService.setCookie(cookie);
+
                         angular.copy(response.obj,self.user);
+                        var lang = self.user.language;
+                        $translate.use(lang);
+
                         deferred.resolve(self.user);
 
                     }, deferred.reject);
@@ -46,12 +45,16 @@
 
             this.logout = function(){
                 var deferred = $q.defer();
-                ConfigurationService.deleteAuth();
-                DBService.removeDb();
-                client.getApi().then(function(api){
+                DocdokuAPIService.getClient().getApi().then(function(api){
+
                     angular.copy({},self.user);
+                    ConfigurationService.deleteAuth();
+                    DocdokuAPIService.setCookie(null);
+                    DBService.removeDb();
+
                     api.auth.logout().then(deferred.resolve,deferred.reject);
                 });
+
                 return deferred.promise;
             };
 

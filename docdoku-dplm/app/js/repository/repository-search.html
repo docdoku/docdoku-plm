@@ -16,7 +16,8 @@
         <input class="ng-hide"
                id="repository-search-input"
                class="md-primary"
-               file-change="search($event,files)" type="file" nwdirectory />
+               onchange="angular.element(this).scope().search(this.files)"
+               type="file" nwdirectory />
 
     </div>
     <div>

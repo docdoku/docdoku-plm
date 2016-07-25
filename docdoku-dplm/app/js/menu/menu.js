@@ -17,17 +17,21 @@ angular.module('dplm.menu', [])
             return $scope.openedSection;
         };
 
+        var translate = $filter('translate');
+
         var folderSection = {
             id:'folders',
-            name: 'Folders',
+            name: translate('MENU_FOLDERS'),
             type: 'toggle',
+            icon:'computer',
             pages: []
         };
 
         var workspaceSection = {
             id:'workspaces',
-            name: 'Workspaces',
+            name: translate('MENU_WORKSPACES'),
             type: 'toggle',
+            icon:'cloud',
             pages: []
         };
 

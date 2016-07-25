@@ -1,69 +1,78 @@
 <div layout-fill layout="column">
-
-    <md-toolbar md-scroll-shrink>
+    <md-toolbar>
         <div class="md-toolbar-tools" layout="row" layout-align="space-between center">
-            <h2>
-                <span>
-                    <i class="fa fa-globe"></i>
-                    {{'WORKSPACE' | translate}} : {{workspace}}
-                </span>
-            </h2>
-        </div>
+            <div layout="row" layout-align="start center">
+                <md-button class="md-icon-button" hide-gt-sm aria-label="{{'MENU' | translate}}" ng-click="openMenu()">
+                    <i class="material-icons">menu</i>
+                </md-button>
+                <i class="material-icons">cloud</i>
+                <h2>
+                    <span>
+                        {{'WORKSPACE' | translate}} : {{workspace}}
+                    </span>
+                </h2>
+            </div>
+            <div layout="row">
 
+                <div ng-if="!sync.running" class="md-caption">
+                    {{'LAST_SYNC_DATE' | translate}}
+                </div>
+
+                <div ng-if="sync.running" class="md-caption">
+                   {{'SYNC_RUNNING' | translate}} ...
+                </div>
+
+            </div>
+        </div>
     </md-toolbar>
 
     <md-content>
-
-        <div layout="row" layout-align="space-between start">
+        <div layout="row" layout-align="space-between center">
             <md-menu-bar>
-
                 <md-menu>
                     <button ng-click="$mdOpenMenu()">
                         {{'WORKSPACE' | translate}}
                     </button>
                     <md-menu-content>
                         <md-menu-item>
-                            <md-button aria-label="{{'REFRESH'|translate}}" ng-click="refresh()">
-                                <md-icon md-svg-icon="img/cached.svg"></md-icon>
-                                {{'REFRESH'|translate}}
+                            <md-button aria-label="{{'REFRESH_WORKSPACE_DATA'|translate}}" ng-click="refresh()">
+                                <i class="material-icons">cached</i>
+                                {{'REFRESH_WORKSPACE_DATA'|translate}}
                             </md-button>
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>
-
                 <md-menu>
                     <button ng-click="$mdOpenMenu()">
                         {{'VIEW' | translate}}
                     </button>
-
                     <md-menu-content>
-                        <md-menu-item type="radio" ng-model="view.type" value="documents">  {{'DOCUMENTS' | translate}} ({{totalDocuments}})</md-menu-item>
-                        <md-menu-item type="radio" ng-model="view.type" value="parts">{{'PARTS' | translate}} ({{totalParts}})</md-menu-item>
+                        <md-menu-item type="radio" ng-model="view.type" value="documents">
+                            {{'DOCUMENTS' | translate}} ({{totalDocuments}})
+                        </md-menu-item>
+                        <md-menu-item type="radio" ng-model="view.type" value="parts">
+                            {{'PARTS' | translate}} ({{totalParts}})
+                        </md-menu-item>
                     </md-menu-content>
-
                 </md-menu>
-
                 <md-menu>
                     <button ng-click="$mdOpenMenu()">
                         {{'FILTERS' | translate}}
                     </button>
-                    <md-menu-content >
-
+                    <md-menu-content>
                         <md-menu-item>
                             <md-button ng-click="toggleFilters(true)">
-                                <md-icon md-svg-icon="img/check.svg"></md-icon>
+                                <i class="material-icons">check_box</i>
                                 {{'SELECT_ALL' | translate}}
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
                             <md-button ng-click="toggleFilters(false)">
-                                <md-icon md-svg-icon="img/clear.svg"></md-icon>
+                                <i class="material-icons">check_box_outline_blank</i>
                                 {{'UNSELECT_ALL' | translate}}
                             </md-button>
                         </md-menu-item>
-
                         <md-menu-divider></md-menu-divider>
-
                         <md-menu-item ng-repeat="filter in filters">
                             <md-input-container>
                                 <md-checkbox ng-change="search()" ng-model="filter.value" aria-label="{{filter.name}}">
@@ -71,47 +80,53 @@
                                 </md-checkbox>
                             </md-input-container>
                         </md-menu-item>
-
                     </md-menu-content>
                 </md-menu>
-
                 <md-menu>
-                    <button ng-click="$mdOpenMenu()">
+                    <button ng-click="$mdOpenMenu()" ng-disabled="!selected.length">
                         {{'SELECTION' | translate}} ({{selected.length}})
                     </button>
                     <md-menu-content>
-
                         <md-menu-item>
-                            <md-button ng-click="checkinSelection()">
-                                <md-icon md-svg-icon="img/done.svg"></md-icon>
+                            <md-button ng-click="actions.download(selected)">
+                                <i class="material-icons">cloud_download</i>
+                                {{'DOWNLOAD' | translate}}
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button ng-click="actions.downloadStructure(selected)">
+                                <i class="material-icons">cloud_download</i>
+                                {{'DOWNLOAD_STRUCTURE' | translate}}
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button ng-click="actions.checkin(selection)">
+                                <i class="material-icons">input</i>
                                 {{'CHECKIN' | translate}}
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
-                            <md-button ng-click="checkoutSelection()">
-                                <md-icon md-svg-icon="img/edit.svg"></md-icon>
+                            <md-button ng-click="actions.checkout(selection)">
+                                <i class="material-icons">mode_edit</i>
                                 {{'CHECKOUT' | translate}}
                             </md-button>
                         </md-menu-item>
-
+                        <md-menu-item>
+                            <md-button ng-click="actions.undoCheckout(selection)">
+                                <i class="material-icons">settings_backup_restore</i>
+                                {{'UNDO_CHECKOUT' | translate}}
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-divider></md-menu-divider>
+                        <md-menu-item>
+                            <md-button ng-click="selected.length=0">
+                                <i class="material-icons">clear</i>
+                                {{'RESET_SELECTION' | translate}}
+                            </md-button>
+                        </md-menu-item>
                     </md-menu-content>
                 </md-menu>
-
             </md-menu-bar>
-        </div>
-
-        <div  ng-hide="sync.running" layout-padding layout="row" layout-align="space-between start">
-            <md-input-container class="no-margin md-block">
-                <label>{{'SEARCH'|translate}}</label>
-                <input type="text" ng-change="search()" ng-model="pattern" />
-            </md-input-container>
-        </div>
-
-        <div ng-if="sync.running">
-            {{'WORKSPACE_SYNC_RUNNING' | translate}}
-        </div>
-
-        <div ng-if="!sync.running" layout-padding layout="row" layout-align="space-between start">
             <md-table-pagination
                     md-boundary-links="true"
                     md-limit="query.limit"
@@ -119,11 +134,21 @@
                     md-page="query.page"
                     md-total="{{filteredItemsCount}}"
                     md-on-paginate="paginate"
-                    md-page-select>
+                    md-page-select
+                    md-label="{{paginationLabels}}">
             </md-table-pagination>
         </div>
 
+        <div layout="column">
+            <md-input-container md-no-float class="md-block search-bar">
+                <input placeholder="{{'SEARCH'|translate}}" type="text" ng-change="search()" ng-model="pattern" />
+            </md-input-container>
+        </div>
         <div ng-include="view.include" ng-if="!sync.running" layout="column"></div>
+
+    </md-content>
+
+    <md-content ng-if="sync.running" layout="row" layout-align="center center" layout-fill>
+        <md-progress-circular md-diameter="96"></md-progress-circular>
     </md-content>
 </div>
-

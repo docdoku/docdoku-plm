@@ -12,6 +12,23 @@ body.app-background{
 	background:#1A658A;
 }
 
-.no-margin{margin:0;}
+.search-bar{margin:0 20px;}
 
 .md-table-pagination{border-top:none;}
+
+i.material-icons{
+	margin: auto 16px auto 0;
+}
+
+.md-cell{
+	white-space: nowrap;
+}
+
+.md-cell i.material-icons{
+	color: #757575;
+}
+
+a{
+	color:#1A658A;
+	text-decoration: none;
+}

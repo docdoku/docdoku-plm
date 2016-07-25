@@ -13,8 +13,9 @@
             };
 
             this.getWorkspaces = function () {
+                console.log('fetching workspaces')
                 return $q(function(resolve, reject){
-                    DocdokuAPIService.client.getApi().then(function(api){
+                    DocdokuAPIService.getClient().getApi().then(function(api){
                         api.workspaces.getWorkspacesForConnectedUser()
                             .then(function(response){
                                 angular.copy(response.obj.allWorkspaces.map(function(workspace){return workspace.id;}),_this.workspaces);
@@ -26,7 +27,7 @@
 
             this.createPartInWorkspace = function(part){
                 return $q(function(resolve, reject){
-                    DocdokuAPIService.client.getApi().then(function(api){
+                    DocdokuAPIService.getClient().getApi().then(function(api){
                         api.parts.createNewPart({
                             workspaceId: part.workspaceId,
                             body:part
@@ -39,7 +40,7 @@
 
             this.createDocumentInWorkspace = function(document){
                 return $q(function(resolve, reject){
-                    DocdokuAPIService.client.getApi().then(function(api){
+                    DocdokuAPIService.getClient().getApi().then(function(api){
                         api.apis.folders.createDocumentMasterInFolder({
                             workspaceId:document.workspaceId,
                             folderId:document.workspaceId,
@@ -49,14 +50,6 @@
                         },reject);
                     },reject);
                 });
-            };
-
-            this.getParts = function(workspace){
-                return DBService.getParts(workspace);
-            };
-
-            this.getDocuments = function(workspace){
-                return DBService.getDocuments(workspace);
             };
 
             this.refreshData = function(workspace){
@@ -78,7 +71,7 @@
 
             this.fetchParts = function(workspace, start, max){
                 return $q(function(resolve, reject){
-                    DocdokuAPIService.client.getApi().then(function(api){
+                    DocdokuAPIService.getClient().getApi().then(function(api){
                         api.apis.parts.getPartRevisions({
                             workspaceId:workspace,
                             start:start,
@@ -92,7 +85,7 @@
 
             this.fetchPartsCount = function(workspace){
                 return $q(function(resolve, reject){
-                    DocdokuAPIService.client.getApi().then(function(api){
+                    DocdokuAPIService.getClient().getApi().then(function(api){
                         api.apis.parts.getTotalNumberOfParts({
                             workspaceId:workspace
                         }).then(function(response){
@@ -104,7 +97,7 @@
 
             this.fetchDocuments = function(workspace, start, max){
                 return $q(function(resolve, reject){
-                    DocdokuAPIService.client.getApi().then(function(api){
+                    DocdokuAPIService.getClient().getApi().then(function(api){
                         api.apis.documents.getDocumentsInWorkspace({
                             workspaceId:workspace,
                             start:start,
@@ -118,7 +111,7 @@
 
             this.fetchDocumentsCount = function(workspace){
                 return $q(function(resolve, reject){
-                    DocdokuAPIService.client.getApi().then(function(api){
+                    DocdokuAPIService.getClient().getApi().then(function(api){
                         api.apis.documents.getDocumentsInWorkspaceCount({
                             workspaceId:workspace
                         }).then(function(response){

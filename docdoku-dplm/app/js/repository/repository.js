@@ -8,7 +8,7 @@
                                                       RepositoryService, FolderService, indexLocation) {
 
 
-            $scope.search = function($ev,files){
+            $scope.search = function(files){
                 var file = files[0];
                 if(file){
                     var path = file.path;

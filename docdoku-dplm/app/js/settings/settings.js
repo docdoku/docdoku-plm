@@ -22,10 +22,5 @@
                 $location.path('home');
             };
 
-            $scope.clearFolders = function(){
-                FolderService.folders.length = 0;
-                FolderService.save();
-            };
-
         });
 })();

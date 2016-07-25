@@ -7,7 +7,7 @@
     <div>
         <md-menu>
             <md-button aria-label="{{'MENU'}}" class="md-icon-button" ng-click="$mdOpenMenu($event)">
-                <md-icon md-svg-icon="img/more_vert.svg"></md-icon>
+                <i class="material-icons">more_vert</i>
             </md-button>
 
             <md-menu-content width="4">
@@ -40,9 +40,13 @@
     </div>
 </md-toolbar>
 <md-content>
-    <span class="connected-as">
-       <i class="fa fa-user"></i> {{configuration.login}}@{{configuration.host}}
-    </span>
+    <div layout="row" class="connected-as" layout-align="start center">
+        <i class="material-icons">account_circle</i>
+        <span>
+            {{configuration.login}}@{{configuration.host}}
+        </span>
+    </div>
+    <div>
     <ul class="menu">
         <li ng-repeat="section in menu.sections"
             class="parent-list-item {{section.className || ''}}"
@@ -50,4 +54,5 @@
             <menu-toggle ng-if="section.type === 'toggle' && !section.hidden"></menu-toggle>
         </li>
     </ul>
+    </div>
 </md-content>

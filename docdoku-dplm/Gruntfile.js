@@ -86,17 +86,9 @@ module.exports = function(grunt){
                     flatten: true,
                     cwd: 'app/',
                     src: [
-                        'bower_components/fontawesome/fonts/**',
+                        'bower_components/material-design-icons/iconfont/**',
                     ],
-                    dest: 'dist/fonts'
-                },{
-                    expand: true,
-                    flatten: true,
-                    cwd: 'app/',
-                    src: [
-                        'css/fonts/**',
-                    ],
-                    dest: 'dist/fonts'
+                    dest: 'bower_components/material-design-icons/iconfont'
                 }]
             }
         },
@@ -110,7 +102,7 @@ module.exports = function(grunt){
                 src:[
                     'app/bower_components/angular-material/angular-material.css',
                     'app/bower_components/fontawesome/css/font-awesome.css',
-                    'app/bower_components/angular-material-data-table/dist/md-data-table.min.css',
+                    'app/bower_components/material-design-icons/iconfont/material-icons.css',
                     'app/css/*.css'
                 ],
                 dest: 'dist/app.css'

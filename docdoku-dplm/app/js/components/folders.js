@@ -11,7 +11,7 @@
             var fs = $window.require('fs');
             var ignoreList = ['.dplm'];
 
-            this.folders = angular.fromJson(localStorage.folders || '[]');
+            this.folders = angular.fromJson($window.localStorage.folders || '[]');
 
             var alreadyHave = function (path) {
                 return _this.folders.filter(function (folder) {
@@ -43,7 +43,7 @@
             };
 
             this.save = function () {
-                localStorage.folders = angular.toJson(_this.folders);
+                $window.localStorage.folders = angular.toJson(_this.folders);
             };
 
             this.recursiveReadDir = function (path) {
