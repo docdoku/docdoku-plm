@@ -192,9 +192,28 @@
                                     <i ng-if="file.item.checkOutUser && file.item.checkOutUser.login !== configuration.login" class="material-icons">lock_outline</i>
                                 </span>
                                 <span>
-                                    <i class="material-icons" ng-if="!file.index.number && !file.index.id">help_outline</i>
                                     <i ng-if="file.index.id" class="material-icons">description</i>
                                     <i ng-if="file.index.number" class="material-icons">extension</i>
+
+                                    <md-menu ng-if="!file.index.number && !file.index.id">
+                                        <md-button aria-label="{{'MENU'}}" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                                            <i class="material-icons">more_vert</i>
+                                        </md-button>
+
+                                        <md-menu-content width="3">
+                                            <md-menu-item>
+                                                <md-button aria-label="{{'CREATE_PART'|translate}}" ng-click="createPart(file)">
+                                                    {{'CREATE_PART'|translate}}
+                                                </md-button>
+                                            </md-menu-item>
+
+                                            <md-menu-item>
+                                                <md-button aria-label="{{'CREATE_DOCUMENT'|translate}}" ng-click="createDocument(file)">
+                                                    {{'CREATE_DOCUMENT'|translate}}
+                                                </md-button>
+                                            </md-menu-item>
+                                        </md-menu-content>
+                                    </md-menu>
                                 </span>
                             </td>
 
