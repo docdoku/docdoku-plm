@@ -4,7 +4,7 @@
             <tr md-row>
                 <th md-column></th>
                 <th md-column><span>{{'ID'|translate}}</span></th>
-                <th md-column><span>{{'ITERATION'|translate}}</span></th>
+                <th md-column><span>{{'VERSION'|translate}}</span></th>
                 <th md-column><span>{{'ATTACHED_FILES'|translate}}</span></th>
             </tr>
         </thead>
@@ -19,9 +19,9 @@
                     <i ng-if="item.checkOutUser && item.checkOutUser.login !== configuration.login" class="material-icons">lock_outline</i>
                 </td>
                 <td md-cell>
-                    {{item.id}}
+                    {{item.documentMasterId}}
                 </td>
-                <td md-cell>{{item.documentIterations.length}}</td>
+                <td md-cell>{{item.version}}-{{item.documentIterations.length}}</td>
 
                 <td md-cell>
                     <div ng-repeat="f in item.lastIteration.attachedFiles">

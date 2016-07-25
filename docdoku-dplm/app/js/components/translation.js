@@ -58,7 +58,7 @@
                     FETCHING_WORKSPACES:'Receiving workspaces list',
                     LATEST:'Latest',
                     BASELINE:'Baseline',
-                    DELETE_FOLDER_CONFIRM_TITLE:'Are you sure to want to remove this folder ?',
+                    DELETE_FOLDER_CONFIRM_TITLE:'Are you sure to want to remove this folder from list ?',
                     DELETE_FOLDER_CONFIRMED:'Folder removed',
                     YES:'Yes',
                     NO:'No',
@@ -145,7 +145,11 @@
                     FILES_TO_BE_DOWNLOADED:'file(s) to be downloaded',
                     CANCEL:'Cancel',
                     DONE:'Done',
-                    TO_FOLDER_VIEW:'Display folder view'
+                    TO_FOLDER_VIEW:'Display folder view',
+                    RESET_SELECTION:'Reset selection',
+                    NATIVE_CAD_FILE:'Native CAD file',
+                    ID:'Id',
+                    SELECT_FOLDER:'Select a folder'
                 })
                 .translations('fr', {
                     CHECKOUT: 'Réserver',
@@ -200,7 +204,7 @@
                     FETCHING_WORKSPACES:'Récupération de la liste des espaces de travail ...',
                     LATEST:'Dernière',
                     BASELINE:'Baseline',
-                    DELETE_FOLDER_CONFIRM_TITLE:'Êtes-vous sûr de vouloir supprimer ce dossier ?',
+                    DELETE_FOLDER_CONFIRM_TITLE:'Êtes-vous sûr de vouloir supprimer ce dossier de la liste ?',
                     DELETE_FOLDER_CONFIRMED:'Dossier supprimé',
                     YES:'Oui',
                     NO:'Non',
@@ -287,7 +291,11 @@
                     FILES_TO_BE_DOWNLOADED:'fichier(s) à télécharger',
                     CANCEL:'Annuler',
                     DONE:'Terminé',
-                    TO_FOLDER_VIEW:'Afficher le dossier'
+                    TO_FOLDER_VIEW:'Afficher le dossier',
+                    RESET_SELECTION:'Effacer la sélection',
+                    NATIVE_CAD_FILE:'Fichier CAD',
+                    ID:'Identifiant',
+                    SELECT_FOLDER:'Sélectionner un dossier'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

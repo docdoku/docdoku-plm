@@ -20,6 +20,92 @@
             var allDocuments = [];
             var filteredItems = [];
             var translate = $filter('translate');
+            var filter = $filter('filter');
+
+            var hasFilter = function(code){
+                return $scope.filters.filter(function(filter){
+                        return filter.code === code && filter.value;
+                    }).length>0;
+            };
+
+            var getData = function(){
+                return DBService.getDocuments(workspace).then(function(documents){
+                    allDocuments = documents;
+                    return DBService.getParts(workspace);
+                }).then(function(parts){
+                    allParts = parts;
+                }).then(function(){
+                    $scope.totalDocuments = allDocuments.length;
+                    $scope.totalParts = allParts.length;
+                });
+            };
+
+            var commonFilter = function(item){
+                if(!hasFilter('CHECKED_OUT') && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login){
+                    return false;
+                }
+
+                if(!hasFilter('CHECKED_IN') && !item.checkOutUser && !item.releaseAuthor && !item.obsoleteAuthor){
+                    return false;
+                }
+
+                if(!hasFilter('LOCKED') && item.checkOutUser && item.checkOutUser.login !== ConfigurationService.configuration.login){
+                    return false;
+                }
+
+                if(!hasFilter('RELEASED') && item.releaseAuthor && !item.obsoleteAuthor){
+                    return false;
+                }
+
+                if(!hasFilter('OBSOLETE') && item.obsoleteAuthor){
+                    return false;
+                }
+
+                if($scope.pattern && filter([item],$scope.pattern).length === 0){
+                    return false;
+                }
+
+                return true;
+            };
+
+            var documentMap = function(item){
+                item.lastIteration = item.documentIterations[item.documentIterations.length-1];
+                return item;
+            };
+
+            var documentFilter = function(item){
+                var lastIteration = item.documentIterations[item.documentIterations.length-1];
+
+                if(!hasFilter('SHOW_EMPTY_DATA') && !lastIteration.attachedFiles.length){
+                    return false;
+                }
+
+                return commonFilter(item);
+            };
+
+            var partFilter = function(item){
+
+                var lastIteration = item.partIterations[item.partIterations.length-1];
+
+                if(!hasFilter('SHOW_EMPTY_DATA') && !lastIteration.nativeCADFile){
+                    return false;
+                }
+
+                if(!hasFilter('LEAVES') && !lastIteration.components.length){
+                    return false;
+                }
+
+                if(!hasFilter('ASSEMBLIES') && lastIteration.components.length){
+                    return false;
+                }
+
+                return commonFilter(item);
+            };
+
+            var partMap = function(item){
+                item.lastIteration = item.partIterations[item.partIterations.length-1];
+                return item;
+            };
 
             $scope.workspace = workspace;
             $scope.configuration = ConfigurationService.configuration;
@@ -64,91 +150,8 @@
                 of: translate('PAGINATION_LABELS_OF')
             };
 
-            var hasFilter = function(code){
-                return $scope.filters.filter(function(filter){
-                    return filter.code === code && filter.value;
-                }).length>0;
-            };
-
-            var getData = function(){
-                return DBService.getDocuments(workspace).then(function(documents){
-                    allDocuments = documents;
-                    return DBService.getParts(workspace);
-                }).then(function(parts){
-                    allParts = parts;
-                }).then(function(){
-                    $scope.totalDocuments = allDocuments.length;
-                    $scope.totalParts = allParts.length;
-                });
-            };
-
-            var commonFilter = function(item){
-                if(!hasFilter('CHECKED_OUT') && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login){
-                    return false;
-                }
-
-                if(!hasFilter('CHECKED_IN') && !item.checkOutUser && !item.releaseAuthor && !item.obsoleteAuthor){
-                    return false;
-                }
-
-                if(!hasFilter('LOCKED') && item.checkOutUser && item.checkOutUser.login !== ConfigurationService.configuration.login){
-                    return false;
-                }
-
-                if(!hasFilter('RELEASED') && item.releaseAuthor && !item.obsoleteAuthor){
-                    return false;
-                }
-
-                if(!hasFilter('OBSOLETE') && item.obsoleteAuthor){
-                    return false;
-                }
-
-                return true;
-            };
-
-            var documentFilter = function(item){
-                if($scope.pattern && !item.id.match($scope.pattern)){
-                    return false;
-                }
-
-                var lastIteration = item.documentIterations[item.documentIterations.length-1];
-
-                if(!hasFilter('SHOW_EMPTY_DATA') && !lastIteration.attachedFiles.length){
-                    return false;
-                }
-
-                return commonFilter(item);
-            };
-
-            var documentMap = function(item){
-                item.lastIteration = item.documentIterations[item.documentIterations.length-1];
-                return item;
-            };
-
-            var partFilter = function(item){
-                if($scope.pattern && !item.number.match($scope.pattern)){
-                    return false;
-                }
-                var lastIteration = item.partIterations[item.partIterations.length-1];
-
-                if(!hasFilter('SHOW_EMPTY_DATA') && !lastIteration.nativeCADFile){
-                    return false;
-                }
-
-                if(!hasFilter('LEAVES') && !lastIteration.components.length){
-                    return false;
-                }
-
-                if(!hasFilter('ASSEMBLIES') && lastIteration.components.length){
-                    return false;
-                }
-
-                return commonFilter(item);
-            };
-
-            var partMap = function(item){
-                item.lastIteration = item.partIterations[item.partIterations.length-1];
-                return item;
+            $scope.sync = {
+                running:false
             };
 
             $scope.paginate = function(page, count){
@@ -166,9 +169,6 @@
                 $scope.paginate(1,10);
             };
 
-            $scope.sync = {
-                running:false
-            };
 
             $scope.refresh = function(){
                 $scope.sync.running = true;
@@ -191,8 +191,6 @@
                     });
                 }
             };
-
-
 
 
             getData().then($scope.search);
