@@ -13,8 +13,8 @@
                 });
         })
 
-        .controller('FolderController', function ($scope, $location, $routeParams, $filter, $mdDialog,
-                                                  FolderService, DBService, RepositoryService) {
+        .controller('FolderController', function ($scope, $location, $routeParams, $filter, $mdDialog, $q,
+                                                  FolderService, DBService, RepositoryService, WorkspaceService, ConfigurationService) {
 
             $scope.folder = FolderService.getFolder({uuid: $routeParams.uuid});
 
@@ -83,8 +83,6 @@
 
                 filteredFiles = allFiles.filter(function (path) {
 
-                    var fileName = getFileName(path);
-
                     var index = RepositoryService.getFileIndex(repositoryIndex, path);
 
                     if (!hasFilter('OUT_OF_INDEX') && !index) {
@@ -99,30 +97,64 @@
                         return false;
                     }
 
-                    if ($scope.pattern) {
-                        if (filter([index || {}, fileName], $scope.pattern).length === 0) {
-                            return false;
-                        }
-                    }
-
                     return true;
-                })
-                    .map(function (path) {
+                }).map(function (path) {
                         var file = FolderService.createFileObject(path);
                         file.index = RepositoryService.getFileIndex(repositoryIndex, path);
                         file.stat = FolderService.getFileSize(path);
-
-                        if (file.index) {
-                            DBService.getItem(file.index).then(function (item) {
-                                file.item = item;
-                            });
-                        }
-
                         return file;
                     });
 
-                $scope.filteredFilesCount = filteredFiles.length;
-                $scope.paginate(1, $scope.query.limit);
+                // Fetch data from db if not cached : allow to filter also on entities internal data
+                var chain = $q.when();
+                filteredFiles.forEach(function(file){
+                    if(file.index && !file.item) {
+                        chain = chain.then(function () {
+                            return DBService.getItem(file.index);
+                        }).then(function (item) {
+                            file.item = item;
+                        });
+                    }
+                });
+
+                chain.then(function(){
+
+                    filteredFiles = filteredFiles.filter(function(file){
+
+                        var item = file.item;
+
+                        if(!hasFilter('CHECKED_OUT') && item && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login){
+                            return false;
+                        }
+
+                        if(!hasFilter('CHECKED_IN') && item && !item.checkOutUser && !item.releaseAuthor && !item.obsoleteAuthor){
+                            return false;
+                        }
+
+                        if(!hasFilter('LOCKED') && item && item.checkOutUser && item.checkOutUser.login !== ConfigurationService.configuration.login){
+                            return false;
+                        }
+
+                        if(!hasFilter('RELEASED') && item && item.releaseAuthor && !item.obsoleteAuthor){
+                            return false;
+                        }
+
+                        if(!hasFilter('OBSOLETE') && item && item.obsoleteAuthor){
+                            return false;
+                        }
+
+
+                        if ($scope.pattern && filter([file], $scope.pattern).length === 0) {
+                            return false;
+                        }
+
+                        return true;
+                    });
+
+                    $scope.filteredFilesCount = filteredFiles.length;
+                    $scope.paginate(1, $scope.query.limit);
+                });
+
             };
 
             $scope.fetchFolder = function () {
@@ -197,6 +229,50 @@
                     filter.value = state;
                 });
                 $scope.search();
+            };
+
+            var refreshDisplay = function(){
+                return;
+                angular.forEach($scope.displayedFiles,function(file){
+                    if(file.index){
+                        DBService.getItem(file.index).then(function(item){
+                            file.item = item;
+                        });
+                    }
+                });
+            };
+
+            $scope.actions = {
+
+                checkin : function(selection){
+                    // TODO : filter for action availability
+                    WorkspaceService.checkInItems(selection, repositoryIndex)
+                        .then(refreshDisplay,function(){
+                        console.log('Something bad happened');
+                    },function(){
+                        console.log('Some progress notifications');
+                    });
+                },
+
+                checkout:function(selection){
+                    // TODO : filter for action availability
+                    WorkspaceService.checkOutItems(selection, repositoryIndex)
+                        .then(refreshDisplay,function(){
+                        console.log('Something bad happened');
+                    },function(){
+                        console.log('Some progress notifications');
+                    });
+                },
+
+                undoCheckout: function(selection){
+                    // TODO : filter for action availability
+                    WorkspaceService.undoCheckOutItems(selection, repositoryIndex)
+                        .then(refreshDisplay,function(){
+                        console.log('Something bad happened');
+                    },function(){
+                        console.log('Some progress notifications');
+                    });
+                }
             };
 
             $scope.fetchFolder();

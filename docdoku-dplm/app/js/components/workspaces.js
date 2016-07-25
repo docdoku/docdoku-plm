@@ -3,9 +3,108 @@
     'use strict';
 
     angular.module('dplm.services.workspaces', [])
-        .service('WorkspaceService', function ($log, $filter, $q, $location, DocdokuAPIService, DBService) {
+        .service('WorkspaceService', function ($log, $filter, $q, $location, DocdokuAPIService, DBService, RepositoryService) {
 
             var _this = this;
+
+            var checkInDocument = function(document, index, path){
+                return $q(function(resolve, reject){
+                    DocdokuAPIService.getClient().getApi().then(function(api){
+                        api.apis.documents.checkInDocument({
+                            workspaceId:document.workspaceId,
+                            documentId:document.documentMasterId,
+                            documentVersion:document.version
+                        }).then(function(response){
+                            RepositoryService.updateItemInIndex(index, response.obj, path);
+                            DBService.storeDocuments([response.obj]);
+                            return response.obj;
+                        }).then(resolve);;
+                    },reject);
+                });
+            };
+
+            var checkOutDocument = function(document, index, path){
+                return $q(function(resolve, reject){
+                    DocdokuAPIService.getClient().getApi().then(function(api){
+                        api.apis.documents.checkOutDocument({
+                            workspaceId:document.workspaceId,
+                            documentId:document.documentMasterId,
+                            documentVersion:document.version
+                        }).then(function(response){
+                            RepositoryService.updateItemInIndex(index, response.obj, path);
+                            DBService.storeDocuments([response.obj]);
+                            return response.obj;
+                        }).then(resolve);
+                    },reject);
+                });
+            };
+
+
+            var undoCheckOutDocument = function(document, index, path){
+                return $q(function(resolve, reject){
+                    DocdokuAPIService.getClient().getApi().then(function(api){
+                        api.apis.documents.checkOutDocument({
+                            workspaceId:document.workspaceId,
+                            documentId:document.documentMasterId,
+                            documentVersion:document.version
+                        }).then(function(response){
+                            RepositoryService.updateItemInIndex(index, response.obj, path);
+                            DBService.storeDocuments([response.obj]);
+                            return response.obj;
+                        }).then(resolve);
+                    },reject);
+                });
+            };
+
+
+            var checkInPart = function(part, index, path){
+                return $q(function(resolve, reject){
+                    DocdokuAPIService.getClient().getApi().then(function(api){
+                        api.apis.part.checkIn({
+                            workspaceId:part.workspaceId,
+                            partNumber:part.number,
+                            partVersion:part.version
+                        }).then(function(response){
+                            RepositoryService.updateItemInIndex(index, response.obj, path);
+                            DBService.storeParts([response.obj]);
+                            return response.obj;
+                        }).then(resolve);
+                    },reject);
+                });
+            };
+
+            var checkOutPart = function(part, index, path){
+                return $q(function(resolve, reject){
+                    DocdokuAPIService.getClient().getApi().then(function(api){
+                        api.apis.part.checkOut({
+                            workspaceId:part.workspaceId,
+                            partNumber:part.number,
+                            partVersion:part.version
+                        }).then(function(response){
+                            RepositoryService.updateItemInIndex(index, response.obj, path);
+                            DBService.storeParts([response.obj]);
+                            return response.obj;
+                        }).then(resolve);
+                    },reject);
+                });
+            };
+
+            var undoCheckOutPart = function(part, index, path){
+                return $q(function(resolve, reject){
+                    DocdokuAPIService.getClient().getApi().then(function(api){
+                        api.apis.part.undoCheckOut({
+                            workspaceId:part.workspaceId,
+                            partNumber:part.number,
+                            partVersion:part.version
+                        }).then(function(response){
+                            RepositoryService.updateItemInIndex(index, response.obj, path);
+                            return DBService.storeParts([response.obj]);
+                        }).then(resolve);
+                    },reject);
+                });
+            };
+
+
             this.workspaces = [];
 
             this.reset = function(){
@@ -13,7 +112,6 @@
             };
 
             this.getWorkspaces = function () {
-                console.log('fetching workspaces')
                 return $q(function(resolve, reject){
                     DocdokuAPIService.getClient().getApi().then(function(api){
                         api.workspaces.getWorkspacesForConnectedUser()
@@ -53,6 +151,7 @@
             };
 
             this.refreshData = function(workspace){
+                // TODO wrap with $q.defer and notify
                 var totalDocuments = 0;
                 var totalParts = 0;
                 return _this.fetchDocumentsCount(workspace).then(function(count){
@@ -120,5 +219,88 @@
                     },reject);
                 });
             };
+
+
+            this.checkInItems = function(files, index){
+
+                var deferred = $q.defer();
+                var chain = $q.when();
+                var done = 0;
+
+                angular.forEach(files,function(file){
+                    chain = chain.then(function(){
+                        if(file.index.id){
+                           return checkInDocument(file.item,index, file.path).then(function(item){
+                               file.item = item;
+                                deferred.notify(++done);
+                            });
+                        }else if(file.index.number){
+                            return checkInPart(file.item, index, file.path).then(function(item){
+                                file.item = item;
+                                deferred.notify(++done);
+                            });
+                        }
+                    })
+                });
+
+                chain.then(deferred.resolve);
+
+                return deferred.promise;
+            };
+
+            this.checkOutItems = function(files, index){
+
+                var deferred = $q.defer();
+                var chain = $q.when();
+                var done = 0;
+
+                angular.forEach(files,function(file){
+                    chain = chain.then(function(){
+                        if(file.index.id){
+                            return checkOutDocument(file.item,index, file.path).then(function(item){
+                                file.item = item;
+                                deferred.notify(++done);
+                            });
+                        }else if(file.index.number){
+                            return checkOutPart(file.item, index, file.path).then(function(item){
+                                file.item = item;
+                                deferred.notify(++done);
+                            });
+                        }
+                    })
+                });
+
+                chain.then(deferred.resolve);
+
+                return deferred.promise;
+            };
+
+            this.undoCheckOutItems = function(files, index){
+
+                var deferred = $q.defer();
+                var chain = $q.when();
+                var done = 0;
+
+                angular.forEach(files,function(file){
+                    chain = chain.then(function(){
+                        if(file.index.id){
+                            return undoCheckOutDocument(file.item,index, file.path).then(function(item){
+                                file.item = item;
+                                deferred.notify(++done);
+                            });
+                        }else if(file.index.number){
+                            return undoCheckOutPart(file.item, index, file.path).then(function(item){
+                                file.item = item;
+                                deferred.notify(++done);
+                            });
+                        }
+                    });
+                });
+
+                chain.then(deferred.resolve);
+
+                return deferred.promise;
+            };
+
         });
 })();
