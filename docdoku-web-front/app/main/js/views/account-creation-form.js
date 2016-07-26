@@ -44,7 +44,9 @@ define([
                         $(this).text(App.config.i18n.LANGUAGES[$(this).val()]);
                     });
                     _this.$('#account_creation_form-timeZone option').each(function(){
-                        $(this).attr('selected', $(this).val() === App.config.account.timeZone);
+                        // Fixed type error. Assume CET is in list.
+                        // TODO : detect browser timezone for auto selection
+                        $(this).attr('selected', $(this).val() === 'CET');
                     });
                 });
 
