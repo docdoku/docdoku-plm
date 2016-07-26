@@ -25,7 +25,6 @@ import com.docdoku.core.exceptions.EntityNotFoundException;
 import com.docdoku.core.exceptions.UserNotActiveException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentBaselineManagerLocal;
-import com.docdoku.server.rest.dto.FolderDTO;
 import com.docdoku.server.rest.dto.baseline.DocumentBaselineDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -162,10 +161,10 @@ public class DocumentBaselinesResource {
     public DocumentBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId,
                                            @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, UserNotActiveException {
-        DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
+//        DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
         DocumentBaselineDTO baselineDTO = getBaselineLight(workspaceId, baselineId);
-        List<FolderDTO> folderDTOs = Tools.mapBaselinedFoldersToFolderDTO(documentBaseline);
-        baselineDTO.setBaselinedFolders(folderDTOs);
+//        List<FolderDTO> folderDTOs = Tools.mapBaselinedFoldersToFolderDTO(documentBaseline);
+//        baselineDTO.setBaselinedFolders(folderDTOs);
         return baselineDTO;
     }
 

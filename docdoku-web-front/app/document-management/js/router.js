@@ -6,10 +6,11 @@ define([
     'views/tag_nav',
     'views/search_nav',
     'views/template_nav',
+    'views/baselines/baseline_nav',
     'views/checkedout_nav',
     'views/task_nav'
 ],
-function (Backbone, singletonDecorator, FolderNavView, TagNavView, SearchNavView, TemplateNavView, CheckedoutNavView, TaskNavView) {
+function (Backbone, singletonDecorator, FolderNavView, TagNavView, SearchNavView, TemplateNavView, BaselineNavView, CheckedoutNavView, TaskNavView) {
     'use strict';
     var Router = Backbone.Router.extend({
         routes: {
@@ -18,6 +19,7 @@ function (Backbone, singletonDecorator, FolderNavView, TagNavView, SearchNavView
             ':workspaceId/tags': 'tags',
             ':workspaceId/tags/:id': 'tag',
             ':workspaceId/templates': 'templates',
+            ':workspaceId/baselines': 'baselines',
             ':workspaceId/checkedouts': 'checkedouts',
             ':workspaceId/tasks': 'tasks',
             ':workspaceId/tasks/:filter': 'tasks',
@@ -36,6 +38,7 @@ function (Backbone, singletonDecorator, FolderNavView, TagNavView, SearchNavView
 		    FolderNavView.getInstance();
 		    TagNavView.getInstance();
 		    TemplateNavView.getInstance();
+		    BaselineNavView.getInstance();
 		    CheckedoutNavView.getInstance();
 		    SearchNavView.getInstance();
 		    TaskNavView.getInstance();
@@ -79,6 +82,12 @@ function (Backbone, singletonDecorator, FolderNavView, TagNavView, SearchNavView
             this.executeOrReload(workspaceId,function(){
 	            this.initNavViews();
 	            TemplateNavView.getInstance().showContent();
+            });
+        },
+        baselines: function (workspaceId) {
+            this.executeOrReload(workspaceId,function(){
+	            this.initNavViews();
+	            BaselineNavView.getInstance().showContent();
             });
         },
         checkedouts: function (workspaceId) {

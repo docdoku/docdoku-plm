@@ -25,8 +25,11 @@ define([
 
             this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n}));
             App.$documentManagementMenu = this.$('#document-management-menu');
+            App.$documentManagementContent = this.$('#document-management-content');
+
             this.bindDomElements();
 	        this.renderSubView();
+
             App.$documentManagementMenu.customResizable({
                 containment: this.$el
             });
