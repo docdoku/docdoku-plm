@@ -1,15 +1,9 @@
-/*global define*/
+/*global define,App*/
 
 define(['common-objects/models/baseline'],
 function(Baseline){
 	'use strict';
 	var ProductBaseline = Baseline.extend({
-		getType:function(){
-			return this.get('type');
-		},
-		isReleased:function(){
-			return this.get('type')==='RELEASED';
-		},
 		getBaselinedParts:function(){
 			return this.get('baselinedParts');
 		},
@@ -34,9 +28,44 @@ function(Baseline){
         setOptionalUsageLinks:function(optionalUsageLinks){
             this.set('optionalUsageLinks',optionalUsageLinks);
         },
+
+        getBomUrl: function () {
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getConfigurationItemId()) + '/config-spec/'+this.getId()+'/bom' ;
+        },
+
+        getSceneUrl: function () {
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getConfigurationItemId()) + '/config-spec/'+this.getId()+'/scene' ;
+        },
+
+        getZipUrl: function () {
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + encodeURIComponent(this.getConfigurationItemId()) + '/export-files?configSpecType=' + encodeURIComponent(this.getId());
+        },
+
+        getSubstitutesParts:function(){
+            //can be null, and used as an array.
+            return this.get('substitutesParts');
+        },
+
+        getOptionalsParts:function(){
+            //can be null, and used as an array.
+            return this.get('optionalsParts');
+        },
+
+        hasObsoletePartRevisions:function(){
+            return this.get('hasObsoletePartRevisions');
+        },
+
+        hasPathToPathLink: function() {
+            return this.getPathToPathLinks().length;
+        },
+        getPathToPathLinks: function () {
+            return this.get('pathToPathLinks');
+        },
+
         getAuthor:function(){
             return this.get('author').name;
         },
+
         getAuthorLogin: function () {
             return this.get('author').login;
         }

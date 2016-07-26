@@ -1,4 +1,4 @@
-/*global $,define*/
+/*global $,define,App*/
 define(['common-objects/models/baseline'], function (Baseline) {
     'use strict';
     var DocumentBaseline = Baseline.extend({
@@ -41,6 +41,10 @@ define(['common-objects/models/baseline'], function (Baseline) {
                     }
                 });
             return baselinedFolders;
+        },
+
+        getZipUrl: function () {
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/document-baselines/export-files?configSpecType=' + encodeURIComponent(this.getId());
         }
     });
 
