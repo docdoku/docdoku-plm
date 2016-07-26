@@ -55,8 +55,8 @@
                 <version>2.12.4</version>
                 <configuration>
                     <systemPropertyVariables>
-                        <url>${env.HOST}</url>
-                        <url>${env.PORT}</url>
+                        <host>${env.HOST}</host>
+                        <port>${env.PORT}</port>
                         <login>${env.LOGIN}</login>
                         <password>${env.PASSWORD}</password>
                         <workspace>${env.WORKSPACE}</workspace>
