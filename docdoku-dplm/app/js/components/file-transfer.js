@@ -4,6 +4,9 @@
 
     angular.module('dplm.services.file-transfer', [])
 
+        .constant('READ_ONLY','444')
+        .constant('READ_WRITE','644')
+
         .service('UploadService', function ($window, $q, $filter, ConfigurationService) {
 
             var fs = $window.require('fs');
@@ -77,8 +80,9 @@
             var http = $window.require('http');
             var getFileName = $filter('fileshortname');
             var zlib = $window.require('zlib');
+            var fileMode = $filter('fileMode');
 
-            var download = function(url, destinationFolder, forceRewrite){
+            var download = function(url, destinationFolder, item, forceRewrite){
                 var deferred = $q.defer();
 
                 var fileName = getFileName(url);
@@ -107,6 +111,7 @@
                 });
 
                 request.on('response', function () {
+                    fs.chmodSync(file, fileMode(item));
                     deferred.resolve(file);
                 });
 
@@ -137,7 +142,7 @@
                 fileUrls.forEach(function(url){
                    var item = fileMap[url];
                    chain = chain.then(function(){
-                       return download('/files/' + url, destinationFolder, forceRewrite)
+                       return download('/files/' + url, destinationFolder, item, forceRewrite)
                            .then(function(filePath){
                                 RepositoryService.updateItemInIndex(index,item,filePath);
                            },function(){
@@ -159,6 +164,12 @@
             };
 
 
+        })
+
+        .filter('fileMode',function(ConfigurationService,READ_ONLY,READ_WRITE){
+            return function(item){
+                return item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login ? READ_WRITE:READ_ONLY;
+            };
         });
 
 })();

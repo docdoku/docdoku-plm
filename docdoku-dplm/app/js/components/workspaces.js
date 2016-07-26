@@ -3,38 +3,50 @@
     'use strict';
 
     angular.module('dplm.services.workspaces', [])
-        .service('WorkspaceService', function ($log, $filter, $q, $location, DocdokuAPIService, DBService, RepositoryService) {
+        .service('WorkspaceService', function ($window,$log, $filter, $q, $location, DocdokuAPIService, DBService, RepositoryService) {
 
             var _this = this;
+            var fs = $window.require('fs');
+            var fileMode = $filter('fileMode');
 
             var checkInDocument = function(document, index, path){
                 return $q(function(resolve, reject){
+                    var updatedItem;
                     DocdokuAPIService.getClient().getApi().then(function(api){
                         api.apis.documents.checkInDocument({
                             workspaceId:document.workspaceId,
                             documentId:document.documentMasterId,
                             documentVersion:document.version
                         }).then(function(response){
-                            RepositoryService.updateItemInIndex(index, response.obj, path);
-                            DBService.storeDocuments([response.obj]);
-                            return response.obj;
-                        }).then(resolve);;
+                            console.log('response')
+                            updatedItem = response.obj;
+                            RepositoryService.updateItemInIndex(index, updatedItem, path);
+                            return DBService.storeDocuments([updatedItem]);
+                        }).then(function(){
+                            console.log('chmod')
+                            fs.chmodSync(path, fileMode(updatedItem));
+                            resolve(updatedItem);
+                        });
                     },reject);
                 });
             };
 
             var checkOutDocument = function(document, index, path){
                 return $q(function(resolve, reject){
+                    var updatedItem;
                     DocdokuAPIService.getClient().getApi().then(function(api){
                         api.apis.documents.checkOutDocument({
                             workspaceId:document.workspaceId,
                             documentId:document.documentMasterId,
                             documentVersion:document.version
                         }).then(function(response){
-                            RepositoryService.updateItemInIndex(index, response.obj, path);
-                            DBService.storeDocuments([response.obj]);
-                            return response.obj;
-                        }).then(resolve);
+                            updatedItem = response.obj;
+                            RepositoryService.updateItemInIndex(index, updatedItem, path);
+                            return DBService.storeDocuments([updatedItem]);
+                        }).then(function(){
+                            fs.chmodSync(path, fileMode(updatedItem));
+                            resolve(updatedItem);
+                        });
                     },reject);
                 });
             };
@@ -42,16 +54,20 @@
 
             var undoCheckOutDocument = function(document, index, path){
                 return $q(function(resolve, reject){
+                    var updatedItem;
                     DocdokuAPIService.getClient().getApi().then(function(api){
                         api.apis.documents.checkOutDocument({
                             workspaceId:document.workspaceId,
                             documentId:document.documentMasterId,
                             documentVersion:document.version
                         }).then(function(response){
-                            RepositoryService.updateItemInIndex(index, response.obj, path);
-                            DBService.storeDocuments([response.obj]);
-                            return response.obj;
-                        }).then(resolve);
+                            updatedItem = response.obj;
+                            RepositoryService.updateItemInIndex(index, updatedItem, path);
+                            return DBService.storeDocuments([updatedItem]);
+                        }).then(function(){
+                            fs.chmodSync(path, fileMode(updatedItem));
+                            resolve(updatedItem);
+                        });
                     },reject);
                 });
             };
@@ -59,47 +75,60 @@
 
             var checkInPart = function(part, index, path){
                 return $q(function(resolve, reject){
+                    var updatedItem;
                     DocdokuAPIService.getClient().getApi().then(function(api){
                         api.apis.part.checkIn({
                             workspaceId:part.workspaceId,
                             partNumber:part.number,
                             partVersion:part.version
                         }).then(function(response){
-                            RepositoryService.updateItemInIndex(index, response.obj, path);
-                            DBService.storeParts([response.obj]);
-                            return response.obj;
-                        }).then(resolve);
+                            updatedItem = response.obj;
+                            RepositoryService.updateItemInIndex(index, updatedItem, path);
+                            return DBService.storeParts([updatedItem]);
+                        }).then(function(){
+                            fs.chmodSync(path, fileMode(updatedItem));
+                            resolve(updatedItem);
+                        });
                     },reject);
                 });
             };
 
             var checkOutPart = function(part, index, path){
                 return $q(function(resolve, reject){
+                    var updatedItem;
                     DocdokuAPIService.getClient().getApi().then(function(api){
                         api.apis.part.checkOut({
                             workspaceId:part.workspaceId,
                             partNumber:part.number,
                             partVersion:part.version
                         }).then(function(response){
-                            RepositoryService.updateItemInIndex(index, response.obj, path);
-                            DBService.storeParts([response.obj]);
-                            return response.obj;
-                        }).then(resolve);
+                            updatedItem = response.obj;
+                            RepositoryService.updateItemInIndex(index, updatedItem, path);
+                            return DBService.storeParts([updatedItem]);
+                        }).then(function(){
+                            fs.chmodSync(path, fileMode(updatedItem));
+                            resolve(updatedItem);
+                        });
                     },reject);
                 });
             };
 
             var undoCheckOutPart = function(part, index, path){
                 return $q(function(resolve, reject){
+                    var updatedItem;
                     DocdokuAPIService.getClient().getApi().then(function(api){
                         api.apis.part.undoCheckOut({
                             workspaceId:part.workspaceId,
                             partNumber:part.number,
                             partVersion:part.version
                         }).then(function(response){
-                            RepositoryService.updateItemInIndex(index, response.obj, path);
-                            return DBService.storeParts([response.obj]);
-                        }).then(resolve);
+                            updatedItem = response.obj;
+                            RepositoryService.updateItemInIndex(index, updatedItem, path);
+                            return DBService.storeParts([updatedItem]);
+                        }).then(function(){
+                            fs.chmodSync(path, fileMode(updatedItem));
+                            resolve(updatedItem);
+                        });
                     },reject);
                 });
             };

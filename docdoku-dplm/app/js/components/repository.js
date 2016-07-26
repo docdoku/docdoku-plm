@@ -187,6 +187,24 @@
                 };
             };
 
+            this.getFilesWithModifications = function(indexFolder){
+                var index = getOrCreateIndex(indexFolder);
+                var keys = Object.keys(index);
+                var files = [];
+                keys.forEach(function(key){
+                    var path;
+                    if(key.endsWith('.id')){
+                        path = key.substr(0,key.length-3);
+                    }else if(key.endsWith('.number')){
+                        path = key.substr(0,key.length-7);
+                    }
+                    if( getIndexValue(index, path, 'hash') !== getIndexValue(index, path, 'digest')){
+                        files.push(path);
+                    }
+                });
+                return files;
+            };
+
             this.syncIndex = function(indexFolder){
 
                 var deferred = $q.defer();

@@ -232,13 +232,11 @@
             };
 
             var refreshDisplay = function(){
-                return;
                 angular.forEach($scope.displayedFiles,function(file){
-                    if(file.index){
-                        DBService.getItem(file.index).then(function(item){
-                            file.item = item;
-                        });
-                    }
+                    file.index = RepositoryService.getFileIndex(repositoryIndex, file.path);
+                    DBService.getItem(file.index).then(function(item){
+                        file.item = item;
+                    });
                 });
             };
 
