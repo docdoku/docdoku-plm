@@ -44,7 +44,7 @@ import java.util.stream.Stream;
 @RunWith(JUnit4.class)
 public class AllCommandTest {
 
-    String[] AUTH_ARGS = {"-u", "foo", "-p", "bar", "-h" , "localhost" , "-P", "8080" , "-F", "json"};
+    String[] AUTH_ARGS = {"-u", TestConfig.LOGIN , "-p", TestConfig.PASSWORD, "-h" , TestConfig.HOST, "-P", TestConfig.PORT, "-F", "json"};
 
     private final static Logger LOGGER = Logger.getLogger(AllCommandTest.class.getName());
     private final static URL documentFile = AllCommandTest.class.getClassLoader().getResource("com/docdoku/cli/commands/common/upload-document.txt");
@@ -108,7 +108,7 @@ public class AllCommandTest {
         reader.close();
 
         Assert.assertNotNull(account);
-        Assert.assertEquals(account.getString("login"), "foo");
+        Assert.assertEquals(account.getString("login"), TestConfig.LOGIN );
 
     }
 
@@ -121,7 +121,7 @@ public class AllCommandTest {
         String documentDescription = "DocDescription";
 
         String[] command = {"cr", "document"};
-        String[] args = {"-w" ,"foo", "-o", documentId, "-N", documentTitle, "-d", documentDescription, filePath};
+        String[] args = {"-w" , TestConfig.WORKSPACE , "-o", documentId, "-N", documentTitle, "-d", documentDescription, filePath};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -159,7 +159,7 @@ public class AllCommandTest {
         String partDescription = "PartDescription";
 
         String[] command = {"cr", "part"};
-        String[] args = {"-w" ,"foo", "-o", partNumber, "-N", partTitle, "-d", partDescription, filePath};
+        String[] args = {"-w" , TestConfig.WORKSPACE , "-o", partNumber, "-N", partTitle, "-d", partDescription, filePath};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -191,7 +191,7 @@ public class AllCommandTest {
     public void documentListTest(){
 
         String[] command = {"l", "document"};
-        String[] args = {"-w" ,"foo"};
+        String[] args = {"-w" , TestConfig.WORKSPACE};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -227,7 +227,7 @@ public class AllCommandTest {
     @Test
     public void partListTest(){
         String[] command = {"l", "part"};
-        String[] args = {"-w", "foo"};
+        String[] args = {"-w", TestConfig.WORKSPACE};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -247,7 +247,7 @@ public class AllCommandTest {
     public void partListCountTest(){
 
         String[] command = {"l", "part"};
-        String[] args = {"-w", "foo", "-c"};
+        String[] args = {"-w", TestConfig.WORKSPACE, "-c"};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -269,7 +269,7 @@ public class AllCommandTest {
         createPart();
 
         String[] command = {"l", "part"};
-        String[] args = {"-w" ,"foo", "-s", "0", "-m", "1" };
+        String[] args = {"-w" , TestConfig.WORKSPACE, "-s", "0", "-m", "1" };
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -292,7 +292,7 @@ public class AllCommandTest {
         String partNumber = createPart();
 
         String[] command = {"ci", "part"};
-        String[] args = {"-w" ,"foo", "-n", "-o", partNumber, "-r" , "A", "-m", "Checked in from junit tests"};
+        String[] args = {"-w" , TestConfig.WORKSPACE, "-n", "-o", partNumber, "-r" , "A", "-m", "Checked in from junit tests"};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -312,7 +312,7 @@ public class AllCommandTest {
         errContent.reset();
 
         String[] checkoutCommand = {"co", "part"};
-        String[] checkoutArgs = {"-w" ,"foo", "-n", "-o", partNumber, "-r" , "A"};
+        String[] checkoutArgs = {"-w" , TestConfig.WORKSPACE, "-n", "-o", partNumber, "-r" , "A"};
         MainCommand.main(getArgs(checkoutCommand, checkoutArgs));
 
         programOutput = outContent.toString();
@@ -332,7 +332,7 @@ public class AllCommandTest {
         errContent.reset();
 
         String[] undoCheckoutCommand = {"uco", "part"};
-        String[] undoCheckoutArgs = {"-w" ,"foo",  "-o", partNumber, "-r" , "A"};
+        String[] undoCheckoutArgs = {"-w" , TestConfig.WORKSPACE,  "-o", partNumber, "-r" , "A"};
         MainCommand.main(getArgs(undoCheckoutCommand, undoCheckoutArgs));
 
         programOutput = outContent.toString();
@@ -357,7 +357,7 @@ public class AllCommandTest {
         String documentId = createDocument();
 
         String[] command = {"ci", "document"};
-        String[] args = {"-w" ,"foo", "-n", "-o", documentId, "-r" , "A", "-m", "Checked in from junit tests"};
+        String[] args = {"-w" , TestConfig.WORKSPACE, "-n", "-o", documentId, "-r" , "A", "-m", "Checked in from junit tests"};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -377,7 +377,7 @@ public class AllCommandTest {
         errContent.reset();
 
         String[] checkoutCommand = {"co", "document"};
-        String[] checkoutArgs = {"-w" ,"foo", "-n", "-o", documentId, "-r" , "A"};
+        String[] checkoutArgs = {"-w" , TestConfig.WORKSPACE, "-n", "-o", documentId, "-r" , "A"};
         MainCommand.main(getArgs(checkoutCommand, checkoutArgs));
 
         programOutput = outContent.toString();
@@ -397,7 +397,7 @@ public class AllCommandTest {
         errContent.reset();
 
         String[] undoCheckoutCommand = {"uco", "document"};
-        String[] undoCheckoutArgs = {"-w" ,"foo",  "-o", documentId, "-r" , "A"};
+        String[] undoCheckoutArgs = {"-w" , TestConfig.WORKSPACE,  "-o", documentId, "-r" , "A"};
         MainCommand.main(getArgs(undoCheckoutCommand, undoCheckoutArgs));
 
         programOutput = outContent.toString();
@@ -423,7 +423,7 @@ public class AllCommandTest {
         File tmpDir = Files.createTempDirectory("docdoku-cli-").toFile();
 
         String[] command = {"get", "document"};
-        String[] args = {"-w" ,"foo", "-o", documentId, "-r" , "A", "-i", "1", tmpDir.getPath()};
+        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", documentId, "-r" , "A", "-i", "1", tmpDir.getPath()};
         MainCommand.main(getArgs(command, args));
 
 
@@ -449,7 +449,7 @@ public class AllCommandTest {
         File tmpDir = Files.createTempDirectory("docdoku-cli-").toFile();
 
         String[] command = {"get", "part"};
-        String[] args = {"-w" ,"foo", "-o", partNumber, "-r" , "A", "-i", "1", tmpDir.getPath()};
+        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", partNumber, "-r" , "A", "-i", "1", tmpDir.getPath()};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -475,7 +475,7 @@ public class AllCommandTest {
         File tmpDir = Files.createTempDirectory("docdoku-cli-").toFile();
 
         String[] command = {"put", "document"};
-        String[] args = {"-w" ,"foo", "-o", documentId, "-r" , "A", putDocumentFile.getPath()};
+        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", documentId, "-r" , "A", putDocumentFile.getPath()};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -515,7 +515,7 @@ public class AllCommandTest {
         File tmpDir = Files.createTempDirectory("docdoku-cli-").toFile();
 
         String[] command = {"put", "part"};
-        String[] args = {"-w" ,"foo", "-o", partNumber, "-r" , "A", putPartFile.getPath()};
+        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", partNumber, "-r" , "A", putPartFile.getPath()};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -553,7 +553,7 @@ public class AllCommandTest {
         String documentId = createDocument();
 
         String[] command = {"st", "document"};
-        String[] args = {"-w" ,"foo", "-o", documentId, "-r" , "A"};
+        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", documentId, "-r" , "A"};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -568,7 +568,7 @@ public class AllCommandTest {
 
         Assert.assertEquals(document.getString("id"),documentId);
         Assert.assertTrue(document.getBoolean("isCheckedOut"));
-        Assert.assertEquals(document.getString("workspace"), "foo");
+        Assert.assertEquals(document.getString("workspace"), TestConfig.WORKSPACE);
         Assert.assertEquals(document.getString("version"), "A");
         Assert.assertNotNull(document.getJsonArray("files"));
         Assert.assertTrue(document.getJsonArray("files").size() == 1);
@@ -582,7 +582,7 @@ public class AllCommandTest {
         String partNumber = createPart();
 
         String[] command = {"st", "part"};
-        String[] args = {"-w" ,"foo", "-o", partNumber, "-r" , "A"};
+        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", partNumber, "-r" , "A"};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -598,7 +598,7 @@ public class AllCommandTest {
         Assert.assertEquals(part.getString("partNumber"),partNumber);
         Assert.assertTrue(part.getBoolean("isCheckedOut"));
         Assert.assertTrue(part.getString("cadFileName").endsWith(FileHelper.getFileName(partFile.getPath())));
-        Assert.assertEquals(part.getString("workspace"), "foo");
+        Assert.assertEquals(part.getString("workspace"), TestConfig.WORKSPACE);
         Assert.assertEquals(part.getString("version"), "A");
 
     }
@@ -607,7 +607,7 @@ public class AllCommandTest {
     public void folderListTest(){
 
         String[] command = {"f"};
-        String[] args = {"-w" ,"foo"};
+        String[] args = {"-w" , TestConfig.WORKSPACE};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -634,7 +634,7 @@ public class AllCommandTest {
         String partNumber = createPart();
 
         String[] command = {"cv"};
-        String[] args = {"-w" ,"foo", "-o", partNumber, "-r", "A", "-i", "1"};
+        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", partNumber, "-r", "A", "-i", "1"};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -662,7 +662,7 @@ public class AllCommandTest {
         String partNumber = createPart();
 
         String[] command = {"bl"};
-        String[] args = {"-w" ,"foo", "-o", partNumber, "-r", "A"};
+        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", partNumber, "-r", "A"};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -711,7 +711,7 @@ public class AllCommandTest {
         String subFolder = folders.getString(0);
 
         String[] command = {"f"};
-        String[] args = {"-w" ,"foo", "-f", parent+subFolder};
+        String[] args = {"-w" , TestConfig.WORKSPACE, "-f", parent+subFolder};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -738,7 +738,7 @@ public class AllCommandTest {
         String partNumber = "Part-"+UUID.randomUUID().toString().substring(0,6);
 
         String[] command = {"cr", "part"};
-        String[] args = {"-w" ,"foo", "-o", partNumber, filePath};
+        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", partNumber, filePath};
         MainCommand.main(getArgs(command, args));
 
         outContent.reset();
@@ -754,7 +754,7 @@ public class AllCommandTest {
         String documentId = "Doc-"+UUID.randomUUID().toString().substring(0,6);
 
         String[] command = {"cr", "document"};
-        String[] args = {"-w" ,"foo", "-o", documentId, filePath};
+        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", documentId, filePath};
         MainCommand.main(getArgs(command, args));
 
         outContent.reset();
