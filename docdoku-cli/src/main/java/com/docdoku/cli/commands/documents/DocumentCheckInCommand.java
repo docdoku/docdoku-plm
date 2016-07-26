@@ -87,7 +87,7 @@ public class DocumentCheckInCommand extends BaseCommandLine {
                     FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
 
                     fh.uploadDocumentFile(getServerURL(), localFile, docIPK);
-                    localFile.setWritable(false);
+                    localFile.setWritable(false, false);
                 }
             }
 

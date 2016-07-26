@@ -94,7 +94,7 @@ public class PartCheckInCommand extends BaseCommandLine {
 
                     FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
                     fh.uploadNativeCADFile(getServerURL(), localFile, partIPK);
-                    localFile.setWritable(false);
+                    localFile.setWritable(false,false);
                 }
             }
         }

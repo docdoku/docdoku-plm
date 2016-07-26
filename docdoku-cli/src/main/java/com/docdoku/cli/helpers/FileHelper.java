@@ -293,7 +293,7 @@ public class FileHelper {
         }
         localFile.delete();
         String digest = downloadFile(localFile, FileHelper.getPartURL(serverURL, partIPK, fileName));
-        localFile.setWritable(writable);
+        localFile.setWritable(writable,false);
 
         saveMetadata(meta, partIPK, digest, localFile);
     }
@@ -346,7 +346,7 @@ public class FileHelper {
 
             localFile.delete();
             String digest = downloadFile(localFile, FileHelper.getDocumentURL(serverURL, docIPK, fileName));
-            localFile.setWritable(writable);
+            localFile.setWritable(writable, false);
 
             saveMetadata(meta, docIPK, digest, localFile);
 
