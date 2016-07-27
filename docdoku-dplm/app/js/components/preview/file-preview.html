@@ -1,0 +1,16 @@
+<div layout="column" layout-padding>
+
+    <div ng-if="is3dAvailable">
+        <div model-viewer="file"></div>
+    </div>
+    <div ng-if="noPreviewAvailable">
+        {{'NO_PREVIEW_AVAILABLE' | translate}}
+    </div>
+
+    <div>
+        <md-button ng-click="close()" aria-label="" class="md-raised md-default">
+            {{'CLOSE'|translate}}
+        </md-button>
+    </div>
+
+</div>

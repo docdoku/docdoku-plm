@@ -44,6 +44,7 @@
         'dplm.services.file-transfer',
         'dplm.services.db',
         'dplm.dialogs.download',
+        'dplm.dialogs.file-preview',
 
         'dplm.services.3d',
         'dplm.filters.fileshortname',

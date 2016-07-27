@@ -4,7 +4,7 @@
 
     angular.module('dplm.services.3d',[])
 
-        .factory('AvailableLoaders',function(){
+        .factory('Available3DLoaders',function(){
             return ['js','json','obj','stl','dae','ply','wrl','bin'];
         })
 
@@ -156,51 +156,31 @@
 
         })
 
-        .directive('modelViewer',function(ModelLoaderService,$filter){
+        .directive('modelViewer',function(ModelLoaderService,$window){
 
             return {
                 restrict: 'A',
                 scope: {
-                    'width': '=',
-                    'height': '=',
-                    'fillcontainer': '=',
-                    'filename':'='
+                    'filename':'=modelViewer'
                 },
 
                 link: function postLink(scope, element, attrs) {
 
                     var camera, scene, renderer,
-                        light, controls,
-                        contW = (scope.fillcontainer) ? element[0].clientWidth : scope.width,
-                        contH = scope.height,
-                        windowHalfX = contW / 2,
-                        windowHalfY = contH / 2,
-                        destroy = false,
-                        spin = document.createElement('i');
-
-                    spin.classList.add('fa');
-                    spin.classList.add('fa-spinner');
-                    spin.classList.add('fa-spin');
-
-                    element[0].appendChild(spin);
+                        light, controls, w, h,
+                        destroy = false;
 
                     var onWindowResize = function () {
-                        contW = (scope.fillcontainer) ?
-                            element[0].clientWidth : scope.width;
-                        contH = scope.height;
+                        w = $window.innerWidth * 0.75;
+                        h = $window.innerHeight * 0.60;
 
-                        windowHalfX = contW / 2;
-                        windowHalfY = contH / 2;
-
-                        camera.aspect = contW / contH;
+                        camera.aspect = w / h;
                         camera.updateProjectionMatrix();
 
-                        renderer.setSize( contW, contH );
+                        renderer.setSize( w, h );
                     };
 
                     var onMeshLoaded = function(mesh){
-
-                        element[0].removeChild(spin);
                         scene.add( mesh );
                         mesh.geometry.computeBoundingBox();
                         var center = mesh.geometry.boundingBox.center();
@@ -211,12 +191,11 @@
                     };
 
                     var onError = function(){
-                        element[0].removeChild(spin);
                         destroy = true;
                     };
 
                     var init = function () {
-                        camera = new THREE.PerspectiveCamera( 20, contW / contH, 1, 1000000 );
+                        camera = new THREE.PerspectiveCamera( 20, w / h, 1, 1000000 );
                         camera.position.z = 1800;
                         scene = new THREE.Scene();
                         light = new THREE.DirectionalLight( 0xffffff );
@@ -227,10 +206,11 @@
                         canvas.height = 128;
                         renderer = new THREE.WebGLRenderer( { antialias: true , alpha:true} );
                         renderer.setClearColor( 0x000000, 0 );
-                        renderer.setSize( contW, contH );
+                        renderer.setSize( w, h );
                         element[0].appendChild( renderer.domElement );
                         controls = new THREE.OrbitControls( camera,element[0]);
                         window.addEventListener( 'resize', onWindowResize, false );
+                        onWindowResize();
                     };
 
                     var animate = function () {
