@@ -30,6 +30,17 @@
                     <textarea id="inputBaselineDescription"></textarea>
                 </div>
             </div>
+
+            <div class="control-group">
+                <label class="control-label" for="inputBaselineType">{{i18n.TYPE}}</label>
+                <div class="controls">
+                    <select id="inputBaselineType">
+                        <option value="LATEST">{{i18n.HEAD_CHECKIN}}</option>
+                        <option value="RELEASED">{{i18n.HEAD_RELEASED}}</option>
+                    </select>
+                    <!--<i class="fa fa-spin fa-refresh loader"></i>-->
+                </div>
+            </div>
         </form>
     </div>
 

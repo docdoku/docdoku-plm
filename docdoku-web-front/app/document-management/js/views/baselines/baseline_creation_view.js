@@ -33,13 +33,15 @@ define([
             this.$notifications = this.$el.find('.notifications').first();
 			this.$inputBaselineName = this.$('#inputBaselineName');
 			this.$inputBaselineDescription = this.$('#inputBaselineDescription');
+            this.$inputBaselineType = this.$('#inputBaselineType');
 		},
 
 		onSubmitForm: function (e) {
             this.$notifications.empty();
             var data = {
                 name: this.$inputBaselineName.val(),
-                description: this.$inputBaselineDescription.val()
+                description: this.$inputBaselineDescription.val(),
+                type: this.$inputBaselineType.val()
             };
 
             this.collection.create(data, {
