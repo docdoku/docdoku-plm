@@ -21,6 +21,7 @@ define([
             var that = this;
             that.$el.html(Mustache.render(template, {i18n: App.config.i18n, model: that.model}));
             that.bindDomElements();
+            that.bindUserPopover();
             date.dateHelper(this.$('.date-popover'));
             that.openModal();
 
@@ -32,6 +33,10 @@ define([
             this.$notifications = this.$('.notifications');
             this.$modal = this.$('#baseline_detail_modal');
             this.$tabs = this.$('.nav-tabs li');
+        },
+
+        bindUserPopover: function () {
+            this.$('.author-popover').userPopover(this.model.getAuthorLogin(), App.config.i18n.BASELINE, 'left');
         },
 
         openModal: function () {

@@ -60,14 +60,6 @@ function(Baseline){
         },
         getPathToPathLinks: function () {
             return this.get('pathToPathLinks');
-        },
-
-        getAuthor:function(){
-            return this.get('author').name;
-        },
-
-        getAuthorLogin: function () {
-            return this.get('author').login;
         }
 	});
 

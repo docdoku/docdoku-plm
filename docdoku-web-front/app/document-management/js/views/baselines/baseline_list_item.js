@@ -76,7 +76,7 @@ define([
         },
 
         bindUserPopover: function () {
-            //this.$('.author-popover').userPopover(this.model.getAuthorLogin(), App.config.i18n.BASELINE, 'left');
+            this.$('.author-popover').userPopover(this.model.getAuthorLogin(), App.config.i18n.BASELINE, 'left');
         }
 
     });

@@ -36,6 +36,14 @@ define(['backbone', 'common-objects/utils/date'], function (Backbone, Date) {
                 App.config.i18n._DATE_FORMAT,
                 this.getCreationDate()
             );
+        },
+
+        getAuthor:function(){
+            return this.get('author').name;
+        },
+
+        getAuthorLogin: function () {
+            return this.get('author').login;
         }
 
     });

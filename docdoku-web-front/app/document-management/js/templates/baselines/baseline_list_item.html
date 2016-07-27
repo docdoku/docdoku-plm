@@ -2,15 +2,15 @@
 <!--<td>{{#model.hasObsoletePartRevisions}}<i title="{{i18n.CONTAINS_OBSOLETE_PARTS}}" class="fa fa-frown-o"></i>{{/model.hasObsoletePartRevisions}}</td>-->
 <td class="reference">{{model.getName}}</td>
 <td class="description">{{model.getDescription}}</td>
+<td>
+    {{#model.isReleased}}
+    {{i18n.HEAD_RELEASED}}
+    {{/model.isReleased}}
+    {{^model.isReleased}}
+    {{i18n.HEAD_CHECKIN}}
+    {{/model.isReleased}}
+</td>
 <td><a class="date-popover">{{model.getFormattedCreationDate}}</a></td>
-<!--<td>-->
-    <!--{{#model.isReleased}}-->
-    <!--{{i18n.HEAD_RELEASED}}-->
-    <!--{{/model.isReleased}}-->
-    <!--{{^model.isReleased}}-->
-    <!--{{i18n.HEAD_CHECKIN}}-->
-    <!--{{/model.isReleased}}-->
-<!--</td>-->
-<!--<td><a class="author-popover">{{model.getAuthor}}</a></td>-->
+<td><a class="author-popover">{{model.getAuthor}}</a></td>
 <!--<td><i class="fa fa-file-archive-o download-zip"></i></td>-->
 
