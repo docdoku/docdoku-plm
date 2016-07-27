@@ -96,7 +96,7 @@ public class DocumentBaselineManagerBeanTest {
         Assert.assertTrue("description".equals(documentBaseline.getDescription()));
         Assert.assertTrue(documentBaseline.hasBasedLinedFolder(workspace.getId()));
         Assert.assertTrue(documentBaseline.getBaselinedFolders().size() == 1);
-        Assert.assertTrue(documentBaseline.getWorkspace().getId().equals(workspace.getId()));
+        Assert.assertTrue(documentBaseline.getAuthor().getWorkspaceId().equals(workspace.getId()));
     }
 
 

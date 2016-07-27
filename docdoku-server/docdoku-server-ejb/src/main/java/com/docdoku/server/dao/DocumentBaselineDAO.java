@@ -54,9 +54,7 @@ public class DocumentBaselineDAO {
     }
 
     public List<DocumentBaseline> findBaselines(String workspaceId) {
-        return em.createQuery("SELECT b " +
-                            "FROM DocumentBaseline b " +
-                            "WHERE b.workspace.id = :workspaceId ",DocumentBaseline.class)
+        return em.createQuery("SELECT b FROM DocumentBaseline b WHERE b.author.workspace.id = :workspaceId", DocumentBaseline.class)
                 .setParameter("workspaceId",workspaceId)
                 .getResultList();
     }

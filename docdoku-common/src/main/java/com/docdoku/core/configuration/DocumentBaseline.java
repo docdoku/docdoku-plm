@@ -19,6 +19,7 @@
  */
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevisionKey;
@@ -45,14 +46,10 @@ public class DocumentBaseline implements Serializable {
     @Id
     private int id;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumns({
-            @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "ID")
-    })
-    private Workspace workspace;
-
     @Column(nullable = false)
     private String name;
+
+    private BaselineType type = BaselineType.LATEST;
 
     @Lob
     private String description;
@@ -63,12 +60,23 @@ public class DocumentBaseline implements Serializable {
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
     private FolderCollection folderCollection =new FolderCollection();
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumns({
+            @JoinColumn(name = "AUTHOR_LOGIN", referencedColumnName = "LOGIN"),
+            @JoinColumn(name = "AUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
+    })
+    private User author;
+
+    public enum BaselineType {
+        LATEST, RELEASED
+    }
 
     public DocumentBaseline() {
     }
-    public DocumentBaseline(Workspace workspace, String name, String description) {
-        this.workspace = workspace;
+    public DocumentBaseline(User author, String name, BaselineType type, String description) {
+        this.author = author;
         this.name = name;
+        this.type = type;
         this.description = description;
         this.creationDate = new Date();
     }
@@ -118,6 +126,14 @@ public class DocumentBaseline implements Serializable {
         this.name = name;
     }
 
+    public BaselineType getType() {
+        return type;
+    }
+
+    public void setType(BaselineType type) {
+        this.type = type;
+    }
+
     public Date getCreationDate() {
         return (creationDate!=null) ? (Date) creationDate.clone(): null;
     }
@@ -136,11 +152,12 @@ public class DocumentBaseline implements Serializable {
         return folderCollection;
     }
 
-    public Workspace getWorkspace() {
-        return workspace;
+    public User getAuthor() {
+        return author;
     }
-    public void setWorkspace(Workspace workspace) {
-        this.workspace = workspace;
+
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     public int getId() {

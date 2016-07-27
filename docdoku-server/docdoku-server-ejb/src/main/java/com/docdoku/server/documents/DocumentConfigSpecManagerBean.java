@@ -80,7 +80,7 @@ public class DocumentConfigSpecManagerBean implements IDocumentConfigSpecManager
     @Override
     public DocumentConfigSpec getConfigSpecForBaseline(int baselineId) throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
         DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
-        User user = userManager.checkWorkspaceReadAccess(documentBaseline.getWorkspace().getId());
+        User user = userManager.checkWorkspaceReadAccess(documentBaseline.getAuthor().getWorkspaceId());
         return new BaselineDocumentConfigSpec(documentBaseline,user);
     }
 

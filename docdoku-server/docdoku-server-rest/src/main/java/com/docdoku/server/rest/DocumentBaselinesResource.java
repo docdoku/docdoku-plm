@@ -86,12 +86,10 @@ public class DocumentBaselinesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBaselines(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
-        List<DocumentBaseline> documentBaselines;
-        documentBaselines = documentBaselineService.getBaselines(workspaceId);
+        List<DocumentBaseline> documentBaselines = documentBaselineService.getBaselines(workspaceId);
         List<DocumentBaselineDTO> baselinesDTO = new ArrayList<>();
         for (DocumentBaseline documentBaseline : documentBaselines) {
             DocumentBaselineDTO documentBaselineDTO = mapper.map(documentBaseline, DocumentBaselineDTO.class);
-            documentBaselineDTO.setWorkspaceId(workspaceId);
             baselinesDTO.add(documentBaselineDTO);
         }
         return Response.ok(new GenericEntity<List<DocumentBaselineDTO>>((List<DocumentBaselineDTO>) baselinesDTO) {

@@ -20,7 +20,6 @@
 package com.docdoku.server.documents;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.BaselinedFolder;
 import com.docdoku.core.configuration.DocumentBaseline;
 import com.docdoku.core.configuration.FolderCollection;
@@ -36,7 +35,6 @@ import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.DocumentBaselineDAO;
 import com.docdoku.server.dao.DocumentRevisionDAO;
 import com.docdoku.server.dao.FolderDAO;
-import com.docdoku.server.dao.WorkspaceDAO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -68,8 +66,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
     @Override
     public DocumentBaseline createBaseline(String workspaceId, String name, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FolderNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
-        Workspace workspace = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(workspaceId);
-        DocumentBaseline baseline = new DocumentBaseline(workspace,name,description);
+        DocumentBaseline baseline = new DocumentBaseline(user, name, DocumentBaseline.BaselineType.LATEST, description);
         new DocumentBaselineDAO(em, new Locale(user.getLanguage())).createBaseline(baseline);
         snapshotAllFolders(baseline,workspaceId);
         snapshotAllDocuments(baseline,workspaceId);
@@ -88,7 +85,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
     @Override
     public void deleteBaseline(int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, BaselineNotFoundException, UserNotActiveException {
         DocumentBaseline documentBaseline = getBaseline(baselineId);
-        User user = userManager.checkWorkspaceWriteAccess(documentBaseline.getWorkspace().getId());
+        User user = userManager.checkWorkspaceWriteAccess(documentBaseline.getAuthor().getWorkspaceId());
         new DocumentBaselineDAO(em, new Locale(user.getLanguage())).deleteBaseline(documentBaseline);
     }
 
@@ -96,7 +93,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
     @Override
     public DocumentBaseline getBaseline(int baselineId) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         DocumentBaseline documentBaseline = new DocumentBaselineDAO(em).loadBaseline(baselineId);
-        userManager.checkWorkspaceReadAccess(documentBaseline.getWorkspace().getId());
+        userManager.checkWorkspaceReadAccess(documentBaseline.getAuthor().getWorkspaceId());
         return documentBaseline;
     }
 
