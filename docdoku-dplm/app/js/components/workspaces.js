@@ -18,12 +18,10 @@
                             documentId:document.documentMasterId,
                             documentVersion:document.version
                         }).then(function(response){
-                            console.log('response')
                             updatedItem = response.obj;
                             RepositoryService.updateItemInIndex(index, updatedItem, path);
                             return DBService.storeDocuments([updatedItem]);
                         }).then(function(){
-                            console.log('chmod')
                             fs.chmodSync(path, fileMode(updatedItem));
                             resolve(updatedItem);
                         });
@@ -154,27 +152,35 @@
 
             this.createPartInWorkspace = function(part){
                 return $q(function(resolve, reject){
+                    var createdPart;
                     DocdokuAPIService.getClient().getApi().then(function(api){
                         api.parts.createNewPart({
                             workspaceId: part.workspaceId,
                             body:part
                         }).then(function(response){
-                            resolve(response.obj);
-                        },reject);
+                            createdPart = response.obj;
+                            return DBService.storeParts([createdPart]);
+                        },reject).then(function(){
+                            resolve(createdPart);
+                        });
                     },reject);
                 });
             };
 
             this.createDocumentInWorkspace = function(document){
                 return $q(function(resolve, reject){
+                    var createdDocument;
                     DocdokuAPIService.getClient().getApi().then(function(api){
                         api.apis.folders.createDocumentMasterInFolder({
                             workspaceId:document.workspaceId,
                             folderId:document.workspaceId,
                             body:document
                         }).then(function(response){
-                            resolve(response.obj);
-                        },reject);
+                            createdDocument = response.obj;
+                            return DBService.storeDocuments([createdDocument]);
+                        },reject).then(function(){
+                            resolve(createdDocument);
+                        });
                     },reject);
                 });
             };

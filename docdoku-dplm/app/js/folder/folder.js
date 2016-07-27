@@ -234,9 +234,11 @@
             var refreshDisplay = function(){
                 angular.forEach($scope.displayedFiles,function(file){
                     file.index = RepositoryService.getFileIndex(repositoryIndex, file.path);
-                    DBService.getItem(file.index).then(function(item){
-                        file.item = item;
-                    });
+                    if(file.index){
+                        DBService.getItem(file.index).then(function(item){
+                            file.item = item;
+                        });
+                    }
                 });
             };
 
@@ -298,7 +300,7 @@
         })
 
         .controller('DocumentCreationCtrl', function ($scope, $mdDialog,
-                                                      WorkspaceService, UploadService, RepositoryService,
+                                                      WorkspaceService, UploadService, RepositoryService, DBService,
                                                       file, folderPath) {
 
             $scope.file = file;
@@ -319,14 +321,18 @@
                 }).then(function () {
                     var newIndex = RepositoryService.saveDocumentToIndex(folderPath, file.path, $scope.document);
                     file.index = RepositoryService.getFileIndex(newIndex, file.path);
-                    $mdDialog.hide();
+                    DBService.getItem(file.index).then(function(item){
+                        file.item = item;
+                        $mdDialog.hide();
+                    });
                 }).catch(onError);
             };
 
         })
 
         .controller('PartCreationCtrl', function ($scope, $mdDialog,
-                                                  WorkspaceService, UploadService, RepositoryService, file, folderPath) {
+                                                  WorkspaceService, UploadService, RepositoryService, DBService,
+                                                  file, folderPath) {
 
             $scope.file = file;
             $scope.workspaces = WorkspaceService.workspaces;
@@ -351,9 +357,11 @@
                 }).then(function () {
                     var newIndex = RepositoryService.savePartToIndex(folderPath, file.path, $scope.part);
                     file.index = RepositoryService.getFileIndex(newIndex, file.path);
-                    $mdDialog.hide();
-                })
-                    .catch(onError);
+                    DBService.getItem(file.index).then(function(item){
+                        file.item = item;
+                        $mdDialog.hide();
+                    });
+                }).catch(onError);
             };
         })
 
