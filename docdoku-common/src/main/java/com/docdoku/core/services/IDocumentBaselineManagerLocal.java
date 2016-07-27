@@ -35,6 +35,7 @@ public interface IDocumentBaselineManagerLocal {
      * Create a new {@link com.docdoku.core.configuration.DocumentBaseline} to snap the latest configuration of folder and documents
      * @param workspaceId The id of the workspace to snap
      * @param name The name of the new baseline
+     * @param type The type of the new baseline (latest or release)
      * @param description The description of the new baseline
      * @return The new {@link com.docdoku.core.configuration.DocumentBaseline}
      * @throws com.docdoku.core.exceptions.UserNotFoundException If no user is connected to this workspace
@@ -44,7 +45,7 @@ public interface IDocumentBaselineManagerLocal {
      * @throws com.docdoku.core.exceptions.UserNotActiveException If the connected user is disable
      * @throws com.docdoku.core.exceptions.DocumentRevisionNotFoundException If a document revision of the configuration cann't be find
      */
-    DocumentBaseline createBaseline(String workspaceId, String name, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FolderNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException;
+    DocumentBaseline createBaseline(String workspaceId, String name, DocumentBaseline.BaselineType type, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FolderNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException;
     /**
      * Get all {@link com.docdoku.core.configuration.DocumentBaseline}s of a specific workspace
      * @param workspaceId Id of the specific workspace

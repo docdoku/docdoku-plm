@@ -64,9 +64,9 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentBaseline createBaseline(String workspaceId, String name, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FolderNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException {
+    public DocumentBaseline createBaseline(String workspaceId, String name, DocumentBaseline.BaselineType type, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FolderNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
-        DocumentBaseline baseline = new DocumentBaseline(user, name, DocumentBaseline.BaselineType.LATEST, description);
+        DocumentBaseline baseline = new DocumentBaseline(user, name, type, description);
         new DocumentBaselineDAO(em, new Locale(user.getLanguage())).createBaseline(baseline);
         snapshotAllFolders(baseline,workspaceId);
         snapshotAllDocuments(baseline,workspaceId);

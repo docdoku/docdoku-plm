@@ -109,7 +109,7 @@ public class DocumentBaselinesResource {
     public Response createBaseline(@PathParam("workspaceId") String workspaceId,
                                    @ApiParam(required = true, value = "Document baseline to create") DocumentBaselineDTO documentBaselineDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
-        DocumentBaseline baseline = documentBaselineService.createBaseline(workspaceId, documentBaselineDTO.getName(), documentBaselineDTO.getDescription());
+        DocumentBaseline baseline = documentBaselineService.createBaseline(workspaceId, documentBaselineDTO.getName(), documentBaselineDTO.getType(), documentBaselineDTO.getDescription());
         DocumentBaselineDTO baselineDTO = mapper.map(baseline, DocumentBaselineDTO.class);
         return prepareCreateResponse(baselineDTO);
     }

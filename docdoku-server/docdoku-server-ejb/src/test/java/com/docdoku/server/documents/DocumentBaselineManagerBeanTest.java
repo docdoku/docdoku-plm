@@ -89,7 +89,7 @@ public class DocumentBaselineManagerBeanTest {
         Mockito.when(documentService.getAllDocumentsInWorkspace(workspace.getId())).thenReturn(new DocumentRevision[0]);
 
         //when
-        DocumentBaseline documentBaseline= docBaselineManagerBean.createBaseline(workspace.getId(), "name", "description");
+        DocumentBaseline documentBaseline= docBaselineManagerBean.createBaseline(workspace.getId(), "name", DocumentBaseline.BaselineType.RELEASED, "description");
 
         //Then
         //TODO should test documentBaseline is null after code update
@@ -145,7 +145,7 @@ public class DocumentBaselineManagerBeanTest {
         Mockito.when(userManager.checkWorkspaceReadAccess(workspace.getId())).thenReturn(user);
 
         //when
-        DocumentBaseline documentBaseline= docBaselineManagerBean.createBaseline(workspace.getId(), "name", "description");
+        DocumentBaseline documentBaseline= docBaselineManagerBean.createBaseline(workspace.getId(), "name", DocumentBaseline.BaselineType.RELEASED, "description");
 
         //Then
         Assert.assertTrue(documentBaseline != null);
