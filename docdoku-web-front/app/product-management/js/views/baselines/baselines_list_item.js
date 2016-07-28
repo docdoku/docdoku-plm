@@ -78,7 +78,7 @@ define([
         openDetailView: function () {
             var model = this.model;
             model.fetch().success(function () {
-                new BaselineDetailView({model: model, isForBaseline: true}).render();
+                new BaselineDetailView({model: model}).render();
             });
         },
 
