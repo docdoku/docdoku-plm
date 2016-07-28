@@ -117,10 +117,8 @@ angular.module('dplm.menu', [])
 
     .directive('menuToggle', function($timeout, $mdUtil) {
         return {
-
             templateUrl: 'js/menu/menu-toggle.html',
             link: function($scope, $element) {
-
                 $mdUtil.nextTick(function() {
                     $scope.$watch(
                         function () {

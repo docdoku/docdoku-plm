@@ -28,6 +28,10 @@
                             controller:'FilePreviewCtrl'
                         });
                     });
+
+                    scope.$on('$destroy',function(){
+                        element.off('click');
+                    });
                 }
             };
         })

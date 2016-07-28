@@ -187,7 +187,7 @@
                 };
             };
 
-            this.getFilesWithModifications = function(indexFolder){
+            this.getLocalChanges = function(indexFolder){
                 var index = getOrCreateIndex(indexFolder);
                 var keys = Object.keys(index);
                 var files = [];
@@ -227,10 +227,10 @@
                 var total = documents.length+parts.length;
 
                 var notify = function(){
-                    deferred.notify({total:total,progress:++progress});
+                    deferred.notify({total:total,progress:++progress, folder:indexFolder});
                 };
 
-                deferred.notify({total:total,progress:0});
+                deferred.notify({total:total,progress:0, folder:indexFolder});
 
                 var chain = $q.when();
 
@@ -263,7 +263,7 @@
                     return chain;
 
                 }).then(function(){
-                    FolderService.getFolder({path:indexFolder}).lastSync = Date.now();
+                    FolderService.getFolder({path:indexFolder}).lastSync = new Date();
                     FolderService.save();
                     writeIndex(indexPath,index);
                     deferred.resolve();
@@ -271,6 +271,23 @@
 
                 return promise;
 
+            };
+
+            this.syncIndexes = function(indexFolders){
+
+                var deferred = $q.defer();
+                var promise = deferred.promise;
+                var chain = $q.when();
+
+                angular.forEach(indexFolders,function(folderPath){
+                    chain = chain.then(function(){
+                        return _this.syncIndex(folderPath);
+                    });
+                });
+
+                chain.then(deferred.resolve,null,deferred.notify);
+
+                return promise;
             };
 
         })

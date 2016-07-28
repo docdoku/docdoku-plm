@@ -37,7 +37,6 @@
         'dplm.services.workspaces',
         'dplm.services.confirm',
         'dplm.services.prompt',
-        'dplm.services.output',
         'dplm.services.auth',
         'dplm.services.api',
         'dplm.services.repository',
@@ -101,20 +100,13 @@
             $scope.user = AuthService.user;
             $scope.configuration = ConfigurationService.configuration;
             $scope.workspaces = WorkspaceService.workspaces;
+            $scope.folders = FolderService.folders;
 
             $scope.$watch('user.login',function(login){
                 if(!login){
                     showLoginPage();
                 }
             });
-
-            $scope.syncFolders = function(){
-                FolderService.syncFolders().then(function(foldersFound){
-                    $scope.foldersFound = foldersFound;
-                });
-            };
-
-            $scope.folders = FolderService.folders;
 
             $scope.logout = function(){
                 AuthService.logout();

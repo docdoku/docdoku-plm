@@ -1,68 +1,186 @@
 <div layout-fill layout="column">
 
     <md-toolbar md-scroll-shrink class="md-whiteframe-6dp">
-        <div class="md-toolbar-tools" layout="row" layout-align="start center">
 
-            <md-button class="md-icon-button" hide-gt-sm aria-label="{{'MENU' | translate}}" ng-click="openMenu()">
-                <i class="material-icons">menu</i>
-            </md-button>
-
-            <i class="material-icons">home</i>
-
-            <h2>
-              <span>
+        <div class="md-toolbar-tools" layout="row" layout-align="space-between center">
+            <div layout="row" layout-align="start center">
+                <md-button class="md-icon-button" hide-gt-sm aria-label="{{'MENU' | translate}}" ng-click="openMenu()">
+                    <i class="material-icons">menu</i>
+                </md-button>
+                <i class="material-icons">home</i>
+                <h2>
+                  <span>
                     {{'HOME' | translate}}
                 </span>
-            </h2>
+                </h2>
+            </div>
         </div>
+
     </md-toolbar>
 
-    <md-content layout-padding flex>
+    <md-content>
 
-        {{modifiedFiles}}
+        <div layout="row">
+            <md-menu-bar>
+                <md-menu>
+                    <button ng-click="$mdOpenMenu()">
+                        {{'SYNC' | translate}}
+                    </button>
+                    <md-menu-content>
+                        <md-menu-item>
+                            <md-button aria-label="{{'SYNCHRONIZE_WORKSPACES'|translate}}" ng-click="syncWorkspaces()">
+                                <i class="material-icons">cloud</i>
+                                {{'SYNC_WORKSPACES'|translate}}
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button aria-label="{{'SYNCHRONIZE_INDEXES'|translate}}" ng-click="syncIndexes()">
+                                <i class="material-icons">folder_open</i>
+                                {{'SYNC_INDEXES'|translate}}
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-divider></md-menu-divider>
+                        <md-menu-item>
+                            <md-button aria-label="{{'SYNC_ALL'|translate}}" ng-click="syncAll()">
+                                <i class="material-icons">cached</i>
+                                {{'SYNC_ALL'|translate}}
+                            </md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+            </md-menu-bar>
+        </div>
 
-        <h3>
-            <i class="material-icons favorite">star</i>
-            {{'FAVORITE_FOLDERS' | translate}}
-        </h3>
 
-        <md-list>
-            <md-list-item ng-if="!folders.length">
-                    {{'NO_FOLDERS' | translate}}
-            </md-list-item>
+        <div  ng-show="status"
+             layout="column" layout-align="center center" layout-fill>
 
-            <md-list-item ng-repeat="folder in folders | filter:{favorite:true}" ng-controller="FolderDetailsController">
+            <div ng-if="status.workspace">
+                <h2>{{'MENU_WORKSPACES'|translate}}</h2>
+                <h3>{{status.workspace}} {{status.done}} / {{ status.total}}</h3>
+            </div>
 
-                <md-button aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">
-                    <i class="material-icons">folder_open</i>
-                    {{folder.path | fileshortname}}
-                </md-button>
-                {{details.count}} {{'FILES' | translate }}
+            <div ng-if="status.folder">
+                <h2>{{'MENU_FOLDERS'|translate}}</h2>
+                <h3>{{status.folder | fileshortname}} {{status.progress}} / {{ status.total}}</h3>
+            </div>
 
-                <md-divider ng-if="!$last"></md-divider>
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
 
-            </md-list-item>
-        </md-list>
 
-        <h3>
-            <i class="material-icons favorite">star</i>
-            {{'LAST_WORKSPACES_VISITED' | translate}}
-        </h3>
+        </div>
 
-        <md-list>
-            <md-list-item ng-if="!workspaces.length">
-                    {{'NOTHING_TO_SHOW' | translate}}
-            </md-list-item>
-            <md-list-item ng-repeat="workspace in workspaces">
 
-                <md-button aria-label="" href="#/workspace/{{workspace}}" class="md-primary">
-                    <i class="material-icons">cloud</i>
-                    {{workspace}}
-                </md-button>
+        <div layout="row" ng-show="!status">
 
-                <md-divider ng-if="!$last"></md-divider>
-            </md-list-item>
-        </md-list>
+            <div layout="column" flex="40">
+
+                <md-card>
+                    <md-card-header>
+                        <md-card-avatar>
+                            <md-icon class=material-icons">mode_edit</md-icon>
+                        </md-card-avatar>
+                        <md-card-header-text>
+                            <span class="md-title">{{'LOCAL_CHANGES' | translate}}</span>
+                            <span class="md-subhead">{{'MENU_FOLDERS'|translate}}</span>
+                        </md-card-header-text>
+                    </md-card-header>
+                    <md-card-content>
+                        <div ng-repeat="folder in folders" folder-local-changes="folder"></div>
+                    </md-card-content>
+                </md-card>
+
+                <md-card>
+                    <md-card-header>
+                        <md-card-avatar>
+                            <md-icon class=material-icons">star</md-icon>
+                        </md-card-avatar>
+                        <md-card-header-text>
+                            <span class="md-title">{{'FAVORITE_FOLDERS' | translate}}</span>
+                            <span class="md-subhead">{{'MENU_FOLDERS'|translate}}</span>
+                        </md-card-header-text>
+                    </md-card-header>
+                    <md-card-content>
+
+                        <div ng-if="!folders.length">
+                            {{'NO_FOLDERS' | translate}}
+                        </div>
+
+                        <div ng-repeat="folder in folders | filter:{favorite:true}"
+                             layout="row"  layout-margin folder="folder"></div>
+
+                    </md-card-content>
+                </md-card>
+
+                <md-card>
+                    <md-card-header>
+                        <md-card-avatar>
+                            <md-icon class=material-icons">cloud</md-icon>
+                        </md-card-avatar>
+                        <md-card-header-text>
+                            <span class="md-title">{{'MENU_WORKSPACES' | translate}}</span>
+                            <span class="md-subhead">{{configuration.login}}@{{configuration.host}}</span>
+                        </md-card-header-text>
+                    </md-card-header>
+                    <md-card-content>
+                        <div ng-repeat="workspace in workspaces"
+                             layout="row" layout-margin>
+
+                            <md-button class="md-icon-button md-primary" aria-label="{{'SYNC'|translate}}" ng-click="syncWorkspace(workspace)">
+                                <i class="material-icons">cached</i>
+                            </md-button>
+
+                            <div layout="column">
+                                <a aria-label="" href="#/workspace/{{workspace}}" class="md-primary">
+                                    {{workspace}}
+                                </a>
+                                <span>{{'LAST_SYNC'}} {{todo}}</span>
+                            </div>
+
+                        </div>
+                    </md-card-content>
+                </md-card>
+
+            </div>
+
+            <div layout="column" flex>
+
+                <md-card>
+                    <md-card-header>
+                        <md-card-avatar>
+                            <md-icon class=material-icons">event</md-icon>
+                        </md-card-avatar>
+                        <md-card-header-text>
+                            <span class="md-title">{{'LATEST_EVENTS' | translate}}</span>
+                            <span class="md-subhead">{{configuration.host}}</span>
+                        </md-card-header-text>
+                    </md-card-header>
+                    <md-card-content>
+                        <div ng-repeat="workspace in workspaces" workspace-latest-events="workspace"></div>
+                    </md-card-content>
+                </md-card>
+
+
+                <!--TODO : my history-->
+                <!--
+                <md-card>
+                    <md-card-header>
+                        <md-card-avatar>
+                            <md-icon class=material-icons">history</md-icon>
+                        </md-card-avatar>
+                        <md-card-header-text>
+                            <span class="md-title">{{'HISTORY' | translate}}</span>
+                            <span class="md-subhead">{{'MY_ACTIONS'|translate}}</span>
+                        </md-card-header-text>
+                    </md-card-header>
+                    <md-card-content ng-controller="HistoryCtrl">
+                        <div>{{history}}</div>
+                    </md-card-content>
+                </md-card>-->
+
+            </div>
+        </div>
+
     </md-content>
 
 </div>

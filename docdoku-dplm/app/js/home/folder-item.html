@@ -1,0 +1,11 @@
+<md-button class="md-icon-button md-primary" aria-label="{{'SYNC'|translate}}" href="#/folder/{{folder.uuid}}">
+    <i class="material-icons">folder_open</i>
+</md-button>
+
+<div layout="column">
+    <a aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">
+        {{folder.path | fileshortname}}
+    </a>
+    <div ng-if="filesCount >= 0">{{filesCount}} {{'FILES' | translate }}</div>
+</div>
+<span ng-if="latestAction">{{'LATEST_ACTION'}} {{latestAction | localDateTimeAgo}}</span>

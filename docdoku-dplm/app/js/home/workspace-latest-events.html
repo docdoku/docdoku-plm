@@ -1,0 +1,59 @@
+<div ng-if="events.length && !loading">
+    <h4>{{workspace}}</h4>
+
+    <div layout-margin>
+        <div layout="column">
+            <div ng-repeat="item in events" layout="column">
+
+             <span ng-if="item.lastIteration.checkInDate">
+                <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                    {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
+                </a>
+                {{'CHECKED_IN_BY'|translate}}
+                 <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                     {{item.lastIteration.author.name}}
+                 </a>
+                {{ item.lastIteration.checkInDate | utcDateTimeAgo}}
+            </span>
+
+            <span ng-if="item.lastIteration.modificationDate">
+                <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                    {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
+                </a>
+               {{'MODIFIED_BY'|translate}}
+                  <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                      {{item.lastIteration.author.name}}
+                  </a>
+                {{ item.lastIteration.modificationDate | utcDateTimeAgo}}
+            </span>
+
+            <span ng-if="item.checkOutDate">
+                <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                    {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
+                </a>
+                {{'CHECKED_OUT_BY'|translate}}
+                <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                    {{item.checkOutUser.name}}
+                </a>
+                {{ item.checkOutDate | utcDateTimeAgo}}
+            </span>
+
+
+            <span ng-if="item.lastIteration.creationDate && !item.lastIteration.modificationDate && !item.lastIteration.checkInDate && !item.checkOutDate ">
+
+                 <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                     {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
+                 </a>
+                {{'CREATED_BY'|translate}}
+                   <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                       {{item.lastIteration.author.name}}
+                   </a>
+                {{ item.lastIteration.creationDate | utcDateTimeAgo}}
+            </span>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<md-progress-circular ng-disabled="!loading" class="md-hue-2" md-diameter="20px"></md-progress-circular>

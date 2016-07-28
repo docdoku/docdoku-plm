@@ -113,10 +113,25 @@
             $scope.totalDocuments = 0;
             $scope.totalParts = 0;
 
-            $scope.view = { type : 'documents', include:'js/workspace/documents.html'};
+            var Types = $scope.viewTypes = {
 
-            $scope.$watch('view.type', function(type){
-                $scope.view.include = 'js/workspace/'+type+'.html';
+                DOCUMENTS:{
+                    code : 'DOCUMENT',
+                    include:'js/workspace/documents.html',
+                    searchLabel:translate('SEARCH_IN_DOCUMENTS')
+                },
+
+                PARTS:{
+                    code : 'PARTS',
+                    include:'js/workspace/parts.html',
+                    searchLabel:translate('SEARCH_IN_PARTS')
+                }
+            };
+
+            $scope.view = Types.DOCUMENTS ;
+
+            $scope.$watch('view', function(type){
+                $scope.view = type;
                 $scope.search();
             });
 
@@ -161,9 +176,9 @@
             };
 
             $scope.search = function(){
-                var items = $scope.view.type === 'documents' ? allDocuments: allParts;
-                var filter = $scope.view.type === 'documents' ? documentFilter: partFilter;
-                var map = $scope.view.type === 'documents' ? documentMap: partMap;
+                var items = $scope.view === Types.DOCUMENTS ? allDocuments: allParts;
+                var filter = $scope.view === Types.DOCUMENTS ? documentFilter: partFilter;
+                var map = $scope.view === Types.DOCUMENTS ? documentMap: partMap;
                 filteredItems = items.filter(filter).map(map);
                 $scope.filteredItemsCount = filteredItems.length;
                 $scope.paginate(1,10);

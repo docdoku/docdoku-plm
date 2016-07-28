@@ -5,12 +5,12 @@
             <th md-column></th>
             <th md-column><span>{{'NUMBER'|translate}}</span></th>
             <th md-column><span>{{'NATIVE_CAD_FILE'|translate}}</span></th>
+            <th md-column><span>{{'LATEST_EVENT'|translate}}</span></th>
         </tr>
         </thead>
         <tbody md-body>
         <tr md-row md-select="item" md-select-id="partKey" ng-repeat="item in displayedItems">
             <td md-cell>
-
                 <i ng-if="item.releaseAuthor && !item.obsoleteAuthor" class="material-icons">check</i>
                 <i ng-if="item.obsoleteAuthor" class="material-icons">broken_image</i>
                 <i ng-if="!item.obsoleteAuthor && !item.releaseAuthor && !item.checkOutUser" class="material-icons">remove_red_eye</i>
@@ -24,6 +24,25 @@
                 <a ng-if="item.lastIteration.nativeCADFile" href="" ng-click="previewFile(item.lastIteration.nativeCADFile)">
                     {{ item.lastIteration.nativeCADFile | fileshortname }}
                 </a>
+            </td>
+            <td md-cell>
+
+                    <span ng-if="item.lastIteration.checkInDate">
+                        {{'CHECKED_IN_BY'|translate}}
+                         <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                             {{item.lastIteration.author.name}}
+                         </a>
+                        {{ item.lastIteration.checkInDate | utcDateTimeAgo}}
+                    </span>
+
+                    <span ng-if="item.checkOutDate">
+                        {{'CHECKED_OUT_BY'|translate}}
+                        <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                            {{item.checkOutUser.name}}
+                        </a>
+                        {{ item.checkOutDate | utcDateTimeAgo}}
+                    </span>
+
             </td>
         </tr>
         </tbody>

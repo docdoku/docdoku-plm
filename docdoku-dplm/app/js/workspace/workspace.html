@@ -44,19 +44,6 @@
                 </md-menu>
                 <md-menu>
                     <button ng-click="$mdOpenMenu()">
-                        {{'VIEW' | translate}}
-                    </button>
-                    <md-menu-content>
-                        <md-menu-item type="radio" ng-model="view.type" value="documents">
-                            {{'DOCUMENTS' | translate}} ({{totalDocuments}})
-                        </md-menu-item>
-                        <md-menu-item type="radio" ng-model="view.type" value="parts">
-                            {{'PARTS' | translate}} ({{totalParts}})
-                        </md-menu-item>
-                    </md-menu-content>
-                </md-menu>
-                <md-menu>
-                    <button ng-click="$mdOpenMenu()">
                         {{'FILTERS' | translate}}
                     </button>
                     <md-menu-content>
@@ -139,11 +126,21 @@
             </md-table-pagination>
         </div>
 
-        <div layout="column">
-            <md-input-container md-no-float class="md-block search-bar">
-                <input placeholder="{{'SEARCH'|translate}}" type="text" ng-change="search()" ng-model="pattern" />
+        <div layout="row">
+
+            <md-button class="md-icon-button md-primary" ng-class="{'md-accent':view === viewTypes.DOCUMENTS}" ng-click="view = viewTypes.DOCUMENTS">
+                <i class="material-icons">description</i>
+            </md-button>
+
+            <md-button class="md-icon-button md-primary" ng-class="{'md-accent':view === viewTypes.PARTS}" ng-click="view = viewTypes.PARTS">
+                <i class="material-icons">extension</i>
+            </md-button>
+
+            <md-input-container flex md-no-float class="md-block search-bar">
+                <input placeholder="{{view.searchLabel}}" type="text" ng-change="search()" ng-model="pattern" />
             </md-input-container>
         </div>
+
         <div ng-include="view.include" ng-if="!sync.running" layout="column"></div>
 
     </md-content>

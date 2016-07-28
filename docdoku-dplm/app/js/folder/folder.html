@@ -1,4 +1,4 @@
-<div layout-fill layout="column">
+<div layout-fill layout="column"  ng-cloak>
     <md-toolbar>
         <div class="md-toolbar-tools" layout="row" layout-align="space-between center">
             <div layout="row" layout-align="start center">
@@ -6,7 +6,7 @@
                     <i class="material-icons">menu</i>
                 </md-button>
                 <i class="material-icons">folder_open</i>
-                <i class="material-icons favorite" ng-if="folder.favorite">star</i>
+                <i class="material-icons" ng-if="folder.favorite">star</i>
                 <h2>
                     <span>
                         {{ folder.path | fileshortname }} ({{totalFilesInFolder}} {{'FILES'|translate}})
@@ -14,8 +14,8 @@
                 </h2>
             </div>
             <div>
-                <span ng-if="!sync.running" class="md-caption">{{'LAST_SYNC_DATE' | translate}} {{ folder.lastSync | date:'medium'}}</span>
-                <span ng-if="sync.running" class="md-caption">{{'SYNCING_INDEX' | translate}} {{ sync.progress }} / {{ sync.total }}</span>
+                <span ng-if="!sync.running" class="md-caption">{{'LAST_SYNC_DATE' | translate}} {{ folder.lastSync | localDateTimeAgo}}</span>
+                <span ng-if="sync.running" class="md-caption">{{ sync.progress }} / {{ sync.total }}</span>
             </div>
         </div>
     </md-toolbar>
@@ -44,7 +44,8 @@
                         <md-menu-item>
                             <md-button aria-label="{{'FAVORITE'|translate}}" ng-click="toggleFavorite()">
                                 <i class="material-icons">star</i>
-                                {{'FAVORITE'|translate}}
+                                <span ng-if="folder.favorite">{{'REMOVE_FROM_FAVORITES'|translate}}</span>
+                                <span ng-if="!folder.favorite">{{'ADD_TO_FAVORITES'|translate}}</span>
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
@@ -218,7 +219,7 @@
                             </td>
 
                             <td md-cell>
-                                <a file-preview="file.path" layout-margin>{{file.path | fileshortname}}</a>
+                                <a href file-preview="file.path" layout-margin>{{file.path | fileshortname}}</a>
                             </td>
 
 
@@ -227,7 +228,7 @@
                             <td md-cell>{{file.index.revision}}-{{file.index.iteration}}</td>
                             <td md-cell>{{file.stat.size | humanreadablesize}}</td>
 
-                            <td md-cell>{{(file.index.lastModifiedDate | date:'medium') || '-' }}</td>
+                            <td md-cell>{{lastModifiedDate ? (file.index.lastModifiedDate | utcDateTimeAgo) : '-' }}</td>
                         </tr>
                     </tbody>
                 </table>

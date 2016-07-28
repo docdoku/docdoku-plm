@@ -10,10 +10,11 @@
     "recursive-readdir": "^1.2.0"
   },
   "window": {
-    "position": "center",
-    "width": 960,
-    "height": 500,
     "resizable": true,
-    "icon": "img/icon.png"
+    "icon": "img/icon.png",
+    "width": 1024,
+    "height": 620,
+    "position": "center"
+
   }
 }

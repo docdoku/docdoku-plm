@@ -149,7 +149,25 @@
                     RESET_SELECTION:'Reset selection',
                     NATIVE_CAD_FILE:'Native CAD file',
                     ID:'Id',
-                    SELECT_FOLDER:'Select a folder'
+                    SELECT_FOLDER:'Select a folder',
+
+                    LOCAL_CHANGES:'Local changes',
+                    HISTORY:'History',
+                    LATEST_EVENTS:'Latest events in workspaces',
+                    SYNC:'Synchronize',
+                    SYNC_WORKSPACES:'Synchronize workspaces',
+                    SYNC_INDEXES:'Synchronize indexes',
+                    MY_ACTIONS:'My latest actions',
+                    CREATED_BY:'created by',
+                    MODIFIED_BY:'modified by',
+                    CHECKED_IN_BY:'checked in by',
+                    CHECKED_OUT_BY:'checked out by',
+                    MODIFICATIONS:'modification(s)',
+                    REMOVE_FROM_FAVORITES:'Remove from favorites',
+                    ADD_TO_FAVORITES:'Add to favorites',
+                    SEARCH_IN_PARTS:'Search in parts',
+                    SEARCH_IN_DOCUMENTS:'Search in documents'
+
                 })
                 .translations('fr', {
                     CHECKOUT: 'Réserver',
@@ -295,7 +313,23 @@
                     RESET_SELECTION:'Effacer la sélection',
                     NATIVE_CAD_FILE:'Fichier CAD',
                     ID:'Identifiant',
-                    SELECT_FOLDER:'Sélectionner un dossier'
+                    SELECT_FOLDER:'Sélectionner un dossier',
+                    LOCAL_CHANGES:'Changements locaux',
+                    HISTORY:'Historique',
+                    LATEST_EVENTS:'Derniers changements dans l\'espace de travail',
+                    SYNC:'Synchroniser',
+                    SYNC_WORKSPACES:'Synchroniser l\'espace de travail distant',
+                    SYNC_INDEXES:'Synchroniser les index locaux',
+                    MY_ACTIONS:'Mes dernières actions',
+                    CREATED_BY:'créé par',
+                    MODIFIED_BY:'modifié par',
+                    CHECKED_IN_BY:'libéré par',
+                    CHECKED_OUT_BY:'réservé par',
+                    MODIFICATIONS:'modification(s)',
+                    REMOVE_FROM_FAVORITES:'Retirer des favoris',
+                    ADD_TO_FAVORITES:'Ajouter aux favoris',
+                    SEARCH_IN_PARTS:'Rechercher dans les articles',
+                    SEARCH_IN_DOCUMENTS:'Rechercher dans les documents'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

@@ -38,21 +38,24 @@
 
         })
 
+        .filter('lastIteration',function(){
+            return function(item){
+                if(item.id){return item.documentIterations[item.documentIterations.length-1]}
+                else if(item.number){return item.partIterations[item.partIterations.length-1]}
+            };
+        })
 
-        .filter('itemsFiles',function(){
+        .filter('itemsFiles',function($filter){
+            var lastIteration = $filter('lastIteration');
             return function(items){
                 var fileMap = {};
                 items.forEach(function(item){
-                    var lastIteration;
-                    if(item.partKey){
-                        lastIteration = item.partIterations[item.partIterations.length-1];
-                        if(lastIteration.nativeCADFile){
-                            fileMap[lastIteration.nativeCADFile]=item;
-                        }
+                    var lastItemIteration = lastIteration(item);
+                    if(item.number && lastItemIteration.nativeCADFile){
+                        fileMap[lastItemIteration.nativeCADFile]=item;
                     }
-                    if(item.documentMasterId){
-                        lastIteration = item.documentIterations[item.documentIterations.length-1];
-                        lastIteration.attachedFiles.forEach(function(file){
+                    if(item.id){
+                        lastItemIteration.attachedFiles.forEach(function(file){
                             fileMap[file]=item;
                         });
                     }

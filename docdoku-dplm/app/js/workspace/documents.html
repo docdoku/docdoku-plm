@@ -4,14 +4,13 @@
             <tr md-row>
                 <th md-column></th>
                 <th md-column><span>{{'ID'|translate}}</span></th>
-                <th md-column><span>{{'VERSION'|translate}}</span></th>
                 <th md-column><span>{{'ATTACHED_FILES'|translate}}</span></th>
+                <th md-column><span>{{'LATEST_EVENT'|translate}}</span></th>
             </tr>
         </thead>
         <tbody md-body>
             <tr md-row md-select="item" md-select-id="id" ng-repeat="item in displayedItems">
                 <td md-cell>
-
                     <i ng-if="item.releaseAuthor && !item.obsoleteAuthor" class="material-icons">check</i>
                     <i ng-if="item.obsoleteAuthor" class="material-icons">broken_image</i>
                     <i ng-if="!item.obsoleteAuthor && !item.releaseAuthor && !item.checkOutUser" class="material-icons">remove_red_eye</i>
@@ -19,14 +18,32 @@
                     <i ng-if="item.checkOutUser && item.checkOutUser.login !== configuration.login" class="material-icons">lock_outline</i>
                 </td>
                 <td md-cell>
-                    {{item.documentMasterId}}
+                    {{item.documentMasterId}}-{{item.version}}-{{item.documentIterations.length}}
                 </td>
-                <td md-cell>{{item.version}}-{{item.documentIterations.length}}</td>
 
                 <td md-cell>
                     <div ng-repeat="f in item.lastIteration.attachedFiles">
                         <a  href="" ng-click="previewFile(f)">{{f|fileshortname}}</a>
                     </div>
+                </td>
+                <td md-cell>
+
+                    <span ng-if="item.lastIteration.checkInDate">
+                        {{'CHECKED_IN_BY'|translate}}
+                         <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                             {{item.lastIteration.author.name}}
+                         </a>
+                        {{ item.lastIteration.checkInDate | utcDateTimeAgo}}
+                    </span>
+
+                    <span ng-if="item.checkOutDate">
+                        {{'CHECKED_OUT_BY'|translate}}
+                        <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                            {{item.checkOutUser.name}}
+                        </a>
+                        {{ item.checkOutDate | utcDateTimeAgo}}
+                    </span>
+
                 </td>
             </tr>
         </tbody>

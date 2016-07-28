@@ -186,21 +186,31 @@
             };
 
             this.refreshData = function(workspace){
-                // TODO wrap with $q.defer and notify
+
+                var deferred = $q.defer();
                 var totalDocuments = 0;
                 var totalParts = 0;
-                return _this.fetchDocumentsCount(workspace).then(function(count){
+                var done = 0, total = 4;
+
+                deferred.notify({total:total, done:done, workspace:workspace});
+
+                _this.fetchDocumentsCount(workspace).then(function(count){
                     totalDocuments = count;
+                    deferred.notify({total:total, done:++done, workspace:workspace});
                     return workspace;
                 }).then(_this.fetchPartsCount).then(function(count){
                     totalParts = count;
-                }).then(function(){
-                    // TODO split with 20 elements by request
+                    deferred.notify({total:total, done:++done, workspace:workspace});
                     return _this.fetchParts(workspace,0,totalParts);
                 }).then(function(){
-                    // TODO split with 20 elements by request
+                    deferred.notify({total:total, done:++done, workspace:workspace});
                     return _this.fetchDocuments(workspace,0,totalDocuments);
+                }).finally(function(){
+                    deferred.notify({total:total, done:++done, workspace:workspace});
+                    deferred.resolve();
                 });
+
+                return deferred.promise;
             };
 
             this.fetchParts = function(workspace, start, max){
@@ -253,6 +263,22 @@
                         });
                     },reject);
                 });
+            };
+
+            this.fetchAllWorkspaces = function(workspaceIds){
+
+                var deferred = $q.defer();
+                var chain = $q.when();
+
+                angular.forEach(workspaceIds,function(workspaceId){
+                    chain = chain.then(function(){
+                        return _this.refreshData(workspaceId);
+                    });
+                });
+
+                chain.then(deferred.resolve,null,deferred.notify);
+
+                return deferred.promise;
             };
 
 
@@ -334,6 +360,38 @@
 
                 chain.then(deferred.resolve);
 
+                return deferred.promise;
+            };
+
+
+            var getLatestDateInIteration = function(iteration){
+                var date = iteration.creationDate;
+                if( date < iteration.modificationDate){
+                    date = iteration.modificationDate;
+                }
+                if( date < iteration.checkInDate){
+                    date = iteration.checkInDate;
+                }
+                return new Date(date).getTime();
+            };
+
+            var latestEventSort = function(a,b){
+                return getLatestDateInIteration(lastIteration(b)) - getLatestDateInIteration(lastIteration(a));
+            };
+
+            var lastIteration = $filter('lastIteration');
+
+            this.getLatestEventsInWorkspace = function(workspaceId, max){
+                var deferred = $q.defer();
+                var items = [];
+                DBService.getDocuments(workspaceId).then(function(documents){
+                    items = items.concat(documents);
+                    return workspaceId;
+                }).then(DBService.getParts).then(function(parts){
+                    items = items.concat(parts);
+                }).finally(function(){
+                    deferred.resolve(items.sort(latestEventSort).slice(0,max));
+                });
                 return deferred.promise;
             };
 
