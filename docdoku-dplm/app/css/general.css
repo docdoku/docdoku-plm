@@ -21,7 +21,8 @@ i.material-icons{
 }
 
 .md-cell{
-	white-space: nowrap;
+	word-wrap: break-word;
+	word-break: break-all;
 }
 
 .md-cell i.material-icons{
