@@ -166,10 +166,6 @@ define([
                 );
             }
 
-            if (App.config.documentConfigSpec !== 'latest') {
-                data.isForBaseline = true;
-            }
-
             /*Main window*/
             var html = Mustache.render(template, data);
             this.$el.html(html);

@@ -5,23 +5,21 @@
         <span class="FolderNavEntry-name">{{model.name}}</span>
     </a>
 
-    {{^isReadOnly}}
-        <div class="btn-group">
-            <a class="btn dropdown-toggle" data-toggle="dropdown">
-                <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu large-entries NavToggle-entries">
-                <li class="new-folder NavToggle-entry">
-                    <a><span class="icon"></span>{{i18n.NEW_FOLDER}}</a>
-                </li>
-                <li class="edit NavToggle-entry">
-                    <a><span class="icon"></span>{{i18n.RENAME}}</a>
-                </li>
-                <li class="delete NavToggle-entry">
-                    <a><span class="icon"></span>{{i18n.DELETE}}</a>
-                </li>
-            </ul>
-        </div>
-    {{/isReadOnly}}
+    <div class="btn-group">
+        <a class="btn dropdown-toggle" data-toggle="dropdown">
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu large-entries NavToggle-entries">
+            <li class="new-folder NavToggle-entry">
+                <a><span class="icon"></span>{{i18n.NEW_FOLDER}}</a>
+            </li>
+            <li class="edit NavToggle-entry">
+                <a><span class="icon"></span>{{i18n.RENAME}}</a>
+            </li>
+            <li class="delete NavToggle-entry">
+                <a><span class="icon"></span>{{i18n.DELETE}}</a>
+            </li>
+        </ul>
+    </div>
 </div>
 <ul id="items-{{view.cid}}" class="items FolderNavListItem-subList SubFolderNavList"></ul>

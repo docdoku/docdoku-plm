@@ -1,19 +1,17 @@
 <div id="actions-{{view.cid}}" class="actions well">
-    {{^isReadOnly}}
-        {{> searchForm}}
+    {{> searchForm}}
 
-        <button class="btn btn-default new-document" title="{{i18n.NEW_DOCUMENT}}">
-            <span class="icon"></span>
-        </button>
+    <button class="btn btn-default new-document" title="{{i18n.NEW_DOCUMENT}}">
+        <span class="icon"></span>
+    </button>
 
-        {{> deleteButton}}
-        {{> checkoutButtonGroup}}
-        {{> tagsButton}}
-        {{> aclButton}}
-        {{> newVersionButton}}
-        {{> releaseButton}}
-        {{> obsoleteButton}}
-    {{/isReadOnly}}
+    {{> deleteButton}}
+    {{> checkoutButtonGroup}}
+    {{> tagsButton}}
+    {{> aclButton}}
+    {{> newVersionButton}}
+    {{> releaseButton}}
+    {{> obsoleteButton}}
 
 </div>
 <div class="notifications"></div>

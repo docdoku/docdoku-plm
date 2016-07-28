@@ -15,8 +15,7 @@ define([
         },
 
         url: function () {
-            var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId;
-            return baseUrl +  '/documents/search?configSpec='+App.config.documentConfigSpec+ '&'+this.query ;
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/documents/search?' + this.query;
         }
     });
 

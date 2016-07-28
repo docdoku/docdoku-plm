@@ -21,11 +21,7 @@ define([
 
 		url: function () {
 			if (this.getId()) {
-                if (App.config.documentConfigSpec) {
-                    return this.baseUrl() + '?configSpec=' + App.config.documentConfigSpec;
-                } else {
-                    return this.baseUrl();
-                }
+                return this.baseUrl();
 			}
 			return this.urlRoot();
 		},

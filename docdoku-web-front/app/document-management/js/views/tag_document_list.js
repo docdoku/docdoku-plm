@@ -40,9 +40,6 @@ define([
             if (this.model) {
                 this.collection.parent = this.model;
             }
-            this.templateExtraData = {
-                isReadOnly: App.appView.isReadOnly()
-            };
         },
         actionNew: function () {
             this.addSubView(

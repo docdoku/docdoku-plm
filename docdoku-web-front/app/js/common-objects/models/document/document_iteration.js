@@ -12,12 +12,8 @@ define([
 
 		url: function () {
 			if (this.getIteration()) {
-                if (App.config.documentConfigSpec) {
-                    return this.baseUrl()+ '?configSpec='+App.config.documentConfigSpec;
-                } else {
-                    return this.baseUrl();
-                }
-			}
+                return this.baseUrl();
+            }
 			return this.collection.baseUrl();
 		},
 

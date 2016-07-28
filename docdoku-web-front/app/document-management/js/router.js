@@ -14,8 +14,8 @@ function (Backbone, singletonDecorator, FolderNavView, TagNavView, SearchNavView
     'use strict';
     var Router = Backbone.Router.extend({
         routes: {
-            ':workspaceId/(configspec/:configSpec/)folders':   'folders',
-            ':workspaceId/(configspec/:configSpec/)folders/*path':   'folder',
+            ':workspaceId/folders': 'folders',
+            ':workspaceId/folders/*path': 'folder',
             ':workspaceId/tags': 'tags',
             ':workspaceId/tags/:id': 'tag',
             ':workspaceId/templates': 'templates',
@@ -45,25 +45,15 @@ function (Backbone, singletonDecorator, FolderNavView, TagNavView, SearchNavView
 		    TaskNavView.getInstance();
 	    },
 
-        folders: function (workspaceId,configSpec) {
-            if(!configSpec){
-                return this.home(workspaceId);
-            }
-            App.config.documentConfigSpec =  configSpec || 'latest';
-            this.executeOrReload(workspaceId,function(){
+        folders: function (workspaceId) {
+            this.executeOrReload(workspaceId, function() {
 	            this.initNavViews();
-                this.configSpecAdaptMenu(configSpec);
                 FolderNavView.getInstance().show();
             });
         },
-        folder: function (workspaceId, configSpec, path) {
-            if(!configSpec){
-                return this.navigate(workspaceId+ '/configspec/latest/folders/'+ path,{trigger:true});
-            }
-            App.config.documentConfigSpec =  configSpec || 'latest';
-            this.executeOrReload(workspaceId,function(){
+        folder: function (workspaceId, path) {
+            this.executeOrReload(workspaceId, function() {
 	            this.initNavViews();
-                this.configSpecAdaptMenu(configSpec);
                 FolderNavView.getInstance().show(decodeURIComponent(path));
             });
         },
@@ -111,23 +101,8 @@ function (Backbone, singletonDecorator, FolderNavView, TagNavView, SearchNavView
         },
 
         home:function(workspaceId){
-            this.navigate(workspaceId+'/configspec/latest/folders',{trigger:true});
-        },
-
-	    configSpecAdaptMenu:function(configSpec){
-
-            // Hide/show some nav view when you selected a baseline
-            var isLatest = configSpec === 'latest';
-
-            TagNavView.getInstance().$el.toggle(isLatest);
-            TemplateNavView.getInstance().$el.toggle(isLatest);
-            CheckedoutNavView.getInstance().$el.toggle(isLatest);
-            TaskNavView.getInstance().$el.toggle(isLatest);
-		    SearchNavView.getInstance().$el.toggle(isLatest);
-            App.appView.$linksNav.toggle(isLatest);
-
-            FolderNavView.getInstance().refresh();
-	    }
+            this.navigate(workspaceId+'/folders',{trigger:true});
+        }
     });
 
 
