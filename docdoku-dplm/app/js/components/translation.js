@@ -138,7 +138,7 @@
                     LAST_SYNC_DATE:'Last synchronisation',
                     SYNC_RUNNING:'Synchronizing data',
                     PAGINATION_LABELS_PAGE:'Page',
-                    PAGINATION_LABELS_ROWS_PER_PAGE:'Rows perpage',
+                    PAGINATION_LABELS_ROWS_PER_PAGE:'Rows per page',
                     PAGINATION_LABELS_OF:'of',
                     ATTACHED_FILES:'Attached files',
                     ADVANCED_OPTIONS:'Advanced options',
@@ -150,7 +150,6 @@
                     NATIVE_CAD_FILE:'Native CAD file',
                     ID:'Id',
                     SELECT_FOLDER:'Select a folder',
-
                     LOCAL_CHANGES:'Local changes',
                     HISTORY:'History',
                     LATEST_EVENTS:'Latest events in workspaces',
