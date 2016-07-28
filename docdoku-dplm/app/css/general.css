@@ -20,7 +20,7 @@ i.material-icons{
 	margin: auto 16px auto 0;
 }
 
-.md-cell{
+.md-cell,md-card{
 	word-wrap: break-word;
 	word-break: break-all;
 }

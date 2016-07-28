@@ -1,7 +1,6 @@
-<div layout-fill layout="column">
+<div layout-fill layout="column"  ng-cloak>
 
-    <md-toolbar md-scroll-shrink class="md-whiteframe-6dp">
-
+    <md-toolbar>
         <div class="md-toolbar-tools" layout="row" layout-align="space-between center">
             <div layout="row" layout-align="start center">
                 <md-button class="md-icon-button" hide-gt-sm aria-label="{{'MENU' | translate}}" ng-click="openMenu()">
@@ -15,12 +14,11 @@
                 </h2>
             </div>
         </div>
-
     </md-toolbar>
 
     <md-content>
 
-        <div layout="row">
+        <div layout="row" layout-align="space-between center">
             <md-menu-bar>
                 <md-menu>
                     <button ng-click="$mdOpenMenu()">
@@ -67,13 +65,12 @@
 
             <md-progress-circular md-mode="indeterminate"></md-progress-circular>
 
-
         </div>
 
 
-        <div layout="row" ng-show="!status">
+        <div layout-gt-xs="row" layout="column" ng-show="!status" flex-gt-xs>
 
-            <div layout="column" flex="40">
+            <div layout="column" flex-gt-xs>
 
                 <md-card>
                     <md-card-header>
@@ -101,13 +98,12 @@
                         </md-card-header-text>
                     </md-card-header>
                     <md-card-content>
-
                         <div ng-if="!folders.length">
                             {{'NO_FOLDERS' | translate}}
                         </div>
 
                         <div ng-repeat="folder in folders | filter:{favorite:true}"
-                             layout="row"  layout-margin folder="folder"></div>
+                             layout="row" layout-margin folder="folder"></div>
 
                     </md-card-content>
                 </md-card>
@@ -123,6 +119,7 @@
                         </md-card-header-text>
                     </md-card-header>
                     <md-card-content>
+
                         <div ng-repeat="workspace in workspaces"
                              layout="row" layout-margin>
 
@@ -136,14 +133,13 @@
                                 </a>
                                 <span>{{'LAST_SYNC'}} {{todo}}</span>
                             </div>
-
                         </div>
                     </md-card-content>
                 </md-card>
 
             </div>
 
-            <div layout="column" flex>
+            <div layout="column" flex-gt-xs>
 
                 <md-card>
                     <md-card-header>

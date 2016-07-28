@@ -112,13 +112,23 @@
                 scope:{
                     folder:'='
                 },
-                controller:function($scope, FolderService){
+                controller:function($scope, FolderService,RepositoryService){
 
                     var refresh = function(){
                         FolderService.getFilesCount($scope.folder.path).then(function(count){
                             $scope.filesCount = count;
-                            console.log(count)
                         });
+
+                        var index = RepositoryService.getOrCreateIndex($scope.folder.path);
+
+                        var sortedEvents = Object.keys(index).filter(function(key){
+                            return key.endsWith('.lastModifiedDate');
+                        }).map(function(key){
+                            return index[key];
+                        }).sort(function(a,b){return a-b;});
+
+                        $scope.latestAction = sortedEvents.length ? sortedEvents[0] : '';
+
                     };
 
                     $scope.$on('refresh',refresh);

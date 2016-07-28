@@ -8,4 +8,4 @@
     </a>
     <div ng-if="filesCount >= 0">{{filesCount}} {{'FILES' | translate }}</div>
 </div>
-<span ng-if="latestAction">{{'LATEST_ACTION'}} {{latestAction | localDateTimeAgo}}</span>
+<span ng-if="latestAction">{{'LATEST_ACTION' | translate}} {{latestAction | utcDateTimeAgo}}</span>
