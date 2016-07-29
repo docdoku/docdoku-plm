@@ -125,7 +125,13 @@
                         {{'SELECTION' | translate}} ({{selected.length}})
                     </button>
                     <md-menu-content>
-
+                        <md-menu-item>
+                            <md-button ng-click="actions.push(selected)">
+                                <i class="material-icons">cloud_upload</i>
+                                {{'PUSH' | translate}}
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-divider></md-menu-divider>
                         <md-menu-item>
                             <md-button ng-click="actions.checkin(selected)">
                                 <i class="material-icons">input</i>

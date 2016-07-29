@@ -376,7 +376,6 @@
                 return deferred.promise;
             };
 
-
             var getLatestDateInIteration = function(iteration){
                 var date = iteration.creationDate;
                 if( date < iteration.modificationDate){

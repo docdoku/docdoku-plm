@@ -1,0 +1,69 @@
+<md-dialog flex="50" layout="column" ng-cloak>
+
+    <div layout="row">
+
+        <form ng-submit="checkIn()" layout="row">
+
+            <div layout="column" layout-margin>
+
+                <h2 class="md-headline">
+                    {{'CHECKIN' | translate}}
+                </h2>
+
+                <div class="md-subhead description">
+                     {{selection.length}} {{'FILES_TO_BE_CHECKED_IN' | translate}}
+                </div>
+
+                <p ng-if="error">{{error}}</p>
+
+                <p ng-if="status">{{status}}</p>
+
+                <div>
+                    <md-input-container>
+                        <label>{{'CHECK_IN_NOTE' | translate}}</label>
+                        <textarea ng-model="data.checkInNote"></textarea>
+                    </md-input-container>
+                </div>
+
+                <div layout="row">
+                    <md-button type="button" ng-if="!loading" aria-label="" ng-click="close()" class="md-raised md-default">
+                        {{'CLOSE'|translate}}
+                    </md-button>
+
+                    <md-progress-circular ng-if="loading" class="md-hue-2" md-diameter="20px"></md-progress-circular>
+
+                    <md-button ng-if="!loading" type="submit" aria-label="" class="md-raised md-primary">
+                        {{'CHECKIN'|translate}}
+                    </md-button>
+                </div>
+
+            </div>
+
+            <div layout="column" layout-margin>
+                <div layout="row" layout-align="start center">
+                    <md-switch ng-model="showAdvancedOptions" aria-label="{{'ADVANCED_OPTIONS' | translate}}">
+                        {{'ADVANCED_OPTIONS' | translate}}
+                    </md-switch>
+                </div>
+
+                <div layout="column" ng-show="showAdvancedOptions">
+
+                    <md-checkbox ng-model="options.pushLocalChanges" aria-label="{{'PUSH_MODIFICATIONS'|translate}}">
+                        {{'PUSH_MODIFICATIONS'|translate}}
+                    </md-checkbox>
+
+                    <md-checkbox ng-model="options.saveNote" aria-label="{{'SAVE_NOTE'|translate}}">
+                        {{'SAVE_NOTE'|translate}}
+                    </md-checkbox>
+
+                    <md-checkbox ng-model="options.cascadeCheckIn" aria-label="{{'CASCADE_CHECKIN'|translate}}">
+                        {{'CASCADE_CHECKIN'|translate}}
+                    </md-checkbox>
+
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+</md-dialog>

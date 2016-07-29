@@ -13,7 +13,7 @@
                 });
         })
 
-        .controller('FolderController', function ($scope, $location, $routeParams, $filter, $mdDialog, $mdBottomSheet, $q,
+        .controller('FolderController', function ($scope, $location, $routeParams, $filter, $mdDialog, $q,
                                                   FolderService, DBService, RepositoryService, WorkspaceService, ConfigurationService) {
 
             $scope.folder = FolderService.getFolder({uuid: $routeParams.uuid});
@@ -177,7 +177,7 @@
             };
 
             $scope.createPart = function (file) {
-                $mdBottomSheet.show({
+                $mdDialog.show({
                     templateUrl: 'js/folder/create-part.html',
                     fullscreen: true,
                     controller: 'PartCreationCtrl',
@@ -189,7 +189,7 @@
             };
 
             $scope.createDocument = function (file) {
-                $mdBottomSheet.show({
+                $mdDialog.show({
                     templateUrl: 'js/folder/create-document.html',
                     fullscreen: true,
                     controller: 'DocumentCreationCtrl',
@@ -249,33 +249,51 @@
             $scope.actions = {
 
                 checkin : function(selection){
-                    // TODO : filter for action availability
-                    WorkspaceService.checkInItems(selection, repositoryIndex)
-                        .then(refreshDisplay,function(){
-                        console.log('Something bad happened');
-                    },function(){
-                        console.log('Some progress notifications');
-                    });
+                    $mdDialog.show({
+                        templateUrl: 'js/folder/check-in.html',
+                        fullscreen: true,
+                        controller: 'CheckInCtrl',
+                        locals: {
+                            selection: selection,
+                            folderPath: folderPath
+                        }
+                    }).then(refreshDisplay);
                 },
 
                 checkout:function(selection){
-                    // TODO : filter for action availability
-                    WorkspaceService.checkOutItems(selection, repositoryIndex)
-                        .then(refreshDisplay,function(){
-                        console.log('Something bad happened');
-                    },function(){
-                        console.log('Some progress notifications');
-                    });
+                    $mdDialog.show({
+                        templateUrl: 'js/folder/check-out.html',
+                        fullscreen: true,
+                        controller: 'CheckOutCtrl',
+                        locals: {
+                            selection: selection,
+                            folderPath: folderPath
+                        }
+                    }).then(refreshDisplay);
                 },
 
                 undoCheckout: function(selection){
-                    // TODO : filter for action availability
-                    WorkspaceService.undoCheckOutItems(selection, repositoryIndex)
-                        .then(refreshDisplay,function(){
-                        console.log('Something bad happened');
-                    },function(){
-                        console.log('Some progress notifications');
-                    });
+                    $mdDialog.show({
+                        templateUrl: 'js/folder/undo-check-out.html',
+                        fullscreen: true,
+                        controller: 'UndoCheckOutCtrl',
+                        locals: {
+                            selection: selection,
+                            folderPath: folderPath
+                        }
+                    }).then(refreshDisplay);
+                },
+
+                push: function(selection){
+                    $mdDialog.show({
+                        templateUrl: 'js/folder/push.html',
+                        fullscreen: true,
+                        controller: 'PushCtrl',
+                        locals: {
+                            selection: selection,
+                            folderPath: folderPath
+                        }
+                    }).then(refreshDisplay);
                 }
             };
 
@@ -288,22 +306,22 @@
 
         })
 
-        .controller('AddFolderCtrl', function ($scope, $mdBottomSheet,
+        .controller('AddFolderCtrl', function ($scope, $mdDialog,
                                                FolderService) {
 
             $scope.search = function (files) {
                 var file = files[0];
                 if (file) {
                     FolderService.add(file.path);
-                    $mdBottomSheet.hide(file.path);
+                    $mdDialog.hide(file.path);
                 }
             };
 
-            $scope.close = $mdBottomSheet.hide;
+            $scope.close = $mdDialog.hide;
 
         })
 
-        .controller('DocumentCreationCtrl', function ($scope, $mdBottomSheet,
+        .controller('DocumentCreationCtrl', function ($scope, $mdDialog,
                                                       WorkspaceService, UploadService, RepositoryService, DBService,
                                                       file, folderPath) {
 
@@ -321,7 +339,7 @@
                 $scope.creating = true;
                 WorkspaceService.createDocumentInWorkspace($scope.document).then(function (document) {
                     $scope.document = document;
-                    return UploadService.uploadFileToDocument(folderPath, file.path, document);
+                    return UploadService.uploadFileToDocument(file.path, document);
                 }).then(function () {
                     var newIndex = RepositoryService.saveDocumentToIndex(folderPath, file.path, $scope.document);
                     file.index = RepositoryService.getFileIndex(newIndex, file.path);
@@ -334,7 +352,7 @@
 
         })
 
-        .controller('PartCreationCtrl', function ($scope, $mdBottomSheet,
+        .controller('PartCreationCtrl', function ($scope, $mdDialog,
                                                   WorkspaceService, UploadService, RepositoryService, DBService,
                                                   file, folderPath) {
 
@@ -350,23 +368,123 @@
                 }
             };
 
-            $scope.close = $mdBottomSheet.hide;
+            $scope.close = $mdDialog.hide;
 
             $scope.create = function () {
                 $scope.creating = true;
                 $scope.error = null;
                 WorkspaceService.createPartInWorkspace($scope.part).then(function (part) {
                     $scope.part = part;
-                    return UploadService.uploadNativeCADFile(folderPath, file.path, part);
+                    return UploadService.uploadNativeCADFile(file.path, part);
                 }).then(function () {
                     var newIndex = RepositoryService.savePartToIndex(folderPath, file.path, $scope.part);
                     file.index = RepositoryService.getFileIndex(newIndex, file.path);
                     DBService.getItem(file.index).then(function(item){
                         file.item = item;
-                        $mdBottomSheet.hide();
+                        $mdDialog.hide();
                     });
                 }).catch(onError);
             };
+        })
+
+        .controller('CheckInCtrl', function ($scope, $mdDialog,
+                                                  WorkspaceService, UploadService, RepositoryService, DBService,
+                                             selection, folderPath) {
+
+            $scope.loading = false;
+            $scope.selection = selection;
+            $scope.folderPath = folderPath;
+            $scope.close = $mdDialog.hide;
+
+            var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
+
+            $scope.checkIn = function(){
+                $scope.loading = true;
+                WorkspaceService.checkInItems(selection, repositoryIndex)
+                    .then($mdDialog.hide,function(error){
+                        $scope.error = error;
+                    },function(status){
+                        $scope.status = status;
+                    }).finally(function(){
+                        $scope.loading = false;
+                    });
+            };
+
+        })
+
+        .controller('CheckOutCtrl', function ($scope, $mdDialog,
+                                                  WorkspaceService, UploadService, RepositoryService, DBService,
+                                             selection, folderPath) {
+
+            $scope.loading = false;
+            $scope.selection = selection;
+            $scope.folderPath = folderPath;
+            $scope.close = $mdDialog.hide;
+
+            var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
+
+            $scope.checkOut = function(){
+                $scope.loading = true;
+                WorkspaceService.checkOutItems(selection, repositoryIndex)
+                    .then($mdDialog.hide,function(error){
+                        $scope.error = error;
+                    },function(status){
+                        $scope.status = status;
+                    }).finally(function(){
+                        $scope.loading = false;
+                    });
+            };
+
+        })
+
+        .controller('UndoCheckOutCtrl', function ($scope, $mdDialog,
+                                              WorkspaceService, UploadService, RepositoryService, DBService,
+                                              selection, folderPath) {
+
+            $scope.loading = false;
+            $scope.selection = selection;
+            $scope.folderPath = folderPath;
+            $scope.close = $mdDialog.hide;
+
+            var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
+
+            $scope.undoCheckOut = function(){
+                $scope.loading = true;
+                WorkspaceService.undoCheckOutItems(selection, repositoryIndex)
+                    .then($mdDialog.hide,function(error){
+                        $scope.error = error;
+                    },function(status){
+                        $scope.status = status;
+                    }).finally(function(){
+                        $scope.loading = false;
+                    });
+            };
+
+        })
+
+        .controller('PushCtrl', function ($scope, $mdDialog,
+                                              WorkspaceService, UploadService, RepositoryService, DBService,
+                                              selection, folderPath) {
+
+            $scope.loading = false;
+            $scope.selection = selection;
+            $scope.folderPath = folderPath;
+            $scope.close = $mdDialog.hide;
+
+            //var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
+
+            $scope.push = function(){
+                $scope.loading = true;
+                UploadService.bulkUpload(selection, folderPath)
+                    .then($mdDialog.hide,function(error){
+                        $scope.error = error;
+                    },function(status){
+                        $scope.status = status;
+                    }).finally(function(){
+                        $scope.loading = false;
+                    });
+            };
+
         })
 
         .controller('DeleteFolderCtrl', function ($scope, $filter, $mdDialog, $location,

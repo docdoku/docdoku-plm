@@ -3,7 +3,7 @@
     'use strict';
 
     angular.module('dplm.repository', [])
-        .controller('RepositorySearchCtrl', function ($timeout,$scope,$mdBottomSheet,
+        .controller('RepositorySearchCtrl', function ($timeout,$scope,$mdDialog,
                                                       RepositoryService, FolderService, INDEX_LOCATION) {
 
 
@@ -28,7 +28,7 @@
                 angular.forEach($scope.repositories,function(repository){
                     FolderService.add(repository);
                 });
-                $mdBottomSheet.hide();
+                $mdDialog.hide();
             };
 
             $scope.addRepository = function(repository){
@@ -36,9 +36,7 @@
                 $scope.repositories.splice($scope.repositories.indexOf(repository),1);
             };
 
-            $scope.close = function(){
-                $mdBottomSheet.hide();
-            };
+            $scope.close = $mdDialog.hide;
         });
 
 })();

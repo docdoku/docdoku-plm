@@ -121,9 +121,9 @@
 
             this.saveItemToIndex = function(indexFolder,path,item){
                 if(item.number){
-                    _this.savePartToIndex(index, path, item);
+                    _this.savePartToIndex(indexFolder, path, item);
                 }else if(item.id){
-                    _this.saveDocumentToIndex(index, path, item);
+                    _this.saveDocumentToIndex(indexFolder, path, item);
                 }
             };
 

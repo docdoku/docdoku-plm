@@ -1,0 +1,59 @@
+<md-dialog flex="50" layout="column" ng-cloak>
+
+    <div layout="row">
+
+        <form ng-submit="checkOut()" layout="row">
+
+            <div layout="column" layout-margin>
+
+                <h2 class="md-headline">
+                    {{'CHECKOUT' | translate}}
+                </h2>
+
+                <div class="md-subhead description">
+                    {{selection.length}} {{'FILES_TO_BE_CHECKED_OUT' | translate}}
+                </div>
+
+                <p ng-if="error">{{error}}</p>
+
+                <p ng-if="status">{{status}}</p>
+
+
+                <div layout="row">
+                    <md-button type="button" ng-if="!loading" aria-label="" ng-click="close()" class="md-raised md-default">
+                        {{'CLOSE'|translate}}
+                    </md-button>
+
+                    <md-progress-circular ng-if="loading" class="md-hue-2" md-diameter="20px"></md-progress-circular>
+
+                    <md-button ng-if="!loading" type="submit" aria-label="" class="md-raised md-primary">
+                        {{'CHECKOUT'|translate}}
+                    </md-button>
+                </div>
+
+            </div>
+
+            <div layout="column" layout-margin>
+                <div layout="row" layout-align="start center">
+                    <md-switch ng-model="showAdvancedOptions" aria-label="{{'ADVANCED_OPTIONS' | translate}}">
+                        {{'ADVANCED_OPTIONS' | translate}}
+                    </md-switch>
+                </div>
+
+                <div layout="column" ng-show="showAdvancedOptions">
+
+                    <md-checkbox ng-model="options.downloadFromServer" aria-label="{{'DOWNLOAD_FILES'|translate}}">
+                        {{'DOWNLOAD_FILES'|translate}}
+                    </md-checkbox>
+
+                    <md-checkbox ng-model="options.cascadeCheckIn" aria-label="{{'CASCADE_CHECKIN'|translate}}">
+                        {{'CASCADE_CHECKOUT'|translate}}
+                    </md-checkbox>
+
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+</md-dialog>

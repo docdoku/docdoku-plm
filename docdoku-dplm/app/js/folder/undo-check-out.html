@@ -1,0 +1,53 @@
+<md-dialog flex="50" layout="column" ng-cloak>
+
+    <div layout="row">
+
+        <form ng-submit="undoCheckOut()" layout="row">
+
+            <div layout="column" layout-margin>
+
+                <h2 class="md-headline">
+                    {{'UNDO_CHECKOUT' | translate}}
+                </h2>
+
+                <div class="md-subhead description">
+                    {{selection.length}} {{'FILES_TO_BE_CHECKED_OUT' | translate}}
+                </div>
+
+                <p ng-if="error">{{error}}</p>
+
+                <p ng-if="status">{{status}}</p>
+
+
+                <div layout="row">
+                    <md-button type="button" ng-if="!loading" aria-label="" ng-click="close()" class="md-raised md-default">
+                        {{'CLOSE'|translate}}
+                    </md-button>
+
+                    <md-progress-circular ng-if="loading" class="md-hue-2" md-diameter="20px"></md-progress-circular>
+
+                    <md-button ng-if="!loading" type="submit" aria-label="" class="md-raised md-primary">
+                        {{'UNDO_CHECKOUT'|translate}}
+                    </md-button>
+                </div>
+
+            </div>
+
+            <div layout="column" layout-margin>
+                <div layout="row" layout-align="start center">
+                    <md-switch ng-model="showAdvancedOptions" aria-label="{{'ADVANCED_OPTIONS' | translate}}">
+                        {{'ADVANCED_OPTIONS' | translate}}
+                    </md-switch>
+                </div>
+
+                <div layout="column" ng-show="showAdvancedOptions">
+                    <md-checkbox ng-model="options.downloadFromServer" aria-label="{{'RESTORE_FILES'|translate}}">
+                        {{'RESTORE_FILES'|translate}}
+                    </md-checkbox>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+</md-dialog>
