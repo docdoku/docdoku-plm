@@ -185,13 +185,7 @@
                         <tr md-row md-select="file" md-select-id="path" ng-repeat="file in displayedFiles">
 
                             <td md-cell>
-                                <span ng-if="file.item">
-                                    <i ng-if="file.item.releaseAuthor && !file.item.obsoleteAuthor" class="material-icons">check</i>
-                                    <i ng-if="file.item.obsoleteAuthor" class="material-icons">broken_image</i>
-                                    <i ng-if="!file.item.obsoleteAuthor && !file.item.releaseAuthor && !file.item.checkOutUser" class="material-icons">remove_red_eye</i>
-                                    <i ng-if="file.item.checkOutUser && file.item.checkOutUser.login === configuration.login" class="material-icons">mode_edit</i>
-                                    <i ng-if="file.item.checkOutUser && file.item.checkOutUser.login !== configuration.login" class="material-icons">lock_outline</i>
-                                </span>
+                                <span ng-if="file.item" status-icon="file.item"></span>
                                 <span>
                                     <i ng-if="file.index.id" class="material-icons">description</i>
                                     <i ng-if="file.index.number" class="material-icons">extension</i>

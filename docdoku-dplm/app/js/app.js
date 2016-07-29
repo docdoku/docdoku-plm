@@ -45,6 +45,7 @@
         'dplm.services.file-transfer',
         'dplm.services.db',
         'dplm.services.3d',
+        'dplm.services.items',
 
         'dplm.dialogs.download',
         'dplm.dialogs.file-preview',

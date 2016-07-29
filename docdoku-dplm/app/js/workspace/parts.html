@@ -10,13 +10,7 @@
         </thead>
         <tbody md-body>
         <tr md-row md-select="item" md-select-id="partKey" ng-repeat="item in displayedItems">
-            <td md-cell>
-                <i ng-if="item.releaseAuthor && !item.obsoleteAuthor" class="material-icons">check</i>
-                <i ng-if="item.obsoleteAuthor" class="material-icons">broken_image</i>
-                <i ng-if="!item.obsoleteAuthor && !item.releaseAuthor && !item.checkOutUser" class="material-icons">remove_red_eye</i>
-                <i ng-if="item.checkOutUser && item.checkOutUser.login === configuration.login" class="material-icons">mode_edit</i>
-                <i ng-if="item.checkOutUser && item.checkOutUser.login !== configuration.login" class="material-icons">lock_outline</i>
-            </td>
+            <td md-cell status-icon="item"></td>
             <td md-cell>
                  {{item.partKey}}-{{item.partIterations.length}}
             </td>
