@@ -15,10 +15,17 @@
         return bytes.toFixed(1)+' '+units[u];
     }
 
-    angular.module('dplm.filters.humanreadablesize', [])
+    angular.module('dplm.filters.files', [])
+
         .filter('humanreadablesize', function () {
             return function (bytes) {
                 return humanFileSize(bytes, true);
+            };
+        })
+
+        .filter('fileshortname', function () {
+            return function (path) {
+                return path.replace(/^.*[\\\/]/, '');
             };
         });
 

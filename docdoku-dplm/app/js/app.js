@@ -23,15 +23,15 @@
         // Templates
         'dplm.templates',
 
-        // Main components
+        // DPLM components
         'dplm.home',
         'dplm.settings',
         'dplm.workspace',
         'dplm.folder',
         'dplm.repository',
         'dplm.login',
+        'dplm.menu',
 
-        // Other components
         'dplm.services.configuration',
         'dplm.services.translations',
         'dplm.services.notification',
@@ -44,17 +44,14 @@
         'dplm.services.repository',
         'dplm.services.file-transfer',
         'dplm.services.db',
+        'dplm.services.3d',
+
         'dplm.dialogs.download',
         'dplm.dialogs.file-preview',
 
-        'dplm.services.3d',
-        'dplm.filters.fileshortname',
-        'dplm.filters.timeago',
-        'dplm.filters.last',
-        'dplm.filters.join',
-        'dplm.filters.humanreadablesize',
-
-        'dplm.menu'
+        'dplm.filters.files',
+        'dplm.filters.arrays',
+        'dplm.filters.timeago'
 
     ])
 
