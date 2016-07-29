@@ -15,7 +15,7 @@
                 <div layout="row">
                     <i class="material-icons">description</i>
                     <div layout="column">
-                        <a href file-preview="change">{{item.path | fileshortname}}</a>
+                        <a href file-preview="item.path">{{item.path | fileshortname}}</a>
                         <div layout="row">
                             <span>{{item.index.id || item.index.number}}-{{item.index.revision}} {{'MODIFIED'}} {{item.stat.mtime | localDateTimeAgo}}</span>
                         </div>

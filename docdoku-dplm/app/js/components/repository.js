@@ -3,9 +3,8 @@
     'use strict';
 
     angular.module('dplm.services.repository', [])
-        .constant('indexLocation','/.dplm/index.json')
-        .constant('indexPatternSearch','**/.dplm/index.json')
-        .service('RepositoryService', function ($q,$timeout,$window,indexLocation,indexPatternSearch, DocdokuAPIService, FolderService) {
+
+        .service('RepositoryService', function ($q,$timeout,$window,INDEX_LOCATION,INDEX_SEARCH_PATTERN, DocdokuAPIService, FolderService) {
 
             var _this = this;
             var fs = $window.require('fs');
@@ -14,20 +13,20 @@
 
             this.getRepositoryIndex = function(indexFolder){
                 try{
-                    return $window.require(indexFolder+indexLocation);
+                    return $window.require(indexFolder+INDEX_LOCATION);
                 }catch(e){
                     var dir = indexFolder+'/.dplm/';
                     if (!fs.existsSync(dir)){
                         fs.mkdirSync(dir);
                     }
-                    fs.writeFileSync(indexFolder+indexLocation,'{}');
-                    return $window.require(indexFolder+indexLocation);
+                    fs.writeFileSync(indexFolder+INDEX_LOCATION,'{}');
+                    return $window.require(indexFolder+INDEX_LOCATION);
                 }
             };
 
             this.search = function(folder){
                 return $q(function(resolve,reject) {
-                    glob(indexPatternSearch, {
+                    glob(INDEX_SEARCH_PATTERN, {
                         cwd: folder,
                         nodir: true
                     }, function (err, files) {
@@ -77,7 +76,7 @@
             this.writeIndex = writeIndex;
 
             this.getIndexPath = function(folder){
-                return folder + indexLocation;
+                return folder + INDEX_LOCATION;
             };
 
             var updateIndexForPart = function(index, path, part){
@@ -129,7 +128,7 @@
             };
 
             this.savePartToIndex = function(indexFolder,path, part){
-                var indexPath = indexFolder + indexLocation;
+                var indexPath = indexFolder + INDEX_LOCATION;
                 var index = _this.getRepositoryIndex(indexFolder);
                 updateIndexForPart(index, path, part);
                 updateFile(index,path);
@@ -138,7 +137,7 @@
             };
 
             this.saveDocumentToIndex = function(indexFolder,path, document){
-                var indexPath = indexFolder + indexLocation;
+                var indexPath = indexFolder + INDEX_LOCATION;
                 var index = _this.getRepositoryIndex(indexFolder);
                 updateIndexForDocument(index, path, document);
                 updateFile(index,path);
@@ -200,7 +199,7 @@
 
                 var promise = deferred.promise;
 
-                var indexPath = indexFolder + indexLocation;
+                var indexPath = indexFolder + INDEX_LOCATION;
                 var index = _this.getRepositoryIndex(indexFolder);
                 var keys = Object.keys(index);
 
@@ -279,12 +278,6 @@
                 return promise;
             };
 
-        })
-
-        .filter('repositoryBasePath',function(indexLocation){
-            return function(arg){
-                return arg.replace(indexLocation,'');
-            };
         });
 
 })();

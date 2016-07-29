@@ -3,9 +3,8 @@
     'use strict';
 
     angular.module('dplm.repository', [])
-        .constant('indexLocation','/.dplm/index.json')
         .controller('RepositorySearchCtrl', function ($timeout,$scope,$mdDialog,
-                                                      RepositoryService, FolderService, indexLocation) {
+                                                      RepositoryService, FolderService, INDEX_LOCATION) {
 
 
             $scope.search = function(files){
@@ -15,7 +14,7 @@
                     $scope.folder = path;
                     RepositoryService.search(path).then(function(repositories){
                         $scope.repositories = repositories.map(function(repository){
-                            return $scope.folder + '/' + repository.replace('/.dplm/index.xml','').replace(indexLocation,'');
+                            return $scope.folder + '/' + repository.replace(INDEX_LOCATION,'');
                         });
                     }, function(err){
                         $scope.repositories = err;
@@ -39,13 +38,6 @@
 
             $scope.close = function(){
                 $mdDialog.hide();
-            };
-        })
-
-        .filter('repositoryBasePath',function(indexLocation){
-            return function(arg){
-                return arg.replace('/.dplm/index.xml','')
-                .replace(indexLocation,'');
             };
         });
 

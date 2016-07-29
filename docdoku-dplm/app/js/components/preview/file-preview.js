@@ -1,6 +1,8 @@
 (function(){
 
     angular.module('dplm.dialogs.file-preview',[])
+
+
         .controller('FilePreviewCtrl',function($scope, $filter,$mdDialog,
                                                Available3DLoaders,file){
 
@@ -11,37 +13,40 @@
             $scope.noPreviewAvailable = !$scope.is3dAvailable;
 
         })
-        .directive('filePreview',function($mdDialog){
+
+        .directive('filePreview',function($mdDialog, $window, $filter, FileUtils){
+
+            var isAvailableForViewer = $filter('isAvailableForViewer');
+
             return {
                 scope:{
                     file:'=filePreview'
                 },
                 link: function postLink(scope, element, attrs) {
-                    element.on('click',function(){
-                        $mdDialog.show({
-                            templateUrl: 'js/components/preview/file-preview.html',
-                            clickOutsideToClose:false,
-                            fullscreen: true,
-                            locals : {
-                                file : scope.file
-                            },
-                            controller:'FilePreviewCtrl'
-                        });
+
+                    element.on('click',function() {
+
+                        if (isAvailableForViewer(scope.file)) {
+                            $mdDialog.show({
+                                templateUrl: 'js/components/preview/file-preview.html',
+                                clickOutsideToClose: false,
+                                fullscreen: true,
+                                locals: {
+                                    file: scope.file
+                                },
+                                controller: 'FilePreviewCtrl'
+                            });
+
+                        } else {
+                            FileUtils.openInOS(scope.file);
+                        }
                     });
 
                     scope.$on('$destroy',function(){
                         element.off('click');
                     });
                 }
-            };
-        })
-        .filter('fileExtension',function(){
-            return function(path){
-                var lastDot = path.lastIndexOf('.');
-                if(lastDot !== -1){
-                    return path.substring(lastDot+1,path.length);
-                }
-                return '';
+
             };
         });
 

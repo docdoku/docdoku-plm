@@ -4,8 +4,6 @@
 
     angular.module('dplm.services.file-transfer', [])
 
-        .constant('READ_ONLY','444')
-        .constant('READ_WRITE','644')
 
         .service('UploadService', function ($window, $q, $filter, ConfigurationService) {
 
@@ -172,13 +170,6 @@
 
             };
 
-
-        })
-
-        .filter('fileMode',function(ConfigurationService,READ_ONLY,READ_WRITE){
-            return function(item){
-                return item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login ? READ_WRITE:READ_ONLY;
-            };
         });
 
 })();

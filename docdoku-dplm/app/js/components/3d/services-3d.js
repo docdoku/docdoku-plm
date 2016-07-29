@@ -4,10 +4,6 @@
 
     angular.module('dplm.services.3d',[])
 
-        .factory('Available3DLoaders',function(){
-            return ['js','json','obj','stl','dae','ply','wrl','bin'];
-        })
-
         .service('ModelLoaderService',function($q){
 
             // Returns a THREE.Mesh in a promise

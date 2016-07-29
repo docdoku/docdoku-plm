@@ -104,11 +104,6 @@ angular.module('dplm.menu', [])
         };
 
     })
-    .filter('nospace', function () {
-        return function (value) {
-            return (!value) ? '' : value.replace(/ /g, '');
-        };
-    })
     .directive('menuLink', function() {
         return {
             templateUrl: 'js/menu/menu-link.html'
