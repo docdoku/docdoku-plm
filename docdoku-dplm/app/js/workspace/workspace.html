@@ -78,15 +78,10 @@
                         <md-menu-item>
                             <md-button ng-click="actions.download(selected)">
                                 <i class="material-icons">cloud_download</i>
-                                {{'DOWNLOAD' | translate}}
+                                {{'DOWNLOAD' | translate}} ...
                             </md-button>
                         </md-menu-item>
-                        <md-menu-item>
-                            <md-button ng-click="actions.downloadStructure(selected)">
-                                <i class="material-icons">cloud_download</i>
-                                {{'DOWNLOAD_STRUCTURE' | translate}}
-                            </md-button>
-                        </md-menu-item>
+                        <md-menu-divider></md-menu-divider>
                         <md-menu-item>
                             <md-button ng-click="actions.checkin(selection)">
                                 <i class="material-icons">input</i>

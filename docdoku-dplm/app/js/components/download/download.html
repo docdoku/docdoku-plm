@@ -1,66 +1,88 @@
-<md-content layout-padding>
+<md-bottom-sheet layout="column" ng-cloak>
+    <div layout-padding layout="column">
 
-    <div ng-if="status && !status.ended">
-        <h1>{{'DOWNLOADING'| translate}}</h1>
-        <h2>{{status.done}}/{{files.length}}</h2>
-        <md-progress-linear md-mode="determinate" value="{{status.mainProgress}}"></md-progress-linear>
+        <div ng-if="status && !status.ended">
+            <h1>{{'DOWNLOADING'| translate}}</h1>
+            <h2>{{status.done}}/{{files.length}}</h2>
+            <md-progress-linear md-mode="determinate" value="{{status.mainProgress}}"></md-progress-linear>
 
-        <h2>{{status.item.partKey||status.item.id}}</h2>
-        <md-progress-linear md-mode="determinate" value="{{status.progress}}"></md-progress-linear>
-        <span class="md-subhead">{{status.url|fileshortname}}</span>
+            <h2>{{status.item.partKey||status.item.id}}</h2>
+            <md-progress-linear md-mode="determinate" value="{{status.progress}}"></md-progress-linear>
+            <span class="md-subhead">{{status.url|fileshortname}}</span>
+        </div>
+
+        <div ng-if="status.ended">
+            <div layout="column">
+                <h1>{{'DONE'| translate}}</h1>
+            </div>
+            <div layout="row">
+                <md-button type="button" aria-label="" ng-click="close()" class="md-raised md-default">
+                    {{'CLOSE'|translate}}
+                </md-button>
+
+                <md-button type="button" aria-label="" ng-click="close()" href="#/folder/{{options.destinationFolder}}" class="md-raised md-primary">
+                    {{'TO_FOLDER_VIEW'|translate}}
+                </md-button>
+            </div>
+        </div>
+
+        <form name="form" ng-submit="submit()" ng-if="!status">
+
+            <h1>{{'DOWNLOAD'| translate}}</h1>
+
+            <pre>{{files.length}} {{'FILES_TO_BE_DOWNLOADED'|translate}}</pre>
+
+            <div layout="row" layout-align="start center">
+                <i class="material-icons">folder_open</i>
+                <md-input-container flex>
+
+                    <label>{{'CHOOSE_DESTINATION_FOLDER'| translate}}</label>
+
+                    <md-select required ng-model="options.destinationFolder">
+                        <md-option ng-value="folder.uuid"  ng-repeat="folder in folders">
+                            {{folder.path | fileshortname}}
+                        </md-option>
+                    </md-select>
+                    </md-input-container>
+            </div>
+            <div layout="row" layout-align="start center">
+                <md-switch ng-model="showAdvancedOptions" aria-label="{{'ADVANCED_OPTIONS' | translate}}">
+                    {{'ADVANCED_OPTIONS' | translate}}
+                </md-switch>
+            </div>
+
+            <div layout="column" ng-show="showAdvancedOptions">
+
+                <md-checkbox ng-model="options.forceRewrite" aria-label="{{'FORCE_REWRITE'|translate}}">
+                    {{'FORCE_REWRITE'|translate}}
+                </md-checkbox>
+
+
+                 <md-checkbox ng-model="options.checkOutItems" aria-label="{{'CHECK_OUT_ITEMS'|translate}}">
+                    {{'CHECK_OUT_ITEMS'|translate}}
+                </md-checkbox>
+
+                <md-checkbox ng-model="options.checkOutItemsRecursive" aria-label="{{'CHECK_OUT_ITEMS'|translate}}">
+                    {{'CHECK_OUT_RECURSIVE'|translate}}
+                </md-checkbox>
+
+            </div>
+
+            <div layout="row" layout-align="end center">
+
+
+                <div layout="row" layout-align="space-between center">
+                    <md-button type="button" aria-label="" ng-click="close()" class="md-raised md-default">
+                        {{'CANCEL'|translate}}
+                    </md-button>
+
+                    <md-button ng-disabled="form.$invalid" type="submit" aria-label="" class="md-raised md-primary">
+                        {{'DOWNLOAD'|translate}}
+                    </md-button>
+                </div>
+            </div>
+
+        </form>
+
     </div>
-
-    <div ng-if="status.ended">
-        <div layout="column">
-            <h1>{{'DONE'| translate}}</h1>
-        </div>
-        <div layout="row">
-            <md-button type="button" aria-label="" ng-click="close()" class="md-raised md-default">
-                {{'CLOSE'|translate}}
-            </md-button>
-
-            <md-button type="button" aria-label="" ng-click="close()" href="#/folder/{{options.destinationFolder}}" class="md-raised md-primary">
-                {{'TO_FOLDER_VIEW'|translate}}
-            </md-button>
-        </div>
-    </div>
-
-    <form name="form" ng-submit="submit()" ng-if="!status">
-
-        <h1>{{'DOWNLOAD'| translate}}</h1>
-
-        <div>
-            <p>{{'CHOOSE_DESTINATION_FOLDER'| translate}}</p>
-
-            <md-select required ng-model="options.destinationFolder">
-                <md-option ng-value="folder.uuid"  ng-repeat="folder in folders">
-                    {{folder.path | fileshortname}}
-                </md-option>
-            </md-select>
-        </div>
-
-        <pre>{{files.length}} {{'FILES_TO_BE_DOWNLOADED'|translate}}</pre>
-
-        <div ng-show="showAdvancedOptions">
-            <md-checkbox ng-model="options.forceRewrite" aria-label="{{'FORCE_REWRITE'|translate}}">
-                {{'FORCE_REWRITE'|translate}}
-            </md-checkbox>
-        </div>
-
-        <div>
-            <md-switch ng-model="showAdvancedOptions" aria-label="{{'ADVANCED_OPTIONS' | translate}}">
-                {{'ADVANCED_OPTIONS' | translate}}
-            </md-switch>
-
-            <md-button type="button" aria-label="" ng-click="close()" class="md-raised md-default">
-                {{'CANCEL'|translate}}
-            </md-button>
-
-            <md-button ng-disabled="form.$invalid" type="submit" aria-label="" class="md-raised md-primary">
-                {{'DOWNLOAD'|translate}}
-            </md-button>
-        </div>
-
-    </form>
-
-</md-content>
+</md-bottom-sheet>

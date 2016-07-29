@@ -13,7 +13,7 @@
                 });
         })
 
-        .controller('FolderController', function ($scope, $location, $routeParams, $filter, $mdDialog, $q,
+        .controller('FolderController', function ($scope, $location, $routeParams, $filter, $mdDialog, $mdBottomSheet, $q,
                                                   FolderService, DBService, RepositoryService, WorkspaceService, ConfigurationService) {
 
             $scope.folder = FolderService.getFolder({uuid: $routeParams.uuid});
@@ -172,7 +172,7 @@
             };
 
             $scope.createPart = function (file) {
-                $mdDialog.show({
+                $mdBottomSheet.show({
                     templateUrl: 'js/folder/create-part.html',
                     fullscreen: true,
                     controller: 'PartCreationCtrl',
@@ -184,7 +184,7 @@
             };
 
             $scope.createDocument = function (file) {
-                $mdDialog.show({
+                $mdBottomSheet.show({
                     templateUrl: 'js/folder/create-document.html',
                     fullscreen: true,
                     controller: 'DocumentCreationCtrl',
@@ -282,22 +282,22 @@
 
         })
 
-        .controller('AddFolderCtrl', function ($scope, $mdDialog,
+        .controller('AddFolderCtrl', function ($scope, $mdBottomSheet,
                                                FolderService) {
 
             $scope.search = function (files) {
                 var file = files[0];
                 if (file) {
                     FolderService.add(file.path);
-                    $mdDialog.hide(file.path);
+                    $mdBottomSheet.hide(file.path);
                 }
             };
 
-            $scope.close = $mdDialog.hide;
+            $scope.close = $mdBottomSheet.hide;
 
         })
 
-        .controller('DocumentCreationCtrl', function ($scope, $mdDialog,
+        .controller('DocumentCreationCtrl', function ($scope, $mdBottomSheet,
                                                       WorkspaceService, UploadService, RepositoryService, DBService,
                                                       file, folderPath) {
 
@@ -328,7 +328,7 @@
 
         })
 
-        .controller('PartCreationCtrl', function ($scope, $mdDialog,
+        .controller('PartCreationCtrl', function ($scope, $mdBottomSheet,
                                                   WorkspaceService, UploadService, RepositoryService, DBService,
                                                   file, folderPath) {
 
@@ -344,7 +344,7 @@
                 }
             };
 
-            $scope.close = $mdDialog.hide;
+            $scope.close = $mdBottomSheet.hide;
 
             $scope.create = function () {
                 $scope.creating = true;
@@ -357,7 +357,7 @@
                     file.index = RepositoryService.getFileIndex(newIndex, file.path);
                     DBService.getItem(file.index).then(function(item){
                         file.item = item;
-                        $mdDialog.hide();
+                        $mdBottomSheet.hide();
                     });
                 }).catch(onError);
             };

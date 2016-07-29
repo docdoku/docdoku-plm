@@ -1,6 +1,6 @@
 angular.module('dplm.menu', [])
 
-    .controller('MenuController', function ($scope,$filter,$mdDialog,
+    .controller('MenuController', function ($scope,$filter,$mdBottomSheet,
                                             FolderService,ConfigurationService,WorkspaceService) {
 
         $scope.workspaces = WorkspaceService.workspaces;
@@ -63,7 +63,7 @@ angular.module('dplm.menu', [])
         $scope.$watchCollection('workspaces',updateWorkspaces);
 
         $scope.searchRepositories = function(){
-            $mdDialog.show({
+            $mdBottomSheet.show({
                 templateUrl: 'js/repository/repository-search.html',
                 fullscreen: true,
                 controller:'RepositorySearchCtrl'
@@ -71,7 +71,7 @@ angular.module('dplm.menu', [])
         };
 
         $scope.addFolder = function(){
-            $mdDialog.show({
+            $mdBottomSheet.show({
                 templateUrl: 'js/folder/add-folder.html',
                 fullscreen: true,
                 controller:'AddFolderCtrl'

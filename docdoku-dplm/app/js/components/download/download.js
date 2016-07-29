@@ -4,7 +4,7 @@
 
     angular.module('dplm.dialogs.download',[])
 
-        .controller('DownloadCtrl',function($scope,$mdDialog,$filter,
+        .controller('DownloadCtrl',function($scope,$mdBottomSheet,$filter,
                                             items,FolderService,DownloadService){
 
             $scope.fileMap = $filter('itemsFiles')(items);
@@ -18,7 +18,7 @@
                 destinationFolder:null
             };
 
-            $scope.close = $mdDialog.hide;
+            $scope.close = $mdBottomSheet.hide;
 
             $scope.status = null;
 

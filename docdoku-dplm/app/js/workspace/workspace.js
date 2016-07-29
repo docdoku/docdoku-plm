@@ -12,7 +12,7 @@
                 });
         })
 
-        .controller('WorkspaceController', function ($scope, $routeParams, $filter, $mdDialog,
+        .controller('WorkspaceController', function ($scope, $routeParams, $filter, $mdBottomSheet,
                                                      WorkspaceService, DBService, ConfigurationService) {
 
             var workspace = $routeParams.workspace;
@@ -202,7 +202,7 @@
 
             $scope.actions = {
                 download: function(selection){
-                    $mdDialog.show({
+                    $mdBottomSheet.show({
                         templateUrl: 'js/components/download/download.html',
                         clickOutsideToClose:false,
                         fullscreen: true,
