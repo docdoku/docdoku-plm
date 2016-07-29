@@ -213,7 +213,7 @@
                             </td>
 
                             <td md-cell>
-                                <a href file-preview="file.path" layout-margin>{{file.path | fileshortname}}</a>
+                                <a href file-preview="file.path" layout-margin ng-class="{'modified':file.index && file.modified}">{{file.path | fileshortname}}</a>
                             </td>
 
 

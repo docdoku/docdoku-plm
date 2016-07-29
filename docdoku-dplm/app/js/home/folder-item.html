@@ -1,4 +1,7 @@
-<md-button class="md-icon-button md-primary" aria-label="{{'SYNC'|translate}}" href="#/folder/{{folder.uuid}}">
+<md-button class="md-icon-button md-primary" aria-label="{{'OPEN_FOLDER'|translate}}" href="#/folder/{{folder.uuid}}">
+    <md-tooltip>
+        {{'TO_FOLDER_VIEW'|translate}}
+    </md-tooltip>
     <i class="material-icons">folder_open</i>
 </md-button>
 
@@ -6,8 +9,6 @@
     <a aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">
         {{folder.path | fileshortname}}
     </a>
-    <div layout="row">
-        <span ng-if="filesCount >= 0">{{filesCount}} {{'FILES' | translate }}</div>
-        <span ng-if="latestAction">{{'LATEST_ACTION' | translate}} {{latestAction | utcDateTimeAgo}}</span>
-    </div>
+    <span ng-if="filesCount >= 0">{{filesCount}} {{'FILES' | translate }}</span>
+    <small ng-if="latestAction">{{'LATEST_ACTION' | translate}} <a>{{latestAction | utcDateTimeAgo}}</a></small>
 </div>

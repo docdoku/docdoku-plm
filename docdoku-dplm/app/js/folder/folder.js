@@ -102,6 +102,7 @@
                         var file = FolderService.createFileObject(path);
                         file.index = RepositoryService.getFileIndex(repositoryIndex, path);
                         file.stat = FolderService.getFileSize(path);
+                        file.modified = RepositoryService.isModified(repositoryIndex, path);
                         return file;
                     });
 
@@ -236,6 +237,7 @@
                         DBService.getItem(file.index).then(function(item){
                             file.item = item;
                         });
+                        file.modified = RepositoryService.isModified(repositoryIndex, file.path);
                     }
                 });
             };

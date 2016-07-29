@@ -179,6 +179,7 @@
                 var index = _this.getRepositoryIndex(indexFolder);
                 var keys = Object.keys(index);
                 var files = [];
+
                 keys.forEach(function(key){
                     var path;
                     if(key.endsWith('.id')){
@@ -186,11 +187,15 @@
                     }else if(key.endsWith('.number')){
                         path = key.substr(0,key.length-7);
                     }
-                    if( getIndexValue(index, path, 'hash') !== getIndexValue(index, path, 'digest')){
+                    if(this.isModified(index, path)){
                         files.push(path);
                     }
                 });
                 return files;
+            };
+
+            this.isModified = function(index, path){
+                return path && getIndexValue(index, path, 'hash') !== getIndexValue(index, path, 'digest');
             };
 
             this.syncIndex = function(indexFolder){

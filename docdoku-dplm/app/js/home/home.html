@@ -51,9 +51,10 @@
 
 
         <div  ng-show="status"
-             layout="column" layout-align="center center" layout-fill>
+             layout="column"
+              layout-align="start center" layout-margin>
 
-            <div ng-if="status.workspace">
+            <div layout-margin ng-if="status.workspace">
                 <h2>{{'MENU_WORKSPACES'|translate}}</h2>
                 <h3>{{status.workspace}} {{status.done}} / {{ status.total}}</h3>
             </div>
@@ -124,15 +125,21 @@
                              layout="row" layout-margin>
 
                             <md-button class="md-icon-button md-primary" aria-label="{{'SYNC'|translate}}" ng-click="syncWorkspace(workspace)">
+                                <md-tooltip>
+                                    {{'SYNC'|translate}}
+                                </md-tooltip>
                                 <i class="material-icons">cached</i>
                             </md-button>
 
                             <div layout="column">
                                 <a aria-label="" href="#/workspace/{{workspace}}" class="md-primary">
+                                    <md-tooltip>
+                                        {{'BROWSE_WORKSPACE'|translate}}
+                                    </md-tooltip>
                                     {{workspace}}
                                 </a>
-                                <span ng-if="workspaceSyncs[workspace]">{{'LAST_SYNC_DATE' | translate}} {{workspaceSyncs[workspace] | localDateTimeAgo}}</span>
-                                <span ng-if="!workspaceSyncs[workspace]">{{'NOT_YET_SYNC' | translate}}</span>
+                                <small ng-if="workspaceSyncs[workspace]">{{'LAST_SYNC_DATE' | translate}} <a>{{workspaceSyncs[workspace] | localDateTimeAgo}}</a></small>
+                                <small ng-if="!workspaceSyncs[workspace]">{{'NOT_YET_SYNC' | translate}}</small>
                             </div>
                         </div>
                     </md-card-content>
