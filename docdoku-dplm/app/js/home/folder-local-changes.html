@@ -1,4 +1,4 @@
-<div ng-if="changes.length && !loading"
+<div ng-if="items.length && !loading"
      layout="row"  layout-margin layout-wrap>
 
     <md-button class="md-icon-button md-primary" aria-label="{{'SYNC'|translate}}" href="#/folder/{{folder.uuid}}">
@@ -9,11 +9,18 @@
         <a aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">
             {{folder.path | fileshortname}}
         </a>
-        <div>{{changes.length}} {{'MODIFICATIONS' | translate }}</div>
+        <div>{{items.length}} {{'MODIFICATIONS' | translate }}</div>
         <md-list>
-            <md-list-item ng-repeat="change in changes">
-                <i class="material-icons">description</i>
-                <a href file-preview="change">{{change | fileshortname}}</a>
+            <md-list-item ng-repeat="item in items">
+                <div layout="row">
+                    <i class="material-icons">description</i>
+                    <div layout="column">
+                        <a href file-preview="change">{{item.path | fileshortname}}</a>
+                        <div layout="row">
+                            <span>{{item.index.id || item.index.number}}-{{item.index.revision}} {{'MODIFIED'}} {{item.stat.mtime | localDateTimeAgo}}</span>
+                        </div>
+                    </div>
+                </div>
             </md-list-item>
         </md-list>
     </div>

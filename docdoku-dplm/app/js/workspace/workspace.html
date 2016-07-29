@@ -15,7 +15,8 @@
             <div layout="row">
 
                 <div ng-if="!sync.running" class="md-caption">
-                    {{'LAST_SYNC_DATE' | translate}}
+                    <span ng-if="lastSyncDate">{{'LAST_SYNC_DATE' | translate}} {{lastSyncDate | localDateTimeAgo}}</span>
+                    <span ng-if="!lastSyncDate"><a href ng-click="refresh()">{{'NOT_YET_SYNC' | translate}}</a></span>
                 </div>
 
                 <div ng-if="sync.running" class="md-caption">
@@ -27,7 +28,7 @@
     </md-toolbar>
 
     <md-content>
-        <div layout="row" layout-align="space-between center">
+        <div layout="row" layout-align="start center">
             <md-menu-bar>
                 <md-menu>
                     <button ng-click="$mdOpenMenu()">
@@ -114,6 +115,7 @@
                     </md-menu-content>
                 </md-menu>
             </md-menu-bar>
+
             <md-table-pagination
                     md-boundary-links="true"
                     md-limit="query.limit"
@@ -126,17 +128,31 @@
             </md-table-pagination>
         </div>
 
-        <div layout="row">
+        <div layout="row" layout-align="start center">
+            <div>
+                <md-button
+                        layout="row" layout-align="start center"
+                        class="md-primary"
+                        ng-class="{'md-accent':view === viewTypes.DOCUMENTS}"
+                        ng-click="view = viewTypes.DOCUMENTS">
+                    <i class="material-icons">description</i> <span>{{totalDocuments}}  {{'DOCUMENTS'|translate}}</span>
+                </md-button>
+            </div>
+            <div>
+                <md-button
+                        layout="row" layout-align="start center"
+                        class="md-primary"
+                        ng-class="{'md-accent':view === viewTypes.PARTS}"
+                        ng-click="view = viewTypes.PARTS">
+                    <i class="material-icons">extension</i>
+                    {{totalParts}} {{'PARTS'|translate}}
+                </md-button>
+            </div>
+        </div>
 
-            <md-button class="md-icon-button md-primary" ng-class="{'md-accent':view === viewTypes.DOCUMENTS}" ng-click="view = viewTypes.DOCUMENTS">
-                <i class="material-icons">description</i>
-            </md-button>
+        <div layout="row" layout-align="start center">
 
-            <md-button class="md-icon-button md-primary" ng-class="{'md-accent':view === viewTypes.PARTS}" ng-click="view = viewTypes.PARTS">
-                <i class="material-icons">extension</i>
-            </md-button>
-
-            <md-input-container flex md-no-float class="md-block search-bar">
+            <md-input-container  layout="row"  flex md-no-float class="md-block search-bar">
                 <input placeholder="{{view.searchLabel}}" type="text" ng-change="search()" ng-model="pattern" />
             </md-input-container>
         </div>

@@ -5,7 +5,7 @@
             <th md-column></th>
             <th md-column><span>{{'NUMBER'|translate}}</span></th>
             <th md-column><span>{{'NATIVE_CAD_FILE'|translate}}</span></th>
-            <th md-column><span>{{'LATEST_EVENT'|translate}}</span></th>
+            <th md-column><span>{{'LATEST_ACTION'|translate}}</span></th>
         </tr>
         </thead>
         <tbody md-body>
@@ -18,7 +18,7 @@
                 <i ng-if="item.checkOutUser && item.checkOutUser.login !== configuration.login" class="material-icons">lock_outline</i>
             </td>
             <td md-cell>
-                 {{item.partKey}}
+                 {{item.partKey}}-{{item.partIterations.length}}
             </td>
             <td md-cell>
                 <a ng-if="item.lastIteration.nativeCADFile" href="" ng-click="previewFile(item.lastIteration.nativeCADFile)">

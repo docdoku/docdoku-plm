@@ -131,7 +131,8 @@
                                 <a aria-label="" href="#/workspace/{{workspace}}" class="md-primary">
                                     {{workspace}}
                                 </a>
-                                <span>{{'LAST_SYNC'}} {{todo}}</span>
+                                <span ng-if="workspaceSyncs[workspace]">{{'LAST_SYNC_DATE' | translate}} {{workspaceSyncs[workspace] | localDateTimeAgo}}</span>
+                                <span ng-if="!workspaceSyncs[workspace]">{{'NOT_YET_SYNC' | translate}}</span>
                             </div>
                         </div>
                     </md-card-content>

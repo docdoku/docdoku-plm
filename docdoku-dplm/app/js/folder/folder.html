@@ -115,7 +115,7 @@
                 </md-menu>
 
                 <md-menu>
-                    <button ng-click="$mdOpenMenu()">
+                    <button ng-click="$mdOpenMenu()" ng-disabled="!selected.length">
                         {{'SELECTION' | translate}} ({{selected.length}})
                     </button>
                     <md-menu-content>
@@ -139,13 +139,13 @@
                             </md-button>
                         </md-menu-item>
                         <md-menu-divider></md-menu-divider>
+
                         <md-menu-item>
                             <md-button ng-click="selected.length=0">
                                 <i class="material-icons">clear</i>
                                 {{'RESET_SELECTION' | translate}}
                             </md-button>
                         </md-menu-item>
-
                     </md-menu-content>
                 </md-menu>
 

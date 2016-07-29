@@ -12,7 +12,7 @@
             var crypto = $window.require('crypto');
             var glob = $window.require("glob");
 
-            var getOrCreateIndex = function(indexFolder){
+            this.getRepositoryIndex = function(indexFolder){
                 try{
                     return $window.require(indexFolder+indexLocation);
                 }catch(e){
@@ -21,11 +21,9 @@
                         fs.mkdirSync(dir);
                     }
                     fs.writeFileSync(indexFolder+indexLocation,'{}');
-                    return {};
+                    return $window.require(indexFolder+indexLocation);
                 }
             };
-
-            this.getOrCreateIndex = getOrCreateIndex;
 
             this.search = function(folder){
                 return $q(function(resolve,reject) {
@@ -43,15 +41,6 @@
                 });
             };
 
-            this.getRepositoryIndex = function(repository){
-                return $q(function(resolve) {
-                    try{
-                        resolve($window.require(repository+indexLocation));
-                    }catch(e){
-                        resolve({});
-                    }
-                });
-            };
 
             var getIndexValue = function(index,path,key){
                 return index[path+'.'+key] || null;
@@ -141,7 +130,7 @@
 
             this.savePartToIndex = function(indexFolder,path, part){
                 var indexPath = indexFolder + indexLocation;
-                var index = getOrCreateIndex(indexFolder);
+                var index = _this.getRepositoryIndex(indexFolder);
                 updateIndexForPart(index, path, part);
                 updateFile(index,path);
                 writeIndex(indexPath,index);
@@ -150,7 +139,7 @@
 
             this.saveDocumentToIndex = function(indexFolder,path, document){
                 var indexPath = indexFolder + indexLocation;
-                var index = getOrCreateIndex(indexFolder);
+                var index = _this.getRepositoryIndex(indexFolder);
                 updateIndexForDocument(index, path, document);
                 updateFile(index,path);
                 writeIndex(indexPath,index);
@@ -188,7 +177,7 @@
             };
 
             this.getLocalChanges = function(indexFolder){
-                var index = getOrCreateIndex(indexFolder);
+                var index = _this.getRepositoryIndex(indexFolder);
                 var keys = Object.keys(index);
                 var files = [];
                 keys.forEach(function(key){
@@ -212,7 +201,7 @@
                 var promise = deferred.promise;
 
                 var indexPath = indexFolder + indexLocation;
-                var index = getOrCreateIndex(indexFolder);
+                var index = _this.getRepositoryIndex(indexFolder);
                 var keys = Object.keys(index);
 
                 var documents = keys.filter(function(key){

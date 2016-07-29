@@ -74,7 +74,7 @@
         })
 
         .service('DownloadService', function ($window, $q, $filter, $timeout,
-                                              ConfigurationService, RepositoryService) {
+                                              ConfigurationService, RepositoryService,READ_WRITE) {
 
             var fs = $window.require('fs');
             var http = $window.require('http');
@@ -94,6 +94,14 @@
                 requestOpts.path =  $window.encodeURI('/api' + url);
 
                 var bytes = 0, totalBytes = 0;
+
+                try{
+                    fs.statSync(file);
+                }catch(e){
+                    fs.writeFileSync(file,'');
+                }
+
+                fs.chmodSync(file, READ_WRITE);
 
                 var request = http.get(requestOpts,function(response){
                     totalBytes = response.headers['content-length'];
@@ -116,6 +124,7 @@
                 });
 
                 request.on('error', function (err) {
+                    fs.chmodSync(file, fileMode(item));
                     deferred.reject(err);
                 });
 
@@ -136,7 +145,7 @@
                 var done = 0;
                 var fileUrls = Object.keys(fileMap);
 
-                var index = RepositoryService.getOrCreateIndex(destinationFolder);
+                var index = RepositoryService.getRepositoryIndex(destinationFolder);
                 var indexPath = RepositoryService.getIndexPath(destinationFolder);
 
                 fileUrls.forEach(function(url){

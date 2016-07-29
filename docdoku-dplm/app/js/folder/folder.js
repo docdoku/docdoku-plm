@@ -159,12 +159,10 @@
 
             $scope.fetchFolder = function () {
                 $scope.sync.running = true;
-                RepositoryService.getRepositoryIndex(folderPath)
-                    .then(function (index) {
-                        repositoryIndex = index;
-                        return folderPath;
-                    })
-                    .then(FolderService.recursiveReadDir)
+
+                repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
+
+                FolderService.recursiveReadDir(folderPath)
                     .then(function (files) {
                         $scope.totalFilesInFolder = files.length;
                         allFiles = files;

@@ -166,7 +166,9 @@
                     ADD_TO_FAVORITES:'Add to favorites',
                     SEARCH_IN_PARTS:'Search in parts',
                     SEARCH_IN_DOCUMENTS:'Search in documents',
-                    LATEST_ACTION:'Latest action'
+                    LATEST_ACTION:'Latest action',
+                    NOT_YET_SYNC:'Not synchronized',
+                    NUMBER:'Number'
                 })
                 .translations('fr', {
                     CHECKOUT: 'Réserver',
@@ -329,7 +331,9 @@
                     ADD_TO_FAVORITES:'Ajouter aux favoris',
                     SEARCH_IN_PARTS:'Rechercher dans les articles',
                     SEARCH_IN_DOCUMENTS:'Rechercher dans les documents',
-                    LATEST_ACTION:'Dernière activité'
+                    LATEST_ACTION:'Dernière activité',
+                    NOT_YET_SYNC:'Non synchronisé',
+                    NUMBER:'Numéro'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

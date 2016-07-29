@@ -37,6 +37,7 @@
                 }).then(function(){
                     $scope.totalDocuments = allDocuments.length;
                     $scope.totalParts = allParts.length;
+                    $scope.lastSyncDate = WorkspaceService.workspaceSyncs[workspace];
                 });
             };
 
@@ -193,6 +194,12 @@
                 });
             };
 
+            var refreshDisplay = function() {
+                console.log('refresh')
+                getData().then($scope.search);
+            };
+
+
             $scope.actions = {
                 download: function(selection){
                     $mdDialog.show({
@@ -204,6 +211,34 @@
                         },
                         controller:'DownloadCtrl'
                     });
+                },
+                checkin : function(selection){
+
+                    WorkspaceService.checkInItems(selection)
+                        .then(refreshDisplay,function(){
+                            console.log('Something bad happened');
+                        },function(){
+                            console.log('Some progress notifications');
+                        });
+                },
+
+                checkout:function(selection){
+                    // TODO : filter for action availability
+                    WorkspaceService.checkOutItems(selection)
+                        .then(refreshDisplay,function(){
+                            console.log('Something bad happened');
+                        },function(){
+                            console.log('Some progress notifications');
+                        });
+                },
+
+                undoCheckout: function(selection){
+                    WorkspaceService.undoCheckOutItems(selection)
+                        .then(refreshDisplay,function(){
+                            console.log('Something bad happened');
+                        },function(){
+                            console.log('Some progress notifications');
+                        });
                 }
             };
 

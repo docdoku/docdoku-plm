@@ -176,8 +176,8 @@
 
                         camera.aspect = w / h;
                         camera.updateProjectionMatrix();
-
                         renderer.setSize( w, h );
+                        controls.handleResize();
                     };
 
                     var onMeshLoaded = function(mesh){
@@ -208,7 +208,7 @@
                         renderer.setClearColor( 0x000000, 0 );
                         renderer.setSize( w, h );
                         element[0].appendChild( renderer.domElement );
-                        controls = new THREE.OrbitControls( camera,element[0]);
+                        controls = new THREE.TrackballControls( camera, element[0]);
                         window.addEventListener( 'resize', onWindowResize, false );
                         onWindowResize();
                     };

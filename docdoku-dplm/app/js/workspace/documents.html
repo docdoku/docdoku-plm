@@ -5,7 +5,7 @@
                 <th md-column></th>
                 <th md-column><span>{{'ID'|translate}}</span></th>
                 <th md-column><span>{{'ATTACHED_FILES'|translate}}</span></th>
-                <th md-column><span>{{'LATEST_EVENT'|translate}}</span></th>
+                <th md-column><span>{{'LATEST_ACTION'|translate}}</span></th>
             </tr>
         </thead>
         <tbody md-body>
@@ -18,7 +18,7 @@
                     <i ng-if="item.checkOutUser && item.checkOutUser.login !== configuration.login" class="material-icons">lock_outline</i>
                 </td>
                 <td md-cell>
-                    {{item.documentMasterId}}-{{item.version}}-{{item.documentIterations.length}}
+                    {{item.id}}-{{item.documentIterations.length}}
                 </td>
 
                 <td md-cell>

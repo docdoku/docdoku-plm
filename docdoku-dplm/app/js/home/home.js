@@ -13,6 +13,7 @@
 
         .controller('HomeCtrl',function ($scope, FolderService, WorkspaceService, RepositoryService) {
 
+            $scope.workspaceSyncs = WorkspaceService.workspaceSyncs;
             var syncWorkspaces = function(){
                 return WorkspaceService.fetchAllWorkspaces(WorkspaceService.workspaces)
             };
@@ -89,12 +90,23 @@
                 scope:{
                     folder:'=folderLocalChanges'
                 },
-                controller:function($scope, FolderService,RepositoryService){
+                controller:function($scope, $window, FolderService,RepositoryService){
 
                     var path = $scope.folder.path;
+                    var fs = $window.require('fs');
 
                     var refresh = function(){
-                        $scope.changes = RepositoryService.getLocalChanges(path);
+
+                        var index = RepositoryService.getRepositoryIndex(path);
+                        var changes = RepositoryService.getLocalChanges(path);
+
+                        $scope.items = changes.map(function(file){
+                            return {
+                                path : file,
+                                index : RepositoryService.getFileIndex(index,file),
+                                stat : fs.statSync(file)
+                            };
+                        });
                     };
 
                     $scope.$on('refresh',refresh);
@@ -119,7 +131,7 @@
                             $scope.filesCount = count;
                         });
 
-                        var index = RepositoryService.getOrCreateIndex($scope.folder.path);
+                        var index = RepositoryService.getRepositoryIndex($scope.folder.path);
 
                         var sortedEvents = Object.keys(index).filter(function(key){
                             return key.endsWith('.lastModifiedDate');
