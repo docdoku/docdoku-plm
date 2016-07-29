@@ -23,8 +23,10 @@ package com.docdoku.server.rest;
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.configuration.BaselinedDocument;
+import com.docdoku.core.configuration.BaselinedDocumentKey;
 import com.docdoku.core.configuration.BaselinedPart;
-import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.configuration.DocumentCollection;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
@@ -230,16 +232,16 @@ public class Tools {
         return new BaselinedPartDTO(baselinedPart.getTargetPart());
     }
 
-    public static List<BaselinedDocumentDTO> mapBaselinedDocumentsToBaselinedDocumentDTO(Collection<DocumentIteration> baselinedDocuments) {
+    public static List<BaselinedDocumentDTO> mapBaselinedDocumentsToBaselinedDocumentDTOs(DocumentCollection documentCollection) {
         List<BaselinedDocumentDTO> baselinedDocumentDTOs = new ArrayList<>();
-        for (DocumentIteration baselinedDocument : baselinedDocuments) {
-            baselinedDocumentDTOs.add(mapBaselinedDocumentToBaselinedDocumentDTO(baselinedDocument));
-        }
-        return baselinedDocumentDTOs;
-    }
+        Map<BaselinedDocumentKey, BaselinedDocument> baselinedDocuments = documentCollection.getBaselinedDocuments();
 
-    public static BaselinedDocumentDTO mapBaselinedDocumentToBaselinedDocumentDTO(DocumentIteration baselineDocument) {
-        return new BaselinedDocumentDTO(baselineDocument);
+        for (Map.Entry<BaselinedDocumentKey, BaselinedDocument> map : baselinedDocuments.entrySet()) {
+            BaselinedDocument baselinedDocument = map.getValue();
+            baselinedDocumentDTOs.add(new BaselinedDocumentDTO(baselinedDocument.getTargetDocument()));
+        }
+
+        return baselinedDocumentDTOs;
     }
 
 }

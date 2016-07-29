@@ -28,31 +28,31 @@ import java.io.Serializable;
 @XmlRootElement
 public class BaselinedDocumentDTO implements Serializable {
 
-    private String documentId;
+    private String documentMasterId;
     private String version;
     private int iteration;
 
     public BaselinedDocumentDTO() {
     }
 
-    public BaselinedDocumentDTO(DocumentIteration partIteration) {
-        this.documentId = partIteration.getDocumentMasterId();
-        this.version = partIteration.getVersion();
-        this.iteration = partIteration.getIteration();
+    public BaselinedDocumentDTO(DocumentIteration documentIteration) {
+        this.documentMasterId = documentIteration.getDocumentMasterId();
+        this.version = documentIteration.getVersion();
+        this.iteration = documentIteration.getIteration();
     }
 
     public BaselinedDocumentDTO(String number, String version, int iteration) {
-        this.documentId = number;
+        this.documentMasterId = number;
         this.version = version;
         this.iteration = iteration;
     }
 
-    public String getDocumentId() {
-        return documentId;
+    public String getDocumentMasterId() {
+        return documentMasterId;
     }
 
-    public void setDocumentId(String documentId) {
-        this.documentId = documentId;
+    public void setDocumentMasterId(String documentMasterId) {
+        this.documentMasterId = documentMasterId;
     }
 
     public String getVersion() {
