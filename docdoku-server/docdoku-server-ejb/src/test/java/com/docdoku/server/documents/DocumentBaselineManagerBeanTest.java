@@ -133,8 +133,8 @@ public class DocumentBaselineManagerBeanTest {
 
         revisions[0] = documentRevision2;
         revisions[1] = documentRevision1;
-        documentRevision2.createNextIteration(user);
         documentRevision1.createNextIteration(user);
+        documentRevision2.createNextIteration(user);
         documentRevision1.setLocation(folder);
         documentRevision2.setLocation(folder);
         Mockito.when(em.find(DocumentRevision.class, documentRevision1.getKey())).thenReturn(documentRevision1);
@@ -144,11 +144,11 @@ public class DocumentBaselineManagerBeanTest {
         Mockito.when(userManager.checkWorkspaceReadAccess(workspace.getId())).thenReturn(user);
 
         //when
-        DocumentBaseline documentBaseline= docBaselineManagerBean.createBaseline(workspace.getId(), "name", DocumentBaseline.BaselineType.RELEASED, "description");
+        DocumentBaseline documentBaseline= docBaselineManagerBean.createBaseline(workspace.getId(), "name", DocumentBaseline.BaselineType.LATEST, "description");
 
         //Then
         Assert.assertTrue(documentBaseline != null);
-        Assert.assertTrue(documentBaseline.hasBaselinedDocument(documentRevision1.getKey()));
+        Assert.assertFalse(documentBaseline.hasBaselinedDocument(documentRevision1.getKey()));
         Assert.assertTrue(documentBaseline.hasBaselinedDocument(documentRevision2.getKey()));
         Assert.assertNull(documentBaseline.getBaselinedDocument(documentRevision1.getKey()));
         Assert.assertNotNull(documentBaseline.getBaselinedDocument(documentRevision2.getKey()));
