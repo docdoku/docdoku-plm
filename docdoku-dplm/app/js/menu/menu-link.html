@@ -1,6 +1,13 @@
+
 <md-button
         aria-label=""
         ng-class="{'active' : openedPage === page}"
         ng-href="{{page.url}}">
-    {{page.name}}
+    <div layout="row" layout-align="space-between center">
+        <div layout="row" layout-align="start center">
+            <i class="material-icons" ng-class="{'favorite':page.folder.favorite}">star</i>
+            <span>{{page.name}}</span>
+        </div>
+        <i class="material-icons modified" ng-if="page.folder.localChanges.length">mode_edit</i>
+    </div>
 </md-button>

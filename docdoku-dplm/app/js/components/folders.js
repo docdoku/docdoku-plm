@@ -30,7 +30,8 @@
                 _this.folders.push({
                     uuid: uuid4.generate(),
                     path: path,
-                    favorite: false
+                    favorite: false,
+                    localChanges:0
                 });
                 _this.save();
             };

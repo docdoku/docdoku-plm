@@ -92,15 +92,16 @@
                 },
                 controller:function($scope, $window, FolderService,RepositoryService){
 
+                    var folder = $scope.folder;
                     var path = $scope.folder.path;
                     var fs = $window.require('fs');
 
                     var refresh = function(){
 
                         var index = RepositoryService.getRepositoryIndex(path);
-                        var changes = RepositoryService.getLocalChanges(path);
+                        RepositoryService.getLocalChanges(folder);
 
-                        $scope.items = changes.map(function(file){
+                        $scope.items = folder.localChanges.map(function(file){
                             return {
                                 path : file,
                                 index : RepositoryService.getFileIndex(index,file),

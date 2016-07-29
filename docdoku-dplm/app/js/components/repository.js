@@ -175,22 +175,24 @@
                 };
             };
 
-            this.getLocalChanges = function(indexFolder){
+            this.getLocalChanges = function(folder){
+                var indexFolder = folder.path;
                 var index = _this.getRepositoryIndex(indexFolder);
                 var keys = Object.keys(index);
                 var files = [];
 
-                keys.forEach(function(key){
+                angular.forEach(keys, function(key){
                     var path;
                     if(key.endsWith('.id')){
                         path = key.substr(0,key.length-3);
                     }else if(key.endsWith('.number')){
                         path = key.substr(0,key.length-7);
                     }
-                    if(this.isModified(index, path)){
+                    if(_this.isModified(index, path)){
                         files.push(path);
                     }
                 });
+                folder.localChanges = files;
                 return files;
             };
 

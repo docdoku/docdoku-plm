@@ -1,7 +1,7 @@
 angular.module('dplm.menu', [])
 
     .controller('MenuController', function ($scope,$filter,$mdBottomSheet,
-                                            FolderService,ConfigurationService,WorkspaceService) {
+                                            FolderService,ConfigurationService,WorkspaceService,RepositoryService) {
 
         $scope.workspaces = WorkspaceService.workspaces;
         $scope.folders = FolderService.folders;
@@ -44,8 +44,11 @@ angular.module('dplm.menu', [])
                 return {
                     name: $filter('fileshortname')(folder.path),
                     type: 'link',
-                    url:'#/folder/'+folder.uuid
+                    url:'#/folder/'+folder.uuid,
+                    folder:folder
                 };
+            }).sort(function(a,b){
+                return a.favorite ? -1 : b.favorite ? 1 : 0;
             });
         };
 
