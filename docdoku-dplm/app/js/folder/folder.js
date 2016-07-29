@@ -67,6 +67,10 @@
                 FolderService.reveal(folderPath);
             };
 
+            $scope.shell = function () {
+                FolderService.shell(folderPath);
+            };
+
             $scope.toggleFavorite = function () {
                 $scope.folder.favorite = !$scope.folder.favorite;
                 FolderService.save();

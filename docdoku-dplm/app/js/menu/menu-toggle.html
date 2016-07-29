@@ -19,7 +19,7 @@
 </md-button>
 
 <ul id="section-{{section.name | nospace}}" class="menu-toggle-list">
-    <li ng-repeat="page in section.pages">
+    <li ng-repeat="page in section.pages | orderBy:'-folder.favorite'">
         <menu-link></menu-link>
     </li>
 </ul>

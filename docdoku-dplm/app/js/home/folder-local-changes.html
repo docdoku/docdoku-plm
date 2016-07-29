@@ -1,23 +1,34 @@
 <div ng-if="items.length && !loading"
      layout="row"  layout-margin layout-wrap>
 
-    <md-button class="md-icon-button md-primary" aria-label="{{'SYNC'|translate}}" href="#/folder/{{folder.uuid}}">
-        <i class="material-icons">folder_open</i>
-    </md-button>
-
     <div layout="column">
-        <a aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">
-            {{folder.path | fileshortname}}
-        </a>
-        <div>{{items.length}} {{'MODIFICATIONS' | translate }}</div>
+
+        <div layout="row" layout-align="start center">
+            <md-button class="md-icon-button md-primary" aria-label="{{'SYNC'|translate}}" href="#/folder/{{folder.uuid}}">
+                <i class="material-icons">folder_open</i>
+            </md-button>
+
+            <a aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">
+                {{folder.path | fileshortname}}
+            </a>
+        </div>
+
+        <div layout="row" layout-align="start center">
+
+            <md-button class="md-icon-button md-primary" aria-label="{{'REFRESH'|translate}}" ng-click="refresh()">
+                <i class="material-icons">cached</i>
+            </md-button>
+            <div>{{items.length}} {{'MODIFICATIONS' | translate }}</div>
+        </div>
+
         <md-list>
             <md-list-item ng-repeat="item in items">
                 <div layout="row">
-                    <i class="material-icons">description</i>
+                    <i class="material-icons modified">mode_edit</i>
                     <div layout="column">
                         <a href class="modified" file-preview="item.path">{{item.path | fileshortname}}</a>
                         <div layout="row">
-                            <small>{{item.index.id || item.index.number}}-{{item.index.revision}} {{'MODIFIED'}} <a>{{item.stat.mtime | localDateTimeAgo}}</a></small>
+                            <small><a>{{item.index.id || item.index.number}}-{{item.index.revision}}</a> {{'MODIFIED'|translate}} <a>{{item.stat.mtime | localDateTimeAgo}}</a></small>
                         </div>
                     </div>
                 </div>

@@ -90,7 +90,7 @@
                 scope:{
                     folder:'=folderLocalChanges'
                 },
-                controller:function($scope, $window, FolderService,RepositoryService){
+                controller:function($scope, $window, FolderService, RepositoryService){
 
                     var folder = $scope.folder;
                     var path = $scope.folder.path;
@@ -109,7 +109,7 @@
                             };
                         });
                     };
-
+                    $scope.refresh = refresh;
                     $scope.$on('refresh',refresh);
 
                     refresh();

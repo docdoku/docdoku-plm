@@ -5,7 +5,7 @@
         ng-href="{{page.url}}">
     <div layout="row" layout-align="space-between center">
         <div layout="row" layout-align="start center">
-            <i class="material-icons" ng-class="{'favorite':page.folder.favorite}">star</i>
+            <i class="material-icons" ng-if="page.folder" ng-class="{'favorite':page.folder.favorite}">star</i>
             <span>{{page.name}}</span>
         </div>
         <i class="material-icons modified" ng-if="page.folder.localChanges.length">mode_edit</i>

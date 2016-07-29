@@ -42,6 +42,12 @@
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
+                            <md-button ng-click="shell()">
+                                <i class="material-icons">featured_play_list</i>
+                                {{'OPEN_SHELL' | translate}}
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
                             <md-button aria-label="{{'FAVORITE'|translate}}" ng-click="toggleFavorite()">
                                 <i class="material-icons">star</i>
                                 <span ng-if="folder.favorite">{{'REMOVE_FROM_FAVORITES'|translate}}</span>

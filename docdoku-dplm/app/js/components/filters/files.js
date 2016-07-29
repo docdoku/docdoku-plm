@@ -65,6 +65,7 @@
                 return Available3DLoaders.indexOf(ext(file)) !== -1;
             }
         })
+
         .service('FileUtils',function($window){
 
             var sys = $window.require('sys');
@@ -78,12 +79,18 @@
                     case 'win32' :
                     case 'win64' : cmd = 'start';
                         break;
-                    default : cmd = 'xdg-open';
+                    case 'linux':
+                         cmd = 'xdg-open';
                         break;
+                    default:break;
                 }
+                if(!cmd){
+                    // Should use toast service
+                }else{
+                    exec(cmd + ' "' + file + '"');
+                }
+            };
 
-                exec(cmd + ' "' + file + '"');
-            }
         });
 
 })();

@@ -49,7 +49,7 @@
 
             this.recursiveReadDir = function (path) {
                 return $q(function (resolve, reject) {
-                    var recursive = require('recursive-readdir');
+                    var recursive = $window.require('recursive-readdir');
                     recursive(path, ignoreList, function (err, files) {
                         if (err) {
                             reject(err);
@@ -63,7 +63,7 @@
 
             this.getFilesCount = function(path){
                 return $q(function (resolve, reject) {
-                    var recursive = require('recursive-readdir');
+                    var recursive = $window.require('recursive-readdir');
                     recursive(path, ignoreList, function (err, files) {
                         if (err) {
                             reject(err);
@@ -76,7 +76,7 @@
             };
 
             this.reveal = function (path) {
-                var os = require('os');
+                var os = $window.require('os');
                 var command = '';
                 switch (os.type()) {
                     case 'Windows_NT' :
@@ -89,8 +89,31 @@
                         command = 'nautilus';
                         break;
                 }
-                require('child_process').spawn(command, [path]);
+                $window.require('child_process').spawn(command, [path]);
 
+            };
+
+            this.shell = function(path){
+                var cmd;
+                switch ($window.process.platform) {
+                    case 'darwin' : cmd = 'open /Applications/Utilities/Terminal.app/';
+                        break;
+                    case 'win32' :
+                    case 'win64' : cmd = 'cmd';
+                        break;
+                    case 'linux' : cmd = 'x-terminal-emulator';
+                        break;
+                    default:break;
+                }
+                if(!cmd){
+                    // Should use toast service
+                }else{
+                    $window.require('child_process').exec(cmd, {
+                        cwd: path
+                    }, function(error, stdout, stderr) {
+
+                    });
+                }
             };
 
             this.isFolder = function(path){

@@ -47,8 +47,6 @@ angular.module('dplm.menu', [])
                     url:'#/folder/'+folder.uuid,
                     folder:folder
                 };
-            }).sort(function(a,b){
-                return a.favorite ? -1 : b.favorite ? 1 : 0;
             });
         };
 

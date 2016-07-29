@@ -168,7 +168,9 @@
                     SEARCH_IN_DOCUMENTS:'Search in documents',
                     LATEST_ACTION:'Latest action',
                     NOT_YET_SYNC:'Not synchronized',
-                    NUMBER:'Number'
+                    NUMBER:'Number',
+                    OPEN_SHELL:'Open terminal here',
+                    BROWSE_WORKSPACE:'Browse workspace'
                 })
                 .translations('fr', {
                     CHECKOUT: 'Réserver',
@@ -333,7 +335,9 @@
                     SEARCH_IN_DOCUMENTS:'Rechercher dans les documents',
                     LATEST_ACTION:'Dernière activité',
                     NOT_YET_SYNC:'Non synchronisé',
-                    NUMBER:'Numéro'
+                    NUMBER:'Numéro',
+                    OPEN_SHELL:'Ouvrir dans un terminal',
+                    BROWSE_WORKSPACE:'Parcourir l\'espace de travail'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');
