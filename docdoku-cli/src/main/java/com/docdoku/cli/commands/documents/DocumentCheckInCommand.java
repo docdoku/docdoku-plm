@@ -69,7 +69,7 @@ public class DocumentCheckInCommand extends BaseCommandLine {
         }
 
         DocumentApi documentApi = new DocumentApi(client);
-        DocumentRevisionDTO dr = documentApi.getDocumentRevision(workspace,id,revision,null);
+        DocumentRevisionDTO dr = documentApi.getDocumentRevision(workspace,id,revision);
 
         DocumentIterationDTO di = LastIterationHelper.getLastIteration(dr);
         DocumentIterationKey docIPK = new DocumentIterationKey();
