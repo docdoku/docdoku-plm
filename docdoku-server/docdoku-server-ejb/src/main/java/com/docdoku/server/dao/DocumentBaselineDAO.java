@@ -72,4 +72,12 @@ public class DocumentBaselineDAO {
         em.remove(documentBaseline);
         em.flush();
     }
+
+    public boolean existBaselinedDocument(String workspaceId, String documentId, String documentVersion) {
+        return em.createNamedQuery("BaselinedDocument.existBaselinedDocument", Long.class)
+                .setParameter("documentId", documentId)
+                .setParameter("documentVersion", documentVersion)
+                .setParameter("workspaceId", workspaceId)
+                .getSingleResult() > 0;
+    }
 }

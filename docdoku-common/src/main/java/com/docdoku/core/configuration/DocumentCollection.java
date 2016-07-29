@@ -72,15 +72,19 @@ public class DocumentCollection implements Serializable {
 
     public BaselinedDocument addBaselinedDocument(DocumentIteration targetDocument){
         BaselinedDocument baselinedDocument = new BaselinedDocument(this, targetDocument);
-        baselinedDocuments.put(baselinedDocument.getKey(),baselinedDocument);
+        baselinedDocuments.put(baselinedDocument.getKey(), baselinedDocument);
         return baselinedDocument;
     }
 
     public BaselinedDocument getBaselinedDocument(BaselinedDocumentKey baselinedDocumentKey){
         return baselinedDocuments.get(baselinedDocumentKey);
     }
+    public BaselinedDocument getBaselinedDocument(DocumentRevisionKey documentRevisionKey){
+        BaselinedDocumentKey baselinedDocumentKey = getBaselinedDocumentKey(documentRevisionKey);
+        return getBaselinedDocument(baselinedDocumentKey);
+    }
     public boolean hasBaselinedDocument(DocumentRevisionKey documentRevisionKey){
-        BaselinedDocumentKey baselinedDocumentKey = new BaselinedDocumentKey(id,documentRevisionKey.getWorkspaceId(), documentRevisionKey.getDocumentMasterId(), documentRevisionKey.getVersion());
+        BaselinedDocumentKey baselinedDocumentKey = getBaselinedDocumentKey(documentRevisionKey);
         return baselinedDocuments.containsKey(baselinedDocumentKey);
     }
 
@@ -103,6 +107,10 @@ public class DocumentCollection implements Serializable {
     }
     public void setId(int id) {
         this.id = id;
+    }
+
+    private BaselinedDocumentKey getBaselinedDocumentKey(DocumentRevisionKey documentRevisionKey) {
+        return new BaselinedDocumentKey(id, documentRevisionKey.getWorkspaceId(), documentRevisionKey.getDocumentMasterId(), documentRevisionKey.getVersion());
     }
 
     @Override

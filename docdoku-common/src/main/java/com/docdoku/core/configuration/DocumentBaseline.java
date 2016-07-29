@@ -57,8 +57,8 @@ public class DocumentBaseline implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
-    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
-    private FolderCollection folderCollection =new FolderCollection();
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private DocumentCollection documentCollection = new DocumentCollection();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumns({
@@ -81,42 +81,18 @@ public class DocumentBaseline implements Serializable {
         this.creationDate = new Date();
     }
 
-    public Map<BaselinedFolderKey, BaselinedFolder> getBaselinedFolders() {
-        return folderCollection.getBaselinedFolders();
-    }
-    public void removeAllBaselinedFolders() {
-        folderCollection.removeAllBaselinedFolders();
-    }
-
-    public BaselinedFolder addBaselinedFolder(Folder folder){
-        return folderCollection.addBaselinedFolder(folder);
-    }
-    public BaselinedFolder addBaselinedFolder(BaselinedFolder baselinedFolder){
-        return folderCollection.addBaselinedFolder(baselinedFolder);
-    }
-    public boolean hasBasedLinedFolder(String completePath){
-        return folderCollection.hasBaselinedFolder(completePath);
-    }
-    public BaselinedFolder getBaselinedFolder(String completePath){
-        return folderCollection.getBaselinedFolder(completePath);
-    }
-
     public void addBaselinedDocument(DocumentIteration targetDocument){
-        Folder location = targetDocument.getDocumentRevision().getLocation();
-        BaselinedFolder baselinedFolder = folderCollection.getBaselinedFolder(location.getCompletePath());
-        if(baselinedFolder==null) {
-            baselinedFolder = addBaselinedFolder(location);
-        }
-        baselinedFolder.addDocumentIteration(targetDocument);
+        documentCollection.addBaselinedDocument(targetDocument);
+
     }
     public boolean hasBaselinedDocument(DocumentRevisionKey documentRevisionKey){
-        if(folderCollection != null){
-            return folderCollection.hasDocumentRevision(documentRevisionKey);
+        if(documentCollection != null){
+            return documentCollection.hasBaselinedDocument(documentRevisionKey);
         }
         return false;
     }
-    public DocumentIteration getBaselinedDocument(DocumentRevisionKey documentRevisionKey){
-        return (folderCollection!=null) ? folderCollection.getDocumentIteration(documentRevisionKey) : null;
+    public BaselinedDocument getBaselinedDocument(DocumentRevisionKey documentRevisionKey){
+        return (documentCollection!=null) ? documentCollection.getBaselinedDocument(documentRevisionKey) : null;
     }
 
     public String getName() {
@@ -148,8 +124,8 @@ public class DocumentBaseline implements Serializable {
         this.description = description;
     }
 
-    public FolderCollection getFolderCollection() {
-        return folderCollection;
+    public DocumentCollection getDocumentCollection() {
+        return documentCollection;
     }
 
     public User getAuthor() {

@@ -37,9 +37,7 @@
     <class>com.docdoku.core.document.StatusChange</class>
     <class>com.docdoku.core.configuration.DocumentBaseline</class>
     <class>com.docdoku.core.configuration.DocumentCollection</class>
-    <class>com.docdoku.core.configuration.FolderCollection</class>
     <class>com.docdoku.core.configuration.BaselinedDocument</class>
-    <class>com.docdoku.core.configuration.BaselinedFolder</class>
     <class>com.docdoku.core.gcm.GCMAccount</class>
     <class>com.docdoku.core.log.DocumentLog</class>
     <class>com.docdoku.core.log.PartLog</class>

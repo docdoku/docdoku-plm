@@ -20,13 +20,10 @@
 package com.docdoku.server.documents;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.BaselinedFolder;
 import com.docdoku.core.configuration.DocumentBaseline;
-import com.docdoku.core.configuration.FolderCollection;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentBaselineManagerLocal;
@@ -34,7 +31,6 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.DocumentBaselineDAO;
 import com.docdoku.server.dao.DocumentRevisionDAO;
-import com.docdoku.server.dao.FolderDAO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -67,8 +63,9 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
     public DocumentBaseline createBaseline(String workspaceId, String name, DocumentBaseline.BaselineType type, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FolderNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
         DocumentBaseline baseline = new DocumentBaseline(user, name, type, description);
+        baseline.getDocumentCollection().setCreationDate(new Date());
+        baseline.getDocumentCollection().setAuthor(user);
         new DocumentBaselineDAO(em, new Locale(user.getLanguage())).createBaseline(baseline);
-        snapshotAllFolders(baseline,workspaceId);
         snapshotAllDocuments(baseline,workspaceId);
         return baseline;
     }
@@ -97,25 +94,6 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
         return documentBaseline;
     }
 
-    private void fillBaselineFolder(DocumentBaseline baseline, String folderPath) throws FolderNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException{
-        // Ignore already existing folder
-        if(baseline.hasBasedLinedFolder(folderPath)){
-            return;
-        }
-        // Add current folder
-        FolderDAO folderDAO = new FolderDAO(em);
-
-        Folder currentFolder = folderDAO.loadFolder(folderPath);
-        BaselinedFolder baselinedFolder = new BaselinedFolder(baseline.getFolderCollection(),currentFolder);
-        baseline.addBaselinedFolder(baselinedFolder);
-
-        // Add all subFolders
-        Folder[] subFolders = folderDAO.getSubFolders(folderPath);
-        for(Folder subFolder : subFolders){
-            fillBaselineFolder(baseline, subFolder.getCompletePath());
-        }
-    }
-
     private void fillBaselineDocument(DocumentBaseline baseline, List<DocumentRevisionKey> revisionKeys) throws DocumentRevisionNotFoundException, FolderNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         // Add all document
         for(DocumentRevisionKey revisionKey : revisionKeys){
@@ -138,14 +116,6 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
                 baseline.addBaselinedDocument(documentIteration);
             }
         }
-    }
-
-    private void snapshotAllFolders(DocumentBaseline baseline, String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FolderNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        FolderCollection collection = baseline.getFolderCollection();
-        collection.setCreationDate(new Date());
-        collection.setAuthor(user);
-        fillBaselineFolder(baseline, workspaceId);
     }
 
     private void snapshotAllDocuments(DocumentBaseline baseline, String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, FolderNotFoundException {

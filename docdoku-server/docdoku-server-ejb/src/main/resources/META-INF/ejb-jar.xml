@@ -15,9 +15,6 @@
             <ejb-name>DocumentBaselineManagerBean</ejb-name>
         </session>
         <session>
-            <ejb-name>DocumentConfigSpecManagerBean</ejb-name>
-        </session>
-        <session>
             <ejb-name>LOVManagerBean</ejb-name>
         </session>
         <session>

@@ -37,6 +37,9 @@ import java.io.Serializable;
 
 @Table(name = "BASELINEDDOCUMENT")
 @Entity
+@NamedQueries({
+        @NamedQuery(name = "BaselinedDocument.existBaselinedDocument", query = "SELECT count(bd) FROM BaselinedDocument bd WHERE bd.baselinedDocumentKey.targetDocumentId = :documentId AND bd.baselinedDocumentKey.targetDocumentVersion = :documentVersion AND bd.baselinedDocumentKey.targetDocumentWorkspaceId = :workspaceId")
+})
 public class BaselinedDocument implements Serializable {
     @EmbeddedId
     private BaselinedDocumentKey baselinedDocumentKey;

@@ -23,7 +23,6 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.configuration.DocumentConfigSpec;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
@@ -32,10 +31,8 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDocumentConfigSpecManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.*;
-import com.docdoku.server.rest.util.ConfigSpecHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -70,8 +67,6 @@ public class TagResource {
     private final static Logger LOGGER = Logger.getLogger(TagResource.class.getName());
     @Inject
     private IDocumentManagerLocal documentService;
-    @Inject
-    private IDocumentConfigSpecManagerLocal documentConfigSpecService;
     private Mapper mapper;
 
     public TagResource() {
@@ -140,32 +135,20 @@ public class TagResource {
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO[] getDocumentsWithGivenTagIdAndWorkspaceId(
             @PathParam("workspaceId") String workspaceId,
-            @PathParam("tagId") String tagId,
-            @QueryParam("configSpec") String configSpecType)
+            @PathParam("tagId") String tagId)
             throws EntityNotFoundException, UserNotActiveException {
 
-        DocumentRevision[] docRs;
         TagKey tagKey = new TagKey(workspaceId, tagId);
-        if (configSpecType == null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
-            docRs = documentService.findDocumentRevisionsByTag(tagKey);
-        } else {
-            DocumentConfigSpec configSpec = ConfigSpecHelper.getConfigSpec(workspaceId, configSpecType, documentConfigSpecService);
-            docRs = documentConfigSpecService.getFilteredDocumentsByTag(workspaceId, configSpec, tagKey);
-        }
+        DocumentRevision[] docRs = documentService.findDocumentRevisionsByTag(tagKey);
         DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
 
         for (int i = 0; i < docRs.length; i++) {
             docRsDTOs[i] = mapper.map(docRs[i], DocumentRevisionDTO.class);
             docRsDTOs[i].setPath(docRs[i].getLocation().getCompletePath());
             docRsDTOs[i] = Tools.createLightDocumentRevisionDTO(docRsDTOs[i]);
-            if (configSpecType == null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
-                docRsDTOs[i].setLifeCycleState(docRs[i].getLifeCycleState());
-                docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
-                docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
-            } else {
-                docRsDTOs[i].setWorkflow(null);
-                docRsDTOs[i].setTags(null);
-            }
+            docRsDTOs[i].setLifeCycleState(docRs[i].getLifeCycleState());
+            docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
+            docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
         }
 
         return docRsDTOs;

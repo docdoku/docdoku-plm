@@ -99,12 +99,4 @@ public class DocumentBaselineDTO implements Serializable {
     public void setAuthor(UserDTO author) {
         this.author = author;
     }
-
-    public List<FolderDTO> getBaselinedFolders() {
-        return baselinedFolders;
-    }
-
-    public void setBaselinedFolders(List<FolderDTO> baselinedFolders) {
-        this.baselinedFolders = baselinedFolders;
-    }
 }

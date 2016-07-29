@@ -20,17 +20,14 @@
 
 package com.docdoku.server.rest;
 
-import com.docdoku.core.configuration.DocumentConfigSpec;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDocumentConfigSpecManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentWorkflowManagerLocal;
 import com.docdoku.server.rest.dto.CountDTO;
 import com.docdoku.server.rest.dto.DocumentRevisionDTO;
-import com.docdoku.server.rest.util.ConfigSpecHelper;
 import com.docdoku.server.rest.util.SearchQueryParser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -61,8 +58,6 @@ public class DocumentsResource {
     @Inject
     private IDocumentManagerLocal documentService;
     @Inject
-    private IDocumentConfigSpecManagerLocal documentConfigSpecService;
-    @Inject
     private IDocumentWorkflowManagerLocal documentWorkflowService;
     @Inject
     private DocumentBaselinesResource baselinesResource;
@@ -84,24 +79,18 @@ public class DocumentsResource {
         return documentResource;
     }
 
+    // TODO: remove configSpec
     @GET
     @ApiOperation(value = "Get documents in workspace", response = DocumentRevisionDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO[] getDocumentsInWorkspace(@PathParam("workspaceId") String workspaceId,
                                                          @QueryParam("start") int start,
-                                                         @QueryParam("max") int max,
-                                                         @QueryParam("configSpec") String configSpecType)
+                                                         @QueryParam("max") int max)
             throws UserNotActiveException, ESServerException, WorkspaceNotFoundException, UserNotFoundException, BaselineNotFoundException, DocumentRevisionNotFoundException {
 
         int maxResult = max != 0 ? max : 20;
 
-        DocumentRevision[] docRs;
-        if (configSpecType == null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
-            docRs = documentService.getAllDocumentsInWorkspace(workspaceId, start, maxResult);
-        } else {
-            DocumentConfigSpec configSpec = ConfigSpecHelper.getConfigSpec(workspaceId, configSpecType, documentConfigSpecService);
-            docRs = documentConfigSpecService.getFilteredDocuments(workspaceId, configSpec, start, maxResult);
-        }
+        DocumentRevision[] docRs = documentService.getAllDocumentsInWorkspace(workspaceId, start, maxResult);
         DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
 
         for (int i = 0; i < docRs.length; i++) {
@@ -128,13 +117,7 @@ public class DocumentsResource {
 
         DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseDocumentStringQuery(workspaceId, params);
 
-        DocumentRevision[] docRs;
-        if (configSpecType == null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
-            docRs = documentService.searchDocumentRevisions(documentSearchQuery);
-        } else {
-            DocumentConfigSpec configSpec = ConfigSpecHelper.getConfigSpec(workspaceId, configSpecType, documentConfigSpecService);
-            docRs = documentConfigSpecService.searchFilteredDocuments(workspaceId, configSpec, documentSearchQuery);
-        }
+        DocumentRevision[] docRs = documentService.searchDocumentRevisions(documentSearchQuery);
         DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
 
         for (int i = 0; i < docRs.length; i++) {

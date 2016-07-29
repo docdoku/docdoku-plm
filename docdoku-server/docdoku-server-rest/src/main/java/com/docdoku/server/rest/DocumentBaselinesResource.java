@@ -159,11 +159,7 @@ public class DocumentBaselinesResource {
     public DocumentBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId,
                                            @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, UserNotActiveException {
-//        DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
-        DocumentBaselineDTO baselineDTO = getBaselineLight(workspaceId, baselineId);
-//        List<FolderDTO> folderDTOs = Tools.mapBaselinedFoldersToFolderDTO(documentBaseline);
-//        baselineDTO.setBaselinedFolders(folderDTOs);
-        return baselineDTO;
+        return getBaselineLight(workspaceId, baselineId);
     }
 
     /**

@@ -163,10 +163,6 @@ public class WorkspaceDAO {
         em.createQuery("DELETE FROM DocumentCollection dc where dc.author.workspaceId = :workspaceId")
                 .setParameter("workspaceId",workspaceId).executeUpdate();
 
-        // FoldereCollection
-        em.createQuery("DELETE FROM FolderCollection fc where fc.author.workspaceId = :workspaceId")
-                .setParameter("workspaceId",workspaceId).executeUpdate();
-
         // Layers
         em.createQuery("DELETE FROM Layer l where l.configurationItem.workspace = :workspace")
                 .setParameter("workspace",workspace).executeUpdate();

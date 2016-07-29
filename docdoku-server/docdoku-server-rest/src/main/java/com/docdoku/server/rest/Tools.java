@@ -23,9 +23,7 @@ package com.docdoku.server.rest;
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.configuration.BaselinedFolder;
 import com.docdoku.core.configuration.BaselinedPart;
-import com.docdoku.core.configuration.DocumentBaseline;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
@@ -244,21 +242,4 @@ public class Tools {
         return new BaselinedDocumentDTO(baselineDocument);
     }
 
-    public static List<FolderDTO> mapBaselinedFoldersToFolderDTO(Collection<BaselinedFolder> baselinedFolders) {
-        List<FolderDTO> folderDTOs = new ArrayList<>();
-        for (BaselinedFolder baselinedFolder : baselinedFolders) {
-            folderDTOs.add(mapBaselinedFolderToFolderDTO(baselinedFolder));
-        }
-        return folderDTOs;
-    }
-
-    public static List<FolderDTO> mapBaselinedFoldersToFolderDTO(DocumentBaseline documentBaseline) {
-        return mapBaselinedFoldersToFolderDTO(documentBaseline.getBaselinedFolders().values());
-    }
-
-
-    private static FolderDTO mapBaselinedFolderToFolderDTO(BaselinedFolder baselinedFolder) {
-        String completePath = baselinedFolder.getCompletePath();
-        return new FolderDTO(FolderDTO.extractParentFolder(completePath), FolderDTO.extractName(completePath));
-    }
 }

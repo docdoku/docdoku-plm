@@ -93,9 +93,8 @@ public class DocumentBaselineManagerBeanTest {
 
         //Then
         //TODO should test documentBaseline is null after code update
+        Assert.assertTrue(documentBaseline != null);
         Assert.assertTrue("description".equals(documentBaseline.getDescription()));
-        Assert.assertTrue(documentBaseline.hasBasedLinedFolder(workspace.getId()));
-        Assert.assertTrue(documentBaseline.getBaselinedFolders().size() == 1);
         Assert.assertTrue(documentBaseline.getAuthor().getWorkspaceId().equals(workspace.getId()));
     }
 
@@ -149,8 +148,8 @@ public class DocumentBaselineManagerBeanTest {
 
         //Then
         Assert.assertTrue(documentBaseline != null);
-        Assert.assertTrue(documentBaseline.hasBasedLinedFolder(workspace.getId()));
-        Assert.assertTrue(documentBaseline.getBaselinedFolders().size() == 1);
+        Assert.assertTrue(documentBaseline.hasBaselinedDocument(documentRevision1.getKey()));
+        Assert.assertTrue(documentBaseline.hasBaselinedDocument(documentRevision2.getKey()));
         Assert.assertNull(documentBaseline.getBaselinedDocument(documentRevision1.getKey()));
         Assert.assertNotNull(documentBaseline.getBaselinedDocument(documentRevision2.getKey()));
 
