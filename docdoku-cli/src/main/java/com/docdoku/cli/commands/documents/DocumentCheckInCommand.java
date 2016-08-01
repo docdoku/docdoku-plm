@@ -20,6 +20,7 @@
 
 package com.docdoku.cli.commands.documents;
 
+import com.docdoku.api.models.BinaryResourceDTO;
 import com.docdoku.api.models.DocumentIterationDTO;
 import com.docdoku.api.models.DocumentIterationKey;
 import com.docdoku.api.models.DocumentRevisionDTO;
@@ -79,9 +80,8 @@ public class DocumentCheckInCommand extends BaseCommandLine {
 
         if(!noUpload && !di.getAttachedFiles().isEmpty()){
 
-            for(String bin :di.getAttachedFiles()){
-                // TODO may break since refactor fullname / filename
-                String fileName =  bin;
+            for(BinaryResourceDTO binaryResourceDTO:di.getAttachedFiles()){
+                String fileName =  binaryResourceDTO.getName();
                 File localFile = new File(path,fileName);
                 if(localFile.exists()){
                     FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));

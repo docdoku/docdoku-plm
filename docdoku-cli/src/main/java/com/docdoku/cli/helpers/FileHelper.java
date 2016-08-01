@@ -33,7 +33,6 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import java.util.List;
 import java.util.Locale;
 import java.util.zip.GZIPInputStream;
 
@@ -271,8 +270,8 @@ public class FileHelper {
     }
 
     public void downloadNativeCADFile(URL serverURL, File path, String workspace, String partNumber, PartRevisionDTO pr, PartIterationDTO pi, boolean force) throws IOException, LoginException, NoSuchAlgorithmException {
-        String bin = pi.getNativeCADFile();
-        String fileName =  FileHelper.getFileName(bin);
+        BinaryResourceDTO nativeCADFile = pi.getNativeCADFile();
+        String fileName =  nativeCADFile.getName();
         UserDTO checkOutUser = pr.getCheckOutUser();
         PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(pr);
         PartIterationKey partIPK = new PartIterationKey();
@@ -319,11 +318,8 @@ public class FileHelper {
     }
 
     public void downloadDocumentFiles(URL serverURL, File path, String workspace, String id, DocumentRevisionDTO dr, DocumentIterationDTO di, boolean force) throws IOException, LoginException, NoSuchAlgorithmException {
-        List<String> bins = di.getAttachedFiles();
-
-        for(String bin:bins){
-            // TODO may break
-            String fileName = FileHelper.getFileName(bin);
+        for(BinaryResourceDTO binaryResourceDTO:di.getAttachedFiles()){
+            String fileName = binaryResourceDTO.getName();
             UserDTO checkOutUser = dr.getCheckOutUser();
             DocumentIterationKey docIPK = new DocumentIterationKey();
             docIPK.setWorkspaceId(workspace);

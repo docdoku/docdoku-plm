@@ -215,9 +215,14 @@ public class JSONOutput extends CliOutput {
 
             PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(pr);
 
-            if (lastIteration != null && lastIteration.getNativeCADFile() != null) {
-                String nativeCADFileName = lastIteration.getNativeCADFile();
-                jsonStatusBuilder.add("cadFileName", nativeCADFileName);
+            if (lastIteration != null){
+
+            }
+            if(lastIteration.getNativeCADFile() != null) {
+                BinaryResourceDTO nativeCADFile = lastIteration.getNativeCADFile();
+                if(nativeCADFile != null){
+                    jsonStatusBuilder.add("cadFileName", nativeCADFile.getFullName());
+                }
             }
 
             List<PartIterationDTO> partIterations = pr.getPartIterations();
@@ -267,8 +272,8 @@ public class JSONOutput extends CliOutput {
 
             if (lastIterationDTO != null && lastIterationDTO.getAttachedFiles() != null) {
                 JsonArrayBuilder jsonFilesBuilder = Json.createArrayBuilder();
-                for(String fileName:lastIterationDTO.getAttachedFiles())
-                    jsonFilesBuilder.add(fileName);
+                for(BinaryResourceDTO binaryResourceDTO:lastIterationDTO.getAttachedFiles())
+                    jsonFilesBuilder.add(binaryResourceDTO.getFullName());
 
                 jsonStatusBuilder.add("files", jsonFilesBuilder.build());
             }

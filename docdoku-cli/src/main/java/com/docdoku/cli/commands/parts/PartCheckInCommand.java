@@ -20,10 +20,7 @@
 
 package com.docdoku.cli.commands.parts;
 
-import com.docdoku.api.models.PartIterationDTO;
-import com.docdoku.api.models.PartIterationKey;
-import com.docdoku.api.models.PartRevisionDTO;
-import com.docdoku.api.models.PartRevisionKey;
+import com.docdoku.api.models.*;
 import com.docdoku.api.models.utils.LastIterationHelper;
 import com.docdoku.api.services.PartApi;
 import com.docdoku.cli.commands.BaseCommandLine;
@@ -85,13 +82,12 @@ public class PartCheckInCommand extends BaseCommandLine {
         partIPK.setIteration(pi.getIteration());
 
         if(!noUpload){
-            String bin = pi.getNativeCADFile();
-            if(bin!=null){
-                // TODO check file path may break
-                String fileName =  bin;
+            BinaryResourceDTO nativeCADFile = pi.getNativeCADFile();
+            if(nativeCADFile!=null){
+
+                String fileName =  nativeCADFile.getName();
                 File localFile = new File(path,fileName);
                 if(localFile.exists()){
-
                     FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
                     fh.uploadNativeCADFile(getServerURL(), localFile, partIPK);
                     localFile.setWritable(false,false);

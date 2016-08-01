@@ -20,6 +20,7 @@
 
 package com.docdoku.cli.commands.parts;
 
+import com.docdoku.api.models.BinaryResourceDTO;
 import com.docdoku.api.models.PartIterationDTO;
 import com.docdoku.api.models.PartRevisionDTO;
 import com.docdoku.api.services.PartApi;
@@ -70,8 +71,9 @@ public class PartUndoCheckOutCommand extends BaseCommandLine {
         PartIterationDTO pi = LastIterationHelper.getLastIteration(pr);
         output.printInfo(LangHelper.getLocalizedMessage("UndoCheckoutPart",user) + " : " + partNumber + " " + pr.getVersion() + "." + pi.getIteration()+1 + " (" + workspace + ")");
 
-        String bin = pi.getNativeCADFile();
-        if(bin!=null && download){
+        BinaryResourceDTO nativeCADFile = pi.getNativeCADFile();
+
+        if(nativeCADFile!=null && download){
             FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
             fh.downloadNativeCADFile(getServerURL(), path, workspace, partNumber, pr, pi, force);
         }
