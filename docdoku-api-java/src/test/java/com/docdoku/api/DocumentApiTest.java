@@ -116,8 +116,8 @@ public class DocumentApiTest {
 
         lastIteration = LastIterationHelper.getLastIteration(document);
         Assert.assertFalse(lastIteration.getAttachedFiles().isEmpty());
-
-        File downloadedFile = UploadDownloadHelper.downloadFile(lastIteration.getAttachedFiles().get(0), TestConfig.BASIC_CLIENT);
+        BinaryResourceDTO binaryResourceDTO = lastIteration.getAttachedFiles().get(0);
+        File downloadedFile = UploadDownloadHelper.downloadFile(binaryResourceDTO.getFullName(), TestConfig.BASIC_CLIENT);
         Assert.assertTrue(FileUtils.contentEquals(file, downloadedFile));
 
     }
