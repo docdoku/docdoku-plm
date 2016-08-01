@@ -70,9 +70,11 @@
         .service('FileUtils',function($window){
 
             var sys = $window.require('sys');
+            var fs = $window.require('fs');
             var exec = $window.require('child_process').exec;
 
             this.openInOS = function (file) {
+
                 var cmd;
                 switch ($window.process.platform) {
                     case 'darwin' : cmd = 'open';
@@ -90,6 +92,15 @@
                 }else{
                     exec(cmd + ' "' + file + '"');
                 }
+            };
+
+            this.createFile = function(folder,name){
+                var filePath = folder + '/' + name;
+                if(!fs.existsSync(filePath)){
+                    fs.writeFileSync(filePath,'');
+                    return filePath;
+                }
+                return null;
             };
 
         });

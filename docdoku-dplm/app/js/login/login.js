@@ -3,6 +3,8 @@
     angular.module('dplm.login',[])
         .controller('LoginCtrl',function($scope, $mdDialog, ConfigurationService, AuthService, WorkspaceService, xhrFrom){
 
+            var configuration =  ConfigurationService.configuration;
+
             $scope.configuration = ConfigurationService.configuration;
             $scope.xhrFrom = xhrFrom;
 
@@ -11,7 +13,7 @@
                 if(ConfigurationService.hasAuth()){
                     $scope.loggingIn = true;
                     ConfigurationService.save();
-                    AuthService.login()
+                    AuthService.login(configuration.login, configuration.password)
                         .then(WorkspaceService.getWorkspaces)
                         .then($mdDialog.hide)
                         .catch(function(xhr){

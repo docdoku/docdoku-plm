@@ -30,32 +30,38 @@
 
                     <md-menu-content>
                         <md-menu-item>
-                            <md-button aria-label="{{'REFRESH_FOLDER'|translate}}" ng-click="fetchFolder()">
+                            <md-button aria-label="{{'CREATE_FILE'|translate}}" ng-click="actions.createFile()">
+                                <i class="material-icons">note_add</i>
+                                {{'CREATE_FILE'|translate}}
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button aria-label="{{'REFRESH_FOLDER'|translate}}" ng-click="actions.fetchFolder()">
                                 <i class="material-icons">cached</i>
                                 {{'REFRESH_FOLDER'|translate}}
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
-                            <md-button ng-click="reveal()">
+                            <md-button ng-click="actions.reveal()">
                                 <i class="material-icons">folder_open</i>
                                 {{'OPEN_IN_EXPLORER' | translate}}
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
-                            <md-button ng-click="shell()">
+                            <md-button ng-click="actions.shell()">
                                 <i class="material-icons">featured_play_list</i>
                                 {{'OPEN_SHELL' | translate}}
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
-                            <md-button aria-label="{{'FAVORITE'|translate}}" ng-click="toggleFavorite()">
+                            <md-button aria-label="{{'FAVORITE'|translate}}" ng-click="actions.toggleFavorite()">
                                 <i class="material-icons">star</i>
                                 <span ng-if="folder.favorite">{{'REMOVE_FROM_FAVORITES'|translate}}</span>
                                 <span ng-if="!folder.favorite">{{'ADD_TO_FAVORITES'|translate}}</span>
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
-                            <md-button aria-label="{{'DELETE_FOLDER'|translate}}" ng-click="delete($event)">
+                            <md-button aria-label="{{'DELETE_FOLDER'|translate}}" ng-click="actions.deleteFolder()">
                                 <i class="material-icons">delete</i>
                                 {{'DELETE_FOLDER'|translate}}
                             </md-button>
@@ -69,19 +75,19 @@
                     </button>
                     <md-menu-content>
                         <md-menu-item>
-                            <md-button ng-click="updateIndex()">
+                            <md-button ng-click="actions.updateIndex()">
                                 <i class="material-icons">cached</i>
                                 {{'UPDATE_INDEX' | translate}}
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
-                            <md-button ng-click="downloadLatest()">
+                            <md-button ng-click="actions.downloadLatest()">
                                 <i class="material-icons">cloud_download</i>
                                 {{'DOWNLOAD_LATEST' | translate}}
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
-                            <md-button ng-click="pushUpdates()">
+                            <md-button ng-click="actions.pushUpdates()">
                                 <i class="material-icons">cloud_upload</i>
                                 {{'PUSH_UPDATES' | translate}}
                             </md-button>
@@ -95,13 +101,13 @@
                     </button>
                     <md-menu-content>
                         <md-menu-item>
-                            <md-button ng-click="toggleFilters(true)">
+                            <md-button ng-click="actions.toggleFilters(true)">
                                 <i class="material-icons">check_box</i>
                                 {{'SELECT_ALL' | translate}}
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
-                            <md-button ng-click="toggleFilters(false)">
+                            <md-button ng-click="actions.toggleFilters(false)">
                                 <i class="material-icons">check_box_outline_blank</i>
                                 {{'UNSELECT_ALL' | translate}}
                             </md-button>
@@ -111,7 +117,7 @@
 
                         <md-menu-item ng-repeat="filter in filters">
                             <md-input-container>
-                                <md-checkbox ng-change="search()" ng-model="filter.value" aria-label="{{filter.name}}">
+                                <md-checkbox ng-change="actions.applyFilters()" ng-model="filter.value" aria-label="{{filter.name}}">
                                     {{filter.name}}
                                 </md-checkbox>
                             </md-input-container>
@@ -168,7 +174,7 @@
                     md-limit-options="query.limits"
                     md-page="query.page"
                     md-total="{{filteredFilesCount}}"
-                    md-on-paginate="paginate"
+                    md-on-paginate="actions.paginate"
                     md-page-select
                     md-label="{{paginationLabels}}">
             </md-table-pagination>
@@ -177,7 +183,7 @@
         <div layout="column">
 
             <md-input-container md-no-float class="md-block search-bar">
-                <input placeholder="{{'SEARCH'|translate}}" type="text" ng-change="search()" ng-model="pattern" />
+                <input placeholder="{{'SEARCH'|translate}}" type="text" ng-change="actions.applyFilters()" ng-model="pattern" />
             </md-input-container>
 
             <md-table-container>
@@ -187,6 +193,7 @@
                             <th md-column></th>
                             <th md-column><span>{{'NAME'|translate}}</span></th>
                             <th md-column><span>{{'WORKSPACE'|translate}}</span></th>
+                            <th md-column><span>{{'TYPE'|translate}}</span></th>
                             <th md-column><span>{{'ITEM_ID'|translate}}</span></th>
                             <th md-column><span>{{'VERSION'|translate}}</span></th>
                             <th md-column><span>{{'SIZE'|translate}}</span></th>
@@ -198,40 +205,45 @@
 
                             <td md-cell>
                                 <span ng-if="file.item" status-icon="file.item"></span>
-                                <span>
-                                    <i ng-if="file.index.id" class="material-icons">description</i>
-                                    <i ng-if="file.index.number" class="material-icons">extension</i>
 
-                                    <md-menu ng-if="!file.index.number && !file.index.id">
-                                        <md-button aria-label="{{'MENU'}}" class="md-icon-button" ng-click="$mdOpenMenu($event)">
-                                            <i class="material-icons">more_vert</i>
-                                        </md-button>
+                                <md-menu ng-if="!file.index.number && !file.index.id">
+                                    <md-button aria-label="{{'MENU'}}" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                                        <i class="material-icons">more_vert</i>
+                                    </md-button>
 
-                                        <md-menu-content width="3">
-                                            <md-menu-item>
-                                                <md-button aria-label="{{'CREATE_PART'|translate}}" ng-click="createPart(file)">
-                                                    {{'CREATE_PART'|translate}}
-                                                </md-button>
-                                            </md-menu-item>
+                                    <md-menu-content width="3">
+                                        <md-menu-item>
+                                            <md-button aria-label="{{'CREATE_PART'|translate}}" ng-click="actions.createPart(file)">
+                                                <i class="material-icons">extension</i>
+                                                {{'CREATE_PART'|translate}}
+                                            </md-button>
+                                        </md-menu-item>
 
-                                            <md-menu-item>
-                                                <md-button aria-label="{{'CREATE_DOCUMENT'|translate}}" ng-click="createDocument(file)">
-                                                    {{'CREATE_DOCUMENT'|translate}}
-                                                </md-button>
-                                            </md-menu-item>
-                                        </md-menu-content>
-                                    </md-menu>
-                                </span>
+                                        <md-menu-item>
+                                            <md-button aria-label="{{'CREATE_DOCUMENT'|translate}}" ng-click="actions.createDocument(file)">
+                                                <i class="material-icons">description</i>
+                                                {{'CREATE_DOCUMENT'|translate}}
+                                            </md-button>
+                                        </md-menu-item>
+                                    </md-menu-content>
+                                </md-menu>
                             </td>
+
 
                             <td md-cell>
                                 <a href file-preview="file.path" layout-margin
                                    ng-class="{'modified':file.index && file.modified,'out-of-date':file.outOfDate}">
-                                    {{file.path | fileShortName}}</a>
+                                    {{file.path | fileShortName}}
+                                    <md-tooltip>{{'FILE_PREVIEW'|translate}}</md-tooltip>
+                                </a>
                             </td>
 
 
-                            <td md-cell><a ng-href="#/workspace/{{file.index.workspace}}">{{file.index.workspace}}</a></td>
+                            <td md-cell><a ng-href="#/workspace/{{file.index.workspace}}">{{file.index.workspace}}<md-tooltip>{{'BROWSE_WORKSPACE'|translate}}</md-tooltip></a></td>
+                            <td md-cell>
+                                <i ng-if="file.index.id" class="material-icons">description<md-tooltip>{{'DOCUMENTS'|translate}}</md-tooltip></i>
+                                <i ng-if="file.index.number" class="material-icons">extension<md-tooltip>{{'PARTS'|translate}}</md-tooltip></i>
+                            </td>
                             <td md-cell>{{file.index.id || file.index.number || '-' }}</td>
                             <td md-cell>{{file.index.revision}}-{{file.index.iteration}}</td>
                             <td md-cell>{{file.stat.size | humanreadablesize}}</td>

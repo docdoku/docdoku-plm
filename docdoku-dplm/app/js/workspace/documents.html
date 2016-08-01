@@ -17,29 +17,32 @@
 
                 <td md-cell>
                     <div layout="column" ng-repeat="file in item.lastIteration.attachedFiles">
-                            <a>
-                                {{ file.fullName | fileShortName }}
-                            </a>
-                            <small>{{'MODIFIED' | translate}} {{ file.lastModified | utcDateTimeAgo }}</small>
+                        <a>
+                            {{ file.fullName | fileShortName }}
+                        </a>
+                        <small>{{file.contentLength | humanreadablesize}}</small>
+                        <small>{{'MODIFIED' | translate}} {{ file.lastModified | utcDateTimeAgo }}</small>
                     </div>
                 </td>
                 <td md-cell>
 
-                    <span ng-if="item.lastIteration.checkInDate">
-                        {{'CHECKED_IN_BY'|translate}}
-                         <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
-                             {{item.lastIteration.author.name}}
-                         </a>
-                        {{ item.lastIteration.checkInDate | utcDateTimeAgo}}
-                    </span>
+                    <div layout="column" ng-if="item.lastIteration.checkInDate">
+                        <span>{{'CHECKED_IN_BY'|translate}}
+                             <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                                 {{item.lastIteration.author.name}}
+                             </a>
+                        </span>
+                        <small>{{ item.lastIteration.checkInDate | utcDateTimeAgo}}</small>
+                    </div>
 
-                    <span ng-if="item.checkOutDate">
-                        {{'CHECKED_OUT_BY'|translate}}
-                        <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
-                            {{item.checkOutUser.name}}
-                        </a>
-                        {{ item.checkOutDate | utcDateTimeAgo}}
-                    </span>
+                    <div layout="column" ng-if="item.checkOutDate">
+                        <span>{{'CHECKED_OUT_BY'|translate}}
+                            <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                                {{item.checkOutUser.name}}
+                            </a>
+                        </span>
+                        <small>{{ item.checkOutDate | utcDateTimeAgo}}</small>
+                    </div>
 
                 </td>
             </tr>

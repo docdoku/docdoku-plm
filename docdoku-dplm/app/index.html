@@ -10,7 +10,6 @@
     <link rel="stylesheet" type="text/css" href="bower_components/material-design-icons/iconfont/material-icons.css"/>
     <link rel="stylesheet" type="text/css" href="css/scrollbars.css"/>
     <link rel="stylesheet" type="text/css" href="css/states.css"/>
-    <link rel="stylesheet" type="text/css" href="css/output.css"/>
     <link rel="stylesheet" type="text/css" href="css/general.css"/>
     <link rel="stylesheet" type="text/css" href="css/menu.css"/>
     <link rel="stylesheet" type="text/css" href="css/login.css"/>
@@ -21,13 +20,13 @@
 
     <div layout="column" layout-fill>
         <section layout="row" flex>
-            <md-sidenav ng-if="user.login" class="md-sidenav-left dplm-sidenav"
+            <md-sidenav ng-cloak ng-if="user.login" class="md-sidenav-left dplm-sidenav"
                         md-component-id="menu"
                         md-is-locked-open="$mdMedia('gt-sm')"
                         ng-controller="MenuController"
                         ng-include="'js/menu/menu.html'">
             </md-sidenav>
-            <md-content ng-if="user.login" layout-fill flex ng-view></md-content>
+            <md-content ng-cloak ng-if="user.login" layout-fill flex ng-view></md-content>
         </section>
     </div>
 

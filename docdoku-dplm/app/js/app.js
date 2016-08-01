@@ -78,6 +78,7 @@
         .controller('AppCtrl', function ($scope, $location, $mdMedia, $mdDialog, $mdSidenav, $filter,
                                          AuthService, NotificationService, ConfigurationService, WorkspaceService, FolderService) {
 
+            var configuration = ConfigurationService.configuration;;
 
             var showLoginPage = function(xhrFrom){
                 $mdDialog.show({
@@ -91,23 +92,31 @@
                 });
             };
 
-            // Auto connect
-            if(ConfigurationService.hasAuth()){
-                AuthService.login().then(WorkspaceService.getWorkspaces, showLoginPage);
-            }
-
             $scope.title = 'DocDoku DPLM';
 
             $scope.user = AuthService.user;
-            $scope.configuration = ConfigurationService.configuration;
+            $scope.configuration = configuration;
             $scope.workspaces = WorkspaceService.workspaces;
             $scope.folders = FolderService.folders;
 
-            $scope.$watch('user.login',function(login){
-                if(!login){
-                    showLoginPage();
-                }
-            });
+
+            var watchUser = function(){
+                $scope.$watch('user.login',function(login){
+                    if(!login){
+                        showLoginPage();
+                    }
+                });
+            };
+
+            if(ConfigurationService.hasAuth()){
+                AuthService.login(configuration.login, configuration.password)
+                    .then(WorkspaceService.getWorkspaces, showLoginPage)
+                    .then(watchUser);
+            }else{
+                watchUser();
+            }
+
+
 
             $scope.logout = function(){
                 AuthService.logout();

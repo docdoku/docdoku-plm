@@ -4,6 +4,7 @@
 
 
         .controller('FilePreviewCtrl',function($scope, $filter,$mdDialog,
+                                               FileUtils,
                                                Available3DLoaders,file){
 
             var ext = $filter('fileExtension')(file);
@@ -11,12 +12,14 @@
             $scope.is3dAvailable  = Available3DLoaders.indexOf(ext) !== -1;
             $scope.close = $mdDialog.hide;
             $scope.noPreviewAvailable = !$scope.is3dAvailable;
+            $scope.open = FileUtils.openInOS;
 
         })
 
         .directive('filePreview',function($mdDialog, $window, $filter, FileUtils){
 
             var isAvailableForViewer = $filter('isAvailableForViewer');
+            var translate = $filter('translate');
 
             return {
                 scope:{

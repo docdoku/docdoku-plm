@@ -23,14 +23,8 @@
             var filteredFiles = [];
             var repositoryIndex;
             var translate = $filter('translate');
-            var getFileName = $filter('fileShortName');
             var filter = $filter('filter');
-
-            var hasFilter = function (code) {
-                return $scope.filters.filter(function (filter) {
-                        return filter.code === code && filter.value;
-                    }).length > 0;
-            };
+            var utcToLocalDateTime = $filter('utcToLocalDateTime');
 
             $scope.query = {
                 limit: 10,
@@ -47,13 +41,13 @@
             $scope.selected = [];
 
             $scope.filters = [
+                {name: translate('DOCUMENTS'), code: 'DOCUMENTS', value: true},
+                {name: translate('PARTS'), code: 'PARTS', value: true},
                 {name: translate('CHECKED_OUT'), code: 'CHECKED_OUT', value: true},
                 {name: translate('CHECKED_IN'), code: 'CHECKED_IN', value: true},
                 {name: translate('RELEASED'), code: 'RELEASED', value: true},
                 {name: translate('OBSOLETE'), code: 'OBSOLETE', value: true},
                 {name: translate('LOCKED'), code: 'LOCKED', value: true},
-                {name: translate('DOCUMENTS'), code: 'DOCUMENTS', value: true},
-                {name: translate('PARTS'), code: 'PARTS', value: true},
                 {name: translate('OUT_OF_INDEX'), code: 'OUT_OF_INDEX', value: true}
             ];
 
@@ -63,27 +57,13 @@
                 total: 0
             };
 
-            $scope.reveal = function () {
-                FolderService.reveal(folderPath);
+            var hasFilter = function (code) {
+                return $scope.filters.filter(function (filter) {
+                        return filter.code === code && filter.value;
+                    }).length > 0;
             };
 
-            $scope.shell = function () {
-                FolderService.shell(folderPath);
-            };
-
-            $scope.toggleFavorite = function () {
-                $scope.folder.favorite = !$scope.folder.favorite;
-                FolderService.save();
-            };
-
-            $scope.paginate = function (page, count) {
-                var start = (page - 1) * count;
-                var end = start + count;
-                $scope.displayedFiles = filteredFiles.slice(start, end);
-            };
-
-
-            $scope.search = function () {
+            var search = function () {
 
                 filteredFiles = allFiles.filter(function (path) {
 
@@ -149,7 +129,6 @@
                             return false;
                         }
 
-
                         if ($scope.pattern && filter([file], $scope.pattern).length === 0) {
                             return false;
                         }
@@ -158,84 +137,11 @@
                     });
 
                     $scope.filteredFilesCount = filteredFiles.length;
-                    $scope.paginate(1, $scope.query.limit);
+                    $scope.actions.paginate(1, $scope.query.limit);
                 });
 
             };
 
-            $scope.fetchFolder = function () {
-                $scope.sync.running = true;
-
-                repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
-
-                FolderService.recursiveReadDir(folderPath)
-                    .then(function (files) {
-                        $scope.totalFilesInFolder = files.length;
-                        allFiles = files;
-                        $scope.search();
-                        $scope.sync.running = false;
-                    });
-            };
-
-            $scope.createPart = function (file) {
-                $mdDialog.show({
-                    templateUrl: 'js/folder/create-part.html',
-                    fullscreen: true,
-                    controller: 'PartCreationCtrl',
-                    locals: {
-                        file: file,
-                        folderPath: folderPath
-                    }
-                });
-            };
-
-            $scope.createDocument = function (file) {
-                $mdDialog.show({
-                    templateUrl: 'js/folder/create-document.html',
-                    fullscreen: true,
-                    controller: 'DocumentCreationCtrl',
-                    locals: {
-                        file: file,
-                        folderPath: folderPath
-                    }
-                });
-            };
-
-            $scope.delete = function (ev) {
-                $mdDialog.show({
-                    targetEvent: ev,
-                    templateUrl: 'js/folder/delete-folder.html',
-                    controller: 'DeleteFolderCtrl',
-                    locals: {
-                        folder: $scope.folder
-                    }
-                });
-            };
-
-            $scope.updateIndex = function () {
-                $scope.sync.running = true;
-                RepositoryService.syncIndex(folderPath)
-                    .then($scope.fetchFolder, function () {
-                        // todo handle error
-                    }, function (sync) {
-                        $scope.sync.total = sync.total;
-                        $scope.sync.progress = sync.progress;
-                    }).catch(function () {
-                        // todo handle error
-                    }).finally(function () {
-                        $scope.sync.total = 0;
-                        $scope.sync.progress = 0;
-                    });
-            };
-
-            $scope.toggleFilters = function (state) {
-                angular.forEach($scope.filters, function (filter) {
-                    filter.value = state;
-                });
-                $scope.search();
-            };
-
-            var utcToLocalDateTime = $filter('utcToLocalDateTime');
             var refreshDisplay = function(){
                 angular.forEach($scope.displayedFiles,function(file){
                     file.index = RepositoryService.getFileIndex(repositoryIndex, file.path);
@@ -250,6 +156,32 @@
                 });
             };
 
+            var filterCanCheckOut = function(selection){
+                return selection.filter(function(file){
+                    var item = file.item;
+                    return item && !item.checkOutUser && !item.releaseAuthor && !item.obsoleteAuthor;
+                });
+            };
+
+            var filterCanCheckIn = function(selection){
+                return selection.filter(function(file){
+                    var item = file.item;
+                    return item && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login;
+                });
+            };
+
+            var filterCanUndoCheckOut = function(selection){
+                var lastIteration = $filter('lastIteration');
+                return selection.filter(function(file){
+                    var item = file.item;
+                    var lastItemIteration = item ? lastIteration(item): null;
+                    return lastItemIteration && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login
+                        && lastItemIteration.iteration > 1;
+                });
+            };
+
+            var filterCanPushFiles = filterCanCheckIn;
+
             $scope.actions = {
 
                 checkin : function(selection){
@@ -258,7 +190,7 @@
                         fullscreen: true,
                         controller: 'CheckInCtrl',
                         locals: {
-                            selection: selection,
+                            selection: filterCanCheckIn(selection),
                             folderPath: folderPath
                         }
                     }).then(refreshDisplay);
@@ -270,7 +202,7 @@
                         fullscreen: true,
                         controller: 'CheckOutCtrl',
                         locals: {
-                            selection: selection,
+                            selection: filterCanCheckOut(selection),
                             folderPath: folderPath
                         }
                     }).then(refreshDisplay);
@@ -282,7 +214,7 @@
                         fullscreen: true,
                         controller: 'UndoCheckOutCtrl',
                         locals: {
-                            selection: selection,
+                            selection: filterCanUndoCheckOut(selection),
                             folderPath: folderPath
                         }
                     }).then(refreshDisplay);
@@ -294,15 +226,124 @@
                         fullscreen: true,
                         controller: 'PushCtrl',
                         locals: {
-                            selection: selection,
+                            selection: filterCanPushFiles(selection),
                             folderPath: folderPath
                         }
                     }).then(refreshDisplay);
-                }
+                },
+
+                createFile: function(){
+                    $mdDialog.show({
+                        templateUrl: 'js/folder/create-file.html',
+                        fullscreen: true,
+                        controller: 'CreateFileCtrl',
+                        locals: {
+                            folderPath: folderPath
+                        }
+                    }).then(function(path){
+                        allFiles.push(path);
+                        var file = FolderService.createFileObject(path);
+                        file.stat = FolderService.getFileSize(path);
+                        $scope.displayedFiles.push(file);
+                    });
+                },
+
+                createPart : function (file) {
+                    $mdDialog.show({
+                        templateUrl: 'js/folder/create-part.html',
+                        fullscreen: true,
+                        controller: 'PartCreationCtrl',
+                        locals: {
+                            file: file,
+                            folderPath: folderPath
+                        }
+                    });
+                },
+
+                createDocument : function (file) {
+                    $mdDialog.show({
+                        templateUrl: 'js/folder/create-document.html',
+                        fullscreen: true,
+                        controller: 'DocumentCreationCtrl',
+                        locals: {
+                            file: file,
+                            folderPath: folderPath
+                        }
+                    });
+                },
+
+                reveal : function () {
+                    FolderService.reveal(folderPath);
+                },
+
+                shell : function () {
+                    FolderService.shell(folderPath);
+                },
+
+                toggleFavorite : function () {
+                    $scope.folder.favorite = !$scope.folder.favorite;
+                    FolderService.save();
+                },
+
+                deleteFolder : function () {
+                    $mdDialog.show({
+                        templateUrl: 'js/folder/delete-folder.html',
+                        controller: 'DeleteFolderCtrl',
+                        locals: {
+                            folder: $scope.folder
+                        }
+                    });
+                },
+
+                toggleFilters:function (state) {
+                    angular.forEach($scope.filters, function (filter) {
+                        filter.value = state;
+                    });
+                    search();
+                },
+
+                fetchFolder:function(){
+
+                    $scope.sync.running = true;
+
+                    repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
+
+                    FolderService.recursiveReadDir(folderPath)
+                        .then(function (files) {
+                            $scope.totalFilesInFolder = files.length;
+                            allFiles = files;
+                            search();
+                            $scope.sync.running = false;
+                        });
+                },
+
+                paginate : function (page, count) {
+                    var start = (page - 1) * count;
+                    var end = start + count;
+                    $scope.displayedFiles = filteredFiles.slice(start, end);
+                },
+
+                updateIndex : function () {
+                    $scope.sync.running = true;
+                    RepositoryService.syncIndex(folderPath)
+                        .then($scope.actions.fetchFolder, function () {
+                            // todo handle error
+                        }, function (sync) {
+                            $scope.sync.total = sync.total;
+                            $scope.sync.progress = sync.progress;
+                        }).catch(function () {
+                            // todo handle error
+                        }).finally(function () {
+                            $scope.sync.total = 0;
+                            $scope.sync.progress = 0;
+                        });
+                },
+
+                applyFilters:search
             };
 
-            $scope.fetchFolder();
 
+            $scope.actions.updateIndex();
 
             $scope.$on("$destroy", function () {
 
@@ -324,7 +365,27 @@
             $scope.close = $mdDialog.hide;
 
         })
+        .controller('CreateFileCtrl', function ($scope, $mdDialog,
+                                                FileUtils, folderPath) {
 
+            $scope.data = {
+                regex:/^[^\/]+$/,
+                fileName:''
+            };
+
+            $scope.close = $mdDialog.hide;
+
+            $scope.create = function(){
+                var file = FileUtils.createFile(folderPath,$scope.data.fileName);
+                if(!file){
+                    console.log('Cannot create file')
+                }else{
+                    $mdDialog.hide(file);
+                }
+            };
+
+
+        })
         .controller('DocumentCreationCtrl', function ($scope, $mdDialog,
                                                       WorkspaceService, UploadService, RepositoryService, DBService,
                                                       file, folderPath) {

@@ -6,13 +6,10 @@
         .service('AuthService',function($q, $translate,
                                         ConfigurationService, DocdokuAPIService, DBService, WorkspaceService){
 
-            var self = this;
+            var user = {};
+            this.user = user;
 
-            this.user = {
-                login:ConfigurationService.configuration.login
-            };
-
-            this.login = function() {
+            this.login = function(login,password) {
 
                 WorkspaceService.reset();
 
@@ -22,8 +19,8 @@
                     .then(function(api){
                         return api.auth.login({
                             body:{
-                                login:ConfigurationService.configuration.login,
-                                password:ConfigurationService.configuration.password
+                                login:login,
+                                password:password
                             }
                         });
                     }, deferred.reject).then(function(response){
@@ -32,11 +29,11 @@
                         var cookie = headers['set-cookie'][0];
                         DocdokuAPIService.setCookie(cookie);
 
-                        angular.copy(response.obj,self.user);
-                        var lang = self.user.language;
+                        angular.copy(response.obj,user);
+                        var lang = user.language;
                         $translate.use(lang);
 
-                        deferred.resolve(self.user);
+                        deferred.resolve(user);
 
                     }, deferred.reject);
 
@@ -47,7 +44,7 @@
                 var deferred = $q.defer();
                 DocdokuAPIService.getClient().getApi().then(function(api){
 
-                    angular.copy({},self.user);
+                    angular.copy({},user);
                     ConfigurationService.deleteAuth();
                     DocdokuAPIService.setCookie(null);
                     DBService.removeDb();

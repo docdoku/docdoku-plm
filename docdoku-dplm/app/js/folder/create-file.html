@@ -1,0 +1,27 @@
+<md-dialog flex="50" layout="column" ng-cloak>
+    <div layout-padding>
+        <form name="createFileForm" ng-submit="createFileForm.$valid && create()">
+            <div>
+                <p class="md-headline">
+                    {{'CREATE_FILE' | translate}}
+                </p>
+
+                <md-input-container>
+                    <label>{{'NAME' | translate}}</label>
+                    <input required ng-pattern="data.regex" ng-model="data.fileName" required>
+                </md-input-container>
+
+            </div>
+            <div>
+
+                <md-button type="button" ng-if="!loading" aria-label="" ng-click="close()" class="md-raised md-default">
+                    {{'CLOSE'|translate}}
+                </md-button>
+
+                <md-button ng-disabled="createFileForm.$invalid" type="submit" aria-label="" class="md-raised md-primary">
+                    {{'OK'|translate}}
+                </md-button>
+            </div>
+        </form>
+</div>
+</md-dialog>

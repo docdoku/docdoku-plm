@@ -170,7 +170,19 @@
                     NOT_YET_SYNC:'Not synchronized',
                     NUMBER:'Number',
                     OPEN_SHELL:'Open terminal here',
-                    BROWSE_WORKSPACE:'Browse workspace'
+                    BROWSE_WORKSPACE:'Browse workspace',
+                    FILES_TO_CHECK_IN:'files to check in',
+                    FILES_TO_CHECK_OUT:'files to check out',
+                    FILES_TO_UNDO_CHECK_OUT:'files to undo check out',
+                    FILES_TO_PUSH:'files to push',
+                    PUSH_MODIFICATIONS:'Push modifications',
+                    SAVE_NOTE:'Save note',
+                    CASCADE_CHECKIN:'Cascade checkin',
+                    CASCADE_CHECKOUT:'Cascade checkout',
+                    DOWNLOAD_FILES:'Télécharger les fichiers',
+                    CREATE_FILE:'New file',
+                    PUSH:'Push files',
+                    FILE_PREVIEW:'Open file'
                 })
                 .translations('fr', {
                     CHECKOUT: 'Réserver',
@@ -337,7 +349,19 @@
                     NOT_YET_SYNC:'Non synchronisé',
                     NUMBER:'Numéro',
                     OPEN_SHELL:'Ouvrir dans un terminal',
-                    BROWSE_WORKSPACE:'Parcourir l\'espace de travail'
+                    BROWSE_WORKSPACE:'Parcourir l\'espace de travail',
+                    FILES_TO_CHECK_IN:'fichiers à libérer',
+                    FILES_TO_CHECK_OUT:'fichiers à réserver',
+                    FILES_TO_UNDO_CHECK_OUT:'fichiers à annuler',
+                    FILES_TO_PUSH:'fichiers à uploader',
+                    PUSH_MODIFICATIONS:'Uploader les fichiers modifiés',
+                    SAVE_NOTE:'Sauvegarder la note',
+                    CASCADE_CHECKIN:'Libération en cascade',
+                    CASCADE_CHECKOUT:'Réservation en cascade',
+                    DOWNLOAD_FILES:'Download files',
+                    CREATE_FILE:'Nouveau fichier',
+                    PUSH:'Téléverser les fichiers',
+                    FILE_PREVIEW:'Ouvrir le fichier'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

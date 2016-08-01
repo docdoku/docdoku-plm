@@ -41,7 +41,6 @@
                 });
             };
 
-
             var getIndexValue = function(index,path,key){
                 return index[path+'.'+key] || null;
             };
@@ -210,7 +209,7 @@
                 var itemLastIteration = lastIteration(item);
                 var binaryResource;
                 if(item.id){
-                    binaryResource = $filter(itemLastIteration.attachedFiles,{name:name})[0];
+                    binaryResource = $filter('filter')(itemLastIteration.attachedFiles,{name:name})[0];
                 } else if(item.number){
                     binaryResource = itemLastIteration.nativeCADFile;
                 }

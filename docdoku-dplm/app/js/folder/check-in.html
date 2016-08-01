@@ -11,8 +11,14 @@
                 </h2>
 
                 <div class="md-subhead description">
-                     {{selection.length}} {{'FILES_TO_BE_CHECKED_IN' | translate}}
+                     {{selection.length}} {{'FILES_TO_CHECK_IN' | translate}}
                 </div>
+
+                <md-virtual-repeat-container class="virtual-list virtual-list-col-5">
+                    <div md-virtual-repeat="file in selection" class="repeated-item" flex>
+                        <span ng-if="file.item" status-icon="file.item"></span> {{file.item.id || file.item.partKey}}
+                    </div>
+                </md-virtual-repeat-container>
 
                 <p ng-if="error">{{error}}</p>
 
@@ -20,7 +26,7 @@
 
                 <div>
                     <md-input-container>
-                        <label>{{'CHECK_IN_NOTE' | translate}}</label>
+                        <label>{{'CHECKIN_MESSAGE' | translate}}</label>
                         <textarea ng-model="data.checkInNote"></textarea>
                     </md-input-container>
                 </div>
