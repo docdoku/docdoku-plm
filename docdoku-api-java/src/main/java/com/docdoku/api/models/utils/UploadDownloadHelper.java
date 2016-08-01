@@ -105,7 +105,10 @@ public class UploadDownloadHelper {
         GenericType<File> returnType = new GenericType<File>() {
         };
         File file = client.invokeAPI(path, "GET", queryParams, null, headerParams, formParams, accept, contentType, authNames, returnType);
-        return uncompress(file);
+        Map<String, List<String>> responseHeaders = client.getResponseHeaders();
+        List<String> encoding = responseHeaders.get("Content-Encoding");
+
+        return encoding != null && "gzip".equals(encoding.get(0)) ? uncompress(file) : file;
     }
 
 
