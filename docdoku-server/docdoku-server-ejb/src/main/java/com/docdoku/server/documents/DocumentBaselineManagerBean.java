@@ -94,30 +94,6 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
         return documentBaseline;
     }
 
-    private void fillBaselineDocument(DocumentBaseline baseline, List<DocumentRevisionKey> revisionKeys) throws DocumentRevisionNotFoundException, FolderNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        // Add all document
-        for(DocumentRevisionKey revisionKey : revisionKeys){
-            User user = userManager.checkWorkspaceReadAccess(revisionKey.getDocumentMaster().getWorkspace());
-
-            // Ignore already existing document
-            if(baseline.hasBaselinedDocument(revisionKey)){
-                break;
-            }
-
-            DocumentRevision documentRevision = new DocumentRevisionDAO(em).loadDocR(revisionKey);
-            documentRevision = filterDocumentRevisionBaselinable(user, documentRevision);
-            // Document non accessible
-            if(documentRevision==null){
-                break;
-            }
-
-            DocumentIteration documentIteration = documentRevision.getLastIteration();
-            if(documentIteration!=null){
-                baseline.addBaselinedDocument(documentIteration);
-            }
-        }
-    }
-
     private void snapshotAllDocuments(DocumentBaseline baseline, String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, FolderNotFoundException {
         userManager.checkWorkspaceReadAccess(workspaceId);
         DocumentRevision[] documentRevisions = documentService.getAllDocumentsInWorkspace(workspaceId);
@@ -129,6 +105,28 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
         fillBaselineDocument(baseline, revisionKeyList);
     }
 
+    private void fillBaselineDocument(DocumentBaseline baseline, List<DocumentRevisionKey> revisionKeys) throws DocumentRevisionNotFoundException, FolderNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        // Add all document
+        for(DocumentRevisionKey revisionKey : revisionKeys){
+            // Ignore already existing document
+            if(baseline.hasBaselinedDocument(revisionKey)){
+                continue;
+            }
+
+            DocumentRevision documentRevision = new DocumentRevisionDAO(em).loadDocR(revisionKey);
+            documentRevision = filterDocumentRevisionBaselinable(baseline.getType(), documentRevision);
+            // Document non accessible
+            if(documentRevision==null){
+                continue;
+            }
+
+            DocumentIteration documentIteration = documentRevision.getLastIteration();
+            if(documentIteration!=null){
+                baseline.addBaselinedDocument(documentIteration);
+            }
+        }
+    }
+
     private DocumentRevision filterDocumentRevisionAccessRight(User user, DocumentRevision documentRevision){
         if(!user.isAdministrator()
                 && (documentRevision.getACL()!=null)
@@ -138,13 +136,17 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
         return documentRevision;
     }
 
-    private DocumentRevision filterDocumentRevisionBaselinable(User user, DocumentRevision documentRevision){
-        DocumentRevision documentFiltered =filterDocumentRevisionAccessRight(user,documentRevision);
+    private DocumentRevision filterDocumentRevisionBaselinable(DocumentBaseline.BaselineType type, DocumentRevision documentRevision) {
+        if (type.equals(DocumentBaseline.BaselineType.RELEASED)) {
+            return documentRevision.isReleased() ? documentRevision : null;
 
-        if (documentFiltered!= null && documentFiltered.isCheckedOut()) {
-            em.detach(documentFiltered);
-            documentFiltered.removeLastIteration();
+        } else {
+            if (documentRevision.isCheckedOut()) {
+                em.detach(documentRevision);
+                documentRevision.removeLastIteration();
+            }
         }
-        return documentFiltered;
+
+        return documentRevision;
     }
 }
