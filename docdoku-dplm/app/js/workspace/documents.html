@@ -16,8 +16,11 @@
                 </td>
 
                 <td md-cell>
-                    <div ng-repeat="f in item.lastIteration.attachedFiles">
-                        <a  href="" ng-click="previewFile(f)">{{f|fileshortname}}</a>
+                    <div layout="column" ng-repeat="file in item.lastIteration.attachedFiles">
+                            <a>
+                                {{ file.fullName | fileShortName }}
+                            </a>
+                            <small>{{'MODIFIED' | translate}} {{ file.lastModified | utcDateTimeAgo }}</small>
                     </div>
                 </td>
                 <td md-cell>

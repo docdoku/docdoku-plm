@@ -119,7 +119,7 @@
 
             var fs = $window.require('fs');
             var http = $window.require('http');
-            var getFileName = $filter('fileshortname');
+            var getFileName = $filter('fileShortName');
             var zlib = $window.require('zlib');
             var fileMode = $filter('fileMode');
 

@@ -52,11 +52,11 @@
                 items.forEach(function(item){
                     var lastItemIteration = lastIteration(item);
                     if(item.number && lastItemIteration.nativeCADFile){
-                        fileMap[lastItemIteration.nativeCADFile]=item;
+                        fileMap[lastItemIteration.nativeCADFile.fullName]=item;
                     }
                     if(item.id){
                         lastItemIteration.attachedFiles.forEach(function(file){
-                            fileMap[file]=item;
+                            fileMap[file.fullName]=item;
                         });
                     }
                 });

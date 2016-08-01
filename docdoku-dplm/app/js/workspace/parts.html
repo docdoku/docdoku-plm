@@ -15,9 +15,13 @@
                  {{item.partKey}}-{{item.partIterations.length}}
             </td>
             <td md-cell>
-                <a ng-if="item.lastIteration.nativeCADFile" href="" ng-click="previewFile(item.lastIteration.nativeCADFile)">
-                    {{ item.lastIteration.nativeCADFile | fileshortname }}
-                </a>
+                <div layout="column" ng-if="item.lastIteration.nativeCADFile" >
+                    <a href="" ng-click="previewFile(item.lastIteration.nativeCADFile.fullName)">
+                        {{ item.lastIteration.nativeCADFile.fullName | fileShortName }}
+
+                    </a>
+                    <small>{{'MODIFIED' | translate}} {{ item.lastIteration.nativeCADFile.lastModified | utcDateTimeAgo }}</small>
+                </div>
             </td>
             <td md-cell>
 

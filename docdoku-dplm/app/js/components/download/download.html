@@ -8,7 +8,7 @@
 
             <h2>{{status.item.partKey||status.item.id}}</h2>
             <md-progress-linear md-mode="determinate" value="{{status.progress}}"></md-progress-linear>
-            <span class="md-subhead">{{status.url|fileshortname}}</span>
+            <span class="md-subhead">{{status.url|fileShortName}}</span>
         </div>
 
         <div ng-if="status.ended">
@@ -40,7 +40,7 @@
 
                     <md-select required ng-model="options.destinationFolder">
                         <md-option ng-value="folder.uuid"  ng-repeat="folder in folders">
-                            {{folder.path | fileshortname}}
+                            {{folder.path | fileShortName}}
                         </md-option>
                     </md-select>
                     </md-input-container>

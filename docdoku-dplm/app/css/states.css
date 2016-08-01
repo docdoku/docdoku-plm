@@ -4,6 +4,9 @@ i.file-sync{
 .modified{
 	color: #ffa600;
 }
+.out-of-date{
+	color: #ff4200;
+}
 i.file-notSync{
 	color:#999;
 }

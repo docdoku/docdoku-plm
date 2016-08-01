@@ -9,7 +9,7 @@
                 <i class="material-icons" ng-if="folder.favorite">star</i>
                 <h2>
                     <span>
-                        {{ folder.path | fileshortname }} ({{totalFilesInFolder}} {{'FILES'|translate}})
+                        {{ folder.path | fileShortName }} ({{totalFilesInFolder}} {{'FILES'|translate}})
                     </span>
                 </h2>
             </div>
@@ -225,7 +225,9 @@
                             </td>
 
                             <td md-cell>
-                                <a href file-preview="file.path" layout-margin ng-class="{'modified':file.index && file.modified}">{{file.path | fileshortname}}</a>
+                                <a href file-preview="file.path" layout-margin
+                                   ng-class="{'modified':file.index && file.modified,'out-of-date':file.outOfDate}">
+                                    {{file.path | fileShortName}}</a>
                             </td>
 
 

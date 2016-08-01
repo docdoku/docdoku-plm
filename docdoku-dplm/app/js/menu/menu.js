@@ -42,7 +42,7 @@ angular.module('dplm.menu', [])
         var updateFolders = function(){
             folderSection.pages = $scope.folders.map(function(folder){
                 return {
-                    name: $filter('fileshortname')(folder.path),
+                    name: $filter('fileShortName')(folder.path),
                     type: 'link',
                     url:'#/folder/'+folder.uuid,
                     folder:folder

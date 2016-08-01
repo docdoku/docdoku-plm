@@ -23,7 +23,7 @@
             var filteredFiles = [];
             var repositoryIndex;
             var translate = $filter('translate');
-            var getFileName = $filter('fileshortname');
+            var getFileName = $filter('fileShortName');
             var filter = $filter('filter');
 
             var hasFilter = function (code) {
@@ -113,11 +113,12 @@
                 // Fetch data from db if not cached : allow to filter also on entities internal data
                 var chain = $q.when();
                 filteredFiles.forEach(function(file){
-                    if(file.index && !file.item) {
+                    if(file.index) {
                         chain = chain.then(function () {
                             return DBService.getItem(file.index);
                         }).then(function (item) {
                             file.item = item;
+                            file.outOfDate = RepositoryService.isOutOfDate(repositoryIndex, file);
                         });
                     }
                 });
@@ -234,14 +235,17 @@
                 $scope.search();
             };
 
+            var utcToLocalDateTime = $filter('utcToLocalDateTime');
             var refreshDisplay = function(){
                 angular.forEach($scope.displayedFiles,function(file){
                     file.index = RepositoryService.getFileIndex(repositoryIndex, file.path);
                     if(file.index){
                         DBService.getItem(file.index).then(function(item){
                             file.item = item;
+                            file.outOfDate = RepositoryService.isOutOfDate(repositoryIndex, file);
                         });
                         file.modified = RepositoryService.isModified(repositoryIndex, file.path);
+
                     }
                 });
             };

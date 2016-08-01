@@ -7,7 +7,7 @@
 
 <div layout="column">
     <a aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">
-        {{folder.path | fileshortname}}
+        {{folder.path | fileShortName}}
     </a>
     <span ng-if="filesCount >= 0">{{filesCount}} {{'FILES' | translate }}</span>
     <small ng-if="latestAction">{{'LATEST_ACTION' | translate}} <a>{{latestAction | utcDateTimeAgo}}</a></small>

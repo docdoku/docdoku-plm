@@ -9,7 +9,7 @@
             </md-button>
 
             <a aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">
-                {{folder.path | fileshortname}}
+                {{folder.path | fileShortName}}
             </a>
         </div>
 
@@ -26,7 +26,7 @@
                 <div layout="row">
                     <i class="material-icons modified">mode_edit</i>
                     <div layout="column">
-                        <a href class="modified" file-preview="item.path">{{item.path | fileshortname}}</a>
+                        <a href class="modified" file-preview="item.path">{{item.path | fileShortName}}</a>
                         <div layout="row">
                             <small><a>{{item.index.id || item.index.number}}-{{item.index.revision}}</a> {{'MODIFIED'|translate}} <a>{{item.stat.mtime | localDateTimeAgo}}</a></small>
                         </div>

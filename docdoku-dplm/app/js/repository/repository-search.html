@@ -42,7 +42,7 @@
         <md-list>
             <md-list-item class="md-3-line"  ng-repeat="repository in repositories">
                 <div class="md-list-item-text">
-                    <h3>{{repository | fileshortname}}</h3>
+                    <h3>{{repository | fileShortName}}</h3>
                     <p>{{repository | repositoryBasePath}}</p>
                 </div>
                 <md-button class="md-secondary" ng-click="addRepository(repository)">{{'ADD'|translate}}</md-button>

@@ -32,7 +32,7 @@
             };
         })
 
-        .filter('fileshortname', function () {
+        .filter('fileShortName', function () {
             return function (path) {
                 return path.replace(/^.*[\\\/]/, '');
             };
@@ -59,6 +59,7 @@
                 return arg.replace(INDEX_LOCATION,'');
             };
         })
+
         .filter('isAvailableForViewer',function($filter, Available3DLoaders){
             var ext = $filter('fileExtension');
             return function(file){

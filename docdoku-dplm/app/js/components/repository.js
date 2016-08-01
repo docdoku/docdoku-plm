@@ -4,7 +4,8 @@
 
     angular.module('dplm.services.repository', [])
 
-        .service('RepositoryService', function ($q,$timeout,$window,INDEX_LOCATION,INDEX_SEARCH_PATTERN, DocdokuAPIService, FolderService) {
+        .service('RepositoryService', function ($q,$timeout,$window,$filter,
+                                                INDEX_LOCATION,INDEX_SEARCH_PATTERN, DocdokuAPIService, FolderService) {
 
             var _this = this;
             var fs = $window.require('fs');
@@ -198,6 +199,31 @@
 
             this.isModified = function(index, path){
                 return path && getIndexValue(index, path, 'hash') !== getIndexValue(index, path, 'digest');
+            };
+
+            var fileShortName = $filter('fileShortName');
+            var lastIteration = $filter('lastIteration');
+            var utcToLocalDateTime = $filter('utcToLocalDateTime');
+
+            var getItemBinaryResource = function(item, path){
+                var name = fileShortName(path);
+                var itemLastIteration = lastIteration(item);
+                var binaryResource;
+                if(item.id){
+                    binaryResource = $filter(itemLastIteration.attachedFiles,{name:name})[0];
+                } else if(item.number){
+                    binaryResource = itemLastIteration.nativeCADFile;
+                }
+                return binaryResource;
+            };
+
+            this.isOutOfDate = function(index, file){
+                if(!file.index || !file.item){
+                    console.log(file)
+                    return false;
+                }
+                var binary = getItemBinaryResource(file.item,file.path);
+                return binary && getIndexValue(index, file.path, 'lastModifiedDate') < new Date(binary.lastModified).getTime();
             };
 
             this.syncIndex = function(indexFolder){

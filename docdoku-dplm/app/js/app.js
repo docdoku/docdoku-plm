@@ -53,7 +53,7 @@
         'dplm.filters.files',
         'dplm.filters.arrays',
         'dplm.filters.strings',
-        'dplm.filters.timeago'
+        'dplm.filters.dates'
 
     ])
 
