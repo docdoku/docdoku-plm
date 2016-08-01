@@ -148,7 +148,7 @@ public class WorkspaceDAO {
         em.createQuery("DELETE FROM ProductBaseline b where b.configurationItem.workspace = :workspace")
                 .setParameter("workspace",workspace).executeUpdate();
         // DocumentBaselines
-        em.createQuery("DELETE FROM DocumentBaseline b where b.workspace = :workspace")
+        em.createQuery("DELETE FROM DocumentBaseline b where b.author.workspace = :workspace")
                 .setParameter("workspace",workspace).executeUpdate();
 
         // Effectivity
