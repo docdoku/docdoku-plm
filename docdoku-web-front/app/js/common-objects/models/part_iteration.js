@@ -18,10 +18,10 @@ define([
             this.set('instanceAttributes', attributes);
             this.resetNativeCADFile();
 
-            var filesMapping = _.map(this.get('attachedFiles'), function (fullName) {
+            var filesMapping = _.map(this.get('attachedFiles'), function (binaryResource) {
                 return {
-                    'fullName': fullName,
-                    shortName: _.last(fullName.split('/')),
+                    fullName: binaryResource.fullName,
+                    shortName: _.last(binaryResource.fullName.split('/')),
                     created: true
                 };
             });
@@ -33,14 +33,13 @@ define([
         },
 
         resetNativeCADFile: function () {
-            var nativeCADFullName = this.get('nativeCADFile');
-            if (nativeCADFullName) {
-                var nativeCad = {
-                    fullName: nativeCADFullName,
-                    shortName: _.last(nativeCADFullName.split('/')),
+            var nativeCADBinaryResource = this.get('nativeCADFile');
+            if (nativeCADBinaryResource) {
+                this._nativeCADFile = new AttachedFileCollection({
+                    fullName: nativeCADBinaryResource.fullName,
+                    shortName: _.last(nativeCADBinaryResource.fullName.split('/')),
                     created: true
-                };
-                this._nativeCADFile = new AttachedFileCollection(nativeCad);
+                });
             } else {
                 this._nativeCADFile = new AttachedFileCollection();
             }

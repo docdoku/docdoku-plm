@@ -36,7 +36,7 @@ public class PathDataIterationDTO implements Serializable {
     private String iterationNote;
     private LightPartLinkListDTO partLinksList;
     private String path;
-    private List<String> attachedFiles;
+    private List<BinaryResourceDTO> attachedFiles;
     private Set<DocumentRevisionDTO> linkedDocuments;
     private List<InstanceAttributeDTO> instanceAttributes;
 
@@ -72,11 +72,11 @@ public class PathDataIterationDTO implements Serializable {
         this.partLinksList = partLinksList;
     }
 
-    public List<String> getAttachedFiles() {
+    public List<BinaryResourceDTO> getAttachedFiles() {
         return attachedFiles;
     }
 
-    public void setAttachedFiles(List<String> attachedFiles) {
+    public void setAttachedFiles(List<BinaryResourceDTO> attachedFiles) {
         this.attachedFiles = attachedFiles;
     }
 

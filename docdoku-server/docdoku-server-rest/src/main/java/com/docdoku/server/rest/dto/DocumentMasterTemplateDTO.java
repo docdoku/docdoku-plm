@@ -41,7 +41,7 @@ public class DocumentMasterTemplateDTO implements Serializable {
     private String mask;
     private String workflowModelId;
 
-    private List<String> attachedFiles;
+    private List<BinaryResourceDTO> attachedFiles;
     private List<InstanceAttributeTemplateDTO> attributeTemplates;
     private boolean attributesLocked;
     private ACLDTO acl;
@@ -114,11 +114,11 @@ public class DocumentMasterTemplateDTO implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public List<String> getAttachedFiles() {
+    public List<BinaryResourceDTO> getAttachedFiles() {
         return attachedFiles;
     }
 
-    public void setAttachedFiles(List<String> attachedFiles) {
+    public void setAttachedFiles(List<BinaryResourceDTO> attachedFiles) {
         this.attachedFiles = attachedFiles;
     }
 

@@ -43,7 +43,7 @@ public class DocumentIterationDTO implements Serializable {
     private UserDTO author;
     @XmlElement(nillable = true)
     private String revisionNote;
-    private List<String> attachedFiles;
+    private List<BinaryResourceDTO> attachedFiles;
     private List<InstanceAttributeDTO> instanceAttributes;
     private List<DocumentRevisionDTO> linkedDocuments;
 
@@ -105,11 +105,11 @@ public class DocumentIterationDTO implements Serializable {
         revisionNote = pRevisionNote;
     }
 
-    public List<String> getAttachedFiles() {
+    public List<BinaryResourceDTO> getAttachedFiles() {
         return attachedFiles;
     }
 
-    public void setAttachedFiles(List<String> attachedFiles) {
+    public void setAttachedFiles(List<BinaryResourceDTO> attachedFiles) {
         this.attachedFiles = attachedFiles;
     }
 

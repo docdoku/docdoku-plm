@@ -29,7 +29,7 @@ public class PartIterationDTO implements Serializable {
 
     private String workspaceId;
     private int iteration;
-    private String nativeCADFile;
+    private BinaryResourceDTO nativeCADFile;
     private String geometryFileURI;
     private String iterationNote;
     private UserDTO author;
@@ -44,7 +44,7 @@ public class PartIterationDTO implements Serializable {
     private String number;
     private String name;
     private String version;
-    private List<String> attachedFiles;
+    private List<BinaryResourceDTO> attachedFiles;
 
     public PartIterationDTO() {
     }
@@ -73,11 +73,11 @@ public class PartIterationDTO implements Serializable {
         this.iteration = iteration;
     }
 
-    public String getNativeCADFile() {
+    public BinaryResourceDTO getNativeCADFile() {
         return nativeCADFile;
     }
 
-    public void setNativeCADFile(String nativeCADFile) {
+    public void setNativeCADFile(BinaryResourceDTO nativeCADFile) {
         this.nativeCADFile = nativeCADFile;
     }
 
@@ -177,11 +177,11 @@ public class PartIterationDTO implements Serializable {
         this.instanceAttributeTemplates = instanceAttributeTemplates;
     }
 
-    public List<String> getAttachedFiles() {
+    public List<BinaryResourceDTO> getAttachedFiles() {
         return attachedFiles;
     }
 
-    public void setAttachedFiles(List<String> attachedFiles) {
+    public void setAttachedFiles(List<BinaryResourceDTO> attachedFiles) {
         this.attachedFiles = attachedFiles;
     }
 
