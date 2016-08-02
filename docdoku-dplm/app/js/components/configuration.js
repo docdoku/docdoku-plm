@@ -40,6 +40,9 @@
                 return _this.getHostUrl() + '/api';
             };
 
+            this.getFileApiURL = function () {
+                return _this.getHostApiURL() + '/files';
+            };
 
             this.getHttpFormRequestOpts = function () {
                 return {

@@ -16,6 +16,26 @@
 
         })
 
+        .directive('remoteFilePreview', function (FileUtils, ConfigurationService) {
+
+          return {
+                scope: {
+                    file: '=remoteFilePreview'
+                },
+                link: function postLink(scope, element, attrs) {
+
+                    element.on('click', function () {
+                        FileUtils.openInOS(ConfigurationService.getFileApiURL() + '/' + scope.file);
+                    });
+
+                    scope.$on('$destroy', function () {
+                        element.off('click');
+                    });
+                }
+
+            };
+        })
+
         .directive('filePreview', function ($mdDialog, $window, $filter, FileUtils) {
 
             var isAvailableForViewer = $filter('isAvailableForViewer');

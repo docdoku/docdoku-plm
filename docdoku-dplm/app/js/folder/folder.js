@@ -14,17 +14,20 @@
         })
 
         .controller('FolderController', function ($scope, $location, $routeParams, $filter, $mdDialog, $q,
-                                                  FolderService, DBService, RepositoryService, WorkspaceService, ConfigurationService) {
+                                                  FolderService, DBService, RepositoryService, WorkspaceService, ConfigurationService, FileUtils) {
 
             $scope.folder = FolderService.getFolder({uuid: $routeParams.uuid});
+            $scope.configuration = ConfigurationService.configuration;
 
             var folderPath = $scope.folder.path;
             var allFiles = [];
             var filteredFiles = [];
-            var repositoryIndex;
+            var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
+
             var translate = $filter('translate');
             var filter = $filter('filter');
             var utcToLocalDateTime = $filter('utcToLocalDateTime');
+            var lastIteration = $filter('lastIteration');
 
             $scope.query = {
                 limit: 10,
@@ -55,6 +58,17 @@
                 running: false,
                 progress: 0,
                 total: 0
+            };
+
+            var fetchFolder = function () {
+                $scope.sync.running = true;
+                return FolderService.recursiveReadDir(folderPath)
+                    .then(function (files) {
+                        $scope.totalFilesInFolder = files.length;
+                        allFiles = files;
+                        search();
+                        $scope.sync.running = false;
+                    });
             };
 
             var sortFiles = function (a, b) {
@@ -89,7 +103,7 @@
                 }).map(function (path) {
                     var file = FolderService.createFileObject(path);
                     file.index = RepositoryService.getFileIndex(repositoryIndex, path);
-                    file.stat = FolderService.getFileStat(path);
+                    file.stat = FileUtils.stat(path);
                     file.modified = RepositoryService.isModified(repositoryIndex, path);
                     return file;
                 });
@@ -175,7 +189,6 @@
             };
 
             var filterCanUndoCheckOut = function (selection) {
-                var lastIteration = $filter('lastIteration');
                 return selection.filter(function (file) {
                     var item = file.item;
                     var lastItemIteration = item ? lastIteration(item) : null;
@@ -183,11 +196,38 @@
                 });
             };
 
+            var fetchFileItem = function(file){
+                if(file.index){
+                    return DBService.getItem(file.index).then(function (item) {
+                        file.item = item;
+                        file.outOfDate = RepositoryService.isOutOfDate(repositoryIndex, file);
+                    });
+                }
+            };
+
+            var getLocalChangesAsSelection = function () {
+
+                var changes = RepositoryService.getLocalChanges($scope.folder);
+                var selection = [];
+
+                angular.forEach(changes,function(path){
+                    var file = {
+                        path: path,
+                        index: RepositoryService.getFileIndex(repositoryIndex, path),
+                        stat: FileUtils.stat(path)
+                    };
+                    selection.push(file);
+                    fetchFileItem(file);
+                });
+
+                return selection;
+            };
+
             var filterCanPushFiles = filterCanCheckIn;
 
             $scope.actions = {
 
-                checkin: function (selection) {
+                checkIn: function (selection) {
                     $mdDialog.show({
                         templateUrl: 'js/folder/check-in.html',
                         fullscreen: true,
@@ -199,7 +239,7 @@
                     }).then(refreshDisplay);
                 },
 
-                checkout: function (selection) {
+                checkOut: function (selection) {
                     $mdDialog.show({
                         templateUrl: 'js/folder/check-out.html',
                         fullscreen: true,
@@ -211,7 +251,7 @@
                     }).then(refreshDisplay);
                 },
 
-                undoCheckout: function (selection) {
+                undoCheckOut: function (selection) {
                     $mdDialog.show({
                         templateUrl: 'js/folder/undo-check-out.html',
                         fullscreen: true,
@@ -235,6 +275,18 @@
                     }).then(refreshDisplay);
                 },
 
+                pushUpdates: function () {
+                    $mdDialog.show({
+                        templateUrl: 'js/folder/push.html',
+                        fullscreen: true,
+                        controller: 'PushCtrl',
+                        locals: {
+                            selection: getLocalChangesAsSelection(),
+                            folderPath: folderPath
+                        }
+                    }).then(refreshDisplay);
+                },
+
                 createFile: function () {
                     $mdDialog.show({
                         templateUrl: 'js/folder/create-file.html',
@@ -246,7 +298,7 @@
                     }).then(function (path) {
                         allFiles.push(path);
                         var file = FolderService.createFileObject(path);
-                        file.stat = FolderService.getFileStat(path);
+                        file.stat = FileUtils.stat(path);
                         $scope.displayedFiles.push(file);
                     });
                 },
@@ -305,52 +357,35 @@
                     search();
                 },
 
-                fetchFolder: function () {
-
-                    $scope.sync.running = true;
-
-                    repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
-
-                    FolderService.recursiveReadDir(folderPath)
-                        .then(function (files) {
-                            $scope.totalFilesInFolder = files.length;
-                            allFiles = files;
-                            search();
-                            $scope.sync.running = false;
-                        });
-                },
-
                 paginate: function (page, count) {
                     var start = (page - 1) * count;
                     var end = start + count;
                     $scope.displayedFiles = filteredFiles.sort(sortFiles).slice(start, end);
                 },
 
-                updateIndex: function () {
+                syncIndex: function () {
                     $scope.sync.running = true;
                     RepositoryService.syncIndex(folderPath)
-                        .then($scope.actions.fetchFolder, function () {
-                            // todo handle error
-                        }, function (sync) {
+                        .then(fetchFolder, null, function (sync) {
                             $scope.sync.total = sync.total;
                             $scope.sync.progress = sync.progress;
-                        }).catch(function () {
-                            // todo handle error
+                        }).catch(function (err) {
+                            $scope.sync = err;
                         }).finally(function () {
                             $scope.sync.total = 0;
                             $scope.sync.progress = 0;
                         });
                 },
 
+                fetchFolder: fetchFolder,
                 applyFilters: search
+
             };
 
 
-            $scope.actions.updateIndex();
+            fetchFolder();
 
-            $scope.$on("$destroy", function () {
-
-            });
+            $scope.$on("$destroy", function () {});
 
         })
 

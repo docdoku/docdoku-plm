@@ -142,10 +142,6 @@
                 };
             };
 
-            this.getFileStat = function (path) {
-                return fs.statSync(path);
-            };
-
         });
 
 })();

@@ -10,7 +10,7 @@
                     {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
                 </a>
                 {{'CHECKED_IN_BY'|translate}}
-                 <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                 <a user-preview="item.lastIteration.author" href class="md-primary">
                      {{item.lastIteration.author.name}}
                  </a>
                 {{ item.lastIteration.checkInDate | utcDateTimeAgo}}
@@ -21,7 +21,7 @@
                     {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
                 </a>
                {{'MODIFIED_BY'|translate}}
-                  <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                  <a user-preview="item.lastIteration.author" href class="md-primary">
                       {{item.lastIteration.author.name}}
                   </a>
                 {{ item.lastIteration.modificationDate | utcDateTimeAgo}}
@@ -32,7 +32,7 @@
                     {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
                 </a>
                 {{'CHECKED_OUT_BY'|translate}}
-                <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                <a user-preview="item.checkOutUser" href class="md-primary">
                     {{item.checkOutUser.name}}
                 </a>
                 {{ item.checkOutDate | utcDateTimeAgo}}
@@ -45,7 +45,7 @@
                      {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
                  </a>
                 {{'CREATED_BY'|translate}}
-                   <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                   <a user-preview="item.lastIteration.author" href class="md-primary">
                        {{item.lastIteration.author.name}}
                    </a>
                 {{ item.lastIteration.creationDate | utcDateTimeAgo}}

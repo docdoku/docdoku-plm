@@ -18,7 +18,7 @@
 
             <td md-cell>
                 <div layout="column" ng-repeat="file in item.lastIteration.attachedFiles">
-                    <a>
+                    <a href remote-file-preview="file.fullName">
                         {{ file.fullName | fileShortName }}
                     </a>
                     <small>{{file.contentLength | humanreadablesize}}</small>
@@ -29,7 +29,7 @@
 
                 <div layout="column" ng-if="item.lastIteration.checkInDate">
                         <span>{{'CHECKED_IN_BY'|translate}}
-                             <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                             <a href user-preview="item.lastIteration.author" class="md-primary">
                                  {{item.lastIteration.author.name}}
                              </a>
                         </span>
@@ -38,7 +38,7 @@
 
                 <div layout="column" ng-if="item.checkOutDate">
                         <span>{{'CHECKED_OUT_BY'|translate}}
-                            <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                            <a href user-preview="item.checkOutUser" class="md-primary">
                                 {{item.checkOutUser.name}}
                             </a>
                         </span>

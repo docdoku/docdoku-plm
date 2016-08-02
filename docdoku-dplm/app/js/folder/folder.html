@@ -76,7 +76,7 @@
                     </button>
                     <md-menu-content>
                         <md-menu-item>
-                            <md-button ng-click="actions.updateIndex()">
+                            <md-button ng-click="actions.syncIndex()">
                                 <i class="material-icons">cached</i>
                                 {{'UPDATE_INDEX' | translate}}
                             </md-button>
@@ -141,19 +141,19 @@
                         </md-menu-item>
                         <md-menu-divider></md-menu-divider>
                         <md-menu-item>
-                            <md-button ng-click="actions.checkin(selected)">
+                            <md-button ng-click="actions.checkIn(selected)">
                                 <i class="material-icons">input</i>
                                 {{'CHECKIN' | translate}}
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
-                            <md-button ng-click="actions.checkout(selected)">
+                            <md-button ng-click="actions.checkOut(selected)">
                                 <i class="material-icons">mode_edit</i>
                                 {{'CHECKOUT' | translate}}
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
-                            <md-button ng-click="actions.undoCheckout(selected)">
+                            <md-button ng-click="actions.undoCheckOut(selected)">
                                 <i class="material-icons">settings_backup_restore</i>
                                 {{'UNDO_CHECKOUT' | translate}}
                             </md-button>
@@ -184,10 +184,24 @@
 
         <div layout="column">
 
-            <md-input-container md-no-float class="md-block search-bar">
-                <input placeholder="{{'SEARCH'|translate}}" type="text" ng-change="actions.applyFilters()"
-                       ng-model="pattern"/>
-            </md-input-container>
+            <div layout="row" layout-margin>
+                <div>
+                    <md-button
+                               aria-label="{{'UPDATE_INDEX'}}"
+                               class="md-icon-button"
+                               ng-click="actions.syncIndex()">
+                        <i class="material-icons">cached</i>
+                        <md-tooltip>{{'UPDATE'|translate}}</md-tooltip>
+                    </md-button>
+                </div>
+                <div flex>
+                    <md-input-container flex md-no-float class="md-block search-bar">
+                        <input placeholder="{{'SEARCH'|translate}}" type="text" ng-change="actions.applyFilters()"
+                               ng-model="pattern"/>
+                    </md-input-container>
+                </div>
+
+            </div>
 
             <md-table-container>
                 <table md-table md-row-select multiple ng-model="selected">
@@ -207,7 +221,49 @@
                     <tr md-row md-select="file" md-select-id="path" ng-repeat="file in displayedFiles">
 
                         <td md-cell>
-                            <span ng-if="file.item" status-icon="file.item"></span>
+
+                            <md-menu ng-if="file.index.number || file.index.id">
+                                <md-button aria-label="{{'MENU'}}" class="md-icon-button"
+                                           ng-click="$mdOpenMenu($event)">
+                                    <span ng-if="file.item" status-icon="file.item"></span>
+                                </md-button>
+
+                                <md-menu-content width="3">
+                                    <md-menu-item
+                                            ng-if="file.item.checkOutUser && file.item.checkOutUser.login === configuration.login">
+                                        <md-button aria-label="{{'CHECKIN'|translate}}"
+                                                   ng-click="actions.checkIn([file])">
+                                            <i class="material-icons">input</i>
+                                            {{'CHECKIN'|translate}}
+                                        </md-button>
+                                    </md-menu-item>
+                                    <md-menu-item
+                                            ng-if="file.item.checkOutUser && file.item.checkOutUser.login === configuration.login && file.modified">
+                                        <md-button
+                                                ng-click="actions.push([file])">
+                                            <i class="material-icons">cloud_upload</i>
+                                            {{'PUSH' | translate}}
+                                        </md-button>
+                                    </md-menu-item>
+                                    <md-menu-item
+                                            ng-if="!file.item.checkOutUser && !file.item.releaseAuthor && !file.item.obsoleteAuthor">
+                                        <md-button
+                                                aria-label="{{'CHECKOUT'|translate}}"
+                                                   ng-click="actions.checkOut([file])">
+                                            <i class="material-icons">mode_edit</i>
+                                            {{'CHECKOUT'|translate}}
+                                        </md-button>
+                                    </md-menu-item>
+                                    <md-menu-item
+                                            ng-if="file.item.checkOutUser && file.item.checkOutUser.login === configuration.login && (file.item|lastIteration).iteration > 1">
+                                        <md-button aria-label="{{'UNDO_CHECKOUT'|translate}}"
+                                                   ng-click="actions.undoCheckOut([file])">
+                                            <i class="material-icons">settings_backup_restore</i>
+                                            {{'UNDO_CHECKOUT'|translate}}
+                                        </md-button>
+                                    </md-menu-item>
+                                </md-menu-content>
+                            </md-menu>
 
                             <md-menu ng-if="!file.index.number && !file.index.id">
                                 <md-button aria-label="{{'MENU'}}" class="md-icon-button"
