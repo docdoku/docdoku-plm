@@ -1,5 +1,5 @@
-(function(){
+(function () {
     'use strict';
-    angular.module('dplm.templates',[]);
+    angular.module('dplm.templates', []);
 })();
 

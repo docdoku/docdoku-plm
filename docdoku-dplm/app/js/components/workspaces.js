@@ -1,224 +1,226 @@
-(function(){
+(function () {
 
     'use strict';
 
     angular.module('dplm.services.workspaces', [])
-        .service('WorkspaceService', function ($window,$log, $filter, $q, $location, DocdokuAPIService, DBService, RepositoryService) {
+        .service('WorkspaceService', function ($window, $log, $filter, $q, $location, DocdokuAPIService, DBService, RepositoryService) {
 
             var _this = this;
             var fs = $window.require('fs');
             var fileMode = $filter('fileMode');
 
-            var checkInDocument = function(document, index, path){
-                return $q(function(resolve, reject){
+            var checkInDocument = function (document, index, path) {
+                return $q(function (resolve, reject) {
                     var updatedItem;
-                    DocdokuAPIService.getClient().getApi().then(function(api){
+                    DocdokuAPIService.getClient().getApi().then(function (api) {
                         api.apis.documents.checkInDocument({
-                            workspaceId:document.workspaceId,
-                            documentId:document.documentMasterId,
-                            documentVersion:document.version
-                        }).then(function(response){
+                            workspaceId: document.workspaceId,
+                            documentId: document.documentMasterId,
+                            documentVersion: document.version
+                        }).then(function (response) {
                             updatedItem = response.obj;
-                            if(index){
+                            if (index) {
                                 RepositoryService.updateItemInIndex(index, updatedItem, path);
                             }
                             return DBService.storeDocuments([updatedItem]);
-                        }).then(function(){
+                        }).then(function () {
                             fs.chmodSync(path, fileMode(updatedItem));
                             resolve(updatedItem);
                         });
-                    },reject);
+                    }, reject);
                 });
             };
 
-            var checkOutDocument = function(document, index, path){
-                return $q(function(resolve, reject){
+            var checkOutDocument = function (document, index, path) {
+                return $q(function (resolve, reject) {
                     var updatedItem;
-                    DocdokuAPIService.getClient().getApi().then(function(api){
+                    DocdokuAPIService.getClient().getApi().then(function (api) {
                         api.apis.documents.checkOutDocument({
-                            workspaceId:document.workspaceId,
-                            documentId:document.documentMasterId,
-                            documentVersion:document.version
-                        }).then(function(response){
+                            workspaceId: document.workspaceId,
+                            documentId: document.documentMasterId,
+                            documentVersion: document.version
+                        }).then(function (response) {
                             updatedItem = response.obj;
-                            if(index){
+                            if (index) {
                                 RepositoryService.updateItemInIndex(index, updatedItem, path);
                             }
                             return DBService.storeDocuments([updatedItem]);
-                        }).then(function(){
+                        }).then(function () {
                             fs.chmodSync(path, fileMode(updatedItem));
                             resolve(updatedItem);
                         });
-                    },reject);
+                    }, reject);
                 });
             };
 
 
-            var undoCheckOutDocument = function(document, index, path){
-                return $q(function(resolve, reject){
+            var undoCheckOutDocument = function (document, index, path) {
+                return $q(function (resolve, reject) {
                     var updatedItem;
-                    DocdokuAPIService.getClient().getApi().then(function(api){
+                    DocdokuAPIService.getClient().getApi().then(function (api) {
                         api.apis.documents.checkOutDocument({
-                            workspaceId:document.workspaceId,
-                            documentId:document.documentMasterId,
-                            documentVersion:document.version
-                        }).then(function(response){
+                            workspaceId: document.workspaceId,
+                            documentId: document.documentMasterId,
+                            documentVersion: document.version
+                        }).then(function (response) {
                             updatedItem = response.obj;
-                            if(index){
+                            if (index) {
                                 RepositoryService.updateItemInIndex(index, updatedItem, path);
                             }
                             return DBService.storeDocuments([updatedItem]);
-                        }).then(function(){
+                        }).then(function () {
                             fs.chmodSync(path, fileMode(updatedItem));
                             resolve(updatedItem);
                         });
-                    },reject);
+                    }, reject);
                 });
             };
 
 
-            var checkInPart = function(part, index, path){
-                return $q(function(resolve, reject){
+            var checkInPart = function (part, index, path) {
+                return $q(function (resolve, reject) {
                     var updatedItem;
-                    DocdokuAPIService.getClient().getApi().then(function(api){
+                    DocdokuAPIService.getClient().getApi().then(function (api) {
                         api.apis.part.checkIn({
-                            workspaceId:part.workspaceId,
-                            partNumber:part.number,
-                            partVersion:part.version
-                        }).then(function(response){
+                            workspaceId: part.workspaceId,
+                            partNumber: part.number,
+                            partVersion: part.version
+                        }).then(function (response) {
                             updatedItem = response.obj;
-                            if(index){
+                            if (index) {
                                 RepositoryService.updateItemInIndex(index, updatedItem, path);
                             }
                             return DBService.storeParts([updatedItem]);
-                        }).then(function(){
+                        }).then(function () {
                             fs.chmodSync(path, fileMode(updatedItem));
                             resolve(updatedItem);
                         });
-                    },reject);
+                    }, reject);
                 });
             };
 
-            var checkOutPart = function(part, index, path){
-                return $q(function(resolve, reject){
+            var checkOutPart = function (part, index, path) {
+                return $q(function (resolve, reject) {
                     var updatedItem;
-                    DocdokuAPIService.getClient().getApi().then(function(api){
+                    DocdokuAPIService.getClient().getApi().then(function (api) {
                         api.apis.part.checkOut({
-                            workspaceId:part.workspaceId,
-                            partNumber:part.number,
-                            partVersion:part.version
-                        }).then(function(response){
+                            workspaceId: part.workspaceId,
+                            partNumber: part.number,
+                            partVersion: part.version
+                        }).then(function (response) {
                             updatedItem = response.obj;
-                            if(index){
+                            if (index) {
                                 RepositoryService.updateItemInIndex(index, updatedItem, path);
                             }
                             return DBService.storeParts([updatedItem]);
-                        }).then(function(){
+                        }).then(function () {
                             fs.chmodSync(path, fileMode(updatedItem));
                             resolve(updatedItem);
                         });
-                    },reject);
+                    }, reject);
                 });
             };
 
-            var undoCheckOutPart = function(part, index, path){
-                return $q(function(resolve, reject){
+            var undoCheckOutPart = function (part, index, path) {
+                return $q(function (resolve, reject) {
                     var updatedItem;
-                    DocdokuAPIService.getClient().getApi().then(function(api){
+                    DocdokuAPIService.getClient().getApi().then(function (api) {
                         api.apis.part.undoCheckOut({
-                            workspaceId:part.workspaceId,
-                            partNumber:part.number,
-                            partVersion:part.version
-                        }).then(function(response){
+                            workspaceId: part.workspaceId,
+                            partNumber: part.number,
+                            partVersion: part.version
+                        }).then(function (response) {
                             updatedItem = response.obj;
-                            if(index){
+                            if (index) {
                                 RepositoryService.updateItemInIndex(index, updatedItem, path);
                             }
                             return DBService.storeParts([updatedItem]);
-                        }).then(function(){
+                        }).then(function () {
                             fs.chmodSync(path, fileMode(updatedItem));
                             resolve(updatedItem);
                         });
-                    },reject);
+                    }, reject);
                 });
             };
 
 
             this.workspaces = [];
 
-            this.reset = function(){
+            this.reset = function () {
                 _this.workspaces.length = 0;
             };
 
             this.getWorkspaces = function () {
-                return $q(function(resolve, reject){
-                    DocdokuAPIService.getClient().getApi().then(function(api){
+                return $q(function (resolve, reject) {
+                    DocdokuAPIService.getClient().getApi().then(function (api) {
                         api.workspaces.getWorkspacesForConnectedUser()
-                            .then(function(response){
-                                angular.copy(response.obj.allWorkspaces.map(function(workspace){return workspace.id;}),_this.workspaces);
+                            .then(function (response) {
+                                angular.copy(response.obj.allWorkspaces.map(function (workspace) {
+                                    return workspace.id;
+                                }), _this.workspaces);
                                 resolve(_this.workspaces);
-                        },reject);
-                    },reject);
+                            }, reject);
+                    }, reject);
                 });
             };
 
-            this.createPartInWorkspace = function(part){
-                return $q(function(resolve, reject){
+            this.createPartInWorkspace = function (part) {
+                return $q(function (resolve, reject) {
                     var createdPart;
-                    DocdokuAPIService.getClient().getApi().then(function(api){
+                    DocdokuAPIService.getClient().getApi().then(function (api) {
                         api.parts.createNewPart({
                             workspaceId: part.workspaceId,
-                            body:part
-                        }).then(function(response){
+                            body: part
+                        }).then(function (response) {
                             createdPart = response.obj;
                             return DBService.storeParts([createdPart]);
-                        },reject).then(function(){
+                        }, reject).then(function () {
                             resolve(createdPart);
                         });
-                    },reject);
+                    }, reject);
                 });
             };
 
-            this.createDocumentInWorkspace = function(document){
-                return $q(function(resolve, reject){
+            this.createDocumentInWorkspace = function (document) {
+                return $q(function (resolve, reject) {
                     var createdDocument;
-                    DocdokuAPIService.getClient().getApi().then(function(api){
+                    DocdokuAPIService.getClient().getApi().then(function (api) {
                         api.apis.folders.createDocumentMasterInFolder({
-                            workspaceId:document.workspaceId,
-                            folderId:document.workspaceId,
-                            body:document
-                        }).then(function(response){
+                            workspaceId: document.workspaceId,
+                            folderId: document.workspaceId,
+                            body: document
+                        }).then(function (response) {
                             createdDocument = response.obj;
                             return DBService.storeDocuments([createdDocument]);
-                        },reject).then(function(){
+                        }, reject).then(function () {
                             resolve(createdDocument);
                         });
-                    },reject);
+                    }, reject);
                 });
             };
 
-            this.refreshData = function(workspace){
+            this.refreshData = function (workspace) {
 
                 var deferred = $q.defer();
                 var totalDocuments = 0;
                 var totalParts = 0;
                 var done = 0, total = 4;
 
-                deferred.notify({total:total, done:done, workspace:workspace});
+                deferred.notify({total: total, done: done, workspace: workspace});
 
-                _this.fetchDocumentsCount(workspace).then(function(count){
+                _this.fetchDocumentsCount(workspace).then(function (count) {
                     totalDocuments = count;
-                    deferred.notify({total:total, done:++done, workspace:workspace});
+                    deferred.notify({total: total, done: ++done, workspace: workspace});
                     return workspace;
-                }).then(_this.fetchPartsCount).then(function(count){
+                }).then(_this.fetchPartsCount).then(function (count) {
                     totalParts = count;
-                    deferred.notify({total:total, done:++done, workspace:workspace});
-                    return _this.fetchParts(workspace,0,totalParts);
-                }).then(function(){
-                    deferred.notify({total:total, done:++done, workspace:workspace});
-                    return _this.fetchDocuments(workspace,0,totalDocuments);
-                }).finally(function(){
-                    deferred.notify({total:total, done:++done, workspace:workspace});
+                    deferred.notify({total: total, done: ++done, workspace: workspace});
+                    return _this.fetchParts(workspace, 0, totalParts);
+                }).then(function () {
+                    deferred.notify({total: total, done: ++done, workspace: workspace});
+                    return _this.fetchDocuments(workspace, 0, totalDocuments);
+                }).finally(function () {
+                    deferred.notify({total: total, done: ++done, workspace: workspace});
                     onWorkspaceSynced(workspace);
                     deferred.resolve();
                 });
@@ -226,90 +228,90 @@
                 return deferred.promise;
             };
 
-            this.fetchParts = function(workspace, start, max){
-                return $q(function(resolve, reject){
-                    DocdokuAPIService.getClient().getApi().then(function(api){
+            this.fetchParts = function (workspace, start, max) {
+                return $q(function (resolve, reject) {
+                    DocdokuAPIService.getClient().getApi().then(function (api) {
                         api.apis.parts.getPartRevisions({
-                            workspaceId:workspace,
-                            start:start,
-                            length:max
-                        }).then(function(response){
+                            workspaceId: workspace,
+                            start: start,
+                            length: max
+                        }).then(function (response) {
                             return DBService.storeParts(response.obj);
                         }).then(resolve);
-                    },reject);
+                    }, reject);
                 });
             };
 
-            this.fetchPartsCount = function(workspace){
-                return $q(function(resolve, reject){
-                    DocdokuAPIService.getClient().getApi().then(function(api){
+            this.fetchPartsCount = function (workspace) {
+                return $q(function (resolve, reject) {
+                    DocdokuAPIService.getClient().getApi().then(function (api) {
                         api.apis.parts.getTotalNumberOfParts({
-                            workspaceId:workspace
-                        }).then(function(response){
+                            workspaceId: workspace
+                        }).then(function (response) {
                             resolve(response.obj.count);
                         });
-                    },reject);
+                    }, reject);
                 });
             };
 
-            this.fetchDocuments = function(workspace, start, max){
-                return $q(function(resolve, reject){
-                    DocdokuAPIService.getClient().getApi().then(function(api){
+            this.fetchDocuments = function (workspace, start, max) {
+                return $q(function (resolve, reject) {
+                    DocdokuAPIService.getClient().getApi().then(function (api) {
                         api.apis.documents.getDocumentsInWorkspace({
-                            workspaceId:workspace,
-                            start:start,
-                            max:max
-                        }).then(function(response){
+                            workspaceId: workspace,
+                            start: start,
+                            max: max
+                        }).then(function (response) {
                             return DBService.storeDocuments(response.obj);
                         }).then(resolve);
-                    },reject);
+                    }, reject);
                 });
             };
 
-            this.fetchDocumentsCount = function(workspace){
-                return $q(function(resolve, reject){
-                    DocdokuAPIService.getClient().getApi().then(function(api){
+            this.fetchDocumentsCount = function (workspace) {
+                return $q(function (resolve, reject) {
+                    DocdokuAPIService.getClient().getApi().then(function (api) {
                         api.apis.documents.getDocumentsInWorkspaceCount({
-                            workspaceId:workspace
-                        }).then(function(response){
+                            workspaceId: workspace
+                        }).then(function (response) {
                             resolve(response.obj.count);
                         });
-                    },reject);
+                    }, reject);
                 });
             };
 
-            this.fetchAllWorkspaces = function(workspaceIds){
+            this.fetchAllWorkspaces = function (workspaceIds) {
 
                 var deferred = $q.defer();
                 var chain = $q.when();
 
-                angular.forEach(workspaceIds,function(workspaceId){
-                    chain = chain.then(function(){
+                angular.forEach(workspaceIds, function (workspaceId) {
+                    chain = chain.then(function () {
                         return _this.refreshData(workspaceId);
                     });
                 });
 
-                chain.then(deferred.resolve,null,deferred.notify);
+                chain.then(deferred.resolve, null, deferred.notify);
 
                 return deferred.promise;
             };
 
 
-            this.checkInItems = function(files, index){
+            this.checkInItems = function (files, index) {
 
                 var deferred = $q.defer();
                 var chain = $q.when();
                 var done = 0;
 
-                angular.forEach(files,function(file){
-                    chain = chain.then(function(){
-                        if(file.index.id){
-                           return checkInDocument(file.item,index, file.path).then(function(item){
-                               file.item = item;
+                angular.forEach(files, function (file) {
+                    chain = chain.then(function () {
+                        if (file.index.id) {
+                            return checkInDocument(file.item, index, file.path).then(function (item) {
+                                file.item = item;
                                 deferred.notify(++done);
                             });
-                        }else if(file.index.number){
-                            return checkInPart(file.item, index, file.path).then(function(item){
+                        } else if (file.index.number) {
+                            return checkInPart(file.item, index, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify(++done);
                             });
@@ -322,21 +324,21 @@
                 return deferred.promise;
             };
 
-            this.checkOutItems = function(files, index){
+            this.checkOutItems = function (files, index) {
 
                 var deferred = $q.defer();
                 var chain = $q.when();
                 var done = 0;
 
-                angular.forEach(files,function(file){
-                    chain = chain.then(function(){
-                        if(file.index.id){
-                            return checkOutDocument(file.item,index, file.path).then(function(item){
+                angular.forEach(files, function (file) {
+                    chain = chain.then(function () {
+                        if (file.index.id) {
+                            return checkOutDocument(file.item, index, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify(++done);
                             });
-                        }else if(file.index.number){
-                            return checkOutPart(file.item, index, file.path).then(function(item){
+                        } else if (file.index.number) {
+                            return checkOutPart(file.item, index, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify(++done);
                             });
@@ -349,21 +351,21 @@
                 return deferred.promise;
             };
 
-            this.undoCheckOutItems = function(files, index){
+            this.undoCheckOutItems = function (files, index) {
 
                 var deferred = $q.defer();
                 var chain = $q.when();
                 var done = 0;
 
-                angular.forEach(files,function(file){
-                    chain = chain.then(function(){
-                        if(file.index.id){
-                            return undoCheckOutDocument(file.item,index, file.path).then(function(item){
+                angular.forEach(files, function (file) {
+                    chain = chain.then(function () {
+                        if (file.index.id) {
+                            return undoCheckOutDocument(file.item, index, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify(++done);
                             });
-                        }else if(file.index.number){
-                            return undoCheckOutPart(file.item, index, file.path).then(function(item){
+                        } else if (file.index.number) {
+                            return undoCheckOutPart(file.item, index, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify(++done);
                             });
@@ -376,33 +378,33 @@
                 return deferred.promise;
             };
 
-            var getLatestDateInIteration = function(iteration){
+            var getLatestDateInIteration = function (iteration) {
                 var date = iteration.creationDate;
-                if( date < iteration.modificationDate){
+                if (date < iteration.modificationDate) {
                     date = iteration.modificationDate;
                 }
-                if( date < iteration.checkInDate){
+                if (date < iteration.checkInDate) {
                     date = iteration.checkInDate;
                 }
                 return new Date(date).getTime();
             };
 
-            var latestEventSort = function(a,b){
+            var latestEventSort = function (a, b) {
                 return getLatestDateInIteration(lastIteration(b)) - getLatestDateInIteration(lastIteration(a));
             };
 
             var lastIteration = $filter('lastIteration');
 
-            this.getLatestEventsInWorkspace = function(workspaceId, max){
+            this.getLatestEventsInWorkspace = function (workspaceId, max) {
                 var deferred = $q.defer();
                 var items = [];
-                DBService.getDocuments(workspaceId).then(function(documents){
+                DBService.getDocuments(workspaceId).then(function (documents) {
                     items = items.concat(documents);
                     return workspaceId;
-                }).then(DBService.getParts).then(function(parts){
+                }).then(DBService.getParts).then(function (parts) {
                     items = items.concat(parts);
-                }).finally(function(){
-                    deferred.resolve(items.sort(latestEventSort).slice(0,max));
+                }).finally(function () {
+                    deferred.resolve(items.sort(latestEventSort).slice(0, max));
                 });
                 return deferred.promise;
             };
@@ -413,8 +415,8 @@
                 _this.workspaceSyncs[workspace] = new Date();
                 $window.localStorage.workspaceSyncs = angular.toJson(_this.workspaceSyncs);
             };
-            
-            this.resetWorkspaceSyncs = function(){
+
+            this.resetWorkspaceSyncs = function () {
                 _this.workspaceSyncs = {};
                 $window.localStorage.workspaceSyncs = '{}';
             };

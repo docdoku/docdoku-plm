@@ -1,4 +1,4 @@
-(function(){
+(function () {
 
     'use strict';
 
@@ -22,89 +22,89 @@
             var translate = $filter('translate');
             var filter = $filter('filter');
 
-            var hasFilter = function(code){
-                return $scope.filters.filter(function(filter){
+            var hasFilter = function (code) {
+                return $scope.filters.filter(function (filter) {
                         return filter.code === code && filter.value;
-                    }).length>0;
+                    }).length > 0;
             };
 
-            var getData = function(){
-                return DBService.getDocuments(workspace).then(function(documents){
+            var getData = function () {
+                return DBService.getDocuments(workspace).then(function (documents) {
                     allDocuments = documents;
                     return DBService.getParts(workspace);
-                }).then(function(parts){
+                }).then(function (parts) {
                     allParts = parts;
-                }).then(function(){
+                }).then(function () {
                     $scope.totalDocuments = allDocuments.length;
                     $scope.totalParts = allParts.length;
                     $scope.lastSyncDate = WorkspaceService.workspaceSyncs[workspace];
                 });
             };
 
-            var commonFilter = function(item){
-                if(!hasFilter('CHECKED_OUT') && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login){
+            var commonFilter = function (item) {
+                if (!hasFilter('CHECKED_OUT') && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login) {
                     return false;
                 }
 
-                if(!hasFilter('CHECKED_IN') && !item.checkOutUser && !item.releaseAuthor && !item.obsoleteAuthor){
+                if (!hasFilter('CHECKED_IN') && !item.checkOutUser && !item.releaseAuthor && !item.obsoleteAuthor) {
                     return false;
                 }
 
-                if(!hasFilter('LOCKED') && item.checkOutUser && item.checkOutUser.login !== ConfigurationService.configuration.login){
+                if (!hasFilter('LOCKED') && item.checkOutUser && item.checkOutUser.login !== ConfigurationService.configuration.login) {
                     return false;
                 }
 
-                if(!hasFilter('RELEASED') && item.releaseAuthor && !item.obsoleteAuthor){
+                if (!hasFilter('RELEASED') && item.releaseAuthor && !item.obsoleteAuthor) {
                     return false;
                 }
 
-                if(!hasFilter('OBSOLETE') && item.obsoleteAuthor){
+                if (!hasFilter('OBSOLETE') && item.obsoleteAuthor) {
                     return false;
                 }
 
-                if($scope.pattern && filter([item],$scope.pattern).length === 0){
+                if ($scope.pattern && filter([item], $scope.pattern).length === 0) {
                     return false;
                 }
 
                 return true;
             };
 
-            var documentMap = function(item){
-                item.lastIteration = item.documentIterations[item.documentIterations.length-1];
+            var documentMap = function (item) {
+                item.lastIteration = item.documentIterations[item.documentIterations.length - 1];
                 return item;
             };
 
-            var documentFilter = function(item){
-                var lastIteration = item.documentIterations[item.documentIterations.length-1];
+            var documentFilter = function (item) {
+                var lastIteration = item.documentIterations[item.documentIterations.length - 1];
 
-                if(!hasFilter('SHOW_EMPTY_DATA') && !lastIteration.attachedFiles.length){
+                if (!hasFilter('SHOW_EMPTY_DATA') && !lastIteration.attachedFiles.length) {
                     return false;
                 }
 
                 return commonFilter(item);
             };
 
-            var partFilter = function(item){
+            var partFilter = function (item) {
 
-                var lastIteration = item.partIterations[item.partIterations.length-1];
+                var lastIteration = item.partIterations[item.partIterations.length - 1];
 
-                if(!hasFilter('SHOW_EMPTY_DATA') && !lastIteration.nativeCADFile){
+                if (!hasFilter('SHOW_EMPTY_DATA') && !lastIteration.nativeCADFile) {
                     return false;
                 }
 
-                if(!hasFilter('LEAVES') && !lastIteration.components.length){
+                if (!hasFilter('LEAVES') && !lastIteration.components.length) {
                     return false;
                 }
 
-                if(!hasFilter('ASSEMBLIES') && lastIteration.components.length){
+                if (!hasFilter('ASSEMBLIES') && lastIteration.components.length) {
                     return false;
                 }
 
                 return commonFilter(item);
             };
 
-            var partMap = function(item){
-                item.lastIteration = item.partIterations[item.partIterations.length-1];
+            var partMap = function (item) {
+                item.lastIteration = item.partIterations[item.partIterations.length - 1];
                 return item;
             };
 
@@ -116,39 +116,39 @@
 
             var Types = $scope.viewTypes = {
 
-                DOCUMENTS:{
-                    code : 'DOCUMENT',
-                    include:'js/workspace/documents.html',
-                    searchLabel:translate('SEARCH_IN_DOCUMENTS')
+                DOCUMENTS: {
+                    code: 'DOCUMENT',
+                    include: 'js/workspace/documents.html',
+                    searchLabel: translate('SEARCH_IN_DOCUMENTS')
                 },
 
-                PARTS:{
-                    code : 'PARTS',
-                    include:'js/workspace/parts.html',
-                    searchLabel:translate('SEARCH_IN_PARTS')
+                PARTS: {
+                    code: 'PARTS',
+                    include: 'js/workspace/parts.html',
+                    searchLabel: translate('SEARCH_IN_PARTS')
                 }
             };
 
-            $scope.view = Types.DOCUMENTS ;
+            $scope.view = Types.DOCUMENTS;
 
-            $scope.$watch('view', function(type){
+            $scope.$watch('view', function (type) {
                 $scope.view = type;
                 $scope.search();
             });
 
             $scope.filters = [
-                { name: translate('CHECKED_OUT') , code:'CHECKED_OUT', value:true},
-                { name: translate('CHECKED_IN'), code:'CHECKED_IN', value:true},
-                { name: translate('RELEASED'), code:'RELEASED', value:true},
-                { name: translate('OBSOLETE'), code:'OBSOLETE', value:true},
-                { name: translate('LOCKED'), code:'LOCKED', value:true},
-                { name: translate('SHOW_EMPTY_DATA'), code:'SHOW_EMPTY_DATA', value:true},
-                { name: translate('LEAVES') , code:'LEAVES', value:true},
-                { name: translate('ASSEMBLIES') , code:'ASSEMBLIES', value:true}
+                {name: translate('CHECKED_OUT'), code: 'CHECKED_OUT', value: true},
+                {name: translate('CHECKED_IN'), code: 'CHECKED_IN', value: true},
+                {name: translate('RELEASED'), code: 'RELEASED', value: true},
+                {name: translate('OBSOLETE'), code: 'OBSOLETE', value: true},
+                {name: translate('LOCKED'), code: 'LOCKED', value: true},
+                {name: translate('SHOW_EMPTY_DATA'), code: 'SHOW_EMPTY_DATA', value: true},
+                {name: translate('LEAVES'), code: 'LEAVES', value: true},
+                {name: translate('ASSEMBLIES'), code: 'ASSEMBLIES', value: true}
             ];
 
-            $scope.toggleFilters = function(state){
-                angular.forEach($scope.filters,function(filter){
+            $scope.toggleFilters = function (state) {
+                angular.forEach($scope.filters, function (filter) {
                     filter.value = state;
                 });
                 $scope.search();
@@ -156,7 +156,7 @@
 
             $scope.query = {
                 limit: 10,
-                limits: [10,20,50,100],
+                limits: [10, 20, 50, 100],
                 page: 1
             };
 
@@ -167,76 +167,76 @@
             };
 
             $scope.sync = {
-                running:false
+                running: false
             };
 
-            $scope.paginate = function(page, count){
-                var start = (page - 1)*count;
-                var end  = start + count;
+            $scope.paginate = function (page, count) {
+                var start = (page - 1) * count;
+                var end = start + count;
                 $scope.displayedItems = filteredItems.slice(start, end);
             };
 
-            $scope.search = function(){
-                var items = $scope.view === Types.DOCUMENTS ? allDocuments: allParts;
-                var filter = $scope.view === Types.DOCUMENTS ? documentFilter: partFilter;
-                var map = $scope.view === Types.DOCUMENTS ? documentMap: partMap;
+            $scope.search = function () {
+                var items = $scope.view === Types.DOCUMENTS ? allDocuments : allParts;
+                var filter = $scope.view === Types.DOCUMENTS ? documentFilter : partFilter;
+                var map = $scope.view === Types.DOCUMENTS ? documentMap : partMap;
                 filteredItems = items.filter(filter).map(map);
                 $scope.filteredItemsCount = filteredItems.length;
-                $scope.paginate(1,10);
+                $scope.paginate(1, 10);
             };
 
 
-            $scope.refresh = function(){
+            $scope.refresh = function () {
                 $scope.sync.running = true;
-                WorkspaceService.refreshData(workspace).then(function(){
+                WorkspaceService.refreshData(workspace).then(function () {
                     $scope.sync.running = false;
                     getData().then($scope.search);
                 });
             };
 
-            var refreshDisplay = function() {
+            var refreshDisplay = function () {
                 console.log('refresh')
                 getData().then($scope.search);
             };
 
 
             $scope.actions = {
-                download: function(selection){
+                download: function (selection) {
                     $mdDialog.show({
                         templateUrl: 'js/components/download/download.html',
-                        clickOutsideToClose:false,
+                        clickOutsideToClose: false,
                         fullscreen: true,
-                        locals : {
-                            items : selection
+                        locals: {
+                            items: selection
                         },
-                        controller:'DownloadCtrl'
+                        controller: 'DownloadCtrl'
                     });
                 },
-                checkin : function(selection){
+                checkin: function (selection) {
 
                     WorkspaceService.checkInItems(selection)
-                        .then(refreshDisplay,function(){
+                        .then(refreshDisplay, function () {
                             console.log('Something bad happened');
-                        },function(){
+                        }, function () {
                             console.log('Some progress notifications');
                         });
                 },
 
-                checkout:function(selection){
+                checkout: function (selection) {
                     // TODO : filter for action availability
                     WorkspaceService.checkOutItems(selection)
-                        .then(refreshDisplay,function(){
+                        .then(refreshDisplay, function () {
                             console.log('Something bad happened');
-                        },function(){
+                        }, function () {
                             console.log('Some progress notifications');
                         });
                 },
 
-                undoCheckout: function(selection){
+                undoCheckout: function (selection) {
                     WorkspaceService.undoCheckOutItems(selection)
-                        .then(refreshDisplay,function(){
+                        .then(refreshDisplay, function () {
                             console.log('Something bad happened');
-                        },function(){
+                        }, function () {
                             console.log('Some progress notifications');
                         });
                 }

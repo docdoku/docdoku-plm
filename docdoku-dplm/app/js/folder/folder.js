@@ -57,6 +57,10 @@
                 total: 0
             };
 
+            var sortFiles = function (a, b) {
+                return b.stat.mtime.getTime() - a.stat.mtime.getTime();
+            };
+
             var hasFilter = function (code) {
                 return $scope.filters.filter(function (filter) {
                         return filter.code === code && filter.value;
@@ -83,17 +87,17 @@
 
                     return true;
                 }).map(function (path) {
-                        var file = FolderService.createFileObject(path);
-                        file.index = RepositoryService.getFileIndex(repositoryIndex, path);
-                        file.stat = FolderService.getFileSize(path);
-                        file.modified = RepositoryService.isModified(repositoryIndex, path);
-                        return file;
-                    });
+                    var file = FolderService.createFileObject(path);
+                    file.index = RepositoryService.getFileIndex(repositoryIndex, path);
+                    file.stat = FolderService.getFileStat(path);
+                    file.modified = RepositoryService.isModified(repositoryIndex, path);
+                    return file;
+                });
 
                 // Fetch data from db if not cached : allow to filter also on entities internal data
                 var chain = $q.when();
-                filteredFiles.forEach(function(file){
-                    if(file.index) {
+                filteredFiles.forEach(function (file) {
+                    if (file.index) {
                         chain = chain.then(function () {
                             return DBService.getItem(file.index);
                         }).then(function (item) {
@@ -103,29 +107,29 @@
                     }
                 });
 
-                chain.then(function(){
+                chain.then(function () {
 
-                    filteredFiles = filteredFiles.filter(function(file){
+                    filteredFiles = filteredFiles.filter(function (file) {
 
                         var item = file.item;
 
-                        if(!hasFilter('CHECKED_OUT') && item && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login){
+                        if (!hasFilter('CHECKED_OUT') && item && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login) {
                             return false;
                         }
 
-                        if(!hasFilter('CHECKED_IN') && item && !item.checkOutUser && !item.releaseAuthor && !item.obsoleteAuthor){
+                        if (!hasFilter('CHECKED_IN') && item && !item.checkOutUser && !item.releaseAuthor && !item.obsoleteAuthor) {
                             return false;
                         }
 
-                        if(!hasFilter('LOCKED') && item && item.checkOutUser && item.checkOutUser.login !== ConfigurationService.configuration.login){
+                        if (!hasFilter('LOCKED') && item && item.checkOutUser && item.checkOutUser.login !== ConfigurationService.configuration.login) {
                             return false;
                         }
 
-                        if(!hasFilter('RELEASED') && item && item.releaseAuthor && !item.obsoleteAuthor){
+                        if (!hasFilter('RELEASED') && item && item.releaseAuthor && !item.obsoleteAuthor) {
                             return false;
                         }
 
-                        if(!hasFilter('OBSOLETE') && item && item.obsoleteAuthor){
+                        if (!hasFilter('OBSOLETE') && item && item.obsoleteAuthor) {
                             return false;
                         }
 
@@ -142,11 +146,11 @@
 
             };
 
-            var refreshDisplay = function(){
-                angular.forEach($scope.displayedFiles,function(file){
+            var refreshDisplay = function () {
+                angular.forEach($scope.displayedFiles, function (file) {
                     file.index = RepositoryService.getFileIndex(repositoryIndex, file.path);
-                    if(file.index){
-                        DBService.getItem(file.index).then(function(item){
+                    if (file.index) {
+                        DBService.getItem(file.index).then(function (item) {
                             file.item = item;
                             file.outOfDate = RepositoryService.isOutOfDate(repositoryIndex, file);
                         });
@@ -156,25 +160,25 @@
                 });
             };
 
-            var filterCanCheckOut = function(selection){
-                return selection.filter(function(file){
+            var filterCanCheckOut = function (selection) {
+                return selection.filter(function (file) {
                     var item = file.item;
                     return item && !item.checkOutUser && !item.releaseAuthor && !item.obsoleteAuthor;
                 });
             };
 
-            var filterCanCheckIn = function(selection){
-                return selection.filter(function(file){
+            var filterCanCheckIn = function (selection) {
+                return selection.filter(function (file) {
                     var item = file.item;
                     return item && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login;
                 });
             };
 
-            var filterCanUndoCheckOut = function(selection){
+            var filterCanUndoCheckOut = function (selection) {
                 var lastIteration = $filter('lastIteration');
-                return selection.filter(function(file){
+                return selection.filter(function (file) {
                     var item = file.item;
-                    var lastItemIteration = item ? lastIteration(item): null;
+                    var lastItemIteration = item ? lastIteration(item) : null;
                     return lastItemIteration && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login
                         && lastItemIteration.iteration > 1;
                 });
@@ -184,7 +188,7 @@
 
             $scope.actions = {
 
-                checkin : function(selection){
+                checkin: function (selection) {
                     $mdDialog.show({
                         templateUrl: 'js/folder/check-in.html',
                         fullscreen: true,
@@ -196,7 +200,7 @@
                     }).then(refreshDisplay);
                 },
 
-                checkout:function(selection){
+                checkout: function (selection) {
                     $mdDialog.show({
                         templateUrl: 'js/folder/check-out.html',
                         fullscreen: true,
@@ -208,7 +212,7 @@
                     }).then(refreshDisplay);
                 },
 
-                undoCheckout: function(selection){
+                undoCheckout: function (selection) {
                     $mdDialog.show({
                         templateUrl: 'js/folder/undo-check-out.html',
                         fullscreen: true,
@@ -220,7 +224,7 @@
                     }).then(refreshDisplay);
                 },
 
-                push: function(selection){
+                push: function (selection) {
                     $mdDialog.show({
                         templateUrl: 'js/folder/push.html',
                         fullscreen: true,
@@ -232,7 +236,7 @@
                     }).then(refreshDisplay);
                 },
 
-                createFile: function(){
+                createFile: function () {
                     $mdDialog.show({
                         templateUrl: 'js/folder/create-file.html',
                         fullscreen: true,
@@ -240,15 +244,15 @@
                         locals: {
                             folderPath: folderPath
                         }
-                    }).then(function(path){
+                    }).then(function (path) {
                         allFiles.push(path);
                         var file = FolderService.createFileObject(path);
-                        file.stat = FolderService.getFileSize(path);
+                        file.stat = FolderService.getFileStat(path);
                         $scope.displayedFiles.push(file);
                     });
                 },
 
-                createPart : function (file) {
+                createPart: function (file) {
                     $mdDialog.show({
                         templateUrl: 'js/folder/create-part.html',
                         fullscreen: true,
@@ -260,7 +264,7 @@
                     });
                 },
 
-                createDocument : function (file) {
+                createDocument: function (file) {
                     $mdDialog.show({
                         templateUrl: 'js/folder/create-document.html',
                         fullscreen: true,
@@ -272,20 +276,20 @@
                     });
                 },
 
-                reveal : function () {
+                reveal: function () {
                     FolderService.reveal(folderPath);
                 },
 
-                shell : function () {
+                shell: function () {
                     FolderService.shell(folderPath);
                 },
 
-                toggleFavorite : function () {
+                toggleFavorite: function () {
                     $scope.folder.favorite = !$scope.folder.favorite;
                     FolderService.save();
                 },
 
-                deleteFolder : function () {
+                deleteFolder: function () {
                     $mdDialog.show({
                         templateUrl: 'js/folder/delete-folder.html',
                         controller: 'DeleteFolderCtrl',
@@ -295,14 +299,14 @@
                     });
                 },
 
-                toggleFilters:function (state) {
+                toggleFilters: function (state) {
                     angular.forEach($scope.filters, function (filter) {
                         filter.value = state;
                     });
                     search();
                 },
 
-                fetchFolder:function(){
+                fetchFolder: function () {
 
                     $scope.sync.running = true;
 
@@ -317,13 +321,13 @@
                         });
                 },
 
-                paginate : function (page, count) {
+                paginate: function (page, count) {
                     var start = (page - 1) * count;
                     var end = start + count;
-                    $scope.displayedFiles = filteredFiles.slice(start, end);
+                    $scope.displayedFiles = filteredFiles.sort(sortFiles).slice(start, end);
                 },
 
-                updateIndex : function () {
+                updateIndex: function () {
                     $scope.sync.running = true;
                     RepositoryService.syncIndex(folderPath)
                         .then($scope.actions.fetchFolder, function () {
@@ -339,7 +343,7 @@
                         });
                 },
 
-                applyFilters:search
+                applyFilters: search
             };
 
 
@@ -369,17 +373,17 @@
                                                 FileUtils, folderPath) {
 
             $scope.data = {
-                regex:/^[^\/]+$/,
-                fileName:''
+                regex: /^[^\/]+$/,
+                fileName: ''
             };
 
             $scope.close = $mdDialog.hide;
 
-            $scope.create = function(){
-                var file = FileUtils.createFile(folderPath,$scope.data.fileName);
-                if(!file){
+            $scope.create = function () {
+                var file = FileUtils.createFile(folderPath, $scope.data.fileName);
+                if (!file) {
                     console.log('Cannot create file')
-                }else{
+                } else {
                     $mdDialog.hide(file);
                 }
             };
@@ -408,7 +412,7 @@
                 }).then(function () {
                     var newIndex = RepositoryService.saveDocumentToIndex(folderPath, file.path, $scope.document);
                     file.index = RepositoryService.getFileIndex(newIndex, file.path);
-                    DBService.getItem(file.index).then(function(item){
+                    DBService.getItem(file.index).then(function (item) {
                         file.item = item;
                         $mdDialog.hide();
                     });
@@ -444,7 +448,7 @@
                 }).then(function () {
                     var newIndex = RepositoryService.savePartToIndex(folderPath, file.path, $scope.part);
                     file.index = RepositoryService.getFileIndex(newIndex, file.path);
-                    DBService.getItem(file.index).then(function(item){
+                    DBService.getItem(file.index).then(function (item) {
                         file.item = item;
                         $mdDialog.hide();
                     });
@@ -453,7 +457,7 @@
         })
 
         .controller('CheckInCtrl', function ($scope, $mdDialog,
-                                                  WorkspaceService, UploadService, RepositoryService, DBService,
+                                             WorkspaceService, UploadService, RepositoryService, DBService,
                                              selection, folderPath) {
 
             $scope.loading = false;
@@ -463,14 +467,14 @@
 
             var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
 
-            $scope.checkIn = function(){
+            $scope.checkIn = function () {
                 $scope.loading = true;
                 WorkspaceService.checkInItems(selection, repositoryIndex)
-                    .then($mdDialog.hide,function(error){
+                    .then($mdDialog.hide, function (error) {
                         $scope.error = error;
-                    },function(status){
+                    }, function (status) {
                         $scope.status = status;
-                    }).finally(function(){
+                    }).finally(function () {
                         $scope.loading = false;
                     });
             };
@@ -478,8 +482,8 @@
         })
 
         .controller('CheckOutCtrl', function ($scope, $mdDialog,
-                                                  WorkspaceService, UploadService, RepositoryService, DBService,
-                                             selection, folderPath) {
+                                              WorkspaceService, UploadService, RepositoryService, DBService,
+                                              selection, folderPath) {
 
             $scope.loading = false;
             $scope.selection = selection;
@@ -488,14 +492,14 @@
 
             var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
 
-            $scope.checkOut = function(){
+            $scope.checkOut = function () {
                 $scope.loading = true;
                 WorkspaceService.checkOutItems(selection, repositoryIndex)
-                    .then($mdDialog.hide,function(error){
+                    .then($mdDialog.hide, function (error) {
                         $scope.error = error;
-                    },function(status){
+                    }, function (status) {
                         $scope.status = status;
-                    }).finally(function(){
+                    }).finally(function () {
                         $scope.loading = false;
                     });
             };
@@ -503,8 +507,8 @@
         })
 
         .controller('UndoCheckOutCtrl', function ($scope, $mdDialog,
-                                              WorkspaceService, UploadService, RepositoryService, DBService,
-                                              selection, folderPath) {
+                                                  WorkspaceService, UploadService, RepositoryService, DBService,
+                                                  selection, folderPath) {
 
             $scope.loading = false;
             $scope.selection = selection;
@@ -513,14 +517,14 @@
 
             var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
 
-            $scope.undoCheckOut = function(){
+            $scope.undoCheckOut = function () {
                 $scope.loading = true;
                 WorkspaceService.undoCheckOutItems(selection, repositoryIndex)
-                    .then($mdDialog.hide,function(error){
+                    .then($mdDialog.hide, function (error) {
                         $scope.error = error;
-                    },function(status){
+                    }, function (status) {
                         $scope.status = status;
-                    }).finally(function(){
+                    }).finally(function () {
                         $scope.loading = false;
                     });
             };
@@ -528,8 +532,8 @@
         })
 
         .controller('PushCtrl', function ($scope, $mdDialog,
-                                              WorkspaceService, UploadService, RepositoryService, DBService,
-                                              selection, folderPath) {
+                                          WorkspaceService, UploadService, RepositoryService, DBService,
+                                          selection, folderPath) {
 
             $scope.loading = false;
             $scope.selection = selection;
@@ -538,14 +542,14 @@
 
             //var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
 
-            $scope.push = function(){
+            $scope.push = function () {
                 $scope.loading = true;
                 UploadService.bulkUpload(selection, folderPath)
-                    .then($mdDialog.hide,function(error){
+                    .then($mdDialog.hide, function (error) {
                         $scope.error = error;
-                    },function(status){
+                    }, function (status) {
                         $scope.status = status;
-                    }).finally(function(){
+                    }).finally(function () {
                         $scope.loading = false;
                     });
             };

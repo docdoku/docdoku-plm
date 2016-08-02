@@ -3,6 +3,7 @@
 
         <div ng-if="status && !status.ended">
             <h1>{{'DOWNLOADING'| translate}}</h1>
+
             <h2>{{status.done}}/{{files.length}}</h2>
             <md-progress-linear md-mode="determinate" value="{{status.mainProgress}}"></md-progress-linear>
 
@@ -20,7 +21,8 @@
                     {{'CLOSE'|translate}}
                 </md-button>
 
-                <md-button type="button" aria-label="" ng-click="close()" href="#/folder/{{options.destinationFolder}}" class="md-raised md-primary">
+                <md-button type="button" aria-label="" ng-click="close()" href="#/folder/{{options.destinationFolder}}"
+                           class="md-raised md-primary">
                     {{'TO_FOLDER_VIEW'|translate}}
                 </md-button>
             </div>
@@ -39,11 +41,11 @@
                     <label>{{'CHOOSE_DESTINATION_FOLDER'| translate}}</label>
 
                     <md-select required ng-model="options.destinationFolder">
-                        <md-option ng-value="folder.uuid"  ng-repeat="folder in folders">
+                        <md-option ng-value="folder.uuid" ng-repeat="folder in folders">
                             {{folder.path | fileShortName}}
                         </md-option>
                     </md-select>
-                    </md-input-container>
+                </md-input-container>
             </div>
             <div layout="row" layout-align="start center">
                 <md-switch ng-model="showAdvancedOptions" aria-label="{{'ADVANCED_OPTIONS' | translate}}">
@@ -58,7 +60,7 @@
                 </md-checkbox>
 
 
-                 <md-checkbox ng-model="options.checkOutItems" aria-label="{{'CHECK_OUT_ITEMS'|translate}}">
+                <md-checkbox ng-model="options.checkOutItems" aria-label="{{'CHECK_OUT_ITEMS'|translate}}">
                     {{'CHECK_OUT_ITEMS'|translate}}
                 </md-checkbox>
 

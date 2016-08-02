@@ -1,51 +1,52 @@
 <md-table-container>
     <table md-table md-row-select multiple ng-model="selected">
         <thead md-head>
-            <tr md-row>
-                <th md-column></th>
-                <th md-column><span>{{'ID'|translate}}</span></th>
-                <th md-column><span>{{'ATTACHED_FILES'|translate}}</span></th>
-                <th md-column><span>{{'LATEST_ACTION'|translate}}</span></th>
-            </tr>
+        <tr md-row>
+            <th md-column><span>{{'ID'|translate}}</span></th>
+            <th md-column><span>{{'ATTACHED_FILES'|translate}}</span></th>
+            <th md-column><span>{{'LATEST_ACTION'|translate}}</span></th>
+        </tr>
         </thead>
         <tbody md-body>
-            <tr md-row md-select="item" md-select-id="id" ng-repeat="item in displayedItems">
-                <td md-cell status-icon="item"></td>
-                <td md-cell>
+        <tr md-row md-select="item" md-select-id="id" ng-repeat="item in displayedItems">
+            <td md-cell>
+                <div layout="row">
+                    <div status-icon="item"></div>
                     {{item.id}}-{{item.documentIterations.length}}
-                </td>
+                </div>
+            </td>
 
-                <td md-cell>
-                    <div layout="column" ng-repeat="file in item.lastIteration.attachedFiles">
-                        <a>
-                            {{ file.fullName | fileShortName }}
-                        </a>
-                        <small>{{file.contentLength | humanreadablesize}}</small>
-                        <small>{{'MODIFIED' | translate}} {{ file.lastModified | utcDateTimeAgo }}</small>
-                    </div>
-                </td>
-                <td md-cell>
+            <td md-cell>
+                <div layout="column" ng-repeat="file in item.lastIteration.attachedFiles">
+                    <a>
+                        {{ file.fullName | fileShortName }}
+                    </a>
+                    <small>{{file.contentLength | humanreadablesize}}</small>
+                    <small>{{'MODIFIED' | translate}} {{ file.lastModified | utcDateTimeAgo }}</small>
+                </div>
+            </td>
+            <td md-cell>
 
-                    <div layout="column" ng-if="item.lastIteration.checkInDate">
+                <div layout="column" ng-if="item.lastIteration.checkInDate">
                         <span>{{'CHECKED_IN_BY'|translate}}
                              <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
                                  {{item.lastIteration.author.name}}
                              </a>
                         </span>
-                        <small>{{ item.lastIteration.checkInDate | utcDateTimeAgo}}</small>
-                    </div>
+                    <small>{{ item.lastIteration.checkInDate | utcDateTimeAgo}}</small>
+                </div>
 
-                    <div layout="column" ng-if="item.checkOutDate">
+                <div layout="column" ng-if="item.checkOutDate">
                         <span>{{'CHECKED_OUT_BY'|translate}}
                             <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
                                 {{item.checkOutUser.name}}
                             </a>
                         </span>
-                        <small>{{ item.checkOutDate | utcDateTimeAgo}}</small>
-                    </div>
+                    <small>{{ item.checkOutDate | utcDateTimeAgo}}</small>
+                </div>
 
-                </td>
-            </tr>
+            </td>
+        </tr>
         </tbody>
     </table>
 </md-table-container>

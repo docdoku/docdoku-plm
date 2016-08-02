@@ -2,7 +2,6 @@
     <table md-table md-row-select multiple ng-model="selected">
         <thead md-head>
         <tr md-row>
-            <th md-column></th>
             <th md-column><span>{{'NUMBER'|translate}}</span></th>
             <th md-column><span>{{'NATIVE_CAD_FILE'|translate}}</span></th>
             <th md-column><span>{{'LATEST_ACTION'|translate}}</span></th>
@@ -10,9 +9,11 @@
         </thead>
         <tbody md-body>
         <tr md-row md-select="item" md-select-id="partKey" ng-repeat="item in displayedItems">
-            <td md-cell status-icon="item"></td>
             <td md-cell>
-                 {{item.partKey}}-{{item.partIterations.length}}
+                <div layout="row">
+                    <div md-cell status-icon="item"></div>
+                    {{item.partKey}}-{{item.partIterations.length}}
+                </div>
             </td>
             <td md-cell>
                 <div layout="column" ng-if="item.lastIteration.nativeCADFile">
@@ -20,13 +21,15 @@
                         {{ item.lastIteration.nativeCADFile.fullName | fileShortName }}
 
                     </a>
-                    <small>{{ item.lastIteration.nativeCADFile.contentLength | humanreadablesize}} </small>
-                    <small>{{'MODIFIED' | translate}} {{ item.lastIteration.nativeCADFile.lastModified | utcDateTimeAgo }}</small>
+                    <small>{{ item.lastIteration.nativeCADFile.contentLength | humanreadablesize}}</small>
+                    <small>{{'MODIFIED' | translate}} {{ item.lastIteration.nativeCADFile.lastModified | utcDateTimeAgo
+                        }}
+                    </small>
                 </div>
             </td>
             <td md-cell>
 
-                    <div layout="column" ng-if="item.lastIteration.checkInDate">
+                <div layout="column" ng-if="item.lastIteration.checkInDate">
 
                         <span>{{'CHECKED_IN_BY'|translate}}
                              <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
@@ -34,18 +37,18 @@
                              </a>
                         </span>
 
-                        <small>{{ item.lastIteration.checkInDate | utcDateTimeAgo}}</small>
-                    </div>
+                    <small>{{ item.lastIteration.checkInDate | utcDateTimeAgo}}</small>
+                </div>
 
-                    <div layout="column" ng-if="item.checkOutDate">
+                <div layout="column" ng-if="item.checkOutDate">
 
                         <span>{{'CHECKED_OUT_BY'|translate}}
                             <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
                                 {{item.checkOutUser.name}}
                             </a>
                         </span>
-                        <small>{{ item.checkOutDate | utcDateTimeAgo}}</small>
-                    </div>
+                    <small>{{ item.checkOutDate | utcDateTimeAgo}}</small>
+                </div>
 
             </td>
         </tr>

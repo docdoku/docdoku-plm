@@ -1,25 +1,25 @@
-(function(){
+(function () {
     'use strict';
-    angular.module('dplm.login',[])
-        .controller('LoginCtrl',function($scope, $mdDialog, ConfigurationService, AuthService, WorkspaceService, xhrFrom){
+    angular.module('dplm.login', [])
+        .controller('LoginCtrl', function ($scope, $mdDialog, ConfigurationService, AuthService, WorkspaceService, xhrFrom) {
 
-            var configuration =  ConfigurationService.configuration;
+            var configuration = ConfigurationService.configuration;
 
             $scope.configuration = ConfigurationService.configuration;
             $scope.xhrFrom = xhrFrom;
 
-            $scope.connect = function() {
-                $scope.xhrFrom=null;
-                if(ConfigurationService.hasAuth()){
+            $scope.connect = function () {
+                $scope.xhrFrom = null;
+                if (ConfigurationService.hasAuth()) {
                     $scope.loggingIn = true;
                     ConfigurationService.save();
                     AuthService.login(configuration.login, configuration.password)
                         .then(WorkspaceService.getWorkspaces)
                         .then($mdDialog.hide)
-                        .catch(function(xhr){
+                        .catch(function (xhr) {
                             $scope.xhrFrom = xhr;
                         })
-                        .finally(function(){
+                        .finally(function () {
                             $scope.loggingIn = false;
                         });
                 }

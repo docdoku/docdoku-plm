@@ -1,4 +1,4 @@
-(function(){
+(function () {
 
     'use strict';
 
@@ -31,14 +31,14 @@
                     uuid: uuid4.generate(),
                     path: path,
                     favorite: false,
-                    localChanges:0
+                    localChanges: 0
                 });
                 _this.save();
             };
 
-            this.delete = function(folder){
+            this.delete = function (folder) {
                 if (alreadyHave(folder.path)) {
-                    _this.folders.splice(_this.folders.indexOf(folder),1);
+                    _this.folders.splice(_this.folders.indexOf(folder), 1);
                     _this.save();
                 }
             };
@@ -61,7 +61,7 @@
                 });
             };
 
-            this.getFilesCount = function(path){
+            this.getFilesCount = function (path) {
                 return $q(function (resolve, reject) {
                     var recursive = $window.require('recursive-readdir');
                     recursive(path, ignoreList, function (err, files) {
@@ -93,52 +93,56 @@
 
             };
 
-            this.shell = function(path){
+            this.shell = function (path) {
                 var cmd;
                 switch ($window.process.platform) {
-                    case 'darwin' : cmd = 'open /Applications/Utilities/Terminal.app/';
+                    case 'darwin' :
+                        cmd = 'open /Applications/Utilities/Terminal.app/';
                         break;
                     case 'win32' :
-                    case 'win64' : cmd = 'cmd';
+                    case 'win64' :
+                        cmd = 'cmd';
                         break;
-                    case 'linux' : cmd = 'x-terminal-emulator';
+                    case 'linux' :
+                        cmd = 'x-terminal-emulator';
                         break;
-                    default:break;
+                    default:
+                        break;
                 }
-                if(!cmd){
+                if (!cmd) {
                     // Should use toast service
-                }else{
+                } else {
                     $window.require('child_process').exec(cmd, {
                         cwd: path
-                    }, function(error, stdout, stderr) {
+                    }, function (error, stdout, stderr) {
 
                     });
                 }
             };
 
-            this.isFolder = function(path){
-                return $q(function(resolve,reject){
+            this.isFolder = function (path) {
+                return $q(function (resolve, reject) {
                     var fs = require('fs');
-                    fs.stat(path, function(err,stats){
-                        if(err){
+                    fs.stat(path, function (err, stats) {
+                        if (err) {
                             reject(err);
                         }
-                        else if(stats.isDirectory()){
+                        else if (stats.isDirectory()) {
                             resolve();
-                        }else{
+                        } else {
                             reject(null);
                         }
                     });
                 });
             };
 
-            this.createFileObject = function(path){
+            this.createFileObject = function (path) {
                 return {
-                    path:path
+                    path: path
                 };
             };
 
-            this.getFileSize = function(path){
+            this.getFileStat = function (path) {
                 return fs.statSync(path);
             };
 

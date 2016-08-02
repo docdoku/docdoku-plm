@@ -6,6 +6,7 @@
                     <i class="material-icons">menu</i>
                 </md-button>
                 <i class="material-icons">cloud</i>
+
                 <h2>
                     <span>
                         {{'WORKSPACE' | translate}} : {{workspace}}
@@ -20,7 +21,7 @@
                 </div>
 
                 <div ng-if="sync.running" class="md-caption">
-                   {{'SYNC_RUNNING' | translate}} ...
+                    {{'SYNC_RUNNING' | translate}} ...
                 </div>
 
             </div>
@@ -147,8 +148,8 @@
 
         <div layout="row" layout-align="start center">
 
-            <md-input-container  layout="row"  flex md-no-float class="md-block search-bar">
-                <input placeholder="{{view.searchLabel}}" type="text" ng-change="search()" ng-model="pattern" />
+            <md-input-container layout="row" flex md-no-float class="md-block search-bar">
+                <input placeholder="{{view.searchLabel}}" type="text" ng-change="search()" ng-model="pattern"/>
             </md-input-container>
         </div>
 

@@ -1,18 +1,18 @@
 angular.module('dplm.menu', [])
 
-    .controller('MenuController', function ($scope,$filter,$mdDialog,
-                                            FolderService,ConfigurationService,WorkspaceService,RepositoryService) {
+    .controller('MenuController', function ($scope, $filter, $mdDialog,
+                                            FolderService, ConfigurationService, WorkspaceService, RepositoryService) {
 
         $scope.workspaces = WorkspaceService.workspaces;
         $scope.folders = FolderService.folders;
         $scope.configuration = ConfigurationService.configuration;
         $scope.openedSection = null;
 
-        $scope.isOpened = function(section){
+        $scope.isOpened = function (section) {
             return $scope.openedSection === section;
         };
 
-        $scope.open = function(section){
+        $scope.open = function (section) {
             $scope.openedSection = $scope.isOpened(section) ? null : section;
             return $scope.openedSection;
         };
@@ -20,68 +20,68 @@ angular.module('dplm.menu', [])
         var translate = $filter('translate');
 
         var folderSection = {
-            id:'folders',
+            id: 'folders',
             name: translate('MENU_FOLDERS'),
             type: 'toggle',
-            icon:'computer',
+            icon: 'computer',
             pages: []
         };
 
         var workspaceSection = {
-            id:'workspaces',
+            id: 'workspaces',
             name: translate('MENU_WORKSPACES'),
             type: 'toggle',
-            icon:'cloud',
+            icon: 'cloud',
             pages: []
         };
 
         $scope.menu = {
-            sections : [folderSection,workspaceSection]
+            sections: [folderSection, workspaceSection]
         };
 
-        var updateFolders = function(){
-            folderSection.pages = $scope.folders.map(function(folder){
+        var updateFolders = function () {
+            folderSection.pages = $scope.folders.map(function (folder) {
                 return {
                     name: $filter('fileShortName')(folder.path),
                     type: 'link',
-                    url:'#/folder/'+folder.uuid,
-                    folder:folder
+                    url: '#/folder/' + folder.uuid,
+                    folder: folder
                 };
             });
         };
 
-        var updateWorkspaces = function(){
-            workspaceSection.pages = $scope.workspaces.map(function(workspace){
+        var updateWorkspaces = function () {
+            workspaceSection.pages = $scope.workspaces.map(function (workspace) {
                 return {
                     name: workspace,
                     type: 'link',
-                    url:'#/workspace/'+workspace
+                    url: '#/workspace/' + workspace
                 };
             });
         };
 
-        $scope.$watchCollection('folders',updateFolders);
-        $scope.$watchCollection('workspaces',updateWorkspaces);
+        $scope.$watchCollection('folders', updateFolders);
+        $scope.$watchCollection('workspaces', updateWorkspaces);
 
-        $scope.searchRepositories = function(){
+        $scope.searchRepositories = function () {
             $mdDialog.show({
                 templateUrl: 'js/repository/repository-search.html',
                 fullscreen: true,
-                controller:'RepositorySearchCtrl'
+                controller: 'RepositorySearchCtrl'
             });
         };
 
-        $scope.addFolder = function(){
+        $scope.addFolder = function () {
             $mdDialog.show({
                 templateUrl: 'js/folder/add-folder.html',
                 fullscreen: true,
-                controller:'AddFolderCtrl'
+                controller: 'AddFolderCtrl'
             });
         };
 
         // TODO check if used
-        $scope.onFileDropped = function(path){
-            if(path){
+        $scope.onFileDropped = function (path) {
+            if (path) {
                 FolderService.add(path);
             }
         };
@@ -99,23 +99,23 @@ angular.module('dplm.menu', [])
         $scope.onDrop = function () {
         };
 
-        $scope.refreshWorkspaces = function(){
+        $scope.refreshWorkspaces = function () {
             WorkspaceService.reset();
             WorkspaceService.getWorkspaces();
         };
 
     })
-    .directive('menuLink', function() {
+    .directive('menuLink', function () {
         return {
             templateUrl: 'js/menu/menu-link.html'
         };
     })
 
-    .directive('menuToggle', function($timeout, $mdUtil) {
+    .directive('menuToggle', function ($timeout, $mdUtil) {
         return {
             templateUrl: 'js/menu/menu-toggle.html',
-            link: function($scope, $element) {
-                $mdUtil.nextTick(function() {
+            link: function ($scope, $element) {
+                $mdUtil.nextTick(function () {
                     $scope.$watch(
                         function () {
                             return $scope.isOpened($scope.section);
@@ -142,7 +142,7 @@ angular.module('dplm.menu', [])
                 });
 
                 var parentNode = $element[0].parentNode.parentNode.parentNode;
-                if(parentNode.classList.contains('parent-list-item')) {
+                if (parentNode.classList.contains('parent-list-item')) {
                     var heading = parentNode.querySelector('h2');
                     $element[0].firstChild.setAttribute('aria-describedby', heading.id);
                 }

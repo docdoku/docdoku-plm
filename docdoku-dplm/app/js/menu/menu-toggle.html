@@ -1,17 +1,15 @@
-
-
 <md-button aria-label="" class="md-button-toggle"
            ng-click="open(section)"
            aria-controls="section-{{section.name | nospace}}"
            aria-expanded="{{isOpened(section)}}">
     <div flex layout="row">
         <i class="material-icons">{{section.icon}}</i>
-       {{section.name}}
+        {{section.name}}
         <span flex></span>
-      <md-icon class="md-toggle-icon"
-               ng-class="{'toggled' : isOpened(section)}"
-               md-svg-icon="md-toggle-arrow">
-      </md-icon>
+        <md-icon class="md-toggle-icon"
+                 ng-class="{'toggled' : isOpened(section)}"
+                 md-svg-icon="md-toggle-arrow">
+        </md-icon>
     </div>
   <span class="md-visually-hidden">
     Toggle {{isOpened(section) ? 'expanded' : 'collapsed'}}

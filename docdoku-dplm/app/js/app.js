@@ -1,12 +1,12 @@
-(function(){
+(function () {
 
     'use strict';
-/*
+    /*
 
-    process.on('uncaughtException', function (e) {
-        console.log(e);
-    });
-*/
+     process.on('uncaughtException', function (e) {
+     console.log(e);
+     });
+     */
 
     angular.module('dplm', [
 
@@ -57,7 +57,7 @@
 
     ])
 
-        .config(function ($routeProvider,$mdThemingProvider,$compileProvider,$mdIconProvider) {
+        .config(function ($routeProvider, $mdThemingProvider, $compileProvider, $mdIconProvider) {
 
             $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
 
@@ -78,17 +78,18 @@
         .controller('AppCtrl', function ($scope, $location, $mdMedia, $mdDialog, $mdSidenav, $filter,
                                          AuthService, NotificationService, ConfigurationService, WorkspaceService, FolderService) {
 
-            var configuration = ConfigurationService.configuration;;
+            var configuration = ConfigurationService.configuration;
+            ;
 
-            var showLoginPage = function(xhrFrom){
+            var showLoginPage = function (xhrFrom) {
                 $mdDialog.show({
                     templateUrl: 'js/login/login.html',
-                    clickOutsideToClose:false,
+                    clickOutsideToClose: false,
                     fullscreen: true,
-                    locals : {
-                        xhrFrom : xhrFrom
+                    locals: {
+                        xhrFrom: xhrFrom
                     },
-                    controller:'LoginCtrl'
+                    controller: 'LoginCtrl'
                 });
             };
 
@@ -100,25 +101,24 @@
             $scope.folders = FolderService.folders;
 
 
-            var watchUser = function(){
-                $scope.$watch('user.login',function(login){
-                    if(!login){
+            var watchUser = function () {
+                $scope.$watch('user.login', function (login) {
+                    if (!login) {
                         showLoginPage();
                     }
                 });
             };
 
-            if(ConfigurationService.hasAuth()){
+            if (ConfigurationService.hasAuth()) {
                 AuthService.login(configuration.login, configuration.password)
                     .then(WorkspaceService.getWorkspaces, showLoginPage)
                     .then(watchUser);
-            }else{
+            } else {
                 watchUser();
             }
 
 
-
-            $scope.logout = function(){
+            $scope.logout = function () {
                 AuthService.logout();
             };
 
@@ -126,6 +126,6 @@
                 $mdSidenav('menu').open();
             };
 
-    });
+        });
 
 })();

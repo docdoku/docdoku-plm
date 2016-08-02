@@ -1,4 +1,4 @@
-(function(){
+(function () {
 
     'use strict';
 
@@ -35,7 +35,7 @@
 
             };
 
-            this.hide = function(){
+            this.hide = function () {
                 $mdToast.hide();
             };
 

@@ -1,65 +1,67 @@
 <md-dialog flex="50" layout="column" ng-cloak>
     <div layout-padding ng-if="!repositories || repositories && !repositories.length">
-    <div>
-        <p class="md-headline">
-            {{'SEARCH_FOR_REPO' | translate}}
-        </p>
-    </div>
-    <div>
+        <div>
+            <p class="md-headline">
+                {{'SEARCH_FOR_REPO' | translate}}
+            </p>
+        </div>
+        <div>
 
-        <label ng-click="close()" class="md-button md-raised md-default">
-            {{'CLOSE'|translate}}
-        </label>
+            <label ng-click="close()" class="md-button md-raised md-default">
+                {{'CLOSE'|translate}}
+            </label>
 
-        <label for="repository-search-input" class="md-button md-raised md-primary">
-            {{'SELECT_FOLDER_TO_BROWSE'|translate}}
-        </label>
-        <input class="ng-hide"
-               id="repository-search-input"
-               class="md-primary"
-               onchange="angular.element(this).scope().search(this.files)"
-               type="file" nwdirectory />
+            <label for="repository-search-input" class="md-button md-raised md-primary">
+                {{'SELECT_FOLDER_TO_BROWSE'|translate}}
+            </label>
+            <input class="ng-hide"
+                   id="repository-search-input"
+                   class="md-primary"
+                   onchange="angular.element(this).scope().search(this.files)"
+                   type="file" nwdirectory/>
 
-    </div>
-    <div>
-    </div>
+        </div>
+        <div>
+        </div>
 
-    <div layout-padding ng-if="repositories && !repositories.length">
-       {{'NO_REPO_MESSAGE'|translate}} {{folder}}
-    </div>
-
-</div>
-
-<div layout-padding layout="column" ng-if="repositories && repositories.length">
-
-    <div>
-        <p class="md-headline">
-            {{'REPOSITORIES_FOUND' | translate}}
-        </p>
-
-
-    <div style="max-height: 300px; overflow-y: auto;">
-        <md-list>
-            <md-list-item class="md-3-line"  ng-repeat="repository in repositories">
-                <div class="md-list-item-text">
-                    <h3>{{repository | fileShortName}}</h3>
-                    <p>{{repository | repositoryBasePath}}</p>
-                </div>
-                <md-button class="md-secondary" ng-click="addRepository(repository)">{{'ADD'|translate}}</md-button>
-                <md-divider ng-if="!$last"></md-divider>
-            </md-list-item>
-        </md-list>
+        <div layout-padding ng-if="repositories && !repositories.length">
+            {{'NO_REPO_MESSAGE'|translate}} {{folder}}
+        </div>
 
     </div>
 
-        <md-button ng-click="close()" aria-label="" class="md-raised md-default">
-            {{'CLOSE'|translate}}
-        </md-button>
+    <div layout-padding layout="column" ng-if="repositories && repositories.length">
 
-        <md-button ng-click="addAllRepositories()" aria-label="" class="md-raised md-primary">
-            {{'ADD_ALL_REPO'|translate}}
-        </md-button>
+        <div>
+            <p class="md-headline">
+                {{'REPOSITORIES_FOUND' | translate}}
+            </p>
+
+
+            <div style="max-height: 300px; overflow-y: auto;">
+                <md-list>
+                    <md-list-item class="md-3-line" ng-repeat="repository in repositories">
+                        <div class="md-list-item-text">
+                            <h3>{{repository | fileShortName}}</h3>
+
+                            <p>{{repository | repositoryBasePath}}</p>
+                        </div>
+                        <md-button class="md-secondary" ng-click="addRepository(repository)">{{'ADD'|translate}}
+                        </md-button>
+                        <md-divider ng-if="!$last"></md-divider>
+                    </md-list-item>
+                </md-list>
+
+            </div>
+
+            <md-button ng-click="close()" aria-label="" class="md-raised md-default">
+                {{'CLOSE'|translate}}
+            </md-button>
+
+            <md-button ng-click="addAllRepositories()" aria-label="" class="md-raised md-primary">
+                {{'ADD_ALL_REPO'|translate}}
+            </md-button>
+        </div>
+
     </div>
-
-</div>
 </md-dialog>

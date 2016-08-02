@@ -1,4 +1,4 @@
-<div layout-fill layout="column"  ng-cloak>
+<div layout-fill layout="column" ng-cloak>
 
     <md-toolbar>
         <div class="md-toolbar-tools" layout="row" layout-align="space-between center">
@@ -7,6 +7,7 @@
                     <i class="material-icons">menu</i>
                 </md-button>
                 <i class="material-icons">home</i>
+
                 <h2>
                   <span>
                     {{'HOME' | translate}}
@@ -50,17 +51,19 @@
         </div>
 
 
-        <div  ng-show="status"
+        <div ng-show="status"
              layout="column"
-              layout-align="start center" layout-margin>
+             layout-align="start center" layout-margin>
 
             <div layout-margin ng-if="status.workspace">
                 <h2>{{'MENU_WORKSPACES'|translate}}</h2>
+
                 <h3>{{status.workspace}} {{status.done}} / {{ status.total}}</h3>
             </div>
 
             <div ng-if="status.folder">
                 <h2>{{'MENU_FOLDERS'|translate}}</h2>
+
                 <h3>{{status.folder | fileShortName}} {{status.progress}} / {{ status.total}}</h3>
             </div>
 
@@ -124,7 +127,8 @@
                         <div ng-repeat="workspace in workspaces"
                              layout="row" layout-margin>
 
-                            <md-button class="md-icon-button md-primary" aria-label="{{'SYNC'|translate}}" ng-click="syncWorkspace(workspace)">
+                            <md-button class="md-icon-button md-primary" aria-label="{{'SYNC'|translate}}"
+                                       ng-click="syncWorkspace(workspace)">
                                 <md-tooltip>
                                     {{'SYNC'|translate}}
                                 </md-tooltip>
@@ -138,7 +142,8 @@
                                     </md-tooltip>
                                     {{workspace}}
                                 </a>
-                                <small ng-if="workspaceSyncs[workspace]">{{'LAST_SYNC_DATE' | translate}} <a>{{workspaceSyncs[workspace] | localDateTimeAgo}}</a></small>
+                                <small ng-if="workspaceSyncs[workspace]">{{'LAST_SYNC_DATE' | translate}} <a>{{workspaceSyncs[workspace]
+                                    | localDateTimeAgo}}</a></small>
                                 <small ng-if="!workspaceSyncs[workspace]">{{'NOT_YET_SYNC' | translate}}</small>
                             </div>
                         </div>

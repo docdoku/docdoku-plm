@@ -49,12 +49,12 @@
         </span>
     </div>
     <div>
-    <ul class="menu">
-        <li ng-repeat="section in menu.sections"
-            class="parent-list-item {{section.className || ''}}"
-            ng-class="{'parentActive' : openedSection === section}">
-            <menu-toggle ng-if="section.type === 'toggle' && !section.hidden"></menu-toggle>
-        </li>
-    </ul>
+        <ul class="menu">
+            <li ng-repeat="section in menu.sections"
+                class="parent-list-item {{section.className || ''}}"
+                ng-class="{'parentActive' : openedSection === section}">
+                <menu-toggle ng-if="section.type === 'toggle' && !section.hidden"></menu-toggle>
+            </li>
+        </ul>
     </div>
 </md-content>

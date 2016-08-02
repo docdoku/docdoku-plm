@@ -1,10 +1,11 @@
 <div ng-if="items.length && !loading"
-     layout="row"  layout-margin layout-wrap>
+     layout="row" layout-margin layout-wrap>
 
     <div layout="column">
 
         <div layout="row" layout-align="start center">
-            <md-button class="md-icon-button md-primary" aria-label="{{'SYNC'|translate}}" href="#/folder/{{folder.uuid}}">
+            <md-button class="md-icon-button md-primary" aria-label="{{'SYNC'|translate}}"
+                       href="#/folder/{{folder.uuid}}">
                 <i class="material-icons">folder_open</i>
             </md-button>
 
@@ -25,10 +26,13 @@
             <md-list-item ng-repeat="item in items">
                 <div layout="row">
                     <i class="material-icons modified">mode_edit</i>
+
                     <div layout="column">
                         <a href class="modified" file-preview="item.path">{{item.path | fileShortName}}</a>
+
                         <div layout="row">
-                            <small><a>{{item.index.id || item.index.number}}-{{item.index.revision}}</a> {{'MODIFIED'|translate}} <a>{{item.stat.mtime | localDateTimeAgo}}</a></small>
+                            <small><a>{{item.index.id || item.index.number}}-{{item.index.revision}}</a>
+                                {{'MODIFIED'|translate}} <a>{{item.stat.mtime | localDateTimeAgo}}</a></small>
                         </div>
                     </div>
                 </div>

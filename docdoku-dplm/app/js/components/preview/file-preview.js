@@ -1,33 +1,33 @@
-(function(){
+(function () {
 
-    angular.module('dplm.dialogs.file-preview',[])
+    angular.module('dplm.dialogs.file-preview', [])
 
 
-        .controller('FilePreviewCtrl',function($scope, $filter,$mdDialog,
-                                               FileUtils,
-                                               Available3DLoaders,file){
+        .controller('FilePreviewCtrl', function ($scope, $filter, $mdDialog,
+                                                 FileUtils,
+                                                 Available3DLoaders, file) {
 
             var ext = $filter('fileExtension')(file);
             $scope.file = file;
-            $scope.is3dAvailable  = Available3DLoaders.indexOf(ext) !== -1;
+            $scope.is3dAvailable = Available3DLoaders.indexOf(ext) !== -1;
             $scope.close = $mdDialog.hide;
             $scope.noPreviewAvailable = !$scope.is3dAvailable;
             $scope.open = FileUtils.openInOS;
 
         })
 
-        .directive('filePreview',function($mdDialog, $window, $filter, FileUtils){
+        .directive('filePreview', function ($mdDialog, $window, $filter, FileUtils) {
 
             var isAvailableForViewer = $filter('isAvailableForViewer');
             var translate = $filter('translate');
 
             return {
-                scope:{
-                    file:'=filePreview'
+                scope: {
+                    file: '=filePreview'
                 },
                 link: function postLink(scope, element, attrs) {
 
-                    element.on('click',function() {
+                    element.on('click', function () {
 
                         if (isAvailableForViewer(scope.file)) {
                             $mdDialog.show({
@@ -45,7 +45,7 @@
                         }
                     });
 
-                    scope.$on('$destroy',function(){
+                    scope.$on('$destroy', function () {
                         element.off('click');
                     });
                 }
