@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('dplm.services.api', [])
+    angular.module('dplm.services')
         .service('DocdokuAPIService', function ($window, ConfigurationService) {
             var DocdokuPLMClient = $window.require('docdoku-api-js');
 

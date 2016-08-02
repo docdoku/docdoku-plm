@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('dplm.folder', [])
+    angular.module('dplm.pages')
 
         .config(function ($routeProvider) {
 
@@ -179,8 +179,7 @@
                 return selection.filter(function (file) {
                     var item = file.item;
                     var lastItemIteration = item ? lastIteration(item) : null;
-                    return lastItemIteration && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login
-                        && lastItemIteration.iteration > 1;
+                    return lastItemIteration && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login && lastItemIteration.iteration > 1;
                 });
             };
 
@@ -381,9 +380,7 @@
 
             $scope.create = function () {
                 var file = FileUtils.createFile(folderPath, $scope.data.fileName);
-                if (!file) {
-                    console.log('Cannot create file')
-                } else {
+                if (file) {
                     $mdDialog.hide(file);
                 }
             };

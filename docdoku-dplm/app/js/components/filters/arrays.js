@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('dplm.filters.arrays', [])
+    angular.module('dplm.filters')
 
         .filter('join', function () {
             return function (input, sep) {

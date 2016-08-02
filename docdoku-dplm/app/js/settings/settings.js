@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('dplm.settings', [])
+    angular.module('dplm.pages')
 
         .config(function ($routeProvider) {
             $routeProvider.when('/settings', {

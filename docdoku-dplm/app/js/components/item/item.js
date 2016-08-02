@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('dplm.services.items', [])
+    angular.module('dplm.directives')
 
         .directive('statusIcon', function (ConfigurationService) {
             return {

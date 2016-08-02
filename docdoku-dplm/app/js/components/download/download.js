@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('dplm.dialogs.download', [])
+    angular.module('dplm.dialogs')
 
         .controller('DownloadCtrl', function ($scope, $mdDialog, $filter,
                                               items, FolderService, DownloadService) {
@@ -41,10 +41,10 @@
         .filter('lastIteration', function () {
             return function (item) {
                 if (item.id) {
-                    return item.documentIterations[item.documentIterations.length - 1]
+                    return item.documentIterations[item.documentIterations.length - 1];
                 }
                 else if (item.number) {
-                    return item.partIterations[item.partIterations.length - 1]
+                    return item.partIterations[item.partIterations.length - 1];
                 }
             };
         })

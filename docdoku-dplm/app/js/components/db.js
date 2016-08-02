@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('dplm.services.db', [])
+    angular.module('dplm.services')
         .service('DBService', function ($window, $q) {
 
             var indexedDB = $window.indexedDB;

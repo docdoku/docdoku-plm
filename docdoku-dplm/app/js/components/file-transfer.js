@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('dplm.services.file-transfer', [])
+    angular.module('dplm.services')
 
 
         .service('UploadService', function ($window, $q, $filter, ConfigurationService, RepositoryService) {
@@ -14,9 +14,6 @@
 
             var upload = function (url, path) {
 
-                console.log('UPLOAD')
-                console.log(url)
-                console.log(path)
                 var deferred = $q.defer();
 
                 var form = new FormData();
@@ -200,7 +197,7 @@
                                 // Error while downloading ?
                             }, function (progress) {
                                 deferred.notify({done: done, url: url, item: item, progress: progress});
-                            })
+                            });
                     });
 
                     chain = chain.then(function () {

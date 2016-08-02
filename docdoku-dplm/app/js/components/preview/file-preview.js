@@ -1,6 +1,6 @@
 (function () {
 
-    angular.module('dplm.dialogs.file-preview', [])
+    angular.module('dplm.dialogs')
 
 
         .controller('FilePreviewCtrl', function ($scope, $filter, $mdDialog,

@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('dplm.services.configuration', [])
+    angular.module('dplm.services')
 
         .service('ConfigurationService', function ($window) {
 

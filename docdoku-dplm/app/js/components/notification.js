@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('dplm.services.notification', [])
+    angular.module('dplm.services')
         .service('NotificationService', function ($mdToast) {
 
             this.toast = function (message, pos, length) {

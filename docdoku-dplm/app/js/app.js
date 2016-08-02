@@ -1,12 +1,10 @@
 (function () {
 
     'use strict';
-    /*
 
      process.on('uncaughtException', function (e) {
-     console.log(e);
+        console.log(e);
      });
-     */
 
     angular.module('dplm', [
 
@@ -19,41 +17,18 @@
         'ngAnimate',
         'ngAria',
         'md.data.table',
+        'pascalprecht.translate',
 
         // Templates
         'dplm.templates',
 
         // DPLM components
-        'dplm.home',
-        'dplm.settings',
-        'dplm.workspace',
-        'dplm.folder',
-        'dplm.repository',
-        'dplm.login',
+        'dplm.pages',
         'dplm.menu',
-
-        'dplm.services.configuration',
-        'dplm.services.translations',
-        'dplm.services.notification',
-        'dplm.services.folders',
-        'dplm.services.workspaces',
-        'dplm.services.confirm',
-        'dplm.services.prompt',
-        'dplm.services.auth',
-        'dplm.services.api',
-        'dplm.services.repository',
-        'dplm.services.file-transfer',
-        'dplm.services.db',
-        'dplm.services.3d',
-        'dplm.services.items',
-
-        'dplm.dialogs.download',
-        'dplm.dialogs.file-preview',
-
-        'dplm.filters.files',
-        'dplm.filters.arrays',
-        'dplm.filters.strings',
-        'dplm.filters.dates'
+        'dplm.services',
+        'dplm.dialogs',
+        'dplm.filters',
+        'dplm.directives'
 
     ])
 
@@ -79,7 +54,6 @@
                                          AuthService, NotificationService, ConfigurationService, WorkspaceService, FolderService) {
 
             var configuration = ConfigurationService.configuration;
-            ;
 
             var showLoginPage = function (xhrFrom) {
                 $mdDialog.show({

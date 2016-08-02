@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('dplm.services.3d', [])
+    angular.module('dplm.services')
 
         .service('ModelLoaderService', function ($q) {
 

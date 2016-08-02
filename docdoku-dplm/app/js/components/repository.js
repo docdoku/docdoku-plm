@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('dplm.services.repository', [])
+    angular.module('dplm.services')
 
         .service('RepositoryService', function ($q, $timeout, $window, $filter,
                                                 INDEX_LOCATION, INDEX_SEARCH_PATTERN, DocdokuAPIService, FolderService) {
@@ -217,7 +217,6 @@
 
             this.isOutOfDate = function (index, file) {
                 if (!file.index || !file.item) {
-                    console.log(file)
                     return false;
                 }
                 var binary = getItemBinaryResource(file.item, file.path);

@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('dplm.filters.dates', [])
+    angular.module('dplm.filters')
 
         .filter('utcDateTimeAgo', function ($window) {
             return function (date) {

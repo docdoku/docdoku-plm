@@ -15,7 +15,7 @@
         return bytes.toFixed(1) + ' ' + units[u];
     }
 
-    angular.module('dplm.filters.files', [])
+    angular.module('dplm.filters')
 
         .constant('READ_ONLY', '444')
         .constant('READ_WRITE', '644')
@@ -64,7 +64,7 @@
             var ext = $filter('fileExtension');
             return function (file) {
                 return Available3DLoaders.indexOf(ext(file)) !== -1;
-            }
+            };
         })
 
         .service('FileUtils', function ($window) {

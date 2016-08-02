@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('dplm.home', [])
+    angular.module('dplm.pages')
 
         .config(function ($routeProvider) {
             $routeProvider.when('/', {
@@ -14,14 +14,15 @@
         .controller('HomeCtrl', function ($scope, FolderService, WorkspaceService, RepositoryService) {
 
             $scope.workspaceSyncs = WorkspaceService.workspaceSyncs;
+
             var syncWorkspaces = function () {
-                return WorkspaceService.fetchAllWorkspaces(WorkspaceService.workspaces)
+                return WorkspaceService.fetchAllWorkspaces(WorkspaceService.workspaces);
             };
 
             var syncIndexes = function () {
                 return RepositoryService.syncIndexes(FolderService.folders.map(function (folder) {
                     return folder.path;
-                }))
+                }));
             };
 
             var onError = function (error) {
@@ -109,12 +110,13 @@
                             };
                         });
                     };
+
                     $scope.refresh = refresh;
                     $scope.$on('refresh', refresh);
 
                     refresh();
                 }
-            }
+            };
         })
 
         .directive('folder', function () {
@@ -184,7 +186,7 @@
 
                     refresh();
                 }
-            }
+            };
         });
 
 })();

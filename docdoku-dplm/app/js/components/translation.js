@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('dplm.services.translations', ['pascalprecht.translate'])
+    angular.module('dplm.services')
         .config(function ($translateProvider) {
 
             $translateProvider

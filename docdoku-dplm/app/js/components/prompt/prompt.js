@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('dplm.services.prompt', [])
+    angular.module('dplm.services')
 
         .service('PromptService', function ($q, $mdDialog) {
 

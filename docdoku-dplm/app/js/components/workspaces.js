@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('dplm.services.workspaces', [])
+    angular.module('dplm.services')
         .service('WorkspaceService', function ($window, $log, $filter, $q, $location, DocdokuAPIService, DBService, RepositoryService) {
 
             var _this = this;
@@ -316,7 +316,7 @@
                                 deferred.notify(++done);
                             });
                         }
-                    })
+                    });
                 });
 
                 chain.then(deferred.resolve);
@@ -343,7 +343,7 @@
                                 deferred.notify(++done);
                             });
                         }
-                    })
+                    });
                 });
 
                 chain.then(deferred.resolve);

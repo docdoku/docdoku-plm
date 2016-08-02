@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('dplm.services.confirm', [])
+    angular.module('dplm.dialogs')
 
         .service('ConfirmService', function ($q, $mdDialog) {
 

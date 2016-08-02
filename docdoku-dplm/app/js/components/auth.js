@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('dplm.services.auth', [])
+    angular.module('dplm.services')
         .service('AuthService', function ($q, $translate,
                                           ConfigurationService, DocdokuAPIService, DBService, WorkspaceService) {
 

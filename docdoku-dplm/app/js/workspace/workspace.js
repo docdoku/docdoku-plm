@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('dplm.workspace', [])
+    angular.module('dplm.pages')
 
         .config(function ($routeProvider) {
             $routeProvider
@@ -195,7 +195,6 @@
             };
 
             var refreshDisplay = function () {
-                console.log('refresh')
                 getData().then($scope.search);
             };
 

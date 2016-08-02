@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('dplm.repository', [])
+    angular.module('dplm.dialogs')
         .controller('RepositorySearchCtrl', function ($timeout, $scope, $mdDialog,
                                                       RepositoryService, FolderService, INDEX_LOCATION) {
 

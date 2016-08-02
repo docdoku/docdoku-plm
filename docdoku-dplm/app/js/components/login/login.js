@@ -1,6 +1,6 @@
 (function () {
     'use strict';
-    angular.module('dplm.login', [])
+    angular.module('dplm.dialogs')
         .controller('LoginCtrl', function ($scope, $mdDialog, ConfigurationService, AuthService, WorkspaceService, xhrFrom) {
 
             var configuration = ConfigurationService.configuration;

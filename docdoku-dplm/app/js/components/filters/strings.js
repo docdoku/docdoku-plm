@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('dplm.filters.strings', [])
+    angular.module('dplm.filters')
 
         .filter('nospace', function () {
             return function (value) {
