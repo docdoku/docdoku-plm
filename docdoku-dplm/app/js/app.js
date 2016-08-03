@@ -57,7 +57,7 @@
 
             var showLoginPage = function (xhrFrom) {
                 $mdDialog.show({
-                    templateUrl: 'js/login/login.html',
+                    templateUrl: 'js/components/login/login.html',
                     clickOutsideToClose: false,
                     fullscreen: true,
                     locals: {

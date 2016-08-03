@@ -94,16 +94,16 @@
                     });
 
                     chain = chain.then(function () {
+                        deferred.notify({done: ++done, total: total});
                         RepositoryService.saveItemToIndex(indexFolder, file.path, item);
                     });
 
                 });
 
-                chain.then(null, null, function () {
-                    deferred.notify({done: ++done, total: total});
-                }).then(function () {
+                chain.then(function () {
                     RepositoryService.writeIndex(indexPath, index);
-                }).then(deferred.resolve);
+                    deferred.resolve();
+                });
 
                 return deferred.promise;
 

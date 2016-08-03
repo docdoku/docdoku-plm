@@ -91,11 +91,10 @@
                 scope: {
                     folder: '=folderLocalChanges'
                 },
-                controller: function ($scope, $window, FolderService, RepositoryService) {
+                controller: function ($scope, FolderService, FileUtils, RepositoryService) {
 
                     var folder = $scope.folder;
                     var path = $scope.folder.path;
-                    var fs = $window.require('fs');
 
                     var refresh = function () {
 
@@ -106,7 +105,7 @@
                             return {
                                 path: file,
                                 index: RepositoryService.getFileIndex(index, file),
-                                stat: fs.statSync(file)
+                                stat: FileUtils.stat(file)
                             };
                         });
                     };

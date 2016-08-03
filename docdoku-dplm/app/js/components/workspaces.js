@@ -8,6 +8,7 @@
             var _this = this;
             var fs = $window.require('fs');
             var fileMode = $filter('fileMode');
+            var lastIteration = $filter('lastIteration');
 
             var checkInDocument = function (document, index, path) {
                 return $q(function (resolve, reject) {
@@ -143,6 +144,51 @@
                 });
             };
 
+            var saveDocumentNote = function(document,note){
+                return $q(function (resolve, reject) {
+                    DocdokuAPIService.getClient().getApi().then(function (api) {
+                        var lastDocumentIteration = lastIteration(document);
+                        api.apis.document.updateDocumentIteration({
+                            workspaceId: document.workspaceId,
+                            documentId: document.documentMasterId,
+                            documentVersion: document.version,
+                            docIteration: lastDocumentIteration.iteration,
+                            body:{
+                                revisionNote:note
+                            }
+                        }).then(function(response){
+                            angular.copy(response.obj,lastDocumentIteration);
+                            return DBService.storeDocuments([document]).then(resolve);
+                        },reject);
+                    });
+                });
+            };
+
+            var savePartNote = function(part,note){
+                return $q(function (resolve, reject) {
+                    DocdokuAPIService.getClient().getApi().then(function (api) {
+                        api.apis.part.updatePartIteration({
+                            workspaceId: part.workspaceId,
+                            partNumber: part.number,
+                            partVersion: part.version,
+                            partIteration: lastIteration(part).iteration,
+                            body:{
+                                iterationNote:note
+                            }
+                        }).then(function(response){
+                            return DBService.storeParts([response.obj]).then(resolve);
+                        },reject);
+                    });
+                });
+            };
+
+            var saveNote = function(item,note){
+                if(item.id){
+                    return saveDocumentNote(item,note);
+                }else if(item.number){
+                    return savePartNote(item,note);
+                }
+            };
 
             this.workspaces = [];
 
@@ -301,19 +347,19 @@
 
                 var deferred = $q.defer();
                 var chain = $q.when();
-                var done = 0;
+                var total = files.length, done = 0;
 
                 angular.forEach(files, function (file) {
                     chain = chain.then(function () {
                         if (file.index.id) {
                             return checkInDocument(file.item, index, file.path).then(function (item) {
                                 file.item = item;
-                                deferred.notify(++done);
+                                deferred.notify({total:total,done:++done});
                             });
                         } else if (file.index.number) {
                             return checkInPart(file.item, index, file.path).then(function (item) {
                                 file.item = item;
-                                deferred.notify(++done);
+                                deferred.notify({total:total,done:++done});
                             });
                         }
                     });
@@ -328,19 +374,19 @@
 
                 var deferred = $q.defer();
                 var chain = $q.when();
-                var done = 0;
+                var total = files.length, done = 0;
 
                 angular.forEach(files, function (file) {
                     chain = chain.then(function () {
                         if (file.index.id) {
                             return checkOutDocument(file.item, index, file.path).then(function (item) {
                                 file.item = item;
-                                deferred.notify(++done);
+                                deferred.notify({total:total,done:++done});
                             });
                         } else if (file.index.number) {
                             return checkOutPart(file.item, index, file.path).then(function (item) {
                                 file.item = item;
-                                deferred.notify(++done);
+                                deferred.notify({total:total,done:++done});
                             });
                         }
                     });
@@ -355,19 +401,19 @@
 
                 var deferred = $q.defer();
                 var chain = $q.when();
-                var done = 0;
+                var total = files.length, done = 0;
 
                 angular.forEach(files, function (file) {
                     chain = chain.then(function () {
                         if (file.index.id) {
                             return undoCheckOutDocument(file.item, index, file.path).then(function (item) {
                                 file.item = item;
-                                deferred.notify(++done);
+                                deferred.notify({total:total,done:++done});
                             });
                         } else if (file.index.number) {
                             return undoCheckOutPart(file.item, index, file.path).then(function (item) {
                                 file.item = item;
-                                deferred.notify(++done);
+                                deferred.notify({total:total,done:++done});
                             });
                         }
                     });
@@ -393,8 +439,6 @@
                 return getLatestDateInIteration(lastIteration(b)) - getLatestDateInIteration(lastIteration(a));
             };
 
-            var lastIteration = $filter('lastIteration');
-
             this.getLatestEventsInWorkspace = function (workspaceId, max) {
                 var deferred = $q.defer();
                 var items = [];
@@ -403,7 +447,7 @@
                     return workspaceId;
                 }).then(DBService.getParts).then(function (parts) {
                     items = items.concat(parts);
-                }).finally(function () {
+                }).then(function () {
                     deferred.resolve(items.sort(latestEventSort).slice(0, max));
                 });
                 return deferred.promise;
@@ -420,6 +464,28 @@
                 _this.workspaceSyncs = {};
                 $window.localStorage.workspaceSyncs = '{}';
             };
+
+
+            this.updateItemNotes = function(items,note){
+                var deferred = $q.defer();
+
+                var chain = $q.when();
+                var total = items.length, done = 0;
+                angular.forEach(items,function(item){
+                   chain = chain.then(function(){
+                       return saveNote(item,note).then(function(){
+                           deferred.notify({total: total, done: ++done});
+                       });
+                   });
+                });
+
+                chain.then(function(){
+                    deferred.resolve();
+                });
+
+                return deferred.promise;
+            };
+
 
         });
 })();

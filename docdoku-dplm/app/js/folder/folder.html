@@ -299,7 +299,12 @@
                                     {{file.path | fileShortName}}
                                     <md-tooltip>{{'FILE_PREVIEW'|translate}}</md-tooltip>
                                 </a>
-                                <small>{{'MODIFIED'|translate}} <a>{{file.stat.mtime | localDateTimeAgo}}</a></small>
+                                <small>{{'MODIFIED'|translate}}
+                                    <a>{{file.stat.mtime | localDateTimeAgo}}
+                                    <md-tooltip ng-if="file.item.id">{{(file.item|lastIteration).revisionNote}}</md-tooltip>
+                                    <md-tooltip ng-if="file.item.number">{{(file.item|lastIteration).iterationNote}}</md-tooltip>
+                                </a>
+                                </small>
                             </div>
                         </td>
 

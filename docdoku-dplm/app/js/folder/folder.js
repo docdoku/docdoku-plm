@@ -488,25 +488,66 @@
             };
         })
 
-        .controller('CheckInCtrl', function ($scope, $mdDialog,
+        .controller('CheckInCtrl', function ($scope, $mdDialog, $q,
                                              WorkspaceService, UploadService, RepositoryService, DBService,
                                              selection, folderPath) {
+
+            var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
+
+            var items = selection.map(function(file){
+                return file.item;
+            });
+
+            var localChanges = selection.filter(function(file){
+                return file.modified;
+            });
+
+            var updateItemsNote = function(){
+               return WorkspaceService.updateItemNotes(items,$scope.options.note)
+                   .then(null, null, function (status) {
+                       $scope.status = status;
+                   });
+            };
+
+            var pushLocalChanges = function(){
+                return UploadService.bulkUpload(localChanges, folderPath)
+                    .then(null, null, function (status) {
+                        $scope.status = status;
+                    });
+            };
+
+            var checkIn = function(){
+                return  WorkspaceService.checkInItems(selection, repositoryIndex)
+                    .then(null, null, function (status) {
+                        $scope.status = status;
+                    });
+            };
 
             $scope.loading = false;
             $scope.selection = selection;
             $scope.folderPath = folderPath;
             $scope.close = $mdDialog.hide;
 
-            var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
+            $scope.options = {
+                pushLocalChanges:true,
+                saveNote:true,
+                cascadeCheckIn:false
+            };
 
             $scope.checkIn = function () {
-                $scope.loading = true;
-                WorkspaceService.checkInItems(selection, repositoryIndex)
-                    .then($mdDialog.hide, function (error) {
-                        $scope.error = error;
-                    }, function (status) {
-                        $scope.status = status;
-                    }).finally(function () {
+
+                var chain = $q.when();
+
+                if($scope.options.saveNote && $scope.options.note){
+                    chain = chain.then(updateItemsNote);
+                }
+
+                if($scope.options.pushLocalChanges){
+                    chain = chain.then(pushLocalChanges);
+                }
+
+                chain.then(checkIn)
+                    .then($mdDialog.hide).finally(function () {
                         $scope.loading = false;
                     });
             };

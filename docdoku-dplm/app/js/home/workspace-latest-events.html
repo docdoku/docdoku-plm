@@ -8,6 +8,7 @@
              <span ng-if="item.lastIteration.checkInDate">
                 <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
                     {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
+                    <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}</md-tooltip>
                 </a>
                 {{'CHECKED_IN_BY'|translate}}
                  <a user-preview="item.lastIteration.author" href class="md-primary">
@@ -19,6 +20,7 @@
             <span ng-if="item.lastIteration.modificationDate">
                 <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
                     {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
+                    <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}</md-tooltip>
                 </a>
                {{'MODIFIED_BY'|translate}}
                   <a user-preview="item.lastIteration.author" href class="md-primary">
@@ -30,6 +32,7 @@
             <span ng-if="item.checkOutDate">
                 <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
                     {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
+                    <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}</md-tooltip>
                 </a>
                 {{'CHECKED_OUT_BY'|translate}}
                 <a user-preview="item.checkOutUser" href class="md-primary">
@@ -43,6 +46,7 @@
 
                  <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
                      {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
+                     <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}</md-tooltip>
                  </a>
                 {{'CREATED_BY'|translate}}
                    <a user-preview="item.lastIteration.author" href class="md-primary">
