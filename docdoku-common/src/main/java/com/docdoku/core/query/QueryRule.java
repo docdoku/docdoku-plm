@@ -44,7 +44,7 @@ public class QueryRule implements Serializable {
     private String operator;
 
     @Column(name="VALUE")
-    @OrderColumn(name="VALUE")
+    @OrderColumn(name="VALUE_ORDER")
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "QUERYRULE_VALUES",
             joinColumns= {
