@@ -216,170 +216,182 @@ public class QueryDAO {
 
         String field = queryRule.getField();
         String operator = queryRule.getOperator();
-        String value = queryRule.getValue();
+        List<String> values = queryRule.getValues();
         String type = queryRule.getType();
 
         if(field.startsWith("pm.")){
-            return getPartMasterPredicate(field.substring(3), operator, value , type);
+            return getPartMasterPredicate(field.substring(3), operator, values , type);
         }
 
         if(field.startsWith("pr.")){
-            return getPartRevisionPredicate(field.substring(3), operator, value, type);
+            return getPartRevisionPredicate(field.substring(3), operator, values, type);
         }
 
         if(field.startsWith("author.")){
-            return getAuthorPredicate(field.substring(7), operator, value, type);
+            return getAuthorPredicate(field.substring(7), operator, values, type);
         }
 
         if(field.startsWith("attr-TEXT.")){
-            return getInstanceTextAttributePredicate(field.substring(10), operator, value, type);
+            return getInstanceTextAttributePredicate(field.substring(10), operator, values, type);
         }
 
         if(field.startsWith("attr-DATE.")){
-            return getInstanceDateAttributePredicate(field.substring(10), operator, value, type);
+            return getInstanceDateAttributePredicate(field.substring(10), operator, values, type);
         }
 
         if(field.startsWith("attr-BOOLEAN.")){
-            return getInstanceBooleanAttributePredicate(field.substring(13), operator, value, type);
+            return getInstanceBooleanAttributePredicate(field.substring(13), operator, values, type);
         }
 
         if(field.startsWith("attr-URL.")){
-            return getInstanceURLAttributePredicate(field.substring(9), operator, value, type);
+            return getInstanceURLAttributePredicate(field.substring(9), operator, values, type);
         }
 
         if(field.startsWith("attr-NUMBER.")){
-            return getInstanceNumberAttributePredicate(field.substring(12), operator, value, type);
+            return getInstanceNumberAttributePredicate(field.substring(12), operator, values, type);
         }
 
         if(field.startsWith("attr-LOV.")){
-            return getInstanceLovAttributePredicate(field.substring(9), operator, value, type);
+            return getInstanceLovAttributePredicate(field.substring(9), operator, values, type);
         }
 
         throw new IllegalArgumentException();
     }
 
-    private Predicate getAuthorPredicate(String field, String operator, String value, String type) {
-        return getPredicate(pr.get("author").get(field),operator,value,type);
+    private Predicate getAuthorPredicate(String field, String operator, List<String> values, String type) {
+        return getPredicate(pr.get("author").get(field),operator,values,type);
     }
 
-    private Predicate getPartRevisionPredicate(String field, String operator, String value, String type) {
+    private Predicate getPartRevisionPredicate(String field, String operator, List<String> values, String type) {
         if("checkInDate".equals(field)){
             Predicate lastIterationPredicate = cb.equal(cb.size(pr.get("partIterations")), pi.get("iteration"));
-            return cb.and(lastIterationPredicate, getPredicate(pi.get("checkInDate"), operator, value, type));
+            return cb.and(lastIterationPredicate, getPredicate(pi.get("checkInDate"), operator, values, type));
         }
         else if("status".equals(field)){
-            return getPredicate(pr.get(field), operator, PartRevision.RevisionStatus.valueOf(value), "");
+            if (values.size() == 1) {
+                return getPredicate(pr.get(field), operator, PartRevision.RevisionStatus.valueOf(values.get(0)), "");
+            }
         }
         else if("tags".equals(field)){
-            return getTagsPredicate(value);
+            return getTagsPredicate(values);
         }
         else if("linkedDocuments".equals(field)){
             // should be ignored, returning always true for the moment
             return cb.and();
         }
-        return getPredicate(pr.get(field), operator, value, type);
+        return getPredicate(pr.get(field), operator, values, type);
     }
 
-    private Predicate getTagsPredicate(String value) {
+    private Predicate getTagsPredicate(List<String> values) {
         Root<Tag> tag = cq.from(Tag.class);
         Predicate prPredicate = tag.in(pr.get("tags"));
-        Predicate valuePredicate = cb.equal(tag.get("label"),value);
-        return cb.and(prPredicate, valuePredicate);
+        Predicate valuesPredicate = cb.equal(tag.get("label"),values);
+        return cb.and(prPredicate, valuesPredicate);
     }
 
-    private Predicate getPartMasterPredicate(String field, String operator, String value, String type) {
-        return getPredicate(pm.get(field), operator, value, type);
+    private Predicate getPartMasterPredicate(String field, String operator, List<String> values, String type) {
+        return getPredicate(pm.get(field), operator, values, type);
     }
 
     // Instances Attributes
-    private Predicate getInstanceURLAttributePredicate(String field, String operator, String value, String type) {
+    private Predicate getInstanceURLAttributePredicate(String field, String operator, List<String> values, String type) {
         Root<InstanceURLAttribute> iua = cq.from(InstanceURLAttribute.class);
-        Predicate valuePredicate = getPredicate(iua.get("urlValue"), operator, value, "string");
+        Predicate valuesPredicate = getPredicate(iua.get("urlValue"), operator, values, "string");
         Predicate memberPredicate = iua.in(pi.get("instanceAttributes"));
-        return cb.and(cb.equal(iua.get("name"), field), valuePredicate, memberPredicate);
+        return cb.and(cb.equal(iua.get("name"), field), valuesPredicate, memberPredicate);
     }
 
-    private Predicate getInstanceBooleanAttributePredicate(String field, String operator, String value, String type) {
-        Root<InstanceBooleanAttribute> iba = cq.from(InstanceBooleanAttribute.class);
-        Predicate memberPredicate = iba.in(pi.get("instanceAttributes"));
-        switch(operator){
-            case "equal":
-                return cb.and(cb.equal(iba.get("name"),field),cb.equal(iba.get("booleanValue"),Boolean.parseBoolean(value)),memberPredicate);
-            case "not_equal":
-                return cb.and(cb.equal(iba.get("name"),field),cb.equal(iba.get("booleanValue"),Boolean.parseBoolean(value)).not(),memberPredicate);
-            default:
-                break;
+    private Predicate getInstanceBooleanAttributePredicate(String field, String operator, List<String> values, String type) {
+        if (values.size() == 1) {
+            Root<InstanceBooleanAttribute> iba = cq.from(InstanceBooleanAttribute.class);
+            Predicate valuesPredicate = cb.equal(iba.get("booleanValue"), Boolean.parseBoolean(values.get(0)));
+            Predicate memberPredicate = iba.in(pi.get("instanceAttributes"));
+            switch(operator){
+                case "equal":
+                    return cb.and(cb.equal(iba.get("name"),field),valuesPredicate,memberPredicate);
+                case "not_equal":
+                    return cb.and(cb.equal(iba.get("name"),field),valuesPredicate.not(),memberPredicate);
+                default:
+                    break;
+            }
         }
 
         throw new IllegalArgumentException();
-
     }
 
-    private Predicate getInstanceNumberAttributePredicate(String field, String operator, String value, String type) {
+    private Predicate getInstanceNumberAttributePredicate(String field, String operator, List<String> values, String type) {
         Root<InstanceNumberAttribute> ina = cq.from(InstanceNumberAttribute.class);
-        Predicate valuePredicate = getPredicate(ina.get("numberValue"), operator, value, "double");
+        Predicate valuesPredicate = getPredicate(ina.get("numberValue"), operator, values, "double");
         Predicate memberPredicate = ina.in(pi.get("instanceAttributes"));
-        return cb.and(cb.equal(ina.get("name"),field),valuePredicate,memberPredicate);
+        return cb.and(cb.equal(ina.get("name"),field),valuesPredicate,memberPredicate);
     }
 
-    private Predicate getInstanceLovAttributePredicate(String field, String operator, String value, String type) {
-        Root<InstanceListOfValuesAttribute> ila = cq.from(InstanceListOfValuesAttribute.class);
-        Predicate valuePredicate = cb.equal(ila.get("indexValue"), Integer.parseInt(value));
-        Predicate memberPredicate = ila.in(pi.get("instanceAttributes"));
-        switch(operator) {
-            case "equal":
-                return cb.and(cb.equal(ila.get("name"), field), valuePredicate, memberPredicate);
-            case "not_equal":
-                return cb.and(cb.equal(ila.get("name"), field), valuePredicate.not(), memberPredicate);
-
-            default:
-                break;
+    private Predicate getInstanceLovAttributePredicate(String field, String operator, List<String> values, String type) {
+        if (values.size() == 1) {
+            Root<InstanceListOfValuesAttribute> ila = cq.from(InstanceListOfValuesAttribute.class);
+            Predicate valuesPredicate = cb.equal(ila.get("indexValue"), Integer.parseInt(values.get(0)));
+            Predicate memberPredicate = ila.in(pi.get("instanceAttributes"));
+            switch(operator) {
+                case "equal":
+                    return cb.and(cb.equal(ila.get("name"), field), valuesPredicate, memberPredicate);
+                case "not_equal":
+                    return cb.and(cb.equal(ila.get("name"), field), valuesPredicate.not(), memberPredicate);
+                default:
+                    break;
+            }
         }
 
         throw new IllegalArgumentException();
     }
 
-    private Predicate getInstanceDateAttributePredicate(String field, String operator, String value, String type) {
+    private Predicate getInstanceDateAttributePredicate(String field, String operator, List<String> values, String type) {
         Root<InstanceDateAttribute> ida = cq.from(InstanceDateAttribute.class);
-        Predicate valuePredicate = getPredicate(ida.get("dateValue"), operator, value, "date");
+        Predicate valuesPredicate = getPredicate(ida.get("dateValue"), operator, values, "date");
         Predicate memberPredicate = ida.in(pi.get("instanceAttributes"));
-        return cb.and(cb.equal(ida.get("name"),field),valuePredicate,memberPredicate);
+        return cb.and(cb.equal(ida.get("name"),field),valuesPredicate,memberPredicate);
     }
 
-    private Predicate getInstanceTextAttributePredicate(String field, String operator, String value, String type) {
+    private Predicate getInstanceTextAttributePredicate(String field, String operator, List<String> values, String type) {
         Root<InstanceTextAttribute> ita = cq.from(InstanceTextAttribute.class);
-        Predicate valuePredicate = getPredicate(ita.get("textValue"), operator, value, "string");
+        Predicate valuesPredicate = getPredicate(ita.get("textValue"), operator, values, "string");
         Predicate memberPredicate = ita.in(pi.get("instanceAttributes"));
-        return cb.and(cb.equal(ita.get("name"),field),valuePredicate,memberPredicate);
+        return cb.and(cb.equal(ita.get("name"),field),valuesPredicate,memberPredicate);
     }
 
 
     // Rule parsing
 
-    private Predicate getPredicate(Expression fieldExp, String operator, Object value, String type){
+    private Predicate getPredicate(Expression fieldExp, String operator, Object values, String type){
 
         Object o;
 
         switch(type){
             case "string" :
-                o=value;
+                o=values;
                 break;
-
             case "date":
                 try {
                     //TODO: this formatting is already done by other method, should be refactored.
                     //TODO: the pattern for the date format should be declared somewhere.
                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
                     df.setTimeZone(TimeZone.getTimeZone("UTC"));
-                    o = df.parse((String) value);
+                    List<Date> temp = new ArrayList<Date>();
+                    for (String string : (List<String>) values) {
+                        temp.add(df.parse(string));
+                    }
+                    o = temp;
                 } catch (ParseException e) {
                     throw new IllegalArgumentException();
                 }
                 break;
             case "double":
                 try {
-                    if (value!= null){
-                        o = Double.parseDouble((String) value);
+                    if (values!= null){
+                        List<Double> temp = new ArrayList<Double>();
+                        for (String string : (List<String>) values) {
+                            temp.add(Double.parseDouble(string));
+                        }
+                        o = temp;
                     }else{
                         o = "";
                     }
@@ -388,22 +400,39 @@ public class QueryDAO {
                 }
                 break;
             default :
-                o=value;
+                o=values;
                 break;
         }
 
-        switch (operator){
+        List<Object> objects = (List<Object>) o;
+        if (objects.size() == 1) {
+            o = objects.get(0);
+        }
 
+        switch (operator){
+            case "between" :
+                if (objects.size() == 2) {
+                    if("date".equals(type)){
+                        return cb.between(fieldExp, (Date)objects.get(0), (Date)objects.get(1));
+
+                    } else if("double".equals(type)){
+                        return cb.between(fieldExp, (Double) objects.get(0), (Double) objects.get(1));
+                    }
+                }
+                break;
             case "equal" :
                 if("date".equals(type)){
+                    List<Date> dates = (List<Date>) o;
+                    if (dates.size() == 1) {
+                        Date date1 = dates.get(0);
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(date1);
+                        c.add(Calendar.DATE, 1);
+                        Date date2 = c.getTime();
 
-                    Date date1 = (Date) o;
-                    Calendar c = Calendar.getInstance();
-                    c.setTime(date1);
-                    c.add(Calendar.DATE, 1);
-                    Date date2 = c.getTime();
+                        return cb.between(fieldExp, date1, date2);
+                    }
 
-                    return cb.between(fieldExp, date1, date2);
                 } else {
                     return cb.equal(fieldExp,o);
                 }

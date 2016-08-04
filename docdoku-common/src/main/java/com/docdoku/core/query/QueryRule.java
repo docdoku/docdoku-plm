@@ -22,6 +22,7 @@ package com.docdoku.core.query;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,7 +42,16 @@ public class QueryRule implements Serializable {
     private String field;
     private String type;
     private String operator;
-    private String value;
+
+    @Column(name="VALUE")
+    @OrderColumn(name="VALUE")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "QUERYRULE_VALUES",
+            joinColumns= {
+                    @JoinColumn(name = "QUERYRULE_ID", referencedColumnName = "QID")
+            }
+    )
+    private List<String> values=new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "PARENT_QUERY_RULE")
@@ -94,12 +104,12 @@ public class QueryRule implements Serializable {
         this.operator = operator;
     }
 
-    public String getValue() {
-        return value;
+    public List<String> getValues() {
+        return values;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setValues(List<String> values) {
+        this.values = values;
     }
 
     public String getType() {

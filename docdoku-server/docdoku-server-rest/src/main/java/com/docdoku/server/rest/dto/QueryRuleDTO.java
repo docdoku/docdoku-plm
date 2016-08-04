@@ -36,7 +36,7 @@ public class QueryRuleDTO implements Serializable {
     private String field;
     private String type;
     private String operator;
-    private String value;
+    private List<String> values;
     private List<QueryRuleDTO> rules;
 
     public QueryRuleDTO() {
@@ -74,12 +74,12 @@ public class QueryRuleDTO implements Serializable {
         this.operator = operator;
     }
 
-    public String getValue() {
-        return value;
+    public List<String> getValues() {
+        return values;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setValues(List<String> values) {
+        this.values = values;
     }
 
     public List<QueryRuleDTO> getRules() {
