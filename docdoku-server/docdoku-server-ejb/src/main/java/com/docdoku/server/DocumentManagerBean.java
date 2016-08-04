@@ -398,6 +398,22 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
     @Override
     public DocumentRevision[] getAllDocumentsInWorkspace(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getAllDocumentRevisions(workspaceId);
+        List<DocumentRevision> documentRevisions = new ArrayList<>();
+        for (DocumentRevision docR : docRs) {
+            if (isCheckoutByAnotherUser(user, docR)) {
+                em.detach(docR);
+                docR.removeLastIteration();
+            }
+            documentRevisions.add(docR);
+        }
+        return documentRevisions.toArray(new DocumentRevision[documentRevisions.size()]);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public DocumentRevision[] getFilteredDocumentsInWorkspace(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
         List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getDocumentRevisionsFiltered(user, workspaceId);
         List<DocumentRevision> documentRevisions = new ArrayList<>();
         for (DocumentRevision docR : docRs) {
@@ -412,7 +428,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevision[] getAllDocumentsInWorkspace(String workspaceId, int start, int pMaxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public DocumentRevision[] getFilteredDocumentsInWorkspace(String workspaceId, int start, int pMaxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getDocumentRevisionsFiltered(user, workspaceId, start, pMaxResults);
         List<DocumentRevision> documentRevisions = new ArrayList<>();

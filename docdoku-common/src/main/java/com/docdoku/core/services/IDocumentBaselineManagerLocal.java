@@ -20,6 +20,7 @@
 package com.docdoku.core.services;
 
 import com.docdoku.core.configuration.DocumentBaseline;
+import com.docdoku.core.configuration.DocumentCollection;
 import com.docdoku.core.exceptions.*;
 
 import java.util.List;
@@ -74,5 +75,15 @@ public interface IDocumentBaselineManagerLocal {
      * @throws com.docdoku.core.exceptions.UserNotActiveException If the connected user is disable
      * @throws com.docdoku.core.exceptions.WorkspaceNotFoundException If the workspace cann't be found
      */
-    DocumentBaseline getBaseline(int baselineId) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    DocumentBaseline getBaselineLight(int baselineId) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    /**
+     * Get a specific {@link com.docdoku.core.configuration.DocumentCollection}.
+     * @param baselineId The id of the require baseline.
+     * @return The require {@link com.docdoku.core.configuration.DocumentCollection}.
+     * @throws com.docdoku.core.exceptions.BaselineNotFoundException If the baseline cann't be found
+     * @throws com.docdoku.core.exceptions.UserNotFoundException If no user is connected to this workspace
+     * @throws com.docdoku.core.exceptions.UserNotActiveException If the connected user is disable
+     * @throws com.docdoku.core.exceptions.WorkspaceNotFoundException If the workspace cann't be found
+     */
+    DocumentCollection getACLFilteredDocumentCollection(int baselineId) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
  }

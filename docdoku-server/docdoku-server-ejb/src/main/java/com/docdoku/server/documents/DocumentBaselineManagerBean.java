@@ -20,7 +20,10 @@
 package com.docdoku.server.documents;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.configuration.BaselinedDocument;
+import com.docdoku.core.configuration.BaselinedDocumentKey;
 import com.docdoku.core.configuration.DocumentBaseline;
+import com.docdoku.core.configuration.DocumentCollection;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
@@ -39,10 +42,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
 @Local(IDocumentBaselineManagerLocal.class)
@@ -81,17 +81,35 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void deleteBaseline(int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, BaselineNotFoundException, UserNotActiveException {
-        DocumentBaseline documentBaseline = getBaseline(baselineId);
+        DocumentBaseline documentBaseline = getBaselineLight(baselineId);
         User user = userManager.checkWorkspaceWriteAccess(documentBaseline.getAuthor().getWorkspaceId());
         new DocumentBaselineDAO(em, new Locale(user.getLanguage())).deleteBaseline(documentBaseline);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentBaseline getBaseline(int baselineId) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public DocumentBaseline getBaselineLight(int baselineId) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         DocumentBaseline documentBaseline = new DocumentBaselineDAO(em).loadBaseline(baselineId);
         userManager.checkWorkspaceReadAccess(documentBaseline.getAuthor().getWorkspaceId());
         return documentBaseline;
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public DocumentCollection getACLFilteredDocumentCollection(int baselineId) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        DocumentBaseline documentBaseline = new DocumentBaselineDAO(em).loadBaseline(baselineId);
+        User user = userManager.checkWorkspaceReadAccess(documentBaseline.getAuthor().getWorkspaceId());
+        DocumentCollection filteredDocumentCollection = new DocumentCollection();
+
+        for (Map.Entry<BaselinedDocumentKey, BaselinedDocument> map : documentBaseline.getDocumentCollection().getBaselinedDocuments().entrySet()) {
+            DocumentIteration documentIteration = map.getValue().getTargetDocument();
+            DocumentRevision documentRevision = filterDocumentRevisionAccessRight(user, documentIteration.getDocumentRevision());
+            if (documentRevision != null) {
+                filteredDocumentCollection.addBaselinedDocument(documentIteration);
+            }
+        }
+
+        return filteredDocumentCollection;
     }
 
     private void snapshotAllDocuments(DocumentBaseline baseline, String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, FolderNotFoundException {

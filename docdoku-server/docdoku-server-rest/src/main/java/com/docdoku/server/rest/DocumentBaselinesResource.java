@@ -111,8 +111,7 @@ public class DocumentBaselinesResource {
                                    @ApiParam(required = true, value = "Document baseline to create") DocumentBaselineDTO documentBaselineDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         DocumentBaseline baseline = documentBaselineService.createBaseline(workspaceId, documentBaselineDTO.getName(), documentBaselineDTO.getType(), documentBaselineDTO.getDescription());
-        DocumentBaselineDTO baselineDTO = mapper.map(baseline, DocumentBaselineDTO.class);
-        return prepareCreateResponse(baselineDTO);
+        return prepareCreateResponse(getBaseline(workspaceId, baseline.getId()));
     }
 
     /**
@@ -161,9 +160,9 @@ public class DocumentBaselinesResource {
                                            @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, UserNotActiveException {
 
-        DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
-        List<BaselinedDocumentDTO> baselinedDocumentDTOs = Tools.mapBaselinedDocumentsToBaselinedDocumentDTOs(documentBaseline.getDocumentCollection());
-        DocumentBaselineDTO baselineDTO = getBaselineLight(workspaceId, baselineId);
+        DocumentBaseline documentBaseline = documentBaselineService.getBaselineLight(baselineId);
+        List<BaselinedDocumentDTO> baselinedDocumentDTOs = Tools.mapBaselinedDocumentsToBaselinedDocumentDTOs(documentBaselineService.getACLFilteredDocumentCollection(baselineId));
+        DocumentBaselineDTO baselineDTO = mapper.map(documentBaseline, DocumentBaselineDTO.class);
         baselineDTO.setBaselinedDocuments(baselinedDocumentDTOs);
         return baselineDTO;
     }
@@ -182,7 +181,7 @@ public class DocumentBaselinesResource {
     public DocumentBaselineDTO getBaselineLight(@PathParam("workspaceId") String workspaceId,
                                                 @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, UserNotActiveException {
-        DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
+        DocumentBaseline documentBaseline = documentBaselineService.getBaselineLight(baselineId);
         return mapper.map(documentBaseline, DocumentBaselineDTO.class);
     }
 }
