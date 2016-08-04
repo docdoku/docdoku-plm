@@ -554,8 +554,8 @@
 
         })
 
-        .controller('CheckOutCtrl', function ($scope, $mdDialog,
-                                              WorkspaceService, UploadService, RepositoryService, DBService,
+        .controller('CheckOutCtrl', function ($scope, $mdDialog, $filter, $q,
+                                              WorkspaceService, DownloadService, RepositoryService,
                                               selection, folderPath) {
 
             $scope.loading = false;
@@ -563,16 +563,42 @@
             $scope.folderPath = folderPath;
             $scope.close = $mdDialog.hide;
 
+            $scope.options = {
+                downloadFiles:true,
+                cascadeCheckOut:false
+            };
+
             var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
 
-            $scope.checkOut = function () {
-                $scope.loading = true;
-                WorkspaceService.checkOutItems(selection, repositoryIndex)
-                    .then($mdDialog.hide, function (error) {
-                        $scope.error = error;
-                    }, function (status) {
+            var downloadFiles = function(){
+
+                var fileMap = $filter('itemsFiles')(selection.map(function(file){
+                    return file.item;
+                }));
+
+                return DownloadService.bulkDownload(fileMap, folderPath)
+                    .then(null, null, function (status) {
                         $scope.status = status;
-                    }).finally(function () {
+                    });
+            };
+
+            var checkOut = function(){
+                return  WorkspaceService.checkOutItems(selection, repositoryIndex)
+                    .then(null, null, function (status) {
+                        $scope.status = status;
+                    });
+            };
+
+            $scope.checkOut = function () {
+
+                var chain = $q.when();
+
+                if($scope.options.downloadFiles){
+                    chain = chain.then(downloadFiles);
+                }
+
+                chain.then(checkOut)
+                    .then($mdDialog.hide).finally(function () {
                         $scope.loading = false;
                     });
             };

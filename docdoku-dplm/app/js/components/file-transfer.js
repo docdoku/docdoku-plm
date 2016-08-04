@@ -59,16 +59,9 @@
                 return upload(getPartIterationURL(part) + '/nativecad/', path);
             };
 
-            /*
-             // TODO : use it
-             this.uploadPartAttachedFile = function (folder, path, part){
-             return upload(getPartIterationURL(part) + '/attached-files/', path);
-             };*/
-
             this.uploadFileToDocument = function (path, document) {
                 return upload(getDocumentIterationURL(document), path);
             };
-
 
             this.bulkUpload = function (files, indexFolder) {
 
@@ -120,7 +113,8 @@
             var zlib = $window.require('zlib');
             var fileMode = $filter('fileMode');
 
-            var download = function (url, destinationFolder, item, forceRewrite) {
+            var download = function (url, destinationFolder, item) {
+
                 var deferred = $q.defer();
 
                 var fileName = getFileName(url);
@@ -138,9 +132,7 @@
                 } catch (e) {
                     fs.writeFileSync(file, '');
                 }
-
                 fs.chmodSync(file, READ_WRITE);
-
                 var request = http.get(requestOpts, function (response) {
                     totalBytes = response.headers['content-length'];
                     var encoding = response.headers['content-encoding'];
@@ -169,14 +161,7 @@
                 return deferred.promise;
             };
 
-            this.downloadItem = function (url, item, destinationFolder, forceRewrite) {
-                return download('/files/' + file, destinationFolder, forceRewrite)
-                    .then(function (filePath) {
-                        RepositoryService.saveItemToIndex(destinationFolder, filePath, item);
-                    });
-            };
-
-            this.bulkDownload = function (fileMap, destinationFolder, forceRewrite) {
+            this.bulkDownload = function (fileMap, destinationFolder) {
 
                 var deferred = $q.defer();
                 var chain = $q.when();
@@ -190,7 +175,7 @@
 
                     var item = fileMap[url];
                     chain = chain.then(function () {
-                        return download('/files/' + url, destinationFolder, item, forceRewrite)
+                        return download('/files/' + url, destinationFolder, item)
                             .then(function (filePath) {
                                 RepositoryService.updateItemInIndex(index, item, filePath);
                             }, function () {

@@ -14,7 +14,6 @@
             var total = $scope.files.length;
 
             $scope.options = {
-                forceRewrite: true,
                 destinationFolder: null
             };
 
@@ -26,8 +25,7 @@
                 $scope.status = {done: 0, url: '', item: [], progress: 0, mainProgress: 0};
 
                 DownloadService.bulkDownload($scope.fileMap,
-                    FolderService.getFolder({uuid: $scope.options.destinationFolder}).path,
-                    $scope.options.forceRewrite)
+                    FolderService.getFolder({uuid: $scope.options.destinationFolder}).path)
                     .then(null, null, function (status) {
                         $scope.status = status;
                         $scope.status.mainProgress = (status.done / total) * 100;

@@ -5,7 +5,7 @@
     angular.module('dplm.services')
 
         .service('RepositoryService', function ($q, $timeout, $window, $filter,
-                                                INDEX_LOCATION, INDEX_SEARCH_PATTERN, DocdokuAPIService, FolderService) {
+                                                INDEX_LOCATION, INDEX_SEARCH_PATTERN, DocdokuAPIService, FolderService, DBService) {
 
             var _this = this;
             var fs = $window.require('fs');
@@ -260,7 +260,7 @@
                         var workspaceId = getIndexValue(index, filePath, 'workspace');
                         chain = chain.then(documentRequest(api, workspaceId, index[id], version)).then(function (document) {
                             updateIndexForDocument(index, filePath, document);
-                            return document;
+                            return DBService.storeDocuments([document]);
                         }, function () {
                             removeFromIndex(index, filePath);
                         }).then(notify);
@@ -272,7 +272,7 @@
                         var workspaceId = getIndexValue(index, filePath, 'workspace');
                         chain = chain.then(partRequest(api, workspaceId, index[number], version)).then(function (part) {
                             updateIndexForPart(index, filePath, part);
-                            return part;
+                            return DBService.storeParts([part]);
                         }, function () {
                             removeFromIndex(index, filePath);
                         }).then(notify);

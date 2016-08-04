@@ -4,8 +4,8 @@
 
     angular.module('dplm.services')
 
-        .constant('READ_ONLY', '444')
-        .constant('READ_WRITE', '644')
+        .constant('READ_ONLY', '0444')
+        .constant('READ_WRITE', '0644')
         .constant('INDEX_LOCATION', '/.dplm/index.json')
         .constant('INDEX_SEARCH_PATTERN', '**/.dplm/index.json')
 
