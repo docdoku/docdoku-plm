@@ -11,8 +11,6 @@
             $scope.files = Object.keys($scope.fileMap);
             $scope.folders = FolderService.folders;
 
-            var total = $scope.files.length;
-
             $scope.options = {
                 destinationFolder: null
             };
@@ -28,7 +26,6 @@
                     FolderService.getFolder({uuid: $scope.options.destinationFolder}).path)
                     .then(null, null, function (status) {
                         $scope.status = status;
-                        $scope.status.mainProgress = (status.done / total) * 100;
                     }).finally(function () {
                         $scope.status.ended = true;
                     });
