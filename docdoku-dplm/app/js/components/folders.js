@@ -47,6 +47,11 @@
                 $window.localStorage.folders = angular.toJson(_this.folders);
             };
 
+            this.removeFolders = function(){
+                _this.folders.length = 0;
+                _this.save();
+            };
+
             this.recursiveReadDir = function (path) {
                 return $q(function (resolve, reject) {
                     var recursive = $window.require('recursive-readdir');

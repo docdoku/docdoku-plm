@@ -222,7 +222,7 @@
 
                         <td md-cell>
 
-                            <md-menu ng-if="file.index.number || file.index.id">
+                            <md-menu ng-if="file.index.number || file.index.documentMasterId">
                                 <md-button aria-label="{{'MENU'}}" class="md-icon-button"
                                            ng-click="$mdOpenMenu($event)">
                                     <span ng-if="file.item" status-icon="file.item"></span>
@@ -265,7 +265,7 @@
                                 </md-menu-content>
                             </md-menu>
 
-                            <md-menu ng-if="!file.index.number && !file.index.id">
+                            <md-menu ng-if="!file.index.number && !file.index.documentMasterId">
                                 <md-button aria-label="{{'MENU'}}" class="md-icon-button"
                                            ng-click="$mdOpenMenu($event)">
                                     <i class="material-icons">more_vert</i>
@@ -301,7 +301,7 @@
                                 </a>
                                 <small>{{'MODIFIED'|translate}}
                                     <a>{{file.stat.mtime | localDateTimeAgo}}
-                                    <md-tooltip ng-if="file.item.id">{{(file.item|lastIteration).revisionNote}}</md-tooltip>
+                                    <md-tooltip ng-if="file.item.documentMasterId">{{(file.item|lastIteration).revisionNote}}</md-tooltip>
                                     <md-tooltip ng-if="file.item.number">{{(file.item|lastIteration).iterationNote}}</md-tooltip>
                                 </a>
                                 </small>
@@ -309,18 +309,18 @@
                         </td>
 
 
-                        <td md-cell><a ng-href="#/workspace/{{file.index.workspace}}">{{file.index.workspace}}
+                        <td md-cell><a ng-href="#/workspace/{{file.index.workspaceId}}">{{file.index.workspaceId}}
                             <md-tooltip>{{'BROWSE_WORKSPACE'|translate}}</md-tooltip>
                         </a></td>
                         <td md-cell>
-                            <i ng-if="file.index.id" class="material-icons">description
+                            <i ng-if="file.index.documentMasterId" class="material-icons">description
                                 <md-tooltip>{{'DOCUMENTS'|translate}}</md-tooltip>
                             </i>
                             <i ng-if="file.index.number" class="material-icons">extension
                                 <md-tooltip>{{'PARTS'|translate}}</md-tooltip>
                             </i>
                         </td>
-                        <td md-cell>{{file.index.id || file.index.number || '-' }}</td>
+                        <td md-cell>{{file.index.documentMasterId || file.index.number || '-' }}</td>
                         <td md-cell>{{file.index.revision}}-{{file.index.iteration}}</td>
                         <td md-cell>{{file.stat.size | humanreadablesize}}</td>
 

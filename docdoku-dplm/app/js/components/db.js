@@ -100,18 +100,18 @@
 
                         var tx, store, request;
 
-                        if (itemIndex.id) {
+                        if (itemIndex.documentMasterId) {
                             tx = db.transaction('Documents', 'readwrite');
                             store = tx.objectStore('Documents');
                             //var index = store.index('WorkspaceIndex');
-                            request = store.get([itemIndex.workspace, itemIndex.id + '-' + itemIndex.revision]);
+                            request = store.get([itemIndex.workspaceId, itemIndex.documentMasterId + '-' + itemIndex.revision]);
                         }
                         else if (itemIndex.number) {
                             tx = db.transaction('Parts', 'readwrite');
                             store = tx.objectStore('Parts');
-                            request = store.get([itemIndex.workspace, itemIndex.number + '-' + itemIndex.revision]);
+                            request = store.get([itemIndex.workspaceId, itemIndex.number + '-' + itemIndex.revision]);
                         } else {
-                            reject();
+                            return reject();
                         }
 
                         tx.oncomplete = function () {
@@ -121,7 +121,9 @@
                         request.onsuccess = function () {
                             resolve(request.result);
                         };
+
                         request.onerror = reject;
+
                     });
                 });
             };

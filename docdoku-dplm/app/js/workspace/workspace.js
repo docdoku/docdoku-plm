@@ -6,7 +6,7 @@
 
         .config(function ($routeProvider) {
             $routeProvider
-                .when('/workspace/:workspace', {
+                .when('/workspace/:workspaceId', {
                     controller: 'WorkspaceController',
                     templateUrl: 'js/workspace/workspace.html'
                 });
@@ -15,7 +15,7 @@
         .controller('WorkspaceController', function ($scope, $routeParams, $filter, $mdDialog,
                                                      WorkspaceService, DBService, ConfigurationService) {
 
-            var workspace = $routeParams.workspace;
+            var workspaceId = $routeParams.workspaceId;
             var allParts = [];
             var allDocuments = [];
             var filteredItems = [];
@@ -29,15 +29,15 @@
             };
 
             var getData = function () {
-                return DBService.getDocuments(workspace).then(function (documents) {
+                return DBService.getDocuments(workspaceId).then(function (documents) {
                     allDocuments = documents;
-                    return DBService.getParts(workspace);
+                    return DBService.getParts(workspaceId);
                 }).then(function (parts) {
                     allParts = parts;
                 }).then(function () {
                     $scope.totalDocuments = allDocuments.length;
                     $scope.totalParts = allParts.length;
-                    $scope.lastSyncDate = WorkspaceService.workspaceSyncs[workspace];
+                    $scope.lastSyncDate = WorkspaceService.workspaceSyncs[workspaceId];
                 });
             };
 
@@ -108,7 +108,7 @@
                 return item;
             };
 
-            $scope.workspace = workspace;
+            $scope.workspaceId = workspaceId;
             $scope.configuration = ConfigurationService.configuration;
             $scope.selected = [];
             $scope.totalDocuments = 0;
@@ -188,7 +188,7 @@
 
             $scope.refresh = function () {
                 $scope.sync.running = true;
-                WorkspaceService.refreshData(workspace).then(function () {
+                WorkspaceService.refreshData(workspaceId).then(function () {
                     $scope.sync.running = false;
                     getData().then($scope.search);
                 });

@@ -183,7 +183,7 @@
             };
 
             var saveNote = function(item,note){
-                if(item.id){
+                if(item.documentMasterId){
                     return saveDocumentNote(item,note);
                 }else if(item.number){
                     return savePartNote(item,note);
@@ -351,7 +351,7 @@
 
                 angular.forEach(files, function (file) {
                     chain = chain.then(function () {
-                        if (file.index.id) {
+                        if (file.index.documentMasterId) {
                             return checkInDocument(file.item, index, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify({total:total,done:++done});
@@ -378,7 +378,7 @@
 
                 angular.forEach(files, function (file) {
                     chain = chain.then(function () {
-                        if (file.index.id) {
+                        if (file.index.documentMasterId) {
                             return checkOutDocument(file.item, index, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify({total:total,done:++done});
@@ -405,7 +405,7 @@
 
                 angular.forEach(files, function (file) {
                     chain = chain.then(function () {
-                        if (file.index.id) {
+                        if (file.index.documentMasterId) {
                             return undoCheckOutDocument(file.item, index, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify({total:total,done:++done});

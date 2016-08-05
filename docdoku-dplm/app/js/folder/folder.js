@@ -91,7 +91,7 @@
                         return false;
                     }
 
-                    if (!hasFilter('DOCUMENTS') && index && index.id) {
+                    if (!hasFilter('DOCUMENTS') && index && index.documentMasterId) {
                         return false;
                     }
 

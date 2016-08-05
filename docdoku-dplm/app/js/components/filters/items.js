@@ -19,7 +19,7 @@
                     if (item.number && lastItemIteration.nativeCADFile) {
                         fileMap[lastItemIteration.nativeCADFile.fullName] = item;
                     }
-                    if (item.id) {
+                    if (item.documentMasterId) {
                         lastItemIteration.attachedFiles.forEach(function (file) {
                             fileMap[file.fullName] = item;
                         });

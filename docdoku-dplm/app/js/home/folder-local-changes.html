@@ -31,7 +31,7 @@
                         <a href class="modified" file-preview="item.path">{{item.path | fileShortName}}</a>
 
                         <div layout="row">
-                            <small><a>{{item.index.id || item.index.number}}-{{item.index.revision}}</a>
+                            <small><a>{{item.index.documentMasterId || item.index.number}}-{{item.index.revision}}</a>
                                 {{'MODIFIED'|translate}} <a>{{item.stat.mtime | localDateTimeAgo}}</a></small>
                         </div>
                     </div>

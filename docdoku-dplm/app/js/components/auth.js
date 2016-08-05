@@ -4,7 +4,7 @@
 
     angular.module('dplm.services')
         .service('AuthService', function ($q, $translate,
-                                          ConfigurationService, DocdokuAPIService, DBService, WorkspaceService) {
+                                          ConfigurationService, DocdokuAPIService, DBService, WorkspaceService, FolderService) {
 
             var user = {};
             this.user = user;
@@ -45,9 +45,12 @@
                 DocdokuAPIService.getClient().getApi().then(function (api) {
 
                     angular.copy({}, user);
+
                     ConfigurationService.deleteAuth();
                     DocdokuAPIService.setCookie(null);
                     DBService.removeDb();
+                    FolderService.removeFolders();
+                    WorkspaceService.resetWorkspaceSyncs();
 
                     api.auth.logout().then(deferred.resolve, deferred.reject);
                 });

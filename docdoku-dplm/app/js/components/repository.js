@@ -4,8 +4,23 @@
 
     angular.module('dplm.services')
 
+        .factory('IndexKeys',function(){
+            return {
+                HASH : 'hash',
+                DIGEST : 'digest',
+                WORKSPACE_ID : 'workspaceId',
+                PART_NUMBER : 'number',
+                DOCUMENT_MASTER_ID:'documentMasterId',
+                REVISION:'revision',
+                ITERATION:'iteration',
+                LAST_MODIFIED_DATE:'lastModifiedDate'
+            };
+        })
+
+
         .service('RepositoryService', function ($q, $timeout, $window, $filter,
-                                                INDEX_LOCATION, INDEX_SEARCH_PATTERN, DocdokuAPIService, FolderService, DBService) {
+                                                INDEX_LOCATION, INDEX_SEARCH_PATTERN, DocdokuAPIService, FolderService, DBService,
+                                                IndexKeys) {
 
             var _this = this;
             var fs = $window.require('fs');
@@ -55,16 +70,16 @@
 
             this.getFileIndex = function (index, path) {
 
-                var digest = getIndexValue(index, path, 'digest');
+                var digest = getIndexValue(index, path, IndexKeys.DIGEST);
 
                 return digest ? {
                     digest: digest,
-                    workspace: getIndexValue(index, path, 'workspace'),
-                    id: getIndexValue(index, path, 'id'),
-                    number: getIndexValue(index, path, 'number'),
-                    revision: getIndexValue(index, path, 'revision'),
-                    iteration: getIndexValue(index, path, 'iteration'),
-                    lastModifiedDate: getIndexValue(index, path, 'lastModifiedDate'),
+                    workspaceId: getIndexValue(index, path, IndexKeys.WORKSPACE_ID),
+                    documentMasterId: getIndexValue(index, path, IndexKeys.DOCUMENT_MASTER_ID),
+                    number: getIndexValue(index, path, IndexKeys.PART_NUMBER),
+                    revision: getIndexValue(index, path, IndexKeys.REVISION),
+                    iteration: getIndexValue(index, path, IndexKeys.ITERATION),
+                    lastModifiedDate: getIndexValue(index, path, IndexKeys.LAST_MODIFIED_DATE),
                     hash: getHashFromFile(path)
                 } : null;
             };
@@ -80,40 +95,38 @@
             };
 
             var updateIndexForPart = function (index, path, part) {
-                setIndexValue(index, path, 'hash', getHashFromFile(path));
-                setIndexValue(index, path, 'workspace', part.workspaceId);
-                setIndexValue(index, path, 'number', part.number);
-                setIndexValue(index, path, 'revision', part.version);
-                setIndexValue(index, path, 'iteration', part.partIterations.length);
+                setIndexValue(index, path, IndexKeys.HASH, getHashFromFile(path));
+                setIndexValue(index, path, IndexKeys.WORKSPACE_ID, part.workspaceId);
+                setIndexValue(index, path, IndexKeys.PART_NUMBER, part.number);
+                setIndexValue(index, path, IndexKeys.REVISION, part.version);
+                setIndexValue(index, path, IndexKeys.ITERATION, part.partIterations.length);
             };
 
             var updateIndexForDocument = function (index, path, document) {
-                setIndexValue(index, path, 'hash', getHashFromFile(path));
-                setIndexValue(index, path, 'workspace', document.workspaceId);
-                setIndexValue(index, path, 'id', document.documentMasterId);
-                setIndexValue(index, path, 'revision', document.version);
-                setIndexValue(index, path, 'iteration', document.documentIterations.length);
+                setIndexValue(index, path, IndexKeys.HASH, getHashFromFile(path));
+                setIndexValue(index, path, IndexKeys.WORKSPACE_ID, document.workspaceId);
+                setIndexValue(index, path, IndexKeys.DOCUMENT_MASTER_ID, document.documentMasterId);
+                setIndexValue(index, path, IndexKeys.REVISION, document.version);
+                setIndexValue(index, path, IndexKeys.ITERATION, document.documentIterations.length);
             };
 
             var updateFile = function (index, path) {
-                setIndexValue(index, path, 'digest', getHashFromFile(path));
-                setIndexValue(index, path, 'lastModifiedDate', Date.now());
+                setIndexValue(index, path, IndexKeys.DIGEST, getHashFromFile(path));
+                setIndexValue(index, path, IndexKeys.LAST_MODIFIED_DATE, Date.now());
             };
 
             var removeFromIndex = function (index, path) {
-                delete index[path + '.digest'];
-                delete index[path + '.workspace'];
-                delete index[path + '.number'];
-                delete index[path + '.id'];
-                delete index[path + '.revision'];
-                delete index[path + '.iteration'];
-                delete index[path + '.lastModifiedDate'];
+                Object.keys(IndexKeys)
+                    .map(function(key){return path + '.' + IndexKeys[key]})
+                    .forEach(function(entry){
+                        delete index[entry];
+                    });
             };
 
             this.updateItemInIndex = function (index, item, path) {
                 if (item.number) {
                     updateIndexForPart(index, path, item);
-                } else if (item.id) {
+                } else if (item.documentMasterId) {
                     updateIndexForDocument(index, path, item);
                 }
                 updateFile(index, path);
@@ -122,7 +135,7 @@
             this.saveItemToIndex = function (indexFolder, path, item) {
                 if (item.number) {
                     _this.savePartToIndex(indexFolder, path, item);
-                } else if (item.id) {
+                } else if (item.documentMasterId) {
                     _this.saveDocumentToIndex(indexFolder, path, item);
                 }
             };
@@ -182,10 +195,10 @@
 
                 angular.forEach(keys, function (key) {
                     var path;
-                    if (key.endsWith('.id')) {
-                        path = key.substr(0, key.length - 3);
-                    } else if (key.endsWith('.number')) {
-                        path = key.substr(0, key.length - 7);
+                    if (key.endsWith('.' + IndexKeys.DOCUMENT_MASTER_ID)) {
+                        path = key.substr(0, key.length - IndexKeys.DOCUMENT_MASTER_ID.length);
+                    } else if (key.endsWith('.'+IndexKeys.NUMBER)) {
+                        path = key.substr(0, key.length - IndexKeys.NUMBER.length);
                     }
                     if (_this.isModified(index, path)) {
                         files.push(path);
@@ -196,7 +209,7 @@
             };
 
             this.isModified = function (index, path) {
-                return path && getIndexValue(index, path, 'hash') !== getIndexValue(index, path, 'digest');
+                return path && getIndexValue(index, path, IndexKeys.HASH) !== getIndexValue(index, path, IndexKeys.HASH);
             };
 
             var fileShortName = $filter('fileShortName');
@@ -207,7 +220,7 @@
                 var name = fileShortName(path);
                 var itemLastIteration = lastIteration(item);
                 var binaryResource;
-                if (item.id) {
+                if (item.documentMasterId) {
                     binaryResource = $filter('filter')(itemLastIteration.attachedFiles, {name: name})[0];
                 } else if (item.number) {
                     binaryResource = itemLastIteration.nativeCADFile;
@@ -220,7 +233,7 @@
                     return false;
                 }
                 var binary = getItemBinaryResource(file.item, file.path);
-                return binary && getIndexValue(index, file.path, 'lastModifiedDate') < new Date(binary.lastModified).getTime();
+                return binary && getIndexValue(index, file.path, IndexKeys.LAST_MODIFIED_DATE) < new Date(binary.lastModified).getTime();
             };
 
             this.syncIndex = function (indexFolder) {
@@ -234,11 +247,11 @@
                 var keys = Object.keys(index);
 
                 var documents = keys.filter(function (key) {
-                    return key.endsWith('.id');
+                    return key.endsWith('.' + IndexKeys.DOCUMENT_MASTER_ID);
                 });
 
                 var parts = keys.filter(function (key) {
-                    return key.endsWith('.number');
+                    return key.endsWith('.' + IndexKeys.NUMBER);
                 });
 
                 var progress = 0;
@@ -256,8 +269,8 @@
 
                     documents.forEach(function (id) {
                         var filePath = id.substr(0, id.length - 3);
-                        var version = getIndexValue(index, filePath, 'revision');
-                        var workspaceId = getIndexValue(index, filePath, 'workspace');
+                        var version = getIndexValue(index, filePath, IndexKeys.REVISION);
+                        var workspaceId = getIndexValue(index, filePath, IndexKeys.WORKSPACE_ID);
                         chain = chain.then(documentRequest(api, workspaceId, index[id], version)).then(function (document) {
                             updateIndexForDocument(index, filePath, document);
                             return DBService.storeDocuments([document]);
@@ -268,8 +281,8 @@
 
                     parts.forEach(function (number) {
                         var filePath = number.substr(0, number.length - 7);
-                        var version = getIndexValue(index, filePath, 'revision');
-                        var workspaceId = getIndexValue(index, filePath, 'workspace');
+                        var version = getIndexValue(index, filePath, IndexKeys.REVISION);
+                        var workspaceId = getIndexValue(index, filePath, IndexKeys.WORKSPACE_ID);
                         chain = chain.then(partRequest(api, workspaceId, index[number], version)).then(function (part) {
                             updateIndexForPart(index, filePath, part);
                             return DBService.storeParts([part]);

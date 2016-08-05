@@ -51,7 +51,7 @@
             };
 
             var getDocumentIterationURL = function (doc) {
-                return '/files/' + doc.workspaceId + '/documents/' + doc.documentId + '/' + doc.version + '/' + doc.documentIterations.length;
+                return '/files/' + doc.workspaceId + '/documents/' + doc.documentMasterId + '/' + doc.version + '/' + doc.documentIterations.length;
             };
 
 
@@ -77,7 +77,7 @@
                     var item = file.item;
 
                     chain = chain.then(function () {
-                        if (item.id) {
+                        if (item.documentMasterId) {
                             return _this.uploadFileToDocument(file.path, item);
 
                         }

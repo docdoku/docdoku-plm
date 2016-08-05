@@ -55,10 +55,10 @@
              layout="column"
              layout-align="start center" layout-margin>
 
-            <div layout-margin ng-if="status.workspace">
+            <div layout-margin ng-if="status.workspaceId">
                 <h2>{{'MENU_WORKSPACES'|translate}}</h2>
 
-                <h3>{{status.workspace}} {{status.done}} / {{ status.total}}</h3>
+                <h3>{{status.workspaceId}} {{status.done}} / {{ status.total}}</h3>
             </div>
 
             <div ng-if="status.folder">

@@ -38,8 +38,8 @@ public class MetaDirectoryManager {
     private static final String PART_NUMBER_PROP = "number";
     private static final String REVISION_PROP = "revision";
     private static final String ITERATION_PROP = "iteration";
-    private static final String WORKSPACE_PROP = "workspace";
-    private static final String ID_PROP = "id";
+    private static final String WORKSPACE_PROP = "workspaceId";
+    private static final String ID_PROP = "documentMasterId";
     private static final String LAST_MODIFIED_DATE_PROP = "lastModifiedDate";
     private static final String DIGEST_PROP = "digest";
 

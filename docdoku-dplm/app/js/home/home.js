@@ -161,7 +161,7 @@
                 restrict: 'A',
                 templateUrl: 'js/home/workspace-latest-events.html',
                 scope: {
-                    workspace: '=workspaceLatestEvents'
+                    workspaceId: '=workspaceLatestEvents'
                 },
                 controller: function ($scope, $filter, WorkspaceService, ConfigurationService) {
 
@@ -170,7 +170,7 @@
                     var refresh = function () {
                         $scope.loading = true;
                         var lastIteration = $filter('lastIteration');
-                        WorkspaceService.getLatestEventsInWorkspace($scope.workspace, 10)
+                        WorkspaceService.getLatestEventsInWorkspace($scope.workspaceId, 10)
                             .then(function (events) {
                                 $scope.events = events.map(function (item) {
                                     item.lastIteration = lastIteration(item);

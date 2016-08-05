@@ -16,7 +16,7 @@
 
                 <md-virtual-repeat-container class="virtual-list virtual-list-col-5">
                     <div md-virtual-repeat="file in selection" class="repeated-item" flex>
-                        <span ng-if="file.item" status-icon="file.item"></span> {{file.item.id || file.item.partKey}}
+                        <span ng-if="file.item" status-icon="file.item"></span> {{file.item.documentMasterId || file.item.partKey}}
                     </div>
                 </md-virtual-repeat-container>
 
