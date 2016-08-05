@@ -422,16 +422,12 @@ public class QueryDAO {
                 break;
             case "equal" :
                 if("date".equals(type)){
-                    List<Date> dates = (List<Date>) o;
-                    if (dates.size() == 1) {
-                        Date date1 = dates.get(0);
-                        Calendar c = Calendar.getInstance();
-                        c.setTime(date1);
-                        c.add(Calendar.DATE, 1);
-                        Date date2 = c.getTime();
-
-                        return cb.between(fieldExp, date1, date2);
-                    }
+                    Date date1 = (Date) o;
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(date1);
+                    c.add(Calendar.DATE, 1);
+                    Date date2 = c.getTime();
+                    return cb.between(fieldExp, date1, date2);
 
                 } else {
                     return cb.equal(fieldExp,o);
