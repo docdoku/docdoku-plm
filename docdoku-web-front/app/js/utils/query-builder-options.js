@@ -69,7 +69,7 @@ define(function () {
     };
 
     var stringOperators = ['equal', 'not_equal', 'contains', 'not_contains', 'begins_with', 'not_begins_with', 'ends_with', 'not_ends_with'];
-    var dateOperators = ['equal', 'not_equal', 'less', 'less_or_equal', 'greater', 'greater_or_equal'];
+    var dateOperators = ['equal', 'not_equal', 'less', 'less_or_equal', 'greater', 'greater_or_equal', 'between'];
     var lovOperators = ['equal', 'not_equal'];
     var statusOperators = ['equal', 'not_equal'];
     var booleanOperators = ['equal', 'not_equal'];
