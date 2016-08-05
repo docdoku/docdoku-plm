@@ -56,14 +56,7 @@ public abstract class Effectivity implements Serializable {
         @JoinColumn(name = "CONFIGURATIONITEM_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
     private ConfigurationItem configurationItem;
-    
-    /**
-     * Used to restrict the effectivity to a given product definition usage.
-     * However, the case when we need to manage different versions of a part
-     * in the same product structure may rarely happen.
-     */
-    @ManyToOne(optional = true, fetch = FetchType.EAGER)
-    private PartUsageLink usageLink;
+
 
     public Effectivity() {
     }
@@ -103,11 +96,4 @@ public abstract class Effectivity implements Serializable {
         return configurationItem;
     }
 
-    public PartUsageLink getUsageLink() {
-        return usageLink;
-    }
-
-    public void setUsageLink(PartUsageLink usageLink) {
-        this.usageLink = usageLink;
-    }
 }
