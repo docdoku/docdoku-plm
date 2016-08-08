@@ -74,8 +74,7 @@ define(function () {
     var statusOperators = ['equal', 'not_equal'];
     var booleanOperators = ['equal', 'not_equal'];
     var tagOperators = ['equal'];
-
-    var numberOperators = ['equal', 'not_equal', 'contains', 'not_contains', 'less', 'less_or_equal', 'greater', 'greater_or_equal', 'between'];
+    var numberOperators = ['equal', 'not_equal', 'less', 'less_or_equal', 'greater', 'greater_or_equal', 'between'];
 
     var filters = [];
 
