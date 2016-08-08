@@ -269,7 +269,7 @@ public class QueryDAO {
         }
         else if("status".equals(field)){
             if (values.size() == 1) {
-                return getPredicate(pr.get(field), operator, PartRevision.RevisionStatus.valueOf(values.get(0)), "");
+                return getPredicate(pr.get(field), operator, values, "status");
             }
         }
         else if("tags".equals(field)){
@@ -398,6 +398,13 @@ public class QueryDAO {
                 }catch(NumberFormatException e){
                     throw new IllegalArgumentException();
                 }
+                break;
+            case "status":
+                List<PartRevision.RevisionStatus> temp = new ArrayList<>();
+                for (String string : (List<String>) values) {
+                    temp.add(PartRevision.RevisionStatus.valueOf(string));
+                }
+                o = temp;
                 break;
             default :
                 o=values;
