@@ -23,7 +23,8 @@ function (Backbone,singletonDecorator, WorkflowNavView, TaskNavView, MilestoneNa
             ':workspaceId/workflow-model-editor': 'workflowModelEditorNew',
             ':workspaceId/tasks/:taskId': 'task',
             ':workspaceId/workflow/:workflowId': 'workflow',
-            ':workspaceId': 'workflows'
+            ':workspaceId': 'workflows',
+            ':workspaceId/*path': 'workflows'
         },
 
 	    executeOrReload:function(workspaceId,fn){

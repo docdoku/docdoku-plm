@@ -24,7 +24,8 @@ function (Backbone, singletonDecorator, ProductNavView, ConfigurationNavView, Ba
             ':workspaceId/checkedouts': 'checkedoutsParts',
             ':workspaceId/part-templates': 'partsTemplate',
             ':workspaceId/parts-search/:query': 'search',
-            ':workspaceId': 'products'
+            ':workspaceId': 'products',
+            ':workspaceId/*path': 'products'
         },
 
         executeOrReload:function(workspaceId,fn){

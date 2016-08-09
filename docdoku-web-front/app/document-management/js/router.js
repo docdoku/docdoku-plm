@@ -24,7 +24,8 @@ function (Backbone, singletonDecorator, FolderNavView, TagNavView, SearchNavView
             ':workspaceId/tasks': 'tasks',
             ':workspaceId/tasks/:filter': 'tasks',
             ':workspaceId/search/:query': 'search',
-            ':workspaceId': 'home'
+            ':workspaceId': 'home',
+            ':workspaceId/*path': 'home'
         },
 
 	    executeOrReload:function(workspaceId,fn){

@@ -14,6 +14,7 @@ function (Backbone, singletonDecorator) {
             'workspace/:workspaceId/users':   'workspaceUsers',
             'workspace/:workspaceId/edit':   'workspaceEdit',
             'workspace/:workspaceId/dashboard':   'workspaceDashboard',
+            'workspace/:workspaceId/*path':   'workspaceUsers'
         },
 
         refresh:function(){
