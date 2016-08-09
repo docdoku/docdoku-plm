@@ -571,7 +571,7 @@ define({
         SEARCHING: 'Searching...',
         SECONDS: 's',
         SEE_IN_DOCUMENT_MANAGEMENT:'See the document in the document management module',
-        SEE_IN_PRODUCT_MANAGEMENT:'See the document in the product management module',
+        SEE_IN_PRODUCT_MANAGEMENT:'See the part in the product management module',
 		SELECT_FILE: 'Choose a file',
         SELECT_FILES: 'Choose one or more file(s)',
         SEND: 'Send',
