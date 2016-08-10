@@ -166,7 +166,6 @@ public class ExcelGenerator {
     }
 
     private String[] createXLSHeaderRow(String header, String[] columns, Locale locale) {
-        LangHelper langHelper = new LangHelper(locale);
         String[] headerFormatted = new String[header.split(";").length];
         int headerIndex = 0;
 
@@ -180,7 +179,7 @@ public class ExcelGenerator {
                     columnTranslated = column.substring(column.indexOf(".") + 1);
                 }
                 else {
-                    columnTranslated = langHelper.getLocalizedMessage(column.trim());
+                    columnTranslated = LangHelper.getLocalizedMessage(column.trim(), locale);
                 }
                 headerFormatted[headerIndex++] = columnTranslated != null ? columnTranslated : column;
             }

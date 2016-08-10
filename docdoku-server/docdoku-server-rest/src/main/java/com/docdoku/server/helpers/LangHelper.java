@@ -20,28 +20,18 @@
 
 package com.docdoku.server.helpers;
 
-
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class LangHelper {
 
-    private static final String DEFAULT_BUNDLE_NAME = "com.docdoku.server.localization.LocalStrings";
-    private static ResourceBundle mResourceBundle;
+    private static final String BUNDLE_NAME = "com.docdoku.server.i18n.LocalStrings";
 
+    private LangHelper() {}
 
-    public LangHelper() {
-        mResourceBundle=ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME, Locale.getDefault());
-
-    }
-
-    public LangHelper(Locale locale) {
-        mResourceBundle=ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME, locale);
-
-    }
-
-    public String getLocalizedMessage(String key) {
-        return mResourceBundle.getString(key);
+    public static String getLocalizedMessage(String key, Locale locale) {
+        ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, locale);
+        return bundle.getString(key);
     }
 
 }
