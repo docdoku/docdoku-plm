@@ -60,6 +60,9 @@ casper.test.begin('Path to path link check tests suite', 26, function pathToPath
         this.click('#path_to_path_link_btn');
         return this.waitForSelector('.modal.path-to-path-link-modal #path-to-path-links > .well', function modalIsDisplayed() {
             this.test.assertElementCount('#path-to-path-links > .well', 1, 'One path to path link should be present');
+        }, function fail() {
+            this.capture('screenshot/pathToPathLinkCheck/openCreationModal-error.png');
+            this.test.assert(false, 'No path to path link found');
         });
     });
 

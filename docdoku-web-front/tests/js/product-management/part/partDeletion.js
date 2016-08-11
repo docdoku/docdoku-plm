@@ -67,8 +67,12 @@ casper.test.begin('Part deletion tests suite', 3, function partDeletionTestsSuit
     });
 
     casper.then(function waitForPartDisappear() {
-        return this.waitForSelector('#part_table tbody tr', function check() {
-            this.test.assertElementCount('#part_table tbody tr', 4, 'Part has been deleted');
+        return this.waitFor(function check() {
+            return this.evaluate(function () {
+                return $('#part_table tbody tr').length === 4;
+            });
+        }, function then() {
+            this.test.assert(true, 'Part has been deleted');
         }, function fail() {
             this.capture('screenshot/partDeletion/waitForPartDisappear-error.png');
             this.test.assert(false, 'Part has not been deleted');
