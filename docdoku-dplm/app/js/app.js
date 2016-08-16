@@ -1,10 +1,10 @@
 (function () {
 
     'use strict';
-
+/*
      process.on('uncaughtException', function (e) {
         console.log(e);
-     });
+     });*/
 
     angular.module('dplm', [
 

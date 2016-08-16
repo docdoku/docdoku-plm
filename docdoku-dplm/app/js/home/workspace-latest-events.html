@@ -5,55 +5,72 @@
         <div layout="column">
             <div ng-repeat="item in events" layout="column">
 
-             <span ng-if="item.lastIteration.checkInDate">
-                <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
-                    {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
-                    <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}</md-tooltip>
-                </a>
-                {{'CHECKED_IN_BY'|translate}}
-                 <a user-preview="item.lastIteration.author" href class="md-primary">
-                     {{item.lastIteration.author.name}}
-                 </a>
-                {{ item.lastIteration.checkInDate | utcDateTimeAgo}}
-            </span>
+                <div layout="row" layout-align="space-between center"
+                     ng-if="item.lastIteration.checkInDate">
+                    <div>
+                        <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                            {{ item.documentMasterId || item.number }} {{ item.version }}
+                            {{item.lastIteration.iteration}}
+                            <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}
+                            </md-tooltip>
+                        </a>
+                        {{'CHECKED_IN_BY'|translate}}
+                        <a user-preview="item.lastIteration.author" href class="md-primary">
+                            {{item.lastIteration.author.name}}
+                        </a>
+                    </div>
+                    <small>{{ item.lastIteration.checkInDate | utcDateTimeAgo}}</small>
+                </div>
 
-            <span ng-if="item.lastIteration.modificationDate">
-                <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
-                    {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
-                    <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}</md-tooltip>
-                </a>
-               {{'MODIFIED_BY'|translate}}
-                  <a user-preview="item.lastIteration.author" href class="md-primary">
-                      {{item.lastIteration.author.name}}
-                  </a>
-                {{ item.lastIteration.modificationDate | utcDateTimeAgo}}
-            </span>
+                <div layout="row" layout-align="space-between center"
+                     ng-if="item.lastIteration.modificationDate">
+                    <div>
+                        <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                            {{ item.documentMasterId || item.number }} {{ item.version }}
+                            {{item.lastIteration.iteration}}
+                            <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}
+                            </md-tooltip>
+                        </a>
+                        {{'MODIFIED_BY'|translate}}
+                        <a user-preview="item.lastIteration.author" href class="md-primary">
+                            {{item.lastIteration.author.name}}
+                        </a>
+                    </div>
+                    <small>{{ item.lastIteration.modificationDate | utcDateTimeAgo}}</small>
+                </div>
 
-            <span ng-if="item.checkOutDate">
-                <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
-                    {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
-                    <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}</md-tooltip>
-                </a>
-                {{'CHECKED_OUT_BY'|translate}}
-                <a user-preview="item.checkOutUser" href class="md-primary">
-                    {{item.checkOutUser.name}}
-                </a>
-                {{ item.checkOutDate | utcDateTimeAgo}}
-            </span>
+                <div layout="row" layout-align="space-between center"
+                     ng-if="item.checkOutDate">
+                    <div>
+                        <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                        {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
+                        <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}</md-tooltip>
+                        </a>
+                        {{'CHECKED_OUT_BY'|translate}}
+                        <a user-preview="item.checkOutUser" href class="md-primary">
+                            {{item.checkOutUser.name}}
+                        </a>
+                        </div>
+                    <small>{{ item.checkOutDate | utcDateTimeAgo}}</small>
+                </div>
 
 
-            <span ng-if="item.lastIteration.creationDate && !item.lastIteration.modificationDate && !item.lastIteration.checkInDate && !item.checkOutDate ">
-
-                 <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
-                     {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
-                     <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}</md-tooltip>
-                 </a>
-                {{'CREATED_BY'|translate}}
-                   <a user-preview="item.lastIteration.author" href class="md-primary">
-                       {{item.lastIteration.author.name}}
-                   </a>
-                {{ item.lastIteration.creationDate | utcDateTimeAgo}}
-            </span>
+                <div layout="row" layout-align="space-between center"
+                     ng-if="item.lastIteration.creationDate && !item.lastIteration.modificationDate && !item.lastIteration.checkInDate && !item.checkOutDate ">
+                    <div>
+                        <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                            {{ item.documentMasterId || item.number }} {{ item.version }}
+                            {{item.lastIteration.iteration}}
+                            <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}
+                            </md-tooltip>
+                        </a>
+                        {{'CREATED_BY'|translate}}
+                        <a user-preview="item.lastIteration.author" href class="md-primary">
+                            {{item.lastIteration.author.name}}
+                        </a>
+                    </div>
+                    <small>{{ item.lastIteration.creationDate | utcDateTimeAgo}}</small>
+                </div>
 
             </div>
         </div>

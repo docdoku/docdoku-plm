@@ -165,11 +165,12 @@
                 },
                 controller: function ($scope, $filter, WorkspaceService, ConfigurationService) {
 
+                    var lastIteration = $filter('lastIteration');
                     $scope.configuration = ConfigurationService.configuration;
 
                     var refresh = function () {
                         $scope.loading = true;
-                        var lastIteration = $filter('lastIteration');
+
                         WorkspaceService.getLatestEventsInWorkspace($scope.workspaceId, 10)
                             .then(function (events) {
                                 $scope.events = events.map(function (item) {

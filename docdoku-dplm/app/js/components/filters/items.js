@@ -29,4 +29,33 @@
             };
         })
 
+        .filter('canCheckOut',function(){
+            return function(selection){
+                return selection.filter(function (file) {
+                    var item = file.item;
+                    return item && !item.checkOutUser && !item.releaseAuthor && !item.obsoleteAuthor;
+                });
+            };
+        })
+
+        .filter('canCheckIn',function(ConfigurationService){
+            return function(selection){
+                return selection.filter(function (file) {
+                    var item = file.item;
+                    return item && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login;
+                });
+            };
+        })
+
+        .filter('canUndoCheckOut',function(ConfigurationService){
+            return function(selection){
+                return selection.filter(function (file) {
+                    var item = file.item;
+                    var lastItemIteration = item ? lastIteration(item) : null;
+                    return lastItemIteration && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login && lastItemIteration.iteration > 1;
+                });
+            };
+        });
+
+
 })();

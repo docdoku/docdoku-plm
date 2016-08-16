@@ -174,27 +174,10 @@
                 });
             };
 
-            var filterCanCheckOut = function (selection) {
-                return selection.filter(function (file) {
-                    var item = file.item;
-                    return item && !item.checkOutUser && !item.releaseAuthor && !item.obsoleteAuthor;
-                });
-            };
-
-            var filterCanCheckIn = function (selection) {
-                return selection.filter(function (file) {
-                    var item = file.item;
-                    return item && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login;
-                });
-            };
-
-            var filterCanUndoCheckOut = function (selection) {
-                return selection.filter(function (file) {
-                    var item = file.item;
-                    var lastItemIteration = item ? lastIteration(item) : null;
-                    return lastItemIteration && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login && lastItemIteration.iteration > 1;
-                });
-            };
+            var filterCanCheckOut = $filter('canCheckOut');
+            var filterCanCheckIn = $filter('canCheckIn');
+            var filterCanUndoCheckOut = $filter('canUndoCheckOut');
+            var filterCanPushFiles = filterCanCheckIn;
 
             var fetchFileItem = function(file){
                 if(file.index){
@@ -223,7 +206,6 @@
                 return selection;
             };
 
-            var filterCanPushFiles = filterCanCheckIn;
 
             $scope.actions = {
 

@@ -209,7 +209,7 @@
             };
 
             this.isModified = function (index, path) {
-                return path && getIndexValue(index, path, IndexKeys.HASH) !== getIndexValue(index, path, IndexKeys.HASH);
+                return path && getIndexValue(index, path, IndexKeys.HASH) !== getIndexValue(index, path, IndexKeys.DIGEST);
             };
 
             var fileShortName = $filter('fileShortName');

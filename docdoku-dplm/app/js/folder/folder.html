@@ -291,7 +291,6 @@
                             </md-menu>
                         </td>
 
-
                         <td md-cell>
                             <div layout="column">
                                 <a href file-preview="file.path"
@@ -324,7 +323,7 @@
                         <td md-cell>{{file.index.revision}}-{{file.index.iteration}}</td>
                         <td md-cell>{{file.stat.size | humanreadablesize}}</td>
 
-                        <td md-cell>{{lastModifiedDate ? (file.index.lastModifiedDate | utcDateTimeAgo) : '-' }}</td>
+                        <td md-cell>{{file.index.lastModifiedDate ? (file.index.lastModifiedDate | utcDateTimeAgo) : '-' }}</td>
                     </tr>
                     </tbody>
                 </table>

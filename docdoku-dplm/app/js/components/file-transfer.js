@@ -185,12 +185,7 @@
                             });
                     });
 
-                    chain = chain.then(function () {
-                        deferred.notify({done: ++done, url: url, item: item, progress: 100});
-                    });
-
                 });
-
 
                 chain.then(function () {
                     RepositoryService.writeIndex(indexPath, index);

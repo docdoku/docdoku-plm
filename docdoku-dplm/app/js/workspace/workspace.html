@@ -84,19 +84,19 @@
                         </md-menu-item>
                         <md-menu-divider></md-menu-divider>
                         <md-menu-item>
-                            <md-button ng-click="actions.checkin(selection)">
+                            <md-button ng-click="actions.checkIn(selected)">
                                 <i class="material-icons">input</i>
                                 {{'CHECKIN' | translate}}
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
-                            <md-button ng-click="actions.checkout(selection)">
+                            <md-button ng-click="actions.checkOut(selected)">
                                 <i class="material-icons">mode_edit</i>
                                 {{'CHECKOUT' | translate}}
                             </md-button>
                         </md-menu-item>
                         <md-menu-item>
-                            <md-button ng-click="actions.undoCheckout(selection)">
+                            <md-button ng-click="actions.undoCheckOut(selected)">
                                 <i class="material-icons">settings_backup_restore</i>
                                 {{'UNDO_CHECKOUT' | translate}}
                             </md-button>

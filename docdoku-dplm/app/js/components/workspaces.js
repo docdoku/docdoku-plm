@@ -20,12 +20,12 @@
                             documentVersion: document.version
                         }).then(function (response) {
                             updatedItem = response.obj;
-                            if (index) {
+                            if (index && path) {
                                 RepositoryService.updateItemInIndex(index, updatedItem, path);
+                                fs.chmodSync(path, fileMode(updatedItem));
                             }
                             return DBService.storeDocuments([updatedItem]);
                         }).then(function () {
-                            fs.chmodSync(path, fileMode(updatedItem));
                             resolve(updatedItem);
                         });
                     }, reject);
@@ -42,12 +42,12 @@
                             documentVersion: document.version
                         }).then(function (response) {
                             updatedItem = response.obj;
-                            if (index) {
+                            if (index && path) {
                                 RepositoryService.updateItemInIndex(index, updatedItem, path);
+                                fs.chmodSync(path, fileMode(updatedItem));
                             }
                             return DBService.storeDocuments([updatedItem]);
                         }).then(function () {
-                            fs.chmodSync(path, fileMode(updatedItem));
                             resolve(updatedItem);
                         });
                     }, reject);
@@ -65,12 +65,12 @@
                             documentVersion: document.version
                         }).then(function (response) {
                             updatedItem = response.obj;
-                            if (index) {
+                            if (index && path) {
                                 RepositoryService.updateItemInIndex(index, updatedItem, path);
+                                fs.chmodSync(path, fileMode(updatedItem));
                             }
                             return DBService.storeDocuments([updatedItem]);
                         }).then(function () {
-                            fs.chmodSync(path, fileMode(updatedItem));
                             resolve(updatedItem);
                         });
                     }, reject);
@@ -88,12 +88,12 @@
                             partVersion: part.version
                         }).then(function (response) {
                             updatedItem = response.obj;
-                            if (index) {
+                            if (index && path) {
                                 RepositoryService.updateItemInIndex(index, updatedItem, path);
+                                fs.chmodSync(path, fileMode(updatedItem));
                             }
                             return DBService.storeParts([updatedItem]);
                         }).then(function () {
-                            fs.chmodSync(path, fileMode(updatedItem));
                             resolve(updatedItem);
                         });
                     }, reject);
@@ -110,12 +110,12 @@
                             partVersion: part.version
                         }).then(function (response) {
                             updatedItem = response.obj;
-                            if (index) {
+                            if (index && path) {
                                 RepositoryService.updateItemInIndex(index, updatedItem, path);
+                                fs.chmodSync(path, fileMode(updatedItem));
                             }
                             return DBService.storeParts([updatedItem]);
                         }).then(function () {
-                            fs.chmodSync(path, fileMode(updatedItem));
                             resolve(updatedItem);
                         });
                     }, reject);
@@ -132,12 +132,12 @@
                             partVersion: part.version
                         }).then(function (response) {
                             updatedItem = response.obj;
-                            if (index) {
+                            if (index && path) {
                                 RepositoryService.updateItemInIndex(index, updatedItem, path);
+                                fs.chmodSync(path, fileMode(updatedItem));
                             }
                             return DBService.storeParts([updatedItem]);
                         }).then(function () {
-                            fs.chmodSync(path, fileMode(updatedItem));
                             resolve(updatedItem);
                         });
                     }, reject);
@@ -351,12 +351,12 @@
 
                 angular.forEach(files, function (file) {
                     chain = chain.then(function () {
-                        if (file.index.documentMasterId) {
+                        if (file.item.documentMasterId) {
                             return checkInDocument(file.item, index, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify({total:total,done:++done});
                             });
-                        } else if (file.index.number) {
+                        } else if (file.item.number) {
                             return checkInPart(file.item, index, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify({total:total,done:++done});
@@ -378,12 +378,12 @@
 
                 angular.forEach(files, function (file) {
                     chain = chain.then(function () {
-                        if (file.index.documentMasterId) {
+                        if (file.item.documentMasterId) {
                             return checkOutDocument(file.item, index, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify({total:total,done:++done});
                             });
-                        } else if (file.index.number) {
+                        } else if (file.item.number) {
                             return checkOutPart(file.item, index, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify({total:total,done:++done});
@@ -405,12 +405,12 @@
 
                 angular.forEach(files, function (file) {
                     chain = chain.then(function () {
-                        if (file.index.documentMasterId) {
+                        if (file.item.documentMasterId) {
                             return undoCheckOutDocument(file.item, index, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify({total:total,done:++done});
                             });
-                        } else if (file.index.number) {
+                        } else if (file.item.number) {
                             return undoCheckOutPart(file.item, index, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify({total:total,done:++done});
@@ -485,6 +485,8 @@
 
                 return deferred.promise;
             };
+
+
 
 
         });

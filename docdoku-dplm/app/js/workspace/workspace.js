@@ -199,6 +199,16 @@
             };
 
 
+            var mapSelection = function(item){
+                return {
+                    item:item
+                };
+            };
+
+            var canCheckOut = $filter('canCheckOut');
+            var canCheckIn = $filter('canCheckIn');
+            var canUndoCheckOut = $filter('canUndoCheckOut');
+
             $scope.actions = {
                 download: function (selection) {
                     $mdDialog.show({
@@ -211,9 +221,9 @@
                         controller: 'DownloadCtrl'
                     });
                 },
-                checkin: function (selection) {
+                checkIn: function (selection) {
 
-                    WorkspaceService.checkInItems(selection)
+                    WorkspaceService.checkInItems(canCheckIn(selection.map(mapSelection)))
                         .then(refreshDisplay, function () {
                             console.log('Something bad happened');
                         }, function () {
@@ -221,9 +231,9 @@
                         });
                 },
 
-                checkout: function (selection) {
-                    // TODO : filter for action availability
-                    WorkspaceService.checkOutItems(selection)
+                checkOut: function (selection) {
+
+                    WorkspaceService.checkOutItems(canCheckOut(selection.map(mapSelection)))
                         .then(refreshDisplay, function () {
                             console.log('Something bad happened');
                         }, function () {
@@ -231,8 +241,8 @@
                         });
                 },
 
-                undoCheckout: function (selection) {
-                    WorkspaceService.undoCheckOutItems(selection)
+                undoCheckOut: function (selection) {
+                    WorkspaceService.undoCheckOutItems(canUndoCheckOut(selection.map(mapSelection)))
                         .then(refreshDisplay, function () {
                             console.log('Something bad happened');
                         }, function () {
