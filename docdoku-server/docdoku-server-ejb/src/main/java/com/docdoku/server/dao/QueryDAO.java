@@ -269,7 +269,7 @@ public class QueryDAO {
         }
         else if("status".equals(field)){
             if (values.size() == 1) {
-                return getPredicate(pr.get(field), operator, PartRevision.RevisionStatus.valueOf(values.get(0)), "");
+                return getPredicate(pr.get(field), operator, values, "status");
             }
         }
         else if("tags".equals(field)){
@@ -399,6 +399,13 @@ public class QueryDAO {
                     throw new IllegalArgumentException();
                 }
                 break;
+            case "status":
+                List<PartRevision.RevisionStatus> temp = new ArrayList<>();
+                for (String string : (List<String>) values) {
+                    temp.add(PartRevision.RevisionStatus.valueOf(string));
+                }
+                o = temp;
+                break;
             default :
                 o=values;
                 break;
@@ -422,16 +429,12 @@ public class QueryDAO {
                 break;
             case "equal" :
                 if("date".equals(type)){
-                    List<Date> dates = (List<Date>) o;
-                    if (dates.size() == 1) {
-                        Date date1 = dates.get(0);
-                        Calendar c = Calendar.getInstance();
-                        c.setTime(date1);
-                        c.add(Calendar.DATE, 1);
-                        Date date2 = c.getTime();
-
-                        return cb.between(fieldExp, date1, date2);
-                    }
+                    Date date1 = (Date) o;
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(date1);
+                    c.add(Calendar.DATE, 1);
+                    Date date2 = c.getTime();
+                    return cb.between(fieldExp, date1, date2);
 
                 } else {
                     return cb.equal(fieldExp,o);

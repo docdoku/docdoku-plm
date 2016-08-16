@@ -65,8 +65,8 @@ casper.test.begin('Part release tests suite', 3, function partReleaseTestsSuite(
      * Wait for the release button to be disabled
      */
     casper.then(function waitForReleaseButtonDisabled() {
-        return this.waitForSelector('.actions .new-release', function checkHidden() {
-            this.test.assertNotVisible('.actions .new-release', 'Release button hidden');
+        return this.waitWhileVisible('.actions .new-release', function checkHidden() {
+            this.test.assert(true, 'Release button hidden');
         }, function fail() {
             this.capture('screenshot/partRelease/waitForReleaseButtonDisabled-error.png');
             this.test.assert(false, 'Release button not hidden');

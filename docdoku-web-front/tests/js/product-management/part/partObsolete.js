@@ -65,8 +65,8 @@ casper.test.begin('Part obsolete tests suite', 3, function partObsoleteTestsSuit
      * Wait for the Mark as obsolete button to be disabled
      */
     casper.then(function waitForMarkAsObsoleteButtonDisabled() {
-        return this.waitForSelector('.actions .mark-as-obsolete', function checkHidden() {
-            this.test.assertNotVisible('.actions .mark-as-obsolete', 'Mark as obsolete button hidden');
+        return this.waitWhileVisible('.actions .mark-as-obsolete', function checkHidden() {
+            this.test.assert(true, 'Mark as obsolete button hidden');
         }, function fail() {
             this.capture('screenshot/partObsolete/waitForMarkAsObsoleteButtonDisabled-error.png');
             this.test.assert(false, 'Mark as obsolete button not hidden');

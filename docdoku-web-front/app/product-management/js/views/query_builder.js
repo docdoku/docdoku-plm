@@ -121,9 +121,20 @@ define([
             if(e.target.value){
                 var query = _.findWhere(this.queries,{id: parseInt(e.target.value,10)});
                 if (query.queryRule) {
-                    if (query.queryRule.rules.length === 0){
+                    if (query.queryRule.rules.length === 0) {
                         this.$where.queryBuilder('reset');
-                    }else{
+                    } else {
+                        if (query.queryRule && query.queryRule.rules) {
+                            var rules = query.queryRule.rules;
+                            for (var i=0; i<rules.length; i++) {
+                                if (rules[i].values.length == 1) {
+                                    rules[i].value = rules[i].values[0];
+                                } else {
+                                    rules[i].value = rules[i].values;
+                                }
+                                rules[i].values = undefined;
+                            }
+                        }
                         this.$where.queryBuilder('setRules', query.queryRule);
                     }
                 }
@@ -538,17 +549,7 @@ define([
 
             var isValid = this.$where.queryBuilder('validate');
             var rules = this.$where.queryBuilder('getRules');
-
-            if (rules.rules) {
-                for (var i=0; i<rules.rules.length; i++) {
-                    if (rules.rules[i].value instanceof Array) {
-                        rules.rules[i].values = rules.rules[i].value;
-                    } else {
-                        rules.rules[i].values = [rules.rules[i].value];
-                    }
-                    rules.rules[i].value = undefined;
-                }
-            }
+            this.sendValuesInArray(rules.rules);
 
             var selectsSize = this.$select[0].selectize.items.length;
 
@@ -612,6 +613,23 @@ define([
                         }).render().$el);
                     }
                 });
+            }
+        },
+
+        sendValuesInArray : function(rules) {
+            if (rules) {
+                for (var i=0; i<rules.length; i++) {
+                    if (rules[i].value === undefined) {
+                        this.sendValuesInArray(rules[i].rules);
+                    } else {
+                        if (rules[i].value instanceof Array) {
+                            rules[i].values = rules[i].value;
+                        } else {
+                            rules[i].values = [rules[i].value];
+                        }
+                        rules[i].value = undefined;
+                    }
+                }
             }
         }
 

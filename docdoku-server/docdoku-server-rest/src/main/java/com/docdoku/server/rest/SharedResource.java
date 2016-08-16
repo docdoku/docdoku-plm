@@ -72,8 +72,11 @@ public class SharedResource {
             documentRevision = documentManager.getDocumentRevision(docKey);
         }
 
+        DocumentRevisionDTO documentRevisionDTO = mapper.map(documentRevision, DocumentRevisionDTO.class);
+        documentRevisionDTO.setRoutePath(documentRevision.getLocation().getRoutePath());
+
         if(documentRevision != null){
-            return Response.ok().entity(mapper.map(documentRevision, DocumentRevisionDTO.class)).build();
+            return Response.ok().entity(documentRevisionDTO).build();
         }else{
             return Response.status(Response.Status.FORBIDDEN).build();
         }

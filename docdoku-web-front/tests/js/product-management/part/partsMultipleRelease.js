@@ -81,8 +81,8 @@ casper.test.begin('Parts multiple release tests suite', 3, function partMultiple
      * Wait for the release button to be disabled
      */
     casper.then(function waitForReleaseButtonDisabled() {
-        return this.waitForSelector('.actions .new-release', function checkHidden() {
-            this.test.assertNotVisible('.actions .new-release', 'Release button hidden');
+        return this.waitWhileVisible('.actions .new-release', function checkHidden() {
+            this.test.assert(true, 'Release button hidden');
         }, function fail() {
             this.capture('screenshot/MultiplePartsRelease/waitForReleaseButtonDisabled-error.png');
             this.test.assert(false, 'Release button not hidden');
@@ -93,8 +93,12 @@ casper.test.begin('Parts multiple release tests suite', 3, function partMultiple
      * Check part has been released
      */
     casper.then(function waitForReleaseIconDisplayed() {
-        this.waitForSelector('#part_table i.fa.fa-check', function partIsReleased() {
-            this.test.assertElementCount('#part_table i.fa.fa-check', 3, 'Parts have been released');
+        return this.waitFor(function check() {
+            return this.evaluate(function () {
+                return $('#part_table i.fa.fa-check').length === 3;
+            });
+        }, function then() {
+            this.test.assert(true, 'Parts have been released');
         }, function fail() {
             this.capture('screenshot/MultiplePartsRelease/waitForReleaseIconDisplayed-error.png');
             this.test.assert(false, 'Parts have not been released');
