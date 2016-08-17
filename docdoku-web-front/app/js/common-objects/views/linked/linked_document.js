@@ -56,7 +56,8 @@ define([
         },
 
         toDocumentDetailView: function () {
-            setTimeout(this.openDocumentDetailView, 500);
+            //setTimeout(this.openDocumentDetailView, 500);
+            this.openDocumentDetailView();
             this.$el.trigger('close-modal-request');
         },
 
