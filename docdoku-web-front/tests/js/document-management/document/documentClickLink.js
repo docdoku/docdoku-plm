@@ -66,7 +66,7 @@ casper.test.begin('Document click link tests suite', 3, function documentClickLi
     });
 
     /**
-     * Wait for linked document display
+     * Wait for linked documents display
      */
     casper.then(function waitForLinkDisplay() {
         return this.waitForSelector('#iteration-links > .linked-items-view > ul.linked-items > li:first-child', function linkDocumentDisplayed() {
@@ -78,28 +78,30 @@ casper.test.begin('Document click link tests suite', 3, function documentClickLi
     });
 
     /**
-     * Wait for linked document modal
+     * Wait for document modal closed
      */
-    casper.then(function waitForLinkedDocumentModal() {
-        return this.waitForSelector('.document-modal', function linkedModalOpened() {
-            this.test.assert(true, 'Linked document modal opened');
+    casper.then(function waitForDocumentModalClosed() {
+        var modalTitle = '.document-modal > .modal-header > h3 > a[href="' + defaultUrl + '/documents/#' + workspace + '/' + documents.document1.number +'/A"]';
+
+        return this.waitWhileVisible(modalTitle, function documentModalClosed() {
+            this.test.assert(true, 'Document modal closed');
         }, function fail() {
-            this.capture('screenshot/documentClickLink/waitForLinkedDocumentModal-error.png');
-            this.test.assert(false, 'Linked document modal can not be found');
+            this.capture('screenshot/documentClickLink/waitForDocumentModalClosed-error.png');
+            this.test.assert(false, 'Document modal is still displayed');
         });
     });
 
     /**
-     * Wait for linked document modal fullfilled
+     * Wait for linked document modal
      */
-    casper.then(function waitForLinkedDocumentModalFullfilled() {
+    casper.then(function waitForLinkedDocumentModal() {
         var modalTitle = '.document-modal > .modal-header > h3 > a[href="' + defaultUrl + '/documents/#' + workspace + '/' + documents.document1.documentLink +'/A"]';
 
-        return this.waitForSelector(modalTitle, function linkedModalFullfilled() {
-            this.test.assert(true, 'Linked document modal fullfilled');
+        return this.waitForSelector(modalTitle, function linkedDocumentModal() {
+            this.test.assert(true, 'Linked document modal opened');
         }, function fail() {
-            this.capture('screenshot/documentClickLink/waitForLinkedDocumentModalFullfilled-error.png');
-            this.test.assert(false, 'Linked document modal is not fullfilled');
+            this.capture('screenshot/documentClickLink/waitForLinkedDocumentModal-error.png');
+            this.test.assert(false, 'Linked document modal can not be found');
         });
     });
 
