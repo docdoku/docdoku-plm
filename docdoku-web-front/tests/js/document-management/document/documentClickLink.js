@@ -1,5 +1,5 @@
 /*global casper,urls,workspace,documents,defaultUrl*/
-casper.test.begin('Document click link tests suite', 2, function documentClickLinkTestsSuite() {
+casper.test.begin('Document click link tests suite', 3, function documentClickLinkTestsSuite() {
     'use strict';
 
     casper.open('');
@@ -68,11 +68,11 @@ casper.test.begin('Document click link tests suite', 2, function documentClickLi
     /**
      * Wait for linked document display
      */
-    casper.then(function waitForLinkedDocumentDisplay() {
+    casper.then(function waitForLinkDisplay() {
         return this.waitForSelector('#iteration-links > .linked-items-view > ul.linked-items > li:first-child', function linkDocumentDisplayed() {
             this.click('#iteration-links > .linked-items-view > ul.linked-items > li:first-child > a.reference');
         }, function fail() {
-            this.capture('screenshot/documentClickLink/waitForLinkedDocumentDisplay-error.png');
+            this.capture('screenshot/documentClickLink/waitForLinkDisplay-error.png');
             this.test.assert(false, 'Linked document can not be found');
         });
     });
@@ -80,14 +80,26 @@ casper.test.begin('Document click link tests suite', 2, function documentClickLi
     /**
      * Wait for linked document modal
      */
-    casper.then(function waitForLinkedDocumentDisplay() {
-        var modalTitle = '.document-modal > .modal-header > h3 > a[href="' + defaultUrl + '/documents/#' + workspace + '/' + documents.document1.documentLink +'/A"]';
-
-        return this.waitForSelector(modalTitle, function linkedModalOpened() {
+    casper.then(function waitForLinkedDocumentModal() {
+        return this.waitForSelector('.document-modal', function linkedModalOpened() {
             this.test.assert(true, 'Linked document modal opened');
         }, function fail() {
             this.capture('screenshot/documentClickLink/waitForLinkedDocumentModal-error.png');
             this.test.assert(false, 'Linked document modal can not be found');
+        });
+    });
+
+    /**
+     * Wait for linked document modal fullfilled
+     */
+    casper.then(function waitForLinkedDocumentModalFullfilled() {
+        var modalTitle = '.document-modal > .modal-header > h3 > a[href="' + defaultUrl + '/documents/#' + workspace + '/' + documents.document1.documentLink +'/A"]';
+
+        return this.waitForSelector(modalTitle, function linkedModalFullfilled() {
+            this.test.assert(true, 'Linked document modal fullfilled');
+        }, function fail() {
+            this.capture('screenshot/documentClickLink/waitForLinkedDocumentModalFullfilled-error.png');
+            this.test.assert(false, 'Linked document modal is not fullfilled');
         });
     });
 
