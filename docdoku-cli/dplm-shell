@@ -6,4 +6,4 @@ while [ -h "$PRG" ] ; do
 done
 dir=`dirname $PRG`
 
-jrunscript -J-Xmx1024M -classpath $dir/target/docdoku-cli-jar-with-dependencies.jar $@
+jjs -J-Xmx1024M -classpath $dir/target/docdoku-cli-jar-with-dependencies.jar $@
