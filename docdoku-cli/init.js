@@ -1,24 +1,30 @@
-var ddk = new JavaImporter(
-    com.docdoku.core.change,
-    com.docdoku.core.common,
-    com.docdoku.core.configuration,
-    com.docdoku.core.document,
-    com.docdoku.core.meta,
-    com.docdoku.core.product,
-    com.docdoku.core.query,
-    com.docdoku.core.security,
-    com.docdoku.core.sharing,
-    com.docdoku.core.util,
-    com.docdoku.core.workflow);
+function readPassword(msg){
+    var c = java.lang.System.console();
+    return new java.lang.String(c.readPassword(msg));
+}
 
+var api = new JavaImporter(
+    com.docdoku.api.models,
+    com.docdoku.api.models.utils,
+    com.docdoku.api.client,
+    com.docdoku.api.client.auth,
+    com.docdoku.api.services
+);
 
-// import com.docdoku.core.common.*
-var Account = Java.type("com.docdoku.core.common.Account");
-var BinaryResource = Java.type("com.docdoku.core.common.BinaryResource");
-var Organization = Java.type("com.docdoku.core.common.Organization");
-var User = Java.type("com.docdoku.core.common.User");
-var UserKey = Java.type("com.docdoku.core.common.UserKey");
-var UserGroup = Java.type("com.docdoku.core.common.UserGroup");
-var UserGroupKey = Java.type("com.docdoku.core.common.UserGroupKey");
-var Version = Java.type("com.docdoku.core.common.Version");
-var Workspace = Java.type("com.docdoku.core.common.Workspace");
+print();
+var url = readLine('What is the server url? [https://docdokuplm.net:443/api] ');
+if(url.isEmpty()){
+    url = 'https://docdokuplm.net:443/api';
+}
+var username = readLine('What is your username? ');
+var password = readPassword('What is your password? ');
+var client = com.docdoku.cli.services.DocdokuClientFactory.createClient(url,username,password);
+var ws = {};
+ws.accounts = new api.AccountsApi(client);
+ws.workspaces = new api.WorkspacesApi(client);
+print();
+print('global objects initialized: api and ws');
+print("server url set to '${url}' using username '${username}'");
+print('sample: var folder = new api.FolderDTO()');
+print('sample: ws.workspaces.getWorkspacesForConnectedUser()');
+print();

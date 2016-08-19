@@ -6,4 +6,6 @@ while [ -h "$PRG" ] ; do
 done
 dir=`dirname $PRG`
 
+cd $dir
+echo "To setup your scripting environment just enter: load('init.js')"
 jjs --language=es6 -scripting -J-Xmx1024M -classpath $dir/target/docdoku-cli-jar-with-dependencies.jar $@
