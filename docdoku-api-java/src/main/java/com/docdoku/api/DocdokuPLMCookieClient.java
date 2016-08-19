@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 
 /**
  * This class helps to create the swagger client.
- * @Author Morgan Guimard
+ * @author Morgan Guimard
  */
 public class DocdokuPLMCookieClient extends DocdokuPLMClient{
 

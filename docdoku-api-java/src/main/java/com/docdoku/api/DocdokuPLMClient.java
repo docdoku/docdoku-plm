@@ -26,7 +26,7 @@ import java.text.SimpleDateFormat;
 
 /**
  * This class helps to create the swagger client.
- * @Author Morgan Guimard
+ * @author Morgan Guimard
  */
 public class DocdokuPLMClient {
 

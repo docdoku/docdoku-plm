@@ -25,7 +25,7 @@ import okhttp3.Credentials;
 
 /**
  * This class helps to create the swagger client.
- * @Author Morgan Guimard
+ * @author Morgan Guimard
  */
 public class DocdokuPLMBasicClient extends DocdokuPLMClient{
 
