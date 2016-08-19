@@ -65,7 +65,7 @@ public class UploadDownloadConsistencyTest {
 
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(document);
         UploadDownloadHelper.uploadAttachedFile(lastIteration, TestConfig.BASIC_CLIENT, file);
-        document = documentApi.getDocumentRevision(TestConfig.WORKSPACE, document.getDocumentMasterId(), document.getVersion(), null);
+        document = documentApi.getDocumentRevision(TestConfig.WORKSPACE, document.getDocumentMasterId(), document.getVersion());
         lastIteration = LastIterationHelper.getLastIteration(document);
         File downloadedFile = UploadDownloadHelper.downloadFile(lastIteration.getAttachedFiles().get(0).getFullName(), TestConfig.BASIC_CLIENT);
 
