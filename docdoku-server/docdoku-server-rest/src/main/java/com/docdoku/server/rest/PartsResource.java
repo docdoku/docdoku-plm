@@ -438,7 +438,7 @@ public class PartsResource {
         String extension = FileIO.getExtension(part.getSubmittedFileName());
 
         File importFile = Files.createTempFile("part-" + name, "-import.tmp" + (extension == null ? "" : "." + extension)).toFile();
-        long length = BinaryResourceUpload.uploadBinary(new BufferedOutputStream(new FileOutputStream(importFile)), part);
+        BinaryResourceUpload.uploadBinary(new BufferedOutputStream(new FileOutputStream(importFile)), part);
         importerService.importIntoParts(workspaceId, importFile, name + "." + extension, revisionNote, autoCheckout, autoCheckin, permissiveUpdate);
 
         importFile.deleteOnExit();
