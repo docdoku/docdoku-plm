@@ -69,9 +69,10 @@ public class ImportDAO {
         }
     }
 
-    public List<Import> findImports(User user) {
-        TypedQuery<Import> query = em.createQuery("SELECT DISTINCT i FROM Import i WHERE i.user = :user", Import.class);
+    public List<Import> findImports(User user, String filename) {
+        TypedQuery<Import> query = em.createQuery("SELECT DISTINCT i FROM Import i WHERE i.user = :user AND i.fileName = :filename", Import.class);
         query.setParameter("user", user);
+        query.setParameter("filename", filename);
         return query.getResultList();
     }
 

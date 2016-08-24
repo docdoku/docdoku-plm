@@ -1193,11 +1193,13 @@ public class ProductManagerBean implements IProductManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<Import> getImports(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public List<Import> getImports(String workspaceId, String filename)
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
         ImportDAO importDAO = new ImportDAO(locale, em);
-        return importDAO.findImports(user);
+        return importDAO.findImports(user, filename);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

@@ -263,14 +263,16 @@ define([
             this.removeSubviews();
             _this.$('.import-status-views').empty();
 
-            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/import';
-            $.get(url).then(function (imports) {
-                _.each(imports, function (pImport) {
-                    var view = new ImportStatusView({model: pImport}).render();
-                    _this.importStatusViews.push(view);
-                    _this.$('.import-status-views').append(view.$el);
+            if (this.file) {
+                var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/imports/' + unorm.nfc(this.file.name);
+                $.get(url).then(function (imports) {
+                    _.each(imports, function (pImport) {
+                        var view = new ImportStatusView({model: pImport}).render();
+                        _this.importStatusViews.push(view);
+                        _this.$('.import-status-views').append(view.$el);
+                    });
                 });
-            });
+            }
         },
 
         printNotifications: function (type, message) {

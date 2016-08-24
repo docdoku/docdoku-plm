@@ -448,17 +448,18 @@ public class PartsResource {
 
     @GET
     @ApiOperation(value = "Get current imports", response = ImportDTO.class, responseContainer = "List")
-    @Path("import")
+    @Path("imports/{filename}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getImports(@PathParam("workspaceId") String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        List<Import> imports = productService.getImports(workspaceId);
+    public List<ImportDTO> getImports(@PathParam("workspaceId") String workspaceId, @PathParam("filename") String filename)
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+
+        List<Import> imports = productService.getImports(workspaceId, filename);
         List<ImportDTO> importDTOs = new ArrayList<>();
         for (Import i : imports) {
             importDTOs.add(mapper.map(i, ImportDTO.class));
         }
-        return Response.ok(new GenericEntity<List<ImportDTO>>((List<ImportDTO>) importDTOs) {
-        }).build();
+        return importDTOs;
     }
 
     @GET
