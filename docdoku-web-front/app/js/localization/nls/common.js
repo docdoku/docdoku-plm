@@ -568,6 +568,7 @@ define({
 		SEARCH_PARTS: 'Search parts',
 		SEARCH: 'Search',
         SEARCHING: 'Searching...',
+        SEARCHING_FOR_PARTS: "Searching for parts, please do not close the window...",
         SECONDS: 's',
         SEE_IN_DOCUMENT_MANAGEMENT:'See the document in the document management module',
         SEE_IN_PRODUCT_MANAGEMENT:'See the part in the product management module',

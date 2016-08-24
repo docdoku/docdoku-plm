@@ -564,6 +564,7 @@ define({
 	SEARCH_PARTS: 'Recherche d\'articles',
 	SEARCH: 'Rechercher',
     SEARCHING: 'Recherche en cours...',
+    SEARCHING_FOR_PARTS: "Recherche des articles en cours, veuillez ne pas fermer la fenêtre...",
     SECONDS: 's',
     SEE_IN_DOCUMENT_MANAGEMENT:'Voir le document dans la gestion des documents',
     SEE_IN_PRODUCT_MANAGEMENT:'Voir l\'article dans la gestion des produits',

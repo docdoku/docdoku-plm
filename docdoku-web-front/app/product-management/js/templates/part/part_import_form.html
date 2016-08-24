@@ -65,7 +65,6 @@
 
     {{#checkout}}
     <p>{{i18n.AUTO_CHECKOUT}}</p>
-    {{/checkout}}
 
     {{#partList.length}}
     <p>{{i18n.CHECKOUT_PART_LIST}}</p><ul>
@@ -74,6 +73,10 @@
     {{/partList}}
     </ul>
     {{/partList.length}}
+    {{#searchingForPartList}}
+    <p>{{i18n.SEARCHING_FOR_PARTS}} <i class="fa fa-spin fa-refresh loader"></i></p>
+    {{/searchingForPartList}}
+    {{/checkout}}
 
     {{#checkin}}
     <p>{{i18n.AUTO_CHECKIN}}</p>

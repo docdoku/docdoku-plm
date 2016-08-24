@@ -127,6 +127,7 @@ define([
                 permissive: this.permissive,
                 revisionNote: this.revisionNote,
                 partList:this.partCheckoutList,
+                searchingForPartList:this.searchingForPartList,
                 i18n: App.config.i18n,
                 options:this.options
             }));
@@ -196,6 +197,7 @@ define([
                         permissiveUpdate: this.permissive
                     };
 
+                    this.searchingForPartList = true;
                     var previewBaseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/importPreview';
                     var previewUrl = previewBaseUrl + '?' + $.param(params);
                     var xhr = new XMLHttpRequest();
@@ -205,6 +207,7 @@ define([
                     xhr.onreadystatechange = function() {
                         if(xhr.readyState === 4 && xhr.status === 200){
                             _this.partCheckoutList = jQuery.parseJSON(xhr.response);
+                            _this.searchingForPartList = false;
                             _this.importForm = false;
                             _this.importPreview = true;
                             _this.rerender();
@@ -214,6 +217,7 @@ define([
                     xhr.send(formData);
                 } else {
                     this.partCheckoutList = null;
+                    this.partCheckoutList = false;
                 }
 
                 this.importForm = false;
@@ -300,6 +304,8 @@ define([
         backToForm: function () {
             this.importPreview = false;
             this.importForm = true;
+            this.partCheckoutList = null;
+            this.searchingForPartList = false;
             this.rerender();
             this.loadNewFile(this.file);
         },
