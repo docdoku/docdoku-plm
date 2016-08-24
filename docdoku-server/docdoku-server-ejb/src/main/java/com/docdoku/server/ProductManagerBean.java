@@ -2440,7 +2440,6 @@ public class ProductManagerBean implements IProductManagerLocal {
         return user;
     }
 
-    @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
     @RolesAllowed({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public boolean canWrite(PartRevisionKey partRKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
