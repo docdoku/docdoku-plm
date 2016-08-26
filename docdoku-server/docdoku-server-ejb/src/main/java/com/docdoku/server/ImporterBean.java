@@ -82,13 +82,11 @@ public class ImporterBean implements IImporterManagerLocal {
 
         ImportResult result;
 
-        User user = userManager.whoAmI(workspaceId);
-        Locale locale = new Locale(user.getLanguage());
-
         if (selectedImporter != null) {
             result = selectedImporter.importFile(workspaceId, file, revisionNote, autoCheckout, autoCheckin, permissiveUpdate);
         } else {
-            result = getNoImporterAvailableError(file, originalFileName,locale);
+            User user = userManager.whoAmI(workspaceId);
+            result = getNoImporterAvailableError(file, originalFileName,new Locale(user.getLanguage()));
         }
 
         return new AsyncResult<>(result);
