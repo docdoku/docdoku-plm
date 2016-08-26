@@ -135,17 +135,30 @@ define([
             //this.delegateEvents();
             this.bindDomElements();
 
-            if(this.autocheckout) { this.checkboxAutoCheckout.prop('checked', true); }
+            if (!this.searchingForPartList) {
+                this.$('.import-button').removeAttr('disabled');
+            }
+
+            if(this.autocheckout) {
+                this.checkboxAutoCheckout.prop('checked', true);
+            }
+
             this.$('#revision_text_part').val(this.revisionNote);
+
             if(this.autocheckout){
                 this.checkboxAutoCheckout.prop('checked', true);
                 this.checkboxAutoCheckin.prop('disabled', false);
-            }
-            else {
+            } else {
                 this.checkboxAutoCheckin.prop('disabled', true);
             }
-            if(this.autocheckin){ this.checkboxAutoCheckin.prop('checked', true); }
-            if(this.permissive){ this.$('#permissive_update_part').prop('checked',true); }
+
+            if(this.autocheckin){
+                this.checkboxAutoCheckin.prop('checked', true);
+            }
+
+            if(this.permissive){
+                this.$('#permissive_update_part').prop('checked',true);
+            }
         },
 
         addOneFile: function (attachedFile) {
