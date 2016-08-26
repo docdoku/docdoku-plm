@@ -94,8 +94,7 @@ define([
                 freeze:this.freeze,
                 permissive: this.permissive,
                 revisionNote: this.revisionNote,
-                i18n: App.config.i18n,
-                options: this.options
+                i18n: App.config.i18n
             }));
             this.bindDomElements();
             this.fetchImports();
@@ -202,7 +201,7 @@ define([
             _this.$('.import-status-views').empty();
 
             if (this.file) {
-                var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/imports' + unorm.nfc(this.file.name);
+                var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/imports/' + unorm.nfc(this.file.name);
                 $.get(url).then(function (imports) {
                     _.each(imports, function (pImport) {
                         var view = new ImportStatusView({model: pImport}).render();
