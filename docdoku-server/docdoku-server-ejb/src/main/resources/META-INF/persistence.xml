@@ -50,6 +50,7 @@
     <class>com.docdoku.core.meta.ListOfValuesAttributeTemplate</class>
     <class>com.docdoku.core.meta.InstanceNumberAttribute</class>
     <class>com.docdoku.core.meta.InstanceTextAttribute</class>
+    <class>com.docdoku.core.meta.InstanceLongTextAttribute</class>
     <class>com.docdoku.core.meta.InstanceURLAttribute</class>
     <class>com.docdoku.core.meta.ListOfValues</class>
     <class>com.docdoku.core.meta.Tag</class>

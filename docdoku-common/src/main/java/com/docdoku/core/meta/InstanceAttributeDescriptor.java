@@ -35,7 +35,7 @@ public class InstanceAttributeDescriptor implements Serializable {
     private List<NameValuePair> lovItems;
 
     public enum Type {
-        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV
+        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV, LONG_TEXT
     }
 
     public InstanceAttributeDescriptor() {
@@ -63,6 +63,9 @@ public class InstanceAttributeDescriptor implements Serializable {
         else if(o instanceof InstanceListOfValuesAttribute){
             type = Type.LOV;
             lovItems = ((InstanceListOfValuesAttribute) o).getItems();
+        }
+        else if(o instanceof InstanceLongTextAttribute){
+            type = Type.LONG_TEXT;
         }
     }
 
@@ -107,6 +110,9 @@ public class InstanceAttributeDescriptor implements Serializable {
                 break;
             case BOOLEAN:
                 typeAsString = "BOOLEAN";
+                break;
+            case LONG_TEXT:
+                typeAsString = "LONG_TEXT";
                 break;
             default :
                 typeAsString = "TEXT";

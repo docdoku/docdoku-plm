@@ -50,7 +50,7 @@ public abstract class InstanceAttributeTemplate implements Serializable, Cloneab
 
     public enum AttributeType {
 
-        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV
+        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV, LONG_TEXT
     }
 
 

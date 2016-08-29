@@ -85,6 +85,9 @@ public class InstanceAttributeFactory {
                 }
                 ((InstanceListOfValuesAttribute) attr).setItems(items);
                 break;
+            case LONG_TEXT:
+                attr = new InstanceLongTextAttribute();
+                break;
             default:
                 throw new IllegalArgumentException("Instance attribute not supported");
         }
