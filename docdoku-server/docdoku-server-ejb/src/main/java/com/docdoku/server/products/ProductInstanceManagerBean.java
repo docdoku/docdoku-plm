@@ -715,9 +715,21 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         // Check the access to the product instance
         checkProductInstanceWriteAccess(workspaceId, prodInstM, user);
 
-        PathDataMasterDAO pathDataMasterDAO = new PathDataMasterDAO(locale, em);
         ProductInstanceIteration prodInstI = prodInstM.getLastIteration();
-        PathDataMaster pathDataMaster = pathDataMasterDAO.findByPathIdAndProductInstanceIteration(pathDataId, prodInstI);
+        //PathDataMaster pathDataMaster = pathDataMasterDAO.findByPathIdAndProductInstanceIteration(pathDataId, prodInstI);
+        //strangely retrieving pathDataMaster from a query as the side effect of not synchronized its pathDataIterations to the L2 cache
+        List<PathDataMaster> pathDataMasterList = prodInstI.getPathDataMasterList();
+        PathDataMaster pathDataMaster = null;
+        if(pathDataMasterList!=null){
+            for(PathDataMaster pd:pathDataMasterList){
+                if(pd.getId()==pathDataId){
+                    pathDataMaster=pd;
+                    break;
+                }
+            }
+        }
+        if(pathDataMaster==null)
+            throw new PathDataMasterNotFoundException(locale, pathDataId);
 
         BinaryResourceDAO binDAO = new BinaryResourceDAO(locale, em);
         Set<BinaryResource> sourceFiles = pathDataMaster.getLastIteration().getAttachedFiles();
@@ -748,9 +760,6 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         pathDataIteration.setIterationNote(note);
         createDocumentLink(locale, pathDataIteration, links, documentLinkComments);
         pathDataIteration.setAttachedFiles(targetFiles);
-        PathDataIterationDAO pathDataIterationDAO = new PathDataIterationDAO(em);
-        pathDataIterationDAO.createPathDataIteration(pathDataIteration);
-
         return pathDataMaster;
     }
 
