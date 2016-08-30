@@ -29,9 +29,20 @@ import java.util.Locale;
  */
 public class PathDataMasterNotFoundException extends EntityNotFoundException {
     private final Integer mPathDataMasterId;
+    private final String mPathDataMasterPath;
 
     public PathDataMasterNotFoundException(String pMessage) {
         super(pMessage);
+        mPathDataMasterId=null;
+        mPathDataMasterPath=null;
+    }
+    public PathDataMasterNotFoundException(Locale pLocale, String pPathDataMasterPath) {
+        this(pLocale, pPathDataMasterPath, null);
+    }
+
+    public PathDataMasterNotFoundException(Locale pLocale, String pPathDataMasterPath, Throwable pCause) {
+        super(pLocale, pCause);
+        mPathDataMasterPath=pPathDataMasterPath;
         mPathDataMasterId=null;
     }
 
@@ -42,11 +53,15 @@ public class PathDataMasterNotFoundException extends EntityNotFoundException {
     public PathDataMasterNotFoundException(Locale pLocale, Integer pPathDataMasterId, Throwable pCause) {
         super(pLocale, pCause);
         mPathDataMasterId=pPathDataMasterId;
+        mPathDataMasterPath=null;
     }
 
     @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
-        return MessageFormat.format(message,mPathDataMasterId);
+        if(mPathDataMasterPath!=null)
+            return MessageFormat.format(message,mPathDataMasterPath);
+        else
+            return MessageFormat.format(message,mPathDataMasterId);
     }
 }

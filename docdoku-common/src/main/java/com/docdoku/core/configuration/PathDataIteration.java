@@ -98,9 +98,9 @@ public class PathDataIteration implements Serializable, FileHolder {
     }
 
     public PathDataIteration(int iteration, PathDataMaster pathDataMaster,Date date) {
-        this.iteration = iteration;
-        this.pathDataMaster = pathDataMaster;
-        this.dateIteration = date;
+        setIteration(iteration);
+        setPathDataMaster(pathDataMaster);
+        setDateIteration(date);
     }
 
     @XmlTransient

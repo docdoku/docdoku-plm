@@ -23,6 +23,7 @@ package com.docdoku.server.dao;
 import com.docdoku.core.configuration.PathDataMaster;
 import com.docdoku.core.configuration.ProductInstanceIteration;
 import com.docdoku.core.configuration.ProductInstanceMaster;
+import com.docdoku.core.exceptions.PathDataMasterNotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -56,25 +57,25 @@ public class PathDataMasterDAO {
     }
 
 
-    public PathDataMaster findByPathAndProductInstanceIteration(String pathAsString, ProductInstanceIteration productInstanceIteration) {
+    public PathDataMaster findByPathAndProductInstanceIteration(String pathAsString, ProductInstanceIteration productInstanceIteration) throws PathDataMasterNotFoundException {
         try {
-            return em.createNamedQuery("pathDataMaster.findByPathAndProductInstanceIteration", PathDataMaster.class)
+            return em.createNamedQuery("PathDataMaster.findByPathAndProductInstanceIteration", PathDataMaster.class)
                     .setParameter("path", pathAsString)
                     .setParameter("productInstanceIteration", productInstanceIteration)
                     .getSingleResult();
         } catch (NoResultException e) {
-            return null;
+            throw new PathDataMasterNotFoundException(mLocale,pathAsString);
         }
     }
 
-    public PathDataMaster findByPathIdAndProductInstanceIteration(int pathId, ProductInstanceIteration productInstanceIteration) {
+    public PathDataMaster findByPathIdAndProductInstanceIteration(int pathId, ProductInstanceIteration productInstanceIteration) throws PathDataMasterNotFoundException {
         try {
-            return em.createNamedQuery("pathDataMaster.findByPathIdAndProductInstanceIteration", PathDataMaster.class)
+            return em.createNamedQuery("PathDataMaster.findByPathIdAndProductInstanceIteration", PathDataMaster.class)
                     .setParameter("pathId", pathId)
                     .setParameter("productInstanceIteration", productInstanceIteration)
                     .getSingleResult();
         } catch (NoResultException e) {
-            return null;
+            throw new PathDataMasterNotFoundException(mLocale,pathId);
         }
     }
 
