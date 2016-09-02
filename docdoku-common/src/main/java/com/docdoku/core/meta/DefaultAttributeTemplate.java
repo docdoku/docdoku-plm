@@ -72,8 +72,11 @@ public class DefaultAttributeTemplate extends InstanceAttributeTemplate {
                 case DATE:
                     attr = new InstanceDateAttribute();
                     break;
-                case URL :
+                case URL:
                     attr = new InstanceURLAttribute();
+                    break;
+                case LONG_TEXT:
+                    attr = new InstanceLongTextAttribute();
                     break;
                 default:
                     return null;

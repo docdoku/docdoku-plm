@@ -32,7 +32,7 @@ import java.io.Serializable;
  * @since V1.0
  */
 @Table(name = "INSTANCEATTRIBUTE")
-@XmlSeeAlso({InstanceTextAttribute.class, InstanceNumberAttribute.class, InstanceDateAttribute.class, InstanceBooleanAttribute.class, InstanceURLAttribute.class, InstanceListOfValuesAttribute.class})
+@XmlSeeAlso({InstanceTextAttribute.class, InstanceLongTextAttribute.class, InstanceNumberAttribute.class, InstanceDateAttribute.class, InstanceBooleanAttribute.class, InstanceURLAttribute.class, InstanceListOfValuesAttribute.class})
 @Inheritance()
 @Entity
 public abstract class InstanceAttribute implements Serializable, Cloneable {

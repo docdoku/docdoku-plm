@@ -1,0 +1,12 @@
+{{> attributeListItem}}
+<div class="controls shift-margin">
+    {{#availability.value}}
+    <textarea class="input-xlarge value" placeholder="{{i18n.VALUE}}"
+              {{#model.mandatory}}required{{/model.mandatory}}>{{model.value}}</textarea>
+    {{#availability.displayRequired}}
+        {{#model.mandatory}}*{{/model.mandatory}}
+    {{/availability.displayRequired}}
+    {{/availability.value}}
+    {{^availability.value}}
+    <textarea class="input-xlarge value" disabled="disabled">{{model.value}}</textarea>{{/availability.value}}
+</div>
