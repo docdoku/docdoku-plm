@@ -63,7 +63,7 @@ define([
         typeChanged: function (evt) {
             var type = evt.target.value;
 
-            if (type !== 'TEXT' && type !== 'NUMBER' && type !== 'BOOLEAN' && type !== 'DATE' && type !== 'URL') {
+            if (type !== 'TEXT' && type !== 'LONG_TEXT' && type !== 'NUMBER' && type !== 'BOOLEAN' && type !== 'DATE' && type !== 'URL') {
                 this.model.set({
                     type: 'LOV',
                     lovName: type,

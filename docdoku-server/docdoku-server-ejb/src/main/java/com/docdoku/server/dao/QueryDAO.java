@@ -40,7 +40,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author morgan on 09/04/15.
+ * @author Morgan Guimard on 09/04/15.
  */
 public class QueryDAO {
 
@@ -48,7 +48,7 @@ public class QueryDAO {
     private Locale mLocale;
 
     private CriteriaBuilder cb;
-    private CriteriaQuery cq;
+    private CriteriaQuery<PartRevision> cq;
     private Root<PartMaster> pm;
     private Root<PartRevision> pr;
     private Root<PartIteration> pi;
@@ -61,7 +61,7 @@ public class QueryDAO {
         mLocale = pLocale;
         cb = em.getCriteriaBuilder();
 
-        cq = cb.createQuery();
+        cq = cb.createQuery(PartRevision.class);
         pm = cq.from(PartMaster.class);
         pr = cq.from(PartRevision.class);
         pi = cq.from(PartIteration.class);
@@ -235,6 +235,10 @@ public class QueryDAO {
             return getInstanceTextAttributePredicate(field.substring(10), operator, values, type);
         }
 
+        if(field.startsWith("attr-LONG_TEXT.")){
+            return getInstanceLongTextAttributePredicate(field.substring(15), operator, values, type);
+        }
+
         if(field.startsWith("attr-DATE.")){
             return getInstanceDateAttributePredicate(field.substring(10), operator, values, type);
         }
@@ -351,6 +355,13 @@ public class QueryDAO {
         return cb.and(cb.equal(ida.get("name"),field),valuesPredicate,memberPredicate);
     }
 
+    private Predicate getInstanceLongTextAttributePredicate(String field, String operator, List<String> values, String type) {
+        Root<InstanceLongTextAttribute> ita = cq.from(InstanceLongTextAttribute.class);
+        Predicate valuesPredicate = getPredicate(ita.get("longTextValue"), operator, values, "string");
+        Predicate memberPredicate = ita.in(pi.get("instanceAttributes"));
+        return cb.and(cb.equal(ita.get("name"),field),valuesPredicate,memberPredicate);
+    }
+
     private Predicate getInstanceTextAttributePredicate(String field, String operator, List<String> values, String type) {
         Root<InstanceTextAttribute> ita = cq.from(InstanceTextAttribute.class);
         Predicate valuesPredicate = getPredicate(ita.get("textValue"), operator, values, "string");
@@ -361,13 +372,13 @@ public class QueryDAO {
 
     // Rule parsing
 
-    private Predicate getPredicate(Expression fieldExp, String operator, Object values, String type){
+    private Predicate getPredicate(Expression fieldExp, String operator, List<String> values, String type){
 
-        Object o;
+        List<?> operands;
 
         switch(type){
             case "string" :
-                o=values;
+                operands=values;
                 break;
             case "date":
                 try {
@@ -376,60 +387,51 @@ public class QueryDAO {
                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
                     df.setTimeZone(TimeZone.getTimeZone("UTC"));
                     List<Date> temp = new ArrayList<Date>();
-                    for (String string : (List<String>) values) {
+                    for (String string : values) {
                         temp.add(df.parse(string));
                     }
-                    o = temp;
+                    operands = temp;
                 } catch (ParseException e) {
                     throw new IllegalArgumentException();
                 }
                 break;
             case "double":
                 try {
-                    if (values!= null){
-                        List<Double> temp = new ArrayList<Double>();
-                        for (String string : (List<String>) values) {
-                            temp.add(Double.parseDouble(string));
-                        }
-                        o = temp;
-                    }else{
-                        o = "";
+                    List<Double> temp = new ArrayList<Double>();
+                    for (String string : values) {
+                        temp.add(Double.parseDouble(string));
                     }
+                    operands = temp;
                 }catch(NumberFormatException e){
                     throw new IllegalArgumentException();
                 }
                 break;
             case "status":
                 List<PartRevision.RevisionStatus> temp = new ArrayList<>();
-                for (String string : (List<String>) values) {
+                for (String string : values) {
                     temp.add(PartRevision.RevisionStatus.valueOf(string));
                 }
-                o = temp;
+                operands = temp;
                 break;
             default :
-                o=values;
+                operands=values;
                 break;
-        }
-
-        List<Object> objects = (List<Object>) o;
-        if (objects.size() == 1) {
-            o = objects.get(0);
         }
 
         switch (operator){
             case "between" :
-                if (objects.size() == 2) {
+                if (operands.size() == 2) {
                     if("date".equals(type)){
-                        return cb.between(fieldExp, (Date)objects.get(0), (Date)objects.get(1));
+                        return cb.between(fieldExp, (Date)operands.get(0), (Date)operands.get(1));
 
                     } else if("double".equals(type)){
-                        return cb.between(fieldExp, (Double) objects.get(0), (Double) objects.get(1));
+                        return cb.between(fieldExp, (Double) operands.get(0), (Double) operands.get(1));
                     }
                 }
                 break;
             case "equal" :
                 if("date".equals(type)){
-                    Date date1 = (Date) o;
+                    Date date1 = (Date) operands.get(0);
                     Calendar c = Calendar.getInstance();
                     c.setTime(date1);
                     c.add(Calendar.DATE, 1);
@@ -437,45 +439,45 @@ public class QueryDAO {
                     return cb.between(fieldExp, date1, date2);
 
                 } else {
-                    return cb.equal(fieldExp,o);
+                    return cb.equal(fieldExp,operands.get(0));
                 }
-            case "not_equal" : return cb.equal(fieldExp, o).not();
+            case "not_equal" : return cb.equal(fieldExp, operands.get(0)).not();
 
-            case "contains" : return cb.like(fieldExp, "%" + o + "%");
-            case "not_contains" : return cb.like(fieldExp, "%"+o+"%").not();
+            case "contains" : return cb.like(fieldExp, "%" + operands.get(0) + "%");
+            case "not_contains" : return cb.like(fieldExp, "%"+operands.get(0)+"%").not();
 
-            case "begins_with" : return cb.like(fieldExp, o+"%");
-            case "not_begins_with" : return  cb.like(fieldExp, o+"%").not();
+            case "begins_with" : return cb.like(fieldExp, operands.get(0)+"%");
+            case "not_begins_with" : return  cb.like(fieldExp, operands.get(0)+"%").not();
 
-            case "ends_with" : return cb.like(fieldExp, "%"+o);
-            case "not_ends_with" : return cb.like(fieldExp, "%"+o).not();
+            case "ends_with" : return cb.like(fieldExp, "%"+operands.get(0));
+            case "not_ends_with" : return cb.like(fieldExp, "%"+operands.get(0)).not();
 
             case "less":
                 if("date".equals(type)){
-                    return cb.lessThan(fieldExp,(Date)o);
+                    return cb.lessThan(fieldExp,(Date)operands.get(0));
                 } else if("double".equals(type)){
-                    return cb.lessThan(fieldExp,(Double)o);
+                    return cb.lessThan(fieldExp,(Double)operands.get(0));
                 }
                 break;
             case "less_or_equal":
                 if("date".equals(type)){
-                    return cb.lessThanOrEqualTo(fieldExp, (Date) o);
+                    return cb.lessThanOrEqualTo(fieldExp, (Date) operands.get(0));
                 } else if("double".equals(type)){
-                    return cb.lessThanOrEqualTo(fieldExp, (Double) o);
+                    return cb.lessThanOrEqualTo(fieldExp, (Double) operands.get(0));
                 }
                 break;
             case "greater":
                 if("date".equals(type)){
-                    return cb.greaterThan(fieldExp, (Date) o);
+                    return cb.greaterThan(fieldExp, (Date) operands.get(0));
                 } else if("double".equals(type)){
-                    return cb.greaterThan(fieldExp, (Double) o);
+                    return cb.greaterThan(fieldExp, (Double) operands.get(0));
                 }
                 break;
             case "greater_or_equal":
                 if("date".equals(type)){
-                    return cb.greaterThanOrEqualTo(fieldExp, (Date) o);
+                    return cb.greaterThanOrEqualTo(fieldExp, (Date) operands.get(0));
                 } else if("double".equals(type)){
-                    return cb.greaterThanOrEqualTo(fieldExp, (Double) o);
+                    return cb.greaterThanOrEqualTo(fieldExp, (Double) operands.get(0));
                 }
                 break;
             default:

@@ -229,6 +229,7 @@ define(function () {
         DATE: 'date',
         NUMBER: 'double',
         TEXT: 'string',
+        LONG_TEXT: 'string',
         URL: 'string',
         LOV: 'lov'
     };
@@ -239,6 +240,7 @@ define(function () {
         {id: 'pi', name: App.config.i18n.QUERY_GROUP_PRODUCT},
         {id: 'author', name: App.config.i18n.QUERY_GROUP_AUTHOR},
         {id: 'attr-TEXT', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_STRING},
+        {id: 'attr-LONG_TEXT', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_LONG_STRING},
         {id: 'attr-URL', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_URL},
         {id: 'attr-LOV', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_LOV},
         {id: 'attr-NUMBER', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_NUMBER},

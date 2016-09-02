@@ -48,6 +48,7 @@ define(['backbone'], function (Backbone) {
         DATE: 'DATE',
         BOOLEAN: 'BOOLEAN',
         TEXT: 'TEXT',
+        LONG_TEXT: 'LONG_TEXT',
         URL: 'URL',
         LOV: 'LOV'
     };
