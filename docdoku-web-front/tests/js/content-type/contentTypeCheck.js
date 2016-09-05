@@ -13,7 +13,7 @@ casper.test.begin('Content type check tests suite', 6, function contentTypeCheck
         urls.productStructure
     ];
 
-    var expectedContentType = 'text/html;charset=UTF-8';
+    var expectedContentType = 'text/html;charset=utf-8';
 
     urlsToTest.map(function(url){
         casper.thenOpen(url, function homePageLoaded() {
@@ -23,7 +23,7 @@ casper.test.begin('Content type check tests suite', 6, function contentTypeCheck
                     contentType = header.value;
                 }
             });
-            this.test.assertEqual(contentType.replace(/ /g, ''),expectedContentType, 'Content Type should be "text/html;charset=UTF-8"');
+            this.test.assertEqual(contentType.replace(/ /g, '').toLowerCase(), expectedContentType, 'Content Type should be "text/html;charset=UTF-8"');
         });
     });
 
