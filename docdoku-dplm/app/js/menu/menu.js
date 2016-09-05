@@ -65,7 +65,7 @@ angular.module('dplm.menu', [])
 
         $scope.searchRepositories = function () {
             $mdDialog.show({
-                templateUrl: 'js/repository/repository-search.html',
+                templateUrl: 'js/components/repository/repository-search.html',
                 fullscreen: true,
                 controller: 'RepositorySearchCtrl'
             });
