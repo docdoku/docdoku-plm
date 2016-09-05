@@ -117,7 +117,7 @@
 
             var removeFromIndex = function (index, path) {
                 Object.keys(IndexKeys)
-                    .map(function(key){return path + '.' + IndexKeys[key]})
+                    .map(function(key){return path + '.' + IndexKeys[key];})
                     .forEach(function(entry){
                         delete index[entry];
                     });
