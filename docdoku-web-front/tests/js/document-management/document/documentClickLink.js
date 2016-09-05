@@ -81,24 +81,23 @@ casper.test.begin('Document click link tests suite', 3, function documentClickLi
      * Wait for document modal closed
      */
     casper.then(function waitForDocumentModalClosed() {
-        var modalTitle = '.document-modal > .modal-header > h3 > a[href="' + defaultUrl + '/documents/#' + workspace + '/' + documents.document1.number +'/A"]';
+        var modalTitle = '.document-modal > .modal-header > h3 > a[href="' + contextPath + '/documents/#' + workspace + '/' + documents.document1.number +'/A"]';
 
         return this.waitWhileVisible(modalTitle, function documentModalClosed() {
             this.test.assert(true, 'Document modal closed');
+            this.capture('screenshot/documentClickLink/waitForLinkedDocumentModal-shouldbeclosed.png');
         }, function fail() {
             this.capture('screenshot/documentClickLink/waitForDocumentModalClosed-error.png');
             this.test.assert(false, 'Document modal is still displayed');
         });
     });
-
     /**
      * Wait for linked document modal
      */
     casper.then(function waitForLinkedDocumentModal() {
-        var modalTitle = '.document-modal > .modal-header > h3 > a[href="' + defaultUrl + '/documents/#' + workspace + '/' + documents.document1.documentLink +'/A"]';
-
+        var modalTitle = '.document-modal > .modal-header > h3 > a';
         return this.waitForSelector(modalTitle, function linkedDocumentModal() {
-            this.test.assert(true, 'Linked document modal opened');
+            this.test.assertSelectorHasText('.document-modal > .modal-header > h3 > a', documents.document1.documentLink, 'Linked document modal opened');
         }, function fail() {
             this.capture('screenshot/documentClickLink/waitForLinkedDocumentModal-error.png');
             this.test.assert(false, 'Linked document modal can not be found');
