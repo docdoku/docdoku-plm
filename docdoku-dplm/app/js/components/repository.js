@@ -71,10 +71,11 @@
             this.getFileIndex = function (index, path) {
 
                 var digest = getIndexValue(index, path, IndexKeys.DIGEST);
+                var workspaceId = getIndexValue(index, path, IndexKeys.WORKSPACE_ID);
 
-                return digest ? {
+                return digest && workspaceId ? {
                     digest: digest,
-                    workspaceId: getIndexValue(index, path, IndexKeys.WORKSPACE_ID),
+                    workspaceId: workspaceId,
                     documentMasterId: getIndexValue(index, path, IndexKeys.DOCUMENT_MASTER_ID),
                     number: getIndexValue(index, path, IndexKeys.PART_NUMBER),
                     revision: getIndexValue(index, path, IndexKeys.REVISION),
@@ -82,6 +83,8 @@
                     lastModifiedDate: getIndexValue(index, path, IndexKeys.LAST_MODIFIED_DATE),
                     hash: getHashFromFile(path)
                 } : null;
+
+
             };
 
             var writeIndex = function (indexPath, index) {
