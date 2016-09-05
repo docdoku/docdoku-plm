@@ -15,6 +15,19 @@
     <link rel="stylesheet" type="text/css" href="css/login.css"/>
     <!-- endbuild -->
 
+    <!-- build:js vendor.js -->
+    <script src="bower_components/threejs/build/three.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/hammerjs/hammer.js"></script>
+    <script src="bower_components/angular-aria/angular-aria.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-material/angular-material.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-translate/angular-translate.js"></script>
+    <script src="bower_components/angular-uuid4/angular-uuid4.js"></script>
+    <script src="bower_components/angular-material-data-table/dist/md-data-table.js"></script>
+    <!-- endbuild -->
+
 </head>
 <body ng-class="{'app-background': !user.login}">
 
@@ -30,20 +43,9 @@
         </section>
     </div>
 
+
     <!-- build:js app.js -->
-    <script src="bower_components/threejs/build/three.js"></script>
-    <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/hammerjs/hammer.js"></script>
-    <script src="bower_components/angular-aria/angular-aria.js"></script>
-    <script src="bower_components/angular-animate/angular-animate.js"></script>
-    <script src="bower_components/angular-material/angular-material.js"></script>
-    <script src="bower_components/angular-route/angular-route.js"></script>
-    <script src="bower_components/angular-translate/angular-translate.js"></script>
-    <script src="bower_components/angular-uuid4/angular-uuid4.js"></script>
-    <script src="bower_components/angular-material-data-table/dist/md-data-table.js"></script>
-
-    <script src="js/modules.js"></script>
-
+    <script src="modules.js"></script>
     <script src="js/components/filters/dates.js"></script>
     <script src="js/components/filters/files.js"></script>
     <script src="js/components/filters/arrays.js"></script>
@@ -88,10 +90,6 @@
     <script src="js/menu/menu.js"></script>
 
     <script src="js/app.js"></script>
-    <!-- endbuild -->
-
-    <!-- build:js  -->
-    <script src="js/dev.js"></script>
     <!-- endbuild -->
 
 </body>

@@ -70,38 +70,36 @@ module.exports = function(grunt){
                     flatten: true,
                     cwd: 'app/',
                     src: [
-                        'bower_components/threejs/build/three.js',
-                        'bower_components/angular-aria/angular-aria.js',
-                        'bower_components/hammerjs/hammer.js',
-                        'bower_components/angular-animate/angular-animate.js',
-                        'bower_components/angular-material/angular-material.js',
-                        'bower_components/angular-route/angular-route.js',
-                        'bower_components/angular-translate/angular-translate.js',
-                        'bower_components/angular-uuid4/angular-uuid4.js',
-                        'bower_components/angular-material-data-table/dist/md-data-table.js'
+                        'bower_components/material-design-icons/iconfont/MaterialIcons*'
                     ],
-                    dest: 'tmp/libs/'
-                },{
-                    expand: true,
-                    flatten: true,
-                    cwd: 'app/',
-                    src: [
-                        'bower_components/material-design-icons/iconfont/**',
-                    ],
-                    dest: 'bower_components/material-design-icons/iconfont'
+                    dest: 'dist'
                 }]
             }
         },
 
         concat: {
-            js: {
-                src: ['app/bower_components/angular/angular.js','tmp/libs/*.js', 'app/js/**/*.js', 'tmp/templates.js'],
+            vendor:{
+                src:[
+                    'app/bower_components/angular/angular.js',
+                    'app/bower_components/threejs/build/three.js',
+                    'app/bower_components/angular-aria/angular-aria.js',
+                    'app/bower_components/hammerjs/hammer.js',
+                    'app/bower_components/angular-animate/angular-animate.js',
+                    'app/bower_components/angular-material/angular-material.js',
+                    'app/bower_components/angular-route/angular-route.js',
+                    'app/bower_components/angular-translate/angular-translate.js',
+                    'app/bower_components/angular-uuid4/angular-uuid4.js',
+                    'app/bower_components/angular-material-data-table/dist/md-data-table.js'
+                ],
+                dest:'dist/vendor.js'
+            },
+            app: {
+                src: ['app/modules.js', 'app/js/**/*.js', 'tmp/templates.js'],
                 dest: 'dist/app.js'
             },
             css:{
                 src:[
                     'app/bower_components/angular-material/angular-material.css',
-                    'app/bower_components/fontawesome/css/font-awesome.css',
                     'app/bower_components/material-design-icons/iconfont/material-icons.css',
                     'app/css/*.css'
                 ],
@@ -128,17 +126,6 @@ module.exports = function(grunt){
             },
             options: {
                 singleQuotes: true
-            }
-        },
-
-        replace: {
-            dist: {
-                src: ['dist/app.css'],
-                dest: 'dist/app.css',
-                replacements: [{
-                    from: '../fonts',
-                    to: 'fonts'
-                }]
             }
         },
 
@@ -207,11 +194,11 @@ module.exports = function(grunt){
         'clean:dist',
         'copy:dist',
         'html2js:dist',
-        'concat:js',
+        'concat:vendor',
+        'concat:app',
         'concat:css',
         'ngAnnotate:dist',
         'uglify:dist',
-        'replace:dist',
         'cssmin:dist',
         'usemin',
         'nwjs',
