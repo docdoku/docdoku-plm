@@ -214,7 +214,6 @@
                         <th md-column><span>{{'ITEM_ID'|translate}}</span></th>
                         <th md-column><span>{{'VERSION'|translate}}</span></th>
                         <th md-column><span>{{'SIZE'|translate}}</span></th>
-                        <th md-column><span>{{'LAST_MODIFIED'|translate}}</span></th>
                     </tr>
                     </thead>
                     <tbody md-body>
@@ -304,6 +303,14 @@
                                     <md-tooltip ng-if="file.item.number">{{(file.item|lastIteration).iterationNote}}</md-tooltip>
                                 </a>
                                 </small>
+                                <small ng-if="file.index.lastModifiedDate">
+                                    {{'SYNCED'|translate}}
+                                    <a>{{file.index.lastModifiedDate ? (file.index.lastModifiedDate | utcDateTimeAgo) : '-' }}</a>
+                                </small>
+                                <small ng-if="!file.index.lastModifiedDate">
+                                    {{'CREATED'|translate}}
+                                    <a>{{file.stat.ctime | utcDateTimeAgo}}</a>
+                                </small>
                             </div>
                         </td>
 
@@ -322,8 +329,6 @@
                         <td md-cell>{{file.index.documentMasterId || file.index.number || '-' }}</td>
                         <td md-cell>{{file.index.revision}}-{{file.index.iteration}}</td>
                         <td md-cell>{{file.stat.size | humanreadablesize}}</td>
-
-                        <td md-cell>{{file.index.lastModifiedDate ? (file.index.lastModifiedDate | utcDateTimeAgo) : '-' }}</td>
                     </tr>
                     </tbody>
                 </table>

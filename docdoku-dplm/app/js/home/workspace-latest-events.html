@@ -31,12 +31,15 @@
                             <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}
                             </md-tooltip>
                         </a>
+
+                    </div>
+                    <small>
                         {{'MODIFIED_BY'|translate}}
                         <a user-preview="item.lastIteration.author" href class="md-primary">
                             {{item.lastIteration.author.name}}
                         </a>
-                    </div>
-                    <small>{{ item.lastIteration.modificationDate | utcDateTimeAgo}}</small>
+                        {{ item.lastIteration.modificationDate | utcDateTimeAgo}}
+                    </small>
                 </div>
 
                 <div layout="row" layout-align="space-between center"
@@ -46,12 +49,14 @@
                         {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
                         <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}</md-tooltip>
                         </a>
-                        {{'CHECKED_OUT_BY'|translate}}
+
+                    </div>
+                    <small>{{'CHECKED_OUT_BY'|translate}}
                         <a user-preview="item.checkOutUser" href class="md-primary">
                             {{item.checkOutUser.name}}
                         </a>
-                        </div>
-                    <small>{{ item.checkOutDate | utcDateTimeAgo}}</small>
+                        {{ item.checkOutDate | utcDateTimeAgo}}
+                    </small>
                 </div>
 
 
@@ -64,12 +69,15 @@
                             <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}
                             </md-tooltip>
                         </a>
+
+                    </div>
+                    <small>
                         {{'CREATED_BY'|translate}}
                         <a user-preview="item.lastIteration.author" href class="md-primary">
                             {{item.lastIteration.author.name}}
                         </a>
-                    </div>
-                    <small>{{ item.lastIteration.creationDate | utcDateTimeAgo}}</small>
+                        {{ item.lastIteration.creationDate | utcDateTimeAgo}}
+                    </small>
                 </div>
 
             </div>

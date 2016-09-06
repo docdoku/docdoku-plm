@@ -12,8 +12,8 @@
   "window": {
     "resizable": true,
     "icon": "img/icon.png",
-    "width": 1024,
-    "height": 620,
+    "width": 1080,
+    "height": 650,
     "position": "center"
 
   }
