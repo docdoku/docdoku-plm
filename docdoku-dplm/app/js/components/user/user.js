@@ -7,6 +7,10 @@
         .controller('UserCtrl', function ($scope, $mdDialog, user) {
 
             $scope.user = user;
+            $scope.close = $mdDialog.hide;
+            $scope.mail = function(){
+                window.location.href = 'mailto:' + user.email;
+            };
 
         })
 

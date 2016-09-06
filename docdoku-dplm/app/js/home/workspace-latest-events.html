@@ -14,12 +14,14 @@
                             <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}
                             </md-tooltip>
                         </a>
+                    </div>
+                    <small>
                         {{'CHECKED_IN_BY'|translate}}
                         <a user-preview="item.lastIteration.author" href class="md-primary">
                             {{item.lastIteration.author.name}}
                         </a>
-                    </div>
-                    <small>{{ item.lastIteration.checkInDate | utcDateTimeAgo}}</small>
+                        {{ item.lastIteration.checkInDate | utcDateTimeAgo}}
+                    </small>
                 </div>
 
                 <div layout="row" layout-align="space-between center"
