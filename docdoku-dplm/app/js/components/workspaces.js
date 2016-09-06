@@ -245,29 +245,29 @@
                 });
             };
 
-            this.refreshData = function (workspace) {
+            this.refreshData = function (workspaceId) {
 
                 var deferred = $q.defer();
                 var totalDocuments = 0;
                 var totalParts = 0;
                 var done = 0, total = 4;
 
-                deferred.notify({total: total, done: done, workspace: workspace});
+                deferred.notify({total: total, done: done, workspaceId: workspaceId});
 
-                _this.fetchDocumentsCount(workspace).then(function (count) {
+                _this.fetchDocumentsCount(workspaceId).then(function (count) {
                     totalDocuments = count;
-                    deferred.notify({total: total, done: ++done, workspace: workspace});
-                    return workspace;
+                    deferred.notify({total: total, done: ++done, workspaceId: workspaceId});
+                    return workspaceId;
                 }).then(_this.fetchPartsCount).then(function (count) {
                     totalParts = count;
-                    deferred.notify({total: total, done: ++done, workspace: workspace});
-                    return _this.fetchParts(workspace, 0, totalParts);
+                    deferred.notify({total: total, done: ++done, workspaceId: workspaceId});
+                    return _this.fetchParts(workspaceId, 0, totalParts);
                 }).then(function () {
-                    deferred.notify({total: total, done: ++done, workspace: workspace});
-                    return _this.fetchDocuments(workspace, 0, totalDocuments);
+                    deferred.notify({total: total, done: ++done, workspaceId: workspaceId});
+                    return _this.fetchDocuments(workspaceId, 0, totalDocuments);
                 }).finally(function () {
-                    deferred.notify({total: total, done: ++done, workspace: workspace});
-                    onWorkspaceSynced(workspace);
+                    deferred.notify({total: total, done: ++done, workspaceId: workspaceId});
+                    onWorkspaceSynced(workspaceId);
                     deferred.resolve();
                 });
 

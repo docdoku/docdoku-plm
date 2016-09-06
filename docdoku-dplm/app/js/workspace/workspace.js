@@ -188,10 +188,11 @@
 
             $scope.refresh = function () {
                 $scope.sync.running = true;
-                WorkspaceService.refreshData(workspaceId).then(function () {
-                    $scope.sync.running = false;
-                    getData().then($scope.search);
-                });
+                WorkspaceService.refreshData(workspaceId)
+                    .then(function () {
+                        $scope.sync.running = false;
+                        refreshDisplay()
+                    });
             };
 
             var refreshDisplay = function () {

@@ -53,7 +53,7 @@
 
         <div ng-show="status"
              layout="column"
-             layout-align="start center" layout-margin>
+             layout-align="center center" layout-fill>
 
             <div layout-margin ng-if="status.workspaceId">
                 <h2>{{'MENU_WORKSPACES'|translate}}</h2>
@@ -67,7 +67,7 @@
                 <h3>{{status.folder | fileShortName}} {{status.progress}} / {{ status.total}}</h3>
             </div>
 
-            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            <md-progress-circular md-diameter="96" md-mode="indeterminate"></md-progress-circular>
 
         </div>
 
