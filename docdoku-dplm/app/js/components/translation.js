@@ -182,7 +182,10 @@
                     DOWNLOAD_FILES: 'Télécharger les fichiers',
                     CREATE_FILE: 'New file',
                     PUSH: 'Push files',
-                    FILE_PREVIEW: 'Open file'
+                    FILE_PREVIEW: 'Open file',
+                    SYNCED:'Synced',
+                    CREATED:'Created',
+                    SEND_MAIL:'Email'
                 })
                 .translations('fr', {
                     CHECKOUT: 'Réserver',
@@ -361,7 +364,10 @@
                     DOWNLOAD_FILES: 'Download files',
                     CREATE_FILE: 'Nouveau fichier',
                     PUSH: 'Téléverser les fichiers',
-                    FILE_PREVIEW: 'Ouvrir le fichier'
+                    FILE_PREVIEW: 'Ouvrir le fichier',
+                    SYNCED:'Synchronisé',
+                    CREATED:'Créé',
+                    SEND_MAIL:'Email'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

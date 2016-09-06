@@ -1,4 +1,4 @@
-i.file-sync{
+.synced{
 	color:#2E7D32;
 }
 .modified{
@@ -7,10 +7,9 @@ i.file-sync{
 .out-of-date{
 	color: #ff4200;
 }
-i.file-notSync{
-	color:#999;
+.out-of-index{
+	color:#525252;
 }
-
-i.favorite{
+.favorite{
 	color:#ffa600;
 }

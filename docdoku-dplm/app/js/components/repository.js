@@ -9,7 +9,7 @@
                 HASH : 'hash',
                 DIGEST : 'digest',
                 WORKSPACE_ID : 'workspaceId',
-                PART_NUMBER : 'number',
+                NUMBER : 'number',
                 DOCUMENT_MASTER_ID:'documentMasterId',
                 REVISION:'revision',
                 ITERATION:'iteration',
@@ -28,7 +28,9 @@
             var glob = $window.require("glob");
 
             this.getRepositoryIndex = function (indexFolder) {
+
                 try {
+                    delete $window.require.cache[$window.require.resolve(indexFolder + INDEX_LOCATION)];
                     return $window.require(indexFolder + INDEX_LOCATION);
                 } catch (e) {
                     var dir = indexFolder + '/.dplm/';
@@ -77,7 +79,7 @@
                     digest: digest,
                     workspaceId: workspaceId,
                     documentMasterId: getIndexValue(index, path, IndexKeys.DOCUMENT_MASTER_ID),
-                    number: getIndexValue(index, path, IndexKeys.PART_NUMBER),
+                    number: getIndexValue(index, path, IndexKeys.NUMBER),
                     revision: getIndexValue(index, path, IndexKeys.REVISION),
                     iteration: getIndexValue(index, path, IndexKeys.ITERATION),
                     lastModifiedDate: getIndexValue(index, path, IndexKeys.LAST_MODIFIED_DATE),
@@ -100,7 +102,7 @@
             var updateIndexForPart = function (index, path, part) {
                 setIndexValue(index, path, IndexKeys.HASH, getHashFromFile(path));
                 setIndexValue(index, path, IndexKeys.WORKSPACE_ID, part.workspaceId);
-                setIndexValue(index, path, IndexKeys.PART_NUMBER, part.number);
+                setIndexValue(index, path, IndexKeys.NUMBER, part.number);
                 setIndexValue(index, path, IndexKeys.REVISION, part.version);
                 setIndexValue(index, path, IndexKeys.ITERATION, part.partIterations.length);
             };
@@ -194,25 +196,23 @@
                 var indexFolder = folder.path;
                 var index = _this.getRepositoryIndex(indexFolder);
                 var keys = Object.keys(index);
-                var files = [];
-
-                angular.forEach(keys, function (key) {
+                var changes = [];
+                keys.forEach(function (key) {
                     var path;
                     if (key.endsWith('.' + IndexKeys.DOCUMENT_MASTER_ID)) {
-                        path = key.substr(0, key.length - IndexKeys.DOCUMENT_MASTER_ID.length);
-                    } else if (key.endsWith('.'+IndexKeys.NUMBER)) {
-                        path = key.substr(0, key.length - IndexKeys.NUMBER.length);
+                        path = key.substr(0, key.length - IndexKeys.DOCUMENT_MASTER_ID.length - 1);
+                    } else if (key.endsWith('.' + IndexKeys.NUMBER)) {
+                        path = key.substr(0, key.length - IndexKeys.NUMBER.length - 1);
                     }
-                    if (_this.isModified(index, path)) {
-                        files.push(path);
+                   if(path && _this.isModified(index, path) ){
+                        changes.push(path);
                     }
                 });
-                folder.localChanges = files;
-                return files;
+                return changes;
             };
 
             this.isModified = function (index, path) {
-                return path && getIndexValue(index, path, IndexKeys.HASH) !== getIndexValue(index, path, IndexKeys.DIGEST);
+                return path && getHashFromFile(path) !== getIndexValue(index, path, IndexKeys.DIGEST);
             };
 
             var fileShortName = $filter('fileShortName');
@@ -269,9 +269,8 @@
                 var chain = $q.when();
 
                 DocdokuAPIService.getClient().getApi().then(function (api) {
-
                     documents.forEach(function (id) {
-                        var filePath = id.substr(0, id.length - 3);
+                        var filePath = id.substr(0, id.length - IndexKeys.DOCUMENT_MASTER_ID.length - 1);
                         var version = getIndexValue(index, filePath, IndexKeys.REVISION);
                         var workspaceId = getIndexValue(index, filePath, IndexKeys.WORKSPACE_ID);
                         chain = chain.then(documentRequest(api, workspaceId, index[id], version)).then(function (document) {
@@ -283,7 +282,7 @@
                     });
 
                     parts.forEach(function (number) {
-                        var filePath = number.substr(0, number.length - 7);
+                        var filePath = number.substr(0, number.length - IndexKeys.NUMBER.length - 1);
                         var version = getIndexValue(index, filePath, IndexKeys.REVISION);
                         var workspaceId = getIndexValue(index, filePath, IndexKeys.WORKSPACE_ID);
                         chain = chain.then(partRequest(api, workspaceId, index[number], version)).then(function (part) {

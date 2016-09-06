@@ -5,12 +5,12 @@
                 <md-button class="md-icon-button" hide-gt-sm aria-label="{{'MENU' | translate}}" ng-click="openMenu()">
                     <i class="material-icons">menu</i>
                 </md-button>
+                <i class="material-icons favorite" ng-if="folder.favorite">star</i>
                 <i class="material-icons">folder_open</i>
-                <i class="material-icons" ng-if="folder.favorite">star</i>
 
                 <h2>
                     <span>
-                        {{ folder.path | fileShortName }} ({{totalFilesInFolder}} {{'FILES'|translate}})
+                        {{ folder.path | fileShortName }}
                     </span>
                 </h2>
             </div>
@@ -26,7 +26,7 @@
             <md-menu-bar>
                 <md-menu>
                     <button ng-click="$mdOpenMenu()">
-                        {{'FILE' | translate}}
+                        {{'FILE' | translate}}  ({{totalFilesInFolder}})
                     </button>
 
                     <md-menu-content>
@@ -293,23 +293,29 @@
                         <td md-cell>
                             <div layout="column">
                                 <a href file-preview="file.path"
-                                   ng-class="{'modified':file.index && file.modified,'out-of-date':file.outOfDate}">
+                                   ng-class="{
+                                   'out-of-index':!file.index,
+                                   'modified':file.index && file.modified,
+                                   'out-of-date':file.outOfDate,
+                                   'synced':file.index && !file.modified
+                                   }">
                                     {{file.path | fileShortName}}
                                     <md-tooltip>{{'FILE_PREVIEW'|translate}}</md-tooltip>
                                 </a>
-                                <small>{{'MODIFIED'|translate}}
+                                <small>
+                                    <span ng-class="{'bold':file.index && file.modified}">{{'MODIFIED'|translate}}</span>
                                     <a>{{file.stat.mtime | localDateTimeAgo}}
                                     <md-tooltip ng-if="file.item.documentMasterId">{{(file.item|lastIteration).revisionNote}}</md-tooltip>
                                     <md-tooltip ng-if="file.item.number">{{(file.item|lastIteration).iterationNote}}</md-tooltip>
                                 </a>
                                 </small>
                                 <small ng-if="file.index.lastModifiedDate">
-                                    {{'SYNCED'|translate}}
+                                    <span ng-class="{'bold':file.index && !file.modified}">{{'SYNCED'|translate}}</span>
                                     <a>{{file.index.lastModifiedDate ? (file.index.lastModifiedDate | utcDateTimeAgo) : '-' }}</a>
                                 </small>
-                                <small ng-if="!file.index.lastModifiedDate">
+                                <small ng-if="!file.index">
                                     {{'CREATED'|translate}}
-                                    <a>{{file.stat.ctime | utcDateTimeAgo}}</a>
+                                    <a>{{file.stat.ctime | localDateTimeAgo}}</a>
                                 </small>
                             </div>
                         </td>

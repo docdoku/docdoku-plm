@@ -99,18 +99,16 @@
                     var refresh = function () {
 
                         var index = RepositoryService.getRepositoryIndex(path);
-                        RepositoryService.getLocalChanges(folder);
-
-                        $scope.items = folder.localChanges.map(function (file) {
+                        var changedFiles = RepositoryService.getLocalChanges(folder);
+                        $scope.items = changedFiles.map(function (filePath) {
                             return {
-                                path: file,
-                                index: RepositoryService.getFileIndex(index, file),
-                                stat: FileUtils.stat(file)
+                                path: filePath,
+                                index: RepositoryService.getFileIndex(index, filePath),
+                                stat: FileUtils.stat(filePath)
                             };
                         });
                     };
 
-                    $scope.refresh = refresh;
                     $scope.$on('refresh', refresh);
 
                     refresh();

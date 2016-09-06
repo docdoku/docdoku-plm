@@ -22,7 +22,6 @@
             var folderPath = $scope.folder.path;
             var allFiles = [];
             var filteredFiles = [];
-            var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
 
             var translate = $filter('translate');
             var filter = $filter('filter');
@@ -82,6 +81,8 @@
             };
 
             var search = function () {
+
+                var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
 
                 filteredFiles = allFiles.filter(function (path) {
 
@@ -161,6 +162,9 @@
             };
 
             var refreshDisplay = function () {
+
+                var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
+
                 angular.forEach($scope.displayedFiles, function (file) {
                     file.index = RepositoryService.getFileIndex(repositoryIndex, file.path);
                     if (file.index) {
@@ -180,6 +184,7 @@
             var filterCanPushFiles = filterCanCheckIn;
 
             var fetchFileItem = function(file){
+                var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
                 if(file.index){
                     return DBService.getItem(file.index).then(function (item) {
                         file.item = item;
@@ -192,6 +197,7 @@
 
                 var changes = RepositoryService.getLocalChanges($scope.folder);
                 var selection = [];
+                var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
 
                 angular.forEach(changes,function(path){
                     var file = {

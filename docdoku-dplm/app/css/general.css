@@ -3,6 +3,9 @@
 	padding: 0 0 0 60px;
 }
 
+.bold{
+	font-weight: bold;
+}
 
 .right{
 	float:right;

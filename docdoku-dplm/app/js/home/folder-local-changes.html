@@ -1,27 +1,19 @@
-<div ng-if="items.length && !loading"
+<div ng-if="!loading"
      layout="row" layout-margin layout-wrap>
 
     <div layout="column">
-
         <div layout="row" layout-align="start center">
             <md-button class="md-icon-button md-primary" aria-label="{{'SYNC'|translate}}"
                        href="#/folder/{{folder.uuid}}">
                 <i class="material-icons">folder_open</i>
             </md-button>
-
-            <a aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">
-                {{folder.path | fileShortName}}
-            </a>
+            <div layout="column">
+                <a aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">
+                    {{folder.path | fileShortName}}
+                </a>
+                <small>{{items.length}} {{'MODIFICATIONS' | translate }}</small>
+            </div>
         </div>
-
-        <div layout="row" layout-align="start center">
-
-            <md-button class="md-icon-button md-primary" aria-label="{{'REFRESH'|translate}}" ng-click="refresh()">
-                <i class="material-icons">cached</i>
-            </md-button>
-            <div>{{items.length}} {{'MODIFICATIONS' | translate }}</div>
-        </div>
-
         <md-list>
             <md-list-item ng-repeat="item in items">
                 <div layout="row">
@@ -29,7 +21,6 @@
 
                     <div layout="column">
                         <a href class="modified" file-preview="item.path">{{item.path | fileShortName}}</a>
-
                         <div layout="row">
                             <small><a>{{item.index.documentMasterId || item.index.number}}-{{item.index.revision}}</a>
                                 {{'MODIFIED'|translate}} <a>{{item.stat.mtime | localDateTimeAgo}}</a></small>
