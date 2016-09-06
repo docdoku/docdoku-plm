@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd" version="2.1">
   <persistence-unit name="DocDoku-PU" transaction-type="JTA">
     <jta-data-source>jdbc/docdokuPU</jta-data-source>
     <class>com.docdoku.core.common.Account</class>
@@ -14,6 +15,7 @@
     <class>com.docdoku.core.change.ChangeOrder</class>
     <class>com.docdoku.core.change.ChangeRequest</class>
     <class>com.docdoku.core.change.Milestone</class>
+    <class>com.docdoku.core.change.ItemTaggedSubscription</class>
     <class>com.docdoku.core.change.ModificationNotification</class>
     <class>com.docdoku.core.configuration.ProductConfiguration</class>
     <class>com.docdoku.core.configuration.ProductBaseline</class>
