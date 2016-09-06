@@ -20,6 +20,8 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.common.*;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.notification.TagUserGroupSubscription;
@@ -29,6 +31,7 @@ import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserMembership;
 import com.docdoku.core.services.*;
 import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.dto.baseline.BaselinedDocumentDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -288,9 +291,10 @@ public class WorkspaceResource {
     @Path("/{workspaceId}/admin")
     @Produces(MediaType.APPLICATION_JSON)
     public Response setNewAdmin(@PathParam("workspaceId") String workspaceId,
-                                @ApiParam(required = true, value = "New admin user") UserDTO userDTO) throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException {
-        Workspace workspace = workspaceManager.changeAdmin(workspaceId, userDTO.getLogin());
+                                @ApiParam(required = true, value = "New admin user") UserDTO userDTO)
+            throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
 
+        Workspace workspace = workspaceManager.changeAdmin(workspaceId, userDTO.getLogin());
         return Response.ok(mapper.map(workspace, WorkspaceDTO.class)).build();
     }
 

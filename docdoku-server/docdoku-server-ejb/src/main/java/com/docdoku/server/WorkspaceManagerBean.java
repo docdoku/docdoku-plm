@@ -80,28 +80,26 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
     @Asynchronous
     public void deleteWorkspace(String workspaceId) {
         try{
+            Workspace workspace = new WorkspaceDAO(em, dataManager).loadWorkspace(workspaceId);
             if(contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
-                Workspace workspace = new WorkspaceDAO(em, dataManager).loadWorkspace(workspaceId);
                 doWorkspaceDeletion(workspace);
                 esIndexer.deleteWorkspace(workspaceId);
             }else{
-                User user = userManager.checkWorkspaceReadAccess(workspaceId);
-                Workspace workspace = new WorkspaceDAO(em, dataManager).loadWorkspace(workspaceId);
                 if(workspace.getAdmin().getLogin().equals(contextManager.getCallerPrincipalLogin())){
-                   doWorkspaceDeletion(workspace);
+                    doWorkspaceDeletion(workspace);
                     esIndexer.deleteWorkspace(workspaceId);
                 }else{
+                    User user = userManager.whoAmI(workspaceId);
                     throw new AccessRightException(new Locale(user.getLanguage()),user);
                 }
             }
         } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
-            LOGGER.log(Level.SEVERE,"Attempt to delete a unauthorized workspace : ("+workspaceId+")",e);
+            LOGGER.log(Level.SEVERE,"Attempt to delete an unauthorized workspace : ("+workspaceId+")",e);
         } catch (WorkspaceNotFoundException e) {
             LOGGER.log(Level.WARNING,"Attempt to delete a workspace which does not exist : ("+workspaceId+")",e);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE,"Exception deleting workspace "+workspaceId,e);
         }
-
     }
 
     @Override
@@ -111,12 +109,23 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
     }
 
     @Override
-    @RolesAllowed({UserGroupMapping.ADMIN_ROLE_ID})
-    public Workspace changeAdmin(String workspaceId, String login) throws WorkspaceNotFoundException, AccountNotFoundException {
-        Account account = new AccountDAO(em).loadAccount(login);
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+    public Workspace changeAdmin(String workspaceId, String login) throws WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
         Workspace workspace = new WorkspaceDAO(em).loadWorkspace(workspaceId);
+        Account account = new AccountDAO(em).loadAccount(login);
 
-        workspace.setAdmin(account);
+        if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
+            workspace.setAdmin(account);
+
+        } else {
+            if (workspace.getAdmin().getLogin().equals(contextManager.getCallerPrincipalLogin())) {
+                workspace.setAdmin(account);
+            } else {
+                User user = userManager.whoAmI(workspaceId);
+                throw new AccessRightException(new Locale(user.getLanguage()),user);
+            }
+        }
+
         return workspace;
     }
 
