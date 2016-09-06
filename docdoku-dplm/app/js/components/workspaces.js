@@ -343,11 +343,17 @@
             };
 
 
-            this.checkInItems = function (files, index) {
+            this.checkInItems = function (files, folderPath) {
 
                 var deferred = $q.defer();
                 var chain = $q.when();
                 var total = files.length, done = 0;
+                var index, indexPath;
+
+                if(folderPath){
+                    index = RepositoryService.getRepositoryIndex(folderPath);
+                    indexPath = RepositoryService.getIndexPath(folderPath);
+                }
 
                 angular.forEach(files, function (file) {
                     chain = chain.then(function () {
@@ -365,16 +371,27 @@
                     });
                 });
 
-                chain.then(deferred.resolve);
+                chain.then(function(){
+                    if(index && indexPath){
+                        RepositoryService.writeIndex(indexPath, index);
+                    }
+                    deferred.resolve();
+                });
 
                 return deferred.promise;
             };
 
-            this.checkOutItems = function (files, index) {
+            this.checkOutItems = function (files, folderPath) {
 
                 var deferred = $q.defer();
                 var chain = $q.when();
                 var total = files.length, done = 0;
+                var index, indexPath;
+
+                if(folderPath){
+                    index = RepositoryService.getRepositoryIndex(folderPath);
+                    indexPath = RepositoryService.getIndexPath(folderPath);
+                }
 
                 angular.forEach(files, function (file) {
                     chain = chain.then(function () {
@@ -392,16 +409,27 @@
                     });
                 });
 
-                chain.then(deferred.resolve);
+                chain.then(function(){
+                    if(index && indexPath){
+                        RepositoryService.writeIndex(indexPath, index);
+                    }
+                    deferred.resolve();
+                });
 
                 return deferred.promise;
             };
 
-            this.undoCheckOutItems = function (files, index) {
+            this.undoCheckOutItems = function (files, folderPath) {
 
                 var deferred = $q.defer();
                 var chain = $q.when();
                 var total = files.length, done = 0;
+                var index, indexPath;
+
+                if(folderPath){
+                    index = RepositoryService.getRepositoryIndex(folderPath);
+                    indexPath = RepositoryService.getIndexPath(folderPath);
+                }
 
                 angular.forEach(files, function (file) {
                     chain = chain.then(function () {
@@ -419,7 +447,12 @@
                     });
                 });
 
-                chain.then(deferred.resolve);
+                chain.then(function(){
+                    if(index && indexPath){
+                        RepositoryService.writeIndex(indexPath, index);
+                    }
+                    deferred.resolve();
+                });
 
                 return deferred.promise;
             };

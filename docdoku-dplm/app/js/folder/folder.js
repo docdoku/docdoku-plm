@@ -16,17 +16,22 @@
         .controller('FolderController', function ($scope, $location, $routeParams, $filter, $mdDialog, $q,
                                                   FolderService, DBService, RepositoryService, WorkspaceService, ConfigurationService, FileUtils) {
 
-            $scope.folder = FolderService.getFolder({uuid: $routeParams.uuid});
-            $scope.configuration = ConfigurationService.configuration;
 
-            var folderPath = $scope.folder.path;
+            var folder = FolderService.getFolder({uuid: $routeParams.uuid});
+            var folderPath = folder.path;
             var allFiles = [];
             var filteredFiles = [];
-
             var translate = $filter('translate');
             var filter = $filter('filter');
             var utcToLocalDateTime = $filter('utcToLocalDateTime');
             var lastIteration = $filter('lastIteration');
+            var filterCanCheckOut = $filter('canCheckOut');
+            var filterCanCheckIn = $filter('canCheckIn');
+            var filterCanUndoCheckOut = $filter('canUndoCheckOut');
+            var filterCanPushFiles = filterCanCheckIn;
+
+            $scope.folder = folder;
+            $scope.configuration = ConfigurationService.configuration;
 
             $scope.query = {
                 limit: 10,
@@ -178,10 +183,6 @@
                 });
             };
 
-            var filterCanCheckOut = $filter('canCheckOut');
-            var filterCanCheckIn = $filter('canCheckIn');
-            var filterCanUndoCheckOut = $filter('canUndoCheckOut');
-            var filterCanPushFiles = filterCanCheckIn;
 
             var fetchFileItem = function(file){
                 var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
@@ -505,7 +506,7 @@
             };
 
             var checkIn = function(){
-                return  WorkspaceService.checkInItems(selection, repositoryIndex)
+                return  WorkspaceService.checkInItems(selection, folderPath)
                     .then(null, null, function (status) {
                         $scope.status = status;
                     });
@@ -556,8 +557,6 @@
                 cascadeCheckOut:false
             };
 
-            var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
-
             var downloadFiles = function(){
 
                 var fileMap = $filter('itemsFiles')(selection.map(function(file){
@@ -571,7 +570,7 @@
             };
 
             var checkOut = function(){
-                return  WorkspaceService.checkOutItems(selection, repositoryIndex)
+                return  WorkspaceService.checkOutItems(selection, folderPath)
                     .then(null, null, function (status) {
                         $scope.status = status;
                     });
@@ -602,11 +601,9 @@
             $scope.folderPath = folderPath;
             $scope.close = $mdDialog.hide;
 
-            var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
-
             $scope.undoCheckOut = function () {
                 $scope.loading = true;
-                WorkspaceService.undoCheckOutItems(selection, repositoryIndex)
+                WorkspaceService.undoCheckOutItems(selection, folderPath)
                     .then($mdDialog.hide, function (error) {
                         $scope.error = error;
                     }, function (status) {
@@ -626,8 +623,6 @@
             $scope.selection = selection;
             $scope.folderPath = folderPath;
             $scope.close = $mdDialog.hide;
-
-            //var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
 
             $scope.push = function () {
                 $scope.loading = true;

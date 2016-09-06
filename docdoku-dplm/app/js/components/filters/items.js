@@ -47,7 +47,8 @@
             };
         })
 
-        .filter('canUndoCheckOut',function(ConfigurationService){
+        .filter('canUndoCheckOut',function($filter,ConfigurationService){
+            var lastIteration = $filter('lastIteration');
             return function(selection){
                 return selection.filter(function (file) {
                     var item = file.item;
