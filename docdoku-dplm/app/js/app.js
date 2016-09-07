@@ -32,7 +32,7 @@
 
     ])
 
-        .config(function ($routeProvider, $mdThemingProvider, $compileProvider, $mdIconProvider) {
+        .config(function ($routeProvider, $mdThemingProvider, $compileProvider) {
 
             $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
 
@@ -45,8 +45,6 @@
                 .accentPalette('blue');
 
             $routeProvider.otherwise('/');
-            $mdIconProvider
-                .defaultIconSet('img/core-icons.svg', 24);
 
         })
 

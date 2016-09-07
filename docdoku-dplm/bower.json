@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "homepage": "https://github.com/docdoku/docdoku-plm",
   "authors": [
-    "morgan <morgan.guimard@docdoku.com>"
+    "Morgan Guimard <morgan.guimard@docdoku.com>"
   ],
   "description": "Docdoku PLM client",
   "private": true,
@@ -17,7 +17,7 @@
   "dependencies": {
     "angular": "^1.5.0",
     "angular-aria": "~1.5.0",
-    "angular-material": "~1.1.0",
+    "angular-material": "~1.1.1",
     "angular-translate": "~2.4.2",
     "angular-uuid4": "~0.3.0",
     "threejs": "r67",

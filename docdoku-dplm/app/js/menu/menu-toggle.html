@@ -6,10 +6,9 @@
         <i class="material-icons">{{section.icon}}</i>
         {{section.name}}
         <span flex></span>
-        <md-icon class="md-toggle-icon"
-                 ng-class="{'toggled' : isOpened(section)}"
-                 md-svg-icon="md-toggle-arrow">
-        </md-icon>
+        <i  class="md-toggle-icon material-icons"
+            ng-class="{'toggled' : isOpened(section)}" >keyboard_arrow_up</i>
+
     </div>
   <span class="md-visually-hidden">
     Toggle {{isOpened(section) ? 'expanded' : 'collapsed'}}
