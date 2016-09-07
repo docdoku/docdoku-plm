@@ -19,7 +19,7 @@
 
     <md-content>
 
-        <div layout="row" layout-align="space-between center">
+        <div layout="row" layout-align="space-between center" ng-if="!status">
             <md-menu-bar>
                 <md-menu>
                     <button ng-click="$mdOpenMenu()">
@@ -51,7 +51,7 @@
         </div>
 
 
-        <div ng-show="status"
+        <div ng-if="status"
              layout="column"
              layout-align="center center" layout-fill>
 
@@ -72,7 +72,7 @@
         </div>
 
 
-        <div layout-gt-xs="row" layout="column" ng-show="!status" flex-gt-xs>
+        <div layout-gt-xs="row" layout="column" ng-if="!status" flex-gt-xs>
 
             <div layout="column" flex-gt-xs>
 
