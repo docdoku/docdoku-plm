@@ -13,7 +13,7 @@
                 DOCUMENT_MASTER_ID:'documentMasterId',
                 REVISION:'revision',
                 ITERATION:'iteration',
-                LAST_MODIFIED_DATE:'lastModifiedDate'
+                LAST_MODIFIED_DATE:'lastModifiedDate' // this is the last sync date, it should correspond to binaryResource.lastModified
             };
         })
 
@@ -23,40 +23,13 @@
                                                 IndexKeys) {
 
             var _this = this;
+
             var fs = $window.require('fs');
             var crypto = $window.require('crypto');
             var glob = $window.require("glob");
-
-            this.getRepositoryIndex = function (indexFolder) {
-
-                try {
-                    delete $window.require.cache[$window.require.resolve(indexFolder + INDEX_LOCATION)];
-                    return $window.require(indexFolder + INDEX_LOCATION);
-                } catch (e) {
-                    var dir = indexFolder + '/.dplm/';
-                    if (!fs.existsSync(dir)) {
-                        fs.mkdirSync(dir);
-                    }
-                    fs.writeFileSync(indexFolder + INDEX_LOCATION, '{}');
-                    return $window.require(indexFolder + INDEX_LOCATION);
-                }
-            };
-
-            this.search = function (folder) {
-                return $q(function (resolve, reject) {
-                    glob(INDEX_SEARCH_PATTERN, {
-                        cwd: folder,
-                        nodir: true
-                    }, function (err, files) {
-                        if (err) {
-                            reject(err);
-                        }
-                        else {
-                            resolve(files);
-                        }
-                    });
-                });
-            };
+            var fileShortName = $filter('fileShortName');
+            var lastIteration = $filter('lastIteration');
+            var utcToLocalDateTime = $filter('utcToLocalDateTime');
 
             var getIndexValue = function (index, path, key) {
                 return index[path + '.' + key] || null;
@@ -70,33 +43,8 @@
                 return crypto.createHash('MD5').update(fs.readFileSync(path)).digest('base64');
             };
 
-            this.getFileIndex = function (index, path) {
-
-                var digest = getIndexValue(index, path, IndexKeys.DIGEST);
-                var workspaceId = getIndexValue(index, path, IndexKeys.WORKSPACE_ID);
-
-                return digest && workspaceId ? {
-                    digest: digest,
-                    workspaceId: workspaceId,
-                    documentMasterId: getIndexValue(index, path, IndexKeys.DOCUMENT_MASTER_ID),
-                    number: getIndexValue(index, path, IndexKeys.NUMBER),
-                    revision: getIndexValue(index, path, IndexKeys.REVISION),
-                    iteration: getIndexValue(index, path, IndexKeys.ITERATION),
-                    lastModifiedDate: getIndexValue(index, path, IndexKeys.LAST_MODIFIED_DATE),
-                    hash: getHashFromFile(path)
-                } : null;
-
-
-            };
-
             var writeIndex = function (indexPath, index) {
                 fs.writeFileSync(indexPath, JSON.stringify(index));
-            };
-
-            this.writeIndex = writeIndex;
-
-            this.getIndexPath = function (folder) {
-                return folder + INDEX_LOCATION;
             };
 
             var updateIndexForPart = function (index, path, part) {
@@ -126,6 +74,88 @@
                     .forEach(function(entry){
                         delete index[entry];
                     });
+            };
+
+            var documentRequest = function (api, workspaceId, documentId, version) {
+                return function () {
+                    return $q(function (resolve, reject) {
+                        api.apis.document.getDocumentRevision({
+                            workspaceId: workspaceId,
+                            documentId: documentId,
+                            documentVersion: version
+                        }).then(function (response) {
+                            resolve(response.obj);
+                        }, reject);
+                    });
+                };
+            };
+
+            var partRequest = function (api, workspaceId, number, version) {
+                return function () {
+                    return $q(function (resolve, reject) {
+                        api.apis.part.getPartRevision({
+                            workspaceId: workspaceId,
+                            partNumber: number,
+                            partVersion: version
+                        }).then(function (response) {
+                            resolve(response.obj);
+                        }, reject);
+                    });
+                };
+            };
+
+            this.getFileIndex = function (index, path) {
+
+                var digest = getIndexValue(index, path, IndexKeys.DIGEST);
+                var workspaceId = getIndexValue(index, path, IndexKeys.WORKSPACE_ID);
+
+                return digest && workspaceId ? {
+                    digest: digest,
+                    workspaceId: workspaceId,
+                    documentMasterId: getIndexValue(index, path, IndexKeys.DOCUMENT_MASTER_ID),
+                    number: getIndexValue(index, path, IndexKeys.NUMBER),
+                    revision: getIndexValue(index, path, IndexKeys.REVISION),
+                    iteration: getIndexValue(index, path, IndexKeys.ITERATION),
+                    lastModifiedDate: getIndexValue(index, path, IndexKeys.LAST_MODIFIED_DATE),
+                    hash: getHashFromFile(path)
+                } : null;
+
+            };
+
+            this.getRepositoryIndex = function (indexFolder) {
+                try {
+                    delete $window.require.cache[$window.require.resolve(indexFolder + INDEX_LOCATION)];
+                    return $window.require(indexFolder + INDEX_LOCATION);
+                } catch (e) {
+                    var dir = indexFolder + '/.dplm/';
+                    if (!fs.existsSync(dir)) {
+                        fs.mkdirSync(dir);
+                    }
+                    fs.writeFileSync(indexFolder + INDEX_LOCATION, '{}');
+                    return $window.require(indexFolder + INDEX_LOCATION);
+                }
+            };
+
+            this.search = function (folder) {
+                return $q(function (resolve, reject) {
+                    glob(INDEX_SEARCH_PATTERN, {
+                        cwd: folder,
+                        nodir: true
+                    }, function (err, files) {
+                        if (err) {
+                            reject(err);
+                        }
+                        else {
+                            resolve(files);
+                        }
+                    });
+                });
+            };
+
+            this.writeIndex = writeIndex;
+
+            this.getIndexPath = function (folder) {
+                return folder + INDEX_LOCATION;
             };
 
             this.updateItemInIndex = function (index, item, path) {
@@ -163,35 +193,6 @@
                 return index;
             };
 
-
-            var documentRequest = function (api, workspaceId, documentId, version) {
-                return function () {
-                    return $q(function (resolve, reject) {
-                        api.apis.document.getDocumentRevision({
-                            workspaceId: workspaceId,
-                            documentId: documentId,
-                            documentVersion: version
-                        }).then(function (response) {
-                            resolve(response.obj);
-                        }, reject);
-                    });
-                };
-            };
-
-            var partRequest = function (api, workspaceId, number, version) {
-                return function () {
-                    return $q(function (resolve, reject) {
-                        api.apis.part.getPartRevision({
-                            workspaceId: workspaceId,
-                            partNumber: number,
-                            partVersion: version
-                        }).then(function (response) {
-                            resolve(response.obj);
-                        }, reject);
-                    });
-                };
-            };
-
             this.getLocalChanges = function (folder) {
                 var indexFolder = folder.path;
                 var index = _this.getRepositoryIndex(indexFolder);
@@ -215,9 +216,6 @@
                 return path && getHashFromFile(path) !== getIndexValue(index, path, IndexKeys.DIGEST);
             };
 
-            var fileShortName = $filter('fileShortName');
-            var lastIteration = $filter('lastIteration');
-            var utcToLocalDateTime = $filter('utcToLocalDateTime');
 
             var getItemBinaryResource = function (item, path) {
                 var name = fileShortName(path);
