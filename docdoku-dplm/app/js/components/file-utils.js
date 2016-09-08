@@ -13,7 +13,7 @@
             return ['js', 'json', 'obj', 'stl', 'dae', 'ply', 'wrl', 'bin'];
         })
 
-        .service('FileUtils', function ($window, $filter) {
+        .service('FileUtils', function ($window, $filter, READ_WRITE) {
 
             var sys = $window.require('sys');
             var fs = $window.require('fs');
@@ -55,6 +55,10 @@
 
             this.stat = function (path) {
                 return fs.statSync(path);
+            };
+
+            this.setWritable = function(path){
+                fs.chmodSync(path, READ_WRITE);
             };
 
             this.setFileMode = function (path, item) {

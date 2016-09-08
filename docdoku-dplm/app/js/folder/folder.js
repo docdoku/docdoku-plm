@@ -166,6 +166,8 @@
             };
 
             var fetchFileItem = function(file){
+                file.stat = FileUtils.stat(file.path);
+                file.index = RepositoryService.getFileIndex(repositoryIndex, file.path);
                 if(file.index){
                     return DBService.getItem(file.index).then(function (item) {
                         file.item = item;
@@ -182,10 +184,8 @@
 
                 angular.forEach(changes,function(path){
                     var file = FolderService.createFileObject(path);
-                    file.index = RepositoryService.getFileIndex(repositoryIndex, path);
-                    file.stat = FileUtils.stat(path);
-                    selection.push(file);
                     fetchFileItem(file);
+                    selection.push(file);
                 });
 
                 return selection;
@@ -408,13 +408,12 @@
                 $scope.creating = true;
                 WorkspaceService.createDocumentInWorkspace($scope.document).then(function (document) {
                     $scope.document = document;
+                    RepositoryService.saveItemToIndex(folderPath, file.path, document);
                     return UploadService.uploadFileToDocument(file.path, document);
                 }).then(function () {
-
+                    RepositoryService.updateFileInIndex(folderPath, file.path);
                     var index = RepositoryService.getRepositoryIndex(folderPath);
-                    RepositoryService.saveDocumentToIndex(folderPath, file.path, $scope.document);
                     file.index = RepositoryService.getFileIndex(index, file.path);
-
                     DBService.getItem(file.index).then(function (item) {
                         file.item = item;
                         $mdDialog.hide();
@@ -448,10 +447,11 @@
                 $scope.error = null;
                 WorkspaceService.createPartInWorkspace($scope.part).then(function (part) {
                     $scope.part = part;
+                    RepositoryService.saveItemToIndex(folderPath, file.path, part);
                     return UploadService.uploadNativeCADFile(file.path, part);
                 }).then(function () {
+                    RepositoryService.updateFileInIndex(folderPath, file.path);
                     var index = RepositoryService.getRepositoryIndex(folderPath);
-                    RepositoryService.savePartToIndex(folderPath, file.path, $scope.part);
                     file.index = RepositoryService.getFileIndex(index, file.path);
                     DBService.getItem(file.index).then(function (item) {
                         file.item = item;

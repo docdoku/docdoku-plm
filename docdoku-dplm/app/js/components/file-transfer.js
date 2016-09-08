@@ -114,6 +114,7 @@
                 var fileName = getFileName(url);
                 var file = destinationFolder + '/' + fileName;
 
+                FileUtils.setWritable(file);
                 var fileStream = fs.createWriteStream(file);
 
                 var requestOpts = ConfigurationService.getHttpFormRequestOpts();
@@ -143,7 +144,8 @@
                 });
 
                 request.on('response', function () {
-                    RepositoryService.updateFileInIndex(destinationFolder, file);
+                    var binary = RepositoryService.getItemBinaryResource(item, file);
+                    RepositoryService.updateFileInIndex(destinationFolder, file, new Date(binary.lastModified).getTime());
                     FileUtils.setFileMode(file, item);
                     deferred.resolve(file);
                 });

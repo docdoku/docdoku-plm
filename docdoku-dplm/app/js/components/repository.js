@@ -106,7 +106,7 @@
                 };
             };
 
-            var getItemBinaryResource = function (item, path) {
+            this.getItemBinaryResource = function (item, path) {
                 var name = fileShortName(path);
                 var itemLastIteration = lastIteration(item);
                 var binaryResource;
@@ -191,10 +191,10 @@
                 FileUtils.setFileMode(path, document);
             };
 
-            this.updateFileInIndex = function (indexFolder, path) {
+            this.updateFileInIndex = function (indexFolder, path, date) {
                 var index = _this.getRepositoryIndex(indexFolder);
                 setIndexValue(index, path, IndexKeys.DIGEST, getHashFromFile(path));
-                setIndexValue(index, path, IndexKeys.LAST_MODIFIED_DATE, Date.now());
+                setIndexValue(index, path, IndexKeys.LAST_MODIFIED_DATE, date || Date.now());
             };
 
             this.getLocalChanges = function (folder) {
@@ -224,7 +224,7 @@
                 if (!file.index || !file.item) {
                     return false;
                 }
-                var binary = getItemBinaryResource(file.item, file.path);
+                var binary = _this.getItemBinaryResource(file.item, file.path);
                 return binary && getIndexValue(index, file.path, IndexKeys.LAST_MODIFIED_DATE) < new Date(binary.lastModified).getTime();
             };
 
