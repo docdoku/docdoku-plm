@@ -81,16 +81,16 @@ module.exports = function(grunt){
         concat: {
             vendor:{
                 src:[
-                    'app/bower_components/angular/angular.js',
-                    'app/bower_components/threejs/build/three.js',
-                    'app/bower_components/angular-aria/angular-aria.js',
-                    'app/bower_components/hammerjs/hammer.js',
-                    'app/bower_components/angular-animate/angular-animate.js',
-                    'app/bower_components/angular-material/angular-material.js',
-                    'app/bower_components/angular-route/angular-route.js',
-                    'app/bower_components/angular-translate/angular-translate.js',
-                    'app/bower_components/angular-uuid4/angular-uuid4.js',
-                    'app/bower_components/angular-material-data-table/dist/md-data-table.js'
+                    'app/bower_components/angular/angular.min.js',
+                    'app/bower_components/threejs/build/three.min.js',
+                    'app/bower_components/angular-aria/angular-aria.min.js',
+                    'app/bower_components/hammerjs/hammer.min.js',
+                    'app/bower_components/angular-animate/angular-animate.min.js',
+                    'app/bower_components/angular-material/angular-material.min.js',
+                    'app/bower_components/angular-route/angular-route.min.js',
+                    'app/bower_components/angular-translate/angular-translate.min.js',
+                    'app/bower_components/angular-uuid4/angular-uuid4.min.js',
+                    'app/bower_components/angular-material-data-table/dist/md-data-table.min.js'
                 ],
                 dest:'dist/vendor.js'
             },
@@ -101,6 +101,7 @@ module.exports = function(grunt){
             css:{
                 src:[
                     'app/bower_components/angular-material/angular-material.css',
+                    'app/bower_components/angular-material-data-table/dist/md-data-table.css',
                     'app/bower_components/material-design-icons/iconfont/material-icons.css',
                     'app/css/*.css'
                 ],
