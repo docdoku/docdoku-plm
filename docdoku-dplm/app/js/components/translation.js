@@ -183,9 +183,9 @@
                     CREATE_FILE: 'New file',
                     PUSH: 'Push files',
                     FILE_PREVIEW: 'Open file',
-                    SYNCED:'Synced',
-                    CREATED:'Created',
-                    SEND_MAIL:'Email'
+                    SYNCED: 'Synced',
+                    CREATED: 'Created',
+                    SEND_MAIL: 'Email'
                 })
                 .translations('fr', {
                     CHECKOUT: 'Réserver',
@@ -365,9 +365,9 @@
                     CREATE_FILE: 'Nouveau fichier',
                     PUSH: 'Téléverser les fichiers',
                     FILE_PREVIEW: 'Ouvrir le fichier',
-                    SYNCED:'Synchronisé',
-                    CREATED:'Créé',
-                    SEND_MAIL:'Email'
+                    SYNCED: 'Synchronisé',
+                    CREATED: 'Créé',
+                    SEND_MAIL: 'Email'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

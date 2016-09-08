@@ -6,7 +6,7 @@
         .filter('lastIteration', function ($filter) {
             var last = $filter('last');
             return function (item) {
-                return last(item.documentIterations||item.partIterations);
+                return last(item.documentIterations || item.partIterations);
             };
         })
 
@@ -29,8 +29,8 @@
             };
         })
 
-        .filter('canCheckOut',function(){
-            return function(selection){
+        .filter('canCheckOut', function () {
+            return function (selection) {
                 return selection.filter(function (file) {
                     var item = file.item;
                     return item && !item.checkOutUser && !item.releaseAuthor && !item.obsoleteAuthor;
@@ -38,8 +38,8 @@
             };
         })
 
-        .filter('canCheckIn',function(ConfigurationService){
-            return function(selection){
+        .filter('canCheckIn', function (ConfigurationService) {
+            return function (selection) {
                 return selection.filter(function (file) {
                     var item = file.item;
                     return item && item.checkOutUser && item.checkOutUser.login === ConfigurationService.configuration.login;
@@ -47,9 +47,9 @@
             };
         })
 
-        .filter('canUndoCheckOut',function($filter,ConfigurationService){
+        .filter('canUndoCheckOut', function ($filter, ConfigurationService) {
             var lastIteration = $filter('lastIteration');
-            return function(selection){
+            return function (selection) {
                 return selection.filter(function (file) {
                     var item = file.item;
                     var lastItemIteration = item ? lastIteration(item) : null;

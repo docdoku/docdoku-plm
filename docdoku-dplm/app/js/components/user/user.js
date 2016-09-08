@@ -8,7 +8,7 @@
 
             $scope.user = user;
             $scope.close = $mdDialog.hide;
-            $scope.mail = function(){
+            $scope.mail = function () {
                 window.location.href = 'mailto:' + user.email;
             };
 

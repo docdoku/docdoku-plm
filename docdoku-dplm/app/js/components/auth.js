@@ -30,9 +30,10 @@
                         DocdokuAPIService.setCookie(cookie);
 
                         angular.copy(response.obj, user);
-                        var lang = user.language;
-                        $translate.use(lang);
 
+                        var lang = user.language;
+
+                        $translate.use(lang);
                         deferred.resolve(user);
 
                     }, deferred.reject);

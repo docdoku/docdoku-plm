@@ -144,12 +144,12 @@
 
                 request.on('response', function () {
                     RepositoryService.updateFileInIndex(destinationFolder, file);
-                    FileUtils.setFileMode(file,item);
+                    FileUtils.setFileMode(file, item);
                     deferred.resolve(file);
                 });
 
                 request.on('error', function (err) {
-                    FileUtils.setFileMode(file,item);
+                    FileUtils.setFileMode(file, item);
                     deferred.reject(err);
                 });
 

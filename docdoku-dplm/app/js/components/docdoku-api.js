@@ -21,9 +21,9 @@
                 cookie = pCookie;
             };
 
-            this.getApi = function(){
-                return getClient().getApi()
-            }
+            this.getApi = function () {
+                return getClient().getApi();
+            };
 
         });
 

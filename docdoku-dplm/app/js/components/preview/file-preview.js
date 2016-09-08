@@ -18,7 +18,7 @@
 
         .directive('remoteFilePreview', function (FileUtils, ConfigurationService) {
 
-          return {
+            return {
                 scope: {
                     file: '=remoteFilePreview'
                 },

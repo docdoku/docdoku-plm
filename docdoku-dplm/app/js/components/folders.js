@@ -47,7 +47,7 @@
                 $window.localStorage.folders = angular.toJson(_this.folders);
             };
 
-            this.removeFolders = function(){
+            this.removeFolders = function () {
                 _this.folders.length = 0;
                 _this.save();
             };

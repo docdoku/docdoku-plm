@@ -138,7 +138,7 @@
                 });
             };
 
-            var saveDocumentNote = function(document,note){
+            var saveDocumentNote = function (document, note) {
                 return $q(function (resolve, reject) {
                     DocdokuAPIService.getApi().then(function (api) {
                         var lastDocumentIteration = lastIteration(document);
@@ -147,18 +147,18 @@
                             documentId: document.documentMasterId,
                             documentVersion: document.version,
                             docIteration: lastDocumentIteration.iteration,
-                            body:{
-                                revisionNote:note
+                            body: {
+                                revisionNote: note
                             }
-                        }).then(function(response){
-                            angular.copy(response.obj,lastDocumentIteration);
+                        }).then(function (response) {
+                            angular.copy(response.obj, lastDocumentIteration);
                             return DBService.storeDocuments([document]).then(resolve);
-                        },reject);
+                        }, reject);
                     });
                 });
             };
 
-            var savePartNote = function(part,note){
+            var savePartNote = function (part, note) {
                 return $q(function (resolve, reject) {
                     DocdokuAPIService.getApi().then(function (api) {
                         api.apis.part.updatePartIteration({
@@ -166,21 +166,21 @@
                             partNumber: part.number,
                             partVersion: part.version,
                             partIteration: lastIteration(part).iteration,
-                            body:{
-                                iterationNote:note
+                            body: {
+                                iterationNote: note
                             }
-                        }).then(function(response){
+                        }).then(function (response) {
                             return DBService.storeParts([response.obj]).then(resolve);
-                        },reject);
+                        }, reject);
                     });
                 });
             };
 
-            var saveNote = function(item,note){
-                if(item.documentMasterId){
-                    return saveDocumentNote(item,note);
-                }else if(item.number){
-                    return savePartNote(item,note);
+            var saveNote = function (item, note) {
+                if (item.documentMasterId) {
+                    return saveDocumentNote(item, note);
+                } else if (item.number) {
+                    return savePartNote(item, note);
                 }
             };
 
@@ -348,12 +348,12 @@
                         if (file.item.documentMasterId) {
                             return checkInDocument(file.item, folderPath, file.path).then(function (item) {
                                 file.item = item;
-                                deferred.notify({total:total,done:++done});
+                                deferred.notify({total: total, done: ++done});
                             });
                         } else if (file.item.number) {
                             return checkInPart(file.item, folderPath, file.path).then(function (item) {
                                 file.item = item;
-                                deferred.notify({total:total,done:++done});
+                                deferred.notify({total: total, done: ++done});
                             });
                         }
                     });
@@ -375,12 +375,12 @@
                         if (file.item.documentMasterId) {
                             return checkOutDocument(file.item, folderPath, file.path).then(function (item) {
                                 file.item = item;
-                                deferred.notify({total:total,done:++done});
+                                deferred.notify({total: total, done: ++done});
                             });
                         } else if (file.item.number) {
                             return checkOutPart(file.item, folderPath, file.path).then(function (item) {
                                 file.item = item;
-                                deferred.notify({total:total,done:++done});
+                                deferred.notify({total: total, done: ++done});
                             });
                         }
                     });
@@ -402,12 +402,12 @@
                         if (file.item.documentMasterId) {
                             return undoCheckOutDocument(file.item, folderPath, file.path).then(function (item) {
                                 file.item = item;
-                                deferred.notify({total:total,done:++done});
+                                deferred.notify({total: total, done: ++done});
                             });
                         } else if (file.item.number) {
                             return undoCheckOutPart(file.item, folderPath, file.path).then(function (item) {
                                 file.item = item;
-                                deferred.notify({total:total,done:++done});
+                                deferred.notify({total: total, done: ++done});
                             });
                         }
                     });
@@ -460,27 +460,25 @@
             };
 
 
-            this.updateItemNotes = function(items,note){
+            this.updateItemNotes = function (items, note) {
                 var deferred = $q.defer();
 
                 var chain = $q.when();
                 var total = items.length, done = 0;
-                angular.forEach(items,function(item){
-                   chain = chain.then(function(){
-                       return saveNote(item,note).then(function(){
-                           deferred.notify({total: total, done: ++done});
-                       });
-                   });
+                angular.forEach(items, function (item) {
+                    chain = chain.then(function () {
+                        return saveNote(item, note).then(function () {
+                            deferred.notify({total: total, done: ++done});
+                        });
+                    });
                 });
 
-                chain.then(function(){
+                chain.then(function () {
                     deferred.resolve();
                 });
 
                 return deferred.promise;
             };
-
-
 
 
         });

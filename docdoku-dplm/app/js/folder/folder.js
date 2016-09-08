@@ -333,15 +333,12 @@
                 syncIndex: function () {
                     $scope.sync.running = true;
                     RepositoryService.syncIndex(folderPath)
-                        .then(fetchFolder, function(){
-                            console.log('error')
-                            console.log(arguments)
-                        }, function (sync) {
+                        .then(fetchFolder, null, function (sync) {
                             $scope.sync.total = sync.total;
                             $scope.sync.progress = sync.progress;
                         }).catch(function (err) {
                             $scope.sync = err;
-                            console.log('errrr')
+                            console.log('Something failed while sync index');
                         }).finally(function () {
                             $scope.sync.total = 0;
                             $scope.sync.progress = 0;

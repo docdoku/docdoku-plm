@@ -4,16 +4,16 @@
 
     angular.module('dplm.services')
 
-        .factory('IndexKeys',function(){
+        .factory('IndexKeys', function () {
             return {
-                HASH : 'hash',
-                DIGEST : 'digest',
-                WORKSPACE_ID : 'workspaceId',
-                NUMBER : 'number',
-                DOCUMENT_MASTER_ID:'documentMasterId',
-                REVISION:'revision',
-                ITERATION:'iteration',
-                LAST_MODIFIED_DATE:'lastModifiedDate'
+                HASH: 'hash',
+                DIGEST: 'digest',
+                WORKSPACE_ID: 'workspaceId',
+                NUMBER: 'number',
+                DOCUMENT_MASTER_ID: 'documentMasterId',
+                REVISION: 'revision',
+                ITERATION: 'iteration',
+                LAST_MODIFIED_DATE: 'lastModifiedDate'
             };
         })
 
@@ -70,8 +70,10 @@
 
             var removeFromIndex = function (index, path) {
                 Object.keys(IndexKeys)
-                    .map(function(key){return path + '.' + IndexKeys[key];})
-                    .forEach(function(entry){
+                    .map(function (key) {
+                        return path + '.' + IndexKeys[key];
+                    })
+                    .forEach(function (entry) {
                         delete index[entry];
                     });
             };
@@ -136,7 +138,7 @@
 
             this.getRepositoryIndex = function (indexFolder) {
                 try {
-                    if(!indexes[indexFolder]){
+                    if (!indexes[indexFolder]) {
                         indexes[indexFolder] = $window.require(indexFolder + INDEX_LOCATION);
                     }
                 } catch (e) {
@@ -189,7 +191,7 @@
                 FileUtils.setFileMode(path, document);
             };
 
-            this.updateFileInIndex = function(indexFolder, path){
+            this.updateFileInIndex = function (indexFolder, path) {
                 var index = _this.getRepositoryIndex(indexFolder);
                 setIndexValue(index, path, IndexKeys.DIGEST, getHashFromFile(path));
                 setIndexValue(index, path, IndexKeys.LAST_MODIFIED_DATE, Date.now());
@@ -207,7 +209,7 @@
                     } else if (key.endsWith('.' + IndexKeys.NUMBER)) {
                         path = key.substr(0, key.length - IndexKeys.NUMBER.length - 1);
                     }
-                   if(path && _this.isModified(index, path) ){
+                    if (path && _this.isModified(index, path)) {
                         changes.push(path);
                     }
                 });

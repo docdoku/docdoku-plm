@@ -53,11 +53,11 @@
                 return null;
             };
 
-            this.stat = function(path){
+            this.stat = function (path) {
                 return fs.statSync(path);
             };
 
-            this.setFileMode = function (path, item){
+            this.setFileMode = function (path, item) {
                 fs.chmodSync(path, fileMode(item));
             };
 
