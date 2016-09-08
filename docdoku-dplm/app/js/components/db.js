@@ -103,7 +103,6 @@
                         if (itemIndex.documentMasterId) {
                             tx = db.transaction('Documents', 'readwrite');
                             store = tx.objectStore('Documents');
-                            //var index = store.index('WorkspaceIndex');
                             request = store.get([itemIndex.workspaceId, itemIndex.documentMasterId + '-' + itemIndex.revision]);
                         }
                         else if (itemIndex.number) {
