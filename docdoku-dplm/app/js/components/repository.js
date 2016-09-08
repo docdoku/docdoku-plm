@@ -191,10 +191,10 @@
                 FileUtils.setFileMode(path, document);
             };
 
-            this.updateFileInIndex = function (indexFolder, path, date) {
+            this.updateFileInIndex = function (indexFolder, path) {
                 var index = _this.getRepositoryIndex(indexFolder);
                 setIndexValue(index, path, IndexKeys.DIGEST, getHashFromFile(path));
-                setIndexValue(index, path, IndexKeys.LAST_MODIFIED_DATE, date || Date.now());
+                setIndexValue(index, path, IndexKeys.LAST_MODIFIED_DATE, Date.now());
             };
 
             this.getLocalChanges = function (folder) {

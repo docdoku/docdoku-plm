@@ -57,6 +57,15 @@
                 return fs.statSync(path);
             };
 
+            this.fileExists = function(path){
+                try{
+                    fs.statSync(path);
+                    return true;
+                } catch(e){
+                    return false;
+                }
+            };
+
             this.setWritable = function(path){
                 fs.chmodSync(path, READ_WRITE);
             };

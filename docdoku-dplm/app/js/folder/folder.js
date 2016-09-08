@@ -13,7 +13,7 @@
                 });
         })
 
-        .controller('FolderController', function ($scope, $location, $routeParams, $filter, $mdDialog, $q,
+        .controller('FolderController', function ($scope, $location, $routeParams, $filter, $mdDialog, $q, $window,
                                                   FolderService, DBService, RepositoryService, WorkspaceService, ConfigurationService, FileUtils) {
 
 
@@ -30,6 +30,7 @@
             var filterCanUndoCheckOut = $filter('canUndoCheckOut');
             var filterCanPushFiles = filterCanCheckIn;
             var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
+            var fs = $window.require('fs');
 
             $scope.folder = folder;
             $scope.configuration = ConfigurationService.configuration;
@@ -161,8 +162,31 @@
 
             };
 
+            var watchers = [];
+
+            var clearWatchers = function(){
+                watchers.forEach(function(watcher){
+                    watcher.close();
+                });
+                watchers.length = 0;
+            };
+
+            var addWatchers = function(){
+                clearWatchers();
+                watchers = $scope.displayedFiles.map(function(file){
+                    var watcher;
+                    watcher = fs.watch(file.path,function(eventType){
+                        if('change' === eventType){
+                            fetchFileItem(file);
+                        }
+                    });
+                    return watcher;
+                });
+            };
+
             var refreshDisplay = function () {
                 $scope.displayedFiles.map(fetchFileItem);
+                addWatchers();
             };
 
             var fetchFileItem = function(file){
@@ -328,6 +352,7 @@
                     var start = (page - 1) * count;
                     var end = start + count;
                     $scope.displayedFiles = filteredFiles.sort(sortFiles).slice(start, end);
+                    addWatchers();
                 },
 
                 syncIndex: function () {
@@ -350,10 +375,11 @@
 
             };
 
-
             fetchFolder();
 
-            $scope.$on("$destroy", function () {});
+            $scope.$on("$destroy", function () {
+                clearWatchers();
+            });
 
         })
 
@@ -474,6 +500,7 @@
             });
 
             var updateItemsNote = function(){
+                // todo : use unique selection (same document may be present more than once)
                return WorkspaceService.updateItemNotes(items,$scope.options.note)
                    .then(null, null, function (status) {
                        $scope.status = status;
@@ -488,6 +515,7 @@
             };
 
             var checkIn = function(){
+                // todo : use unique selection (same document may be present more than once)
                 return  WorkspaceService.checkInItems(selection, folderPath)
                     .then(null, null, function (status) {
                         $scope.status = status;
@@ -552,6 +580,7 @@
             };
 
             var checkOut = function(){
+                // todo : use unique selection (same document may be present more than once)
                 return  WorkspaceService.checkOutItems(selection, folderPath)
                     .then(null, null, function (status) {
                         $scope.status = status;
@@ -585,6 +614,8 @@
 
             $scope.undoCheckOut = function () {
                 $scope.loading = true;
+                // todo : use unique selection (same document may be present more than once)
+                // todo : add option to revert files
                 WorkspaceService.undoCheckOutItems(selection, folderPath)
                     .then($mdDialog.hide, function (error) {
                         $scope.error = error;

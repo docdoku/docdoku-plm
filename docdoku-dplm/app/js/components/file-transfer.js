@@ -114,7 +114,12 @@
                 var fileName = getFileName(url);
                 var file = destinationFolder + '/' + fileName;
 
+                if(!FileUtils.fileExists(file)){
+                    fs.writeFileSync(file, '');
+                }
+
                 FileUtils.setWritable(file);
+
                 var fileStream = fs.createWriteStream(file);
 
                 var requestOpts = ConfigurationService.getHttpFormRequestOpts();
@@ -122,12 +127,6 @@
 
                 var bytes = 0, totalBytes = 0;
 
-                try {
-                    fs.statSync(file);
-                } catch (e) {
-                    fs.writeFileSync(file, '');
-                }
-                fs.chmodSync(file, READ_WRITE);
                 var request = http.get(requestOpts, function (response) {
                     totalBytes = response.headers['content-length'];
                     var encoding = response.headers['content-encoding'];
@@ -144,10 +143,10 @@
                 });
 
                 request.on('response', function () {
-                    var binary = RepositoryService.getItemBinaryResource(item, file);
-                    RepositoryService.updateFileInIndex(destinationFolder, file, new Date(binary.lastModified).getTime());
-                    FileUtils.setFileMode(file, item);
-                    deferred.resolve(file);
+                    // wait for writeStream end
+                    fileStream.on('finish', function() {
+                        deferred.resolve(file);
+                    });
                 });
 
                 request.on('error', function (err) {
@@ -173,6 +172,7 @@
                             .then(function (filePath) {
                                 RepositoryService.saveItemToIndex(indexFolder, filePath, item);
                                 RepositoryService.updateFileInIndex(indexFolder, filePath);
+                                FileUtils.setFileMode(filePath, item);
                             }, function () {
                                 // Error while downloading ?
                             }, function (progress) {
