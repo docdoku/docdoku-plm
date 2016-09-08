@@ -21,6 +21,9 @@
             var filteredItems = [];
             var translate = $filter('translate');
             var filter = $filter('filter');
+            var canCheckOut = $filter('canCheckOut');
+            var canCheckIn = $filter('canCheckIn');
+            var canUndoCheckOut = $filter('canUndoCheckOut');
 
             var hasFilter = function (code) {
                 return $scope.filters.filter(function (filter) {
@@ -108,6 +111,17 @@
                 return item;
             };
 
+            var refreshDisplay = function () {
+                return getData().then($scope.search);
+            };
+
+
+            var mapSelection = function(item){
+                return {
+                    item:item
+                };
+            };
+
             $scope.workspaceId = workspaceId;
             $scope.configuration = ConfigurationService.configuration;
             $scope.selected = [];
@@ -189,26 +203,13 @@
             $scope.refresh = function () {
                 $scope.sync.running = true;
                 WorkspaceService.refreshData(workspaceId)
-                    .then(function () {
+                    .then(refreshDisplay)
+                    .finally(function () {
                         $scope.sync.running = false;
-                        refreshDisplay()
                     });
             };
 
-            var refreshDisplay = function () {
-                getData().then($scope.search);
-            };
 
-
-            var mapSelection = function(item){
-                return {
-                    item:item
-                };
-            };
-
-            var canCheckOut = $filter('canCheckOut');
-            var canCheckIn = $filter('canCheckIn');
-            var canUndoCheckOut = $filter('canUndoCheckOut');
 
             $scope.actions = {
                 download: function (selection) {
@@ -248,12 +249,12 @@
                             console.log('Something bad happened');
                         }, function () {
                             console.log('Some progress notifications');
+
                         });
                 }
             };
 
-
-            getData().then($scope.search);
+            refreshDisplay();
 
         });
 

@@ -13,13 +13,13 @@
                 DOCUMENT_MASTER_ID:'documentMasterId',
                 REVISION:'revision',
                 ITERATION:'iteration',
-                LAST_MODIFIED_DATE:'lastModifiedDate' // this is the last sync date, it should correspond to binaryResource.lastModified
+                LAST_MODIFIED_DATE:'lastModifiedDate'
             };
         })
 
 
         .service('RepositoryService', function ($q, $timeout, $window, $filter,
-                                                INDEX_LOCATION, INDEX_SEARCH_PATTERN, DocdokuAPIService, FolderService, DBService,
+                                                INDEX_LOCATION, INDEX_SEARCH_PATTERN, DocdokuAPIService, FolderService, DBService, FileUtils,
                                                 IndexKeys) {
 
             var _this = this;
@@ -30,6 +30,9 @@
             var fileShortName = $filter('fileShortName');
             var lastIteration = $filter('lastIteration');
             var utcToLocalDateTime = $filter('utcToLocalDateTime');
+            var fileMode = $filter('fileMode');
+
+            var indexes = {};
 
             var getIndexValue = function (index, path, key) {
                 return index[path + '.' + key] || null;
@@ -43,7 +46,9 @@
                 return crypto.createHash('MD5').update(fs.readFileSync(path)).digest('base64');
             };
 
-            var writeIndex = function (indexPath, index) {
+            var writeIndex = function (folderPath) {
+                var index = _this.getRepositoryIndex(folderPath);
+                var indexPath = folderPath + INDEX_LOCATION;
                 fs.writeFileSync(indexPath, JSON.stringify(index));
             };
 
@@ -61,11 +66,6 @@
                 setIndexValue(index, path, IndexKeys.DOCUMENT_MASTER_ID, document.documentMasterId);
                 setIndexValue(index, path, IndexKeys.REVISION, document.version);
                 setIndexValue(index, path, IndexKeys.ITERATION, document.documentIterations.length);
-            };
-
-            var updateFile = function (index, path) {
-                setIndexValue(index, path, IndexKeys.DIGEST, getHashFromFile(path));
-                setIndexValue(index, path, IndexKeys.LAST_MODIFIED_DATE, Date.now());
             };
 
             var removeFromIndex = function (index, path) {
@@ -104,6 +104,18 @@
                 };
             };
 
+            var getItemBinaryResource = function (item, path) {
+                var name = fileShortName(path);
+                var itemLastIteration = lastIteration(item);
+                var binaryResource;
+                if (item.documentMasterId) {
+                    binaryResource = $filter('filter')(itemLastIteration.attachedFiles, {name: name})[0];
+                } else if (item.number) {
+                    binaryResource = itemLastIteration.nativeCADFile;
+                }
+                return binaryResource;
+            };
+
             this.getFileIndex = function (index, path) {
 
                 var digest = getIndexValue(index, path, IndexKeys.DIGEST);
@@ -124,16 +136,18 @@
 
             this.getRepositoryIndex = function (indexFolder) {
                 try {
-                    delete $window.require.cache[$window.require.resolve(indexFolder + INDEX_LOCATION)];
-                    return $window.require(indexFolder + INDEX_LOCATION);
+                    if(!indexes[indexFolder]){
+                        indexes[indexFolder] = $window.require(indexFolder + INDEX_LOCATION);
+                    }
                 } catch (e) {
                     var dir = indexFolder + '/.dplm/';
                     if (!fs.existsSync(dir)) {
                         fs.mkdirSync(dir);
                     }
                     fs.writeFileSync(indexFolder + INDEX_LOCATION, '{}');
-                    return $window.require(indexFolder + INDEX_LOCATION);
+                    indexes[indexFolder] = $window.require(indexFolder + INDEX_LOCATION);
                 }
+                return indexes[indexFolder];
             };
 
             this.search = function (folder) {
@@ -152,20 +166,6 @@
                 });
             };
 
-            this.writeIndex = writeIndex;
-
-            this.getIndexPath = function (folder) {
-                return folder + INDEX_LOCATION;
-            };
-
-            this.updateItemInIndex = function (index, item, path) {
-                if (item.number) {
-                    updateIndexForPart(index, path, item);
-                } else if (item.documentMasterId) {
-                    updateIndexForDocument(index, path, item);
-                }
-                updateFile(index, path);
-            };
 
             this.saveItemToIndex = function (indexFolder, path, item) {
                 if (item.number) {
@@ -176,21 +176,23 @@
             };
 
             this.savePartToIndex = function (indexFolder, path, part) {
-                var indexPath = indexFolder + INDEX_LOCATION;
                 var index = _this.getRepositoryIndex(indexFolder);
                 updateIndexForPart(index, path, part);
-                updateFile(index, path);
-                writeIndex(indexPath, index);
-                return index;
+                writeIndex(indexFolder);
+                FileUtils.setFileMode(path, part);
             };
 
             this.saveDocumentToIndex = function (indexFolder, path, document) {
-                var indexPath = indexFolder + INDEX_LOCATION;
                 var index = _this.getRepositoryIndex(indexFolder);
                 updateIndexForDocument(index, path, document);
-                updateFile(index, path);
-                writeIndex(indexPath, index);
-                return index;
+                writeIndex(indexFolder);
+                FileUtils.setFileMode(path, document);
+            };
+
+            this.updateFileInIndex = function(indexFolder, path){
+                var index = _this.getRepositoryIndex(indexFolder);
+                setIndexValue(index, path, IndexKeys.DIGEST, getHashFromFile(path));
+                setIndexValue(index, path, IndexKeys.LAST_MODIFIED_DATE, Date.now());
             };
 
             this.getLocalChanges = function (folder) {
@@ -216,19 +218,6 @@
                 return path && getHashFromFile(path) !== getIndexValue(index, path, IndexKeys.DIGEST);
             };
 
-
-            var getItemBinaryResource = function (item, path) {
-                var name = fileShortName(path);
-                var itemLastIteration = lastIteration(item);
-                var binaryResource;
-                if (item.documentMasterId) {
-                    binaryResource = $filter('filter')(itemLastIteration.attachedFiles, {name: name})[0];
-                } else if (item.number) {
-                    binaryResource = itemLastIteration.nativeCADFile;
-                }
-                return binaryResource;
-            };
-
             this.isOutOfDate = function (index, file) {
                 if (!file.index || !file.item) {
                     return false;
@@ -243,7 +232,6 @@
 
                 var promise = deferred.promise;
 
-                var indexPath = indexFolder + INDEX_LOCATION;
                 var index = _this.getRepositoryIndex(indexFolder);
                 var keys = Object.keys(index);
 
@@ -266,7 +254,7 @@
 
                 var chain = $q.when();
 
-                DocdokuAPIService.getClient().getApi().then(function (api) {
+                DocdokuAPIService.getApi().then(function (api) {
                     documents.forEach(function (id) {
                         var filePath = id.substr(0, id.length - IndexKeys.DOCUMENT_MASTER_ID.length - 1);
                         var version = getIndexValue(index, filePath, IndexKeys.REVISION);
@@ -296,7 +284,7 @@
                 }).then(function () {
                     FolderService.getFolder({path: indexFolder}).lastSync = new Date();
                     FolderService.save();
-                    writeIndex(indexPath, index);
+                    writeIndex(indexFolder);
                     deferred.resolve();
                 });
 

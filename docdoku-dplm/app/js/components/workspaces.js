@@ -10,19 +10,18 @@
             var fileMode = $filter('fileMode');
             var lastIteration = $filter('lastIteration');
 
-            var checkInDocument = function (document, index, path) {
+            var checkInDocument = function (document, indexFolder, path) {
                 return $q(function (resolve, reject) {
                     var updatedItem;
-                    DocdokuAPIService.getClient().getApi().then(function (api) {
+                    DocdokuAPIService.getApi().then(function (api) {
                         api.apis.documents.checkInDocument({
                             workspaceId: document.workspaceId,
                             documentId: document.documentMasterId,
                             documentVersion: document.version
                         }).then(function (response) {
                             updatedItem = response.obj;
-                            if (index && path) {
-                                RepositoryService.updateItemInIndex(index, updatedItem, path);
-                                fs.chmodSync(path, fileMode(updatedItem));
+                            if (indexFolder && path) {
+                                RepositoryService.saveItemToIndex(indexFolder, path, updatedItem);
                             }
                             return DBService.storeDocuments([updatedItem]);
                         }).then(function () {
@@ -32,19 +31,18 @@
                 });
             };
 
-            var checkOutDocument = function (document, index, path) {
+            var checkOutDocument = function (document, indexFolder, path) {
                 return $q(function (resolve, reject) {
                     var updatedItem;
-                    DocdokuAPIService.getClient().getApi().then(function (api) {
+                    DocdokuAPIService.getApi().then(function (api) {
                         api.apis.documents.checkOutDocument({
                             workspaceId: document.workspaceId,
                             documentId: document.documentMasterId,
                             documentVersion: document.version
                         }).then(function (response) {
                             updatedItem = response.obj;
-                            if (index && path) {
-                                RepositoryService.updateItemInIndex(index, updatedItem, path);
-                                fs.chmodSync(path, fileMode(updatedItem));
+                            if (indexFolder && path) {
+                                RepositoryService.saveItemToIndex(indexFolder, path, updatedItem);
                             }
                             return DBService.storeDocuments([updatedItem]);
                         }).then(function () {
@@ -55,19 +53,18 @@
             };
 
 
-            var undoCheckOutDocument = function (document, index, path) {
+            var undoCheckOutDocument = function (document, indexFolder, path) {
                 return $q(function (resolve, reject) {
                     var updatedItem;
-                    DocdokuAPIService.getClient().getApi().then(function (api) {
+                    DocdokuAPIService.getApi().then(function (api) {
                         api.apis.documents.checkOutDocument({
                             workspaceId: document.workspaceId,
                             documentId: document.documentMasterId,
                             documentVersion: document.version
                         }).then(function (response) {
                             updatedItem = response.obj;
-                            if (index && path) {
-                                RepositoryService.updateItemInIndex(index, updatedItem, path);
-                                fs.chmodSync(path, fileMode(updatedItem));
+                            if (indexFolder && path) {
+                                RepositoryService.saveItemToIndex(indexFolder, path, updatedItem);
                             }
                             return DBService.storeDocuments([updatedItem]);
                         }).then(function () {
@@ -78,19 +75,18 @@
             };
 
 
-            var checkInPart = function (part, index, path) {
+            var checkInPart = function (part, indexFolder, path) {
                 return $q(function (resolve, reject) {
                     var updatedItem;
-                    DocdokuAPIService.getClient().getApi().then(function (api) {
+                    DocdokuAPIService.getApi().then(function (api) {
                         api.apis.part.checkIn({
                             workspaceId: part.workspaceId,
                             partNumber: part.number,
                             partVersion: part.version
                         }).then(function (response) {
                             updatedItem = response.obj;
-                            if (index && path) {
-                                RepositoryService.updateItemInIndex(index, updatedItem, path);
-                                fs.chmodSync(path, fileMode(updatedItem));
+                            if (indexFolder && path) {
+                                RepositoryService.saveItemToIndex(indexFolder, path, updatedItem);
                             }
                             return DBService.storeParts([updatedItem]);
                         }).then(function () {
@@ -100,19 +96,18 @@
                 });
             };
 
-            var checkOutPart = function (part, index, path) {
+            var checkOutPart = function (part, indexFolder, path) {
                 return $q(function (resolve, reject) {
                     var updatedItem;
-                    DocdokuAPIService.getClient().getApi().then(function (api) {
+                    DocdokuAPIService.then(function (api) {
                         api.apis.part.checkOut({
                             workspaceId: part.workspaceId,
                             partNumber: part.number,
                             partVersion: part.version
                         }).then(function (response) {
                             updatedItem = response.obj;
-                            if (index && path) {
-                                RepositoryService.updateItemInIndex(index, updatedItem, path);
-                                fs.chmodSync(path, fileMode(updatedItem));
+                            if (indexFolder && path) {
+                                RepositoryService.saveItemToIndex(indexFolder, path, updatedItem);
                             }
                             return DBService.storeParts([updatedItem]);
                         }).then(function () {
@@ -122,19 +117,18 @@
                 });
             };
 
-            var undoCheckOutPart = function (part, index, path) {
+            var undoCheckOutPart = function (part, indexFolder, path) {
                 return $q(function (resolve, reject) {
                     var updatedItem;
-                    DocdokuAPIService.getClient().getApi().then(function (api) {
+                    DocdokuAPIService.getApi().then(function (api) {
                         api.apis.part.undoCheckOut({
                             workspaceId: part.workspaceId,
                             partNumber: part.number,
                             partVersion: part.version
                         }).then(function (response) {
                             updatedItem = response.obj;
-                            if (index && path) {
-                                RepositoryService.updateItemInIndex(index, updatedItem, path);
-                                fs.chmodSync(path, fileMode(updatedItem));
+                            if (indexFolder && path) {
+                                RepositoryService.saveItemToIndex(indexFolder, path, updatedItem);
                             }
                             return DBService.storeParts([updatedItem]);
                         }).then(function () {
@@ -146,7 +140,7 @@
 
             var saveDocumentNote = function(document,note){
                 return $q(function (resolve, reject) {
-                    DocdokuAPIService.getClient().getApi().then(function (api) {
+                    DocdokuAPIService.getApi().then(function (api) {
                         var lastDocumentIteration = lastIteration(document);
                         api.apis.document.updateDocumentIteration({
                             workspaceId: document.workspaceId,
@@ -166,7 +160,7 @@
 
             var savePartNote = function(part,note){
                 return $q(function (resolve, reject) {
-                    DocdokuAPIService.getClient().getApi().then(function (api) {
+                    DocdokuAPIService.getApi().then(function (api) {
                         api.apis.part.updatePartIteration({
                             workspaceId: part.workspaceId,
                             partNumber: part.number,
@@ -198,7 +192,7 @@
 
             this.getWorkspaces = function () {
                 return $q(function (resolve, reject) {
-                    DocdokuAPIService.getClient().getApi().then(function (api) {
+                    DocdokuAPIService.getApi().then(function (api) {
                         api.workspaces.getWorkspacesForConnectedUser()
                             .then(function (response) {
                                 angular.copy(response.obj.allWorkspaces.map(function (workspace) {
@@ -213,7 +207,7 @@
             this.createPartInWorkspace = function (part) {
                 return $q(function (resolve, reject) {
                     var createdPart;
-                    DocdokuAPIService.getClient().getApi().then(function (api) {
+                    DocdokuAPIService.getApi().then(function (api) {
                         api.parts.createNewPart({
                             workspaceId: part.workspaceId,
                             body: part
@@ -230,7 +224,7 @@
             this.createDocumentInWorkspace = function (document) {
                 return $q(function (resolve, reject) {
                     var createdDocument;
-                    DocdokuAPIService.getClient().getApi().then(function (api) {
+                    DocdokuAPIService.getApi().then(function (api) {
                         api.apis.folders.createDocumentMasterInFolder({
                             workspaceId: document.workspaceId,
                             folderId: document.workspaceId,
@@ -276,7 +270,7 @@
 
             this.fetchParts = function (workspace, start, max) {
                 return $q(function (resolve, reject) {
-                    DocdokuAPIService.getClient().getApi().then(function (api) {
+                    DocdokuAPIService.getApi().then(function (api) {
                         api.apis.parts.getPartRevisions({
                             workspaceId: workspace,
                             start: start,
@@ -290,7 +284,7 @@
 
             this.fetchPartsCount = function (workspace) {
                 return $q(function (resolve, reject) {
-                    DocdokuAPIService.getClient().getApi().then(function (api) {
+                    DocdokuAPIService.getApi().then(function (api) {
                         api.apis.parts.getTotalNumberOfParts({
                             workspaceId: workspace
                         }).then(function (response) {
@@ -302,7 +296,7 @@
 
             this.fetchDocuments = function (workspace, start, max) {
                 return $q(function (resolve, reject) {
-                    DocdokuAPIService.getClient().getApi().then(function (api) {
+                    DocdokuAPIService.getApi().then(function (api) {
                         api.apis.documents.getDocumentsInWorkspace({
                             workspaceId: workspace,
                             start: start,
@@ -316,7 +310,7 @@
 
             this.fetchDocumentsCount = function (workspace) {
                 return $q(function (resolve, reject) {
-                    DocdokuAPIService.getClient().getApi().then(function (api) {
+                    DocdokuAPIService.getApi().then(function (api) {
                         api.apis.documents.getDocumentsInWorkspaceCount({
                             workspaceId: workspace
                         }).then(function (response) {
@@ -348,22 +342,16 @@
                 var deferred = $q.defer();
                 var chain = $q.when();
                 var total = files.length, done = 0;
-                var index, indexPath;
-
-                if(folderPath){
-                    index = RepositoryService.getRepositoryIndex(folderPath);
-                    indexPath = RepositoryService.getIndexPath(folderPath);
-                }
 
                 angular.forEach(files, function (file) {
                     chain = chain.then(function () {
                         if (file.item.documentMasterId) {
-                            return checkInDocument(file.item, index, file.path).then(function (item) {
+                            return checkInDocument(file.item, folderPath, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify({total:total,done:++done});
                             });
                         } else if (file.item.number) {
-                            return checkInPart(file.item, index, file.path).then(function (item) {
+                            return checkInPart(file.item, folderPath, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify({total:total,done:++done});
                             });
@@ -371,12 +359,7 @@
                     });
                 });
 
-                chain.then(function(){
-                    if(index && indexPath){
-                        RepositoryService.writeIndex(indexPath, index);
-                    }
-                    deferred.resolve();
-                });
+                chain.then(deferred.resolve);
 
                 return deferred.promise;
             };
@@ -386,22 +369,16 @@
                 var deferred = $q.defer();
                 var chain = $q.when();
                 var total = files.length, done = 0;
-                var index, indexPath;
-
-                if(folderPath){
-                    index = RepositoryService.getRepositoryIndex(folderPath);
-                    indexPath = RepositoryService.getIndexPath(folderPath);
-                }
 
                 angular.forEach(files, function (file) {
                     chain = chain.then(function () {
                         if (file.item.documentMasterId) {
-                            return checkOutDocument(file.item, index, file.path).then(function (item) {
+                            return checkOutDocument(file.item, folderPath, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify({total:total,done:++done});
                             });
                         } else if (file.item.number) {
-                            return checkOutPart(file.item, index, file.path).then(function (item) {
+                            return checkOutPart(file.item, folderPath, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify({total:total,done:++done});
                             });
@@ -409,12 +386,7 @@
                     });
                 });
 
-                chain.then(function(){
-                    if(index && indexPath){
-                        RepositoryService.writeIndex(indexPath, index);
-                    }
-                    deferred.resolve();
-                });
+                chain.then(deferred.resolve);
 
                 return deferred.promise;
             };
@@ -424,22 +396,16 @@
                 var deferred = $q.defer();
                 var chain = $q.when();
                 var total = files.length, done = 0;
-                var index, indexPath;
-
-                if(folderPath){
-                    index = RepositoryService.getRepositoryIndex(folderPath);
-                    indexPath = RepositoryService.getIndexPath(folderPath);
-                }
 
                 angular.forEach(files, function (file) {
                     chain = chain.then(function () {
                         if (file.item.documentMasterId) {
-                            return undoCheckOutDocument(file.item, index, file.path).then(function (item) {
+                            return undoCheckOutDocument(file.item, folderPath, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify({total:total,done:++done});
                             });
                         } else if (file.item.number) {
-                            return undoCheckOutPart(file.item, index, file.path).then(function (item) {
+                            return undoCheckOutPart(file.item, folderPath, file.path).then(function (item) {
                                 file.item = item;
                                 deferred.notify({total:total,done:++done});
                             });
@@ -447,12 +413,7 @@
                     });
                 });
 
-                chain.then(function(){
-                    if(index && indexPath){
-                        RepositoryService.writeIndex(indexPath, index);
-                    }
-                    deferred.resolve();
-                });
+                chain.then(deferred.resolve);
 
                 return deferred.promise;
             };

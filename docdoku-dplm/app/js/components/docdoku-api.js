@@ -8,11 +8,7 @@
 
             var cookie = null;
 
-            this.setCookie = function (pCookie) {
-                cookie = pCookie;
-            };
-
-            this.getClient = function () {
+            var getClient = function () {
                 var client = new DocdokuPLMClient();
                 client.setOptions({
                     url: ConfigurationService.getHostApiURL(),
@@ -20,6 +16,14 @@
                 });
                 return client;
             };
+
+            this.setCookie = function (pCookie) {
+                cookie = pCookie;
+            };
+
+            this.getApi = function(){
+                return getClient().getApi()
+            }
 
         });
 

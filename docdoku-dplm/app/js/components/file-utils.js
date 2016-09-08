@@ -13,11 +13,12 @@
             return ['js', 'json', 'obj', 'stl', 'dae', 'ply', 'wrl', 'bin'];
         })
 
-        .service('FileUtils', function ($window) {
+        .service('FileUtils', function ($window, $filter) {
 
             var sys = $window.require('sys');
             var fs = $window.require('fs');
             var exec = $window.require('child_process').exec;
+            var fileMode = $filter('fileMode');
 
             this.openInOS = function (file) {
 
@@ -54,6 +55,10 @@
 
             this.stat = function(path){
                 return fs.statSync(path);
+            };
+
+            this.setFileMode = function (path, item){
+                fs.chmodSync(path, fileMode(item));
             };
 
         });

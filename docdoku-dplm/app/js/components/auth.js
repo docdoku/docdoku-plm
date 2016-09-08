@@ -15,7 +15,7 @@
 
                 var deferred = $q.defer();
 
-                DocdokuAPIService.getClient().getApi()
+                DocdokuAPIService.getApi()
                     .then(function (api) {
                         return api.auth.login({
                             body: {
@@ -42,7 +42,7 @@
 
             this.logout = function () {
                 var deferred = $q.defer();
-                DocdokuAPIService.getClient().getApi().then(function (api) {
+                DocdokuAPIService.getApi().then(function (api) {
 
                     angular.copy({}, user);
 

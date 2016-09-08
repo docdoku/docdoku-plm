@@ -29,6 +29,7 @@
             var filterCanCheckIn = $filter('canCheckIn');
             var filterCanUndoCheckOut = $filter('canUndoCheckOut');
             var filterCanPushFiles = filterCanCheckIn;
+            var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
 
             $scope.folder = folder;
             $scope.configuration = ConfigurationService.configuration;
@@ -87,8 +88,6 @@
 
             var search = function () {
 
-                var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
-
                 filteredFiles = allFiles.filter(function (path) {
 
                     var index = RepositoryService.getFileIndex(repositoryIndex, path);
@@ -110,7 +109,6 @@
                     var file = FolderService.createFileObject(path);
                     file.index = RepositoryService.getFileIndex(repositoryIndex, path);
                     file.stat = FileUtils.stat(path);
-                    file.modified = RepositoryService.isModified(repositoryIndex, path);
                     return file;
                 });
 
@@ -119,10 +117,7 @@
                 filteredFiles.forEach(function (file) {
                     if (file.index) {
                         chain = chain.then(function () {
-                            return DBService.getItem(file.index);
-                        }).then(function (item) {
-                            file.item = item;
-                            file.outOfDate = RepositoryService.isOutOfDate(repositoryIndex, file);
+                            return fetchFileItem(file);
                         });
                     }
                 });
@@ -167,29 +162,15 @@
             };
 
             var refreshDisplay = function () {
-
-                var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
-
-                angular.forEach($scope.displayedFiles, function (file) {
-                    file.index = RepositoryService.getFileIndex(repositoryIndex, file.path);
-                    if (file.index) {
-                        DBService.getItem(file.index).then(function (item) {
-                            file.item = item;
-                            file.outOfDate = RepositoryService.isOutOfDate(repositoryIndex, file);
-                        });
-                        file.modified = RepositoryService.isModified(repositoryIndex, file.path);
-
-                    }
-                });
+                $scope.displayedFiles.map(fetchFileItem);
             };
 
-
             var fetchFileItem = function(file){
-                var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
                 if(file.index){
                     return DBService.getItem(file.index).then(function (item) {
                         file.item = item;
                         file.outOfDate = RepositoryService.isOutOfDate(repositoryIndex, file);
+                        file.modified = RepositoryService.isModified(repositoryIndex, file.path);
                     });
                 }
             };
@@ -198,14 +179,11 @@
 
                 var changes = RepositoryService.getLocalChanges($scope.folder);
                 var selection = [];
-                var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
 
                 angular.forEach(changes,function(path){
-                    var file = {
-                        path: path,
-                        index: RepositoryService.getFileIndex(repositoryIndex, path),
-                        stat: FileUtils.stat(path)
-                    };
+                    var file = FolderService.createFileObject(path);
+                    file.index = RepositoryService.getFileIndex(repositoryIndex, path);
+                    file.stat = FileUtils.stat(path);
                     selection.push(file);
                     fetchFileItem(file);
                 });
@@ -355,11 +333,15 @@
                 syncIndex: function () {
                     $scope.sync.running = true;
                     RepositoryService.syncIndex(folderPath)
-                        .then(fetchFolder, null, function (sync) {
+                        .then(fetchFolder, function(){
+                            console.log('error')
+                            console.log(arguments)
+                        }, function (sync) {
                             $scope.sync.total = sync.total;
                             $scope.sync.progress = sync.progress;
                         }).catch(function (err) {
                             $scope.sync = err;
+                            console.log('errrr')
                         }).finally(function () {
                             $scope.sync.total = 0;
                             $scope.sync.progress = 0;
@@ -431,12 +413,16 @@
                     $scope.document = document;
                     return UploadService.uploadFileToDocument(file.path, document);
                 }).then(function () {
-                    var newIndex = RepositoryService.saveDocumentToIndex(folderPath, file.path, $scope.document);
-                    file.index = RepositoryService.getFileIndex(newIndex, file.path);
+
+                    var index = RepositoryService.getRepositoryIndex(folderPath);
+                    RepositoryService.saveDocumentToIndex(folderPath, file.path, $scope.document);
+                    file.index = RepositoryService.getFileIndex(index, file.path);
+
                     DBService.getItem(file.index).then(function (item) {
                         file.item = item;
                         $mdDialog.hide();
                     });
+
                 }).catch(onError);
             };
 
@@ -467,8 +453,9 @@
                     $scope.part = part;
                     return UploadService.uploadNativeCADFile(file.path, part);
                 }).then(function () {
-                    var newIndex = RepositoryService.savePartToIndex(folderPath, file.path, $scope.part);
-                    file.index = RepositoryService.getFileIndex(newIndex, file.path);
+                    var index = RepositoryService.getRepositoryIndex(folderPath);
+                    RepositoryService.savePartToIndex(folderPath, file.path, $scope.part);
+                    file.index = RepositoryService.getFileIndex(index, file.path);
                     DBService.getItem(file.index).then(function (item) {
                         file.item = item;
                         $mdDialog.hide();
@@ -480,8 +467,6 @@
         .controller('CheckInCtrl', function ($scope, $mdDialog, $q,
                                              WorkspaceService, UploadService, RepositoryService, DBService,
                                              selection, folderPath) {
-
-            var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
 
             var items = selection.map(function(file){
                 return file.item;

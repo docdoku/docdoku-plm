@@ -70,9 +70,6 @@
                 var done = 0;
                 var total = files.length;
 
-                var index = RepositoryService.getRepositoryIndex(indexFolder);
-                var indexPath = RepositoryService.getIndexPath(indexFolder);
-
                 files.forEach(function (file) {
                     var item = file.item;
 
@@ -89,14 +86,12 @@
                     chain = chain.then(function () {
                         deferred.notify({done: ++done, total: total});
                         RepositoryService.saveItemToIndex(indexFolder, file.path, item);
+                        RepositoryService.updateFileInIndex(indexFolder, file.path);
                     });
 
                 });
 
-                chain.then(function () {
-                    RepositoryService.writeIndex(indexPath, index);
-                    deferred.resolve();
-                });
+                chain.then(deferred.resolve);
 
                 return deferred.promise;
 
@@ -105,13 +100,12 @@
         })
 
         .service('DownloadService', function ($window, $q, $filter, $timeout,
-                                              ConfigurationService, RepositoryService, READ_WRITE) {
+                                              ConfigurationService, RepositoryService, FileUtils, READ_WRITE) {
 
             var fs = $window.require('fs');
             var http = $window.require('http');
             var getFileName = $filter('fileShortName');
             var zlib = $window.require('zlib');
-            var fileMode = $filter('fileMode');
 
             var download = function (url, destinationFolder, item) {
 
@@ -149,35 +143,34 @@
                 });
 
                 request.on('response', function () {
-                    fs.chmodSync(file, fileMode(item));
+                    RepositoryService.updateFileInIndex(destinationFolder, file);
+                    FileUtils.setFileMode(file,item);
                     deferred.resolve(file);
                 });
 
                 request.on('error', function (err) {
-                    fs.chmodSync(file, fileMode(item));
+                    FileUtils.setFileMode(file,item);
                     deferred.reject(err);
                 });
 
                 return deferred.promise;
             };
 
-            this.bulkDownload = function (fileMap, destinationFolder) {
+            this.bulkDownload = function (fileMap, indexFolder) {
 
                 var deferred = $q.defer();
                 var chain = $q.when();
                 var done = 0;
                 var fileUrls = Object.keys(fileMap);
 
-                var index = RepositoryService.getRepositoryIndex(destinationFolder);
-                var indexPath = RepositoryService.getIndexPath(destinationFolder);
-
                 fileUrls.forEach(function (url) {
 
                     var item = fileMap[url];
                     chain = chain.then(function () {
-                        return download('/files/' + url, destinationFolder, item)
+                        return download('/files/' + url, indexFolder, item)
                             .then(function (filePath) {
-                                RepositoryService.updateItemInIndex(index, item, filePath);
+                                RepositoryService.saveItemToIndex(indexFolder, filePath, item);
+                                RepositoryService.updateFileInIndex(indexFolder, filePath);
                             }, function () {
                                 // Error while downloading ?
                             }, function (progress) {
@@ -187,9 +180,7 @@
 
                 });
 
-                chain.then(function () {
-                    RepositoryService.writeIndex(indexPath, index);
-                }).then(deferred.resolve);
+                chain.then(deferred.resolve);
 
                 return deferred.promise;
 
