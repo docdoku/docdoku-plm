@@ -99,7 +99,7 @@
             var checkOutPart = function (part, indexFolder, path) {
                 return $q(function (resolve, reject) {
                     var updatedItem;
-                    DocdokuAPIService.then(function (api) {
+                    DocdokuAPIService.getApi().then(function (api) {
                         api.apis.part.checkOut({
                             workspaceId: part.workspaceId,
                             partNumber: part.number,
