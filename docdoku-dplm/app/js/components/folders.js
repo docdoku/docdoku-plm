@@ -115,7 +115,7 @@
                         break;
                 }
                 if (!cmd) {
-                    // Should use toast service
+                    // Should use toast service, action is not available for this platform
                 } else {
                     $window.require('child_process').exec(cmd, {
                         cwd: path
