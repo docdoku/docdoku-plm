@@ -603,8 +603,8 @@
 
         })
 
-        .controller('UndoCheckOutCtrl', function ($scope, $mdDialog,
-                                                  WorkspaceService, UploadService, RepositoryService, DBService,
+        .controller('UndoCheckOutCtrl', function ($scope, $mdDialog, $filter, $q, DownloadService,
+                                                  WorkspaceService, RepositoryService, DBService,
                                                   selection, folderPath) {
 
             $scope.loading = false;
@@ -612,18 +612,46 @@
             $scope.folderPath = folderPath;
             $scope.close = $mdDialog.hide;
 
-            $scope.undoCheckOut = function () {
-                $scope.loading = true;
-                // todo : use unique selection (same document may be present more than once)
-                // todo : add option to revert files
-                WorkspaceService.undoCheckOutItems(selection, folderPath)
-                    .then($mdDialog.hide, function (error) {
-                        $scope.error = error;
-                    }, function (status) {
+            $scope.options = {
+                restoreFiles:true
+            };
+
+            var restoreFiles = function(){
+
+                var fileMap = $filter('itemsFiles')(selection.map(function(file){
+                    return file.item;
+                }));
+
+                return DownloadService.bulkDownload(fileMap, folderPath)
+                    .then(null, null, function (status) {
                         $scope.status = status;
-                    }).finally(function () {
+                    });
+            };
+
+            var undoCheckOut = function(){
+                return WorkspaceService.undoCheckOutItems(selection, folderPath)
+                    .then(null, null, function (status) {
+                        $scope.status = status;
+                    });
+            };
+
+
+            $scope.undoCheckOut = function () {
+                // todo : use unique selection (same document may be present more than once)
+
+                $scope.loading = true;
+
+                var chain = $q.when();
+
+                if($scope.options.restoreFiles){
+                    chain = chain.then(restoreFiles);
+                }
+
+                chain.then(undoCheckOut)
+                    .then($mdDialog.hide).finally(function () {
                         $scope.loading = false;
                     });
+
             };
 
         })

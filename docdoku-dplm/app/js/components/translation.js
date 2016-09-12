@@ -185,7 +185,8 @@
                     FILE_PREVIEW: 'Open file',
                     SYNCED: 'Synced',
                     CREATED: 'Created',
-                    SEND_MAIL: 'Email'
+                    SEND_MAIL: 'Email',
+                    RESTORE_FILES:'Restore files'
                 })
                 .translations('fr', {
                     CHECKOUT: 'Réserver',
@@ -367,7 +368,8 @@
                     FILE_PREVIEW: 'Ouvrir le fichier',
                     SYNCED: 'Synchronisé',
                     CREATED: 'Créé',
-                    SEND_MAIL: 'Email'
+                    SEND_MAIL: 'Email',
+                    RESTORE_FILES:'Restaurer les fichiers'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

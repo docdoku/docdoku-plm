@@ -11,7 +11,7 @@
                 </h2>
 
                 <div class="md-subhead description">
-                    {{selection.length}} {{'FILES_TO_BE_CHECKED_OUT' | translate}}
+                    {{selection.length}} {{'FILES_TO_UNDO_CHECK_OUT' | translate}}
                 </div>
 
                 <p ng-if="error">{{error}}</p>
@@ -42,7 +42,7 @@
                 </div>
 
                 <div layout="column" ng-show="showAdvancedOptions">
-                    <md-checkbox ng-model="options.downloadFromServer" aria-label="{{'RESTORE_FILES'|translate}}">
+                    <md-checkbox ng-model="options.restoreFiles" aria-label="{{'RESTORE_FILES'|translate}}">
                         {{'RESTORE_FILES'|translate}}
                     </md-checkbox>
                 </div>
