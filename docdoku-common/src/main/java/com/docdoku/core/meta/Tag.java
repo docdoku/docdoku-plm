@@ -22,9 +22,7 @@ package com.docdoku.core.meta;
 
 import com.docdoku.core.common.Workspace;
 
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -39,15 +37,15 @@ import java.io.Serializable;
 @javax.persistence.Entity
 public class Tag implements Serializable {
     
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
+    @Column(name = "WORKSPACE_ID", nullable = false, insertable = false, updatable = false)
     private String workspaceId="";
 
     @Column(length=100)
-    @javax.persistence.Id
+    @Id
     private String label="";
-    
-    @javax.persistence.ManyToOne(optional=false, fetch=FetchType.EAGER)
+
+    @Id
+    @ManyToOne(optional=false, fetch=FetchType.EAGER)
     private Workspace workspace;
 
     public Tag() {
