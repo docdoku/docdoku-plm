@@ -20,27 +20,92 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.document.*;
 import com.docdoku.core.gcm.GCMAccount;
+import com.docdoku.core.notification.TagUserGroupSubscription;
+import com.docdoku.core.notification.TagUserGroupSubscriptionKey;
+import com.docdoku.core.notification.TagUserSubscription;
+import com.docdoku.core.notification.TagUserSubscriptionKey;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SubscriptionDAO {
     private static final Logger LOGGER = Logger.getLogger(SubscriptionDAO.class.getName());
     private final EntityManager em;
+    private Locale mLocale;
+
+
+    public SubscriptionDAO(Locale pLocale, EntityManager pEM) {
+        mLocale=pLocale;
+        em=pEM;
+    }
 
     public SubscriptionDAO(EntityManager pEM) {
         em = pEM;
     }
 
-    public void createStateChangeSubscription(StateChangeSubscription pSubscription) {
-        em.merge(pSubscription);
+    public TagUserSubscription saveTagUserSubscription(TagUserSubscription pSubscription) {
+        return em.merge(pSubscription);
+    }
+
+    public TagUserGroupSubscription saveTagUserGroupSubscription(TagUserGroupSubscription pSubscription) {
+        return em.merge(pSubscription);
+    }
+
+    public void removeTagUserSubscription(TagUserSubscriptionKey pKey) {
+        try {
+            TagUserSubscription subscription = em.getReference(TagUserSubscription.class, pKey);
+            em.remove(subscription);
+            em.flush();
+        } catch (NullPointerException pNPEx) {
+            //em.getReference throws a NullPointerException when entity
+            //doesn't exist. It's probably a bug, as a workaround
+            //we silently catch this exception
+            LOGGER.log(Level.FINER,null,pNPEx);
+        } catch (EntityNotFoundException pENFEx) {
+            //not subscribed, no need to unsubscribe
+            LOGGER.log(Level.FINER,null,pENFEx);
+        }
+    }
+
+    public void removeTagUserGroupSubscription(TagUserGroupSubscriptionKey pKey) {
+        try {
+            TagUserGroupSubscription subscription = em.getReference(TagUserGroupSubscription.class, pKey);
+            em.remove(subscription);
+            em.flush();
+        } catch (NullPointerException pNPEx) {
+            //em.getReference throws a NullPointerException when entity
+            //doesn't exist. It's probably a bug, as a workaround
+            //we silently catch this exception
+            LOGGER.log(Level.FINER,null,pNPEx);
+        } catch (EntityNotFoundException pENFEx) {
+            //not subscribed, no need to unsubscribe
+            LOGGER.log(Level.FINER,null,pENFEx);
+        }
+    }
+
+    public List<TagUserSubscription> getTagUserSubscriptionsByUser(User pUser){
+        return em.createNamedQuery("TagUserSubscription.findTagUserSubscriptionsByUser", TagUserSubscription.class)
+                .setParameter("userSubscriber", pUser)
+                .getResultList();
+    }
+
+    public List<TagUserGroupSubscription> getTagUserGroupSubscriptionsByGroup(UserGroup pUserGroup){
+        return em.createNamedQuery("TagUserGroupSubscription.findTagUserGroupSubscriptionsByGroup", TagUserGroupSubscription.class)
+                .setParameter("groupSubscriber", pUserGroup)
+                .getResultList();
+    }
+
+
+    public StateChangeSubscription createStateChangeSubscription(StateChangeSubscription pSubscription) {
+        return em.merge(pSubscription);
     }
 
     public void removeStateChangeSubscription(SubscriptionKey pKey) {
@@ -59,8 +124,8 @@ public class SubscriptionDAO {
         }
     }
 
-    public void createIterationChangeSubscription(IterationChangeSubscription pSubscription) {
-        em.merge(pSubscription);
+    public IterationChangeSubscription createIterationChangeSubscription(IterationChangeSubscription pSubscription) {
+        return em.merge(pSubscription);
     }
 
     public void removeIterationChangeSubscription(SubscriptionKey pKey) {
@@ -141,27 +206,43 @@ public class SubscriptionDAO {
 
 
 
-    public User[] getIterationChangeEventSubscribers(DocumentRevision pDocR) {
-        User[] users;
+    public Collection<User> getIterationChangeEventSubscribers(DocumentRevision pDocR) {
         TypedQuery<User> query = em.createQuery("SELECT DISTINCT s.subscriber FROM IterationChangeSubscription s WHERE s.observedDocumentRevision = :docR", User.class);
         List<User> listUsers = query.setParameter("docR", pDocR).getResultList();
-        users = new User[listUsers.size()];
-        for (int i = 0; i < listUsers.size(); i++) {
-            users[i] = listUsers.get(i);
-        }
+        Set<User> users=new HashSet<>();
+        users.addAll(listUsers);
 
+        listUsers = em.createNamedQuery("TagUserSubscription.findIterationChangeSubscribersByTags", User.class)
+        .setParameter("workspaceId", pDocR.getWorkspaceId())
+        .setParameter("tags", pDocR.getTags())
+        .getResultList();
+        users.addAll(listUsers);
+
+        listUsers = em.createNamedQuery("TagUserGroupSubscription.findIterationChangeSubscribersByTags", User.class)
+                .setParameter("workspaceId", pDocR.getWorkspaceId())
+                .setParameter("tags", pDocR.getTags())
+                .getResultList();
+        users.addAll(listUsers);
         return users;
     }
 
-    public User[] getStateChangeEventSubscribers(DocumentRevision pDocR) {
-        User[] users;
+    public Collection<User> getStateChangeEventSubscribers(DocumentRevision pDocR) {
         TypedQuery<User> query = em.createQuery("SELECT DISTINCT s.subscriber FROM StateChangeSubscription s WHERE s.observedDocumentRevision = :docR", User.class);
         List<User> listUsers = query.setParameter("docR", pDocR).getResultList();
-        users = new User[listUsers.size()];
-        for (int i = 0; i < listUsers.size(); i++) {
-            users[i] = listUsers.get(i);
-        }
+        Set<User> users=new HashSet<>();
+        users.addAll(listUsers);
 
+        listUsers = em.createNamedQuery("TagUserSubscription.findStateChangeSubscribersByTags", User.class)
+                .setParameter("workspaceId", pDocR.getWorkspaceId())
+                .setParameter("tags", pDocR.getTags())
+                .getResultList();
+        users.addAll(listUsers);
+
+        listUsers = em.createNamedQuery("TagUserGroupSubscription.findStateChangeSubscribersByTags", User.class)
+                .setParameter("workspaceId", pDocR.getWorkspaceId())
+                .setParameter("tags", pDocR.getTags())
+                .getResultList();
+        users.addAll(listUsers);
         return users;
     }
 

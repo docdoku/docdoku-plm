@@ -15,7 +15,8 @@
     <class>com.docdoku.core.change.ChangeOrder</class>
     <class>com.docdoku.core.change.ChangeRequest</class>
     <class>com.docdoku.core.change.Milestone</class>
-    <class>com.docdoku.core.change.ItemTaggedSubscription</class>
+    <class>com.docdoku.core.notification.TagUserSubscription</class>
+    <class>com.docdoku.core.notification.TagUserGroupSubscription</class>
     <class>com.docdoku.core.change.ModificationNotification</class>
     <class>com.docdoku.core.configuration.ProductConfiguration</class>
     <class>com.docdoku.core.configuration.ProductBaseline</class>

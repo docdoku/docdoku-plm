@@ -64,7 +64,7 @@ public class MailerBean implements IMailerLocal {
 
     @Asynchronous
     @Override
-    public void sendStateNotification(User[] pSubscribers,
+    public void sendStateNotification(Collection<User> pSubscribers,
                                       DocumentRevision pDocumentRevision) {
         try {
             for (User pSubscriber : pSubscribers) {
@@ -79,7 +79,7 @@ public class MailerBean implements IMailerLocal {
 
     @Asynchronous
     @Override
-    public void sendIterationNotification(User[] pSubscribers,
+    public void sendIterationNotification(Collection<User> pSubscribers,
                                           DocumentRevision pDocumentRevision) {
         try {
             for (User pSubscriber : pSubscribers) {
