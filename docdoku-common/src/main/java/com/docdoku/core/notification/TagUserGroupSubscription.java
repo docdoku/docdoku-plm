@@ -54,8 +54,8 @@ public class TagUserGroupSubscription implements Serializable{
     @Id
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumns({
-            @JoinColumn(name = "MEMBER_ID", referencedColumnName = "ID"),
-            @JoinColumn(name = "MEMBER_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
+            @JoinColumn(name = "SUBSCRIBER_ID", referencedColumnName = "ID"),
+            @JoinColumn(name = "SUBSCRIBER_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
     private UserGroup groupSubscriber;
 

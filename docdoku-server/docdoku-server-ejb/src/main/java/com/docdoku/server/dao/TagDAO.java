@@ -68,6 +68,15 @@ public class TagDAO {
         }
     }
 
+    public Tag loadTag(TagKey pTagKey) throws TagNotFoundException {
+        Tag tag = em.find(Tag.class,pTagKey);
+        if (tag == null) {
+            throw new TagNotFoundException(mLocale, pTagKey);
+        } else {
+            return tag;
+        }
+    }
+
     public void createTag(Tag pTag) throws CreationException, TagAlreadyExistsException {
         try {
             //the EntityExistsException is thrown only when flush occurs
