@@ -23,11 +23,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.UserKey;
-import com.docdoku.core.exceptions.AccessRightException;
-import com.docdoku.core.exceptions.UserNotActiveException;
-import com.docdoku.core.exceptions.UserNotFoundException;
-import com.docdoku.core.exceptions.WorkspaceNotFoundException;
-import com.docdoku.core.meta.Tag;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.TagKey;
 import com.docdoku.core.notification.TagUserGroupSubscription;
 import com.docdoku.core.notification.TagUserGroupSubscriptionKey;
@@ -37,6 +33,9 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.INotificationManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.SubscriptionDAO;
+import com.docdoku.server.dao.TagDAO;
+import com.docdoku.server.dao.UserDAO;
+import com.docdoku.server.dao.UserGroupDAO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -68,12 +67,12 @@ public class NotificationManagerBean implements INotificationManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public TagUserSubscription subscribeToTagEvent(String pWorkspaceId, String pLabel, boolean pOnIterationChange, boolean pOnStateChange) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public TagUserSubscription subscribeToTagEvent(String pWorkspaceId, String pLabel, boolean pOnIterationChange, boolean pOnStateChange) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TagNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         Locale userLocale = new Locale(user.getLanguage());
         SubscriptionDAO subDAO = new SubscriptionDAO(userLocale, em);
         TagUserSubscription subscription = new TagUserSubscription(
-                em.getReference(Tag.class, new TagKey(pWorkspaceId, pLabel)),
+                new TagDAO(userLocale, em).loadTag(new TagKey(pWorkspaceId, pLabel)),
                 user,
                 pOnIterationChange, pOnStateChange);
         return subDAO.saveTagUserSubscription(subscription);
@@ -91,15 +90,15 @@ public class NotificationManagerBean implements INotificationManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public TagUserSubscription createOrUpdateTagUserSubscription(String pWorkspaceId, String pLogin, String pLabel, boolean pOnIterationChange, boolean pOnStateChange) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+    public TagUserSubscription createOrUpdateTagUserSubscription(String pWorkspaceId, String pLogin, String pLabel, boolean pOnIterationChange, boolean pOnStateChange) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, TagNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         // Check if it is the workspace's administrator
         if (user.isAdministrator()) {
             Locale userLocale = new Locale(user.getLanguage());
             SubscriptionDAO subDAO = new SubscriptionDAO(userLocale, em);
             TagUserSubscription subscription = new TagUserSubscription(
-                    em.getReference(Tag.class, new TagKey(pWorkspaceId, pLabel)),
-                    em.getReference(User.class, new UserKey(pWorkspaceId, pLogin)),
+                    new TagDAO(userLocale, em).loadTag(new TagKey(pWorkspaceId, pLabel)),
+                    new UserDAO(userLocale,em).loadUser(new UserKey(pWorkspaceId, pLogin)),
                     pOnIterationChange, pOnStateChange);
             return subDAO.saveTagUserSubscription(subscription);
         } else {
@@ -110,15 +109,15 @@ public class NotificationManagerBean implements INotificationManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public TagUserGroupSubscription createOrUpdateTagUserGroupSubscription(String pWorkspaceId, String pId, String pLabel, boolean pOnIterationChange, boolean pOnStateChange) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+    public TagUserGroupSubscription createOrUpdateTagUserGroupSubscription(String pWorkspaceId, String pId, String pLabel, boolean pOnIterationChange, boolean pOnStateChange) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, TagNotFoundException, UserGroupNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         // Check if it is the workspace's administrator
         if (user.isAdministrator()) {
             Locale userLocale = new Locale(user.getLanguage());
             SubscriptionDAO subDAO = new SubscriptionDAO(userLocale, em);
             TagUserGroupSubscription subscription = new TagUserGroupSubscription(
-                    em.getReference(Tag.class, new TagKey(pWorkspaceId, pLabel)),
-                    em.getReference(UserGroup.class, new UserKey(pWorkspaceId, pId)),
+                    new TagDAO(userLocale, em).loadTag(new TagKey(pWorkspaceId, pLabel)),
+                    new UserGroupDAO(userLocale,em).loadUserGroup(new UserGroupKey(pWorkspaceId, pId)),
                     pOnIterationChange, pOnStateChange);
             return subDAO.saveTagUserGroupSubscription(subscription);
         } else {
@@ -159,13 +158,13 @@ public class NotificationManagerBean implements INotificationManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<TagUserGroupSubscription> getTagUserGroupSubscriptionsByGroup(String pWorkspaceId, String pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+    public List<TagUserGroupSubscription> getTagUserGroupSubscriptionsByGroup(String pWorkspaceId, String pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, UserGroupNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         // Check if it is the workspace's administrator
         if (user.isAdministrator()) {
             Locale userLocale = new Locale(user.getLanguage());
             SubscriptionDAO subDAO = new SubscriptionDAO(userLocale, em);
-            return subDAO.getTagUserGroupSubscriptionsByGroup(em.getReference(UserGroup.class,new UserGroupKey(pWorkspaceId, pId)));
+            return subDAO.getTagUserGroupSubscriptionsByGroup(new UserGroupDAO(userLocale,em).loadUserGroup(new UserGroupKey(pWorkspaceId, pId)));
         } else {
             // Else throw a AccessRightException
             throw new AccessRightException(new Locale(user.getLanguage()), user);
@@ -180,7 +179,7 @@ public class NotificationManagerBean implements INotificationManagerLocal {
         if (user.isAdministrator()) {
             Locale userLocale = new Locale(user.getLanguage());
             SubscriptionDAO subDAO = new SubscriptionDAO(userLocale, em);
-            return subDAO.getTagUserSubscriptionsByUser(em.getReference(User.class,new UserKey(pWorkspaceId, pLogin)));
+            return subDAO.getTagUserSubscriptionsByUser(new UserDAO(userLocale,em).loadUser(new UserKey(pWorkspaceId, pLogin)));
         } else {
             // Else throw a AccessRightException
             throw new AccessRightException(new Locale(user.getLanguage()), user);

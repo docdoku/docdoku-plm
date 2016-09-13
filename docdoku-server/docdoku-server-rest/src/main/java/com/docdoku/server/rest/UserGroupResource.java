@@ -34,6 +34,7 @@ import com.docdoku.server.rest.dto.UserDTO;
 import com.docdoku.server.rest.dto.UserGroupDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -42,13 +43,16 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RequestScoped
 @Api(hidden = true, value = "groups", description = "Operations about user groups")
@@ -64,6 +68,8 @@ public class UserGroupResource {
     private INotificationManagerLocal notificationManager;
 
     private Mapper mapper;
+
+    private static final Logger LOGGER = Logger.getLogger(UserGroupResource.class.getName());
 
     public UserGroupResource() {
     }
@@ -115,6 +121,45 @@ public class UserGroupResource {
             userDTOs[i] = mapper.map(usersArray[i], UserDTO.class);
         }
         return userDTOs;
+    }
+
+
+    @PUT
+    @ApiOperation(value = "Update or create tag subscription of group", response = TagSubscriptionDTO.class)
+    @Path("{groupId}/tag-subscriptions/{tagName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateSubscription(@PathParam("workspaceId") String workspaceId,
+                               @PathParam("groupId") String groupId,
+                               @PathParam("tagName") String tagName,
+                               @ApiParam(required = true, value = "Tag subscription to update or create") TagSubscriptionDTO subDTO)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+
+
+        notificationManager.createOrUpdateTagUserGroupSubscription(workspaceId,
+                groupId,
+                tagName,
+                subDTO.isOnIterationChange(),
+                subDTO.isOnStateChange());
+        subDTO.setTag(tagName);
+       try {
+            return Response.created(URI.create(URLEncoder.encode(tagName, "UTF-8"))).entity(subDTO).build();
+       } catch (UnsupportedEncodingException ex) {
+           LOGGER.log(Level.WARNING, null, ex);
+           return Response.ok().build();
+       }
+    }
+
+    @DELETE
+    @ApiOperation(value = "Delete tag subscription of group", response = Response.class)
+    @Path("{groupId}/tag-subscriptions/{tagName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteSubscription(@PathParam("workspaceId") String workspaceId,
+                               @PathParam("groupId") String groupId,
+                               @PathParam("tagName") String tagName) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException {
+
+        notificationManager.removeTagUserGroupSubscription(workspaceId,groupId,tagName);
+        return Response.ok().build();
     }
 
 }
