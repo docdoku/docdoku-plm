@@ -111,8 +111,8 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
         if (previousStep != currentStep){
             SubscriptionDAO subscriptionDAO = new SubscriptionDAO(em);
 
-            User[] subscribers = subscriptionDAO.getStateChangeEventSubscribers(docR);
-            if (subscribers.length != 0) {
+            Collection<User> subscribers = subscriptionDAO.getStateChangeEventSubscribers(docR);
+            if (!subscribers.isEmpty()) {
                 mailer.sendStateNotification(subscribers, docR);
             }
 

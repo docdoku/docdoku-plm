@@ -33,9 +33,9 @@ import java.util.Collection;
  */
 public interface IMailerLocal {
 
-    void sendStateNotification(User[] pSubscribers, DocumentRevision pDocumentRevision);
+    void sendStateNotification(Collection<User> pSubscribers, DocumentRevision pDocumentRevision);
 
-    void sendIterationNotification(User[] pSubscribers, DocumentRevision pDocumentRevision);
+    void sendIterationNotification(Collection<User> pSubscribers, DocumentRevision pDocumentRevision);
 
     void sendApproval(Collection<Task> pRunningTasks, DocumentRevision pDocumentRevision);
 

@@ -20,14 +20,18 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.notification.TagUserGroupSubscription;
 import com.docdoku.core.notification.TagUserSubscription;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.INotificationManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.TagSubscriptionDTO;
 import com.docdoku.server.rest.dto.UserDTO;
+import com.docdoku.server.rest.dto.UserGroupDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -44,12 +48,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Set;
 
 @RequestScoped
-@Api(hidden = true, value = "users", description = "Operations about users")
+@Api(hidden = true, value = "groups", description = "Operations about user groups")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-public class UserResource {
+public class UserGroupResource {
 
 
     @Inject
@@ -60,7 +65,7 @@ public class UserResource {
 
     private Mapper mapper;
 
-    public UserResource() {
+    public UserGroupResource() {
     }
 
     @PostConstruct
@@ -68,53 +73,26 @@ public class UserResource {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
+
     @GET
-    @ApiOperation(value = "Get users", response = UserDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get groups", response = UserGroupDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public UserDTO[] getUsersInWorkspace(@PathParam("workspaceId") String workspaceId)
-            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
-
-        User[] users = userManager.getUsers(workspaceId);
-        UserDTO[] dtos = new UserDTO[users.length];
-
-        for (int i = 0; i < users.length; i++) {
-            dtos[i] = mapper.map(users[i], UserDTO.class);
+    public UserGroupDTO[] getGroups(@PathParam("workspaceId") String workspaceId)
+            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        UserGroup[] userGroups = userManager.getUserGroups(workspaceId);
+        UserGroupDTO[] userGroupDTOs = new UserGroupDTO[userGroups.length];
+        for (int i = 0; i < userGroups.length; i++) {
+            userGroupDTOs[i] = mapper.map(userGroups[i],UserGroupDTO.class);
         }
-
-        return dtos;
+        return userGroupDTOs;
     }
 
     @GET
-    @ApiOperation(value = "Get current user details", response = UserDTO.class)
-    @Path("me")
+    @ApiOperation(value = "Get tag subscriptions of group", response = TagSubscriptionDTO.class, responseContainer = "List")
+    @Path("{groupId}/tag-subscriptions")
     @Produces(MediaType.APPLICATION_JSON)
-    public UserDTO whoami(@PathParam("workspaceId") String workspaceId)
-            throws EntityNotFoundException, UserNotActiveException {
-
-        User user = userManager.whoAmI(workspaceId);
-        return mapper.map(user, UserDTO.class);
-    }
-
-    @GET
-    @ApiOperation(value = "Get admin for workspace", response = UserDTO.class)
-    @Path("admin")
-    @Produces(MediaType.APPLICATION_JSON)
-    public UserDTO getAdminInWorkspace(@PathParam("workspaceId") String workspaceId)
-            throws EntityNotFoundException {
-
-        Workspace workspace = userManager.getWorkspace(workspaceId);
-        UserDTO userDTO = mapper.map(workspace.getAdmin(), UserDTO.class);
-        userDTO.setWorkspaceId(workspaceId);
-        return userDTO;
-    }
-
-
-    @GET
-    @ApiOperation(value = "Get tag subscriptions of user", response = TagSubscriptionDTO.class, responseContainer = "List")
-    @Path("{login}/tag-subscriptions")
-    @Produces(MediaType.APPLICATION_JSON)
-    public TagSubscriptionDTO[] getTagSubscriptionsForUser(@PathParam("workspaceId") String workspaceId, @PathParam("login") String login) throws UserNotFoundException, AccessRightException, UserNotActiveException, WorkspaceNotFoundException {
-        List<TagUserSubscription> subs = notificationManager.getTagUserSubscriptionsByUser(workspaceId, login);
+    public TagSubscriptionDTO[] getTagSubscriptionsForGroup(@PathParam("workspaceId") String workspaceId, @PathParam("groupId") String groupId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException {
+        List<TagUserGroupSubscription> subs = notificationManager.getTagUserGroupSubscriptionsByGroup(workspaceId, groupId);
 
         TagSubscriptionDTO[] subDTOs = new TagSubscriptionDTO[subs.size()];
         for (int i = 0; i < subs.size(); i++) {
@@ -122,5 +100,22 @@ public class UserResource {
         }
         return subDTOs;
     }
+
+    @GET
+    @ApiOperation(value = "Get users of group", response = UserDTO.class, responseContainer = "List")
+    @Path("{groupId}/users")
+    @Produces(MediaType.APPLICATION_JSON)
+    public UserDTO[] getUsersInGroup(@PathParam("workspaceId") String workspaceId, @PathParam("groupId") String groupId)
+            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, UserGroupNotFoundException {
+        UserGroup userGroup = userManager.getUserGroup(new UserGroupKey(workspaceId, groupId));
+        Set<User> users = userGroup.getUsers();
+        User[] usersArray = users.toArray(new User[users.size()]);
+        UserDTO[] userDTOs = new UserDTO[users.size()];
+        for (int i = 0; i < usersArray.length; i++) {
+            userDTOs[i] = mapper.map(usersArray[i], UserDTO.class);
+        }
+        return userDTOs;
+    }
+
 }
 

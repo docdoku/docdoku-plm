@@ -1042,7 +1042,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
         if (isCheckoutByUser(user, docR)) {
             SubscriptionDAO subscriptionDAO = new SubscriptionDAO(em);
-            User[] subscribers = subscriptionDAO.getIterationChangeEventSubscribers(docR);
+            Collection<User> subscribers = subscriptionDAO.getIterationChangeEventSubscribers(docR);
             GCMAccount[] gcmAccounts = subscriptionDAO.getIterationChangeEventSubscribersGCMAccount(docR);
 
             docR.setCheckOutDate(null);
@@ -1051,7 +1051,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             DocumentIteration lastIteration = docR.getLastIteration();
             lastIteration.setCheckInDate(new Date());
 
-            if (subscribers.length != 0) {
+            if (!subscribers.isEmpty()) {
                 mailer.sendIterationNotification(subscribers, docR);
             }
 
