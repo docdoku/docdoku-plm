@@ -24,7 +24,7 @@ define([
 
                 if(!coWorkers.length){
                     var menuUrl = App.config.contextPath+'/workspace-management/';
-                    $ul.append('<li><i>&nbsp;'+App.config.i18n.NO_COWORKERS+'</i></li>');
+                    $ul.append('<li><i>&nbsp;'+App.config.i18n.NO_COWORKER+'</i></li>');
                     $ul.append('<li><a href="'+menuUrl+'"><i class="fa fa-cog"></i> '+App.config.i18n.WORKSPACES_ADMINISTRATION+'</a></li>');
                     return;
                 }
