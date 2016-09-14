@@ -26,6 +26,8 @@ define({
     LOGIN:'Identifiant',
     MOVE_TO_GROUP:'Ajouter au groupe',
     NO_ADMINISTRATED_WORKSPACES:'Aucun espace de travail administré',
+    NO_GROUP_TO_MANAGE:'Aucun groupe à gérer',
+    NO_NOTIFICATION_TO_MANAGE:'Aucune notification à gérer',
     NO_USER_IN_GROUP:'Aucun utilisateur dans ce groupe',
     NO_USER_TO_MANAGE:'Aucun utilisateur à gérer',
     READONLY:'Lecture seule',

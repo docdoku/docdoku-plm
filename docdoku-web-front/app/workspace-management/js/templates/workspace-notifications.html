@@ -1,4 +1,8 @@
-
+<div class="actions well">
+    <button class="btn btn-default workspace-management" title="{{i18n.BACK}}">
+        {{i18n.BACK}}
+    </button>
+</div>
 <div class="notifications"></div>
 
 <div class="margin">
@@ -23,7 +27,7 @@
                 {{#groupsToManage}}
 
                 <tr>
-                    <td><input type="checkbox" class="toggle-checkbox" data-is-admin="{{isCurrentAdmin}}" data-login="{{login}}"/></td>
+                    <td><input type="checkbox" class="toggle-checkbox" data-is-admin="{{isCurrentAdmin}}" data-name="{{memberId}}"/></td>
                     <td>{{memberId}}</td>
                     <td>
                         {{#readOnly}}{{i18n.READ_ONLY}}{{/readOnly}}
@@ -36,6 +40,8 @@
             </table>
             {{/groupsToManage.length}}
         </div>
+
+        <div id="user-group-subscriptions"></div>
     </div>
 </div>
 
@@ -82,5 +88,7 @@
             </table>
             {{/usersToManage.length}}
         </div>
+
+        <div id="user-subscriptions"></div>
     </div>
 </div>

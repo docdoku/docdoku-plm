@@ -32,5 +32,9 @@ function (Backbone) {
         });
     };
 
+    UserModel.getTagSubscriptions = function (workspaceId, login) {
+        return $.getJSON(App.config.contextPath + '/api/workspaces/' + workspaceId + '/users/' + login + '/tag-subscriptions');
+    };
+
     return UserModel;
 });
