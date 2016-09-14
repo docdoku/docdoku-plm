@@ -195,5 +195,9 @@ define(['backbone'], function (Backbone) {
         return $.when.apply(undefined, promiseArray);
     };
 
+    Workspace.getTags = function (workspaceId) {
+        return $.getJSON(App.config.contextPath + '/api/workspaces/' + workspaceId + '/tags');
+    };
+
     return Workspace;
 });

@@ -6,10 +6,11 @@ define([
     'views/workspace-edit',
     'views/workspace-creation',
     'views/workspace-users',
+    'views/workspace-notifications',
     'views/workspace-dashboard',
     'views/workspace-management-home',
     'views/admin-dashboard'
-], function (Backbone, Mustache, template, WorkspaceEditView, WorkspaceCreationView, WorkspaceUsersView, WorkspaceDashboardView, WorkspaceManagementHomeView, AdminDashboardView) {
+], function (Backbone, Mustache, template, WorkspaceEditView, WorkspaceCreationView, WorkspaceUsersView, WorkspaceNotificationsView, WorkspaceDashboardView, WorkspaceManagementHomeView, AdminDashboardView) {
 	'use strict';
     var AppView = Backbone.View.extend({
 
@@ -17,7 +18,7 @@ define([
 
         events: {
             'click .new-workspace':'navigateWorkspaceCreation',
-            'click .workspace-management':'navigateWorkspaceManagement',
+            'click .workspace-management':'navigateWorkspaceManagement'
         },
 
         initialize: function () {
@@ -26,6 +27,7 @@ define([
         render: function () {
             var isEditionRegex = new RegExp('#/workspace/'+App.config.workspaceId+'/edit','g');
             var isUsersRegex = new RegExp('#/workspace/'+App.config.workspaceId+'/users','g');
+            var isNotificationsRegex = new RegExp('#/workspace/'+App.config.workspaceId+'/notifications','g');
             var isDashboardRegex = new RegExp('#/workspace/'+App.config.workspaceId+'/dashboard','g');
             this.$el.html(Mustache.render(template, {
                 isAdmin:App.config.admin,
@@ -36,7 +38,8 @@ define([
                 isCreation: window.location.hash === '#/create',
                 isEdition: window.location.hash.match(isEditionRegex) !== null,
                 isUsers: window.location.hash.match(isUsersRegex) !== null,
-                isDashboard: window.location.hash.match(isDashboardRegex) !== null,
+                isNotifications: window.location.hash.match(isNotificationsRegex) !== null,
+                isDashboard: window.location.hash.match(isDashboardRegex) !== null
             })).show();
             return this;
         },
@@ -62,6 +65,11 @@ define([
         },
         workspaceUsers : function(){
             var view = new WorkspaceUsersView();
+            view.render();
+            this.$('#workspace-management-content').html(view.$el);
+        },
+        workspaceNotifications : function(){
+            var view = new WorkspaceNotificationsView();
             view.render();
             this.$('#workspace-management-content').html(view.$el);
         },
