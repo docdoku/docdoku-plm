@@ -8,5 +8,9 @@ function (Backbone) {
         }
     });
 
+    UserGroupModel.getTagSubscriptions = function (workspaceId, group) {
+        return $.getJSON(App.config.contextPath + '/api/workspaces/' + workspaceId + '/groups/' + group + '/tag-subscriptions');
+    };
+
     return UserGroupModel;
 });

@@ -24,6 +24,8 @@ define({
         LOGIN:'Login',
         MOVE_TO_GROUP:'Add to group',
         NO_ADMINISTRATED_WORKSPACES:'No administrated workspace',
+        NO_GROUP_TO_MANAGE:'No group to manage',
+        NO_NOTIFICATION_TO_MANAGE:'No notification to manage',
         NO_USER_IN_GROUP:'No user in this group',
         NO_USER_TO_MANAGE:'No user to manage',
         READONLY:'Read only',
