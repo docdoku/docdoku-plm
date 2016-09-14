@@ -1,0 +1,86 @@
+
+<div class="notifications"></div>
+
+<div class="margin">
+    <div class="workspace-group-container">
+        <div class="workspace-group well well-large">
+            <h4>
+                <i class="fa fa-users"></i> {{i18n.GROUPS}}
+            </h4>
+            {{^groupsToManage}}
+            <p>{{i18n.NO_GROUP_TO_MANAGE}}</p>
+            {{/groupsToManage}}
+            {{#groupsToManage.length}}
+            <table id="workspace_group_table" class="table table-striped table-condensed">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>{{i18n.NAME}}</th>
+                    <th>{{i18n.ACCESS_RIGHTS}}</th>
+                </tr>
+                </thead>
+                <tbody class="items">
+                {{#groupsToManage}}
+
+                <tr>
+                    <td><input type="checkbox" class="toggle-checkbox" data-is-admin="{{isCurrentAdmin}}" data-login="{{login}}"/></td>
+                    <td>{{memberId}}</td>
+                    <td>
+                        {{#readOnly}}{{i18n.READ_ONLY}}{{/readOnly}}
+                        {{^readOnly}}{{i18n.FULL_ACCESS}}{{/readOnly}}
+                    </td>
+                </tr>
+
+                {{/groupsToManage}}
+                </tbody>
+            </table>
+            {{/groupsToManage.length}}
+        </div>
+    </div>
+</div>
+
+<div class="margin">
+    <div class="workspace-group-container">
+        <div class="workspace-group well well-large">
+            <h4>
+                <i class="fa fa-user"></i> {{i18n.USERS}}
+            </h4>
+            {{^usersToManage}}
+            <p>{{i18n.NO_USER_TO_MANAGE}}</p>
+            {{/usersToManage}}
+            {{#usersToManage.length}}
+            <table id="workspace_user_table" class="table table-striped table-condensed">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>{{i18n.LOGIN}}</th>
+                    <th>{{i18n.NAME}}</th>
+                    <th>{{i18n.EMAIL}}</th>
+                    <th>{{i18n.ACCESS_RIGHTS}}</th>
+                </tr>
+                </thead>
+                <tbody class="items">
+                {{#usersToManage}}
+
+                <tr>
+                    <td><input type="checkbox" class="toggle-checkbox" data-is-admin="{{isCurrentAdmin}}" data-login="{{login}}"/></td>
+                    <td>{{#isCurrentAdmin}}<i class="fa fa-graduation-cap"></i> {{/isCurrentAdmin}}{{login}}</td>
+                    <td>{{name}}</td>
+                    <td>{{email}}</td>
+                    <td>
+                        {{^isCurrentAdmin}}
+                        {{#membership}}
+                        {{#readOnly}}{{i18n.READ_ONLY}}{{/readOnly}}
+                        {{^readOnly}}{{i18n.FULL_ACCESS}}{{/readOnly}}
+                        {{/membership}}
+                        {{/isCurrentAdmin}}
+                    </td>
+                </tr>
+
+                {{/usersToManage}}
+                </tbody>
+            </table>
+            {{/usersToManage.length}}
+        </div>
+    </div>
+</div>

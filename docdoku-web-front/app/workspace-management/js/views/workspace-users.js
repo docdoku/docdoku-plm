@@ -14,7 +14,6 @@ define([
             'click .read-only':'readOnly',
             'change .toggle-checkboxes':'toggleCheckboxes',
             'click .toggle-checkbox':'toggleCheckbox',
-            'change .toggle-checkbox':'toggleCheckboxChange',
             'click .delete-users':'deleteUsers',
             'click .delete-group':'deleteGroup',
             'click .add-user':'addUserForm',
@@ -247,11 +246,7 @@ define([
                 .then(this.render.bind(this), this.onError.bind(this));
         },
 
-        toggleCheckboxChange:function(){
-        },
-
         toggleCheckbox:function(e){
-            console.log('click ' + e.target);
             this.toggleButtons();
         },
 

@@ -19,6 +19,11 @@
                 {{i18n.USERS}}
             </a>
         </li>
+        <li  class="header nav-list-entry {{#isNotifications}}active{{/isNotifications}}">
+            <a href="#/workspace/{{workspaceId}}/notifications">
+                {{i18n.NOTIFICATIONS}}
+            </a>
+        </li>
         <li  class="header nav-list-entry {{#isDashboard}}active{{/isDashboard}}">
             <a href="#/workspace/{{workspaceId}}/dashboard">
                 {{i18n.DASHBOARD}}
