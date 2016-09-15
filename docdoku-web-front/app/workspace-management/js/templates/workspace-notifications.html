@@ -2,6 +2,30 @@
     <button class="btn btn-default workspace-management" title="{{i18n.BACK}}">
         {{i18n.BACK}}
     </button>
+    {{#tags.length}}
+    <button class="btn btn-default add-tag hide" title="{{i18n.NOTIFY_BY_TAG}}">
+        <i class="fa fa-plus"></i> {{i18n.ADD_TAG}}
+    </button>
+    <form id="workspace-add-tag-form" class="inline form-inline hide">
+        <select id="tag" required>
+            {{#tags}}
+            <option value="{{label}}">{{label}}</option>
+            {{/tags}}
+        </select>
+        <label name="state-change">
+            <input type="checkbox" name="state-change" /> {{i18n.STATE_CHANGE}}
+        </label>
+        <label name="iteration-change">
+            <input type="checkbox" name="iteration-change" /> {{i18n.ITERATION_CHANGE}}
+        </label>
+        <button class="btn btn-default" title="{{i18n.ADD}}">
+            {{i18n.ADD}}
+        </button>
+        <button class="btn btn-default cancel" type="reset" title="{{i18n.CANCEL}}">
+            {{i18n.CANCEL}}
+        </button>
+    </form>
+    {{/tags.length}}
 </div>
 <div class="notifications"></div>
 
