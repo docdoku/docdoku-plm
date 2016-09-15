@@ -150,18 +150,17 @@ define([
             newTagSubscription.setOnIterationChange(this.$('#workspace-add-tag-form input[name="iteration-change"]')[0].checked);
 
             var groupsSelected = this.$('#workspace_group_table tbody > tr > td:nth-child(1) > input[type="checkbox"]:checked');
-
-            groupsSelected.each(function(index, checkbox) {
-                UserGroupModel.addOrEditTagSubscription(App.config.workspaceId, checkbox.dataset.name, newTagSubscription)
-                    .then(_this.updateViews.bind(_this), _this.onError);
-            });
-
             var usersSelected = this.$('#workspace_user_table tbody > tr > td:nth-child(1) > input[type="checkbox"]:checked');
 
-            usersSelected.each(function(index, checkbox) {
-                UserModel.addOrEditTagSubscription(App.config.workspaceId, checkbox.dataset.login, newTagSubscription, newTagSubscription)
-                    .then(_this.updateViews.bind(_this), _this.onError);
+            groupsSelected.each(function(index, checkbox) {
+                UserGroupModel.addOrEditTagSubscription(App.config.workspaceId, checkbox.dataset.name, newTagSubscription, _this.onError.bind(_this));
             });
+
+            usersSelected.each(function(index, checkbox) {
+                UserModel.addOrEditTagSubscription(App.config.workspaceId, checkbox.dataset.login, newTagSubscription, _this.onError.bind(_this));
+            });
+
+            this.updateViews();
 
             e.preventDefault();
             return false;
