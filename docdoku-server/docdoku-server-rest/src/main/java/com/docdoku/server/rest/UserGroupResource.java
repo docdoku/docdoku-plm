@@ -22,10 +22,8 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.UserGroupKey;
-import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.notification.TagUserGroupSubscription;
-import com.docdoku.core.notification.TagUserSubscription;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.INotificationManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
@@ -97,7 +95,7 @@ public class UserGroupResource {
     @ApiOperation(value = "Get tag subscriptions of group", response = TagSubscriptionDTO.class, responseContainer = "List")
     @Path("{groupId}/tag-subscriptions")
     @Produces(MediaType.APPLICATION_JSON)
-    public TagSubscriptionDTO[] getTagSubscriptionsForGroup(@PathParam("workspaceId") String workspaceId, @PathParam("groupId") String groupId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException {
+    public TagSubscriptionDTO[] getTagSubscriptionsForGroup(@PathParam("workspaceId") String workspaceId, @PathParam("groupId") String groupId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, UserGroupNotFoundException {
         List<TagUserGroupSubscription> subs = notificationManager.getTagUserGroupSubscriptionsByGroup(workspaceId, groupId);
 
         TagSubscriptionDTO[] subDTOs = new TagSubscriptionDTO[subs.size()];
