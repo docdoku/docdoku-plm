@@ -112,6 +112,26 @@
                     </md-card-content>
                 </md-card>
 
+
+
+            </div>
+
+            <div layout="column" flex-gt-xs>
+
+                <md-card>
+                    <md-card-header>
+                        <md-card-avatar>
+                            <md-icon class=material-icons">event</md-icon>
+                        </md-card-avatar>
+                        <md-card-header-text>
+                            <span class="md-title">{{'LATEST_EVENTS' | translate}}</span>
+                            <span class="md-subhead">{{configuration.host}}</span>
+                        </md-card-header-text>
+                    </md-card-header>
+                    <md-card-content>
+                        <div ng-repeat="workspace in workspaces" workspace-latest-events="workspace"></div>
+                    </md-card-content>
+                </md-card>
                 <md-card>
                     <md-card-header>
                         <md-card-avatar>
@@ -149,26 +169,6 @@
                         </div>
                     </md-card-content>
                 </md-card>
-
-            </div>
-
-            <div layout="column" flex-gt-xs>
-
-                <md-card>
-                    <md-card-header>
-                        <md-card-avatar>
-                            <md-icon class=material-icons">event</md-icon>
-                        </md-card-avatar>
-                        <md-card-header-text>
-                            <span class="md-title">{{'LATEST_EVENTS' | translate}}</span>
-                            <span class="md-subhead">{{configuration.host}}</span>
-                        </md-card-header-text>
-                    </md-card-header>
-                    <md-card-content>
-                        <div ng-repeat="workspace in workspaces" workspace-latest-events="workspace"></div>
-                    </md-card-content>
-                </md-card>
-
             </div>
         </div>
 
