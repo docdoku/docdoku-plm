@@ -36,19 +36,21 @@ function (Backbone) {
         return $.getJSON(App.config.contextPath + '/api/workspaces/' + workspaceId + '/users/' + login + '/tag-subscriptions');
     };
 
-    UserModel.addOrEditTagSubscription = function (workspaceId, login, tagSubscription) {
+    UserModel.addOrEditTagSubscription = function (workspaceId, login, tagSubscription, error) {
         return $.ajax({
             type: 'PUT',
             url: App.config.contextPath + '/api/workspaces/' + workspaceId + '/users/' + login + '/tag-subscriptions/' + tagSubscription.getTag(),
             data: JSON.stringify(tagSubscription),
-            contentType: 'application/json; charset=utf-8'
+            contentType: 'application/json; charset=utf-8',
+            error: error
         });
     };
 
-    UserModel.removeTagSubscription = function (workspaceId, login, tagId) {
+    UserModel.removeTagSubscription = function (workspaceId, login, tagId, error) {
         return $.ajax({
             type: 'DELETE',
-            url: App.config.contextPath + '/api/workspaces/' + workspaceId + '/users/' + login + '/tag-subscriptions/' + tagId
+            url: App.config.contextPath + '/api/workspaces/' + workspaceId + '/users/' + login + '/tag-subscriptions/' + tagId,
+            error: error
         });
     };
 
