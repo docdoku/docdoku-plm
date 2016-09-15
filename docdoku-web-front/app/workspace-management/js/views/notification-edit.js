@@ -13,8 +13,8 @@ define([
     var NotificationEditView = Backbone.View.extend({
 
         events: {
-            'click .toggle-checkbox':'toggleCheckbox',
-            'click .remove-tag-subscription':'removeTagSubscription'
+            'click .change':'notificationOptionsHaveChanged',
+            'click .remove':'removeTagSubscription'
         },
 
         initialize: function () {
@@ -26,6 +26,8 @@ define([
             if (this.options.id) {
                 this.getTagSubscriptions()
                     .then(function(tagSubscriptions){
+                        _this.tagSubscriptions = tagSubscriptions;
+
                         _this.$el.html(Mustache.render(template, {
                             i18n: App.config.i18n,
                             tagSubscriptions:tagSubscriptions
@@ -56,12 +58,48 @@ define([
             }).render().$el);
         },
 
-        toggleCheckbox:function(e){
-            // TODO
+        notificationOptionsHaveChanged:function(e){
+            var changedTagSubscription;
+
+            _.each(this.tagSubscriptions, function(tagSubscription) {
+                if (tagSubscription.tag === e.currentTarget.dataset.id) {
+                    changedTagSubscription = tagSubscription;
+
+                    if (e.currentTarget.dataset.option === 'state') {
+                        changedTagSubscription.onStateChange = e.currentTarget.checked;
+                    } else if (e.currentTarget.dataset.option === 'iteration') {
+                        changedTagSubscription.onIterationChange = e.currentTarget.checked;
+                    }
+                }
+            });
+
+            if (this.options.type === 'group') {
+                UserGroupModel.editTagSubscription(App.config.workspaceId, this.options.id, changedTagSubscription)
+                    .then(this.render.bind(this), this.onError.bind(this));
+
+            } else {
+                UserModel.editTagSubscription(App.config.workspaceId, this.options.id, changedTagSubscription)
+                    .then(this.render.bind(this), this.onError.bind(this));
+            }
         },
 
-        removeTagSubscription:function(){
-            // TODO
+        removeTagSubscription:function(e){
+            var tagSubscriptionToRemove;
+
+            _.each(this.tagSubscriptions, function(tagSubscription) {
+                if (tagSubscription.tag === e.currentTarget.dataset.id) {
+                    tagSubscriptionToRemove = tagSubscription;
+                }
+            });
+
+            if (this.options.type === 'group') {
+                UserGroupModel.removeTagSubscription(App.config.workspaceId, this.options.id, tagSubscriptionToRemove)
+                    .then(this.render.bind(this), this.onError.bind(this));
+
+            } else {
+                UserModel.removeTagSubscription(App.config.workspaceId, this.options.id, tagSubscriptionToRemove)
+                    .then(this.render.bind(this), this.onError.bind(this));
+            }
         }
 
     });
