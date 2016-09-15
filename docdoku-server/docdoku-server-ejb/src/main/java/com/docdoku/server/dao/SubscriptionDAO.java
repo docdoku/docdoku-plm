@@ -61,7 +61,7 @@ public class SubscriptionDAO {
 
     public void removeTagUserSubscription(TagUserSubscriptionKey pKey) {
         try {
-            TagUserSubscription subscription = em.getReference(TagUserSubscription.class, pKey);
+            TagUserSubscription subscription = em.find(TagUserSubscription.class, pKey);
             em.remove(subscription);
             em.flush();
         } catch (NullPointerException pNPEx) {
@@ -77,7 +77,7 @@ public class SubscriptionDAO {
 
     public void removeTagUserGroupSubscription(TagUserGroupSubscriptionKey pKey) {
         try {
-            TagUserGroupSubscription subscription = em.getReference(TagUserGroupSubscription.class, pKey);
+            TagUserGroupSubscription subscription = em.find(TagUserGroupSubscription.class, pKey);
             em.remove(subscription);
             em.flush();
         } catch (NullPointerException pNPEx) {
