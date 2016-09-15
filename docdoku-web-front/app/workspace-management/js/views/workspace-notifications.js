@@ -5,14 +5,20 @@ define([
     'text!templates/workspace-notifications.html',
     'views/notification-edit',
     'common-objects/models/workspace',
+    'common-objects/models/user_group',
+    'common-objects/models/user',
+    'common-objects/models/tag_subscription',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, NotificationEditView, Workspace, AlertView) {
+], function (Backbone, Mustache, template, NotificationEditView, Workspace, UserGroupModel, UserModel, TagSubscription, AlertView) {
     'use strict';
 
     var WorkspaceNotificationsView = Backbone.View.extend({
 
         events: {
-            'click .toggle-checkbox':'toggleCheckbox'
+            'click .toggle-checkbox':'toggleCheckbox',
+            'click .add-tag':'addTagForm',
+            'submit #workspace-add-tag-form':'onAddTagFormSubmit',
+            'click #workspace-add-tag-form .cancel':'cancelAddTagForm'
         },
 
         initialize: function () {
@@ -70,6 +76,8 @@ define([
             this.$addTagForm = this.$('#workspace-add-tag-form');
             this.$addTagFormButton = this.$('.add-tag');
             this.$notifications = this.$('.notifications');
+            this.$userGroupSubscriptionViews = this.$('#user-group-subscriptions');
+            this.$userSubscriptionViews = this.$('#user-subscriptions');
         },
 
         onError:function(error){
@@ -79,7 +87,10 @@ define([
             }).render().$el);
         },
 
-        toggleButtons:function(){
+        updateViews:function(){
+            this.cancelAddTagForm();
+            this.removeNotificationsEditViews();
+
             var nbOfSelection = this.$('tbody > tr > td:nth-child(1) > input[type="checkbox"]:checked').size();
 
             if (nbOfSelection > 0) {
@@ -87,56 +98,78 @@ define([
 
                 if (nbOfSelection == 1) {
                     var groupSelected = this.$('#workspace_group_table tbody > tr > td:nth-child(1) > input[type="checkbox"]:checked');
-
-                    if (groupSelected.size() == 1) {
-                        var _this = this;
-                        groupSelected.each(function(index, checkbox) {
-                            _this.groupNotificationsEditView = new NotificationEditView({
-                                id: checkbox.dataset.name,
-                                type: 'group'
-                            }).render();
-
-                            _this.$('#user-group-subscriptions').append(_this.groupNotificationsEditView.el);
-                        });
-                    }
-
                     var userSelected = this.$('#workspace_user_table tbody > tr > td:nth-child(1) > input[type="checkbox"]:checked');
 
-                    if (userSelected.size() == 1) {
-                        var _this = this;
-                        userSelected.each(function(index, checkbox) {
-                            _this.userNotificationsEditView = new NotificationEditView({
-                                id: checkbox.dataset.login,
-                                type: 'user'
-                            }).render();
+                    if (groupSelected.size() == 1) {
+                        this.groupNotificationsEditView = new NotificationEditView({
+                            id: groupSelected[0].dataset.name,
+                            type: 'group'
+                        }).render();
 
-                            _this.$('#user-subscriptions').append(_this.userNotificationsEditView.el);
-                        });
-                    }
+                        this.$userGroupSubscriptionViews.append(this.groupNotificationsEditView.el);
 
-                } else {
-                    if (this.groupNotificationsEditView) {
-                        this.groupNotificationsEditView.remove();
-                    }
-                    if (this.userNotificationsEditView) {
-                        this.userNotificationsEditView.remove();
+                    } else if (userSelected.size() == 1) {
+                        this.userNotificationsEditView = new NotificationEditView({
+                            id: userSelected[0].dataset.login,
+                            type: 'user'
+                        }).render();
+
+                        this.$userSubscriptionViews.append(this.userNotificationsEditView.el);
                     }
                 }
 
             } else {
                 this.$addTagFormButton.toggle(false);
+            }
+        },
 
-                if (this.groupNotificationsEditView) {
-                    this.groupNotificationsEditView.remove();
-                }
-                if (this.userNotificationsEditView) {
-                    this.userNotificationsEditView.remove();
-                }
+        removeNotificationsEditViews: function () {
+            if (this.groupNotificationsEditView) {
+                this.groupNotificationsEditView.remove();
+            }
+            if (this.userNotificationsEditView) {
+                this.userNotificationsEditView.remove();
             }
         },
 
         toggleCheckbox:function(e){
-            this.toggleButtons();
+            this.updateViews();
+        },
+
+        addTagForm:function(){
+            this.$addTagForm.removeClass('hide');
+            this.$addTagFormButton.hide();
+        },
+
+        onAddTagFormSubmit:function(e){
+            var _this = this;
+
+            var newTagSubscription = new TagSubscription();
+            newTagSubscription.setTag(this.$('#workspace-add-tag-form select#tag').val());
+            newTagSubscription.setOnStateChange(this.$('#workspace-add-tag-form input[name="state-change"]')[0].checked);
+            newTagSubscription.setOnIterationChange(this.$('#workspace-add-tag-form input[name="iteration-change"]')[0].checked);
+
+            var groupsSelected = this.$('#workspace_group_table tbody > tr > td:nth-child(1) > input[type="checkbox"]:checked');
+
+            groupsSelected.each(function(index, checkbox) {
+                UserGroupModel.addOrEditTagSubscription(App.config.workspaceId, checkbox.dataset.name, newTagSubscription)
+                    .then(_this.updateViews.bind(_this), _this.onError);
+            });
+
+            var usersSelected = this.$('#workspace_user_table tbody > tr > td:nth-child(1) > input[type="checkbox"]:checked');
+
+            usersSelected.each(function(index, checkbox) {
+                UserModel.addOrEditTagSubscription(App.config.workspaceId, checkbox.dataset.login, newTagSubscription, newTagSubscription)
+                    .then(_this.updateViews.bind(_this), _this.onError);
+            });
+
+            e.preventDefault();
+            return false;
+        },
+
+        cancelAddTagForm:function(){
+            this.$addTagForm.addClass('hide');
+            this.$addTagFormButton.show();
         }
 
     });

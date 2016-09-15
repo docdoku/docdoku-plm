@@ -6,8 +6,9 @@ define([
     'common-objects/models/workspace',
     'common-objects/models/user_group',
     'common-objects/models/user',
+    'common-objects/models/tag_subscription',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, Workspace, UserGroupModel, UserModel, AlertView) {
+], function (Backbone, Mustache, template, Workspace, UserGroupModel, UserModel, TagSubscription, AlertView) {
     'use strict';
 
     var NotificationEditView = Backbone.View.extend({
@@ -59,45 +60,40 @@ define([
         },
 
         notificationOptionsHaveChanged:function(e){
-            var changedTagSubscription;
+            var changedTagSubscription = new TagSubscription();
 
             _.each(this.tagSubscriptions, function(tagSubscription) {
                 if (tagSubscription.tag === e.currentTarget.dataset.id) {
-                    changedTagSubscription = tagSubscription;
+                    changedTagSubscription.setTag(tagSubscription.tag);
 
                     if (e.currentTarget.dataset.option === 'state') {
-                        changedTagSubscription.onStateChange = e.currentTarget.checked;
+                        changedTagSubscription.setOnStateChange(e.currentTarget.checked);
+                        changedTagSubscription.setOnIterationChange(tagSubscription.onIterationChange);
+
                     } else if (e.currentTarget.dataset.option === 'iteration') {
-                        changedTagSubscription.onIterationChange = e.currentTarget.checked;
+                        changedTagSubscription.setOnStateChange(tagSubscription.onStateChange);
+                        changedTagSubscription.setOnIterationChange(e.currentTarget.checked);
                     }
                 }
             });
 
             if (this.options.type === 'group') {
-                UserGroupModel.editTagSubscription(App.config.workspaceId, this.options.id, changedTagSubscription)
+                UserGroupModel.addOrEditTagSubscription(App.config.workspaceId, this.options.id, changedTagSubscription)
                     .then(this.render.bind(this), this.onError.bind(this));
 
             } else {
-                UserModel.editTagSubscription(App.config.workspaceId, this.options.id, changedTagSubscription)
+                UserModel.addOrEditTagSubscription(App.config.workspaceId, this.options.id, changedTagSubscription)
                     .then(this.render.bind(this), this.onError.bind(this));
             }
         },
 
         removeTagSubscription:function(e){
-            var tagSubscriptionToRemove;
-
-            _.each(this.tagSubscriptions, function(tagSubscription) {
-                if (tagSubscription.tag === e.currentTarget.dataset.id) {
-                    tagSubscriptionToRemove = tagSubscription;
-                }
-            });
-
             if (this.options.type === 'group') {
-                UserGroupModel.removeTagSubscription(App.config.workspaceId, this.options.id, tagSubscriptionToRemove)
+                UserGroupModel.removeTagSubscription(App.config.workspaceId, this.options.id, e.currentTarget.dataset.id)
                     .then(this.render.bind(this), this.onError.bind(this));
 
             } else {
-                UserModel.removeTagSubscription(App.config.workspaceId, this.options.id, tagSubscriptionToRemove)
+                UserModel.removeTagSubscription(App.config.workspaceId, this.options.id, e.currentTarget.dataset.id)
                     .then(this.render.bind(this), this.onError.bind(this));
             }
         }
