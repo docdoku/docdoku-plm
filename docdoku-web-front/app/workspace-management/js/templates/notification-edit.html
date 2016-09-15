@@ -20,13 +20,13 @@
         {{#tagSubscriptions}}
 
         <tr>
-            <td><i class="fa fa-remove"></i></td>
+            <td><button type="button" class="close remove" data-id="{{tag}}">×</button></td>
             <td>{{tag}}</td>
             <td>
-                <input type="checkbox" {{#onStateChange}}checked{{/onStateChange}}/>
+                <input type="checkbox" class="change" data-id="{{tag}}" data-option="state" {{#onStateChange}}checked{{/onStateChange}} />
             </td>
             <td>
-                <input type="checkbox" {{#onIterationChange}}checked{{/onIterationChange}}/>
+                <input type="checkbox" class="change" data-id="{{tag}}" data-option="iteration" {{#onIterationChange}}checked{{/onIterationChange}} />
             </td>
         </tr>
 
