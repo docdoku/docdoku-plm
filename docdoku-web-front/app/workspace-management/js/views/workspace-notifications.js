@@ -151,16 +151,17 @@ define([
 
             var groupsSelected = this.$('#workspace_group_table tbody > tr > td:nth-child(1) > input[type="checkbox"]:checked');
             var usersSelected = this.$('#workspace_user_table tbody > tr > td:nth-child(1) > input[type="checkbox"]:checked');
+            var promises = [];
 
             groupsSelected.each(function(index, checkbox) {
-                UserGroupModel.addOrEditTagSubscription(App.config.workspaceId, checkbox.dataset.name, newTagSubscription, _this.onError.bind(_this));
+                promises.push(UserGroupModel.addOrEditTagSubscription(App.config.workspaceId, checkbox.dataset.name, newTagSubscription, _this.onError.bind(_this)));
             });
 
             usersSelected.each(function(index, checkbox) {
-                UserModel.addOrEditTagSubscription(App.config.workspaceId, checkbox.dataset.login, newTagSubscription, _this.onError.bind(_this));
+                promises.push(UserModel.addOrEditTagSubscription(App.config.workspaceId, checkbox.dataset.login, newTagSubscription, _this.onError.bind(_this)));
             });
 
-            this.updateViews();
+            $.when.apply($, promises).then(_this.updateViews.bind(_this));
 
             e.preventDefault();
             return false;
