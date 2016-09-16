@@ -35,7 +35,7 @@ public class AccountsApiTest {
 
     @Test
     public void createAccountTest() throws ApiException {
-        String login = "USER-"+ UUID.randomUUID().toString().substring(0,6);
+        String login = "USER-"+ UUID.randomUUID().toString().substring(0,8);
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setLogin(login);
         accountDTO.setEmail("my@email.com");
@@ -56,7 +56,7 @@ public class AccountsApiTest {
     @Test
     public void updateAccountTest() throws ApiException {
 
-        String newName = UUID.randomUUID().toString().substring(0,6);
+        String newName = UUID.randomUUID().toString().substring(0, 8);
 
         AccountsApi accountsApi = new AccountsApi(TestConfig.BASIC_CLIENT);
         AccountDTO account = accountsApi.getAccount();

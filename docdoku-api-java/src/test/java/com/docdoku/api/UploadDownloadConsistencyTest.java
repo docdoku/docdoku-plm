@@ -52,7 +52,7 @@ public class UploadDownloadConsistencyTest {
 
         // Create a document
         DocumentCreationDTO documentCreation = new DocumentCreationDTO();
-        documentCreation.setReference(UUID.randomUUID().toString().substring(0, 6));
+        documentCreation.setReference(UUID.randomUUID().toString().substring(0, 8));
         documentCreation.setTitle("GeneratedDoc");
 
         DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreation, TestConfig.WORKSPACE);

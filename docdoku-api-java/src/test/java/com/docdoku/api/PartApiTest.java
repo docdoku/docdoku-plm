@@ -53,7 +53,7 @@ public class PartApiTest {
 
         // Create a part
         PartCreationDTO part = new PartCreationDTO();
-        part.setNumber(UUID.randomUUID().toString().substring(0, 6));
+        part.setNumber(UUID.randomUUID().toString().substring(0, 8));
         part.setName("GeneratedPart");
 
         PartRevisionDTO createdPart = partsApi.createNewPart(TestConfig.WORKSPACE, part);
@@ -108,7 +108,7 @@ public class PartApiTest {
 
         // Create a part
         PartCreationDTO partCreation = new PartCreationDTO();
-        partCreation.setNumber(UUID.randomUUID().toString().substring(0, 6));
+        partCreation.setNumber(UUID.randomUUID().toString().substring(0, 8));
         partCreation.setName("GeneratedPart");
 
         PartRevisionDTO part = partsApi.createNewPart(TestConfig.WORKSPACE, partCreation);
@@ -132,7 +132,7 @@ public class PartApiTest {
 
         // Create a part
         PartCreationDTO partCreation = new PartCreationDTO();
-        partCreation.setNumber(UUID.randomUUID().toString().substring(0, 6));
+        partCreation.setNumber(UUID.randomUUID().toString().substring(0, 8));
         partCreation.setName("GeneratedPart");
 
         PartRevisionDTO part = partsApi.createNewPart(TestConfig.WORKSPACE, partCreation);
