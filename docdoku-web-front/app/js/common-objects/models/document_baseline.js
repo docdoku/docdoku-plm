@@ -29,7 +29,10 @@ define(['common-objects/models/baseline'], function (Baseline) {
             return this.set('baselinedDocuments', baselinedDocuments);
         },
         addBaselinedDocument: function (baselinedDocument) {
-            this.getBaselinedDocuments().push(baselinedDocument);
+            var documents = this.getBaselinedDocuments();
+            if(documents.indexOf(baselinedDocument) === -1){
+                documents.push(baselinedDocument);
+            }
         },
 
         getZipUrl: function () {
