@@ -195,6 +195,7 @@
                 var index = _this.getRepositoryIndex(indexFolder);
                 setIndexValue(index, path, IndexKeys.DIGEST, getHashFromFile(path));
                 setIndexValue(index, path, IndexKeys.LAST_MODIFIED_DATE, Date.now());
+                writeIndex(indexFolder);
             };
 
             this.getLocalChanges = function (folder) {
@@ -217,7 +218,8 @@
             };
 
             this.isModified = function (index, path) {
-                return path && getHashFromFile(path) !== getIndexValue(index, path, IndexKeys.DIGEST);
+                var digest = getIndexValue(index, path, IndexKeys.DIGEST);
+                return digest && getHashFromFile(path) !== digest;
             };
 
             this.isOutOfDate = function (index, file) {
