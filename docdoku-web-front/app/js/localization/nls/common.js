@@ -171,6 +171,7 @@ define({
         DOCUMENT_VERSION_HELP: 'Version of the document',
 		DOCUMENTS: 'Documents',
 		DOCUMENTS_CHOICE: 'Documents choice',
+        DOCUMENTS_CHOICE_EXPLANATION: 'Select some documents from folders',
         DOCUMENTS_COLLECTION: 'Documents collection',
         DOCUMENTS_COLLECTION_IN_PROGRESS: 'Documents collection in progress',
         DOCUMENTS_COLLECTIONS: 'Documents collections',

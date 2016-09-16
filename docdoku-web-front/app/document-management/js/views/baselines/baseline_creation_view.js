@@ -129,6 +129,7 @@ define([
 
             } else {
                 App.config.documentBaselineInProgress = this.model;
+                App.appView.showBaselineTooltip();
             }
 
 			e.preventDefault();

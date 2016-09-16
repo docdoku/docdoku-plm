@@ -30,8 +30,21 @@ define([
             return this;
         },
 
+        showBaselineTooltip : function(){
+            this.$foldersNav.popover('destroy');
+            this.$foldersNav.popover({
+                html: true,
+                title:'',
+                content: '<b>'+App.config.i18n.DOCUMENTS_CHOICE+'</b> <br />'
+                + '<span>'+App.config.i18n.DOCUMENTS_CHOICE_EXPLANATION+'</span>',
+                container: 'body',
+                placement: 'right'
+            }).popover('show');
+        },
+
         bindDomElements:function(){
             this.$linksNav = this.$('.nav-header.links-nav');
+            this.$foldersNav = this.$('#folder-nav');
         }
     });
 
