@@ -25,8 +25,8 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.events.CheckedIn;
-import com.docdoku.server.events.PartIterationChangeEvent;
-import com.docdoku.server.events.PartRevisionChangeEvent;
+import com.docdoku.server.events.PartIterationEvent;
+import com.docdoku.server.events.PartRevisionEvent;
 import com.docdoku.server.events.Removed;
 
 import javax.enterprise.context.RequestScoped;
@@ -44,17 +44,17 @@ public class PartNotificationManager {
     @Inject
     private IProductManagerLocal productService;
 
-    private void onRemovePartIteration(@Observes @Removed PartIterationChangeEvent event){
-        PartIteration partIteration = event.getModifiedPart();
+    private void onRemovePartIteration(@Observes @Removed PartIterationEvent event){
+        PartIteration partIteration = event.getObservedPart();
         productService.removeModificationNotificationsOnIteration(partIteration.getKey());
     }
 
-    private void onRemovePartRevision(@Observes @Removed PartRevisionChangeEvent event){
-        PartRevision partRevision = event.getModifiedPart();
+    private void onRemovePartRevision(@Observes @Removed PartRevisionEvent event){
+        PartRevision partRevision = event.getObservedPart();
         productService.removeModificationNotificationsOnRevision(partRevision.getKey());
     }
-    private void onCheckInPartIteration(@Observes @CheckedIn PartIterationChangeEvent event) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
-        PartIteration partIteration = event.getModifiedPart();
+    private void onCheckInPartIteration(@Observes @CheckedIn PartIterationEvent event) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+        PartIteration partIteration = event.getObservedPart();
         productService.createModificationNotifications(partIteration);
     }
 }

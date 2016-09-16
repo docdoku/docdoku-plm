@@ -19,24 +19,24 @@
  */
 package com.docdoku.server.events;
 
-import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartRevision;
 
 /**
  * @author Florent Garin
  */
-public class PartIterationChangeEvent {
+public class PartRevisionEvent {
 
-    private PartIteration modifiedPart;
+    private PartRevision observedPart;
 
-    public PartIterationChangeEvent(PartIteration modifiedPart) {
-        this.modifiedPart = modifiedPart;
+    public PartRevisionEvent(PartRevision observedPart) {
+        this.observedPart = observedPart;
     }
 
-    public PartIteration getModifiedPart() {
-        return modifiedPart;
+    public PartRevision getObservedPart() {
+        return observedPart;
     }
 
-    public void setModifiedPart(PartIteration modifiedPart) {
-        this.modifiedPart = modifiedPart;
+    public void setObservedPart(PartRevision observedPart) {
+        this.observedPart = observedPart;
     }
 }

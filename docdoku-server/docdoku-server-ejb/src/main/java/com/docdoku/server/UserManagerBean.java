@@ -57,7 +57,7 @@ public class UserManagerBean implements IUserManagerLocal {
     private Event<WorkspaceAccessEvent> workspaceAccessEvent;
 
     @Inject
-    private Event<UserRemovedEvent> userRemovedEvent;
+    private Event<UserEvent> userRemovedEvent;
 
     @Inject
     private IContextManagerLocal contextManager;
@@ -112,7 +112,7 @@ public class UserManagerBean implements IUserManagerLocal {
         User user = userDAO.loadUser(new UserKey(pWorkspaceId, login));
 
         userRemovedEvent.select(new AnnotationLiteral<Removed>() {
-        }).fire(new UserRemovedEvent(user));
+        }).fire(new UserEvent(user));
         userDAO.removeUser(user);
 
         return workspace;
@@ -426,7 +426,7 @@ public class UserManagerBean implements IUserManagerLocal {
         for (String login : pLogins) {
             User user = userDAO.loadUser(new UserKey(pWorkspaceId, login));
             userRemovedEvent.select(new AnnotationLiteral<Removed>() {
-            }).fire(new UserRemovedEvent(user));
+            }).fire(new UserEvent(user));
             userDAO.removeUser(user);
         }
 

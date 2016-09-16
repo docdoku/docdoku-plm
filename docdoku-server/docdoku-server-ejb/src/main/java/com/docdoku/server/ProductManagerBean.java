@@ -47,8 +47,8 @@ import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
 import com.docdoku.server.events.CheckedIn;
-import com.docdoku.server.events.PartIterationChangeEvent;
-import com.docdoku.server.events.PartRevisionChangeEvent;
+import com.docdoku.server.events.PartIterationEvent;
+import com.docdoku.server.events.PartRevisionEvent;
 import com.docdoku.server.events.Removed;
 import com.docdoku.server.factory.ACLFactory;
 import com.docdoku.server.validation.AttributesConsistencyUtils;
@@ -62,7 +62,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
-import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -101,10 +100,10 @@ public class ProductManagerBean implements IProductManagerLocal {
     private IPSFilterManagerLocal psFilterManager;
 
     @Inject
-    private Event<PartIterationChangeEvent> partIterationEvent;
+    private Event<PartIterationEvent> partIterationEvent;
 
     @Inject
-    private Event<PartRevisionChangeEvent> partRevisionEvent;
+    private Event<PartRevisionEvent> partRevisionEvent;
 
     private static final Logger LOGGER = Logger.getLogger(ProductManagerBean.class.getName());
 
@@ -350,7 +349,7 @@ public class ProductManagerBean implements IProductManagerLocal {
             }
             PartIteration partIte = partR.removeLastIteration();
             partIterationEvent.select(new AnnotationLiteral<Removed>() {
-            }).fire(new PartIterationChangeEvent(partIte));
+            }).fire(new PartIterationEvent(partIte));
 
             PartIterationDAO partIDAO = new PartIterationDAO(locale, em);
             partIDAO.removeIteration(partIte);
@@ -543,7 +542,7 @@ public class ProductManagerBean implements IProductManagerLocal {
             esIndexer.index(lastIteration);
 
             partIterationEvent.select(new AnnotationLiteral<CheckedIn>() {
-            }).fire(new PartIterationChangeEvent(lastIteration));
+            }).fire(new PartIterationEvent(lastIteration));
             return partR;
         } else {
             throw new NotAllowedException(locale, "NotAllowedException20");
@@ -2096,7 +2095,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         }
 
         partRevisionEvent.select(new AnnotationLiteral<Removed>() {
-        }).fire(new PartRevisionChangeEvent(partR));
+        }).fire(new PartRevisionEvent(partR));
 
         if (isLastRevision) {
             partMasterDAO.removePartM(partMaster);

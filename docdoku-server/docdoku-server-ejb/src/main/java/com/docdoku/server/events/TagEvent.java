@@ -19,24 +19,24 @@
  */
 package com.docdoku.server.events;
 
-import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.meta.Tag;
 
 /**
  * @author Florent Garin
  */
-public class PartRevisionChangeEvent {
+public class TagEvent {
 
-    private PartRevision modifiedPart;
+    private Tag observedTag;
 
-    public PartRevisionChangeEvent(PartRevision modifiedPart) {
-        this.modifiedPart = modifiedPart;
+    public TagEvent(Tag observedTag) {
+        this.observedTag = observedTag;
     }
 
-    public PartRevision getModifiedPart() {
-        return modifiedPart;
+    public Tag getObservedTag() {
+        return observedTag;
     }
 
-    public void setModifiedPart(PartRevision modifiedPart) {
-        this.modifiedPart = modifiedPart;
+    public void setObservedTag(Tag observedTag) {
+        this.observedTag = observedTag;
     }
 }

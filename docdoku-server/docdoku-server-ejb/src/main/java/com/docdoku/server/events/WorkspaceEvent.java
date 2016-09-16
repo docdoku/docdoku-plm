@@ -19,24 +19,24 @@
  */
 package com.docdoku.server.events;
 
-import com.docdoku.core.common.User;
+import com.docdoku.core.common.Workspace;
 
 /**
- * @author Morgan Guimard
+ * @author Florent Garin
  */
-public class UserRemovedEvent {
+public class WorkspaceEvent {
 
-    private User removedUser;
+    private Workspace observedWorkspace;
 
-    public UserRemovedEvent(User removedUser) {
-        this.removedUser = removedUser;
+    public WorkspaceEvent(Workspace modifiedWorkspace) {
+        this.observedWorkspace = modifiedWorkspace;
     }
 
-    public User getRemovedUser() {
-        return removedUser;
+    public Workspace getObservedWorkspace() {
+        return observedWorkspace;
     }
 
-    public void setRemovedUser(User removedUser) {
-        this.removedUser = removedUser;
+    public void setObservedWorkspace(Workspace observedWorkspace) {
+        this.observedWorkspace = observedWorkspace;
     }
 }
