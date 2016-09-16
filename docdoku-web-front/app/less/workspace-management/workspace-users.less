@@ -6,7 +6,9 @@
     align-items: stretch;
     align-content: flex-start;
 
+
     .well-large.workspace-group {
+
         margin: 3px;
         padding:0 8px 4px 10px;
         border:1px solid rgba(63, 95, 153, 0.24);
@@ -22,13 +24,27 @@
             top: 12px;
             right: 20px;
         }
-    }
 
-    .well-large.workspace-group.half {
+        table {
+            width: 100%;
+        }
+        td {
+            max-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
         width: 46%;
+
+        @media (max-width: 1300px) {
+            width: 92%;
+        }
     }
 
 }
+
+
 .readonly-switch{
     display: block; white-space: nowrap;
     label{
