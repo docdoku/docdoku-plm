@@ -71,6 +71,7 @@ define([
 
             if (App.config.documentBaselineInProgress) {
                 this.snapInProgressGroupButtons.toggle(true);
+                this.snapInProgressGroupButtons.find('span.count').text(App.config.documentBaselineInProgress.getBaselinedDocuments().length);
             }
         },
 
@@ -554,8 +555,7 @@ define([
             this.listView.eachChecked(function (view) {
                 App.config.documentBaselineInProgress.addBaselinedDocument(view.model);
             });
-
-            this.$('.actions .view-baseline-detail>span.count').text(App.config.documentBaselineInProgress.getBaselinedDocuments().length);
+            this.snapInProgressGroupButtons.find('span.count').text(App.config.documentBaselineInProgress.getBaselinedDocuments().length);
             this.viewBaselineDetail.highlightEffect();
         },
 
