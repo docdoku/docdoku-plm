@@ -25,7 +25,7 @@
 
         .filter('fileShortName', function () {
             return function (path) {
-                return path.replace(/^.*[\\\/]/, '');
+                return typeof path === 'string' ? path.replace(/^.*[\\\/]/, '') : path;
             };
         })
 
