@@ -20,6 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.configuration.DocumentBaseline;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.AccessRightException;
 import com.docdoku.core.exceptions.EntityNotFoundException;
 import com.docdoku.core.exceptions.UserNotActiveException;
@@ -110,7 +111,15 @@ public class DocumentBaselinesResource {
     public Response createBaseline(@PathParam("workspaceId") String workspaceId,
                                    @ApiParam(required = true, value = "Document baseline to create") DocumentBaselineDTO documentBaselineDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
-        DocumentBaseline baseline = documentBaselineService.createBaseline(workspaceId, documentBaselineDTO.getName(), documentBaselineDTO.getType(), documentBaselineDTO.getDescription());
+
+        List<BaselinedDocumentDTO> baselinedDocumentsDTO = documentBaselineDTO.getBaselinedDocuments();
+        List<DocumentRevisionKey> documentRevisionKeys = new ArrayList<>();
+
+        for (BaselinedDocumentDTO document : baselinedDocumentsDTO) {
+            documentRevisionKeys.add(new DocumentRevisionKey(workspaceId, document.getDocumentMasterId(), document.getVersion()));
+        }
+
+        DocumentBaseline baseline = documentBaselineService.createBaseline(workspaceId, documentBaselineDTO.getName(), documentBaselineDTO.getType(), documentBaselineDTO.getDescription(), documentRevisionKeys);
         return prepareCreateResponse(getBaseline(workspaceId, baseline.getId()));
     }
 

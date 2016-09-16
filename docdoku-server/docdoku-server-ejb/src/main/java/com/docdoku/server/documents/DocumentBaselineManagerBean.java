@@ -42,7 +42,10 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
 @Local(IDocumentBaselineManagerLocal.class)
@@ -60,13 +63,15 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentBaseline createBaseline(String workspaceId, String name, DocumentBaseline.BaselineType type, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FolderNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException {
+    public DocumentBaseline createBaseline(String workspaceId, String name, DocumentBaseline.BaselineType type, String description, List<DocumentRevisionKey> documentRevisionKeys)
+            throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FolderNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException {
+
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
         DocumentBaseline baseline = new DocumentBaseline(user, name, type, description);
         baseline.getDocumentCollection().setCreationDate(new Date());
         baseline.getDocumentCollection().setAuthor(user);
         new DocumentBaselineDAO(em, new Locale(user.getLanguage())).createBaseline(baseline);
-        snapshotAllDocuments(baseline,workspaceId);
+        snapshotDocuments(baseline, workspaceId, documentRevisionKeys);
         return baseline;
     }
 
@@ -112,39 +117,6 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
         return filteredDocumentCollection;
     }
 
-    private void snapshotAllDocuments(DocumentBaseline baseline, String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, FolderNotFoundException {
-        userManager.checkWorkspaceReadAccess(workspaceId);
-        DocumentRevision[] documentRevisions = documentService.getAllDocumentsInWorkspace(workspaceId);
-        List<DocumentRevisionKey> revisionKeyList = new ArrayList<>();
-        for(DocumentRevision documentRevision : documentRevisions){
-            revisionKeyList.add(documentRevision.getKey());
-        }
-
-        fillBaselineDocument(baseline, revisionKeyList);
-    }
-
-    private void fillBaselineDocument(DocumentBaseline baseline, List<DocumentRevisionKey> revisionKeys) throws DocumentRevisionNotFoundException, FolderNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        // Add all document
-        for(DocumentRevisionKey revisionKey : revisionKeys){
-            // Ignore already existing document
-            if(baseline.hasBaselinedDocument(revisionKey)){
-                continue;
-            }
-
-            DocumentRevision documentRevision = new DocumentRevisionDAO(em).loadDocR(revisionKey);
-            documentRevision = filterDocumentRevisionBaselinable(baseline.getType(), documentRevision);
-            // Document non accessible
-            if(documentRevision==null){
-                continue;
-            }
-
-            DocumentIteration documentIteration = documentRevision.getLastIteration();
-            if(documentIteration!=null){
-                baseline.addBaselinedDocument(documentIteration);
-            }
-        }
-    }
-
     private DocumentRevision filterDocumentRevisionAccessRight(User user, DocumentRevision documentRevision){
         if(!user.isAdministrator()
                 && (documentRevision.getACL()!=null)
@@ -154,17 +126,36 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
         return documentRevision;
     }
 
-    private DocumentRevision filterDocumentRevisionBaselinable(DocumentBaseline.BaselineType type, DocumentRevision documentRevision) {
+    private void snapshotDocuments(DocumentBaseline baseline, String workspaceId, List<DocumentRevisionKey> documentRevisionKeys) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, FolderNotFoundException {
+        userManager.checkWorkspaceReadAccess(workspaceId);
+
+        for (DocumentRevisionKey revisionKey : documentRevisionKeys) {
+            // Ignore already existing document
+            if (baseline.hasBaselinedDocument(revisionKey)) {
+                continue;
+            }
+
+            DocumentIteration documentIteration = filterBaselinedDocument(baseline.getType(), revisionKey);
+
+            if (documentIteration != null) {
+                baseline.addBaselinedDocument(documentIteration);
+            }
+        }
+    }
+
+    private DocumentIteration filterBaselinedDocument(DocumentBaseline.BaselineType type, DocumentRevisionKey documentRevisionKey) throws DocumentRevisionNotFoundException {
+        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(em);
+        DocumentRevision documentRevision = documentRevisionDAO.loadDocR(documentRevisionKey);
+
         if (type.equals(DocumentBaseline.BaselineType.RELEASED)) {
-            return documentRevision.isReleased() ? documentRevision : null;
+            return documentRevision.isReleased() ? documentRevision.getLastIteration() : null;
 
         } else {
             if (documentRevision.isCheckedOut()) {
                 em.detach(documentRevision);
                 documentRevision.removeLastIteration();
             }
+            return documentRevision.getLastIteration();
         }
-
-        return documentRevision;
     }
 }

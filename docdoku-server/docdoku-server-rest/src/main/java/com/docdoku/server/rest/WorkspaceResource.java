@@ -20,8 +20,6 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.common.*;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.notification.TagUserGroupSubscription;
@@ -31,7 +29,6 @@ import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserMembership;
 import com.docdoku.core.services.*;
 import com.docdoku.server.rest.dto.*;
-import com.docdoku.server.rest.dto.baseline.BaselinedDocumentDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -535,7 +532,6 @@ public class WorkspaceResource {
                 .add("activegroups", activeGroupsCount)
                 .add("inactivegroups", inactiveGroupsCount).build();
     }
-
 
     // Sub resources
 

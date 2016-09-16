@@ -24,13 +24,18 @@ import com.docdoku.core.document.DocumentIteration;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @XmlRootElement
 public class BaselinedDocumentDTO implements Serializable {
 
     private String documentMasterId;
+    private String title;
     private String version;
     private int iteration;
+    private List<BaselinedDocumentOptionDTO> availableIterations;
 
     public BaselinedDocumentDTO() {
     }
@@ -38,7 +43,23 @@ public class BaselinedDocumentDTO implements Serializable {
     public BaselinedDocumentDTO(DocumentIteration documentIteration) {
         this.documentMasterId = documentIteration.getDocumentMasterId();
         this.version = documentIteration.getVersion();
+        this.title = documentIteration.getDocumentRevision().getTitle();
         this.iteration = documentIteration.getIteration();
+    }
+
+    public BaselinedDocumentDTO(List<DocumentIteration> availableDocuments) {
+
+        DocumentIteration max = Collections.max(availableDocuments);
+
+        this.documentMasterId = max.getDocumentMasterId();
+        this.version = max.getVersion();
+        this.title = max.getDocumentRevision().getTitle();
+        this.iteration = max.getIteration();
+
+        this.availableIterations = new ArrayList<>();
+        for (DocumentIteration documentIteration : availableDocuments) {
+            this.availableIterations.add(new BaselinedDocumentOptionDTO(documentIteration.getVersion(), documentIteration.getIteration(), documentIteration.getDocumentRevision().isReleased(), documentIteration.getDocumentRevision().isObsolete()));
+        }
     }
 
     public BaselinedDocumentDTO(String number, String version, int iteration) {
@@ -55,6 +76,14 @@ public class BaselinedDocumentDTO implements Serializable {
         this.documentMasterId = documentMasterId;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getVersion() {
         return version;
     }
@@ -69,5 +98,13 @@ public class BaselinedDocumentDTO implements Serializable {
 
     public void setIteration(int iteration) {
         this.iteration = iteration;
+    }
+
+    public List<BaselinedDocumentOptionDTO> getAvailableIterations() {
+        return availableIterations;
+    }
+
+    public void setAvailableIterations(List<BaselinedDocumentOptionDTO> availableIterations) {
+        this.availableIterations = availableIterations;
     }
 }
