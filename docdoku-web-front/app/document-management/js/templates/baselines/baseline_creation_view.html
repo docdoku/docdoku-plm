@@ -1,51 +1,64 @@
 <div id="baseline_creation_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3>
-            {{#isReleased}}{{i18n.CREATE_BASELINE_RELEASED}}{{/isReleased}}
-            {{^isReleased}}
-            {{#isLatest}}{{i18n.CREATE_BASELINE_LATEST}}{{/isLatest}}
-            {{^isLatest}}{{i18n.CREATE_BASELINE}}{{/isLatest}}
-            {{/isReleased}}
-        </h3>
+        <h3>{{i18n.CREATE_DOCUMENTS_COLLECTION}}</h3>
     </div>
 
     <div class="modal-body">
         <div class="notifications"></div>
-        <h4></h4>
-        <form id="baseline_creation_form" class="form-horizontal">
 
-            <div class="control-group">
-                <label class="control-label" for="inputBaselineName">{{i18n.NAME}}</label>
+        <div class="ModalTabs ModalBody-tabs tabs">
+            <ul class="ModalTabs-nav nav nav-tabs">
+                <li class="active"><a href="#tab-baseline-general" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                <li><a href="#tab-docs-choice" data-toggle="tab">{{i18n.DOCUMENTS_CHOICE}}</a></li>
+            </ul>
+            <form id="baseline_creation_form" class="form-horizontal">
+                <div class="ModalTabsContent tab-content form-horizontal">
+                    <div id="tab-baseline-general" class="ModalTabsPane tab-pane active">
 
-                <div class="controls">
-                    <input type="text" id="inputBaselineName" placeholder="{{i18n.NAME}}" required/>
+                        <div class="control-group">
+                            <label class="control-label" for="inputBaselineName">{{i18n.NAME}}</label>
+
+                            <div class="controls">
+                                <input type="text" id="inputBaselineName" placeholder="{{i18n.NAME}}" {{#edition}}value="{{model.getName}}"{{/edition}} required />
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="inputBaselineDescription">{{i18n.DESCRIPTION}}</label>
+
+                            <div class="controls">
+                                <textarea id="inputBaselineDescription">{{#edition}}{{model.getDescription}}{{/edition}}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="inputBaselineType">{{i18n.TYPE}}</label>
+                            <div class="controls">
+                                <select id="inputBaselineType">
+                                    <option value="LATEST">{{i18n.HEAD_CHECKIN}}</option>
+                                    <option value="RELEASED">{{i18n.HEAD_RELEASED}}</option>
+                                </select>
+                                <i class="fa fa-spin fa-refresh loader"></i>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="tab-docs-choice" class="ModalTabsPane tab-pane baselineDocumentsChoiceListArea">
+
+                    </div>
+
                 </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label" for="inputBaselineDescription">{{i18n.DESCRIPTION}}</label>
-
-                <div class="controls">
-                    <textarea id="inputBaselineDescription"></textarea>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label" for="inputBaselineType">{{i18n.TYPE}}</label>
-                <div class="controls">
-                    <select id="inputBaselineType">
-                        <option value="LATEST">{{i18n.HEAD_CHECKIN}}</option>
-                        <option value="RELEASED">{{i18n.HEAD_RELEASED}}</option>
-                    </select>
-                    <!--<i class="fa fa-spin fa-refresh loader"></i>-->
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 
     <div class="modal-footer">
         <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CANCEL}}</button>
-        <button class="btn btn-primary" form="baseline_creation_form">{{i18n.CREATE_BASELINE}}</button>
+        <button class="btn btn-primary" form="baseline_creation_form">
+            {{#edition}}{{i18n.CREATE}}{{/edition}}
+            {{^edition}}{{i18n.FILL}}{{/edition}}
+        </button>
     </div>
 </div>

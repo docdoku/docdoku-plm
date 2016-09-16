@@ -3,9 +3,11 @@ define([
 	'backbone',
 	'mustache',
 	'common-objects/collections/baselines',
+    'common-objects/models/document_baseline',
 	'text!templates/baselines/baseline_creation_view.html',
-    'common-objects/views/alert'
-], function (Backbone, Mustache, Baselines, template, AlertView) {
+    'common-objects/views/alert',
+    'views/baselines/document_revision_list'
+], function (Backbone, Mustache, Baselines, DocumentBaseline, template, AlertView, DocumentRevisionListView) {
 
     'use strict';
 
@@ -13,16 +15,33 @@ define([
 
 		events: {
 			'submit #baseline_creation_form': 'onSubmitForm',
-			'hidden #baseline_creation_modal': 'onHidden'
+			'hidden #baseline_creation_modal': 'onHidden',
+            'change select#inputBaselineType': 'changeBaselineType',
+            'close-modal-request': 'closeModal'
 		},
 
 		initialize: function () {
 			_.bindAll(this);
+
+            this.choiceView = new DocumentRevisionListView().render();
 		},
 
 		render: function () {
-			this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
+            this.$el.html(Mustache.render(template, {
+                i18n: App.config.i18n,
+                edition: this.options.mode,
+                model: App.config.documentBaselineInProgress
+            }));
+
 			this.bindDomElements();
+
+            if (this.options.mode === 'edit') {
+                this.fillDocumentsChoiceView();
+            }
+
+            this.hideLoader();
+
+            this.$baselineDocumentsChoiceListArea.html(this.choiceView.$el);
             this.$inputBaselineName.customValidity(App.config.i18n.REQUIRED_FIELD);
 
             return this;
@@ -34,32 +53,100 @@ define([
 			this.$inputBaselineName = this.$('#inputBaselineName');
 			this.$inputBaselineDescription = this.$('#inputBaselineDescription');
             this.$inputBaselineType = this.$('#inputBaselineType');
+            this.$baselineDocumentsChoiceListArea = this.$('.baselineDocumentsChoiceListArea');
+            this.$loader = this.$('.loader');
 		},
+
+        changeBaselineType: function () {
+            var type = this.$inputBaselineType.val();
+
+            // TODO
+            //this.resetViews();
+            //this.fetchDocumentRevisions(type);
+        },
+
+        resetViews: function () {
+            this.choiceView.clear();
+        },
+
+        fetchDocumentRevisions: function (type) {
+            this.showLoader();
+            if (type === 'RELEASED') {
+                this.getReleasedDocumentRevisions().success(this.fillDocumentsChoiceView).error(this.onRequestsError);
+            } else {
+                this.getCheckedInDocumentRevisions().success(this.fillDocumentsChoiceView).error(this.onRequestsError);
+            }
+        },
+
+        getReleasedDocumentRevisions: function () {
+            return $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/documents/released');
+        },
+
+        getCheckedInDocumentRevisions: function () {
+            return $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/documents/checkedin');
+        },
+
+        fillDocumentsChoiceView: function () {
+            this.hideLoader();
+            this.choiceView.renderList(App.config.documentBaselineInProgress.getBaselinedDocuments());
+        },
+
+        onRequestsError:function(xhr,type,message){
+            this.$loader.hide();
+            this.$notifications.append(new AlertView({
+                type:'error',
+                message:message
+            }).render().$el);
+        },
+
+        showLoader:function(){
+            this.$loader.show();
+        },
+        hideLoader:function(){
+            this.$loader.hide();
+        },
 
 		onSubmitForm: function (e) {
             this.$notifications.empty();
-            var data = {
+
+            this.model = new DocumentBaseline({
                 name: this.$inputBaselineName.val(),
                 description: this.$inputBaselineDescription.val(),
-                type: this.$inputBaselineType.val()
-            };
-
-            this.collection.create(data, {
-                wait: true,
-                success: this.onBaselineCreated,
-                error: this.onError
+                type: this.$inputBaselineType.val(),
+                baselinedDocuments: []
             });
+
+            if (this.options.mode === 'edit') {
+                this.model.setBaselinedDocuments(App.config.documentBaselineInProgress.getBaselinedDocuments());
+                var saveOptions = {};
+
+                this.model.save(saveOptions, {
+                    wait: true,
+                    success: this.onBaselineCreated,
+                    error: this.onError
+                });
+
+            } else {
+                App.config.documentBaselineInProgress = this.model;
+            }
 
 			e.preventDefault();
 			e.stopPropagation();
-			return false;
+
+            if (this.options.mode === 'edit') {
+                return false;
+            } else {
+                this.closeModal();
+            }
 		},
 
 		onBaselineCreated: function (e) {
             if (e.message) {
                 this.trigger('warning', e.message);
             }
-			this.closeModal();
+
+            App.config.documentBaselineInProgress = undefined;
+            this.closeModal();
 		},
 
 		onError: function (model, error) {

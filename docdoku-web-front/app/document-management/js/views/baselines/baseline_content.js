@@ -50,7 +50,7 @@ define([
         },
 
         createBaseline: function () {
-            var baselineCreationView = new BaselineCreationView({collection:this.listView.collection});
+            var baselineCreationView = new BaselineCreationView();
             window.document.body.appendChild(baselineCreationView.render().el);
             baselineCreationView.on('warning', this.onWarning);
             baselineCreationView.openModal();

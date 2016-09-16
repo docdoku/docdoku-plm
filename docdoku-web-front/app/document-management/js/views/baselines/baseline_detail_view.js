@@ -42,7 +42,7 @@ define([
             this.linkedDocumentsView = new LinkedDocumentsView({
                 editMode: false,
                 commentEditable:false,
-                collection: new LinkedDocumentIterationCollection(this.model.getBaselineDocuments())
+                collection: new LinkedDocumentIterationCollection(this.model.getBaselinedDocuments())
             }).render();
 
             this.$('#documents-list').html(this.linkedDocumentsView.el);

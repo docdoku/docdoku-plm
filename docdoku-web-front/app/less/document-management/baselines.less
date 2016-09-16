@@ -1,0 +1,52 @@
+ul.baselines-list {
+
+    margin: 0;
+
+    li.baseline-item {
+
+        margin: 4px;
+        list-style: none;
+
+        input[type=checkbox] {
+            margin: 0 3px 3px 0;
+        }
+
+        a {
+            &.stroke {
+                text-decoration: line-through;
+                color: red;
+            }
+        }
+
+    }
+
+}
+
+ul.baselined-documents {
+
+    margin: 2px 4px;
+
+    li.baselined-document-item {
+        list-style: none;
+
+        label {
+            &.control-label {
+                padding-top: 5px;
+            }
+            display: inline-block;
+            input[type=radio] {
+                margin: 4px;
+            }
+        }
+
+    }
+}
+
+div#baseline_creation_modal {
+    div#tab-docs-choice {
+        button.close {
+            float: none;
+            margin-bottom: 4px;
+        }
+    }
+}

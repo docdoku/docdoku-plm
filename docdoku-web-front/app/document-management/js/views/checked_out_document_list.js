@@ -7,9 +7,10 @@ define([
     'text!common-objects/templates/buttons/tags_button.html',
     'text!common-objects/templates/buttons/new_version_button.html',
     'text!common-objects/templates/buttons/ACL_button.html',
+    'text!common-objects/templates/buttons/snap_in_progress_button.html',
     'text!templates/search_document_form.html',
     'text!templates/checked_out_document_list.html'
-], function (CheckedOutDocumentList, ContentDocumentListView, deleteButton, checkoutButtonGroup, tagsButton, newVersionButton, aclButton, searchForm, template) {
+], function (CheckedOutDocumentList, ContentDocumentListView, deleteButton, checkoutButtonGroup, tagsButton, newVersionButton, aclButton, snapInProgressButton, searchForm, template) {
     'use strict';
 	var CheckedOutDocumentListView = ContentDocumentListView.extend({
 
@@ -20,7 +21,8 @@ define([
             checkoutButtonGroup: checkoutButtonGroup,
             tagsButton: tagsButton,
             searchForm: searchForm,
-            aclButton: aclButton
+            aclButton: aclButton,
+            snapInProgressButton: snapInProgressButton
         },
 
         collection: function () {
