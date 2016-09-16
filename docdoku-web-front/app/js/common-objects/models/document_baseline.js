@@ -3,6 +3,10 @@ define(['common-objects/models/baseline'], function (Baseline) {
     'use strict';
     var DocumentBaseline = Baseline.extend({
 
+        getId: function () {
+            return this.get('id');
+        },
+
         getName: function () {
             return this.get('name');
         },
@@ -40,7 +44,7 @@ define(['common-objects/models/baseline'], function (Baseline) {
         },
 
         url: function () {
-            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/document-baselines/';
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/document-baselines/' + this.getId();
         }
     });
 
