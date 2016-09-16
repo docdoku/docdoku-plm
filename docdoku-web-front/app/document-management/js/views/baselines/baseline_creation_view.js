@@ -70,23 +70,6 @@ define([
             this.choiceView.clear();
         },
 
-        fetchDocumentRevisions: function (type) {
-            this.showLoader();
-            if (type === 'RELEASED') {
-                this.getReleasedDocumentRevisions().success(this.fillDocumentsChoiceView).error(this.onRequestsError);
-            } else {
-                this.getCheckedInDocumentRevisions().success(this.fillDocumentsChoiceView).error(this.onRequestsError);
-            }
-        },
-
-        getReleasedDocumentRevisions: function () {
-            return $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/documents/released');
-        },
-
-        getCheckedInDocumentRevisions: function () {
-            return $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/documents/checkedin');
-        },
-
         fillDocumentsChoiceView: function () {
             this.hideLoader();
             this.choiceView.renderList(App.config.documentBaselineInProgress.getBaselinedDocuments());
