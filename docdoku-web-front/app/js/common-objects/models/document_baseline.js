@@ -44,7 +44,10 @@ define(['common-objects/models/baseline'], function (Baseline) {
         },
 
         url: function () {
-            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/document-baselines/' + this.getId();
+            if (this.getId()) {
+                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/document-baselines/' + this.getId();
+            }
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/document-baselines';
         }
     });
 
