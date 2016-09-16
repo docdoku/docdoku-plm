@@ -45,4 +45,5 @@ define({
     WORKSPACE_DELETING_TEXT:'Un email de rapport sera envoyé à l\'administrateur à la fin de l\'opération.',
     WORKSPACE_INDEXING:'L\'indexations des données de l\'espace de travail est en cours. Un email de rapport sera envoyé à l\'administrateur à la fin de l\'opération.',
     INDEX_WORKSPACE:'Indexer les données',
+    NO_TAGS_YET:'Vous devez avoir créé au moins un tag avant de pouvoir créer des notifications'
 });

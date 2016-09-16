@@ -26,8 +26,20 @@
         </button>
     </form>
     {{/tags.length}}
+
+
 </div>
-<div class="notifications"></div>
+<div class="notifications">
+
+    {{^tags.length}}
+    <div class="Alert alert alert-info fade in" data-dismiss="alert">
+        <a class="Alert-closeBtn close" data-dismiss="alert">×</a>
+        <h4 class="Alert-title alert-heading"></h4>
+        <p class="Alert-message">{{i18n.NO_TAGS_YET}}</p>
+    </div>
+    {{/tags.length}}
+
+</div>
 
 <div class="margin">
     <div class="workspace-group-container">
