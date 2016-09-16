@@ -179,14 +179,16 @@
                     SAVE_NOTE: 'Save note',
                     CASCADE_CHECKIN: 'Cascade checkin',
                     CASCADE_CHECKOUT: 'Cascade checkout',
-                    DOWNLOAD_FILES: 'Télécharger les fichiers',
+                    DOWNLOAD_FILES: 'Download files',
                     CREATE_FILE: 'New file',
                     PUSH: 'Push files',
                     FILE_PREVIEW: 'Open file',
                     SYNCED: 'Synced',
                     CREATED: 'Created',
                     SEND_MAIL: 'Email',
-                    RESTORE_FILES:'Restore files'
+                    RESTORE_FILES:'Restore files',
+                    CHECK_OUT_ITEMS:'Check out items',
+                    CHECK_OUT_RECURSIVE:'Recursive check out'
                 })
                 .translations('fr', {
                     CHECKOUT: 'Réserver',
@@ -369,7 +371,9 @@
                     SYNCED: 'Synchronisé',
                     CREATED: 'Créé',
                     SEND_MAIL: 'Email',
-                    RESTORE_FILES:'Restaurer les fichiers'
+                    RESTORE_FILES:'Restaurer les fichiers',
+                    CHECK_OUT_ITEMS:'Réserver les éléments',
+                    CHECK_OUT_RECURSIVE:'Réservemer récursivement les éléments'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');
