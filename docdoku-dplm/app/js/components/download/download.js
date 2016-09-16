@@ -4,7 +4,7 @@
 
     angular.module('dplm.dialogs')
 
-        .controller('DownloadCtrl', function ($scope, $mdDialog, $filter,
+        .controller('DownloadCtrl', function ($scope, $mdDialog, $filter, $location,
                                               items, FolderService, DownloadService) {
 
             $scope.fileMap = $filter('itemsFiles')(items);
@@ -15,15 +15,22 @@
                 destinationFolder: null
             };
 
-            $scope.close = $mdDialog.hide;
+            $scope.close = function(openDestinationFolder){
+                $mdDialog.hide();
+                if(openDestinationFolder){
+                    $location.path('folder/'+$scope.options.destinationFolder);
+                }
+            };
 
             $scope.status = null;
 
             $scope.submit = function () {
-                $scope.status = {done: 0, url: '', item: [], progress: 0, mainProgress: 0};
 
-                DownloadService.bulkDownload($scope.fileMap,
-                    FolderService.getFolder({uuid: $scope.options.destinationFolder}).path)
+                $scope.loading = true;
+
+                var destinationFolder = FolderService.getFolder({uuid: $scope.options.destinationFolder}).path;
+
+                DownloadService.bulkDownload($scope.fileMap, destinationFolder)
                     .then(null, null, function (status) {
                         $scope.status = status;
                     }).finally(function () {

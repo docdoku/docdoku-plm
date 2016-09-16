@@ -100,7 +100,7 @@
         })
 
         .service('DownloadService', function ($window, $q, $filter, $timeout,
-                                              ConfigurationService, RepositoryService, FileUtils, READ_WRITE) {
+                                              ConfigurationService, RepositoryService, FileUtils) {
 
             var fs = $window.require('fs');
             var http = $window.require('http');
@@ -143,7 +143,7 @@
                 });
 
                 request.on('response', function () {
-                    // wait for writeStream end
+                    // wait for writeStream end (file completely written to disk), always happens after response event
                     fileStream.on('finish', function() {
                         deferred.resolve(file);
                     });
@@ -163,6 +163,7 @@
                 var chain = $q.when();
                 var done = 0;
                 var fileUrls = Object.keys(fileMap);
+                var total = fileUrls.length;
 
                 fileUrls.forEach(function (url) {
 
@@ -173,16 +174,17 @@
                                 RepositoryService.saveItemToIndex(indexFolder, filePath, item);
                                 RepositoryService.updateFileInIndex(indexFolder, filePath);
                                 FileUtils.setFileMode(filePath, item);
+                                deferred.notify({done: ++done, total: total});
                             }, function () {
-                                // Error while downloading ?
+                                // TODO : handle case : Error while downloading
                             }, function (progress) {
-                                deferred.notify({done: done, url: url, item: item, progress: progress});
+                                deferred.notify({done: done, total: total, url: url, progress: progress});
                             });
                     });
 
                 });
 
-                chain.then(deferred.resolve);
+                chain = chain.then(deferred.resolve);
 
                 return deferred.promise;
 
