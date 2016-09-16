@@ -76,8 +76,8 @@ define([
             this.$addTagForm = this.$('#workspace-add-tag-form');
             this.$addTagFormButton = this.$('.add-tag');
             this.$notifications = this.$('.notifications');
-            this.$userGroupSubscriptionViews = this.$('#user-group-subscriptions');
-            this.$userSubscriptionViews = this.$('#user-subscriptions');
+            this.$userGroupSubscriptionViews = this.$('.user-group-subscriptions');
+            this.$userSubscriptionViews = this.$('.user-subscriptions');
         },
 
         onError:function(error){
@@ -96,30 +96,39 @@ define([
             if (nbOfSelection > 0) {
                 this.$addTagFormButton.toggle(true);
 
-                if (nbOfSelection == 1) {
+                if (nbOfSelection === 1) {
                     var groupSelected = this.$('#workspace_group_table tbody > tr > td:nth-child(1) > input[type="checkbox"]:checked');
                     var userSelected = this.$('#workspace_user_table tbody > tr > td:nth-child(1) > input[type="checkbox"]:checked');
 
-                    if (groupSelected.size() == 1) {
+                    if (groupSelected.size() === 1) {
+
                         this.groupNotificationsEditView = new NotificationEditView({
                             id: groupSelected[0].dataset.name,
                             type: 'group'
                         }).render();
 
                         this.$userGroupSubscriptionViews.append(this.groupNotificationsEditView.el);
+                        this.$userGroupSubscriptionViews.removeClass('hide');
 
-                    } else if (userSelected.size() == 1) {
+                    } else if (userSelected.size() === 1) {
+
                         this.userNotificationsEditView = new NotificationEditView({
                             id: userSelected[0].dataset.login,
                             type: 'user'
                         }).render();
 
                         this.$userSubscriptionViews.append(this.userNotificationsEditView.el);
+                        this.$userSubscriptionViews.removeClass('hide');
                     }
+                }else {
+                    this.$userGroupSubscriptionViews.addClass('hide');
+                    this.$userSubscriptionViews.addClass('hide')
                 }
 
             } else {
                 this.$addTagFormButton.toggle(false);
+                this.$userGroupSubscriptionViews.addClass('hide');
+                this.$userSubscriptionViews.addClass('hide')
             }
         },
 
