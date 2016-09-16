@@ -46,10 +46,8 @@ define([
 
         renderList:function(documentRevisions){
             this.clear();
-
             this.documentRevisions = documentRevisions;
-
-            _.each(this.documentRevisions,this.addDocumentItemView,this);
+            _.each(this.documentRevisions, this.addDocumentItemView, this);
         },
 
         addDocumentItemView: function (documentRevision) {
@@ -58,8 +56,16 @@ define([
             this.$list.append(view.$el);
 
             // TODO: use this
-            //this.listenTo(documentView,'notification',this.printNotifications);
-            //this.listenTo(documentView,'clear', this.clearNotifications);
+            this.listenTo(view,'notification', this.printNotifications);
+            this.listenTo(view,'remove', this.removeItemView.bind(this));
+        },
+
+        removeItemView:function(view){
+            this.documentsViews = _.without(this.documentsViews, view);
+            var index = this.documentRevisions.indexOf(view.model);
+            this.documentRevisions.splice(index, 1);
+            view.$el.remove();
+            this.trigger('update');
         },
 
         clear:function(){

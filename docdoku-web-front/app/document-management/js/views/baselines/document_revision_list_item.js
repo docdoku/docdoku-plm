@@ -14,7 +14,7 @@ define([
         className: 'control-group',
 
         events: {
-            'click remove': 'remove'
+            'click .remove': 'remove'
         },
 
         template: Mustache.parse(template),
@@ -33,7 +33,7 @@ define([
         },
 
         remove: function() {
-            // TODO
+            this.trigger('remove', this);
         }
     });
 

@@ -24,6 +24,7 @@ define([
 			_.bindAll(this);
 
             this.choiceView = new DocumentRevisionListView().render();
+            this.listenTo(this.choiceView,'update',this.notifyUpdate.bind(this))
 		},
 
 		render: function () {
@@ -168,7 +169,12 @@ define([
 
 		onHidden: function () {
 			this.remove();
-		}
+		},
+
+        notifyUpdate:function(){
+            this.trigger('update');
+        }
+
 	});
 
 	return BaselineCreationView;

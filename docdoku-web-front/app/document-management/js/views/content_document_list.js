@@ -71,7 +71,7 @@ define([
 
             if (App.config.documentBaselineInProgress) {
                 this.snapInProgressGroupButtons.toggle(true);
-                this.snapInProgressGroupButtons.find('span.count').text(App.config.documentBaselineInProgress.getBaselinedDocuments().length);
+                this.refreshBaselineDocumentsCount();
             }
         },
 
@@ -555,15 +555,21 @@ define([
             this.listView.eachChecked(function (view) {
                 App.config.documentBaselineInProgress.addBaselinedDocument(view.model);
             });
-            this.snapInProgressGroupButtons.find('span.count').text(App.config.documentBaselineInProgress.getBaselinedDocuments().length);
+            this.refreshBaselineDocumentsCount();
             this.viewBaselineDetail.highlightEffect();
+        },
+
+        refreshBaselineDocumentsCount:function(){
+            this.snapInProgressGroupButtons.find('span.count').text(App.config.documentBaselineInProgress.getBaselinedDocuments().length);
         },
 
         openBaselineDetail: function () {
             var baselineCreationView = new BaselineCreationView({mode:'edit'});
             window.document.body.appendChild(baselineCreationView.render().el);
             baselineCreationView.on('warning', this.onWarning);
+            baselineCreationView.on('update', this.refreshBaselineDocumentsCount.bind(this));
             baselineCreationView.openModal();
+
         }
 
     });
