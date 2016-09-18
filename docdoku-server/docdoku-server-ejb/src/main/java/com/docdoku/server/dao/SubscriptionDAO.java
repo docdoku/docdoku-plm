@@ -236,17 +236,19 @@ public class SubscriptionDAO {
         Set<User> users=new HashSet<>();
         users.addAll(listUsers);
 
-        listUsers = em.createNamedQuery("TagUserSubscription.findIterationChangeSubscribersByTags", User.class)
-        .setParameter("workspaceId", pDocR.getWorkspaceId())
-        .setParameter("tags", pDocR.getTags().stream().map(Tag::getLabel).collect(Collectors.toList()))
-        .getResultList();
-        users.addAll(listUsers);
+        if(pDocR.getTags() !=null && !pDocR.getTags().isEmpty()) {
+            listUsers = em.createNamedQuery("TagUserSubscription.findIterationChangeSubscribersByTags", User.class)
+                    .setParameter("workspaceId", pDocR.getWorkspaceId())
+                    .setParameter("tags", pDocR.getTags().stream().map(Tag::getLabel).collect(Collectors.toList()))
+                    .getResultList();
+            users.addAll(listUsers);
 
-        listUsers = em.createNamedQuery("TagUserGroupSubscription.findIterationChangeSubscribersByTags", User.class)
-                .setParameter("workspaceId", pDocR.getWorkspaceId())
-                .setParameter("tags", pDocR.getTags().stream().map(Tag::getLabel).collect(Collectors.toList()))
-                .getResultList();
-        users.addAll(listUsers);
+            listUsers = em.createNamedQuery("TagUserGroupSubscription.findIterationChangeSubscribersByTags", User.class)
+                    .setParameter("workspaceId", pDocR.getWorkspaceId())
+                    .setParameter("tags", pDocR.getTags().stream().map(Tag::getLabel).collect(Collectors.toList()))
+                    .getResultList();
+            users.addAll(listUsers);
+        }
         return users;
     }
 
@@ -256,17 +258,19 @@ public class SubscriptionDAO {
         Set<User> users=new HashSet<>();
         users.addAll(listUsers);
 
-        listUsers = em.createNamedQuery("TagUserSubscription.findStateChangeSubscribersByTags", User.class)
-                .setParameter("workspaceId", pDocR.getWorkspaceId())
-                .setParameter("tags", pDocR.getTags().stream().map(Tag::getLabel).collect(Collectors.toList()))
-                .getResultList();
-        users.addAll(listUsers);
+        if(pDocR.getTags() !=null && !pDocR.getTags().isEmpty()) {
+            listUsers = em.createNamedQuery("TagUserSubscription.findStateChangeSubscribersByTags", User.class)
+                    .setParameter("workspaceId", pDocR.getWorkspaceId())
+                    .setParameter("tags", pDocR.getTags().stream().map(Tag::getLabel).collect(Collectors.toList()))
+                    .getResultList();
+            users.addAll(listUsers);
 
-        listUsers = em.createNamedQuery("TagUserGroupSubscription.findStateChangeSubscribersByTags", User.class)
-                .setParameter("workspaceId", pDocR.getWorkspaceId())
-                .setParameter("tags", pDocR.getTags().stream().map(Tag::getLabel).collect(Collectors.toList()))
-                .getResultList();
-        users.addAll(listUsers);
+            listUsers = em.createNamedQuery("TagUserGroupSubscription.findStateChangeSubscribersByTags", User.class)
+                    .setParameter("workspaceId", pDocR.getWorkspaceId())
+                    .setParameter("tags", pDocR.getTags().stream().map(Tag::getLabel).collect(Collectors.toList()))
+                    .getResultList();
+            users.addAll(listUsers);
+        }
         return users;
     }
 
