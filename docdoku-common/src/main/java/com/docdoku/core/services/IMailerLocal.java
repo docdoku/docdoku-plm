@@ -22,6 +22,7 @@ package com.docdoku.core.services;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.workflow.Task;
 
@@ -54,4 +55,8 @@ public interface IMailerLocal {
     void sendCredential(Account account);
 
     void sendWorkspaceDeletionErrorNotification(Account admin, String workspaceId);
+
+    void sendTaggedNotification(Collection<User> pSubscribers, DocumentRevision pDocR, Tag pTag);
+
+    void sendUntaggedNotification(Collection<User> pSubscribers, DocumentRevision pDocR, Tag pTag);
 }

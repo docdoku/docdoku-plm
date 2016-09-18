@@ -52,7 +52,7 @@ public class UploadDownloadConsistencyTest {
 
         // Create a document
         DocumentCreationDTO documentCreation = new DocumentCreationDTO();
-        documentCreation.setReference(UUID.randomUUID().toString().substring(0, 6));
+        documentCreation.setReference(UUID.randomUUID().toString().substring(0, 8));
         documentCreation.setTitle("GeneratedDoc");
 
         DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreation, TestConfig.WORKSPACE);
@@ -67,7 +67,7 @@ public class UploadDownloadConsistencyTest {
         UploadDownloadHelper.uploadAttachedFile(lastIteration, TestConfig.BASIC_CLIENT, file);
         document = documentApi.getDocumentRevision(TestConfig.WORKSPACE, document.getDocumentMasterId(), document.getVersion(), null);
         lastIteration = LastIterationHelper.getLastIteration(document);
-        File downloadedFile = UploadDownloadHelper.downloadFile(lastIteration.getAttachedFiles().get(0), TestConfig.BASIC_CLIENT);
+        File downloadedFile = UploadDownloadHelper.downloadFile(lastIteration.getAttachedFiles().get(0).getFullName(), TestConfig.BASIC_CLIENT);
 
         List<String> downloadedEntries = getEntries(downloadedFile);
         Assert.assertTrue(new HashSet<>(originalEntries).equals(new HashSet<>(downloadedEntries)));

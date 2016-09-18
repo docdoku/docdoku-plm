@@ -1,0 +1,58 @@
+<md-table-container>
+    <table md-table md-row-select multiple ng-model="selected">
+        <thead md-head>
+        <tr md-row>
+            <th md-column><span>{{'NUMBER'|translate}}</span></th>
+            <th md-column><span>{{'NATIVE_CAD_FILE'|translate}}</span></th>
+            <th md-column><span>{{'LATEST_ACTION'|translate}}</span></th>
+        </tr>
+        </thead>
+        <tbody md-body>
+        <tr md-row md-select="item" md-select-id="partKey" ng-repeat="item in displayedItems">
+            <td md-cell>
+                <div layout="row">
+                    <div md-cell status-icon="item"></div>
+                    {{item.partKey}}-{{item.partIterations.length}}
+                </div>
+            </td>
+            <td md-cell>
+                <div layout="column" ng-if="item.lastIteration.nativeCADFile">
+                    <a href remote-file-preview="item.lastIteration.nativeCADFile.fullName">
+                        {{ item.lastIteration.nativeCADFile.fullName | fileShortName }}
+
+                    </a>
+                    <small>{{ item.lastIteration.nativeCADFile.contentLength | humanreadablesize}}</small>
+                    <small>{{'MODIFIED' | translate}} {{ item.lastIteration.nativeCADFile.lastModified | utcDateTimeAgo
+                        }}
+                    </small>
+                </div>
+            </td>
+            <td md-cell>
+
+                <div layout="column" ng-if="item.lastIteration.checkInDate">
+
+                        <span>{{'CHECKED_IN_BY'|translate}}
+                             <a href user-preview="item.lastIteration.author" class="md-primary">
+                                 {{item.lastIteration.author.name}}
+                             </a>
+                        </span>
+
+                    <small>{{ item.lastIteration.checkInDate | utcDateTimeAgo}}</small>
+                </div>
+
+                <div layout="column" ng-if="item.checkOutDate">
+
+                        <span>{{'CHECKED_OUT_BY'|translate}}
+                            <a href user-preview="item.checkOutUser" class="md-primary">
+                                {{item.checkOutUser.name}}
+                            </a>
+                        </span>
+                    <small>{{ item.checkOutDate | utcDateTimeAgo}}</small>
+                </div>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</md-table-container>
+

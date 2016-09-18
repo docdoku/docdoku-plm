@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto.product;
 
 import com.docdoku.server.rest.dto.ACLDTO;
+import com.docdoku.server.rest.dto.BinaryResourceDTO;
 import com.docdoku.server.rest.dto.DocumentRevisionDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 
@@ -40,7 +41,7 @@ public class ProductInstanceCreationDTO implements Serializable {
     private ACLDTO acl;
     private List<InstanceAttributeDTO> instanceAttributes = new ArrayList<>();
     private Set<DocumentRevisionDTO> linkedDocuments = new HashSet<>();
-    private List<String> attachedFiles;
+    private List<BinaryResourceDTO> attachedFiles;
 
     public ProductInstanceCreationDTO() {
     }
@@ -93,11 +94,11 @@ public class ProductInstanceCreationDTO implements Serializable {
         this.linkedDocuments = linkedDocuments;
     }
 
-    public List<String> getAttachedFiles() {
+    public List<BinaryResourceDTO> getAttachedFiles() {
         return attachedFiles;
     }
 
-    public void setAttachedFiles(List<String> attachedFiles) {
+    public void setAttachedFiles(List<BinaryResourceDTO> attachedFiles) {
         this.attachedFiles = attachedFiles;
     }
 }

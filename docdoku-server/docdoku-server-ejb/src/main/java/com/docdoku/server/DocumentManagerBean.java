@@ -41,6 +41,7 @@ import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
+import com.docdoku.server.events.*;
 import com.docdoku.server.factory.ACLFactory;
 import com.docdoku.server.validation.AttributesConsistencyUtils;
 
@@ -48,6 +49,8 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -85,6 +88,12 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
     @Inject
     private IDataManagerLocal dataManager;
+
+    @Inject
+    private Event<TagEvent> tagEvent;
+
+    @Inject
+    private Event<DocumentRevisionEvent> documentRevisionEvent;
 
     private static final Logger LOGGER = Logger.getLogger(DocumentManagerBean.class.getName());
 
@@ -622,6 +631,9 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             partRevision.getTags().remove(tagToRemove);
         }
 
+        tagEvent.select(new AnnotationLiteral<Removed>() {
+        }).fire(new TagEvent(tagToRemove));
+
         new TagDAO(userLocale, em).removeTag(pKey);
     }
 
@@ -961,8 +973,18 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             }
         }
 
-        docR.setTags(tags);
+        Set<Tag> removedTags = new HashSet<>(docR.getTags());
+        removedTags.removeAll(tags);
+        Set<Tag> addedTags = docR.setTags(tags);
 
+        for(Tag tag : removedTags) {
+            tagEvent.select(new AnnotationLiteral<Untagged>() {
+            }).fire(new TagEvent(tag, docR));
+        }
+        for(Tag tag : addedTags) {
+            tagEvent.select(new AnnotationLiteral<Tagged>() {
+            }).fire(new TagEvent(tag, docR));
+        }
         if (isCheckoutByAnotherUser(user, docR)) {
             em.flush();
             em.detach(docR);
@@ -985,6 +1007,9 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         DocumentRevision docR = getDocumentRevision(pDocRPK);
         Tag tagToRemove = new Tag(user.getWorkspace(), pTag);
         docR.getTags().remove(tagToRemove);
+
+        tagEvent.select(new AnnotationLiteral<Untagged>() {
+        }).fire(new TagEvent(tagToRemove, docR));
 
         if (isCheckoutByAnotherUser(user, docR)) {
             em.detach(docR);

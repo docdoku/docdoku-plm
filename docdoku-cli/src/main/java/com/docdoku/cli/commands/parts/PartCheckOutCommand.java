@@ -21,6 +21,7 @@
 package com.docdoku.cli.commands.parts;
 
 import com.docdoku.api.client.ApiException;
+import com.docdoku.api.models.BinaryResourceDTO;
 import com.docdoku.api.models.PartIterationDTO;
 import com.docdoku.api.models.PartRevisionDTO;
 import com.docdoku.api.models.PartUsageLinkDTO;
@@ -128,9 +129,9 @@ public class PartCheckOutCommand extends BaseCommandLine {
             }
         }
 
-        String bin = pi.getNativeCADFile();
+        BinaryResourceDTO nativeCADFile = pi.getNativeCADFile();
 
-        if(bin!=null && !noDownload){
+        if(nativeCADFile!=null && !noDownload){
             FileHelper fh = new FileHelper(user,password,output,locale);
             fh.downloadNativeCADFile(getServerURL(), path, workspace, pPartNumber, pr, pi, force);
         }

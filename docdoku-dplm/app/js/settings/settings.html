@@ -1,0 +1,30 @@
+<md-toolbar scroll-shrink>
+    <div class="md-toolbar-tools">
+        <md-button class="md-icon-button" hide-gt-sm aria-label="{{'MENU' | translate}}" ng-click="openMenu()">
+            <i class="material-icons">menu</i>
+        </md-button>
+        <h2>
+          <span>
+              <i class="material-icons">settings</i>
+              {{'SETTINGS' | translate}}
+            </span>
+        </h2>
+    </div>
+</md-toolbar>
+
+<div layout="column" layout-padding>
+
+    <div>
+        <form ng-submit="save()">
+
+            <p><em>No settings to configure yet</em></p>
+
+            <div class="row">
+                <md-button ng-disabled="true" aria-label="" class="md-raised md-primary">
+                    {{'SAVE'|translate}}
+                </md-button>
+            </div>
+        </form>
+    </div>
+
+</div>

@@ -23,6 +23,7 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.workflow.Task;
@@ -72,8 +73,7 @@ public class MailerBean implements IMailerLocal {
             }
         } catch (MessagingException pMEx) {
             String logMessage = "Message format error. \n\tNotifications can't be sent. \n\t" + pMEx.getMessage();
-            LOGGER.severe(logMessage);
-            LOGGER.log(Level.FINER, logMessage, pMEx);
+            LOGGER.log(Level.SEVERE, logMessage, pMEx);
         }
     }
 
@@ -87,8 +87,7 @@ public class MailerBean implements IMailerLocal {
             }
         } catch (MessagingException pMEx) {
             String message = "Message format error. \n\tNotifications can't be sent. \n\t" + pMEx.getMessage();
-            LOGGER.severe(message);
-            LOGGER.log(Level.FINER, message, pMEx);
+            LOGGER.log(Level.SEVERE, message, pMEx);
         }
     }
 
@@ -102,8 +101,7 @@ public class MailerBean implements IMailerLocal {
             }
         } catch (MessagingException pMEx) {
             String message = "Message format error. \n\t Approval can't be sent. \n\t " + pMEx.getMessage();
-            LOGGER.severe(message);
-            LOGGER.log(Level.FINER, message, pMEx);
+            LOGGER.log(Level.SEVERE, message, pMEx);
         }
     }
 
@@ -119,12 +117,10 @@ public class MailerBean implements IMailerLocal {
             LOGGER.info("Sending recovery message \n\tfor the user which login is " + account.getLogin());
         } catch (UnsupportedEncodingException pUEEx) {
             String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.warning(message);
-            LOGGER.log(Level.FINER, message, pUEEx);
+            LOGGER.log(Level.WARNING, message, pUEEx);
         } catch (MessagingException pMEx) {
             String message = "Message format error. \n\tRecovery message can't be sent. \n\t" + pMEx.getMessage();
-            LOGGER.severe(message);
-            LOGGER.log(Level.FINER, message, pMEx);
+            LOGGER.log(Level.SEVERE, message, pMEx);
         }
     }
 
@@ -138,8 +134,7 @@ public class MailerBean implements IMailerLocal {
             }
         } catch (MessagingException pMEx) {
             String message = "Message format error.  \n\tApproval can't be sent. \n\t" + pMEx.getMessage();
-            LOGGER.severe(message);
-            LOGGER.log(Level.FINER, message, pMEx);
+            LOGGER.log(Level.SEVERE, message, pMEx);
         }
     }
 
@@ -154,12 +149,10 @@ public class MailerBean implements IMailerLocal {
 
         } catch (UnsupportedEncodingException pUEEx) {
             String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.warning(message);
-            LOGGER.log(Level.FINER, message, pUEEx);
+            LOGGER.log(Level.WARNING, message, pUEEx);
         } catch (MessagingException pMEx) {
             String message = "Message format error. \n\t" + pMEx.getMessage();
-            LOGGER.severe(message);
-            LOGGER.log(Level.FINER, message, pMEx);
+            LOGGER.log(Level.SEVERE, message, pMEx);
         }
     }
 
@@ -174,12 +167,36 @@ public class MailerBean implements IMailerLocal {
 
         } catch (UnsupportedEncodingException pUEEx) {
             String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.warning(message);
-            LOGGER.log(Level.FINER, message, pUEEx);
+            LOGGER.log(Level.WARNING, message, pUEEx);
         } catch (MessagingException pMEx) {
             String message = "Message format error. \n\t" + pMEx.getMessage();
-            LOGGER.severe(message);
-            LOGGER.log(Level.FINER, message, pMEx);
+            LOGGER.log(Level.SEVERE, message, pMEx);
+        }
+    }
+
+    @Asynchronous
+    @Override
+    public void sendTaggedNotification(Collection<User> pSubscribers, DocumentRevision pDocR, Tag pTag) {
+        try {
+            for (User pSubscriber : pSubscribers) {
+                sendTaggedNotification(pSubscriber, pDocR, pTag);
+            }
+        } catch (MessagingException pMEx) {
+            String message = "Message format error. \n\tNotifications can't be sent. \n\t" + pMEx.getMessage();
+            LOGGER.log(Level.SEVERE, message, pMEx);
+        }
+    }
+
+    @Asynchronous
+    @Override
+    public void sendUntaggedNotification(Collection<User> pSubscribers, DocumentRevision pDocR, Tag pTag) {
+        try {
+            for (User pSubscriber : pSubscribers) {
+                sendUntaggedNotification(pSubscriber, pDocR, pTag);
+            }
+        } catch (MessagingException pMEx) {
+            String message = "Message format error. \n\tNotifications can't be sent. \n\t" + pMEx.getMessage();
+            LOGGER.log(Level.SEVERE, message, pMEx);
         }
     }
 
@@ -224,12 +241,10 @@ public class MailerBean implements IMailerLocal {
                     getIndexerResultMessage(workspaceId, pMessage, hasSuccess, locale));
         } catch (UnsupportedEncodingException pUEEx) {
             String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.warning(message);
-            LOGGER.log(Level.FINER, message, pUEEx);
+            LOGGER.log(Level.WARNING, message, pUEEx);
         } catch (MessagingException pMEx) {
             String message = "Message format error. \n\t" + pMEx.getMessage();
-            LOGGER.severe(message);
-            LOGGER.log(Level.FINER, message, pMEx);
+            LOGGER.log(Level.SEVERE, message, pMEx);
         }
     }
 
@@ -243,8 +258,7 @@ public class MailerBean implements IMailerLocal {
                     getCredentialMessage(account, locale));
         } catch (MessagingException pMEx) {
             String message = "Message format error. \n\t" + pMEx.getMessage();
-            LOGGER.severe(message);
-            LOGGER.log(Level.FINER, message, pMEx);
+            LOGGER.log(Level.SEVERE, message, pMEx);
         }
     }
 
@@ -259,8 +273,7 @@ public class MailerBean implements IMailerLocal {
 
         } catch (UnsupportedEncodingException pUEEx) {
             String logMessage = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.warning(logMessage);
-            LOGGER.log(Level.FINER, logMessage, pUEEx);
+            LOGGER.log(Level.WARNING, logMessage, pUEEx);
         }
     }
 
@@ -274,8 +287,35 @@ public class MailerBean implements IMailerLocal {
             LOGGER.info("Sending iteration notification emails \n\tfor the document " + pDocumentRevision.getLastIteration());
         } catch (UnsupportedEncodingException pUEEx) {
             String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.warning(message);
-            LOGGER.log(Level.FINER, message, pUEEx);
+            LOGGER.log(Level.WARNING, message, pUEEx);
+        }
+    }
+
+    private void sendTaggedNotification(User pSubscriber,
+                                           DocumentRevision pDocumentRevision, Tag pTag) throws MessagingException {
+        try {
+            Locale locale = new Locale(pSubscriber.getLanguage());
+            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()),
+                    getTagNotificationSubject(locale),
+                    getTaggedNotificationMessage(pTag, pDocumentRevision, locale));
+            LOGGER.info("Sending tag notification emails \n\tfor the document " + pDocumentRevision.getLastIteration());
+        } catch (UnsupportedEncodingException pUEEx) {
+            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
+            LOGGER.log(Level.WARNING, message, pUEEx);
+        }
+    }
+
+    private void sendUntaggedNotification(User pSubscriber,
+                                        DocumentRevision pDocumentRevision, Tag pTag) throws MessagingException {
+        try {
+            Locale locale = new Locale(pSubscriber.getLanguage());
+            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()),
+                    getTagNotificationSubject(locale),
+                    getUntaggedNotificationMessage(pTag, pDocumentRevision, locale));
+            LOGGER.info("Sending tag notification emails \n\tfor the document " + pDocumentRevision.getLastIteration());
+        } catch (UnsupportedEncodingException pUEEx) {
+            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
+            LOGGER.log(Level.WARNING, message, pUEEx);
         }
     }
 
@@ -292,8 +332,7 @@ public class MailerBean implements IMailerLocal {
                 LOGGER.info("Sending approval required emails \n\tfor the document " + pDocumentRevision.getLastIteration());
             } catch (UnsupportedEncodingException pUEEx) {
                 String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-                LOGGER.warning(message);
-                LOGGER.log(Level.FINER, message, pUEEx);
+                LOGGER.log(Level.WARNING, message, pUEEx);
             }
         }
     }
@@ -311,8 +350,7 @@ public class MailerBean implements IMailerLocal {
 
             } catch (UnsupportedEncodingException pUEEx) {
                 String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-                LOGGER.warning(message);
-                LOGGER.log(Level.FINER, message, pUEEx);
+                LOGGER.log(Level.WARNING, message, pUEEx);
             }
         }
     }
@@ -341,12 +379,10 @@ public class MailerBean implements IMailerLocal {
                             partRevision.getVersion(), partRevision.getWorkflow().getLifeCycleState(), locale));
         } catch (UnsupportedEncodingException pUEEx) {
             String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.warning(message);
-            LOGGER.log(Level.FINER, message, pUEEx);
+            LOGGER.log(Level.WARNING, message, pUEEx);
         } catch (MessagingException pMEx) {
             String message = "Message format error. \n\tCannot send workflow relaunched notification.\n\t" + pMEx.getMessage();
-            LOGGER.severe(message);
-            LOGGER.log(Level.FINER, message, pMEx);
+            LOGGER.log(Level.SEVERE, message, pMEx);
         }
     }
 
@@ -371,12 +407,10 @@ public class MailerBean implements IMailerLocal {
                             documentRevision.getVersion(), documentRevision.getWorkflow().getLifeCycleState(), locale));
         } catch (UnsupportedEncodingException pUEEx) {
             String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.warning(message);
-            LOGGER.log(Level.FINER, message, pUEEx);
+            LOGGER.log(Level.WARNING, message, pUEEx);
         } catch (MessagingException pMEx) {
             String message = "Message format error. \n\tCannot send workflow relaunched notification.\n\t" + pMEx.getMessage();
-            LOGGER.severe(message);
-            LOGGER.log(Level.FINER, message, pMEx);
+            LOGGER.log(Level.SEVERE, message, pMEx);
         }
     }
 
@@ -423,6 +457,25 @@ public class MailerBean implements IMailerLocal {
         return MessageFormat.format(bundle.getString("Approval_part_text"), args);
     }
 
+    private String getTaggedNotificationMessage(Tag pTag, DocumentRevision pDocumentRevision, Locale pLocale) {
+        Object[] args = {
+                pTag,
+                pDocumentRevision,
+                getDocumentRevisionPermalinkURL(pDocumentRevision)
+        };
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return MessageFormat.format(bundle.getString("TagNotificationTagged_text"), args);
+    }
+
+    private String getUntaggedNotificationMessage(Tag pTag, DocumentRevision pDocumentRevision, Locale pLocale) {
+        Object[] args = {
+                pTag,
+                pDocumentRevision,
+                getDocumentRevisionPermalinkURL(pDocumentRevision)
+        };
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return MessageFormat.format(bundle.getString("TagNotificationUntagged_text"), args);
+    }
 
     private String getPasswordRecoveryMessage(Account account, String pPasswordRRUuid, Locale pLocale) {
         Object[] args = {
@@ -510,6 +563,11 @@ public class MailerBean implements IMailerLocal {
     private String getPasswordRecoverySubject(Locale pLocale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return bundle.getString("Recovery_title");
+    }
+
+    private String getTagNotificationSubject(Locale pLocale) {
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return bundle.getString("TagNotification_title");
     }
 
     private String getWorkspaceDeletionSubject(Locale pLocale) {

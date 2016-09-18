@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.events;
 
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.meta.Tag;
 
 /**
@@ -28,8 +29,25 @@ public class TagEvent {
 
     private Tag observedTag;
 
+    private DocumentRevision taggableDocument;
+
+
+
+    public TagEvent(Tag observedTag, DocumentRevision taggableDocument) {
+        this.observedTag = observedTag;
+        this.taggableDocument = taggableDocument;
+    }
+
     public TagEvent(Tag observedTag) {
         this.observedTag = observedTag;
+    }
+
+    public DocumentRevision getTaggableDocument() {
+        return taggableDocument;
+    }
+
+    public void setTaggableDocument(DocumentRevision taggableDocument) {
+        this.taggableDocument = taggableDocument;
     }
 
     public Tag getObservedTag() {

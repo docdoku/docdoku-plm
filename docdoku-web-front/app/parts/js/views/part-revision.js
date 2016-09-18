@@ -42,12 +42,12 @@ define([
 
             this.$accordion = this.$('#tab-part-files > .accordion');
 
-            _.each(lastIteration.attachedFiles,function(file){
+            _.each(lastIteration.attachedFiles,function(binaryResource){
                 var url = App.config.contextPath+'/api/viewer?';
                 if(uuid){
                     url+= 'uuid=' + encodeURIComponent(uuid) + '&';
                 }
-                $.get(url+'fileName='+encodeURIComponent(file)).then(function(data){
+                $.get(url+'fileName='+encodeURIComponent(binaryResource.fullName)).then(function(data){
                     _this.$accordion.append(data);
                 });
             });

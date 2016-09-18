@@ -346,7 +346,7 @@ define({
 	NEW_WORKFLOW: 'Nouveau processus métier',
 	NEXT_PAGE: 'Page suivante',
 	NO_CONVERSION: 'Pas de conversion',
-    NO_COWORKERS:'Aucun collaborateur',
+    NO_COWORKER:'Aucun collaborateur',
 	NO_DATA: 'Aucune donnée dans la table',
     NO_FILE_TO_IMPORT:'Pas de fichier à importer',
 	NO_FILTERED_DATA: 'Aucune donnée correspondante',

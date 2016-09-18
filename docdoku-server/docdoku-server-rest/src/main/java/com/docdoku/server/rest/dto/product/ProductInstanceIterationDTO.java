@@ -51,7 +51,7 @@ public class ProductInstanceIterationDTO implements Serializable {
     private List<LightPartLinkListDTO> pathDataPaths;
     private List<InstanceAttributeDTO> instanceAttributes = new ArrayList<>();
     private Set<DocumentRevisionDTO> linkedDocuments = new HashSet<>();
-    private List<String> attachedFiles;
+    private List<BinaryResourceDTO> attachedFiles;
 
     public ProductInstanceIterationDTO() {
     }
@@ -144,11 +144,11 @@ public class ProductInstanceIterationDTO implements Serializable {
         this.linkedDocuments = linkedDocuments;
     }
 
-    public List<String> getAttachedFiles() {
+    public List<BinaryResourceDTO> getAttachedFiles() {
         return attachedFiles;
     }
 
-    public void setAttachedFiles(List<String> attachedFiles) {
+    public void setAttachedFiles(List<BinaryResourceDTO> attachedFiles) {
         this.attachedFiles = attachedFiles;
     }
 

@@ -43,9 +43,12 @@ import java.io.Serializable;
 @Table(name="TAGUSERGROUPSUBSCRIPTION")
 @IdClass(TagUserGroupSubscriptionKey.class)
 @NamedQueries({
-        @NamedQuery(name="TagUserGroupSubscription.findIterationChangeSubscribersByTags", query="SELECT distinct(u) FROM TagUserGroupSubscription s JOIN s.groupSubscriber g JOIN g.users u WHERE s.tag.workspaceId = :workspaceId AND s.onIterationChange = true AND s.tag.label IN (:tags)"),
-        @NamedQuery(name="TagUserGroupSubscription.findStateChangeSubscribersByTags", query="SELECT distinct(u) FROM TagUserGroupSubscription s JOIN s.groupSubscriber g JOIN g.users u WHERE s.tag.workspaceId = :workspaceId AND s.onStateChange = true AND s.tag.label IN (:tags)"),
-        @NamedQuery(name="TagUserGroupSubscription.findTagUserGroupSubscriptionsByGroup", query="SELECT s FROM TagUserGroupSubscription s WHERE s.groupSubscriber = :groupSubscriber")
+        @NamedQuery(name="TagUserGroupSubscription.findIterationChangeSubscribersByTags", query="SELECT distinct(u) FROM TagUserGroupSubscription s JOIN s.groupSubscriber g JOIN g.users u WHERE s.tag.workspaceId = :workspaceId AND s.onIterationChange = true AND s.tag.label IN :tags"),
+        @NamedQuery(name="TagUserGroupSubscription.findStateChangeSubscribersByTags", query="SELECT distinct(u) FROM TagUserGroupSubscription s JOIN s.groupSubscriber g JOIN g.users u WHERE s.tag.workspaceId = :workspaceId AND s.onStateChange = true AND s.tag.label IN :tags"),
+        @NamedQuery(name="TagUserGroupSubscription.findSubscribersByTags", query="SELECT distinct(u) FROM TagUserGroupSubscription s JOIN s.groupSubscriber g JOIN g.users u WHERE s.tag.workspaceId = :workspaceId AND s.tag.label IN :tags"),
+        @NamedQuery(name="TagUserGroupSubscription.findTagUserGroupSubscriptionsByGroup", query="SELECT s FROM TagUserGroupSubscription s WHERE s.groupSubscriber = :groupSubscriber"),
+        @NamedQuery(name="TagUserGroupSubscription.deleteTagUserGroupSubscriptionsFromTag", query="DELETE FROM TagUserGroupSubscription s WHERE s.tag = :tag"),
+        @NamedQuery(name="TagUserGroupSubscription.deleteTagUserGroupSubscriptionsFromGroup", query="DELETE FROM TagUserGroupSubscription s WHERE s.groupSubscriber = :groupSubscriber")
 })
 @Entity
 public class TagUserGroupSubscription implements Serializable{

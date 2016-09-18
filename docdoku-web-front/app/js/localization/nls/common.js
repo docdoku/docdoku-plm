@@ -345,7 +345,7 @@ define({
 		NEW_WORKFLOW: 'New workflow',
 		NEXT_PAGE: 'Next page',
         NO_CONVERSION: 'No conversion',
-        NO_COWORKERS:'No coworkers',
+        NO_COWORKER:'No coworker',
 		NO_DATA: 'No data available in table',
         NO_FILE_TO_IMPORT:'No file to import',
 		NO_FILTERED_DATA: 'No matching records found',

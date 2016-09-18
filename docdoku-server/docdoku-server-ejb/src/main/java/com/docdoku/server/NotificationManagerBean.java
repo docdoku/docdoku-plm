@@ -24,6 +24,7 @@ import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.UserKey;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.meta.Tag;
 import com.docdoku.core.meta.TagKey;
 import com.docdoku.core.notification.TagUserGroupSubscription;
 import com.docdoku.core.notification.TagUserGroupSubscriptionKey;
@@ -44,10 +45,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Florent Garin on 07/09/16
@@ -143,6 +142,49 @@ public class NotificationManagerBean implements INotificationManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
+    public void removeAllTagSubscriptions(String pWorkspaceId, String pLabel) throws TagNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        // Check if it is the workspace's administrator
+        if (user.isAdministrator()) {
+            Locale userLocale = new Locale(user.getLanguage());
+            SubscriptionDAO subDAO = new SubscriptionDAO(userLocale, em);
+            subDAO.removeAllTagSubscriptions(new TagDAO(userLocale, em).loadTag(new TagKey(pWorkspaceId, pLabel)));
+        } else {
+            // Else throw a AccessRightException
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+    }
+
+    @Override
+    public void removeAllTagUserSubscriptions(String pWorkspaceId, String pLogin) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        // Check if it is the workspace's administrator
+        if (user.isAdministrator()) {
+            Locale userLocale = new Locale(user.getLanguage());
+            SubscriptionDAO subDAO = new SubscriptionDAO(userLocale, em);
+            subDAO.removeAllTagSubscriptions(new UserDAO(userLocale, em).loadUser(new UserKey(pWorkspaceId, pLogin)));
+        } else {
+            // Else throw a AccessRightException
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+    }
+
+    @Override
+    public void removeAllTagUserGroupSubscriptions(String pWorkspaceId, String pGroupId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, UserGroupNotFoundException, AccessRightException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        // Check if it is the workspace's administrator
+        if (user.isAdministrator()) {
+            Locale userLocale = new Locale(user.getLanguage());
+            SubscriptionDAO subDAO = new SubscriptionDAO(userLocale, em);
+            subDAO.removeAllTagSubscriptions(new UserGroupDAO(userLocale, em).loadUserGroup(new UserGroupKey(pWorkspaceId, pGroupId)));
+        } else {
+            // Else throw a AccessRightException
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
     public void removeTagUserGroupSubscription(String pWorkspaceId, String pId, String pLabel) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         // Check if it is the workspace's administrator
@@ -184,5 +226,26 @@ public class NotificationManagerBean implements INotificationManagerLocal {
             // Else throw a AccessRightException
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public Collection<User> getSubscribersForTag(String pWorkspaceId, String pLabel) {
+        Set<User> users=new HashSet<>();
+
+
+        List<User> listUsers = em.createNamedQuery("TagUserSubscription.findSubscribersByTags", User.class)
+                .setParameter("workspaceId", pWorkspaceId)
+                .setParameter("tags", Arrays.asList(pLabel))
+                .getResultList();
+        users.addAll(listUsers);
+
+        listUsers = em.createNamedQuery("TagUserGroupSubscription.findSubscribersByTags", User.class)
+                .setParameter("workspaceId", pWorkspaceId)
+                .setParameter("tags", Arrays.asList(pLabel))
+                .getResultList();
+        users.addAll(listUsers);
+
+        return users;
     }
 }

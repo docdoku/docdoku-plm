@@ -27,23 +27,11 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <workingDirectory>ui</workingDirectory>
+                                    <workingDirectory>.</workingDirectory>
                                     <executable>npm</executable>
                                     <arguments>
-                                        <argument>install</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>release-dplm</id>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>bash</executable>
-                                    <arguments>
-                                        <argument>release.sh</argument>
+                                        <argument>run</argument>
+                                        <argument>build</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

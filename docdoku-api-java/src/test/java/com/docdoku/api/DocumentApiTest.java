@@ -48,7 +48,7 @@ public class DocumentApiTest {
 
         // Create a document
         DocumentCreationDTO document = new DocumentCreationDTO();
-        document.setReference(UUID.randomUUID().toString().substring(0,6));
+        document.setReference(UUID.randomUUID().toString().substring(0, 8));
         document.setTitle("GeneratedDoc");
 
         DocumentRevisionDTO createdDocument = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, document, TestConfig.WORKSPACE);
@@ -101,7 +101,7 @@ public class DocumentApiTest {
 
         // Create a document
         DocumentCreationDTO documentCreation = new DocumentCreationDTO();
-        documentCreation.setReference(UUID.randomUUID().toString().substring(0, 6));
+        documentCreation.setReference(UUID.randomUUID().toString().substring(0, 8));
         documentCreation.setTitle("GeneratedDoc");
 
         DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreation, TestConfig.WORKSPACE);
@@ -116,8 +116,8 @@ public class DocumentApiTest {
 
         lastIteration = LastIterationHelper.getLastIteration(document);
         Assert.assertFalse(lastIteration.getAttachedFiles().isEmpty());
-
-        File downloadedFile = UploadDownloadHelper.downloadFile(lastIteration.getAttachedFiles().get(0), TestConfig.BASIC_CLIENT);
+        BinaryResourceDTO binaryResourceDTO = lastIteration.getAttachedFiles().get(0);
+        File downloadedFile = UploadDownloadHelper.downloadFile(binaryResourceDTO.getFullName(), TestConfig.BASIC_CLIENT);
         Assert.assertTrue(FileUtils.contentEquals(file, downloadedFile));
 
     }

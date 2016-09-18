@@ -51,7 +51,7 @@
             <env-entry>
                 <env-entry-name>codebase</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>http://docdokuplm.net</env-entry-value>
+                <env-entry-value>http://localhost:8989</env-entry-value>
             </env-entry>
         </session>
     </enterprise-beans>

@@ -21,6 +21,7 @@
 package com.docdoku.api;
 
 import com.docdoku.api.client.ApiException;
+import com.docdoku.api.models.BinaryResourceDTO;
 import com.docdoku.api.models.PartCreationDTO;
 import com.docdoku.api.models.PartIterationDTO;
 import com.docdoku.api.models.PartRevisionDTO;
@@ -52,7 +53,7 @@ public class PartApiTest {
 
         // Create a part
         PartCreationDTO part = new PartCreationDTO();
-        part.setNumber(UUID.randomUUID().toString().substring(0, 6));
+        part.setNumber(UUID.randomUUID().toString().substring(0, 8));
         part.setName("GeneratedPart");
 
         PartRevisionDTO createdPart = partsApi.createNewPart(TestConfig.WORKSPACE, part);
@@ -107,7 +108,7 @@ public class PartApiTest {
 
         // Create a part
         PartCreationDTO partCreation = new PartCreationDTO();
-        partCreation.setNumber(UUID.randomUUID().toString().substring(0, 6));
+        partCreation.setNumber(UUID.randomUUID().toString().substring(0, 8));
         partCreation.setName("GeneratedPart");
 
         PartRevisionDTO part = partsApi.createNewPart(TestConfig.WORKSPACE, partCreation);
@@ -119,8 +120,8 @@ public class PartApiTest {
         part = partsApi.getPartRevision(TestConfig.WORKSPACE, part.getNumber(), part.getVersion());
         lastIteration = LastIterationHelper.getLastIteration(part);
         Assert.assertFalse(lastIteration.getAttachedFiles().isEmpty());
-
-        File downloadedFile = UploadDownloadHelper.downloadFile(lastIteration.getAttachedFiles().get(0), TestConfig.BASIC_CLIENT);
+        BinaryResourceDTO binaryResourceDTO = lastIteration.getAttachedFiles().get(0);
+        File downloadedFile = UploadDownloadHelper.downloadFile(binaryResourceDTO.getFullName(), TestConfig.BASIC_CLIENT);
         Assert.assertTrue(FileUtils.contentEquals(file, downloadedFile));
 
     }
@@ -131,7 +132,7 @@ public class PartApiTest {
 
         // Create a part
         PartCreationDTO partCreation = new PartCreationDTO();
-        partCreation.setNumber(UUID.randomUUID().toString().substring(0, 6));
+        partCreation.setNumber(UUID.randomUUID().toString().substring(0, 8));
         partCreation.setName("GeneratedPart");
 
         PartRevisionDTO part = partsApi.createNewPart(TestConfig.WORKSPACE, partCreation);
@@ -142,9 +143,10 @@ public class PartApiTest {
         UploadDownloadHelper.uploadNativeCADFile(lastIteration,TestConfig.BASIC_CLIENT,file);
         part = partsApi.getPartRevision(TestConfig.WORKSPACE, part.getNumber(), part.getVersion());
         lastIteration = LastIterationHelper.getLastIteration(part);
-        Assert.assertFalse(lastIteration.getNativeCADFile().isEmpty());
+        BinaryResourceDTO nativeCADFile = lastIteration.getNativeCADFile();
+        Assert.assertNotNull(nativeCADFile);
 
-        File downloadedFile = UploadDownloadHelper.downloadFile(lastIteration.getNativeCADFile(), TestConfig.BASIC_CLIENT);
+        File downloadedFile = UploadDownloadHelper.downloadFile(nativeCADFile.getFullName(), TestConfig.BASIC_CLIENT);
         Assert.assertTrue(FileUtils.contentEquals(file, downloadedFile));
 
     }

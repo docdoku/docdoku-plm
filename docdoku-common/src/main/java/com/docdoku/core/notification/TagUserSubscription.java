@@ -43,9 +43,12 @@ import java.io.Serializable;
 @Table(name="TAGUSERSUBSCRIPTION")
 @IdClass(TagUserSubscriptionKey.class)
 @NamedQueries({
-        @NamedQuery(name="TagUserSubscription.findIterationChangeSubscribersByTags", query="SELECT distinct(u) FROM TagUserSubscription s JOIN s.userSubscriber u WHERE s.tag.workspaceId = :workspaceId AND s.onIterationChange = true AND s.tag.label IN (:tags)"),
-        @NamedQuery(name="TagUserSubscription.findStateChangeSubscribersByTags", query="SELECT distinct(u) FROM TagUserSubscription s JOIN s.userSubscriber u WHERE s.tag.workspaceId = :workspaceId AND s.onStateChange = true AND s.tag.label IN (:tags)"),
-        @NamedQuery(name="TagUserSubscription.findTagUserSubscriptionsByUser", query="SELECT s FROM TagUserSubscription s WHERE s.userSubscriber = :userSubscriber")
+        @NamedQuery(name="TagUserSubscription.findIterationChangeSubscribersByTags", query="SELECT distinct(u) FROM TagUserSubscription s JOIN s.userSubscriber u WHERE s.tag.workspaceId = :workspaceId AND s.onIterationChange = true AND s.tag.label IN :tags"),
+        @NamedQuery(name="TagUserSubscription.findStateChangeSubscribersByTags", query="SELECT distinct(u) FROM TagUserSubscription s JOIN s.userSubscriber u WHERE s.tag.workspaceId = :workspaceId AND s.onStateChange = true AND s.tag.label IN :tags"),
+        @NamedQuery(name="TagUserSubscription.findSubscribersByTags", query="SELECT distinct(u) FROM TagUserSubscription s JOIN s.userSubscriber u WHERE s.tag.workspaceId = :workspaceId AND s.tag.label IN :tags"),
+        @NamedQuery(name="TagUserSubscription.findTagUserSubscriptionsByUser", query="SELECT s FROM TagUserSubscription s WHERE s.userSubscriber = :userSubscriber"),
+        @NamedQuery(name="TagUserSubscription.deleteTagUserSubscriptionsFromTag", query="DELETE FROM TagUserSubscription s WHERE s.tag = :tag"),
+        @NamedQuery(name="TagUserSubscription.deleteTagUserSubscriptionsFromUser", query="DELETE FROM TagUserSubscription s WHERE s.userSubscriber = :userSubscriber")
 })
 @Entity
 public class TagUserSubscription implements Serializable{

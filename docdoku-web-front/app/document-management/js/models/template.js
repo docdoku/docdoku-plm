@@ -12,10 +12,10 @@ define([
         },
 
         parse: function (response) {
-            var filesMapping = _.map(response.attachedFiles, function (fullName) {
+            var filesMapping = _.map(response.attachedFiles, function (binaryResource) {
                 return {
-                    'fullName': fullName,
-                    shortName: _.last(fullName.split('/')),
+                    fullName: binaryResource.fullName,
+                    shortName: _.last(binaryResource.fullName.split('/')),
                     created: true
                 };
             });

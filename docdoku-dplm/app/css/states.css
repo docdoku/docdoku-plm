@@ -1,0 +1,15 @@
+.synced{
+	color:#2E7D32;
+}
+.modified{
+	color: #ffa600;
+}
+.out-of-date{
+	color: #ff4200;
+}
+.out-of-index{
+	color:#525252;
+}
+.favorite{
+	color:#ffa600;
+}

@@ -462,11 +462,21 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     public Set<Tag> getTags() {
         return tags;
     }
-    public void setTags(Set<Tag> pTags) {
+
+    /**
+     * Tags the DocumentRevision with the set of tags.
+     * Some of them may already be attached on the document.
+     *
+     * @param pTags the tag set to attach on the DocumentRevision
+     * @return the tags that have actually been added
+     */
+    public Set<Tag> setTags(Set<Tag> pTags) {
         tags.retainAll(pTags);
         pTags.removeAll(tags);
         tags.addAll(pTags);
+        return pTags;
     }
+
     public boolean addTag(Tag pTag){
         return tags.add(pTag);
     }

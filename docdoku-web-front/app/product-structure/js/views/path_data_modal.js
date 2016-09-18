@@ -184,10 +184,10 @@ define([
 
             buildFileTab: function () {
 
-                var filesMapping = _.map(this.iteration !== null ? this.iteration.getAttachedFiles() : [], function (fullName) {
+                var filesMapping = _.map(this.iteration !== null ? this.iteration.getAttachedFiles() : [], function (binaryResource) {
                     return {
-                        fullName: fullName,
-                        shortName: _.last(fullName.split('/')),
+                        fullName: binaryResource.fullName,
+                        shortName: _.last(binaryResource.fullName.split('/')),
                         created: true
                     };
                 });

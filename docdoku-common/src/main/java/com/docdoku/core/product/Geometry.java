@@ -23,6 +23,7 @@ package com.docdoku.core.product;
 
 import com.docdoku.core.common.BinaryResource;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Date;
@@ -46,15 +47,24 @@ public class Geometry extends BinaryResource{
      */
     private int quality;
 
-    /*
-    * Box
-    * */
 
+    //Bounding box
+    @Column(name="X_MIN")
     private double xMin = 0;
+
+    @Column(name="Y_MIN")
     private double yMin = 0;
+
+    @Column(name="Z_MIN")
     private double zMin = 0;
+
+    @Column(name="X_MAX")
     private double xMax = 0;
+
+    @Column(name="Y_MAX")
     private double yMax = 0;
+
+    @Column(name="Z_MAX")
     private double zMax = 0;
 
     public Geometry() {

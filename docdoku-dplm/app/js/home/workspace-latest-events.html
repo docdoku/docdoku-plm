@@ -1,0 +1,90 @@
+<div ng-if="events.length && !loading">
+    <h4>{{workspace}}</h4>
+
+    <div layout-margin>
+        <div layout="column">
+            <div ng-repeat="item in events" layout="column">
+
+                <div layout="row" layout-align="space-between center"
+                     ng-if="item.lastIteration.checkInDate">
+                    <div>
+                        <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                            {{ item.documentMasterId || item.number }} {{ item.version }}
+                            {{item.lastIteration.iteration}}
+                            <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}
+                            </md-tooltip>
+                        </a>
+                    </div>
+                    <small>
+                        {{'CHECKED_IN_BY'|translate}}
+                        <a user-preview="item.lastIteration.author" href class="md-primary">
+                            {{item.lastIteration.author.name}}
+                        </a>
+                        {{ item.lastIteration.checkInDate | utcDateTimeAgo}}
+                    </small>
+                </div>
+
+                <div layout="row" layout-align="space-between center"
+                     ng-if="item.lastIteration.modificationDate">
+                    <div>
+                        <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                            {{ item.documentMasterId || item.number }} {{ item.version }}
+                            {{item.lastIteration.iteration}}
+                            <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}
+                            </md-tooltip>
+                        </a>
+
+                    </div>
+                    <small>
+                        {{'MODIFIED_BY'|translate}}
+                        <a user-preview="item.lastIteration.author" href class="md-primary">
+                            {{item.lastIteration.author.name}}
+                        </a>
+                        {{ item.lastIteration.modificationDate | utcDateTimeAgo}}
+                    </small>
+                </div>
+
+                <div layout="row" layout-align="space-between center"
+                     ng-if="item.checkOutDate">
+                    <div>
+                        <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                        {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
+                        <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}</md-tooltip>
+                        </a>
+
+                    </div>
+                    <small>{{'CHECKED_OUT_BY'|translate}}
+                        <a user-preview="item.checkOutUser" href class="md-primary">
+                            {{item.checkOutUser.name}}
+                        </a>
+                        {{ item.checkOutDate | utcDateTimeAgo}}
+                    </small>
+                </div>
+
+
+                <div layout="row" layout-align="space-between center"
+                     ng-if="item.lastIteration.creationDate && !item.lastIteration.modificationDate && !item.lastIteration.checkInDate && !item.checkOutDate ">
+                    <div>
+                        <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                            {{ item.documentMasterId || item.number }} {{ item.version }}
+                            {{item.lastIteration.iteration}}
+                            <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}
+                            </md-tooltip>
+                        </a>
+
+                    </div>
+                    <small>
+                        {{'CREATED_BY'|translate}}
+                        <a user-preview="item.lastIteration.author" href class="md-primary">
+                            {{item.lastIteration.author.name}}
+                        </a>
+                        {{ item.lastIteration.creationDate | utcDateTimeAgo}}
+                    </small>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<md-progress-circular ng-disabled="!loading" class="md-hue-2" md-diameter="20px"></md-progress-circular>

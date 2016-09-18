@@ -31,10 +31,10 @@ define([
 
 			var attributes = new AttributeCollection(this.get('instanceAttributes'));
 
-			var filesMapping = _.map(this.get('attachedFiles'), function (fullName) {
+			var filesMapping = _.map(this.get('attachedFiles'), function (binaryResource) {
 				return {
-					'fullName': fullName,
-					shortName: _.last(fullName.split('/')),
+					fullName: binaryResource.fullName,
+					shortName: _.last(binaryResource.fullName.split('/')),
 					created: true
 				};
 			});

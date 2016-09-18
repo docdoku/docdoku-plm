@@ -23,6 +23,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.document.*;
 import com.docdoku.core.gcm.GCMAccount;
+import com.docdoku.core.meta.Tag;
 import com.docdoku.core.notification.TagUserGroupSubscription;
 import com.docdoku.core.notification.TagUserGroupSubscriptionKey;
 import com.docdoku.core.notification.TagUserSubscription;
@@ -35,6 +36,7 @@ import javax.persistence.TypedQuery;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class SubscriptionDAO {
     private static final Logger LOGGER = Logger.getLogger(SubscriptionDAO.class.getName());
@@ -144,6 +146,28 @@ public class SubscriptionDAO {
         }
     }
 
+    public void removeAllTagSubscriptions(User pUser) {
+        Query query = em.createNamedQuery("TagUserSubscription.deleteTagUserSubscriptionsFromUser");
+        query.setParameter("userSubscriber", pUser);
+        query.executeUpdate();
+    }
+
+    public void removeAllTagSubscriptions(UserGroup pGroup) {
+        Query query = em.createNamedQuery("TagUserGroupSubscription.deleteTagUserGroupSubscriptionsFromGroup");
+        query.setParameter("groupSubscriber", pGroup);
+        query.executeUpdate();
+    }
+
+    public void removeAllTagSubscriptions(Tag pTag) {
+        Query query = em.createNamedQuery("TagUserSubscription.deleteTagUserSubscriptionsFromTag");
+        query.setParameter("tag", pTag);
+        query.executeUpdate();
+
+        Query query2 = em.createNamedQuery("TagUserGroupSubscription.deleteTagUserGroupSubscriptionsFromTag");
+        query2.setParameter("tag", pTag);
+        query2.executeUpdate();
+    }
+
     public void removeAllSubscriptions(DocumentRevision pDocR) {
         Query query = em.createQuery("DELETE FROM StateChangeSubscription s WHERE s.observedDocumentRevision = :docR");
         query.setParameter("docR", pDocR);
@@ -214,13 +238,13 @@ public class SubscriptionDAO {
 
         listUsers = em.createNamedQuery("TagUserSubscription.findIterationChangeSubscribersByTags", User.class)
         .setParameter("workspaceId", pDocR.getWorkspaceId())
-        .setParameter("tags", pDocR.getTags())
+        .setParameter("tags", pDocR.getTags().stream().map(Tag::getLabel).collect(Collectors.toList()))
         .getResultList();
         users.addAll(listUsers);
 
         listUsers = em.createNamedQuery("TagUserGroupSubscription.findIterationChangeSubscribersByTags", User.class)
                 .setParameter("workspaceId", pDocR.getWorkspaceId())
-                .setParameter("tags", pDocR.getTags())
+                .setParameter("tags", pDocR.getTags().stream().map(Tag::getLabel).collect(Collectors.toList()))
                 .getResultList();
         users.addAll(listUsers);
         return users;
@@ -234,13 +258,13 @@ public class SubscriptionDAO {
 
         listUsers = em.createNamedQuery("TagUserSubscription.findStateChangeSubscribersByTags", User.class)
                 .setParameter("workspaceId", pDocR.getWorkspaceId())
-                .setParameter("tags", pDocR.getTags())
+                .setParameter("tags", pDocR.getTags().stream().map(Tag::getLabel).collect(Collectors.toList()))
                 .getResultList();
         users.addAll(listUsers);
 
         listUsers = em.createNamedQuery("TagUserGroupSubscription.findStateChangeSubscribersByTags", User.class)
                 .setParameter("workspaceId", pDocR.getWorkspaceId())
-                .setParameter("tags", pDocR.getTags())
+                .setParameter("tags", pDocR.getTags().stream().map(Tag::getLabel).collect(Collectors.toList()))
                 .getResultList();
         users.addAll(listUsers);
         return users;
