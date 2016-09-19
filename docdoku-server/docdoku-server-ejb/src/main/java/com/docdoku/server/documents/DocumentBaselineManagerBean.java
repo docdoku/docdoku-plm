@@ -67,14 +67,14 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
             throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FolderNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, NotAllowedException {
 
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
-        if (documentRevisionKeys.isEmpty()) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException66");
-        }
         DocumentBaseline baseline = new DocumentBaseline(user, name, type, description);
         baseline.getDocumentCollection().setCreationDate(new Date());
         baseline.getDocumentCollection().setAuthor(user);
         new DocumentBaselineDAO(em, new Locale(user.getLanguage())).createBaseline(baseline);
         snapshotDocuments(baseline, workspaceId, documentRevisionKeys);
+        if (baseline.getDocumentCollection().getBaselinedDocuments().isEmpty()) {
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException66");
+        }
         return baseline;
     }
 
@@ -151,7 +151,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
         DocumentRevision documentRevision = documentRevisionDAO.loadDocR(documentRevisionKey);
 
         if (type.equals(DocumentBaseline.BaselineType.RELEASED)) {
-            return documentRevision.isReleased() ? documentRevision.getLastIteration() : null;
+            return (documentRevision.isReleased() || documentRevision.isObsolete()) ? documentRevision.getLastIteration() : null;
 
         } else {
             if (documentRevision.isCheckedOut()) {

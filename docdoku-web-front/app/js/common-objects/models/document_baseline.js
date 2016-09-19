@@ -34,8 +34,7 @@ define(['common-objects/models/baseline'], function (Baseline) {
         },
 
         addBaselinedDocument: function (baselinedDocument) {
-
-            if(!baselinedDocument.isReleased() && this.getType() === 'RELEASED'){
+            if(!(baselinedDocument.isReleased() || baselinedDocument.isObsolete()) && this.getType() === 'RELEASED'){
                 return {error : App.config.i18n.DOCUMENT_NOT_RELEASED};
             }
 
@@ -47,7 +46,6 @@ define(['common-objects/models/baseline'], function (Baseline) {
             } else {
                 return {info : App.config.i18n.DOCUMENT_ALREADY_IN_LIST};
             }
-
         },
 
         getZipUrl: function () {
