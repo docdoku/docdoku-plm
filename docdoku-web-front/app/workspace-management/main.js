@@ -75,7 +75,7 @@ require.config({
         datePickerLang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr',
         d3:'../../bower_components/d3/d3',
         nvd3:'../../bower_components/nvd3/build/nv.d3',
-        helpers:'../../js/utils/charts-helpers'
+        'charts-helpers':'../../js/utils/charts-helpers'
     },
 
     deps: [
@@ -95,8 +95,7 @@ require.config({
         'utilsprototype',
         'datePickerLang',
         'd3',
-        'nvd3',
-        'helpers'
+        'nvd3'
     ],
     config: {
         i18n: {

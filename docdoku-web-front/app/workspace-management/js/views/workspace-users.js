@@ -250,7 +250,7 @@ define([
         toggleCheckboxChange:function(){
         },
 
-        toggleCheckbox:function(e){
+        toggleCheckbox:function(){
             this.toggleButtons();
         },
 

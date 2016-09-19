@@ -1,4 +1,4 @@
-/*global casper,urls,$*/
+/*global casper,urls,workspace,documents*/
 
 casper.test.begin('Document checkout tests suite', 2, function documentCheckoutTestsSuite() {
     'use strict';

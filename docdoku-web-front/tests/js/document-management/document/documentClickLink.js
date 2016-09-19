@@ -1,4 +1,4 @@
-/*global casper,urls,workspace,documents,defaultUrl*/
+/*global casper,urls,workspace,documents,contextPath*/
 casper.test.begin('Document click link tests suite', 3, function documentClickLinkTestsSuite() {
     'use strict';
 

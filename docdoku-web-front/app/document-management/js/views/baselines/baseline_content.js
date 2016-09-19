@@ -1,4 +1,4 @@
-/*global _,$,define,App*/
+/*global _,define,App*/
 define([
     'backbone',
     'mustache',
@@ -46,7 +46,6 @@ define([
 
         // TODO: determine if this is still useful
         bindEvent: function(){
-            var _this = this;
             this.delegateEvents();
         },
 

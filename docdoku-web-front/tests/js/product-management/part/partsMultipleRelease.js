@@ -1,4 +1,4 @@
-/*global casper,urls,products*/
+/*global casper,urls*/
 
 casper.test.begin('Parts multiple release tests suite', 3, function partMultipleReleaseTestsSuite() {
     'use strict';

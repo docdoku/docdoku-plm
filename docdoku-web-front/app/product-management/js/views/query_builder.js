@@ -127,7 +127,7 @@ define([
                         if (query.queryRule && query.queryRule.rules) {
                             var rules = query.queryRule.rules;
                             for (var i=0; i<rules.length; i++) {
-                                if (rules[i].values.length == 1) {
+                                if (rules[i].values.length === 1) {
                                     rules[i].value = rules[i].values[0];
                                 } else {
                                     rules[i].value = rules[i].values;

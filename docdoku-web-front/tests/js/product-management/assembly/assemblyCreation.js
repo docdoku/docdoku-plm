@@ -1,4 +1,4 @@
-/*global casper,urls,products,homeUrl,workspace*/
+/*global casper,urls,products,apiUrls*/
 
 casper.test.begin('Assembly creation tests suite', 14, function assemblyCreationTestsSuite() {
 

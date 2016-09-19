@@ -1,4 +1,4 @@
-/*global casper,urls,products*/
+/*global casper,urls*/
 
 casper.test.begin('Part obsolete tests suite', 3, function partObsoleteTestsSuite() {
     'use strict';

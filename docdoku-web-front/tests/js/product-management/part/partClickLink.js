@@ -1,4 +1,4 @@
-/*global casper,urls,workspace,products,defaultUrl*/
+/*global casper,urls,workspace,products,contextPath*/
 casper.test.begin('Part click link tests suite', 3, function partClickLinkTestsSuite() {
     'use strict';
 

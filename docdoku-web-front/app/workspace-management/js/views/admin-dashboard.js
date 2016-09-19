@@ -1,10 +1,11 @@
-/*global define,App,nv,d3,bytesToSize,diskUsageTooltip*/
+/*global define,App,nv,d3*/
 define([
     'backbone',
     'mustache',
     'text!templates/admin-dashboard.html',
-    'common-objects/models/admin'
-], function (Backbone, Mustache, template, Admin) {
+    'common-objects/models/admin',
+    'charts-helpers'
+], function (Backbone, Mustache, template, Admin, ChartsHelpers) {
     'use strict';
 
     var AdminDashboardView = Backbone.View.extend({
@@ -43,13 +44,13 @@ define([
 
             for (var key in diskUsage) {
                 //if(diskUsage[key]){
-                diskUsageData.push({key: key, y: diskUsage[key], f: bytesToSize(diskUsage[key])});
+                diskUsageData.push({key: key, y: diskUsage[key], f: ChartsHelpers.bytesToSize(diskUsage[key])});
                 totalDiskUsage += diskUsage[key];
                 // }
             }
 
             var $chart = this.$('#admin_disk_usage_chart');
-            $chart.parent().find('span.total').html(bytesToSize(totalDiskUsage));
+            $chart.parent().find('span.total').html(ChartsHelpers.bytesToSize(totalDiskUsage));
             var width = $chart.width();
             var height = $chart.height();
             $chart.find('svg')
@@ -61,18 +62,16 @@ define([
 
             nv.addGraph(function () {
 
-                var chart;
-
                 var chart = nv.models.pieChart()
-                    .x(function(d) { return d.key })
-                    .y(function(d) { return d.y })
+                    .x(function(d) { return d.key; })
+                    .y(function(d) { return d.y; })
                     .width(width)
                     .height(height)
                     .showTooltipPercent(true);
 
-                    chart.tooltip.contentGenerator(function (obj) {
-                        return diskUsageTooltip(obj.data.key, obj.data.f);
-                    });
+                chart.tooltip.contentGenerator(function (obj) {
+                    return ChartsHelpers.diskUsageTooltip(obj.data.key, obj.data.f);
+                });
 
 
                 d3.select('#admin_disk_usage_chart svg')
