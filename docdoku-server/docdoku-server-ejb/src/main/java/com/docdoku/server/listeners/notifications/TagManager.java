@@ -17,18 +17,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.server.listeners.tags;
+package com.docdoku.server.listeners.notifications;
 
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.INotificationManagerLocal;
-import com.docdoku.server.events.Removed;
-import com.docdoku.server.events.TagEvent;
-import com.docdoku.server.events.Tagged;
-import com.docdoku.server.events.Untagged;
+import com.docdoku.server.events.*;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Observes;
@@ -52,6 +50,16 @@ public class TagManager {
     private void onRemoveTag(@Observes @Removed TagEvent event) throws UserNotFoundException, AccessRightException, UserNotActiveException, TagNotFoundException, WorkspaceNotFoundException {
         Tag tag = event.getObservedTag();
         notificationService.removeAllTagSubscriptions(tag.getWorkspaceId(),tag.getLabel());
+    }
+
+    private void onRemoveUser(@Observes @Removed UserEvent event) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException {
+        User user=event.getObservedUser();
+        notificationService.removeAllTagUserSubscriptions(user.getWorkspaceId(), user.getLogin());
+    }
+
+    private void onRemoveUserGroup(@Observes @Removed UserGroupEvent event) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, UserGroupNotFoundException {
+        UserGroup group=event.getObservedUserGroup();
+        notificationService.removeAllTagUserGroupSubscriptions(group.getWorkspaceId(), group.getId());
     }
 
     private void onTagItem(@Observes @Tagged TagEvent event){

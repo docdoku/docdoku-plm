@@ -57,7 +57,10 @@ public class UserManagerBean implements IUserManagerLocal {
     private Event<WorkspaceAccessEvent> workspaceAccessEvent;
 
     @Inject
-    private Event<UserEvent> userRemovedEvent;
+    private Event<UserEvent> userEvent;
+
+    @Inject
+    private Event<UserGroupEvent> groupEvent;
 
     @Inject
     private IContextManagerLocal contextManager;
@@ -111,7 +114,7 @@ public class UserManagerBean implements IUserManagerLocal {
         UserDAO userDAO = new UserDAO(locale, em);
         User user = userDAO.loadUser(new UserKey(pWorkspaceId, login));
 
-        userRemovedEvent.select(new AnnotationLiteral<Removed>() {
+        userEvent.select(new AnnotationLiteral<Removed>() {
         }).fire(new UserEvent(user));
         userDAO.removeUser(user);
 
@@ -425,7 +428,7 @@ public class UserManagerBean implements IUserManagerLocal {
 
         for (String login : pLogins) {
             User user = userDAO.loadUser(new UserKey(pWorkspaceId, login));
-            userRemovedEvent.select(new AnnotationLiteral<Removed>() {
+            userEvent.select(new AnnotationLiteral<Removed>() {
             }).fire(new UserEvent(user));
             userDAO.removeUser(user);
         }
@@ -452,7 +455,10 @@ public class UserManagerBean implements IUserManagerLocal {
             if (groupDAO.hasACLConstraint(userGroupKey)) {
                 throw new EntityConstraintException(locale, "EntityConstraintException11");
             }
-            groupDAO.removeUserGroup(userGroupKey);
+            UserGroup group = groupDAO.loadUserGroup(userGroupKey);
+            groupEvent.select(new AnnotationLiteral<Removed>() {
+            }).fire(new UserGroupEvent(group));
+            groupDAO.removeUserGroup(group);
         }
     }
 

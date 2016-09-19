@@ -19,24 +19,24 @@
  */
 package com.docdoku.server.events;
 
-import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
 
 /**
- * @author Morgan Guimard
+ * @author Florent Garin
  */
-public class UserEvent {
+public class UserGroupEvent {
 
-    private User observedUser;
+    private UserGroup observedUserGroup;
 
-    public UserEvent(User observedUser) {
-        this.observedUser = observedUser;
+    public UserGroupEvent(UserGroup observedUserGroup) {
+        this.observedUserGroup = observedUserGroup;
     }
 
-    public User getObservedUser() {
-        return observedUser;
+    public UserGroup getObservedUserGroup() {
+        return observedUserGroup;
     }
 
-    public void setObservedUser(User observedUser) {
-        this.observedUser = observedUser;
+    public void setObservedUserGroup(UserGroup observedUserGroup) {
+        this.observedUserGroup = observedUserGroup;
     }
 }
