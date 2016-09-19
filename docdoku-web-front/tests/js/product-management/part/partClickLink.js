@@ -1,5 +1,5 @@
 /*global casper,urls,workspace,products,defaultUrl*/
-casper.test.begin('Part click link tests suite', 2, function partClickLinkTestsSuite() {
+casper.test.begin('Part click link tests suite', 3, function partClickLinkTestsSuite() {
     'use strict';
 
     casper.open('');
@@ -76,14 +76,28 @@ casper.test.begin('Part click link tests suite', 2, function partClickLinkTestsS
         });
     });
 
+
+    /**
+     * Wait for part modal closed
+     */
+    casper.then(function waitForPartModalClosed() {
+        var modalTitle = '#part-modal > .modal-header > h3 > a[href="' + contextPath + '/documents/#' + workspace + '/' + products.part1.documentLink +'/A"]';
+
+        return this.waitWhileVisible(modalTitle, function partModalClosed() {
+            this.test.assert(true, 'Part modal closed');
+        }, function fail() {
+            this.capture('screenshot/partClickLink/waitForPartModalClosed-error.png');
+            this.test.assert(false, 'Part modal is still displayed');
+        });
+    });
+
     /**
      * Wait for linked document modal
      */
-    casper.then(function waitForLinkedDocumentDisplay() {
-        var modalTitle = '.document-modal > .modal-header > h3 > a[href="' + defaultUrl + '/documents/#' + workspace + '/' + products.part1.documentLink +'/A"]';
-
-        return this.waitForSelector(modalTitle, function linkedModalOpened() {
-            this.test.assert(true, 'Linked document modal opened');
+    casper.then(function waitForLinkedDocumentModal() {
+        var modalTitle = '.document-modal > .modal-header > h3 > a';
+        return this.waitForSelector(modalTitle, function linkedDocumentModal() {
+            this.test.assertSelectorHasText('.document-modal > .modal-header > h3 > a', products.part1.documentLink , 'Linked document modal opened');
         }, function fail() {
             this.capture('screenshot/partClickLink/waitForLinkedDocumentModal-error.png');
             this.test.assert(false, 'Linked document modal can not be found');

@@ -1,5 +1,5 @@
 /*global casper,urls,products*/
-casper.test.begin('Part add link tests suite', 2, function partAddLinkTestsSuite() {
+casper.test.begin('Part add link tests suite', 3, function partAddLinkTestsSuite() {
     'use strict';
 
     casper.open('');
@@ -84,10 +84,24 @@ casper.test.begin('Part add link tests suite', 2, function partAddLinkTestsSuite
     casper.then(function waitForLinkedDocumentDisplay() {
         return this.waitForSelector('#iteration-links > .linked-items-view > ul.linked-items > li:first-child', function linkDocumentDisplayed() {
             this.test.assert(true, 'Link added');
-            this.click('#part-modal .btn.btn-primary');
         }, function fail() {
             this.capture('screenshot/partAddLink/waitForLinkedDocumentDisplay-error.png');
             this.test.assert(false, 'Linked document can not be found and saved');
+        });
+    });
+
+
+    /**
+     * Save and wait for the modal to be closed
+     */
+
+    casper.then(function savePartIteration(){
+        this.click('#part-modal .btn.btn-primary');
+        return this.waitWhileSelector('#part-modal', function modalClosed() {
+            this.test.assert(true, 'Part modal has been closed');
+        }, function fail() {
+            this.capture('screenshot/partAddLink/waitForModalToBeClosed-error.png');
+            this.test.assert(false, 'Part modal not closed');
         });
     });
 

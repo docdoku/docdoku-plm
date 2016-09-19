@@ -85,7 +85,6 @@ casper.test.begin('Document click link tests suite', 3, function documentClickLi
 
         return this.waitWhileVisible(modalTitle, function documentModalClosed() {
             this.test.assert(true, 'Document modal closed');
-            this.capture('screenshot/documentClickLink/waitForLinkedDocumentModal-shouldbeclosed.png');
         }, function fail() {
             this.capture('screenshot/documentClickLink/waitForDocumentModalClosed-error.png');
             this.test.assert(false, 'Document modal is still displayed');
