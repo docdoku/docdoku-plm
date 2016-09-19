@@ -42,7 +42,9 @@ import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.*;
 import com.docdoku.server.configuration.PSFilterVisitor;
-import com.docdoku.server.configuration.filter.*;
+import com.docdoku.server.configuration.filter.LatestPSFilter;
+import com.docdoku.server.configuration.filter.UpdatePartIterationPSFilter;
+import com.docdoku.server.configuration.filter.WIPPSFilter;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
@@ -62,7 +64,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
-import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -258,6 +259,7 @@ public class ProductManagerBean implements IProductManagerLocal {
                 runningTask.start();
             }
 
+            em.flush();
             mailer.sendApproval(runningTasks, newRevision);
 
         }
@@ -2282,6 +2284,7 @@ public class ProductManagerBean implements IProductManagerLocal {
                 runningTask.start();
             }
 
+            em.flush();
             mailer.sendApproval(runningTasks, partR);
         }
 

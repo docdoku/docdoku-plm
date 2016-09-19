@@ -126,6 +126,7 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
         for (Task runningTask : runningTasks) {
             runningTask.start();
         }
+        em.flush();
         mailer.sendApproval(runningTasks, docR);
         return docR;
     }
@@ -147,7 +148,7 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
 
         if(currentActivity.isStopped() && relaunchActivity != null){
             relaunchWorkflow(docR,relaunchActivity.getStep());
-
+            em.flush();
             // Send mails for running tasks
             mailer.sendApproval(docR.getWorkflow().getRunningTasks(), docR);
             // Send notification for relaunch

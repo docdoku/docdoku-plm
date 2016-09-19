@@ -121,6 +121,7 @@ public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
         for (Task runningTask : runningTasks) {
             runningTask.start();
         }
+        em.flush();
         mailer.sendApproval(runningTasks, partRevision);
         return partRevision;
     }
@@ -141,7 +142,7 @@ public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
 
         if(currentActivity.isStopped() && relaunchActivity != null){
             relaunchWorkflow(partR,relaunchActivity.getStep());
-
+            em.flush();
             // Send mails for running tasks
             mailer.sendApproval(partR.getWorkflow().getRunningTasks(), partR);
             // Send notification for relaunch

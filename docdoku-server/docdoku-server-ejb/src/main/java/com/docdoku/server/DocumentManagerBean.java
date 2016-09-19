@@ -747,6 +747,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
                 runningTask.start();
             }
 
+            em.flush();
             mailer.sendApproval(runningTasks, docR);
         }
 
@@ -1508,6 +1509,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
                 runningTask.start();
             }
 
+            em.flush();
             mailer.sendApproval(runningTasks, docR);
         }
 
