@@ -52,10 +52,15 @@ function (Backbone, singletonDecorator, FolderNavView, TagNavView, SearchNavView
             });
         },
         folder: function (workspaceId, path) {
-            this.executeOrReload(workspaceId, function() {
-	            this.initNavViews();
-                FolderNavView.getInstance().show(decodeURIComponent(path));
-            });
+            if (path) {
+                this.executeOrReload(workspaceId, function() {
+                    this.initNavViews();
+                    FolderNavView.getInstance().show(decodeURIComponent(path));
+                });
+
+            } else {
+                this.folders(workspaceId);
+            }
         },
         tags: function (workspaceId) {
             this.executeOrReload(workspaceId,function(){
