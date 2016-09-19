@@ -22,6 +22,7 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.notification.TagUserGroupSubscription;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
@@ -102,6 +103,9 @@ public class WorkspaceResource {
 
     @Inject
     private UserResource users;
+
+    @Inject
+    private UserGroupResource groups;
 
     @Inject
     private RoleResource roles;
@@ -398,35 +402,6 @@ public class WorkspaceResource {
         return Response.ok().build();
     }
 
-    @GET
-    @ApiOperation(value = "Get groups", response = UserGroupDTO.class, responseContainer = "List")
-    @Path("/{workspaceId}/groups")
-    @Produces(MediaType.APPLICATION_JSON)
-    public UserGroupDTO[] getGroups(@PathParam("workspaceId") String workspaceId)
-            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        UserGroup[] userGroups = userManager.getUserGroups(workspaceId);
-        UserGroupDTO[] userGroupDTOs = new UserGroupDTO[userGroups.length];
-        for (int i = 0; i < userGroups.length; i++) {
-            userGroupDTOs[i] = mapper.map(userGroups[i],UserGroupDTO.class);
-        }
-        return userGroupDTOs;
-    }
-
-    @GET
-    @ApiOperation(value = "Get users of group", response = UserDTO.class, responseContainer = "List")
-    @Path("/{workspaceId}/groups/{groupId}/users")
-    @Produces(MediaType.APPLICATION_JSON)
-    public UserDTO[] getUsersInGroup(@PathParam("workspaceId") String workspaceId, @PathParam("groupId") String groupId)
-            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, UserGroupNotFoundException {
-        UserGroup userGroup = userManager.getUserGroup(new UserGroupKey(workspaceId, groupId));
-        Set<User> users = userGroup.getUsers();
-        User[] usersArray = users.toArray(new User[users.size()]);
-        UserDTO[] userDTOs = new UserDTO[users.size()];
-        for (int i = 0; i < usersArray.length; i++) {
-            userDTOs[i] = mapper.map(usersArray[i], UserDTO.class);
-        }
-        return userDTOs;
-    }
 
     @GET
     @ApiOperation(value = "Get stats overview for workspace", response = StatsOverviewDTO.class)
@@ -642,6 +617,12 @@ public class WorkspaceResource {
     @Path("/{workspaceId}/users")
     public UserResource users() {
         return users;
+    }
+
+    @ApiOperation(value = "UserGroupResource")
+    @Path("/{workspaceId}/groups")
+    public UserGroupResource groups() {
+        return groups;
     }
 
     @ApiOperation(value = "RoleResource", hidden = false)

@@ -1,0 +1,36 @@
+<h4>
+    <i class="fa fa-bell"></i> {{i18n.NOTIFICATIONS}}
+</h4>
+{{^tagSubscriptions}}
+<p>{{i18n.NO_NOTIFICATION_TO_MANAGE}}</p>
+{{/tagSubscriptions}}
+{{#tagSubscriptions.length}}
+<table class="table table-striped table-condensed">
+    <div class="notifications"></div>
+    <thead>
+    <tr>
+        <th></th>
+        <th>{{i18n.TAG}}</th>
+        <th>{{i18n.STATE_CHANGE}}</th>
+        <th>{{i18n.ITERATION_CHANGE}}</th>
+    </tr>
+    </thead>
+    <tbody class="items">
+    {{#tagSubscriptions}}
+
+    <tr>
+        <td><button type="button" class="close remove" data-id="{{tag}}">×</button></td>
+        <td>{{tag}}</td>
+        <td>
+            <input type="checkbox" class="change" data-id="{{tag}}" data-option="state" {{#onStateChange}}checked{{/onStateChange}} />
+        </td>
+        <td>
+            <input type="checkbox" class="change" data-id="{{tag}}" data-option="iteration" {{#onIterationChange}}checked{{/onIterationChange}} />
+        </td>
+    </tr>
+
+    {{/tagSubscriptions}}
+    </tbody>
+</table>
+{{/tagSubscriptions.length}}
+

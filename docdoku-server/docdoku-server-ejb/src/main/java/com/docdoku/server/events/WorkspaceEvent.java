@@ -19,24 +19,24 @@
  */
 package com.docdoku.server.events;
 
-import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.common.Workspace;
 
 /**
  * @author Florent Garin
  */
-public class PartRevisionChangeEvent {
+public class WorkspaceEvent {
 
-    private PartRevision modifiedPart;
+    private Workspace observedWorkspace;
 
-    public PartRevisionChangeEvent(PartRevision modifiedPart) {
-        this.modifiedPart = modifiedPart;
+    public WorkspaceEvent(Workspace modifiedWorkspace) {
+        this.observedWorkspace = modifiedWorkspace;
     }
 
-    public PartRevision getModifiedPart() {
-        return modifiedPart;
+    public Workspace getObservedWorkspace() {
+        return observedWorkspace;
     }
 
-    public void setModifiedPart(PartRevision modifiedPart) {
-        this.modifiedPart = modifiedPart;
+    public void setObservedWorkspace(Workspace observedWorkspace) {
+        this.observedWorkspace = observedWorkspace;
     }
 }

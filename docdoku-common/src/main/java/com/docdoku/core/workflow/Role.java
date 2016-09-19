@@ -42,7 +42,7 @@ import java.util.Set;
 @NamedQueries({
         @NamedQuery(name="Role.findByWorkspace", query="SELECT r FROM Role r WHERE r.workspace.id = :workspaceId"),
         @NamedQuery(name="Role.findRolesWhereUserIsAssigned", query="SELECT r FROM Role r WHERE :user member of r.defaultAssignedUsers"),
-        @NamedQuery(name="Role.findRolesWhereGroupIsAssigned", query="SELECT r FROM Role r WHERE :userGroup member of r.defaultAssignedUsers")
+        @NamedQuery(name="Role.findRolesWhereGroupIsAssigned", query="SELECT r FROM Role r WHERE :userGroup member of r.defaultAssignedGroups")
 })
 public class Role implements Serializable {
 

@@ -28,21 +28,21 @@ import java.io.Serializable;
  */
 public class TagKey implements Serializable {
     
-    private String workspaceId;
+    private String workspace;
     private String label;
     
     public TagKey() {
     }
     
     public TagKey(String pWorkspaceId, String pLabel) {
-        workspaceId=pWorkspaceId;
+        workspace=pWorkspaceId;
         label=pLabel;
     }
     
     @Override
     public int hashCode() {
         int hash = 1;
-        hash = 31 * hash + workspaceId.hashCode();
+        hash = 31 * hash + workspace.hashCode();
         hash = 31 * hash + label.hashCode();
         return hash;
     }
@@ -56,7 +56,7 @@ public class TagKey implements Serializable {
             return false;
         }
         TagKey key = (TagKey) pObj;
-        return key.workspaceId.equals(workspaceId) && key.label.equals(label);
+        return key.workspace.equals(workspace) && key.label.equals(label);
     }
     
     @Override
@@ -64,12 +64,12 @@ public class TagKey implements Serializable {
         return label;
     }
     
-    public String getWorkspaceId() {
-        return workspaceId;
+    public String getWorkspace() {
+        return workspace;
     }
     
-    public void setWorkspaceId(String pWorkspaceId) {
-        workspaceId = pWorkspaceId;
+    public void setWorkspace(String pWorkspaceId) {
+        workspace = pWorkspaceId;
     }
     
     

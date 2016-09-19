@@ -21,6 +21,7 @@ package com.docdoku.server.dao;
 
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.RoleAlreadyExistsException;
 import com.docdoku.core.exceptions.RoleNotFoundException;
@@ -106,6 +107,16 @@ public class RoleDAO {
                 .getResultList();
         for(Role role:roles){
             role.removeUser(pUser);
+        }
+        em.flush();
+    }
+
+    public void removeGroupFromRoles(UserGroup pGroup) {
+        List<Role> roles = em.createNamedQuery("Role.findRolesWhereGroupIsAssigned", Role.class)
+                .setParameter("userGroup", pGroup)
+                .getResultList();
+        for(Role role:roles){
+            role.removeUserGroup(pGroup);
         }
         em.flush();
     }

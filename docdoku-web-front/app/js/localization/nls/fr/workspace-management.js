@@ -26,6 +26,8 @@ define({
     LOGIN:'Identifiant',
     MOVE_TO_GROUP:'Ajouter au groupe',
     NO_ADMINISTRATED_WORKSPACES:'Aucun espace de travail administré',
+    NO_GROUP_TO_MANAGE:'Aucun groupe à gérer',
+    NO_NOTIFICATION_TO_MANAGE:'Aucune notification à gérer',
     NO_USER_IN_GROUP:'Aucun utilisateur dans ce groupe',
     NO_USER_TO_MANAGE:'Aucun utilisateur à gérer',
     READONLY:'Lecture seule',
@@ -43,4 +45,5 @@ define({
     WORKSPACE_DELETING_TEXT:'Un email de rapport sera envoyé à l\'administrateur à la fin de l\'opération.',
     WORKSPACE_INDEXING:'L\'indexations des données de l\'espace de travail est en cours. Un email de rapport sera envoyé à l\'administrateur à la fin de l\'opération.',
     INDEX_WORKSPACE:'Indexer les données',
+    NO_TAGS_YET:'Vous devez avoir créé au moins un tag avant de pouvoir créer des notifications'
 });

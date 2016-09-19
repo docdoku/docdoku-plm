@@ -41,6 +41,7 @@ import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
+import com.docdoku.server.events.*;
 import com.docdoku.server.factory.ACLFactory;
 import com.docdoku.server.validation.AttributesConsistencyUtils;
 
@@ -48,6 +49,8 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -85,6 +88,12 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
     @Inject
     private IDataManagerLocal dataManager;
+
+    @Inject
+    private Event<TagEvent> tagEvent;
+
+    @Inject
+    private Event<DocumentRevisionEvent> documentRevisionEvent;
 
     private static final Logger LOGGER = Logger.getLogger(DocumentManagerBean.class.getName());
 
@@ -240,7 +249,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public DocumentRevision[] findDocumentRevisionsByTag(TagKey pKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        String workspaceId = pKey.getWorkspaceId();
+        String workspaceId = pKey.getWorkspace();
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).findDocRsByTag(new Tag(user.getWorkspace(), pKey.getLabel()));
         ListIterator<DocumentRevision> ite = docRs.listIterator();
@@ -605,14 +614,14 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void deleteTag(TagKey pKey) throws WorkspaceNotFoundException, AccessRightException, TagNotFoundException, UserNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspace());
         Locale userLocale = new Locale(user.getLanguage());
         Tag tagToRemove = new Tag(user.getWorkspace(), pKey.getLabel());
         List<DocumentRevision> docRs = new DocumentRevisionDAO(userLocale, em).findDocRsByTag(tagToRemove);
         for (DocumentRevision docR : docRs) {
             docR.getTags().remove(tagToRemove);
         }
-        List<ChangeItem> changeItems = new ChangeItemDAO(userLocale, em).findChangeItemByTag(pKey.getWorkspaceId(), tagToRemove);
+        List<ChangeItem> changeItems = new ChangeItemDAO(userLocale, em).findChangeItemByTag(pKey.getWorkspace(), tagToRemove);
         for (ChangeItem changeItem : changeItems) {
             changeItem.getTags().remove(tagToRemove);
         }
@@ -621,6 +630,9 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         for (PartRevision partRevision : partRevisions) {
             partRevision.getTags().remove(tagToRemove);
         }
+
+        tagEvent.select(new AnnotationLiteral<Removed>() {
+        }).fire(new TagEvent(tagToRemove));
 
         new TagDAO(userLocale, em).removeTag(pKey);
     }
@@ -962,8 +974,18 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             }
         }
 
-        docR.setTags(tags);
+        Set<Tag> removedTags = new HashSet<>(docR.getTags());
+        removedTags.removeAll(tags);
+        Set<Tag> addedTags = docR.setTags(tags);
 
+        for(Tag tag : removedTags) {
+            tagEvent.select(new AnnotationLiteral<Untagged>() {
+            }).fire(new TagEvent(tag, docR));
+        }
+        for(Tag tag : addedTags) {
+            tagEvent.select(new AnnotationLiteral<Tagged>() {
+            }).fire(new TagEvent(tag, docR));
+        }
         if (isCheckoutByAnotherUser(user, docR)) {
             em.flush();
             em.detach(docR);
@@ -986,6 +1008,9 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         DocumentRevision docR = getDocumentRevision(pDocRPK);
         Tag tagToRemove = new Tag(user.getWorkspace(), pTag);
         docR.getTags().remove(tagToRemove);
+
+        tagEvent.select(new AnnotationLiteral<Untagged>() {
+        }).fire(new TagEvent(tagToRemove, docR));
 
         if (isCheckoutByAnotherUser(user, docR)) {
             em.detach(docR);
@@ -1043,7 +1068,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
         if (isCheckoutByUser(user, docR)) {
             SubscriptionDAO subscriptionDAO = new SubscriptionDAO(em);
-            User[] subscribers = subscriptionDAO.getIterationChangeEventSubscribers(docR);
+            Collection<User> subscribers = subscriptionDAO.getIterationChangeEventSubscribers(docR);
             GCMAccount[] gcmAccounts = subscriptionDAO.getIterationChangeEventSubscribersGCMAccount(docR);
 
             docR.setCheckOutDate(null);
@@ -1052,7 +1077,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             DocumentIteration lastIteration = docR.getLastIteration();
             lastIteration.setCheckInDate(new Date());
 
-            if (subscribers.length != 0) {
+            if (!subscribers.isEmpty()) {
                 mailer.sendIterationNotification(subscribers, docR);
             }
 

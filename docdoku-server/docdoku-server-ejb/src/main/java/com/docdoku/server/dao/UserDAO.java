@@ -110,7 +110,6 @@ public class UserDAO {
         removeUserMembership(new WorkspaceUserMembershipKey(pUser.getWorkspaceId(), pUser.getWorkspaceId(), pUser.getLogin()));
         new SubscriptionDAO(em).removeAllSubscriptions(pUser);
         new UserGroupDAO(mLocale, em).removeUserFromAllGroups(pUser);
-        new RoleDAO(mLocale,em).removeUserFromRoles(pUser);
         new ACLDAO(em).removeAclUserEntries(pUser);
 
         boolean author = isDocMAuthor(pUser) || isDocAuthor(pUser) || isDocMTemplateAuthor(pUser) || isWorkflowModelAuthor(pUser);

@@ -125,10 +125,9 @@ public class UserGroupDAO {
         return memberships;
     }
 
-    public void removeUserGroup(UserGroupKey pKey) throws UserGroupNotFoundException {
-        UserGroup group = loadUserGroup(pKey);
-        removeUserGroupMembership(new WorkspaceUserGroupMembershipKey(pKey.getWorkspaceId(), pKey.getWorkspaceId(), pKey.getId()));
-        em.remove(group);
+    public void removeUserGroup(UserGroup pUserGroup) throws UserGroupNotFoundException {
+        removeUserGroupMembership(new WorkspaceUserGroupMembershipKey(pUserGroup.getWorkspaceId(), pUserGroup.getWorkspaceId(), pUserGroup.getId()));
+        em.remove(pUserGroup);
     }
 
     public boolean hasACLConstraint(UserGroupKey pKey){

@@ -24,19 +24,19 @@ import com.docdoku.core.common.User;
 /**
  * @author Morgan Guimard
  */
-public class UserRemovedEvent {
+public class UserEvent {
 
-    private User removedUser;
+    private User observedUser;
 
-    public UserRemovedEvent(User removedUser) {
-        this.removedUser = removedUser;
+    public UserEvent(User observedUser) {
+        this.observedUser = observedUser;
     }
 
-    public User getRemovedUser() {
-        return removedUser;
+    public User getObservedUser() {
+        return observedUser;
     }
 
-    public void setRemovedUser(User removedUser) {
-        this.removedUser = removedUser;
+    public void setObservedUser(User observedUser) {
+        this.observedUser = observedUser;
     }
 }

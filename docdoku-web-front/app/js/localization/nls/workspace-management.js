@@ -24,6 +24,8 @@ define({
         LOGIN:'Login',
         MOVE_TO_GROUP:'Add to group',
         NO_ADMINISTRATED_WORKSPACES:'No administrated workspace',
+        NO_GROUP_TO_MANAGE:'No group to manage',
+        NO_NOTIFICATION_TO_MANAGE:'No notification to manage',
         NO_USER_IN_GROUP:'No user in this group',
         NO_USER_TO_MANAGE:'No user to manage',
         READONLY:'Read only',
@@ -36,7 +38,8 @@ define({
         WORKSPACE_DELETING_TITLE:'Workspace deletion on progress.',
         WORKSPACE_DELETING_TEXT:'A report will be sent by mail to workspace administrator once finished.',
         WORKSPACE_INDEXING:'Workspace indexation on progress. A report will be sent by mail to workspace administrator once finished.',
-        INDEX_WORKSPACE:'Index data'
+        INDEX_WORKSPACE:'Index data',
+        NO_TAGS_YET:'You must have created at least one tag to create notifications'
     },
     'fr': true,
     'es': true

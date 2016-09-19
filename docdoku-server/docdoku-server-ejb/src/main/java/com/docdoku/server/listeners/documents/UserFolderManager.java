@@ -17,14 +17,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.server.plugins.notifications;
+package com.docdoku.server.listeners.documents;
 
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.events.Removed;
-import com.docdoku.server.events.UserRemovedEvent;
+import com.docdoku.server.events.UserEvent;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Observes;
@@ -36,13 +36,13 @@ import javax.inject.Named;
  */
 @Named
 @RequestScoped
-public class UserNotificationManager {
+public class UserFolderManager {
 
     @Inject
     private IDocumentManagerLocal documentService;
 
-    private void onRemoveUser(@Observes @Removed UserRemovedEvent userRemovedEvent) throws ESServerException, EntityConstraintException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, FolderNotFoundException, AccessRightException, UserNotActiveException {
-        User user = userRemovedEvent.getRemovedUser();
+    private void onRemoveUser(@Observes @Removed UserEvent event) throws ESServerException, EntityConstraintException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, FolderNotFoundException, AccessRightException, UserNotActiveException {
+        User user = event.getObservedUser();
         documentService.deleteUserFolder(user);
     }
 

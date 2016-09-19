@@ -19,24 +19,18 @@
  */
 package com.docdoku.server.events;
 
-import com.docdoku.core.product.PartIteration;
+import javax.inject.Qualifier;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * @author Florent Garin
  */
-public class PartIterationChangeEvent {
-
-    private PartIteration modifiedPart;
-
-    public PartIterationChangeEvent(PartIteration modifiedPart) {
-        this.modifiedPart = modifiedPart;
-    }
-
-    public PartIteration getModifiedPart() {
-        return modifiedPart;
-    }
-
-    public void setModifiedPart(PartIteration modifiedPart) {
-        this.modifiedPart = modifiedPart;
-    }
+@Qualifier
+@Target({METHOD, FIELD, PARAMETER, TYPE})
+@Retention(RUNTIME)
+public @interface Untagged {
 }
