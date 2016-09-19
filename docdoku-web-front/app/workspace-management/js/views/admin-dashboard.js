@@ -43,10 +43,10 @@ define([
             var totalDiskUsage = 0;
 
             for (var key in diskUsage) {
-                //if(diskUsage[key]){
-                diskUsageData.push({key: key, y: diskUsage[key], f: ChartsHelpers.bytesToSize(diskUsage[key])});
+                if(diskUsage[key]){
+                    diskUsageData.push({key: key, y: diskUsage[key], f: ChartsHelpers.bytesToSize(diskUsage[key])});
+                }
                 totalDiskUsage += diskUsage[key];
-                // }
             }
 
             var $chart = this.$('#admin_disk_usage_chart');
@@ -125,7 +125,6 @@ define([
                             return d.y;
                         })
                         .showValues(true)
-                        /*.tooltips(false)*/
                         .showControls(true);
 
                     chart.yAxis
