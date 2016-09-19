@@ -98,7 +98,11 @@ define([
         },
 
 		onSubmitForm: function (e) {
+
             this.$notifications.empty();
+
+            e.preventDefault();
+            e.stopPropagation();
 
             this.model = new DocumentBaseline({
                 name: this.$inputBaselineName.val(),
@@ -107,29 +111,36 @@ define([
                 baselinedDocuments: []
             });
 
-            if (this.options.mode === 'edit') {
-                this.model.setBaselinedDocuments(App.config.documentBaselineInProgress.getBaselinedDocuments());
-                var saveOptions = {};
+            if(this.options.mode === 'edit'){
 
-                this.model.save(saveOptions, {
-                    wait: true,
-                    success: this.onBaselineCreated,
-                    error: this.onError
-                });
+                var documents = App.config.documentBaselineInProgress.getBaselinedDocuments();
+                if (!documents.length) {
 
-            } else {
+                    this.$notifications.append(new AlertView({
+                        type: 'error',
+                        message: App.config.i18n.DOCUMENT_BASELINE_IS_EMPTY
+                    }).render().$el);
+                    return false;
+
+                }else{
+
+                    this.model.setBaselinedDocuments(documents);
+                    var saveOptions = {};
+
+                    this.model.save(saveOptions, {
+                        wait: true,
+                        success: this.onBaselineCreated,
+                        error: this.onError
+                    });
+
+                }
+            }
+            else {
                 App.config.documentBaselineInProgress = this.model;
                 App.appView.showBaselineTooltip();
-            }
-
-			e.preventDefault();
-			e.stopPropagation();
-
-            if (this.options.mode === 'edit') {
-                return false;
-            } else {
                 this.closeModal();
             }
+
 		},
 
 		onBaselineCreated: function (e) {

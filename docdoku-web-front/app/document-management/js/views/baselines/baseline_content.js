@@ -5,7 +5,7 @@ define([
     'common-objects/collections/baselines',
     'text!templates/baselines/baseline_content.html',
     'views/baselines/baseline_list',
-    'text!common-objects/templates/buttons/delete_button.html',
+    'text!common-objects/templates/buttons/delete_baseline_button.html',
     'text!common-objects/templates/buttons/snap_button.html',
     'common-objects/views/alert',
     'views/baselines/baseline_creation_view'
@@ -19,7 +19,7 @@ define([
         },
 
         events: {
-            'click button.delete': 'deleteBaseline',
+            'click button.delete-baseline': 'deleteBaseline',
             'click button.new-baseline': 'createBaseline'
         },
 
@@ -39,7 +39,7 @@ define([
 
         bindDomElements: function () {
             this.$notifications = this.$el.find('.notifications').first();
-            this.deleteButton = this.$('.delete');
+            this.deleteButton = this.$('.delete-baseline');
             this.createBaselineButton = this.$('.new-baseline');
         },
 
