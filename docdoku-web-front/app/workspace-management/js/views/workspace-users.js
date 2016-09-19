@@ -251,7 +251,6 @@ define([
         },
 
         toggleCheckbox:function(e){
-            console.log('click ' + e.target);
             this.toggleButtons();
         },
 
