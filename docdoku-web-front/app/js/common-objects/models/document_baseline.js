@@ -32,11 +32,22 @@ define(['common-objects/models/baseline'], function (Baseline) {
         setBaselinedDocuments: function (baselinedDocuments) {
             return this.set('baselinedDocuments', baselinedDocuments);
         },
+
         addBaselinedDocument: function (baselinedDocument) {
+
+            if(!baselinedDocument.isReleased() && this.getType() === 'RELEASED'){
+                return {error : App.config.i18n.DOCUMENT_NOT_RELEASED};
+            }
+
             var documents = this.getBaselinedDocuments();
+
+            // todo use custom loop to detect number/version
             if(documents.indexOf(baselinedDocument) === -1){
                 documents.push(baselinedDocument);
+            } else {
+                return {info : App.config.i18n.DOCUMENT_ALREADY_IN_LIST};
             }
+
         },
 
         getZipUrl: function () {

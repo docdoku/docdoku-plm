@@ -552,9 +552,28 @@ define([
         },
 
         addDocumentsInBaseline: function () {
+            var returns = [];
+
             this.listView.eachChecked(function (view) {
-                App.config.documentBaselineInProgress.addBaselinedDocument(view.model);
+                returns.push(App.config.documentBaselineInProgress.addBaselinedDocument(view.model));
             });
+
+            var notifications = this.notifications;
+
+            _.each(returns, function(status){
+                if(status && status.info){
+                    notifications.append(new AlertView({
+                        type: 'info',
+                        message: status.info
+                    }).render().$el);
+                }else if (status && status.error){
+                    notifications.append(new AlertView({
+                        type: 'error',
+                        message: status.error
+                    }).render().$el);
+                }
+            });
+
             this.refreshBaselineDocumentsCount();
             this.viewBaselineDetail.highlightEffect();
         },

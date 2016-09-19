@@ -38,12 +38,15 @@ define([
 
             if (this.options.mode === 'edit') {
                 this.fillDocumentsChoiceView();
+                this.fillDocumentBaselineType();
             }
 
             this.hideLoader();
 
             this.$baselineDocumentsChoiceListArea.html(this.choiceView.$el);
             this.$inputBaselineName.customValidity(App.config.i18n.REQUIRED_FIELD);
+
+
 
             return this;
 		},
@@ -73,6 +76,10 @@ define([
         fillDocumentsChoiceView: function () {
             this.hideLoader();
             this.choiceView.renderList(App.config.documentBaselineInProgress.getBaselinedDocuments());
+        },
+
+        fillDocumentBaselineType:function(){
+            this.$('#inputBaselineType').val(App.config.documentBaselineInProgress.getType());
         },
 
         onRequestsError:function(xhr,type,message){
