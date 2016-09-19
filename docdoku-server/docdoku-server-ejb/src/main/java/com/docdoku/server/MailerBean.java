@@ -553,7 +553,7 @@ public class MailerBean implements IMailerLocal {
     }
 
     private String getTaskUrl(Task pTask, String workspaceId) {
-        return codebase + "/#change-management/#" + workspaceId + "/tasks/" + pTask.getWorkflowId() + "-" + pTask.getActivityStep() + "-" + pTask.getNum();
+        return codebase + "/#change-management/" + workspaceId + "/tasks/" + pTask.getWorkflowId() + "-" + pTask.getActivityStep() + "-" + pTask.getNum();
     }
 
     private String getPasswordRecoveryUrl(String uuid) {
