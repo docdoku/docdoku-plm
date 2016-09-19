@@ -58,7 +58,9 @@ define([
             };
 
             for (var key in diskUsage) {
-                diskUsageData.push({key: translates[key], y: diskUsage[key], f: bytesToSize(diskUsage[key])});
+                if(diskUsage[key]){
+                    diskUsageData.push({key: translates[key], y: diskUsage[key], f: bytesToSize(diskUsage[key])});
+                }
                 totalDiskUsage += diskUsage[key];
             }
 
