@@ -63,25 +63,20 @@ define([
 
                 var chart;
 
-                chart = nv.models.pieChart()
-                    .x(function (d) {
-                        return d.key;
-                    })
-                    .y(function (d) {
-                        return d.y;
-                    })
-                    .showLabels(false)
-                    .values(function (d) {
-                        return d;
-                    })
-                    .color(d3.scale.category10().range())
-                    .donut(false)
-                    .tooltipContent(function (x, y, e) {
-                        return diskUsageTooltip(x, e.point.f);
+                var chart = nv.models.pieChart()
+                    .x(function(d) { return d.key })
+                    .y(function(d) { return d.y })
+                    .width(width)
+                    .height(height)
+                    .showTooltipPercent(true);
+
+                    chart.tooltip.contentGenerator(function (obj) {
+                        return diskUsageTooltip(obj.data.key, obj.data.f);
                     });
 
+
                 d3.select('#admin_disk_usage_chart svg')
-                    .datum([diskUsageData])
+                    .datum(diskUsageData)
                     .transition().duration(1200)
                     .call(chart);
                 nv.utils.windowResize(chart.update);
@@ -131,7 +126,7 @@ define([
                             return d.y;
                         })
                         .showValues(true)
-                        .tooltips(false)
+                        /*.tooltips(false)*/
                         .showControls(true);
 
                     chart.yAxis

@@ -39,15 +39,7 @@ require.config({
         datePickerLang: { deps: ['bootstrapDatepicker'], exports: 'jQuery'},
         d3:{deps:[],exports:'window'},
         nvd3:{deps:['d3'],exports:'window'},
-        legend:{deps:['nvd3','d3']},
-        pie:{deps:['nvd3','d3']},
-        pieChart:{deps:['nvd3','d3']},
-        discreteBar:{deps:['nvd3','d3']},
-        discreteBarChart:{deps:['nvd3','d3']},
-        nvutils:{deps:['nvd3','d3']},
-        tooltip:{deps:['nvd3','d3'],exports:'window'},
-        fisheye:{deps:['nvd3','d3']},
-        helpers:{deps:['nvd3','d3']},
+        helpers:{deps:['nvd3','d3']}
     },
 
     paths: {
@@ -81,17 +73,9 @@ require.config({
         userPopover: '../../js/modules/user-popover-module/app',
         async: '../../bower_components/async/lib/async',
         datePickerLang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr',
-        d3:'../../js/lib/charts/nv3d/lib/d3.v2',
-        nvd3:'../../js/lib/charts/nv3d/nv.d3',
-        legend:'../../js/lib/charts/nv3d/src/models/legend',
-        pie:'../../js/lib/charts/nv3d/src/models/pie',
-        pieChart:'../../js/lib/charts/nv3d/src/models/pieChart',
-        discreteBar:'../../js/lib/charts/nv3d/src/models/discreteBar',
-        discreteBarChart:'../../js/lib/charts/nv3d/src/models/discreteBarChart',
-        nvutils:'../../js/lib/charts/nv3d/src/utils',
-        fisheye:'../../js/lib/charts/nv3d/lib/fisheye',
-        tooltip:'../../js/lib/charts/nv3d/custom/tooltip',
-        helpers:'../../js/lib/charts/helpers'
+        d3:'../../bower_components/d3/d3',
+        nvd3:'../../bower_components/nvd3/build/nv.d3',
+        helpers:'../../js/utils/charts-helpers'
     },
 
     deps: [
@@ -112,14 +96,6 @@ require.config({
         'datePickerLang',
         'd3',
         'nvd3',
-        'legend',
-        'pie',
-        'pieChart',
-        'discreteBar',
-        'discreteBarChart',
-        'nvutils',
-        'fisheye',
-        'tooltip',
         'helpers'
     ],
     config: {

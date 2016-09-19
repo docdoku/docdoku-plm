@@ -55,8 +55,7 @@ module.exports = {
                         'fonts/**',
                         'js/home/main.js',
                         'js/lib/plugin-detect.js',
-                        'js/lib/empty.pdf',
-                        'js/lib/charts/**'
+                        'js/lib/empty.pdf'
                     ]
                 },{
                     expand: true,
@@ -69,6 +68,7 @@ module.exports = {
                 }
             ]
         };
+
         config.copy.dmu = {
             files: [
                 {
@@ -83,6 +83,7 @@ module.exports = {
                 }
             ]
         };
+
         config.copy.i18n ={
             files: [
                 {

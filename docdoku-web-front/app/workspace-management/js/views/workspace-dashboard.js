@@ -80,31 +80,22 @@ define([
 
             $chart.parent().find('span.total').html(bytesToSize(totalDiskUsage));
 
-            // TODO translate keys
-
             nv.addGraph(function () {
-                var chart;
 
-                chart = nv.models.pieChart()
-                    .x(function (d) {
-                        return d.key;
-                    })
-                    .y(function (d) {
-                        return d.y;
-                    })
-                    .showLabels(false)
-                    .values(function (d) {
-                        return d;
-                    })
-                    .color(d3.scale.category10().range())
+                var chart = nv.models.pieChart()
+                    .x(function(d) { return d.key })
+                    .y(function(d) { return d.y })
+                    .width(width)
+                    .height(height)
+                    .showTooltipPercent(true);
 
-                    .donut(false)
-                    .tooltipContent(function (x, y, e) {
-                        return diskUsageTooltip(x, e.point.f);
+                    chart.tooltip.contentGenerator(function (obj) {
+                        return diskUsageTooltip(obj.data.key, obj.data.f);
                     });
 
+
                 d3.select('#disk_usage_chart svg')
-                    .datum([diskUsageData])
+                    .datum(diskUsageData)
                     .transition().duration(1200)
                     .call(chart);
 
@@ -147,7 +138,7 @@ define([
                         return d.y;
                     })
                     .staggerLabels(true)
-                    .tooltips(false)
+                    /*.tooltips(false)*/
                     .showValues(true);
 
                 chart.yAxis.tickFormat(d3.format('.f'));
@@ -334,7 +325,7 @@ define([
                         return d.y;
                     })
                     .staggerLabels(true)
-                    .tooltips(true)
+                    /*.tooltips(true)*/
                     .showValues(true);
 
                 chart.yAxis.tickFormat(d3.format('.f'));

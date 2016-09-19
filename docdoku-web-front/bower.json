@@ -30,7 +30,8 @@
     "threejs": "r68",
     "tweenjs": "~16.3.4",
     "underscore": "~1.4.2",
-    "unorm": "1.3.3"
+    "unorm": "1.3.3",
+    "nvd3": "^1.8.4"
   },
   "devDependencies": {},
   "resolutions": {

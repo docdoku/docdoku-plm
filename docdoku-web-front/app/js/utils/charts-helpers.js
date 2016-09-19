@@ -5,3 +5,6 @@ function bytesToSize(bytes) {
     if (i == 0) { return (bytes / Math.pow(1024, i)) + ' ' + sizes[i]; }
     return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
 }
+function diskUsageTooltip(key,value){
+    return "<h3>"+key+"</h3>" + "<p>"+value+"</p>";
+}

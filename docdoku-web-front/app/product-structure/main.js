@@ -151,7 +151,7 @@ require.config({
         mtlloader:'../../js/dmu/loaders/MTLLoader',
         buffergeometryutils: '../../js/dmu/utils/BufferGeometryUtils',
         stats:'../../js/dmu/utils/Stats',
-        typeface:'../../js//lib/helvetiker_regular.typeface',
+        typeface:'../../js/lib/helvetiker_regular.typeface',
         selectize: '../../bower_components/selectize/dist/js/standalone/selectize',
         datePickerLang: '../../bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.fr'
     },
