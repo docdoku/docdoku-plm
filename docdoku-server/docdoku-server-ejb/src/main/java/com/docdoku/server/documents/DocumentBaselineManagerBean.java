@@ -64,9 +64,12 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public DocumentBaseline createBaseline(String workspaceId, String name, DocumentBaseline.BaselineType type, String description, List<DocumentRevisionKey> documentRevisionKeys)
-            throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FolderNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException {
+            throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FolderNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, NotAllowedException {
 
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
+        if (documentRevisionKeys.isEmpty()) {
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException66");
+        }
         DocumentBaseline baseline = new DocumentBaseline(user, name, type, description);
         baseline.getDocumentCollection().setCreationDate(new Date());
         baseline.getDocumentCollection().setAuthor(user);

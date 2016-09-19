@@ -110,7 +110,7 @@ public class DocumentBaselinesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createBaseline(@PathParam("workspaceId") String workspaceId,
                                    @ApiParam(required = true, value = "Document baseline to create") DocumentBaselineDTO documentBaselineDTO)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, com.docdoku.core.exceptions.NotAllowedException {
 
         List<BaselinedDocumentDTO> baselinedDocumentsDTO = documentBaselineDTO.getBaselinedDocuments();
         List<DocumentRevisionKey> documentRevisionKeys = new ArrayList<>();
