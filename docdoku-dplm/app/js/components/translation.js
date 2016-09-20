@@ -188,7 +188,8 @@
                     SEND_MAIL: 'Email',
                     RESTORE_FILES:'Restore files',
                     CHECK_OUT_ITEMS:'Check out items',
-                    CHECK_OUT_RECURSIVE:'Recursive check out'
+                    CHECK_OUT_RECURSIVE:'Recursive check out',
+                    SHOW_HIDDEN_FILES:'Hidden files'
                 })
                 .translations('fr', {
                     CHECKOUT: 'Réserver',
@@ -373,7 +374,8 @@
                     SEND_MAIL: 'Email',
                     RESTORE_FILES:'Restaurer les fichiers',
                     CHECK_OUT_ITEMS:'Réserver les éléments',
-                    CHECK_OUT_RECURSIVE:'Réservemer récursivement les éléments'
+                    CHECK_OUT_RECURSIVE:'Réservemer récursivement les éléments',
+                    SHOW_HIDDEN_FILES:'Fichier cachés'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

@@ -56,6 +56,29 @@
             return function (file) {
                 return Available3DLoaders.indexOf(ext(file)) !== -1;
             };
+        })
+
+        .filter('isFileHidden',function(FileUtils, $window){
+
+            if($window.process.platform === 'darwin' || $window.process.platform === 'linux') {
+                return function (file) {
+                    return (/(^|\/)\.[^\/\.]/g).test(file);
+                };
+
+            } else if($window.process.platform === 'win32' || $window.process.platform === 'win64'){
+                return function(/*file*/){
+                    // TODO : not tested on windows
+                    // var winattr = $window.require('winattr');
+                    // var attrs = winattr.getSync(file);
+                    // return attrs && hidden.hidden;
+                    return false;
+                };
+            } else {
+                return function(/*file*/){
+                    return false;
+                };
+            }
+
         });
 
 })();

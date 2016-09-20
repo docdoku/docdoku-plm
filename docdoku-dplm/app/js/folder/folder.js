@@ -28,6 +28,7 @@
             var filterCanCheckOut = $filter('canCheckOut');
             var filterCanCheckIn = $filter('canCheckIn');
             var filterCanUndoCheckOut = $filter('canUndoCheckOut');
+            var isFileHidden = $filter('isFileHidden');
             var filterCanPushFiles = filterCanCheckIn;
             var repositoryIndex = RepositoryService.getRepositoryIndex(folderPath);
             var fs = $window.require('fs');
@@ -57,7 +58,8 @@
                 {name: translate('RELEASED'), code: 'RELEASED', value: true},
                 {name: translate('OBSOLETE'), code: 'OBSOLETE', value: true},
                 {name: translate('LOCKED'), code: 'LOCKED', value: true},
-                {name: translate('OUT_OF_INDEX'), code: 'OUT_OF_INDEX', value: true}
+                {name: translate('OUT_OF_INDEX'), code: 'OUT_OF_INDEX', value: true},
+                {name: translate('SHOW_HIDDEN_FILES'), code: 'SHOW_HIDDEN_FILES', value: false}
             ];
 
             $scope.sync = {
@@ -92,6 +94,10 @@
                 filteredFiles = allFiles.filter(function (path) {
 
                     var index = RepositoryService.getFileIndex(repositoryIndex, path);
+
+                    if (!hasFilter('SHOW_HIDDEN_FILES') && isFileHidden(path)) {
+                        return false;
+                    }
 
                     if (!hasFilter('OUT_OF_INDEX') && !index) {
                         return false;
