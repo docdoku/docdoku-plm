@@ -26,8 +26,9 @@ define([
     'common-objects/models/part',
     'views/path_data_modal',
     'views/path_to_path_link_modal',
-    'common-objects/views/alert'
-], function (Backbone, Mustache, SearchView, PartsTreeView, BomView, CollaborativeView, PartMetadataView, PartInstanceView, ExportSceneModalView, ControlNavigationView, ControlModesView, ControlTransformView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlClippingView, ControlExplodeView, ControlMeasureView, BaselineSelectView, SceneManager, CollaborativeController, InstancesManager, template, Part, PathDataModalView, PathToPathLinkModalView, AlertView) {
+    'common-objects/views/alert',
+    'common-objects/log'
+], function (Backbone, Mustache, SearchView, PartsTreeView, BomView, CollaborativeView, PartMetadataView, PartInstanceView, ExportSceneModalView, ControlNavigationView, ControlModesView, ControlTransformView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlClippingView, ControlExplodeView, ControlMeasureView, BaselineSelectView, SceneManager, CollaborativeController, InstancesManager, template, Part, PathDataModalView, PathToPathLinkModalView, AlertView, Logger) {
 
     'use strict';
 
@@ -92,7 +93,7 @@ define([
                 this.bindDatGUIControls();
             } catch (ex) {
                 console.error('Got exception in dmu');
-                App.log(ex);
+                Logger.log(ex);
                 this.onNoWebGLSupport();
             }
 

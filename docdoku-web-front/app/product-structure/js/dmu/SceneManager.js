@@ -5,8 +5,9 @@ define([
     'views/blocker_view',
     'dmu/LayerManager',
     'dmu/MeasureTool',
-    'common-objects/utils/date'
-], function (Backbone, MarkerCreateModalView, BlockerView, LayerManager, MeasureTool, date) {
+    'common-objects/utils/date',
+    'common-objects/log'
+], function (Backbone, MarkerCreateModalView, BlockerView, LayerManager, MeasureTool, date, Logger) {
     'use strict';
     var SceneManager = function (pOptions) {
         var _this = this;
@@ -511,7 +512,7 @@ define([
             }
             _this.scene.remove(object);
 
-            App.log('%c object removed', 'SM');
+            Logger.log('%c object removed', 'SM');
 
             _this.reDraw();
         }
@@ -1093,7 +1094,7 @@ define([
                 if (editedObjectsColoured) {
                     _this.colourEditedObjects();
                 }
-                App.log('%c Mesh added : \n\t' + this.editedObjects, 'SM');
+                Logger.log('%c Mesh added : \n\t' + this.editedObjects, 'SM');
                 App.collaborativeController.sendEditedObjects();
             }
             transformControls.bindEvents();
@@ -1164,7 +1165,7 @@ define([
                 .start();
             _this.editedObjects = _.without(_this.editedObjects, object.uuid);
             restoreInitialMaterials(object);
-            App.log('%c Mesh removed', 'SM');
+            Logger.log('%c Mesh removed', 'SM');
             App.collaborativeController.sendEditedObjects();
 
             _this.reDraw();

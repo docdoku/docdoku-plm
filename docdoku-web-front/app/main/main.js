@@ -1,29 +1,6 @@
 /*global _,require,window*/
 
-var App = {
-    debug:false,
-    config:{
-        locale: window.localStorage.getItem('locale') || 'en'
-    },
-    SceneOptions: {
-        zoomSpeed: 3,
-        rotateSpeed: 3.0,
-        panSpeed: 0.3,
-        cameraNear: 1,
-        cameraFar: 5E4,
-        defaultCameraPosition: {x: 0, y:0, z:0},
-        startCameraPosition: {x: 100, y: 2500, z: 2500},
-        endCameraPosition: {x: 0, y: 250, z: 250},
-        defaultTargetPosition: {x: 0, y: 0, z: 0}
-    }
-};
-
-App.log=function(message){
-    'use strict';
-    if(App.debug){
-        window.console.log(message);
-    }
-};
+var App = {};
 
 require.config({
 
@@ -71,7 +48,7 @@ require.config({
             locale: (function(){
                 'use strict';
                 try{
-                    return App.config.locale;
+                    return window.localStorage.getItem('locale') || 'en';
                 }catch(ex){
                     return 'en';
                 }
@@ -84,7 +61,21 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
     function (ContextResolver, commonStrings, indexStrings) {
         'use strict';
 
+        App.config.needAuthentication = false;
         App.config.i18n = _.extend(commonStrings, indexStrings);
+
+        App.SceneOptions =  {
+            zoomSpeed: 3,
+                rotateSpeed: 3.0,
+                panSpeed: 0.3,
+                cameraNear: 1,
+                cameraFar: 5E4,
+                defaultCameraPosition: {x: 0, y:0, z:0},
+            startCameraPosition: {x: 100, y: 2500, z: 2500},
+            endCameraPosition: {x: 0, y: 250, z: 250},
+            defaultTargetPosition: {x: 0, y: 0, z: 0}
+        };
+
         ContextResolver.resolveServerProperties()
             .then(function(){
                 ContextResolver.resolveAccount().then(function(){

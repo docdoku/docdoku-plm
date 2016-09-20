@@ -1,28 +1,6 @@
 /*global _,require,window*/
-var workspace = /^#([^\/]+)/.exec(window.location.hash);
-if(!workspace){
-    location.href = '../404?url='+window.location.href;
-    throw new Error('Cannot parse workspace in url');
-}
-var App = {
-	debug:false,
 
-	config:{
-		workspaceId: decodeURIComponent(workspace[1]).trim() || null,
-		login: '',
-		groups: [],
-		contextPath: '',
-		locale: window.localStorage.getItem('locale') || 'en',
-        needAuthentication:true
-	}
-};
-
-App.log=function(message){
-    'use strict';
-    if(App.debug){
-        window.console.log(message);
-    }
-};
+var App = {};
 
 require.config({
     baseUrl: 'js',
@@ -106,7 +84,7 @@ require.config({
             locale: (function(){
 	            'use strict';
                 try{
-                    return App.config.locale;
+                    return window.localStorage.locale || 'en';
                 }catch(ex){
                     return 'en';
                 }
@@ -115,22 +93,42 @@ require.config({
     }
 });
 
-require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/product-management'],
-    function (ContextResolver,  commonStrings, productManagementStrings) {
+require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/product-management','common-objects/views/error'],
+    function (ContextResolver,  commonStrings, productManagementStrings, ErrorView) {
 	    'use strict';
-        App.config.i18n = _.extend(commonStrings,productManagementStrings);
+
+        App.config.needAuthentication = true;
+        App.config.i18n = _.extend(commonStrings, productManagementStrings);
+
+        var match = /^#([^\/]+)/.exec(window.location.hash) || ['',''];
+        App.config.workspaceId = decodeURIComponent(match[1] || '').trim();
+
+        if(!App.config.workspaceId){
+            // TODO : add workspace selector
+            new ErrorView({el:'#content'}).render({
+                title:App.config.i18n.ERROR,
+                content:App.config.i18n.ERROR
+            });
+            return;
+        }
+
         ContextResolver.resolveServerProperties()
             .then(ContextResolver.resolveAccount)
             .then(ContextResolver.resolveWorkspaces)
             .then(ContextResolver.resolveGroups)
             .then(ContextResolver.resolveUser)
-            .then(function(){
+            .then(function buildView(){
                 require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
                     App.appView = new AppView().render();
                     App.headerView = new HeaderView().render();
                     App.router = Router.getInstance();
                     App.coworkersView = new Modules.CoWorkersAccessModuleView().render();
                     Backbone.history.start();
+                });
+            },function(xhr){
+                new ErrorView({el:'#content'}).render({
+                    title:xhr.statusText,
+                    content:xhr.responseText
                 });
             });
     });

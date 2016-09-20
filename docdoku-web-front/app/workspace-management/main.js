@@ -12,13 +12,6 @@ var App = {
 	}
 };
 
-App.log=function(message){
-    'use strict';
-    if(App.debug){
-        window.console.log(message);
-    }
-};
-
 require.config({
 
     baseUrl: 'js',
@@ -102,7 +95,7 @@ require.config({
             locale: (function(){
 	            'use strict';
                 try{
-                    return App.config.locale;
+                    return window.localStorage.locale || 'en';
                 }catch(ex){
                     return 'en';
                 }

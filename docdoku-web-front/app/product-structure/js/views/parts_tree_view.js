@@ -1,6 +1,6 @@
 /*global _,define,App*/
-define(['backbone', 'models/component_module', 'views/component_views'
-], function (Backbone, ComponentModule, ComponentViews) {
+define(['backbone', 'models/component_module', 'views/component_views', 'common-objects/log'
+], function (Backbone, ComponentModule, ComponentViews, Logger) {
 	'use strict';
 
     var PartsTreeView = Backbone.View.extend({
@@ -186,11 +186,11 @@ define(['backbone', 'models/component_module', 'views/component_views'
 
             // We have to unload path before load it because some path to unload can be child of path to load
             if (pathsToUnload.length !== 0) {
-                App.log('%c Path to unload : \n\t'+pathsToUnload, 'PTV');
+                Logger.log('%c Path to unload : \n\t'+pathsToUnload, 'PTV');
                 App.instancesManager.unLoadComponentsByPaths(pathsToUnload);
             }
             if (pathsToLoad.length !== 0) {
-		        App.log('%c Paths to load : \n\t'+pathsToLoad, 'PTV');
+                Logger.log('%c Paths to load : \n\t'+pathsToLoad, 'PTV');
 		        App.instancesManager.loadComponentsByPaths(pathsToLoad);
 	        }
 

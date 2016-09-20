@@ -1,18 +1,6 @@
 /*global _,require,window*/
 
-var App = {
-    debug:false,
-    config:{
-        locale: window.localStorage.getItem('locale') || 'en'
-    }
-};
-
-App.log=function(message){
-    'use strict';
-    if(App.debug){
-        window.console.log(message);
-    }
-};
+var App = {};
 
 require.config({
 
@@ -51,7 +39,7 @@ require.config({
             locale: (function(){
                 'use strict';
                 try{
-                    return App.config.locale;
+                    return window.localStorage.locale || 'en';
                 }catch(ex){
                     return 'en';
                 }
@@ -65,6 +53,7 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
         'use strict';
 
         App.config.i18n = _.extend(commonStrings, indexStrings);
+
         ContextResolver.resolveServerProperties()
             .then(function buildView(){
                 require(['backbone','app','router','common-objects/views/header'],function(Backbone, AppView, Router, HeaderView){

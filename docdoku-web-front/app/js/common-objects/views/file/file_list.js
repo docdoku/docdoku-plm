@@ -186,7 +186,7 @@ define([
 
             var fd = new window.FormData();
             fd.append('upload', file);
-            console.log(fd);
+
             xhr.send(fd);
 
             this.xhrs.push(xhr);

@@ -1,11 +1,12 @@
 /*global _,$,define,App*/
 define([
     'moment',
-    'momentTimeZone'
-], function (moment) {
+    'momentTimeZone',
+    'common-objects/log'
+], function (moment, momentTimeZone,  Logger) {
     'use strict';
 
-    console.log('Using timezone ' + App.config.timeZone + ' and locale ' + App.config.locale);
+    Logger.log('Using timezone ' + App.config.timeZone + ' and locale ' + App.config.locale);
     // calculating the offset so that it's not calculating again by momentjs
     moment.suppressDeprecationWarnings = true;
     moment.locale(App.config.locale);

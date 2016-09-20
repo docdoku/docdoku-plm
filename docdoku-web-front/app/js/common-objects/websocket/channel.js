@@ -1,5 +1,5 @@
 /*global _,define,WebSocket,App*/
-define(['common-objects/websocket/channelStatus'], function (ChannelStatus) {
+define(['common-objects/websocket/channelStatus','common-objects/log'], function (ChannelStatus,Logger) {
 	'use strict';
     function Channel() {
         this.status = ChannelStatus.CLOSED;
@@ -19,7 +19,7 @@ define(['common-objects/websocket/channelStatus'], function (ChannelStatus) {
             this.ws = new WebSocket(this.url);
 
             this.ws.onopen = function (event) {
-                App.log('%c Websocket created','WS');
+                Logger.log('%c Websocket created','WS');
                 self.onopen(event);
             };
 
@@ -40,7 +40,7 @@ define(['common-objects/websocket/channelStatus'], function (ChannelStatus) {
         // send string
         send: function (message) {
 
-            App.log('C->S: %c' + message,'WS');
+            Logger.log('C->S: %c' + message,'WS');
             this.ws.send(message);
 
         },
@@ -64,7 +64,7 @@ define(['common-objects/websocket/channelStatus'], function (ChannelStatus) {
         },
 
         onmessage: function (message) {
-            App.log('S->C: %c' + message.data,'WS');
+            Logger.log('S->C: %c' + message.data,'WS');
 
             var jsonMessage = JSON.parse(message.data);
             if (jsonMessage.type) {
@@ -80,7 +80,7 @@ define(['common-objects/websocket/channelStatus'], function (ChannelStatus) {
         onclose: function (event) {
             this.status = ChannelStatus.CLOSED;
 
-            App.log('%c Websocket closed\n\t'+event,'WS');
+            Logger.log('%c Websocket closed\n\t'+event,'WS');
 
             _.each(this.listeners, function (listener) {
                 listener.handlers.onStatusChanged(ChannelStatus.CLOSED);
@@ -89,7 +89,7 @@ define(['common-objects/websocket/channelStatus'], function (ChannelStatus) {
         },
 
         onerror: function (event) {
-            App.log('%c Websocket error\n\t'+event,'WS');
+            Logger.log('%c Websocket error\n\t'+event,'WS');
         },
 
         addChannelListener: function (listener) {

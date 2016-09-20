@@ -1,86 +1,6 @@
 /*global _,require,window*/
-var workspace = /^#([^\/]+)/.exec(window.location.hash);
-if(!workspace){
-    location.href = '../404?url='+window.location.href;
-    throw new Error('Cannot parse workspace in url');
-}
 
-var App = {
-    debug: false,
-
-    setDebug:function(state){
-        'use strict';
-        App.debug = state;
-        if(state){
-            document.body.classList.add('debug');
-        }else{
-            document.body.classList.remove('debug');
-        }
-    },
-
-	config:{
-		workspaceId: decodeURIComponent(workspace[1]).trim() || null,
-		productId: decodeURIComponent(window.location.hash.split('/')[1]).trim() || null,
-		login: '',
-		groups: [],
-		contextPath: '',
-		locale: window.localStorage.getItem('locale') || 'en',
-        needAuthentication:true
-	},
-
-    WorkerManagedValues: {
-        maxInstances: 500,
-        maxAngle: Math.PI / 2,
-        maxDist: 5E10,
-        minProjectedSize: 0.000001,//100,
-        distanceRating: 0.6,//0.7,
-        angleRating: 0.4,//0.6,//0.5,
-        volRating: 1.0//0.7
-    },
-
-    SceneOptions: {
-        grid: false,
-        zoomSpeed: 1.2,
-        rotateSpeed: 1.0,
-        panSpeed: 0.3,
-        cameraNear: 0.1,
-        cameraFar: 5E4,
-        defaultCameraPosition: {x: -1000, y: 800, z: 1100},
-        defaultTargetPosition: {x: 0, y: 0, z: 0},
-        ambientLightColor:0xffffff,
-        cameraLight1Color:0xbcbcbc,
-        cameraLight2Color:0xffffff,
-        transformControls:true
-    }
-
-};
-
-App.log=function(message,colorType){
-    'use strict';
-    if(App.debug){
-        if(colorType){
-            switch (colorType) {
-                case 'WS' :
-                    window.console.log('%c [WS] ' + message, 'background: #222; color: #bada55','background: none; color:inherit');
-                    break;
-                case 'IM' :
-                    window.console.log('%c [InstancesManager] ' + message, 'background: #206963; color: #bada55','background: none; color:inherit');
-                    break;
-                case 'SM' :
-                    window.console.log('%c [SceneManager] ' + message, 'background: #275217; color: #bada55','background: none; color:inherit');
-                    break;
-                case 'PTV' :
-                    window.console.log('%c [PartsTreeView] ' + message, 'background: #3C4C52; color: #bada55','background: none; color:inherit');
-                    break;
-                default :
-                    window.console.log(message, 'background: #888; color: #bada55','background: none; color:inherit');
-                    break;
-            }
-        }else{
-            window.console.log(message);
-        }
-    }
-};
+var App = {};
 
 require.config({
     baseUrl: 'js',
@@ -193,7 +113,7 @@ require.config({
             locale: (function(){
 	            'use strict';
                 try{
-                    return App.config.locale;
+                    return window.localStorage.locale || 'en';
                 }catch(ex){
                     return 'en';
                 }
@@ -202,10 +122,52 @@ require.config({
     }
 });
 
-require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/product-structure'],
-    function (ContextResolver,  commonStrings, productStructureStrings) {
+require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/product-structure', 'common-objects/views/error'],
+    function (ContextResolver,  commonStrings, productStructureStrings, ErrorView) {
 	    'use strict';
+
         App.config.i18n = _.extend(commonStrings,productStructureStrings);
+        App.config.needAuthentication = true;
+
+        var match = /^#([^\/]+)/.exec(window.location.hash) || ['',''];
+        App.config.workspaceId = decodeURIComponent(match[1] || '').trim();
+
+        if(!App.config.workspaceId){
+            // TODO : add workspace selector
+            new ErrorView({el:'#content'}).render({
+                title:App.config.i18n.ERROR,
+                content:App.config.i18n.ERROR
+            });
+            return;
+        }
+
+        App.config.productId = decodeURIComponent(window.location.hash.split('/')[1]).trim() || null;
+
+        App.WorkerManagedValues = {
+            maxInstances: 500,
+            maxAngle: Math.PI / 2,
+            maxDist: 5E10,
+            minProjectedSize: 0.000001,//100,
+            distanceRating: 0.6,//0.7,
+            angleRating: 0.4,//0.6,//0.5,
+            volRating: 1.0//0.7
+        };
+
+        App.SceneOptions = {
+            grid: false,
+            zoomSpeed: 1.2,
+            rotateSpeed: 1.0,
+            panSpeed: 0.3,
+            cameraNear: 0.1,
+            cameraFar: 5E4,
+            defaultCameraPosition: {x: -1000, y: 800, z: 1100},
+            defaultTargetPosition: {x: 0, y: 0, z: 0},
+            ambientLightColor:0xffffff,
+            cameraLight1Color:0xbcbcbc,
+            cameraLight2Color:0xffffff,
+            transformControls:true
+        };
+
         ContextResolver.resolveServerProperties()
             .then(ContextResolver.resolveAccount)
             .then(ContextResolver.resolveWorkspaces)
@@ -219,6 +181,11 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
                     App.coworkersView = new Modules.CoWorkersAccessModuleView().render();
                     Backbone.history.start();
                     App.appView.initModules();
+                });
+            },function(xhr){
+                new ErrorView({el:'#content'}).render({
+                    title:xhr.statusText,
+                    content:xhr.responseText
                 });
             });
     });

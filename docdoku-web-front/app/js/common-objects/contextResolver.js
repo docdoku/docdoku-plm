@@ -7,10 +7,25 @@ define([
 
     'use strict';
 
-
     var ContextResolver = function () {
     };
 
+    App.config = {
+        login: '',
+        groups: [],
+        contextPath: '',
+        locale: window.localStorage.getItem('locale') || 'en'
+    };
+
+    App.setDebug = function(state){
+        'use strict';
+        App.debug = state;
+        if(state){
+            document.body.classList.add('debug');
+        }else{
+            document.body.classList.remove('debug');
+        }
+    };
 
     $.ajaxSetup({
         beforeSend: function(xhr) {

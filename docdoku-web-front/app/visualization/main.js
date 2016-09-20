@@ -1,70 +1,5 @@
 /*global $,require,window,_*/
-var App = {
-    debug: false,
-
-	config:{
-		workspaceId: decodeURIComponent(/^#(product|assembly)\/([^\/]+)/.exec(window.location.hash)[2]).trim() || null,
-		productId: decodeURIComponent(window.location.hash.split('/')[2]).trim() || null,
-		login: '',
-		groups: [],
-		contextPath: '',
-		locale: window.localStorage.getItem('locale') || 'en',
-        needAuthentication:true
-	},
-
-    WorkerManagedValues: {
-        maxInstances: 500,
-        maxAngle: Math.PI / 4,
-        maxDist: 100000,
-        minProjectedSize: 0.000001,//100,
-        distanceRating: 0.6,//0.7,
-        angleRating: 0.4,//0.6,//0.5,
-        volRating: 1.0//0.7
-    },
-
-    SceneOptions: {
-        grid: false,
-        zoomSpeed: 1.2,
-        rotateSpeed: 1.0,
-        panSpeed: 0.3,
-        cameraNear: 1,
-        cameraFar: 5E4,
-        defaultCameraPosition: {x: -1000, y: 800, z: 1100},
-        defaultTargetPosition: {x: 0, y: 0, z: 0},
-        ambientLightColor:0xffffff,
-        cameraLight1Color:0xbcbcbc,
-        cameraLight2Color:0xffffff,
-        transformControls:false
-    }
-
-};
-
-App.log=function(message,colorType){
-    'use strict';
-    if(App.debug){
-        if(colorType){
-            switch (colorType) {
-                case 'WS' :
-                    window.console.log('%c [WS] ' + message, 'background: #222; color: #bada55','background: none; color:inherit');
-                    break;
-                case 'IM' :
-                    window.console.log('%c [InstancesManager] ' + message, 'background: #206963; color: #bada55','background: none; color:inherit');
-                    break;
-                case 'SM' :
-                    window.console.log('%c [SceneManager] ' + message, 'background: #275217; color: #bada55','background: none; color:inherit');
-                    break;
-                case 'PTV' :
-                    window.console.log('%c [PartsTreeView] ' + message, 'background: #3C4C52; color: #bada55','background: none; color:inherit');
-                    break;
-                default :
-                    window.console.log(message, 'background: #888; color: #bada55','background: none; color:inherit');
-                    break;
-            }
-        }else{
-            window.console.log(message);
-        }
-    }
-};
+var App = {};
 
 require.config({
     baseUrl: '../product-structure/js',
@@ -135,7 +70,7 @@ require.config({
             locale: (function(){
 	            'use strict';
                 try{
-                    return App.config.locale;
+                    return window.localStorage.locale || 'en';
                 }catch(ex){
                     return 'en';
                 }
@@ -144,10 +79,50 @@ require.config({
     }
 });
 
-require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/product-structure'],
-function (ContextResolver,  commonStrings, productStructureStrings) {
+require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/product-structure', 'common-objects/views/error'],
+function (ContextResolver,  commonStrings, productStructureStrings, ErrorView) {
+
     'use strict';
     App.config.i18n = _.extend(commonStrings,productStructureStrings);
+
+    App.config.workspaceId = decodeURIComponent(/^#(product|assembly)\/([^\/]+)/.exec(window.location.hash)[2]).trim() || null;
+    App.config.productId = decodeURIComponent(window.location.hash.split('/')[2]).trim() || null;
+    App.config.needAuthentication = true;
+
+    if(!App.config.workspaceId){
+        // TODO : add workspace selector
+        new ErrorView({el:'#content'}).render({
+            title:App.config.i18n.ERROR,
+            content:App.config.i18n.ERROR
+        });
+        return;
+    }
+
+    App.WorkerManagedValues = {
+        maxInstances: 500,
+            maxAngle: Math.PI / 4,
+            maxDist: 100000,
+            minProjectedSize: 0.000001,//100,
+            distanceRating: 0.6,//0.7,
+            angleRating: 0.4,//0.6,//0.5,
+            volRating: 1.0//0.7
+    };
+
+    App.SceneOptions = {
+        grid: false,
+        zoomSpeed: 1.2,
+        rotateSpeed: 1.0,
+        panSpeed: 0.3,
+        cameraNear: 1,
+        cameraFar: 5E4,
+        defaultCameraPosition: {x: -1000, y: 800, z: 1100},
+        defaultTargetPosition: {x: 0, y: 0, z: 0},
+        ambientLightColor:0xffffff,
+        cameraLight1Color:0xbcbcbc,
+        cameraLight2Color:0xffffff,
+        transformControls:false
+    };
+
     ContextResolver.resolveServerProperties()
         .then(ContextResolver.resolveAccount)
         .then(ContextResolver.resolveWorkspaces)
@@ -161,6 +136,11 @@ function (ContextResolver,  commonStrings, productStructureStrings) {
                 App.sceneManager.init();
                 App.router = Router.getInstance();
                 Backbone.history.start();
+            });
+        },function(xhr){
+            new ErrorView({el:'#content'}).render({
+                title:xhr.statusText,
+                content:xhr.responseText
             });
         });
 });
