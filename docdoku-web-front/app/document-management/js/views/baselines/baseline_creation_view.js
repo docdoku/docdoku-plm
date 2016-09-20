@@ -23,7 +23,7 @@ define([
 		initialize: function () {
 			_.bindAll(this);
 
-            this.choiceView = new DocumentRevisionListView().render();
+            this.choiceView = new DocumentRevisionListView({editMode: true}).render();
             this.listenTo(this.choiceView,'update',this.notifyUpdate.bind(this))
 		},
 
@@ -45,8 +45,6 @@ define([
 
             this.$baselineDocumentsChoiceListArea.html(this.choiceView.$el);
             this.$inputBaselineName.customValidity(App.config.i18n.REQUIRED_FIELD);
-
-
 
             return this;
 		},

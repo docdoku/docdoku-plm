@@ -1,4 +1,14 @@
-<button type="button" class="close remove" data-id="{{model.getId}}">×</button>
-{{model.getDisplayKey}}
-{{#model.isObsolete}}<i class="fa fa-frown-o"></i>{{/model.isObsolete}}
-{{#model.isReleased}}<i class="fa fa-check"></i>{{/model.isReleased}}
+<div class="baselined-document well">
+    {{#editMode}}
+    <a class="fa fa-times delete-document" data-id="{{model.getId}}" title="{{i18n.REMOVE_DOCUMENT_FROM_COLLECTION}}"></a>
+    {{/editMode}}
+    <a target="_blank" class="reference">{{model.getDisplayKey}}</a>
+    {{#model.isObsolete}}<a class="fa fa-frown-o" title="{{i18n.OBSOLETE}}"></a>{{/model.isObsolete}}
+    {{#model.isReleased}}<a class="fa fa-check" title="{{i18n.RELEASED}}"></a>{{/model.isReleased}}
+</div>
+
+{{#editMode}}
+{{#multiple}}
+<div class="warning-multiple">{{i18n.MULTIPLE_VERSIONS_FOR_DOCUMENT}}</div>
+{{/multiple}}
+{{/editMode}}

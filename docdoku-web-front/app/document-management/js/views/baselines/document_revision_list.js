@@ -4,10 +4,9 @@ define([
     'mustache',
     'text!templates/baselines/document_revision_list.html',
     'common-objects/models/document/document_revision',
-    'views/baselines/document_revision_list_item',
-    'common-objects/views/alert'
+    'views/baselines/document_revision_list_item'
 
-], function (Backbone, Mustache, template, DocumentRevision, DocumentRevisionListItemView, AlertView) {
+], function (Backbone, Mustache, template, DocumentRevision, DocumentRevisionListItemView) {
     'use strict';
     var DocumentsChoiceListView = Backbone.View.extend({
 
@@ -23,6 +22,7 @@ define([
             _.bindAll(this);
 
             this.title = this.options.title;
+            this.editMode = this.options.editMode;
             this.checkAll = true;
 
             this.documentRevisions = [];
@@ -32,7 +32,7 @@ define([
         render: function () {
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n,
-                title:this.title
+                title: this.title
             }));
 
             this.bindDomElements();
@@ -41,7 +41,6 @@ define([
 
         bindDomElements: function () {
             this.$list = this.$('.documents');
-            this.notifications = this.$('div.notifications');
         },
 
         renderList:function(documentRevisions){
@@ -51,13 +50,25 @@ define([
         },
 
         addDocumentItemView: function (documentRevision) {
-            var view = new DocumentRevisionListItemView({model:documentRevision}).render();
+
+            var multipleVersions = false;
+            _.each(this.documentRevisions, function (otherDocumentRevision) {
+                if (documentRevision.getId() !== otherDocumentRevision.getId() && documentRevision.getReference() === otherDocumentRevision.getReference()) {
+                    multipleVersions = true;
+                    return;
+                }
+            }, this);
+
+            var view = new DocumentRevisionListItemView({
+                model:documentRevision,
+                editMode: this.editMode,
+                multiple: multipleVersions
+            }).render();
+
             this.documentsViews.push(view);
             this.$list.append(view.$el);
 
-            // TODO: use this
-            this.listenTo(view,'notification', this.printNotifications);
-            this.listenTo(view,'remove', this.removeItemView.bind(this));
+            this.listenTo(view, 'remove', this.removeItemView.bind(this));
         },
 
         removeItemView:function(view){
@@ -81,17 +92,6 @@ define([
 
         formSubmit: function () {
             return false;
-        },
-
-        printNotifications: function(type,message) {
-            this.notifications.append(new AlertView({
-                type: type,
-                message: message
-            }).render().$el);
-        },
-
-        clearNotifications: function() {
-            this.notifications.text('');
         }
     });
 

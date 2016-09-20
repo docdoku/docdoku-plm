@@ -44,9 +44,32 @@ ul.baselined-documents {
 
 div#baseline_creation_modal {
     div#tab-docs-choice {
-        button.close {
-            float: none;
-            margin-bottom: 4px;
+        div.baselined-document {
+            padding: 6px 4px 2px 4px;
+            margin: 12px 6px 0 0;
+            display: inline-block;
+            a:hover {
+                text-decoration: none;
+            }
+            a.delete-document {
+                font-size: 15px;
+                color: #333;
+                opacity: 0.2;
+
+                &:hover {
+                    opacity: 0.8;
+                    color: #333;
+                }
+            }
+            a.fa-check {
+                color: #51a351;
+            }
+            a.fa-frown-o {
+                color: #f89406;
+            }
+        }
+        div.warning-multiple {
+            color: #f89406;
         }
     }
 }

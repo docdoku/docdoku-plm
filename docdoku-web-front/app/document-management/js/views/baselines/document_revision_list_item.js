@@ -9,12 +9,8 @@ define([
     'use strict';
     var DocumentRevisionListItemView = Backbone.View.extend({
 
-        tagName: 'div',
-
-        className: 'control-group',
-
         events: {
-            'click .remove': 'remove'
+            'click .delete-document': 'remove'
         },
 
         template: Mustache.parse(template),
@@ -26,7 +22,9 @@ define([
         render: function () {
             this.$el.html(Mustache.render(template, {
                 model: this.model,
-                i18n: App.config.i18n
+                i18n: App.config.i18n,
+                editMode: this.options.editMode,
+                multiple: this.options.multiple
             }));
 
             return this;
