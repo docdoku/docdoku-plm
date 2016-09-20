@@ -17,6 +17,12 @@ define([
             _.bindAll(this);
         },
 
+        render404:function(){
+            return this.render({
+                title:App.config.i18n.SORRY,
+                content:App.config.i18n.NOTHING_HERE
+            });
+        },
         render: function (opts) {
             this.$el.html(Mustache.render(template, {
                 title: opts.title,

@@ -101,11 +101,7 @@ require(['common-objects/contextResolver', 'i18n!localization/nls/common', 'i18n
         App.config.workspaceId = decodeURIComponent(match[1] || '').trim();
 
         if(!App.config.workspaceId){
-            // TODO : add workspace selector
-            new ErrorView({el:'#content'}).render({
-                title:App.config.i18n.ERROR,
-                content:App.config.i18n.ERROR
-            });
+            new ErrorView({el:'#content'}).render404();
             return;
         }
 

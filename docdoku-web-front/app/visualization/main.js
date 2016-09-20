@@ -90,11 +90,7 @@ function (ContextResolver,  commonStrings, productStructureStrings, ErrorView) {
     App.config.needAuthentication = true;
 
     if(!App.config.workspaceId){
-        // TODO : add workspace selector
-        new ErrorView({el:'#content'}).render({
-            title:App.config.i18n.ERROR,
-            content:App.config.i18n.ERROR
-        });
+        new ErrorView({el:'#content'}).render404();
         return;
     }
 
