@@ -50,14 +50,16 @@ define([
         },
 
         addDocumentItemView: function (documentRevision) {
-
             var multipleVersions = false;
-            _.each(this.documentRevisions, function (otherDocumentRevision) {
-                if (documentRevision.getId() !== otherDocumentRevision.getId() && documentRevision.getReference() === otherDocumentRevision.getReference()) {
-                    multipleVersions = true;
-                    return;
-                }
-            }, this);
+
+            if (this.editMode) {
+                _.each(this.documentRevisions, function (otherDocumentRevision) {
+                    if (documentRevision.getId() !== otherDocumentRevision.getId() && documentRevision.getReference() === otherDocumentRevision.getReference()) {
+                        multipleVersions = true;
+                        return;
+                    }
+                }, this);
+            }
 
             var view = new DocumentRevisionListItemView({
                 model:documentRevision,
@@ -68,7 +70,9 @@ define([
             this.documentsViews.push(view);
             this.$list.append(view.$el);
 
-            this.listenTo(view, 'remove', this.removeItemView.bind(this));
+            if (this.editMode) {
+                this.listenTo(view, 'remove', this.removeItemView.bind(this));
+            }
         },
 
         removeItemView:function(view){
