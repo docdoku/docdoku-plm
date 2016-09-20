@@ -39,7 +39,7 @@ public class TestConfig {
         LOGIN = System.getProperty("login") != null ? System.getProperty("login") : "test";
         PASSWORD = System.getProperty("password") != null ? System.getProperty("password") : "test";
         WORKSPACE = System.getProperty("workspace") != null ? System.getProperty("workspace") : "test";
-        DEBUG = System.getProperty("debug") != null ? Boolean.parseBoolean(System.getProperty("debug")) : false;
+        DEBUG = System.getProperty("debug") != null ? Boolean.parseBoolean(System.getProperty("debug")) : true;
         GUEST_CLIENT = new DocdokuPLMClient(URL,DEBUG).getClient();
         BASIC_CLIENT = new DocdokuPLMBasicClient(URL,LOGIN, PASSWORD, DEBUG).getClient();
         JWT_CLIENT  = new DocdokuPLMBasicClient(URL, LOGIN, PASSWORD, DEBUG).getClient();
