@@ -429,8 +429,14 @@
                 return new Date(date).getTime();
             };
 
+
             var latestEventSort = function (a, b) {
-                return getLatestDateInIteration(lastIteration(b)) - getLatestDateInIteration(lastIteration(a));
+                return getLatestDateInIteration(b.lastIteration) - getLatestDateInIteration(a.lastIteration);
+            };
+
+            var hasLastIteration = function (obj) {
+                obj.lastIteration = lastIteration(obj);
+                return obj.lastIteration;
             };
 
             this.getLatestEventsInWorkspace = function (workspaceId, max) {
@@ -442,7 +448,7 @@
                 }).then(DBService.getParts).then(function (parts) {
                     items = items.concat(parts);
                 }).then(function () {
-                    deferred.resolve(items.sort(latestEventSort).slice(0, max));
+                    deferred.resolve(items.filter(hasLastIteration).sort(latestEventSort).slice(0, max));
                 });
                 return deferred.promise;
             };

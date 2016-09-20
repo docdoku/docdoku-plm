@@ -112,12 +112,9 @@
                     </md-card-content>
                 </md-card>
 
-
-
             </div>
 
             <div layout="column" flex-gt-xs>
-
                 <md-card>
                     <md-card-header>
                         <md-card-avatar>
@@ -125,48 +122,11 @@
                         </md-card-avatar>
                         <md-card-header-text>
                             <span class="md-title">{{'LATEST_EVENTS' | translate}}</span>
-                            <span class="md-subhead">{{configuration.host}}</span>
-                        </md-card-header-text>
-                    </md-card-header>
-                    <md-card-content>
-                        <div ng-repeat="workspace in workspaces" workspace-latest-events="workspace"></div>
-                    </md-card-content>
-                </md-card>
-                <md-card>
-                    <md-card-header>
-                        <md-card-avatar>
-                            <md-icon class=material-icons">cloud</md-icon>
-                        </md-card-avatar>
-                        <md-card-header-text>
-                            <span class="md-title">{{'MENU_WORKSPACES' | translate}}</span>
                             <span class="md-subhead">{{configuration.login}}@{{configuration.host}}</span>
                         </md-card-header-text>
                     </md-card-header>
                     <md-card-content>
-
-                        <div ng-repeat="workspace in workspaces"
-                             layout="row" layout-margin>
-
-                            <md-button class="md-icon-button md-primary" aria-label="{{'SYNC'|translate}}"
-                                       ng-click="syncWorkspace(workspace)">
-                                <md-tooltip>
-                                    {{'SYNC'|translate}}
-                                </md-tooltip>
-                                <i class="material-icons">cached</i>
-                            </md-button>
-
-                            <div layout="column">
-                                <a aria-label="" href="#/workspace/{{workspace}}" class="md-primary">
-                                    <md-tooltip>
-                                        {{'BROWSE_WORKSPACE'|translate}}
-                                    </md-tooltip>
-                                    {{workspace}}
-                                </a>
-                                <small ng-if="workspaceSyncs[workspace]">{{'LAST_SYNC_DATE' | translate}} <a>{{workspaceSyncs[workspace]
-                                    | localDateTimeAgo}}</a></small>
-                                <small ng-if="!workspaceSyncs[workspace]">{{'NOT_YET_SYNC' | translate}}</small>
-                            </div>
-                        </div>
+                        <div ng-repeat="workspace in workspaces" workspace-latest-events="workspace" sync-workspace="syncWorkspace(workspace)"></div>
                     </md-card-content>
                 </md-card>
             </div>

@@ -14,7 +14,7 @@
 
         .filter('last', function () {
             return function (arr) {
-                return arr.length ? arr[arr.length - 1] : null;
+                return arr && arr.length ? arr[arr.length - 1] : null;
             };
         });
 

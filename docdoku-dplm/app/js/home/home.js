@@ -13,8 +13,6 @@
 
         .controller('HomeCtrl', function ($scope, FolderService, WorkspaceService, RepositoryService) {
 
-            $scope.workspaceSyncs = WorkspaceService.workspaceSyncs;
-
             var syncWorkspaces = function () {
                 return WorkspaceService.fetchAllWorkspaces(WorkspaceService.workspaces);
             };
@@ -159,17 +157,19 @@
                 restrict: 'A',
                 templateUrl: 'js/home/workspace-latest-events.html',
                 scope: {
-                    workspaceId: '=workspaceLatestEvents'
+                    workspaceId: '=workspaceLatestEvents',
+                    syncWorkspace: '&',
                 },
                 controller: function ($scope, $filter, WorkspaceService, ConfigurationService) {
 
                     var lastIteration = $filter('lastIteration');
+                    $scope.workspaceSyncs = WorkspaceService.workspaceSyncs;
                     $scope.configuration = ConfigurationService.configuration;
 
                     var refresh = function () {
                         $scope.loading = true;
 
-                        WorkspaceService.getLatestEventsInWorkspace($scope.workspaceId, 10)
+                        WorkspaceService.getLatestEventsInWorkspace($scope.workspaceId, 5)
                             .then(function (events) {
                                 $scope.events = events.map(function (item) {
                                     item.lastIteration = lastIteration(item);
