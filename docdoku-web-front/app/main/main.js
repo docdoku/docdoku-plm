@@ -66,11 +66,11 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
 
         App.SceneOptions =  {
             zoomSpeed: 3,
-                rotateSpeed: 3.0,
-                panSpeed: 0.3,
-                cameraNear: 1,
-                cameraFar: 5E4,
-                defaultCameraPosition: {x: 0, y:0, z:0},
+            rotateSpeed: 3.0,
+            panSpeed: 0.3,
+            cameraNear: 1,
+            cameraFar: 5E4,
+            defaultCameraPosition: {x: 0, y:0, z:0},
             startCameraPosition: {x: 100, y: 2500, z: 2500},
             endCameraPosition: {x: 0, y: 250, z: 250},
             defaultTargetPosition: {x: 0, y: 0, z: 0}

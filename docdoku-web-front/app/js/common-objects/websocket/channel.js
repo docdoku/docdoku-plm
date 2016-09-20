@@ -1,4 +1,4 @@
-/*global _,define,WebSocket,App*/
+/*global _,define,WebSocket*/
 define(['common-objects/websocket/channelStatus','common-objects/log'], function (ChannelStatus,Logger) {
 	'use strict';
     function Channel() {

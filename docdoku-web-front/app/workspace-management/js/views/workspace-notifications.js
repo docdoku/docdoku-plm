@@ -122,13 +122,13 @@ define([
                     }
                 }else {
                     this.$userGroupSubscriptionViews.addClass('hide');
-                    this.$userSubscriptionViews.addClass('hide')
+                    this.$userSubscriptionViews.addClass('hide');
                 }
 
             } else {
                 this.$addTagFormButton.toggle(false);
                 this.$userGroupSubscriptionViews.addClass('hide');
-                this.$userSubscriptionViews.addClass('hide')
+                this.$userSubscriptionViews.addClass('hide');
             }
         },
 
@@ -141,7 +141,7 @@ define([
             }
         },
 
-        toggleCheckbox:function(e){
+        toggleCheckbox:function(){
             this.updateViews();
         },
 

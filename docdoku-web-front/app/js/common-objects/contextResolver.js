@@ -18,7 +18,6 @@ define([
     };
 
     App.setDebug = function(state){
-        'use strict';
         App.debug = state;
         if(state){
             document.body.classList.add('debug');

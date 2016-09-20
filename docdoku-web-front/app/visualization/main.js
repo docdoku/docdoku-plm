@@ -100,12 +100,12 @@ function (ContextResolver,  commonStrings, productStructureStrings, ErrorView) {
 
     App.WorkerManagedValues = {
         maxInstances: 500,
-            maxAngle: Math.PI / 4,
-            maxDist: 100000,
-            minProjectedSize: 0.000001,//100,
-            distanceRating: 0.6,//0.7,
-            angleRating: 0.4,//0.6,//0.5,
-            volRating: 1.0//0.7
+        maxAngle: Math.PI / 4,
+        maxDist: 100000,
+        minProjectedSize: 0.000001,//100,
+        distanceRating: 0.6,//0.7,
+        angleRating: 0.4,//0.6,//0.5,
+        volRating: 1.0//0.7
     };
 
     App.SceneOptions = {
