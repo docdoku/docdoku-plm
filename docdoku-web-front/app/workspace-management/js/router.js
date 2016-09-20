@@ -18,6 +18,25 @@ function (Backbone, singletonDecorator) {
             'workspace/:workspaceId/*path':   'workspaceUsers'
         },
 
+        checkWorkspaceAdmin:function(workspaceId){
+
+            var isAdmin = App.config.workspaces.administratedWorkspaces.filter(function(workspace){
+                return workspace.id === workspaceId;
+            }).length > 0;
+
+            if(!isAdmin) {
+                window.location.hash = '#';
+            }
+            return isAdmin;
+        },
+
+        checkRootAdmin:function(){
+            if(!App.config.admin){
+                window.location.hash = '#';
+            }
+            return App.config.admin;
+        },
+
         refresh:function(){
             App.appView.render();
             App.headerView.render();
@@ -36,32 +55,42 @@ function (Backbone, singletonDecorator) {
         },
 
         workspaceUsers:function(workspaceId){
-            App.config.workspaceId = workspaceId;
-            this.refresh();
-            App.appView.workspaceUsers();
+            if(this.checkWorkspaceAdmin(workspaceId)){
+                App.config.workspaceId = workspaceId;
+                this.refresh();
+                App.appView.workspaceUsers();
+            }
         },
 
         workspaceNotifications:function(workspaceId){
-            App.config.workspaceId = workspaceId;
-            this.refresh();
-            App.appView.workspaceNotifications();
+            if(this.checkWorkspaceAdmin(workspaceId)){
+                App.config.workspaceId = workspaceId;
+                this.refresh();
+                App.appView.workspaceNotifications();
+            }
         },
 
         workspaceEdit:function(workspaceId){
-            App.config.workspaceId = workspaceId;
-            this.refresh();
-            App.appView.workspaceEdit();
+            if(this.checkWorkspaceAdmin(workspaceId)) {
+                App.config.workspaceId = workspaceId;
+                this.refresh();
+                App.appView.workspaceEdit();
+            }
         },
 
         workspaceDashboard:function(workspaceId){
-            App.config.workspaceId = workspaceId;
-            this.refresh();
-            App.appView.workspaceDashboard();
+            if(this.checkWorkspaceAdmin(workspaceId)){
+                App.config.workspaceId = workspaceId;
+                this.refresh();
+                App.appView.workspaceDashboard();
+            }
         },
 
         adminDashboard:function(){
-            this.refresh();
-            App.appView.adminDashboard();
+            if(this.checkRootAdmin()){
+                this.refresh();
+                App.appView.adminDashboard();
+            }
         }
 
     });
