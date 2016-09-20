@@ -5,12 +5,13 @@
 
         <h3>{{i18n.WORKFLOW_COPY}} : {{workflow.id}}</h3>
     </div>
+    <div class="notifications"></div>
     <div class="modal-body">
         <label for="workflow-copy-name">{{i18n.RENAME_WORKFLOW_COPY}}</label>
         <input id="workflow-copy-name" type="text" value="{{workflow.id}}" required/>
     </div>
     <div class="modal-footer">
         <button id="cancel-copy-workflow-btn" class="btn btn-default">{{i18n.CANCEL}}</button>
-        <button id="save-copy-workflow-btn" class="btn btn-primary">{{i18n.COPY}}</button>
+        <button id="save-copy-workflow-btn" class="btn btn-primary" disabled>{{i18n.COPY}}</button>
     </div>
 </div>
