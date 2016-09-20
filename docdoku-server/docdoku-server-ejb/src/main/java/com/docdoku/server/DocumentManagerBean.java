@@ -1615,7 +1615,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         new SubscriptionDAO(em).removeIterationChangeSubscription(key);
     }
 
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public String[] getTags(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
