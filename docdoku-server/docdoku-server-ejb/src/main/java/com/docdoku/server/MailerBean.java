@@ -189,10 +189,36 @@ public class MailerBean implements IMailerLocal {
 
     @Asynchronous
     @Override
+    public void sendTaggedNotification(Collection<User> pSubscribers, PartRevision pPartR, Tag pTag) {
+        try {
+            for (User pSubscriber : pSubscribers) {
+                sendTaggedNotification(pSubscriber, pPartR, pTag);
+            }
+        } catch (MessagingException pMEx) {
+            String message = "Message format error. \n\tNotifications can't be sent. \n\t" + pMEx.getMessage();
+            LOGGER.log(Level.SEVERE, message, pMEx);
+        }
+    }
+
+    @Asynchronous
+    @Override
     public void sendUntaggedNotification(Collection<User> pSubscribers, DocumentRevision pDocR, Tag pTag) {
         try {
             for (User pSubscriber : pSubscribers) {
                 sendUntaggedNotification(pSubscriber, pDocR, pTag);
+            }
+        } catch (MessagingException pMEx) {
+            String message = "Message format error. \n\tNotifications can't be sent. \n\t" + pMEx.getMessage();
+            LOGGER.log(Level.SEVERE, message, pMEx);
+        }
+    }
+
+    @Asynchronous
+    @Override
+    public void sendUntaggedNotification(Collection<User> pSubscribers, PartRevision pPartR, Tag pTag) {
+        try {
+            for (User pSubscriber : pSubscribers) {
+                sendUntaggedNotification(pSubscriber, pPartR, pTag);
             }
         } catch (MessagingException pMEx) {
             String message = "Message format error. \n\tNotifications can't be sent. \n\t" + pMEx.getMessage();
@@ -305,6 +331,20 @@ public class MailerBean implements IMailerLocal {
         }
     }
 
+    private void sendTaggedNotification(User pSubscriber,
+                                        PartRevision pPartRevision, Tag pTag) throws MessagingException {
+        try {
+            Locale locale = new Locale(pSubscriber.getLanguage());
+            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()),
+                    getTagNotificationSubject(locale),
+                    getTaggedNotificationMessage(pTag, pPartRevision, locale));
+            LOGGER.info("Sending tag notification emails \n\tfor the part " + pPartRevision.getLastIteration());
+        } catch (UnsupportedEncodingException pUEEx) {
+            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
+            LOGGER.log(Level.WARNING, message, pUEEx);
+        }
+    }
+
     private void sendUntaggedNotification(User pSubscriber,
                                         DocumentRevision pDocumentRevision, Tag pTag) throws MessagingException {
         try {
@@ -313,6 +353,20 @@ public class MailerBean implements IMailerLocal {
                     getTagNotificationSubject(locale),
                     getUntaggedNotificationMessage(pTag, pDocumentRevision, locale));
             LOGGER.info("Sending tag notification emails \n\tfor the document " + pDocumentRevision.getLastIteration());
+        } catch (UnsupportedEncodingException pUEEx) {
+            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
+            LOGGER.log(Level.WARNING, message, pUEEx);
+        }
+    }
+
+    private void sendUntaggedNotification(User pSubscriber,
+                                          PartRevision pPartRevision, Tag pTag) throws MessagingException {
+        try {
+            Locale locale = new Locale(pSubscriber.getLanguage());
+            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()),
+                    getTagNotificationSubject(locale),
+                    getUntaggedNotificationMessage(pTag, pPartRevision, locale));
+            LOGGER.info("Sending tag notification emails \n\tfor the part " + pPartRevision.getLastIteration());
         } catch (UnsupportedEncodingException pUEEx) {
             String message = "Mail address format error. \n\t" + pUEEx.getMessage();
             LOGGER.log(Level.WARNING, message, pUEEx);
@@ -467,11 +521,31 @@ public class MailerBean implements IMailerLocal {
         return MessageFormat.format(bundle.getString("TagNotificationTagged_text"), args);
     }
 
+    private String getTaggedNotificationMessage(Tag pTag, PartRevision pPartRevision, Locale pLocale) {
+        Object[] args = {
+                pTag,
+                pPartRevision,
+                getPartRevisionPermalinkURL(pPartRevision)
+        };
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return MessageFormat.format(bundle.getString("TagNotificationTagged_text"), args);
+    }
+
     private String getUntaggedNotificationMessage(Tag pTag, DocumentRevision pDocumentRevision, Locale pLocale) {
         Object[] args = {
                 pTag,
                 pDocumentRevision,
                 getDocumentRevisionPermalinkURL(pDocumentRevision)
+        };
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return MessageFormat.format(bundle.getString("TagNotificationUntagged_text"), args);
+    }
+
+    private String getUntaggedNotificationMessage(Tag pTag, PartRevision pPartRevision, Locale pLocale) {
+        Object[] args = {
+                pTag,
+                pPartRevision,
+                getPartRevisionPermalinkURL(pPartRevision)
         };
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return MessageFormat.format(bundle.getString("TagNotificationUntagged_text"), args);

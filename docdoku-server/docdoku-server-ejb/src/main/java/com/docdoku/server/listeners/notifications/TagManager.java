@@ -22,8 +22,10 @@ package com.docdoku.server.listeners.notifications;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.Tag;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.INotificationManagerLocal;
 import com.docdoku.server.events.*;
@@ -64,14 +66,24 @@ public class TagManager {
 
     private void onTagItem(@Observes @Tagged TagEvent event){
         Tag t = event.getObservedTag();
-        Collection<User> subscribers = notificationService.getSubscribersForTag(t.getWorkspaceId(),t.getLabel());
-        mailer.sendTaggedNotification(subscribers, event.getTaggableDocument(), event.getObservedTag());
+        Collection<User> subscribers = notificationService.getSubscribersForTag(t.getWorkspaceId(), t.getLabel());
+        DocumentRevision doc =  event.getTaggableDocument();
+        PartRevision part = event.getTaggablePart();
+        if(doc !=null)
+            mailer.sendTaggedNotification(subscribers, doc, event.getObservedTag());
+        else if(part !=null)
+            mailer.sendTaggedNotification(subscribers, part, event.getObservedTag());
     }
 
     private void onUntagItem(@Observes @Untagged TagEvent event){
         Tag t = event.getObservedTag();
         Collection<User> subscribers = notificationService.getSubscribersForTag(t.getWorkspaceId(),t.getLabel());
-        mailer.sendUntaggedNotification(subscribers, event.getTaggableDocument(), event.getObservedTag());
+        DocumentRevision doc =  event.getTaggableDocument();
+        PartRevision part = event.getTaggablePart();
+        if(doc !=null)
+            mailer.sendUntaggedNotification(subscribers, doc, event.getObservedTag());
+        else if(part != null)
+            mailer.sendUntaggedNotification(subscribers, part, event.getObservedTag());
     }
 
 

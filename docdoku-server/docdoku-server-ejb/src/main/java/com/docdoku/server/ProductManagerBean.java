@@ -48,10 +48,7 @@ import com.docdoku.server.configuration.filter.WIPPSFilter;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
-import com.docdoku.server.events.CheckedIn;
-import com.docdoku.server.events.PartIterationEvent;
-import com.docdoku.server.events.PartRevisionEvent;
-import com.docdoku.server.events.Removed;
+import com.docdoku.server.events.*;
 import com.docdoku.server.factory.ACLFactory;
 import com.docdoku.server.validation.AttributesConsistencyUtils;
 
@@ -100,6 +97,9 @@ public class ProductManagerBean implements IProductManagerLocal {
 
     @Inject
     private IPSFilterManagerLocal psFilterManager;
+
+    @Inject
+    private Event<TagEvent> tagEvent;
 
     @Inject
     private Event<PartIterationEvent> partIterationEvent;
@@ -1325,7 +1325,19 @@ public class ProductManagerBean implements IProductManagerLocal {
                 }
             }
 
-            partRevision.setTags(tags);
+            Set<Tag> removedTags = new HashSet<>(partRevision.getTags());
+            removedTags.removeAll(tags);
+
+            Set<Tag> addedTags = partRevision.setTags(tags);
+
+            for(Tag tag : removedTags) {
+                tagEvent.select(new AnnotationLiteral<Untagged>() {
+                }).fire(new TagEvent(tag, partRevision));
+            }
+            for(Tag tag : addedTags) {
+                tagEvent.select(new AnnotationLiteral<Tagged>() {
+                }).fire(new TagEvent(tag, partRevision));
+            }
 
             if (isCheckoutByAnotherUser(user, partRevision)) {
                 em.detach(partRevision);
@@ -1339,7 +1351,6 @@ public class ProductManagerBean implements IProductManagerLocal {
             throw new IllegalArgumentException("pTags argument must not be null");
         }
 
-
         return partRevision;
 
     }
@@ -1352,6 +1363,9 @@ public class ProductManagerBean implements IProductManagerLocal {
         PartRevision partRevision = getPartRevision(partRevisionKey);
         Tag tagToRemove = new Tag(user.getWorkspace(), tagName);
         partRevision.getTags().remove(tagToRemove);
+
+        tagEvent.select(new AnnotationLiteral<Untagged>() {
+        }).fire(new TagEvent(tagToRemove, partRevision));
 
         if (isCheckoutByAnotherUser(user, partRevision)) {
             em.detach(partRevision);

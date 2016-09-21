@@ -302,13 +302,22 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
         return tags;
     }
 
-    public void setTags(Set<Tag> pTags) {
+    /**
+     * Tags the PartRevision with the set of tags.
+     * Some of them may already be attached on the part.
+     *
+     * @param pTags the tag set to attach on the PartRevision
+     * @return the tags that have actually been added
+     */
+    public Set<Tag> setTags(Set<Tag> pTags) {
        if (pTags != null){
-           tags.retainAll(pTags);
-           pTags.removeAll(tags);
-           tags.addAll(pTags);
-       }
-
+           Set<Tag> addedTags = new HashSet<>(pTags);
+           tags.retainAll(addedTags);
+           addedTags.removeAll(tags);
+           tags.addAll(addedTags);
+           return addedTags;
+       }else
+           return Collections.emptySet();
     }
 
     public boolean addTag(Tag pTag) {

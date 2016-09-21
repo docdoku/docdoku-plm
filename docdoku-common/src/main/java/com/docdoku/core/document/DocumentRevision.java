@@ -471,10 +471,14 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
      * @return the tags that have actually been added
      */
     public Set<Tag> setTags(Set<Tag> pTags) {
-        tags.retainAll(pTags);
-        pTags.removeAll(tags);
-        tags.addAll(pTags);
-        return pTags;
+        if (pTags != null) {
+            Set<Tag> addedTags = new HashSet<>(pTags);
+            tags.retainAll(addedTags);
+            addedTags.removeAll(tags);
+            tags.addAll(addedTags);
+            return addedTags;
+        }else
+            return Collections.emptySet();
     }
 
     public boolean addTag(Tag pTag){

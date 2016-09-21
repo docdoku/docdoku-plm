@@ -57,6 +57,7 @@ public interface IMailerLocal {
     void sendWorkspaceDeletionErrorNotification(Account admin, String workspaceId);
 
     void sendTaggedNotification(Collection<User> pSubscribers, DocumentRevision pDocR, Tag pTag);
-
     void sendUntaggedNotification(Collection<User> pSubscribers, DocumentRevision pDocR, Tag pTag);
+    void sendTaggedNotification(Collection<User> pSubscribers, PartRevision pPartR, Tag pTag);
+    void sendUntaggedNotification(Collection<User> pSubscribers, PartRevision pPartR, Tag pTag);
 }

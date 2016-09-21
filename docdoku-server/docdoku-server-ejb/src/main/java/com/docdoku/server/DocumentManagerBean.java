@@ -956,44 +956,49 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
 
         Set<Tag> tags = new HashSet<>();
-        for (String label : pTags) {
-            tags.add(new Tag(user.getWorkspace(), label));
-        }
+        if (pTags != null) {
+            for (String label : pTags) {
+                tags.add(new Tag(user.getWorkspace(), label));
+            }
 
-        TagDAO tagDAO = new TagDAO(userLocale, em);
-        List<Tag> existingTags = Arrays.asList(tagDAO.findAllTags(user.getWorkspaceId()));
+            TagDAO tagDAO = new TagDAO(userLocale, em);
+            List<Tag> existingTags = Arrays.asList(tagDAO.findAllTags(user.getWorkspaceId()));
 
-        Set<Tag> tagsToCreate = new HashSet<>(tags);
-        tagsToCreate.removeAll(existingTags);
+            Set<Tag> tagsToCreate = new HashSet<>(tags);
+            tagsToCreate.removeAll(existingTags);
 
-        for (Tag t : tagsToCreate) {
-            try {
-                tagDAO.createTag(t);
-            } catch (CreationException | TagAlreadyExistsException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+            for (Tag t : tagsToCreate) {
+                try {
+                    tagDAO.createTag(t);
+                } catch (CreationException | TagAlreadyExistsException ex) {
+                    LOGGER.log(Level.SEVERE, null, ex);
+                }
+            }
+
+            Set<Tag> removedTags = new HashSet<>(docR.getTags());
+            removedTags.removeAll(tags);
+            Set<Tag> addedTags = docR.setTags(tags);
+
+            for (Tag tag : removedTags) {
+                tagEvent.select(new AnnotationLiteral<Untagged>() {
+                }).fire(new TagEvent(tag, docR));
+            }
+            for (Tag tag : addedTags) {
+                tagEvent.select(new AnnotationLiteral<Tagged>() {
+                }).fire(new TagEvent(tag, docR));
+            }
+            if (isCheckoutByAnotherUser(user, docR)) {
+                em.flush();
+                em.detach(docR);
+                docR.removeLastIteration();
+            }
+
+            for (DocumentIteration documentIteration : docR.getDocumentIterations()) {
+                esIndexer.index(documentIteration);
             }
         }
-
-        Set<Tag> removedTags = new HashSet<>(docR.getTags());
-        removedTags.removeAll(tags);
-        Set<Tag> addedTags = docR.setTags(tags);
-
-        for(Tag tag : removedTags) {
-            tagEvent.select(new AnnotationLiteral<Untagged>() {
-            }).fire(new TagEvent(tag, docR));
-        }
-        for(Tag tag : addedTags) {
-            tagEvent.select(new AnnotationLiteral<Tagged>() {
-            }).fire(new TagEvent(tag, docR));
-        }
-        if (isCheckoutByAnotherUser(user, docR)) {
-            em.flush();
-            em.detach(docR);
-            docR.removeLastIteration();
-        }
-
-        for (DocumentIteration documentIteration : docR.getDocumentIterations()) {
-            esIndexer.index(documentIteration);
+        else {
+            throw new IllegalArgumentException("pTags argument must not be null");
         }
         return docR;
     }

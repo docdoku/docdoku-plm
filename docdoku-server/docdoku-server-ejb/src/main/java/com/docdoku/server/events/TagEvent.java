@@ -21,6 +21,7 @@ package com.docdoku.server.events;
 
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.meta.Tag;
+import com.docdoku.core.product.PartRevision;
 
 /**
  * @author Florent Garin
@@ -30,6 +31,7 @@ public class TagEvent {
     private Tag observedTag;
 
     private DocumentRevision taggableDocument;
+    private PartRevision taggablePart;
 
 
 
@@ -38,8 +40,22 @@ public class TagEvent {
         this.taggableDocument = taggableDocument;
     }
 
+    public TagEvent(Tag observedTag, PartRevision taggablePart) {
+        this.observedTag = observedTag;
+        this.taggablePart = taggablePart;
+    }
+
+
     public TagEvent(Tag observedTag) {
         this.observedTag = observedTag;
+    }
+
+    public PartRevision getTaggablePart() {
+        return taggablePart;
+    }
+
+    public void setTaggablePart(PartRevision taggablePart) {
+        this.taggablePart = taggablePart;
     }
 
     public DocumentRevision getTaggableDocument() {
