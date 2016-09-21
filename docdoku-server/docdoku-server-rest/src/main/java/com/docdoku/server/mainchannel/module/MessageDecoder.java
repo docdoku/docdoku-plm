@@ -41,7 +41,7 @@ public class MessageDecoder implements Decoder.Text<AbstractMessage>{
         String remoteUser = jsObj.getString("remoteUser");
         String type = jsObj.getString("type");
         JsonValue jsonValue = jsObj.get("context");
-        String context = JsonValue.NULL.equals(jsonValue) ? null : jsonValue.toString();
+        String context = (jsonValue == null || JsonValue.NULL.equals(jsonValue)) ? null : jsonValue.toString();
         AbstractMessage message=null;
         switch(type){
 
