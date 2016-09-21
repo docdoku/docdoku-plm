@@ -33,6 +33,10 @@ import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.PartUsageLinkDAO;
 import com.docdoku.server.dao.PathToPathLinkDAO;
 import com.docdoku.server.esindexer.ESIndexer;
+import com.docdoku.server.events.PartIterationEvent;
+import com.docdoku.server.events.PartRevisionEvent;
+import com.docdoku.server.events.TagEvent;
+import com.docdoku.server.events.Untagged;
 import com.docdoku.server.products.ProductBaselineManagerBean;
 import com.docdoku.server.util.CyclicAssemblyRule;
 import com.docdoku.server.util.ProductUtil;
@@ -42,13 +46,15 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.*;
+import static org.mockito.Matchers.*;
 
 import javax.ejb.SessionContext;
+import javax.enterprise.event.Event;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.*;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ProductManagerBeanTest {
@@ -88,8 +94,15 @@ public class ProductManagerBeanTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+    @Mock
+    private Event<TagEvent> tagEvent;
+    @Mock
+    private Event<PartIterationEvent> partIterationEvent;
+    @Mock
+    private Event<PartRevisionEvent> partRevisionEvent;
+
     private Account account;
-    private Workspace workspace ;
+    private Workspace workspace;
     private User user;
     private User user2;
     private PartMaster partMaster;
@@ -101,6 +114,7 @@ public class ProductManagerBeanTest {
     @Before
     public void setup() throws Exception {
         initMocks(this);
+        Mockito.when(tagEvent.select(any())).thenReturn(tagEvent);
         account = new Account(ProductUtil.USER_2_LOGIN, ProductUtil.USER_2_NAME, ProductUtil.USER_1_MAIL, ProductUtil.USER_1_LANGUAGE, new Date(), null);
         workspace = new Workspace(ProductUtil.WORKSPACE_ID,account, "pDescription", false);
         user = new User(workspace, new Account(ProductUtil.USER_1_LOGIN , ProductUtil.USER_1_LOGIN, ProductUtil.USER_1_MAIL,ProductUtil.USER_1_LANGUAGE, new Date(), null));
@@ -248,9 +262,9 @@ public class ProductManagerBeanTest {
 
         Mockito.when(em.createQuery("SELECT DISTINCT t FROM Tag t WHERE t.workspaceId = :workspaceId", Tag.class)).thenReturn(tagsQuery);
         Mockito.when(tagsQuery.setParameter("workspaceId", ProductUtil.WORKSPACE_ID)).thenReturn(tagsQuery);
-        Mockito.when(tagsQuery.getResultList()).thenReturn(new ArrayList<Tag>());
+        Mockito.when(tagsQuery.getResultList()).thenReturn(new ArrayList<>());
 
-        PartRevision partRevisionResult = productManagerBean.saveTags(partRevisionKey, (String[]) tags);
+        PartRevision partRevisionResult = productManagerBean.saveTags(partRevisionKey, tags);
 
         Assert.assertEquals(partRevisionResult.getTags().size() ,3);
         int i = 0;
