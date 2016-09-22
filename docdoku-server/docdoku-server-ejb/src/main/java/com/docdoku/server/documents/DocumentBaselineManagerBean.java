@@ -19,11 +19,9 @@
  */
 package com.docdoku.server.documents;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.BaselinedDocument;
-import com.docdoku.core.configuration.BaselinedDocumentKey;
-import com.docdoku.core.configuration.DocumentBaseline;
-import com.docdoku.core.configuration.DocumentCollection;
+import com.docdoku.core.configuration.*;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
@@ -42,10 +40,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
 @Local(IDocumentBaselineManagerLocal.class)
@@ -118,6 +113,33 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
         }
 
         return filteredDocumentCollection;
+    }
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public List<BaselinedDocumentBinaryResourceCollection> getBinaryResourcesFromBaseline(String workspaceId, int baselineId)
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
+
+        userManager.checkWorkspaceReadAccess(workspaceId);
+        List<BaselinedDocumentBinaryResourceCollection> result = new ArrayList<>();
+
+        DocumentBaseline documentBaseline = getBaselineLight(baselineId);
+        Set<Map.Entry<BaselinedDocumentKey, BaselinedDocument>> entries = documentBaseline.getDocumentCollection().getBaselinedDocuments().entrySet();
+
+        for (Map.Entry<BaselinedDocumentKey, BaselinedDocument> entry : entries) {
+            DocumentIteration documentIteration = entry.getValue().getTargetDocument();
+            BaselinedDocumentBinaryResourceCollection collection = new BaselinedDocumentBinaryResourceCollection(documentBaseline.getName() + "/" + documentIteration.toString());
+            Set<BinaryResource> attachedFiles = documentIteration.getAttachedFiles();
+
+            if (!attachedFiles.isEmpty()) {
+                collection.setAttachedFiles(attachedFiles);
+            }
+
+            if (!collection.hasNoFiles()) {
+                result.add(collection);
+            }
+        }
+
+        return result;
     }
 
     private DocumentRevision filterDocumentRevisionAccessRight(User user, DocumentRevision documentRevision){

@@ -21,13 +21,13 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.configuration.DocumentBaseline;
 import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.exceptions.AccessRightException;
-import com.docdoku.core.exceptions.EntityNotFoundException;
-import com.docdoku.core.exceptions.UserNotActiveException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentBaselineManagerLocal;
 import com.docdoku.server.rest.dto.baseline.BaselinedDocumentDTO;
 import com.docdoku.server.rest.dto.baseline.DocumentBaselineDTO;
+import com.docdoku.server.rest.util.FileDownloadTools;
+import com.docdoku.server.rest.util.FileExportDocumentEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -187,10 +187,28 @@ public class DocumentBaselinesResource {
     @ApiOperation(value = "Get baseline light format", response = DocumentBaselineDTO.class)
     @Path("{baselineId}-light")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentBaselineDTO getBaselineLight(@PathParam("workspaceId") String workspaceId,
-                                                @PathParam("baselineId") int baselineId)
+    public DocumentBaselineDTO getBaselineLight(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, UserNotActiveException {
         DocumentBaseline documentBaseline = documentBaselineService.getBaselineLight(baselineId);
         return mapper.map(documentBaseline, DocumentBaselineDTO.class);
+    }
+
+    @GET
+    @ApiOperation(value = "Export files", response = Response.class)
+    @Path("{baselineId}/export-files")
+    public Response exportFiles(@PathParam("workspaceId") String workspaceId,
+                                @PathParam("baselineId") int baselineId)
+            throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
+
+        FileExportDocumentEntity fileExportEntity = new FileExportDocumentEntity(workspaceId, baselineId);
+
+        DocumentBaseline documentBaseline = documentBaselineService.getBaselineLight(baselineId);
+        String fileName = FileDownloadTools.getFileName(documentBaseline.getName() + "-export", "zip");
+        String contentDisposition = FileDownloadTools.getContentDisposition("attachment", fileName);
+
+        return Response.ok()
+                .header("Content-Type", "application/download")
+                .header("Content-Disposition", contentDisposition)
+                .entity(fileExportEntity).build();
     }
 }

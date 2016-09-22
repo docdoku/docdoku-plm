@@ -19,6 +19,7 @@
  */
 package com.docdoku.core.services;
 
+import com.docdoku.core.configuration.BaselinedDocumentBinaryResourceCollection;
 import com.docdoku.core.configuration.DocumentBaseline;
 import com.docdoku.core.configuration.DocumentCollection;
 import com.docdoku.core.document.DocumentRevisionKey;
@@ -88,4 +89,15 @@ public interface IDocumentBaselineManagerLocal {
      * @throws com.docdoku.core.exceptions.WorkspaceNotFoundException If the workspace can't be found
      */
     DocumentCollection getACLFilteredDocumentCollection(int baselineId) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    /**
+     * Get the {@link com.docdoku.core.common.BinaryResource}s of a {@link com.docdoku.core.configuration.DocumentBaseline}.
+     * @param workspaceId Id of the specific workspace
+     * @param baselineId The id of the require baseline.
+     * @return The Map of {@link com.docdoku.core.common.BinaryResource}s.
+     * @throws com.docdoku.core.exceptions.UserNotFoundException If no user is connected to this workspace
+     * @throws com.docdoku.core.exceptions.UserNotActiveException If the connected user is disable
+     * @throws com.docdoku.core.exceptions.WorkspaceNotFoundException If the workspace can't be found
+     * @throws com.docdoku.core.exceptions.BaselineNotFoundException If the baseline can't be found
+     */
+    List<BaselinedDocumentBinaryResourceCollection> getBinaryResourcesFromBaseline(String workspaceId, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException;
 }

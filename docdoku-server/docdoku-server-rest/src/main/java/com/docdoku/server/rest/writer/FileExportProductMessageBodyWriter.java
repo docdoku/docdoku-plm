@@ -29,7 +29,8 @@ import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.server.rest.util.FileExportEntity;
+import com.docdoku.server.rest.util.FileExportProductEntity;
+import com.docdoku.server.rest.util.FileExportTools;
 
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
@@ -48,13 +49,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @Provider
-public class FileExportMessageBodyWriter implements MessageBodyWriter<FileExportEntity> {
+public class FileExportProductMessageBodyWriter implements MessageBodyWriter<FileExportProductEntity> {
 
-    private static final Logger LOGGER = Logger.getLogger(FileExportMessageBodyWriter.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(FileExportProductMessageBodyWriter.class.getName());
     @Inject
     private IDataManagerLocal dataManager;
     @Inject
@@ -64,16 +64,16 @@ public class FileExportMessageBodyWriter implements MessageBodyWriter<FileExport
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return type.equals(FileExportEntity.class);
+        return type.equals(FileExportProductEntity.class);
     }
 
     @Override
-    public long getSize(FileExportEntity fileExportEntity, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType) {
+    public long getSize(FileExportProductEntity fileExportEntity, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType) {
         return -1;
     }
 
     @Override
-    public void writeTo(FileExportEntity fileExportEntity, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> multivaluedMap, OutputStream outputStream) throws IOException, WebApplicationException {
+    public void writeTo(FileExportProductEntity fileExportEntity, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> multivaluedMap, OutputStream outputStream) throws IOException, WebApplicationException {
 
         ZipOutputStream zs = new ZipOutputStream(outputStream);
 
@@ -147,16 +147,7 @@ public class FileExportMessageBodyWriter implements MessageBodyWriter<FileExport
     public void addToZipFile(BinaryResource binaryResource, String folderName, ZipOutputStream zos) throws IOException, StorageException {
 
         try (InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource)) {
-
-            ZipEntry zipEntry = new ZipEntry(folderName + "/" + binaryResource.getName());
-            zos.putNextEntry(zipEntry);
-
-            byte[] bytes = new byte[1024];
-            int length;
-            while ((length = binaryResourceInputStream.read(bytes)) >= 0) {
-                zos.write(bytes, 0, length);
-            }
-            zos.closeEntry();
+            FileExportTools.addToZipFile(binaryResourceInputStream, binaryResource.getName(), folderName, zos);
         }
     }
 
