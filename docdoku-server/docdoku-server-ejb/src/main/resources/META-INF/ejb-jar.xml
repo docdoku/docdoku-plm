@@ -4,54 +4,6 @@
          version = "3.1"
          xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" 
          xsi:schemaLocation = "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd">
-    <enterprise-beans>
-        <session>
-            <ejb-name>WorkflowManagerBean</ejb-name>
-        </session>
-        <session>
-            <ejb-name>DocumentManagerBean</ejb-name>
-        </session>
-        <session>
-            <ejb-name>DocumentBaselineManagerBean</ejb-name>
-        </session>
-        <session>
-            <ejb-name>LOVManagerBean</ejb-name>
-        </session>
-        <session>
-            <ejb-name>ProductManagerBean</ejb-name>
-        </session>
-        <session>
-            <ejb-name>ProductBaselineManagerBean</ejb-name>
-        </session>
-        <session>
-            <ejb-name>ProductInstanceManagerBean</ejb-name>
-        </session>
-        <session>
-            <ejb-name>UserManagerBean</ejb-name>
-        </session>
-        <session>
-            <ejb-name>AccountManagerBean</ejb-name>
-        </session>
-        <session>
-            <ejb-name>ChangeManagerBean</ejb-name>
-        </session>
-        <session>
-            <ejb-name>DataManagerBean</ejb-name>
-            <env-entry>
-                <env-entry-name>vaultPath</env-entry-name>
-                <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>/var/lib/docdoku/vault</env-entry-value>
-            </env-entry>
-        </session>
-        <session>
-            <ejb-name>MailerBean</ejb-name>
-            <env-entry>
-                <env-entry-name>codebase</env-entry-name>
-                <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>http://docdokuplm.net</env-entry-value>
-            </env-entry>
-        </session>
-    </enterprise-beans>
     <assembly-descriptor>
         <application-exception>
             <exception-class>com.docdoku.core.exceptions.ApplicationException</exception-class>
