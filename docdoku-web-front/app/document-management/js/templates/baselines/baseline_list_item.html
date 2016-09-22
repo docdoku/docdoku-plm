@@ -1,5 +1,4 @@
 <td><input type="checkbox"/></td>
-<!--<td>{{#model.hasObsoletePartRevisions}}<i title="{{i18n.CONTAINS_OBSOLETE_PARTS}}" class="fa fa-frown-o"></i>{{/model.hasObsoletePartRevisions}}</td>-->
 <td class="reference">{{model.getName}}</td>
 <td class="description">{{model.getDescription}}</td>
 <td>
@@ -12,5 +11,5 @@
 </td>
 <td><a class="date-popover">{{model.getFormattedCreationDate}}</a></td>
 <td><a class="author-popover">{{model.getAuthor}}</a></td>
-<!--<td><i class="fa fa-file-archive-o download-zip"></i></td>-->
+<td class="download-zip"><a class="fa fa-file-archive-o" href="{{model.getZipUrl}}" title="{{i18n.DOWNLOAD_ZIP}}"></a></td>
 

@@ -22,29 +22,12 @@ define([
         render: function () {
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n,
-                model: this.model,
-                zipUrl: this.model.getZipUrl()
+                model: this.model
             }));
+
             this.$checkbox = this.$('input[type=checkbox]');
             this.bindUserPopover();
             date.dateHelper(this.$('.date-popover'));
-            this.trigger('rendered', this);
-
-            var zipUrl = this.model.getZipUrl();
-            this.$('.download-zip').popover({
-                title: '<b>'+App.config.i18n.DOWNLOAD_ZIP+'<br/>',
-                animation: true,
-                html: true,
-                trigger: 'manual',
-                content: '<a href="'+(zipUrl+ '&exportDocumentLinks=false')+'">'+App.config.i18n.WITHOUT_LINKS+'</a> | ' +
-                '<a href="'+(zipUrl+ '&exportDocumentLinks=true')+'">'+App.config.i18n.WITH_LINKS+'</a>',
-                placement: 'top'
-            }).click(function (e) {
-                $(this).popover('show');
-                e.stopPropagation();
-                e.preventDefault();
-                return false;
-            });
 
             return this;
         },
@@ -68,15 +51,15 @@ define([
             this._isChecked = false;
         },
 
+        bindUserPopover: function () {
+            this.$('.author-popover').userPopover(this.model.getAuthorLogin(), App.config.i18n.BASELINE, 'left');
+        },
+
         openDetailView: function () {
             var model = this.model;
             model.fetch().success(function () {
                 new BaselineDetailView({model: model}).render();
             });
-        },
-
-        bindUserPopover: function () {
-            this.$('.author-popover').userPopover(this.model.getAuthorLogin(), App.config.i18n.BASELINE, 'left');
         }
 
     });
