@@ -52,7 +52,7 @@ public interface IDocumentBaselineManagerLocal {
     DocumentBaseline createBaseline(String workspaceId, String name, DocumentBaseline.BaselineType type, String description, List<DocumentRevisionKey> documentRevisionKeys) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FolderNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, NotAllowedException;
     /**
      * Get all {@link com.docdoku.core.configuration.DocumentBaseline}s of a specific workspace
-     * @param workspaceId Id of the specific workspace
+     * @param workspaceId Id of the specific workspace.
      * @return The list of {@link com.docdoku.core.configuration.DocumentBaseline}s of the specif workspace
      * @throws com.docdoku.core.exceptions.UserNotFoundException If no user is connected to this workspace
      * @throws com.docdoku.core.exceptions.UserNotActiveException If the connected user is disable
@@ -61,6 +61,7 @@ public interface IDocumentBaselineManagerLocal {
     List<DocumentBaseline> getBaselines(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     /**
      * Delete a specific {@link com.docdoku.core.configuration.DocumentBaseline}.
+     * @param workspaceId Id of the specific workspace.
      * @param baselineId The id of the baseline to deleted
      * @throws com.docdoku.core.exceptions.UserNotFoundException If no user is connected to this workspace
      * @throws com.docdoku.core.exceptions.AccessRightException If you can't access to this workspace
@@ -68,9 +69,10 @@ public interface IDocumentBaselineManagerLocal {
      * @throws com.docdoku.core.exceptions.BaselineNotFoundException If the baseline can't be found
      * @throws com.docdoku.core.exceptions.UserNotActiveException If the connected user is disable
      */
-    void deleteBaseline(int baselineId) throws BaselineNotFoundException, UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException;
+    void deleteBaseline(String workspaceId, int baselineId) throws BaselineNotFoundException, UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException;
     /**
      * Get a specific {@link com.docdoku.core.configuration.DocumentBaseline}.
+     * @param workspaceId Id of the specific workspace.
      * @param baselineId The id of the require baseline.
      * @return The require {@link com.docdoku.core.configuration.DocumentBaseline}.
      * @throws com.docdoku.core.exceptions.BaselineNotFoundException If the baseline can't be found
@@ -78,9 +80,10 @@ public interface IDocumentBaselineManagerLocal {
      * @throws com.docdoku.core.exceptions.UserNotActiveException If the connected user is disable
      * @throws com.docdoku.core.exceptions.WorkspaceNotFoundException If the workspace can't be found
      */
-    DocumentBaseline getBaselineLight(int baselineId) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    DocumentBaseline getBaselineLight(String workspaceId, int baselineId) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     /**
      * Get a specific {@link com.docdoku.core.configuration.DocumentCollection}.
+     * @param workspaceId Id of the specific workspace.
      * @param baselineId The id of the require baseline.
      * @return The require {@link com.docdoku.core.configuration.DocumentCollection}.
      * @throws com.docdoku.core.exceptions.BaselineNotFoundException If the baseline can't be found
@@ -88,10 +91,10 @@ public interface IDocumentBaselineManagerLocal {
      * @throws com.docdoku.core.exceptions.UserNotActiveException If the connected user is disable
      * @throws com.docdoku.core.exceptions.WorkspaceNotFoundException If the workspace can't be found
      */
-    DocumentCollection getACLFilteredDocumentCollection(int baselineId) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    DocumentCollection getACLFilteredDocumentCollection(String workspaceId, int baselineId) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     /**
      * Get the {@link com.docdoku.core.common.BinaryResource}s of a {@link com.docdoku.core.configuration.DocumentBaseline}.
-     * @param workspaceId Id of the specific workspace
+     * @param workspaceId Id of the specific workspace.
      * @param baselineId The id of the require baseline.
      * @return The Map of {@link com.docdoku.core.common.BinaryResource}s.
      * @throws com.docdoku.core.exceptions.UserNotFoundException If no user is connected to this workspace

@@ -20,6 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.configuration.DocumentBaseline;
+import com.docdoku.core.configuration.DocumentCollection;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
@@ -141,6 +142,7 @@ public class DocumentBaselinesResource {
     /**
      * Delete a specific document baseline
      *
+     * @param workspaceId The workspace of the specific baseline
      * @param baselineId The id of the specific document baseline
      * @return A response if the baseline was deleted
      */
@@ -148,9 +150,10 @@ public class DocumentBaselinesResource {
     @ApiOperation(value = "Delete a baseline", response = Response.class)
     @Path("{baselineId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteBaseline(@PathParam("baselineId") int baselineId)
+    public Response deleteBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
-        documentBaselineService.deleteBaseline(baselineId);
+
+        documentBaselineService.deleteBaseline(workspaceId, baselineId);
         return Response.ok().build();
     }
 
@@ -165,12 +168,12 @@ public class DocumentBaselinesResource {
     @ApiOperation(value = "Get baseline", response = DocumentBaselineDTO.class)
     @Path("{baselineId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId,
-                                           @PathParam("baselineId") int baselineId)
+    public DocumentBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, UserNotActiveException {
 
-        DocumentBaseline documentBaseline = documentBaselineService.getBaselineLight(baselineId);
-        List<BaselinedDocumentDTO> baselinedDocumentDTOs = Tools.mapBaselinedDocumentsToBaselinedDocumentDTOs(documentBaselineService.getACLFilteredDocumentCollection(baselineId));
+        DocumentBaseline documentBaseline = documentBaselineService.getBaselineLight(workspaceId, baselineId);
+        DocumentCollection documentCollection = documentBaselineService.getACLFilteredDocumentCollection(workspaceId, baselineId);
+        List<BaselinedDocumentDTO> baselinedDocumentDTOs = Tools.mapBaselinedDocumentsToBaselinedDocumentDTOs(documentCollection);
         DocumentBaselineDTO baselineDTO = mapper.map(documentBaseline, DocumentBaselineDTO.class);
         baselineDTO.setBaselinedDocuments(baselinedDocumentDTOs);
         return baselineDTO;
@@ -189,7 +192,7 @@ public class DocumentBaselinesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentBaselineDTO getBaselineLight(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, UserNotActiveException {
-        DocumentBaseline documentBaseline = documentBaselineService.getBaselineLight(baselineId);
+        DocumentBaseline documentBaseline = documentBaselineService.getBaselineLight(workspaceId, baselineId);
         return mapper.map(documentBaseline, DocumentBaselineDTO.class);
     }
 
@@ -202,7 +205,7 @@ public class DocumentBaselinesResource {
 
         FileExportDocumentEntity fileExportEntity = new FileExportDocumentEntity(workspaceId, baselineId);
 
-        DocumentBaseline documentBaseline = documentBaselineService.getBaselineLight(baselineId);
+        DocumentBaseline documentBaseline = documentBaselineService.getBaselineLight(workspaceId, baselineId);
         String fileName = FileDownloadTools.getFileName(documentBaseline.getName() + "-export", "zip");
         String contentDisposition = FileDownloadTools.getContentDisposition("attachment", fileName);
 

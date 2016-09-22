@@ -83,25 +83,24 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deleteBaseline(int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, BaselineNotFoundException, UserNotActiveException {
-        DocumentBaseline documentBaseline = getBaselineLight(baselineId);
-        User user = userManager.checkWorkspaceWriteAccess(documentBaseline.getAuthor().getWorkspaceId());
+    public void deleteBaseline(String workspaceId, int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, BaselineNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceWriteAccess(workspaceId);
+        DocumentBaseline documentBaseline = getBaselineLight(workspaceId, baselineId);
         new DocumentBaselineDAO(em, new Locale(user.getLanguage())).deleteBaseline(documentBaseline);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentBaseline getBaselineLight(int baselineId) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        DocumentBaseline documentBaseline = new DocumentBaselineDAO(em).loadBaseline(baselineId);
-        userManager.checkWorkspaceReadAccess(documentBaseline.getAuthor().getWorkspaceId());
-        return documentBaseline;
+    public DocumentBaseline getBaselineLight(String workspaceId, int baselineId) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        return new DocumentBaselineDAO(em, new Locale(user.getLanguage())).loadBaseline(baselineId);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentCollection getACLFilteredDocumentCollection(int baselineId) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public DocumentCollection getACLFilteredDocumentCollection(String workspaceId, int baselineId) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
         DocumentBaseline documentBaseline = new DocumentBaselineDAO(em).loadBaseline(baselineId);
-        User user = userManager.checkWorkspaceReadAccess(documentBaseline.getAuthor().getWorkspaceId());
         DocumentCollection filteredDocumentCollection = new DocumentCollection();
 
         for (Map.Entry<BaselinedDocumentKey, BaselinedDocument> map : documentBaseline.getDocumentCollection().getBaselinedDocuments().entrySet()) {
@@ -122,7 +121,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
         userManager.checkWorkspaceReadAccess(workspaceId);
         List<BaselinedDocumentBinaryResourceCollection> result = new ArrayList<>();
 
-        DocumentBaseline documentBaseline = getBaselineLight(baselineId);
+        DocumentBaseline documentBaseline = getBaselineLight(workspaceId, baselineId);
         Set<Map.Entry<BaselinedDocumentKey, BaselinedDocument>> entries = documentBaseline.getDocumentCollection().getBaselinedDocuments().entrySet();
 
         for (Map.Entry<BaselinedDocumentKey, BaselinedDocument> entry : entries) {
@@ -152,8 +151,6 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
     }
 
     private void snapshotDocuments(DocumentBaseline baseline, String workspaceId, List<DocumentRevisionKey> documentRevisionKeys) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, FolderNotFoundException {
-        userManager.checkWorkspaceReadAccess(workspaceId);
-
         for (DocumentRevisionKey revisionKey : documentRevisionKeys) {
             // Ignore already existing document
             if (baseline.hasBaselinedDocument(revisionKey)) {
