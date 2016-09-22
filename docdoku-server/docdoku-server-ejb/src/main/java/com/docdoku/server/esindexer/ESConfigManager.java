@@ -39,7 +39,7 @@ public class ESConfigManager {
     }
 
     public Integer getNumberOfReplicas(){
-        return Integer.parseInt(properties.getProperty("auto_expand_replicas"));
+        return Integer.parseInt(properties.getProperty("number_of_replicas"));
     }
 
     public String getAutoExpandReplicas(){
