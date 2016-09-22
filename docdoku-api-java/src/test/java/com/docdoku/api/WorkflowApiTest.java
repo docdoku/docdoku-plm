@@ -131,7 +131,7 @@ public class WorkflowApiTest {
 
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(createdDocument);
         UploadDownloadHelper.uploadAttachedFile(lastIteration, TestConfig.BASIC_CLIENT, file);
-        DocumentRevisionDTO documentRevision = documentApi.getDocumentRevision(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), null);
+        DocumentRevisionDTO documentRevision = documentApi.getDocumentRevision(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
         lastIteration = LastIterationHelper.getLastIteration(documentRevision);
         UploadDownloadHelper.downloadFile(lastIteration.getAttachedFiles().get(0).getFullName(), TestConfig.BASIC_CLIENT);
 
@@ -144,7 +144,7 @@ public class WorkflowApiTest {
         runAsserts(createdDocument.getWorkflow(), workflowModel);
         processTask(createdDocument.getWorkflow(), workflowModel);
 
-        documentRevision = documentApi.getDocumentRevision(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), null);
+        documentRevision = documentApi.getDocumentRevision(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
         Assert.assertTrue("Task is refreshed on document getter", documentRevision.getWorkflow().getActivities().get(0).getTasks().get(0).getStatus().equals(TaskDTO.StatusEnum.APPROVED));
 
     }
