@@ -58,7 +58,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -88,8 +91,9 @@ public class ESIndexer {
     @Inject
     private Client client;
 
-    private static final String CONF_PROPERTIES = "/com/docdoku/server/esindexer/conf.properties";
-    private static final Properties CONF = new Properties();
+    @Inject
+    private ESConfigManager esConfigManager;
+
     private static final String I18N_CONF = "com.docdoku.core.i18n.LocalStrings";
     private static final Logger LOGGER = Logger.getLogger(ESIndexer.class.getName());
 
@@ -99,14 +103,6 @@ public class ESIndexer {
     private static final String ES_INDEX_ERROR_3 = "ES_IndexError3";
     private static final String ES_INDEX_CREATION_ERROR_2 = "ES_IndexCreationError2";
     private static final String ES_DELETE_ERROR_1 = "ES_DeleteError1";
-
-    static {
-        try (InputStream inputStream  = ESIndexer.class.getResourceAsStream(CONF_PROPERTIES)) {
-            CONF.load(inputStream);
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, null, e);
-        }
-    }
 
     /**
      * Constructor
@@ -119,9 +115,9 @@ public class ESIndexer {
         try {
             client.admin().indices().prepareCreate(pIndex)
                     .setSettings(ImmutableSettings.settingsBuilder()
-                            .put("number_of_shards", CONF.getProperty("number_of_shards"))
-                            .put("number_of_replicas", CONF.getProperty("number_of_replicas"))
-                            .put("auto_expand_replicas", CONF.getProperty("auto_expand_replicas")))
+                            .put("number_of_shards", esConfigManager.getNumberOfShards())
+                            .put("number_of_replicas", esConfigManager.getNumberOfReplicas())
+                            .put("auto_expand_replicas", esConfigManager.getAutoExpandReplicas()))
                     .addMapping(ESMapper.PART_TYPE,this.partMapping())
                     .addMapping(ESMapper.DOCUMENT_TYPE, this.docMapping())
                     .setSource(defaultMapping())
