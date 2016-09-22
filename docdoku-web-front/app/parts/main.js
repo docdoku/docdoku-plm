@@ -1,22 +1,6 @@
 /*global _,require,window*/
 
-var App = {
-    debug:false,
-    config:{
-        locale: window.localStorage.getItem('locale') || 'en'
-    },
-    SceneOptions: {
-        zoomSpeed: 1.2,
-        rotateSpeed: 1.0,
-        panSpeed: 0.3,
-        cameraNear: 0.1,
-        cameraFar: 5E4,
-        defaultCameraPosition: {x: 0, y: 50, z: 200},
-        ambientLightColor: 0xffffff,
-        cameraLight1Color: 0xbcbcbc,
-        cameraLight2Color: 0xffffff
-    }
-};
+var App = {};
 
 require.config({
 
@@ -97,6 +81,19 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
         'use strict';
 
         App.config.i18n = _.extend(commonStrings, indexStrings);
+
+        App.config.SceneOptions = {
+            zoomSpeed: 1.2,
+            rotateSpeed: 1.0,
+            panSpeed: 0.3,
+            cameraNear: 0.1,
+            cameraFar: 5E4,
+            defaultCameraPosition: {x: 0, y: 50, z: 200},
+            ambientLightColor: 0xffffff,
+            cameraLight1Color: 0xbcbcbc,
+            cameraLight2Color: 0xffffff
+        };
+
         ContextResolver.resolveServerProperties()
             .then(function buildView(){
                 require(['backbone','app','router','common-objects/views/header'],function(Backbone, AppView, Router, HeaderView){

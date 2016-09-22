@@ -1,16 +1,7 @@
 /*global _,require,window*/
 
 
-var App = {
-    debug:false,
-	config:{
-		login: '',
-		groups: [],
-		contextPath: '',
-		locale: window.localStorage.getItem('locale') || 'en',
-        needAuthentication:true
-	}
-};
+var App = {};
 
 require.config({
 
@@ -106,9 +97,9 @@ require.config({
 
 require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/workspace-management'],
     function (ContextResolver, commonStrings, workspaceManagementStrings) {
-
         'use strict';
 
+        App.config.needAuthentication = true;
         App.config.i18n = _.extend(commonStrings,workspaceManagementStrings);
 
         ContextResolver.resolveServerProperties()
