@@ -100,7 +100,7 @@ public class DocumentCheckOutCommand extends BaseCommandLine {
         documentRevisionKey.setVersion(pRevision);
 
         DocumentApi documentApi = new DocumentApi(client);
-        DocumentRevisionDTO dr = documentApi.getDocumentRevision(workspace,id,pRevision,null);
+        DocumentRevisionDTO dr = documentApi.getDocumentRevision(workspace,id,pRevision);
         DocumentIterationDTO di = LastIterationHelper.getLastIteration(dr);
 
         output.printInfo(

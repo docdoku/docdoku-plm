@@ -114,6 +114,7 @@ public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
         Workflow workflow = task.getActivity().getWorkflow();
         PartRevision partRevision = checkTaskAccess(user,task);
+        task = partRevision.getWorkflow().getTasks().stream().filter(pTask -> pTask.getKey().equals(pTaskKey)).findFirst().get();
 
         task.approve(user,pComment, partRevision.getLastIteration().getIteration(), pSignature);
 
@@ -132,23 +133,24 @@ public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
 
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
-        PartRevision partR = checkTaskAccess(user,task);
+        PartRevision partRevision = checkTaskAccess(user,task);
+        task = partRevision.getWorkflow().getTasks().stream().filter(pTask -> pTask.getKey().equals(pTaskKey)).findFirst().get();
 
-        task.reject(user,pComment, partR.getLastIteration().getIteration(), pSignature);
+        task.reject(user,pComment, partRevision.getLastIteration().getIteration(), pSignature);
 
         // Relaunch Workflow ?
         Activity currentActivity = task.getActivity();
         Activity relaunchActivity = currentActivity.getRelaunchActivity();
 
         if(currentActivity.isStopped() && relaunchActivity != null){
-            relaunchWorkflow(partR,relaunchActivity.getStep());
+            relaunchWorkflow(partRevision,relaunchActivity.getStep());
             em.flush();
             // Send mails for running tasks
-            mailer.sendApproval(partR.getWorkflow().getRunningTasks(), partR);
+            mailer.sendApproval(partRevision.getWorkflow().getRunningTasks(), partRevision);
             // Send notification for relaunch
-            mailer.sendPartRevisionWorkflowRelaunchedNotification(partR);
+            mailer.sendPartRevisionWorkflowRelaunchedNotification(partRevision);
         }
-        return partR;
+        return partRevision;
     }
 
     /**

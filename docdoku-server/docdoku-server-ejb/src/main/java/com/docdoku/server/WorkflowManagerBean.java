@@ -427,6 +427,7 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
 
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(taskKey);
         Workflow workflow = task.getActivity().getWorkflow();
+        task = workflow.getTasks().stream().filter(pTask -> pTask.getKey().equals(taskKey)).findFirst().get();
 
         checkTaskAccess(user,task);
 

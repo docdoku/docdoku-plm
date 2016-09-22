@@ -20,6 +20,7 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.workflow.WorkspaceWorkflow;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
@@ -116,7 +117,7 @@ public class TaskManagerBean implements ITaskManagerLocal {
 
     @Override
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    public void processTask(String workspaceId, TaskKey taskKey, String action, String comment, String signature) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, WorkflowNotFoundException, AccessRightException {
+    public void processTask(String workspaceId, TaskKey taskKey, String action, String comment, String signature) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, WorkflowNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         TaskDAO taskDAO = new TaskDAO(new Locale(user.getLanguage()), em);
         Task task = taskDAO.loadTask(taskKey);
@@ -126,11 +127,12 @@ public class TaskManagerBean implements ITaskManagerLocal {
         }
         switch (taskWrapper.getHolderType()){
             case "documents":
-                    if("APPROVE".equals(action)){
-                        documentWorkflowService.approveTaskOnDocument(workspaceId,taskKey,comment,signature);
+                DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(taskWrapper.getWorkspaceId(), taskWrapper.getHolderReference(), taskWrapper.getHolderVersion());
+                if("APPROVE".equals(action)){
+                        documentWorkflowService.approveTaskOnDocument(workspaceId, taskKey, documentRevisionKey, comment,signature);
                     }
                     else if("REJECT".equals(action)){
-                        documentWorkflowService.rejectTaskOnDocument(workspaceId, taskKey, comment, signature);
+                        documentWorkflowService.rejectTaskOnDocument(workspaceId, taskKey, documentRevisionKey, comment, signature);
                     }
                 break;
             case "parts":

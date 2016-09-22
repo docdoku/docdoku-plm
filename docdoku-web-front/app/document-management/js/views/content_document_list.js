@@ -9,8 +9,9 @@ define([
     'common-objects/views/security/acl_edit',
     'common-objects/views/tags/tags_management',
     'common-objects/views/alert',
+    'views/baselines/baseline_creation_view',
     'async'
-], function (Backbone, ContentView, DocumentListView, DocumentNewVersionView, AdvancedSearchView, PromptView, ACLEditView, TagsManagementView, AlertView, async) {
+], function (Backbone, ContentView, DocumentListView, DocumentNewVersionView, AdvancedSearchView, PromptView, ACLEditView, TagsManagementView, AlertView, BaselineCreationView, async) {
     'use strict';
     var ContentDocumentListView = ContentView.extend({
 
@@ -27,6 +28,8 @@ define([
             this.events['submit .actions #document-search-form'] = 'onQuickSearch';
             this.events['click .actions .advanced-search-button'] = 'onAdvancedSearchButton';
             this.events['click .actions .edit-acl'] = 'onEditAcl';
+            this.events['click .actions .add-documents-to-baseline'] = 'addDocumentsInBaseline';
+            this.events['click .actions .view-baseline-detail'] = 'openBaselineDetail';
             Backbone.Events.on('folder-delete:error',this.onError);
         },
 
@@ -42,6 +45,9 @@ define([
             this.releaseButton = this.$('.actions .new-release');
             this.obsoleteButton = this.$('.actions .mark-as-obsolete');
             this.aclButton = this.$('.actions .edit-acl');
+            this.snapInProgressGroupButtons = this.$('.actions .baseline-in-progress');
+            this.addDocsToBaseline = this.$('.actions .add-documents-to-baseline');
+            this.viewBaselineDetail = this.$('.actions .view-baseline-detail');
             this.notifications = this.$('>.notifications');
 
             this.tagsButton.show();
@@ -62,6 +68,11 @@ define([
             this.listenTo(this.collection, 'add', this.highlightAddedView);
 
             this.$('.tabs').tabs();
+
+            if (App.config.documentBaselineInProgress) {
+                this.snapInProgressGroupButtons.toggle(true);
+                this.refreshBaselineDocumentsCount();
+            }
         },
 
         onStateChange: function () {
@@ -90,6 +101,7 @@ define([
             this.changeReleaseButtonDisplay(false);
             this.changeObsoleteButtonDisplay(false);
             this.aclButton.hide();
+            this.updateSnapInProgressGroupButtons(false, true);
         },
 
         onOneDocumentSelected: function (document) {
@@ -123,6 +135,8 @@ define([
             if ((App.config.workspaceAdmin || document.attributes.author.login === App.config.login)) {
                 this.aclButton.show();
             }
+
+            this.updateSnapInProgressGroupButtons(true, true);
 
         },
         areAllDocumentsCheckedOut: function () {
@@ -208,6 +222,7 @@ define([
             this.checkoutGroup.css('display', 'inline-block');
             this.updateActionButtonsDisplay();
             this.aclButton.hide();
+            this.updateSnapInProgressGroupButtons(true, true);
         },
 
         updateCheckoutGroupButtons: function (canCheckout, canUndo, canCheckin) {
@@ -215,6 +230,11 @@ define([
             this.checkoutButton.prop('disabled', !canCheckout);
             this.undoCheckoutButton.prop('disabled', !canUndo);
             this.checkinButton.prop('disabled', !canCheckin);
+        },
+
+        updateSnapInProgressGroupButtons: function (canAdd, canViewDetail) {
+            this.addDocsToBaseline.prop('disabled', !canAdd);
+            this.viewBaselineDetail.prop('disabled', !canViewDetail);
         },
 
         changeCheckoutGroupDisplay: function (state) {
@@ -529,6 +549,46 @@ define([
             if (addedView) {
                 addedView.$el.highlightEffect();
             }
+        },
+
+        addDocumentsInBaseline: function () {
+            var returns = [];
+
+            this.listView.eachChecked(function (view) {
+                returns.push(App.config.documentBaselineInProgress.addBaselinedDocument(view.model));
+            });
+
+            var notifications = this.notifications;
+
+            _.each(returns, function(status){
+                if(status && status.info){
+                    notifications.append(new AlertView({
+                        type: 'info',
+                        message: status.info
+                    }).render().$el);
+                }else if (status && status.error){
+                    notifications.append(new AlertView({
+                        type: 'error',
+                        message: status.error
+                    }).render().$el);
+                }
+            });
+
+            this.refreshBaselineDocumentsCount();
+            this.viewBaselineDetail.highlightEffect();
+        },
+
+        refreshBaselineDocumentsCount:function(){
+            this.snapInProgressGroupButtons.find('span.count').text(App.config.documentBaselineInProgress.getBaselinedDocuments().length);
+        },
+
+        openBaselineDetail: function () {
+            var baselineCreationView = new BaselineCreationView({mode:'edit'});
+            window.document.body.appendChild(baselineCreationView.render().el);
+            baselineCreationView.on('warning', this.onWarning);
+            baselineCreationView.on('update', this.refreshBaselineDocumentsCount.bind(this));
+            baselineCreationView.openModal();
+
         }
 
     });

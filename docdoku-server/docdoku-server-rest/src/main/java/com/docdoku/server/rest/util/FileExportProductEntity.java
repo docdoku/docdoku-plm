@@ -26,7 +26,7 @@ import com.docdoku.core.product.ConfigurationItemKey;
 /**
  * @author morgan on 29/04/15.
  */
-public class FileExportEntity {
+public class FileExportProductEntity {
 
     private ConfigurationItemKey configurationItemKey;
     private PSFilter psFilter;
@@ -38,7 +38,7 @@ public class FileExportEntity {
     private boolean exportDocumentLinks;
 
 
-    public FileExportEntity() {
+    public FileExportProductEntity() {
     }
 
     public PSFilter getPsFilter() {

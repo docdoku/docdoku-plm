@@ -62,7 +62,7 @@ public class DocumentStatusCommand extends BaseCommandLine {
 
             DocumentApi documentApi = new DocumentApi(client);
 
-            DocumentRevisionDTO documentRevisionDTO = documentApi.getDocumentRevision(workspace,id,revision,null);
+            DocumentRevisionDTO documentRevisionDTO = documentApi.getDocumentRevision(workspace,id,revision);
             output.printDocumentRevision(documentRevisionDTO,lastModified);
 
         } catch (ApiException e) {

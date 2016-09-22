@@ -20,7 +20,6 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.common.*;
-import com.docdoku.core.configuration.DocumentConfigSpec;
 import com.docdoku.core.configuration.PathDataMaster;
 import com.docdoku.core.configuration.ProductInstanceMaster;
 import com.docdoku.core.document.DocumentIteration;
@@ -37,7 +36,6 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDocumentConfigSpecManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentWorkflowManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
@@ -45,7 +43,6 @@ import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
-import com.docdoku.server.rest.util.ConfigSpecHelper;
 import com.docdoku.server.rest.util.InstanceAttributeFactory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -79,9 +76,6 @@ public class DocumentResource {
     @Inject
     private IDocumentWorkflowManagerLocal documentWorkflowService;
 
-    @Inject
-    private IDocumentConfigSpecManagerLocal documentConfigSpecService;
-
     private Mapper mapper;
 
     public DocumentResource() {
@@ -97,30 +91,20 @@ public class DocumentResource {
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO getDocumentRevision(@PathParam("workspaceId") String workspaceId,
                                                    @PathParam("documentId") String documentId,
-                                                   @PathParam("documentVersion") String documentVersion,
-                                                   @QueryParam("configSpec") String configSpecType)
+                                                   @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException {
-        DocumentRevision docR;
+
         DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
-        if (configSpecType == null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
-            docR = documentService.getDocumentRevision(documentRevisionKey);
-        } else {
-            DocumentConfigSpec configSpec = ConfigSpecHelper.getConfigSpec(workspaceId, configSpecType, documentConfigSpecService);
-            docR = documentConfigSpecService.getFilteredDocumentRevision(documentRevisionKey, configSpec);
-        }
+        DocumentRevision docR = documentService.getDocumentRevision(documentRevisionKey);
 
         DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
         docRsDTO.setPath(docR.getLocation().getCompletePath());
         docRsDTO.setRoutePath(docR.getLocation().getRoutePath());
 
-        if (configSpecType == null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
-            setDocumentRevisionDTOWorkflow(docR, docRsDTO);
-            docRsDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docR));
-            docRsDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docR));
-        } else {
-            docRsDTO.setWorkflow(null);
-            docRsDTO.setTags(null);
-        }
+        setDocumentRevisionDTOWorkflow(docR, docRsDTO);
+        docRsDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docR));
+        docRsDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docR));
+
         return docRsDTO;
     }
 

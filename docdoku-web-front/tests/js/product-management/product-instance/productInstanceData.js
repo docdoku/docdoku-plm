@@ -55,7 +55,6 @@ casper.test.begin('Product instance data path tests suite', 22, function product
             this.capture('screenshot/product-instance/NoDeliverableButton.png');
             this.test.assert(false, 'deliverable data button not present');
         });
-
     });
 
     /**

@@ -231,6 +231,8 @@ public class DocumentManagerBeanTest {
         Mockito.when(contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)).thenReturn(true);
         Mockito.when(em.find(BinaryResource.class, DocumentUtil.FULL_NAME)).thenReturn(binaryResource);
         BinaryResource binaryResource = documentManagerBean.getBinaryResource(DocumentUtil.FULL_NAME);
+        //Then
+        Assert.assertNotNull(binaryResource);
     }
     /**
      *
@@ -389,6 +391,6 @@ public class DocumentManagerBeanTest {
     }
 
     public void removeTagFromDocument(){
-
+        // TODO
     }
 }

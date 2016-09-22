@@ -3,8 +3,9 @@ define([
     'backbone',
     'mustache',
     'text!templates/baselines/baseline_detail.html',
+    'views/baselines/document_revision_list',
     'common-objects/utils/date'
-], function (Backbone, Mustache, template, date) {
+], function (Backbone, Mustache, template, DocumentRevisionListView, date) {
     'use strict';
     var BaselineDetailView = Backbone.View.extend({
 
@@ -13,17 +14,18 @@ define([
             'close-modal-request': 'closeModal'
         },
 
-        initialize: function () {
-
-        },
-
         render: function () {
             var that = this;
-            that.$el.html(Mustache.render(template, {i18n: App.config.i18n, model: that.model}));
+            that.$el.html(Mustache.render(template, {
+                i18n: App.config.i18n,
+                model: that.model
+            }));
             that.bindDomElements();
+            that.bindUserPopover();
             date.dateHelper(this.$('.date-popover'));
-            that.openModal();
+            that.displayDocumentRevisionListView();
 
+            that.openModal();
             window.document.body.appendChild(this.el);
             return this;
         },
@@ -32,6 +34,17 @@ define([
             this.$notifications = this.$('.notifications');
             this.$modal = this.$('#baseline_detail_modal');
             this.$tabs = this.$('.nav-tabs li');
+        },
+
+        bindUserPopover: function () {
+            this.$('.author-popover').userPopover(this.model.getAuthorLogin(), App.config.i18n.BASELINE, 'left');
+        },
+
+        displayDocumentRevisionListView: function () {
+            this.documentRevisionListView = new DocumentRevisionListView({editMode: false}).render();
+            this.documentRevisionListView.renderList(this.model.getBaselinedDocuments());
+
+            this.$('#documents-list').html(this.documentRevisionListView.el);
         },
 
         openModal: function () {

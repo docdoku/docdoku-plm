@@ -28,10 +28,10 @@ import com.docdoku.server.storage.StorageProvider;
 import com.docdoku.server.storage.filesystem.FileStorageProvider;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,15 +43,15 @@ import java.util.List;
 @Stateless(name = "DataManagerBean")
 public class DataManagerBean implements IDataManagerLocal {
 
-    @Resource(name = "vaultPath")
-    private String vaultPath;
+    @Inject
+    private ConfigManager configManager;
 
     private StorageProvider defaultStorageProvider;
     private FileStorageProvider fileStorageProvider;
 
     @PostConstruct
     private void init() {
-        fileStorageProvider = new FileStorageProvider(vaultPath);
+        fileStorageProvider = new FileStorageProvider(configManager.getVaultPath());
         defaultStorageProvider = fileStorageProvider;
     }
 

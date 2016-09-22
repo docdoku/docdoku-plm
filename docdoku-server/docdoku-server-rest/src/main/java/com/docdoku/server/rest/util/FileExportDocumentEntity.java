@@ -18,26 +18,36 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-package com.docdoku.core.configuration;
-
-import com.docdoku.core.common.User;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentRevision;
-
-import java.io.Serializable;
+package com.docdoku.server.rest.util;
 
 /**
- * @author Morgan Guimard
+ * @author Elisabel Généreux on 21/09/16.
  */
+public class FileExportDocumentEntity {
+    private String workspaceId;
+    private Integer baselineId;
 
-public abstract class DocumentConfigSpec implements Serializable{
+    public FileExportDocumentEntity() {
+    }
 
-    public DocumentConfigSpec() {
+    public FileExportDocumentEntity(String workspaceId, Integer baselineId) {
+        this.workspaceId = workspaceId;
+        this.baselineId = baselineId;
     }
-    public DocumentConfigSpec(User user) {
+
+    public String getWorkspaceId() {
+        return workspaceId;
     }
-    public DocumentConfigSpec(DocumentBaseline documentBaseline, User user) {
+
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
     }
-    public abstract DocumentIteration filter(DocumentRevision documentRevision);
+
+    public Integer getBaselineId() {
+        return baselineId;
+    }
+
+    public void setBaselineId(Integer baselineId) {
+        this.baselineId = baselineId;
+    }
 }

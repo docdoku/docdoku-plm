@@ -11,9 +11,9 @@ define([
         url: function () {
             var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId;
             if (this.parent) {
-                return  baseUrl + '/folders' + '/' + this.parent.id + '/documents?configSpec='+App.config.documentConfigSpec;
+                return baseUrl + '/folders' + '/' + this.parent.id + '/documents';
             } else {
-                return  baseUrl + '/folders' + '/' + App.config.workspaceId + '/documents?configSpec='+App.config.documentConfigSpec;
+                return baseUrl + '/folders' + '/' + App.config.workspaceId + '/documents';
             }
         },
 

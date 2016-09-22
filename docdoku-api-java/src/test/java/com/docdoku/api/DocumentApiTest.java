@@ -112,7 +112,7 @@ public class DocumentApiTest {
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(document);
         UploadDownloadHelper.uploadAttachedFile(lastIteration, TestConfig.BASIC_CLIENT, file);
 
-        document = documentApi.getDocumentRevision(TestConfig.WORKSPACE, document.getDocumentMasterId(), document.getVersion(), null);
+        document = documentApi.getDocumentRevision(TestConfig.WORKSPACE, document.getDocumentMasterId(), document.getVersion());
 
         lastIteration = LastIterationHelper.getLastIteration(document);
         Assert.assertFalse(lastIteration.getAttachedFiles().isEmpty());

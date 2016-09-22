@@ -23,7 +23,6 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.configuration.DocumentConfigSpec;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.document.Folder;
@@ -33,10 +32,8 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDocumentConfigSpecManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.*;
-import com.docdoku.server.rest.util.ConfigSpecHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -69,8 +66,6 @@ public class FolderResource {
     private static final Logger LOGGER = Logger.getLogger(FolderResource.class.getName());
     @Inject
     private IDocumentManagerLocal documentService;
-    @Inject
-    private IDocumentConfigSpecManagerLocal documentConfigSpecService;
     private Mapper mapper;
 
     public FolderResource() {
@@ -87,32 +82,20 @@ public class FolderResource {
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO[] getDocumentsWithGivenFolderIdAndWorkspaceId(
             @PathParam("workspaceId") String workspaceId,
-            @PathParam("folderId") String folderId,
-            @QueryParam("configSpec") String configSpecType)
+            @PathParam("folderId") String folderId)
             throws EntityNotFoundException, UserNotActiveException {
 
         String decodedCompletePath = getPathFromUrlParams(workspaceId, folderId);
-        DocumentRevision[] docRs;
-        if (configSpecType == null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
-            docRs = documentService.findDocumentRevisionsByFolder(decodedCompletePath);
-        } else {
-            DocumentConfigSpec configSpec = ConfigSpecHelper.getConfigSpec(workspaceId, configSpecType, documentConfigSpecService);
-            docRs = documentConfigSpecService.getFilteredDocumentsByFolder(workspaceId, configSpec, decodedCompletePath);
-        }
+        DocumentRevision[] docRs = documentService.findDocumentRevisionsByFolder(decodedCompletePath);
         DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
 
         for (int i = 0; i < docRs.length; i++) {
             docRsDTOs[i] = mapper.map(docRs[i], DocumentRevisionDTO.class);
             docRsDTOs[i].setPath(docRs[i].getLocation().getCompletePath());
             docRsDTOs[i] = Tools.createLightDocumentRevisionDTO(docRsDTOs[i]);
-            if (configSpecType == null || ConfigSpecHelper.BASELINE_UNDEFINED.equals(configSpecType) || ConfigSpecHelper.BASELINE_LATEST.equals(configSpecType)) {
-                docRsDTOs[i].setLifeCycleState(docRs[i].getLifeCycleState());
-                docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
-                docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
-            } else {
-                docRsDTOs[i].setWorkflow(null);
-                docRsDTOs[i].setTags(null);
-            }
+            docRsDTOs[i].setLifeCycleState(docRs[i].getLifeCycleState());
+            docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
+            docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
         }
 
         return docRsDTOs;
@@ -218,14 +201,7 @@ public class FolderResource {
 
     private FolderDTO[] getFolders(String workspaceId, String completePath, boolean rootFolder, String configSpecType)
             throws EntityNotFoundException, UserNotActiveException {
-        String[] folderNames;
-        if (configSpecType == null || "latest".equals(configSpecType)) {
-            folderNames = documentService.getFolders(completePath);
-        } else {
-            DocumentConfigSpec cs = ConfigSpecHelper.getConfigSpec(workspaceId, configSpecType, documentConfigSpecService);
-            folderNames = documentConfigSpecService.getFilteredFolders(workspaceId, cs, completePath);
-        }
-
+        String[] folderNames = documentService.getFolders(completePath);
         FolderDTO[] folderDTOs = new FolderDTO[folderNames.length];
 
         for (int i = 0; i < folderNames.length; i++) {

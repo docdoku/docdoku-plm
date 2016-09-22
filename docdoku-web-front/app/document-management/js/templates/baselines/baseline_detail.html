@@ -13,7 +13,7 @@
 
             <ul class="ModalTabs-nav nav nav-tabs">
                 <li class="active"><a href="#tab-baseline-general" data-toggle="tab">{{i18n.GENERAL}}</a></li>
-                <li><a href="#tab-documents" data-toggle="tab">{{i18n.DOCUMENTS}}</a></li>
+                <li><a href="#tab-baseline-documents" data-toggle="tab">{{i18n.DOCUMENTS}}</a></li>
             </ul>
 
             <div class="ModalTabsContent tab-content form-horizontal">
@@ -38,11 +38,18 @@
                                 <span class="help-inline"><a class="date-popover">{{model.getFormattedCreationDate}}</a></span>
                             </div>
                         </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.AUTHOR}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline"><a class="author-popover">{{model.getAuthor}}</a></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div id="tab-baseline-documents" class="ModalTabsPane tab-pane">
-                    <div class="documents-list"></div>
+                    <div id="documents-list"></div>
                 </div>
             </div>
         </div>

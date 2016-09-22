@@ -15,9 +15,6 @@ define([
             this.render();
         },
         refresh:function(){
-            this.templateExtraData = {
-                isReadOnly: App.appView.isReadOnly()
-            };
             this.render();
         }
     });

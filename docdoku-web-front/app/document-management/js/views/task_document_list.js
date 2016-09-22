@@ -9,10 +9,11 @@ define([
     'text!common-objects/templates/buttons/release_button.html',
     'text!common-objects/templates/buttons/obsolete_button.html',
     'text!common-objects/templates/buttons/ACL_button.html',
+    'text!common-objects/templates/buttons/snap_in_progress_button.html',
     'text!templates/search_document_form.html',
     'text!templates/status_filter.html',
     'text!templates/task_document_list.html'
-], function (TaskDocumentList, ContentDocumentListView, deleteButton, checkoutButtonGroup, tagsButton, newVersionButton, releaseButton, obsoleteButton, aclButton, searchForm, statusFilter, template) {
+], function (TaskDocumentList, ContentDocumentListView, deleteButton, checkoutButtonGroup, tagsButton, newVersionButton, releaseButton, obsoleteButton, aclButton, snapInProgressButton, searchForm, statusFilter, template) {
 	'use strict';
 	var TaskDocumentListView = ContentDocumentListView.extend({
 
@@ -24,9 +25,10 @@ define([
             tagsButton: tagsButton,
             newVersionButton: newVersionButton,
             releaseButton: releaseButton,
-            obsoleteButton:obsoleteButton,
+            obsoleteButton: obsoleteButton,
             searchForm: searchForm,
             aclButton: aclButton,
+            snapInProgressButton: snapInProgressButton,
             statusFilter: statusFilter
         },
 

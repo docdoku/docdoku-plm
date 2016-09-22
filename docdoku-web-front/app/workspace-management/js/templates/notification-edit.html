@@ -19,7 +19,7 @@
     {{#tagSubscriptions}}
 
     <tr>
-        <td><button type="button" class="close remove" data-id="{{tag}}">×</button></td>
+        <td><a class="fa fa-times remove" data-id="{{tag}}""></a></td>
         <td>{{tag}}</td>
         <td>
             <input type="checkbox" class="change" data-id="{{tag}}" data-option="state" {{#onStateChange}}checked{{/onStateChange}} />

@@ -52,18 +52,27 @@ casper.test.begin('Query builder search tests suite', 5, function queryBuilderSe
     });
 
     /**
-     * Fill condition and
+     * Add condition
      * */
-
-    casper.then(function fillSelectField() {
+    casper.then(function addCondition() {
         this.evaluate(function () {
             $('#where_rule_0 > div.rule-filter-container > select').val('attr-TEXT.CasperJsTestAttr-lock');
             $('#where_rule_0 > div.rule-filter-container > select').change();
             return true;
         });
-        this.sendKeys('#where_rule_0 > div.rule-value-container > input', products.part1.attributeValue);
     });
 
+    /**
+     * Fill condition
+     * */
+    casper.then(function fillCondition() {
+        return this.waitForSelector('#where_rule_0 > div.rule-value-container > input', function conditionInputDisplayed() {
+            this.sendKeys('#where_rule_0 > div.rule-value-container > input', products.part1.attributeValue);
+        }, function fail() {
+            this.capture('screenshot/queryBuilderSearch/conditionInputDisplayed-error.png');
+            this.test.assert(false, 'Condition input can not be found');
+        });
+    });
 
     /**
      * Run query
@@ -78,7 +87,7 @@ casper.test.begin('Query builder search tests suite', 5, function queryBuilderSe
      * */
 
     casper.then(function waitForResultTable() {
-        return this.waitForSelector('#query-table table', function resultTableDisplayed() {
+        return this.waitForSelector('#query-table table tbody tr', function resultTableDisplayed() {
             this.test.assertElementCount('#query-table table tbody tr', 1, 'We should have one result matching our query');
             this.test.assertSelectorHasText('#query-table table tbody tr td span', products.part1.number, 'We should have ' + products.part1.number + ' in the first cell');
         }, function fail() {

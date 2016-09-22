@@ -27,15 +27,23 @@ casper.test.begin('Assembly creation tests suite', 14, function assemblyCreation
     });
 
     /**
+     * Check parts count in list
+     */
+    casper.then(function waitForPartList() {
+        return this.waitForSelector('#part_table tbody tr', function checkPartsCountInList() {
+            this.test.assertElementCount('#part_table tbody tr', 1, 'There should be only 1 entry in the table');
+        });
+    });
+
+    /**
      * Open the first item modal view
      */
     casper.then(function waitForPartList() {
         var link = '#part_table tbody tr:first-child td.part_number';
-        return this.waitForSelector(link, function clickPartNavLink() {
-            this.test.assertElementCount('#part_table tbody tr', 1, 'There should be only 1 entry in the table');
+        return this.waitForSelector(link, function clickPartLink() {
             this.click(link);
         }, function fail() {
-            this.capture('screenshot/assemblyCreation/waitForPartList-error.png');
+            this.capture('screenshot/assemblyCreation/clickPartLink-error.png');
             this.test.assert(false, 'Part list can not be found');
         });
     });

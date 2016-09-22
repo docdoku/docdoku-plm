@@ -20,12 +20,15 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.configuration.DocumentBaseline;
-import com.docdoku.core.exceptions.AccessRightException;
-import com.docdoku.core.exceptions.EntityNotFoundException;
-import com.docdoku.core.exceptions.UserNotActiveException;
+import com.docdoku.core.configuration.DocumentCollection;
+import com.docdoku.core.document.DocumentRevisionKey;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentBaselineManagerLocal;
+import com.docdoku.server.rest.dto.baseline.BaselinedDocumentDTO;
 import com.docdoku.server.rest.dto.baseline.DocumentBaselineDTO;
+import com.docdoku.server.rest.util.FileDownloadTools;
+import com.docdoku.server.rest.util.FileExportDocumentEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -86,12 +89,10 @@ public class DocumentBaselinesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBaselines(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
-        List<DocumentBaseline> documentBaselines;
-        documentBaselines = documentBaselineService.getBaselines(workspaceId);
+        List<DocumentBaseline> documentBaselines = documentBaselineService.getBaselines(workspaceId);
         List<DocumentBaselineDTO> baselinesDTO = new ArrayList<>();
         for (DocumentBaseline documentBaseline : documentBaselines) {
             DocumentBaselineDTO documentBaselineDTO = mapper.map(documentBaseline, DocumentBaselineDTO.class);
-            documentBaselineDTO.setWorkspaceId(workspaceId);
             baselinesDTO.add(documentBaselineDTO);
         }
         return Response.ok(new GenericEntity<List<DocumentBaselineDTO>>((List<DocumentBaselineDTO>) baselinesDTO) {
@@ -110,10 +111,17 @@ public class DocumentBaselinesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createBaseline(@PathParam("workspaceId") String workspaceId,
                                    @ApiParam(required = true, value = "Document baseline to create") DocumentBaselineDTO documentBaselineDTO)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
-        DocumentBaseline baseline = documentBaselineService.createBaseline(workspaceId, documentBaselineDTO.getName(), documentBaselineDTO.getDescription());
-        DocumentBaselineDTO baselineDTO = mapper.map(baseline, DocumentBaselineDTO.class);
-        return prepareCreateResponse(baselineDTO);
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, com.docdoku.core.exceptions.NotAllowedException {
+
+        List<BaselinedDocumentDTO> baselinedDocumentsDTO = documentBaselineDTO.getBaselinedDocuments();
+        List<DocumentRevisionKey> documentRevisionKeys = new ArrayList<>();
+
+        for (BaselinedDocumentDTO document : baselinedDocumentsDTO) {
+            documentRevisionKeys.add(new DocumentRevisionKey(workspaceId, document.getDocumentMasterId(), document.getVersion()));
+        }
+
+        DocumentBaseline baseline = documentBaselineService.createBaseline(workspaceId, documentBaselineDTO.getName(), documentBaselineDTO.getType(), documentBaselineDTO.getDescription(), documentRevisionKeys);
+        return prepareCreateResponse(getBaseline(workspaceId, baseline.getId()));
     }
 
     /**
@@ -134,6 +142,7 @@ public class DocumentBaselinesResource {
     /**
      * Delete a specific document baseline
      *
+     * @param workspaceId The workspace of the specific baseline
      * @param baselineId The id of the specific document baseline
      * @return A response if the baseline was deleted
      */
@@ -141,14 +150,15 @@ public class DocumentBaselinesResource {
     @ApiOperation(value = "Delete a baseline", response = Response.class)
     @Path("{baselineId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteBaseline(@PathParam("baselineId") int baselineId)
+    public Response deleteBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
-        documentBaselineService.deleteBaseline(baselineId);
+
+        documentBaselineService.deleteBaseline(workspaceId, baselineId);
         return Response.ok().build();
     }
 
     /**
-     * Get a specific document baseline ( with document list and folder list )
+     * Get a specific document baseline ( with documents list )
      *
      * @param workspaceId The workspace of the specific baseline
      * @param baselineId  The id of the specific document baseline
@@ -158,13 +168,14 @@ public class DocumentBaselinesResource {
     @ApiOperation(value = "Get baseline", response = DocumentBaselineDTO.class)
     @Path("{baselineId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId,
-                                           @PathParam("baselineId") int baselineId)
+    public DocumentBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, UserNotActiveException {
-//        DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
-        DocumentBaselineDTO baselineDTO = getBaselineLight(workspaceId, baselineId);
-//        List<FolderDTO> folderDTOs = Tools.mapBaselinedFoldersToFolderDTO(documentBaseline);
-//        baselineDTO.setBaselinedFolders(folderDTOs);
+
+        DocumentBaseline documentBaseline = documentBaselineService.getBaselineLight(workspaceId, baselineId);
+        DocumentCollection documentCollection = documentBaselineService.getACLFilteredDocumentCollection(workspaceId, baselineId);
+        List<BaselinedDocumentDTO> baselinedDocumentDTOs = Tools.mapBaselinedDocumentsToBaselinedDocumentDTOs(documentCollection);
+        DocumentBaselineDTO baselineDTO = mapper.map(documentBaseline, DocumentBaselineDTO.class);
+        baselineDTO.setBaselinedDocuments(baselinedDocumentDTOs);
         return baselineDTO;
     }
 
@@ -179,10 +190,28 @@ public class DocumentBaselinesResource {
     @ApiOperation(value = "Get baseline light format", response = DocumentBaselineDTO.class)
     @Path("{baselineId}-light")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentBaselineDTO getBaselineLight(@PathParam("workspaceId") String workspaceId,
-                                                @PathParam("baselineId") int baselineId)
+    public DocumentBaselineDTO getBaselineLight(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, UserNotActiveException {
-        DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
+        DocumentBaseline documentBaseline = documentBaselineService.getBaselineLight(workspaceId, baselineId);
         return mapper.map(documentBaseline, DocumentBaselineDTO.class);
+    }
+
+    @GET
+    @ApiOperation(value = "Export files", response = Response.class)
+    @Path("{baselineId}/export-files")
+    public Response exportFiles(@PathParam("workspaceId") String workspaceId,
+                                @PathParam("baselineId") int baselineId)
+            throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
+
+        FileExportDocumentEntity fileExportEntity = new FileExportDocumentEntity(workspaceId, baselineId);
+
+        DocumentBaseline documentBaseline = documentBaselineService.getBaselineLight(workspaceId, baselineId);
+        String fileName = FileDownloadTools.getFileName(documentBaseline.getName() + "-export", "zip");
+        String contentDisposition = FileDownloadTools.getContentDisposition("attachment", fileName);
+
+        return Response.ok()
+                .header("Content-Type", "application/download")
+                .header("Content-Disposition", contentDisposition)
+                .entity(fileExportEntity).build();
     }
 }

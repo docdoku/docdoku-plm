@@ -56,7 +56,7 @@ public class FileStatusCommand extends BaseCommandLine {
             String ref = meta.getDocumentId(filePath);
             try {
                 DocumentApi documentApi = new DocumentApi(client);
-                DocumentRevisionDTO documentRevision = documentApi.getDocumentRevision(workspace,ref,strRevision,null);
+                DocumentRevisionDTO documentRevision = documentApi.getDocumentRevision(workspace,ref,strRevision);
                 output.printDocumentRevision(documentRevision,lastModified);
             } catch (ApiException e) {
                 meta.deleteEntryInfo(file.getAbsolutePath());

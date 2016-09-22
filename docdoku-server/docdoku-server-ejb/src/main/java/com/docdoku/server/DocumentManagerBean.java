@@ -398,7 +398,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
     @Override
     public DocumentRevision[] getAllDocumentsInWorkspace(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getDocumentRevisionsFiltered(user, workspaceId);
+        List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getAllDocumentRevisions(workspaceId);
         List<DocumentRevision> documentRevisions = new ArrayList<>();
         for (DocumentRevision docR : docRs) {
             if (isCheckoutByAnotherUser(user, docR)) {
@@ -412,7 +412,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevision[] getAllDocumentsInWorkspace(String workspaceId, int start, int pMaxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public DocumentRevision[] getFilteredDocumentsInWorkspace(String workspaceId, int start, int pMaxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getDocumentRevisionsFiltered(user, workspaceId, start, pMaxResults);
         List<DocumentRevision> documentRevisions = new ArrayList<>();
@@ -1190,8 +1190,8 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             throw new NotAllowedException(locale, "NotAllowedException22");
         }
 
-        BaselinedDocumentDAO baselinedDocumentDAO = new BaselinedDocumentDAO(locale, em);
-        if (baselinedDocumentDAO.hasDocumentRevision(pDocRPK)) {
+        DocumentBaselineDAO documentBaselineDAO = new DocumentBaselineDAO(em, locale);
+        if (documentBaselineDAO.existBaselinedDocument(pDocRPK.getWorkspaceId(), pDocRPK.getDocumentMasterId(), pDocRPK.getVersion())) {
             throw new EntityConstraintException(locale, "EntityConstraintException6");
         }
 

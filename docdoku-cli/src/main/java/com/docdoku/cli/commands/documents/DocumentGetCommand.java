@@ -93,7 +93,7 @@ public class DocumentGetCommand extends BaseCommandLine {
     private void getDocument(String pId, String pRevision, int pIteration) throws IOException, ApiException, LoginException, NoSuchAlgorithmException {
 
         DocumentApi documentApi = new DocumentApi(client);
-        DocumentRevisionDTO dr = documentApi.getDocumentRevision(workspace,pId,pRevision,null);
+        DocumentRevisionDTO dr = documentApi.getDocumentRevision(workspace,pId,pRevision);
 
         DocumentIterationDTO di;
 

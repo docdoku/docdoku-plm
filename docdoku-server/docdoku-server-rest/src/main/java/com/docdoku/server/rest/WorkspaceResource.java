@@ -288,9 +288,10 @@ public class WorkspaceResource {
     @Path("/{workspaceId}/admin")
     @Produces(MediaType.APPLICATION_JSON)
     public Response setNewAdmin(@PathParam("workspaceId") String workspaceId,
-                                @ApiParam(required = true, value = "New admin user") UserDTO userDTO) throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException {
-        Workspace workspace = workspaceManager.changeAdmin(workspaceId, userDTO.getLogin());
+                                @ApiParam(required = true, value = "New admin user") UserDTO userDTO)
+            throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
 
+        Workspace workspace = workspaceManager.changeAdmin(workspaceId, userDTO.getLogin());
         return Response.ok(mapper.map(workspace, WorkspaceDTO.class)).build();
     }
 
@@ -531,7 +532,6 @@ public class WorkspaceResource {
                 .add("activegroups", activeGroupsCount)
                 .add("inactivegroups", inactiveGroupsCount).build();
     }
-
 
     // Sub resources
 

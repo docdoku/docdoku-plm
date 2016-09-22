@@ -14,14 +14,9 @@ define([
 
         url: function () {
 	        if(this.document.getId()){
-                if (App.config.documentConfigSpec) {
-		            return this.baseUrl()+ '?configSpec='+App.config.documentConfigSpec;
-                } else {
-                    return this.baseUrl();
-                }
-		    }else{
-                return this.document.urlRoot()+ '/iterations';
-		    }
+                return this.baseUrl();
+            }
+            return this.document.urlRoot()+ '/iterations';
 	    },
 
 	    baseUrl: function(){

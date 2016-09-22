@@ -491,7 +491,7 @@ define([
                     data: JSON.stringify(data),
                     contentType: 'application/json; charset=utf-8',
                     success: function () {
-                        this.collection.fetch({reset: true, sucess: onSuccess});
+                        this.collection.fetch({reset: true, success: onSuccess});
                     },
                     error: onError
                 });

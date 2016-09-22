@@ -32,6 +32,7 @@ import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -55,11 +56,11 @@ public class MailerBean implements IMailerLocal {
 
     private static final String BASE_NAME = "com.docdoku.server.templates.MailText";
 
+    @Inject
+    private ConfigManager configManager;
+
     @Resource(name = "mail/docdokuSMTP")
     private Session mailSession;
-
-    @Resource(name = "codebase")
-    private String codebase;
 
     private static final Logger LOGGER = Logger.getLogger(MailerBean.class.getName());
 
@@ -413,7 +414,7 @@ public class MailerBean implements IMailerLocal {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale);
         Object[] args = {
                 account.getLogin(),
-                codebase
+                configManager.getCodebase()
         };
 
         return MessageFormat.format(bundle.getString("SignUp_success_text"), args);
@@ -677,18 +678,18 @@ public class MailerBean implements IMailerLocal {
     }
 
     private String getDocumentRevisionPermalinkURL(DocumentRevision pDocR) {
-        return codebase + "/documents/#" + pDocR.getWorkspaceId() + "/" + pDocR.getId() + "/" + pDocR.getVersion();
+        return configManager.getCodebase() + "/documents/#" + pDocR.getWorkspaceId() + "/" + pDocR.getId() + "/" + pDocR.getVersion();
     }
 
     private String getPartRevisionPermalinkURL(PartRevision pPartR) {
-        return codebase + "/parts/#" + pPartR.getWorkspaceId() + "/" + pPartR.getPartNumber() + "/" + pPartR.getVersion();
+        return configManager.getCodebase() + "/parts/#" + pPartR.getWorkspaceId() + "/" + pPartR.getPartNumber() + "/" + pPartR.getVersion();
     }
 
     private String getTaskUrl(Task pTask, String workspaceId) {
-        return codebase + "/change-management/#" + workspaceId + "/tasks/" + pTask.getWorkflowId() + "-" + pTask.getActivityStep() + "-" + pTask.getNum();
+        return configManager.getCodebase() + "/change-management/#" + workspaceId + "/tasks/" + pTask.getWorkflowId() + "-" + pTask.getActivityStep() + "-" + pTask.getNum();
     }
 
     private String getPasswordRecoveryUrl(String uuid) {
-        return codebase + "/#recover/" + uuid;
+        return configManager.getCodebase() + "/#recover/" + uuid;
     }
 }

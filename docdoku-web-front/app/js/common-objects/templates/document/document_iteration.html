@@ -131,15 +131,13 @@
                                 <span class="help-inline">{{docRevision.description}}</span>
                             </div>
                         </div>
-                        {{^isForBaseline}}
-                            <div class="control-group">
-                                <label class="control-label">{{i18n.TAGS}}</label>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.TAGS}}</label>
 
-                                <div class="controls">
-                                    <ul class="help-inline master-tags-list unstyled"></ul>
-                                </div>
+                            <div class="controls">
+                                <ul class="help-inline master-tags-list unstyled"></ul>
                             </div>
-                        {{/isForBaseline}}
+                        </div>
                         {{#docRevision.releaseAuthor}}
                         <div class="control-group">
                             <label class="control-label">{{i18n.RELEASED_BY}}</label>

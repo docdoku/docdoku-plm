@@ -21,11 +21,7 @@ define([
 
 		url: function () {
 			if (this.getId()) {
-                if (App.config.documentConfigSpec) {
-                    return this.baseUrl() + '?configSpec=' + App.config.documentConfigSpec;
-                } else {
-                    return this.baseUrl();
-                }
+                return this.baseUrl();
 			}
 			return this.urlRoot();
 		},
@@ -326,7 +322,7 @@ define([
 
 		},
 
-		createNewVersion: function (title, description, workflow, roleMappingList, aclList) {
+		createNewVersion: function (title, description, workflow, roleMappingList, aclList, onSuccess, onError) {
 
 			var data = {
 				title: title,
@@ -343,8 +339,9 @@ define([
 				data: JSON.stringify(data),
 				contentType: 'application/json; charset=utf-8',
 				success: function () {
-					this.collection.fetch({reset: true});
-				}
+					this.collection.fetch({reset: true, success: onSuccess});
+				},
+                error: onError
 			});
 		},
 

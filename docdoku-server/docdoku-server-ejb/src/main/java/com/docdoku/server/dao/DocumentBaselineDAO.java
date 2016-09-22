@@ -54,9 +54,7 @@ public class DocumentBaselineDAO {
     }
 
     public List<DocumentBaseline> findBaselines(String workspaceId) {
-        return em.createQuery("SELECT b " +
-                            "FROM DocumentBaseline b " +
-                            "WHERE b.workspace.id = :workspaceId ",DocumentBaseline.class)
+        return em.createQuery("SELECT b FROM DocumentBaseline b WHERE b.author.workspace.id = :workspaceId", DocumentBaseline.class)
                 .setParameter("workspaceId",workspaceId)
                 .getResultList();
     }
@@ -73,5 +71,13 @@ public class DocumentBaselineDAO {
     public void deleteBaseline(DocumentBaseline documentBaseline) {
         em.remove(documentBaseline);
         em.flush();
+    }
+
+    public boolean existBaselinedDocument(String workspaceId, String documentId, String documentVersion) {
+        return em.createNamedQuery("BaselinedDocument.existBaselinedDocument", Long.class)
+                .setParameter("documentId", documentId)
+                .setParameter("documentVersion", documentVersion)
+                .setParameter("workspaceId", workspaceId)
+                .getSingleResult() > 0;
     }
 }

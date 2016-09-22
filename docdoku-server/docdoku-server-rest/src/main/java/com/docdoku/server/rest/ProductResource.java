@@ -42,7 +42,7 @@ import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.PathChoiceDTO;
 import com.docdoku.server.rest.util.FileDownloadTools;
-import com.docdoku.server.rest.util.FileExportEntity;
+import com.docdoku.server.rest.util.FileExportProductEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -506,7 +506,7 @@ public class ProductResource {
             configSpecType = "wip";
         }
 
-        FileExportEntity fileExportEntity = new FileExportEntity();
+        FileExportProductEntity fileExportEntity = new FileExportProductEntity();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         PSFilter psFilter = psFilterService.getPSFilter(ciKey, configSpecType, false);
 

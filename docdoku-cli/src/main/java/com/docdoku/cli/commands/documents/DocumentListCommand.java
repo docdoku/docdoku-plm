@@ -55,7 +55,7 @@ public class DocumentListCommand extends BaseCommandLine {
         }else{
             FoldersApi foldersApi = new FoldersApi(client);
             String decodedPath = folder == null ? workspace : workspace+"/"+folder;
-            List<DocumentRevisionDTO> documentRevisions = foldersApi.getDocumentsWithGivenFolderIdAndWorkspaceId(workspace,decodedPath,null);
+            List<DocumentRevisionDTO> documentRevisions = foldersApi.getDocumentsWithGivenFolderIdAndWorkspaceId(workspace,decodedPath);
             output.printDocumentRevisions(documentRevisions);
         }
 

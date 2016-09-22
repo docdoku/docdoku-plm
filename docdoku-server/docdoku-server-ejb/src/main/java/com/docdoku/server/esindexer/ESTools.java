@@ -51,6 +51,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -60,7 +61,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -72,17 +72,11 @@ import java.util.zip.ZipInputStream;
  * @author Taylor LABEJOF
  */
 public class ESTools {
-    private static final String CONF_PROPERTIES="/com/docdoku/server/esindexer/conf.properties";
-    private static final Properties CONF = new Properties();
-    private static final Logger LOGGER = Logger.getLogger(ESTools.class.getName());
 
-    static{
-        try (InputStream inputStream = ESTools.class.getResourceAsStream(CONF_PROPERTIES)){
-            CONF.load(inputStream);
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, null, e);
-        }
-    }
+    @Inject
+    private ESConfigManager esConfigManager;
+
+    private static final Logger LOGGER = Logger.getLogger(ESTools.class.getName());
 
     private ESTools() {
         super();
@@ -96,9 +90,9 @@ public class ESTools {
     public Client createClient() throws ESServerException {
         try{
             Settings settings = ImmutableSettings.settingsBuilder()
-                    .put("cluster.name", CONF.getProperty("cluster.name")).build();
+                    .put("cluster.name", esConfigManager.getClusterName()).build();
 
-            return new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress(CONF.getProperty("host"), Integer.parseInt(CONF.getProperty("port"))));
+            return new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress(esConfigManager.getHost(), esConfigManager.getPort()));
         }catch (ElasticsearchException e){
             LOGGER.log(Level.WARNING, null, e);
             throw new ESServerException(Locale.getDefault(), "IndexerServerException");

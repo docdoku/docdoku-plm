@@ -19,6 +19,7 @@
  */
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevisionKey;
@@ -45,14 +46,10 @@ public class DocumentBaseline implements Serializable {
     @Id
     private int id;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumns({
-            @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "ID")
-    })
-    private Workspace workspace;
-
     @Column(nullable = false)
     private String name;
+
+    private BaselineType type = BaselineType.LATEST;
 
     @Lob
     private String description;
@@ -60,55 +57,42 @@ public class DocumentBaseline implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
-    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
-    private FolderCollection folderCollection =new FolderCollection();
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private DocumentCollection documentCollection = new DocumentCollection();
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumns({
+            @JoinColumn(name = "AUTHOR_LOGIN", referencedColumnName = "LOGIN"),
+            @JoinColumn(name = "AUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
+    })
+    private User author;
+
+    public enum BaselineType {
+        LATEST, RELEASED
+    }
 
     public DocumentBaseline() {
     }
-    public DocumentBaseline(Workspace workspace, String name, String description) {
-        this.workspace = workspace;
+    public DocumentBaseline(User author, String name, BaselineType type, String description) {
+        this.author = author;
         this.name = name;
+        this.type = type;
         this.description = description;
         this.creationDate = new Date();
     }
 
-    public Map<BaselinedFolderKey, BaselinedFolder> getBaselinedFolders() {
-        return folderCollection.getBaselinedFolders();
-    }
-    public void removeAllBaselinedFolders() {
-        folderCollection.removeAllBaselinedFolders();
-    }
-
-    public BaselinedFolder addBaselinedFolder(Folder folder){
-        return folderCollection.addBaselinedFolder(folder);
-    }
-    public BaselinedFolder addBaselinedFolder(BaselinedFolder baselinedFolder){
-        return folderCollection.addBaselinedFolder(baselinedFolder);
-    }
-    public boolean hasBasedLinedFolder(String completePath){
-        return folderCollection.hasBaselinedFolder(completePath);
-    }
-    public BaselinedFolder getBaselinedFolder(String completePath){
-        return folderCollection.getBaselinedFolder(completePath);
-    }
-
     public void addBaselinedDocument(DocumentIteration targetDocument){
-        Folder location = targetDocument.getDocumentRevision().getLocation();
-        BaselinedFolder baselinedFolder = folderCollection.getBaselinedFolder(location.getCompletePath());
-        if(baselinedFolder==null) {
-            baselinedFolder = addBaselinedFolder(location);
-        }
-        baselinedFolder.addDocumentIteration(targetDocument);
+        documentCollection.addBaselinedDocument(targetDocument);
+
     }
     public boolean hasBaselinedDocument(DocumentRevisionKey documentRevisionKey){
-        if(folderCollection != null){
-            return folderCollection.hasDocumentRevision(documentRevisionKey);
+        if(documentCollection != null){
+            return documentCollection.hasBaselinedDocument(documentRevisionKey);
         }
         return false;
     }
-    public DocumentIteration getBaselinedDocument(DocumentRevisionKey documentRevisionKey){
-        return (folderCollection!=null) ? folderCollection.getDocumentIteration(documentRevisionKey) : null;
+    public BaselinedDocument getBaselinedDocument(DocumentRevisionKey documentRevisionKey){
+        return (documentCollection!=null) ? documentCollection.getBaselinedDocument(documentRevisionKey) : null;
     }
 
     public String getName() {
@@ -116,6 +100,14 @@ public class DocumentBaseline implements Serializable {
     }
     public void setName(String name) {
         this.name = name;
+    }
+
+    public BaselineType getType() {
+        return type;
+    }
+
+    public void setType(BaselineType type) {
+        this.type = type;
     }
 
     public Date getCreationDate() {
@@ -132,15 +124,16 @@ public class DocumentBaseline implements Serializable {
         this.description = description;
     }
 
-    public FolderCollection getFolderCollection() {
-        return folderCollection;
+    public DocumentCollection getDocumentCollection() {
+        return documentCollection;
     }
 
-    public Workspace getWorkspace() {
-        return workspace;
+    public User getAuthor() {
+        return author;
     }
-    public void setWorkspace(Workspace workspace) {
-        this.workspace = workspace;
+
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     public int getId() {

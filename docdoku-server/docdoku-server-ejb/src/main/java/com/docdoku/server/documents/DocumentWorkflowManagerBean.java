@@ -33,7 +33,6 @@ import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.CheckActivity;
 import com.docdoku.server.dao.DocumentRevisionDAO;
 import com.docdoku.server.dao.SubscriptionDAO;
-import com.docdoku.server.dao.TaskDAO;
 import com.docdoku.server.dao.WorkflowDAO;
 
 import javax.annotation.security.DeclareRoles;
@@ -97,12 +96,14 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @CheckActivity
     @Override
-    public DocumentRevision approveTaskOnDocument(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+    public DocumentRevision approveTaskOnDocument(String workspaceId, TaskKey pTaskKey, DocumentRevisionKey documentRevisionKey,  String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getWorkspaceId());
 
-        Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
+        DocumentRevision documentRevision = documentManager.getDocumentRevision(documentRevisionKey);
+        Task task = documentRevision.getWorkflow().getTasks().stream().filter(pTask -> pTask.getKey().equals(pTaskKey)).findFirst().get();
+
         Workflow workflow = task.getActivity().getWorkflow();
-        DocumentRevision docR = checkTaskAccess(user,task);
+        DocumentRevision docR = checkTaskAccess(user, task);
 
         int previousStep = workflow.getCurrentStep();
         task.approve(user, pComment, docR.getLastIteration().getIteration(), pSignature);
@@ -134,10 +135,12 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @CheckActivity
     @Override
-    public DocumentRevision rejectTaskOnDocument(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+    public DocumentRevision rejectTaskOnDocument(String workspaceId, TaskKey pTaskKey, DocumentRevisionKey documentRevisionKey,  String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getWorkspaceId());
 
-        Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
+        DocumentRevision documentRevision = documentManager.getDocumentRevision(documentRevisionKey);
+        Task task = documentRevision.getWorkflow().getTasks().stream().filter(pTask -> pTask.getKey().equals(pTaskKey)).findFirst().get();
+
         DocumentRevision docR = checkTaskAccess(user,task);
 
         task.reject(user, pComment, docR.getLastIteration().getIteration(), pSignature);

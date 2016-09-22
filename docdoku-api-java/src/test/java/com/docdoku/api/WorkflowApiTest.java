@@ -23,6 +23,8 @@ package com.docdoku.api;
 
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.*;
+import com.docdoku.api.models.utils.LastIterationHelper;
+import com.docdoku.api.models.utils.UploadDownloadHelper;
 import com.docdoku.api.models.utils.WorkflowHelper;
 import com.docdoku.api.services.*;
 import org.junit.Assert;
@@ -30,6 +32,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -120,20 +124,28 @@ public class WorkflowApiTest {
         document.setWorkflowModelId(workflowModelReference);
         document.setRoleMapping(roleMapping);
 
+        // Upload file
         DocumentRevisionDTO createdDocument = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, document, TestConfig.WORKSPACE);
-        // TODO : upload file to doc, then download, then checkin
+        URL fileURL = WorkflowApiTest.class.getClassLoader().getResource("com/docdoku/api/attached-file.zip");
+        File file = new File(fileURL.getPath());
+
+        DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(createdDocument);
+        UploadDownloadHelper.uploadAttachedFile(lastIteration, TestConfig.BASIC_CLIENT, file);
+        DocumentRevisionDTO documentRevision = documentApi.getDocumentRevision(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
+        lastIteration = LastIterationHelper.getLastIteration(documentRevision);
+        UploadDownloadHelper.downloadFile(lastIteration.getAttachedFiles().get(0).getFullName(), TestConfig.BASIC_CLIENT);
+
+        // Check in
         documentApi.checkInDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
 
         WorkflowDTO workflow = workflowsApi.getWorkflowInstance(TestConfig.WORKSPACE, createdDocument.getWorkflow().getId());
         Assert.assertEquals(workflow,createdDocument.getWorkflow());
 
         runAsserts(createdDocument.getWorkflow(), workflowModel);
+        processTask(createdDocument.getWorkflow(), workflowModel);
 
-        try {
-            processTask(createdDocument.getWorkflow(), workflowModel);
-        } catch (ApiException e){
-            Assert.assertEquals("Before marking a task as done or rejecting it on a document you must have downloaded and opened it at least one time",e.getMessage());
-        }
+        documentRevision = documentApi.getDocumentRevision(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
+        Assert.assertTrue("Task is refreshed on document getter", documentRevision.getWorkflow().getActivities().get(0).getTasks().get(0).getStatus().equals(TaskDTO.StatusEnum.APPROVED));
 
     }
 
@@ -181,7 +193,7 @@ public class WorkflowApiTest {
 
         currentActivity = WorkflowHelper.getCurrentActivity(workflow);
         TaskDTO nextTask = WorkflowHelper.getRunningTasks(currentActivity).get(0);
-        Assert.assertEquals(createdFrom.getActivityModels().get(0).getTaskModels().get(1).getTitle(),nextTask.getTitle());
+        Assert.assertEquals("2nd task must be the next running task", createdFrom.getActivityModels().get(0).getTaskModels().get(1).getTitle(),nextTask.getTitle());
 
     }
 

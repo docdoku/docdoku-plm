@@ -30,9 +30,6 @@ define([
             $.event.props.push('dataTransfer');
 
             this.isOpen = false;
-            this.templateExtraData = {
-                isReadOnly: App.appView.isReadOnly()
-            };
             if (this.model) {
                 this.collection.parent = this.model;
             }
@@ -134,7 +131,7 @@ define([
         },
         navigate: function () {
             var path = this.modelPath ? '/' + encodeURIComponent(this.modelPath) : '';
-            App.router.navigate(App.config.workspaceId + '/configspec/' + App.config.documentConfigSpec + '/folders' + path, {trigger: false});
+            App.router.navigate(App.config.workspaceId + '/folders' + path, {trigger: false});
         },
 
         toggle: function () {
