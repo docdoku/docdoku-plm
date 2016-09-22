@@ -155,6 +155,7 @@ public class NotificationManagerBean implements INotificationManagerLocal {
         }
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void removeAllTagUserSubscriptions(String pWorkspaceId, String pLogin) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -169,6 +170,7 @@ public class NotificationManagerBean implements INotificationManagerLocal {
         }
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void removeAllTagUserGroupSubscriptions(String pWorkspaceId, String pGroupId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, UserGroupNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -177,6 +179,21 @@ public class NotificationManagerBean implements INotificationManagerLocal {
             Locale userLocale = new Locale(user.getLanguage());
             SubscriptionDAO subDAO = new SubscriptionDAO(userLocale, em);
             subDAO.removeAllTagSubscriptions(new UserGroupDAO(userLocale, em).loadUserGroup(new UserGroupKey(pWorkspaceId, pGroupId)));
+        } else {
+            // Else throw a AccessRightException
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public void removeAllSubscriptions(String pWorkspaceId, String pLogin) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        // Check if it is the workspace's administrator
+        if (user.isAdministrator()) {
+            Locale userLocale = new Locale(user.getLanguage());
+            SubscriptionDAO subDAO = new SubscriptionDAO(userLocale, em);
+            subDAO.removeAllSubscriptions(new UserDAO(userLocale, em).loadUser(new UserKey(pWorkspaceId, pLogin)));
         } else {
             // Else throw a AccessRightException
             throw new AccessRightException(new Locale(user.getLanguage()), user);

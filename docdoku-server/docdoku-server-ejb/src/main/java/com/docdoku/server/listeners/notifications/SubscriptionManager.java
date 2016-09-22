@@ -41,7 +41,7 @@ import java.util.Collection;
  */
 @Named
 @RequestScoped
-public class TagManager {
+public class SubscriptionManager {
 
     @Inject
     private INotificationManagerLocal notificationService;
@@ -56,6 +56,7 @@ public class TagManager {
 
     private void onRemoveUser(@Observes @Removed UserEvent event) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException {
         User user=event.getObservedUser();
+        notificationService.removeAllSubscriptions(user.getWorkspaceId(), user.getLogin());
         notificationService.removeAllTagUserSubscriptions(user.getWorkspaceId(), user.getLogin());
     }
 

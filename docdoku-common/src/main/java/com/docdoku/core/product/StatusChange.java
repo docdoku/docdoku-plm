@@ -39,10 +39,10 @@ public class StatusChange implements Serializable{
             @JoinColumn(name="USER_WORKSPACE",referencedColumnName = "WORKSPACE_ID")})
     private User statusChangeAuthor;
 
-    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private java.util.Date statusModificationDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date statusModificationDate;
 
-    public java.util.Date getStatusModificationDate() {
+    public Date getStatusModificationDate() {
         return statusModificationDate;
     }
 

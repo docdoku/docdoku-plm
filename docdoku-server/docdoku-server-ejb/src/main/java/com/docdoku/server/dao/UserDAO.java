@@ -27,10 +27,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.WorkspaceUserMembership;
 import com.docdoku.core.security.WorkspaceUserMembershipKey;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
+import javax.persistence.*;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -106,51 +103,18 @@ public class UserDAO {
         return memberships;
     }
 
-    public void removeUser(User pUser) throws UserNotFoundException, NotAllowedException, FolderNotFoundException, EntityConstraintException {
+    public void removeUser(User pUser) throws UserNotFoundException, FolderNotFoundException, EntityConstraintException {
         removeUserMembership(new WorkspaceUserMembershipKey(pUser.getWorkspaceId(), pUser.getWorkspaceId(), pUser.getLogin()));
-        new SubscriptionDAO(em).removeAllSubscriptions(pUser);
         new UserGroupDAO(mLocale, em).removeUserFromAllGroups(pUser);
         new ACLDAO(em).removeAclUserEntries(pUser);
-
-        boolean author = isDocMAuthor(pUser) || isDocAuthor(pUser) || isDocMTemplateAuthor(pUser) || isWorkflowModelAuthor(pUser);
-        boolean involved = isInvolvedInWF(pUser);
-
-        if (author || involved) {
-            throw new NotAllowedException(mLocale, "NotAllowedException8");
-        } else {
+        try {
             em.remove(pUser);
+            em.flush();
+        } catch (PersistenceException pPEx) {
+            throw new EntityConstraintException(mLocale,"EntityConstraintException27");
         }
     }
 
-    public boolean isInvolvedInWF(User pUser) {
-        Query query = em.createQuery("SELECT DISTINCT u FROM User u WHERE EXISTS (SELECT t FROM Task t WHERE t.worker = u AND t.worker = :user)");
-        List listUsers = query.setParameter("user", pUser).getResultList();
-        return !listUsers.isEmpty();
-    }
-
-    public boolean isDocMAuthor(User pUser) {
-        Query query = em.createQuery("SELECT DISTINCT u FROM User u WHERE EXISTS (SELECT m FROM DocumentMaster m WHERE m.author = u AND m.author = :user)");
-        List listUsers = query.setParameter("user", pUser).getResultList();
-        return !listUsers.isEmpty();
-    }
-
-    public boolean isDocAuthor(User pUser) {
-        Query query = em.createQuery("SELECT DISTINCT u FROM User u WHERE EXISTS (SELECT d FROM DocumentIteration d WHERE d.author = u AND d.author = :user)");
-        List listUsers = query.setParameter("user", pUser).getResultList();
-        return !listUsers.isEmpty();
-    }
-
-    public boolean isDocMTemplateAuthor(User pUser) {
-        Query query = em.createQuery("SELECT DISTINCT u FROM User u WHERE EXISTS (SELECT t FROM DocumentMasterTemplate t WHERE t.author = u AND t.author = :user)");
-        List listUsers = query.setParameter("user", pUser).getResultList();
-        return !listUsers.isEmpty();
-    }
-
-    public boolean isWorkflowModelAuthor(User pUser) {
-        Query query = em.createQuery("SELECT DISTINCT u FROM User u WHERE EXISTS (SELECT w FROM WorkflowModel w WHERE w.author = u AND w.author = :user)");
-        List listUsers = query.setParameter("user", pUser).getResultList();
-        return !listUsers.isEmpty();
-    }
 
     public void createUser(User pUser) throws UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {
         try {

@@ -24,6 +24,7 @@ import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.EntityConstraintException;
 import com.docdoku.core.exceptions.UserGroupAlreadyExistsException;
 import com.docdoku.core.exceptions.UserGroupNotFoundException;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
@@ -125,9 +126,14 @@ public class UserGroupDAO {
         return memberships;
     }
 
-    public void removeUserGroup(UserGroup pUserGroup) throws UserGroupNotFoundException {
+    public void removeUserGroup(UserGroup pUserGroup) throws UserGroupNotFoundException, EntityConstraintException {
         removeUserGroupMembership(new WorkspaceUserGroupMembershipKey(pUserGroup.getWorkspaceId(), pUserGroup.getWorkspaceId(), pUserGroup.getId()));
-        em.remove(pUserGroup);
+        try {
+            em.remove(pUserGroup);
+            em.flush();
+        } catch (PersistenceException pPEx) {
+            throw new EntityConstraintException(mLocale,"EntityConstraintException28");
+        }
     }
 
     public boolean hasACLConstraint(UserGroupKey pKey){
