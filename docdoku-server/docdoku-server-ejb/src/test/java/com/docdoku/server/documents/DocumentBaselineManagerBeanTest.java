@@ -26,7 +26,9 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.DocumentBaseline;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.document.Folder;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.DataManagerBean;
@@ -42,9 +44,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DocumentBaselineManagerBeanTest {
@@ -72,12 +72,12 @@ public class DocumentBaselineManagerBeanTest {
 
 
     /**
-     * test that we cannot baseline an empty workspace
+     * test that we cannot baseline an empty collection of documents
      *
      * @throws Exception
      */
     @Test
-    public void shouldNotBaselineEmptyWorkspace() throws Exception {
+    public void shouldNotBaselineAnEmptyCollection() throws Exception {
         //Given
         Mockito.when(userManager.checkWorkspaceWriteAccess(workspace.getId())).thenReturn(user);
         Mockito.when(em.find(Workspace.class, workspace.getId())).thenReturn(workspace);
@@ -88,12 +88,14 @@ public class DocumentBaselineManagerBeanTest {
         Mockito.when(documentService.getAllDocumentsInWorkspace(workspace.getId())).thenReturn(new DocumentRevision[0]);
 
         //when
-        DocumentBaseline documentBaseline = docBaselineManagerBean.createBaseline(workspace.getId(), "name", DocumentBaseline.BaselineType.RELEASED, "description", new ArrayList<>());
+        try {
+            docBaselineManagerBean.createBaseline(workspace.getId(), "name", DocumentBaseline.BaselineType.RELEASED, "description", new ArrayList<>());
+        }catch (NotAllowedException e){
+            ResourceBundle bundle = ResourceBundle.getBundle("com.docdoku.core.i18n.LocalStrings", new Locale(user.getLanguage()));
+            String expected = bundle.getString("NotAllowedException66");
+            Assert.assertEquals(expected,e.getMessage());
+        }
 
-        //Then
-        Assert.assertTrue(documentBaseline != null);
-        Assert.assertTrue("description".equals(documentBaseline.getDescription()));
-        Assert.assertTrue(documentBaseline.getAuthor().getWorkspaceId().equals(workspace.getId()));
     }
 
 
@@ -121,14 +123,6 @@ public class DocumentBaselineManagerBeanTest {
         DocumentRevision documentRevision1 = documentMaster1.createNextRevision(user);
         DocumentRevision documentRevision2 = documentMaster2.createNextRevision(user);
 
-        // TODO: test with ACL
-//        ACL acl1 = new ACL();
-//        ACL acl2 = new ACL();
-//        acl1.addEntry(user, ACL.Permission.FORBIDDEN);
-//        acl2.addEntry(user, ACL.Permission.READ_ONLY);
-//        documentRevision1.setACL(acl1);
-//        documentRevision2.setACL(acl2);
-
         revisions[0] = documentRevision2;
         revisions[1] = documentRevision1;
         documentRevision1.createNextIteration(user);
@@ -141,8 +135,12 @@ public class DocumentBaselineManagerBeanTest {
         Mockito.when(documentService.getAllDocumentsInWorkspace(workspace.getId())).thenReturn(revisions);
         Mockito.when(userManager.checkWorkspaceReadAccess(workspace.getId())).thenReturn(user);
 
+
         //when
-        DocumentBaseline documentBaseline = docBaselineManagerBean.createBaseline(workspace.getId(), "name", DocumentBaseline.BaselineType.LATEST, "description", new ArrayList<>());
+        List<DocumentRevisionKey> documentRevisionKeys = new ArrayList<>();
+        documentRevisionKeys.add(new DocumentRevisionKey(workspace.getId(),documentMaster1.getId(),documentMaster1.getLastRevision().getVersion()));
+        documentRevisionKeys.add(new DocumentRevisionKey(workspace.getId(),documentMaster2.getId(),documentMaster2.getLastRevision().getVersion()));
+        DocumentBaseline documentBaseline = docBaselineManagerBean.createBaseline(workspace.getId(), "name", DocumentBaseline.BaselineType.LATEST, "description", documentRevisionKeys);
 
         //Then
         Assert.assertTrue(documentBaseline != null);
