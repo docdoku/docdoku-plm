@@ -297,10 +297,9 @@ define([
                 Backbone.Events.trigger('document-moved');
                 that.folderDiv.removeClass('move-doc-into');
                 that.folderDiv.highlightEffect();
-            }, function () {
-                Backbone.Events.trigger('document-error-moved');
+            }, function (error) {
+                Backbone.Events.trigger('document-error-moved', null, error);
                 that.folderDiv.removeClass('move-doc-into');
-
             });
 
         },

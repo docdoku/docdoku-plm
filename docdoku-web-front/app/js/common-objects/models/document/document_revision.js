@@ -363,8 +363,7 @@ define([
 					}
 				},
 				error: function (xhr) {
-                    window.alert(xhr.responseText);
-					error();
+					error(xhr);
 				}
 			});
 		},
