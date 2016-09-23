@@ -22,6 +22,7 @@ package com.docdoku.core.document;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
+import com.docdoku.core.meta.StatusChange;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.workflow.Workflow;

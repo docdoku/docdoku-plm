@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.core.product;
+package com.docdoku.core.meta;
 
 import com.docdoku.core.common.User;
 

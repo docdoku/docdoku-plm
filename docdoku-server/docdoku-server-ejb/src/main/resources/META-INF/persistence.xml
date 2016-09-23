@@ -35,7 +35,6 @@
     <class>com.docdoku.core.document.Folder</class>
     <class>com.docdoku.core.document.IterationChangeSubscription</class>
     <class>com.docdoku.core.document.StateChangeSubscription</class>
-    <class>com.docdoku.core.document.StatusChange</class>
     <class>com.docdoku.core.configuration.DocumentBaseline</class>
     <class>com.docdoku.core.configuration.DocumentCollection</class>
     <class>com.docdoku.core.configuration.BaselinedDocument</class>
@@ -101,7 +100,7 @@
     <class>com.docdoku.core.query.QueryRule</class>
     <class>com.docdoku.core.query.QueryContext</class>
     <class>com.docdoku.core.product.PathToPathLink</class>
-    <class>com.docdoku.core.product.StatusChange</class>
+    <class>com.docdoku.core.meta.StatusChange</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>
