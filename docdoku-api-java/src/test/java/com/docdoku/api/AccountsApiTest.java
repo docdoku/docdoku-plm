@@ -38,7 +38,7 @@ public class AccountsApiTest {
         String login = "USER-"+ UUID.randomUUID().toString().substring(0,8);
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setLogin(login);
-        accountDTO.setEmail("my@email.com");
+        accountDTO.setEmail("test@docdoku.com");
         accountDTO.setNewPassword("password");
         accountDTO.setLanguage("en");
         accountDTO.setName("Mr " + login);
