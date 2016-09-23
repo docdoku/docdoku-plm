@@ -66,6 +66,9 @@ define([
             var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries';
 
             var $select = this.$selectQuery;
+            var $existingQueriesArea = this.$existingQueriesArea;
+            var $deleteQueryButton = this.$deleteQueryButton;
+            var $exportQueryButton = this.$exportQueryButton;
             var selected = this.$selectQuery.val();
             $select.empty();
             $select.append('<option value=""></option>');
@@ -76,10 +79,10 @@ define([
             };
 
             return $.getJSON(url,function(data){
+
                 data.sort(function(a,b){
                     return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1;
-                });
-                data.map(fillOption);
+                }).map(fillOption);
 
                 if (typeof queryName === 'string') {
                     var selectedQuery = _.find(data, function (query) {
@@ -88,6 +91,15 @@ define([
                     selected = selectedQuery.id;
                 }
                 $select.val(selected);
+
+            }).then(function(){
+                if(!queries.length){
+                    $existingQueriesArea.hide();
+                }else {
+                    $existingQueriesArea.show();
+                    $deleteQueryButton.toggle($select.val() !== '');
+                    $exportQueryButton.toggle($select.val() !== '');
+                }
             });
 
         },
@@ -329,7 +341,10 @@ define([
                 .then(this.fetchTags.bind(this))
                 .then(this.fetchQueries.bind(this))
                 .then(this.fillSelectizes.bind(this))
-                .then(this.initWhere.bind(this));
+                .then(this.initWhere.bind(this))
+                .then(function(){
+
+                });
             return this;
         },
 
@@ -458,6 +473,7 @@ define([
             this.$exportQueryButton = this.$('.export-excel-button');
             this.$searchButton = this.$('.search-button');
             this.$context = this.$('#context');
+            this.$existingQueriesArea = this.$('.choose-existing-request-area');
         },
 
         onClearSelect: function(){
