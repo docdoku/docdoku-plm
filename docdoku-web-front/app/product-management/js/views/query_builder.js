@@ -14,7 +14,7 @@ define([
     var QueryBuilderView = Backbone.View.extend({
 
         events: {
-            'click .search-button': 'doSearch',
+            'click .search-button': 'onSearchButton',
             'click .save-button': 'onSave',
             'change select.query-list':'onSelectQueryChange',
             'click .delete-selected-query':'deleteSelectedQuery',
@@ -81,7 +81,6 @@ define([
             this.$groupBy = this.$('#groupBy');
             this.$selectQuery = this.$('select.query-list');
             this.$deleteQueryButton = this.$('.delete-selected-query');
-            this.$exportQueryButton = this.$('.export-excel-button');
             this.$exportExistingQueryButton = this.$('.export-existing-query-excel-button');
             this.$searchButton = this.$('.search-button');
             this.$context = this.$('#context');
@@ -361,10 +360,10 @@ define([
             });
         },
 
-
-
         destroy:function(){
-            this.$where.queryBuilder('destroy');
+            if(this.$where){
+                this.$where.queryBuilder('destroy');
+            }
         },
 
         initWhere:function(){
@@ -620,6 +619,10 @@ define([
                 xhr.send(JSON.stringify(queryData));
             }
 
+        },
+
+        onSearchButton : function(){
+            this.doSearch(false);
         },
 
         doSearch : function(save){

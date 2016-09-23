@@ -13,12 +13,12 @@ define([
         },
 
         initialize: function () {
-            this.items = this.options.data.queryResponse;
-            this.selects = this.options.data.queryData.selects;
-            this.orderByList = this.options.data.queryData.orderByList;
-            this.groupedByList = this.options.data.queryData.groupedByList;
-            this.columnNameMapping = this.options.data.queryColumnNameMapping;
-            this.queryFilters = this.options.data.queryFilters;
+            this.items = this.options.data ? this.options.data.queryResponse : [];
+            this.selects =  this.options.data ? this.options.data.queryData.selects : [];
+            this.orderByList =  this.options.data ? this.options.data.queryData.orderByList : [];
+            this.groupedByList =  this.options.data ? this.options.data.queryData.groupedByList : [];
+            this.columnNameMapping =  this.options.data ? this.options.data.queryColumnNameMapping: [];
+            this.queryFilters =  this.options.data ? this.options.data.queryFilters : [];
         },
 
         render: function () {

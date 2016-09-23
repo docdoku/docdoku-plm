@@ -11,7 +11,7 @@ define([
     'views/part/part_new_version',
     'common-objects/views/prompt',
     'common-objects/views/security/acl_edit',
-    '../query_builder',
+    'views/query_builder',
     'text!common-objects/templates/buttons/delete_button.html',
     'text!common-objects/templates/buttons/checkout_button_group.html',
     'text!common-objects/templates/buttons/new_version_button.html',
@@ -68,9 +68,46 @@ define([
             importButton:importButton
         },
 
+        id:'part_content',
+
         initialize: function () {
             _.bindAll(this);
-            this.query = null;
+        },
+
+        render: function () {
+
+            this.isQueryBuilderDisplayed = false;
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
+            this.bindDomElements();
+
+            this.tagsButton.show();
+
+            if(!this.query && !this.partsCollection){
+                this.partsCollection = new PartCollection();
+            } else if(this.query){
+                this.partsCollection = new PartSearchCollection();
+                this.partsCollection.setQuery(this.query);
+            }
+
+            if(this.partListView){
+                this.partListView.remove();
+            }
+
+            if(this.queryBuilder){
+                this.queryBuilder.remove();
+            }
+
+            this.partListView = new PartListView({
+                el: this.$('#part_table'),
+                collection: this.partsCollection
+            }).render();
+
+            this.queryBuilder = new QueryBuilder({
+                el: this.$queryBuilder
+            });
+
+            this.bindEvent();
+            return this;
         },
 
         setCollection:function(collection){
@@ -80,42 +117,6 @@ define([
 
         setQuery: function (query) {
             this.query = query;
-            this.partsCollection = null;
-            return this;
-        },
-
-        render: function () {
-            this.isQueryBuilderDisplayed = false;
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
-            this.bindDomElements();
-
-            //always show tag button
-            this.tagsButton.show();
-
-            if(!this.partsCollection){
-                if (this.query) {
-                    this.partsCollection = new PartSearchCollection();
-                    this.partsCollection.setQuery(this.query);
-                } else {
-                    this.partsCollection = new PartCollection();
-                }
-            }
-
-            if(this.partListView){
-                this.partListView.remove();
-            }
-
-            this.partListView = new PartListView({
-                el: this.$('#part_table'),
-                collection: this.partsCollection
-            }).render();
-
-
-            this.queryBuilder = new QueryBuilder({
-                el: this.$('.query-builder')
-            });
-
-            this.bindEvent();
             return this;
         },
 
@@ -136,12 +137,16 @@ define([
             this.pageControls = this.$('.page-controls');
             this.pagingButtons = this.$('.paging-buttons');
             this.showAllButton = this.$('.show-all');
+
+            this.$queryBuilder = this.$('.query-builder');
+            this.$displayQueryBuilderButton = this.$('.display-query-builder-button');
+            this.$queryTableContainer = this.$('#query_table_container');
+            this.$partTableContainer = this.$('#part_table_container');
         },
 
         bindEvent: function(){
             this.partListView.collection.on('page-count:fetch', this.onPageCountFetched);
             this.partListView.collection.fetchPageCount();
-
             this.partListView.on('error', this.onError);
             this.partListView.on('warning', this.onWarning);
             this.partListView.on('delete-button:display', this.changeDeleteButtonDisplay);
@@ -152,22 +157,15 @@ define([
             this.partListView.on('release-button:display', this.changeReleaseButtonDisplay);
             this.partListView.on('obsolete-button:display', this.changeObsoleteButtonDisplay);
             this.partListView.on('new-product-button:display', this.changeNewProductButtonDisplay);
-
+            this.queryBuilder.on('query:search',this.onQueryBuilderSearch);
             this.delegateEvents();
+        },
 
-            var self = this;
-            this.queryBuilder.on('query:search', function(data){
-                if(self.partListView){
-                    self.partListView.remove();
-                    self.pageControls.remove();
-                    self.$('#part_table_filter').remove();
-                }
-                self.queryTable = new PartGroupedByView({
-                    data : data,
-                    el: self.$('#query-table')
-                }).render();
-            });
-
+        onQueryBuilderSearch:function(data){
+            this.queryTable = new PartGroupedByView({
+                data : data,
+                el: this.$queryTableContainer
+            }).render();
         },
 
         newPart: function () {
@@ -528,17 +526,19 @@ define([
         },
 
         toggleQueryBuilder:function() {
-            this.$el.toggleClass('displayQueryBuilder', !this.isQueryBuilderDisplayed);
-            this.$('.display-query-builder-button').toggleClass('fa-angle-double-down', this.isQueryBuilderDisplayed);
-            this.$('.display-query-builder-button').toggleClass('fa-angle-double-up', !this.isQueryBuilderDisplayed);
+            this.isQueryBuilderDisplayed = !this.isQueryBuilderDisplayed;
+            this.$el.toggleClass('displayQueryBuilder', this.isQueryBuilderDisplayed);
+            this.$displayQueryBuilderButton.toggleClass('fa-angle-double-down', !this.isQueryBuilderDisplayed);
+            this.$displayQueryBuilderButton.toggleClass('fa-angle-double-up', this.isQueryBuilderDisplayed);
+            this.$queryTableContainer.toggle(this.isQueryBuilderDisplayed);
+            this.$partTableContainer.toggle(!this.isQueryBuilderDisplayed);
 
-            if (this.isQueryBuilderDisplayed) {
-                this.queryBuilder.destroy();
-            } else {
+            if(this.isQueryBuilderDisplayed){
                 this.queryBuilder.render();
+            }else {
+                this.queryBuilder.destroy();
             }
 
-            this.isQueryBuilderDisplayed = !this.isQueryBuilderDisplayed;
         },
 
         showImporter:function(){
@@ -546,7 +546,6 @@ define([
             partImporterView.render();
             document.body.appendChild(partImporterView.el);
             partImporterView.openModal();
-
             return false;
         },
 
