@@ -170,6 +170,7 @@ public class TaskManagerBean implements ITaskManagerLocal {
             taskWrapper.setHolderType("documents");
             taskWrapper.setHolderReference(documentRevision.getDocumentMasterId());
             taskWrapper.setHolderVersion(documentRevision.getVersion());
+            taskWrapper.setTask(documentRevision.getWorkflow().getTasks().stream().filter(pTask -> pTask.getKey().equals(task.getKey())).findFirst().get());
             return taskWrapper;
         }
         PartRevisionDAO PartRevisionDAO = new PartRevisionDAO(em);
@@ -179,6 +180,7 @@ public class TaskManagerBean implements ITaskManagerLocal {
             taskWrapper.setHolderType("parts");
             taskWrapper.setHolderReference(partRevision.getPartNumber());
             taskWrapper.setHolderVersion(partRevision.getVersion());
+            taskWrapper.setTask(partRevision.getWorkflow().getTasks().stream().filter(pTask -> pTask.getKey().equals(task.getKey())).findFirst().get());
             return taskWrapper;
         }
 
@@ -186,6 +188,7 @@ public class TaskManagerBean implements ITaskManagerLocal {
         if(workspaceWorkflowTarget!=null){
             taskWrapper.setHolderType("workspace-workflows");
             taskWrapper.setHolderReference(workspaceWorkflowTarget.getId());
+            taskWrapper.setTask(workspaceWorkflowTarget.getWorkflow().getTasks().stream().filter(pTask -> pTask.getKey().equals(task.getKey())).findFirst().get());
             return taskWrapper;
         }
 
