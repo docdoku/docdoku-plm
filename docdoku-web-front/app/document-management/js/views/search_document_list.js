@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global define*/
 define([
     'collections/search_document',
     'views/content_document_list',

@@ -179,9 +179,6 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
                     App.appView.initModules();
                 });
             },function(xhr){
-                new ErrorView({el:'#content'}).render({
-                    title:xhr.statusText,
-                    content:xhr.responseText
-                });
+                new ErrorView({el:'#content'}).renderError(xhr);
             });
     });

@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global define*/
 define([
     'mustache',
     'common-objects/common/singleton_decorator',

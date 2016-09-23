@@ -1,4 +1,4 @@
-/*global _,define,App*/
+/*global _,define*/
 define([
     'backbone',
     'common-objects/models/document/document_iteration'

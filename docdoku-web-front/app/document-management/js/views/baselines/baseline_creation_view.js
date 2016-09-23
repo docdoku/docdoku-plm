@@ -16,7 +16,6 @@ define([
 		events: {
 			'submit #baseline_creation_form': 'onSubmitForm',
 			'hidden #baseline_creation_modal': 'onHidden',
-            'change select#inputBaselineType': 'changeBaselineType',
             'close-modal-request': 'closeModal'
 		},
 
@@ -24,7 +23,7 @@ define([
 			_.bindAll(this);
 
             this.choiceView = new DocumentRevisionListView({editMode: true}).render();
-            this.listenTo(this.choiceView,'update',this.notifyUpdate.bind(this))
+            this.listenTo(this.choiceView,'update',this.notifyUpdate.bind(this));
 		},
 
 		render: function () {
@@ -58,14 +57,6 @@ define([
             this.$baselineDocumentsChoiceListArea = this.$('.baselineDocumentsChoiceListArea');
             this.$loader = this.$('.loader');
 		},
-
-        changeBaselineType: function () {
-            var type = this.$inputBaselineType.val();
-
-            // TODO
-            //this.resetViews();
-            //this.fetchDocumentRevisions(type);
-        },
 
         resetViews: function () {
             this.choiceView.clear();

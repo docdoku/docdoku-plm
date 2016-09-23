@@ -113,9 +113,6 @@ function (ContextResolver,  commonStrings, changeManagementStrings, ErrorView) {
                 Backbone.history.start();
             });
         }, function(xhr){
-            new ErrorView({el:'#content'}).render({
-                title:xhr.statusText,
-                content:xhr.responseText
-            });
+            new ErrorView({el:'#content'}).renderError(xhr);
         });
 });

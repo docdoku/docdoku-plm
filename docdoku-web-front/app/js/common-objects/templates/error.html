@@ -1,5 +1,10 @@
 <h3>{{title}}</h3>
 <p>{{content}}</p>
+{{#xhr}}
+<pre>
+   CODE[{{xhr.status}}] - {{xhr.responseText}}
+</pre>
+{{/xhr}}
 <button class="btn back">{{i18n.BACK}}</button>
 <button class="btn workspace-management">{{i18n.WORKSPACE_MANAGEMENT}}</button>
 <button class="btn btn-primary disconnect">{{i18n.LOGOUT}}</button>

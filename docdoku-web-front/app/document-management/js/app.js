@@ -35,8 +35,7 @@ define([
             this.$foldersNav.popover({
                 html: true,
                 title:'',
-                content: '<b>'+App.config.i18n.DOCUMENTS_CHOICE+'</b> <br />'
-                + '<span>'+App.config.i18n.DOCUMENTS_CHOICE_EXPLANATION+'</span>',
+                content: '<b>'+App.config.i18n.DOCUMENTS_CHOICE+'</b> <br />' + '<span>'+App.config.i18n.DOCUMENTS_CHOICE_EXPLANATION+'</span>',
                 container: 'body',
                 placement: 'right'
             }).popover('show');

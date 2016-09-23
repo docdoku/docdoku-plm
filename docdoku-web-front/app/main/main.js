@@ -57,8 +57,8 @@ require.config({
     }
 });
 
-require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/index'],
-    function (ContextResolver, commonStrings, indexStrings) {
+require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/index', 'common-objects/views/error'],
+    function (ContextResolver, commonStrings, indexStrings, ErrorView) {
         'use strict';
 
         App.config.needAuthentication = false;
@@ -77,20 +77,24 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
         };
 
         ContextResolver.resolveServerProperties()
+
+            .then(ContextResolver.resolveAccount)
             .then(function(){
-                ContextResolver.resolveAccount().then(function(){
-                    window.location.href = App.config.contextPath + '/workspace-management/';
-                }, null);
-            })
-            .then(function buildView(){
-                require(['backbone','app','router','common-objects/views/header'],function(Backbone, AppView, Router,HeaderView){
-                    App.appView = new AppView();
-                    App.headerView = new HeaderView();
-                    App.appView.render();
-                    App.headerView.render();
-                    App.router = Router.getInstance();
-                    Backbone.history.start();
-                });
+                window.location.href = App.config.contextPath + '/workspace-management/';
+            }, function buildView(xhr){
+                if(xhr.status === 401){
+                    require(['backbone','app','router','common-objects/views/header'],function(Backbone, AppView, Router,HeaderView){
+                        App.appView = new AppView();
+                        App.headerView = new HeaderView();
+                        App.appView.render();
+                        App.headerView.render();
+                        App.router = Router.getInstance();
+                        Backbone.history.start();
+                    });
+                } else {
+                    new ErrorView({el:'#content'}).renderError(xhr);
+                }
+
             });
     });
 

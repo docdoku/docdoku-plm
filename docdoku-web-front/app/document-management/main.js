@@ -119,9 +119,6 @@ require(['common-objects/contextResolver', 'i18n!localization/nls/common', 'i18n
                     Backbone.history.start();
                 });
             }, function(xhr){
-                new ErrorView({el:'#content'}).render({
-                    title:xhr.statusText,
-                    content:xhr.responseText
-                });
+                new ErrorView({el:'#content'}).renderError(xhr);
             });
     });
