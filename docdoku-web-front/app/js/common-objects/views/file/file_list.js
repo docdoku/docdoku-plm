@@ -244,10 +244,11 @@ define([
         },
 
 		deleteAFile: function(file){
+            var self = this;
 			file.destroy({
 				dataType: 'text', // server doesn't send a json hash in the response body
 				error: function () {
-					window.alert(App.config.i18n.FILE_DELETION_ERROR.replace('%{id}',file.id));
+                    self.printNotifications('error', App.config.i18n.FILE_DELETION_ERROR.replace('%{id}',file.id));
 				}
 			});
 		},
