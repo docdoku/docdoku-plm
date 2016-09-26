@@ -11,28 +11,31 @@ define([
     'text!common-objects/templates/buttons/delete_button.html',
     'text!common-objects/templates/buttons/ACL_button.html',
     'common-objects/views/alert'
-], function (require, Backbone, Mustache, RoleList, WorkflowListView, RolesModalView,ACLEditView, template, deleteButton,aclButton, AlertView) {
-	'use strict';
+], function (require, Backbone, Mustache, RoleList, WorkflowListView, RolesModalView, ACLEditView, template, deleteButton, aclButton, AlertView) {
+    'use strict';
     var WorkflowContentListView = Backbone.View.extend({
 
-        events:{
-            'click .actions .new':'actionNew',
-            'click .actions .delete':'actionDelete',
+        events: {
+            'click .actions .new': 'actionNew',
+            'click .actions .delete': 'actionDelete',
             'click .actions .roles': 'actionRoles',
             'click .actions .edit-acl': 'onEditAcl'
         },
 
         partials: {
             deleteButton: deleteButton,
-            aclButton:  aclButton
+            aclButton: aclButton
         },
 
         initialize: function () {
             this.rolesList = new RoleList();
         },
 
-        render:function(){
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, workspaceId: App.config.workspaceId},this.partials));
+        render: function () {
+            this.$el.html(Mustache.render(template, {
+                i18n: App.config.i18n,
+                workspaceId: App.config.workspaceId
+            }, this.partials));
             this.bindDomElement();
             this.listView = new WorkflowListView({
                 el: this.$('.workflow-table')
@@ -44,14 +47,14 @@ define([
             this.$el.html('');
         },
 
-        bindDomElement : function(){
+        bindDomElement: function () {
             this.$notifications = this.$('.notifications');
             this.$newWorflowBtn = this.$('.actions .new');
             this.$aclButton = this.$('.actions .edit-acl');
             this.$deleteButton = this.$('.actions .delete');
 
         },
-        bindCollections : function(){
+        bindCollections: function () {
             this.listenTo(this.listView.collection, 'reset', this.onWorkflowsListChange);
             this.listView.collection.fetch({reset: true});
             this.listenTo(this.rolesList, 'reset', this.onRolesListChange);
@@ -83,22 +86,25 @@ define([
         actionDelete: function () {
             var _this = this;
 
-            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_WORKFLOW, function(result) {
-                if (result) {
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_WORKFLOW,
+                App.config.i18n.CANCEL,
+                App.config.i18n.DELETE,
+                function (result) {
+                    if (result) {
 
-                    _this.listView.eachChecked(function (view) {
-                        view.model.destroy({
-                            wait:true,
-                            dataType: 'text',
-                            success: function () {
-                                _this.listView.redraw();
-                                _this.onNoWorkflowSelected();
-                            },
-                            error:_this.onError.bind(_this)
+                        _this.listView.eachChecked(function (view) {
+                            view.model.destroy({
+                                wait: true,
+                                dataType: 'text',
+                                success: function () {
+                                    _this.listView.redraw();
+                                    _this.onNoWorkflowSelected();
+                                },
+                                error: _this.onError.bind(_this)
+                            });
                         });
-                    });
-                }
-            });
+                    }
+                });
             return false;
         },
         actionRoles: function () {
@@ -108,7 +114,7 @@ define([
             }).show();
         },
 
-        onRolesListChange: function(){
+        onRolesListChange: function () {
             var _this = this;
             var isRolesListEmpty = _this.rolesList.length === 0;
             if (isRolesListEmpty) {
@@ -122,7 +128,7 @@ define([
                 _this.$newWorflowBtn.removeAttr('disabled');
             }
         },
-        onWorkflowsListChange: function(){
+        onWorkflowsListChange: function () {
             var _this = this;
             var isWorkflowListEmpty = _this.listView.collection.length === 0;
             if (isWorkflowListEmpty) {
@@ -177,7 +183,7 @@ define([
                         aclEditView.closeModal();
                         self.listView.redraw();
                     },
-                    error: function(model, error){
+                    error: function (model, error) {
                         aclEditView.onError(model, error);
                     }
                 });
@@ -186,7 +192,7 @@ define([
             return false;
         },
 
-        onError: function(model, error) {
+        onError: function (model, error) {
             var errorMessage = error ? error.responseText : model;
             this.$notifications.append(new AlertView({
                 type: 'error',

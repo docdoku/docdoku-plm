@@ -5,9 +5,9 @@ define([
     'text!templates/nav/tag_nav_item.html',
     'common-objects/models/part'
 ], function (Backbone, Mustache, template, Part) {
-	'use strict';
+    'use strict';
     var TagNavItemView = Backbone.View.extend({
-        events:{
+        events: {
             'click .delete': 'actionDelete',
             'mouseleave .header': 'hideActions',
             'dragenter >.nav-list-entry': 'onDragEnter',
@@ -19,24 +19,27 @@ define([
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n,
                 workspaceId: App.config.workspaceId,
-                model:this.model
+                model: this.model
             }));
             this.tagDiv = this.$('>.nav-list-entry');
             return this;
         },
-        hideActions:function() {
+        hideActions: function () {
             this.$('.header .btn-group').first().removeClass('open');
         },
-        actionDelete:function() {
+        actionDelete: function () {
             this.hideActions();
-            var that = this ;
-            bootbox.confirm(App.config.i18n.DELETE_TAG_QUESTION, function(result){
-                if(result){
-                    that.model.destroy({
-                        dataType: 'text' // server doesn't send a json hash in the response body
-                    }).success(that.remove.bind(that));
-                }
-            });
+            var that = this;
+            bootbox.confirm(App.config.i18n.DELETE_TAG_QUESTION,
+                App.config.i18n.CANCEL,
+                App.config.i18n.DELETE,
+                function (result) {
+                    if (result) {
+                        that.model.destroy({
+                            dataType: 'text' // server doesn't send a json hash in the response body
+                        }).success(that.remove.bind(that));
+                    }
+                });
             return false;
         },
 
@@ -61,7 +64,7 @@ define([
             }
         },
 
-        tagPart: function(e) {
+        tagPart: function (e) {
             var that = this;
             var part = new Part(JSON.parse(e.dataTransfer.getData('part:text/plain')));
 

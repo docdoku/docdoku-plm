@@ -30,7 +30,7 @@ define([
             this.events['click .actions .edit-acl'] = 'onEditAcl';
             this.events['click .actions .add-documents-to-baseline'] = 'addDocumentsInBaseline';
             this.events['click .actions .view-baseline-detail'] = 'openBaselineDetail';
-            Backbone.Events.on('folder-delete:error',this.onError);
+            Backbone.Events.on('folder-delete:error', this.onError);
         },
 
         rendered: function () {
@@ -59,8 +59,8 @@ define([
                 })
             );
             var self = this;
-            this.collection.fetch({reset: true}).error(function(err) {
-                self.onError(null,err);
+            this.collection.fetch({reset: true}).error(function (err) {
+                self.onError(null, err);
             });
 
             this.listenTo(this.listView, 'selectionChange', this.onStateChange);
@@ -245,7 +245,7 @@ define([
             this.releaseButton.toggle(state);
         },
 
-        changeObsoleteButtonDisplay: function(state) {
+        changeObsoleteButtonDisplay: function (state) {
             this.obsoleteButton.toggle(state);
         },
 
@@ -255,11 +255,11 @@ define([
 
             var selectedDocuments = this.listView.checkedViews();
 
-            var queueCheckOut= async.queue(function(docView,callback){
+            var queueCheckOut = async.queue(function (docView, callback) {
                 docView.model.checkout().success(callback);
             });
 
-            queueCheckOut.drain = function(){
+            queueCheckOut.drain = function () {
                 self.multipleCheckInCheckOutDone(selectedDocuments);
             };
 
@@ -269,20 +269,23 @@ define([
 
         actionUndocheckout: function () {
             var self = this;
-            bootbox.confirm(App.config.i18n.UNDO_CHECKOUT_QUESTION, function (result) {
-                if (result) {
+            bootbox.confirm(App.config.i18n.UNDO_CHECKOUT_QUESTION,
+                App.config.i18n.CANCEL,
+                App.config.i18n.CONFIRM,
+                function (result) {
+                    if (result) {
 
-                    var selectedDocuments = self.listView.checkedViews();
-                    var queueUndoCheckOut= async.queue(function(docView,callback){
+                        var selectedDocuments = self.listView.checkedViews();
+                        var queueUndoCheckOut = async.queue(function (docView, callback) {
                             docView.model.undocheckout().success(callback);
                         });
-                    queueUndoCheckOut.drain = function(){
-                        self.multipleCheckInCheckOutDone(selectedDocuments);
-                    };
+                        queueUndoCheckOut.drain = function () {
+                            self.multipleCheckInCheckOutDone(selectedDocuments);
+                        };
 
-                    queueUndoCheckOut.push(selectedDocuments);
-                }
-            });
+                        queueUndoCheckOut.push(selectedDocuments);
+                    }
+                });
             return false;
         },
 
@@ -314,11 +317,11 @@ define([
                 this.listenTo(promptView, 'prompt-ok', function (args) {
 
                     var iterationNote = args[0];
-                    if(_.isEqual(iterationNote, '')){
+                    if (_.isEqual(iterationNote, '')) {
                         iterationNote = null;
                     }
 
-                    var queueCheckIn = async.queue(function(docView, callback) {
+                    var queueCheckIn = async.queue(function (docView, callback) {
                         var revisionNote;
                         if (iterationNote) {
                             revisionNote = docView.model.getLastIteration().get('revisionNote');
@@ -329,12 +332,12 @@ define([
 
                         docView.model.getLastIteration().save({
                             revisionNote: revisionNote
-                        }).success(function(){
+                        }).success(function () {
                             docView.model.checkin().success(callback);
                         });
                     });
 
-                    queueCheckIn.drain = function(){
+                    queueCheckIn.drain = function () {
                         self.multipleCheckInCheckOutDone(selectedDocuments);
                     };
 
@@ -342,11 +345,11 @@ define([
                 });
 
                 this.listenTo(promptView, 'prompt-cancel', function () {
-                    var queueCheckIn= async.queue(function(docView,callback){
+                    var queueCheckIn = async.queue(function (docView, callback) {
                         docView.model.checkin().success(callback);
                     });
 
-                    queueCheckIn.drain = function(){
+                    queueCheckIn.drain = function () {
                         self.multipleCheckInCheckOutDone(selectedDocuments);
                     };
 
@@ -354,13 +357,13 @@ define([
                 });
 
             } else {
-                var queueCheckIn = async.queue(function(docView, callback) {
-                    docView.model.getLastIteration().save().success(function(){
+                var queueCheckIn = async.queue(function (docView, callback) {
+                    docView.model.getLastIteration().save().success(function () {
                         docView.model.checkin().success(callback);
                     });
                 });
 
-                queueCheckIn.drain = function(){
+                queueCheckIn.drain = function () {
                     self.multipleCheckInCheckOutDone(selectedDocuments);
                 };
 
@@ -372,7 +375,7 @@ define([
 
         multipleCheckInCheckOutDone: function (selectedDocuments) {
             var that = this;
-            this.collection.fetch({reset: true}).success(function(){
+            this.collection.fetch({reset: true}).success(function () {
                 that.listView.checkCheckboxes(selectedDocuments);
             });
             Backbone.Events.trigger('document:iterationChange');
@@ -381,35 +384,38 @@ define([
         actionDelete: function () {
             var that = this;
 
-            bootbox.confirm(App.config.i18n.DELETE_SELECTION_QUESTION, function (result) {
-                if (result) {
+            bootbox.confirm(App.config.i18n.DELETE_SELECTION_QUESTION,
+                App.config.i18n.CANCEL,
+                App.config.i18n.DELETE,
+                function (result) {
+                    if (result) {
 
-                    var checkedViews = that.listView.checkedViews();
-                    var requestsToBeDone = checkedViews.length;
-                    var requestsDone = 0;
+                        var checkedViews = that.listView.checkedViews();
+                        var requestsToBeDone = checkedViews.length;
+                        var requestsDone = 0;
 
-                    var onRequestOver = function () {
-                        if (++requestsDone === requestsToBeDone) {
-                            that.listView.redraw();
-                            that.collection.fetch();
-                            that.onStateChange();
-                            Backbone.Events.trigger('document:iterationChange');
-                        }
-                    };
-
-                    that.listView.eachChecked(function (view) {
-                        view.model.destroy({
-                            wait: true,
-                            dataType: 'text', // server doesn't send a json hash in the response body
-                            success: onRequestOver,
-                            error: function (model, err) {
-                                that.onError(model, err);
-                                onRequestOver();
+                        var onRequestOver = function () {
+                            if (++requestsDone === requestsToBeDone) {
+                                that.listView.redraw();
+                                that.collection.fetch();
+                                that.onStateChange();
+                                Backbone.Events.trigger('document:iterationChange');
                             }
+                        };
+
+                        that.listView.eachChecked(function (view) {
+                            view.model.destroy({
+                                wait: true,
+                                dataType: 'text', // server doesn't send a json hash in the response body
+                                success: onRequestOver,
+                                error: function (model, err) {
+                                    that.onError(model, err);
+                                    onRequestOver();
+                                }
+                            });
                         });
-                    });
-                }
-            });
+                    }
+                });
 
             return false;
         },
@@ -466,24 +472,30 @@ define([
 
         releaseDocuments: function () {
             var that = this;
-            bootbox.confirm(App.config.i18n.RELEASE_SELECTION_QUESTION, function (result) {
-                if (result) {
-                    that.listView.eachChecked(function (view) {
-                        view.model.release();
-                    });
-                }
-            });
+            bootbox.confirm(App.config.i18n.RELEASE_SELECTION_QUESTION,
+                App.config.i18n.CANCEL,
+                App.config.i18n.CONFIRM,
+                function (result) {
+                    if (result) {
+                        that.listView.eachChecked(function (view) {
+                            view.model.release();
+                        });
+                    }
+                });
         },
 
         markAsObsolete: function () {
             var that = this;
-            bootbox.confirm(App.config.i18n.MARK_DOCUMENT_AS_OBSOLETE_QUESTION, function(result){
-                if(result){
-                    that.listView.eachChecked(function (view) {
-                        view.model.markAsObsolete();
-                    });
-                }
-            });
+            bootbox.confirm(App.config.i18n.MARK_DOCUMENT_AS_OBSOLETE_QUESTION,
+                App.config.i18n.CANCEL,
+                App.config.i18n.CONFIRM,
+                function (result) {
+                    if (result) {
+                        that.listView.eachChecked(function (view) {
+                            view.model.markAsObsolete();
+                        });
+                    }
+                });
         },
 
         onQuickSearch: function (e) {
@@ -560,13 +572,13 @@ define([
 
             var notifications = this.notifications;
 
-            _.each(returns, function(status){
-                if(status && status.info){
+            _.each(returns, function (status) {
+                if (status && status.info) {
                     notifications.append(new AlertView({
                         type: 'info',
                         message: status.info
                     }).render().$el);
-                }else if (status && status.error){
+                } else if (status && status.error) {
                     notifications.append(new AlertView({
                         type: 'error',
                         message: status.error
@@ -578,12 +590,12 @@ define([
             this.viewBaselineDetail.highlightEffect();
         },
 
-        refreshBaselineDocumentsCount:function(){
+        refreshBaselineDocumentsCount: function () {
             this.snapInProgressGroupButtons.find('span.count').text(App.config.documentBaselineInProgress.getBaselinedDocuments().length);
         },
 
         openBaselineDetail: function () {
-            var baselineCreationView = new BaselineCreationView({mode:'edit'});
+            var baselineCreationView = new BaselineCreationView({mode: 'edit'});
             window.document.body.appendChild(baselineCreationView.render().el);
             baselineCreationView.on('warning', this.onWarning);
             baselineCreationView.on('update', this.refreshBaselineDocumentsCount.bind(this));

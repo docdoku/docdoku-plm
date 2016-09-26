@@ -150,27 +150,30 @@ define([
 
         deleteSelectedProductInstances: function () {
             var _this = this;
-            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PRODUCT_INSTANCE, function (result) {
-                if (result) {
-                    _(_this.listItemViews).each(function (view) {
-                        if (view.isChecked()) {
-                            view.model.id = view.model.getSerialNumber();
-                            view.model.destroy({
-                                dataType: 'text', // server doesn't send a json hash in the response body
-                                success: function () {
-                                    _this.removeProductInstance(view.model);
-                                    _this.onSelectionChanged();
-                                },
-                                error: function (model, err) {
-                                    _this.trigger('error', model, err);
-                                    _this.onSelectionChanged();
-                                },
-                                wait: true
-                            });
-                        }
-                    });
-                }
-            });
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PRODUCT_INSTANCE,
+                App.config.i18n.CANCEL,
+                App.config.i18n.DELETE,
+                function (result) {
+                    if (result) {
+                        _(_this.listItemViews).each(function (view) {
+                            if (view.isChecked()) {
+                                view.model.id = view.model.getSerialNumber();
+                                view.model.destroy({
+                                    dataType: 'text', // server doesn't send a json hash in the response body
+                                    success: function () {
+                                        _this.removeProductInstance(view.model);
+                                        _this.onSelectionChanged();
+                                    },
+                                    error: function (model, err) {
+                                        _this.trigger('error', model, err);
+                                        _this.onSelectionChanged();
+                                    },
+                                    wait: true
+                                });
+                            }
+                        });
+                    }
+                });
         },
 
         redraw: function () {
@@ -229,7 +232,7 @@ define([
                         templateSelected.set('acl', acl);
                         aclEditView.closeModal();
                     },
-                    error: function(error){
+                    error: function (error) {
                         aclEditView.onError(error);
                     }
                 });

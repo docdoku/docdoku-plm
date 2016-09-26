@@ -12,9 +12,9 @@ define([
     'views/folder_new',
     'views/folder_edit',
     'text!templates/folder_list_item.html'
-], function (Backbone,Mustache, require, DocumentRevision, Folder, FolderList, ListItemView, FolderListView, FolderDocumentListView, FolderNewView, FolderEditView, template) {
+], function (Backbone, Mustache, require, DocumentRevision, Folder, FolderList, ListItemView, FolderListView, FolderDocumentListView, FolderNewView, FolderEditView, template) {
     'use strict';
-	var FolderListItemView = ListItemView.extend({
+    var FolderListItemView = ListItemView.extend({
 
         template: template,
 
@@ -154,22 +154,22 @@ define([
             }
         },
 
-		/** State */
-		setActive: function () {
-			if (App.$documentManagementMenu) {
-				App.$documentManagementMenu.find('.active').removeClass('active');
-			}
-			this.$el.find('.header').first().addClass('active');
-		},
-		isActive: function () {
-			return this.$el.find('.header').first().hasClass('active');
-		},
+        /** State */
+        setActive: function () {
+            if (App.$documentManagementMenu) {
+                App.$documentManagementMenu.find('.active').removeClass('active');
+            }
+            this.$el.find('.header').first().addClass('active');
+        },
+        isActive: function () {
+            return this.$el.find('.header').first().hasClass('active');
+        },
 
-		/** Action */
-		hideActions: function () {
-			// Prevents the actions menu to stay opened all the time
-			this.$el.find('.header .btn-group').first().removeClass('open');
-		},
+        /** Action */
+        hideActions: function () {
+            // Prevents the actions menu to stay opened all the time
+            this.$el.find('.header .btn-group').first().removeClass('open');
+        },
         actionNewFolder: function () {
             this.hideActions();
             this.addSubView(
@@ -189,20 +189,23 @@ define([
         actionDelete: function () {
             this.hideActions();
             var that = this;
-            bootbox.confirm(App.config.i18n.DELETE_FOLDER_QUESTION, function(result){
-                if(result){
-                    that.model.destroy({
-                        wait:true,
-                        dataType: 'text', // server doesn't send a json hash in the response body,
-                        success:function(){
-                            Backbone.Events.trigger('document:iterationChange');
-                        },
-                        error:function(model,res){
-                            Backbone.Events.trigger('folder-delete:error',model,res);
-                        }
-                    });
-                }
-            });
+            bootbox.confirm(App.config.i18n.DELETE_FOLDER_QUESTION,
+                App.config.i18n.CANCEL,
+                App.config.i18n.DELETE,
+                function (result) {
+                    if (result) {
+                        that.model.destroy({
+                            wait: true,
+                            dataType: 'text', // server doesn't send a json hash in the response body,
+                            success: function () {
+                                Backbone.Events.trigger('document:iterationChange');
+                            },
+                            error: function (model, res) {
+                                Backbone.Events.trigger('folder-delete:error', model, res);
+                            }
+                        });
+                    }
+                });
             return false;
         },
 
@@ -231,11 +234,11 @@ define([
             this.folderDiv.removeClass('move-doc-into');
         },
 
-        onDragStart : function(e){
+        onDragStart: function (e) {
 
             var data = JSON.stringify(this.model.toJSON());
 
-            if(!data || this.model.get('home')){
+            if (!data || this.model.get('home')) {
                 e.preventDefault();
                 e.stopPropagation();
                 return false;
@@ -255,7 +258,7 @@ define([
             });
 
 
-            e.dataTransfer.setData('folder:text/plain',data);
+            e.dataTransfer.setData('folder:text/plain', data);
 
             var img = document.createElement('img');
             img.src = App.config.contextPath + '/images/icon-nav-folder-opened.png';
@@ -269,19 +272,19 @@ define([
 
         },
 
-        onDragEnd : function(){
+        onDragEnd: function () {
 
         },
 
         onDrop: function (e) {
-            if(e.dataTransfer.getData('document:text/plain')){
+            if (e.dataTransfer.getData('document:text/plain')) {
                 this.moveDocument(e);
-            } else if(e.dataTransfer.getData('folder:text/plain')){
+            } else if (e.dataTransfer.getData('folder:text/plain')) {
                 this.moveFolder(e);
             }
         },
 
-        moveDocument: function(e){
+        moveDocument: function (e) {
 
             var that = this;
             var documentRevision = new DocumentRevision(JSON.parse(e.dataTransfer.getData('document:text/plain')));
@@ -302,18 +305,18 @@ define([
 
         },
 
-        moveFolder: function(e){
+        moveFolder: function (e) {
             var data = JSON.parse(e.dataTransfer.getData('folder:text/plain'));
-            var model = this.model||{id:App.config.workspaceId};
+            var model = this.model || {id: App.config.workspaceId};
             var folder = new Folder(data);
-            var that = this ;
+            var that = this;
 
-            folder.moveTo(model).success(function(){
+            folder.moveTo(model).success(function () {
                 Backbone.Events.trigger('folder-moved');
                 that.folderDiv.removeClass('move-doc-into');
                 that.folderDiv.highlightEffect();
                 that.show();
-            }).error(function(){
+            }).error(function () {
                 Backbone.Events.trigger('folder-error-moved');
                 that.folderDiv.removeClass('move-doc-into');
             });

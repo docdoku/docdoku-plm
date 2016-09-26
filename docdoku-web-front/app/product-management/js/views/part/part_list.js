@@ -107,9 +107,9 @@ define([
 
         checkCheckboxes: function () {
             var that = this;
-            _.each(that.selectedPartIndexes, function(selectedView) {
-                _.each(that.listItemViews, function(view) {
-                    if(selectedView.model.getPartKey() === view.model.getPartKey()) {
+            _.each(that.selectedPartIndexes, function (selectedView) {
+                _.each(that.listItemViews, function (view) {
+                    if (selectedView.model.getPartKey() === view.model.getPartKey()) {
                         view.check();
                         view.selectionChanged();
                     }
@@ -184,56 +184,62 @@ define([
         deleteSelectedParts: function () {
             var _this = this;
 
-            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PART, function (result) {
-                if (result) {
-                    var checkedViews = _(_this.listItemViews).select(function(view) {
-                        return view.isChecked();
-                    });
-                    var requestsToBeDone = checkedViews.length;
-                    var requestsDone = 0;
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PART,
+                App.config.i18n.CANCEL,
+                App.config.i18n.CONFIRM,
+                function (result) {
+                    if (result) {
+                        var checkedViews = _(_this.listItemViews).select(function (view) {
+                            return view.isChecked();
+                        });
+                        var requestsToBeDone = checkedViews.length;
+                        var requestsDone = 0;
 
-                    var onRequestOver = function () {
-                        if (++requestsDone === requestsToBeDone) {
-                            _this.onSelectionChanged();
-                            Backbone.Events.trigger('part:iterationChange');
-                        }
-                    };
-                    _(_this.listItemViews).each(function (view) {
-                        if (view.isChecked()) {
-                            view.model.destroy({
-                                wait: true,
-                                dataType: 'text', // server doesn't send a json hash in the response body
-                                success: function () {
-                                    _this.removePart(view.model);
-                                    onRequestOver();
+                        var onRequestOver = function () {
+                            if (++requestsDone === requestsToBeDone) {
+                                _this.onSelectionChanged();
+                                Backbone.Events.trigger('part:iterationChange');
+                            }
+                        };
+                        _(_this.listItemViews).each(function (view) {
+                            if (view.isChecked()) {
+                                view.model.destroy({
+                                    wait: true,
+                                    dataType: 'text', // server doesn't send a json hash in the response body
+                                    success: function () {
+                                        _this.removePart(view.model);
+                                        onRequestOver();
 
-                                },
-                                error: function (model, err) {
-                                    _this.trigger('error', model, err);
-                                    //must be called, if not the ones which succeed
-                                    //won't trigger the event while the part did change.
-                                    Backbone.Events.trigger('part:iterationChange');
-                                    _this.onSelectionChanged();
-                                }
-                            });
-                        }
-                    });
+                                    },
+                                    error: function (model, err) {
+                                        _this.trigger('error', model, err);
+                                        //must be called, if not the ones which succeed
+                                        //won't trigger the event while the part did change.
+                                        Backbone.Events.trigger('part:iterationChange');
+                                        _this.onSelectionChanged();
+                                    }
+                                });
+                            }
+                        });
 
-                }
-            });
+                    }
+                });
         },
 
         releaseSelectedParts: function () {
             var that = this;
-            bootbox.confirm(App.config.i18n.RELEASE_SELECTION_QUESTION, function (result) {
-                if (result) {
-                    _(that.listItemViews).each(function (view) {
-                        if (view.isChecked()) {
-                            view.model.release();
-                        }
-                    });
-                }
-            });
+            bootbox.confirm(App.config.i18n.RELEASE_SELECTION_QUESTION,
+                App.config.i18n.CANCEL,
+                App.config.i18n.CONFIRM,
+                function (result) {
+                    if (result) {
+                        _(that.listItemViews).each(function (view) {
+                            if (view.isChecked()) {
+                                view.model.release();
+                            }
+                        });
+                    }
+                });
         },
 
         getSelectedPart: function () {
@@ -259,7 +265,7 @@ define([
         },
 
         getSelectedPartIndexes: function () {
-            for (var i=0; i<this.listItemViews.length; i++) {
+            for (var i = 0; i < this.listItemViews.length; i++) {
                 if (this.listItemViews[i].isChecked()) {
                     this.selectedPartIndexes[this.selectedPartIndexes.length] = this.listItemViews[i];
                 }
@@ -285,7 +291,7 @@ define([
         },
 
         areSelectedPartsCheckoutable: function () {
-            var isPartCheckout = this.getSelectedParts().length >0;
+            var isPartCheckout = this.getSelectedParts().length > 0;
             _(this.getSelectedParts()).each(function (view) {
                 if (view.isReleased() || view.isCheckout() || view.isObsolete()) {
                     isPartCheckout = false;
@@ -295,7 +301,7 @@ define([
         },
 
         areSelectedPartsCheckedOut: function () {
-            var isPartCheckedOut = this.getSelectedParts().length >0;
+            var isPartCheckedOut = this.getSelectedParts().length > 0;
             _(this.getSelectedParts()).each(function (view) {
                 if (!view.isCheckout()) {
                     isPartCheckedOut = false;
@@ -305,7 +311,7 @@ define([
         },
 
         areSelectedPartsAllNotCheckedOut: function () {
-            var isPartNotCheckedOut = this.getSelectedParts().length >0;
+            var isPartNotCheckedOut = this.getSelectedParts().length > 0;
             _(this.getSelectedParts()).each(function (view) {
                 if (view.isCheckout() || view.isReleased() || view.isObsolete()) {
                     isPartNotCheckedOut = false;
@@ -315,7 +321,7 @@ define([
         },
 
         areSelectedPartsCheckedOutByConnectedUser: function () {
-            var isPartCheckedOutByConnectedUser = this.getSelectedParts().length >0;
+            var isPartCheckedOutByConnectedUser = this.getSelectedParts().length > 0;
             _(this.getSelectedParts()).each(function (view) {
                 if (!view.isCheckoutByConnectedUser()) {
                     isPartCheckedOutByConnectedUser = false;
@@ -325,7 +331,7 @@ define([
         },
 
         haveMoreThanOneIteration: function () {
-            var hasMoreThanOneIteration = this.getSelectedParts().length >0;
+            var hasMoreThanOneIteration = this.getSelectedParts().length > 0;
             _(this.getSelectedParts()).each(function (view) {
                 if (view.getLastIteration().get('iteration') <= 1) {
                     hasMoreThanOneIteration = false;
@@ -339,21 +345,25 @@ define([
             if (this.areSelectedPartsCheckedOut()) {
                 if (this.areSelectedPartsCheckedOutByConnectedUser()) {
                     this.trigger('checkout-group:display', true);
-                    this.trigger('checkout-group:update', {canCheckout: false, canUndo: this.haveMoreThanOneIteration(), canCheckin: true});
+                    this.trigger('checkout-group:update', {
+                        canCheckout: false,
+                        canUndo: this.haveMoreThanOneIteration(),
+                        canCheckin: true
+                    });
                 } else {
                     this.trigger('checkout-group:display', true);
                     this.trigger('checkout-group:update', {canCheckout: false, canUndo: false, canCheckin: false});
                 }
-            } else if(this.areSelectedPartsAllNotCheckedOut()) {
+            } else if (this.areSelectedPartsAllNotCheckedOut()) {
                 this.trigger('checkout-group:display', true);
                 this.trigger('checkout-group:update', {canCheckout: true, canUndo: false, canCheckin: false});
             }
 
-            else if ( this.areSelectedPartsCheckoutable()){
+            else if (this.areSelectedPartsCheckoutable()) {
                 this.trigger('checkout-group:display', true);
                 this.trigger('checkout-group:update', {canCheckout: true, canUndo: false, canCheckin: false});
             }
-            else{
+            else {
                 this.trigger('checkout-group:display', false);
             }
 
@@ -368,7 +378,7 @@ define([
                 [0, 'asc']
             ];
             if (this.oTable) {
-                if(this.oTable.fnSettings()){
+                if (this.oTable.fnSettings()) {
                     oldSort = this.oTable.fnSettings().aaSorting;
                 }
                 this.oTable.fnDestroy();
@@ -384,9 +394,9 @@ define([
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { 'bSortable': false, 'aTargets': [ 0, 1, 2, 12, 13, 14, 15 ] },
-                    { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [9] },
-                    { 'sType': 'strip_html', 'aTargets': [3] }
+                    {'bSortable': false, 'aTargets': [0, 1, 2, 12, 13, 14, 15]},
+                    {'sType': App.config.i18n.DATE_SORT, 'aTargets': [9]},
+                    {'sType': 'strip_html', 'aTargets': [3]}
                 ]
             });
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);

@@ -139,25 +139,28 @@ define([
 
         deleteSelectedPartTemplates: function () {
             var _this = this;
-            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PART_TEMPLATE, function (result) {
-                if (result) {
-                    _(_this.listItemViews).each(function (view) {
-                        if (view.isChecked()) {
-                            view.model.destroy({
-                                dataType: 'text', // server doesn't send a json hash in the response body
-                                success: function () {
-                                    _this.removePartTemplate(view.model);
-                                    _this.onSelectionChanged();
-                                },
-                                error: function (model, err) {
-                                    _this.trigger('error', model, err);
-                                    _this.onSelectionChanged();
-                                }
-                            });
-                        }
-                    });
-                }
-            });
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PART_TEMPLATE,
+                App.config.i18n.CANCEL,
+                App.config.i18n.DELETE,
+                function (result) {
+                    if (result) {
+                        _(_this.listItemViews).each(function (view) {
+                            if (view.isChecked()) {
+                                view.model.destroy({
+                                    dataType: 'text', // server doesn't send a json hash in the response body
+                                    success: function () {
+                                        _this.removePartTemplate(view.model);
+                                        _this.onSelectionChanged();
+                                    },
+                                    error: function (model, err) {
+                                        _this.trigger('error', model, err);
+                                        _this.onSelectionChanged();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
         },
 
         editSelectedPartTemplateACL: function () {
@@ -188,7 +191,7 @@ define([
                         templateSelected.set('acl', acl);
                         aclEditView.closeModal();
                     },
-                    error: function(error){
+                    error: function (error) {
                         aclEditView.onError(error);
                     }
                 });

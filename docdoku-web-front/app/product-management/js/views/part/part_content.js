@@ -20,7 +20,7 @@ define([
     'text!common-objects/templates/buttons/new_product_button.html',
     'text!common-objects/templates/buttons/tags_button.html',
     'text!common-objects/templates/buttons/obsolete_button.html',
-	'text!templates/part/search_part_form.html',
+    'text!templates/part/search_part_form.html',
     'common-objects/views/alert',
     'common-objects/views/tags/tags_management',
     'views/part/part_importer',
@@ -28,9 +28,9 @@ define([
     'views/advanced_search',
     'views/part/part_grouped_by_list',
     'text!common-objects/templates/buttons/import_button.html',
-], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, QueryBuilder, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,PartImporterView,ProductCreationView,AdvancedSearchView, PartGroupedByView, importButton) {
+], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, QueryBuilder, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView, TagsManagementView, PartImporterView, ProductCreationView, AdvancedSearchView, PartGroupedByView, importButton) {
     'use strict';
-	var PartContentView = Backbone.View.extend({
+    var PartContentView = Backbone.View.extend({
         events: {
             'click button.new-part': 'newPart',
             'click button.delete': 'deletePart',
@@ -62,13 +62,13 @@ define([
             newVersionButton: newVersionButton,
             releaseButton: releaseButton,
             searchForm: searchForm,
-            newProductButton:newProductButton,
+            newProductButton: newProductButton,
             tagsButton: tagsButton,
-            obsoleteButton:obsoleteButton,
-            importButton:importButton
+            obsoleteButton: obsoleteButton,
+            importButton: importButton
         },
 
-        id:'part_content',
+        id: 'part_content',
 
         initialize: function () {
             _.bindAll(this);
@@ -82,18 +82,18 @@ define([
 
             this.tagsButton.show();
 
-            if(!this.query && !this.partsCollection){
+            if (!this.query && !this.partsCollection) {
                 this.partsCollection = new PartCollection();
-            } else if(this.query){
+            } else if (this.query) {
                 this.partsCollection = new PartSearchCollection();
                 this.partsCollection.setQuery(this.query);
             }
 
-            if(this.partListView){
+            if (this.partListView) {
                 this.partListView.remove();
             }
 
-            if(this.queryBuilder){
+            if (this.queryBuilder) {
                 this.queryBuilder.remove();
             }
 
@@ -110,7 +110,7 @@ define([
             return this;
         },
 
-        setCollection:function(collection){
+        setCollection: function (collection) {
             this.partsCollection = collection;
             return this;
         },
@@ -144,7 +144,7 @@ define([
             this.$partTableContainer = this.$('#part_table_container');
         },
 
-        bindEvent: function(){
+        bindEvent: function () {
             this.partListView.collection.on('page-count:fetch', this.onPageCountFetched);
             this.partListView.collection.fetchPageCount();
             this.partListView.on('error', this.onError);
@@ -157,13 +157,13 @@ define([
             this.partListView.on('release-button:display', this.changeReleaseButtonDisplay);
             this.partListView.on('obsolete-button:display', this.changeObsoleteButtonDisplay);
             this.partListView.on('new-product-button:display', this.changeNewProductButtonDisplay);
-            this.queryBuilder.on('query:search',this.onQueryBuilderSearch);
+            this.queryBuilder.on('query:search', this.onQueryBuilderSearch);
             this.delegateEvents();
         },
 
-        onQueryBuilderSearch:function(data){
+        onQueryBuilderSearch: function (data) {
             this.queryTable = new PartGroupedByView({
-                data : data,
+                data: data,
                 el: this.$queryTableContainer
             }).render();
         },
@@ -218,7 +218,7 @@ define([
             this.releaseButton.toggle(state);
         },
 
-        changeObsoleteButtonDisplay: function(state) {
+        changeObsoleteButtonDisplay: function (state) {
             this.obsoleteButton.toggle(state);
         },
 
@@ -259,7 +259,7 @@ define([
                     if (_.isEqual(iterationNote, '')) {
                         iterationNote = null;
                     }
-                    Async.each(selectedParts, function(part, callback) {
+                    Async.each(selectedParts, function (part, callback) {
                         var revisionNote;
                         if (iterationNote) {
                             revisionNote = part.getLastIteration().get('iterationNote');
@@ -272,11 +272,11 @@ define([
                             iterationNote: revisionNote
                         }).then(function () {
                             return part.checkin();
-                        }).then(function(){
+                        }).then(function () {
                             callback();
                         });
 
-                    }, function(err) {
+                    }, function (err) {
                         if (err) {
                             _this.onError(undefined, err);
                         } else {
@@ -295,13 +295,13 @@ define([
                 });
 
             } else {
-                Async.each(selectedParts, function(part, callback) {
+                Async.each(selectedParts, function (part, callback) {
 
                     part.getLastIteration().save().success(function () {
                         part.checkin().success(callback);
                     });
 
-                }, function(err) {
+                }, function (err) {
                     if (err) {
                         _this.onError(undefined, err);
                     } else {
@@ -323,22 +323,25 @@ define([
         },
         undocheckout: function () {
             this.partListView.getSelectedPartIndexes();
-            var _this= this;
+            var _this = this;
             var toBeDone = this.partListView.selectedPartIndexes.length;
             var done = 0;
-            var onSuccess = function() {
-                if(++done === toBeDone) {
+            var onSuccess = function () {
+                if (++done === toBeDone) {
                     _this.allCheckinDone();
                 }
             };
-            bootbox.confirm(App.config.i18n.UNDO_CHECKOUT_QUESTION, function(result){
-                if(result){
-                    _(_this.partListView.getSelectedParts()).each(function (view) {
-                        view.undocheckout().success(onSuccess);
-                    });
-                }
+            bootbox.confirm(App.config.i18n.UNDO_CHECKOUT_QUESTION,
+                App.config.i18n.CANCEL,
+                App.config.i18n.CONFIRM,
+                function (result) {
+                    if (result) {
+                        _(_this.partListView.getSelectedParts()).each(function (view) {
+                            view.undocheckout().success(onSuccess);
+                        });
+                    }
 
-            });
+                });
         },
 
         updateACL: function () {
@@ -467,7 +470,7 @@ define([
         },
 
 
-        onError:function(model, error){
+        onError: function (model, error) {
             var errorMessage = error ? error.responseText : model;
 
             this.$notifications.append(new AlertView({
@@ -475,7 +478,7 @@ define([
                 message: errorMessage
             }).render().$el);
         },
-        onWarning:function(model, error){
+        onWarning: function (model, error) {
             var errorMessage = error ? error.responseText : model;
 
             this.$notifications.append(new AlertView({
@@ -484,11 +487,11 @@ define([
             }).render().$el);
         },
 
-        newProduct:function(){
+        newProduct: function () {
             var productCreationView = new ProductCreationView();
             window.document.body.appendChild(productCreationView.render().el);
-            var that = this ;
-            productCreationView.on('product:created',function(){
+            var that = this;
+            productCreationView.on('product:created', function () {
                 that.$notifications.append(new AlertView({
                     type: 'info',
                     message: App.config.i18n.PRODUCT_CREATED
@@ -514,18 +517,21 @@ define([
             return false;
 
         },
-        markAsObsolete:function(){
+        markAsObsolete: function () {
             var _this = this;
-            bootbox.confirm(App.config.i18n.MARK_PART_AS_OBSOLETE_QUESTION, function(result){
-                if(result){
-                    _(_this.partListView.getSelectedParts()).each(function (part) {
-                        part.markAsObsolete();
-                    });
-                }
-            });
+            bootbox.confirm(App.config.i18n.MARK_PART_AS_OBSOLETE_QUESTION,
+                App.config.i18n.CANCEL,
+                App.config.i18n.CONFIRM,
+                function (result) {
+                    if (result) {
+                        _(_this.partListView.getSelectedParts()).each(function (part) {
+                            part.markAsObsolete();
+                        });
+                    }
+                });
         },
 
-        toggleQueryBuilder:function(e) {
+        toggleQueryBuilder: function () {
             this.isQueryBuilderDisplayed = !this.isQueryBuilderDisplayed;
             this.$el.toggleClass('displayQueryBuilder', this.isQueryBuilderDisplayed);
             this.$displayQueryBuilderButton.toggleClass('fa-angle-double-down', !this.isQueryBuilderDisplayed);
@@ -533,17 +539,17 @@ define([
             this.$queryTableContainer.toggle(this.isQueryBuilderDisplayed);
             this.$partTableContainer.toggle(!this.isQueryBuilderDisplayed);
 
-            this.$('.actions *:not(.display-query-builder-button)').prop('disabled',this.isQueryBuilderDisplayed);
+            this.$('.actions *:not(.display-query-builder-button)').prop('disabled', this.isQueryBuilderDisplayed);
 
-            if(this.isQueryBuilderDisplayed){
+            if (this.isQueryBuilderDisplayed) {
                 this.queryBuilder.render();
-            }else {
+            } else {
                 this.queryBuilder.destroy();
             }
 
         },
 
-        showImporter:function(){
+        showImporter: function () {
             var partImporterView = new PartImporterView();
             partImporterView.render();
             document.body.appendChild(partImporterView.el);
@@ -551,8 +557,8 @@ define([
             return false;
         },
 
-        destroy:function(){
-            if(this.partListView){
+        destroy: function () {
+            if (this.partListView) {
                 this.partListView.remove();
             }
             this.remove();

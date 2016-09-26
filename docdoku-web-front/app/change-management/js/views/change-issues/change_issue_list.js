@@ -5,7 +5,7 @@ define([
     'text!templates/change_item_list.html',
     'views/change-issues/change_issue_list_item'
 ], function (Backbone, Mustache, template, ChangeIssueListItemView) {
-	'use strict';
+    'use strict';
     var ChangeIssueListView = Backbone.View.extend({
         events: {
             'click .toggle-checkboxes': 'toggleSelection'
@@ -128,26 +128,29 @@ define([
 
         deleteSelectedIssues: function () {
             var _this = this;
-            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_ISSUE, function(result){
-                if(result){
-                    _(_this.listItemViews).each(function (view) {
-                        if (view.isChecked()) {
-                            view.model.destroy({
-                                wait:true,
-                                dataType: 'text', // server doesn't send a json hash in the response body
-                                success: function () {
-                                    _this.removeIssue(view.model);
-                                    _this.onSelectionChanged();
-                                },
-                                error: function (model, err) {
-                                    _this.trigger('error', model, err);
-                                    _this.onSelectionChanged();
-                                }
-                            });
-                        }
-                    });
-                }
-            });
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_ISSUE,
+                App.config.i18n.CANCEL,
+                App.config.i18n.DELETE,
+                function (result) {
+                    if (result) {
+                        _(_this.listItemViews).each(function (view) {
+                            if (view.isChecked()) {
+                                view.model.destroy({
+                                    wait: true,
+                                    dataType: 'text', // server doesn't send a json hash in the response body
+                                    success: function () {
+                                        _this.removeIssue(view.model);
+                                        _this.onSelectionChanged();
+                                    },
+                                    error: function (model, err) {
+                                        _this.trigger('error', model, err);
+                                        _this.onSelectionChanged();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
         },
 
         redraw: function () {
@@ -178,9 +181,9 @@ define([
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { 'bSortable': false, 'aTargets': [ 0, 5 ] },
-                    { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [6] },
-                    { 'sType': 'strip_html', 'aTargets': [1] }
+                    {'bSortable': false, 'aTargets': [0, 5]},
+                    {'sType': App.config.i18n.DATE_SORT, 'aTargets': [6]},
+                    {'sType': 'strip_html', 'aTargets': [1]}
                 ]
             });
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);

@@ -130,8 +130,8 @@ define([
             this.trigger('delete-button:display', true);
         },
 
-        getSelectedBaseline:function(){
-            var selectedView =  _.select(this.listItemViews,function(view){
+        getSelectedBaseline: function () {
+            var selectedView = _.select(this.listItemViews, function (view) {
                 return view.isChecked();
             })[0];
             return selectedView ? selectedView.model : null;
@@ -139,25 +139,28 @@ define([
 
         deleteSelectedBaselines: function () {
             var _this = this;
-            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_DOCUMENTS_COLLECTIONS, function(result){
-                if(result){
-                    _(_this.listItemViews).each(function (view) {
-                        if (view.isChecked()) {
-                            view.model.destroy({
-                                dataType: 'text', // server doesn't send a json hash in the response body
-                                success: function () {
-                                    _this.removeDocumentBaseline(view.model);
-                                    _this.onSelectionChanged();
-                                },
-                                error: function (model, err) {
-                                    _this.trigger('error',model,err);
-                                    _this.onSelectionChanged();
-                                }
-                            });
-                        }
-                    });
-                }
-            });
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_DOCUMENTS_COLLECTIONS,
+                App.config.i18n.CANCEL,
+                App.config.i18n.DELETE,
+                function (result) {
+                    if (result) {
+                        _(_this.listItemViews).each(function (view) {
+                            if (view.isChecked()) {
+                                view.model.destroy({
+                                    dataType: 'text', // server doesn't send a json hash in the response body
+                                    success: function () {
+                                        _this.removeDocumentBaseline(view.model);
+                                        _this.onSelectionChanged();
+                                    },
+                                    error: function (model, err) {
+                                        _this.trigger('error', model, err);
+                                        _this.onSelectionChanged();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
         },
         redraw: function () {
             this.dataTable();
@@ -181,8 +184,8 @@ define([
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { 'bSortable': false, 'aTargets': [ 0,6 ] },
-                    { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [4] }
+                    {'bSortable': false, 'aTargets': [0, 6]},
+                    {'sType': App.config.i18n.DATE_SORT, 'aTargets': [4]}
                 ]
             });
             this.$el.find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);

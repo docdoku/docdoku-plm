@@ -105,7 +105,7 @@ define([
                         aclEditView.closeModal();
                         self.listView.redraw();
                     },
-                    error: function(error){
+                    error: function (error) {
                         aclEditView.onError(error);
                     }
                 });
@@ -126,18 +126,21 @@ define([
         actionDelete: function () {
             var that = this;
 
-            bootbox.confirm(App.config.i18n.DELETE_SELECTION_QUESTION, function (result) {
-                if (result) {
-                    that.listView.eachChecked(function (view) {
-                        view.model.destroy({
-                            dataType: 'text', // server doesn't send a json hash in the response body
-                            success: function () {
-                                that.listView.redraw();
-                            }
+            bootbox.confirm(App.config.i18n.DELETE_SELECTION_QUESTION,
+                App.config.i18n.CANCEL,
+                App.config.i18n.DELETE,
+                function (result) {
+                    if (result) {
+                        that.listView.eachChecked(function (view) {
+                            view.model.destroy({
+                                dataType: 'text', // server doesn't send a json hash in the response body
+                                success: function () {
+                                    that.listView.redraw();
+                                }
+                            });
                         });
-                    });
-                }
-            });
+                    }
+                });
 
             return false;
         },

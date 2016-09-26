@@ -5,8 +5,8 @@ define([
     'text!templates/milestones/milestone_list.html',
     'views/milestones/milestone_list_item'
 ], function (Backbone, Mustache, template, MilestoneListItemView) {
-	'use strict';
-	var MilestoneListView = Backbone.View.extend({
+    'use strict';
+    var MilestoneListView = Backbone.View.extend({
 
         events: {
             'click .toggle-checkboxes': 'toggleSelection'
@@ -132,26 +132,29 @@ define([
 
         deleteSelectedMilestones: function () {
             var that = this;
-            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_ISSUE, function(result){
-                if(result){
-                    _(that.listItemViews).each(function (view) {
-                        if (view.isChecked()) {
-                            view.model.destroy({
-                                wait:true,
-                                dataType: 'text', // server doesn't send a json hash in the response body
-                                success: function () {
-                                    that.removeMilestone(view.model);
-                                    that.onSelectionChanged();
-                                },
-                                error: function (model, err) {
-                                    that.trigger('error', model, err);
-                                    that.onSelectionChanged();
-                                }
-                            });
-                        }
-                    });
-                }
-            });
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_ISSUE,
+                App.config.i18n.CANCEL,
+                App.config.i18n.DELETE,
+                function (result) {
+                    if (result) {
+                        _(that.listItemViews).each(function (view) {
+                            if (view.isChecked()) {
+                                view.model.destroy({
+                                    wait: true,
+                                    dataType: 'text', // server doesn't send a json hash in the response body
+                                    success: function () {
+                                        that.removeMilestone(view.model);
+                                        that.onSelectionChanged();
+                                    },
+                                    error: function (model, err) {
+                                        that.trigger('error', model, err);
+                                        that.onSelectionChanged();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
 
         },
 
@@ -181,8 +184,8 @@ define([
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { 'bSortable': false, 'aTargets': [ 0, 5 ] },
-                    { 'sType': 'strip_html', 'aTargets': [1] }
+                    {'bSortable': false, 'aTargets': [0, 5]},
+                    {'sType': 'strip_html', 'aTargets': [1]}
                 ]
             });
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);

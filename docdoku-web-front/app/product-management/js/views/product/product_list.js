@@ -5,7 +5,7 @@ define([
     'text!templates/product/product_list.html',
     'views/product/product_list_item'
 ], function (Backbone, Mustache, template, ProductListItemView) {
-	'use strict';
+    'use strict';
     var ProductListView = Backbone.View.extend({
 
         events: {
@@ -27,10 +27,10 @@ define([
 
         render: function () {
             var _this = this;
-            this.oTable=null;
+            this.oTable = null;
             this.collection.fetch({
                 reset: true,
-                error:function(collection,err){
+                error: function (collection, err) {
                     _this.trigger('error', null, err);
                 }
             });
@@ -152,25 +152,28 @@ define([
 
         deleteSelectedProducts: function () {
             var _this = this;
-            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PRODUCT, function(result){
-                if(result){
-                    _(_this.listItemViews).each(function (view) {
-                        if (view.isChecked()) {
-                            view.model.destroy({
-                                dataType: 'text', // server doesn't send a json hash in the response body
-                                success: function () {
-                                    _this.removeProduct(view.model);
-                                    _this.onSelectionChanged();
-                                },
-                                error: function (model, err) {
-                                    _this.trigger('error',model,err);
-                                    _this.onSelectionChanged();
-                                }
-                            });
-                        }
-                    });
-                }
-            });
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PRODUCT,
+                App.config.i18n.CANCEL,
+                App.config.i18n.DELETE,
+                function (result) {
+                    if (result) {
+                        _(_this.listItemViews).each(function (view) {
+                            if (view.isChecked()) {
+                                view.model.destroy({
+                                    dataType: 'text', // server doesn't send a json hash in the response body
+                                    success: function () {
+                                        _this.removeProduct(view.model);
+                                        _this.onSelectionChanged();
+                                    },
+                                    error: function (model, err) {
+                                        _this.trigger('error', model, err);
+                                        _this.onSelectionChanged();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
         },
         redraw: function () {
             this.dataTable();
@@ -194,7 +197,7 @@ define([
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { 'bSortable': false, 'aTargets': [ 0, 2, 5, 6, 7 ] }
+                    {'bSortable': false, 'aTargets': [0, 2, 5, 6, 7]}
                 ]
             });
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);

@@ -23,8 +23,8 @@ define([
             });
 
         },
-        rendered:function(){
-            this.tagDiv= this.$('>.nav-list-entry');
+        rendered: function () {
+            this.tagDiv = this.$('>.nav-list-entry');
         },
         hideActions: function () {
             // Prevents the actions menu to stay opened all the time
@@ -46,14 +46,17 @@ define([
         },
         actionDelete: function () {
             this.hideActions();
-            var that = this ;
-            bootbox.confirm(App.config.i18n.DELETE_TAG_QUESTION, function(result){
-                if(result){
-                    that.model.destroy({
-                        dataType: 'text' // server doesn't send a json hash in the response body
-                    });
-                }
-            });
+            var that = this;
+            bootbox.confirm(App.config.i18n.DELETE_TAG_QUESTION,
+                App.config.i18n.CANCEL,
+                App.config.i18n.DELETE,
+                function (result) {
+                    if (result) {
+                        that.model.destroy({
+                            dataType: 'text' // server doesn't send a json hash in the response body
+                        });
+                    }
+                });
             return false;
         },
         onDragEnter: function () {
@@ -72,12 +75,12 @@ define([
         },
 
         onDrop: function (e) {
-            if(e.dataTransfer.getData('document:text/plain')){
+            if (e.dataTransfer.getData('document:text/plain')) {
                 this.tagDocument(e);
             }
         },
 
-        tagDocument : function(e) {
+        tagDocument: function (e) {
             var that = this;
             var documentRevision = new DocumentRevision(JSON.parse(e.dataTransfer.getData('document:text/plain')));
 
