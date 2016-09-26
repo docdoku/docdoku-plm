@@ -525,13 +525,15 @@ define([
             });
         },
 
-        toggleQueryBuilder:function() {
+        toggleQueryBuilder:function(e) {
             this.isQueryBuilderDisplayed = !this.isQueryBuilderDisplayed;
             this.$el.toggleClass('displayQueryBuilder', this.isQueryBuilderDisplayed);
             this.$displayQueryBuilderButton.toggleClass('fa-angle-double-down', !this.isQueryBuilderDisplayed);
             this.$displayQueryBuilderButton.toggleClass('fa-angle-double-up', this.isQueryBuilderDisplayed);
             this.$queryTableContainer.toggle(this.isQueryBuilderDisplayed);
             this.$partTableContainer.toggle(!this.isQueryBuilderDisplayed);
+
+            this.$('.actions *:not(.display-query-builder-button)').prop('disabled',this.isQueryBuilderDisplayed);
 
             if(this.isQueryBuilderDisplayed){
                 this.queryBuilder.render();
