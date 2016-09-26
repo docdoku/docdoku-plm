@@ -159,7 +159,7 @@ define([
             xhr.addEventListener('load', function (e) {
 
                 if (e.currentTarget.status !== 200 && e.currentTarget.status !== 201) {
-                    self.xhrFinishedWithError(xhr, App.config.i18n.FILE + ' <' + fileName + '> : ' + e.currentTarget.statusText);
+                    self.xhrFinishedWithError(xhr, App.config.i18n.FILE + ' <' + fileName + '> : ' + e.currentTarget.responseText);
                     progressBar.remove();
                     return false;
                 }
