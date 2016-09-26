@@ -87,12 +87,12 @@ casper.test.begin('Query builder search tests suite', 5, function queryBuilderSe
      * */
 
     casper.then(function waitForResultTable() {
-        return this.waitForSelector('#query-table table tbody tr', function resultTableDisplayed() {
-            this.test.assertElementCount('#query-table table tbody tr', 1, 'We should have one result matching our query');
-            this.test.assertSelectorHasText('#query-table table tbody tr td span', products.part1.number, 'We should have ' + products.part1.number + ' in the first cell');
+        return this.waitForSelector('#query_table_container table tbody tr', function resultTableDisplayed() {
+            this.test.assertElementCount('#query_table_container table tbody tr', 1, 'We should have one result matching our query');
+            this.test.assertSelectorHasText('#query_table_container table tbody tr td span', products.part1.number, 'We should have ' + products.part1.number + ' in the first cell');
         }, function fail() {
             this.capture('screenshot/queryBuilderSearch/waitForQueryBuilderDisplay-error.png');
-            this.test.assert(false, 'Query builder view can not be found');
+            this.test.assert(false, 'Query builder results table can not be found');
         });
     });
 
