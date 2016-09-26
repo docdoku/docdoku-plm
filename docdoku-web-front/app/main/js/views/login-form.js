@@ -22,6 +22,7 @@ define([
                 contextPath:App.config.contextPath
             }));
             this.$notifications = this.$('.notifications');
+            this.$loginButton = this.$('#login_form-login_button');
             this.showMessageAtStart();
             return this;
         },
@@ -46,7 +47,7 @@ define([
         onLoginFormSubmit:function(e){
             delete localStorage.jwt;
             this.$notifications.empty();
-            this.$el.addClass('connecting');
+            this.disableLoginButton();
             $.ajax({
                 type: 'POST',
                 url: App.config.contextPath + '/api/auth/login',
@@ -65,8 +66,18 @@ define([
             return false;
         },
 
+        disableLoginButton:function(){
+            this.$loginButton.attr('value', App.config.i18n.CONNECTING);
+            this.$loginButton.prop('disabled',true);
+        },
+
+        enableLoginButton:function(){
+            this.$loginButton.attr('value', App.config.i18n.CONNECTION);
+            this.$loginButton.prop('disabled',false);
+        },
+
         onLoginFailed:function(){
-            this.$el.removeClass('connecting');
+            this.enableLoginButton();
             this.$notifications.append(new AlertView({
                 type: 'error',
                 message: App.config.i18n.FAILED_LOGIN
