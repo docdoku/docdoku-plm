@@ -30,21 +30,25 @@ define([
         showRecoveryForm:function(){
             this.$FormContainer.html(new RecoveryFormView().render().$el);
             this.$FormContainer.attr('class','put-right');
+            this.sceneView.handleResize();
         },
 
         showRecoverForm:function(uuid){
             this.$FormContainer.html(new RecoverFormView().render(uuid).$el);
             this.$FormContainer.attr('class','put-right');
+            this.sceneView.handleResize();
         },
 
         showLoginForm:function(){
             this.$FormContainer.html(new LoginFormView().render().$el);
             this.$FormContainer.attr('class','put-right');
+            this.sceneView.handleResize();
         },
 
         showAccountCreationForm:function(){
             this.$FormContainer.html(new AccountCreationFormView().render().$el);
             this.$FormContainer.attr('class','put-above');
+            this.sceneView.handleResize();
         }
 
 

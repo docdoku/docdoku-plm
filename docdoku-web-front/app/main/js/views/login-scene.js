@@ -80,6 +80,7 @@ define([
             }
 
             function handleResize() {
+                renderer.setSize(0, 0); // hack to get the canvas element resized
                 camera.aspect = container.clientWidth / container.clientHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(container.clientWidth , container.clientHeight);
