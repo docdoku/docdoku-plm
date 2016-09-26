@@ -21,21 +21,22 @@
 package com.docdoku.api.swagger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.kongchen.swagger.docgen.LogAdapter;
 import com.github.kongchen.swagger.docgen.reader.AbstractReader;
 import com.github.kongchen.swagger.docgen.reader.ClassSwaggerReader;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponses;
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs.ext.SwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtensions;
 import io.swagger.models.*;
-import io.swagger.models.Tag;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.util.Json;
+import org.apache.maven.plugin.logging.Log;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import javax.ws.rs.Consumes;
@@ -61,7 +62,7 @@ public class JaxrsReader extends AbstractReader implements ClassSwaggerReader {
     private static final Logger LOGGER = Logger.getLogger(JaxrsReader.class.getName());
     static ObjectMapper m = Json.mapper();
 
-    public JaxrsReader(Swagger swagger, LogAdapter LOG) {
+    public JaxrsReader(Swagger swagger, Log LOG) {
         super(swagger, LOG);
     }
 
