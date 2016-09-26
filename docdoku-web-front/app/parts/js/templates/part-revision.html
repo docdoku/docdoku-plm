@@ -22,7 +22,7 @@
                 <tbody>
                 <tr>
                     <th scope="row">{{i18n.CREATION_DATE}}</th>
-                    <td>{{part.creationDate}}</td>
+                    <td><a class="date-popover">{{part.creationDate}}</a></td>
                 </tr>
                 <tr>
                     <th scope="row">{{i18n.TYPE}}</th>
@@ -62,7 +62,7 @@
                 </tr>
                 <tr>
                     <th scope="row">{{i18n.RELEASE_DATE}}</th>
-                    <td>{{part.releaseDate}}</td>
+                    <td><a class="date-popover">{{part.releaseDate}}</a></td>
                 </tr>
                 {{/part.releaseAuthor}}
                 {{#part.obsoleteAuthor}}
@@ -72,7 +72,7 @@
                 </tr>
                 <tr>
                     <th scope="row">{{i18n.OBSOLETE_DATE}}</th>
-                    <td>{{part.obsoleteDate}}</td>
+                    <td><a class="date-popover">{{part.obsoleteDate}}</a></td>
                 </tr>
                 {{/part.obsoleteAuthor}}
                 </tbody>
@@ -95,16 +95,16 @@
                     <th scope="row">{{i18n.REVISION_DATE}}</th>
                     <td>
                     {{#part.checkOutUser}}
-                        {{lastIteration.creationDate}}
+                        <a class="date-popover">{{lastIteration.creationDate}}</a>
                     {{/part.checkOutUser}}
                     {{^part.checkOutUser}}
-                        {{lastIteration.checkInDate}}
+                        <a class="date-popover">{{lastIteration.checkInDate}}</a>
                     {{/part.checkOutUser}}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">{{i18n.MODIFICATION_DATE}}</th>
-                    <td>{{lastIteration.modificationDate}}</td>
+                    <td><a class="date-popover">{{lastIteration.modificationDate}}</a></td>
                 </tr>
                 <tr>
                     <th scope="row">{{i18n.AUTHOR}}</th>

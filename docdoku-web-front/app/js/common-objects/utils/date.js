@@ -11,7 +11,7 @@ define([
     moment.suppressDeprecationWarnings = true;
     moment.locale(App.config.locale);
 
-    var offset = moment().tz(App.config.timeZone).zone();
+    var offset = moment().tz(App.config.timeZone || 'CET').zone();
     var moffset = offset * 60 * 1000;
 
     return {
@@ -103,7 +103,7 @@ define([
 
                 var fromNow = moment(dateUTCWithOffset).utc().fromNow();
                 $(this).popover({
-                    title: '<b>' + App.config.timeZone + '</b><br /><i class="fa fa-clock-o"></i> ' + _date + '<br />' + fromNow,
+                    title: '<b>' + (App.config.timeZone || 'CET')+ '</b><br /><i class="fa fa-clock-o"></i> ' + _date + '<br />' + fromNow,
                     html: true,
                     content: '<b>UTC</b><br /><i class="fa fa-clock-o"></i>  ' + moment.utc(_date, App.config.i18n._DATE_FORMAT).zone(-offset).format(App.config.i18n._DATE_FORMAT),
                     trigger: 'manual',

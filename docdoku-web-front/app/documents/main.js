@@ -9,7 +9,8 @@ require.config({
     shim: {
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
         bootstrap: { deps: ['jquery', 'jqueryUI'], exports: 'jQuery' },
-        backbone: { deps: ['underscore', 'jquery'], exports: 'Backbone'}
+        backbone: { deps: ['underscore', 'jquery'], exports: 'Backbone'},
+        popoverUtils: {deps: ['jquery'], exports: 'jQuery'}
 
     },
 
@@ -24,7 +25,10 @@ require.config({
         bootstrap: '../../bower_components/bootstrap/docs/assets/js/bootstrap',
         'common-objects': '../../js/common-objects',
         localization: '../../js/localization',
-        pluginDetect:'../../js/lib/plugin-detect'
+        pluginDetect:'../../js/lib/plugin-detect',
+        moment: '../../bower_components/moment/min/moment-with-locales',
+        momentTimeZone: '../../bower_components/moment-timezone/builds/moment-timezone-with-data',
+        popoverUtils: '../../js/utils/popover.utils'
     },
 
     deps: [
@@ -32,7 +36,8 @@ require.config({
         'underscore',
         'bootstrap',
         'jqueryUI',
-        'pluginDetect'
+        'pluginDetect',
+        'popoverUtils'
     ],
     config: {
         i18n: {

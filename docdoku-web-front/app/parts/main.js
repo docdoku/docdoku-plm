@@ -18,7 +18,8 @@ require.config({
         stlloader: {deps: ['threecore'], exports: 'THREE'},
         objloader: {deps: ['threecore'], exports: 'THREE'},
         mtlloader:{deps:['threecore'],exports:'THREE'},
-        buffergeometryutils: {deps: ['threecore'], exports: 'THREE'}
+        buffergeometryutils: {deps: ['threecore'], exports: 'THREE'},
+        popoverUtils: {deps: ['jquery'], exports: 'jQuery'}
     },
 
     paths: {
@@ -42,7 +43,10 @@ require.config({
         buffergeometryutils: '../../js/dmu/utils/BufferGeometryUtils',
         stlloader: '../../js/dmu/loaders/STLLoader',
         objloader: '../../js/dmu/loaders/OBJLoader',
-        mtlloader: '../../js/dmu/loaders/MTLLoader'
+        mtlloader: '../../js/dmu/loaders/MTLLoader',
+        popoverUtils: '../../js/utils/popover.utils',
+        moment: '../../bower_components/moment/min/moment-with-locales',
+        momentTimeZone: '../../bower_components/moment-timezone/builds/moment-timezone-with-data',
     },
 
     deps: [
@@ -51,6 +55,7 @@ require.config({
         'bootstrap',
         'jqueryUI',
         'pluginDetect',
+        'popoverUtils',
         'threecore',
         'pointerlockcontrols',
         'trackballcontrols',
