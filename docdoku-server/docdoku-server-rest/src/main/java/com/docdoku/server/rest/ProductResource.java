@@ -124,7 +124,8 @@ public class ProductResource {
     @POST
     @ApiOperation(value = "Create configuration item", response = ConfigurationItemDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createConfigurationItem(@ApiParam(required = true, value = "Product to create") ConfigurationItemDTO configurationItemDTO)
+    public Response createConfigurationItem(@PathParam("workspaceId") String workspaceId,
+                                            @ApiParam(required = true, value = "Product to create") ConfigurationItemDTO configurationItemDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException {
 
         ConfigurationItem configurationItem = productService.createConfigurationItem(configurationItemDTO.getWorkspaceId(), configurationItemDTO.getId(), configurationItemDTO.getDescription(), configurationItemDTO.getDesignItemNumber());
