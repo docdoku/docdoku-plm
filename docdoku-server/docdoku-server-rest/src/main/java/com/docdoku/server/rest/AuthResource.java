@@ -27,6 +27,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RequestScoped
@@ -65,7 +66,7 @@ public class AuthResource {
             try {
                 request.logout();
             } catch (ServletException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.WARNING, "Logout failed", e);
             }
         }
 
