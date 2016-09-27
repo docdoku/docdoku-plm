@@ -130,8 +130,13 @@
                     <apiSources>
                         <apiSource>
                             <basePath>/api</basePath>
-                            <locations>com.docdoku.server.rest</locations>
-                            <schemes>http,https</schemes>
+                            <locations>
+                                <location>com.docdoku.server.rest</location>
+                            </locations>
+                            <schemes>
+                                <scheme>http</scheme>
+                                <scheme>https</scheme>
+                            </schemes>
                             <info>
                                 <title>DocdokuPLM API</title>
                                 <version>v2.5</version>
