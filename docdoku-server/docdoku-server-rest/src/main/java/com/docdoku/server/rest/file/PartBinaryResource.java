@@ -296,13 +296,13 @@ public class PartBinaryResource {
         }
 
         //attachedfiles is not a valid subtype
-        if (subType != null && !subType.isEmpty() && !subType.equals("attachedfiles")) {
+        if (subType != null && !subType.isEmpty() && !ATTACHED_FILES_SUBTYPE.equals(subType)) {
             binaryResourceDownloadMeta.setSubResourceVirtualPath(subType);
         }
 
         InputStream binaryContentInputStream = null;
         try {
-            if ("attachedfiles".equals(subType) && output != null && !output.isEmpty()) {
+            if (ATTACHED_FILES_SUBTYPE.equals(subType) && output != null && !output.isEmpty()) {
                 binaryResourceDownloadMeta.setSubResourceVirtualPath(null);
                 binaryContentInputStream = getConvertedBinaryResource(binaryResource, output, uuid);
             } else {
