@@ -71,24 +71,25 @@ public class FileExportDocumentMessageBodyWriter implements MessageBodyWriter<Fi
 
         try {
             List<BaselinedDocumentBinaryResourceCollection> binaryResourceCollections = documentBaselineService.getBinaryResourcesFromBaseline(fileExportEntity.getWorkspaceId(), fileExportEntity.getBaselineId());
-
             for (BaselinedDocumentBinaryResourceCollection collection : binaryResourceCollections) {
                 for (BinaryResource binaryResource : collection.getAttachedFiles()) {
-                    try {
-                        String folderName = collection.getRootFoldername() + "/attachedFiles";
-                        addToZipFile(binaryResource, folderName, zs);
-                    } catch (StorageException e) {
-                        LOGGER.log(Level.FINEST, null, e);
-                    }
+                    addToZip(collection, binaryResource, zs);
                 }
             }
-
-        } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException |
-                BaselineNotFoundException e) {
-            LOGGER.log(Level.FINEST, null, e);
+        } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | BaselineNotFoundException e) {
+            LOGGER.log(Level.SEVERE, null, e);
         }
 
         zs.close();
+    }
+
+    private void addToZip(BaselinedDocumentBinaryResourceCollection collection, BinaryResource binaryResource, ZipOutputStream zs) {
+        try {
+            String folderName = collection.getRootFoldername() + "/attachedFiles";
+            addToZipFile(binaryResource, folderName, zs);
+        } catch (IOException | StorageException e) {
+            LOGGER.log(Level.SEVERE, "Something went wrong while adding file to zip", e);
+        }
     }
 
     public void addToZipFile(BinaryResource binaryResource, String folderName, ZipOutputStream zos)

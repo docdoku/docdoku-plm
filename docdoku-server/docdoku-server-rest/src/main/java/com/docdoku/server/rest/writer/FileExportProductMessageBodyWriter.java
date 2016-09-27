@@ -96,18 +96,11 @@ public class FileExportProductMessageBodyWriter implements MessageBodyWriter<Fil
 
             for (Map.Entry<String, Set<BinaryResource>> entry : entries) {
                 String partNumberFolderName = entry.getKey();
-                String folderName;
+
                 Set<BinaryResource> files = entry.getValue();
 
                 for (BinaryResource binaryResource : files) {
-                    try {
-                        String fileType = binaryResource.getFileType();
-                        folderName = partNumberFolderName + (fileType == null ? "" : "/" + fileType);
-                        addToZipFile(binaryResource, folderName, zs);
-
-                    } catch (StorageException e) {
-                        LOGGER.log(Level.FINEST, null, e);
-                    }
+                    addToZip(binaryResource, partNumberFolderName, zs);
                 }
             }
 
@@ -123,6 +116,16 @@ public class FileExportProductMessageBodyWriter implements MessageBodyWriter<Fil
 
         zs.close();
 
+    }
+
+    private void addToZip(BinaryResource binaryResource, String partNumberFolderName, ZipOutputStream zs) {
+        try {
+            String fileType = binaryResource.getFileType();
+            String folderName = partNumberFolderName + (fileType == null ? "" : "/" + fileType);
+            addToZipFile(binaryResource, folderName, zs);
+        } catch (IOException | StorageException e) {
+            LOGGER.log(Level.SEVERE, "Something went wrong while adding file to zip", e);
+        }
     }
 
     private void addProductInstanceDataToZip(ZipOutputStream zs, ConfigurationItemKey configurationItemKey, String serialNumber, List<String> baselinedSourcesName) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductInstanceMasterNotFoundException, IOException, StorageException {
