@@ -22,7 +22,6 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
-import com.docdoku.core.notification.TagUserGroupSubscription;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
@@ -50,7 +49,10 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RequestScoped
 @Api(value = "workspaces", description = "Operations about workspaces")
@@ -190,11 +192,11 @@ public class WorkspaceResource {
     public UserDTO[] getReachableUsersForCaller()
             throws EntityNotFoundException {
 
-        User[] users = userManager.getReachableUsers();
-        UserDTO[] dtos = new UserDTO[users.length];
+        User[] reachableUsers = userManager.getReachableUsers();
+        UserDTO[] dtos = new UserDTO[reachableUsers.length];
 
-        for (int i = 0; i < users.length; i++) {
-            dtos[i] = mapper.map(users[i], UserDTO.class);
+        for (int i = 0; i < reachableUsers.length; i++) {
+            dtos[i] = mapper.map(reachableUsers[i], UserDTO.class);
         }
 
         return dtos;
