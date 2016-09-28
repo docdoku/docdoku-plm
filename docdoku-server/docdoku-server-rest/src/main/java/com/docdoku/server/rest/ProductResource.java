@@ -451,14 +451,13 @@ public class ProductResource {
 
     @ApiOperation(value = "Get all ProductConfigurationsResource")
     @Path("configurations")
-    public ProductConfigurationsResource getAllConfigurations(@PathParam("workspaceId") String workspaceId) {
+    public ProductConfigurationsResource getAllConfigurations() {
         return productConfigurationsResource;
     }
 
     @ApiOperation(value = "Get ProductConfigurationsResource")
     @Path("{ciId}/configurations")
-    public ProductConfigurationsResource getConfigurations(@PathParam("workspaceId") String workspaceId,
-                                                           @PathParam("ciId") String ciId) {
+    public ProductConfigurationsResource getConfigurations() {
         return productConfigurationsResource;
     }
 
@@ -467,27 +466,25 @@ public class ProductResource {
 
     @ApiOperation(value = "Get ProductConfigurationsResource")
     @Path("baselines")
-    public ProductBaselinesResource getAllBaselines(@PathParam("workspaceId") String workspaceId) {
+    public ProductBaselinesResource getAllBaselines() {
         return productBaselinesResource;
     }
 
     @ApiOperation(value = "Get ProductBaselinesResource")
     @Path("{ciId}/baselines")
-    public ProductBaselinesResource getBaselines(@PathParam("workspaceId") String workspaceId,
-                                                 @PathParam("ciId") String ciId) {
+    public ProductBaselinesResource getBaselines() {
         return productBaselinesResource;
     }
 
     @ApiOperation(value = "Get all ProductInstancesResource")
     @Path("product-instances")
-    public ProductInstancesResource getAllProductInstances(@PathParam("workspaceId") String workspaceId) {
+    public ProductInstancesResource getAllProductInstances() {
         return productInstancesResource;
     }
 
     @ApiOperation(value = "Get ProductInstancesResource")
     @Path("{ciId}/product-instances")
-    public ProductInstancesResource getProductInstances(@PathParam("workspaceId") String workspaceId,
-                                                        @PathParam("ciId") String ciId) {
+    public ProductInstancesResource getProductInstances() {
         return productInstancesResource;
     }
     // -- refactor with regex to merge 2 by 2
