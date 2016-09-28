@@ -58,7 +58,12 @@ define([
                 function(result){
                 if(result){
                     Workspace.deleteWorkspace(App.config.workspaceId)
-                        .then(_this.onDeleteWorkspaceSuccess.bind(_this),_this.onError.bind(_this));
+                        .then(_this.onDeleteWorkspaceSuccess.bind(_this),_this.onError.bind(_this))
+                        .then(function() {
+                            var workspaceIndex = _.indexOf(App.config.workspaces.administratedWorkspaces,
+                                _.findWhere(App.config.workspaces.administratedWorkspaces,{id:App.config.workspaceId}));
+                            App.config.workspaces.administratedWorkspaces.splice(workspaceIndex);
+                        });
                 }
             });
         },
