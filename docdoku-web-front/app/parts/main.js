@@ -87,7 +87,7 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
 
         App.config.i18n = _.extend(commonStrings, indexStrings);
 
-        App.config.SceneOptions = {
+        App.SceneOptions = {
             zoomSpeed: 1.2,
             rotateSpeed: 1.0,
             panSpeed: 0.3,
