@@ -51,11 +51,6 @@ public class ListOfValuesAttributeTemplate extends InstanceAttributeTemplate {
         lov=pLov;
     }
 
-    @Override
-    public AttributeType getAttributeType() {
-        return AttributeType.LOV;
-    }
-
     public ListOfValues getLov() {
         return lov;
     }

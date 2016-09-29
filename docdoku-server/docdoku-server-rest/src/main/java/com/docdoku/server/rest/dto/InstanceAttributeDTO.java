@@ -29,6 +29,8 @@ import java.util.List;
 @XmlRootElement
 public class InstanceAttributeDTO implements Serializable {
 
+    private String workspaceId;
+
     private String name;
     private boolean mandatory;
     private boolean locked;
@@ -110,7 +112,15 @@ public class InstanceAttributeDTO implements Serializable {
         this.items = items;
     }
 
+    public String getWorkspaceId() {
+        return workspaceId;
+    }
+
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
+    }
+
     public enum Type {
-        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV, LONG_TEXT
+        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV, LONG_TEXT, PART_NUMBER
     }
 }

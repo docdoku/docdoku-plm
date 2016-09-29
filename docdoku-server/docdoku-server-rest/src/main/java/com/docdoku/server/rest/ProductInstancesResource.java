@@ -40,7 +40,6 @@ import com.docdoku.server.rest.dto.product.ProductInstanceCreationDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceIterationDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
-import com.docdoku.server.rest.util.InstanceAttributeFactory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -127,15 +126,19 @@ public class ProductInstancesResource {
                                                                 @ApiParam(required = true, value = "Product instance master to create") ProductInstanceCreationDTO productInstanceCreationDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException, NotAllowedException, EntityConstraintException, UserNotActiveException {
 
-        InstanceAttributeFactory factory = new InstanceAttributeFactory();
         ACLDTO acldto = productInstanceCreationDTO.getAcl();
         Map<String, ACL.Permission> userEntries = new HashMap<>();
         Map<String, ACL.Permission> grpEntries = new HashMap<>();
-        List<InstanceAttributeDTO> instanceAttributes = productInstanceCreationDTO.getInstanceAttributes();
+        List<InstanceAttributeDTO> instanceAttributeDTOs = productInstanceCreationDTO.getInstanceAttributes();
         List<InstanceAttribute> attributes = new ArrayList<>();
-        if (instanceAttributes != null) {
-            attributes = factory.createInstanceAttributes(instanceAttributes);
+
+        if (instanceAttributeDTOs != null) {
+            for (InstanceAttributeDTO dto : instanceAttributeDTOs) {
+                dto.setWorkspaceId(workspaceId);
+                attributes.add(mapper.map(dto, InstanceAttribute.class));
+            }
         }
+
         if (acldto != null) {
             userEntries = acldto.getUserEntries();
             grpEntries = acldto.getGroupEntries();
@@ -170,12 +173,14 @@ public class ProductInstancesResource {
                                                                 @ApiParam(required = true, value = "Product instance master to create") ProductInstanceIterationDTO productInstanceCreationDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException, UserNotActiveException {
 
-        InstanceAttributeFactory factory = new InstanceAttributeFactory();
-
         List<InstanceAttributeDTO> instanceAttributes = productInstanceCreationDTO.getInstanceAttributes();
         List<InstanceAttribute> attributes = new ArrayList<>();
+
         if (instanceAttributes != null) {
-            attributes = factory.createInstanceAttributes(instanceAttributes);
+            for (InstanceAttributeDTO dto : instanceAttributes) {
+                dto.setWorkspaceId(workspaceId);
+                attributes.add(mapper.map(dto, InstanceAttribute.class));
+            }
         }
 
         Set<DocumentRevisionDTO> linkedDocs = productInstanceCreationDTO.getLinkedDocuments();
@@ -452,13 +457,16 @@ public class ProductInstancesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public PathDataMasterDTO addNewPathDataIteration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathDataId") int pathDataId, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, FileAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, BaselineNotFoundException, PathDataMasterNotFoundException {
 
-        InstanceAttributeFactory factory = new InstanceAttributeFactory();
-
-        List<InstanceAttributeDTO> instanceAttributes = pathDataIterationCreationDTO.getInstanceAttributes();
+        List<InstanceAttributeDTO> instanceAttributeDTOs = pathDataIterationCreationDTO.getInstanceAttributes();
         List<InstanceAttribute> attributes = new ArrayList<>();
-        if (instanceAttributes != null) {
-            attributes = factory.createInstanceAttributes(instanceAttributes);
+
+        if (instanceAttributeDTOs != null) {
+            for (InstanceAttributeDTO dto : instanceAttributeDTOs) {
+                dto.setWorkspaceId(workspaceId);
+                attributes.add(mapper.map(dto, InstanceAttribute.class));
+            }
         }
+
         Set<DocumentRevisionDTO> linkedDocs = pathDataIterationCreationDTO.getLinkedDocuments();
         DocumentRevisionKey[] links = null;
         String[] documentLinkComments = null;
@@ -511,13 +519,16 @@ public class ProductInstancesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public PathDataMasterDTO createPathDataMaster(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("path") String pathAsString, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, FileAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
 
-        InstanceAttributeFactory factory = new InstanceAttributeFactory();
-
-        List<InstanceAttributeDTO> instanceAttributes = pathDataIterationCreationDTO.getInstanceAttributes();
+        List<InstanceAttributeDTO> instanceAttributeDTOs = pathDataIterationCreationDTO.getInstanceAttributes();
         List<InstanceAttribute> attributes = new ArrayList<>();
-        if (instanceAttributes != null) {
-            attributes = factory.createInstanceAttributes(instanceAttributes);
+
+        if (instanceAttributeDTOs != null) {
+            for (InstanceAttributeDTO dto : instanceAttributeDTOs) {
+                dto.setWorkspaceId(workspaceId);
+                attributes.add(mapper.map(dto, InstanceAttribute.class));
+            }
         }
+
 
         PathDataMaster pathDataMaster = productInstanceService.createPathDataMaster(workspaceId, configurationItemId, serialNumber, pathAsString, attributes, pathDataIterationCreationDTO.getIterationNote());
 
@@ -542,12 +553,14 @@ public class ProductInstancesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public PathDataMasterDTO updatePathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("iteration") int iteration, @PathParam("serialNumber") String serialNumber, @PathParam("pathDataId") int pathDataId, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
 
-        InstanceAttributeFactory factory = new InstanceAttributeFactory();
-
-        List<InstanceAttributeDTO> instanceAttributes = pathDataIterationCreationDTO.getInstanceAttributes();
+        List<InstanceAttributeDTO> instanceAttributeDTOs = pathDataIterationCreationDTO.getInstanceAttributes();
         List<InstanceAttribute> attributes = new ArrayList<>();
-        if (instanceAttributes != null) {
-            attributes = factory.createInstanceAttributes(instanceAttributes);
+
+        if (instanceAttributeDTOs != null) {
+            for (InstanceAttributeDTO dto : instanceAttributeDTOs) {
+                dto.setWorkspaceId(workspaceId);
+                attributes.add(mapper.map(dto, InstanceAttribute.class));
+            }
         }
 
         Set<DocumentRevisionDTO> linkedDocs = pathDataIterationCreationDTO.getLinkedDocuments();

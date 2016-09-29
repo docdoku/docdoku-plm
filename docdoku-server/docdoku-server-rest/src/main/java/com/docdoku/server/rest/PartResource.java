@@ -45,7 +45,6 @@ import com.docdoku.server.rest.collections.VirtualInstanceCollection;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
-import com.docdoku.server.rest.util.InstanceAttributeFactory;
 import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -193,21 +192,29 @@ public class PartResource {
 
         PartIterationKey pKey = new PartIterationKey(revisionKey, partIteration);
 
-        List<InstanceAttributeDTO> instanceAttributes = data.getInstanceAttributes();
-        List<InstanceAttribute> attributes = null;
-        InstanceAttributeFactory instanceAttributeFactory = new InstanceAttributeFactory();
-        if (instanceAttributes != null) {
-            attributes = instanceAttributeFactory.createInstanceAttributes(instanceAttributes);
-        }
+        List<InstanceAttributeDTO> instanceAttributeDTOs = data.getInstanceAttributes();
+        List<InstanceAttribute> attributes = new ArrayList<>();
 
-        List<InstanceAttributeTemplateDTO> instanceAttributeTemplates = data.getInstanceAttributeTemplates();
-        List<InstanceAttributeTemplate> attributeTemplates = null;
-        String[] lovNames = null;
-        if (instanceAttributeTemplates != null) {
-            attributeTemplates = instanceAttributeFactory.createInstanceAttributeTemplateFromDTO(instanceAttributeTemplates);
-            lovNames = new String[instanceAttributeTemplates.size()];
-            for (int i = 0; i < instanceAttributeTemplates.size(); i++)
-                lovNames[i] = instanceAttributeTemplates.get(i).getLovName();
+        if (instanceAttributeDTOs != null) {
+            for (InstanceAttributeDTO dto : instanceAttributeDTOs) {
+                dto.setWorkspaceId(pWorkspaceId);
+                attributes.add(mapper.map(dto, InstanceAttribute.class));
+            }
+        }
+        List<InstanceAttributeTemplateDTO> instanceAttrTemplateDTOs = data.getInstanceAttributeTemplates();
+        String[] instanceLovNames=null;
+        List<InstanceAttributeTemplate> instanceAttrTemplates = null;
+        if (instanceAttrTemplateDTOs != null) {
+            instanceLovNames = new String[instanceAttrTemplateDTOs.size()];
+            for (int i = 0; i < instanceAttrTemplateDTOs.size(); i++) {
+                instanceLovNames[i] = instanceAttrTemplateDTOs.get(i).getLovName();
+            }
+
+            instanceAttrTemplates = new ArrayList<>();
+
+            for (InstanceAttributeTemplateDTO dto : instanceAttrTemplateDTOs) {
+                instanceAttrTemplates.add(mapper.map(dto, InstanceAttributeTemplate.class));
+            }
         }
 
 
@@ -235,7 +242,7 @@ public class PartResource {
 
         PartIteration.Source sameSource = partRevision.getIteration(partIteration).getSource();
 
-        PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, newComponents, attributes, attributeTemplates, links, documentLinkComments, lovNames);
+        PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, newComponents, attributes, instanceAttrTemplates, links, documentLinkComments, instanceLovNames);
 
         PartRevisionDTO partRevisionDTO = Tools.mapPartRevisionToPartDTO(partRevisionUpdated);
         return Response.ok(partRevisionDTO).build();

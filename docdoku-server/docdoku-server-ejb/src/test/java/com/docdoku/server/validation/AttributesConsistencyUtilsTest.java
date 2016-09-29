@@ -20,10 +20,7 @@
 
 package com.docdoku.server.validation;
 
-import com.docdoku.core.meta.DefaultAttributeTemplate;
-import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.meta.InstanceAttributeTemplate;
-import com.docdoku.core.meta.InstanceTextAttribute;
+import com.docdoku.core.meta.*;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Test;
@@ -123,18 +120,18 @@ public class AttributesConsistencyUtilsTest extends TestCase {
         List<InstanceAttributeTemplate> instanceAttributeTemplates = new ArrayList<>();
 
         //bad attribute: can not be "not locked" and mandatory
-        InstanceAttributeTemplate attr = new DefaultAttributeTemplate("test", InstanceAttributeTemplate.AttributeType.BOOLEAN);
+        InstanceAttributeTemplate attr = new DefaultAttributeTemplate("test", DefaultAttributeTemplate.AttributeType.BOOLEAN);
         attr.setLocked(false);
         attr.setMandatory(true);
         instanceAttributeTemplates.add(attr);
 
-        attr = new DefaultAttributeTemplate("test", InstanceAttributeTemplate.AttributeType.TEXT);
+        attr = new DefaultAttributeTemplate("test", DefaultAttributeTemplate.AttributeType.TEXT);
         attr.setLocked(true);
         attr.setMandatory(true);
         instanceAttributeTemplates.add(attr);
 
         //bad attribute: can not be "not locked" and mandatory
-        attr = new DefaultAttributeTemplate("test1", InstanceAttributeTemplate.AttributeType.LOV);
+        attr = new DefaultAttributeTemplate("test1", DefaultAttributeTemplate.AttributeType.LONG_TEXT);
         attr.setLocked(false);
         attr.setMandatory(true);
         instanceAttributeTemplates.add(attr);
@@ -144,15 +141,15 @@ public class AttributesConsistencyUtilsTest extends TestCase {
         Assert.assertFalse(AttributesConsistencyUtils.isTemplateAttributesValid(instanceAttributeTemplates,true));
 
         instanceAttributeTemplates.clear();
-        attr = new DefaultAttributeTemplate("test", InstanceAttributeTemplate.AttributeType.BOOLEAN);
+        attr = new DefaultAttributeTemplate("test", DefaultAttributeTemplate.AttributeType.BOOLEAN);
         attr.setLocked(false);
         attr.setMandatory(false);
         instanceAttributeTemplates.add(attr);
-        attr = new DefaultAttributeTemplate("test", InstanceAttributeTemplate.AttributeType.TEXT);
+        attr = new DefaultAttributeTemplate("test", DefaultAttributeTemplate.AttributeType.TEXT);
         attr.setLocked(true);
         attr.setMandatory(true);
         instanceAttributeTemplates.add(attr);
-        attr = new DefaultAttributeTemplate("test1", InstanceAttributeTemplate.AttributeType.LOV);
+        attr = new DefaultAttributeTemplate("test1", DefaultAttributeTemplate.AttributeType.LONG_TEXT);
         attr.setLocked(true);
         attr.setMandatory(false);
         instanceAttributeTemplates.add(attr);
@@ -162,15 +159,15 @@ public class AttributesConsistencyUtilsTest extends TestCase {
         Assert.assertFalse(AttributesConsistencyUtils.isTemplateAttributesValid(instanceAttributeTemplates,true));
 
         instanceAttributeTemplates.clear();
-        attr = new DefaultAttributeTemplate("test", InstanceAttributeTemplate.AttributeType.BOOLEAN);
+        attr = new DefaultAttributeTemplate("test", DefaultAttributeTemplate.AttributeType.BOOLEAN);
         attr.setLocked(true);
         attr.setMandatory(false);
         instanceAttributeTemplates.add(attr);
-        attr = new DefaultAttributeTemplate("test", InstanceAttributeTemplate.AttributeType.TEXT);
+        attr = new DefaultAttributeTemplate("test", DefaultAttributeTemplate.AttributeType.TEXT);
         attr.setLocked(true);
         attr.setMandatory(true);
         instanceAttributeTemplates.add(attr);
-        attr = new DefaultAttributeTemplate("test1", InstanceAttributeTemplate.AttributeType.LOV);
+        attr = new DefaultAttributeTemplate("test1", DefaultAttributeTemplate.AttributeType.LONG_TEXT);
         attr.setLocked(true);
         attr.setMandatory(false);
         instanceAttributeTemplates.add(attr);
