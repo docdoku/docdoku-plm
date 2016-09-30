@@ -2299,8 +2299,6 @@ public class ProductManagerBean implements IProductManagerLocal {
             for (Task runningTask : runningTasks) {
                 runningTask.start();
             }
-
-            mailer.sendApproval(runningTasks, partR);
         }
 
         partR.setDescription(pDescription);
