@@ -656,7 +656,7 @@ define({
 	USERS: 'Utilisateurs',
 	VALIDATION_FAILED_FOR: 'Validation échouée pour ',
 	_VALIDATION_PATTERN_DATE: '\\d{4}-\\d{2}-\\d{2}',
-    _VALIDATION_PATTERN_NUMBER: '^\\-?\\d+(\\.\\d+)?(([eE]([-+])?)?\\d+)?$',
+    _VALIDATION_PATTERN_NUMBER: '^-?\\d+(\\.\\d+)?(([eE]([-+])?)?\\d+)?$',
 	_VALIDATION_PATTERN_TIME: '\\d{2}:\\d{2}',
 	VALUE: 'Valeur',
     VALUES: 'Valeurs',
