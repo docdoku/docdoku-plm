@@ -11,6 +11,7 @@ function (Backbone, singletonDecorator) {
             '':   'workspaceManagementHome',
             'create':   'workspaceCreation',
             'admin/dashboard':'adminDashboard',
+            'admin/options':'adminOptions',
             'workspace/:workspaceId/users':   'workspaceUsers',
             'workspace/:workspaceId/notifications':   'workspaceNotifications',
             'workspace/:workspaceId/edit':   'workspaceEdit',
@@ -90,6 +91,13 @@ function (Backbone, singletonDecorator) {
             if(this.checkRootAdmin()){
                 this.refresh();
                 App.appView.adminDashboard();
+            }
+        },
+
+        adminOptions:function(){
+            if(this.checkRootAdmin()){
+                this.refresh();
+                App.appView.adminOptions();
             }
         }
 

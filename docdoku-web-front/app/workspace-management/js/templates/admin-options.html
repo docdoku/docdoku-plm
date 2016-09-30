@@ -1,0 +1,41 @@
+<div class="actions well">
+    <button class="btn btn-default workspace-management" title="{{i18n.BACK}}">
+        {{i18n.BACK}}
+    </button>
+</div>
+<div class="notifications"></div>
+<div class="margin">
+    <h3>{{i18n.PLATFORM_OPTIONS}}</h3>
+
+    <form id="platform-options-form">
+
+        <div>
+            <h4>{{i18n.SIGN_UP}}</h4>
+            <label for="registration-strategy">{{i18n.REGISTRATION_STRATEGY}}</label>
+
+            <select id="registration-strategy">
+                <option value="NONE">{{i18n.NONE}}</option>
+                <option value="ADMIN_VALIDATION">{{i18n.ADMIN_VALIDATION}}</option>
+            </select>
+        </div>
+
+        <div>
+            <h4>{{i18n.WORKSPACE_CREATION}}</h4>
+
+            <label
+                for="workspace-creation-verification-strategy">{{i18n.WORKSPACE_CREATION_VERIFICATION_STRATEGY}}</label>
+
+            <select id="workspace-creation-verification-strategy">
+                <option value="NONE">{{i18n.NONE}}</option>
+                <option value="ADMIN_VALIDATION">{{i18n.ADMIN_VALIDATION}}</option>
+            </select>
+        </div>
+
+        <div>
+            <button type="submit" class="btn btn-primary">
+                {{i18n.SAVE}}
+            </button>
+        </div>
+
+    </form>
+</div>

@@ -37,5 +37,18 @@ define(['backbone'], function (Backbone) {
         });
     };
 
+    Admin.getPlatformOptions = function () {
+        return $.getJSON(App.config.contextPath +  '/api/admin/platform-options');
+    };
+
+    Admin.setPlatformOptions = function (options) {
+        return $.ajax({
+            type: 'PUT',
+            url: App.config.contextPath +  '/api/admin/platform-options',
+            data: JSON.stringify(options),
+            contentType: 'application/json'
+        });
+    };
+
     return Admin;
 });

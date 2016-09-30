@@ -3,6 +3,7 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd" version="2.1">
   <persistence-unit name="DocDoku-PU" transaction-type="JTA">
     <jta-data-source>jdbc/docdokuPU</jta-data-source>
+    <class>com.docdoku.core.admin.PlatformOptions</class>
     <class>com.docdoku.core.common.Account</class>
     <class>com.docdoku.core.common.BinaryResource</class>
     <class>com.docdoku.core.common.Organization</class>

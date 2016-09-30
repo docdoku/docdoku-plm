@@ -20,16 +20,19 @@
 
 package com.docdoku.server.rest;
 
+import com.docdoku.core.admin.PlatformOptions;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.core.services.IWorkspaceManagerLocal;
+import com.docdoku.core.services.*;
+import com.docdoku.server.rest.dto.PlatformOptionsDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -43,6 +46,10 @@ import javax.ws.rs.core.Response;
 import java.io.Serializable;
 
 
+/**
+ *
+ * @author Morgan Guimard
+ */
 @RequestScoped
 @Api(value = "admin", description = "Admin resources")
 @Path("admin")
@@ -65,8 +72,17 @@ public class AdminResource implements Serializable {
     @Inject
     private IWorkspaceManagerLocal workspaceManager;
 
-    public AdminResource(){
+    @Inject
+    private IPlatformOptionsManagerLocal platformOptionsManager;
 
+    private Mapper mapper;
+
+    public AdminResource(){
+    }
+
+    @PostConstruct
+    public void init() {
+        mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
     @GET
@@ -178,6 +194,25 @@ public class AdminResource implements Serializable {
         for(Workspace workspace : administratedWorkspaces){
             workspaceManager.synchronizeIndexer(workspace.getId());
         }
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path("platform-options")
+    @ApiOperation(value = "Get platform options", response = PlatformOptions.class)
+    @Produces(MediaType.APPLICATION_JSON)
+    public PlatformOptionsDTO getPlatformOptions() {
+        return mapper.map(platformOptionsManager.getPlatformOptions(), PlatformOptionsDTO.class);
+    }
+
+
+    @PUT
+    @Path("platform-options")
+    @ApiOperation(value = "Set platform options", response = Response.class)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response setPlatformOptions(@ApiParam("Options to set") PlatformOptionsDTO platformOptionsDTO) {
+        platformOptionsManager.setRegistrationStrategy(platformOptionsDTO.getRegistrationStrategy());
+        platformOptionsManager.setWorkspaceCreationStrategy(platformOptionsDTO.getWorkspaceCreationStrategy());
         return Response.ok().build();
     }
 }

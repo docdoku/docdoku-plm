@@ -42,7 +42,13 @@ define({
         INDEX_ALL_WORKSPACES:'Index all workspaces',
         NO_TAGS_YET:'You must have created at least one tag to create notifications',
         INDEX_ALL_WORKSPACES_QUESTION:'Are you sure to want to index every workspaces ?',
-        INDEX_ALL_WORKSPACES_TEXT:'This may take a while, you\'ll be notified by email when indexing has finished'
+        INDEX_ALL_WORKSPACES_TEXT:'This may take a while, you\'ll be notified by email when indexing has finished',
+        PLATFORM_OPTIONS:'Platform options',
+        SIGN_UP:'Sign up',
+        REGISTRATION_STRATEGY:'Registration strategy',
+        ADMIN_VALIDATION:'Admin validation',
+        WORKSPACE_CREATION:'Workspace creation',
+        WORKSPACE_CREATION_VERIFICATION_STRATEGY:'Workspace creation strategy'
     },
     'fr': true,
     'es': true

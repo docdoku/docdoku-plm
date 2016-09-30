@@ -48,5 +48,12 @@ define({
     INDEX_ALL_WORKSPACES:'Indexer tous les esapces de travail',
     NO_TAGS_YET:'Vous devez avoir créé au moins un tag avant de pouvoir créer des notifications',
     INDEX_ALL_WORKSPACES_QUESTION:'Etes-vous sûr de vouloir indexer tous les espaces de travail ?',
-    INDEX_ALL_WORKSPACES_TEXT:'Ceci peut prendre plusieurs minutes, vous serez notifié par email une fois l\'indexation terminée'
+    INDEX_ALL_WORKSPACES_TEXT:'Ceci peut prendre plusieurs minutes, vous serez notifié par email une fois l\'indexation terminée',
+    PLATFORM_OPTIONS:'Options de la plateforme',
+    SIGN_UP:'Enregistrement',
+    REGISTRATION_STRATEGY:'Stratégie de validation des nouveaux comptes',
+    ADMIN_VALIDATION:'Validation par l\'administrateur',
+    WORKSPACE_CREATION:'Création d\'espaces de travail',
+    WORKSPACE_CREATION_VERIFICATION_STRATEGY:'Stratégie de validation des nouveaux expaces de travail',
+
 });
