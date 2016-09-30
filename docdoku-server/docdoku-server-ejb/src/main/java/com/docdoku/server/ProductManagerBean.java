@@ -212,6 +212,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         pm.setCreationDate(now);
         PartRevision newRevision = pm.createNextRevision(user);
 
+        Collection<Task> runningTasks=null;
         if (pWorkflowModelId != null) {
 
             UserDAO userDAO = new UserDAO(locale, em);
@@ -254,14 +255,10 @@ public class ProductManagerBean implements IProductManagerLocal {
                 }
             }
 
-            Collection<Task> runningTasks = workflow.getRunningTasks();
+            runningTasks = workflow.getRunningTasks();
             for (Task runningTask : runningTasks) {
                 runningTask.start();
             }
-
-            em.flush();
-            mailer.sendApproval(runningTasks, newRevision);
-
         }
         newRevision.setCheckOutUser(user);
         newRevision.setCheckOutDate(now);
@@ -326,6 +323,11 @@ public class ProductManagerBean implements IProductManagerLocal {
         }
 
         new PartMasterDAO(locale, em).createPartM(pm);
+
+        if(runningTasks!=null) {
+            mailer.sendApproval(runningTasks, newRevision);
+        }
+
         return pm;
     }
 
@@ -2250,6 +2252,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         }
 
 
+        Collection<Task> runningTasks=null;
         if (pWorkflowModelId != null) {
 
             UserDAO userDAO = new UserDAO(locale, em);
@@ -2292,13 +2295,11 @@ public class ProductManagerBean implements IProductManagerLocal {
                 }
             }
 
-            Collection<Task> runningTasks = workflow.getRunningTasks();
-
+            runningTasks = workflow.getRunningTasks();
             for (Task runningTask : runningTasks) {
                 runningTask.start();
             }
 
-            em.flush();
             mailer.sendApproval(runningTasks, partR);
         }
 
@@ -2327,6 +2328,10 @@ public class ProductManagerBean implements IProductManagerLocal {
         firstPartI.setModificationDate(now);
 
         partRevisionDAO.createPartR(partR);
+
+        if(runningTasks!=null) {
+            mailer.sendApproval(runningTasks, partR);
+        }
 
         return partR;
 
