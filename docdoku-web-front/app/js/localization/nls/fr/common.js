@@ -489,6 +489,7 @@ define({
     QUERY_GROUP_PRODUCT:'Produit',
     QUERY_GROUP_ATTRIBUTE_STRING:'Attribut de type chaine',
     QUERY_GROUP_ATTRIBUTE_LONG_STRING:'Attribut de type longue chaine',
+    QUERY_GROUP_ATTRIBUTE_PART_NUMBER: 'Attribut de type numéro d\'article',
     QUERY_GROUP_ATTRIBUTE_URL:'Attribut de type URL',
     QUERY_GROUP_ATTRIBUTE_LOV:'Attribut de type Liste de valeurs',
     QUERY_GROUP_ATTRIBUTE_NUMBER:'Attribut de type nombre',

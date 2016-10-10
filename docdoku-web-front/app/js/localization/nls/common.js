@@ -492,6 +492,7 @@ define({
         QUERY_GROUP_PRODUCT:'Product',
         QUERY_GROUP_ATTRIBUTE_STRING:'String Attribute',
         QUERY_GROUP_ATTRIBUTE_LONG_STRING:'Long string Attribute',
+        QUERY_GROUP_ATTRIBUTE_PART_NUMBER: 'Part number Attribute',
         QUERY_GROUP_ATTRIBUTE_LOV:'List of values Attribute',
         QUERY_GROUP_ATTRIBUTE_URL:'URL Attribute',
         QUERY_GROUP_ATTRIBUTE_NUMBER:'Number Attribute',

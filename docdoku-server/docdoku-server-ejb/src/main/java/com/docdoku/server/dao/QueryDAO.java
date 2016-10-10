@@ -24,6 +24,7 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.QueryAlreadyExistsException;
 import com.docdoku.core.meta.*;
+import com.docdoku.core.product.InstancePartNumberAttribute;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
@@ -259,6 +260,10 @@ public class QueryDAO {
             return getInstanceLovAttributePredicate(field.substring(9), operator, values, type);
         }
 
+        if(field.startsWith("attr-PART_NUMBER.")){
+            return getInstancePartNumberAttributePredicate(field.substring(17), operator, values, type);
+        }
+
         throw new IllegalArgumentException();
     }
 
@@ -358,6 +363,13 @@ public class QueryDAO {
     private Predicate getInstanceLongTextAttributePredicate(String field, String operator, List<String> values, String type) {
         Root<InstanceLongTextAttribute> ita = cq.from(InstanceLongTextAttribute.class);
         Predicate valuesPredicate = getPredicate(ita.get("longTextValue"), operator, values, "string");
+        Predicate memberPredicate = ita.in(pi.get("instanceAttributes"));
+        return cb.and(cb.equal(ita.get("name"),field),valuesPredicate,memberPredicate);
+    }
+
+    private Predicate getInstancePartNumberAttributePredicate(String field, String operator, List<String> values, String type) {
+        Root<InstancePartNumberAttribute> ita = cq.from(InstancePartNumberAttribute.class);
+        Predicate valuesPredicate = getPredicate(ita.get("partMasterValue").get("number"), operator, values, "string");
         Predicate memberPredicate = ita.in(pi.get("instanceAttributes"));
         return cb.and(cb.equal(ita.get("name"),field),valuesPredicate,memberPredicate);
     }

@@ -20,6 +20,8 @@
 
 package com.docdoku.core.meta;
 
+import com.docdoku.core.product.InstancePartNumberAttribute;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -35,7 +37,7 @@ public class InstanceAttributeDescriptor implements Serializable {
     private List<NameValuePair> lovItems;
 
     public enum Type {
-        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV, LONG_TEXT
+        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV, LONG_TEXT, PART_NUMBER
     }
 
     public InstanceAttributeDescriptor() {
@@ -66,6 +68,8 @@ public class InstanceAttributeDescriptor implements Serializable {
         }
         else if(o instanceof InstanceLongTextAttribute){
             type = Type.LONG_TEXT;
+        }else if(o instanceof InstancePartNumberAttribute){
+            type = Type.PART_NUMBER;
         }
     }
 
@@ -94,31 +98,7 @@ public class InstanceAttributeDescriptor implements Serializable {
     }
 
     public String getStringType(){
-        String typeAsString = "";
-        switch (type){
-            case LOV:
-                typeAsString = "LOV";
-                break;
-            case DATE:
-                typeAsString = "DATE";
-                break;
-            case NUMBER:
-                typeAsString = "NUMBER";
-                break;
-            case URL:
-                typeAsString = "URL";
-                break;
-            case BOOLEAN:
-                typeAsString = "BOOLEAN";
-                break;
-            case LONG_TEXT:
-                typeAsString = "LONG_TEXT";
-                break;
-            default :
-                typeAsString = "TEXT";
-                break;
-        }
-        return typeAsString;
+        return type.name();
     }
 
     @Override
