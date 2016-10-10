@@ -64,6 +64,9 @@ public class InstanceAttributeTemplateDozerConverter extends DozerConverter<Inst
         }else if(instanceAttributeTemplate instanceof ListOfValuesAttributeTemplate){
             ListOfValuesAttributeTemplate lovIA=(ListOfValuesAttributeTemplate)instanceAttributeTemplate;
             dto.setLovName(lovIA.getLovName());
+            dto.setAttributeType(InstanceAttributeTemplateDTO.AttributeType.LOV);
+        }else if(instanceAttributeTemplate instanceof PartNumberAttributeTemplate){
+            dto.setAttributeType(InstanceAttributeTemplateDTO.AttributeType.PART_NUMBER);
         }
         return dto;
     }

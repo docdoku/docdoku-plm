@@ -40,7 +40,7 @@ public class InstancePartNumberAttribute extends InstanceAttribute{
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTNUMBER"),
-            @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+            @JoinColumn(name="PARTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
     private PartMaster partMasterValue;
 
