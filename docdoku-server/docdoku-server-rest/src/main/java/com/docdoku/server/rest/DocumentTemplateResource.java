@@ -24,11 +24,11 @@ import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.*;
-import com.docdoku.server.rest.util.InstanceAttributeFactory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -43,6 +43,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,12 +126,18 @@ public class DocumentTemplateResource {
         boolean idGenerated = templateCreationDTO.isIdGenerated();
         boolean attributesLocked = templateCreationDTO.isAttributesLocked();
 
-        List<InstanceAttributeTemplateDTO> attributeTemplates = templateCreationDTO.getAttributeTemplates();
-        String[] lovNames = new String[attributeTemplates.size()];
-        for (int i = 0; i < attributeTemplates.size(); i++)
-            lovNames[i] = attributeTemplates.get(i).getLovName();
+        List<InstanceAttributeTemplateDTO> attrTemplateDTOs = templateCreationDTO.getAttributeTemplates();
+        String[] lovNames = new String[attrTemplateDTOs.size()];
+        for (int i = 0; i < attrTemplateDTOs.size(); i++)
+            lovNames[i] = attrTemplateDTOs.get(i).getLovName();
 
-        DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, workflowModelId, mask, new InstanceAttributeFactory().createInstanceAttributeTemplateFromDTO(attributeTemplates), lovNames, idGenerated, attributesLocked);
+
+        List<InstanceAttributeTemplate> attrTemplates = new ArrayList<>();
+        for (InstanceAttributeTemplateDTO dto : attrTemplateDTOs) {
+            attrTemplates.add(mapper.map(dto, InstanceAttributeTemplate.class));
+        }
+
+        DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, workflowModelId, mask, attrTemplates, lovNames, idGenerated, attributesLocked);
         DocumentMasterTemplateDTO response = mapper.map(template, DocumentMasterTemplateDTO.class);
         return response;
     }
@@ -151,12 +158,17 @@ public class DocumentTemplateResource {
         boolean idGenerated = documentMasterTemplateDTO.isIdGenerated();
         boolean attributesLocked = documentMasterTemplateDTO.isAttributesLocked();
 
-        List<InstanceAttributeTemplateDTO> attributeTemplates = documentMasterTemplateDTO.getAttributeTemplates();
-        String[] lovNames = new String[attributeTemplates.size()];
-        for (int i = 0; i < attributeTemplates.size(); i++)
-            lovNames[i] = attributeTemplates.get(i).getLovName();
+        List<InstanceAttributeTemplateDTO> attrTemplateDTOs = documentMasterTemplateDTO.getAttributeTemplates();
+        String[] lovNames = new String[attrTemplateDTOs.size()];
+        for (int i = 0; i < attrTemplateDTOs.size(); i++)
+            lovNames[i] = attrTemplateDTOs.get(i).getLovName();
 
-        DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, workflowModelId, mask, new InstanceAttributeFactory().createInstanceAttributeTemplateFromDTO(attributeTemplates), lovNames, idGenerated, attributesLocked);
+        List<InstanceAttributeTemplate> attrTemplates = new ArrayList<>();
+        for (InstanceAttributeTemplateDTO dto : attrTemplateDTOs) {
+            attrTemplates.add(mapper.map(dto, InstanceAttributeTemplate.class));
+        }
+
+        DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, workflowModelId, mask, attrTemplates, lovNames, idGenerated, attributesLocked);
         return mapper.map(template, DocumentMasterTemplateDTO.class);
     }
 

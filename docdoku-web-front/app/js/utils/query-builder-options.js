@@ -231,7 +231,8 @@ define(function () {
         TEXT: 'string',
         LONG_TEXT: 'string',
         URL: 'string',
-        LOV: 'lov'
+        LOV: 'lov',
+        PART_NUMBER: 'string'
     };
 
     var groups = [
@@ -241,6 +242,7 @@ define(function () {
         {id: 'author', name: App.config.i18n.QUERY_GROUP_AUTHOR},
         {id: 'attr-TEXT', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_STRING},
         {id: 'attr-LONG_TEXT', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_LONG_STRING},
+        {id: 'attr-PART_NUMBER', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_PART_NUMBER},
         {id: 'attr-URL', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_URL},
         {id: 'attr-LOV', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_LOV},
         {id: 'attr-NUMBER', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_NUMBER},

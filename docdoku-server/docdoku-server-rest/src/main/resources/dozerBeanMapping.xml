@@ -14,6 +14,10 @@
                 <class-a>com.docdoku.core.meta.InstanceAttribute</class-a>
                 <class-b>com.docdoku.server.rest.dto.InstanceAttributeDTO</class-b>
             </converter>
+            <converter type="com.docdoku.server.rest.converters.InstanceAttributeTemplateDozerConverter" >
+                <class-a>com.docdoku.core.meta.InstanceAttributeTemplate</class-a>
+                <class-b>com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO</class-b>
+            </converter>
             <converter type="com.docdoku.server.rest.converters.ActivityModelDozerConverter" >
                 <class-a>com.docdoku.core.workflow.ActivityModel</class-a>
                 <class-b>com.docdoku.server.rest.dto.ActivityModelDTO</class-b>

@@ -43,7 +43,6 @@ import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
-import com.docdoku.server.rest.util.InstanceAttributeFactory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -261,10 +260,14 @@ public class DocumentResource {
             }
         }
 
-        List<InstanceAttributeDTO> instanceAttributes = documentIterationDTO.getInstanceAttributes();
-        List<InstanceAttribute> attributes = null;
-        if (instanceAttributes != null) {
-            attributes = new InstanceAttributeFactory().createInstanceAttributes(instanceAttributes);
+        List<InstanceAttributeDTO> instanceAttributeDTOs = documentIterationDTO.getInstanceAttributes();
+        List<InstanceAttribute> attributes = new ArrayList<>();
+
+        if (instanceAttributeDTOs != null) {
+            for (InstanceAttributeDTO dto : instanceAttributeDTOs) {
+                dto.setWorkspaceId(workspaceId);
+                attributes.add(mapper.map(dto, InstanceAttribute.class));
+            }
         }
 
         DocumentRevision docR = documentService.updateDocument(new DocumentIterationKey(workspaceId, documentId, documentVersion, pIteration), pRevisionNote, attributes, links, documentLinkComments);

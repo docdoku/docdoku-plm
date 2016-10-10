@@ -760,10 +760,11 @@ public class ProductManagerBean implements IProductManagerLocal {
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, List<InstanceAttributeTemplate> pAttributeTemplates, DocumentRevisionKey[] pLinkKeys, String[] documentLinkComments, String[] lovNames)
-            throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException, EntityConstraintException, UserNotActiveException, ListOfValuesNotFoundException, PartUsageLinkNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException, EntityConstraintException, UserNotActiveException, ListOfValuesNotFoundException, PartUsageLinkNotFoundException, DocumentRevisionNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         Locale locale = new Locale(user.getLanguage());
+        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(locale, em);
 
         PartRevisionDAO partRDAO = new PartRevisionDAO(locale, em);
         PartRevision partRev = partRDAO.loadPartR(pKey.getPartRevision());
@@ -791,7 +792,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
                 int counter = 0;
                 for (DocumentRevisionKey link : pLinkKeys) {
-                    DocumentLink newLink = new DocumentLink(em.getReference(DocumentRevision.class, link));
+                    DocumentLink newLink = new DocumentLink(docRDAO.loadDocR(link));
                     newLink.setComment(documentLinkComments[counter]);
                     linkDAO.createLink(newLink);
                     partIte.getLinkedDocuments().add(newLink);

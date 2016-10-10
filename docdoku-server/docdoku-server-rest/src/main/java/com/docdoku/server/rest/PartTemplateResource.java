@@ -22,13 +22,13 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.*;
-import com.docdoku.server.rest.util.InstanceAttributeFactory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -43,6 +43,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,19 +126,30 @@ public class PartTemplateResource {
         boolean idGenerated = templateCreationDTO.isIdGenerated();
         boolean attributesLocked = templateCreationDTO.isAttributesLocked();
 
-        List<InstanceAttributeTemplateDTO> attributeTemplates = templateCreationDTO.getAttributeTemplates();
-        String[] lovNames = new String[attributeTemplates.size()];
-        for (int i = 0; i < attributeTemplates.size(); i++) {
-            lovNames[i] = attributeTemplates.get(i).getLovName();
+        List<InstanceAttributeTemplateDTO> attrTemplateDTOs = templateCreationDTO.getAttributeTemplates();
+        String[] lovNames = new String[attrTemplateDTOs.size()];
+        for (int i = 0; i < attrTemplateDTOs.size(); i++) {
+            lovNames[i] = attrTemplateDTOs.get(i).getLovName();
         }
 
-        List<InstanceAttributeTemplateDTO> attributeInstanceTemplates = templateCreationDTO.getAttributeInstanceTemplates();
-        String[] instanceLovNames = new String[attributeInstanceTemplates.size()];
-        for (int i = 0; i < attributeInstanceTemplates.size(); i++) {
-            instanceLovNames[i] = attributeInstanceTemplates.get(i).getLovName();
+        List<InstanceAttributeTemplateDTO> instanceAttrTemplateDTOs = templateCreationDTO.getAttributeInstanceTemplates();
+        String[] instanceLovNames = new String[instanceAttrTemplateDTOs.size()];
+        for (int i = 0; i < instanceAttrTemplateDTOs.size(); i++) {
+            instanceLovNames[i] = instanceAttrTemplateDTOs.get(i).getLovName();
         }
-        InstanceAttributeFactory attributeFactory = new InstanceAttributeFactory();
-        PartMasterTemplate template = productService.createPartMasterTemplate(workspaceId, id, partType, workflowModelId, mask, attributeFactory.createInstanceAttributeTemplateFromDTO(attributeTemplates), lovNames, attributeFactory.createInstanceAttributeTemplateFromDTO(attributeInstanceTemplates), instanceLovNames, idGenerated, attributesLocked);
+
+        List<InstanceAttributeTemplate> attrTemplates = new ArrayList<>();
+        for (InstanceAttributeTemplateDTO dto : attrTemplateDTOs) {
+            attrTemplates.add(mapper.map(dto, InstanceAttributeTemplate.class));
+        }
+
+        List<InstanceAttributeTemplate> instanceAttrTemplates = new ArrayList<>();
+        for (InstanceAttributeTemplateDTO dto : instanceAttrTemplateDTOs) {
+            instanceAttrTemplates.add(mapper.map(dto, InstanceAttributeTemplate.class));
+        }
+
+
+        PartMasterTemplate template = productService.createPartMasterTemplate(workspaceId, id, partType, workflowModelId, mask, attrTemplates, lovNames, instanceAttrTemplates, instanceLovNames, idGenerated, attributesLocked);
         return mapper.map(template, PartMasterTemplateDTO.class);
     }
 
@@ -157,20 +169,30 @@ public class PartTemplateResource {
         boolean idGenerated = partMasterTemplateDTO.isIdGenerated();
         boolean attributesLocked = partMasterTemplateDTO.isAttributesLocked();
 
-        List<InstanceAttributeTemplateDTO> attributeTemplates = partMasterTemplateDTO.getAttributeTemplates();
-        String[] lovNames = new String[attributeTemplates.size()];
-        for (int i = 0; i < attributeTemplates.size(); i++) {
-            lovNames[i] = attributeTemplates.get(i).getLovName();
+        List<InstanceAttributeTemplateDTO> attrTemplateDTOs = partMasterTemplateDTO.getAttributeTemplates();
+        String[] lovNames = new String[attrTemplateDTOs.size()];
+        for (int i = 0; i < attrTemplateDTOs.size(); i++) {
+            lovNames[i] = attrTemplateDTOs.get(i).getLovName();
+        }
+
+        List<InstanceAttributeTemplateDTO> instanceAttrTemplateDTOs = partMasterTemplateDTO.getAttributeInstanceTemplates();
+        String[] instanceLovNames = new String[instanceAttrTemplateDTOs.size()];
+        for (int i = 0; i < instanceAttrTemplateDTOs.size(); i++) {
+            instanceLovNames[i] = instanceAttrTemplateDTOs.get(i).getLovName();
         }
 
 
-        List<InstanceAttributeTemplateDTO> attributeInstanceTemplates = partMasterTemplateDTO.getAttributeInstanceTemplates();
-        String[] instanceLovNames = new String[attributeInstanceTemplates.size()];
-        for (int i = 0; i < attributeInstanceTemplates.size(); i++) {
-            instanceLovNames[i] = attributeInstanceTemplates.get(i).getLovName();
+        List<InstanceAttributeTemplate> attrTemplates = new ArrayList<>();
+        for (InstanceAttributeTemplateDTO dto : attrTemplateDTOs) {
+            attrTemplates.add(mapper.map(dto, InstanceAttributeTemplate.class));
         }
-        InstanceAttributeFactory attributeFactory = new InstanceAttributeFactory();
-        PartMasterTemplate template = productService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, workflowModelId, mask, attributeFactory.createInstanceAttributeTemplateFromDTO(attributeTemplates), lovNames, attributeFactory.createInstanceAttributeTemplateFromDTO(attributeInstanceTemplates), instanceLovNames, idGenerated, attributesLocked);
+
+        List<InstanceAttributeTemplate> instanceAttrTemplates = new ArrayList<>();
+        for (InstanceAttributeTemplateDTO dto : instanceAttrTemplateDTOs) {
+            instanceAttrTemplates.add(mapper.map(dto, InstanceAttributeTemplate.class));
+        }
+
+        PartMasterTemplate template = productService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, workflowModelId, mask, attrTemplates, lovNames, instanceAttrTemplates, instanceLovNames, idGenerated, attributesLocked);
         return mapper.map(template, PartMasterTemplateDTO.class);
     }
 

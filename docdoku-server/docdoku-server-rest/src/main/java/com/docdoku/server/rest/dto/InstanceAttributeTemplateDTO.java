@@ -109,6 +109,6 @@ public class InstanceAttributeTemplateDTO implements Serializable {
     }
 
     public enum AttributeType {
-        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV, LONG_TEXT
+        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV, LONG_TEXT, PART_NUMBER
     }
 }

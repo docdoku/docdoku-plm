@@ -48,11 +48,6 @@ public abstract class InstanceAttributeTemplate implements Serializable, Cloneab
 
     protected boolean locked;
 
-    public enum AttributeType {
-
-        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV, LONG_TEXT
-    }
-
 
     public InstanceAttributeTemplate() {
     }
@@ -94,8 +89,6 @@ public abstract class InstanceAttributeTemplate implements Serializable, Cloneab
     }
 
     public abstract InstanceAttribute createInstanceAttribute();
-
-    public abstract AttributeType getAttributeType();
 
     @Override
     public InstanceAttributeTemplate clone() {

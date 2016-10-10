@@ -1407,7 +1407,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
                 int counter = 0;
                 for (DocumentRevisionKey link : pLinkKeys) {
                     if (!link.equals(iKey)) {
-                        DocumentLink newLink = new DocumentLink(em.getReference(DocumentRevision.class, link));
+                        DocumentLink newLink = new DocumentLink(docRDAO.loadDocR(link));
                         newLink.setComment(documentLinkComments[counter]);
                         linkDAO.createLink(newLink);
                         doc.getLinkedDocuments().add(newLink);

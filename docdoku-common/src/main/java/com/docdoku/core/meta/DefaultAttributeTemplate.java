@@ -37,6 +37,10 @@ public class DefaultAttributeTemplate extends InstanceAttributeTemplate {
 
     private AttributeType attributeType;
 
+    public enum AttributeType {
+        TEXT, NUMBER, DATE, BOOLEAN, URL, LONG_TEXT
+    }
+
     public DefaultAttributeTemplate() {
     }
 
@@ -45,8 +49,6 @@ public class DefaultAttributeTemplate extends InstanceAttributeTemplate {
         attributeType = pAttributeType;
     }
 
-
-    @Override
     public AttributeType getAttributeType() {
         return attributeType;
     }

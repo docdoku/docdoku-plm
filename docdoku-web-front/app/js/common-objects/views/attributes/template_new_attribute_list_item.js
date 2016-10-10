@@ -49,7 +49,7 @@ define([
         },
         typeChanged: function (evt) {
             var typeValue = evt.target.value;
-            if (typeValue === 'TEXT' || typeValue === 'LONG_TEXT' || typeValue === 'BOOLEAN' || typeValue === 'DATE' || typeValue === 'NUMBER' || typeValue === 'URL' ){
+            if (typeValue === 'TEXT' || typeValue === 'LONG_TEXT' || typeValue === 'BOOLEAN' || typeValue === 'DATE' || typeValue === 'PART_NUMBER' || typeValue === 'NUMBER' || typeValue === 'URL' ){
                 this.model.set({
                     attributeType: typeValue
                 });

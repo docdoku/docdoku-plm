@@ -144,7 +144,8 @@ public class UserDAO {
         return users;
     }
 
-    public User[] findReachableUsersForCaller(String callerLogin) {
+    public User[]
+    findReachableUsersForCaller(String callerLogin) {
 
         Map<String,User> users = new TreeMap<>();
 

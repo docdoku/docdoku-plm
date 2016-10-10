@@ -7,8 +7,9 @@ define([
     'common-objects/views/attributes/attribute_list_item_text',
     'common-objects/views/attributes/attribute_list_item_long_text',
     'common-objects/views/attributes/attribute_list_item_url',
-    'common-objects/views/attributes/attribute_list_item_lov'
-], function (ListView, AttributeListItemBooleanView, AttributeListItemDateView, AttributeListItemNumberView, AttributeListItemTextView, AttributeListItemLongTextView, AttributeListItemUrlView, AttributeListItemLOVView) {
+    'common-objects/views/attributes/attribute_list_item_lov',
+    'common-objects/views/attributes/attribute_list_item_part_number'
+], function (ListView, AttributeListItemBooleanView, AttributeListItemDateView, AttributeListItemNumberView, AttributeListItemTextView, AttributeListItemLongTextView, AttributeListItemUrlView, AttributeListItemLOVView, AttributeListItemPartNumberView) {
     'use strict';
     var AttributeListView = ListView.extend({
 
@@ -19,7 +20,8 @@ define([
             'TEXT': AttributeListItemTextView,
             'LONG_TEXT': AttributeListItemLongTextView,
             'URL': AttributeListItemUrlView,
-            'LOV': AttributeListItemLOVView
+            'LOV': AttributeListItemLOVView,
+            'PART_NUMBER': AttributeListItemPartNumberView
         },
 
         editMode: true,
@@ -39,7 +41,7 @@ define([
                 type = model.get('attributeType');
             }
 
-            if(type !== 'TEXT' && type !== 'LONG_TEXT' && type !== 'BOOLEAN' && type !== 'NUMBER' && type !== 'URL' && type !== 'DATE'){
+            if(type !== 'TEXT' && type !== 'LONG_TEXT' && type !== 'BOOLEAN' && type !== 'NUMBER' && type !== 'URL' && type !== 'PART_NUMBER' && type !== 'DATE'){
                 type = 'LOV';
             }
             var Constructor = this.typeViewMapping[type];
