@@ -14,7 +14,10 @@
 <div class="margin">
     <h3>{{i18n.WORKSPACES_ADMINISTRATION}}</h3>
     {{#isAdmin}}
-    <p><a href="#/admin/dashboard">{{i18n.ADMIN_DASHBOARD}}</a></p>
+    <p>
+        <a href="#/admin/dashboard">{{i18n.ADMIN_DASHBOARD}}</a> |
+        <a href="#" class="index-all-workspaces" data-workspace-id="{{workspace.id}}">{{i18n.INDEX_ALL_WORKSPACES}}</a>
+    </p>
     {{/isAdmin}}
     <p><i class="fa fa-graduation-cap"></i> <em>{{i18n.WORKSPACES_ADMINISTRATION_TEXT}}</em></p>
 

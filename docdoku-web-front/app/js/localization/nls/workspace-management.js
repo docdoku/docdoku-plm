@@ -39,7 +39,10 @@ define({
         WORKSPACE_DELETING_TEXT:'A report will be sent by mail to workspace administrator once finished.',
         WORKSPACE_INDEXING:'Workspace indexation on progress. A report will be sent by mail to workspace administrator once finished.',
         INDEX_WORKSPACE:'Index data',
-        NO_TAGS_YET:'You must have created at least one tag to create notifications'
+        INDEX_ALL_WORKSPACES:'Index all workspaces',
+        NO_TAGS_YET:'You must have created at least one tag to create notifications',
+        INDEX_ALL_WORKSPACES_QUESTION:'Are you sure to want to index every workspaces ?',
+        INDEX_ALL_WORKSPACES_TEXT:'This may take a while, you\'ll be notified by email when indexing has finished'
     },
     'fr': true,
     'es': true

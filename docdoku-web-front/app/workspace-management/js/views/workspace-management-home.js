@@ -5,14 +5,16 @@ define([
     'text!templates/workspace-management-home.html',
     'common-objects/models/workspace',
     'common-objects/views/alert',
-    'views/workspace-item'
-], function (Backbone, Mustache, template, Workspace, AlertView, WorkspaceItemView) {
+    'views/workspace-item',
+    'common-objects/models/admin'
+], function (Backbone, Mustache, template, Workspace, AlertView, WorkspaceItemView, Admin) {
     'use strict';
 
     var WorkspaceManagementHomeView = Backbone.View.extend({
 
         events: {
-            'click .new-workspace':'newWorkspace'
+            'click .new-workspace':'newWorkspace',
+            'click .index-all-workspaces':'indexAllWorkspaces',
         },
 
         initialize: function () {
@@ -64,6 +66,25 @@ define([
                 type: 'info',
                 message: message
             }).render().$el);
+        },
+
+        indexAllWorkspaces:function(){
+            var _this = this;
+            bootbox.confirm(
+                '<h4>'+App.config.i18n.INDEX_ALL_WORKSPACES_QUESTION+'</h4>'+
+                '<p><i class="fa fa-warning"></i> '+App.config.i18n.INDEX_ALL_WORKSPACES_TEXT+'</p>',
+                App.config.i18n.CANCEL,
+                App.config.i18n.INDEX_ALL_WORKSPACES,
+                function(result){
+                    if(result){
+                        Admin.indexAllWorkspaces()
+                            .then(function(){
+                                _this.onInfo(App.config.i18n.WORKSPACE_INDEXING);
+                            },function(error){
+                                _this.onError(error);
+                            });
+                    }
+                });
         }
 
     });
