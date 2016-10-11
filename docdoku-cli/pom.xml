@@ -53,6 +53,7 @@
                         <login>${env.LOGIN}</login>
                         <password>${env.PASSWORD}</password>
                         <workspace>${env.WORKSPACE}</workspace>
+                        <ssl>${env.SSL}</ssl>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

@@ -20,6 +20,11 @@
 
 package com.docdoku.cli.commands.common;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
 public class TestConfig {
 
     public static String HOST;
@@ -27,12 +32,39 @@ public class TestConfig {
     public static String PASSWORD;
     public static String WORKSPACE;
     public static String PORT;
+    public static boolean SSL;
 
-    static{
+    static {
         HOST = System.getProperty("host") != null ? System.getProperty("host") : "localhost";
         PORT = System.getProperty("port") != null ? System.getProperty("port") : "8080";
         LOGIN = System.getProperty("login") != null ? System.getProperty("login") : "test";
         PASSWORD = System.getProperty("password") != null ? System.getProperty("password") : "test";
         WORKSPACE = System.getProperty("workspace") != null ? System.getProperty("workspace") : "test";
+        SSL = System.getProperty("ssl") != null ? Boolean.valueOf(System.getProperty("ssl")) : true;
+    }
+
+    public static String[] getAuth() {
+
+        List<String> args = new ArrayList<>();
+        if (SSL) {
+            args.add("--ssl");
+        }
+
+        return Stream.concat(
+                args.stream(),
+                Arrays.stream(new String[]{
+                        "-u",
+                        TestConfig.LOGIN,
+                        "-p",
+                        TestConfig.PASSWORD,
+                        "-h",
+                        TestConfig.HOST,
+                        "-P",
+                        TestConfig.PORT,
+                        "-F",
+                        "json"
+                })
+        ).toArray(String[]::new);
+
     }
 }

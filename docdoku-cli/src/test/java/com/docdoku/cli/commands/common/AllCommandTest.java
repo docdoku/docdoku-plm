@@ -44,8 +44,7 @@ import java.util.stream.Stream;
 @RunWith(JUnit4.class)
 public class AllCommandTest {
 
-    String[] AUTH_ARGS = {"-u", TestConfig.LOGIN , "-p", TestConfig.PASSWORD, "-h" , TestConfig.HOST, "-P", TestConfig.PORT, "-F", "json"};
-
+    private final static String[] AUTH_ARGS = TestConfig.getAuth();
     private final static Logger LOGGER = Logger.getLogger(AllCommandTest.class.getName());
     private final static URL documentFile = AllCommandTest.class.getClassLoader().getResource("com/docdoku/cli/commands/common/upload-document.txt");
     private final static URL partFile = AllCommandTest.class.getClassLoader().getResource("com/docdoku/cli/commands/common/upload-part.txt");
