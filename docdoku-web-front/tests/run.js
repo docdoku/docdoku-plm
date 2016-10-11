@@ -22,7 +22,7 @@ del.sync(['screenshot/**']);
 var conf = _.extend(config, argv);
 
 var casperCommand = 'casperjs test' +
-                    ' --ignore-ssl-errors=true '+
+                    ' --ssl-protocol=any --ignore-ssl-errors=true '+
                     ' --protocol=' + conf.protocol +
                     ' --domain=' + conf.domain +
                     ' --port=' + conf.port +
