@@ -62,7 +62,7 @@ define([
                         .then(function() {
                             var workspaceIndex = _.indexOf(App.config.workspaces.administratedWorkspaces,
                                 _.findWhere(App.config.workspaces.administratedWorkspaces,{id:App.config.workspaceId}));
-                            App.config.workspaces.administratedWorkspaces.splice(workspaceIndex);
+                            App.config.workspaces.administratedWorkspaces.splice(workspaceIndex, 1);
                         });
                 }
             });
