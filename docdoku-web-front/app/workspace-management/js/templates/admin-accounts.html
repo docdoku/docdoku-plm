@@ -1,0 +1,41 @@
+<div class="actions well">
+    <button class="btn btn-default workspace-management" title="{{i18n.BACK}}">
+        {{i18n.BACK}}
+    </button>
+
+    <button class="accounts-actions enable-selected-accounts btn btn-primary">
+        {{i18n.ENABLE_ACCOUNTS}}
+    </button>
+
+    <button class="accounts-actions disable-selected-accounts btn btn-warning">
+        {{i18n.DISABLE_ACCOUNTS}}
+    </button>
+
+</div>
+<div class="notifications"></div>
+<div class="margin">
+    <h3>{{i18n.ACCOUNTS}}</h3>
+
+    <table class="accounts-table table table-striped table-condensed">
+        <thead>
+        <tr>
+            <th><input type="checkbox" class="toggle-checkboxes"/></th>
+            <th>{{i18n.LOGIN}}</th>
+            <th>{{i18n.NAME}}</th>
+            <th>{{i18n.EMAIL}}</th>
+        </tr>
+        </thead>
+        <tbody class="items">
+        {{#accounts}}
+        <tr class="account-item {{#enabled}}account-enabled{{/enabled}}" data-login="{{login}}">
+            <td>
+                <input type="checkbox" class="toggle-checkbox"/>
+            </td>
+            <td>{{login}}</td>
+            <td>{{name}}</td>
+            <td>{{email}}</td>
+        </tr>
+        {{/accounts}}
+        </tbody>
+    </table>
+</div>

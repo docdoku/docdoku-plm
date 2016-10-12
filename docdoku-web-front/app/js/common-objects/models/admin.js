@@ -37,6 +37,13 @@ define(['backbone'], function (Backbone) {
         });
     };
 
+    Admin.enableAccount = function (login, enabled) {
+        return $.ajax({
+            type: 'PUT',
+            url: App.config.contextPath +  '/api/admin/account/' + login + '/enable?enabled='+enabled
+        });
+    };
+
     Admin.indexAllWorkspaces = function () {
         return $.ajax({
             type: 'PUT',
@@ -46,6 +53,10 @@ define(['backbone'], function (Backbone) {
 
     Admin.getPlatformOptions = function () {
         return $.getJSON(App.config.contextPath +  '/api/admin/platform-options');
+    };
+
+    Admin.getAccounts = function () {
+        return $.getJSON(App.config.contextPath +  '/api/accounts');
     };
 
     Admin.setPlatformOptions = function (options) {

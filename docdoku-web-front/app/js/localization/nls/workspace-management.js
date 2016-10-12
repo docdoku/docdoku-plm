@@ -48,7 +48,10 @@ define({
         REGISTRATION_STRATEGY:'Registration strategy',
         ADMIN_VALIDATION:'Admin validation',
         WORKSPACE_CREATION:'Workspace creation',
-        WORKSPACE_CREATION_VERIFICATION_STRATEGY:'Workspace creation strategy'
+        WORKSPACE_CREATION_VERIFICATION_STRATEGY:'Workspace creation strategy',
+        ACCOUNTS:'User accounts',
+        DISABLE_ACCOUNTS:'Disable selected accounts',
+        ENABLE_ACCOUNTS:'Enable selected accounts'
     },
     'fr': true,
     'es': true

@@ -55,5 +55,5 @@ define({
     ADMIN_VALIDATION:'Validation par l\'administrateur',
     WORKSPACE_CREATION:'Création d\'espaces de travail',
     WORKSPACE_CREATION_VERIFICATION_STRATEGY:'Stratégie de validation des nouveaux expaces de travail',
-
+    ACCOUNTS:'Comptes utilisateur'
 });
