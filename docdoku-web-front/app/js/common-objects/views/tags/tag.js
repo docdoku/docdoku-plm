@@ -20,7 +20,7 @@ define([
                 this.events = { 'click': 'clicked' };
             }
 
-            this.isRemovable = this.options.isAdded || this.options.isAvailable;
+            this.isRemovable = (this.options.isAdded || this.options.isAvailable) && !App.config.isReadOnly;
 
             return this;
         },

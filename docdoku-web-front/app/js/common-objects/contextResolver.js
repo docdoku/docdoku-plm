@@ -87,6 +87,8 @@ define([
         return User.getGroups(App.config.workspaceId)
             .then(function(groups){
                 App.config.groups = groups;
+                App.config.isReadOnly = _.some(App.config.groups,function(group){return group.readOnly;})
+                    && !App.config.workspaceAdmin;
             },onError);
     };
 

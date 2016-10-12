@@ -34,7 +34,6 @@ define([
         },
 
         rendered: function () {
-
             this.checkoutGroup = this.$('.actions .checkout-group');
             this.checkoutButton = this.$('.checkout');
             this.undoCheckoutButton = this.$('.undocheckout');
@@ -51,6 +50,7 @@ define([
             this.notifications = this.$('>.notifications');
 
             this.tagsButton.show();
+            this.tagsButton.prop('disabled', App.config.isReadOnly);
 
             this.listView = this.addSubView(
                 new DocumentListView({

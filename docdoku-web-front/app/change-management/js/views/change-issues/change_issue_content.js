@@ -48,6 +48,7 @@ define([
             this.listView.on('acl-button:display', this.changeAclButtonDisplay);
             this.listView.on('error', this.onError);
             this.tagsButton.show();
+            this.tagsButton.prop('disabled', App.config.isReadOnly);
 
             this.$el.on('remove', this.listView.remove);
             return this;

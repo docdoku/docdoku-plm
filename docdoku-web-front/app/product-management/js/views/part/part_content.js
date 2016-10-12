@@ -81,6 +81,7 @@ define([
             this.bindDomElements();
 
             this.tagsButton.show();
+            this.tagsButton.prop('disabled', App.config.isReadOnly);
 
             if (!this.query && !this.partsCollection) {
                 this.partsCollection = new PartCollection();
