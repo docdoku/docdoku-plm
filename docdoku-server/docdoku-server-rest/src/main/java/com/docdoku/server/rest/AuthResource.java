@@ -75,10 +75,16 @@ public class AuthResource {
         try {
             request.login(loginRequestDTO.getLogin(),loginRequestDTO.getPassword());
             Account account = accountManager.getAccount(loginRequestDTO.getLogin());
-            return Response.ok()
-                    .entity(mapper.map(account,AccountDTO.class))
-                    .header("jwt", JWTokenFactory.createToken(account))
-                    .build();
+            if(account.isEnabled()) {
+                return Response.ok()
+                        .entity(mapper.map(account, AccountDTO.class))
+                        .header("jwt", JWTokenFactory.createToken(account))
+                        .build();
+            }else{
+                request.logout();
+                HttpSession restoredSession = request.getSession();
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
         } catch (ServletException e) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }

@@ -159,6 +159,12 @@ public class AccountManagerBean implements IAccountManagerLocal {
         gcmAccountDAO.deleteGCMAccount(gcmAccount);
     }
 
+    @Override
+    public boolean isAccountEnabled(String pLogin) throws AccountNotFoundException {
+        Account account = getAccount(pLogin);
+        return account.isEnabled();
+    }
+
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public Account getMyAccount() throws AccountNotFoundException {

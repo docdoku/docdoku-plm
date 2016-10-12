@@ -49,4 +49,5 @@ public interface IAccountManagerLocal {
     void setGCMAccount(String gcmId) throws AccountNotFoundException, GCMAccountAlreadyExistsException, CreationException;
     void deleteGCMAccount() throws AccountNotFoundException, GCMAccountNotFoundException;
 
+    boolean isAccountEnabled(String pLogin) throws AccountNotFoundException;
 }

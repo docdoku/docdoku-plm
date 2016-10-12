@@ -20,7 +20,12 @@
 
 package com.docdoku.server.filters;
 
+import com.docdoku.core.exceptions.AccountNotFoundException;
+import com.docdoku.core.services.IAccountManagerLocal;
+
+import javax.inject.Inject;
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
@@ -29,16 +34,38 @@ import java.io.IOException;
  */
 public class RequestFilter implements Filter {
 
+    @Inject
+    private IAccountManagerLocal accountManager;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        if(FilterUtils.isAuthenticated(servletRequest)){
-            filterChain.doFilter(servletRequest,servletResponse);
-        }else{
+        if(!FilterUtils.isAuthenticated(servletRequest)){
             FilterUtils.sendUnauthorized(servletResponse);
+            return;
+        }
+
+        HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
+        String remoteUser = httpRequest.getRemoteUser();
+
+        if(remoteUser != null && !isAccountEnabled(remoteUser)){
+            httpRequest.logout();
+            httpRequest.getSession();
+            FilterUtils.sendUnauthorized(servletResponse);
+            return;
+        }
+
+        filterChain.doFilter(servletRequest,servletResponse);
+    }
+
+    private boolean isAccountEnabled(String userLogin) {
+        try {
+            return accountManager.isAccountEnabled(userLogin);
+        } catch (AccountNotFoundException e) {
+            return false;
         }
     }
 
