@@ -73,7 +73,7 @@ public class CatiaProductFileParserImpl implements CADConverter {
     }
 
     @Override
-    public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
+    public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException, WorkspaceNotEnabledException {
 
         File tmpCadFile;
         File tmpXMLFile = new File(tempDir, cadFile.getName() + "_dtk.xml");
@@ -137,7 +137,7 @@ public class CatiaProductFileParserImpl implements CADConverter {
         return null;
     }
 
-    private void syncAssembly(ComponentDTK componentDtk, PartIteration partToConvert) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    private void syncAssembly(ComponentDTK componentDtk, PartIteration partToConvert) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
 
         List<PartUsageLink> partUsageLinks = new ArrayList<>();
 

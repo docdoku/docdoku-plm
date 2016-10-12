@@ -1,21 +1,33 @@
-<h4>
-    {{#administrated}}
+<div>
+    <h4>
+        {{#administrated}}
         <a href="#/workspace/{{workspace.id}}/edit"><i class="fa fa-pencil"></i></a>
         <i class="fa fa-graduation-cap"></i>
-    {{/administrated}}
-    {{^administrated}}
+        {{/administrated}}
+        {{^administrated}}
         <i class="fa fa-user"></i>
-    {{/administrated}}
-    {{workspace.id}}
-    <small>{{workspace.description}}</small>
-</h4>
+        {{/administrated}}
+        {{workspace.id}}
+        <small>{{workspace.description}}</small>
+    </h4>
+
+    {{#isAdmin}}
+    <div class="controls">
+        <div class="workspace-enable-switch switch switch-small" data-on="success" data-off="danger">
+            <input type="checkbox" checked/>
+        </div>
+    </div>
+    {{/isAdmin}}
+</div>
+
+
 <ul class="unstyled">
     <li>
         {{#administrated}}
         <a href="#/workspace/{{workspace.id}}/users">
-        {{/administrated}}
-         {{i18n.USERS}}
-        {{#administrated}}
+            {{/administrated}}
+            {{i18n.USERS}}
+            {{#administrated}}
         </a>
         (<span class="users-count"></span>)
         {{/administrated}}
@@ -23,9 +35,9 @@
     <li>
         {{^isAdmin}}
         <a href="../document-management/#{{workspace.id}}">
-        {{/isAdmin}}
-             {{i18n.DOCUMENTS}}
-        {{^isAdmin}}
+            {{/isAdmin}}
+            {{i18n.DOCUMENTS}}
+            {{^isAdmin}}
         </a>
         {{/isAdmin}}
         (<span class="documents-count"></span>)
@@ -33,9 +45,9 @@
     <li>
         {{^isAdmin}}
         <a href="../product-management/#{{workspace.id}}/parts">
-        {{/isAdmin}}
+            {{/isAdmin}}
             {{i18n.PARTS}}
-        {{^isAdmin}}
+            {{^isAdmin}}
         </a>
         {{/isAdmin}}
         (<span class="parts-count"></span>)
@@ -43,9 +55,9 @@
     <li>
         {{^isAdmin}}
         <a href="../product-management/#{{workspace.id}}/products">
-        {{/isAdmin}}
+            {{/isAdmin}}
             {{i18n.PRODUCTS}}
-        {{^isAdmin}}
+            {{^isAdmin}}
         </a>
         {{/isAdmin}}
         (<span class="products-count"></span>)
@@ -60,3 +72,4 @@
     {{/isAdmin}}
 </div>
 {{/administrated}}
+

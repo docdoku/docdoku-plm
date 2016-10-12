@@ -35,9 +35,14 @@ define([
                 description:description,
                 folderLocked:folderLocked
             }).then(function(workspace){
-                App.config.workspaces.administratedWorkspaces.push(workspace);
-                App.config.workspaces.allWorkspaces.push(workspace);
-                window.location.hash = '#/';
+                if(workspace.enabled){
+                    App.config.workspaces.administratedWorkspaces.push(workspace);
+                    App.config.workspaces.allWorkspaces.push(workspace);
+                    window.location.hash = '#/';
+                }else {
+                    // TODO : informative message depending on platform options
+                    window.location.hash = '#/';
+                }
             },this.onError.bind(this));
 
             e.preventDefault();

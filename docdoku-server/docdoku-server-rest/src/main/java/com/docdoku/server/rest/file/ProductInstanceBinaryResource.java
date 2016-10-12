@@ -296,7 +296,7 @@ public class ProductInstanceBinaryResource {
         if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
             return productInstanceManagerLocal.getBinaryResource(fullName);
         } else {
-            return guestProxy.getBinaryResourceForProducInstance(fullName);
+            return guestProxy.getBinaryResourceForProductInstance(fullName);
         }
     }
 

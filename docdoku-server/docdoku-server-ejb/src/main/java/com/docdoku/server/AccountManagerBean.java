@@ -19,6 +19,7 @@
  */
 package com.docdoku.server;
 
+import com.docdoku.core.admin.PlatformOptions;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Organization;
 import com.docdoku.core.exceptions.*;
@@ -27,6 +28,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
+import com.docdoku.core.services.IPlatformOptionsManagerLocal;
 import com.docdoku.server.dao.AccountDAO;
 import com.docdoku.server.dao.GCMAccountDAO;
 import com.docdoku.server.dao.OrganizationDAO;
@@ -56,6 +58,9 @@ public class AccountManagerBean implements IAccountManagerLocal {
     @Inject
     private IMailerLocal mailer;
 
+    @Inject
+    private IPlatformOptionsManagerLocal platformOptionsManager;
+
     private static final Logger LOGGER = Logger.getLogger(AccountManagerBean.class.getName());
 
     public AccountManagerBean() {
@@ -63,8 +68,10 @@ public class AccountManagerBean implements IAccountManagerLocal {
 
     @Override
     public Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountAlreadyExistsException, CreationException {
+        PlatformOptions.OperationSecurityStrategy registrationStrategy = platformOptionsManager.getRegistrationStrategy();
         Date now = new Date();
         Account account = new Account(pLogin, pName, pEmail, pLanguage, now, pTimeZone);
+        account.setEnabled(registrationStrategy.equals(PlatformOptions.OperationSecurityStrategy.NONE));
         new AccountDAO(new Locale(pLanguage), em).createAccount(account, pPassword);
         mailer.sendCredential(account);
         return account;

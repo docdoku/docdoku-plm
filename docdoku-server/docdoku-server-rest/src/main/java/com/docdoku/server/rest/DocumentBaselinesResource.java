@@ -201,7 +201,7 @@ public class DocumentBaselinesResource {
     @Path("{baselineId}/export-files")
     public Response exportFiles(@PathParam("workspaceId") String workspaceId,
                                 @PathParam("baselineId") int baselineId)
-            throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
+            throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, WorkspaceNotEnabledException {
 
         FileExportDocumentEntity fileExportEntity = new FileExportDocumentEntity(workspaceId, baselineId);
 

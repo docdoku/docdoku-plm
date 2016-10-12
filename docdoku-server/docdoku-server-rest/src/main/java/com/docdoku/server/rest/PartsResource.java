@@ -193,7 +193,7 @@ public class PartsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCustomQueries(@PathParam("workspaceId") String workspaceId)
-            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         List<Query> queries = productService.getQueries(workspaceId);
         List<QueryDTO> queryDTOs = new ArrayList<>();
         for (Query query : queries) {
@@ -231,7 +231,7 @@ public class PartsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response filterPartMasterInBaseline(@PathParam("workspaceId") String workspaceId,
                                              @PathParam("partNumber") String partNumber,
-                                             @PathParam("baselineId") String baselineId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, PartMasterNotFoundException {
+                                             @PathParam("baselineId") String baselineId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, PartMasterNotFoundException, WorkspaceNotEnabledException {
 
         PSFilter filter = filterService.getBaselinePSFilter(Integer.valueOf(baselineId));
         PartMaster partMaster = productService.getPartMaster(new PartMasterKey(workspaceId, partNumber));
@@ -252,7 +252,7 @@ public class PartsResource {
                                       @PathParam("workspaceId") String workspaceId,
                                       @QueryParam("export") String exportType,
                                       @ApiParam(required = true, value = "Query to export") QueryDTO queryDTO)
-            throws BaselineNotFoundException, ProductInstanceMasterNotFoundException, EntityConstraintException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, PartMasterNotFoundException, ConfigurationItemNotFoundException, UserNotActiveException {
+            throws BaselineNotFoundException, ProductInstanceMasterNotFoundException, EntityConstraintException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, PartMasterNotFoundException, ConfigurationItemNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
 
             Query query = mapper.map(queryDTO, Query.class);
             User user = userManager.whoAmI(workspaceId);
@@ -277,14 +277,14 @@ public class PartsResource {
     }
 
     private Response export(String workspaceId, Query query, HttpServletRequest request, String exportType, Locale locale)
-            throws BaselineNotFoundException, ProductInstanceMasterNotFoundException, EntityConstraintException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, PartMasterNotFoundException, ConfigurationItemNotFoundException, UserNotActiveException {
+            throws BaselineNotFoundException, ProductInstanceMasterNotFoundException, EntityConstraintException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, PartMasterNotFoundException, ConfigurationItemNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
         QueryResult queryResult = getQueryResult(workspaceId, query, exportType);
         String url = request.getRequestURL().toString();
         String baseURL = url.substring(0, url.length() - request.getRequestURI().length()) + request.getContextPath();
         return makeQueryResponse(queryResult, locale, baseURL);
     }
 
-    private QueryResult getQueryResult(String workspaceId, Query query, String pExportType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, EntityConstraintException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, NotAllowedException, ConfigurationItemNotFoundException, PartMasterNotFoundException {
+    private QueryResult getQueryResult(String workspaceId, Query query, String pExportType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, EntityConstraintException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, NotAllowedException, ConfigurationItemNotFoundException, PartMasterNotFoundException, WorkspaceNotEnabledException {
         List<PartRevision> partRevisions = productService.searchPartRevisions(workspaceId, query);
         QueryResult queryResult = new QueryResult(partRevisions, query);
         if (query.hasContext()) {
@@ -346,7 +346,7 @@ public class PartsResource {
     @Path("countCheckedOut")
     @Produces(MediaType.APPLICATION_JSON)
     public CountDTO getCheckedOutNumberOfItems(@PathParam("workspaceId") String workspaceId)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException, WorkspaceNotEnabledException {
         return new CountDTO(productService.getCheckedOutPartRevisions(workspaceId).length);
     }
 
@@ -474,7 +474,7 @@ public class PartsResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public List<ImportDTO> getImports(@PathParam("workspaceId") String workspaceId, @PathParam("filename") String filename)
-            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
 
         List<Import> imports = productService.getImports(workspaceId, filename);
         List<ImportDTO> importDTOs = new ArrayList<>();
@@ -489,7 +489,8 @@ public class PartsResource {
     @Path("import/{importId}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public ImportDTO getImport(@PathParam("workspaceId") String workspaceId, @PathParam("importId") String importId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+    public ImportDTO getImport(@PathParam("workspaceId") String workspaceId, @PathParam("importId") String importId)
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         Import anImport = productService.getImport(workspaceId, importId);
         return mapper.map(anImport, ImportDTO.class);
     }
@@ -499,7 +500,8 @@ public class PartsResource {
     @Path("import/{importId}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteImport(@PathParam("workspaceId") String workspaceId, @PathParam("importId") String importId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException {
+    public Response deleteImport(@PathParam("workspaceId") String workspaceId, @PathParam("importId") String importId)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException {
         productService.removeImport(workspaceId, importId);
         return Response.noContent().build();
     }

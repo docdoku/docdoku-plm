@@ -45,6 +45,7 @@ public class Account implements Serializable, Cloneable {
     private String email;
     private String language;
     private String timeZone = "Europe/London";
+    private boolean enabled;
 
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate;
@@ -106,6 +107,14 @@ public class Account implements Serializable, Cloneable {
     }
     public Date getCreationDate() {
         return creationDate;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override

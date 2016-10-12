@@ -213,7 +213,7 @@ public class ProductBaselinesResource {
     public Response getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId,
                                            @PathParam("ciId") String configurationItemId,
                                            @PathParam("baselineId") int baselineId)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, WorkspaceNotEnabledException {
         List<String> pathToPathLinkTypes = productBaselineService.getPathToPathLinkTypes(workspaceId, configurationItemId, baselineId);
         List<LightPathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
         for (String type : pathToPathLinkTypes) {
@@ -234,7 +234,7 @@ public class ProductBaselinesResource {
                                                          @PathParam("baselineId") int baselineId,
                                                          @PathParam("sourcePath") String sourcePathAsString,
                                                          @PathParam("targetPath") String targetPathAsString)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
         List<PathToPathLink> pathToPathLinks = productBaselineService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, baselineId, sourcePathAsString, targetPathAsString);
         List<PathToPathLinkDTO> dtos = new ArrayList<>();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, configurationItemId);
@@ -267,7 +267,7 @@ public class ProductBaselinesResource {
 
     }
 
-    private List<PathToPathLinkDTO> getPathToPathLinksForGivenBaseline(ProductBaseline productBaseline) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, AccessRightException {
+    private List<PathToPathLinkDTO> getPathToPathLinksForGivenBaseline(ProductBaseline productBaseline) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
         List<PathToPathLink> pathToPathLinkTypes = productBaseline.getPathToPathLinks();
         List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();

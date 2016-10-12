@@ -18,21 +18,35 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.core.services;
+package com.docdoku.core.exceptions;
 
-import com.docdoku.core.common.Workspace;
-import com.docdoku.core.exceptions.*;
+import java.text.MessageFormat;
+import java.util.Locale;
 
 /**
  *
  * @author Morgan Guimard
  */
-public interface IWorkspaceManagerLocal {
-    long getDiskUsageInWorkspace(String workspaceId) throws AccountNotFoundException;
-    void deleteWorkspace(String workspaceId);
-    void synchronizeIndexer(String workspaceId);
+public class WorkspaceNotEnabledException extends EntityNotFoundException {
+    private final String mID;
 
-    Workspace changeAdmin(String workspaceId, String login) throws WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException;
+    public WorkspaceNotEnabledException(String pMessage) {
+        super(pMessage);
+        mID=null;
+    }
 
-    Workspace enableWorkspace(String workspaceId, boolean enabled) throws WorkspaceNotFoundException;
+    public WorkspaceNotEnabledException(Locale pLocale, String pID) {
+        this(pLocale, pID, null);
+    }
+
+    public WorkspaceNotEnabledException(Locale pLocale, String pID, Throwable pCause) {
+        super(pLocale, pCause);
+        mID=pID;
+    }
+
+    @Override
+    public String getLocalizedMessage() {
+        String message = getBundleDefaultMessage();
+        return MessageFormat.format(message,mID);     
+    }
 }

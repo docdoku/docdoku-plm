@@ -292,7 +292,7 @@ public class ProductResource {
     public Response getBaselineCreationPathChoices(@PathParam("workspaceId") String workspaceId,
                                                    @PathParam("ciId") String ciId,
                                                    @QueryParam("type") String pType)
-            throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
+            throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, PartMasterNotFoundException, NotAllowedException, EntityConstraintException, WorkspaceNotEnabledException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
@@ -324,7 +324,7 @@ public class ProductResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBaselineCreationVersionsChoices(@PathParam("workspaceId") String workspaceId,
                                                        @PathParam("ciId") String ciId)
-            throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
+            throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, PartMasterNotFoundException, NotAllowedException, EntityConstraintException, WorkspaceNotEnabledException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
@@ -498,7 +498,7 @@ public class ProductResource {
                                 @QueryParam("configSpecType") String configSpecType,
                                 @QueryParam("exportNativeCADFiles") boolean exportNativeCADFiles,
                                 @QueryParam("exportDocumentLinks") boolean exportDocumentLinks)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ProductInstanceMasterNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, WorkspaceNotEnabledException {
 
         if (configSpecType == null) {
             configSpecType = "wip";
@@ -545,7 +545,7 @@ public class ProductResource {
                                                        @PathParam("ciId") String configurationItemId,
                                                        @PathParam("serialNumber") String serialNumber,
                                                        @ApiParam(required = true, value = "Path to path link to create") LightPathToPathLinkDTO pathToPathLinkDTO)
-            throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathCyclicException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, NotAllowedException {
+            throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathCyclicException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, NotAllowedException, WorkspaceNotEnabledException {
         PathToPathLink pathToPathLink = productService.createPathToPathLink(workspaceId, configurationItemId, pathToPathLinkDTO.getType(), pathToPathLinkDTO.getSourcePath(), pathToPathLinkDTO.getTargetPath(), pathToPathLinkDTO.getDescription());
         return mapper.map(pathToPathLink, LightPathToPathLinkDTO.class);
     }
@@ -560,7 +560,7 @@ public class ProductResource {
                                                        @PathParam("serialNumber") String serialNumber,
                                                        @PathParam("pathToPathLinkId") int pathToPathLinkId,
                                                        @ApiParam(required = true, value = "Path to path link to update") LightPathToPathLinkDTO pathToPathLinkDTO)
-            throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathCyclicException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, NotAllowedException, PathToPathLinkNotFoundException {
+            throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathCyclicException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, NotAllowedException, PathToPathLinkNotFoundException, WorkspaceNotEnabledException {
         PathToPathLink pathToPathLink = productService.updatePathToPathLink(workspaceId, configurationItemId, pathToPathLinkId, pathToPathLinkDTO.getDescription());
         return mapper.map(pathToPathLink, LightPathToPathLinkDTO.class);
     }
@@ -572,7 +572,7 @@ public class ProductResource {
                                          @PathParam("ciId") String configurationItemId,
                                          @PathParam("serialNumber") String serialNumber,
                                          @PathParam("pathToPathLinkId") int pathToPathLinkId)
-            throws PathToPathLinkNotFoundException, UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, ConfigurationItemNotFoundException {
+            throws PathToPathLinkNotFoundException, UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, ConfigurationItemNotFoundException, WorkspaceNotEnabledException {
         productService.deletePathToPathLink(workspaceId, configurationItemId, pathToPathLinkId);
         return Response.ok().build();
     }
@@ -585,7 +585,7 @@ public class ProductResource {
                                                          @PathParam("ciId") String configurationItemId,
                                                          @PathParam("sourcePath") String sourcePathAsString,
                                                          @PathParam("targetPath") String targetPathAsString)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
         List<PathToPathLink> pathToPathLinks = productService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, sourcePathAsString, targetPathAsString);
         List<PathToPathLinkDTO> dtos = new ArrayList<>();
 
@@ -623,7 +623,7 @@ public class ProductResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId,
                                            @PathParam("ciId") String configurationItemId)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, WorkspaceNotEnabledException {
         List<String> pathToPathLinkTypes = productService.getPathToPathLinkTypes(workspaceId, configurationItemId);
         List<LightPathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
         for (String type : pathToPathLinkTypes) {
@@ -642,7 +642,7 @@ public class ProductResource {
     public Response decodePath(@PathParam("workspaceId") String workspaceId,
                                @PathParam("ciId") String configurationItemId,
                                @PathParam("path") String pathAsString)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, configurationItemId);
         List<PartLink> path = productService.decodePath(ciKey, pathAsString);
         List<LightPartLinkDTO> lightPartLinkDTOs = new ArrayList<>();
@@ -664,7 +664,7 @@ public class ProductResource {
                                                           @PathParam("partVersion") String partVersion,
                                                           @PathParam("partIteration") int partIteration,
                                                           @PathParam("configSpec") String configSpec)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, PartIterationNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, PartIterationNotFoundException, WorkspaceNotEnabledException {
 
         List<DocumentIterationLinkDTO> dtos = new ArrayList<>();
         PartIterationKey partIterationKey = new PartIterationKey(workspaceId, partNumber, partVersion, partIteration);
@@ -697,7 +697,7 @@ public class ProductResource {
                                     @PathParam("ciId") String ciId,
                                     @QueryParam("configSpec") String configSpecType,
                                     @QueryParam("path") String path)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         CascadeResult cascadeResult = cascadeActionService.cascadeCheckout(ciKey, path);
         return Response.ok(cascadeResult).build();
@@ -712,7 +712,7 @@ public class ProductResource {
                                    @PathParam("ciId") String ciId,
                                    @QueryParam("configSpec") String configSpecType,
                                    @QueryParam("path") String path,
-                                   @ApiParam(required = true, value = "Iteration note to add") IterationNoteDTO iterationNoteDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException {
+                                   @ApiParam(required = true, value = "Iteration note to add") IterationNoteDTO iterationNoteDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         CascadeResult cascadeResult = cascadeActionService.cascadeCheckin(ciKey, path, iterationNoteDTO.getIterationNote());
         return Response.ok(cascadeResult).build();
@@ -726,7 +726,7 @@ public class ProductResource {
                                         @PathParam("ciId") String ciId,
                                         @QueryParam("configSpec") String configSpecType,
                                         @QueryParam("path") String path)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         CascadeResult cascadeResult = cascadeActionService.cascadeUndocheckout(ciKey, path);
         return Response.ok(cascadeResult).build();
@@ -865,7 +865,7 @@ public class ProductResource {
         return Tools.mapModificationNotificationsToModificationNotificationDTO(notifications);
     }
 
-    private List<PathToPathLinkDTO> getPathToPathLinksForGivenConfigurationItem(ConfigurationItem configurationItem) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+    private List<PathToPathLinkDTO> getPathToPathLinksForGivenConfigurationItem(ConfigurationItem configurationItem) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
         List<PathToPathLink> pathToPathLinkTypes = configurationItem.getPathToPathLinks();
         List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
 

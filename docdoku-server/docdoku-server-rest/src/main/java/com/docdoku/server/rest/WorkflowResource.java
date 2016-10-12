@@ -82,7 +82,7 @@ public class WorkflowResource {
     @Path("{workflowId}/aborted")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getWorkflowAbortedWorkflows(@PathParam("workspaceId") String workspaceId, @PathParam("workflowId") int workflowId)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, WorkflowNotFoundException, AccessRightException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, WorkflowNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         Workflow[] abortedWorkflows =  workflowService.getWorkflowAbortedWorkflows(workspaceId, workflowId);
 
         List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<>();

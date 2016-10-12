@@ -22,10 +22,7 @@ package com.docdoku.server;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.exceptions.ConvertedResourceException;
-import com.docdoku.core.exceptions.UserNotActiveException;
-import com.docdoku.core.exceptions.UserNotFoundException;
-import com.docdoku.core.exceptions.WorkspaceNotFoundException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
@@ -63,7 +60,7 @@ public class DocumentResourceGetterBean implements IDocumentResourceGetterManage
 
     @Override
     public InputStream getDocumentConvertedResource(String outputFormat, BinaryResource binaryResource)
-            throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConvertedResourceException {
+            throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConvertedResourceException, WorkspaceNotEnabledException {
 
         DocumentIteration docI;
         Locale locale;
@@ -93,7 +90,7 @@ public class DocumentResourceGetterBean implements IDocumentResourceGetterManage
 
     @Override
     public InputStream getPartConvertedResource(String outputFormat, BinaryResource binaryResource)
-            throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConvertedResourceException {
+            throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConvertedResourceException, WorkspaceNotEnabledException {
 
         PartIteration partIteration;
         Locale locale;

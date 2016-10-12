@@ -99,7 +99,7 @@ public class HTMLViewerResource {
 
 
     private BinaryResource checkUuidValidity(SharedEntity sharedEntity, String fileName)
-            throws UnmatchingUuidException, NotAllowedException, WorkspaceNotFoundException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException, ExpiredLinkException {
+            throws UnmatchingUuidException, NotAllowedException, WorkspaceNotFoundException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException, ExpiredLinkException, WorkspaceNotEnabledException {
 
         // Compare types
         String holderType = BinaryResource.parseHolderType(fileName);

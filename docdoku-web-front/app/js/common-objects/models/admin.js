@@ -30,6 +30,13 @@ define(['backbone'], function (Backbone) {
         });
     };
 
+    Admin.enableWorkspace = function (workspaceId, enabled) {
+        return $.ajax({
+            type: 'PUT',
+            url: App.config.contextPath +  '/api/admin/workspace/' + workspaceId + '/enable?enabled='+enabled
+        });
+    };
+
     Admin.indexAllWorkspaces = function () {
         return $.ajax({
             type: 'PUT',

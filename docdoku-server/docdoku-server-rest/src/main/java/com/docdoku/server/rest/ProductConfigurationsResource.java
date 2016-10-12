@@ -82,7 +82,7 @@ public class ProductConfigurationsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllConfiguration(@PathParam("workspaceId") String workspaceId,
                                         @PathParam("ciId") String ciId)
-            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, WorkspaceNotEnabledException {
         List<ProductConfiguration> allProductConfigurations;
         if (ciId != null) {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
@@ -109,7 +109,7 @@ public class ProductConfigurationsResource {
     public ProductConfigurationDTO getConfiguration(@PathParam("workspaceId") String workspaceId,
                                                     @PathParam("ciId") String ciId,
                                                     @PathParam("productConfigurationId") int productConfigurationId)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, EntityConstraintException, NotAllowedException, AccessRightException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, PartMasterNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, EntityConstraintException, NotAllowedException, AccessRightException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, PartMasterNotFoundException, WorkspaceNotEnabledException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         ProductConfiguration productConfiguration = productBaselineService.getProductConfiguration(ciKey, productConfigurationId);
         ProductConfigurationDTO productConfigurationDTO = mapper.map(productConfiguration, ProductConfigurationDTO.class);
@@ -147,7 +147,7 @@ public class ProductConfigurationsResource {
     public ProductConfigurationDTO createConfiguration(@PathParam("workspaceId") String workspaceId,
                                                        @PathParam("ciId") String pCiId,
                                                        @ApiParam(required = true, value = "Product configuration to create") ProductConfigurationDTO pProductConfigurationDTO)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, CreationException, AccessRightException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, CreationException, AccessRightException, WorkspaceNotEnabledException {
         String ciId = (pCiId != null) ? pCiId : pProductConfigurationDTO.getConfigurationItemId();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         String description = pProductConfigurationDTO.getDescription();
@@ -176,7 +176,7 @@ public class ProductConfigurationsResource {
                                            @PathParam("ciId") String pCiId,
                                            @PathParam("productConfigurationId") int productConfigurationId,
                                            @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, AccessRightException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, pCiId);
 
         if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
@@ -207,7 +207,7 @@ public class ProductConfigurationsResource {
     public Response deleteProductConfiguration(@PathParam("workspaceId") String workspaceId,
                                                @PathParam("ciId") String ciId,
                                                @PathParam("productConfigurationId") int productConfigurationId)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, AccessRightException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         productBaselineService.deleteProductConfiguration(ciKey, productConfigurationId);
         return Response.ok().build();

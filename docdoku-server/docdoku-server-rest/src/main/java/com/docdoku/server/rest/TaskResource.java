@@ -81,7 +81,7 @@ public class TaskResource {
     @Produces(MediaType.APPLICATION_JSON)
     public TaskDTO[] getAssignedTasksForGivenUser(
             @PathParam("workspaceId") String workspaceId,
-            @PathParam("assignedUserLogin") String assignedUserLogin) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+            @PathParam("assignedUserLogin") String assignedUserLogin) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         TaskWrapper[] runningTasksForGivenUser = taskManager.getAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
         List<TaskDTO> taskDTOs = new ArrayList<>();
         for(TaskWrapper taskWrapper:runningTasksForGivenUser){
@@ -101,7 +101,7 @@ public class TaskResource {
     @Produces(MediaType.APPLICATION_JSON)
     public TaskDTO getTask(
             @PathParam("workspaceId") String workspaceId,
-            @PathParam("taskId") String taskId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, AccessRightException {
+            @PathParam("taskId") String taskId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
         String[] split = taskId.split("-");
 

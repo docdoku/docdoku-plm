@@ -22,10 +22,11 @@ define([
         render: function () {
 
             var _this = this;
+            var workspace = this.options.workspace;
 
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n,
-                workspace:this.options.workspace,
+                workspace:workspace,
                 isAdmin:App.config.admin,
                 administrated:this.options.administrated
             }));
@@ -36,6 +37,20 @@ define([
                 _this.$('.users-count').text(stats.users);
                 _this.$('.products-count').text(stats.products);
             });
+
+            if(App.config.admin){
+                this.$enableSwitch = this.$('.workspace-enable-switch');
+                this.$enableSwitch.bootstrapSwitch();
+                this.$enableSwitch.bootstrapSwitch('setState', workspace.enabled);
+                this.$enableSwitch.on('switch-change', function(){
+                    workspace.enabled = !workspace.enabled;
+                    Admin.enableWorkspace(workspace.id,workspace.enabled).then(null,function(){
+                        workspace.enabled = !workspace.enabled;
+                        _this.$enableSwitch.bootstrapSwitch('setState', workspace.enabled);
+                        // TODO Should inform error ?
+                    });
+                });
+            }
 
             return this;
         },

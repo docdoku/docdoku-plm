@@ -63,7 +63,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeIssue getChangeIssue(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException {
+    public ChangeIssue getChangeIssue(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         ChangeIssue changeIssue = new ChangeItemDAO(new Locale(user.getLanguage()), em).loadChangeIssue(pId);           // Load the Change-Issue
         checkChangeItemReadAccess(changeIssue, user);                                                                   // Check if the user can access to the Change-Issue
@@ -72,7 +72,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<ChangeIssue> getChangeIssues(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public List<ChangeIssue> getChangeIssues(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         List<ChangeIssue> allChangeIssues = new ChangeItemDAO(new Locale(user.getLanguage()),
                 em).findAllChangeIssues(pWorkspaceId);                    // Load all the Change-Issues
@@ -90,7 +90,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<ChangeIssue> getIssuesWithReference(String pWorkspaceId, String q, int maxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public List<ChangeIssue> getIssuesWithReference(String pWorkspaceId, String q, int maxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         List<ChangeIssue> allChangeIssues = new ChangeItemDAO(new Locale(user.getLanguage()),
                 em).findAllChangeIssuesWithReferenceLike(pWorkspaceId, q, maxResults);// Load all the Change-Issues matching this pattern
@@ -108,7 +108,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeIssue createChangeIssue(String pWorkspaceId, String name, String description, String initiator, ChangeItem.Priority priority, String assignee, ChangeItem.Category category) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
+    public ChangeIssue createChangeIssue(String pWorkspaceId, String name, String description, String initiator, ChangeItem.Priority priority, String assignee, ChangeItem.Category category) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);                                                // Check the write access to the workspace
         User assigneeUser = null;
         if (assignee != null && pWorkspaceId != null) {
@@ -129,7 +129,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeIssue updateChangeIssue(int pId, String pWorkspaceId, String description, ChangeItem.Priority priority, String assignee, ChangeItem.Category category) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException {
+    public ChangeIssue updateChangeIssue(int pId, String pWorkspaceId, String description, ChangeItem.Priority priority, String assignee, ChangeItem.Category category) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         ChangeIssue changeIssue = new ChangeItemDAO(new Locale(user.getLanguage()), em).loadChangeIssue(pId);            // Load the Change-Issue
         checkChangeItemWriteAccess(changeIssue, user);                                                                  // Check the write access to the Change-Issue
@@ -142,7 +142,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deleteChangeIssue(int pId) throws ChangeIssueNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, EntityConstraintException {
+    public void deleteChangeIssue(int pId) throws ChangeIssueNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, EntityConstraintException, WorkspaceNotEnabledException {
         ChangeIssue changeIssue = new ChangeItemDAO(em).loadChangeIssue(pId);                                           // Load the Change-Issue
         User user = userManager.checkWorkspaceReadAccess(changeIssue.getWorkspaceId());                                 // Check the read access to the workspace
         checkChangeItemWriteAccess(changeIssue, user);                                                                  // Check the write access to the Change-Issue
@@ -159,7 +159,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeIssue saveChangeIssueAffectedDocuments(String pWorkspaceId, int pId, DocumentIterationKey[] pAffectedDocuments) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
+    public ChangeIssue saveChangeIssueAffectedDocuments(String pWorkspaceId, int pId, DocumentIterationKey[] pAffectedDocuments) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Locale userLocale = new Locale(user.getLanguage());                                                             // Load the user Locale
         ChangeIssue changeIssue = new ChangeItemDAO(userLocale, em).loadChangeIssue(pId);                               // Load the Change-Issue
@@ -170,7 +170,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeIssue saveChangeIssueAffectedParts(String pWorkspaceId, int pId, PartIterationKey[] pAffectedParts) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException {
+    public ChangeIssue saveChangeIssueAffectedParts(String pWorkspaceId, int pId, PartIterationKey[] pAffectedParts) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Locale userLocale = new Locale(user.getLanguage());                                                             // Load the user Locale
         ChangeIssue changeIssue = new ChangeItemDAO(userLocale, em).loadChangeIssue(pId);                                // Load the Change-Issue
@@ -192,7 +192,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeIssue saveChangeIssueTags(String pWorkspaceId, int pId, String[] tagsLabel) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException {
+    public ChangeIssue saveChangeIssueTags(String pWorkspaceId, int pId, String[] tagsLabel) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Locale userLocale = new Locale(user.getLanguage());                                                             // Load the user Locale
         ChangeIssue changeIssue = new ChangeItemDAO(userLocale, em).loadChangeIssue(pId);                                // Load the Change-Issue
@@ -223,7 +223,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeIssue removeChangeIssueTag(String pWorkspaceId, int pId, String tagName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException {
+    public ChangeIssue removeChangeIssueTag(String pWorkspaceId, int pId, String tagName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         ChangeItemDAO changeItemDAO = new ChangeItemDAO(new Locale(user.getLanguage()), em);
         ChangeIssue changeIssue = changeItemDAO.loadChangeIssue(pId);                                                   // Load the Change-Issue
@@ -233,7 +233,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeRequest getChangeRequest(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException {
+    public ChangeRequest getChangeRequest(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         ChangeRequest changeRequest = new ChangeItemDAO(new Locale(user.getLanguage()), em).loadChangeRequest(pId);     // Load the Change-Request
         checkChangeItemReadAccess(changeRequest, user);                                                                 // Check if the user can access to the Change-Request
@@ -242,7 +242,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<ChangeRequest> getChangeRequests(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public List<ChangeRequest> getChangeRequests(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         List<ChangeRequest> allChangeRequests = new ChangeItemDAO(new Locale(user.getLanguage()),
                 em).findAllChangeRequests(pWorkspaceId);                    // Load all the Change-Requests
@@ -261,7 +261,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<ChangeRequest> getRequestsWithReference(String pWorkspaceId, String q, int maxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public List<ChangeRequest> getRequestsWithReference(String pWorkspaceId, String q, int maxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         List<ChangeRequest> allChangeRequests = new ChangeItemDAO(new Locale(user.getLanguage()),
                 em).findAllChangeRequestsWithReferenceLike(pWorkspaceId, q, maxResults);// Load all the Change-Requests matching this pattern
@@ -279,7 +279,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeRequest createChangeRequest(String pWorkspaceId, String name, String description, int milestoneId, ChangeItem.Priority priority, String assignee, ChangeItem.Category category) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
+    public ChangeRequest createChangeRequest(String pWorkspaceId, String name, String description, int milestoneId, ChangeItem.Priority priority, String assignee, ChangeItem.Category category) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);                                                // Check the write access to the workspace
         User assigneeUser = null;
         if (assignee != null && pWorkspaceId != null) {
@@ -300,7 +300,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeRequest updateChangeRequest(int pId, String pWorkspaceId, String description, int milestoneId, ChangeItem.Priority priority, String assignee, ChangeItem.Category category) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException {
+    public ChangeRequest updateChangeRequest(int pId, String pWorkspaceId, String description, int milestoneId, ChangeItem.Priority priority, String assignee, ChangeItem.Category category) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         ChangeRequest changeRequest = new ChangeItemDAO(new Locale(user.getLanguage()), em).loadChangeRequest(pId);      // Load the Change-Request
         checkChangeItemWriteAccess(changeRequest, user);                                                                // Check the write access to the Change-Request
@@ -314,7 +314,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deleteChangeRequest(String pWorkspaceId, int pId) throws ChangeRequestNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, EntityConstraintException {
+    public void deleteChangeRequest(String pWorkspaceId, int pId) throws ChangeRequestNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, EntityConstraintException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         Locale userLocale = new Locale(user.getLanguage());
 
@@ -331,7 +331,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeRequest saveChangeRequestAffectedDocuments(String pWorkspaceId, int pId, DocumentIterationKey[] pAffectedDocuments) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
+    public ChangeRequest saveChangeRequestAffectedDocuments(String pWorkspaceId, int pId, DocumentIterationKey[] pAffectedDocuments) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Locale userLocale = new Locale(user.getLanguage());                                                             // Load the user Locale
         ChangeRequest changeRequest = new ChangeItemDAO(userLocale, em).loadChangeRequest(pId);                         // Load the Change-Request
@@ -342,7 +342,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeRequest saveChangeRequestAffectedParts(String pWorkspaceId, int pId, PartIterationKey[] pAffectedParts) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException {
+    public ChangeRequest saveChangeRequestAffectedParts(String pWorkspaceId, int pId, PartIterationKey[] pAffectedParts) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Locale userLocale = new Locale(user.getLanguage());                                                             // Load the user Locale
         ChangeRequest changeRequest = new ChangeItemDAO(userLocale, em).loadChangeRequest(pId);                          // Load the Change-Request
@@ -363,7 +363,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeRequest saveChangeRequestAffectedIssues(String pWorkspaceId, int pId, int[] pLinkIds) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException {
+    public ChangeRequest saveChangeRequestAffectedIssues(String pWorkspaceId, int pId, int[] pLinkIds) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         ChangeItemDAO changeItemDAO = new ChangeItemDAO(new Locale(user.getLanguage()), em);
         ChangeRequest changeRequest = changeItemDAO.loadChangeRequest(pId);                                             // Load the Change-Request
@@ -383,7 +383,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeRequest saveChangeRequestTags(String pWorkspaceId, int pId, String[] tagsLabel) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException {
+    public ChangeRequest saveChangeRequestTags(String pWorkspaceId, int pId, String[] tagsLabel) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Locale userLocale = new Locale(user.getLanguage());                                                             // Load the user Locale
         ChangeRequest changeRequest = new ChangeItemDAO(userLocale, em).loadChangeRequest(pId);                          // Load the Change-Request
@@ -414,7 +414,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeRequest removeChangeRequestTag(String pWorkspaceId, int pId, String tagName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException {
+    public ChangeRequest removeChangeRequestTag(String pWorkspaceId, int pId, String tagName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         ChangeItemDAO changeItemDAO = new ChangeItemDAO(new Locale(user.getLanguage()), em);
         ChangeIssue changeRequest = changeItemDAO.loadChangeIssue(pId);                                                 // Load the Change-Request
@@ -424,7 +424,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeOrder getChangeOrder(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException {
+    public ChangeOrder getChangeOrder(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         ChangeOrder changeOrder = new ChangeItemDAO(new Locale(user.getLanguage()), em).loadChangeOrder(pId);           // Load the Change-Order
         checkChangeItemReadAccess(changeOrder, user);                                                                   // Check if the user can access to the Change-Order
@@ -433,7 +433,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<ChangeOrder> getChangeOrders(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public List<ChangeOrder> getChangeOrders(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         List<ChangeOrder> allChangeOrders = new ChangeItemDAO(new Locale(user.getLanguage()),
                 em).findAllChangeOrders(pWorkspaceId);                    // Load all the Change-Orders
@@ -451,7 +451,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeOrder createChangeOrder(String pWorkspaceId, String name, String description, int milestoneId, ChangeItem.Priority priority, String assignee, ChangeItem.Category category) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
+    public ChangeOrder createChangeOrder(String pWorkspaceId, String name, String description, int milestoneId, ChangeItem.Priority priority, String assignee, ChangeItem.Category category) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);                                                // Check the write access to the workspace
         User assigneeUser = null;
         if (assignee != null && pWorkspaceId != null) {
@@ -472,7 +472,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeOrder updateChangeOrder(int pId, String pWorkspaceId, String description, int milestoneId, ChangeItem.Priority priority, String assignee, ChangeItem.Category category) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException {
+    public ChangeOrder updateChangeOrder(int pId, String pWorkspaceId, String description, int milestoneId, ChangeItem.Priority priority, String assignee, ChangeItem.Category category) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         ChangeOrder changeOrder = new ChangeItemDAO(new Locale(user.getLanguage()), em).loadChangeOrder(pId);            // Load the Change-Order
         checkChangeItemWriteAccess(changeOrder, user);                                                                  // Check the write access to the Change-Order
@@ -486,7 +486,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deleteChangeOrder(int pId) throws ChangeOrderNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+    public void deleteChangeOrder(int pId) throws ChangeOrderNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         ChangeOrder changeOrder = new ChangeItemDAO(em).loadChangeOrder(pId);                                           // Load the Change-Order
         User user = userManager.checkWorkspaceReadAccess(changeOrder.getWorkspaceId());                                 // Check the read access to the workspace
         checkChangeItemWriteAccess(changeOrder, user);                                                                   // Check the write access to the Change-Order
@@ -495,7 +495,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeOrder saveChangeOrderAffectedDocuments(String pWorkspaceId, int pId, DocumentIterationKey[] pAffectedDocuments) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
+    public ChangeOrder saveChangeOrderAffectedDocuments(String pWorkspaceId, int pId, DocumentIterationKey[] pAffectedDocuments) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Locale userLocale = new Locale(user.getLanguage());                                                             // Load the user Locale
         ChangeOrder changeOrder = new ChangeItemDAO(userLocale, em).loadChangeOrder(pId);                                // Load the Change-Order
@@ -506,7 +506,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeOrder saveChangeOrderAffectedParts(String pWorkspaceId, int pId, PartIterationKey[] pAffectedParts) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException {
+    public ChangeOrder saveChangeOrderAffectedParts(String pWorkspaceId, int pId, PartIterationKey[] pAffectedParts) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Locale userLocale = new Locale(user.getLanguage());                                                             // Load the user Locale
         ChangeOrder changeOrder = new ChangeItemDAO(userLocale, em).loadChangeOrder(pId);                                // Load the Change-Order
@@ -527,7 +527,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeOrder saveChangeOrderAffectedRequests(String pWorkspaceId, int pId, int[] pLinkIds) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException {
+    public ChangeOrder saveChangeOrderAffectedRequests(String pWorkspaceId, int pId, int[] pLinkIds) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         ChangeItemDAO changeItemDAO = new ChangeItemDAO(new Locale(user.getLanguage()), em);
         ChangeOrder changeOrder = changeItemDAO.loadChangeOrder(pId);                                                   // Load the Change-Order
@@ -547,7 +547,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeOrder saveChangeOrderTags(String pWorkspaceId, int pId, String[] tagsLabel) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException {
+    public ChangeOrder saveChangeOrderTags(String pWorkspaceId, int pId, String[] tagsLabel) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Locale userLocale = new Locale(user.getLanguage());                                                             // Load the user Locale
         ChangeOrder changeOrder = new ChangeItemDAO(userLocale, em).loadChangeOrder(pId);                                // Load the Change-Order
@@ -577,7 +577,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ChangeOrder removeChangeOrderTag(String pWorkspaceId, int pId, String tagName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException {
+    public ChangeOrder removeChangeOrderTag(String pWorkspaceId, int pId, String tagName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         ChangeItemDAO changeItemDAO = new ChangeItemDAO(new Locale(user.getLanguage()), em);
         ChangeIssue changeOrder = changeItemDAO.loadChangeIssue(pId);                                                   // Load the Change-Order
@@ -587,7 +587,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Milestone getMilestone(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException {
+    public Milestone getMilestone(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Milestone milestone = new MilestoneDAO(new Locale(user.getLanguage()), em).loadMilestone(pId);                  // Load the Milestone
         checkMilestoneReadAccess(milestone, user);                                                                      // Check if the user can access to the Milestone
@@ -596,7 +596,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Milestone getMilestoneByTitle(String pWorkspaceId, String pTitle) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException {
+    public Milestone getMilestoneByTitle(String pWorkspaceId, String pTitle) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Milestone milestone = new MilestoneDAO(new Locale(user.getLanguage()), em).loadMilestone(pTitle, pWorkspaceId); // Load the Milestone
         checkMilestoneReadAccess(milestone, user);                                                                      // Check if the user can access to the Milestone
@@ -605,7 +605,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<Milestone> getMilestones(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public List<Milestone> getMilestones(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         List<Milestone> allMilestones = new MilestoneDAO(new Locale(user.getLanguage()),
                 em).findAllMilestone(pWorkspaceId);                            // Load all the Milestones
@@ -623,7 +623,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Milestone createMilestone(String pWorkspaceId, String title, String description, Date dueDate) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, MilestoneAlreadyExistsException {
+    public Milestone createMilestone(String pWorkspaceId, String title, String description, Date dueDate) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, MilestoneAlreadyExistsException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);                                                // Check the write access to the workspace
         Milestone milestone = new Milestone(title,                                                                      // Create the Milestone =>  The Milestone's title
                 dueDate,                                                                    //                          The Milestone's due date
@@ -635,7 +635,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Milestone updateMilestone(int pId, String pWorkspaceId, String title, String description, Date dueDate) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException {
+    public Milestone updateMilestone(int pId, String pWorkspaceId, String title, String description, Date dueDate) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Milestone milestone = new MilestoneDAO(new Locale(user.getLanguage()), em).loadMilestone(pId);                   // Load the Milestone
         checkMilestoneWriteAccess(milestone, user);                                                                      // Check the write access to the milestone
@@ -647,7 +647,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deleteMilestone(String pWorkspaceId, int pId) throws MilestoneNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, EntityConstraintException {
+    public void deleteMilestone(String pWorkspaceId, int pId) throws MilestoneNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, EntityConstraintException, WorkspaceNotEnabledException {
 
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         Locale userLocale = new Locale(user.getLanguage());
@@ -674,7 +674,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<ChangeRequest> getChangeRequestsByMilestone(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException {
+    public List<ChangeRequest> getChangeRequestsByMilestone(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Milestone milestone = new MilestoneDAO(new Locale(user.getLanguage()), em).loadMilestone(pId);                  // Load the Milestone
         checkMilestoneReadAccess(milestone, user);                                                                      // Check if the user can access to the Milestone
@@ -694,7 +694,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<ChangeOrder> getChangeOrdersByMilestone(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException {
+    public List<ChangeOrder> getChangeOrdersByMilestone(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Milestone milestone = new MilestoneDAO(new Locale(user.getLanguage()), em).loadMilestone(pId);                  // Load the Milestone
         checkMilestoneReadAccess(milestone, user);                                                                      // Check if the user can access to the Milestone
@@ -714,21 +714,21 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public int getNumberOfRequestByMilestone(String pWorkspaceId, int milestoneId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public int getNumberOfRequestByMilestone(String pWorkspaceId, int milestoneId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         return new MilestoneDAO(new Locale(user.getLanguage()), em).getNumberOfRequests(milestoneId, pWorkspaceId);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public int getNumberOfOrderByMilestone(String pWorkspaceId, int milestoneId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public int getNumberOfOrderByMilestone(String pWorkspaceId, int milestoneId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         return new MilestoneDAO(new Locale(user.getLanguage()), em).getNumberOfOrders(milestoneId, pWorkspaceId);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void updateACLForChangeIssue(String pWorkspaceId, int pId, Map<String, String> pUserEntries, Map<String, String> pGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException {
+    public void updateACLForChangeIssue(String pWorkspaceId, int pId, Map<String, String> pUserEntries, Map<String, String> pGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         ChangeIssue changeIssue = new ChangeItemDAO(new Locale(user.getLanguage()), em).loadChangeIssue(pId);            // Load the change item
         checkChangeItemGrantAccess(changeIssue, user);                                                                  // Check the grant access to the change item
@@ -738,7 +738,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void updateACLForChangeRequest(String pWorkspaceId, int pId, Map<String, String> pUserEntries, Map<String, String> pGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException {
+    public void updateACLForChangeRequest(String pWorkspaceId, int pId, Map<String, String> pUserEntries, Map<String, String> pGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         ChangeRequest changeRequest = new ChangeItemDAO(new Locale(user.getLanguage()), em).loadChangeRequest(pId);      // Load the change item
         checkChangeItemGrantAccess(changeRequest, user);                                                                // Check the grant access to the change item
@@ -748,7 +748,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void updateACLForChangeOrder(String pWorkspaceId, int pId, Map<String, String> pUserEntries, Map<String, String> pGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException {
+    public void updateACLForChangeOrder(String pWorkspaceId, int pId, Map<String, String> pUserEntries, Map<String, String> pGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         ChangeOrder changeOrder = new ChangeItemDAO(new Locale(user.getLanguage()), em).loadChangeOrder(pId);            // Load the change item
         checkChangeItemGrantAccess(changeOrder, user);                                                                  // Check the grant access to the change item
@@ -758,7 +758,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void updateACLForMilestone(String pWorkspaceId, int pId, Map<String, String> pUserEntries, Map<String, String> pGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException {
+    public void updateACLForMilestone(String pWorkspaceId, int pId, Map<String, String> pUserEntries, Map<String, String> pGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Milestone milestone = new MilestoneDAO(new Locale(user.getLanguage()), em).loadMilestone(pId);                   // Load the milestone
         checkMilestoneWriteAccess(milestone, user);                                                                    // Check the grant access to the milestone
@@ -775,7 +775,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void removeACLFromChangeIssue(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException {
+    public void removeACLFromChangeIssue(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         ChangeIssue changeIssue = new ChangeItemDAO(new Locale(user.getLanguage()), em).loadChangeIssue(pId);            // Load the change item
         checkChangeItemGrantAccess(changeIssue, user);                                                                   // Check the grant access to the change item
@@ -785,7 +785,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void removeACLFromChangeRequest(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException {
+    public void removeACLFromChangeRequest(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeRequestNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         ChangeRequest changeRequest = new ChangeItemDAO(new Locale(user.getLanguage()), em).loadChangeRequest(pId);      // Load the change item
         checkChangeItemGrantAccess(changeRequest, user);                                                                // Check the grant access to the change item
@@ -795,7 +795,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void removeACLFromChangeOrder(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException {
+    public void removeACLFromChangeOrder(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeOrderNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         ChangeOrder changeOrder = new ChangeItemDAO(new Locale(user.getLanguage()), em).loadChangeOrder(pId);            // Load the change item
         checkChangeItemGrantAccess(changeOrder, user);                                                                  // Check the grant access to the change item
@@ -805,7 +805,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void removeACLFromMilestone(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException {
+    public void removeACLFromMilestone(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, MilestoneNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
         Milestone milestone = new MilestoneDAO(new Locale(user.getLanguage()), em).loadMilestone(pId);                   // Load the milestone
         checkMilestoneWriteAccess(milestone, user);                                                                     // Check the grant access to the milestone
@@ -819,7 +819,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public boolean isChangeItemWritable(ChangeItem pChangeItem) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public boolean isChangeItemWritable(ChangeItem pChangeItem) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pChangeItem.getWorkspaceId());                                 // Check the read access to the workspace
         try {
             checkChangeItemWriteAccess(pChangeItem, user);                                                               // Try to check if the user can write the Change-Item
@@ -832,7 +832,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public boolean isMilestoneWritable(Milestone pMilestone) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public boolean isMilestoneWritable(Milestone pMilestone) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pMilestone.getWorkspaceId());                                  // Check the read access to the workspace
         try {
             checkMilestoneWriteAccess(pMilestone, user);                                                                 // Try to check if the user can write the Milestone
@@ -862,7 +862,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         }
     }
 
-    private User checkChangeItemGrantAccess(ChangeItem pChangeItem, User pUser) throws AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    private User checkChangeItemGrantAccess(ChangeItem pChangeItem, User pUser) throws AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         if (pUser.isAdministrator()) {                                                                                    // Check if it is the workspace's administrator
             return pUser;
         } else if (pUser.getLogin().equals(pChangeItem.getAuthor().getLogin())) {                                          // Check if it the change item owner
@@ -873,7 +873,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         }
     }
 
-    private User checkChangeItemWriteAccess(ChangeItem pChangeItem, User pUser) throws AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    private User checkChangeItemWriteAccess(ChangeItem pChangeItem, User pUser) throws AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         if (pUser.isAdministrator()) {                                                                                    // Check if it is the workspace's administrator
             return pUser;
         }
@@ -896,7 +896,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         }
     }
 
-    private User checkMilestoneWriteAccess(Milestone pMilestone, User pUser) throws AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    private User checkMilestoneWriteAccess(Milestone pMilestone, User pUser) throws AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         if (pUser.isAdministrator()) {                                                                                    // Check if it is the workspace's administrator
             return pUser;
         }

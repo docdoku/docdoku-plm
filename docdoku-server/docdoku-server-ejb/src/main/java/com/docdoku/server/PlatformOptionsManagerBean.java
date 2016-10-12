@@ -37,7 +37,7 @@ import java.util.logging.Logger;
  *
  * @author Morgan Guimard
  */
-@DeclareRoles({UserGroupMapping.ADMIN_ROLE_ID})
+@DeclareRoles({UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID})
 @Local(IPlatformOptionsManagerLocal.class)
 @Stateless(name = "PlatformOptionsManagerBean")
 public class PlatformOptionsManagerBean implements IPlatformOptionsManagerLocal {
@@ -54,10 +54,17 @@ public class PlatformOptionsManagerBean implements IPlatformOptionsManagerLocal 
     }
 
     @Override
-    @RolesAllowed(UserGroupMapping.ADMIN_ROLE_ID)
+    @RolesAllowed({UserGroupMapping.ADMIN_ROLE_ID,UserGroupMapping.REGULAR_USER_ROLE_ID})
     public PlatformOptions.OperationSecurityStrategy getWorkspaceCreationStrategy(){
         PlatformOptions platformOptions = loadPlatformOptions();
         return platformOptions.getWorkspaceCreationStrategy();
+    }
+
+    @Override
+    @RolesAllowed({UserGroupMapping.ADMIN_ROLE_ID,UserGroupMapping.REGULAR_USER_ROLE_ID})
+    public PlatformOptions.OperationSecurityStrategy getRegistrationStrategy(){
+        PlatformOptions platformOptions = loadPlatformOptions();
+        return platformOptions.getRegistrationStrategy();
     }
 
     @Override
@@ -65,13 +72,6 @@ public class PlatformOptionsManagerBean implements IPlatformOptionsManagerLocal 
     public void setWorkspaceCreationStrategy(PlatformOptions.OperationSecurityStrategy strategy){
         PlatformOptions platformOptions = loadPlatformOptions();
         platformOptions.setWorkspaceCreationStrategy(strategy);
-    }
-
-    @Override
-    @RolesAllowed(UserGroupMapping.ADMIN_ROLE_ID)
-    public PlatformOptions.OperationSecurityStrategy getRegistrationStrategy(){
-        PlatformOptions platformOptions = loadPlatformOptions();
-        return platformOptions.getRegistrationStrategy();
     }
 
     @Override

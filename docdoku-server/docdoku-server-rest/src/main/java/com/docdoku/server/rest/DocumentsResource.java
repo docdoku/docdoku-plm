@@ -85,7 +85,7 @@ public class DocumentsResource {
     public DocumentRevisionDTO[] getDocumentsInWorkspace(@PathParam("workspaceId") String workspaceId,
                                                          @QueryParam("start") int start,
                                                          @QueryParam("max") int max)
-            throws UserNotActiveException, ESServerException, WorkspaceNotFoundException, UserNotFoundException, BaselineNotFoundException, DocumentRevisionNotFoundException {
+            throws UserNotActiveException, ESServerException, WorkspaceNotFoundException, UserNotFoundException, BaselineNotFoundException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
 
         int maxResult = max != 0 ? max : 20;
 
@@ -166,7 +166,7 @@ public class DocumentsResource {
     @Path("countCheckedOut")
     @Produces(MediaType.APPLICATION_JSON)
     public CountDTO countCheckedOutDocs(@PathParam("workspaceId") String workspaceId)
-            throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
+            throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, WorkspaceNotEnabledException {
         return new CountDTO(documentService.getCheckedOutDocumentRevisions(workspaceId).length);
     }
 

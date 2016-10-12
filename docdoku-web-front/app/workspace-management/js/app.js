@@ -10,8 +10,9 @@ define([
     'views/workspace-dashboard',
     'views/workspace-management-home',
     'views/admin-dashboard',
-    'views/admin-options'
-], function (Backbone, Mustache, template, WorkspaceEditView, WorkspaceCreationView, WorkspaceUsersView, WorkspaceNotificationsView, WorkspaceDashboardView, WorkspaceManagementHomeView, AdminDashboardView, AdminOptionsView) {
+    'views/admin-options',
+    'views/admin-home'
+], function (Backbone, Mustache, template, WorkspaceEditView, WorkspaceCreationView, WorkspaceUsersView, WorkspaceNotificationsView, WorkspaceDashboardView, WorkspaceManagementHomeView, AdminDashboardView, AdminOptionsView, AdminHomeView) {
 	'use strict';
     var AppView = Backbone.View.extend({
 
@@ -54,7 +55,7 @@ define([
         },
 
         workspaceManagementHome : function(){
-            var view = new WorkspaceManagementHomeView();
+            var view = App.config.admin ? new AdminHomeView(): new WorkspaceManagementHomeView();
             view.render();
             this.$('#workspace-management-content').html(view.$el);
         },

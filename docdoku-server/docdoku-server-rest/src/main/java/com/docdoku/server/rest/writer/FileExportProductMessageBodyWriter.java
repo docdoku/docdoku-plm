@@ -110,7 +110,7 @@ public class FileExportProductMessageBodyWriter implements MessageBodyWriter<Fil
 
         } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | ConfigurationItemNotFoundException |
                 NotAllowedException | EntityConstraintException | PartMasterNotFoundException | ProductInstanceMasterNotFoundException |
-                StorageException e) {
+                StorageException | WorkspaceNotEnabledException e) {
             LOGGER.log(Level.FINEST, null, e);
         }
 
@@ -128,7 +128,7 @@ public class FileExportProductMessageBodyWriter implements MessageBodyWriter<Fil
         }
     }
 
-    private void addProductInstanceDataToZip(ZipOutputStream zs, ConfigurationItemKey configurationItemKey, String serialNumber, List<String> baselinedSourcesName) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductInstanceMasterNotFoundException, IOException, StorageException {
+    private void addProductInstanceDataToZip(ZipOutputStream zs, ConfigurationItemKey configurationItemKey, String serialNumber, List<String> baselinedSourcesName) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductInstanceMasterNotFoundException, IOException, StorageException, WorkspaceNotEnabledException {
         ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, configurationItemKey));
         ProductInstanceIteration lastIteration = productInstanceMaster.getLastIteration();
 

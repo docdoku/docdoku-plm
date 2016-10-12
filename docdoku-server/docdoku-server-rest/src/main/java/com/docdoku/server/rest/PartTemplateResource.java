@@ -260,7 +260,7 @@ public class PartTemplateResource {
                                       @PathParam("templateId") String templateId,
                                       @PathParam("fileName") String fileName,
                                       @ApiParam(required = true, value = "File to rename") FileDTO fileDTO)
-            throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, AccessRightException, FileAlreadyExistsException, StorageException, NotAllowedException {
+            throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, AccessRightException, FileAlreadyExistsException, StorageException, NotAllowedException, WorkspaceNotEnabledException {
 
         String fileFullName = workspaceId + "/part-templates/" + templateId + "/" + fileName;
         BinaryResource binaryResource = productService.renameFileInTemplate(fileFullName, fileDTO.getShortName());

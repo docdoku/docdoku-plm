@@ -1,4 +1,4 @@
-/*global define,App,bootbox*/
+/*global define,App*/
 define([
     'backbone',
     'mustache',

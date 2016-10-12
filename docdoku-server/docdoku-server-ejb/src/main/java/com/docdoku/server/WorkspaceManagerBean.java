@@ -110,7 +110,7 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
 
     @Override
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
-    public Workspace changeAdmin(String workspaceId, String login) throws WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
+    public Workspace changeAdmin(String workspaceId, String login) throws WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException {
         Workspace workspace = new WorkspaceDAO(em).loadWorkspace(workspaceId);
         Account account = new AccountDAO(em).loadAccount(login);
 
@@ -126,6 +126,14 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
             }
         }
 
+        return workspace;
+    }
+
+    @Override
+    @RolesAllowed(UserGroupMapping.ADMIN_ROLE_ID)
+    public Workspace enableWorkspace(String workspaceId, boolean enabled) throws WorkspaceNotFoundException {
+        Workspace workspace = new WorkspaceDAO(em).loadWorkspace(workspaceId);
+        workspace.setEnabled(enabled);
         return workspace;
     }
 

@@ -72,7 +72,7 @@ public class TaskManagerBean implements ITaskManagerLocal {
 
     @Override
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    public TaskWrapper[] getAssignedTasksForGivenUser(String workspaceId, String userLogin) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public TaskWrapper[] getAssignedTasksForGivenUser(String workspaceId, String userLogin) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         TaskDAO taskDAO = new TaskDAO(new Locale(user.getLanguage()), em);
         Task[] assignedTasks = taskDAO.findAssignedTasks(workspaceId, userLogin);
@@ -88,7 +88,7 @@ public class TaskManagerBean implements ITaskManagerLocal {
 
     @Override
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    public TaskWrapper[] getInProgressTasksForGivenUser(String workspaceId, String userLogin) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public TaskWrapper[] getInProgressTasksForGivenUser(String workspaceId, String userLogin) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         TaskDAO taskDAO = new TaskDAO(new Locale(user.getLanguage()), em);
         Task[] inProgressTasks = taskDAO.findInProgressTasks(workspaceId, userLogin);
@@ -104,7 +104,7 @@ public class TaskManagerBean implements ITaskManagerLocal {
 
     @Override
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    public TaskWrapper getTask(String workspaceId, TaskKey taskKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, AccessRightException {
+    public TaskWrapper getTask(String workspaceId, TaskKey taskKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         TaskDAO taskDAO = new TaskDAO(new Locale(user.getLanguage()), em);
         Task task = taskDAO.loadTask(taskKey);
@@ -117,7 +117,7 @@ public class TaskManagerBean implements ITaskManagerLocal {
 
     @Override
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    public void processTask(String workspaceId, TaskKey taskKey, String action, String comment, String signature) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, WorkflowNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
+    public void processTask(String workspaceId, TaskKey taskKey, String action, String comment, String signature) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, WorkflowNotFoundException, AccessRightException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         TaskDAO taskDAO = new TaskDAO(new Locale(user.getLanguage()), em);
         Task task = taskDAO.loadTask(taskKey);

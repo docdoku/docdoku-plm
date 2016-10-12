@@ -114,7 +114,7 @@ public class PartResource {
     public Response getProductInstanceMasters(@PathParam("workspaceId") String pWorkspaceId,
                                               @PathParam("partNumber") String partNumber,
                                               @PathParam("partVersion") String partVersion)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(pWorkspaceId, partNumber, partVersion);
         PartRevision partRevision = productService.getPartRevision(revisionKey);
@@ -138,7 +138,7 @@ public class PartResource {
     public Response getUsedByAsComponent(@PathParam("workspaceId") String pWorkspaceId,
                                          @PathParam("partNumber") String partNumber,
                                          @PathParam("partVersion") String partVersion)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
         List<PartIteration> partIterations = productService.getUsedByAsComponent(new PartRevisionKey(pWorkspaceId, partNumber, partVersion));
 
@@ -160,7 +160,7 @@ public class PartResource {
     public Response getUsedByAsSubstitute(@PathParam("workspaceId") String pWorkspaceId,
                                           @PathParam("partNumber") String partNumber,
                                           @PathParam("partVersion") String partVersion)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
         List<PartIteration> partIterations = productService.getUsedByAsSubstitute(new PartRevisionKey(pWorkspaceId, partNumber, partVersion));
 
@@ -256,7 +256,7 @@ public class PartResource {
                                              @PathParam("partNumber") String partNumber,
                                              @PathParam("partVersion") String partVersion,
                                              @PathParam("partIteration") int partIteration)
-            throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, PartIterationNotFoundException, AccessRightException {
+            throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, PartIterationNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         PartIterationKey partIPK = new PartIterationKey(pWorkspaceId, partNumber, partVersion, partIteration);
         Conversion conversion = productService.getConversion(partIPK);
         if (conversion != null) {
@@ -268,7 +268,7 @@ public class PartResource {
     @PUT
     @ApiOperation(value = "Retry conversion", response = Response.class)
     @Path("/iterations/{partIteration}/conversion")
-    public Response retryConversion(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int iteration) throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, PartIterationNotFoundException, AccessRightException, NotAllowedException {
+    public Response retryConversion(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int iteration) throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, PartIterationNotFoundException, AccessRightException, NotAllowedException, WorkspaceNotEnabledException {
 
         PartIterationKey partIPK = new PartIterationKey(pWorkspaceId, partNumber, partVersion, iteration);
         PartIteration partIteration = productService.getPartIteration(partIPK);
@@ -488,7 +488,7 @@ public class PartResource {
                                       @PathParam("subType") String subType,
                                       @PathParam("fileName") String fileName,
                                       @ApiParam(required = true, value = "File to rename") FileDTO fileDTO)
-            throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
+            throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException, WorkspaceNotEnabledException {
         String fileFullName = workspaceId + "/parts/" + partNumber + "/" + partVersion + "/" + partIteration + "/" + subType + "/" + fileName;
         BinaryResource binaryResource = productService.renameFileInPartIteration(subType, fileFullName, fileDTO.getShortName());
         return new FileDTO(true, binaryResource.getFullName(), binaryResource.getName());
@@ -632,7 +632,7 @@ public class PartResource {
     public Response getInstances(@PathParam("workspaceId") String workspaceId,
                                  @PathParam("partNumber") String partNumber,
                                  @PathParam("partVersion") String partVersion)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId, partNumber, partVersion));
         PSFilter filter = productService.getLatestCheckedInPSFilter(workspaceId);
         VirtualInstanceCollection virtualInstanceCollection = new VirtualInstanceCollection(partRevision, filter);
@@ -646,7 +646,7 @@ public class PartResource {
     public Response getBaselinesWherePartRevisionHasIterations(@PathParam("workspaceId") String workspaceId,
                                  @PathParam("partNumber") String partNumber,
                                  @PathParam("partVersion") String partVersion)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotEnabledException {
 
         List<ProductBaseline> baselines = productService.findBaselinesWherePartRevisionHasIterations(new PartRevisionKey(workspaceId, partNumber, partVersion));
         List<ProductBaselineDTO> productBaselineDTOs = new ArrayList<>();
@@ -748,7 +748,7 @@ public class PartResource {
         return data;
     }
 
-    private List<PartRevisionDTO> getPartRevisionDTO(Set<PartRevision> partRevisions) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException {
+    private List<PartRevisionDTO> getPartRevisionDTO(Set<PartRevision> partRevisions) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotEnabledException {
         List<PartRevisionDTO> partRevisionDTOs = new ArrayList<>();
 
         for (PartRevision partRevision : partRevisions) {

@@ -49,18 +49,18 @@ public class SubscriptionManager {
     @Inject
     private IMailerLocal mailer;
 
-    private void onRemoveTag(@Observes @Removed TagEvent event) throws UserNotFoundException, AccessRightException, UserNotActiveException, TagNotFoundException, WorkspaceNotFoundException {
+    private void onRemoveTag(@Observes @Removed TagEvent event) throws UserNotFoundException, AccessRightException, UserNotActiveException, TagNotFoundException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         Tag tag = event.getObservedTag();
         notificationService.removeAllTagSubscriptions(tag.getWorkspaceId(),tag.getLabel());
     }
 
-    private void onRemoveUser(@Observes @Removed UserEvent event) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException {
+    private void onRemoveUser(@Observes @Removed UserEvent event) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException {
         User user=event.getObservedUser();
         notificationService.removeAllSubscriptions(user.getWorkspaceId(), user.getLogin());
         notificationService.removeAllTagUserSubscriptions(user.getWorkspaceId(), user.getLogin());
     }
 
-    private void onRemoveUserGroup(@Observes @Removed UserGroupEvent event) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, UserGroupNotFoundException {
+    private void onRemoveUserGroup(@Observes @Removed UserGroupEvent event) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, UserGroupNotFoundException, WorkspaceNotEnabledException {
         UserGroup group=event.getObservedUserGroup();
         notificationService.removeAllTagUserGroupSubscriptions(group.getWorkspaceId(), group.getId());
     }

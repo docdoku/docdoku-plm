@@ -36,7 +36,6 @@ import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.events.PartIterationEvent;
 import com.docdoku.server.events.PartRevisionEvent;
 import com.docdoku.server.events.TagEvent;
-import com.docdoku.server.events.Untagged;
 import com.docdoku.server.products.ProductBaselineManagerBean;
 import com.docdoku.server.util.CyclicAssemblyRule;
 import com.docdoku.server.util.ProductUtil;
@@ -46,15 +45,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.*;
-import static org.mockito.Matchers.*;
 
 import javax.ejb.SessionContext;
 import javax.enterprise.event.Event;
-import javax.enterprise.util.AnnotationLiteral;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.*;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ProductManagerBeanTest {
@@ -246,7 +244,7 @@ public class ProductManagerBeanTest {
      * @throws AccessRightException
      */
     @Test
-    public void addTagToPartWithNoTags() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+    public void addTagToPartWithNoTags() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
 
         PartRevisionKey partRevisionKey = partRevision.getKey();
@@ -278,7 +276,7 @@ public class ProductManagerBeanTest {
 
 
     @Test
-    public void removeTagFromPart() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+    public void removeTagFromPart() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         Set<Tag> tags = new LinkedHashSet<Tag>();
         tags.add(new Tag(workspace, "Important"));
         tags.add(new Tag(workspace, "ToRemove"));
@@ -301,7 +299,7 @@ public class ProductManagerBeanTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void addNullTagToOnePart() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+    public void addNullTagToOnePart() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         String[] tags = null;
         partRevision.setTags(null);
         PartRevisionKey partRevisionKey = partRevision.getKey();
@@ -320,7 +318,7 @@ public class ProductManagerBeanTest {
     }
 
     @Test
-    public void checkCyclicDetection() throws EntityConstraintException, PartMasterNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, NotAllowedException {
+    public void checkCyclicDetection() throws EntityConstraintException, PartMasterNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, NotAllowedException, WorkspaceNotEnabledException {
 
         cyclicAssemblyRule = new CyclicAssemblyRule("user1");
         Mockito.when(em.find(PartMaster.class, cyclicAssemblyRule.getP1().getKey())).thenReturn(cyclicAssemblyRule.getP1());
@@ -360,7 +358,7 @@ public class ProductManagerBeanTest {
     }
 
     @Test(expected = NotAllowedException.class)
-    public void getPartIterationCheckedOutByOther() throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException, NotAllowedException {
+    public void getPartIterationCheckedOutByOther() throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException, NotAllowedException, WorkspaceNotEnabledException {
         Mockito.when(userManager.checkWorkspaceReadAccess(partRevision.getKey().getPartMaster().getWorkspace())).thenReturn(user2);
         Mockito.when(em.find(PartRevision.class, partRevision.getKey())).thenReturn(partRevision);
         Mockito.when(em.find(PartIteration.class, partIteration.getKey())).thenReturn(partIteration);
@@ -369,7 +367,7 @@ public class ProductManagerBeanTest {
     }
 
     @Test(expected = NotAllowedException.class)
-    public void updatePartIterationCheckedOutByOther() throws ListOfValuesNotFoundException, PartMasterNotFoundException, EntityConstraintException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, UserNotActiveException, PartUsageLinkNotFoundException, AccessRightException, PartRevisionNotFoundException, DocumentRevisionNotFoundException {
+    public void updatePartIterationCheckedOutByOther() throws ListOfValuesNotFoundException, PartMasterNotFoundException, EntityConstraintException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, UserNotActiveException, PartUsageLinkNotFoundException, AccessRightException, PartRevisionNotFoundException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
 
         Mockito.when(userManager.checkWorkspaceReadAccess(partRevision.getKey().getPartMaster().getWorkspace())).thenReturn(user2);
         Mockito.when(em.find(PartRevision.class, partRevision.getKey())).thenReturn(partRevision);

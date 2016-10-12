@@ -29,6 +29,7 @@ public class WorkspaceDTO implements Serializable {
     private String id;
     private String description;
     private boolean folderLocked;
+    private boolean enabled;
 
     public WorkspaceDTO() {
     }
@@ -55,5 +56,13 @@ public class WorkspaceDTO implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

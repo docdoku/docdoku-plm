@@ -100,7 +100,7 @@ public class InstanceBodyWriterTools {
                 }
             }
 
-        } catch (PartMasterNotFoundException | PartRevisionNotFoundException | PartUsageLinkNotFoundException | UserNotFoundException | WorkspaceNotFoundException | ConfigurationItemNotFoundException e) {
+        } catch (PartMasterNotFoundException | PartRevisionNotFoundException | PartUsageLinkNotFoundException | UserNotFoundException | WorkspaceNotFoundException | WorkspaceNotEnabledException | ConfigurationItemNotFoundException e) {
             LOGGER.log(Level.SEVERE, null, e);
         } catch (AccessRightException | EntityConstraintException | NotAllowedException | UserNotActiveException e) {
             LOGGER.log(Level.FINEST, null, e);
@@ -145,7 +145,7 @@ public class InstanceBodyWriterTools {
                 }
             }
 
-        } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | PartRevisionNotFoundException e) {
+        } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | WorkspaceNotEnabledException | PartRevisionNotFoundException e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
 

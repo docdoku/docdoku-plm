@@ -119,7 +119,7 @@ public class UserResource {
     @ApiOperation(value = "Get tag subscriptions of user", response = TagSubscriptionDTO.class, responseContainer = "List")
     @Path("{login}/tag-subscriptions")
     @Produces(MediaType.APPLICATION_JSON)
-    public TagSubscriptionDTO[] getTagSubscriptionsForUser(@PathParam("workspaceId") String workspaceId, @PathParam("login") String login) throws UserNotFoundException, AccessRightException, UserNotActiveException, WorkspaceNotFoundException {
+    public TagSubscriptionDTO[] getTagSubscriptionsForUser(@PathParam("workspaceId") String workspaceId, @PathParam("login") String login) throws UserNotFoundException, AccessRightException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         List<TagUserSubscription> subs = notificationManager.getTagUserSubscriptionsByUser(workspaceId, login);
 
         TagSubscriptionDTO[] subDTOs = new TagSubscriptionDTO[subs.size()];
@@ -161,7 +161,7 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteSubscription(@PathParam("workspaceId") String workspaceId,
                                        @PathParam("login") String login,
-                                       @PathParam("tagName") String tagName) throws UserNotFoundException, AccessRightException, UserNotActiveException, WorkspaceNotFoundException {
+                                       @PathParam("tagName") String tagName) throws UserNotFoundException, AccessRightException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
 
         notificationManager.removeTagUserSubscription(workspaceId, login, tagName);
         return Response.ok().build();

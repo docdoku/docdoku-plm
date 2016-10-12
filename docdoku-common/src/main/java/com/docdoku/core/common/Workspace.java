@@ -52,6 +52,7 @@ public class Workspace implements Serializable, Cloneable {
     
     private boolean folderLocked;
 
+    private boolean enabled;
 
     public Workspace(String pId, Account pAdmin, String pDescription, boolean pFolderLocked) {
         id = pId;
@@ -93,7 +94,14 @@ public class Workspace implements Serializable, Cloneable {
         this.folderLocked = folderLocked;
     }
 
-    
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public String toString() {
         return id;

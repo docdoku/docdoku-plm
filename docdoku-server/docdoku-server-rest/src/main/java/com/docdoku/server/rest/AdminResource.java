@@ -26,6 +26,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.server.rest.dto.PlatformOptionsDTO;
+import com.docdoku.server.rest.dto.WorkspaceDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -107,7 +108,7 @@ public class AdminResource implements Serializable {
     @Path("users-stats")
     @ApiOperation(value = "Get users stats", response = JsonObject.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public JsonObject getUsersStats() throws AccountNotFoundException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
+    public JsonObject getUsersStats() throws AccountNotFoundException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
 
         JsonObjectBuilder userStats = Json.createObjectBuilder();
 
@@ -143,7 +144,7 @@ public class AdminResource implements Serializable {
     @Path("products-stats")
     @ApiOperation(value = "Get products stats", response = JsonObject.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public JsonObject getProductsStats() throws AccountNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public JsonObject getProductsStats() throws AccountNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
 
         JsonObjectBuilder productsStats = Json.createObjectBuilder();
 
@@ -162,7 +163,7 @@ public class AdminResource implements Serializable {
     @Path("parts-stats")
     @ApiOperation(value = "Get parts stats", response = JsonObject.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public JsonObject getPartsStats() throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public JsonObject getPartsStats() throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
 
         JsonObjectBuilder partsStats = Json.createObjectBuilder();
 
@@ -215,4 +216,14 @@ public class AdminResource implements Serializable {
         platformOptionsManager.setWorkspaceCreationStrategy(platformOptionsDTO.getWorkspaceCreationStrategy());
         return Response.ok().build();
     }
+
+    @PUT
+    @ApiOperation(value = "Enable workspace", response = Response.class)
+    @Path("workspace/{workspaceId}/enable")
+    @Produces(MediaType.APPLICATION_JSON)
+    public WorkspaceDTO enableWorkspace(@PathParam("workspaceId") String workspaceId, @QueryParam("enabled") boolean enabled) throws WorkspaceNotFoundException {
+        Workspace workspace = workspaceManager.enableWorkspace(workspaceId, enabled);
+        return mapper.map(workspace, WorkspaceDTO.class);
+    }
+
 }

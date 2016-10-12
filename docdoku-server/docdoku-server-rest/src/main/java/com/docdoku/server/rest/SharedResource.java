@@ -61,7 +61,7 @@ public class SharedResource {
                                                    @PathParam("documentId") String documentId,
                                                    @PathParam("documentVersion") String documentVersion)
             throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException,
-            DocumentRevisionNotFoundException, UserNotActiveException {
+            DocumentRevisionNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
 
         // Tries public
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
@@ -89,7 +89,7 @@ public class SharedResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPublicSharedPartRevision(@PathParam("workspaceId") String workspaceId,
                                                     @PathParam("partNumber") String partNumber,
-                                                    @PathParam("partVersion") String partVersion) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+                                                    @PathParam("partVersion") String partVersion) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
         // Tries public
         PartRevisionKey partKey = new PartRevisionKey(workspaceId, partNumber, partVersion);

@@ -24,10 +24,7 @@ import com.docdoku.core.configuration.*;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.exceptions.ProductInstanceMasterNotFoundException;
-import com.docdoku.core.exceptions.UserNotActiveException;
-import com.docdoku.core.exceptions.UserNotFoundException;
-import com.docdoku.core.exceptions.WorkspaceNotFoundException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeDescriptor;
 import com.docdoku.core.meta.InstanceDateAttribute;
@@ -218,7 +215,7 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
                             }
                         }
 
-                    } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | ProductInstanceMasterNotFoundException e) {
+                    } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | WorkspaceNotEnabledException | ProductInstanceMasterNotFoundException e) {
                         LOGGER.log(Level.FINEST, null, e);
                     }
                 } else {

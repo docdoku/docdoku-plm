@@ -82,7 +82,7 @@ public class UserGroupResource {
     @ApiOperation(value = "Get groups", response = UserGroupDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public UserGroupDTO[] getGroups(@PathParam("workspaceId") String workspaceId)
-            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
         UserGroup[] userGroups = userManager.getUserGroups(workspaceId);
         UserGroupDTO[] userGroupDTOs = new UserGroupDTO[userGroups.length];
         for (int i = 0; i < userGroups.length; i++) {
@@ -95,7 +95,7 @@ public class UserGroupResource {
     @ApiOperation(value = "Get tag subscriptions of group", response = TagSubscriptionDTO.class, responseContainer = "List")
     @Path("{groupId}/tag-subscriptions")
     @Produces(MediaType.APPLICATION_JSON)
-    public TagSubscriptionDTO[] getTagSubscriptionsForGroup(@PathParam("workspaceId") String workspaceId, @PathParam("groupId") String groupId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, UserGroupNotFoundException {
+    public TagSubscriptionDTO[] getTagSubscriptionsForGroup(@PathParam("workspaceId") String workspaceId, @PathParam("groupId") String groupId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, UserGroupNotFoundException, WorkspaceNotEnabledException {
         List<TagUserGroupSubscription> subs = notificationManager.getTagUserGroupSubscriptionsByGroup(workspaceId, groupId);
 
         TagSubscriptionDTO[] subDTOs = new TagSubscriptionDTO[subs.size()];
@@ -110,7 +110,7 @@ public class UserGroupResource {
     @Path("{groupId}/users")
     @Produces(MediaType.APPLICATION_JSON)
     public UserDTO[] getUsersInGroup(@PathParam("workspaceId") String workspaceId, @PathParam("groupId") String groupId)
-            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, UserGroupNotFoundException {
+            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, UserGroupNotFoundException, WorkspaceNotEnabledException {
         UserGroup userGroup = userManager.getUserGroup(new UserGroupKey(workspaceId, groupId));
         Set<User> users = userGroup.getUsers();
         User[] usersArray = users.toArray(new User[users.size()]);
@@ -154,7 +154,7 @@ public class UserGroupResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteSubscription(@PathParam("workspaceId") String workspaceId,
                                @PathParam("groupId") String groupId,
-                               @PathParam("tagName") String tagName) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException {
+                               @PathParam("tagName") String tagName) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException {
 
         notificationManager.removeTagUserGroupSubscription(workspaceId,groupId,tagName);
         return Response.ok().build();

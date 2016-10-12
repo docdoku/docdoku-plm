@@ -21,19 +21,16 @@
 package com.docdoku.core.services;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.exceptions.ConvertedResourceException;
-import com.docdoku.core.exceptions.UserNotActiveException;
-import com.docdoku.core.exceptions.UserNotFoundException;
-import com.docdoku.core.exceptions.WorkspaceNotFoundException;
+import com.docdoku.core.exceptions.*;
 
 import java.io.InputStream;
 
 public interface IDocumentResourceGetterManagerLocal {
     InputStream getDocumentConvertedResource(String outputFormat, BinaryResource binaryResource)
-            throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConvertedResourceException;
+            throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConvertedResourceException, WorkspaceNotEnabledException;
 
     InputStream getPartConvertedResource(String outputFormat, BinaryResource binaryResource)
-            throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConvertedResourceException;
+            throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConvertedResourceException, WorkspaceNotEnabledException;
 
     String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri);
 }

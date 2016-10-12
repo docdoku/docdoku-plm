@@ -22,6 +22,7 @@ package com.docdoku.server.rest;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.UserNotActiveException;
 import com.docdoku.core.exceptions.UserNotFoundException;
+import com.docdoku.core.exceptions.WorkspaceNotEnabledException;
 import com.docdoku.core.exceptions.WorkspaceNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
@@ -65,7 +66,7 @@ public class CheckedOutDocumentResource {
     @Path("{checkoutUser}/documents")
     @ApiOperation(value = "Get documents checked out by caller", response = DocumentRevisionDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO[] getDocumentsCheckedOutByUser(@PathParam("workspaceId") String workspaceId) throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
+    public DocumentRevisionDTO[] getDocumentsCheckedOutByUser(@PathParam("workspaceId") String workspaceId) throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, WorkspaceNotEnabledException {
         DocumentRevision[] docRs = documentService.getCheckedOutDocumentRevisions(workspaceId);
         DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
 

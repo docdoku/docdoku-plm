@@ -576,7 +576,7 @@ public class DocumentResource {
                                             @PathParam("documentVersion") String documentVersion,
                                             @PathParam("iteration") int iteration,
                                             @QueryParam("configSpec") String configSpecType)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, DocumentIterationNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, DocumentIterationNotFoundException, WorkspaceNotEnabledException {
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
         List<DocumentIteration> documents = documentService.getInverseDocumentsLink(docKey);
         Set<DocumentRevisionDTO> dtos = new HashSet<>();
@@ -597,7 +597,7 @@ public class DocumentResource {
                                          @PathParam("documentVersion") String documentVersion,
                                          @PathParam("iteration") int iteration,
                                          @QueryParam("configSpec") String configSpecType)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentRevisionNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
         List<PartIteration> parts = productService.getInversePartsLink(docKey);
         Set<PartRevisionDTO> dtos = new HashSet<>();
@@ -618,7 +618,7 @@ public class DocumentResource {
                                                     @PathParam("documentVersion") String documentVersion,
                                                     @PathParam("iteration") int iteration,
                                                     @QueryParam("configSpec") String configSpecType)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentRevisionNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
         Set<ProductInstanceMaster> productInstanceMasterList = productService.getInverseProductInstancesLink(docKey);
         Set<ProductInstanceMasterDTO> dtos = new HashSet<>();
@@ -638,7 +638,7 @@ public class DocumentResource {
                                             @PathParam("documentVersion") String documentVersion,
                                             @PathParam("iteration") int iteration,
                                             @QueryParam("configSpec") String configSpecType)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentRevisionNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentRevisionNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
         Set<PathDataMaster> pathDataMasters = productService.getInversePathDataLink(docKey);
 

@@ -237,7 +237,7 @@ public class WorkspaceResource {
     @Path("/{workspaceId}/user-group")
     @Produces(MediaType.APPLICATION_JSON)
     public UserGroupDTO[] getUserGroups(@PathParam("workspaceId") String workspaceId)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException, WorkspaceNotEnabledException {
         UserGroup[] userGroups = userManager.getUserGroups(workspaceId);
         UserGroupDTO[] userGroupDTOs = new UserGroupDTO[userGroups.length];
         for(int i = 0 ; i < userGroups.length; i++){
@@ -291,7 +291,7 @@ public class WorkspaceResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response setNewAdmin(@PathParam("workspaceId") String workspaceId,
                                 @ApiParam(required = true, value = "New admin user") UserDTO userDTO)
-            throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+            throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
 
         Workspace workspace = workspaceManager.changeAdmin(workspaceId, userDTO.getLogin());
         return Response.ok(mapper.map(workspace, WorkspaceDTO.class)).build();
@@ -411,7 +411,7 @@ public class WorkspaceResource {
     @Path("/{workspaceId}/stats-overview")
     @Produces(MediaType.APPLICATION_JSON)
     public StatsOverviewDTO getStatsOverview(@PathParam("workspaceId") String workspaceId)
-            throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
+            throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
 
         StatsOverviewDTO statsOverviewDTO = new StatsOverviewDTO();
 
@@ -513,7 +513,7 @@ public class WorkspaceResource {
     @ApiOperation(value = "Get user stats for workspace", response = JsonObject.class)
     @Path("/{workspaceId}/users-stats")
     @Produces(MediaType.APPLICATION_JSON)
-    public JsonObject getUsersStats(@PathParam("workspaceId") String workspaceId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException, AccessRightException {
+    public JsonObject getUsersStats(@PathParam("workspaceId") String workspaceId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
         WorkspaceUserMembership[] workspaceUserMemberships = userManager.getWorkspaceUserMemberships(workspaceId);
         WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceUserGroupMemberships(workspaceId);

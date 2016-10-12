@@ -22,8 +22,10 @@ package com.docdoku.server.listeners.workflow;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.exceptions.*;
-import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.exceptions.AccessRightException;
+import com.docdoku.core.exceptions.UserNotFoundException;
+import com.docdoku.core.exceptions.WorkspaceNotEnabledException;
+import com.docdoku.core.exceptions.WorkspaceNotFoundException;
 import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.server.events.Removed;
 import com.docdoku.server.events.UserEvent;
@@ -44,12 +46,12 @@ public class RoleManager {
     @Inject
     private IWorkflowManagerLocal workflowService;
 
-    private void onRemoveUser(@Observes @Removed UserEvent event) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException {
+    private void onRemoveUser(@Observes @Removed UserEvent event) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = event.getObservedUser();
         workflowService.removeUserFromAllRoleMappings(user);
     }
 
-    private void onRemoveUserGroup(@Observes @Removed UserGroupEvent event) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException {
+    private void onRemoveUserGroup(@Observes @Removed UserGroupEvent event) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         UserGroup group = event.getObservedUserGroup();
         workflowService.removeUserGroupFromAllRoleMappings(group);
     }

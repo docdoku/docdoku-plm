@@ -21,6 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.exceptions.UserNotActiveException;
 import com.docdoku.core.exceptions.UserNotFoundException;
+import com.docdoku.core.exceptions.WorkspaceNotEnabledException;
 import com.docdoku.core.exceptions.WorkspaceNotFoundException;
 import com.docdoku.core.meta.InstanceAttributeDescriptor;
 import com.docdoku.core.security.UserGroupMapping;
@@ -76,7 +77,7 @@ public class AttributesResource {
             responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPartIterationsAttributes(@PathParam("workspaceId") String workspaceId)
-            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         List<InstanceAttributeDescriptor> attributes = productManager.getPartIterationsInstanceAttributesInWorkspace(workspaceId);
         List<InstanceAttributeDescriptorDTO> dtos = new ArrayList<>();
         for (InstanceAttributeDescriptor descriptor : attributes) {
@@ -94,7 +95,7 @@ public class AttributesResource {
             responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPathDataAttributes(@PathParam("workspaceId") String workspaceId)
-            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         List<InstanceAttributeDescriptor> attributes = productManager.getPathDataInstanceAttributesInWorkspace(workspaceId);
         List<InstanceAttributeDescriptorDTO> dtos = new ArrayList<>();
         for (InstanceAttributeDescriptor descriptor : attributes) {

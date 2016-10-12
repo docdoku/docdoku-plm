@@ -226,7 +226,7 @@ public class DocumentBinaryResource {
         }
     }
 
-    private boolean canAccess(DocumentIterationKey docIKey) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException {
+    private boolean canAccess(DocumentIterationKey docIKey) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
         DocumentRevision publicDocumentRevision = guestProxy.getPublicDocumentRevision(docIKey.getDocumentRevision());
         if(publicDocumentRevision!=null){
             return true;

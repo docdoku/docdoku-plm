@@ -19,10 +19,7 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.exceptions.AccessRightException;
-import com.docdoku.core.exceptions.PartRevisionNotFoundException;
-import com.docdoku.core.exceptions.UserNotFoundException;
-import com.docdoku.core.exceptions.WorkspaceNotFoundException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.ModificationNotificationDTO;
@@ -64,7 +61,7 @@ public class ModificationNotificationResource {
     public Response acknowledgeNotification(@PathParam("workspaceId") String workspaceId,
                                             @PathParam("notificationId") int notificationId,
                                             @ApiParam(required = true, value = "Modification notification to acknowledge") ModificationNotificationDTO notificationDTO)
-            throws UserNotFoundException, AccessRightException, PartRevisionNotFoundException, WorkspaceNotFoundException {
+            throws UserNotFoundException, AccessRightException, PartRevisionNotFoundException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
 
         productService.updateModificationNotification(workspaceId, notificationId, notificationDTO.getAckComment());
         return Response.ok().build();

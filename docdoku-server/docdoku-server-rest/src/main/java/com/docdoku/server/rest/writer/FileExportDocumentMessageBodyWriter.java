@@ -76,7 +76,7 @@ public class FileExportDocumentMessageBodyWriter implements MessageBodyWriter<Fi
                     addToZip(collection, binaryResource, zs);
                 }
             }
-        } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | BaselineNotFoundException e) {
+        } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | WorkspaceNotEnabledException | BaselineNotFoundException e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
 

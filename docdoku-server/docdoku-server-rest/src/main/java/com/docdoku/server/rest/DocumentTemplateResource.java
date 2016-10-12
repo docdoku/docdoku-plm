@@ -236,7 +236,7 @@ public class DocumentTemplateResource {
                                       @PathParam("templateId") String templateId,
                                       @PathParam("fileName") String fileName,
                                       @ApiParam(required = true, value = "File to rename") FileDTO fileDTO)
-            throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException, FileAlreadyExistsException, StorageException {
+            throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException, FileAlreadyExistsException, StorageException, WorkspaceNotEnabledException {
         String fileFullName = workspaceId + "/document-templates/" + templateId + "/" + fileName;
         BinaryResource binaryResource = documentService.renameFileInTemplate(fileFullName, fileDTO.getShortName());
         return new FileDTO(true, binaryResource.getFullName(), binaryResource.getName());

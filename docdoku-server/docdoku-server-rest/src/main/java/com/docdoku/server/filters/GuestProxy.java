@@ -59,12 +59,12 @@ public class GuestProxy{
     @Inject
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
 
-    public PartRevision getPublicPartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+    public PartRevision getPublicPartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         PartRevision partRevision = productService.getPartRevision(partRevisionKey);
         return partRevision.isPublicShared() ? partRevision : null;
     }
 
-    public DocumentRevision getPublicDocumentRevision(DocumentRevisionKey documentRevisionKey) throws NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, AccessRightException {
+    public DocumentRevision getPublicDocumentRevision(DocumentRevisionKey documentRevisionKey) throws NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException {
         DocumentRevision documentRevision =  documentService.getDocumentRevision(documentRevisionKey);
         return documentRevision.isPublicShared() ? documentRevision : null;
     }
@@ -132,11 +132,11 @@ public class GuestProxy{
 
 */
 
-    public BinaryResource getBinaryResourceForSharedDocument(String fullName) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, UserNotActiveException {
+    public BinaryResource getBinaryResourceForSharedDocument(String fullName) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
         return documentService.getBinaryResource(fullName);
     }
 
-    public BinaryResource getBinaryResourceForSharedPart(String fullName) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, UserNotActiveException {
+    public BinaryResource getBinaryResourceForSharedPart(String fullName) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
         return productService.getBinaryResource(fullName);
     }
 
@@ -147,19 +147,19 @@ public class GuestProxy{
         return productService.canAccess(partIKey);
     }
 
-    public InputStream getDocumentConvertedResource(String outputFormat, BinaryResource binaryResource) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConvertedResourceException {
+    public InputStream getDocumentConvertedResource(String outputFormat, BinaryResource binaryResource) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConvertedResourceException, WorkspaceNotEnabledException {
         return documentResourceGetterService.getDocumentConvertedResource(outputFormat, binaryResource);
     }
 
-    public InputStream getPartConvertedResource(String outputFormat, BinaryResource binaryResource) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConvertedResourceException {
+    public InputStream getPartConvertedResource(String outputFormat, BinaryResource binaryResource) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConvertedResourceException, WorkspaceNotEnabledException {
         return documentResourceGetterService.getPartConvertedResource(outputFormat, binaryResource);
     }
 
-    public BinaryResource getBinaryResourceForProducInstance(String fullName) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException {
+    public BinaryResource getBinaryResourceForProductInstance(String fullName) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException, WorkspaceNotEnabledException {
         return productInstanceManagerLocal.getBinaryResource(fullName);
     }
 
-    public BinaryResource getBinaryResourceForPathData(String fullName) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException {
+    public BinaryResource getBinaryResourceForPathData(String fullName) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException, WorkspaceNotEnabledException {
         return productInstanceManagerLocal.getPathDataBinaryResource(fullName);
     }
 }

@@ -68,7 +68,7 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Workflow getCurrentWorkflow(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException, WorkflowNotFoundException {
+    public Workflow getCurrentWorkflow(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException, WorkflowNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getDocumentMaster().getWorkspace());
         if(!documentManager.canUserAccess(user, documentRevisionKey)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
@@ -81,7 +81,7 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Workflow[] getAbortedWorkflow(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException {
+    public Workflow[] getAbortedWorkflow(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getDocumentMaster().getWorkspace());
         if(!documentManager.canUserAccess(user, documentRevisionKey)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
@@ -96,7 +96,7 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @CheckActivity
     @Override
-    public DocumentRevision approveTaskOnDocument(String workspaceId, TaskKey pTaskKey, DocumentRevisionKey documentRevisionKey,  String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
+    public DocumentRevision approveTaskOnDocument(String workspaceId, TaskKey pTaskKey, DocumentRevisionKey documentRevisionKey,  String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException, AccessRightException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getWorkspaceId());
 
         DocumentRevision documentRevision = documentManager.getDocumentRevision(documentRevisionKey);
@@ -135,7 +135,7 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @CheckActivity
     @Override
-    public DocumentRevision rejectTaskOnDocument(String workspaceId, TaskKey pTaskKey, DocumentRevisionKey documentRevisionKey,  String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
+    public DocumentRevision rejectTaskOnDocument(String workspaceId, TaskKey pTaskKey, DocumentRevisionKey documentRevisionKey,  String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException, AccessRightException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getWorkspaceId());
 
         DocumentRevision documentRevision = documentManager.getDocumentRevision(documentRevisionKey);

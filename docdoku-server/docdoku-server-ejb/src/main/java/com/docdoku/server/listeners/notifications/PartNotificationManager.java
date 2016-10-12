@@ -53,7 +53,7 @@ public class PartNotificationManager {
         PartRevision partRevision = event.getObservedPart();
         productService.removeModificationNotificationsOnRevision(partRevision.getKey());
     }
-    private void onCheckInPartIteration(@Observes @CheckedIn PartIterationEvent event) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+    private void onCheckInPartIteration(@Observes @CheckedIn PartIterationEvent event) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         PartIteration partIteration = event.getObservedPart();
         productService.createModificationNotifications(partIteration);
     }
