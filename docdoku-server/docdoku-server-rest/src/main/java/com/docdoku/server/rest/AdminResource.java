@@ -21,10 +21,13 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.admin.PlatformOptions;
+import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
+import com.docdoku.server.rest.dto.AccountDTO;
 import com.docdoku.server.rest.dto.PlatformOptionsDTO;
 import com.docdoku.server.rest.dto.WorkspaceDTO;
 import io.swagger.annotations.Api;
@@ -72,6 +75,9 @@ public class AdminResource implements Serializable {
 
     @Inject
     private IWorkspaceManagerLocal workspaceManager;
+
+    @Inject
+    private IAccountManagerLocal accountManager;
 
     @Inject
     private IPlatformOptionsManagerLocal platformOptionsManager;
@@ -218,12 +224,22 @@ public class AdminResource implements Serializable {
     }
 
     @PUT
-    @ApiOperation(value = "Enable workspace", response = Response.class)
+    @ApiOperation(value = "Enable or disable workspace", response = Response.class)
     @Path("workspace/{workspaceId}/enable")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceDTO enableWorkspace(@PathParam("workspaceId") String workspaceId, @QueryParam("enabled") boolean enabled) throws WorkspaceNotFoundException {
+    public WorkspaceDTO enableWorkspace(@PathParam("workspaceId") String workspaceId, @QueryParam("enabled") boolean enabled)
+            throws WorkspaceNotFoundException {
         Workspace workspace = workspaceManager.enableWorkspace(workspaceId, enabled);
         return mapper.map(workspace, WorkspaceDTO.class);
     }
 
+    @PUT
+    @ApiOperation(value = "Enable or disable account", response = Response.class)
+    @Path("account/{login}/enable")
+    @Produces(MediaType.APPLICATION_JSON)
+    public AccountDTO enableAccount(@PathParam("login") String login, @QueryParam("enabled") boolean enabled)
+            throws WorkspaceNotFoundException, AccountNotFoundException, NotAllowedException {
+        Account account = accountManager.enableAccount(login, enabled);
+        return mapper.map(account, AccountDTO.class);
+    }
 }

@@ -113,4 +113,9 @@ public class AccountDAO {
         return workspaces;
     }
 
+    public List<Account> getAccounts(){
+        TypedQuery<Account> query = em.createQuery("SELECT DISTINCT a FROM Account a", Account.class);
+        return query.getResultList();
+    }
+
 }

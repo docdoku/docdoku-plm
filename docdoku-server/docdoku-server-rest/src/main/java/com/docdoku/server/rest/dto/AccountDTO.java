@@ -32,6 +32,7 @@ public class AccountDTO implements Serializable {
     private String language;
     private String timeZone;
     private boolean admin;
+    private boolean enabled;
     private String newPassword;
 
     public AccountDTO() {
@@ -91,5 +92,13 @@ public class AccountDTO implements Serializable {
 
     public void setNewPassword(String newPassword) {
         this.newPassword = newPassword;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

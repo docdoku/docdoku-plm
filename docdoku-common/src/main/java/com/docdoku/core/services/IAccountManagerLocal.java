@@ -23,6 +23,8 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Organization;
 import com.docdoku.core.exceptions.*;
 
+import java.util.List;
+
 /**
  *
  * @author Elisabel Généreux
@@ -50,4 +52,8 @@ public interface IAccountManagerLocal {
     void deleteGCMAccount() throws AccountNotFoundException, GCMAccountNotFoundException;
 
     boolean isAccountEnabled(String pLogin) throws AccountNotFoundException;
+
+    List<Account> getAccounts();
+
+    Account enableAccount(String login, boolean enabled) throws AccountNotFoundException, NotAllowedException;
 }

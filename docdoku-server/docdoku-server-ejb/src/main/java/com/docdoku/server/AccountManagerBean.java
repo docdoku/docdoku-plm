@@ -41,6 +41,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
 
@@ -165,10 +166,30 @@ public class AccountManagerBean implements IAccountManagerLocal {
         return account.isEnabled();
     }
 
+    @Override
+    @RolesAllowed(UserGroupMapping.ADMIN_ROLE_ID)
+    public List<Account> getAccounts() {
+        AccountDAO accountDAO = new AccountDAO(em);
+        return accountDAO.getAccounts();
+    }
+
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public Account getMyAccount() throws AccountNotFoundException {
         return getAccount(contextManager.getCallerPrincipalName());
     }
 
+    @Override
+    @RolesAllowed(UserGroupMapping.ADMIN_ROLE_ID)
+    public Account enableAccount(String login, boolean enabled) throws AccountNotFoundException, NotAllowedException {
+        String callerPrincipalLogin = contextManager.getCallerPrincipalLogin();
+        if(!callerPrincipalLogin.equals(login)){
+            Account account = getAccount(login);
+            account.setEnabled(enabled);
+            return account;
+        }else{
+            Account callerAccount = getMyAccount();
+            throw new NotAllowedException(new Locale(callerAccount.getLanguage()),"NotAllowedException67");
+        }
+    }
 }
