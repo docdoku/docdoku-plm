@@ -291,6 +291,13 @@ public class WorkspaceDAO {
 
         em.flush();
 
+        // Tags subscriptions
+        em.createQuery("DELETE FROM TagUserSubscription t where t.tag.workspace = :workspace")
+                .setParameter("workspace",workspace).executeUpdate();
+
+        em.createQuery("DELETE FROM TagUserGroupSubscription t where t.tag.workspace = :workspace")
+                .setParameter("workspace",workspace).executeUpdate();
+
         // Tags
         em.createQuery("DELETE FROM Tag t where t.workspace = :workspace")
                 .setParameter("workspace",workspace).executeUpdate();
