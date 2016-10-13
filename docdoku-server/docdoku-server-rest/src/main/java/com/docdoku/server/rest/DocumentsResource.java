@@ -112,8 +112,6 @@ public class DocumentsResource {
                                                         @PathParam("workspaceId") String workspaceId,
                                                         @QueryParam("q") String q) throws EntityNotFoundException, UserNotActiveException, ESServerException {
         MultivaluedMap<String, String> params = uri.getQueryParameters();
-        String configSpecType = params.containsKey("configSpec") ? params.get("configSpec").get(0) : null;
-
         DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseDocumentStringQuery(workspaceId, params);
 
         DocumentRevision[] docRs = documentService.searchDocumentRevisions(documentSearchQuery);
