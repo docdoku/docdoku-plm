@@ -26,6 +26,7 @@ import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IMailerLocal;
+import com.docdoku.core.services.IPlatformOptionsManagerLocal;
 import com.docdoku.core.workflow.Task;
 
 import javax.annotation.Resource;
@@ -59,6 +60,9 @@ public class MailerBean implements IMailerLocal {
     @Inject
     private ConfigManager configManager;
 
+    @Inject
+    private IPlatformOptionsManagerLocal platformOptionsManager;
+
     @Resource(name = "mail/docdokuSMTP")
     private Session mailSession;
 
@@ -68,13 +72,15 @@ public class MailerBean implements IMailerLocal {
     @Override
     public void sendStateNotification(Collection<User> pSubscribers,
                                       DocumentRevision pDocumentRevision) {
+
+        LOGGER.info("Sending state notification emails \n\tfor the document " + pDocumentRevision.getLastIteration());
+
         try {
             for (User pSubscriber : pSubscribers) {
                 sendStateNotification(pSubscriber, pDocumentRevision);
             }
         } catch (MessagingException pMEx) {
-            String logMessage = "Message format error. \n\tNotifications can't be sent. \n\t" + pMEx.getMessage();
-            LOGGER.log(Level.SEVERE, logMessage, pMEx);
+            logMessagingException(pMEx);
         }
     }
 
@@ -82,13 +88,75 @@ public class MailerBean implements IMailerLocal {
     @Override
     public void sendIterationNotification(Collection<User> pSubscribers,
                                           DocumentRevision pDocumentRevision) {
+
+        LOGGER.info("Sending iteration notification emails \n\tfor the document " + pDocumentRevision.getLastIteration());
+
         try {
             for (User pSubscriber : pSubscribers) {
                 sendIterationNotification(pSubscriber, pDocumentRevision);
             }
         } catch (MessagingException pMEx) {
-            String message = "Message format error. \n\tNotifications can't be sent. \n\t" + pMEx.getMessage();
-            LOGGER.log(Level.SEVERE, message, pMEx);
+            logMessagingException(pMEx);
+        }
+    }
+
+    @Asynchronous
+    @Override
+    public void sendTaggedNotification(Collection<User> pSubscribers, DocumentRevision pDocR, Tag pTag) {
+
+        LOGGER.info("Sending tagged notification emails \n\tfor the document " + pDocR.getLastIteration());
+
+        try {
+            for (User pSubscriber : pSubscribers) {
+                sendTaggedNotification(pSubscriber, pDocR, pTag);
+            }
+        } catch (MessagingException pMEx) {
+            logMessagingException(pMEx);
+        }
+    }
+
+    @Asynchronous
+    @Override
+    public void sendTaggedNotification(Collection<User> pSubscribers, PartRevision pPartR, Tag pTag) {
+
+        LOGGER.info("Sending tagged notification emails \n\tfor the part " + pPartR.getLastIteration());
+
+        try {
+            for (User pSubscriber : pSubscribers) {
+                sendTaggedNotification(pSubscriber, pPartR, pTag);
+            }
+        } catch (MessagingException pMEx) {
+            logMessagingException(pMEx);
+        }
+    }
+
+    @Asynchronous
+    @Override
+    public void sendUntaggedNotification(Collection<User> pSubscribers, DocumentRevision pDocR, Tag pTag) {
+
+        LOGGER.info("Sending untagged notification emails \n\tfor the document " + pDocR.getLastIteration());
+
+        try {
+            for (User pSubscriber : pSubscribers) {
+                sendUntaggedNotification(pSubscriber, pDocR, pTag);
+            }
+        } catch (MessagingException pMEx) {
+            logMessagingException(pMEx);
+        }
+    }
+
+    @Asynchronous
+    @Override
+    public void sendUntaggedNotification(Collection<User> pSubscribers, PartRevision pPartR, Tag pTag) {
+
+        LOGGER.info("Sending untagged notification emails \n\tfor the part " + pPartR.getLastIteration());
+
+        try {
+            for (User pSubscriber : pSubscribers) {
+                sendUntaggedNotification(pSubscriber, pPartR, pTag);
+            }
+        } catch (MessagingException pMEx) {
+            logMessagingException(pMEx);
         }
     }
 
@@ -96,148 +164,86 @@ public class MailerBean implements IMailerLocal {
     @Override
     public void sendApproval(Collection<Task> pRunningTasks,
                              DocumentRevision pDocumentRevision) {
+
+        LOGGER.info("Sending approval emails \n\tfor the document " + pDocumentRevision.getLastIteration());
+
         try {
             for (Task task : pRunningTasks) {
                 sendApproval(task, pDocumentRevision);
             }
         } catch (MessagingException pMEx) {
-            String message = "Message format error. \n\t Approval can't be sent. \n\t " + pMEx.getMessage();
-            LOGGER.log(Level.SEVERE, message, pMEx);
-        }
-    }
-
-
-    @Asynchronous
-    @Override
-    public void sendPasswordRecovery(Account account, String passwordRRUuid) {
-        try {
-            Locale locale = new Locale(account.getLanguage());
-            sendMessage(new InternetAddress(account.getEmail(), account.getName()),
-                    getPasswordRecoverySubject(locale),
-                    getPasswordRecoveryMessage(account, passwordRRUuid, locale));
-            LOGGER.info("Sending recovery message \n\tfor the user which login is " + account.getLogin());
-        } catch (UnsupportedEncodingException pUEEx) {
-            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.log(Level.WARNING, message, pUEEx);
-        } catch (MessagingException pMEx) {
-            String message = "Message format error. \n\tRecovery message can't be sent. \n\t" + pMEx.getMessage();
-            LOGGER.log(Level.SEVERE, message, pMEx);
+            logMessagingException(pMEx);
         }
     }
 
     @Asynchronous
     @Override
     public void sendApproval(Collection<Task> pRunningTasks, PartRevision partRevision) {
+
+        LOGGER.info("Sending approval required emails \n\tfor the part " + partRevision.getLastIteration());
+
         try {
             for (Task task : pRunningTasks) {
                 sendApproval(task, partRevision);
-                LOGGER.info("Sending approval required emails \n\tfor the part " + partRevision.getLastIteration());
             }
         } catch (MessagingException pMEx) {
-            String message = "Message format error.  \n\tApproval can't be sent. \n\t" + pMEx.getMessage();
-            LOGGER.log(Level.SEVERE, message, pMEx);
+            logMessagingException(pMEx);
+        }
+    }
+
+    @Asynchronous
+    @Override
+    public void sendPasswordRecovery(Account account, String passwordRRUuid) {
+
+        LOGGER.info("Sending recovery message \n\tfor the user which login is " + account.getLogin());
+
+        Locale locale = new Locale(account.getLanguage());
+        Object[] args = {
+                getPasswordRecoveryUrl(passwordRRUuid),
+                account.getLogin()
+        };
+
+        String subject = getString("Recovery_title", locale);
+        String body = getBody("Recovery_text", args, locale);
+
+        try {
+            sendMessage(new InternetAddress(account.getEmail(), account.getName()), subject, body);
+        } catch (UnsupportedEncodingException pUEEx) {
+            logUnsupportedEncodingException(pUEEx);
+        } catch (MessagingException pMEx) {
+            logMessagingException(pMEx);
         }
     }
 
     @Asynchronous
     @Override
     public void sendWorkspaceDeletionNotification(Account admin, String workspaceId) {
-        try {
-            Locale locale = new Locale(admin.getLanguage());
-            sendMessage(new InternetAddress(admin.getEmail(), admin.getName()),
-                    getWorkspaceDeletionSubject(locale),
-                    getWorkspaceDeletionMessage(workspaceId, locale));
-
-        } catch (UnsupportedEncodingException pUEEx) {
-            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.log(Level.WARNING, message, pUEEx);
-        } catch (MessagingException pMEx) {
-            String message = "Message format error. \n\t" + pMEx.getMessage();
-            LOGGER.log(Level.SEVERE, message, pMEx);
-        }
+        sendWorkspaceDeletionNotification(admin, workspaceId, true);
     }
 
     @Asynchronous
     @Override
     public void sendWorkspaceDeletionErrorNotification(Account admin, String workspaceId) {
-        try {
-            Locale locale = new Locale(admin.getLanguage());
-            sendMessage(new InternetAddress(admin.getEmail(), admin.getName()),
-                    getWorkspaceDeletionSubject(locale),
-                    getWorkspaceDeletionErrorMessage(workspaceId, locale));
-
-        } catch (UnsupportedEncodingException pUEEx) {
-            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.log(Level.WARNING, message, pUEEx);
-        } catch (MessagingException pMEx) {
-            String message = "Message format error. \n\t" + pMEx.getMessage();
-            LOGGER.log(Level.SEVERE, message, pMEx);
-        }
+        sendWorkspaceDeletionNotification(admin, workspaceId, false);
     }
 
-    @Asynchronous
-    @Override
-    public void sendTaggedNotification(Collection<User> pSubscribers, DocumentRevision pDocR, Tag pTag) {
-        try {
-            for (User pSubscriber : pSubscribers) {
-                sendTaggedNotification(pSubscriber, pDocR, pTag);
-            }
-        } catch (MessagingException pMEx) {
-            String message = "Message format error. \n\tNotifications can't be sent. \n\t" + pMEx.getMessage();
-            LOGGER.log(Level.SEVERE, message, pMEx);
-        }
-    }
-
-    @Asynchronous
-    @Override
-    public void sendTaggedNotification(Collection<User> pSubscribers, PartRevision pPartR, Tag pTag) {
-        try {
-            for (User pSubscriber : pSubscribers) {
-                sendTaggedNotification(pSubscriber, pPartR, pTag);
-            }
-        } catch (MessagingException pMEx) {
-            String message = "Message format error. \n\tNotifications can't be sent. \n\t" + pMEx.getMessage();
-            LOGGER.log(Level.SEVERE, message, pMEx);
-        }
-    }
-
-    @Asynchronous
-    @Override
-    public void sendUntaggedNotification(Collection<User> pSubscribers, DocumentRevision pDocR, Tag pTag) {
-        try {
-            for (User pSubscriber : pSubscribers) {
-                sendUntaggedNotification(pSubscriber, pDocR, pTag);
-            }
-        } catch (MessagingException pMEx) {
-            String message = "Message format error. \n\tNotifications can't be sent. \n\t" + pMEx.getMessage();
-            LOGGER.log(Level.SEVERE, message, pMEx);
-        }
-    }
-
-    @Asynchronous
-    @Override
-    public void sendUntaggedNotification(Collection<User> pSubscribers, PartRevision pPartR, Tag pTag) {
-        try {
-            for (User pSubscriber : pSubscribers) {
-                sendUntaggedNotification(pSubscriber, pPartR, pTag);
-            }
-        } catch (MessagingException pMEx) {
-            String message = "Message format error. \n\tNotifications can't be sent. \n\t" + pMEx.getMessage();
-            LOGGER.log(Level.SEVERE, message, pMEx);
-        }
-    }
 
     @Asynchronous
     @Override
     public void sendPartRevisionWorkflowRelaunchedNotification(PartRevision partRevision) {
+
         Workspace workspace = partRevision.getPartMaster().getWorkspace();
         Account admin = workspace.getAdmin();
         User author = partRevision.getAuthor();
 
+        LOGGER.info("Sending workflow relaunch notification email \n\tfor the part " + partRevision.getLastIteration() + " to admin: " + admin.getLogin());
+
         // Mail both workspace admin and partRevision author
         sendWorkflowRelaunchedNotification(admin.getName(), admin.getEmail(), admin.getLanguage(), workspace.getId(), partRevision);
 
+
         if (!admin.getLogin().equals(author.getLogin())) {
+            LOGGER.info("Sending workflow relaunch notification email \n\tfor the part " + partRevision.getLastIteration() + " to user: " + author.getLogin());
             sendWorkflowRelaunchedNotification(author.getName(), author.getEmail(), author.getLanguage(), workspace.getId(), partRevision);
         }
 
@@ -261,238 +267,252 @@ public class MailerBean implements IMailerLocal {
     @Asynchronous
     @Override
     public void sendIndexerResult(Account account, String workspaceId, boolean hasSuccess, String pMessage) {
+
+        Locale locale = new Locale(account.getLanguage());
+
+        Object[] args = {
+                workspaceId,
+                pMessage
+        };
+
+        String subject = getSubject(hasSuccess ? "Indexer_success_title" : "Indexer_failure_title", locale);
+        String body = getBody(hasSuccess ? "Indexer_success_text" : "Indexer_failure_text", args, locale);
+
         try {
-            Locale locale = new Locale(account.getLanguage());
-            sendMessage(new InternetAddress(account.getEmail(), account.getName()),
-                    getIndexerResultSubject(locale, hasSuccess),
-                    getIndexerResultMessage(workspaceId, pMessage, hasSuccess, locale));
-        } catch (UnsupportedEncodingException pUEEx) {
-            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.log(Level.WARNING, message, pUEEx);
+            sendMessage(new InternetAddress(account.getEmail(), account.getName()), subject, body);
         } catch (MessagingException pMEx) {
-            String message = "Message format error. \n\t" + pMEx.getMessage();
-            LOGGER.log(Level.SEVERE, message, pMEx);
+            logMessagingException(pMEx);
+        } catch (UnsupportedEncodingException e) {
+            logUnsupportedEncodingException(e);
         }
     }
 
     @Asynchronous
     @Override
     public void sendCredential(Account account) {
+
+        Locale locale = new Locale(account.getLanguage());
+
+        String accountDisabledMessage = "";
+        if (!account.isEnabled()) {
+            switch (platformOptionsManager.getWorkspaceCreationStrategy()) {
+                case ADMIN_VALIDATION:
+                    accountDisabledMessage = getString("SignUp_AccountDisabled_text", locale);
+                    break;
+            }
+        }
+
+        Object[] args = {
+                account.getLogin(),
+                configManager.getCodebase(),
+                accountDisabledMessage
+        };
+
+        String subject = getSubject("SignUp_success_title", locale);
+        String body = getBody("SignUp_success_text", args, locale);
+
         try {
-            Locale locale = new Locale(account.getLanguage());
-            sendMessage(new InternetAddress(account.getEmail()),
-                    getCredentialSubject(locale),
-                    getCredentialMessage(account, locale));
+            sendMessage(new InternetAddress(account.getEmail(), account.getName()), subject, body);
         } catch (MessagingException pMEx) {
-            String message = "Message format error. \n\t" + pMEx.getMessage();
-            LOGGER.log(Level.SEVERE, message, pMEx);
+            logMessagingException(pMEx);
+        } catch (UnsupportedEncodingException e) {
+            logUnsupportedEncodingException(e);
+        }
+    }
+
+    private void sendWorkspaceDeletionNotification(Account admin, String workspaceId, boolean hasSuccess) {
+
+        LOGGER.info("Sending workspace deletion notification emails \n\tfor the workspace " + workspaceId + " success : " + hasSuccess);
+
+        Locale locale = new Locale(admin.getLanguage());
+        Object[] args = {
+                workspaceId
+        };
+        String subject = getSubject("WorkspaceDeletion_title", locale);
+        String body = getBody(hasSuccess ? "WorkspaceDeletion_text" : "WorkspaceDeletionError_text", args, locale);
+
+        try {
+            sendMessage(new InternetAddress(admin.getEmail(), admin.getName()), subject, body);
+        } catch (UnsupportedEncodingException pUEEx) {
+            logUnsupportedEncodingException(pUEEx);
+        } catch (MessagingException pMEx) {
+            logMessagingException(pMEx);
         }
     }
 
     private void sendStateNotification(User pSubscriber,
                                        DocumentRevision pDocumentRevision) throws MessagingException {
-        try {
-            Locale locale = new Locale(pSubscriber.getLanguage());
-            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()),
-                    getStateNotificationSubject(locale),
-                    getStateNotificationMessage(pDocumentRevision, locale));
-            LOGGER.info("Sending state notification emails \n\tfor the document " + pDocumentRevision.getLastIteration());
 
+        LOGGER.info("Sending state notification emails \n\tfor the document " + pDocumentRevision.getLastIteration() + " to user " + pSubscriber.getLogin());
+
+        Locale locale = new Locale(pSubscriber.getLanguage());
+        String stateName = pDocumentRevision.getLifeCycleState();
+        stateName = (stateName != null && !stateName.isEmpty()) ? stateName : getString("FinalState_name", locale);
+
+        Object[] args = {
+                pDocumentRevision,
+                pDocumentRevision.getLastIteration().getCreationDate(),
+                getDocumentRevisionPermalinkURL(pDocumentRevision),
+                stateName
+        };
+
+        String subject = getSubject("StateNotification_title", locale);
+        String body = getBody("StateNotification_text", args, locale);
+
+        try {
+            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()), subject, body);
         } catch (UnsupportedEncodingException pUEEx) {
-            String logMessage = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.log(Level.WARNING, logMessage, pUEEx);
+            logUnsupportedEncodingException(pUEEx);
         }
     }
 
     private void sendIterationNotification(User pSubscriber,
                                            DocumentRevision pDocumentRevision) throws MessagingException {
+
+        LOGGER.info("Sending iteration notification emails \n\tfor the document " + pDocumentRevision.getLastIteration());
+
+        Locale locale = new Locale(pSubscriber.getLanguage());
+
+        Object[] args = {
+                pDocumentRevision,
+                pDocumentRevision.getLastIteration().getCreationDate(),
+                pDocumentRevision.getLastIteration().getIteration(),
+                pDocumentRevision.getLastIteration().getAuthor(),
+                getDocumentRevisionPermalinkURL(pDocumentRevision)
+        };
+
+        String subject = getSubject("IterationNotification_title", locale);
+        String body = getBody("IterationNotification_text", args, locale);
+
         try {
-            Locale locale = new Locale(pSubscriber.getLanguage());
-            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()),
-                    getIterationNotificationSubject(locale),
-                    getIterationNotificationMessage(pDocumentRevision, locale));
-            LOGGER.info("Sending iteration notification emails \n\tfor the document " + pDocumentRevision.getLastIteration());
+            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()), subject, body);
         } catch (UnsupportedEncodingException pUEEx) {
-            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.log(Level.WARNING, message, pUEEx);
+            logUnsupportedEncodingException(pUEEx);
         }
+    }
+
+    private void sendTaggedNotification(User pSubscriber, DocumentRevision pDocumentRevision, Tag pTag) throws MessagingException {
+        sendTaggedNotification(pSubscriber, pDocumentRevision, pTag, true);
+    }
+
+    private void sendUntaggedNotification(User pSubscriber, DocumentRevision pDocumentRevision, Tag pTag) throws MessagingException {
+        sendTaggedNotification(pSubscriber, pDocumentRevision, pTag, false);
     }
 
     private void sendTaggedNotification(User pSubscriber,
-                                           DocumentRevision pDocumentRevision, Tag pTag) throws MessagingException {
+                                        DocumentRevision pDocumentRevision, Tag pTag, boolean tagged) throws MessagingException {
+        LOGGER.info("Sending tag notification emails \n\tfor the document " + pDocumentRevision.getLastIteration() + " to subscriber : " + pSubscriber.getLogin());
+
+        Locale locale = new Locale(pSubscriber.getLanguage());
+        String subject = getSubject("TagNotification_title", locale);
+
+        Object[] args = {
+                pTag,
+                pDocumentRevision,
+                getDocumentRevisionPermalinkURL(pDocumentRevision)
+        };
+
+        String body = getBody(tagged ? "TagNotificationTagged_text" : "TagNotificationUntagged_text", args, locale);
+
         try {
-            Locale locale = new Locale(pSubscriber.getLanguage());
-            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()),
-                    getTagNotificationSubject(locale),
-                    getTaggedNotificationMessage(pTag, pDocumentRevision, locale));
-            LOGGER.info("Sending tag notification emails \n\tfor the document " + pDocumentRevision.getLastIteration());
+            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()), subject, body);
         } catch (UnsupportedEncodingException pUEEx) {
-            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.log(Level.WARNING, message, pUEEx);
+            logUnsupportedEncodingException(pUEEx);
         }
     }
 
-    private void sendTaggedNotification(User pSubscriber,
-                                        PartRevision pPartRevision, Tag pTag) throws MessagingException {
-        try {
-            Locale locale = new Locale(pSubscriber.getLanguage());
-            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()),
-                    getTagNotificationSubject(locale),
-                    getTaggedNotificationMessage(pTag, pPartRevision, locale));
-            LOGGER.info("Sending tag notification emails \n\tfor the part " + pPartRevision.getLastIteration());
-        } catch (UnsupportedEncodingException pUEEx) {
-            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.log(Level.WARNING, message, pUEEx);
-        }
+    private void sendTaggedNotification(User pSubscriber, PartRevision pPartRevision, Tag pTag) throws MessagingException {
+        sendTaggedNotification(pSubscriber, pPartRevision, pTag, true);
     }
 
-    private void sendUntaggedNotification(User pSubscriber,
-                                        DocumentRevision pDocumentRevision, Tag pTag) throws MessagingException {
-        try {
-            Locale locale = new Locale(pSubscriber.getLanguage());
-            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()),
-                    getTagNotificationSubject(locale),
-                    getUntaggedNotificationMessage(pTag, pDocumentRevision, locale));
-            LOGGER.info("Sending tag notification emails \n\tfor the document " + pDocumentRevision.getLastIteration());
-        } catch (UnsupportedEncodingException pUEEx) {
-            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.log(Level.WARNING, message, pUEEx);
-        }
+    private void sendUntaggedNotification(User pSubscriber, PartRevision pPartRevision, Tag pTag) throws MessagingException {
+        sendTaggedNotification(pSubscriber, pPartRevision, pTag, false);
     }
 
-    private void sendUntaggedNotification(User pSubscriber,
-                                          PartRevision pPartRevision, Tag pTag) throws MessagingException {
+    private void sendTaggedNotification(User pSubscriber, PartRevision pPartRevision, Tag pTag, boolean tagged) throws MessagingException {
+        LOGGER.info("Sending tag notification emails \n\tfor the part " + pPartRevision.getLastIteration());
+
+        Locale locale = new Locale(pSubscriber.getLanguage());
+        Object[] args = {
+                pTag,
+                pPartRevision,
+                getPartRevisionPermalinkURL(pPartRevision)
+        };
+
+        String subject = getSubject("TagNotification_title", locale);
+        String body = getBody(tagged ? "TagNotificationTagged_text" : "TagNotificationUnTagged_text", args, locale);
+
         try {
-            Locale locale = new Locale(pSubscriber.getLanguage());
-            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()),
-                    getTagNotificationSubject(locale),
-                    getUntaggedNotificationMessage(pTag, pPartRevision, locale));
-            LOGGER.info("Sending tag notification emails \n\tfor the part " + pPartRevision.getLastIteration());
+            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()), subject, body);
         } catch (UnsupportedEncodingException pUEEx) {
-            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.log(Level.WARNING, message, pUEEx);
+            logUnsupportedEncodingException(pUEEx);
         }
     }
 
     private void sendApproval(Task task, DocumentRevision pDocumentRevision) throws MessagingException {
-        Set<User> workers=new HashSet<>();
+
+        LOGGER.info("Sending approval required emails \n\tfor the document " + pDocumentRevision.getLastIteration());
+
+        Set<User> workers = new HashSet<>();
         workers.addAll(task.getAssignedUsers());
-        task.getAssignedGroups().forEach(g->workers.addAll(g.getUsers()));
-        for(User worker:workers) {
-            try {
-                Locale locale = new Locale(worker.getLanguage());
-                sendMessage(new InternetAddress(worker.getEmail(), worker.getName()),
-                        getApprovalRequiredSubject(locale),
-                        getApprovalRequiredMessage(task, pDocumentRevision, locale));
-                LOGGER.info("Sending approval required emails \n\tfor the document " + pDocumentRevision.getLastIteration());
-            } catch (UnsupportedEncodingException pUEEx) {
-                String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-                LOGGER.log(Level.WARNING, message, pUEEx);
-            }
+        task.getAssignedGroups().forEach(g -> workers.addAll(g.getUsers()));
+
+        for (User worker : workers) {
+            sendApprovalToUser(worker, task, pDocumentRevision);
         }
     }
 
     private void sendApproval(Task task, PartRevision partRevision) throws MessagingException {
-        Set<User> workers=new HashSet<>();
+
+        LOGGER.info("Sending approval required emails \n\tfor the part " + partRevision.getLastIteration());
+
+        Set<User> workers = new HashSet<>();
         workers.addAll(task.getAssignedUsers());
-        task.getAssignedGroups().forEach(g->workers.addAll(g.getUsers()));
-        for(User worker:workers) {
-            try {
-                Locale locale = new Locale(worker.getLanguage());
-                sendMessage(new InternetAddress(worker.getEmail(), worker.getName()),
-                        getApprovalRequiredSubject(locale),
-                        getApprovalRequiredMessage(task, partRevision, locale));
+        task.getAssignedGroups().forEach(g -> workers.addAll(g.getUsers()));
 
-            } catch (UnsupportedEncodingException pUEEx) {
-                String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-                LOGGER.log(Level.WARNING, message, pUEEx);
-            }
+        for (User worker : workers) {
+            sendApprovalToUser(worker, task, partRevision);
         }
     }
 
-    private String getCredentialMessage(Account account, Locale locale) {
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale);
+
+    private void sendApprovalToUser(User worker, Task task, DocumentRevision pDocumentRevision) throws MessagingException {
+
+        LOGGER.info("Sending approval email \n\tfor the document " + pDocumentRevision.getLastIteration() + " to user: " + worker.getLogin());
+
+        Locale locale = new Locale(worker.getLanguage());
+
+        String subject = getSubject("Approval_title", locale);
+
         Object[] args = {
-                account.getLogin(),
-                configManager.getCodebase()
+                getTaskUrl(task, pDocumentRevision.getWorkspaceId()),
+                pDocumentRevision.getWorkspaceId(),
+                String.valueOf(task.getWorkflowId()),
+                String.valueOf(task.getActivityStep()),
+                String.valueOf(task.getNum()),
+                task.getTitle(),
+                getDocumentRevisionPermalinkURL(pDocumentRevision),
+                pDocumentRevision,
+                task.getInstructions() == null ? "-" : task.getInstructions()
         };
 
-        return MessageFormat.format(bundle.getString("SignUp_success_text"), args);
-    }
+        String body = getBody("Approval_document_text", args, locale);
 
-    private String getCredentialSubject(Locale pLocale) {
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return bundle.getString("SignUp_success_title");
-    }
-
-    private void sendWorkflowRelaunchedNotification(String userName, String userEmail, String userLanguage, String workspaceId, PartRevision partRevision) {
         try {
-            Locale locale = new Locale(userLanguage);
-            sendMessage(new InternetAddress(userEmail, userName),
-                    getPartRevisionWorkflowRelaunchedSubject(locale),
-                    getPartRevisionWorkflowRelaunchedMessage(workspaceId, partRevision.getPartNumber(),
-                            partRevision.getVersion(), partRevision.getWorkflow().getLifeCycleState(), locale));
+            sendMessage(new InternetAddress(worker.getEmail(), worker.getName()), subject, body);
         } catch (UnsupportedEncodingException pUEEx) {
-            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.log(Level.WARNING, message, pUEEx);
-        } catch (MessagingException pMEx) {
-            String message = "Message format error. \n\tCannot send workflow relaunched notification.\n\t" + pMEx.getMessage();
-            LOGGER.log(Level.SEVERE, message, pMEx);
+            logUnsupportedEncodingException(pUEEx);
         }
     }
 
 
-    private String getPartRevisionWorkflowRelaunchedMessage(String workspaceId, String number, String version, String lifeCycleState, Locale pLocale) {
-        Object[] args = {
-                number + "-" + version,
-                workspaceId,
-                lifeCycleState
-        };
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return MessageFormat.format(bundle.getString("PartRevision_workflow_relaunched_text"), args);
-    }
+    private void sendApprovalToUser(User worker, Task pTask, PartRevision partRevision) throws MessagingException {
 
+        LOGGER.info("Sending approval email \n\tfor the part " + partRevision.getLastIteration() + " to user: " + worker.getLogin());
 
-    private void sendWorkflowRelaunchedNotification(String userName, String userEmail, String userLanguage, String workspaceId, DocumentRevision documentRevision) {
-        try {
-            Locale locale = new Locale(userLanguage);
-            sendMessage(new InternetAddress(userEmail, userName),
-                    getDocumentRevisionWorkflowRelaunchedSubject(locale),
-                    getDocumentRevisionWorkflowRelaunchedMessage(workspaceId, documentRevision.getId(),
-                            documentRevision.getVersion(), documentRevision.getWorkflow().getLifeCycleState(), locale));
-        } catch (UnsupportedEncodingException pUEEx) {
-            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
-            LOGGER.log(Level.WARNING, message, pUEEx);
-        } catch (MessagingException pMEx) {
-            String message = "Message format error. \n\tCannot send workflow relaunched notification.\n\t" + pMEx.getMessage();
-            LOGGER.log(Level.SEVERE, message, pMEx);
-        }
-    }
+        Locale locale = new Locale(worker.getLanguage());
 
-    private String getDocumentRevisionWorkflowRelaunchedMessage(String workspaceId, String docMid, String version, String lifeCycleState, Locale pLocale) {
-        Object[] args = {
-                docMid + "-" + version,
-                workspaceId,
-                lifeCycleState
-        };
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return MessageFormat.format(bundle.getString("DocumentRevision_workflow_relaunched_text"), args);
-    }
-
-    private String getWorkspaceDeletionMessage(String workspaceId, Locale pLocale) {
-        Object[] args = {workspaceId};
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return MessageFormat.format(bundle.getString("WorkspaceDeletion_text"), args);
-    }
-
-    private String getWorkspaceDeletionErrorMessage(String workspaceId, Locale locale) {
-        Object[] args = {workspaceId};
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale);
-        return MessageFormat.format(bundle.getString("WorkspaceDeletionError_text"), args);
-    }
-
-
-    private String getApprovalRequiredMessage(Task pTask, PartRevision partRevision, Locale pLocale) {
+        String subject = getSubject("Approval_title", locale);
 
         String instructions = pTask.getInstructions() == null ? "-" : pTask.getInstructions();
 
@@ -508,175 +528,64 @@ public class MailerBean implements IMailerLocal {
                 instructions
         };
 
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return MessageFormat.format(bundle.getString("Approval_part_text"), args);
+        String body = getBody("Approval_part_text", args, locale);
+
+        try {
+            sendMessage(new InternetAddress(worker.getEmail(), worker.getName()), subject, body);
+        } catch (UnsupportedEncodingException pUEEx) {
+            logUnsupportedEncodingException(pUEEx);
+        }
     }
 
-    private String getTaggedNotificationMessage(Tag pTag, DocumentRevision pDocumentRevision, Locale pLocale) {
-        Object[] args = {
-                pTag,
-                pDocumentRevision,
-                getDocumentRevisionPermalinkURL(pDocumentRevision)
-        };
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return MessageFormat.format(bundle.getString("TagNotificationTagged_text"), args);
-    }
 
-    private String getTaggedNotificationMessage(Tag pTag, PartRevision pPartRevision, Locale pLocale) {
-        Object[] args = {
-                pTag,
-                pPartRevision,
-                getPartRevisionPermalinkURL(pPartRevision)
-        };
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return MessageFormat.format(bundle.getString("TagNotificationTagged_text"), args);
-    }
+    private void sendWorkflowRelaunchedNotification(String userName, String userEmail, String userLanguage, String workspaceId, PartRevision partRevision) {
 
-    private String getUntaggedNotificationMessage(Tag pTag, DocumentRevision pDocumentRevision, Locale pLocale) {
-        Object[] args = {
-                pTag,
-                pDocumentRevision,
-                getDocumentRevisionPermalinkURL(pDocumentRevision)
-        };
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return MessageFormat.format(bundle.getString("TagNotificationUntagged_text"), args);
-    }
-
-    private String getUntaggedNotificationMessage(Tag pTag, PartRevision pPartRevision, Locale pLocale) {
-        Object[] args = {
-                pTag,
-                pPartRevision,
-                getPartRevisionPermalinkURL(pPartRevision)
-        };
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return MessageFormat.format(bundle.getString("TagNotificationUntagged_text"), args);
-    }
-
-    private String getPasswordRecoveryMessage(Account account, String pPasswordRRUuid, Locale pLocale) {
-        Object[] args = {
-                getPasswordRecoveryUrl(pPasswordRRUuid),
-                account.getLogin()
-        };
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return MessageFormat.format(bundle.getString("Recovery_text"), args);
-    }
-
-    private String getApprovalRequiredMessage(Task pTask,
-                                              DocumentRevision pDocumentRevision, Locale pLocale) {
+        Locale locale = new Locale(userLanguage);
 
         Object[] args = {
-                getTaskUrl(pTask, pDocumentRevision.getWorkspaceId()),
-                pDocumentRevision.getWorkspaceId(),
-                String.valueOf(pTask.getWorkflowId()),
-                String.valueOf(pTask.getActivityStep()),
-                String.valueOf(pTask.getNum()),
-                pTask.getTitle(),
-                getDocumentRevisionPermalinkURL(pDocumentRevision),
-                pDocumentRevision,
-                pTask.getInstructions() == null ? "-" : pTask.getInstructions()
-        };
-
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return MessageFormat.format(bundle.getString("Approval_document_text"), args);
-    }
-
-    private String getIterationNotificationMessage(DocumentRevision pDocumentRevision, Locale pLocale) {
-
-        Object[] args = {
-                pDocumentRevision,
-                pDocumentRevision.getLastIteration().getCreationDate(),
-                pDocumentRevision.getLastIteration().getIteration(),
-                pDocumentRevision.getLastIteration().getAuthor(),
-                getDocumentRevisionPermalinkURL(pDocumentRevision)
-        };
-
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return MessageFormat.format(bundle.getString("IterationNotification_text"), args);
-    }
-
-    private String getIndexerResultMessage(String workspaceId, String pMessage, boolean hasSuccess, Locale pLocale) {
-        Object[] args = {
+                partRevision.getPartNumber() + "-" + partRevision.getVersion(),
                 workspaceId,
-                pMessage
+                partRevision.getWorkflow().getLifeCycleState()
         };
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return (hasSuccess) ? MessageFormat.format(bundle.getString("Indexer_success_text"), args) :
-                MessageFormat.format(bundle.getString("Indexer_failure_text"), args);
+
+        String subject = getSubject("PartRevision_workflow_relaunched_title", locale);
+        String body = getBody("PartRevision_workflow_relaunched_text", args, locale);
+
+        try {
+            sendMessage(new InternetAddress(userEmail, userName), subject, body);
+        } catch (UnsupportedEncodingException pUEEx) {
+            logUnsupportedEncodingException(pUEEx);
+        } catch (MessagingException pMEx) {
+            logMessagingException(pMEx);
+        }
     }
 
-    private String getStateNotificationMessage(DocumentRevision pDocumentRevision, Locale pLocale) {
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        String stateName = pDocumentRevision.getLifeCycleState();
-        stateName = (stateName != null && !stateName.isEmpty()) ? stateName : bundle.getString("FinalState_name");
+
+    private void sendWorkflowRelaunchedNotification(String userName, String userEmail, String userLanguage, String workspaceId, DocumentRevision documentRevision) {
+
+
+        Locale locale = new Locale(userLanguage);
 
         Object[] args = {
-                pDocumentRevision,
-                pDocumentRevision.getLastIteration().getCreationDate(),
-                getDocumentRevisionPermalinkURL(pDocumentRevision),
-                stateName
+                documentRevision.getId() + "-" + documentRevision.getVersion(),
+                workspaceId,
+                documentRevision.getWorkflow().getLifeCycleState()
         };
 
-        return MessageFormat.format(bundle.getString("StateNotification_text"), args);
+        String subject = getSubject("DocumentRevision_workflow_relaunched_title", locale);
+        String body = getBody("DocumentRevision_workflow_relaunched_text", args, locale);
+
+        try {
+            sendMessage(new InternetAddress(userEmail, userName), subject, body);
+        } catch (UnsupportedEncodingException pUEEx) {
+            logUnsupportedEncodingException(pUEEx);
+        } catch (MessagingException pMEx) {
+            logMessagingException(pMEx);
+        }
     }
 
-
-    private String getStateNotificationSubject(Locale pLocale) {
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return bundle.getString("StateNotification_title");
-    }
-
-    private String getIterationNotificationSubject(Locale pLocale) {
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return bundle.getString("IterationNotification_title");
-    }
-
-    private String getApprovalRequiredSubject(Locale pLocale) {
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return bundle.getString("Approval_title");
-    }
-
-    private String getPasswordRecoverySubject(Locale pLocale) {
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return bundle.getString("Recovery_title");
-    }
-
-    private String getTagNotificationSubject(Locale pLocale) {
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return bundle.getString("TagNotification_title");
-    }
-
-    private String getWorkspaceDeletionSubject(Locale pLocale) {
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return bundle.getString("WorkspaceDeletion_title");
-    }
-
-    private String getPartRevisionWorkflowRelaunchedSubject(Locale pLocale) {
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return bundle.getString("PartRevision_workflow_relaunched_title");
-
-    }
-
-    private String getDocumentRevisionWorkflowRelaunchedSubject(Locale pLocale) {
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return bundle.getString("DocumentRevision_workflow_relaunched_title");
-
-    }
-
-    private String getIndexerResultSubject(Locale pLocale, boolean hasSuccess) {
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return (hasSuccess) ? bundle.getString("Indexer_success_title") : bundle.getString("Indexer_failure_title");
-    }
-
-    private void sendMessage(InternetAddress address, String subject, String content) throws MessagingException {
-        Message message = new MimeMessage(mailSession);
-        message.addRecipient(Message.RecipientType.TO, address);
-        message.setSubject(subject);
-        message.setSentDate(new Date());
-        message.setContent(content, "text/html; charset=utf-8");
-        message.setFrom();
-        Transport.send(message);
-    }
-
+    // URIs
+    // todo : move to properties file and format
     private String getDocumentRevisionPermalinkURL(DocumentRevision pDocR) {
         return configManager.getCodebase() + "/documents/#" + pDocR.getWorkspaceId() + "/" + pDocR.getId() + "/" + pDocR.getVersion();
     }
@@ -692,4 +601,52 @@ public class MailerBean implements IMailerLocal {
     private String getPasswordRecoveryUrl(String uuid) {
         return configManager.getCodebase() + "/#recover/" + uuid;
     }
+
+
+    // Log shortcuts
+    private void logMessagingException(MessagingException pMEx) {
+        String logMessage = "Message format error. \n\tMail can't be sent. \n\t" + pMEx.getMessage();
+        LOGGER.log(Level.SEVERE, logMessage, pMEx);
+    }
+
+    private void logUnsupportedEncodingException(UnsupportedEncodingException e) {
+        String logMessage = "Unsupported encoding: " + e.getMessage();
+        LOGGER.log(Level.SEVERE, logMessage, e);
+    }
+
+    // Template utils methods
+
+    private ResourceBundle getBundle(Locale pLocale) {
+        return ResourceBundle.getBundle(BASE_NAME, pLocale);
+    }
+
+    private String getString(String string, Locale pLocale) {
+        return getBundle(pLocale).getString(string);
+    }
+
+    private String format(String string, Object[] args, Locale pLocale) {
+        return MessageFormat.format(getString(string, pLocale), args);
+    }
+
+    private String getBody(String string, Object[] args, Locale pLocale) {
+        String mailBodyTemplate = getString("MailBodyTemplate", pLocale);
+        String body = format(string, args, pLocale);
+        return MessageFormat.format(mailBodyTemplate, new Object[]{body});
+    }
+
+    private String getSubject(String string, Locale pLocale) {
+        String mailSubjectTemplate = getString("MailSubjectTemplate", pLocale);
+        return mailSubjectTemplate + " " + getString(string, pLocale);
+    }
+
+    private void sendMessage(InternetAddress address, String subject, String content) throws MessagingException {
+        Message message = new MimeMessage(mailSession);
+        message.addRecipient(Message.RecipientType.TO, address);
+        message.setSubject(subject);
+        message.setSentDate(new Date());
+        message.setContent(content, "text/html; charset=utf-8");
+        message.setFrom();
+        Transport.send(message);
+    }
+
 }

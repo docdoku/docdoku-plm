@@ -48,20 +48,17 @@ public class PlatformOptionsManagerBean implements IPlatformOptionsManagerLocal 
     private EntityManager em;
 
     @Override
-    @RolesAllowed(UserGroupMapping.ADMIN_ROLE_ID)
     public PlatformOptions getPlatformOptions() {
         return loadPlatformOptions();
     }
 
     @Override
-    @RolesAllowed({UserGroupMapping.ADMIN_ROLE_ID,UserGroupMapping.REGULAR_USER_ROLE_ID})
     public PlatformOptions.OperationSecurityStrategy getWorkspaceCreationStrategy(){
         PlatformOptions platformOptions = loadPlatformOptions();
         return platformOptions.getWorkspaceCreationStrategy();
     }
 
     @Override
-    @RolesAllowed({UserGroupMapping.ADMIN_ROLE_ID,UserGroupMapping.REGULAR_USER_ROLE_ID})
     public PlatformOptions.OperationSecurityStrategy getRegistrationStrategy(){
         PlatformOptions platformOptions = loadPlatformOptions();
         return platformOptions.getRegistrationStrategy();
