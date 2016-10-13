@@ -207,9 +207,7 @@ public class MailerBean implements IMailerLocal {
         String body = getBody("Recovery_text", args, locale);
 
         try {
-            sendMessage(new InternetAddress(account.getEmail(), account.getName()), subject, body);
-        } catch (UnsupportedEncodingException pUEEx) {
-            logUnsupportedEncodingException(pUEEx);
+            sendMessage(account, subject, body);
         } catch (MessagingException pMEx) {
             logMessagingException(pMEx);
         }
@@ -279,11 +277,9 @@ public class MailerBean implements IMailerLocal {
         String body = getBody(hasSuccess ? "Indexer_success_text" : "Indexer_failure_text", args, locale);
 
         try {
-            sendMessage(new InternetAddress(account.getEmail(), account.getName()), subject, body);
+            sendMessage(account, subject, body);
         } catch (MessagingException pMEx) {
             logMessagingException(pMEx);
-        } catch (UnsupportedEncodingException e) {
-            logUnsupportedEncodingException(e);
         }
     }
 
@@ -312,11 +308,9 @@ public class MailerBean implements IMailerLocal {
         String body = getBody("SignUp_success_text", args, locale);
 
         try {
-            sendMessage(new InternetAddress(account.getEmail(), account.getName()), subject, body);
+            sendMessage(account, subject, body);
         } catch (MessagingException pMEx) {
             logMessagingException(pMEx);
-        } catch (UnsupportedEncodingException e) {
-            logUnsupportedEncodingException(e);
         }
     }
 
@@ -332,9 +326,7 @@ public class MailerBean implements IMailerLocal {
         String body = getBody(hasSuccess ? "WorkspaceDeletion_text" : "WorkspaceDeletionError_text", args, locale);
 
         try {
-            sendMessage(new InternetAddress(admin.getEmail(), admin.getName()), subject, body);
-        } catch (UnsupportedEncodingException pUEEx) {
-            logUnsupportedEncodingException(pUEEx);
+            sendMessage(admin, subject, body);
         } catch (MessagingException pMEx) {
             logMessagingException(pMEx);
         }
@@ -359,11 +351,7 @@ public class MailerBean implements IMailerLocal {
         String subject = getSubject("StateNotification_title", locale);
         String body = getBody("StateNotification_text", args, locale);
 
-        try {
-            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()), subject, body);
-        } catch (UnsupportedEncodingException pUEEx) {
-            logUnsupportedEncodingException(pUEEx);
-        }
+        sendMessage(pSubscriber, subject, body);
     }
 
     private void sendIterationNotification(User pSubscriber,
@@ -384,11 +372,8 @@ public class MailerBean implements IMailerLocal {
         String subject = getSubject("IterationNotification_title", locale);
         String body = getBody("IterationNotification_text", args, locale);
 
-        try {
-            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()), subject, body);
-        } catch (UnsupportedEncodingException pUEEx) {
-            logUnsupportedEncodingException(pUEEx);
-        }
+        sendMessage(pSubscriber, subject, body);
+
     }
 
     private void sendTaggedNotification(User pSubscriber, DocumentRevision pDocumentRevision, Tag pTag) throws MessagingException {
@@ -414,11 +399,7 @@ public class MailerBean implements IMailerLocal {
 
         String body = getBody(tagged ? "TagNotificationTagged_text" : "TagNotificationUntagged_text", args, locale);
 
-        try {
-            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()), subject, body);
-        } catch (UnsupportedEncodingException pUEEx) {
-            logUnsupportedEncodingException(pUEEx);
-        }
+        sendMessage(pSubscriber, subject, body);
     }
 
     private void sendTaggedNotification(User pSubscriber, PartRevision pPartRevision, Tag pTag) throws MessagingException {
@@ -442,11 +423,7 @@ public class MailerBean implements IMailerLocal {
         String subject = getSubject("TagNotification_title", locale);
         String body = getBody(tagged ? "TagNotificationTagged_text" : "TagNotificationUnTagged_text", args, locale);
 
-        try {
-            sendMessage(new InternetAddress(pSubscriber.getEmail(), pSubscriber.getName()), subject, body);
-        } catch (UnsupportedEncodingException pUEEx) {
-            logUnsupportedEncodingException(pUEEx);
-        }
+        sendMessage(pSubscriber, subject, body);
     }
 
     private void sendApproval(Task task, DocumentRevision pDocumentRevision) throws MessagingException {
@@ -498,11 +475,7 @@ public class MailerBean implements IMailerLocal {
 
         String body = getBody("Approval_document_text", args, locale);
 
-        try {
-            sendMessage(new InternetAddress(worker.getEmail(), worker.getName()), subject, body);
-        } catch (UnsupportedEncodingException pUEEx) {
-            logUnsupportedEncodingException(pUEEx);
-        }
+        sendMessage(worker, subject, body);
     }
 
 
@@ -530,11 +503,8 @@ public class MailerBean implements IMailerLocal {
 
         String body = getBody("Approval_part_text", args, locale);
 
-        try {
-            sendMessage(new InternetAddress(worker.getEmail(), worker.getName()), subject, body);
-        } catch (UnsupportedEncodingException pUEEx) {
-            logUnsupportedEncodingException(pUEEx);
-        }
+        sendMessage(worker, subject, body);
+
     }
 
 
@@ -552,9 +522,7 @@ public class MailerBean implements IMailerLocal {
         String body = getBody("PartRevision_workflow_relaunched_text", args, locale);
 
         try {
-            sendMessage(new InternetAddress(userEmail, userName), subject, body);
-        } catch (UnsupportedEncodingException pUEEx) {
-            logUnsupportedEncodingException(pUEEx);
+            sendMessage(userEmail, userName, subject, body);
         } catch (MessagingException pMEx) {
             logMessagingException(pMEx);
         }
@@ -576,9 +544,7 @@ public class MailerBean implements IMailerLocal {
         String body = getBody("DocumentRevision_workflow_relaunched_text", args, locale);
 
         try {
-            sendMessage(new InternetAddress(userEmail, userName), subject, body);
-        } catch (UnsupportedEncodingException pUEEx) {
-            logUnsupportedEncodingException(pUEEx);
+            sendMessage(userEmail, userName, subject, body);
         } catch (MessagingException pMEx) {
             logMessagingException(pMEx);
         }
@@ -639,14 +605,27 @@ public class MailerBean implements IMailerLocal {
         return mailSubjectTemplate + " " + getString(string, pLocale);
     }
 
-    private void sendMessage(InternetAddress address, String subject, String content) throws MessagingException {
-        Message message = new MimeMessage(mailSession);
-        message.addRecipient(Message.RecipientType.TO, address);
-        message.setSubject(subject);
-        message.setSentDate(new Date());
-        message.setContent(content, "text/html; charset=utf-8");
-        message.setFrom();
-        Transport.send(message);
+    private void sendMessage(Account account, String subject, String content) throws MessagingException {
+        sendMessage(account.getLogin(), account.getName(), subject, content);
+    }
+
+    private void sendMessage(User user, String subject, String content) throws MessagingException {
+        sendMessage(user.getLogin(), user.getName(), subject, content);
+    }
+
+    private void sendMessage(String login, String name, String subject, String content) throws MessagingException {
+        try {
+            InternetAddress emailAddress = new InternetAddress(login, name);
+            Message message = new MimeMessage(mailSession);
+            message.addRecipient(Message.RecipientType.TO, emailAddress);
+            message.setSubject(subject);
+            message.setSentDate(new Date());
+            message.setContent(content, "text/html; charset=utf-8");
+            message.setFrom();
+            Transport.send(message);
+        } catch (UnsupportedEncodingException e) {
+            logUnsupportedEncodingException(e);
+        }
     }
 
 }
