@@ -51,7 +51,7 @@ public class TestConfig {
         LOGIN = System.getProperty("login") != null ? System.getProperty("login") : "test";
         NAME = System.getProperty("name") != null ? System.getProperty("name") : "test";
         PASSWORD = System.getProperty("password") != null ? System.getProperty("password") : "test";
-        WORKSPACE = System.getProperty("workspace") != null ? System.getProperty("workspace") : "test";
+        WORKSPACE = System.getProperty("workspace") != null ? System.getProperty("workspace") : "test-api-java";
         EMAIL = System.getProperty("email") != null ? System.getProperty("email") : "";
         LANGUAGE = System.getProperty("language") != null ? System.getProperty("language") : "en";
         TIMEZONE = System.getProperty("timezone") != null ? System.getProperty("timezone") : "CET";

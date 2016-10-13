@@ -4,7 +4,7 @@ var defaults = {
     url :'http://localhost:8080/api',
     login :'test',
     password:'test',
-    workspace:'test'
+    workspace:'test-api-js'
 };
 
 config.login = config.login ? config.login : defaults.login;
