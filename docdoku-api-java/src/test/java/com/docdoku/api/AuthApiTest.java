@@ -32,7 +32,7 @@ import org.junit.runners.JUnit4;
 public class AuthApiTest {
 
     @Test
-    public void testLogin() {
+    public void testUnsuccessfulLogin() {
 
         AuthApi authApi = new AuthApi(TestConfig.GUEST_CLIENT);
         LoginRequestDTO loginRequestDTO = new LoginRequestDTO();
@@ -46,7 +46,7 @@ public class AuthApiTest {
             Assert.assertEquals(e.getCode(), 403);
         }
 
-        loginRequestDTO.setLogin("NonExisting");
+        loginRequestDTO.setLogin("wronglogin");
         loginRequestDTO.setPassword("whatever");
         try {
             authApi.login(loginRequestDTO);

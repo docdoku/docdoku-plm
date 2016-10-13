@@ -196,9 +196,13 @@
                     <systemPropertyVariables>
                         <url>${env.URL}</url>
                         <login>${env.LOGIN}</login>
+                        <email>${env.EMAIL}</email>
+                        <name>${env.NAME}</name>
+                        <language>${env.LANGUAGE}</language>
                         <password>${env.PASSWORD}</password>
                         <workspace>${env.WORKSPACE}</workspace>
                         <debug>${env.DEBUG}</debug>
+                        <timezone>${env.TIMEZONE}</timezone>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

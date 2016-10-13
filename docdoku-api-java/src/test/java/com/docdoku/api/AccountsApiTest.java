@@ -35,14 +35,14 @@ public class AccountsApiTest {
 
     @Test
     public void createAccountTest() throws ApiException {
-        String login = "USER-"+ UUID.randomUUID().toString().substring(0,8);
+        String login = "TMP-USER-"+ UUID.randomUUID().toString().substring(0,8);
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setLogin(login);
-        accountDTO.setEmail("test@docdoku.com");
-        accountDTO.setNewPassword("password");
-        accountDTO.setLanguage("en");
-        accountDTO.setName("Mr " + login);
-        accountDTO.setTimeZone("CET");
+        accountDTO.setEmail(TestConfig.EMAIL);
+        accountDTO.setNewPassword(TestConfig.PASSWORD);
+        accountDTO.setLanguage(TestConfig.LANGUAGE);
+        accountDTO.setName(login);
+        accountDTO.setTimeZone(TestConfig.TIMEZONE);
         AccountDTO account = new AccountsApi(TestConfig.GUEST_CLIENT).createAccount(accountDTO);
         Assert.assertEquals(account.getLogin(), login);
     }

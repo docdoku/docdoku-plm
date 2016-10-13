@@ -28,7 +28,6 @@ import com.docdoku.api.models.PartRevisionDTO;
 import com.docdoku.api.models.utils.LastIterationHelper;
 import com.docdoku.api.models.utils.UploadDownloadHelper;
 import com.docdoku.api.services.PartApi;
-import com.docdoku.api.services.PartbinaryApi;
 import com.docdoku.api.services.PartsApi;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
@@ -45,7 +44,6 @@ import java.util.UUID;
 public class PartApiTest {
 
     private PartApi partApi = new PartApi(TestConfig.BASIC_CLIENT);
-    private PartbinaryApi partbinaryApi = new PartbinaryApi(TestConfig.BASIC_CLIENT);
     private PartsApi partsApi = new PartsApi(TestConfig.BASIC_CLIENT);
 
     @Test

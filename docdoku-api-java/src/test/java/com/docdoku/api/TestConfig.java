@@ -22,27 +22,46 @@ package com.docdoku.api;
 
 import com.docdoku.api.client.ApiClient;
 
+import java.util.logging.Logger;
+
 public class TestConfig {
 
     public static String URL;
     public static String LOGIN;
     public static String PASSWORD;
     public static String WORKSPACE;
+    public static String EMAIL;
+    public static String NAME;
+    public static String LANGUAGE;
+    public static String TIMEZONE;
     public static boolean DEBUG;
     public static ApiClient GUEST_CLIENT;
     public static ApiClient BASIC_CLIENT;
     public static ApiClient JWT_CLIENT;
     public static ApiClient COOKIE_CLIENT;
+    private static final Logger LOGGER = Logger.getLogger(TestConfig.class.getName());
 
-    static{
+    static {
+        parseProperties();
+        createClients();
+    }
+
+    private static void parseProperties() {
         URL = System.getProperty("url") != null ? System.getProperty("url") : "http://localhost:8080/api";
         LOGIN = System.getProperty("login") != null ? System.getProperty("login") : "test";
+        NAME = System.getProperty("name") != null ? System.getProperty("name") : "test";
         PASSWORD = System.getProperty("password") != null ? System.getProperty("password") : "test";
         WORKSPACE = System.getProperty("workspace") != null ? System.getProperty("workspace") : "test";
-        DEBUG = System.getProperty("debug") != null ? Boolean.parseBoolean(System.getProperty("debug")) : true;
-        GUEST_CLIENT = new DocdokuPLMClient(URL,DEBUG).getClient();
-        BASIC_CLIENT = new DocdokuPLMBasicClient(URL,LOGIN, PASSWORD, DEBUG).getClient();
-        JWT_CLIENT  = new DocdokuPLMBasicClient(URL, LOGIN, PASSWORD, DEBUG).getClient();
-        COOKIE_CLIENT  = new DocdokuPLMCookieClient(URL, LOGIN, PASSWORD, DEBUG).getClient();
+        EMAIL = System.getProperty("email") != null ? System.getProperty("email") : "";
+        LANGUAGE = System.getProperty("language") != null ? System.getProperty("language") : "en";
+        TIMEZONE = System.getProperty("timezone") != null ? System.getProperty("timezone") : "CET";
+        DEBUG = System.getProperty("debug") != null ? Boolean.parseBoolean(System.getProperty("debug")) : false;
+    }
+
+    private static void createClients() {
+        GUEST_CLIENT = new DocdokuPLMClient(URL, DEBUG).getClient();
+        BASIC_CLIENT = new DocdokuPLMBasicClient(URL, LOGIN, PASSWORD, DEBUG).getClient();
+        JWT_CLIENT = new DocdokuPLMBasicClient(URL, LOGIN, PASSWORD, DEBUG).getClient();
+        COOKIE_CLIENT = new DocdokuPLMCookieClient(URL, LOGIN, PASSWORD, DEBUG).getClient();
     }
 }

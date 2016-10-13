@@ -21,6 +21,7 @@
 package com.docdoku.api;
 
 
+import com.docdoku.api.client.ApiClient;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.*;
 import com.docdoku.api.services.AccountsApi;
@@ -104,7 +105,7 @@ public class WorkspacesApiTest {
     }
 
     @Test
-    public void forbiddenDeleteWorkspaceTest() throws ApiException {
+    public void forbiddenDeleteWorkspaceTest() throws ApiException, InterruptedException {
         WorkspaceDTO workspace = new WorkspaceDTO();
         String workspaceId = UUID.randomUUID().toString().substring(0,6);
         workspace.setId(workspaceId);
@@ -122,10 +123,19 @@ public class WorkspacesApiTest {
         try {
             workspacesApi.deleteWorkspace(workspaceId);
         } catch (ApiException e) {
+            Assert.assertEquals(403, e.getCode());
         }
 
         WorkspaceListDTO workspacesForConnectedUser = workspacesApi.getWorkspacesForConnectedUser();
         Assert.assertTrue(workspacesForConnectedUser.getAllWorkspaces().contains(createdWorkspace));
+        Assert.assertTrue(!workspacesForConnectedUser.getAdministratedWorkspaces().contains(createdWorkspace));
+
+        ApiClient newAdminClient = new DocdokuPLMBasicClient(TestConfig.URL, userToAdd.getLogin(), TestConfig.PASSWORD, TestConfig.DEBUG).getClient();
+        new WorkspacesApi(newAdminClient).deleteWorkspace(workspaceId);
+        Thread.sleep(2000);
+
+        workspacesForConnectedUser = workspacesApi.getWorkspacesForConnectedUser();
+        Assert.assertTrue(!workspacesForConnectedUser.getAllWorkspaces().contains(createdWorkspace));
     }
 
     private UserGroupDTO createGroup() throws ApiException {
@@ -141,11 +151,11 @@ public class WorkspacesApiTest {
         String login = "USER-"+ UUID.randomUUID().toString().substring(0,8);
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setLogin(login);
-        accountDTO.setEmail("test@docdoku.com");
-        accountDTO.setNewPassword("password");
-        accountDTO.setLanguage("en");
-        accountDTO.setName("Mr " + login);
-        accountDTO.setTimeZone("CET");
+        accountDTO.setEmail(TestConfig.EMAIL);
+        accountDTO.setNewPassword(TestConfig.PASSWORD);
+        accountDTO.setLanguage(TestConfig.LANGUAGE);
+        accountDTO.setName(login);
+        accountDTO.setTimeZone(TestConfig.TIMEZONE);
         return new AccountsApi(TestConfig.GUEST_CLIENT).createAccount(accountDTO);
     }
 
