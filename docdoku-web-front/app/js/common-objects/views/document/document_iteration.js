@@ -13,8 +13,9 @@ define([
     'common-objects/collections/linked/linked_document_collection',
     'text!common-objects/templates/document/document_iteration.html',
     'common-objects/views/prompt',
+    'common-objects/views/alert',
     'common-objects/utils/date'
-], function (Backbone, Mustache, ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, UsedByListView, Tag, TagView, LinkedDocumentCollection, template, PromptView, date) {
+], function (Backbone, Mustache, ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, UsedByListView, Tag, TagView, LinkedDocumentCollection, template, PromptView, AlertView, date) {
     'use strict';
 
     var IterationView = ModalView.extend({
@@ -45,6 +46,7 @@ define([
         bindDom: function () {
             this.revisionNote = this.$('#inputRevisionNote');
             this.$modal = this.$('#product_details_modal');
+            this.notifications = this.$('.notifications');
         },
         onPreviousIteration: function () {
             if (this.iterations.hasPreviousIteration(this.iteration)) {
@@ -260,6 +262,9 @@ define([
                     success: function () {
                         _this.closeModal();
                         _this.model.fetch();
+                    },
+                    error: function (model, response) {
+                        _this.onError(model, response);
                     }
                 });
 
@@ -408,9 +413,12 @@ define([
                     linkedDocuments: this.linkedDocumentsView.collection.toJSON()
                 }, {
                     success: function () {
-                        that.model.checkin().success(function () {
+                        that.model.checkin(that.onError).success(function () {
                             that.onSuccess();
                         });
+                    },
+                    error: function (model, response) {
+                        that.onError(model, response);
                     }
                 });
 
@@ -433,14 +441,14 @@ define([
 
         actionCheckout: function () {
             var self = this;
-            self.model.checkout().success(function () {
+            self.model.checkout(self.onError).success(function () {
                 self.onSuccess();
             });
 
         },
         actionUndoCheckout: function () {
             var self = this;
-            self.model.undocheckout().success(function () {
+            self.model.undocheckout(self.onError).success(function () {
                 self.onSuccess();
             });
 
@@ -454,6 +462,15 @@ define([
                 this.activateTab(1);
                 Backbone.Events.trigger('document:iterationChange');
             }.bind(this));
+        },
+
+        onError: function (model, error) {
+            var errorMessage = error ? error.responseText : model;
+
+            this.notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
         },
 
         closeModal: function () {

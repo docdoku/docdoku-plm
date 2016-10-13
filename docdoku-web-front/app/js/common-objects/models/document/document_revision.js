@@ -176,36 +176,36 @@ define([
             return '< ' + this.getId() + ' >';
         },
 
-		checkout: function () {
+		checkout: function (onError) {
 			return $.ajax({
 				context: this,
 				type: 'PUT',
 				url: this.baseUrl() + '/checkout',
 				error: function (xhr) {
-                    window.alert(xhr.responseText);
+                    onError(xhr.responseText);
 				}
 			});
 		},
 
 
-		undocheckout: function () {
+		undocheckout: function (onError) {
 			return $.ajax({
 				context: this,
 				type: 'PUT',
 				url: this.baseUrl() + '/undocheckout',
                 error: function (xhr) {
-                    window.alert(xhr.responseText);
+                    onError(xhr.responseText);
 				}
 			});
 		},
 
-		checkin: function () {
+		checkin: function (onError) {
 			return $.ajax({
 				context: this,
 				type: 'PUT',
 				url: this.baseUrl() + '/checkin',
                 error: function (xhr) {
-                    window.alert(xhr.responseText);
+                    onError(xhr.responseText);
 				}
 			});
 		},

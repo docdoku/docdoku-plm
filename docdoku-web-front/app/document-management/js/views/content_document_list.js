@@ -258,7 +258,7 @@ define([
             var selectedDocuments = this.listView.checkedViews();
 
             var queueCheckOut = async.queue(function (docView, callback) {
-                docView.model.checkout().success(callback);
+                docView.model.checkout(self.onError).success(callback);
             });
 
             queueCheckOut.drain = function () {
@@ -279,7 +279,7 @@ define([
 
                         var selectedDocuments = self.listView.checkedViews();
                         var queueUndoCheckOut = async.queue(function (docView, callback) {
-                            docView.model.undocheckout().success(callback);
+                            docView.model.undocheckout(self.onError).success(callback);
                         });
                         queueUndoCheckOut.drain = function () {
                             self.multipleCheckInCheckOutDone(selectedDocuments);
@@ -335,7 +335,9 @@ define([
                         docView.model.getLastIteration().save({
                             revisionNote: revisionNote
                         }).success(function () {
-                            docView.model.checkin().success(callback);
+                            docView.model.checkin(self.onError).success(callback);
+                        }).error(function (error) {
+                            self.onError(docView.model, error);
                         });
                     });
 
@@ -348,7 +350,7 @@ define([
 
                 this.listenTo(promptView, 'prompt-cancel', function () {
                     var queueCheckIn = async.queue(function (docView, callback) {
-                        docView.model.checkin().success(callback);
+                        docView.model.checkin(self.onError).success(callback);
                     });
 
                     queueCheckIn.drain = function () {
@@ -360,9 +362,13 @@ define([
 
             } else {
                 var queueCheckIn = async.queue(function (docView, callback) {
-                    docView.model.getLastIteration().save().success(function () {
-                        docView.model.checkin().success(callback);
-                    });
+                    docView.model.getLastIteration().save()
+                        .success(function () {
+                            docView.model.checkin(self.onError).success(callback);
+                        })
+                        .error(function (error) {
+                            self.onError(docView.model, error);
+                        });
                 });
 
                 queueCheckIn.drain = function () {
