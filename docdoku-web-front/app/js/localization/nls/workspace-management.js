@@ -51,7 +51,8 @@ define({
         WORKSPACE_CREATION_VERIFICATION_STRATEGY:'Workspace creation strategy',
         ACCOUNTS:'User accounts',
         DISABLE_ACCOUNTS:'Disable selected accounts',
-        ENABLE_ACCOUNTS:'Enable selected accounts'
+        ENABLE_ACCOUNTS:'Enable selected accounts',
+        ENABLE_WORKSPACE:'Enable workspace'
     },
     'fr': true,
     'es': true

@@ -1,24 +1,27 @@
 <div>
     <h4>
         {{#administrated}}
-        <a href="#/workspace/{{workspace.id}}/edit"><i class="fa fa-pencil"></i></a>
         <i class="fa fa-graduation-cap"></i>
         {{/administrated}}
         {{^administrated}}
         <i class="fa fa-user"></i>
         {{/administrated}}
         {{workspace.id}}
+        <br/>
         <small>{{workspace.description}}</small>
     </h4>
 
-    {{#isAdmin}}
-    <div class="controls">
-        <div class="workspace-enable-switch switch switch-small" data-on="success" data-off="danger">
-            <input type="checkbox" checked/>
-        </div>
-    </div>
-    {{/isAdmin}}
 </div>
+
+{{#isAdmin}}
+<div class="controls">
+    <label for="workspace-enable-switch-{{workspace.id}}">{{i18n.ENABLE_WORKSPACE}}</label>
+    <div class="workspace-enable-switch switch switch-small" data-on="success" data-off="danger">
+        <input id="workspace-enable-switch-{{workspace.id}}" type="checkbox" checked/>
+    </div>
+
+</div>
+{{/isAdmin}}
 
 
 <ul class="unstyled">
@@ -65,11 +68,13 @@
 
 </ul>
 {{#administrated}}
-<div class="workspace-actions pull-left">
+<div class="workspace-actions ">
+    {{#administrated}}
+    <a href="#/workspace/{{workspace.id}}/edit">{{i18n.EDIT}}</i></a> |
     <a href="#/workspace/{{workspace.id}}/dashboard">{{i18n.DASHBOARD}}</a>
+    {{/administrated}}
     {{#isAdmin}}
-    <a href="#" class="index-workspace" data-workspace-id="{{workspace.id}}">{{i18n.INDEX_WORKSPACE}}</a>
+    | <a href="#" class="index-workspace" data-workspace-id="{{workspace.id}}">{{i18n.INDEX_WORKSPACE}}</a>
     {{/isAdmin}}
 </div>
 {{/administrated}}
-
