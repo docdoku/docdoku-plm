@@ -32,6 +32,7 @@ define([
             this.events['click .actions .view-baseline-detail'] = 'openBaselineDetail';
             Backbone.Events.on('folder-delete:error', this.onError);
             Backbone.Events.on('document-error-moved', this.onError);
+            Backbone.Events.on('folder-error-moved', this.onError);
         },
 
         rendered: function () {

@@ -315,8 +315,8 @@ define([
                 that.folderDiv.removeClass('move-doc-into');
                 that.folderDiv.highlightEffect();
                 that.show();
-            }).error(function () {
-                Backbone.Events.trigger('folder-error-moved');
+            }).error(function (error) {
+                Backbone.Events.trigger('folder-error-moved', null, error);
                 that.folderDiv.removeClass('move-doc-into');
             });
 
