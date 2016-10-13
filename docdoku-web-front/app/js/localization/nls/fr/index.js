@@ -13,6 +13,7 @@ define({
     USER_NOT_FOUND:'Utilisateur non trouvé',
     LANGUAGE:'Langue',
     TIMEZONE:'Fuseau horaire',
+    ACCOUNT_NOT_ENABLED_YET:'Votre compte a bien été créé mais n\'est pas encore actif. Un email a été envoyé à l\'adresse fournie. Contactez l\'administrateur de la plateforme, ou suivez les instructions contenues dans le mail...',
     MANAGE_DOCUMENTS_STRINGS:[
         'Gérez les changements avec le contrôle de version',
         'Ajoutez des libellés et des attributs personnalisés',

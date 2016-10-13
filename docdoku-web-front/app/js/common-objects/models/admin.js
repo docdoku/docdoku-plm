@@ -40,7 +40,7 @@ define(['backbone'], function (Backbone) {
     Admin.enableAccount = function (login, enabled) {
         return $.ajax({
             type: 'PUT',
-            url: App.config.contextPath +  '/api/admin/account/' + login + '/enable?enabled='+enabled
+            url: App.config.contextPath +  '/api/admin/accounts/' + login + '/enable?enabled='+enabled
         });
     };
 
@@ -56,7 +56,7 @@ define(['backbone'], function (Backbone) {
     };
 
     Admin.getAccounts = function () {
-        return $.getJSON(App.config.contextPath +  '/api/accounts');
+        return $.getJSON(App.config.contextPath +  '/api/admin/accounts');
     };
 
     Admin.setPlatformOptions = function (options) {

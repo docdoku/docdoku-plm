@@ -78,11 +78,20 @@ define([
                     newPassword:this.$('#account_creation_form-password').val()
                 }),
                 contentType: 'application/json; charset=utf-8'
-            }).then(function(/*account, status, xhr*/){
-                window.location.href =App.config.contextPath + '/workspace-management/?accountCreated=true';
-            }, this.onAccountCreationFailed.bind(this));
+            }).then(this.onAccountCreated.bind(this), this.onAccountCreationFailed.bind(this));
             e.preventDefault();
             return false;
+        },
+
+        onAccountCreated : function(account){
+            if(account.enabled){
+                window.location.href = App.config.contextPath + '/workspace-management/?accountCreated=true';
+            } else {
+                this.$notifications.append(new AlertView({
+                    type: 'success',
+                    message: App.config.i18n.ACCOUNT_NOT_ENABLED_YET
+                }).render().$el);
+            }
         },
 
         onAccountCreationFailed:function(err){

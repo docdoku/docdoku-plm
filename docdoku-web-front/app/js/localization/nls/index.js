@@ -14,6 +14,7 @@ define({
         USER_NOT_FOUND:'User not found',
         LANGUAGE:'Language',
         TIMEZONE:'Time zone',
+        ACCOUNT_NOT_ENABLED_YET:'Your account has been created but is not enabled yet. An email has been sent to the provided address, contact your platform administrator or follow mail instructions...',
         MANAGE_DOCUMENTS_STRINGS:[
             'Manage changes with version control' ,
             'Add tags and custom attributes' ,
