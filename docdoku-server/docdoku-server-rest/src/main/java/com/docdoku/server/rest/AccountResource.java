@@ -78,19 +78,6 @@ public class AccountResource {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
-
-    @GET
-    @ApiOperation(value = "Get accounts ", response = AccountDTO.class)
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<AccountDTO> getAccounts(){
-        List<Account> accounts = accountManager.getAccounts();
-        List<AccountDTO> accountsDTO = new ArrayList<>();
-        for(Account account : accounts){
-            accountsDTO.add(mapper.map(account,AccountDTO.class));
-        }
-        return accountsDTO;
-    }
-
     @GET
     @Path("/me")
     @ApiOperation(value = "Get authenticated user's account", response = AccountDTO.class)

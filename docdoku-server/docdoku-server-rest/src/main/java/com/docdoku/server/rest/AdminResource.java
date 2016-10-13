@@ -48,6 +48,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -235,11 +237,25 @@ public class AdminResource implements Serializable {
 
     @PUT
     @ApiOperation(value = "Enable or disable account", response = Response.class)
-    @Path("account/{login}/enable")
+    @Path("accounts/{login}/enable")
     @Produces(MediaType.APPLICATION_JSON)
     public AccountDTO enableAccount(@PathParam("login") String login, @QueryParam("enabled") boolean enabled)
             throws WorkspaceNotFoundException, AccountNotFoundException, NotAllowedException {
         Account account = accountManager.enableAccount(login, enabled);
         return mapper.map(account, AccountDTO.class);
+    }
+
+
+    @GET
+    @Path("accounts")
+    @ApiOperation(value = "Get accounts ", response = AccountDTO.class)
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<AccountDTO> getAccounts(){
+        List<Account> accounts = accountManager.getAccounts();
+        List<AccountDTO> accountsDTO = new ArrayList<>();
+        for(Account account : accounts){
+            accountsDTO.add(mapper.map(account,AccountDTO.class));
+        }
+        return accountsDTO;
     }
 }
