@@ -217,7 +217,8 @@ public class WorkspaceResource {
     @Path("/{workspaceId}/index")
     @ApiOperation(value = "Index the workspace", response = Response.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response synchronizeIndexer(@PathParam("workspaceId") String workspaceId)
+    public Response synchronizeIndexer(@PathParam("workspaceId") String workspaceId,
+                                       @ApiParam(name = "body", defaultValue = "") String body)
             throws AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         workspaceManager.synchronizeIndexer(workspaceId);
         return Response.ok().build();
@@ -318,7 +319,8 @@ public class WorkspaceResource {
     @Path("/{workspaceId}/user-access")
     @Produces(MediaType.APPLICATION_JSON)
     public Response setUserAccess(@PathParam("workspaceId") String workspaceId,
-                                  @ApiParam(value = "User to grant access in workspace", required = true) UserDTO userDTO) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+                                  @ApiParam(value = "User to grant access in workspace", required = true) UserDTO userDTO)
+            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
         if (userDTO.getMembership() == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }

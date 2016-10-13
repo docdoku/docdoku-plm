@@ -696,7 +696,8 @@ public class ProductResource {
     public Response cascadeCheckout(@PathParam("workspaceId") String workspaceId,
                                     @PathParam("ciId") String ciId,
                                     @QueryParam("configSpec") String configSpecType,
-                                    @QueryParam("path") String path)
+                                    @QueryParam("path") String path,
+                                    @ApiParam(name = "body", defaultValue = "") String body)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         CascadeResult cascadeResult = cascadeActionService.cascadeCheckout(ciKey, path);
@@ -725,7 +726,8 @@ public class ProductResource {
     public Response cascadeUndocheckout(@PathParam("workspaceId") String workspaceId,
                                         @PathParam("ciId") String ciId,
                                         @QueryParam("configSpec") String configSpecType,
-                                        @QueryParam("path") String path)
+                                        @QueryParam("path") String path,
+                                        @ApiParam(name = "body", defaultValue = "") String body)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         CascadeResult cascadeResult = cascadeActionService.cascadeUndocheckout(ciKey, path);

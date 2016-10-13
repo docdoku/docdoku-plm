@@ -85,9 +85,9 @@ public class AccountManagerBean implements IAccountManagerLocal {
 
     public String getRole(String login) {
         UserGroupMapping userGroupMapping = em.find(UserGroupMapping.class, login);
-        if(userGroupMapping == null){
+        if (userGroupMapping == null) {
             return null;
-        }else{
+        } else {
             return userGroupMapping.getGroupName();
         }
     }
@@ -183,13 +183,29 @@ public class AccountManagerBean implements IAccountManagerLocal {
     @RolesAllowed(UserGroupMapping.ADMIN_ROLE_ID)
     public Account enableAccount(String login, boolean enabled) throws AccountNotFoundException, NotAllowedException {
         String callerPrincipalLogin = contextManager.getCallerPrincipalLogin();
-        if(!callerPrincipalLogin.equals(login)){
+        if (!callerPrincipalLogin.equals(login)) {
             Account account = getAccount(login);
             account.setEnabled(enabled);
             return account;
-        }else{
+        } else {
             Account callerAccount = getMyAccount();
-            throw new NotAllowedException(new Locale(callerAccount.getLanguage()),"NotAllowedException67");
+            throw new NotAllowedException(new Locale(callerAccount.getLanguage()), "NotAllowedException67");
         }
+    }
+
+    @Override
+    @RolesAllowed(UserGroupMapping.ADMIN_ROLE_ID)
+    public Account updateAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountNotFoundException, NotAllowedException {
+        Account account = getMyAccount();
+        AccountDAO accountDAO = new AccountDAO(new Locale(account.getLanguage()), em);
+        Account otherAccount = getAccount(pLogin);
+        otherAccount.setName(pName);
+        otherAccount.setEmail(pEmail);
+        otherAccount.setLanguage(pLanguage);
+        otherAccount.setTimeZone(pTimeZone);
+        if (pPassword != null) {
+            accountDAO.updateCredential(otherAccount.getLogin(), pPassword);
+        }
+        return otherAccount;
     }
 }

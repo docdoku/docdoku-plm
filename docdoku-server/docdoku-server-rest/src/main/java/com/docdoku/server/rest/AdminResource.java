@@ -53,7 +53,6 @@ import java.util.List;
 
 
 /**
- *
  * @author Morgan Guimard
  */
 @RequestScoped
@@ -86,7 +85,7 @@ public class AdminResource implements Serializable {
 
     private Mapper mapper;
 
-    public AdminResource(){
+    public AdminResource() {
     }
 
     @PostConstruct
@@ -104,7 +103,7 @@ public class AdminResource implements Serializable {
 
         Workspace[] allWorkspaces = userManager.getAdministratedWorkspaces();
 
-        for(Workspace workspace:allWorkspaces){
+        for (Workspace workspace : allWorkspaces) {
             long workspaceDiskUsage = workspaceService.getDiskUsageInWorkspace(workspace.getId());
             diskUsage.add(workspace.getId(), workspaceDiskUsage);
         }
@@ -112,6 +111,7 @@ public class AdminResource implements Serializable {
         return diskUsage.build();
 
     }
+
     @GET
     @Path("users-stats")
     @ApiOperation(value = "Get users stats", response = JsonObject.class)
@@ -122,14 +122,15 @@ public class AdminResource implements Serializable {
 
         Workspace[] allWorkspaces = userManager.getAdministratedWorkspaces();
 
-        for(Workspace workspace:allWorkspaces){
-            int userCount =  userManager.getUsers(workspace.getId()).length;
+        for (Workspace workspace : allWorkspaces) {
+            int userCount = userManager.getUsers(workspace.getId()).length;
             userStats.add(workspace.getId(), userCount);
         }
 
         return userStats.build();
 
     }
+
     @GET
     @Path("documents-stats")
     @ApiOperation(value = "Get documents stats", response = JsonObject.class)
@@ -140,7 +141,7 @@ public class AdminResource implements Serializable {
 
         Workspace[] allWorkspaces = userManager.getAdministratedWorkspaces();
 
-        for(Workspace workspace:allWorkspaces){
+        for (Workspace workspace : allWorkspaces) {
             int documentsCount = documentService.getTotalNumberOfDocuments(workspace.getId());
             docStats.add(workspace.getId(), documentsCount);
         }
@@ -148,6 +149,7 @@ public class AdminResource implements Serializable {
         return docStats.build();
 
     }
+
     @GET
     @Path("products-stats")
     @ApiOperation(value = "Get products stats", response = JsonObject.class)
@@ -158,7 +160,7 @@ public class AdminResource implements Serializable {
 
         Workspace[] allWorkspaces = userManager.getAdministratedWorkspaces();
 
-        for(Workspace workspace:allWorkspaces){
+        for (Workspace workspace : allWorkspaces) {
             int productsCount = productService.getConfigurationItems(workspace.getId()).size();
             productsStats.add(workspace.getId(), productsCount);
         }
@@ -177,7 +179,7 @@ public class AdminResource implements Serializable {
 
         Workspace[] allWorkspaces = userManager.getAdministratedWorkspaces();
 
-        for(Workspace workspace:allWorkspaces){
+        for (Workspace workspace : allWorkspaces) {
             int productsCount = productService.getTotalNumberOfParts(workspace.getId());
             partsStats.add(workspace.getId(), productsCount);
         }
@@ -189,18 +191,19 @@ public class AdminResource implements Serializable {
     @PUT
     @ApiOperation(value = "Synchronize index for workspace")
     @Path("index/{workspaceId}")
-    public Response indexWorkspace(@PathParam("workspaceId") String workspaceId){
+    public Response indexWorkspace(@PathParam("workspaceId") String workspaceId,
+                                   @ApiParam(name = "body", defaultValue = "") String body) {
         workspaceManager.synchronizeIndexer(workspaceId);
         return Response.ok().build();
 
     }
 
     @PUT
-    @ApiOperation(value = "Synchronize index for all workspaces")
+    @ApiOperation(value = "Synchronize index for all workspaces", response = Response.class)
     @Path("index-all")
-    public Response indexAllWorkspaces() throws AccountNotFoundException {
+    public Response indexAllWorkspaces(@ApiParam(name = "body", defaultValue = "") String body) throws AccountNotFoundException {
         Workspace[] administratedWorkspaces = userManager.getAdministratedWorkspaces();
-        for(Workspace workspace : administratedWorkspaces){
+        for (Workspace workspace : administratedWorkspaces) {
             workspaceManager.synchronizeIndexer(workspace.getId());
         }
         return Response.ok().build();
@@ -219,6 +222,7 @@ public class AdminResource implements Serializable {
     @Path("platform-options")
     @ApiOperation(value = "Set platform options", response = Response.class)
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response setPlatformOptions(@ApiParam("Options to set") PlatformOptionsDTO platformOptionsDTO) {
         platformOptionsManager.setRegistrationStrategy(platformOptionsDTO.getRegistrationStrategy());
         platformOptionsManager.setWorkspaceCreationStrategy(platformOptionsDTO.getWorkspaceCreationStrategy());
@@ -226,20 +230,24 @@ public class AdminResource implements Serializable {
     }
 
     @PUT
-    @ApiOperation(value = "Enable or disable workspace", response = Response.class)
+    @ApiOperation(value = "Enable or disable workspace", response = WorkspaceDTO.class)
     @Path("workspace/{workspaceId}/enable")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceDTO enableWorkspace(@PathParam("workspaceId") String workspaceId, @QueryParam("enabled") boolean enabled)
+    public WorkspaceDTO enableWorkspace(@PathParam("workspaceId") String workspaceId,
+                                        @QueryParam("enabled") boolean enabled,
+                                        @ApiParam(name = "body", defaultValue = "") String body)
             throws WorkspaceNotFoundException {
         Workspace workspace = workspaceManager.enableWorkspace(workspaceId, enabled);
         return mapper.map(workspace, WorkspaceDTO.class);
     }
 
     @PUT
-    @ApiOperation(value = "Enable or disable account", response = Response.class)
+    @ApiOperation(value = "Enable or disable account", response = AccountDTO.class)
     @Path("accounts/{login}/enable")
     @Produces(MediaType.APPLICATION_JSON)
-    public AccountDTO enableAccount(@PathParam("login") String login, @QueryParam("enabled") boolean enabled)
+    public AccountDTO enableAccount(@PathParam("login") String login,
+                                    @QueryParam("enabled") boolean enabled,
+                                    @ApiParam(name = "body", defaultValue = "") String body)
             throws WorkspaceNotFoundException, AccountNotFoundException, NotAllowedException {
         Account account = accountManager.enableAccount(login, enabled);
         return mapper.map(account, AccountDTO.class);
@@ -248,14 +256,33 @@ public class AdminResource implements Serializable {
 
     @GET
     @Path("accounts")
-    @ApiOperation(value = "Get accounts ", response = AccountDTO.class)
+    @ApiOperation(value = "Get accounts ", response = AccountDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<AccountDTO> getAccounts(){
+    public List<AccountDTO> getAccounts() {
         List<Account> accounts = accountManager.getAccounts();
         List<AccountDTO> accountsDTO = new ArrayList<>();
-        for(Account account : accounts){
-            accountsDTO.add(mapper.map(account,AccountDTO.class));
+        for (Account account : accounts) {
+            accountsDTO.add(mapper.map(account, AccountDTO.class));
         }
         return accountsDTO;
+    }
+
+    @PUT
+    @Path("accounts")
+    @ApiOperation(value = "Update account", response = AccountDTO.class)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public AccountDTO updateAccount(@ApiParam(required = true, value = "Updated account") AccountDTO accountDTO)
+            throws AccountNotFoundException, NotAllowedException {
+
+        Account account = accountManager.updateAccount(
+                accountDTO.getLogin(),
+                accountDTO.getName(),
+                accountDTO.getEmail(),
+                accountDTO.getLanguage(),
+                accountDTO.getNewPassword(),
+                accountDTO.getTimeZone());
+
+        return mapper.map(account, AccountDTO.class);
     }
 }

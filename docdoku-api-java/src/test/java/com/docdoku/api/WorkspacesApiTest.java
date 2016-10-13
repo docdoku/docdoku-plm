@@ -24,7 +24,6 @@ package com.docdoku.api;
 import com.docdoku.api.client.ApiClient;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.*;
-import com.docdoku.api.services.AccountsApi;
 import com.docdoku.api.services.WorkspacesApi;
 import org.junit.Assert;
 import org.junit.Test;
@@ -83,7 +82,7 @@ public class WorkspacesApiTest {
 
     @Test
     public void addUserInWorkspace() throws ApiException {
-        AccountDTO newAccount = createAccount();
+        AccountDTO newAccount = TestUtils.createAccount();
         UserDTO userToAdd = new UserDTO();
         userToAdd.setLogin(newAccount.getLogin());
         WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.BASIC_CLIENT);
@@ -94,7 +93,7 @@ public class WorkspacesApiTest {
 
     @Test
     public void addUserInGroup() throws ApiException {
-        AccountDTO newAccount = createAccount();
+        AccountDTO newAccount = TestUtils.createAccount();
         UserDTO userToAdd = new UserDTO();
         userToAdd.setLogin(newAccount.getLogin());
         UserGroupDTO group = createGroup();
@@ -114,7 +113,7 @@ public class WorkspacesApiTest {
         WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.BASIC_CLIENT);
         WorkspaceDTO createdWorkspace = workspacesApi.createWorkspace(workspace, TestConfig.LOGIN);
 
-        AccountDTO newAccount = createAccount();
+        AccountDTO newAccount = TestUtils.createAccount();
         UserDTO userToAdd = new UserDTO();
         userToAdd.setLogin(newAccount.getLogin());
         workspacesApi.addUser(workspaceId, userToAdd, null);
@@ -144,19 +143,6 @@ public class WorkspacesApiTest {
         group.setWorkspaceId(TestConfig.WORKSPACE);
         group.setId(groupId);
         return new WorkspacesApi(TestConfig.BASIC_CLIENT).createGroup(TestConfig.WORKSPACE, group);
-    }
-
-
-    private AccountDTO createAccount() throws ApiException {
-        String login = "USER-"+ UUID.randomUUID().toString().substring(0,8);
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setLogin(login);
-        accountDTO.setEmail(TestConfig.EMAIL);
-        accountDTO.setNewPassword(TestConfig.PASSWORD);
-        accountDTO.setLanguage(TestConfig.LANGUAGE);
-        accountDTO.setName(login);
-        accountDTO.setTimeZone(TestConfig.TIMEZONE);
-        return new AccountsApi(TestConfig.GUEST_CLIENT).createAccount(accountDTO);
     }
 
 }

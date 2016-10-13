@@ -268,7 +268,12 @@ public class PartResource {
     @PUT
     @ApiOperation(value = "Retry conversion", response = Response.class)
     @Path("/iterations/{partIteration}/conversion")
-    public Response retryConversion(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int iteration) throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, PartIterationNotFoundException, AccessRightException, NotAllowedException, WorkspaceNotEnabledException {
+    public Response retryConversion(@PathParam("workspaceId") String pWorkspaceId,
+                                    @PathParam("partNumber") String partNumber,
+                                    @PathParam("partVersion") String partVersion,
+                                    @PathParam("partIteration") int iteration,
+                                    @ApiParam(name = "body", defaultValue = "") String body)
+            throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, PartIterationNotFoundException, AccessRightException, NotAllowedException, WorkspaceNotEnabledException {
 
         PartIterationKey partIPK = new PartIterationKey(pWorkspaceId, partNumber, partVersion, iteration);
         PartIteration partIteration = productService.getPartIteration(partIPK);
@@ -519,7 +524,8 @@ public class PartResource {
     @Path("/publish")
     public Response publishPartRevision(@PathParam("workspaceId") String workspaceId,
                                         @PathParam("partNumber") String partNumber,
-                                        @PathParam("partVersion") String partVersion)
+                                        @PathParam("partVersion") String partVersion,
+                                        @ApiParam(name = "body", defaultValue = "") String body)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
         productService.setPublicSharedPart(new PartRevisionKey(workspaceId, partNumber, partVersion),true);
         return Response.ok().build();
@@ -531,7 +537,8 @@ public class PartResource {
     @Path("/unpublish")
     public Response unPublishPartRevision(@PathParam("workspaceId") String workspaceId,
                                           @PathParam("partNumber") String partNumber,
-                                          @PathParam("partVersion") String partVersion)
+                                          @PathParam("partVersion") String partVersion,
+                                          @ApiParam(name = "body", defaultValue = "") String body)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
         productService.setPublicSharedPart(new PartRevisionKey(workspaceId, partNumber, partVersion),false);
         return Response.ok().build();

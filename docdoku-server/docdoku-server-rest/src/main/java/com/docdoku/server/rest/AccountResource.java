@@ -55,8 +55,8 @@ import java.util.List;
 @RequestScoped
 @Path("accounts")
 @Api(value = "accounts", description = "Operations about accounts")
-@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
-@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 public class AccountResource {
 
     @Inject
@@ -85,7 +85,7 @@ public class AccountResource {
     public AccountDTO getAccount() throws AccountNotFoundException {
         Account account = accountManager.getMyAccount();
         AccountDTO accountDTO = mapper.map(account, AccountDTO.class);
-        if(contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
+        if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
             accountDTO.setAdmin(true);
         }
         return accountDTO;
@@ -95,16 +95,17 @@ public class AccountResource {
     @Path("/me")
     @ApiOperation(value = "Update user's account", response = AccountDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public AccountDTO updateAccount(@ApiParam(required = true,value = "Updated account") AccountDTO accountDTO) throws AccountNotFoundException {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public AccountDTO updateAccount(@ApiParam(required = true, value = "Updated account") AccountDTO accountDTO) throws AccountNotFoundException {
         Account account = accountManager.updateAccount(accountDTO.getName(), accountDTO.getEmail(), accountDTO.getLanguage(), accountDTO.getNewPassword(), accountDTO.getTimeZone());
-        return mapper.map(account,AccountDTO.class);
+        return mapper.map(account, AccountDTO.class);
     }
 
     @POST
     @Path("/create")
     @ApiOperation(value = "Create user's account", response = AccountDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createAccount(@Context HttpServletRequest request, @ApiParam(required = true,value = "Account to create") AccountDTO accountDTO) throws AccountAlreadyExistsException, CreationException {
+    public Response createAccount(@Context HttpServletRequest request, @ApiParam(required = true, value = "Account to create") AccountDTO accountDTO) throws AccountAlreadyExistsException, CreationException {
         Account account = accountManager.createAccount(accountDTO.getLogin(), accountDTO.getName(), accountDTO.getEmail(), accountDTO.getLanguage(), accountDTO.getNewPassword(), accountDTO.getTimeZone());
         HttpSession session = request.getSession();
         try {

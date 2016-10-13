@@ -35,16 +35,9 @@ public class AccountsApiTest {
 
     @Test
     public void createAccountTest() throws ApiException {
-        String login = "TMP-USER-"+ UUID.randomUUID().toString().substring(0,8);
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setLogin(login);
-        accountDTO.setEmail(TestConfig.EMAIL);
-        accountDTO.setNewPassword(TestConfig.PASSWORD);
-        accountDTO.setLanguage(TestConfig.LANGUAGE);
-        accountDTO.setName(login);
-        accountDTO.setTimeZone(TestConfig.TIMEZONE);
+        AccountDTO accountDTO = TestUtils.createAccount();
         AccountDTO account = new AccountsApi(TestConfig.GUEST_CLIENT).createAccount(accountDTO);
-        Assert.assertEquals(account.getLogin(), login);
+        Assert.assertEquals(account.getLogin(), accountDTO.getLogin());
     }
 
     @Test

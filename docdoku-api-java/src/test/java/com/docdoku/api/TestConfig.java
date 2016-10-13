@@ -30,6 +30,8 @@ public class TestConfig {
     public static String LOGIN;
     public static String PASSWORD;
     public static String WORKSPACE;
+    public static String ROOT_LOGIN;
+    public static String ROOT_PASSWORD;
     public static String EMAIL;
     public static String NAME;
     public static String LANGUAGE;
@@ -37,6 +39,7 @@ public class TestConfig {
     public static boolean DEBUG;
     public static ApiClient GUEST_CLIENT;
     public static ApiClient BASIC_CLIENT;
+    public static ApiClient ROOT_CLIENT;
     public static ApiClient JWT_CLIENT;
     public static ApiClient COOKIE_CLIENT;
     private static final Logger LOGGER = Logger.getLogger(TestConfig.class.getName());
@@ -51,6 +54,8 @@ public class TestConfig {
         LOGIN = System.getProperty("login") != null ? System.getProperty("login") : "test";
         NAME = System.getProperty("name") != null ? System.getProperty("name") : "test";
         PASSWORD = System.getProperty("password") != null ? System.getProperty("password") : "test";
+        ROOT_PASSWORD = System.getProperty("root_password") != null ? System.getProperty("root_password") : "password";
+        ROOT_LOGIN = System.getProperty("root_login") != null ? System.getProperty("root_login") : "admin";
         WORKSPACE = System.getProperty("workspace") != null ? System.getProperty("workspace") : "test-api-java";
         EMAIL = System.getProperty("email") != null ? System.getProperty("email") : "";
         LANGUAGE = System.getProperty("language") != null ? System.getProperty("language") : "en";
@@ -61,6 +66,7 @@ public class TestConfig {
     private static void createClients() {
         GUEST_CLIENT = new DocdokuPLMClient(URL, DEBUG).getClient();
         BASIC_CLIENT = new DocdokuPLMBasicClient(URL, LOGIN, PASSWORD, DEBUG).getClient();
+        ROOT_CLIENT = new DocdokuPLMBasicClient(URL, ROOT_LOGIN, ROOT_PASSWORD, DEBUG).getClient();
         JWT_CLIENT = new DocdokuPLMBasicClient(URL, LOGIN, PASSWORD, DEBUG).getClient();
         COOKIE_CLIENT = new DocdokuPLMCookieClient(URL, LOGIN, PASSWORD, DEBUG).getClient();
     }

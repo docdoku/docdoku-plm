@@ -203,6 +203,8 @@
                         <workspace>${env.WORKSPACE}</workspace>
                         <debug>${env.DEBUG}</debug>
                         <timezone>${env.TIMEZONE}</timezone>
+                        <root_login>${env.ROOT_LOGIN}</root_login>
+                        <root_password>${env.ROOT_PASSWORD}</root_password>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
