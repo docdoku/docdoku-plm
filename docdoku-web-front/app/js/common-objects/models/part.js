@@ -4,10 +4,9 @@ define([
         'common-objects/utils/date',
         'common-objects/collections/part_iteration_collection',
         'common-objects/collections/modification_notification_collection',
-        'common-objects/utils/acl-checker',
-        'common-objects/views/alert'
+        'common-objects/utils/acl-checker'
     ],
-    function (Backbone, Date, PartIterationList, ModificationNotificationCollection, ACLChecker, AlertView) {
+    function (Backbone, Date, PartIterationList, ModificationNotificationCollection, ACLChecker) {
         'use strict';
 
         var Part = Backbone.Model.extend({
@@ -315,28 +314,23 @@ define([
                     contentType: 'application/json; charset=utf-8',
                     success: function () {
                         this.fetch();
-                    },
-                    error: function () {
-                        this.onError();
                     }
                 });
 
             },
 
-            removeTag: function (tag, callback) {
+            removeTag: function (tag, callback, onError) {
                 $.ajax({
                     type: 'DELETE',
                     url: this.url() + '/tags/' + tag,
                     success: function () {
                         callback();
                     },
-                    error: function () {
-                        this.onError();
-                    }
+                    error: onError
                 });
             },
 
-            removeTags: function (tags, callback) {
+            removeTags: function (tags, callback, onError) {
                 var baseUrl = this.url() + '/tags/';
                 var count = 0;
                 var total = _(tags).length;
@@ -350,10 +344,7 @@ define([
                                 callback();
                             }
                         },
-                        error: function () {
-                            this.onError();
-                        }
-
+                        error: onError
                     });
                 });
 
@@ -526,15 +517,6 @@ define([
                     return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getPartKey();
                 }
                 return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/';
-            },
-
-            onError: function (model, error) {
-                var errorMessage = error ? error.responseText : model;
-
-                this.$el.find('.notifications').first().append(new AlertView({
-                    type: 'error',
-                    message: errorMessage
-                }).render().$el);
             }
 
         });
