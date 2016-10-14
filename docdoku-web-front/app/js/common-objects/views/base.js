@@ -165,14 +165,9 @@ define([
         },
         alert: function (options) {
             // AlertView not used to resolve circular dependency
-            var titles = {
-                'error': App.config.i18n.ERROR
-            };
-            options.title = options.title ? options.title : titles[options.type];
             var html = Mustache.render(alertTemplate, {
                 model: {
                     type: options.type,
-                    title: options.title,
                     message: options.message
                 }
             });

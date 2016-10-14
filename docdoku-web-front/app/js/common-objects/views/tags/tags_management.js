@@ -311,6 +311,7 @@ define([
         },
         clearDeleteTags: function (callbackSuccess) {
             if (this._tagsToDeleteCollection && this._tagsToDeleteCollection.length) {
+                var that = this;
                 var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/tags/';
                 var total = this._tagsToDeleteCollection.length;
                 var count = 0;
@@ -324,6 +325,9 @@ define([
                                 callbackSuccess();
                                 Backbone.Events.trigger('refreshTagNavViewCollection');
                             }
+                        },
+                        error: function (error) {
+                            that.alert({message: error.responseText, type: 'error'});
                         }
                     });
                 });
