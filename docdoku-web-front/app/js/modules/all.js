@@ -12,7 +12,7 @@ define([
 	'use strict';
 
     if(App.config.admin){
-        return;
+        return {};
     }
 
     var pageUnload = function () {
