@@ -606,16 +606,16 @@ public class MailerBean implements IMailerLocal {
     }
 
     private void sendMessage(Account account, String subject, String content) throws MessagingException {
-        sendMessage(account.getLogin(), account.getName(), subject, content);
+        sendMessage(account.getEmail(), account.getName(), subject, content);
     }
 
     private void sendMessage(User user, String subject, String content) throws MessagingException {
-        sendMessage(user.getLogin(), user.getName(), subject, content);
+        sendMessage(user.getEmail(), user.getName(), subject, content);
     }
 
-    private void sendMessage(String login, String name, String subject, String content) throws MessagingException {
+    private void sendMessage(String email, String name, String subject, String content) throws MessagingException {
         try {
-            InternetAddress emailAddress = new InternetAddress(login, name);
+            InternetAddress emailAddress = new InternetAddress(email, name);
             Message message = new MimeMessage(mailSession);
             message.addRecipient(Message.RecipientType.TO, emailAddress);
             message.setSubject(subject);
