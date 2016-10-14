@@ -22,8 +22,6 @@ package com.docdoku.api;
 
 import com.docdoku.api.client.ApiClient;
 
-import java.util.logging.Logger;
-
 public class TestConfig {
 
     public static String URL;
@@ -42,7 +40,6 @@ public class TestConfig {
     public static ApiClient ROOT_CLIENT;
     public static ApiClient JWT_CLIENT;
     public static ApiClient COOKIE_CLIENT;
-    private static final Logger LOGGER = Logger.getLogger(TestConfig.class.getName());
 
     static {
         parseProperties();

@@ -37,6 +37,7 @@ import java.util.UUID;
 
 /**
  * This class tests DocdokuPLMClient class
+ *
  * @Author Morgan Guimard
  */
 
@@ -69,12 +70,13 @@ public class DocdokuPLMClientTest {
         WorkspaceDTO workspace = new WorkspaceDTO();
         workspace.setId(UUID.randomUUID().toString());
 
-        workspacesApi.createWorkspace(workspace, TestConfig.LOGIN);
-
+        WorkspaceDTO createdWorkspace = workspacesApi.createWorkspace(workspace, TestConfig.LOGIN);
         WorkspaceListDTO workspacesForConnectedUser = workspacesApi.getWorkspacesForConnectedUser();
+
         Assert.assertNotNull(workspacesForConnectedUser);
-        Assert.assertTrue("Should contain created workspace", workspacesForConnectedUser.getAllWorkspaces().contains(workspace));
-        workspacesApi.deleteWorkspace(workspace.getId());
+        Assert.assertTrue("Should contain created workspace", workspacesForConnectedUser.getAllWorkspaces().contains(createdWorkspace));
+
+        workspacesApi.deleteWorkspace(createdWorkspace.getId());
     }
 
 }
