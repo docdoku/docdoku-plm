@@ -20,11 +20,13 @@
 package com.docdoku.server.rest.dto;
 
 import com.docdoku.core.product.CADInstance;
+import io.swagger.annotations.ApiModel;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
+@ApiModel(value="CADInstanceDTO", description="This class is the representation of an {@link CADInstance} entity")
 public class CADInstanceDTO implements Serializable {
 
     private Double rx;

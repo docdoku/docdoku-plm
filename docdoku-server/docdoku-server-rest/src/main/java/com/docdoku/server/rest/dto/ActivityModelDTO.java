@@ -20,6 +20,8 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement
+@ApiModel(value="ActivityModelDTO", description="This class is the representation of an {@link ActivityMode} entity")
 public class ActivityModelDTO implements Serializable {
 
     private int step;

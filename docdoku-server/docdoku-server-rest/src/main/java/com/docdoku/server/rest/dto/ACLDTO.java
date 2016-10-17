@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import com.docdoku.core.security.ACL;
+import io.swagger.annotations.ApiModel;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @XmlRootElement
+@ApiModel(value="ACLDTO", description="This class is the representation of an {@link ACL} entity")
 public class ACLDTO implements Serializable {
 
     @XmlElement(nillable = true)

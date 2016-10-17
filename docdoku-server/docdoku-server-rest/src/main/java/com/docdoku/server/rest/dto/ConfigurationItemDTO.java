@@ -19,6 +19,8 @@
  */
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
@@ -27,6 +29,7 @@ import java.util.List;
  * @author Florent Garin
  */
 @XmlRootElement
+@ApiModel(value="ConfigurationItemDTO", description="This class is the representation of an {@link ConfigurationItem} entity")
 public class ConfigurationItemDTO implements Serializable {
 
     private String id;

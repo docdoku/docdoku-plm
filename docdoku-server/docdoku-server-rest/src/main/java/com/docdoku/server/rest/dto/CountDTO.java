@@ -20,10 +20,13 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
+@ApiModel(value="CountDTO", description="This class is an helper class")
 public class CountDTO implements Serializable {
 
     private int count;

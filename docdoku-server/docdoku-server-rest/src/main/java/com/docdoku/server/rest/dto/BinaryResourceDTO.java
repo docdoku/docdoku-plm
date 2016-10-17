@@ -20,11 +20,14 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
 @XmlRootElement
+@ApiModel(value="BinaryResourceDTO", description="This class is the representation of an {@link BinaryResource} entity")
 public class BinaryResourceDTO implements Serializable {
 
     private String fullName;

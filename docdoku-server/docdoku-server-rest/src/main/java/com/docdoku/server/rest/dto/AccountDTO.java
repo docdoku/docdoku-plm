@@ -20,19 +20,31 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
+@ApiModel(value="AccountDTO", description="This class is the representation of an {@link com.docdoku.core.common.Account} entity")
 public class AccountDTO implements Serializable {
 
+    @ApiModelProperty(value = "Login of the account")
     private String login;
+    @ApiModelProperty(value = "Name of the account")
     private String name;
+    @ApiModelProperty(value = "Email of the account")
     private String email;
+    @ApiModelProperty(value = "Language of the account")
     private String language;
+    @ApiModelProperty(value = "Timezone of the account")
     private String timeZone;
+    @ApiModelProperty(value = "Account administrator flag")
     private boolean admin;
+    @ApiModelProperty(value = "Account enabled flag")
     private boolean enabled;
+    @ApiModelProperty(value = "Password for password change or create action")
     private String newPassword;
 
     public AccountDTO() {

@@ -20,6 +20,8 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
@@ -27,6 +29,7 @@ import java.io.Serializable;
  * @author Yassine Belouad
  */
 @XmlRootElement
+@ApiModel(value="DocumentCreationDTO", description="Use this class to create a new {@link DocumentMaster} entity")
 public class DocumentCreationDTO implements Serializable, Comparable<DocumentCreationDTO> {
 
     private String workspaceId;

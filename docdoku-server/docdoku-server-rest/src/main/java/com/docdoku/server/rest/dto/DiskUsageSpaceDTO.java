@@ -1,5 +1,7 @@
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
@@ -7,6 +9,7 @@ import java.io.Serializable;
  * @author Morgan Guimard
  */
 @XmlRootElement
+@ApiModel(value="DiskUsageSpaceDTO", description="This class provides storage information")
 public class DiskUsageSpaceDTO implements Serializable {
 
     private long documents;
