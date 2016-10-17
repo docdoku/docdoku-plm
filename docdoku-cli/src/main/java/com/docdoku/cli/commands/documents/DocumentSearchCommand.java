@@ -44,7 +44,7 @@ public class DocumentSearchCommand extends BaseCommandLine {
     @Override
     public void execImpl() throws Exception {
         DocumentsApi documentsApi = new DocumentsApi(client);
-        List<DocumentRevisionDTO> documentRevisions = documentsApi.searchDocumentRevision(workspace,searchValue);
+        List<DocumentRevisionDTO> documentRevisions = documentsApi.searchDocumentRevision(workspace, searchValue, null, null, null, null, null, null, null, null, null, null, null, null);
         output.printDocumentRevisions(documentRevisions);
     }
 
