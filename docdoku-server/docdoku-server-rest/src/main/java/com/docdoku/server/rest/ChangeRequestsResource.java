@@ -185,7 +185,7 @@ public class ChangeRequestsResource {
     @Path("{requestId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeRequestDTO saveTags(@PathParam("workspaceId") String workspaceId,
+    public ChangeRequestDTO saveChangeRequestTags(@PathParam("workspaceId") String workspaceId,
                                      @PathParam("requestId") int requestId,
                                      @ApiParam(required = true, value = "Tag list to add") TagListDTO tagListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
@@ -207,7 +207,7 @@ public class ChangeRequestsResource {
     @Path("{requestId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO addTag(@PathParam("workspaceId") String workspaceId,
+    public ChangeItemDTO addTagToChangeRequest(@PathParam("workspaceId") String workspaceId,
                                 @PathParam("requestId") int requestId,
                                 @ApiParam(required = true, value = "Tag list to add") TagListDTO tagListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
@@ -234,7 +234,7 @@ public class ChangeRequestsResource {
     @ApiOperation(value = "Delete tag attached to a request",
             response = Response.class)
     @Path("{requestId}/tags/{tagName}")
-    public Response removeTags(@PathParam("workspaceId") String workspaceId,
+    public Response removeTagsFromChangeRequest(@PathParam("workspaceId") String workspaceId,
                                @PathParam("requestId") int requestId,
                                @PathParam("tagName") String tagName)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
@@ -248,7 +248,7 @@ public class ChangeRequestsResource {
     @Path("{requestId}/affected-documents")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO saveAffectedDocuments(@PathParam("workspaceId") String workspaceId,
+    public ChangeItemDTO saveChangeItemAffectedDocuments(@PathParam("workspaceId") String workspaceId,
                                                @PathParam("requestId") int requestId,
                                                @ApiParam(required = true, value = "Document list to save as affected") DocumentIterationListDTO documentIterationListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
@@ -268,7 +268,7 @@ public class ChangeRequestsResource {
     @Path("{requestId}/affected-parts")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO saveAffectedParts(@PathParam("workspaceId") String workspaceId,
+    public ChangeItemDTO saveChangeRequestAffectedParts(@PathParam("workspaceId") String workspaceId,
                                            @PathParam("requestId") int requestId,
                                            @ApiParam(required = true, value = "Parts to save as affected") PartIterationListDTO partIterationListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
@@ -315,7 +315,7 @@ public class ChangeRequestsResource {
             response = Response.class)
     @Path("{requestId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId,
+    public Response updateChangeRequestACL(@PathParam("workspaceId") String pWorkspaceId,
                               @PathParam("requestId") int requestId,
                               @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {

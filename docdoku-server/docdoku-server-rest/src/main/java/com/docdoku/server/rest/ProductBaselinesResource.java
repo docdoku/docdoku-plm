@@ -82,7 +82,7 @@ public class ProductBaselinesResource {
     @GET
     @ApiOperation(value = "Get product-baseline with given configuration item", response = ProductBaselineDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBaselines(@PathParam("workspaceId") String workspaceId,
+    public Response getProductBaselines(@PathParam("workspaceId") String workspaceId,
                                  @PathParam("ciId") String ciId)
             throws UserNotActiveException, EntityNotFoundException, AccessRightException {
         List<ProductBaseline> productBaselines;
@@ -108,7 +108,7 @@ public class ProductBaselinesResource {
     @ApiOperation(value = "Create product-baseline", response = ProductBaselineDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductBaselineDTO createBaseline(@PathParam("workspaceId") String workspaceId,
+    public ProductBaselineDTO createProductBaseline(@PathParam("workspaceId") String workspaceId,
                                              @PathParam("ciId") String pCiId,
                                              @ApiParam(required = true, value = "Product baseline to create") ProductBaselineDTO productBaselineDTO)
             throws UserNotActiveException, EntityNotFoundException, NotAllowedException, AccessRightException, PartRevisionNotReleasedException, EntityConstraintException, CreationException, PathToPathLinkAlreadyExistsException {
@@ -138,7 +138,7 @@ public class ProductBaselinesResource {
     @ApiOperation(value = "Delete product-baseline", response = Response.class)
     @Path("{baselineId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteBaseline(@PathParam("workspaceId") String workspaceId,
+    public Response deleteProductBaseline(@PathParam("workspaceId") String workspaceId,
                                    @PathParam("ciId") String ciId,
                                    @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, EntityConstraintException {
@@ -150,7 +150,7 @@ public class ProductBaselinesResource {
     @ApiOperation(value = "Get product-baseline", response = ProductBaselineDTO.class)
     @Path("{baselineId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId,
+    public ProductBaselineDTO getProductBaseline(@PathParam("workspaceId") String workspaceId,
                                           @PathParam("ciId") String ciId,
                                           @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
@@ -190,7 +190,7 @@ public class ProductBaselinesResource {
     @ApiOperation(value = "Get product-baseline's part", response = BaselinedPartDTO.class, responseContainer = "List")
     @Path("{baselineId}/parts")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBaselineParts(@PathParam("workspaceId") String workspaceId,
+    public Response getProductBaselineParts(@PathParam("workspaceId") String workspaceId,
                                      @PathParam("ciId") String ciId,
                                      @PathParam("baselineId") int baselineId,
                                      @QueryParam("q") String q)

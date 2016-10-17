@@ -342,7 +342,7 @@ public class PartResource {
     @Path("/acl")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateACL(@PathParam("workspaceId") String workspaceId,
+    public Response updatePartRevisionACL(@PathParam("workspaceId") String workspaceId,
                               @PathParam("partNumber") String partNumber,
                               @PathParam("partVersion") String partVersion,
                               @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)

@@ -162,7 +162,7 @@ public class ChangeOrdersResource {
     @Path("{orderId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeOrderDTO saveTags(@PathParam("workspaceId") String workspaceId,
+    public ChangeOrderDTO saveChangeOrderTags(@PathParam("workspaceId") String workspaceId,
                                    @PathParam("orderId") int orderId,
                                    @ApiParam(required = true, value = "Tag list to add") TagListDTO tagListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
@@ -184,7 +184,7 @@ public class ChangeOrdersResource {
     @Path("{orderId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO addTag(@PathParam("workspaceId") String workspaceId,
+    public ChangeItemDTO addTagToChangeOrder(@PathParam("workspaceId") String workspaceId,
                                 @PathParam("orderId") int orderId,
                                 @ApiParam(required = true, value = "Tag list to add") TagListDTO tagListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
@@ -211,7 +211,7 @@ public class ChangeOrdersResource {
     @ApiOperation(value = "Delete tag attached to order",
             response = Response.class)
     @Path("{orderId}/tags/{tagName}")
-    public Response removeTags(@PathParam("workspaceId") String workspaceId,
+    public Response removeTagsFromChangeOrder(@PathParam("workspaceId") String workspaceId,
                                @PathParam("orderId") int orderId,
                                @PathParam("tagName") String tagName)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
@@ -225,7 +225,7 @@ public class ChangeOrdersResource {
     @Path("{orderId}/affected-documents")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO saveAffectedDocuments(@PathParam("workspaceId") String workspaceId,
+    public ChangeItemDTO saveChangeOrderAffectedDocuments(@PathParam("workspaceId") String workspaceId,
                                                @PathParam("orderId") int orderId,
                                                @ApiParam(required = true, value = "Documents to save as affected") DocumentIterationListDTO documentIterationListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
@@ -245,7 +245,7 @@ public class ChangeOrdersResource {
     @Path("{orderId}/affected-parts")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO saveAffectedParts(@PathParam("workspaceId") String workspaceId,
+    public ChangeItemDTO saveChangeOrderAffectedParts(@PathParam("workspaceId") String workspaceId,
                                            @PathParam("orderId") int orderId,
                                            @ApiParam(required = true, value = "Parts to save as affected") PartIterationListDTO partIterationListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
@@ -292,7 +292,7 @@ public class ChangeOrdersResource {
             response = Response.class)
     @Path("{orderId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId,
+    public Response updateChangeOrderACL(@PathParam("workspaceId") String pWorkspaceId,
                               @PathParam("orderId") int orderId,
                               @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {

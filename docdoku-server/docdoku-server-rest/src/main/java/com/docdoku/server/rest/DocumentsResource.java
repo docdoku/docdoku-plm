@@ -79,6 +79,12 @@ public class DocumentsResource {
         return documentResource;
     }
 
+    @ApiOperation(value = "SubResource : DocumentBaselinesResource")
+    @Path("baselines")
+    public DocumentBaselinesResource getAllBaselines() {
+        return baselinesResource;
+    }
+
     @GET
     @ApiOperation(value = "Get documents in workspace", response = DocumentRevisionDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
@@ -203,10 +209,5 @@ public class DocumentsResource {
         return docRevDTOS.toArray(new DocumentRevisionDTO[docRevDTOS.size()]);
     }
 
-    @ApiOperation(value = "SubResource : DocumentBaselinesResource")
-    @Path("baselines")
-    public DocumentBaselinesResource getAllBaselines(@PathParam("workspaceId") String workspaceId) {
-        return baselinesResource;
-    }
 
 }

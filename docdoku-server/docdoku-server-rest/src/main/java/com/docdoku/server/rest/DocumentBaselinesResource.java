@@ -57,7 +57,7 @@ import java.util.logging.Logger;
  */
 
 @RequestScoped
-@Api(hidden = true, value = "baselines", description = "Operations about document baselines")
+@Api(hidden = true, value = "document-baseline", description = "Operations about document baselines")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class DocumentBaselinesResource {
@@ -87,7 +87,7 @@ public class DocumentBaselinesResource {
             response = DocumentBaselineDTO.class,
             responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBaselines(@PathParam("workspaceId") String workspaceId)
+    public Response getDocumentBaselines(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
         List<DocumentBaseline> documentBaselines = documentBaselineService.getBaselines(workspaceId);
         List<DocumentBaselineDTO> baselinesDTO = new ArrayList<>();
@@ -109,7 +109,7 @@ public class DocumentBaselinesResource {
     @POST
     @ApiOperation(value = "Create baseline", response = DocumentBaselineDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createBaseline(@PathParam("workspaceId") String workspaceId,
+    public Response createDocumentBaseline(@PathParam("workspaceId") String workspaceId,
                                    @ApiParam(required = true, value = "Document baseline to create") DocumentBaselineDTO documentBaselineDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, com.docdoku.core.exceptions.NotAllowedException {
 

@@ -191,7 +191,7 @@ public class MilestonesResource {
             response = Response.class)
     @Path("{milestoneId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId,
+    public Response updateMilestoneACL(@PathParam("workspaceId") String pWorkspaceId,
                               @PathParam("milestoneId") int milestoneId,
                               @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {

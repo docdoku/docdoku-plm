@@ -524,7 +524,7 @@ public class DocumentResource {
     @ApiOperation(value = "Update document's ACL", response = Response.class)
     @Path("acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId,
+    public Response updateDocumentRevisionACL(@PathParam("workspaceId") String pWorkspaceId,
                               @PathParam("documentId") String documentId,
                               @PathParam("documentVersion") String documentVersion,
                               @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
