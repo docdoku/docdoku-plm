@@ -142,7 +142,7 @@ define([
                 var saveOptions = {
                     templateId: templateId ? templateId : null,
                     workflowModelId: workflow ? workflow.get('id') : null,
-                    roleMapping: workflow ? this.workflowsMappingView.toList() : null,
+                    roleMapping: workflow ? this.workflowsMappingView.toResolvedList() : null,
                     acl: this.workspaceMembershipsView.toList()
                 };
 
