@@ -25,6 +25,7 @@ import com.docdoku.api.models.*;
 import com.docdoku.api.models.utils.LastIterationHelper;
 import com.docdoku.api.models.utils.UploadDownloadHelper;
 import com.docdoku.api.services.DocumentApi;
+import com.docdoku.api.services.DocumentsApi;
 import com.docdoku.api.services.FoldersApi;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
@@ -35,12 +36,14 @@ import org.junit.runners.JUnit4;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.UUID;
 
 @RunWith(JUnit4.class)
 public class DocumentApiTest {
 
     private DocumentApi documentApi = new DocumentApi(TestConfig.BASIC_CLIENT);
+    private DocumentsApi documentsApi = new DocumentsApi(TestConfig.BASIC_CLIENT);
     private FoldersApi foldersApi = new FoldersApi(TestConfig.BASIC_CLIENT);
 
     @Test
@@ -121,6 +124,53 @@ public class DocumentApiTest {
         Assert.assertTrue(FileUtils.contentEquals(file, downloadedFile));
 
     }
+
+    @Test
+    public void createDocumentAndSearch() throws ApiException, IOException, InterruptedException {
+
+        // Create a document
+        DocumentCreationDTO documentCreation = new DocumentCreationDTO();
+        documentCreation.setReference(UUID.randomUUID().toString().substring(0, 8));
+        documentCreation.setTitle(UUID.randomUUID().toString().substring(0, 8));
+
+        DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreation, TestConfig.WORKSPACE);
+
+        DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(document);
+        InstanceAttributeDTO attribute = new InstanceAttributeDTO();
+        attribute.setName("ATTR_NAME");
+        attribute.setType(InstanceAttributeDTO.TypeEnum.TEXT);
+        attribute.setValue("ATTR_VALUE");
+        lastIteration.getInstanceAttributes().add(attribute);
+        documentApi.updateDocumentIteration(TestConfig.WORKSPACE,documentCreation.getReference(), "A", "1", lastIteration);
+        documentApi.checkInDocument(TestConfig.WORKSPACE,documentCreation.getReference(),"A","");
+
+        String attributeSearchQuery = "TEXT:ATTR_NAME:ATTR_VALUE";
+
+        // Let some time to server for data indexing (asynchronous)
+        Thread.sleep(2000);
+
+        // search by attributes
+        List<DocumentRevisionDTO> documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeSearchQuery);
+        Assert.assertEquals(1, documentRevisions.stream()
+                .filter(documentRevisionDTO -> documentRevisionDTO.getDocumentMasterId().equals(documentCreation.getReference()))
+                .count());
+
+
+        // search by title
+        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, documentCreation.getTitle(), null, null, null, null, null, null, null, null, null, null);
+        Assert.assertEquals(1, documentRevisions.stream()
+                .filter(documentRevisionDTO -> documentRevisionDTO.getTitle().equals(documentCreation.getTitle()))
+                .count());
+
+        // search by author
+        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, TestConfig.LOGIN, null, null, null, null, null, null, null);
+        Assert.assertEquals(1, documentRevisions.stream()
+                .filter(documentRevisionDTO -> documentRevisionDTO.getTitle().equals(documentCreation.getTitle()))
+                .count());
+
+
+    }
+
 
 
 }

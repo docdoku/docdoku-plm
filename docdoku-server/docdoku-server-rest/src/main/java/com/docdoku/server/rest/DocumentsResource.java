@@ -110,7 +110,20 @@ public class DocumentsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO[] searchDocumentRevision(@Context UriInfo uri,
                                                         @PathParam("workspaceId") String workspaceId,
-                                                        @QueryParam("q") String q) throws EntityNotFoundException, UserNotActiveException, ESServerException {
+                                                        @QueryParam("q") String q,
+                                                        @QueryParam("id") String id,
+                                                        @QueryParam("title") String title,
+                                                        @QueryParam("type") String type,
+                                                        @QueryParam("version") String version,
+                                                        @QueryParam("author") String author,
+                                                        @QueryParam("tags") String tags,
+                                                        @QueryParam("content") String content,
+                                                        @QueryParam("createdFrom") String createdFrom,
+                                                        @QueryParam("createdTo") String createdTo,
+                                                        @QueryParam("modifiedFrom") String modifiedFrom,
+                                                        @QueryParam("modifiedTo") String modifiedTo,
+                                                        @QueryParam("attributes") String attributes
+    ) throws EntityNotFoundException, UserNotActiveException, ESServerException {
         MultivaluedMap<String, String> params = uri.getQueryParameters();
         DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseDocumentStringQuery(workspaceId, params);
 
