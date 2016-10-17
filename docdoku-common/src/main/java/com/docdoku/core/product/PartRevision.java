@@ -48,7 +48,9 @@ import java.util.*;
         @NamedQuery(name="PartRevision.countByWorkspace.filterUserACLEntry", query="SELECT count(pr) FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId and (pr.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = pr.acl))"),
         @NamedQuery(name="PartRevision.countByWorkspace", query="SELECT count(pr) FROM PartRevision pr WHERE pr.partMasterWorkspaceId = :workspaceId"),
         @NamedQuery(name="PartRevision.findByReferenceOrName", query="SELECT pr FROM PartRevision pr WHERE (pr.partMaster.number LIKE :partNumber OR pr.partMaster.name LIKE :partName) AND pr.partMaster.workspace.id = :workspaceId"),
-        @NamedQuery(name="PartRevision.findByWorkflow", query="SELECT p FROM PartRevision p WHERE p.workflow = :workflow")
+        @NamedQuery(name="PartRevision.findByWorkflow", query="SELECT p FROM PartRevision p WHERE p.workflow = :workflow"),
+        @NamedQuery(name="PartRevision.findWithAssignedTasksForUser", query="SELECT p FROM PartRevision p, Task t LEFT JOIN t.assignedUsers au LEFT JOIN t.assignedGroups ag LEFT JOIN ag.users agu WHERE t.activity.workflow = p.workflow AND p.workflow IS NOT NULL AND p.partMasterWorkspaceId = :workspaceId AND ((au.login = :login AND au.workspaceId = :workspaceId) OR (agu.login = :login AND agu.workspaceId = :workspaceId))"),
+        @NamedQuery(name="PartRevision.findWithOpenedTasksForUser", query="SELECT p FROM PartRevision p, Task t LEFT JOIN t.assignedUsers au LEFT JOIN t.assignedGroups ag LEFT JOIN ag.users agu WHERE t.activity.workflow = p.workflow AND p.workflow IS NOT NULL AND p.partMasterWorkspaceId = :workspaceId AND ((au.login = :login AND au.workspaceId = :workspaceId) OR (agu.login = :login AND agu.workspaceId = :workspaceId)) AND t.status = com.docdoku.core.workflow.Task.Status.IN_PROGRESS")
 })
 public class PartRevision implements Serializable, Comparable<PartRevision> {
 

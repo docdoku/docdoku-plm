@@ -21,6 +21,7 @@ define([
     'text!common-objects/templates/buttons/tags_button.html',
     'text!common-objects/templates/buttons/obsolete_button.html',
     'text!templates/part/search_part_form.html',
+    'text!common-objects/templates/task/status_filter.html',
     'common-objects/views/alert',
     'common-objects/views/tags/tags_management',
     'views/part/part_importer',
@@ -28,7 +29,7 @@ define([
     'views/advanced_search',
     'views/part/part_grouped_by_list',
     'text!common-objects/templates/buttons/import_button.html',
-], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, QueryBuilder, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView, TagsManagementView, PartImporterView, ProductCreationView, AdvancedSearchView, PartGroupedByView, importButton) {
+], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, QueryBuilder, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, statusFilter, AlertView, TagsManagementView, PartImporterView, ProductCreationView, AdvancedSearchView, PartGroupedByView, importButton) {
     'use strict';
     var PartContentView = Backbone.View.extend({
         events: {
@@ -52,7 +53,9 @@ define([
             'submit #part-search-form': 'onQuickSearch',
             'click .advanced-search-button': 'onAdvancedSearch',
             'click .display-query-builder-button': 'toggleQueryBuilder',
-            'click .import': 'showImporter'
+            'click .import': 'showImporter',
+            'click button[value="all"]': 'showAllWithTask',
+            'click button[value="in_progress"]': 'showTaskInProgress'
         },
 
         partials: {
@@ -65,7 +68,8 @@ define([
             newProductButton: newProductButton,
             tagsButton: tagsButton,
             obsoleteButton: obsoleteButton,
-            importButton: importButton
+            importButton: importButton,
+            statusFilter: statusFilter
         },
 
         id: 'part_content',
@@ -77,7 +81,7 @@ define([
         render: function () {
 
             this.isQueryBuilderDisplayed = false;
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, filter: this.options.filter}, this.partials));
             this.bindDomElements();
 
             this.tagsButton.show();
@@ -106,6 +110,10 @@ define([
             this.queryBuilder = new QueryBuilder({
                 el: this.$queryBuilder
             });
+
+            if (this.options.filter) {
+                this.$('button.filter[value=' + this.options.filter + ']').addClass('active');
+            }
 
             this.bindEvent();
             return this;
@@ -563,6 +571,14 @@ define([
                 this.partListView.remove();
             }
             this.remove();
+        },
+
+        showAllWithTask: function () {
+            window.location.hash = '#' + App.config.workspaceId + '/tasks';
+        },
+
+        showTaskInProgress: function () {
+            window.location.hash = '#' + App.config.workspaceId + '/tasks/in_progress';
         }
 
     });

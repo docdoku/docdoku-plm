@@ -9,9 +9,10 @@ define([
     'views/nav/part_nav',
     'views/nav/part_template_nav',
     'views/nav/checkedouts_nav',
+    'views/nav/tasks_nav',
     'views/nav/tag_nav'
 ],
-function (Backbone, singletonDecorator, ProductNavView, ConfigurationNavView, BaselinesNavView, ProductInstancesNavView, PartNavView, PartTemplateNavView, CheckedOutNavView, TagNavView) {
+function (Backbone, singletonDecorator, ProductNavView, ConfigurationNavView, BaselinesNavView, ProductInstancesNavView, PartNavView, PartTemplateNavView, CheckedOutNavView, TasksNavView, TagNavView) {
     'use strict';
     var Router = Backbone.Router.extend({
         routes: {
@@ -22,6 +23,8 @@ function (Backbone, singletonDecorator, ProductNavView, ConfigurationNavView, Ba
             ':workspaceId/parts': 'parts',
             ':workspaceId/tags/:tag': 'tags',
             ':workspaceId/checkedouts': 'checkedoutsParts',
+            ':workspaceId/tasks': 'tasksParts',
+            ':workspaceId/tasks/:filter': 'tasksParts',
             ':workspaceId/part-templates': 'partsTemplate',
             ':workspaceId/parts-search/:query': 'search',
             ':workspaceId': 'products',
@@ -44,6 +47,7 @@ function (Backbone, singletonDecorator, ProductNavView, ConfigurationNavView, Ba
 	        PartNavView.getInstance().cleanView();
 	        PartTemplateNavView.getInstance().cleanView();
 	        CheckedOutNavView.getInstance().cleanView();
+            TasksNavView.getInstance().cleanView();
             TagNavView.getInstance();
         },
 
@@ -81,6 +85,12 @@ function (Backbone, singletonDecorator, ProductNavView, ConfigurationNavView, Ba
             this.executeOrReload(workspaceId,function(){
                 this.initNavViews();
                 CheckedOutNavView.getInstance().showContent();
+            });
+        },
+        tasksParts: function (workspaceId, filter) {
+            this.executeOrReload(workspaceId,function(){
+                this.initNavViews();
+                TasksNavView.getInstance().showContent(filter);
             });
         },
         tags:function(workspaceId,tag){

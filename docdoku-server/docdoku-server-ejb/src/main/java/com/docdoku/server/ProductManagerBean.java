@@ -3664,6 +3664,48 @@ public class ProductManagerBean implements IProductManagerLocal {
         return binaryResourceDAO.getPartHolder(binaryResource);
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public PartRevision[] getPartRevisionsWithAssignedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin)
+            throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        List<PartRevision> partRs = new PartRevisionDAO(new Locale(user.getLanguage()), em).findPartsWithAssignedTasksForGivenUser(pWorkspaceId, assignedUserLogin);
+
+        ListIterator<PartRevision> ite = partRs.listIterator();
+        while (ite.hasNext()) {
+            PartRevision partR = ite.next();
+            if (!hasPartRevisionReadAccess(user, partR)) {
+                ite.remove();
+            } else if (isCheckoutByAnotherUser(user, partR)) {
+                em.detach(partR);
+                partR.removeLastIteration();
+            }
+        }
+
+        return partRs.toArray(new PartRevision[partRs.size()]);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public PartRevision[] getPartRevisionsWithOpenedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin)
+            throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        List<PartRevision> partRs = new PartRevisionDAO(new Locale(user.getLanguage()), em).findPartsWithOpenedTasksForGivenUser(pWorkspaceId, assignedUserLogin);
+
+        ListIterator<PartRevision> ite = partRs.listIterator();
+        while (ite.hasNext()) {
+            PartRevision partR = ite.next();
+            if (!hasPartRevisionReadAccess(user, partR)) {
+                ite.remove();
+            } else if (isCheckoutByAnotherUser(user, partR)) {
+                em.detach(partR);
+                partR.removeLastIteration();
+            }
+        }
+
+        return partRs.toArray(new PartRevision[partRs.size()]);
+    }
+
     private void checkCyclicPathToPathLink(ConfigurationItem ci, PathToPathLink startLink, User user, List<PathToPathLink> visitedLinks) throws PathToPathCyclicException {
         Locale locale = new Locale(user.getLanguage());
         PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);

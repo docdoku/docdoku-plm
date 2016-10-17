@@ -19,18 +19,20 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
+import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.ITaskManagerLocal;
 import com.docdoku.core.workflow.ActivityKey;
 import com.docdoku.core.workflow.TaskKey;
 import com.docdoku.core.workflow.TaskWrapper;
-import com.docdoku.server.rest.dto.DocumentRevisionDTO;
-import com.docdoku.server.rest.dto.TaskDTO;
-import com.docdoku.server.rest.dto.TaskProcessDTO;
+import com.docdoku.server.rest.dto.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -43,6 +45,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
@@ -60,6 +63,8 @@ public class TaskResource {
 
     @Inject
     private IDocumentManagerLocal documentService;
+    @Inject
+    private IProductManagerLocal productService;
 
     @Inject
     private ITaskManagerLocal taskManager;
@@ -153,6 +158,41 @@ public class TaskResource {
         }
 
         return docRsDTOs.toArray(new DocumentRevisionDTO[docRsDTOs.size()]);
+    }
+
+    @GET
+    @ApiOperation(value = "Get parts where user has assigned tasks", response = PartRevisionDTO.class, responseContainer = "List")
+    @Path("{assignedUserLogin}/parts")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPartsWhereGivenUserHasAssignedTasks(
+            @PathParam("workspaceId") String workspaceId,
+            @PathParam("assignedUserLogin") String assignedUserLogin,
+            @QueryParam("filter") String filter)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+
+        PartRevision[] withTaskPartRevisions;
+
+        if ("in_progress".equals(filter)) {
+            withTaskPartRevisions = productService.getPartRevisionsWithOpenedTasksForGivenUser(workspaceId, assignedUserLogin);
+        } else {
+            withTaskPartRevisions = productService.getPartRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
+        }
+
+        List<PartRevisionDTO> partRevisionDTOs = new ArrayList<>();
+
+        for (PartRevision partRevision : withTaskPartRevisions) {
+            PartRevisionDTO partRevisionDTO = Tools.mapPartRevisionToPartDTO(partRevision);
+
+            PartIterationKey iterationKey = new PartIterationKey(partRevision.getKey(), partRevision.getLastIterationNumber());
+            List<ModificationNotification> notifications = productService.getModificationNotifications(iterationKey);
+            List<ModificationNotificationDTO> notificationDTOs =  Tools.mapModificationNotificationsToModificationNotificationDTO(notifications);
+            partRevisionDTO.setNotifications(notificationDTOs);
+
+            partRevisionDTOs.add(partRevisionDTO);
+        }
+
+        return Response.ok(new GenericEntity<List<PartRevisionDTO>>((List<PartRevisionDTO>) partRevisionDTOs) {
+        }).build();
     }
 
 

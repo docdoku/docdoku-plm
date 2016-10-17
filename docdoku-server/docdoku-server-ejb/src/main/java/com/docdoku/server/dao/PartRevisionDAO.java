@@ -179,4 +179,18 @@ public class PartRevisionDAO {
             return null;
         }
     }
+
+    public List<PartRevision> findPartsWithAssignedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) {
+        return em.createNamedQuery("PartRevision.findWithAssignedTasksForUser", PartRevision.class)
+                .setParameter("workspaceId", pWorkspaceId)
+                .setParameter("login", assignedUserLogin)
+                .getResultList();
+    }
+
+    public List<PartRevision> findPartsWithOpenedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) {
+        return em.createNamedQuery("PartRevision.findWithOpenedTasksForUser", PartRevision.class)
+                .setParameter("workspaceId", pWorkspaceId)
+                .setParameter("login", assignedUserLogin)
+                .getResultList();
+    }
 }

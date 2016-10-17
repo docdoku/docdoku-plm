@@ -11,7 +11,7 @@ define([
     'text!common-objects/templates/buttons/ACL_button.html',
     'text!common-objects/templates/buttons/snap_in_progress_button.html',
     'text!templates/search_document_form.html',
-    'text!templates/status_filter.html',
+    'text!common-objects/templates/task/status_filter.html',
     'text!templates/task_document_list.html'
 ], function (TaskDocumentList, ContentDocumentListView, deleteButton, checkoutButtonGroup, tagsButton, newVersionButton, releaseButton, obsoleteButton, aclButton, snapInProgressButton, searchForm, statusFilter, template) {
 	'use strict';
