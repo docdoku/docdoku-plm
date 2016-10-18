@@ -21,11 +21,13 @@
 package com.docdoku.server.rest.dto;
 
 import com.docdoku.core.admin.PlatformOptions;
+import io.swagger.annotations.ApiModel;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
+@ApiModel(value="PlatformOptionsDTO", description="This class is a representation of a {@link com.docdoku.core.admin.PlatformOptions} entity")
 public class PlatformOptionsDTO implements Serializable {
 
 

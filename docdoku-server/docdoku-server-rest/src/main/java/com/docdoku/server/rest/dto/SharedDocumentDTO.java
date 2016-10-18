@@ -20,6 +20,8 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
@@ -28,6 +30,7 @@ import java.util.Date;
  * @author Morgan Guimard
  */
 @XmlRootElement
+@ApiModel(value="SharedDocumentDTO", description="This class is a representation of a {@link com.docdoku.core.sharing.SharedDocument} entity")
 public class SharedDocumentDTO implements Serializable {
 
     private String uuid;

@@ -29,7 +29,7 @@ import java.io.Serializable;
  * @author Yassine Belouad
  */
 @XmlRootElement
-@ApiModel(value="DocumentCreationDTO", description="Use this class to create a new {@link DocumentMaster} entity")
+@ApiModel(value="DocumentCreationDTO", description="Use this class to create a new {@link com.docdoku.core.document.DocumentLink} entity")
 public class DocumentCreationDTO implements Serializable, Comparable<DocumentCreationDTO> {
 
     private String workspaceId;

@@ -20,12 +20,15 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
 @XmlRootElement
+@ApiModel(value="ModificationNotificationDTO", description="This class is a representation of a {@link com.docdoku.core.change.ModificationNotification} entity")
 public class ModificationNotificationDTO implements Serializable {
 
     private int id;

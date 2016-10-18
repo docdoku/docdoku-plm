@@ -19,12 +19,15 @@
  */
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @XmlRootElement
+@ApiModel(value="PartIterationDTO", description="This class is a representation of a {@link com.docdoku.core.product.PartIteration} entity")
 public class PartIterationDTO implements Serializable {
 
     private String workspaceId;

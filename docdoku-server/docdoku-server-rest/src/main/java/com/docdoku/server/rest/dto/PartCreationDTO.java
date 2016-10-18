@@ -20,12 +20,15 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @XmlRootElement
+@ApiModel(value="PartCreationDTO", description="Use this class to create a new {@link com.docdoku.core.product.PartMaster} entity")
 public class PartCreationDTO implements Serializable {
 
     private String partKey;

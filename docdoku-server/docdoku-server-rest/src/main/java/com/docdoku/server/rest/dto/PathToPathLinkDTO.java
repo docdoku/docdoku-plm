@@ -20,11 +20,14 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
 
 @XmlRootElement
+@ApiModel(value="PathToPathLinkDTO", description="This class is a representation of a {@link com.docdoku.core.product.PathToPathLink} entity")
 public class PathToPathLinkDTO implements Serializable {
 
     private Integer id;

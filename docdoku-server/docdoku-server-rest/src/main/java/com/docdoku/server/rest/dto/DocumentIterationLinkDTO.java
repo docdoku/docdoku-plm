@@ -19,10 +19,13 @@
  */
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
+@ApiModel(value="DocumentIterationLinkDTO", description="This class is the representation of a {@link com.docdoku.core.document.DocumentIteration} entity")
 public class DocumentIterationLinkDTO implements Serializable {
 
     private String workspaceId;

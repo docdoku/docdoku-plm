@@ -21,10 +21,13 @@
 package com.docdoku.server.rest.dto;
 
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
+@ApiModel(value="WorkspaceUserMemberShipDTO", description="This class is a representation of a {@link com.docdoku.core.security.WorkspaceUserMemberShip} entity")
 public class WorkspaceUserMemberShipDTO implements Serializable {
 
     private String workspaceId;

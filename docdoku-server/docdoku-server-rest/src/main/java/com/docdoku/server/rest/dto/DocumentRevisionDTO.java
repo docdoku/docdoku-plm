@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import com.docdoku.core.document.DocumentRevision;
+import io.swagger.annotations.ApiModel;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -33,6 +34,7 @@ import java.util.List;
  * @author Florent Garin
  */
 @XmlRootElement
+@ApiModel(value="DocumentRevisionDTO", description="This class is the representation of a {@link com.docdoku.core.document.DocumentRevision} entity")
 public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRevisionDTO> {
 
     private String workspaceId;

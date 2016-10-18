@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @XmlRootElement
-@ApiModel(value="BinaryResourceDTO", description="This class is the representation of an {@link BinaryResource} entity")
+@ApiModel(value="BinaryResourceDTO", description="This class is the representation of an {@link com.docdoku.core.common.BinaryResource} entity")
 public class BinaryResourceDTO implements Serializable {
 
     private String fullName;

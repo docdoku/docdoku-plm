@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
-@ApiModel(value="CADInstanceDTO", description="This class is the representation of an {@link CADInstance} entity")
+@ApiModel(value="CADInstanceDTO", description="This class is the representation of an {@link com.docdoku.core.product.CADInstance} entity")
 public class CADInstanceDTO implements Serializable {
 
     private Double rx;

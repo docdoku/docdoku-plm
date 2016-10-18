@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement
-@ApiModel(value="ActivityDTO", description="This class is the representation of an {@link Activity} entity")
+@ApiModel(value="ActivityDTO", description="This class is the representation of an {@link com.docdoku.core.workflow.Activity} entity")
 public class ActivityDTO implements Serializable {
 
     private int step;

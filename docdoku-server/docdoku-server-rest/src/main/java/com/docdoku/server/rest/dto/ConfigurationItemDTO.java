@@ -29,7 +29,7 @@ import java.util.List;
  * @author Florent Garin
  */
 @XmlRootElement
-@ApiModel(value="ConfigurationItemDTO", description="This class is the representation of an {@link ConfigurationItem} entity")
+@ApiModel(value="ConfigurationItemDTO", description="This class is the representation of an {@link com.docdoku.core.product.ConfigurationItem} entity")
 public class ConfigurationItemDTO implements Serializable {
 
     private String id;

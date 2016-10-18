@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @XmlRootElement
-@ApiModel(value="ACLDTO", description="This class is the representation of an {@link ACL} entity")
+@ApiModel(value="ACLDTO", description="This class is the representation of an {@link com.docdoku.core.security.ACL} entity")
 public class ACLDTO implements Serializable {
 
     @XmlElement(nillable = true)

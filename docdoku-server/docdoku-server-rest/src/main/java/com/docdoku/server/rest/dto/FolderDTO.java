@@ -20,6 +20,8 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
@@ -28,6 +30,7 @@ import java.io.Serializable;
  */
 
 @XmlRootElement
+@ApiModel(value="FolderDTO", description="This class is a representation of a {@link com.docdoku.core.document.Folder} entity")
 public class FolderDTO implements Serializable {
 
     private String path;

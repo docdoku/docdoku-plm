@@ -21,10 +21,13 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
+@ApiModel(value="LayerDTO", description="This class is a representation of a {@link com.docdoku.core.product.Layer} entity")
 public class LayerDTO implements Serializable {
 
     private int id;

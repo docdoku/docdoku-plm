@@ -32,7 +32,7 @@ import java.util.List;
  * @author Julien Maffre
  */
 @XmlRootElement
-@ApiModel(value="ComponentDTO", description="This class is the representation of an {@link Component} entity")
+@ApiModel(value="ComponentDTO", description="This class is the representation of an {@link com.docdoku.core.product.Component} entity")
 public class ComponentDTO implements Serializable {
 
     private String author;

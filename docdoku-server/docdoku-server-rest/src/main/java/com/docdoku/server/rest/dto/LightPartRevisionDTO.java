@@ -1,9 +1,17 @@
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+
 /**
- * Created by laurentlevan on 29/06/16.
+ *
+ * @author laurentlevan
  */
-public class LightPartRevisionDTO {
+@XmlRootElement
+@ApiModel(value="LightPartRevisionDTO", description="This class is a light representation of a {@link com.docdoku.core.product.PartRevision} entity")
+public class LightPartRevisionDTO implements Serializable {
 
     private String workspaceId;
     private String partNumber;

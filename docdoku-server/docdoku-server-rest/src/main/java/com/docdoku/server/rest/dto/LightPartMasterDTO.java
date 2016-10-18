@@ -20,10 +20,13 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
+@ApiModel(value="LightPartMasterDTO", description="This class is a light representation of a {@link com.docdoku.core.product.PartMaster} entity")
 public class LightPartMasterDTO implements Serializable {
 
     private String partNumber;

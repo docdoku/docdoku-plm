@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @XmlRootElement
-@ApiModel(value="ConversionDTO", description="This class is the representation of an {@link Conversion} entity")
+@ApiModel(value="ConversionDTO", description="This class is the representation of an {@link com.docdoku.core.product.Conversion} entity")
 public class ConversionDTO implements Serializable {
 
     private Date endDate;

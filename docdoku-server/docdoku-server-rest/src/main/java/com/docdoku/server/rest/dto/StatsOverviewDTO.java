@@ -20,6 +20,8 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
@@ -27,6 +29,7 @@ import java.io.Serializable;
  * @author Morgan Guimard
  */
 @XmlRootElement
+@ApiModel(value="StatsOverviewDTO", description="This class is a representation of workspace metrics")
 public class StatsOverviewDTO implements Serializable {
 
     private int documents;

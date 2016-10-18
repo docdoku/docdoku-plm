@@ -20,12 +20,15 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement
+@ApiModel(value="LightPartLinkListDTO", description="This class wraps a list of {@link LightPartLinkDTO} entities")
 public class LightPartLinkListDTO implements Serializable {
 
     private List<LightPartLinkDTO> partLinks = new ArrayList<>();

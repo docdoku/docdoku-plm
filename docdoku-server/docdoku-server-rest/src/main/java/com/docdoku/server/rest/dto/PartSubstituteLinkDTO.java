@@ -19,11 +19,14 @@
  */
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
 
 @XmlRootElement
+@ApiModel(value="PartSubstituteLinkDTO", description="This class is a representation of a {@link com.docdoku.core.product.PartSubstituteLink} entity")
 public class PartSubstituteLinkDTO implements Serializable {
 
     private int id;

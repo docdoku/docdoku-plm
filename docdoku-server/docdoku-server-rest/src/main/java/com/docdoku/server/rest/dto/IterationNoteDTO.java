@@ -20,10 +20,13 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
+@ApiModel(value="IterationNoteDTO", description="Use this class to provide iteration notes when check in entities")
 public class IterationNoteDTO implements Serializable {
     private String iterationNote;
 

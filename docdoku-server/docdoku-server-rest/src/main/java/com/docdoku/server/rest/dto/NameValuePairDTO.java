@@ -19,6 +19,8 @@
  */
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
@@ -26,6 +28,7 @@ import java.io.Serializable;
  * @author lebeaujulien on 03/03/15.
  */
 @XmlRootElement
+@ApiModel(value="NameValuePairDTO", description="This class is a representation of a {@link com.docdoku.core.meta.NameValuePair} entity")
 public class NameValuePairDTO implements Serializable {
 
     private String name;

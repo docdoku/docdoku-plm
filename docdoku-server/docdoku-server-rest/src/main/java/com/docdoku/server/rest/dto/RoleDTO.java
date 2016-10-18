@@ -19,6 +19,8 @@
  */
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
@@ -27,6 +29,7 @@ import java.util.List;
  * @author Yassine Belouad
  */
 @XmlRootElement
+@ApiModel(value="RoleDTO", description="This class is a representation of a {@link com.docdoku.core.workflow.Role} entity")
 public class RoleDTO implements Serializable {
 
     private String id;

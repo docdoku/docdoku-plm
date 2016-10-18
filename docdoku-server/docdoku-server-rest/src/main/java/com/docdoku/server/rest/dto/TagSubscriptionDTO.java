@@ -20,6 +20,8 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
@@ -27,6 +29,7 @@ import java.io.Serializable;
  * @author Florent Garin
  */
 @XmlRootElement
+@ApiModel(value="TagSubscriptionDTO", description="This is a representation of a {@link com.docdoku.core.meta.TagUserSubscription} or {@link com.docdoku.core.meta.TagUserGroupSubscription} entity")
 public class TagSubscriptionDTO implements Serializable {
 
     private String tag;

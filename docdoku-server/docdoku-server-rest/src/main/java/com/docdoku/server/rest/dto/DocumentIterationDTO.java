@@ -31,7 +31,7 @@ import java.util.List;
  * @author Florent Garin
  */
 @XmlRootElement
-@ApiModel(value="DocumentIterationDTO", description="This class is the representation of a {@link DocumentIteration} entity")
+@ApiModel(value="DocumentIterationDTO", description="This class is the representation of a {@link com.docdoku.core.document.DocumentIteration} entity")
 public class DocumentIterationDTO implements Serializable {
 
     private String workspaceId;

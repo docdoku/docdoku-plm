@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement
-@ApiModel(value="ActivityModelDTO", description="This class is the representation of an {@link ActivityMode} entity")
+@ApiModel(value="ActivityModelDTO", description="This class is the representation of an {@link com.docdoku.core.workflow.ActivityModel} entity")
 public class ActivityModelDTO implements Serializable {
 
     private int step;

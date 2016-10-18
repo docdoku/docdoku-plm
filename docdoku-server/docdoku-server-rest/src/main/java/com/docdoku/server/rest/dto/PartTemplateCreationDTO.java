@@ -20,11 +20,14 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
 
 @XmlRootElement
+@ApiModel(value="PartTemplateCreationDTO", description="Use this class to create a new {@link com.docdoku.core.product.PartTemplateMaster} entity")
 public class PartTemplateCreationDTO implements Serializable {
 
     private String workspaceId;

@@ -20,6 +20,8 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 
 @XmlRootElement
+@ApiModel(value="TaskDTO", description="This class is a representation of a {@link com.docdoku.core.workflow.Task} entity")
 public class TaskDTO implements Serializable {
 
     private String closureComment;

@@ -19,6 +19,8 @@
  */
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -28,6 +30,7 @@ import java.io.Serializable;
  */
 
 @XmlRootElement
+@ApiModel(value="TagDTO", description="This class is a representation of a {@link com.docdoku.core.meta.Tag} entity")
 public class TagDTO implements Serializable {
 
     @XmlElement(nillable = true)

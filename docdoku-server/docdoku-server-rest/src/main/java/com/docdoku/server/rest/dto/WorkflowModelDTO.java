@@ -20,6 +20,8 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -28,6 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 @XmlRootElement
+@ApiModel(value="WorkflowModelDTO", description="This class is a representation of a {@link com.docdoku.core.workflow.WorkflowModel} entity")
 public class WorkflowModelDTO implements Serializable {
 
     private String id;

@@ -20,6 +20,8 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
@@ -27,6 +29,7 @@ import java.io.Serializable;
  * @author Florent Garin
  */
 @XmlRootElement
+@ApiModel(value="UserDTO", description="This class is a representation of a {@link com.docdoku.core.common.User} entity")
 public class UserDTO implements Serializable {
 
     private String workspaceId;

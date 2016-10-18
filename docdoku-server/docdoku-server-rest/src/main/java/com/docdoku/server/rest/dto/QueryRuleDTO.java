@@ -20,6 +20,8 @@
 
 package com.docdoku.server.rest.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
@@ -29,6 +31,7 @@ import java.util.List;
  */
 
 @XmlRootElement
+@ApiModel(value="QueryRuleDTO", description="This class is a representation of a {@link com.docdoku.core.query.QueryRule} entity")
 public class QueryRuleDTO implements Serializable {
 
     private String condition;
