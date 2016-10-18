@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -30,9 +31,16 @@ import java.util.Date;
 @ApiModel(value="ConversionDTO", description="This class is the representation of an {@link com.docdoku.core.product.Conversion} entity")
 public class ConversionDTO implements Serializable {
 
+    @ApiModelProperty(value = "Conversion end date")
     private Date endDate;
+
+    @ApiModelProperty(value = "Conversion start date")
     private Date startDate;
+
+    @ApiModelProperty(value = "Success flag")
     private boolean succeed;
+
+    @ApiModelProperty(value = "Pending flag")
     private boolean pending;
 
     public ConversionDTO() {

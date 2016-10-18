@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -36,17 +37,29 @@ import java.util.List;
 @ApiModel(value="QueryDTO", description="This class is a representation of a {@link com.docdoku.core.query.Query} entity")
 public class QueryDTO implements Serializable {
 
+    @ApiModelProperty(value = "Query id")
     private int id;
+
+    @ApiModelProperty(value = "Query name")
     private String name;
+
+    @ApiModelProperty(value = "Query creation date")
     private Date creationDate;
 
+    @ApiModelProperty(value = "Query rule")
     @XmlElement(nillable = false)
     private QueryRuleDTO queryRule;
 
+    @ApiModelProperty(value = "List of select statements")
     private List<String> selects;
+
+    @ApiModelProperty(value = "List of order by statements")
     private List<String> orderByList;
+
+    @ApiModelProperty(value = "List of grouped by statements")
     private List<String> groupedByList;
 
+    @ApiModelProperty(value = "Query context list")
     private List<QueryContextDTO> contexts;
 
     public QueryDTO() {

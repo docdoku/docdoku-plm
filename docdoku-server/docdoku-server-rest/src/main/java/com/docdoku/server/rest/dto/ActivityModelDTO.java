@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,14 +33,23 @@ import java.util.List;
 @ApiModel(value="ActivityModelDTO", description="This class is the representation of an {@link com.docdoku.core.workflow.ActivityModel} entity")
 public class ActivityModelDTO implements Serializable {
 
+    @ApiModelProperty(value = "Activity model step")
     private int step;
+
+    @ApiModelProperty(value = "Activity model relaunch step")
     private Integer relaunchStep;
 
     @XmlElement(nillable = false, required = true)
+    @ApiModelProperty(value = "List of task models")
     private List<TaskModelDTO> taskModels;
 
+    @ApiModelProperty(value = "Final lifecycle state")
     private String lifeCycleState;
+
+    @ApiModelProperty(value = "Type of the workflow model")
     private Type type;
+
+    @ApiModelProperty(value = "Amount of tasks to complete")
     private Integer tasksToComplete;
 
     public ActivityModelDTO() {

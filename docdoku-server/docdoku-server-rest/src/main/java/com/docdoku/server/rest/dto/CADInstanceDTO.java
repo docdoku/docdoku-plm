@@ -21,6 +21,7 @@ package com.docdoku.server.rest.dto;
 
 import com.docdoku.core.product.CADInstance;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -29,13 +30,28 @@ import java.io.Serializable;
 @ApiModel(value="CADInstanceDTO", description="This class is the representation of an {@link com.docdoku.core.product.CADInstance} entity")
 public class CADInstanceDTO implements Serializable {
 
+    @ApiModelProperty(value = "Rotation around x Axis")
     private Double rx;
+
+    @ApiModelProperty(value = "Rotation around y Axis")
     private Double ry;
+
+    @ApiModelProperty(value = "Rotation around z Axis")
     private Double rz;
+
+    @ApiModelProperty(value = "Translation on x Axis")
     private Double tx;
+
+    @ApiModelProperty(value = "Translation on y Axis")
     private Double ty;
+
+    @ApiModelProperty(value = "Translation on z Axis")
     private Double tz;
+
+    @ApiModelProperty(value = "4x4 Transformation matrix")
     private double[] matrix;
+
+    @ApiModelProperty(value = "Transformation type")
     private CADInstance.RotationType rotationType;
 
 

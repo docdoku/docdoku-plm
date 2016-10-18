@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -31,13 +32,28 @@ import java.util.List;
 @ApiModel(value="ImportDTO", description="This class is a representation of a {@link com.docdoku.core.product.Import} entity")
 public class ImportDTO implements Serializable {
 
+    @ApiModelProperty(value = "Import id")
     private String id;
+
+    @ApiModelProperty(value = "Imported file name")
     private String fileName;
+
+    @ApiModelProperty(value = "Import end date")
     private Date endDate;
+
+    @ApiModelProperty(value = "Import start date")
     private Date startDate;
+
+    @ApiModelProperty(value = "Success flag")
     private boolean succeed;
+
+    @ApiModelProperty(value = "Pending flag")
     private boolean pending;
+
+    @ApiModelProperty(value = "Potential errors")
     private List<String> errors;
+
+    @ApiModelProperty(value = "Potential warnings")
     private List<String> warnings;
 
     public ImportDTO() {

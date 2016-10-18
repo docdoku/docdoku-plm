@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -33,13 +34,25 @@ import java.util.Date;
 @ApiModel(value="SharedDocumentDTO", description="This class is a representation of a {@link com.docdoku.core.sharing.SharedDocument} entity")
 public class SharedDocumentDTO implements Serializable {
 
+    @ApiModelProperty(value = "Shared document token")
     private String uuid;
+
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
+
+    @ApiModelProperty(value = "Shared document password")
     private String password;
+
+    @ApiModelProperty(value = "Shared document expired date")
     private Date expireDate;
+
+    @ApiModelProperty(value = "Shared document creator")
     private String userLogin;
 
+    @ApiModelProperty(value = "Shared document maser id")
     private String documentMasterId;
+
+    @ApiModelProperty(value = "Shared document version")
     private String documentMasterVersion;
 
     public SharedDocumentDTO() {

@@ -22,6 +22,7 @@ package com.docdoku.server.rest.dto;
 
 import com.docdoku.core.admin.PlatformOptions;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -30,12 +31,14 @@ import java.io.Serializable;
 @ApiModel(value="PlatformOptionsDTO", description="This class is a representation of a {@link com.docdoku.core.admin.PlatformOptions} entity")
 public class PlatformOptionsDTO implements Serializable {
 
+    @ApiModelProperty(value = "Registration strategy")
+    private PlatformOptions.OperationSecurityStrategy registrationStrategy;
+
+    @ApiModelProperty(value = "Workspace creation strategy")
+    private PlatformOptions.OperationSecurityStrategy workspaceCreationStrategy;
 
     public PlatformOptionsDTO() {
     }
-
-    private PlatformOptions.OperationSecurityStrategy registrationStrategy;
-    private PlatformOptions.OperationSecurityStrategy workspaceCreationStrategy;
 
     public PlatformOptions.OperationSecurityStrategy getRegistrationStrategy() {
         return registrationStrategy;

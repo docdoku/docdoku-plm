@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -29,14 +30,19 @@ import java.io.Serializable;
 @ApiModel(value="InstanceAttributeTemplateDTO", description="This class is the representation of an {@link com.docdoku.core.meta.InstanceAttributeTemplate} entity")
 public class InstanceAttributeTemplateDTO implements Serializable {
 
+    @ApiModelProperty(value = "Attribute template name")
     private String name;
 
+    @ApiModelProperty(value = "Mandatory flag")
     private boolean mandatory;
 
+    @ApiModelProperty(value = "Attribute template type")
     private AttributeType attributeType;
 
+    @ApiModelProperty(value = "Attribute template LOV name")
     private String lovName;
 
+    @ApiModelProperty(value = "Locked flag")
     private boolean locked;
 
     public InstanceAttributeTemplateDTO() {

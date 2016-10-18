@@ -20,6 +20,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -32,10 +33,19 @@ import java.util.List;
 @ApiModel(value="ListOfValuesDTO", description="This class is a representation of a {@link com.docdoku.core.meta.ListOfValues} entity")
 public class ListOfValuesDTO implements Serializable {
 
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
+
+    @ApiModelProperty(value = "LOV name")
     private String name;
+
+    // todo : find usage
     private WorkspaceDTO workspace;
+
+    @ApiModelProperty(value = "LOV values")
     private List<NameValuePairDTO> values;
+
+    @ApiModelProperty(value = "LOV id")
     private String id;
 
     private boolean isDeletable = true;

@@ -20,6 +20,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -27,26 +28,58 @@ import java.util.Date;
 import java.util.List;
 
 @XmlRootElement
-@ApiModel(value="PartIterationDTO", description="This class is a representation of a {@link com.docdoku.core.product.PartIteration} entity")
+@ApiModel(value = "PartIterationDTO", description = "This class is a representation of a {@link com.docdoku.core.product.PartIteration} entity")
 public class PartIterationDTO implements Serializable {
 
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
+
+    @ApiModelProperty(value = "Part iteration")
     private int iteration;
+
+    @ApiModelProperty(value = "Native CAD file")
     private BinaryResourceDTO nativeCADFile;
+
+    @ApiModelProperty(value = "3D file URI")
     private String geometryFileURI;
+
+    @ApiModelProperty(value = "Iteration note")
     private String iterationNote;
+
+    @ApiModelProperty(value = "Part author")
     private UserDTO author;
 
+    @ApiModelProperty(value = "Creation date")
     private Date creationDate;
+
+    @ApiModelProperty(value = "Modification date")
     private Date modificationDate;
+
+    @ApiModelProperty(value = "Checkin date")
     private Date checkInDate;
+
+    @ApiModelProperty(value = "Part iteration attributes")
     private List<InstanceAttributeDTO> instanceAttributes;
+
+    @ApiModelProperty(value = "Attribute templates for structure path data")
     private List<InstanceAttributeTemplateDTO> instanceAttributeTemplates;
+
+    @ApiModelProperty(value = "List of children components")
     private List<PartUsageLinkDTO> components;
+
+    @ApiModelProperty(value = "Part iteration linked documents")
     private List<DocumentRevisionDTO> linkedDocuments;
+
+    @ApiModelProperty(value = "Part number")
     private String number;
+
+    @ApiModelProperty(value = "Part name")
     private String name;
+
+    @ApiModelProperty(value = "Part version")
     private String version;
+
+    @ApiModelProperty(value = "Part attached files")
     private List<BinaryResourceDTO> attachedFiles;
 
     public PartIterationDTO() {

@@ -22,6 +22,7 @@ package com.docdoku.server.rest.dto;
 
 import com.docdoku.core.security.ACL;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -34,9 +35,11 @@ import java.util.Map;
 public class ACLDTO implements Serializable {
 
     @XmlElement(nillable = true)
+    @ApiModelProperty(value = "Users ACL entries")
     protected Map<String, ACL.Permission> userEntries = new HashMap<String, ACL.Permission>();
 
     @XmlElement(nillable = true)
+    @ApiModelProperty(value = "Groups ACL entries")
     protected Map<String, ACL.Permission> groupEntries = new HashMap<String, ACL.Permission>();
 
     public ACLDTO() {

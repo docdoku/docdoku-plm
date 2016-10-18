@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -32,10 +33,19 @@ import java.io.Serializable;
 @ApiModel(value="TaskModelDTO", description="This class is a representation of a {@link com.docdoku.core.workflow.TaskModel} entity")
 public class TaskModelDTO implements Serializable {
 
+    @ApiModelProperty(value = "Task model num")
     private int num;
+
+    @ApiModelProperty(value = "Task model title")
     private String title;
+
+    @ApiModelProperty(value = "Task model instructions")
     private String instructions;
+
+    @ApiModelProperty(value = "Task model assigned role")
     private RoleDTO role;
+
+    @ApiModelProperty(value = "Task model duration")
     private int duration;
 
     public TaskModelDTO() {

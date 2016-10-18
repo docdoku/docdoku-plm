@@ -20,6 +20,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -34,8 +35,13 @@ import java.util.List;
 @ApiModel(value="RoleMappingDTO", description="Use this class to provide roles mapping for {@link com.docdoku.core.workflow.Workflow} entity instantiation")
 public class RoleMappingDTO implements Serializable {
 
+    @ApiModelProperty(value = "Role name")
     private String roleName;
+
+    @ApiModelProperty(value = "Mapped users")
     private List<String> userLogins = new ArrayList<>();
+
+    @ApiModelProperty(value = "Mapped groups")
     private List<String> groupIds = new ArrayList<>();
 
     public RoleMappingDTO() {

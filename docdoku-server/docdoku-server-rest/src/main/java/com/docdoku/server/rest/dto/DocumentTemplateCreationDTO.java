@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -33,15 +34,31 @@ import java.util.List;
 @ApiModel(value="DocumentTemplateCreationDTO", description="Use this class to create a new {@link com.docdoku.core.document.DocumentTemplateMaster} entity")
 public class DocumentTemplateCreationDTO implements Serializable {
 
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
+
+    @ApiModelProperty(value = "Document template id")
     private String reference;
+
+    @ApiModelProperty(value = "Document template type")
     private String documentType;
+
+    @ApiModelProperty(value = "Document template generate mode")
     private boolean idGenerated;
+
+    @ApiModelProperty(value = "Document template mask")
     private String mask;
+
+    @ApiModelProperty(value = "Document template associated workflow id")
     private String workflowModelId;
 
+    @ApiModelProperty(value = "Document template attached files")
     private List<BinaryResourceDTO> attachedFiles;
+
+    @ApiModelProperty(value = "Document template attribute templates")
     private List<InstanceAttributeTemplateDTO> attributeTemplates;
+
+    @ApiModelProperty(value = "Document template attributes locked flag")
     private boolean attributesLocked;
 
     public DocumentTemplateCreationDTO() {

@@ -20,6 +20,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -32,14 +33,31 @@ import java.util.List;
 @ApiModel(value="ConfigurationItemDTO", description="This class is the representation of an {@link com.docdoku.core.product.ConfigurationItem} entity")
 public class ConfigurationItemDTO implements Serializable {
 
+    @ApiModelProperty(value = "Configuration item id")
     private String id;
+
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
+
+    @ApiModelProperty(value = "Configuration item description")
     private String description;
+
+    @ApiModelProperty(value = "Configuration item root part number")
     private String designItemNumber;
+
+    @ApiModelProperty(value = "Configuration item root part name")
     private String designItemName;
+
+    @ApiModelProperty(value = "Configuration item root part latest version")
     private String designItemLatestVersion;
+
+    @ApiModelProperty(value = "Configuration item author")
     private UserDTO author;
+
+    @ApiModelProperty(value = "Hooked modification notifications")
     private boolean hasModificationNotification;
+
+    @ApiModelProperty(value = "List of structure path links")
     private List<PathToPathLinkDTO> pathToPathLinks;
 
 

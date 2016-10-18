@@ -20,6 +20,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -29,13 +30,28 @@ import java.util.List;
 @ApiModel(value="PartSubstituteLinkDTO", description="This class is a representation of a {@link com.docdoku.core.product.PartSubstituteLink} entity")
 public class PartSubstituteLinkDTO implements Serializable {
 
+    @ApiModelProperty(value = "Part substitute link id")
     private int id;
+
+    @ApiModelProperty(value = "Complete path in context")
     private String fullId;
+
+    @ApiModelProperty(value = "Amount of component")
     private double amount;
+
+    @ApiModelProperty(value = "Unit for amount")
     private String unit;
+
+    @ApiModelProperty(value = "Link description")
     private String referenceDescription;
+
+    @ApiModelProperty(value = "Link comment")
     private String comment;
+
+    @ApiModelProperty(value = "Substitute component")
     private ComponentDTO substitute;
+
+    @ApiModelProperty(value = "Component CAD instances")
     private List<CADInstanceDTO> cadInstances;
 
     public int getId() {

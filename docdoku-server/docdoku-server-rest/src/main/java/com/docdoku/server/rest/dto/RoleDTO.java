@@ -20,6 +20,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -32,10 +33,19 @@ import java.util.List;
 @ApiModel(value="RoleDTO", description="This class is a representation of a {@link com.docdoku.core.workflow.Role} entity")
 public class RoleDTO implements Serializable {
 
+    @ApiModelProperty(value = "Role id")
     private String id;
+
+    @ApiModelProperty(value = "Role name")
     private String name;
+
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
+
+    @ApiModelProperty(value = "Default assigned users for role")
     private List<UserDTO> defaultAssignedUsers;
+
+    @ApiModelProperty(value = "Default assigned groups for role")
     private List<UserGroupDTO> defaultAssignedGroups;
 
     public RoleDTO() {

@@ -22,6 +22,7 @@ package com.docdoku.server.rest.dto;
 
 import com.docdoku.core.document.DocumentRevision;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -37,45 +38,97 @@ import java.util.List;
 @ApiModel(value="DocumentRevisionDTO", description="This class is the representation of a {@link com.docdoku.core.document.DocumentRevision} entity")
 public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRevisionDTO> {
 
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
+
+    @ApiModelProperty(value = "Document key")
     private String id;
+
+    @ApiModelProperty(value = "Document master id")
     private String documentMasterId;
+
+    @ApiModelProperty(value = "Document version")
     private String version;
+
+    @ApiModelProperty(value = "Document type")
     private String type;
+
+    @ApiModelProperty(value = "Document author")
     private UserDTO author;
+
+    @ApiModelProperty(value = "Document creation date")
     private Date creationDate;
+
+    @ApiModelProperty(value = "Document comment link")
     @XmlElement(nillable = true)
     private String commentLink;
+
+    @ApiModelProperty(value = "Document title")
     private String title;
 
+    @ApiModelProperty(value = "Document check out user")
     @XmlElement(nillable = true)
     private UserDTO checkOutUser;
 
+    @ApiModelProperty(value = "Document check out date")
     @XmlElement(nillable = true)
     private Date checkOutDate;
 
+    @ApiModelProperty(value = "Document tag list")
     private String[] tags;
+
+    @ApiModelProperty(value = "Document description")
     private String description;
+
+    @ApiModelProperty(value = "Subscribe iteration notifications flag")
     private boolean iterationSubscription;
+
+    @ApiModelProperty(value = "Subscribe state notifications flag")
     private boolean stateSubscription;
+
+    @ApiModelProperty(value = "Document iterations list")
     private List<DocumentIterationDTO> documentIterations;
+
+    @ApiModelProperty(value = "Document instantiated workflow")
     private WorkflowDTO workflow;
+
+    @ApiModelProperty(value = "Document instantiated workflow id")
     private Integer workflowId;
+
+    @ApiModelProperty(value = "Document folder")
     private String path;
+
+    @ApiModelProperty(value = "Document folder route")
     private String routePath;
+
+    @ApiModelProperty(value = "Current lifecycle state")
     private String lifeCycleState;
+
+    @ApiModelProperty(value = "Public shared flag")
     private boolean publicShared;
+
+    @ApiModelProperty(value = "Attributes locked flag")
     private boolean attributesLocked;
 
     @XmlElement(nillable = true)
+    @ApiModelProperty(value = "Document status")
     private DocumentRevision.RevisionStatus status;
+
+    @ApiModelProperty(value = "Obsolete date")
     private Date obsoleteDate;
+
+    @ApiModelProperty(value = "Obsolete author")
     @XmlElement(nillable = true)
     private UserDTO obsoleteAuthor;
+
+    @ApiModelProperty(value = "Released date")
     private Date releaseDate;
+
+    @ApiModelProperty(value = "Released author")
     @XmlElement(nillable = true)
     private UserDTO releaseAuthor;
 
+    @ApiModelProperty(value = "Document ACL")
     @XmlElement(nillable = true)
     private ACLDTO acl;
 

@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -28,6 +29,8 @@ import java.io.Serializable;
 @XmlRootElement
 @ApiModel(value="TemplateGeneratedIdDTO", description="This class provides information on next {@link com.docdoku.core.product.PartMasterTemplate} or {@link com.docdoku.core.document.DocumentMasterTemplate} generated id")
 public class TemplateGeneratedIdDTO implements Serializable {
+
+    @ApiModelProperty(value = "Generated id for template")
     private String id;
 
     public TemplateGeneratedIdDTO() {

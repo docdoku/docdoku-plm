@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -29,7 +30,10 @@ import java.io.Serializable;
 @ApiModel(value="PasswordRecoverDTO", description="Use this class to recover password after a recovery request")
 public class PasswordRecoverDTO implements Serializable {
 
+    @ApiModelProperty(value = "Token for password recovery")
     private String uuid;
+
+    @ApiModelProperty(value = "New password to use")
     private String newPassword;
 
     public PasswordRecoverDTO() {

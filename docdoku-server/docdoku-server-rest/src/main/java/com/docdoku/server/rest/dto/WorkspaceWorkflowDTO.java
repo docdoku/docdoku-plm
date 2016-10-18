@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -32,9 +33,13 @@ import java.io.Serializable;
 @ApiModel(value="WorkspaceWorkflowDTO", description="This class is a representation of a {@link com.docdoku.core.workflow.WorkspaceWorkflow} entity")
 public class WorkspaceWorkflowDTO implements Serializable {
 
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
+
+    @ApiModelProperty(value = "Workspace workflow id")
     private String id;
 
+    @ApiModelProperty(value = "Workspace workflow instance")
     private WorkflowDTO workflow;
 
     public WorkspaceWorkflowDTO() {

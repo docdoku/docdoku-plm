@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -32,8 +33,13 @@ import java.io.Serializable;
 @ApiModel(value="QueryContextDTO", description="This class is a representation of a {@link com.docdoku.core.query.QueryContext} entity")
 public class QueryContextDTO implements Serializable {
 
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
+
+    @ApiModelProperty(value = "Product instance serial number in use")
     private String serialNumber;
+
+    @ApiModelProperty(value = "Configuration item in use")
     private String configurationItemId;
 
     public QueryContextDTO() {

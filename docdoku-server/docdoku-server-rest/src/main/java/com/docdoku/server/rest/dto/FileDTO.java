@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -28,8 +29,14 @@ import java.io.Serializable;
 @XmlRootElement
 @ApiModel(value="FileDTO", description="This class is a helper for files representation")
 public class FileDTO implements Serializable {
+
+    @ApiModelProperty(value = "Created flag")
     private boolean created;
+
+    @ApiModelProperty(value = "File path and name")
     private String fullName;
+
+    @ApiModelProperty(value = "File name")
     private String shortName;
 
     public FileDTO(boolean created, String fullName, String shortName) {

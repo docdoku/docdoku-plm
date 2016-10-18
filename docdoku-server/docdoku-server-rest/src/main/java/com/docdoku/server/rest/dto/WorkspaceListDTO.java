@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -30,7 +31,11 @@ import java.util.List;
 @XmlRootElement
 @ApiModel(value="WorkspaceListDTO", description="This class holds a list of {@link com.docdoku.core.common.Workspace} entities")
 public class WorkspaceListDTO implements Serializable {
+
+    @ApiModelProperty(value = "Administrated workspace list")
     private List<WorkspaceDTO> administratedWorkspaces = new ArrayList<>();
+
+    @ApiModelProperty(value = "All workspace list")
     private List<WorkspaceDTO> allWorkspaces = new ArrayList<>();
 
     public WorkspaceListDTO() {

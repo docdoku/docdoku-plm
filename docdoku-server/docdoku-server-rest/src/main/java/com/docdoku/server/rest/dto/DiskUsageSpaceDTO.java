@@ -1,6 +1,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -12,9 +13,16 @@ import java.io.Serializable;
 @ApiModel(value="DiskUsageSpaceDTO", description="This class provides storage information")
 public class DiskUsageSpaceDTO implements Serializable {
 
+    @ApiModelProperty(value = "Storage size for document files")
     private long documents;
+
+    @ApiModelProperty(value = "Storage size for part files")
     private long parts;
+
+    @ApiModelProperty(value = "Storage size for documentTemplates files")
     private long documentTemplates;
+
+    @ApiModelProperty(value = "Storage size for partTemplates files")
     private long partTemplates;
 
     public DiskUsageSpaceDTO() {

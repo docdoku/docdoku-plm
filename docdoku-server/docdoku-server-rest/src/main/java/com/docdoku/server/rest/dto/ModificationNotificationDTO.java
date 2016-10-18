@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,25 +32,46 @@ import java.util.Date;
 @ApiModel(value="ModificationNotificationDTO", description="This class is a representation of a {@link com.docdoku.core.change.ModificationNotification} entity")
 public class ModificationNotificationDTO implements Serializable {
 
+    @ApiModelProperty(value = "Modification notification id")
     private int id;
-
+    @ApiModelProperty(value = "Impacted part number")
     private String impactedPartNumber;
+
+    @ApiModelProperty(value = "Impacted part version")
     private String impactedPartVersion;
 
+    @ApiModelProperty(value = "Modified part number")
     private String modifiedPartNumber;
+
+    @ApiModelProperty(value = "Modified part name")
     private String modifiedPartName;
+
+    @ApiModelProperty(value = "Modified part version")
     private String modifiedPartVersion;
+
+    @ApiModelProperty(value = "Modified part iteration")
     private int modifiedPartIteration;
 
+    @ApiModelProperty(value = "Modified part check in date")
     private Date checkInDate;
+
+    @ApiModelProperty(value = "Modified part iteration note")
     private String iterationNote;
+
+    @ApiModelProperty(value = "Modifications author")
     private UserDTO author;
 
+    @ApiModelProperty(value = "Acknowledged flag")
     @XmlElement(nillable = true)
     private boolean acknowledged;
 
+    @ApiModelProperty(value = "Acknowledged comment")
     private String ackComment;
+
+    @ApiModelProperty(value = "Acknowledged author")
     private UserDTO ackAuthor;
+
+    @ApiModelProperty(value = "Acknowledged date")
     private Date ackDate;
 
     public ModificationNotificationDTO() {

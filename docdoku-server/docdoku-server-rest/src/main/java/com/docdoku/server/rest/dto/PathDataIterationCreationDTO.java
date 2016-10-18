@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -34,12 +35,25 @@ import java.util.Set;
 @ApiModel(value="PathDataIterationCreationDTO", description="Use this class to create a new {@link com.docdoku.core.product.PathDataIteration} entity")
 public class PathDataIterationCreationDTO implements Serializable {
 
+    @ApiModelProperty(value = "Path data iteration id")
     private int id;
+
+    @ApiModelProperty(value = "Complete path in context")
     private String path;
+
+    @ApiModelProperty(value = "Path data iteration number")
     private int iteration;
+
+    @ApiModelProperty(value = "Path data iteration note")
     private String iterationNote;
+
+    @ApiModelProperty(value = "Path data iteration attached files")
     private List<String> attachedFiles;
+
+    @ApiModelProperty(value = "Path data iteration linked documents")
     private Set<DocumentRevisionDTO> linkedDocuments;
+
+    @ApiModelProperty(value = "Path data iteration attributes")
     private List<InstanceAttributeDTO> instanceAttributes;
 
     public PathDataIterationCreationDTO() {

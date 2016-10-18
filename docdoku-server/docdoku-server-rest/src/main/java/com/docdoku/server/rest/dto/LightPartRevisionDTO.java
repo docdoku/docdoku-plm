@@ -1,6 +1,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -13,8 +14,13 @@ import java.io.Serializable;
 @ApiModel(value="LightPartRevisionDTO", description="This class is a light representation of a {@link com.docdoku.core.product.PartRevision} entity")
 public class LightPartRevisionDTO implements Serializable {
 
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
+
+    @ApiModelProperty(value = "Part number")
     private String partNumber;
+
+    @ApiModelProperty(value = "Part version")
     private String version;
 
     public LightPartRevisionDTO() {

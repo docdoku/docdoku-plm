@@ -20,6 +20,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -32,8 +33,13 @@ import java.util.List;
 @ApiModel(value="InstanceAttributeDescriptorDTO", description="This class is the representation of an {@link com.docdoku.core.meta.InstanceAttributeDescriptor} object")
 public class InstanceAttributeDescriptorDTO implements Serializable {
 
+    @ApiModelProperty(value = "Instance attribute name")
     private String name;
+
+    @ApiModelProperty(value = "Instance attribute type")
     private String type;
+
+    @ApiModelProperty(value = "Instance attribute list of value items")
     private List<NameValuePairDTO> lovItems;
 
     public InstanceAttributeDescriptorDTO() {

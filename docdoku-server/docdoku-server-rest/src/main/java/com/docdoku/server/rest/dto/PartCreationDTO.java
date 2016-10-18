@@ -21,31 +21,43 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 @XmlRootElement
 @ApiModel(value="PartCreationDTO", description="Use this class to create a new {@link com.docdoku.core.product.PartMaster} entity")
 public class PartCreationDTO implements Serializable {
 
-    private String partKey;
-    private String number;
-    private String version;
-    private String name;
-    private UserDTO author;
-    private Date creationDate;
-    private String description;
-    private List<PartIterationDTO> partIterations;
-    private UserDTO checkOutUser;
-    private Date checkOutDate;
-    private String workflowModelId;
-    private boolean standardPart;
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
+
+    @ApiModelProperty(value = "Part number")
+    private String number;
+
+    @ApiModelProperty(value = "Part version")
+    private String version;
+
+    @ApiModelProperty(value = "Part name")
+    private String name;
+
+    @ApiModelProperty(value = "Part description")
+    private String description;
+
+    @ApiModelProperty(value = "Workflow to instantiate")
+    private String workflowModelId;
+
+    @ApiModelProperty(value = "Standard part flag")
+    private boolean standardPart;
+
+    @ApiModelProperty(value = "Template to use")
     private String templateId;
+
+    @ApiModelProperty(value = "Role mapping for instantiated workflow")
     private RoleMappingDTO[] roleMapping;
+
+    @ApiModelProperty(value = "Part ACL")
     private ACLDTO acl;
 
     public PartCreationDTO() {
@@ -65,22 +77,6 @@ public class PartCreationDTO implements Serializable {
 
     public void setVersion(String version) {
         this.version = version;
-    }
-
-    public UserDTO getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(UserDTO author) {
-        this.author = author;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
     }
 
     public String getDescription() {
@@ -107,44 +103,12 @@ public class PartCreationDTO implements Serializable {
         this.standardPart = standardPart;
     }
 
-    public List<PartIterationDTO> getPartIterations() {
-        return partIterations;
-    }
-
-    public void setPartIterations(List<PartIterationDTO> partIterations) {
-        this.partIterations = partIterations;
-    }
-
-    public UserDTO getCheckOutUser() {
-        return checkOutUser;
-    }
-
-    public void setCheckOutUser(UserDTO checkOutUser) {
-        this.checkOutUser = checkOutUser;
-    }
-
-    public Date getCheckOutDate() {
-        return checkOutDate;
-    }
-
-    public void setCheckOutDate(Date checkOutDate) {
-        this.checkOutDate = checkOutDate;
-    }
-
     public String getWorkflowModelId() {
         return workflowModelId;
     }
 
     public void setWorkflowModelId(String workflowModelId) {
         this.workflowModelId = workflowModelId;
-    }
-
-    public String getPartKey() {
-        return partKey;
-    }
-
-    public void setPartKey(String partKey) {
-        this.partKey = partKey;
     }
 
     public String getWorkspaceId() {

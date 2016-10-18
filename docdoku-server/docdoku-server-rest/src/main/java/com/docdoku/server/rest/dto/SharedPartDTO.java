@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -30,20 +31,31 @@ import java.util.Date;
  * @author Morgan Guimard
  */
 @XmlRootElement
-@ApiModel(value="SharedPartDTO", description="This class is a representation of a {@link com.docdoku.core.sharing.SharedPart} entity")
+@ApiModel(value = "SharedPartDTO", description = "This class is a representation of a {@link com.docdoku.core.sharing.SharedPart} entity")
 public class SharedPartDTO implements Serializable {
 
+    @ApiModelProperty(value = "Shared part token")
     private String uuid;
+
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
+
+    @ApiModelProperty(value = "Shared part password")
     private String password;
+
+    @ApiModelProperty(value = "Shared part expire date")
     private Date expireDate;
+
+    @ApiModelProperty(value = "Shared part login creator")
     private String userLogin;
 
+    @ApiModelProperty(value = "Shared part number")
     private String partMasterNumber;
+
+    @ApiModelProperty(value = "Shared part version")
     private String partMasterVersion;
 
     public SharedPartDTO() {
-
     }
 
     public SharedPartDTO(String uuid, String workspaceId, String password, Date expireDate, String userLogin) {

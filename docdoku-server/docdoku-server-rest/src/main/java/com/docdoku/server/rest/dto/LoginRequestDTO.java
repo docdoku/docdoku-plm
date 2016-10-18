@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -29,7 +30,10 @@ import java.io.Serializable;
 @ApiModel(value="LoginRequestDTO", description="Use this class to provide login information when signing in")
 public class LoginRequestDTO implements Serializable {
 
+    @ApiModelProperty(value = "Account login")
     private String login;
+
+    @ApiModelProperty(value = "Account password")
     private String password;
 
     public LoginRequestDTO() {

@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -31,12 +32,25 @@ import java.util.List;
 @ApiModel(value="PathDataMasterDTO", description="This class is a representation of a {@link com.docdoku.core.product.PathDataMaster} entity")
 public class PathDataMasterDTO implements Serializable {
 
+    @ApiModelProperty(value = "Path data master id")
     private Integer id;
+
+    @ApiModelProperty(value = "Complete path in context")
     private String path;
+
+    @ApiModelProperty(value = "Product instance serial number")
     private String serialNumber;
+
+    @ApiModelProperty(value = "List of part links")
     private LightPartLinkListDTO partLinksList;
+
+    @ApiModelProperty(value = "Path data master iterations")
     private List<PathDataIterationDTO> pathDataIterations = new ArrayList<PathDataIterationDTO>();
+
+    @ApiModelProperty(value = "Path data master attributes")
     private List<InstanceAttributeDTO> partAttributes;
+
+    @ApiModelProperty(value = "Path data master attribute templates")
     private List<InstanceAttributeTemplateDTO> partAttributeTemplates;
 
     public PathDataMasterDTO() {

@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -29,17 +30,22 @@ import java.io.Serializable;
 @ApiModel(value="TaskProcessDTO", description="Use this class to process a task")
 public class TaskProcessDTO implements Serializable {
 
+    @ApiModelProperty(value = "Task process action")
     private Action action;
+
+    @ApiModelProperty(value = "Task process comment")
     private String comment;
+
+    @ApiModelProperty(value = "Task process signature")
     private String signature;
+
+    public TaskProcessDTO() {
+    }
 
     public TaskProcessDTO(Action action, String comment, String signature) {
         this.action = action;
         this.comment = comment;
         this.signature = signature;
-    }
-
-    public TaskProcessDTO() {
     }
 
     public String getComment() {

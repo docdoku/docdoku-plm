@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -32,8 +33,13 @@ import java.io.Serializable;
 @ApiModel(value="WorkspaceWorkflowCreationDTO", description="Use this class to create a new {@link com.docdoku.core.workflow.WorkspaceWorkflow} entity")
 public class WorkspaceWorkflowCreationDTO implements Serializable {
 
+    @ApiModelProperty(value = "Workspace workflow id")
     private String id;
+
+    @ApiModelProperty(value = "Workflow model to use")
     private String workflowModelId;
+
+    @ApiModelProperty(value = "Role mapping for instantiated workflow")
     private RoleMappingDTO[] roleMapping;
 
     public WorkspaceWorkflowCreationDTO() {

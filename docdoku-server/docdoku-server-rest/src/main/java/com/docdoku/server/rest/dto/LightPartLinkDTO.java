@@ -22,6 +22,7 @@ package com.docdoku.server.rest.dto;
 
 import com.docdoku.core.product.PartLink;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -30,9 +31,16 @@ import java.io.Serializable;
 @ApiModel(value="LightPartLinkDTO", description="This class is a light representation of a {@link com.docdoku.core.product.PartLink} entity")
 public class LightPartLinkDTO implements Serializable {
 
+    @ApiModelProperty(value = "Part number")
     private String number;
+
+    @ApiModelProperty(value = "Part name")
     private String name;
+
+    @ApiModelProperty(value = "Link description")
     private String referenceDescription;
+
+    @ApiModelProperty(value = "Complete component path in context")
     private String fullId;
 
     public LightPartLinkDTO() {

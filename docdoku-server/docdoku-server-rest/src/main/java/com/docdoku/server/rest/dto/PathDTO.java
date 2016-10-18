@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -29,6 +30,7 @@ import java.io.Serializable;
 @ApiModel(value="PathDTO", description="This class holds a string representing a sequence of {@link com.docdoku.core.product.PartLink} entities")
 public class PathDTO implements Serializable {
 
+    @ApiModelProperty(value = "Path value")
     private String path;
 
     public PathDTO() {

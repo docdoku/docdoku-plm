@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -29,10 +30,19 @@ import java.io.Serializable;
 @ApiModel(value="LightPathToPathLinkDTO", description="This class is a light representation of a {@link com.docdoku.core.product.PathToPathLink} entity")
 public class LightPathToPathLinkDTO implements Serializable {
 
+    @ApiModelProperty(value = "Path to path link id")
     private Integer id;
+
+    @ApiModelProperty(value = "Path to path link type")
     private String type;
+
+    @ApiModelProperty(value = "Path to path link source path")
     private String sourcePath;
+
+    @ApiModelProperty(value = "Path to path link target path")
     private String targetPath;
+
+    @ApiModelProperty(value = "Path to path link description")
     private String description;
 
     public LightPathToPathLinkDTO() {

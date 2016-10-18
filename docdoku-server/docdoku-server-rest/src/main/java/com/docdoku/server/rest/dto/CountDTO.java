@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -29,6 +30,7 @@ import java.io.Serializable;
 @ApiModel(value="CountDTO", description="This class is an helper class")
 public class CountDTO implements Serializable {
 
+    @ApiModelProperty(value = "Count value")
     private int count;
 
     public CountDTO(int count) {

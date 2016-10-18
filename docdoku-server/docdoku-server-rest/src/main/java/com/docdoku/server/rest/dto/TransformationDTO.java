@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -33,34 +34,22 @@ import java.io.Serializable;
 @ApiModel(value="TransformationDTO", description="This class is a representation of a geometric transformation")
 public class TransformationDTO implements Serializable, Cloneable {
 
-    /**
-     * Translation on x axis.
-     */
+    @ApiModelProperty(value = "Translation on x Axis")
     private double tx;
 
-    /**
-     * Translation on y axis.
-     */
+    @ApiModelProperty(value = "Translation on y Axis")
     private double ty;
 
-    /**
-     * Translation on z axis.
-     */
+    @ApiModelProperty(value = "Translation on z Axis")
     private double tz;
 
-    /**
-     * Radian rotation on x axis.
-     */
+    @ApiModelProperty(value = "Rotation around x Axis")
     private double rx;
 
-    /**
-     * Radian rotation on y axis.
-     */
+    @ApiModelProperty(value = "Rotation around y Axis")
     private double ry;
 
-    /**
-     * Radian rotation on z axis.
-     */
+    @ApiModelProperty(value = "Rotation around z Axis")
     private double rz;
 
 

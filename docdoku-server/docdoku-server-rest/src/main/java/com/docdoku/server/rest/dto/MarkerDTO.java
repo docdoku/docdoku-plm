@@ -22,6 +22,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -30,9 +31,13 @@ import java.io.Serializable;
 @ApiModel(value="MarkerDTO", description="This class is a representation of a {@link com.docdoku.core.product.Marker} entity")
 public class MarkerDTO implements Serializable {
 
+    @ApiModelProperty(value = "Marker id")
     private int id;
 
+    @ApiModelProperty(value = "Marker title")
     private String title;
+
+    @ApiModelProperty(value = "Marker description")
     private String description;
 
     private double x;

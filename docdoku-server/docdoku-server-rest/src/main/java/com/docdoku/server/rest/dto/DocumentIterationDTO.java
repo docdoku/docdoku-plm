@@ -20,6 +20,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -34,20 +35,47 @@ import java.util.List;
 @ApiModel(value="DocumentIterationDTO", description="This class is the representation of a {@link com.docdoku.core.document.DocumentIteration} entity")
 public class DocumentIterationDTO implements Serializable {
 
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
+
+    @ApiModelProperty(value = "Document iteration id")
     private String id;
+
+    @ApiModelProperty(value = "Document master id")
     private String documentMasterId;
+
+    @ApiModelProperty(value = "Document version")
     private String version;
+
+    @ApiModelProperty(value = "Document iteration")
     private int iteration;
+
+    @ApiModelProperty(value = "Document creation date")
     private Date creationDate;
+
+    @ApiModelProperty(value = "Document modification date")
     private Date modificationDate;
+
+    @ApiModelProperty(value = "Document check in date")
     private Date checkInDate;
+
+    @ApiModelProperty(value = "Document title")
     private String title;
+
+    @ApiModelProperty(value = "Document author")
     private UserDTO author;
+
     @XmlElement(nillable = true)
+    @ApiModelProperty(value = "Revision note")
     private String revisionNote;
+
+    @ApiModelProperty(value = "Document iteration attached files")
     private List<BinaryResourceDTO> attachedFiles;
+
+    @ApiModelProperty(value = "Document iteration attributes")
     private List<InstanceAttributeDTO> instanceAttributes;
+
+    @ApiModelProperty(value = "Document iteration linked documents")
     private List<DocumentRevisionDTO> linkedDocuments;
 
     public DocumentIterationDTO() {

@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -29,12 +30,19 @@ import java.util.Date;
 import java.util.List;
 
 @XmlRootElement
-@ApiModel(value="WorkflowDTO", description="This class is a representation of a {@link com.docdoku.core.workflow.Workflow} entity")
+@ApiModel(value = "WorkflowDTO", description = "This class is a representation of a {@link com.docdoku.core.workflow.Workflow} entity")
 public class WorkflowDTO implements Serializable, Comparable<WorkflowDTO> {
 
+    @ApiModelProperty(value = "Workflow id")
     private int id;
+
+    @ApiModelProperty(value = "Workflow final lifecycle state")
     private String finalLifeCycleState;
+
+    @ApiModelProperty(value = "Workflow activity list")
     private List<ActivityDTO> activities;
+
+    @ApiModelProperty(value = "Workflow aborted date if aborted")
     private Date abortedDate;
 
     public WorkflowDTO() {

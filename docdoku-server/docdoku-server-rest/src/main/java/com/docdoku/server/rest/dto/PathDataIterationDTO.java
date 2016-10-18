@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -31,17 +32,38 @@ import java.util.Set;
  * @author Chadid Asmae
  */
 @XmlRootElement
-@ApiModel(value="PathDataIterationDTO", description="This class is a representation of a {@link com.docdoku.core.product.PathDataIteration} entity")
+@ApiModel(value = "PathDataIterationDTO", description = "This class is a representation of a {@link com.docdoku.core.product.PathDataIteration} entity")
 public class PathDataIterationDTO implements Serializable {
+
+    @ApiModelProperty(value = "Product instance serial number")
     private String serialNumber;
+
+    @ApiModelProperty(value = "Path data master id")
     private int pathDataMasterId;
+
+    @ApiModelProperty(value = "Path data iteration number")
     private int iteration;
+
+    @ApiModelProperty(value = "Path data iteration note")
     private String iterationNote;
+
+    @ApiModelProperty(value = "List of part links")
     private LightPartLinkListDTO partLinksList;
+
+    @ApiModelProperty(value = "Complete path in context")
     private String path;
+
+    @ApiModelProperty(value = "Path data iteration attached files")
     private List<BinaryResourceDTO> attachedFiles;
+
+    @ApiModelProperty(value = "Path data iteration linked documents")
     private Set<DocumentRevisionDTO> linkedDocuments;
+
+    @ApiModelProperty(value = "Path data iteration attributes")
     private List<InstanceAttributeDTO> instanceAttributes;
+
+    public PathDataIterationDTO() {
+    }
 
     public String getSerialNumber() {
         return serialNumber;

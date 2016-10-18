@@ -20,6 +20,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -32,6 +33,7 @@ import java.util.List;
 @ApiModel(value="PartIterationListDTO", description="This class is wraps a list of {@link com.docdoku.core.change.PartIteration} entities")
 public class PartIterationListDTO implements Serializable {
 
+    @ApiModelProperty(value = "The list of part iterations")
     private List<PartIterationDTO> parts;
 
     public PartIterationListDTO() {

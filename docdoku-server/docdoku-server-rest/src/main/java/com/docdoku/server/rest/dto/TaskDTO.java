@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -32,27 +33,55 @@ import java.util.List;
 @ApiModel(value="TaskDTO", description="This class is a representation of a {@link com.docdoku.core.workflow.Task} entity")
 public class TaskDTO implements Serializable {
 
+    @ApiModelProperty(value = "Task closure comment")
     private String closureComment;
+
+    @ApiModelProperty(value = "Task title")
     private String title;
+
+    @ApiModelProperty(value = "Task instructions")
     private String instructions;
+
+    @ApiModelProperty(value = "Task entity target iteration")
     private int targetIteration;
+
+    @ApiModelProperty(value = "Task closure date")
     private Date closureDate;
+
+    @ApiModelProperty(value = "Task signature")
     private String signature;
 
+    @ApiModelProperty(value = "Task assigned users")
     private List<UserDTO> assignedUsers = new ArrayList<>();
+
+    @ApiModelProperty(value = "Task assigned groups")
     private List<UserGroupDTO> assignedGroups = new ArrayList<>();
 
+    @ApiModelProperty(value = "Task effective worker")
     private UserDTO worker;
+
+    @ApiModelProperty(value = "Task status")
     private Status status;
 
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
 
+    @ApiModelProperty(value = "Task parent workflow")
     private int workflowId;
+
+    @ApiModelProperty(value = "Task parent activity step")
     private int activityStep;
+
+    @ApiModelProperty(value = "Task num")
     private int num;
 
+    @ApiModelProperty(value = "Task holder type")
     private String holderType;
+
+    @ApiModelProperty(value = "Task holder reference")
     private String holderReference;
+
+    @ApiModelProperty(value = "Task holder version")
     private String holderVersion;
 
     public TaskDTO() {

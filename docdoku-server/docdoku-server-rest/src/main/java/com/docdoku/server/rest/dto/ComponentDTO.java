@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,44 +33,97 @@ import java.util.List;
  * @author Julien Maffre
  */
 @XmlRootElement
-@ApiModel(value="ComponentDTO", description="This class is the representation of an {@link com.docdoku.core.product.Component} entity")
+@ApiModel(value = "ComponentDTO", description = "This class is the representation of an {@link com.docdoku.core.product.Component} entity")
 public class ComponentDTO implements Serializable {
 
+    @ApiModelProperty(value = "Part author name")
     private String author;
+
+    @ApiModelProperty(value = "Part author login")
     private String authorLogin;
+
+    @ApiModelProperty(value = "Part number")
     private String number;
+
+    @ApiModelProperty(value = "Part name")
     private String name = "";
+
+    @ApiModelProperty(value = "Part version")
     private String version;
+
+    @ApiModelProperty(value = "Part iteration")
     private int iteration;
+
+    @ApiModelProperty(value = "Part description")
     private String description;
+
+    @ApiModelProperty(value = "Standard part flag")
     private boolean standardPart;
+
+    @ApiModelProperty(value = "Assembly flag")
     private boolean assembly;
+
+    @ApiModelProperty(value = "Substitute flag")
     private boolean substitute;
+
+    @ApiModelProperty(value = "Component usage link id")
     private String partUsageLinkId;
+
+    @ApiModelProperty(value = "Component usage link description")
     private String partUsageLinkReferenceDescription;
+
+    @ApiModelProperty(value = "List of children components")
     private List<ComponentDTO> components;
+
+    @ApiModelProperty(value = "Amount of component")
     private double amount;
+
+    @ApiModelProperty(value = "Unit for amount")
     private String unit;
+
+    @ApiModelProperty(value = "List of part iteration attributes")
     private List<InstanceAttributeDTO> attributes;
+
+    @ApiModelProperty(value = "Check out user if any")
     private UserDTO checkOutUser;
+
+    @ApiModelProperty(value = "Check out date if any")
     private Date checkOutDate;
+
+    @ApiModelProperty(value = "Released flag")
     private boolean released;
+
+    @ApiModelProperty(value = "Obsolete flag")
     private boolean obsolete;
+
+    @ApiModelProperty(value = "Optional flag")
     private boolean optional;
+
+    @ApiModelProperty(value = "Last part iteration number")
     @XmlElement(nillable = true)
     private int lastIterationNumber;
+
+    @ApiModelProperty(value = "Denied access flag")
     @XmlElement(nillable = true)
     private boolean accessDeny;
+
+    @ApiModelProperty(value = "Available substitutes list")
     @XmlElement(nillable = true)
     private List<String> substituteIds;
+
+    @ApiModelProperty(value = "Hooked modifications notifications")
     private List<ModificationNotificationDTO> notifications;
+
+    @ApiModelProperty(value = "Contains structure path data flag")
     private boolean hasPathData;
+
+    @ApiModelProperty(value = "Is virtual component flag")
     private boolean isVirtual;
+
+    @ApiModelProperty(value = "Component path in context")
     private String path;
 
-
     public ComponentDTO() {
-
     }
 
     public ComponentDTO(String number) {

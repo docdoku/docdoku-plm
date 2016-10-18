@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -29,9 +30,16 @@ import java.io.Serializable;
 @ApiModel(value="WorkspaceDTO", description="This class is a representation of a {@link com.docdoku.core.common.Workspace} entity")
 public class WorkspaceDTO implements Serializable {
 
+    @ApiModelProperty(value = "Workspace id")
     private String id;
+
+    @ApiModelProperty(value = "Workspace description")
     private String description;
+
+    @ApiModelProperty(value = "Folder locked flag")
     private boolean folderLocked;
+
+    @ApiModelProperty(value = "Workspace enabled flag")
     private boolean enabled;
 
     public WorkspaceDTO() {

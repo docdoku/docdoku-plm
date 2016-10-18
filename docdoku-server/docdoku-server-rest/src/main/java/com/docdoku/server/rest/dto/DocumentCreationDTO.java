@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -32,16 +33,37 @@ import java.io.Serializable;
 @ApiModel(value="DocumentCreationDTO", description="Use this class to create a new {@link com.docdoku.core.document.DocumentLink} entity")
 public class DocumentCreationDTO implements Serializable, Comparable<DocumentCreationDTO> {
 
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
+
+    @ApiModelProperty(value = "Document master id")
     private String reference;
+
+    @ApiModelProperty(value = "Document version")
     private String version;
+
+    @ApiModelProperty(value = "Document type")
     private String type;
+
+    @ApiModelProperty(value = "Document title")
     private String title;
+
+    @ApiModelProperty(value = "Document description")
     private String description;
+
+    @ApiModelProperty(value = "Workflow id to use")
     private String workflowModelId;
+
+    @ApiModelProperty(value = "Workflow to instantiate")
     private String templateId;
+
+    @ApiModelProperty(value = "Folder path")
     private String path;
+
+    @ApiModelProperty(value = "Role mapping for workflow instantiation")
     private RoleMappingDTO[] roleMapping;
+
+    @ApiModelProperty(value = "ACL to set on document")
     private ACLDTO acl;
 
     public DocumentCreationDTO() {

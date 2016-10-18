@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -31,16 +32,39 @@ import java.util.List;
 @ApiModel(value="ActivityDTO", description="This class is the representation of an {@link com.docdoku.core.workflow.Activity} entity")
 public class ActivityDTO implements Serializable {
 
+    @ApiModelProperty(value = "Activity step")
     private int step;
+
+    @ApiModelProperty(value = "Activity relaunch step")
     private Integer relaunchStep;
+
+    @ApiModelProperty(value = "List of the tasks")
     private List<TaskDTO> tasks;
+
+    @ApiModelProperty(value = "Final lifecycle state")
     private String lifeCycleState;
+
+    @ApiModelProperty(value = "Workflow type")
     private Type type;
+
+    @ApiModelProperty(value = "Tasks to complete")
     private Integer tasksToComplete;
+
+    @ApiModelProperty(value = "Complete flag")
     private boolean complete;
+
+    @ApiModelProperty(value = "Stopped flag")
     private boolean stopped;
+
+    @ApiModelProperty(value = "In progress flag")
     private boolean inProgress;
+
+    @ApiModelProperty(value = "Todo flag")
     private boolean toDo;
+
+    public ActivityDTO() {
+        tasks = new ArrayList<>();
+    }
 
     public ActivityDTO(int step, List<TaskDTO> tasks, String lifeCycleState, Type type, Integer tasksToComplete, boolean complete, boolean stopped, boolean inProgress, boolean toDo, Integer relaunchStep) {
         this.step = step;
@@ -53,10 +77,6 @@ public class ActivityDTO implements Serializable {
         this.stopped = stopped;
         this.inProgress = inProgress;
         this.toDo = toDo;
-    }
-
-    public ActivityDTO() {
-        tasks = new ArrayList<>();
     }
 
     public Integer getTasksToComplete() {

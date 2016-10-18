@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -31,20 +32,49 @@ import java.util.List;
 @ApiModel(value="PartMasterTemplateDTO", description="This class is a representation of a {@link com.docdoku.core.product.PartMasterTemplate} entity")
 public class PartMasterTemplateDTO implements Serializable {
 
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
+
+    @ApiModelProperty(value = "Part template id")
     private String id;
+
+    @ApiModelProperty(value = "Part template reference")
     private String reference;
+
+    @ApiModelProperty(value = "Part template type")
     private String partType;
+
+    @ApiModelProperty(value = "Part template author")
     private UserDTO author;
+
+    @ApiModelProperty(value = "Part template creation date")
     private Date creationDate;
+
+    @ApiModelProperty(value = "Part template modification date")
     private Date modificationDate;
+
+    @ApiModelProperty(value = "Generate id flag")
     private boolean idGenerated;
+
+    @ApiModelProperty(value = "Part template mask")
     private String mask;
+
+    @ApiModelProperty(value = "Part template attached files")
     private String attachedFile;
+
+    @ApiModelProperty(value = "Part template attributes")
     private List<InstanceAttributeTemplateDTO> attributeTemplates;
+
+    @ApiModelProperty(value = "Part template structure path attributes")
     private List<InstanceAttributeTemplateDTO> attributeInstanceTemplates;
+
+    @ApiModelProperty(value = "Attributes locked flag")
     private boolean attributesLocked;
+
+    @ApiModelProperty(value = "Workflow to instantiate on part creation")
     private String workflowModelId;
+
+    @ApiModelProperty(value = "Part template ACL")
     private ACLDTO acl;
 
     public PartMasterTemplateDTO() {
