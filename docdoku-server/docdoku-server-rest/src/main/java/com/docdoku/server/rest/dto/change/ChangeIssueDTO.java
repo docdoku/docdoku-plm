@@ -20,11 +20,17 @@
 
 package com.docdoku.server.rest.dto.change;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
+@ApiModel(value="ChangeIssueDTO", description="This class is the representation of a {@link com.docdoku.core.change.ChangeIssue} entity")
 public class ChangeIssueDTO extends ChangeItemDTO implements Serializable {
+
+    @ApiModelProperty(value = "Login of initiator")
     private String initiator;
 
     public ChangeIssueDTO() {

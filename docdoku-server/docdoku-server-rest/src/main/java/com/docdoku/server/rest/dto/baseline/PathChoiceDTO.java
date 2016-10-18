@@ -23,6 +23,8 @@ package com.docdoku.server.rest.dto.baseline;
 import com.docdoku.core.configuration.PathChoice;
 import com.docdoku.core.configuration.ResolvedPartLink;
 import com.docdoku.server.rest.dto.PartUsageLinkDTO;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -32,9 +34,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement
+@ApiModel(value="PathChoiceDTO", description="This class is the representation of {@link com.docdoku.core.configuration.PathChoice} entity")
 public class PathChoiceDTO implements Serializable {
 
+    @ApiModelProperty(value = "Complete path in context")
     private List<ResolvedPartLinkDTO> resolvedPath = new ArrayList<>();
+
+    @ApiModelProperty(value = "Path concerned by the choice")
     private PartUsageLinkDTO partUsageLink;
 
     public PathChoiceDTO() {

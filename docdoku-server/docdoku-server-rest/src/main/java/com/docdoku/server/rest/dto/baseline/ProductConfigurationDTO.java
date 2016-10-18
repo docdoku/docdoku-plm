@@ -23,6 +23,8 @@ package com.docdoku.server.rest.dto.baseline;
 import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.LightPartLinkListDTO;
 import com.docdoku.server.rest.dto.UserDTO;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,21 +33,41 @@ import java.util.Date;
 import java.util.List;
 
 @XmlRootElement
+@ApiModel(value="ProductConfigurationDTO", description="This class is the representation of {@link com.docdoku.core.configuration.ProductConfiguration} entity")
 public class ProductConfigurationDTO implements Serializable {
 
+    @ApiModelProperty(value = "Product configuration id")
     @XmlElement(nillable = true)
     private int id;
+
+    @ApiModelProperty(value = "Configuration item id")
     private String configurationItemId;
+
+    @ApiModelProperty(value = "Product configuration name")
     private String name;
+
+    @ApiModelProperty(value = "Product configuration description")
     private String description;
+
+    @ApiModelProperty(value = "Product configuration substitute links list")
     private List<String> substituteLinks;
+
+    @ApiModelProperty(value = "Product configuration optional links retained list")
     private List<String> optionalUsageLinks;
+
+    @ApiModelProperty(value = "Product configuration creation date")
     private Date creationDate;
+
+    @ApiModelProperty(value = "Product configuration author")
     private UserDTO author;
 
+    @ApiModelProperty(value = "Product configuration substitute links list")
     private List<LightPartLinkListDTO> substitutesParts;
+
+    @ApiModelProperty(value = "Product configuration optional links retained list")
     private List<LightPartLinkListDTO> optionalsParts;
 
+    @ApiModelProperty(value = "Product configuration ACL")
     private ACLDTO acl;
 
     public ProductConfigurationDTO() {

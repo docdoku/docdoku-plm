@@ -21,18 +21,30 @@
 package com.docdoku.server.rest.dto.product;
 
 import com.docdoku.server.rest.dto.ACLDTO;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
 
 @XmlRootElement
+@ApiModel(value="ProductInstanceMasterDTO", description="This class is the representation of {@link com.docdoku.core.configuration.ProductInstanceMaster} entity")
 public class ProductInstanceMasterDTO implements Serializable {
 
+    @ApiModelProperty(value = "Product instance identifier")
     private String identifier;
+
+    @ApiModelProperty(value = "Product instance serial number")
     private String serialNumber;
+
+    @ApiModelProperty(value = "Configuration item used")
     private String configurationItemId;
+
+    @ApiModelProperty(value = "Product instance iterations")
     private List<ProductInstanceIterationDTO> productInstanceIterations;
+
+    @ApiModelProperty(value = "Product instance ACL")
     private ACLDTO acl;
 
     public ProductInstanceMasterDTO() {

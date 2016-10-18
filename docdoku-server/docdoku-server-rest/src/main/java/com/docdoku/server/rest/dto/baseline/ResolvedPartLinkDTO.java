@@ -24,14 +24,20 @@ import com.docdoku.core.configuration.ResolvedPartLink;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.server.rest.dto.LightPartLinkDTO;
 import com.docdoku.server.rest.dto.PartIterationDTO;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
+@ApiModel(value="ResolvedPartLinkDTO", description="This class is the representation of a {@link com.docdoku.core.product.PartLink} and its resolved {@link com.docdoku.core.product.PartIteration} in context")
 public class ResolvedPartLinkDTO implements Serializable {
 
+    @ApiModelProperty(value = "Resolved part iteration")
     private PartIterationDTO partIteration;
+
+    @ApiModelProperty(value = "Usage Link")
     private LightPartLinkDTO partLink;
 
     public ResolvedPartLinkDTO() {

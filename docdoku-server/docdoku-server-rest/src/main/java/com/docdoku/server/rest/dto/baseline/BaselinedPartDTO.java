@@ -22,6 +22,8 @@ package com.docdoku.server.rest.dto.baseline;
 
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -30,12 +32,22 @@ import java.util.Collections;
 import java.util.List;
 
 @XmlRootElement
+@ApiModel(value="BaselinedPartDTO", description="This class is a representation of a {@link com.docdoku.core.configuration.BaselinedPart} entity")
 public class BaselinedPartDTO implements Serializable {
 
+    @ApiModelProperty(value = "Part number")
     private String number;
+
+    @ApiModelProperty(value = "Part nale")
     private String name;
+
+    @ApiModelProperty(value = "Part version")
     private String version;
+
+    @ApiModelProperty(value = "Part iteration")
     private int iteration;
+
+    @ApiModelProperty(value = "Part available iterations")
     private List<BaselinedPartOptionDTO> availableIterations;
 
     public BaselinedPartDTO() {

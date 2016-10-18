@@ -20,14 +20,26 @@
 
 package com.docdoku.server.rest.dto.baseline;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
+@ApiModel(value="BaselinedDocumentOptionDTO", description="This class holds document status and iteration information")
 public class BaselinedDocumentOptionDTO implements Serializable {
+
+    @ApiModelProperty(value = "Entity version")
     private String version;
+
+    @ApiModelProperty(value = "Entity last iteration")
     private int lastIteration;
+
+    @ApiModelProperty(value = "Entity released flag")
     private boolean released;
+
+    @ApiModelProperty(value = "Entity obsolete flag")
     private boolean obsolete;
 
     public BaselinedDocumentOptionDTO() {

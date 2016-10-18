@@ -20,13 +20,23 @@
 
 package com.docdoku.server.rest.dto.baseline;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
+@ApiModel(value="BaselinedPartOptionDTO", description="This class holds part status and iteration information")
 public class BaselinedPartOptionDTO implements Serializable {
+
+    @ApiModelProperty(value = "Part version")
     private String version;
+
+    @ApiModelProperty(value = "Part last iteration")
     private int lastIteration;
+
+    @ApiModelProperty(value = "Part released flag")
     private boolean released;
 
     public BaselinedPartOptionDTO() {

@@ -24,6 +24,8 @@ import com.docdoku.core.change.ChangeItem;
 import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.docdoku.server.rest.dto.PartIterationDTO;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,23 +34,56 @@ import java.util.Date;
 import java.util.List;
 
 @XmlRootElement
+@ApiModel(value="ChangeItemDTO", description="This class is the representation of a {@link com.docdoku.core.change.ChangeItem} entity")
 public class ChangeItemDTO implements Serializable {
+
+    @ApiModelProperty(value = "Change item id")
     private int id;
+
+    @ApiModelProperty(value = "Change item name")
     private String name;
+
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
+
+    @ApiModelProperty(value = "Change item author login")
     private String author;
+
+    @ApiModelProperty(value = "Change item author name")
     private String authorName;
+
+    @ApiModelProperty(value = "Change item assignee user login")
     private String assignee;
+
+    @ApiModelProperty(value = "Change item assignee user name")
     private String assigneeName;
+
+    @ApiModelProperty(value = "Change item creation date")
     private Date creationDate;
+
+    @ApiModelProperty(value = "Change item description")
     private String description;
+
+    @ApiModelProperty(value = "Change item priority")
     private ChangeItem.Priority priority;
+
+    @ApiModelProperty(value = "Change item category")
     private ChangeItem.Category category;
+
+    @ApiModelProperty(value = "Change item affected documents")
     private List<DocumentIterationDTO> affectedDocuments;
+
+    @ApiModelProperty(value = "Change item affected parts")
     private List<PartIterationDTO> affectedParts;
+
+    @ApiModelProperty(value = "Change item tag list")
     private String[] tags;
+
+    @ApiModelProperty(value = "Change item ACL")
     @XmlElement(nillable = true)
     private ACLDTO acl;
+
+    @ApiModelProperty(value = "Change item writable flag")
     private boolean writable;
 
     public ChangeItemDTO() {

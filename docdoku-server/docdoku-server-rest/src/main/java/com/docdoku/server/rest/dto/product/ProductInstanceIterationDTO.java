@@ -23,34 +23,78 @@ package com.docdoku.server.rest.dto.product;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.*;
 
 @XmlRootElement
+@ApiModel(value="ProductInstanceIterationDTO", description="This class is the representation of {@link com.docdoku.core.configuration.ProductInstanceIteration} entity")
 public class ProductInstanceIterationDTO implements Serializable {
+
+    @ApiModelProperty(value = "Product instance serial number")
     private String serialNumber;
+
+    @ApiModelProperty(value = "Product instance iteration")
     private int iteration;
+
+    @ApiModelProperty(value = "Product instance iteration note")
     private String iterationNote;
+
+    @ApiModelProperty(value = "Configuration item used")
     private String configurationItemId;
+
+    @ApiModelProperty(value = "Product instance last update author login")
     private String updateAuthor;
+
+    @ApiModelProperty(value = "Product instance last update author name")
     private String updateAuthorName;
+
+    @ApiModelProperty(value = "Product instance last modification date")
     private Date modificationDate;
+
+    @ApiModelProperty(value = "Product instance baselined parts")
     private List<BaselinedPartDTO> baselinedParts;
+
+    @ApiModelProperty(value = "Product instance substitute links retained")
     private List<String> substituteLinks;
+
+    @ApiModelProperty(value = "Product instance optional links retained")
     private List<String> optionalUsageLinks;
+
+    @ApiModelProperty(value = "Product instance author")
     private UserDTO author;
+
+    @ApiModelProperty(value = "Product instance creation date")
     private Date creationDate;
+
+    @ApiModelProperty(value = "Product instance substitute links retained as parts")
     private List<LightPartLinkListDTO> substitutesParts;
+
+    @ApiModelProperty(value = "Product instance optional links retained as parts")
     private List<LightPartLinkListDTO> optionalsParts;
+
+    @ApiModelProperty(value = "Product instance path to path links in structure")
     private List<PathToPathLinkDTO> pathToPathLinks;
 
+    @ApiModelProperty(value = "Product instance baseline in use")
     private ProductBaselineDTO basedOn;
+
+    @ApiModelProperty(value = "Product instance path data list")
     private List<PathDataMasterDTO> pathDataMasterList;
+
+    @ApiModelProperty(value = "Product instance path data locations")
     private List<LightPartLinkListDTO> pathDataPaths;
+
+    @ApiModelProperty(value = "Product instance attributes")
     private List<InstanceAttributeDTO> instanceAttributes = new ArrayList<>();
+
+    @ApiModelProperty(value = "Product instance linked documents")
     private Set<DocumentRevisionDTO> linkedDocuments = new HashSet<>();
+
+    @ApiModelProperty(value = "Product instance attached files")
     private List<BinaryResourceDTO> attachedFiles;
 
     public ProductInstanceIterationDTO() {

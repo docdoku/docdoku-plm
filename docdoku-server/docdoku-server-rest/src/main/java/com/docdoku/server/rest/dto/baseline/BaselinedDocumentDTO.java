@@ -21,6 +21,8 @@
 package com.docdoku.server.rest.dto.baseline;
 
 import com.docdoku.core.document.DocumentIteration;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -29,12 +31,22 @@ import java.util.Collections;
 import java.util.List;
 
 @XmlRootElement
+@ApiModel(value="BaselinedDocumentDTO", description="This class is the representation of a {@link com.docdoku.core.configuration.BaselinedDocument} entity")
 public class BaselinedDocumentDTO implements Serializable {
 
+    @ApiModelProperty(value = "Document master id")
     private String documentMasterId;
+
+    @ApiModelProperty(value = "Document title")
     private String title;
+
+    @ApiModelProperty(value = "Document version")
     private String version;
+
+    @ApiModelProperty(value = "Document iteration")
     private int iteration;
+
+    @ApiModelProperty(value = "Document available iterations")
     private List<BaselinedDocumentOptionDTO> availableIterations;
 
     public BaselinedDocumentDTO() {

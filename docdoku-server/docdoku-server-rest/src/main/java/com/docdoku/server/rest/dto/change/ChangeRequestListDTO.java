@@ -19,6 +19,9 @@
  */
 package com.docdoku.server.rest.dto.change;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
@@ -27,8 +30,10 @@ import java.util.List;
  * @author Morgan Guimard
  */
 @XmlRootElement
+@ApiModel(value="ChangeRequestListDTO", description="This class holds a list of {@link com.docdoku.core.change.ChangeRequest} entities")
 public class ChangeRequestListDTO implements Serializable {
 
+    @ApiModelProperty(value = "The list of change requests")
     private List<ChangeRequestDTO> requests;
 
     public ChangeRequestListDTO() {

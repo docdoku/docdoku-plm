@@ -22,6 +22,8 @@ package com.docdoku.server.rest.dto.baseline;
 
 import com.docdoku.core.configuration.DocumentBaseline;
 import com.docdoku.server.rest.dto.UserDTO;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -29,14 +31,28 @@ import java.util.Date;
 import java.util.List;
 
 @XmlRootElement
+@ApiModel(value="DocumentBaselineDTO", description="This class is the representation of {@link com.docdoku.core.configuration.DocumentBaseline} entity")
 public class DocumentBaselineDTO implements Serializable {
 
+    @ApiModelProperty(value = "Baseline id")
     private int id;
+
+    @ApiModelProperty(value = "Baseline name")
     private String name;
+
+    @ApiModelProperty(value = "Baseline description")
     private String description;
+
+    @ApiModelProperty(value = "Baseline creation date")
     private Date creationDate;
+
+    @ApiModelProperty(value = "Baseline type")
     private DocumentBaseline.BaselineType type;
+
+    @ApiModelProperty(value = "Baselined document list")
     private List<BaselinedDocumentDTO> baselinedDocuments;
+
+    @ApiModelProperty(value = "Baseline author")
     private UserDTO author;
 
     public DocumentBaselineDTO() {

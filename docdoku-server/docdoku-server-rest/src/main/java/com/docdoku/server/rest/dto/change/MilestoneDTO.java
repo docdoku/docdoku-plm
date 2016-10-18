@@ -21,22 +21,42 @@
 package com.docdoku.server.rest.dto.change;
 
 import com.docdoku.server.rest.dto.ACLDTO;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
 @XmlRootElement
+@ApiModel(value="MilestoneDTO", description="This class is the representation of a {@link com.docdoku.core.change.Milestone} entity")
 public class MilestoneDTO implements Serializable {
 
+    @ApiModelProperty(value = "Milestone id")
     private int id;
+
+    @ApiModelProperty(value = "Milestone title")
     private String title;
+
+    @ApiModelProperty(value = "Milestone due date")
     private Date dueDate;
+
+    @ApiModelProperty(value = "Milestone desription")
     private String description;
+
+    @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
+
+    @ApiModelProperty(value = "Milestone associated requests count")
     private int numberOfRequests;
+
+    @ApiModelProperty(value = "Milestone associated orders count")
     private int numberOfOrders;
+
+    @ApiModelProperty(value = "Milestone ACL")
     private ACLDTO acl;
+
+    @ApiModelProperty(value = "Milestone writable flag")
     private boolean writable;
 
     public MilestoneDTO() {

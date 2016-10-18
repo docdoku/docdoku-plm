@@ -24,6 +24,8 @@ import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.server.rest.dto.LightPartLinkListDTO;
 import com.docdoku.server.rest.dto.PathToPathLinkDTO;
 import com.docdoku.server.rest.dto.UserDTO;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -31,23 +33,52 @@ import java.util.Date;
 import java.util.List;
 
 @XmlRootElement
+@ApiModel(value="ProductBaselineDTO", description="This class is the representation of {@link com.docdoku.core.configuration.ProductBaseline} entity")
 public class ProductBaselineDTO implements Serializable {
 
+    @ApiModelProperty(value = "Baseline id")
     private int id;
+
+    @ApiModelProperty(value = "Baseline name")
     private String name;
+
+    @ApiModelProperty(value = "Baseline description")
     private String description;
+
+    @ApiModelProperty(value = "Baseline creation date")
     private Date creationDate;
+
+    @ApiModelProperty(value = "Configuration item in use")
     private String configurationItemId;
+
+    @ApiModelProperty(value = "Configuration item latest revision")
     private String configurationItemLatestRevision;
+
+    @ApiModelProperty(value = "Baseline type")
     private ProductBaseline.BaselineType type;
+
+    @ApiModelProperty(value = "Baselined part list")
     private List<BaselinedPartDTO> baselinedParts;
+
+    @ApiModelProperty(value = "Baseline substitute links used, as id list")
     private List<String> substituteLinks;
+
+    @ApiModelProperty(value = "Baseline optional links retained, as id list")
     private List<String> optionalUsageLinks;
 
+    @ApiModelProperty(value = "Baseline substitutes links, as part list")
     private List<LightPartLinkListDTO> substitutesParts;
+
+    @ApiModelProperty(value = "Baseline optional links retained, as part list")
     private List<LightPartLinkListDTO> optionalsParts;
+
+    @ApiModelProperty(value = "Baseline author")
     private UserDTO author;
+
+    @ApiModelProperty(value = "Baseline has obsolete parts flag")
     private boolean hasObsoletePartRevisions;
+
+    @ApiModelProperty(value = "Baseline path to path links in structure")
     private List<PathToPathLinkDTO> pathToPathLinks;
 
     public ProductBaselineDTO() {

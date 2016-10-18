@@ -24,6 +24,8 @@ import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.BinaryResourceDTO;
 import com.docdoku.server.rest.dto.DocumentRevisionDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -33,14 +35,28 @@ import java.util.List;
 import java.util.Set;
 
 @XmlRootElement
+@ApiModel(value = "ProductInstanceCreationDTO", description = "Use this class to create a new {@link com.docdoku.core.configuration.ProductInstanceMaster} entity")
 public class ProductInstanceCreationDTO implements Serializable {
 
+    @ApiModelProperty(value = "Product instance serial number")
     private String serialNumber;
+
+    @ApiModelProperty(value = "Configuration item in use")
     private String configurationItemId;
+
+    @ApiModelProperty(value = "Baseline in use")
     private int baselineId;
+
+    @ApiModelProperty(value = "Product instance ACL")
     private ACLDTO acl;
+
+    @ApiModelProperty(value = "Product instance attributes")
     private List<InstanceAttributeDTO> instanceAttributes = new ArrayList<>();
+
+    @ApiModelProperty(value = "Product instance linked documents")
     private Set<DocumentRevisionDTO> linkedDocuments = new HashSet<>();
+
+    @ApiModelProperty(value = "Product instance attached files")
     private List<BinaryResourceDTO> attachedFiles;
 
     public ProductInstanceCreationDTO() {
