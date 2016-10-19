@@ -42,7 +42,9 @@ import java.util.logging.Logger;
  * @author Taylor LABEJOF
  */
 public class ESMapper {
+
     private static final Logger LOGGER = Logger.getLogger(ESMapper.class.getName());
+
     public static final String WORKSPACE_ID_KEY = "workspaceId";
     public static final String ITERATIONS_KEY = "iterations";
     public static final String ITERATION_KEY = "iteration";
@@ -72,7 +74,6 @@ public class ESMapper {
     public static final String PART_TYPE = "part";
     public static final String DOCUMENT_TYPE = "document" ;
     public static final String ATTR_NESTED_PATH = ITERATIONS_KEY +"."+ ATTRIBUTES_KEY;
-
 
     private ESMapper() {
         super();

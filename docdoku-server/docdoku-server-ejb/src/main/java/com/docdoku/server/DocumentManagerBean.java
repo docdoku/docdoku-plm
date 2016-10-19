@@ -870,6 +870,13 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
                 em.detach(docR);
                 docR.removeLastIteration();
             }
+
+            DocumentIteration lastCheckedInIteration = docR.getLastCheckedInIteration();
+
+            if(null != lastCheckedInIteration) {
+                esIndexer.index(lastCheckedInIteration);
+            }
+
             return docR;
         }
     }
@@ -1169,9 +1176,21 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             List<DocumentRevision> docRs = folderDAO.moveFolder(folder, newFolder);
             DocumentRevisionKey[] pks = new DocumentRevisionKey[docRs.size()];
             int i = 0;
+
+            List<DocumentIteration> lastCheckedInIterations = new ArrayList<>();
+
             for (DocumentRevision docR : docRs) {
                 pks[i++] = docR.getKey();
+                DocumentIteration lastCheckedInIteration = docR.getLastCheckedInIteration();
+                if(null != lastCheckedInIteration){
+                    lastCheckedInIterations.add(lastCheckedInIteration);
+                }
             }
+
+            if(!lastCheckedInIterations.isEmpty()) {
+                esIndexer.indexMultiple(lastCheckedInIterations);
+            }
+
             return pks;
         }
     }

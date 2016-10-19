@@ -64,6 +64,7 @@ public class SearchQueryParser {
         List<DocumentSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<>();
         String[] pTags = null;
         String pContent = null;
+        String folder = null;
 
 
         for (String filter : query.keySet()) {
@@ -93,6 +94,9 @@ public class SearchQueryParser {
                         break;
                     case "type":
                         pType = value;
+                        break;
+                    case "folder":
+                        folder = value;
                         break;
                     case "createdFrom":
                         try {
@@ -143,7 +147,7 @@ public class SearchQueryParser {
 
         return new DocumentSearchQuery(workspaceId, fullText, pDocMId, pTitle, pVersion, pAuthor, pType,
                 pCreationDateFrom, pCreationDateTo, pModificationDateFrom, pModificationDateTo,
-                pAttributesArray, pTags, pContent);
+                pAttributesArray, pTags, pContent, folder);
 
     }
 

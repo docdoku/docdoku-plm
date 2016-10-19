@@ -33,31 +33,40 @@ import java.util.Date;
 public class DocumentSearchQuery extends SearchQuery implements Serializable{
     protected String docMId;
     protected String title;
+    protected String folder;
 
     public DocumentSearchQuery(){
 
     }
-    public DocumentSearchQuery(String workspaceId, String fullText, String docMId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, Date modificationDateFrom, Date modificationDateTo, SearchQuery.AbstractAttributeQuery[] attributes, String[] tags, String content){
+    public DocumentSearchQuery(String workspaceId, String fullText, String docMId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, Date modificationDateFrom, Date modificationDateTo, SearchQuery.AbstractAttributeQuery[] attributes, String[] tags, String content, String folder){
         super(workspaceId,fullText,version,author,type,creationDateFrom,creationDateTo,modificationDateFrom,modificationDateTo,attributes,tags,content);
         this.docMId=docMId;
         this.title=title;
         this.content=content;
+        this.folder=folder;
     }
 
-    //Getter
     public String getDocMId() {
         return docMId;
     }
+
+    public void setDocMId(String docMId) {
+        this.docMId = docMId;
+    }
+
     public String getTitle() {
         return title;
     }
 
-    //Setter
-    public void setDocMId(String docMId) {
-        this.docMId = docMId;
-    }
     public void setTitle(String title) {
         this.title = title;
     }
 
+    public String getFolder() {
+        return folder;
+    }
+
+    public void setFolder(String folder) {
+        this.folder = folder;
+    }
 }

@@ -129,7 +129,8 @@ public class DocumentsResource {
                                                         @ApiParam(required = false, value = "Document creation to date") @QueryParam("createdTo") String createdTo,
                                                         @ApiParam(required = false, value = "Document modified from date") @QueryParam("modifiedFrom") String modifiedFrom,
                                                         @ApiParam(required = false, value = "Document modified to date") @QueryParam("modifiedTo") String modifiedTo,
-                                                        @ApiParam(required = false, value = "Document attributes") @QueryParam("attributes") String attributes
+                                                        @ApiParam(required = false, value = "Document attributes") @QueryParam("attributes") String attributes,
+                                                        @ApiParam(required = false, value = "Folder") @QueryParam("folder") String folder
     ) throws EntityNotFoundException, UserNotActiveException, ESServerException {
         MultivaluedMap<String, String> params = uri.getQueryParameters();
         DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseDocumentStringQuery(workspaceId, params);

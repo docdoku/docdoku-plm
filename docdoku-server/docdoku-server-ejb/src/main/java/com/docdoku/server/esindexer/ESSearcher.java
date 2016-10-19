@@ -57,14 +57,16 @@ import java.util.logging.Logger;
  */
 @Stateless(name = "ESSearcher")
 public class ESSearcher {
+
     private static final String I18N_CONF = "com.docdoku.core.i18n.LocalStrings";
     private static final Logger LOGGER = Logger.getLogger(ESSearcher.class.getName());
     private static final String ES_TYPE_DOCUMENT = "document";
     private static final String ES_TYPE_PART = "part";
-    private static final String ES_SEARCH_ERROR_1 = "ES_SearchError1";
+
+  /*  private static final String ES_SEARCH_ERROR_1 = "ES_SearchError1";
     private static final String ES_SEARCH_ERROR_2 = "ES_SearchError2";
     private static final String ES_SERVER_ERROR_1 = "IndexerServerException";
-    private static final String ES_SERVER_ERROR_2 ="MissingIndexException";
+    private static final String ES_SERVER_ERROR_2 ="MissingIndexException";*/
 
     @PersistenceContext
     private EntityManager em;
@@ -92,6 +94,7 @@ public class ESSearcher {
             SearchResponse sr = srb.execute().actionGet();
 
             List<DocumentRevision> listOfDocuments = new ArrayList<>();
+
             for (int i = 0; i < sr.getHits().getHits().length; i++) {
                 SearchHit hit = sr.getHits().getAt(i);
                 DocumentRevision docR = getDocumentRevision(hit);
@@ -100,17 +103,13 @@ public class ESSearcher {
                 }
             }
 
-            //Todo FilterConfigSpec
-
             return listOfDocuments;
         } catch (NoNodeAvailableException e) {
-            String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_SEARCH_ERROR_1);
-            LOGGER.log(Level.WARNING, logMessage, e);
-            throw new ESServerException(Locale.getDefault(), ES_SERVER_ERROR_1);
+            LOGGER.log(Level.WARNING, "Cannot search: The ElasticSearch server doesn't seem to respond");
+            throw new ESServerException(Locale.getDefault(), "ES_SearchError1");
         } catch (IndexMissingException e) {
-            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString(ES_SEARCH_ERROR_2);
-            LOGGER.log(Level.WARNING,logMessage,e);
-            throw new ESServerException(Locale.getDefault(),ES_SERVER_ERROR_2);
+            LOGGER.log(Level.WARNING, "Cannot search: index is missing", e);
+            throw new ESServerException(Locale.getDefault(), "ES_SearchError2");
         }
     }
 
@@ -134,17 +133,13 @@ public class ESSearcher {
                     setOfParts.add(partRevision);
                 }
             }
-
-            //Todo FilterConfigSpec
             return new ArrayList<>(setOfParts);
         } catch (NoNodeAvailableException e) {
-            String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_SEARCH_ERROR_1);
-            LOGGER.log(Level.WARNING, logMessage, e);
-            throw new ESServerException(Locale.getDefault(), ES_SERVER_ERROR_1);
+            LOGGER.log(Level.WARNING, "Cannot search: The ElasticSearch server doesn't seem to respond");
+            throw new ESServerException(Locale.getDefault(), "ES_SearchError1");
         } catch (IndexMissingException e) {
-            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString(ES_SEARCH_ERROR_2);
-            LOGGER.log(Level.WARNING,logMessage,e);
-            throw new ESServerException(Locale.getDefault(),ES_SERVER_ERROR_2);
+            LOGGER.log(Level.WARNING, "Cannot search: index is missing", e);
+            throw new ESServerException(Locale.getDefault(), "ES_SearchError2");
         }
 
     }
@@ -181,9 +176,8 @@ public class ESSearcher {
             }
             return listOfDocuments;
         } catch (NoNodeAvailableException e) {
-            String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_SEARCH_ERROR_1);
-            LOGGER.log(Level.WARNING, logMessage, e);
-            throw new ESServerException(Locale.getDefault(), ES_SERVER_ERROR_1);
+            LOGGER.log(Level.WARNING, "Cannot search in all workspace: The ElasticSearch server doesn't seem to respond");
+            throw new ESServerException(Locale.getDefault(), "ES_SearchError1");
         }
     }
 
@@ -220,16 +214,15 @@ public class ESSearcher {
             }
 
             return listOfParts;
-        } catch (NoNodeAvailableException e) {
-            String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(ES_SEARCH_ERROR_1);
-            LOGGER.log(Level.WARNING, logMessage, e);
-            throw new ESServerException(Locale.getDefault(), ES_SERVER_ERROR_1);
+        }  catch (NoNodeAvailableException e) {
+            LOGGER.log(Level.WARNING, "Cannot search in all workspace: The ElasticSearch server doesn't seem to respond");
+            throw new ESServerException(Locale.getDefault(), "ES_SearchError1");
         }
     }
 
     private QueryBuilder getFullTextQuery(SearchQuery query) {
         // TODO Cut the query and make a boolQuery() with all the words
-        QueryBuilder fullTextQuery = QueryBuilders.matchQuery("_all",query.getFullText())
+        QueryBuilder fullTextQuery = QueryBuilders.matchQuery("_all", query.getFullText())
                 .operator(MatchQueryBuilder.Operator.OR)
                 .fuzziness("AUTO");
         return fullTextQuery;
@@ -252,9 +245,12 @@ public class ESSearcher {
                 queryBuilder.add(QueryBuilders.fuzzyQuery(ESMapper.DOCUMENT_ID_KEY, docQuery.getDocMId()));
             }
             if (docQuery.getTitle() != null) {
-               queryBuilder.add(QueryBuilders.fuzzyQuery(ESMapper.TITLE_KEY, docQuery.getTitle()));
+                queryBuilder.add(QueryBuilders.fuzzyQuery(ESMapper.TITLE_KEY, docQuery.getTitle()));
             }
-            addCommonQuery(queryBuilder,docQuery);
+            if (docQuery.getFolder() != null) {
+                queryBuilder.add(QueryBuilders.fuzzyQuery(ESMapper.FOLDER_KEY, docQuery.getFolder()));
+            }
+            addCommonQuery(queryBuilder, docQuery);
         }
         return queryBuilder.getFilteredQuery();
     }
@@ -262,7 +258,7 @@ public class ESSearcher {
     /**
      * Add queries common to both part and doc.
      *
-     * @param searchQuery The search query wanted
+     * @param searchQuery  The search query wanted
      * @param queryBuilder The QueryBuilder initialized with the specific (doc/part) values
      */
     private void addCommonQuery(ESQueryBuilder queryBuilder, SearchQuery searchQuery) {
@@ -302,16 +298,16 @@ public class ESSearcher {
                 String attributeName = attr.getNameWithoutWhiteSpace();
                 List<NestedFilterBuilder> attrFilters = filterBuilders.get(attributeName);
 
-                if(null == attrFilters){
+                if (null == attrFilters) {
                     attrFilters = new ArrayList<>();
                     filterBuilders.put(attributeName, attrFilters);
                 }
 
                 BoolFilterBuilder b = new BoolFilterBuilder();
 
-                b.must(FilterBuilders.termFilter(ESMapper.ATTR_NESTED_PATH+ "." + ESMapper.ATTRIBUTE_NAME, attributeName));
+                b.must(FilterBuilders.termFilter(ESMapper.ATTR_NESTED_PATH + "." + ESMapper.ATTRIBUTE_NAME, attributeName));
 
-                if(attr.hasValue()) {
+                if (attr.hasValue()) {
                     b.must(FilterBuilders.termFilter(ESMapper.ATTR_NESTED_PATH + "." + ESMapper.ATTRIBUTE_VALUE, attr.toString()));
                 }
 
@@ -320,7 +316,7 @@ public class ESSearcher {
 
             }
 
-            for(Map.Entry<String,List<NestedFilterBuilder>> filterBuilderEntrySet : filterBuilders.entrySet()){
+            for (Map.Entry<String, List<NestedFilterBuilder>> filterBuilderEntrySet : filterBuilders.entrySet()) {
                 List<NestedFilterBuilder> builders = filterBuilderEntrySet.getValue();
                 queryBuilder.add(FilterBuilders.orFilter(builders.toArray(new NestedFilterBuilder[builders.size()])));
             }
@@ -351,7 +347,7 @@ public class ESSearcher {
             if (partQuery.isStandardPart() != null) {
                 queryBuilder.add(FilterBuilders.termFilter(ESMapper.STANDARD_PART_KEY, partQuery.isStandardPart()));
             }
-            addCommonQuery(queryBuilder,partQuery);
+            addCommonQuery(queryBuilder, partQuery);
         }
 
         return queryBuilder.getFilteredQuery();
