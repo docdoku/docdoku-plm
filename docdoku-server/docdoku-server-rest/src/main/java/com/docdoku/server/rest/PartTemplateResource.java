@@ -73,7 +73,7 @@ public class PartTemplateResource {
     @GET
     @ApiOperation(value = "Get part master templates", response = PartMasterTemplateDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public PartMasterTemplateDTO[] getPartMasterTemplates(@PathParam("workspaceId") String workspaceId)
+    public PartMasterTemplateDTO[] getPartMasterTemplates(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
 
@@ -91,8 +91,8 @@ public class PartTemplateResource {
     @ApiOperation(value = "Get part master template", response = PartMasterTemplateDTO.class)
     @Path("{templateId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public PartMasterTemplateDTO getPartMasterTemplate(@PathParam("workspaceId") String workspaceId,
-                                                       @PathParam("templateId") String templateId)
+    public PartMasterTemplateDTO getPartMasterTemplate(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                       @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId)
             throws EntityNotFoundException, UserNotActiveException {
 
         PartMasterTemplate partMasterTemplate = productService.getPartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId));
@@ -103,8 +103,8 @@ public class PartTemplateResource {
     @ApiOperation(value = "Generate part master template id", response = TemplateGeneratedIdDTO.class)
     @Path("{templateId}/generate_id")
     @Produces(MediaType.APPLICATION_JSON)
-    public TemplateGeneratedIdDTO generatePartMasterTemplateId(@PathParam("workspaceId") String workspaceId,
-                                                               @PathParam("templateId") String templateId)
+    public TemplateGeneratedIdDTO generatePartMasterTemplateId(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                               @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId)
             throws EntityNotFoundException, UserNotActiveException {
 
         String generatedId = productService.generateId(workspaceId, templateId);
@@ -115,7 +115,7 @@ public class PartTemplateResource {
     @ApiOperation(value = "Crate part master template", response = PartMasterTemplateDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PartMasterTemplateDTO createPartMasterTemplate(@PathParam("workspaceId") String workspaceId,
+    public PartMasterTemplateDTO createPartMasterTemplate(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
                                                           @ApiParam(required = true, value = "Part master template to create") PartTemplateCreationDTO templateCreationDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException {
 
@@ -158,8 +158,8 @@ public class PartTemplateResource {
     @Path("{templateId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PartMasterTemplateDTO updatePartMasterTemplate(@PathParam("workspaceId") String workspaceId,
-                                                          @PathParam("templateId") String templateId,
+    public PartMasterTemplateDTO updatePartMasterTemplate(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                          @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
                                                           @ApiParam(required = true, value = "Part master template to update") PartMasterTemplateDTO partMasterTemplateDTO)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
@@ -200,8 +200,8 @@ public class PartTemplateResource {
     @ApiOperation(value = "Update part master template ACL", response = Response.class)
     @Path("{templateId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updatePartMasterTemplateACL(@PathParam("workspaceId") String workspaceId,
-                                                @PathParam("templateId") String templateId,
+    public Response updatePartMasterTemplateACL(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
                                                 @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
@@ -229,8 +229,8 @@ public class PartTemplateResource {
     @DELETE
     @ApiOperation(value = "Delete part master template", response = Response.class)
     @Path("{templateId}")
-    public Response deletePartMasterTemplate(@PathParam("workspaceId") String workspaceId,
-                                             @PathParam("templateId") String templateId)
+    public Response deletePartMasterTemplate(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                             @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         productService.deletePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId));
@@ -241,9 +241,9 @@ public class PartTemplateResource {
     @ApiOperation(value = "Remove attached file from part master template", response = Response.class)
     @Path("{templateId}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId,
-                                       @PathParam("templateId") String templateId,
-                                       @PathParam("fileName") String fileName)
+    public Response removeAttachedFile(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                       @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
+                                       @ApiParam(required = true, value = "File name") @PathParam("fileName") String fileName)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         String fileFullName = workspaceId + "/part-templates/" + templateId + "/" + fileName;
@@ -256,9 +256,9 @@ public class PartTemplateResource {
     @Path("{templateId}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId,
-                                      @PathParam("templateId") String templateId,
-                                      @PathParam("fileName") String fileName,
+    public FileDTO renameAttachedFile(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                      @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
+                                      @ApiParam(required = true, value = "File name") @PathParam("fileName") String fileName,
                                       @ApiParam(required = true, value = "File to rename") FileDTO fileDTO)
             throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, AccessRightException, FileAlreadyExistsException, StorageException, NotAllowedException, WorkspaceNotEnabledException {
 

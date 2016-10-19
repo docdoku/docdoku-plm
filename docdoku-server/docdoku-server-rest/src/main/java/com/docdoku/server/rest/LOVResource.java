@@ -74,7 +74,7 @@ public class LOVResource {
             response = ListOfValuesDTO.class,
             responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getLOVs(@PathParam("workspaceId") String workspaceId)
+    public Response getLOVs(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         List<ListOfValuesDTO> lovsDTO = new ArrayList<>();
         List<ListOfValues> lovs = lovManager.findLOVFromWorkspace(workspaceId);
@@ -94,7 +94,7 @@ public class LOVResource {
             responseContainer = "List")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createLOV(@PathParam("workspaceId") String workspaceId,
+    public Response createLOV(@ApiParam(required = true, value = "Workspace id")  @PathParam("workspaceId") String workspaceId,
                               @ApiParam(required = true, value = "LOV to create") ListOfValuesDTO lovDTO)
             throws ListOfValuesAlreadyExistsException, CreationException, UnsupportedEncodingException, UserNotFoundException, AccessRightException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         ListOfValues lov = mapper.map(lovDTO, ListOfValues.class);
@@ -108,8 +108,8 @@ public class LOVResource {
     @Path("/{name}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ListOfValuesDTO getLOV(@PathParam("workspaceId") String workspaceId,
-                                  @PathParam("name") String name)
+    public ListOfValuesDTO getLOV(@ApiParam(required = true, value = "Workspace id")  @PathParam("workspaceId") String workspaceId,
+                                  @ApiParam(required = true, value = "Name")  @PathParam("name") String name)
             throws ListOfValuesNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         ListOfValuesKey lovKey = new ListOfValuesKey(workspaceId, name);
         ListOfValues lov = lovManager.findLov(lovKey);
@@ -122,8 +122,8 @@ public class LOVResource {
             response = ListOfValuesDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ListOfValuesDTO updateLOV(@PathParam("workspaceId") String workspaceId,
-                                     @PathParam("name") String name,
+    public ListOfValuesDTO updateLOV(@ApiParam(required = true, value = "Workspace id")  @PathParam("workspaceId") String workspaceId,
+                                     @ApiParam(required = true, value = "Name")  @PathParam("name") String name,
                                      @ApiParam(required = true, value = "LOV to update") ListOfValuesDTO lovDTO)
             throws ListOfValuesNotFoundException, ListOfValuesAlreadyExistsException, CreationException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException {
         ListOfValuesKey lovKey = new ListOfValuesKey(workspaceId, name);
@@ -139,8 +139,8 @@ public class LOVResource {
             response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteLOV(@PathParam("workspaceId") String workspaceId,
-                              @PathParam("name") String name)
+    public Response deleteLOV(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                              @ApiParam(required = true, value = "Name") @PathParam("name") String name)
             throws ListOfValuesNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException, WorkspaceNotEnabledException {
         ListOfValuesKey lovKey = new ListOfValuesKey(workspaceId, name);
         lovManager.deleteLov(lovKey);

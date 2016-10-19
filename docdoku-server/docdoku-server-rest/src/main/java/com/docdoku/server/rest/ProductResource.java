@@ -358,7 +358,7 @@ public class ProductResource {
 
 
     @GET
-    @ApiOperation(value = "Get instances", response = Response.class)
+    @ApiOperation(value = "Get instances", response = String.class)
     @Path("{ciId}/instances")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getInstances(@Context Request request,
@@ -449,6 +449,8 @@ public class ProductResource {
         return Response.ok(partRevisionDTO).build();
     }
 
+    // TODO : refactor with regex to merge 2 by 2
+
     @ApiOperation(value = "Get all ProductConfigurationsResource")
     @Path("configurations")
     public ProductConfigurationsResource getAllConfigurations() {
@@ -462,7 +464,6 @@ public class ProductResource {
     }
 
 
-    // TODO : refactor with regex to merge 2 by 2
 
     @ApiOperation(value = "Get ProductConfigurationsResource")
     @Path("baselines")
@@ -475,7 +476,6 @@ public class ProductResource {
     public ProductBaselinesResource getBaselines() {
         return productBaselinesResource;
     }
-
     @ApiOperation(value = "Get all ProductInstancesResource")
     @Path("product-instances")
     public ProductInstancesResource getAllProductInstances() {

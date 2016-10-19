@@ -97,8 +97,8 @@ public class ProductInstancesResource {
     @GET
     @ApiOperation(value = "Get product-instance with given configuration item", response = ProductInstanceMasterDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProductInstances(@PathParam("workspaceId") String workspaceId,
-                                        @PathParam("ciId") String ciId)
+    public Response getProductInstances(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                        @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId)
             throws EntityNotFoundException, UserNotActiveException {
 
         List<ProductInstanceMaster> productInstanceMasterList;
@@ -122,7 +122,7 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Create product-instance", response = ProductInstanceMasterDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductInstanceMasterDTO createProductInstanceMaster(@PathParam("workspaceId") String workspaceId,
+    public ProductInstanceMasterDTO createProductInstanceMaster(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
                                                                 @ApiParam(required = true, value = "Product instance master to create") ProductInstanceCreationDTO productInstanceCreationDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException, NotAllowedException, EntityConstraintException, UserNotActiveException {
 
@@ -168,9 +168,9 @@ public class ProductInstancesResource {
     @Path("{serialNumber}/iterations/{iteration}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductInstanceMasterDTO updateProductInstanceMaster(@PathParam("workspaceId") String workspaceId,
-                                                                @PathParam("serialNumber") String serialNumber,
-                                                                @PathParam("iteration") int iteration,
+    public ProductInstanceMasterDTO updateProductInstanceMaster(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                                @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+                                                                @ApiParam(required = true, value = "Product instance iteration") @PathParam("iteration") int iteration,
                                                                 @ApiParam(required = true, value = "Product instance master to create") ProductInstanceIterationDTO productInstanceCreationDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException, UserNotActiveException {
 
@@ -209,9 +209,9 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Get product-instance", response = ProductInstanceMasterDTO.class)
     @Path("{serialNumber}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductInstanceMasterDTO getProductInstance(@PathParam("workspaceId") String workspaceId,
-                                                       @PathParam("ciId") String configurationItemId,
-                                                       @PathParam("serialNumber") String serialNumber)
+    public ProductInstanceMasterDTO getProductInstance(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                       @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                                       @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber)
             throws EntityNotFoundException, UserNotActiveException {
 
         ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
@@ -267,11 +267,11 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Remove attached file from product-instance", response = Response.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{serialNumber}/iterations/{iteration}/files/{fileName}")
-    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId,
-                                       @PathParam("iteration") int iteration,
-                                       @PathParam("ciId") String configurationItemId,
-                                       @PathParam("serialNumber") String serialNumber,
-                                       @PathParam("fileName") String fileName)
+    public Response removeAttachedFile(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                       @ApiParam(required = true, value = "Product instance iteration") @PathParam("iteration") int iteration,
+                                       @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                       @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+                                       @ApiParam(required = true, value = "File name") @PathParam("fileName") String fileName)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         String fullName = workspaceId + "/product-instances/" + serialNumber + "/iterations/" + iteration + "/" + fileName;
@@ -284,9 +284,9 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Update product-instance's ACL", response = Response.class)
     @Path("{serialNumber}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateProductInstanceACL(@PathParam("workspaceId") String workspaceId,
-                                             @PathParam("ciId") String configurationItemId,
-                                             @PathParam("serialNumber") String serialNumber,
+    public Response updateProductInstanceACL(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                             @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
                                              @ApiParam(required = true, value = "ACL to set") ACLDTO acl)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
@@ -315,9 +315,9 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Delete product-instance", response = Response.class)
     @Path("{serialNumber}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteProductInstanceMaster(@PathParam("workspaceId") String workspaceId,
-                                                @PathParam("ciId") String configurationItemId,
-                                                @PathParam("serialNumber") String serialNumber)
+    public Response deleteProductInstanceMaster(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                                @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         productInstanceService.deleteProductInstance(workspaceId, configurationItemId, serialNumber);
@@ -328,9 +328,9 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Get product-instance's iterations", response = ProductInstanceIterationDTO.class, responseContainer = "List")
     @Path("{serialNumber}/iterations")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProductInstanceIterations(@PathParam("workspaceId") String workspaceId,
-                                                 @PathParam("ciId") String configurationItemId,
-                                                 @PathParam("serialNumber") String serialNumber)
+    public Response getProductInstanceIterations(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                 @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                                 @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber)
             throws EntityNotFoundException, UserNotActiveException {
 
         List<ProductInstanceIteration> productInstanceIterationList = productInstanceService.getProductInstanceIterations(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
@@ -348,10 +348,10 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Get product-instance's iteration", response = ProductInstanceIterationDTO.class)
     @Path("{serialNumber}/iterations/{iteration}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductInstanceIterationDTO getProductInstanceIteration(@PathParam("workspaceId") String workspaceId,
-                                                                   @PathParam("ciId") String configurationItemId,
-                                                                   @PathParam("serialNumber") String serialNumber,
-                                                                   @PathParam("iteration") int iteration)
+    public ProductInstanceIterationDTO getProductInstanceIteration(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                                   @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                                                   @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+                                                                   @ApiParam(required = true, value = "Product instance iteration") @PathParam("iteration") int iteration)
             throws EntityNotFoundException, UserNotActiveException {
 
         ProductInstanceIteration productInstanceIteration = productInstanceService.getProductInstanceIteration(new ProductInstanceIterationKey(serialNumber, workspaceId, configurationItemId, iteration));
@@ -363,9 +363,9 @@ public class ProductInstancesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{serialNumber}/rebase")
-    public Response rebaseProductInstance(@PathParam("workspaceId") String workspaceId,
-                                          @PathParam("ciId") String configurationItemId,
-                                          @PathParam("serialNumber") String serialNumber,
+    public Response rebaseProductInstance(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                          @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                          @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
                                           @ApiParam(required = true, value = "Product baseline to rebase with") ProductBaselineDTO baselineDTO)
             throws UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemNotFoundException, PathToPathLinkAlreadyExistsException, PartMasterNotFoundException, CreationException, EntityConstraintException, WorkspaceNotEnabledException {
 
@@ -377,11 +377,11 @@ public class ProductInstancesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{serialNumber}/iterations/{iteration}/files/{fileName}")
-    public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId,
-                                      @PathParam("ciId") String configurationItemId,
-                                      @PathParam("serialNumber") String serialNumber,
-                                      @PathParam("iteration") int iteration,
-                                      @PathParam("fileName") String fileName,
+    public FileDTO renameAttachedFile(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                      @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                      @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+                                      @ApiParam(required = true, value = "Product instance iteration") @PathParam("iteration") int iteration,
+                                      @ApiParam(required = true, value = "File name") @PathParam("fileName") String fileName,
                                       @ApiParam(required = true, value = "Renamed file") FileDTO fileDTO)
             throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, ProductInstanceMasterNotFoundException, AccessRightException, StorageException, WorkspaceNotEnabledException {
         String fullName = workspaceId + "/product-instances/" + serialNumber + "/iterations/" + iteration + "/" + fileName;
@@ -393,10 +393,10 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Get product-instance's path-data", response = PathDataMasterDTO.class)
     @Path("{serialNumber}/pathdata/{path}")
     @Produces(MediaType.APPLICATION_JSON)
-    public PathDataMasterDTO getPathData(@PathParam("workspaceId") String workspaceId,
-                                         @PathParam("ciId") String configurationItemId,
-                                         @PathParam("serialNumber") String serialNumber,
-                                         @PathParam("path") String pathAsString)
+    public PathDataMasterDTO getPathData(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                         @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                         @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+                                         @ApiParam(required = true, value = "Complete path in context") @PathParam("path") String pathAsString)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, BaselineNotFoundException, WorkspaceNotEnabledException {
         PathDataMaster pathDataMaster = productInstanceService.getPathDataByPath(workspaceId, configurationItemId, serialNumber, pathAsString);
 
@@ -438,12 +438,12 @@ public class ProductInstancesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{serialNumber}/pathdata/{pathDataId}/iterations/{iteration}/files/{fileName}")
-    public FileDTO renameAttachedFileInPathData(@PathParam("workspaceId") String workspaceId,
-                                                @PathParam("ciId") String configurationItemId,
-                                                @PathParam("serialNumber") String serialNumber,
-                                                @PathParam("pathDataId") int pathDataId,
-                                                @PathParam("iteration") int iteration,
-                                                @PathParam("fileName") String fileName,
+    public FileDTO renameAttachedFileInPathData(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                                @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+                                                @ApiParam(required = true, value = "Path data master id") @PathParam("pathDataId") int pathDataId,
+                                                @ApiParam(required = true, value = "Product instance iteration") @PathParam("iteration") int iteration,
+                                                @ApiParam(required = true, value = "File name") @PathParam("fileName") String fileName,
                                                 @ApiParam(required = true, value = "Renamed file") FileDTO fileDTO)
             throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, ProductInstanceMasterNotFoundException, AccessRightException, StorageException, WorkspaceNotEnabledException {
 
@@ -457,12 +457,12 @@ public class ProductInstancesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{serialNumber}/pathdata/{pathDataId}/iterations/{iteration}/files/{fileName}")
-    public Response deleteAttachedFileInPathData(@PathParam("workspaceId") String workspaceId,
-                                                 @PathParam("ciId") String configurationItemId,
-                                                 @PathParam("serialNumber") String serialNumber,
-                                                 @PathParam("pathDataId") int pathDataId,
-                                                 @PathParam("iteration") int iteration,
-                                                 @PathParam("fileName") String fileName
+    public Response deleteAttachedFileInPathData(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                 @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                                 @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+                                                 @ApiParam(required = true, value = "Path data master id") @PathParam("pathDataId") int pathDataId,
+                                                 @ApiParam(required = true, value = "Product instance iteration") @PathParam("iteration") int iteration,
+                                                 @ApiParam(required = true, value = "File name") @PathParam("fileName") String fileName
     ) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, ProductInstanceMasterNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
         String fullName = workspaceId + "/product-instances/" + serialNumber + "/pathdata/" + pathDataId + "/iterations/" + iteration + "/" + fileName;
@@ -475,10 +475,10 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Delete product-instance's path-data", response = Response.class)
     @Path("{serialNumber}/pathdata/{pathDataId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deletePathData(@PathParam("workspaceId") String workspaceId,
-                                   @PathParam("ciId") String configurationItemId,
-                                   @PathParam("serialNumber") String serialNumber,
-                                   @PathParam("pathDataId") int pathDataId)
+    public Response deletePathData(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                   @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                   @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+                                   @ApiParam(required = true, value = "Path data master id") @PathParam("pathDataId") int pathDataId)
             throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException, WorkspaceNotEnabledException {
         productInstanceService.deletePathData(workspaceId, configurationItemId, serialNumber, pathDataId);
         return Response.ok().build();
@@ -489,11 +489,11 @@ public class ProductInstancesResource {
     @Path("{serialNumber}/pathdata/{pathDataId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PathDataMasterDTO addNewPathDataIteration(@PathParam("workspaceId") String workspaceId,
-                                                     @PathParam("ciId") String configurationItemId,
-                                                     @PathParam("serialNumber") String serialNumber,
-                                                     @PathParam("pathDataId") int pathDataId,
-                                                     @ApiParam(required = true, value = "Path data to create") PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, FileAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, BaselineNotFoundException, PathDataMasterNotFoundException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
+    public PathDataMasterDTO addNewPathDataIteration(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                     @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                                     @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+                                                     @ApiParam(required = true, value = "Path data master id") @PathParam("pathDataId") int pathDataId,
+                                                     @ApiParam(required = true, value = "Path data iteration to create") PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, FileAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, BaselineNotFoundException, PathDataMasterNotFoundException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
 
         List<InstanceAttributeDTO> instanceAttributeDTOs = pathDataIterationCreationDTO.getInstanceAttributes();
         List<InstanceAttribute> attributes = new ArrayList<>();
@@ -555,10 +555,10 @@ public class ProductInstancesResource {
     @Path("{serialNumber}/pathdata/{path}/new")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PathDataMasterDTO createPathDataMaster(@PathParam("workspaceId") String workspaceId,
-                                                  @PathParam("ciId") String configurationItemId,
-                                                  @PathParam("serialNumber") String serialNumber,
-                                                  @PathParam("path") String pathAsString,
+    public PathDataMasterDTO createPathDataMaster(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                  @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                                  @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+                                                  @ApiParam(required = true, value = "Complete path in context") @PathParam("path") String pathAsString,
                                                   @ApiParam(required = true, value = "Path data iteration create") PathDataIterationCreationDTO pathDataIterationCreationDTO)
             throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, FileAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
 
@@ -594,11 +594,11 @@ public class ProductInstancesResource {
     @Path("{serialNumber}/pathdata/{pathDataId}/iterations/{iteration}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PathDataMasterDTO updatePathData(@PathParam("workspaceId") String workspaceId,
-                                            @PathParam("ciId") String configurationItemId,
-                                            @PathParam("iteration") int iteration,
-                                            @PathParam("serialNumber") String serialNumber,
-                                            @PathParam("pathDataId") int pathDataId,
+    public PathDataMasterDTO updatePathData(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                            @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+                                            @ApiParam(required = true, value = "Path data master id") @PathParam("pathDataId") int pathDataId,
+                                            @ApiParam(required = true, value = "Product instance iteration") @PathParam("iteration") int iteration,
                                             @ApiParam(required = true, value = "Path data iteration to update") PathDataIterationCreationDTO pathDataIterationCreationDTO)
             throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
 
@@ -649,9 +649,9 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Get path-to-path link types", response = LightPathToPathLinkDTO.class, responseContainer = "List")
     @Path("{serialNumber}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId,
-                                           @PathParam("ciId") String configurationItemId,
-                                           @PathParam("serialNumber") String serialNumber)
+    public Response getPathToPathLinkTypes(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                           @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                           @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, WorkspaceNotEnabledException {
         List<String> pathToPathLinkTypes = productInstanceService.getPathToPathLinkTypes(workspaceId, configurationItemId, serialNumber);
         List<LightPathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
@@ -668,10 +668,10 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Get part from path-to-path link", response = LightPartMasterDTO.class)
     @Path("{serialNumber}/link-path-part/{pathPart}")
     @Produces(MediaType.APPLICATION_JSON)
-    public LightPartMasterDTO getPartFromPathLink(@PathParam("workspaceId") String workspaceId,
-                                                  @PathParam("ciId") String configurationItemId,
-                                                  @PathParam("serialNumber") String serialNumber,
-                                                  @PathParam("pathPart") String partPath)
+    public LightPartMasterDTO getPartFromPathLink(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                  @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                                  @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+                                                  @ApiParam(required = true, value = "Complete path to the part") @PathParam("pathPart") String partPath)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException, WorkspaceNotEnabledException {
 
         PartMaster partMaster = productService.getPartMasterFromPath(workspaceId, configurationItemId, partPath);
@@ -686,9 +686,9 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Get path-to-path links", response = LightPathToPathLinkDTO.class, responseContainer = "List")
     @Path("{serialNumber}/path-to-path-links")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathToPathLinks(@PathParam("workspaceId") String workspaceId,
-                                       @PathParam("ciId") String configurationItemId,
-                                       @PathParam("serialNumber") String serialNumber)
+    public Response getPathToPathLinks(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                       @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                       @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, WorkspaceNotEnabledException {
         List<PathToPathLink> pathToPathLinkTypes = productInstanceService.getPathToPathLinks(workspaceId, configurationItemId, serialNumber);
         List<LightPathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
@@ -705,10 +705,10 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Get path-to-path link", response = LightPathToPathLinkDTO.class)
     @Path("{serialNumber}/path-to-path-links/{pathToPathLinkId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public LightPathToPathLinkDTO getPathToPathLink(@PathParam("workspaceId") String workspaceId,
-                                                    @PathParam("ciId") String configurationItemId,
-                                                    @PathParam("serialNumber") String serialNumber,
-                                                    @PathParam("pathToPathLinkId") int pathToPathLinkId)
+    public LightPathToPathLinkDTO getPathToPathLink(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                    @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                                    @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+                                                    @ApiParam(required = true, value = "Path to path link id") @PathParam("pathToPathLinkId") int pathToPathLinkId)
             throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathLinkNotFoundException, WorkspaceNotEnabledException {
         PathToPathLink pathToPathLink = productInstanceService.getPathToPathLink(workspaceId, configurationItemId, serialNumber, pathToPathLinkId);
         return mapper.map(pathToPathLink, LightPathToPathLinkDTO.class);
@@ -718,11 +718,11 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Get path-to-path link for given source and target", response = LightPathToPathLinkDTO.class, responseContainer = "List")
     @Path("{serialNumber}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId,
-                                                              @PathParam("ciId") String configurationItemId,
-                                                              @PathParam("serialNumber") String serialNumber,
-                                                              @PathParam("sourcePath") String sourcePathAsString,
-                                                              @PathParam("targetPath") String targetPathAsString)
+    public Response getPathToPathLinksForGivenSourceAndTarget(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                              @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                                              @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+                                                              @ApiParam(required = true, value = "Complete source path") @PathParam("sourcePath") String sourcePathAsString,
+                                                              @ApiParam(required = true, value = "Complete target path") @PathParam("targetPath") String targetPathAsString)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
         List<PathToPathLink> pathToPathLinks = productInstanceService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, serialNumber, sourcePathAsString, targetPathAsString);
         List<PathToPathLinkDTO> dtos = new ArrayList<>();
@@ -759,10 +759,10 @@ public class ProductInstancesResource {
     @ApiOperation(value = "Get root path-to-path links", response = LightPathToPathLinkDTO.class, responseContainer = "List")
     @Path("{serialNumber}/path-to-path-links-roots/{type}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getRootPathToPathLinks(@PathParam("workspaceId") String workspaceId,
-                                           @PathParam("ciId") String configurationItemId,
-                                           @PathParam("serialNumber") String serialNumber,
-                                           @PathParam("type") String type)
+    public Response getRootPathToPathLinks(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                           @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                           @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+                                           @ApiParam(required = true, value = "Link type") @PathParam("type") String type)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, WorkspaceNotEnabledException {
         List<PathToPathLink> pathToPathLinks = productInstanceService.getRootPathToPathLinks(workspaceId, configurationItemId, serialNumber, type);
         List<LightPathToPathLinkDTO> dtos = new ArrayList<>();
@@ -779,10 +779,10 @@ public class ProductInstancesResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public Response importAttributes(@Context HttpServletRequest request,
-                                     @PathParam("workspaceId") String workspaceId,
-                                     @QueryParam("autoFreezeAfterUpdate") boolean autoFreezeAfterUpdate,
-                                     @QueryParam("permissiveUpdate") boolean permissiveUpdate,
-                                     @QueryParam("revisionNote") String revisionNote)
+                                     @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                     @ApiParam(required = false, value = "Auto freeze after update flag") @QueryParam("autoFreezeAfterUpdate") boolean autoFreezeAfterUpdate,
+                                     @ApiParam(required = false, value = "Permissive update flag") @QueryParam("permissiveUpdate") boolean permissiveUpdate,
+                                     @ApiParam(required = false, value = "Revision note to set") @QueryParam("revisionNote") String revisionNote)
             throws Exception {
 
         Collection<Part> parts = request.getParts();

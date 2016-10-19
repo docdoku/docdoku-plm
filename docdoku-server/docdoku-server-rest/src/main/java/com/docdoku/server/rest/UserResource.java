@@ -77,7 +77,7 @@ public class UserResource {
     @GET
     @ApiOperation(value = "Get users", response = UserDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public UserDTO[] getUsersInWorkspace(@PathParam("workspaceId") String workspaceId)
+    public UserDTO[] getUsersInWorkspace(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         User[] users = userManager.getUsers(workspaceId);
@@ -94,7 +94,7 @@ public class UserResource {
     @ApiOperation(value = "Get current user details", response = UserDTO.class)
     @Path("me")
     @Produces(MediaType.APPLICATION_JSON)
-    public UserDTO whoami(@PathParam("workspaceId") String workspaceId)
+    public UserDTO whoAmI(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         User user = userManager.whoAmI(workspaceId);
@@ -105,7 +105,7 @@ public class UserResource {
     @ApiOperation(value = "Get admin for workspace", response = UserDTO.class)
     @Path("admin")
     @Produces(MediaType.APPLICATION_JSON)
-    public UserDTO getAdminInWorkspace(@PathParam("workspaceId") String workspaceId)
+    public UserDTO getAdminInWorkspace(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException {
 
         Workspace workspace = userManager.getWorkspace(workspaceId);
@@ -119,7 +119,9 @@ public class UserResource {
     @ApiOperation(value = "Get tag subscriptions of user", response = TagSubscriptionDTO.class, responseContainer = "List")
     @Path("{login}/tag-subscriptions")
     @Produces(MediaType.APPLICATION_JSON)
-    public TagSubscriptionDTO[] getTagSubscriptionsForUser(@PathParam("workspaceId") String workspaceId, @PathParam("login") String login) throws UserNotFoundException, AccessRightException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
+    public TagSubscriptionDTO[] getTagSubscriptionsForUser(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                           @ApiParam(required = true, value = "User login") @PathParam("login") String login)
+            throws UserNotFoundException, AccessRightException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         List<TagUserSubscription> subs = notificationManager.getTagUserSubscriptionsByUser(workspaceId, login);
 
         TagSubscriptionDTO[] subDTOs = new TagSubscriptionDTO[subs.size()];
@@ -134,9 +136,9 @@ public class UserResource {
     @Path("{login}/tag-subscriptions/{tagName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateSubscription(@PathParam("workspaceId") String workspaceId,
-                                       @PathParam("login") String login,
-                                       @PathParam("tagName") String tagName,
+    public Response updateSubscription(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                       @ApiParam(required = true, value = "User login") @PathParam("login") String login,
+                                       @ApiParam(required = true, value = "Tag name") @PathParam("tagName") String tagName,
                                        @ApiParam(required = true, value = "Tag subscription to update or create") TagSubscriptionDTO subDTO)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
@@ -159,9 +161,10 @@ public class UserResource {
     @ApiOperation(value = "Delete tag subscription of user", response = Response.class)
     @Path("{login}/tag-subscriptions/{tagName}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteSubscription(@PathParam("workspaceId") String workspaceId,
-                                       @PathParam("login") String login,
-                                       @PathParam("tagName") String tagName) throws UserNotFoundException, AccessRightException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
+    public Response deleteSubscription(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                       @ApiParam(required = true, value = "User login") @PathParam("login") String login,
+                                       @ApiParam(required = true, value = "Tag name") @PathParam("tagName") String tagName)
+            throws UserNotFoundException, AccessRightException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
 
         notificationManager.removeTagUserSubscription(workspaceId, login, tagName);
         return Response.ok().build();

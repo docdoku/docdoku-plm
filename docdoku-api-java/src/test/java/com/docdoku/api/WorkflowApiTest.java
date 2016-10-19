@@ -162,7 +162,7 @@ public class WorkflowApiTest {
 
     private void processTask(WorkflowDTO createdWorkflow, WorkflowModelDTO createdFrom) throws ApiException {
 
-        UserDTO me = usersApi.whoami(TestConfig.WORKSPACE);
+        UserDTO me = usersApi.whoAmI(TestConfig.WORKSPACE);
 
         // Retrieve workflow by it's id
         WorkflowDTO workflow = workflowsApi.getWorkflowInstance(TestConfig.WORKSPACE, createdWorkflow.getId());
@@ -224,7 +224,7 @@ public class WorkflowApiTest {
         String roleName = "ROLE-" + UUID.randomUUID().toString().substring(0, 8);
 
         // Get current user to create a role with default assignee
-        UserDTO user = usersApi.whoami(TestConfig.WORKSPACE);
+        UserDTO user = usersApi.whoAmI(TestConfig.WORKSPACE);
         List<UserGroupDTO> userGroups = workspacesApi.getUserGroups(TestConfig.WORKSPACE);
 
         RoleDTO role = new RoleDTO();

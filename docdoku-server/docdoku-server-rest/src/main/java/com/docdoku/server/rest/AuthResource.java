@@ -60,7 +60,9 @@ public class AuthResource {
     @ApiOperation(value = "Try to authenticate", response = AccountDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(@Context HttpServletRequest request, @ApiParam(required = true,value = "Login request") LoginRequestDTO loginRequestDTO) throws AccountNotFoundException {
+    public Response login(@Context HttpServletRequest request,
+                          @ApiParam(required = true,value = "Login request") LoginRequestDTO loginRequestDTO)
+            throws AccountNotFoundException {
 
         if (request.getUserPrincipal() != null){
             try {
@@ -94,7 +96,8 @@ public class AuthResource {
     @Path("/recovery")
     @ApiOperation(value = "Send password recovery request", response = Response.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response sendPasswordRecovery(PasswordRecoveryRequestDTO passwordRecoveryRequestDTO) throws AccountNotFoundException {
+    public Response sendPasswordRecovery(@ApiParam(required = true, value = "Password recovery request") PasswordRecoveryRequestDTO passwordRecoveryRequestDTO)
+            throws AccountNotFoundException {
         String login = passwordRecoveryRequestDTO.getLogin();
         Account account = accountManager.getAccount(login);
         userManager.createPasswordRecoveryRequest(account);
@@ -105,7 +108,8 @@ public class AuthResource {
     @Path("/recover")
     @ApiOperation(value = "Recover password", response = Response.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response sendPasswordRecover(PasswordRecoverDTO passwordRecoverDTO) throws PasswordRecoveryRequestNotFoundException {
+    public Response sendPasswordRecover(@ApiParam(required = true, value = "Password recovery process") PasswordRecoverDTO passwordRecoverDTO)
+            throws PasswordRecoveryRequestNotFoundException {
         userManager.recoverPassword(passwordRecoverDTO.getUuid(),passwordRecoverDTO.getNewPassword());
         return Response.ok().build();
     }
@@ -114,7 +118,8 @@ public class AuthResource {
     @Path("/logout")
     @ApiOperation(value = "Log out connected user", response = Response.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response logout(@Context HttpServletRequest request) throws ServletException {
+    public Response logout(@Context HttpServletRequest request)
+            throws ServletException {
         request.logout();
         return Response.ok().build();
     }

@@ -73,7 +73,7 @@ public class WorkflowModelResource {
     @GET
     @ApiOperation(value = "Get workflow models", response = WorkflowModelDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowModelDTO[] getWorkflowModelsInWorkspace(@PathParam("workspaceId") String workspaceId)
+    public WorkflowModelDTO[] getWorkflowModelsInWorkspace(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         WorkflowModel[] workflowModels = workflowService.getWorkflowModels(workspaceId);
@@ -90,8 +90,8 @@ public class WorkflowModelResource {
     @ApiOperation(value = "Get workflow model", response = WorkflowModelDTO.class)
     @Path("{workflowModelId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowModelDTO getWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId,
-                                                   @PathParam("workflowModelId") String workflowModelId)
+    public WorkflowModelDTO getWorkflowModelInWorkspace(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                        @ApiParam(required = true, value = "Workflow model id") @PathParam("workflowModelId") String workflowModelId)
             throws EntityNotFoundException, UserNotActiveException {
 
         WorkflowModel workflowModel = workflowService.getWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
@@ -112,8 +112,8 @@ public class WorkflowModelResource {
     @ApiOperation(value = "Update workflow model", response = WorkflowModelDTO.class)
     @Path("{workflowModelId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowModelDTO updateWorkflowModel(@PathParam("workspaceId") String workspaceId,
-                                                @PathParam("workflowModelId") String workflowModelId,
+    public WorkflowModelDTO updateWorkflowModel(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                @ApiParam(required = true, value = "Workflow model id") @PathParam("workflowModelId") String workflowModelId,
                                                 @ApiParam(required = true, value = "Workflow model to update") WorkflowModelDTO workflowModelDTOToPersist)
             throws EntityNotFoundException, AccessRightException, EntityAlreadyExistsException, CreationException, UserNotActiveException, NotAllowedException {
 
@@ -128,8 +128,8 @@ public class WorkflowModelResource {
     @ApiOperation(value = "Update workflow model ACL", response = Response.class)
     @Path("{workflowModelId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateWorkflowModelACL(@PathParam("workspaceId") String pWorkspaceId,
-                                           @PathParam("workflowModelId") String workflowModelId,
+    public Response updateWorkflowModelACL(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String pWorkspaceId,
+                                           @ApiParam(required = true, value = "Workflow model id") @PathParam("workflowModelId") String workflowModelId,
                                            @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
@@ -156,7 +156,7 @@ public class WorkflowModelResource {
     @ApiOperation(value = "Create workflow model", response = WorkflowModelDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowModelDTO createWorkflowModel(@PathParam("workspaceId") String workspaceId,
+    public WorkflowModelDTO createWorkflowModel(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
                                                 @ApiParam(required = true, value = "Workflow model to create rules to set") WorkflowModelDTO workflowModelDTOToPersist)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, NotAllowedException, AccessRightException, CreationException {
         List<ActivityModelDTO> activityModelDTOsList = workflowModelDTOToPersist.getActivityModels();

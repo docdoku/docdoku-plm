@@ -30,6 +30,7 @@ import com.docdoku.server.rest.dto.WorkspaceUserGroupMemberShipDTO;
 import com.docdoku.server.rest.dto.WorkspaceUserMemberShipDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -74,7 +75,7 @@ public class WorkspaceMembershipResource {
     @ApiOperation(value = "Get workspace's user memberships", response = WorkspaceUserMemberShipDTO.class, responseContainer = "List")
     @Path("users")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceUserMemberShipDTO[] getWorkspaceUserMemberShips(@PathParam("workspaceId") String workspaceId)
+    public WorkspaceUserMemberShipDTO[] getWorkspaceUserMemberShips(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         WorkspaceUserMembership[] workspaceUserMemberships = userManager.getWorkspaceUserMemberships(workspaceId);
@@ -89,7 +90,7 @@ public class WorkspaceMembershipResource {
     @ApiOperation(value = "Get workspace's user membership for current user", response = WorkspaceUserMemberShipDTO.class)
     @Path("users/me")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceUserMemberShipDTO getWorkspaceSpecificUserMemberShips(@PathParam("workspaceId") String workspaceId)
+    public WorkspaceUserMemberShipDTO getWorkspaceSpecificUserMemberShips(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         WorkspaceUserMembership workspaceUserMemberships = userManager.getWorkspaceSpecificUserMemberships(workspaceId);
@@ -100,7 +101,7 @@ public class WorkspaceMembershipResource {
     @ApiOperation(value = "Get workspace's group membership for current user", response = WorkspaceUserGroupMemberShipDTO.class, responseContainer = "List")
     @Path("usergroups")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceUserGroupMemberShipDTO[] getWorkspaceUserGroupMemberShips(@PathParam("workspaceId") String workspaceId)
+    public WorkspaceUserGroupMemberShipDTO[] getWorkspaceUserGroupMemberShips(@ApiParam(required = true, value = "Workspace id")  @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceUserGroupMemberships(workspaceId);
@@ -115,7 +116,7 @@ public class WorkspaceMembershipResource {
     @ApiOperation(value = "Get workspace's group membership for current user", response = WorkspaceUserGroupMemberShipDTO.class, responseContainer = "List")
     @Path("usergroups/me")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getWorkspaceSpecificUserGroupMemberShips(@PathParam("workspaceId") String workspaceId)
+    public Response getWorkspaceSpecificUserGroupMemberShips(@ApiParam(required = true, value = "Workspace id")  @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceSpecificUserGroupMemberships(workspaceId);

@@ -74,7 +74,7 @@ public class DocumentTemplateResource {
     @GET
     @ApiOperation(value = "Get document templates", response = DocumentMasterTemplateDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentMasterTemplateDTO[] getDocumentMasterTemplates(@PathParam("workspaceId") String workspaceId)
+    public DocumentMasterTemplateDTO[] getDocumentMasterTemplates(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         DocumentMasterTemplate[] documentMasterTemplates = documentService.getDocumentMasterTemplates(workspaceId);
@@ -91,8 +91,8 @@ public class DocumentTemplateResource {
     @ApiOperation(value = "Get document template", response = DocumentMasterTemplateDTO.class)
     @Path("{templateId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentMasterTemplateDTO getDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId,
-                                                               @PathParam("templateId") String templateId)
+    public DocumentMasterTemplateDTO getDocumentMasterTemplate(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                               @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId)
             throws EntityNotFoundException, UserNotActiveException {
 
         DocumentMasterTemplate documentMasterTemplate = documentService.getDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
@@ -103,8 +103,8 @@ public class DocumentTemplateResource {
     @ApiOperation(value = "Generate document template id", response = TemplateGeneratedIdDTO.class)
     @Path("{templateId}/generate_id")
     @Produces(MediaType.APPLICATION_JSON)
-    public TemplateGeneratedIdDTO generateDocumentMasterId(@PathParam("workspaceId") String workspaceId,
-                                                           @PathParam("templateId") String templateId)
+    public TemplateGeneratedIdDTO generateDocumentMasterId(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                           @ApiParam(required = true, value = "Template id")  @PathParam("templateId") String templateId)
             throws EntityNotFoundException, UserNotActiveException {
 
         String generateId = documentService.generateId(workspaceId, templateId);
@@ -115,7 +115,7 @@ public class DocumentTemplateResource {
     @ApiOperation(value = "Create document template", response = DocumentMasterTemplateDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentMasterTemplateDTO createDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId,
+    public DocumentMasterTemplateDTO createDocumentMasterTemplate(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
                                                                   @ApiParam(required = true, value = "Document master template to create") DocumentTemplateCreationDTO templateCreationDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException {
 
@@ -147,8 +147,8 @@ public class DocumentTemplateResource {
     @Path("{templateId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentMasterTemplateDTO updateDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId,
-                                                                  @PathParam("templateId") String templateId,
+    public DocumentMasterTemplateDTO updateDocumentMasterTemplate(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                                  @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
                                                                   @ApiParam(required = true, value = "Document master template to update") DocumentMasterTemplateDTO documentMasterTemplateDTO)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
@@ -176,8 +176,8 @@ public class DocumentTemplateResource {
     @ApiOperation(value = "Update document template ACL", response = Response.class)
     @Path("{templateId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateDocumentMasterTemplateACL(@PathParam("workspaceId") String workspaceId,
-                                                    @PathParam("templateId") String templateId,
+    public Response updateDocumentMasterTemplateACL(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                    @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
                                                     @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
@@ -205,7 +205,8 @@ public class DocumentTemplateResource {
     @DELETE
     @ApiOperation(value = "Delete document template", response = Response.class)
     @Path("{templateId}")
-    public Response deleteDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
+    public Response deleteDocumentMasterTemplate(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                 @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         documentService.deleteDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
@@ -216,9 +217,9 @@ public class DocumentTemplateResource {
     @ApiOperation(value = "Remove attached file from document template", response = Response.class)
     @Path("{templateId}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId,
-                                       @PathParam("templateId") String templateId,
-                                       @PathParam("fileName") String fileName)
+    public Response removeAttachedFile(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                       @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
+                                       @ApiParam(required = true, value = "File name") @PathParam("fileName") String fileName)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, StorageException {
 
         String fileFullName = workspaceId + "/document-templates/" + templateId + "/" + fileName;
@@ -232,9 +233,9 @@ public class DocumentTemplateResource {
     @Path("{templateId}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId,
-                                      @PathParam("templateId") String templateId,
-                                      @PathParam("fileName") String fileName,
+    public FileDTO renameAttachedFile(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                      @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
+                                      @ApiParam(required = true, value = "File name") @PathParam("fileName") String fileName,
                                       @ApiParam(required = true, value = "File to rename") FileDTO fileDTO)
             throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException, FileAlreadyExistsException, StorageException, WorkspaceNotEnabledException {
         String fileFullName = workspaceId + "/document-templates/" + templateId + "/" + fileName;

@@ -17,6 +17,7 @@ import com.docdoku.server.rest.dto.DocumentRevisionDTO;
 import com.docdoku.server.rest.dto.PartRevisionDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -57,9 +58,9 @@ public class SharedResource {
     @Path("{workspaceId}/documents/{documentId}-{documentVersion}")
     @ApiOperation(value = "Get document revision", response = DocumentRevisionDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPublicSharedDocumentRevision(@PathParam("workspaceId") String workspaceId,
-                                                   @PathParam("documentId") String documentId,
-                                                   @PathParam("documentVersion") String documentVersion)
+    public Response getPublicSharedDocumentRevision(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                    @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
+                                                    @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
             throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException,
             DocumentRevisionNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
 
@@ -67,7 +68,7 @@ public class SharedResource {
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
         DocumentRevision documentRevision = guestProxy.getPublicDocumentRevision(docKey);
 
-        if(documentRevision == null) {
+        if (documentRevision == null) {
             // Ties authenticated
             documentRevision = documentManager.getDocumentRevision(docKey);
         }
@@ -75,9 +76,9 @@ public class SharedResource {
         DocumentRevisionDTO documentRevisionDTO = mapper.map(documentRevision, DocumentRevisionDTO.class);
         documentRevisionDTO.setRoutePath(documentRevision.getLocation().getRoutePath());
 
-        if(documentRevision != null){
+        if (documentRevision != null) {
             return Response.ok().entity(documentRevisionDTO).build();
-        }else{
+        } else {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -87,22 +88,22 @@ public class SharedResource {
     @Path("{workspaceId}/parts/{partNumber}-{partVersion}")
     @ApiOperation(value = "Get part revision", response = PartRevisionDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPublicSharedPartRevision(@PathParam("workspaceId") String workspaceId,
-                                                    @PathParam("partNumber") String partNumber,
-                                                    @PathParam("partVersion") String partVersion) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
+    public Response getPublicSharedPartRevision(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
+                                                @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
         // Tries public
         PartRevisionKey partKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
         PartRevision partRevision = guestProxy.getPublicPartRevision(partKey);
 
-        if(partRevision == null) {
+        if (partRevision == null) {
             // Ties authenticated
             partRevision = productManager.getPartRevision(partKey);
         }
 
-        if(partRevision != null){
+        if (partRevision != null) {
             return Response.ok().entity(Tools.mapPartRevisionToPartDTO(partRevision)).build();
-        }else{
+        } else {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -112,40 +113,41 @@ public class SharedResource {
     @Path("{uuid}/documents")
     @ApiOperation(value = "Get shared document", response = DocumentRevisionDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getDocumentWithSharedEntity(@HeaderParam("password") String password ,@PathParam("uuid") String uuid) throws SharedEntityNotFoundException {
+    public Response getDocumentWithSharedEntity(@ApiParam(required = false, value = "Password for resource") @HeaderParam("password") String password,
+                                                @ApiParam(required = true, value = "Resource token")  @PathParam("uuid") String uuid) throws SharedEntityNotFoundException {
 
         SharedEntity sharedEntity = shareManager.findSharedEntityForGivenUUID(uuid);
 
         // check if expire - delete it - send 404
-        if(sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()){
+        if (sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()) {
             shareManager.deleteSharedEntityIfExpired(sharedEntity);
             return createExpiredEntityResponse();
         }
 
-        if(!checkPasswordAccess(sharedEntity.getPassword(), password)){
+        if (!checkPasswordAccess(sharedEntity.getPassword(), password)) {
             return createPasswordProtectedResponse();
         }
 
         DocumentRevision documentRevision = ((SharedDocument) sharedEntity).getDocumentRevision();
         return Response.ok().entity(mapper.map(documentRevision, DocumentRevisionDTO.class)).build();
-
     }
 
     @GET
     @Path("{uuid}/parts")
     @ApiOperation(value = "Get shared part", response = PartRevisionDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPartWithSharedEntity(@HeaderParam("password") String password, @PathParam("uuid") String uuid) throws SharedEntityNotFoundException {
+    public Response getPartWithSharedEntity(@ApiParam(required = false, value = "Password for resource") @HeaderParam("password") String password,
+                                            @ApiParam(required = true, value = "Resource token") @PathParam("uuid") String uuid) throws SharedEntityNotFoundException {
 
         SharedEntity sharedEntity = shareManager.findSharedEntityForGivenUUID(uuid);
 
         // check if expire - delete it - send 404
-        if(sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()){
+        if (sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()) {
             shareManager.deleteSharedEntityIfExpired(sharedEntity);
             return createExpiredEntityResponse();
         }
 
-        if(!checkPasswordAccess(sharedEntity.getPassword(), password)){
+        if (!checkPasswordAccess(sharedEntity.getPassword(), password)) {
             return createPasswordProtectedResponse();
         }
 
@@ -176,7 +178,7 @@ public class SharedResource {
         byte[] digest;
         try {
             digest = MessageDigest.getInstance("MD5").digest(pText.getBytes());
-        } catch(Exception e){
+        } catch (Exception e) {
             return null;
         }
         StringBuffer hexString = new StringBuffer();

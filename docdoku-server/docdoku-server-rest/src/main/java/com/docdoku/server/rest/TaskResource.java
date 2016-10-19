@@ -85,11 +85,12 @@ public class TaskResource {
     @Path("{assignedUserLogin}/assigned")
     @Produces(MediaType.APPLICATION_JSON)
     public TaskDTO[] getAssignedTasksForGivenUser(
-            @PathParam("workspaceId") String workspaceId,
-            @PathParam("assignedUserLogin") String assignedUserLogin) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Assigned user login") @PathParam("assignedUserLogin") String assignedUserLogin)
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         TaskWrapper[] runningTasksForGivenUser = taskManager.getAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
         List<TaskDTO> taskDTOs = new ArrayList<>();
-        for(TaskWrapper taskWrapper:runningTasksForGivenUser){
+        for (TaskWrapper taskWrapper : runningTasksForGivenUser) {
             TaskDTO taskDTO = mapper.map(taskWrapper.getTask(), TaskDTO.class);
             taskDTO.setHolderType(taskWrapper.getHolderType());
             taskDTO.setWorkspaceId(workspaceId);
@@ -105,8 +106,9 @@ public class TaskResource {
     @Path("{taskId}")
     @Produces(MediaType.APPLICATION_JSON)
     public TaskDTO getTask(
-            @PathParam("workspaceId") String workspaceId,
-            @PathParam("taskId") String taskId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, AccessRightException, WorkspaceNotEnabledException {
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Task id") @PathParam("taskId") String taskId)
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
         String[] split = taskId.split("-");
 
@@ -131,9 +133,9 @@ public class TaskResource {
     @Path("{assignedUserLogin}/documents")
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO[] getDocumentsWhereGivenUserHasAssignedTasks(
-            @PathParam("workspaceId") String workspaceId,
-            @PathParam("assignedUserLogin") String assignedUserLogin,
-            @QueryParam("filter") String filter)
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Assigned user login") @PathParam("assignedUserLogin") String assignedUserLogin,
+            @ApiParam(required = false, value = "Status filter") @QueryParam("filter") String filter)
             throws EntityNotFoundException, UserNotActiveException {
 
         DocumentRevision[] docRs;
@@ -165,8 +167,8 @@ public class TaskResource {
     @Path("{assignedUserLogin}/parts")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPartsWhereGivenUserHasAssignedTasks(
-            @PathParam("workspaceId") String workspaceId,
-            @PathParam("assignedUserLogin") String assignedUserLogin,
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Assigned user login") @PathParam("assignedUserLogin") String assignedUserLogin,
             @QueryParam("filter") String filter)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
 
@@ -185,7 +187,7 @@ public class TaskResource {
 
             PartIterationKey iterationKey = new PartIterationKey(partRevision.getKey(), partRevision.getLastIterationNumber());
             List<ModificationNotification> notifications = productService.getModificationNotifications(iterationKey);
-            List<ModificationNotificationDTO> notificationDTOs =  Tools.mapModificationNotificationsToModificationNotificationDTO(notifications);
+            List<ModificationNotificationDTO> notificationDTOs = Tools.mapModificationNotificationsToModificationNotificationDTO(notifications);
             partRevisionDTO.setNotifications(notificationDTOs);
 
             partRevisionDTOs.add(partRevisionDTO);
@@ -200,9 +202,9 @@ public class TaskResource {
     @ApiOperation(value = "Approve or reject task on document", response = Response.class)
     @Path("{taskId}/process")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response processTask(@PathParam("workspaceId") String workspaceId,
-                                            @PathParam("taskId") String taskId,
-                                            @ApiParam(required = true, value = "Task process data") TaskProcessDTO taskProcessDTO)
+    public Response processTask(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                @ApiParam(required = true, value = "Task id") @PathParam("taskId") String taskId,
+                                @ApiParam(required = true, value = "Task process data") TaskProcessDTO taskProcessDTO)
             throws EntityNotFoundException, NotAllowedException, UserNotActiveException, AccessRightException {
 
         String[] split = taskId.split("-");
@@ -210,7 +212,7 @@ public class TaskResource {
         int step = Integer.valueOf(split[1]);
         int index = Integer.valueOf(split[2]);
 
-        taskManager.processTask(workspaceId, new TaskKey(new ActivityKey(workflowId,step),index), taskProcessDTO.getAction().name(), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
+        taskManager.processTask(workspaceId, new TaskKey(new ActivityKey(workflowId, step), index), taskProcessDTO.getAction().name(), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
         return Response.ok().build();
     }
 

@@ -77,7 +77,7 @@ public class RoleResource {
     @GET
     @ApiOperation(hidden = false, value = "Get roles", response = RoleDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public RoleDTO[] getRolesInWorkspace(@PathParam("workspaceId") String workspaceId)
+    public RoleDTO[] getRolesInWorkspace(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         Role[] roles = roleService.getRoles(workspaceId);
@@ -95,7 +95,7 @@ public class RoleResource {
     @ApiOperation(value = "Get roles in use", response = RoleDTO.class, responseContainer = "List")
     @Path("inuse")
     @Produces(MediaType.APPLICATION_JSON)
-    public RoleDTO[] getRolesInUseInWorkspace(@PathParam("workspaceId") String workspaceId)
+    public RoleDTO[] getRolesInUseInWorkspace(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         Role[] roles = roleService.getRolesInUse(workspaceId);
@@ -115,7 +115,7 @@ public class RoleResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createRole(
-            @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Role to create") RoleDTO roleDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, CreationException {
 
@@ -150,8 +150,8 @@ public class RoleResource {
     @Path("{roleName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateRole(@PathParam("workspaceId") String workspaceId,
-                               @PathParam("roleName") String roleName,
+    public Response updateRole(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                               @ApiParam(required = true, value = "Role name")  @PathParam("roleName") String roleName,
                                @ApiParam(required = true, value = "Role to update") RoleDTO roleDTO)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
@@ -184,8 +184,8 @@ public class RoleResource {
     @ApiOperation(value = "Delete role", response = Response.class)
     @Path("{roleName}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteRole(@PathParam("workspaceId") String workspaceId,
-                               @PathParam("roleName") String roleName)
+    public Response deleteRole(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                               @ApiParam(required = true, value = "Role name")  @PathParam("roleName") String roleName)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException {
 
         RoleKey roleKey = new RoleKey(workspaceId, roleName);
@@ -193,16 +193,10 @@ public class RoleResource {
         return Response.ok().build();
     }
 
-
     private RoleDTO mapRoleToDTO(Role role) {
         RoleDTO roleDTO = mapper.map(role, RoleDTO.class);
         roleDTO.setWorkspaceId(role.getWorkspace().getId());
-//
-//        if (role.getDefaultAssignee() != null) {
-//            roleDTO.setDefaultAssignee(mapper.map(role.getDefaultAssignee(), UserDTO.class));
-//        }
         roleDTO.setId(role.getName());
-
         return roleDTO;
     }
 

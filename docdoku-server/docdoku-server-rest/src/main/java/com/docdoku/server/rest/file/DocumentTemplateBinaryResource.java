@@ -38,6 +38,7 @@ import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 import com.docdoku.server.rest.interceptors.Compress;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -81,8 +82,8 @@ public class DocumentTemplateBinaryResource {
     @ApiOperation(value = "Upload document template file", response = Response.class)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response uploadDocumentTemplateFiles(@Context HttpServletRequest request,
-                                                @PathParam("workspaceId") final String workspaceId,
-                                                @PathParam("templateId") final String templateId)
+                                                @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
+                                                @ApiParam(required = true, value = "Template id") @PathParam("templateId") final String templateId)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException {
 
         try {
@@ -119,11 +120,11 @@ public class DocumentTemplateBinaryResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadDocumentTemplateFile(@Context Request request,
                                                  @HeaderParam("Range") String range,
-                                                 @PathParam("workspaceId") final String workspaceId,
-                                                 @PathParam("templateId") final String templateId,
-                                                 @PathParam("fileName") final String fileName,
-                                                 @QueryParam("type") String type,
-                                                 @QueryParam("output") String output)
+                                                 @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
+                                                 @ApiParam(required = true, value = "Template id") @PathParam("templateId") final String templateId,
+                                                 @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
+                                                 @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
+                                                 @ApiParam(required = false, value = "Output") @QueryParam("output") String output)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException {
 
 

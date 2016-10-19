@@ -52,7 +52,7 @@ public class TaskApiTest {
         String groupId = "GROUP-" + UUID.randomUUID().toString().substring(0, 8);
 
         // Get current user to create a role with default assignee
-        UserDTO user = usersApi.whoami(TestConfig.WORKSPACE);
+        UserDTO user = usersApi.whoAmI(TestConfig.WORKSPACE);
 
 
         UserGroupDTO userGroup = new UserGroupDTO();

@@ -36,6 +36,7 @@ import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -86,7 +87,11 @@ public class ProductInstanceBinaryResource {
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public Response uploadFilesToProductInstanceIteration(
             @Context HttpServletRequest request,
-            @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration)
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+            @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+            @ApiParam(required = true, value = "Product instance iteration") @PathParam("iteration") int iteration)
+
             throws EntityNotFoundException, UserNotActiveException, NotAllowedException, AccessRightException, EntityAlreadyExistsException, CreationException {
 
 
@@ -117,13 +122,13 @@ public class ProductInstanceBinaryResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadFileFromProductInstance(@Context Request request,
                                                     @HeaderParam("Range") String range,
-                                                    @PathParam("workspaceId") final String workspaceId,
-                                                    @PathParam("serialNumber") final String serialNumber,
-                                                    @PathParam("ciId") final String configurationItemId,
-                                                    @PathParam("iteration") final int iteration,
-                                                    @PathParam("fileName") final String fileName,
-                                                    @QueryParam("type") String type,
-                                                    @QueryParam("output") String output)
+                                                    @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                    @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                                    @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+                                                    @ApiParam(required = true, value = "Product instance iteration") @PathParam("iteration") int iteration,
+                                                    @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
+                                                    @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
+                                                    @ApiParam(required = false, value = "Output") @QueryParam("output") String output)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, com.docdoku.core.exceptions.NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
 
 
@@ -155,11 +160,11 @@ public class ProductInstanceBinaryResource {
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public Response uploadFilesToPathData(
             @Context HttpServletRequest request,
-            @PathParam("workspaceId") String workspaceId,
-            @PathParam("ciId") String configurationItemId,
-            @PathParam("serialNumber") String serialNumber,
-            @PathParam("pathDataId") int pathDataId,
-            @PathParam("iteration") int iteration)
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+            @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+            @ApiParam(required = true, value = "Product instance iteration") @PathParam("iteration") int iteration,
+            @ApiParam(required = true, value = "Path data id") @PathParam("pathDataId") int pathDataId)
             throws EntityNotFoundException, UserNotActiveException, NotAllowedException, AccessRightException, EntityAlreadyExistsException, CreationException {
 
         // TODO: determine if this WS is really used...
@@ -190,13 +195,12 @@ public class ProductInstanceBinaryResource {
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public Response uploadFilesToPathDataIteration(
             @Context HttpServletRequest request,
-            @PathParam("workspaceId") String workspaceId,
-            @PathParam("ciId") String configurationItemId,
-            @PathParam("serialNumber") String serialNumber,
-            @PathParam("path") int path,
-            @PathParam("iteration") int iteration)
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+            @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+            @ApiParam(required = true, value = "Product instance iteration") @PathParam("iteration") int iteration,
+            @ApiParam(required = true, value = "Complete path") @PathParam("path") int path)
             throws EntityNotFoundException, UserNotActiveException, NotAllowedException, AccessRightException, EntityAlreadyExistsException, CreationException {
-
 
         try {
             String fileName = null;
@@ -223,13 +227,13 @@ public class ProductInstanceBinaryResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadFileFromPathData(@Context Request request,
                                              @HeaderParam("Range") String range,
-                                             @PathParam("workspaceId") final String workspaceId,
-                                             @PathParam("serialNumber") final String serialNumber,
-                                             @PathParam("ciId") final String configurationItemId,
-                                             @PathParam("pathDataId") final int pathDataId,
-                                             @PathParam("fileName") final String fileName,
-                                             @QueryParam("type") String type,
-                                             @QueryParam("output") String output)
+                                             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                             @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
+                                             @ApiParam(required = true, value = "Path data master id") @PathParam("pathDataId") final int pathDataId,
+                                             @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
+                                             @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
+                                             @ApiParam(required = false, value = "Output") @QueryParam("output") String output)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, com.docdoku.core.exceptions.NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
 
 
@@ -259,13 +263,13 @@ public class ProductInstanceBinaryResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadFileFromPathDataIteration(@Context Request request,
                                                       @HeaderParam("Range") String range,
-                                                      @PathParam("workspaceId") final String workspaceId,
-                                                      @PathParam("serialNumber") final String serialNumber,
-                                                      @PathParam("pathDataId") String pathDataId,
-                                                      @PathParam("iteration") final int iteration,
-                                                      @PathParam("fileName") final String fileName,
-                                                      @QueryParam("type") String type,
-                                                      @QueryParam("output") String output)
+                                                      @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
+                                                      @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") final String serialNumber,
+                                                      @ApiParam(required = true, value = "Path data master id")  @PathParam("pathDataId") String pathDataId,
+                                                      @ApiParam(required = true, value = "Path data iteration number") @PathParam("iteration") final int iteration,
+                                                      @ApiParam(required = true, value = "File name id")  @PathParam("fileName") final String fileName,
+                                                      @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
+                                                      @ApiParam(required = false, value = "Output") @QueryParam("output") String output)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, com.docdoku.core.exceptions.NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
 
 

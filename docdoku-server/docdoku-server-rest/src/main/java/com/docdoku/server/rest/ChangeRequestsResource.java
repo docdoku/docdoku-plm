@@ -77,7 +77,7 @@ public class ChangeRequestsResource {
             response = ChangeRequestDTO.class,
             responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getRequests(@PathParam("workspaceId") String workspaceId)
+    public Response getRequests(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
         List<ChangeRequest> changeRequests = changeManager.getChangeRequests(workspaceId);
         List<ChangeRequestDTO> changeRequestDTOs = new ArrayList<>();
@@ -95,7 +95,7 @@ public class ChangeRequestsResource {
             response = ChangeRequestDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeRequestDTO createRequest(@PathParam("workspaceId") String workspaceId,
+    public ChangeRequestDTO createRequest(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
                                           @ApiParam(required = true, value = "Change request to create") ChangeRequestDTO changeRequestDTO)
             throws EntityNotFoundException, AccessRightException {
         ChangeRequest changeRequest = changeManager.createChangeRequest(workspaceId,
@@ -116,8 +116,8 @@ public class ChangeRequestsResource {
             responseContainer = "List")
     @Path("link")
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeRequestDTO[] searchRequestsToLink(@PathParam("workspaceId") String workspaceId,
-                                                   @QueryParam("q") String q)
+    public ChangeRequestDTO[] searchRequestsToLink(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                   @ApiParam(required = true, value = "Query") @QueryParam("q") String q)
             throws EntityNotFoundException, UserNotActiveException {
         int maxResults = 8;
         List<ChangeRequest> requests = changeManager.getRequestsWithReference(workspaceId, q, maxResults);
@@ -135,8 +135,8 @@ public class ChangeRequestsResource {
             response = ChangeRequestDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{requestId}")
-    public ChangeRequestDTO getRequest(@PathParam("workspaceId") String workspaceId,
-                                       @PathParam("requestId") int requestId)
+    public ChangeRequestDTO getRequest(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                       @ApiParam(required = true, value = "Request id") @PathParam("requestId") int requestId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         ChangeRequest changeRequest = changeManager.getChangeRequest(workspaceId, requestId);
         ChangeRequestDTO changeRequestDTO = mapper.map(changeRequest, ChangeRequestDTO.class);
@@ -150,8 +150,8 @@ public class ChangeRequestsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{requestId}")
-    public ChangeRequestDTO updateRequest(@PathParam("workspaceId") String workspaceId,
-                                          @PathParam("requestId") int requestId,
+    public ChangeRequestDTO updateRequest(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                          @ApiParam(required = true, value = "Request id") @PathParam("requestId") int requestId,
                                           @ApiParam(required = true, value = "Request to update") ChangeRequestDTO pChangeRequestDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         ChangeRequest changeRequest = changeManager.updateChangeRequest(requestId,
@@ -185,9 +185,9 @@ public class ChangeRequestsResource {
     @Path("{requestId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeRequestDTO saveChangeRequestTags(@PathParam("workspaceId") String workspaceId,
-                                     @PathParam("requestId") int requestId,
-                                     @ApiParam(required = true, value = "Tag list to add") TagListDTO tagListDTO)
+    public ChangeRequestDTO saveChangeRequestTags(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                  @ApiParam(required = true, value = "Request id") @PathParam("requestId") int requestId,
+                                                  @ApiParam(required = true, value = "Tag list to add") TagListDTO tagListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         List<TagDTO> tagDTOs = tagListDTO.getTags();
         String[] tagsLabel = new String[tagDTOs.size()];
@@ -207,9 +207,9 @@ public class ChangeRequestsResource {
     @Path("{requestId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO addTagToChangeRequest(@PathParam("workspaceId") String workspaceId,
-                                @PathParam("requestId") int requestId,
-                                @ApiParam(required = true, value = "Tag list to add") TagListDTO tagListDTO)
+    public ChangeItemDTO addTagToChangeRequest(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                               @ApiParam(required = true, value = "Request id") @PathParam("requestId") int requestId,
+                                               @ApiParam(required = true, value = "Tag list to add") TagListDTO tagListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         ChangeRequest changeRequest = changeManager.getChangeRequest(workspaceId, requestId);
         Set<Tag> tags = changeRequest.getTags();
@@ -234,9 +234,9 @@ public class ChangeRequestsResource {
     @ApiOperation(value = "Delete tag attached to a request",
             response = Response.class)
     @Path("{requestId}/tags/{tagName}")
-    public Response removeTagsFromChangeRequest(@PathParam("workspaceId") String workspaceId,
-                               @PathParam("requestId") int requestId,
-                               @PathParam("tagName") String tagName)
+    public Response removeTagsFromChangeRequest(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                @ApiParam(required = true, value = "Request id") @PathParam("requestId") int requestId,
+                                                @PathParam("tagName") String tagName)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         changeManager.removeChangeRequestTag(workspaceId, requestId, tagName);
         return Response.ok().build();
@@ -248,9 +248,9 @@ public class ChangeRequestsResource {
     @Path("{requestId}/affected-documents")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO saveChangeItemAffectedDocuments(@PathParam("workspaceId") String workspaceId,
-                                               @PathParam("requestId") int requestId,
-                                               @ApiParam(required = true, value = "Document list to save as affected") DocumentIterationListDTO documentIterationListDTO)
+    public ChangeItemDTO saveChangeItemAffectedDocuments(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                         @ApiParam(required = true, value = "Request id") @PathParam("requestId") int requestId,
+                                                         @ApiParam(required = true, value = "Document list to save as affected") DocumentIterationListDTO documentIterationListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
 
         List<DocumentIterationDTO> documentIterationDTOs = documentIterationListDTO.getDocuments();
@@ -268,9 +268,9 @@ public class ChangeRequestsResource {
     @Path("{requestId}/affected-parts")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO saveChangeRequestAffectedParts(@PathParam("workspaceId") String workspaceId,
-                                           @PathParam("requestId") int requestId,
-                                           @ApiParam(required = true, value = "Parts to save as affected") PartIterationListDTO partIterationListDTO)
+    public ChangeItemDTO saveChangeRequestAffectedParts(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                        @ApiParam(required = true, value = "Request id") @PathParam("requestId") int requestId,
+                                                        @ApiParam(required = true, value = "Parts to save as affected") PartIterationListDTO partIterationListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
 
         List<PartIterationDTO> partIterationDTOs = partIterationListDTO.getParts();
@@ -288,8 +288,8 @@ public class ChangeRequestsResource {
     @Path("{requestId}/affected-issues")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO saveAffectedIssues(@PathParam("workspaceId") String workspaceId,
-                                            @PathParam("requestId") int requestId,
+    public ChangeItemDTO saveAffectedIssues(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                            @ApiParam(required = true, value = "Request id") @PathParam("requestId") int requestId,
                                             @ApiParam(required = true, value = "Change issues to save as affected") ChangeIssueListDTO changeIssueListDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         int[] links;
@@ -315,9 +315,9 @@ public class ChangeRequestsResource {
             response = Response.class)
     @Path("{requestId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateChangeRequestACL(@PathParam("workspaceId") String pWorkspaceId,
-                              @PathParam("requestId") int requestId,
-                              @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
+    public Response updateChangeRequestACL(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                           @ApiParam(required = true, value = "Request id") @PathParam("requestId") int requestId,
+                                           @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
@@ -332,9 +332,9 @@ public class ChangeRequestsResource {
                 groupEntries.put(entry.getKey(), entry.getValue().name());
             }
 
-            changeManager.updateACLForChangeRequest(pWorkspaceId, requestId, userEntries, groupEntries);
+            changeManager.updateACLForChangeRequest(workspaceId, requestId, userEntries, groupEntries);
         } else {
-            changeManager.removeACLFromChangeRequest(pWorkspaceId, requestId);
+            changeManager.removeACLFromChangeRequest(workspaceId, requestId);
         }
         return Response.ok().build();
     }

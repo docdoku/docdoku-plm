@@ -65,6 +65,7 @@ import java.util.logging.Logger;
 public class TagResource {
 
     private final static Logger LOGGER = Logger.getLogger(TagResource.class.getName());
+
     @Inject
     private IDocumentManagerLocal documentService;
     private Mapper mapper;
@@ -80,7 +81,7 @@ public class TagResource {
     @GET
     @ApiOperation(value = "Get tags in workspace", response = TagDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTagsInWorkspace(@PathParam("workspaceId") String workspaceId)
+    public Response getTagsInWorkspace(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         String[] tagsName = documentService.getTags(workspaceId);
@@ -96,7 +97,7 @@ public class TagResource {
     @ApiOperation(value = "Create tag in workspace", response = TagDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public TagDTO createTag(@PathParam("workspaceId") String workspaceId,
+    public TagDTO createTag(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
                             @ApiParam(value = "Tag to create", required = true) TagDTO tag)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, CreationException {
 
@@ -108,7 +109,7 @@ public class TagResource {
     @ApiOperation(value = "Create tags in workspace", response = Response.class)
     @Path("/multiple")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createTags(@PathParam("workspaceId") String workspaceId,
+    public Response createTags(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
                                @ApiParam(value = "Tag list to create", required = true) TagListDTO tagList)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, CreationException {
 
@@ -134,8 +135,8 @@ public class TagResource {
     @Path("{tagId}/documents/")
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO[] getDocumentsWithGivenTagIdAndWorkspaceId(
-            @PathParam("workspaceId") String workspaceId,
-            @PathParam("tagId") String tagId)
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Tag id")  @PathParam("tagId") String tagId)
             throws EntityNotFoundException, UserNotActiveException {
 
         TagKey tagKey = new TagKey(workspaceId, tagId);
@@ -160,10 +161,10 @@ public class TagResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createDocumentMasterInRootFolderWithTag(
-            @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document to create") DocumentCreationDTO docCreationDTO,
-            @PathParam("tagId") String tagId,
-            @QueryParam("configSpec") String configSpecType)
+            @ApiParam(required = true, value = "Tag id") @PathParam("tagId") String tagId,
+            @ApiParam(required = false, value = "Config spec to use") @QueryParam("configSpec") String configSpecType)
             throws CreationException, FileAlreadyExistsException, DocumentRevisionAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, DocumentMasterAlreadyExistsException, RoleNotFoundException, FolderNotFoundException, WorkflowModelNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, ESServerException, UserGroupNotFoundException, WorkspaceNotEnabledException {
 
         String pDocMID = docCreationDTO.getReference();

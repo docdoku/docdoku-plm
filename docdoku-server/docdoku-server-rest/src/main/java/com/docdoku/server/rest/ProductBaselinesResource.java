@@ -82,8 +82,8 @@ public class ProductBaselinesResource {
     @GET
     @ApiOperation(value = "Get product-baseline with given configuration item", response = ProductBaselineDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProductBaselines(@PathParam("workspaceId") String workspaceId,
-                                 @PathParam("ciId") String ciId)
+    public Response getProductBaselines(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                        @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId)
             throws UserNotActiveException, EntityNotFoundException, AccessRightException {
         List<ProductBaseline> productBaselines;
         if (ciId != null) {
@@ -108,9 +108,9 @@ public class ProductBaselinesResource {
     @ApiOperation(value = "Create product-baseline", response = ProductBaselineDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductBaselineDTO createProductBaseline(@PathParam("workspaceId") String workspaceId,
-                                             @PathParam("ciId") String pCiId,
-                                             @ApiParam(required = true, value = "Product baseline to create") ProductBaselineDTO productBaselineDTO)
+    public ProductBaselineDTO createProductBaseline(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                    @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String pCiId,
+                                                    @ApiParam(required = true, value = "Product baseline to create") ProductBaselineDTO productBaselineDTO)
             throws UserNotActiveException, EntityNotFoundException, NotAllowedException, AccessRightException, PartRevisionNotReleasedException, EntityConstraintException, CreationException, PathToPathLinkAlreadyExistsException {
 
         String ciId = (pCiId != null) ? pCiId : productBaselineDTO.getConfigurationItemId();
@@ -138,9 +138,9 @@ public class ProductBaselinesResource {
     @ApiOperation(value = "Delete product-baseline", response = Response.class)
     @Path("{baselineId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteProductBaseline(@PathParam("workspaceId") String workspaceId,
-                                   @PathParam("ciId") String ciId,
-                                   @PathParam("baselineId") int baselineId)
+    public Response deleteProductBaseline(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                          @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+                                          @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, EntityConstraintException {
         productBaselineService.deleteBaseline(workspaceId, baselineId);
         return Response.ok().build();
@@ -150,9 +150,9 @@ public class ProductBaselinesResource {
     @ApiOperation(value = "Get product-baseline", response = ProductBaselineDTO.class)
     @Path("{baselineId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductBaselineDTO getProductBaseline(@PathParam("workspaceId") String workspaceId,
-                                          @PathParam("ciId") String ciId,
-                                          @PathParam("baselineId") int baselineId)
+    public ProductBaselineDTO getProductBaseline(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                 @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+                                                 @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         ProductBaseline productBaseline = productBaselineService.getBaseline(baselineId);
         ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline, ProductBaselineDTO.class);
@@ -190,10 +190,10 @@ public class ProductBaselinesResource {
     @ApiOperation(value = "Get product-baseline's part", response = BaselinedPartDTO.class, responseContainer = "List")
     @Path("{baselineId}/parts")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProductBaselineParts(@PathParam("workspaceId") String workspaceId,
-                                     @PathParam("ciId") String ciId,
-                                     @PathParam("baselineId") int baselineId,
-                                     @QueryParam("q") String q)
+    public Response getProductBaselineParts(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+                                            @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId,
+                                            @ApiParam(required = true, value = "Query") @QueryParam("q") String q)
             throws EntityNotFoundException, UserNotActiveException {
         int maxResults = 8;
         List<BaselinedPart> baselinedPartList = productBaselineService.getBaselinedPartWithReference(baselineId, q, maxResults);
@@ -210,11 +210,11 @@ public class ProductBaselinesResource {
     @ApiOperation(value = "Get product-baseline's path-to-path links", response = LightPathToPathLinkDTO.class, responseContainer = "List")
     @Path("{baselineId}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId,
-                                           @PathParam("ciId") String configurationItemId,
-                                           @PathParam("baselineId") int baselineId)
+    public Response getPathToPathLinkTypes(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                           @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+                                           @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, WorkspaceNotEnabledException {
-        List<String> pathToPathLinkTypes = productBaselineService.getPathToPathLinkTypes(workspaceId, configurationItemId, baselineId);
+        List<String> pathToPathLinkTypes = productBaselineService.getPathToPathLinkTypes(workspaceId, ciId, baselineId);
         List<LightPathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
         for (String type : pathToPathLinkTypes) {
             LightPathToPathLinkDTO pathToPathLinkDTO = new LightPathToPathLinkDTO();
@@ -229,11 +229,11 @@ public class ProductBaselinesResource {
     @ApiOperation(value = "Get product-baseline's path-to-path links for given source and target", response = LightPathToPathLinkDTO.class, responseContainer = "List")
     @Path("{baselineId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathToPathLinkFromSourceAndTarget(@PathParam("workspaceId") String workspaceId,
-                                                         @PathParam("ciId") String configurationItemId,
-                                                         @PathParam("baselineId") int baselineId,
-                                                         @PathParam("sourcePath") String sourcePathAsString,
-                                                         @PathParam("targetPath") String targetPathAsString)
+    public Response getPathToPathLinkFromSourceAndTarget(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                         @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+                                                         @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId,
+                                                         @ApiParam(required = true, value = "Source path") @PathParam("sourcePath") String sourcePathAsString,
+                                                         @ApiParam(required = true, value = "Target path") @PathParam("targetPath") String targetPathAsString)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
         List<PathToPathLink> pathToPathLinks = productBaselineService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, baselineId, sourcePathAsString, targetPathAsString);
         List<PathToPathLinkDTO> dtos = new ArrayList<>();

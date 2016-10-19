@@ -22,6 +22,7 @@ package com.docdoku.api;
 
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.AccountDTO;
+import com.docdoku.api.models.PlatformOptionsDTO;
 import com.docdoku.api.models.WorkspaceDTO;
 import com.docdoku.api.services.AdminApi;
 import com.docdoku.api.services.WorkspacesApi;
@@ -87,5 +88,58 @@ public class AdminApiTest {
         Assert.assertEquals(updatedAccount,account);
 
     }
+
+    @Test
+    public void platformOptionsTests() throws ApiException {
+
+        AdminApi adminApi = new AdminApi(TestConfig.ROOT_CLIENT);
+
+        // Getter
+        PlatformOptionsDTO platformOptions = adminApi.getPlatformOptions();
+        PlatformOptionsDTO.RegistrationStrategyEnum registrationStrategy = platformOptions.getRegistrationStrategy();
+        PlatformOptionsDTO.WorkspaceCreationStrategyEnum workspaceCreationStrategy = platformOptions.getWorkspaceCreationStrategy();
+        Assert.assertNotNull(registrationStrategy);
+        Assert.assertNotNull(workspaceCreationStrategy);
+
+        // change strategy
+        platformOptions.setRegistrationStrategy(PlatformOptionsDTO.RegistrationStrategyEnum.ADMIN_VALIDATION);
+        platformOptions.setWorkspaceCreationStrategy(PlatformOptionsDTO.WorkspaceCreationStrategyEnum.ADMIN_VALIDATION);
+        adminApi.setPlatformOptions(platformOptions);
+
+        // Assert modifications
+        PlatformOptionsDTO updatedOptions = adminApi.getPlatformOptions();
+        Assert.assertEquals(updatedOptions.getRegistrationStrategy(), platformOptions.getRegistrationStrategy());
+        Assert.assertEquals(updatedOptions.getWorkspaceCreationStrategy(), platformOptions.getWorkspaceCreationStrategy());
+
+        // Restore
+        platformOptions.setRegistrationStrategy(PlatformOptionsDTO.RegistrationStrategyEnum.NONE);
+        platformOptions.setWorkspaceCreationStrategy(PlatformOptionsDTO.WorkspaceCreationStrategyEnum.NONE);
+        adminApi.setPlatformOptions(platformOptions);
+
+    }
+
+
+    @Test
+    public void getStatsTests() throws ApiException {
+        AdminApi adminApi = new AdminApi(TestConfig.ROOT_CLIENT);
+
+        String documentsStats = adminApi.getDocumentsStats();
+        Assert.assertNotNull(documentsStats);
+
+        String partsStats = adminApi.getPartsStats();
+        Assert.assertNotNull(partsStats);
+
+        String productsStats = adminApi.getProductsStats();
+        Assert.assertNotNull(productsStats);
+
+        String usersStats = adminApi.getUsersStats();
+        Assert.assertNotNull(usersStats);
+
+        String diskSpaceUsageStats = adminApi.getDiskSpaceUsageStats();
+        Assert.assertNotNull(diskSpaceUsageStats);
+
+
+    }
+
 
 }

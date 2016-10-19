@@ -30,9 +30,7 @@ import com.docdoku.server.jwt.JWTokenFactory;
 import com.docdoku.server.rest.dto.AccountDTO;
 import com.docdoku.server.rest.dto.GCMAccountDTO;
 import com.docdoku.server.rest.dto.WorkspaceDTO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -81,6 +79,9 @@ public class AccountResource {
     @GET
     @Path("/me")
     @ApiOperation(value = "Get authenticated user's account", response = AccountDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "Account not enabled or authentication not sufficient")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public AccountDTO getAccount() throws AccountNotFoundException {
         Account account = accountManager.getMyAccount();
@@ -94,9 +95,13 @@ public class AccountResource {
     @PUT
     @Path("/me")
     @ApiOperation(value = "Update user's account", response = AccountDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Account updated")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public AccountDTO updateAccount(@ApiParam(required = true, value = "Updated account") AccountDTO accountDTO) throws AccountNotFoundException {
+    public AccountDTO updateAccount(@ApiParam(required = true, value = "Updated account") AccountDTO accountDTO)
+            throws AccountNotFoundException {
         Account account = accountManager.updateAccount(accountDTO.getName(), accountDTO.getEmail(), accountDTO.getLanguage(), accountDTO.getNewPassword(), accountDTO.getTimeZone());
         return mapper.map(account, AccountDTO.class);
     }
@@ -104,8 +109,14 @@ public class AccountResource {
     @POST
     @Path("/create")
     @ApiOperation(value = "Create user's account", response = AccountDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Account created"),
+            @ApiResponse(code = 500, message = "Internal server error"),
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createAccount(@Context HttpServletRequest request, @ApiParam(required = true, value = "Account to create") AccountDTO accountDTO) throws AccountAlreadyExistsException, CreationException {
+    public Response createAccount(@Context HttpServletRequest request,
+                                  @ApiParam(required = true, value = "Account to create") AccountDTO accountDTO)
+            throws AccountAlreadyExistsException, CreationException {
         Account account = accountManager.createAccount(accountDTO.getLogin(), accountDTO.getName(), accountDTO.getEmail(), accountDTO.getLanguage(), accountDTO.getNewPassword(), accountDTO.getTimeZone());
         HttpSession session = request.getSession();
         try {
@@ -121,7 +132,12 @@ public class AccountResource {
 
     @GET
     @Path("/workspaces")
-    @ApiOperation(value = "Get workspaces where authenticated user is active", response = WorkspaceDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get workspaces where authenticated user is active",
+            response = WorkspaceDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "Account not enabled or authentication not sufficient"),
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response getWorkspaces() {
         Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
@@ -138,7 +154,10 @@ public class AccountResource {
 
     @PUT
     @Path("gcm")
-    @ApiOperation(value = "Update GCM account for authenticated user", response = Response.class, code = 200)
+    @ApiOperation(value = "Update GCM account for authenticated user", response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "GCM account updated"),
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     public Response setGCMAccount(@ApiParam(required = true, value = "GCM account to set") GCMAccountDTO data)
             throws EntityAlreadyExistsException, AccountNotFoundException, CreationException {
@@ -149,7 +168,10 @@ public class AccountResource {
 
     @DELETE
     @Path("gcm")
-    @ApiOperation(value = "Update GCM account for authenticated user", response = Response.class, code = 200)
+    @ApiOperation(value = "Update GCM account for authenticated user", response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "GCM account deleted"),
+    })
     public Response deleteGCMAccount() throws EntityNotFoundException {
         accountManager.deleteGCMAccount();
         return Response.ok().build();

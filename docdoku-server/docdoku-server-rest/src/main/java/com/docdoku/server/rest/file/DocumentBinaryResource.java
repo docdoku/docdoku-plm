@@ -38,6 +38,7 @@ import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 import com.docdoku.server.rest.interceptors.Compress;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -92,10 +93,10 @@ public class DocumentBinaryResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public Response uploadDocumentFiles(@Context HttpServletRequest request,
-                                        @PathParam("workspaceId") final String workspaceId,
-                                        @PathParam("documentId") final String documentId,
-                                        @PathParam("version") final String version,
-                                        @PathParam("iteration") final int iteration)
+                                        @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
+                                        @ApiParam(required = true, value = "Document master id")  @PathParam("documentId") final String documentId,
+                                        @ApiParam(required = true, value = "Workspace version")  @PathParam("version") final String version,
+                                        @ApiParam(required = true, value = "Document iteration")  @PathParam("iteration") final int iteration)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException {
         try {
             String fileName = null;
@@ -139,15 +140,15 @@ public class DocumentBinaryResource {
     public Response downloadDocumentFile(@Context Request request,
                                          @HeaderParam("Range") String range,
                                          @HeaderParam("Referer") String referer,
-                                         @PathParam("workspaceId") final String workspaceId,
-                                         @PathParam("documentId") final String documentId,
-                                         @PathParam("version") final String version,
-                                         @PathParam("iteration") final int iteration,
-                                         @PathParam("fileName") final String fileName,
-                                         @PathParam("virtualSubResource") final String virtualSubResource,
-                                         @QueryParam("type") String type,
-                                         @QueryParam("output") String output,
-                                         @PathParam("uuid") final String pUuid)
+                                         @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
+                                         @ApiParam(required = true, value = "Document master id")  @PathParam("documentId") final String documentId,
+                                         @ApiParam(required = true, value = "Workspace version")  @PathParam("version") final String version,
+                                         @ApiParam(required = true, value = "Document iteration")  @PathParam("iteration") final int iteration,
+                                         @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
+                                         @ApiParam(required = false, value = "Virtual sub resource") @PathParam("virtualSubResource") final String virtualSubResource,
+                                         @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
+                                         @ApiParam(required = false, value = "Output") @QueryParam("output") String output,
+                                         @ApiParam(required = false, value = "Resource token") @PathParam("uuid") final String pUuid)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, NotModifiedException, PreconditionFailedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
 
         String fullName;

@@ -58,8 +58,8 @@ public class ModificationNotificationResource {
     @ApiOperation(value = "Acknowledge modification notification", response = Response.class)
     @Path("/{notificationId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response acknowledgeNotification(@PathParam("workspaceId") String workspaceId,
-                                            @PathParam("notificationId") int notificationId,
+    public Response acknowledgeNotification(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                            @ApiParam(required = true, value = "Notification id")  @PathParam("notificationId") int notificationId,
                                             @ApiParam(required = true, value = "Modification notification to acknowledge") ModificationNotificationDTO notificationDTO)
             throws UserNotFoundException, AccessRightException, PartRevisionNotFoundException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
 

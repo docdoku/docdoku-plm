@@ -20,7 +20,6 @@
 
 package com.docdoku.server.rest;
 
-import com.docdoku.core.admin.PlatformOptions;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
@@ -95,9 +94,10 @@ public class AdminResource implements Serializable {
 
     @GET
     @Path("disk-usage-stats")
-    @ApiOperation(value = "Get disk usage stats", response = JsonObject.class)
+    @ApiOperation(value = "Get disk usage stats", response = String.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public JsonObject getDiskSpaceUsageStats() throws AccountNotFoundException {
+    public JsonObject getDiskSpaceUsageStats()
+            throws AccountNotFoundException {
 
         JsonObjectBuilder diskUsage = Json.createObjectBuilder();
 
@@ -114,9 +114,10 @@ public class AdminResource implements Serializable {
 
     @GET
     @Path("users-stats")
-    @ApiOperation(value = "Get users stats", response = JsonObject.class)
+    @ApiOperation(value = "Get users stats", response = String.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public JsonObject getUsersStats() throws AccountNotFoundException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
+    public JsonObject getUsersStats()
+            throws AccountNotFoundException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
 
         JsonObjectBuilder userStats = Json.createObjectBuilder();
 
@@ -133,9 +134,10 @@ public class AdminResource implements Serializable {
 
     @GET
     @Path("documents-stats")
-    @ApiOperation(value = "Get documents stats", response = JsonObject.class)
+    @ApiOperation(value = "Get documents stats", response = String.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public JsonObject getDocumentsStats() throws AccountNotFoundException, WorkspaceNotFoundException, AccessRightException {
+    public JsonObject getDocumentsStats()
+            throws AccountNotFoundException, WorkspaceNotFoundException, AccessRightException {
 
         JsonObjectBuilder docStats = Json.createObjectBuilder();
 
@@ -152,9 +154,10 @@ public class AdminResource implements Serializable {
 
     @GET
     @Path("products-stats")
-    @ApiOperation(value = "Get products stats", response = JsonObject.class)
+    @ApiOperation(value = "Get products stats", response = String.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public JsonObject getProductsStats() throws AccountNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
+    public JsonObject getProductsStats()
+            throws AccountNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
 
         JsonObjectBuilder productsStats = Json.createObjectBuilder();
 
@@ -171,9 +174,10 @@ public class AdminResource implements Serializable {
 
     @GET
     @Path("parts-stats")
-    @ApiOperation(value = "Get parts stats", response = JsonObject.class)
+    @ApiOperation(value = "Get parts stats", response = String.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public JsonObject getPartsStats() throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
+    public JsonObject getPartsStats()
+            throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
 
         JsonObjectBuilder partsStats = Json.createObjectBuilder();
 
@@ -191,8 +195,8 @@ public class AdminResource implements Serializable {
     @PUT
     @ApiOperation(value = "Synchronize index for workspace")
     @Path("index/{workspaceId}")
-    public Response indexWorkspace(@PathParam("workspaceId") String workspaceId,
-                                   @ApiParam(name = "body", defaultValue = "") String body) {
+    public Response indexWorkspace(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
+                                   @ApiParam(value = "Put content", name = "body") String body) {
         workspaceManager.synchronizeIndexer(workspaceId);
         return Response.ok().build();
 
@@ -201,7 +205,8 @@ public class AdminResource implements Serializable {
     @PUT
     @ApiOperation(value = "Synchronize index for all workspaces", response = Response.class)
     @Path("index-all")
-    public Response indexAllWorkspaces(@ApiParam(name = "body", defaultValue = "") String body) throws AccountNotFoundException {
+    public Response indexAllWorkspaces(@ApiParam(name = "body", defaultValue = "") String body)
+            throws AccountNotFoundException {
         Workspace[] administratedWorkspaces = userManager.getAdministratedWorkspaces();
         for (Workspace workspace : administratedWorkspaces) {
             workspaceManager.synchronizeIndexer(workspace.getId());
@@ -211,7 +216,7 @@ public class AdminResource implements Serializable {
 
     @GET
     @Path("platform-options")
-    @ApiOperation(value = "Get platform options", response = PlatformOptions.class)
+    @ApiOperation(value = "Get platform options", response = PlatformOptionsDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
     public PlatformOptionsDTO getPlatformOptions() {
         return mapper.map(platformOptionsManager.getPlatformOptions(), PlatformOptionsDTO.class);
@@ -233,9 +238,9 @@ public class AdminResource implements Serializable {
     @ApiOperation(value = "Enable or disable workspace", response = WorkspaceDTO.class)
     @Path("workspace/{workspaceId}/enable")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceDTO enableWorkspace(@PathParam("workspaceId") String workspaceId,
-                                        @QueryParam("enabled") boolean enabled,
-                                        @ApiParam(name = "body", defaultValue = "") String body)
+    public WorkspaceDTO enableWorkspace(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
+                                        @ApiParam(value = "Enabled", required = true) @QueryParam("enabled") boolean enabled,
+                                        @ApiParam(value = "Put content", name = "body") String body)
             throws WorkspaceNotFoundException {
         Workspace workspace = workspaceManager.enableWorkspace(workspaceId, enabled);
         return mapper.map(workspace, WorkspaceDTO.class);
@@ -245,9 +250,9 @@ public class AdminResource implements Serializable {
     @ApiOperation(value = "Enable or disable account", response = AccountDTO.class)
     @Path("accounts/{login}/enable")
     @Produces(MediaType.APPLICATION_JSON)
-    public AccountDTO enableAccount(@PathParam("login") String login,
-                                    @QueryParam("enabled") boolean enabled,
-                                    @ApiParam(name = "body", defaultValue = "") String body)
+    public AccountDTO enableAccount(@ApiParam(value = "Workspace id", required = true) @PathParam("login") String login,
+                                    @ApiParam(value = "Enabled", required = true) @QueryParam("enabled") boolean enabled,
+                                    @ApiParam(value = "Put content", name = "body") String body)
             throws WorkspaceNotFoundException, AccountNotFoundException, NotAllowedException {
         Account account = accountManager.enableAccount(login, enabled);
         return mapper.map(account, AccountDTO.class);

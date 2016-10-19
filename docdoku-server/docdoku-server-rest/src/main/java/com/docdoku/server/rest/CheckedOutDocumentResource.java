@@ -29,6 +29,7 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.DocumentRevisionDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -66,7 +67,9 @@ public class CheckedOutDocumentResource {
     @Path("{checkoutUser}/documents")
     @ApiOperation(value = "Get documents checked out by caller", response = DocumentRevisionDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO[] getDocumentsCheckedOutByUser(@PathParam("workspaceId") String workspaceId) throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, WorkspaceNotEnabledException {
+    public DocumentRevisionDTO[] getDocumentsCheckedOutByUser(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+            throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, WorkspaceNotEnabledException {
+
         DocumentRevision[] docRs = documentService.getCheckedOutDocumentRevisions(workspaceId);
         DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
 

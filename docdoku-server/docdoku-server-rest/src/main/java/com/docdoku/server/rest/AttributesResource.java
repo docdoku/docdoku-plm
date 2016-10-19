@@ -29,6 +29,7 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.InstanceAttributeDescriptorDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -76,7 +77,7 @@ public class AttributesResource {
             response = InstanceAttributeDescriptorDTO.class,
             responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPartIterationsAttributes(@PathParam("workspaceId") String workspaceId)
+    public Response getPartIterationsAttributes(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         List<InstanceAttributeDescriptor> attributes = productManager.getPartIterationsInstanceAttributesInWorkspace(workspaceId);
         List<InstanceAttributeDescriptorDTO> dtos = new ArrayList<>();
@@ -94,7 +95,7 @@ public class AttributesResource {
             response = InstanceAttributeDescriptorDTO.class,
             responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathDataAttributes(@PathParam("workspaceId") String workspaceId)
+    public Response getPathDataAttributes(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         List<InstanceAttributeDescriptor> attributes = productManager.getPathDataInstanceAttributesInWorkspace(workspaceId);
         List<InstanceAttributeDescriptorDTO> dtos = new ArrayList<>();

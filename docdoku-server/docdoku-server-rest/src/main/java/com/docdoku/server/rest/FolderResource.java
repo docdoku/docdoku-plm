@@ -81,8 +81,8 @@ public class FolderResource {
     @ApiOperation(value = "Get documents in folder", response = DocumentRevisionDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO[] getDocumentsWithGivenFolderIdAndWorkspaceId(
-            @PathParam("workspaceId") String workspaceId,
-            @PathParam("folderId") String folderId)
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Folder id") @PathParam("folderId") String folderId)
             throws EntityNotFoundException, UserNotActiveException {
 
         String decodedCompletePath = getPathFromUrlParams(workspaceId, folderId);
@@ -107,9 +107,9 @@ public class FolderResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createDocumentMasterInFolder(
-            @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document to create") DocumentCreationDTO docCreationDTO,
-            @PathParam("folderId") String folderId)
+            @ApiParam(required = true, value = "Folder id") @PathParam("folderId") String folderId)
             throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, CreationException, AccessRightException {
 
         String pDocMID = docCreationDTO.getReference();
@@ -179,8 +179,8 @@ public class FolderResource {
     @GET
     @ApiOperation(value = "Get root folders", response = FolderDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO[] getRootFolders(@PathParam("workspaceId") String workspaceId,
-                                      @QueryParam("configSpec") String configSpecType)
+    public FolderDTO[] getRootFolders(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                      @ApiParam(required = false, value = "Config spec") @QueryParam("configSpec") String configSpecType)
             throws EntityNotFoundException, UserNotActiveException {
         String completePath = Tools.stripTrailingSlash(workspaceId);
         return getFolders(workspaceId, completePath, true, configSpecType);
@@ -190,9 +190,9 @@ public class FolderResource {
     @ApiOperation(value = "Get sub folders", response = FolderDTO.class, responseContainer = "List")
     @Path("{completePath}/folders")
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO[] getSubFolders(@PathParam("workspaceId") String workspaceId,
-                                     @PathParam("completePath") String folderId,
-                                     @QueryParam("configSpec") String configSpecType)
+    public FolderDTO[] getSubFolders(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                     @ApiParam(required = true, value = "Folder id") @PathParam("completePath") String folderId,
+                                     @ApiParam(required = false, value = "Config spec") @QueryParam("configSpec") String configSpecType)
             throws EntityNotFoundException, UserNotActiveException {
         String decodedCompletePath = FolderDTO.replaceColonWithSlash(folderId);
         String completePath = Tools.stripTrailingSlash(decodedCompletePath);
@@ -232,8 +232,8 @@ public class FolderResource {
     @Path("{folderId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO renameFolder(@PathParam("workspaceId") String workspaceId,
-                                  @PathParam("folderId") String folderPath,
+    public FolderDTO renameFolder(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                  @ApiParam(required = true, value = "Folder id") @PathParam("folderId") String folderPath,
                                   @ApiParam(value = "Folder with new name", required = true) FolderDTO folderDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException, CreationException {
 
@@ -263,8 +263,8 @@ public class FolderResource {
     @Path("{folderId}/move")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO moveFolder(@PathParam("workspaceId") String workspaceId,
-                                @PathParam("folderId") String folderPath,
+    public FolderDTO moveFolder(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                @ApiParam(required = true, value = "Folder id") @PathParam("folderId") String folderPath,
                                 @ApiParam(required = true, value = "Folder to move") FolderDTO folderDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException, CreationException {
 
@@ -292,8 +292,8 @@ public class FolderResource {
     @Path("{parentFolderPath}/folders")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO createSubFolder(@PathParam("workspaceId") String workspaceId,
-                                     @PathParam("parentFolderPath") String parentFolderPath,
+    public FolderDTO createSubFolder(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                     @ApiParam(required = true, value = "Parent folder id") @PathParam("parentFolderPath") String parentFolderPath,
                                      @ApiParam(value = "Folder to create", required = true) FolderDTO folder)
             throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException, UserNotActiveException, CreationException {
 
@@ -307,7 +307,7 @@ public class FolderResource {
     @ApiOperation(value = "Create root folder", response = FolderDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO createRootFolder(@PathParam("workspaceId") String workspaceId,
+    public FolderDTO createRootFolder(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
                                       @ApiParam(required = true, value = "Folder to create") FolderDTO folder)
             throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException, UserNotActiveException, CreationException {
 
@@ -325,8 +325,8 @@ public class FolderResource {
     @ApiOperation(value = "Delete root folder", response = Response.class)
     @Path("{folderId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteRootFolder(@PathParam("workspaceId") String workspaceId,
-                                     @PathParam("folderId") String completePath)
+    public Response deleteRootFolder(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                     @ApiParam(required = true, value = "Folder id") @PathParam("folderId") String completePath)
             throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, ESServerException, EntityConstraintException {
 
         deleteFolder(completePath);

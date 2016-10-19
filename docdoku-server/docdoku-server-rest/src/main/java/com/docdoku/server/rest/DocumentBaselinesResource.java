@@ -87,7 +87,7 @@ public class DocumentBaselinesResource {
             response = DocumentBaselineDTO.class,
             responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getDocumentBaselines(@PathParam("workspaceId") String workspaceId)
+    public Response getDocumentBaselines(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
         List<DocumentBaseline> documentBaselines = documentBaselineService.getBaselines(workspaceId);
         List<DocumentBaselineDTO> baselinesDTO = new ArrayList<>();
@@ -109,7 +109,7 @@ public class DocumentBaselinesResource {
     @POST
     @ApiOperation(value = "Create baseline", response = DocumentBaselineDTO.class)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createDocumentBaseline(@PathParam("workspaceId") String workspaceId,
+    public Response createDocumentBaseline(@ApiParam(required = true, value = "Workspace id")  @PathParam("workspaceId") String workspaceId,
                                    @ApiParam(required = true, value = "Document baseline to create") DocumentBaselineDTO documentBaselineDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, com.docdoku.core.exceptions.NotAllowedException {
 
@@ -150,7 +150,8 @@ public class DocumentBaselinesResource {
     @ApiOperation(value = "Delete a baseline", response = Response.class)
     @Path("{baselineId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId)
+    public Response deleteBaseline(@ApiParam(required = true, value = "Workspace id")  @PathParam("workspaceId") String workspaceId,
+                                   @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         documentBaselineService.deleteBaseline(workspaceId, baselineId);
@@ -168,7 +169,8 @@ public class DocumentBaselinesResource {
     @ApiOperation(value = "Get baseline", response = DocumentBaselineDTO.class)
     @Path("{baselineId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId)
+    public DocumentBaselineDTO getBaseline(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                           @ApiParam(required = true, value = "Baseline id")  @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, UserNotActiveException {
 
         DocumentBaseline documentBaseline = documentBaselineService.getBaselineLight(workspaceId, baselineId);
@@ -190,7 +192,8 @@ public class DocumentBaselinesResource {
     @ApiOperation(value = "Get baseline light format", response = DocumentBaselineDTO.class)
     @Path("{baselineId}-light")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentBaselineDTO getBaselineLight(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId)
+    public DocumentBaselineDTO getBaselineLight(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                                @ApiParam(required = true, value = "Baseline id")  @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, UserNotActiveException {
         DocumentBaseline documentBaseline = documentBaselineService.getBaselineLight(workspaceId, baselineId);
         return mapper.map(documentBaseline, DocumentBaselineDTO.class);
@@ -199,8 +202,8 @@ public class DocumentBaselinesResource {
     @GET
     @ApiOperation(value = "Export files", response = Response.class)
     @Path("{baselineId}/export-files")
-    public Response exportFiles(@PathParam("workspaceId") String workspaceId,
-                                @PathParam("baselineId") int baselineId)
+    public Response exportFiles(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                @ApiParam(required = true, value = "Baseline id")  @PathParam("baselineId") int baselineId)
             throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, WorkspaceNotEnabledException {
 
         FileExportDocumentEntity fileExportEntity = new FileExportDocumentEntity(workspaceId, baselineId);
