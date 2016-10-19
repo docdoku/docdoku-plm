@@ -55,21 +55,21 @@ public class DocumentApiTest {
         document.setTitle("GeneratedDoc");
 
         DocumentRevisionDTO createdDocument = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, document, TestConfig.WORKSPACE);
-        Assert.assertEquals(createdDocument.getDocumentMasterId(),document.getReference());
+        Assert.assertEquals(createdDocument.getDocumentMasterId(), document.getReference());
 
         // Check in
         DocumentRevisionDTO checkedInDocument = documentApi.checkInDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
-        Assert.assertEquals(checkedInDocument.getDocumentMasterId(),document.getReference());
+        Assert.assertEquals(checkedInDocument.getDocumentMasterId(), document.getReference());
         Assert.assertEquals(LastIterationHelper.getLastIteration(checkedInDocument).getIteration(), Integer.valueOf("1"));
 
         // Check out
         DocumentRevisionDTO checkedOutDocument = documentApi.checkOutDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
-        Assert.assertEquals(checkedOutDocument.getDocumentMasterId(),document.getReference());
-        Assert.assertEquals(LastIterationHelper.getLastIteration(checkedOutDocument).getIteration(),Integer.valueOf("2"));
+        Assert.assertEquals(checkedOutDocument.getDocumentMasterId(), document.getReference());
+        Assert.assertEquals(LastIterationHelper.getLastIteration(checkedOutDocument).getIteration(), Integer.valueOf("2"));
 
         // Undo check out
-        DocumentRevisionDTO undoCheckOutDocument= documentApi.undoCheckOutDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
-        Assert.assertEquals(undoCheckOutDocument,checkedInDocument);
+        DocumentRevisionDTO undoCheckOutDocument = documentApi.undoCheckOutDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
+        Assert.assertEquals(undoCheckOutDocument, checkedInDocument);
 
         // Check out
         checkedOutDocument = documentApi.checkOutDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
@@ -83,7 +83,7 @@ public class DocumentApiTest {
 
         Assert.assertNotNull(updatedIteration.getModificationDate());
         lastIteration.setModificationDate(updatedIteration.getModificationDate());
-        Assert.assertEquals(lastIteration,updatedIteration);
+        Assert.assertEquals(lastIteration, updatedIteration);
 
         // Check in
         checkedInDocument = documentApi.checkInDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
@@ -141,8 +141,8 @@ public class DocumentApiTest {
         attribute.setType(InstanceAttributeDTO.TypeEnum.TEXT);
         attribute.setValue("ATTR_VALUE");
         lastIteration.getInstanceAttributes().add(attribute);
-        documentApi.updateDocumentIteration(TestConfig.WORKSPACE,documentCreation.getReference(), "A", "1", lastIteration);
-        documentApi.checkInDocument(TestConfig.WORKSPACE,documentCreation.getReference(),"A","");
+        documentApi.updateDocumentIteration(TestConfig.WORKSPACE, documentCreation.getReference(), "A", "1", lastIteration);
+        documentApi.checkInDocument(TestConfig.WORKSPACE, documentCreation.getReference(), "A", "");
 
         String attributeSearchQuery = "TEXT:ATTR_NAME:ATTR_VALUE";
 
@@ -171,6 +171,111 @@ public class DocumentApiTest {
 
     }
 
+    @Test
+    public void attributesAdvancedSearch() throws ApiException, InterruptedException {
+
+        String attributeValue1 = UUID.randomUUID().toString().substring(0, 8);
+        String attributeValue2 = UUID.randomUUID().toString().substring(0, 8);
+        String attributeValue3 = UUID.randomUUID().toString().substring(0, 8);
+        String attrName1 = UUID.randomUUID().toString().substring(0, 8);
+        String attrName2 = UUID.randomUUID().toString().substring(0, 8);
+
+        DocumentRevisionDTO document1 = createDocument(attrName1, attrName2, attributeValue1);
+        DocumentRevisionDTO document2 = createDocument(attrName1, attrName2, attributeValue2);
+        DocumentRevisionDTO document3 = createDocument(attrName1, attrName2, attributeValue3);
+
+        Thread.sleep(2000);
+
+        List<DocumentRevisionDTO> documentRevisions;
+        String attributeQuery;
+
+        // Simple attribute query
+        attributeQuery = "TEXT:" + attrName1 + ":" + attributeValue1;
+        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery);
+        Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document1.getId())).count());
+        Assert.assertEquals(1, documentRevisions.size());
+
+        // Simple attribute query
+        attributeQuery = "TEXT:" + attrName1 + ":" + attributeValue2;
+        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery);
+        Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document2.getId())).count());
+        Assert.assertEquals(1, documentRevisions.size());
+
+        // Simple attribute query
+        attributeQuery = "TEXT:" + attrName1 + ":" + attributeValue3;
+        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery);
+        Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document3.getId())).count());
+        Assert.assertEquals(1, documentRevisions.size());
+
+        // "Or" query on same attribute
+        attributeQuery = "TEXT:" + attrName1 + ":" + attributeValue1 + ";" + "TEXT:" + attrName1 + ":" + attributeValue2;
+        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery);
+        Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document1.getId())).count());
+        Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document2.getId())).count());
+        Assert.assertEquals(2, documentRevisions.size());
+
+        // Something not existing
+        attributeQuery = "TEXT:" + attrName1 + ":something that doesnt exist";
+        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery);
+        Assert.assertTrue(documentRevisions.isEmpty());
+
+        // Simple "AND" on 2 different attributes
+        attributeQuery = "TEXT:" + attrName1 + ":" + attributeValue1 + ";TEXT:" + attrName2 + ":" + attributeValue1;
+        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery);
+        Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document1.getId())).count());
+        Assert.assertEquals(1, documentRevisions.size());
+
+
+        // Mix "AND" and "OR" on 2 same attribute
+        attributeQuery =
+                InstanceAttributeDTO.TypeEnum.TEXT + ":" + attrName1 + ":" + attributeValue1 + ";" +
+                        InstanceAttributeDTO.TypeEnum.TEXT + ":" + attrName1 + ":" + attributeValue2 + ";" +
+                        InstanceAttributeDTO.TypeEnum.TEXT + ":" + attrName2 + ":" + attributeValue1;
+
+        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery);
+        Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document1.getId())).count());
+        Assert.assertEquals(1, documentRevisions.size());
+
+
+        // Mix 2 "OR" in a "AND"
+        attributeQuery = InstanceAttributeDTO.TypeEnum.TEXT + ":" + attrName1 + ":" + attributeValue1 + ";" +
+                InstanceAttributeDTO.TypeEnum.TEXT + ":" + attrName1 + ":" + attributeValue2 + ";" +
+                InstanceAttributeDTO.TypeEnum.TEXT + ":" + attrName2 + ":" + attributeValue1 + ";" +
+                InstanceAttributeDTO.TypeEnum.TEXT + ":" + attrName2 + ":" + attributeValue2;
+
+        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery);
+        Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document1.getId())).count());
+        Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document2.getId())).count());
+        Assert.assertEquals(2, documentRevisions.size());
+
+
+    }
+
+
+    private DocumentRevisionDTO createDocument(String attrName1, String attrName2, String attrValue) throws ApiException {
+
+        DocumentCreationDTO documentCreation = new DocumentCreationDTO();
+        documentCreation.setReference(UUID.randomUUID().toString().substring(0, 8));
+        DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreation, TestConfig.WORKSPACE);
+        DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(document);
+
+        InstanceAttributeDTO attribute1 = new InstanceAttributeDTO();
+        attribute1.setName(attrName1);
+        attribute1.setType(InstanceAttributeDTO.TypeEnum.TEXT);
+        attribute1.setValue(attrValue);
+
+        InstanceAttributeDTO attribute2 = new InstanceAttributeDTO();
+        attribute2.setName(attrName2);
+        attribute2.setType(InstanceAttributeDTO.TypeEnum.TEXT);
+        attribute2.setValue(attrValue);
+
+        List<InstanceAttributeDTO> instanceAttributes = lastIteration.getInstanceAttributes();
+        instanceAttributes.add(attribute1);
+        instanceAttributes.add(attribute2);
+
+        documentApi.updateDocumentIteration(TestConfig.WORKSPACE, documentCreation.getReference(), "A", "1", lastIteration);
+        return documentApi.checkInDocument(TestConfig.WORKSPACE, documentCreation.getReference(), "A", "");
+    }
 
 
 }

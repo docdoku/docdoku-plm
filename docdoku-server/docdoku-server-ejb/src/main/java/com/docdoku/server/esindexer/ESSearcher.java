@@ -293,16 +293,36 @@ public class ESSearcher {
             queryBuilder.add(QueryBuilders.matchQuery(ESMapper.CONTENT_KEY, searchQuery.getContent()));
         }
         if (searchQuery.getAttributes() != null) {
+
+            Map<String, List<NestedFilterBuilder>> filterBuilders = new HashMap<>();
+
+            // Group attributes by
             for (SearchQuery.AbstractAttributeQuery attr : searchQuery.getAttributes()) {
-                BoolFilterBuilder b = FilterBuilders.boolFilter();
-                b.must(FilterBuilders.termFilter(ESMapper.ATTR_NESTED_PATH+ "." + ESMapper.ATTRIBUTE_NAME, attr.getNameWithoutWhiteSpace()));
+
+                String attributeName = attr.getNameWithoutWhiteSpace();
+                List<NestedFilterBuilder> attrFilters = filterBuilders.get(attributeName);
+
+                if(null == attrFilters){
+                    attrFilters = new ArrayList<>();
+                    filterBuilders.put(attributeName, attrFilters);
+                }
+
+                BoolFilterBuilder b = new BoolFilterBuilder();
+
+                b.must(FilterBuilders.termFilter(ESMapper.ATTR_NESTED_PATH+ "." + ESMapper.ATTRIBUTE_NAME, attributeName));
 
                 if(attr.hasValue()) {
                     b.must(FilterBuilders.termFilter(ESMapper.ATTR_NESTED_PATH + "." + ESMapper.ATTRIBUTE_VALUE, attr.toString()));
                 }
 
                 NestedFilterBuilder nested = FilterBuilders.nestedFilter(ESMapper.ATTR_NESTED_PATH, b);
-                queryBuilder.add(nested);
+                attrFilters.add(nested);
+
+            }
+
+            for(Map.Entry<String,List<NestedFilterBuilder>> filterBuilderEntrySet : filterBuilders.entrySet()){
+                List<NestedFilterBuilder> builders = filterBuilderEntrySet.getValue();
+                queryBuilder.add(FilterBuilders.orFilter(builders.toArray(new NestedFilterBuilder[builders.size()])));
             }
         }
         if (searchQuery.getTags() != null) {
