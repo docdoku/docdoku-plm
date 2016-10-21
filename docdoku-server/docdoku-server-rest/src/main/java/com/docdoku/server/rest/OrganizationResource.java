@@ -27,6 +27,7 @@ import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IOrganizationManagerLocal;
+import com.docdoku.server.rest.dto.AccountDTO;
 import com.docdoku.server.rest.dto.OrganizationDTO;
 import com.docdoku.server.rest.dto.UserDTO;
 import io.swagger.annotations.Api;
@@ -69,7 +70,7 @@ public class OrganizationResource {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
-    public Organization getOrganizationOfCurrentUser() throws AccountNotFoundException {
+    private Organization getOrganizationOfCurrentUser() throws AccountNotFoundException {
         Account account = accountManager.getMyAccount();
         return organizationManager.getOrganizationOfAccount(account.getLogin());
     }
@@ -115,11 +116,18 @@ public class OrganizationResource {
 
     @GET
     @Path("members")
-    @ApiOperation(value = "Get members of the authenticated user's organization", response = Response.class)
+    @ApiOperation(value = "Get members of the authenticated user's organization", response = AccountDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Account> getMembers() throws AccountNotFoundException, OrganizationNotFoundException, AccessRightException {
+    public AccountDTO[] getMembers() throws AccountNotFoundException, OrganizationNotFoundException, AccessRightException {
         Organization organization = this.getOrganizationOfCurrentUser();
-        return organization.getMembers();
+        List<Account> accounts = organization.getMembers();
+        AccountDTO[] dtos = new AccountDTO[accounts.size()];
+
+        for (int i = 0; i < accounts.size(); i++) {
+            dtos[i] = mapper.map(accounts.get(i), AccountDTO.class);
+        }
+
+        return dtos;
     }
 
     @PUT
