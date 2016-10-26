@@ -34,7 +34,6 @@ import java.util.Locale;
 
 public class OrganizationDAO {
 
-
     private EntityManager em;
     private Locale mLocale;
 
@@ -68,6 +67,8 @@ public class OrganizationDAO {
     public void createOrganization(Organization pOrganization) throws OrganizationAlreadyExistsException, CreationException {
         try{
             //the EntityExistsException is thrown only when flush occurs
+            if(pOrganization.getName().trim().equals(""))
+                throw new CreationException(mLocale);
             em.persist(pOrganization);
             em.flush();
         }catch(EntityExistsException pEEEx){
