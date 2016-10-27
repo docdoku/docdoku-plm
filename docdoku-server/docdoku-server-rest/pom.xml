@@ -1,123 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>com.docdoku</groupId>
-		<artifactId>docdoku-server</artifactId>
-		<version>2.5-SNAPSHOT</version>
-	</parent>
-	<artifactId>docdoku-server-rest</artifactId>
-	<packaging>war</packaging>
-	<name>docdoku-server-rest Java EE 7 Restful web services</name>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.docdoku</groupId>
+        <artifactId>docdoku-server</artifactId>
+        <version>2.5-SNAPSHOT</version>
+    </parent>
+    <artifactId>docdoku-server-rest</artifactId>
+    <packaging>war</packaging>
+    <name>docdoku-server-rest Java EE 7 Restful web services</name>
 
-	<dependencies>
-		<!-- docdoku core -->
-		<dependency>
-			<groupId>com.docdoku</groupId>
-			<artifactId>docdoku-common</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope><!-- FIXME why a provided scope? -->
-		</dependency>
+    <dependencies>
+        <!-- docdoku core -->
+        <dependency>
+            <groupId>com.docdoku</groupId>
+            <artifactId>docdoku-common</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope><!-- FIXME why a provided scope? -->
+        </dependency>
 
-		<!-- JEE core API -->
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.activation</groupId>
-			<artifactId>activation</artifactId>
-		</dependency>
+        <!-- JEE core API -->
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+        </dependency>
 
-		<!-- Dependencies for sources -->
-		<dependency>
-			<groupId>io.swagger</groupId>
-			<artifactId>swagger-annotations</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId> <!-- FIXME -->
-		</dependency>
-		<dependency>
-			<groupId>net.sf.dozer</groupId>
-			<artifactId>dozer</artifactId> <!-- FIXME -->
-		</dependency>
-		<dependency>
-			<groupId>java3d</groupId>
-			<artifactId>vecmath</artifactId> <!-- FIXME -->
-		</dependency>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.bitbucket.b_c</groupId>
-			<artifactId>jose4j</artifactId>
-		</dependency>
-		<!-- Swagger dependencies -->
-		<dependency>
-			<groupId>io.swagger</groupId>
-			<artifactId>swagger-jersey2-jaxrs</artifactId>
-			<scope>runtime</scope> <!-- FIXME: dependency anymore?-->
-			<exclusions>
-				<exclusion>
-					<groupId>javax.ws.rs</groupId>
-					<artifactId>jsr311-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.brsanthu</groupId>
-			<artifactId>migbase64</artifactId>
-			<scope>runtime</scope> <!-- FIXME: dependency anymore?-->
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-json-jackson</artifactId>
-			<scope>runtime</scope><!-- FIXME: dependency anymore-->
-		</dependency>
+        <!-- Dependencies for sources -->
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId> <!-- FIXME -->
+        </dependency>
+        <dependency>
+            <groupId>net.sf.dozer</groupId>
+            <artifactId>dozer</artifactId> <!-- FIXME -->
+        </dependency>
+        <dependency>
+            <groupId>java3d</groupId>
+            <artifactId>vecmath</artifactId> <!-- FIXME -->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.bitbucket.b_c</groupId>
+            <artifactId>jose4j</artifactId>
+        </dependency>
+        <!-- Swagger dependencies -->
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-jersey2-jaxrs</artifactId>
+            <scope>runtime</scope> <!-- FIXME: dependency anymore? -->
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.ws.rs</groupId>
+                    <artifactId>jsr311-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.brsanthu</groupId>
+            <artifactId>migbase64</artifactId>
+            <scope>runtime</scope> <!-- FIXME: dependency anymore? -->
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <scope>runtime</scope><!-- FIXME: dependency anymore -->
+        </dependency>
 
-		<!-- Test dependencies -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish</groupId>
-			<artifactId>javax.json</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-		</dependency>
-	</dependencies>
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+        </dependency>
+    </dependencies>
 
-	<build>
-		<!-- War name -->
-		<finalName>${project.artifactId}</finalName>
-		<plugins>
-			<!-- Compile sources -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-		</plugins>
-		<testResources>
-			<testResource>
-				<directory>src/test/resources</directory>
-			</testResource>
-			<testResource>
-				<directory>src/test/resources/com/docdoku/server/rest/file/*</directory>
-			</testResource>
-			<testResource>
-				<directory>src/test/resources/com/docdoku/server/rest/part/*</directory>
-			</testResource>
-		</testResources>
-	</build>
+    <build>
+        <!-- War name -->
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <!-- Compile sources -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources/com/docdoku/server/rest/file/*</directory>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources/com/docdoku/server/rest/part/*</directory>
+            </testResource>
+        </testResources>
+    </build>
 </project>
