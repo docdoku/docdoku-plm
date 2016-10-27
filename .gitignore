@@ -13,3 +13,8 @@ bower_components/
 derby.log
 gcm.properties
 npm-debug.log
+bin/
+.settings
+.settings/**
+.project
+.classpath
