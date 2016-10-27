@@ -37,15 +37,15 @@
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId> <!-- FIXME -->
+            <artifactId>guava</artifactId>
         </dependency>
         <dependency>
             <groupId>net.sf.dozer</groupId>
-            <artifactId>dozer</artifactId> <!-- FIXME -->
+            <artifactId>dozer</artifactId>
         </dependency>
         <dependency>
             <groupId>java3d</groupId>
-            <artifactId>vecmath</artifactId> <!-- FIXME -->
+            <artifactId>vecmath</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-jersey2-jaxrs</artifactId>
-            <scope>runtime</scope> <!-- FIXME: dependency anymore? -->
+            <scope>runtime</scope>
             <exclusions>
                 <exclusion>
                     <groupId>javax.ws.rs</groupId>
@@ -74,12 +74,12 @@
         <dependency>
             <groupId>com.brsanthu</groupId>
             <artifactId>migbase64</artifactId>
-            <scope>runtime</scope> <!-- FIXME: dependency anymore? -->
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-jackson</artifactId>
-            <scope>runtime</scope><!-- FIXME: dependency anymore -->
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Test dependencies -->

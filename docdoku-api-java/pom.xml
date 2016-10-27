@@ -18,7 +18,7 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <scope>runtime</scope><!-- FIXME: dependency anymore? -->
+            <scope>runtime</scope>
         </dependency>
         <!-- HTTP client: jersey-client -->
         <dependency>
@@ -62,7 +62,7 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <scope>runtime</scope><!-- FIXME: dependency anymore? -->
+            <scope>runtime</scope>
         </dependency>
         <!-- An HTTP & HTTP/2 client for Android and Java applications -->
         <dependency>
