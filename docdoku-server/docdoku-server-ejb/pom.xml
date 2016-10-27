@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.docdoku</groupId>
@@ -13,8 +14,6 @@
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>7.0</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
@@ -23,130 +22,126 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-converter-step</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-converter-dae</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-converter-all</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-converter-obj</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-converter-ifc</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-converter-catia</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-converter-catia-product</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-ext</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-scorm</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-viewer-image</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-office-doc</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-viewer-multimedia</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
-            <version>4.6.0</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-contrib</artifactId>
-            <version>3.6</version>
+            <scope>runetime</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-scratchpad</artifactId>
-            <version>3.12</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>3.12</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.12</version>
         </dependency>
         <dependency>
             <groupId>com.github.spullara.mustache.java</groupId>
             <artifactId>compiler</artifactId>
-            <version>0.8.11</version>
         </dependency>
         <!-- ES dependency for query builder -->
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
-            <version>1.0.0</version>
         </dependency>
         <!-- JUNIT & Mockito -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
@@ -170,12 +165,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
