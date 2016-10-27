@@ -1,9 +1,10 @@
 /*global _,$,define,App*/
 define([
     'common-objects/models/user',
-    'common-objects/models/workspace'
+    'common-objects/models/workspace',
+    'common-objects/models/organization'
 
-], function (User, Workspace) {
+], function (User, Workspace, Organization) {
 
     'use strict';
 
@@ -90,6 +91,12 @@ define([
                 App.config.isReadOnly = _.some(App.config.groups,function(group){return group.readOnly;})
                     && !App.config.workspaceAdmin;
             },onError);
+    };
+
+    ContextResolver.prototype.resolveOrganization = function() {
+        return Organization.getOrganization().then(function(organization) {
+            App.config.organization = organization;
+        }, onError);
     };
 
     ContextResolver.prototype.resolveUser = function () {

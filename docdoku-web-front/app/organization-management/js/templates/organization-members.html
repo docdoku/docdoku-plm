@@ -1,0 +1,60 @@
+<div class="actions well">
+    <button class="btn btn-default organization-management" title="{{i18n.CANCEL}}">
+        {{i18n.CANCEL}}
+    </button>
+
+    <button class="btn btn-default add-user" title="{{i18n.ADD_USER}}">
+        <i class="fa fa-plus"></i> {{i18n.ADD_USER}}
+    </button>
+
+    <form id="organization-add-user-form" class="inline form-inline hide">
+        <input type="text" required name="login" placeholder="{{i18n.LOGIN}}"/>
+        <button class="btn btn-default" title="{{i18n.ADD}}">
+            {{i18n.ADD}}
+        </button>
+        <button class="btn btn-default cancel" type="reset" title="{{i18n.CANCEL}}">
+            {{i18n.CANCEL}}
+        </button>
+    </form>
+
+    <button class="btn btn-default delete-users hide show-if-users" title="{{i18n.DELETE}}">
+        <i class="fa fa-remove"></i> {{i18n.DELETE}}
+    </button>
+
+    <button class="btn btn-default move-member-up hide show-if-user" title="{{i18n.MOVE_UP}}">
+        <i class="fa fa-chevron-up"></i> {{i18n.MOVE_UP}}
+    </button>
+
+    <button class="btn btn-default move-member-down hide show-if-user" title="{{i18n.MOVE_DOWN}}">
+        <i class="fa fa-chevron-down"></i> {{i18n.MOVE_DOWN}}
+    </button>
+</div>
+
+<div class="notifications"></div>
+<div class="margin">
+    <div class="organization-group-container">
+        <div class="organization-group well well-large">
+            <h4>
+                <i class="fa fa-user"></i> {{i18n.MEMBERS}}
+            </h4>
+            <table id="organization_user_table" class="table table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" class="toggle-checkboxes"></th>
+                        <th>{{i18n.NAME}}</th>
+                        <th>{{i18n.EMAIL}}</th>
+                    </tr>
+                </thead>
+                <tbody class="items">
+                {{#members}}
+                    <tr>
+                        <td><input type="checkbox" class="toggle-checkbox" data-is-admin="{{isCurrentAdmin}}" data-login="{{login}}"/></td>
+                        <td>{{name}}</td>
+                        <td>{{email}}</td>
+                    </tr>
+                {{/members}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

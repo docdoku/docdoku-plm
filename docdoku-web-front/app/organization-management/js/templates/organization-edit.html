@@ -1,0 +1,51 @@
+<div class="actions well">
+    <button class="btn btn-default organization-management" title="{{i18n.CANCEL}}">
+        {{i18n.CANCEL}}
+    </button>
+    {{#organization}}
+    <button class="btn btn-warning delete-organization" title="{{i18n.DELETE}}">
+        {{i18n.DELETE}}
+    </button>
+    {{/organization}}
+</div>
+<div class="notifications"></div>
+<div class="margin">
+    {{#deleting}}
+    <h4><i class="fa fa-check"></i> <strong>{{i18n.ORGANIZATION_DELETING_TITLE}}</strong></h4>
+    {{/deleting}}
+    {{#organization}}
+    <h3>{{i18n.EDIT_ORGANIZATION_SUBTITLE}}</h3>
+
+    <form id="organization_update_form" class="form-horizontal">
+
+        <div class="control-group hide success-update">
+            <div class="controls">
+                <h4 class="">
+                <i class="fa fa-save"></i> {{i18n.SAVED}}
+            </h4>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label"> {{i18n.ORGANIZATION}}</label>
+            <div class="controls">
+                {{organization.name}}
+            </div>
+        </div>
+
+
+        <div class="control-group">
+            <label class="control-label" for="description"> {{i18n.DESCRIPTION}}</label>
+            <div class="controls">
+                <textarea id="description" placeholder="Description" rows="3">{{organization.description}}</textarea>
+            </div>
+        </div>
+
+        <div class="actions-btn">
+            <div class="controls">
+                <input type="submit" value="{{i18n.SAVE}}" alt="{{i18n.SAVE}}" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+    {{/organization}}
+</div>

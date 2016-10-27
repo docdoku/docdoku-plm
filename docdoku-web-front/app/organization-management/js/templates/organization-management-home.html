@@ -1,0 +1,35 @@
+<div class="notifications"></div>
+
+<div class="margin">
+    <h3>{{i18n.ORGANIZATION_ADMINISTRATION}}</h3>
+
+    {{^organizationName}}
+    <p><i class="fa fa-exclamation-triangle"></i> <em>{{i18n.NO_ORGANIZATION_EXISTS}}</em></p>
+    <a href="#/create">{{i18n.CREATE_ORGANIZATION_SUBTITLE}}</a>
+    {{/organizationName}}
+    {{#organizationName}}
+    <div class="home-organization-list-container">
+        <div class="well-large well home-organization">
+            <div>
+                <h4>
+                    <i class="fa fa-graduation-cap"></i>
+                    {{organization.name}}
+                    <br/>
+                    <small>{{organization.description}}</small>
+                </h4>
+            </div>
+
+            <ul class="unstyled">
+                <li>
+                    <a href="#/members">{{i18n.MEMBERS}}</a>
+                    (<span class="members-count"></span>)
+                </li>
+            </ul>
+
+            <div class="organization-actions">
+                <a href="#/edit">{{i18n.EDIT}}</i></a>
+            </div>
+        </div>
+    </div>
+    {{/organizationName}}
+</div>

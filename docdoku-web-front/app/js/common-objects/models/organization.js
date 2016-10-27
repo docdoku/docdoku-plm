@@ -59,6 +59,14 @@ define(['backbone'], function (Backbone) {
         });
     };
 
+    Organization.removeMembers = function (userLogins) {
+        var promiseArray = [];
+        _.each(userLogins, function (login) {
+            promiseArray.push(Organization.removeMember({login: login}));
+        });
+        return $.when.apply(undefined, promiseArray);
+    };
+
     Organization.moveMemberUp = function(user) {
         return $.ajax({
             type: 'PUT',

@@ -1,0 +1,26 @@
+/*global define*/
+define({
+    ADD_USER:'Ajouter un nouveau compte',
+		CREATE_ORGANIZATION_SIDE_TEXT:'Seul le créateur de l\'organisation possède les droits d\'administration. Ces droits permettent d\'éditer les propriétés de l\'organisation, d\'ajouter et de supprimer de utilisateurs.',
+		CREATE_ORGANIZATION_SUBTITLE:'Créer son organization',
+    CREATE_SUBSCRIPTION:'Créer un abonnement',
+    DELETE_ORGANIZATION_TEXT:'Ceci est  irréversible. Entrez "SUPPRIMER" dans le champ ci-dessous pour confirmer la suppression.',
+    DELETE_ORGANIZATION_QUESTION:'Vous êtes sur le point de supprimer votre organization !',
+		EDIT_ORGANIZATION_SUBTITLE:'Editer son organization',
+    MEMBER_MOVE_SUCCESS:'Membre déplacé avec succées',
+    MEMBERS:'Membres',
+    NO_ORGANIZATION_EXISTS:'Il n\'existe pas d\'organisation lié à ce compte.',
+    NO_SUBSCRIPTIONS:'Vous n\'avez pas d\'abonnement.',
+    ORGANIZATION_ADMINISTRATION:'Gérer son organisation',
+    ORGANIZATION_CREATED:'Succées de la création de l\'organisation.',
+    ORGANIZATION_DELETING_TITLE:'Succées de la suppression de l\'organisation.',
+    ORGANIZATION_MEMBERS: 'Membres',
+    ORGANIZATION_SUBSCRIPTIONS_MANAGEMENT:'Gestion des abonnements',
+    ORGANIZATION_UPDATED:'Succées de la modification de l\'organisation.',
+    PAID_ACCESS:'Accès payant',
+    SIDEBAR_ACCOUNT_TEXT:'Supprimer un compte d\'une organisation n\'a pas d\'incidence sur l\'appartenance aux espaces de travail.<br>Un compte avec accès payant permet d\'accéder aux espaces de travail de plus de 2 utilisateurs (en production). Pour passer en production, rendez-vous dans la section <a href="/organization-management/#FredericMaury/subscriptions">Gérer les abonnements</a>.',
+    SIDEBAR_ACCOUNT_TITLE:'Compte',
+    SIDEBAR_SUBSCRIPTION_TEXT:'L\'utilisation de DocDokuPLM en production s\'active via les abonnements. Un abonnement est une période d\'utilisation de DocDokuPLM pour le nombre de comptes que vous souhaitez. L\'utilisation par compte par mois coûte 49€ HT. Vous pouvez planifier 2 abonnements maximum, chacun étant composé d\'un nombre quelconque d\'utilisateurs. Le premier abonnement commence le jour de l\'achat.',
+    SIDEBAR_SUBSCRIPTION_TITLE:'Abonnements',
+    SUBSCRIPTIONS:'Abonnements'
+});
