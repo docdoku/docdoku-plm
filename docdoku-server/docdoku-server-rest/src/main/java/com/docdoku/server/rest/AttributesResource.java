@@ -23,10 +23,10 @@ import com.docdoku.core.exceptions.UserNotActiveException;
 import com.docdoku.core.exceptions.UserNotFoundException;
 import com.docdoku.core.exceptions.WorkspaceNotEnabledException;
 import com.docdoku.core.exceptions.WorkspaceNotFoundException;
-import com.docdoku.core.meta.InstanceAttributeDescriptor;
+import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.server.rest.dto.InstanceAttributeDescriptorDTO;
+import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -46,7 +46,9 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Morgan Guimard
@@ -74,35 +76,59 @@ public class AttributesResource {
     @GET
     @Path("part-iterations")
     @ApiOperation(value = "Get parts attributes list for given workspace",
-            response = InstanceAttributeDescriptorDTO.class,
+            response = InstanceAttributeDTO.class,
             responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPartIterationsAttributes(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
-        List<InstanceAttributeDescriptor> attributes = productManager.getPartIterationsInstanceAttributesInWorkspace(workspaceId);
-        List<InstanceAttributeDescriptorDTO> dtos = new ArrayList<>();
-        for (InstanceAttributeDescriptor descriptor : attributes) {
-            dtos.add(mapper.map(descriptor, InstanceAttributeDescriptorDTO.class));
+        List<InstanceAttribute> attributes = productManager.getPartIterationsInstanceAttributesInWorkspace(workspaceId);
+        List<InstanceAttributeDTO> dtos = new ArrayList<>();
+        Set<String> seen=new HashSet<>();
+
+        for (InstanceAttribute attribute : attributes) {
+            if(attribute==null)
+                continue;
+
+            InstanceAttributeDTO dto = mapper.map(attribute, InstanceAttributeDTO.class);
+            if(seen.add(dto.getType()+"."+dto.getName())) {
+                dto.setValue(null);
+                dto.setMandatory(false);
+                dto.setLocked(false);
+                dto.setLovName(null);
+                dtos.add(dto);
+            }
         }
 
-        return Response.ok(new GenericEntity<List<InstanceAttributeDescriptorDTO>>((List<InstanceAttributeDescriptorDTO>) dtos) {
+        return Response.ok(new GenericEntity<List<InstanceAttributeDTO>>((List<InstanceAttributeDTO>) dtos) {
         }).build();
     }
 
     @GET
     @Path("path-data")
     @ApiOperation(value = "Get path data attributes list for given workspace",
-            response = InstanceAttributeDescriptorDTO.class,
+            response = InstanceAttributeDTO.class,
             responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPathDataAttributes(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
-        List<InstanceAttributeDescriptor> attributes = productManager.getPathDataInstanceAttributesInWorkspace(workspaceId);
-        List<InstanceAttributeDescriptorDTO> dtos = new ArrayList<>();
-        for (InstanceAttributeDescriptor descriptor : attributes) {
-            dtos.add(mapper.map(descriptor, InstanceAttributeDescriptorDTO.class));
+        List<InstanceAttribute> attributes = productManager.getPathDataInstanceAttributesInWorkspace(workspaceId);
+        List<InstanceAttributeDTO> dtos = new ArrayList<>();
+        Set<String> seen=new HashSet<>();
+
+        for (InstanceAttribute attribute : attributes) {
+            if(attribute==null)
+                continue;
+
+            InstanceAttributeDTO dto = mapper.map(attribute, InstanceAttributeDTO.class);
+            if(seen.add(dto.getType()+"."+dto.getName())) {
+                dto.setValue(null);
+                dto.setMandatory(false);
+                dto.setLocked(false);
+                dto.setLovName(null);
+                dtos.add(dto);
+            }
         }
-        return Response.ok(new GenericEntity<List<InstanceAttributeDescriptorDTO>>((List<InstanceAttributeDescriptorDTO>) dtos) {
+        return Response.ok(new GenericEntity<List<InstanceAttributeDTO>>((List<InstanceAttributeDTO>) dtos) {
         }).build();
     }
 }

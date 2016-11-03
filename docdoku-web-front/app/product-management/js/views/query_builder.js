@@ -306,7 +306,7 @@ define([
                 filter.input = 'select';
                 var values = [];
                 var index = 0;
-                _.each(attribute.lovItems, function (item) {
+                _.each(attribute.items, function (item) {
                     var value = {};
                     value[index] = item.name;
                     values.push(value);

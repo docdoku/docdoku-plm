@@ -26,7 +26,6 @@ import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.meta.InstanceAttributeDescriptor;
 import com.docdoku.core.meta.InstanceDateAttribute;
 import com.docdoku.core.meta.InstanceListOfValuesAttribute;
 import com.docdoku.core.product.PartIteration;
@@ -39,7 +38,11 @@ import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.export.ExcelGenerator;
 import com.docdoku.server.rest.collections.QueryResult;
+import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonValue;
@@ -71,6 +74,13 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
     private ExcelGenerator excelGenerator = new ExcelGenerator();
     @Inject
     private IProductInstanceManagerLocal productInstanceService;
+
+    private Mapper mapper;
+    @PostConstruct
+    public void init() {
+        mapper = DozerBeanMapperSingletonWrapper.getInstance();
+    }
+
 
     private static SimpleDateFormat getFormat() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -253,10 +263,10 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
                         jg.writeStartArray(attributeSelect);
 
                         for (InstanceAttribute attribute : attributes) {
-                            InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
+                            InstanceAttributeDTO attrDTO = mapper.map(attribute, InstanceAttributeDTO.class);
 
-                            if (attributeDescriptor.getName().equals(attributeSelectName)
-                                    && attributeDescriptor.getStringType().equals(attributeSelectType)) {
+                            if (attrDTO.getName().equals(attributeSelectName)
+                                    && attrDTO.getType().name().equals(attributeSelectType)) {
 
                                 attributeValue = attribute.getValue() + "";
 
@@ -299,10 +309,10 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
                         jg.writeStartArray(attributeSelect);
 
                         for (InstanceAttribute attribute : attributes) {
-                            InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
+                            InstanceAttributeDTO attrDTO = mapper.map(attribute, InstanceAttributeDTO.class);
 
-                            if (attributeDescriptor.getName().equals(attributeSelectName)
-                                    && attributeDescriptor.getStringType().equals(attributeSelectType)) {
+                            if (attrDTO.getName().equals(attributeSelectName)
+                                    && attrDTO.getType().name().equals(attributeSelectType)) {
 
                                 attributeValue = attribute.getValue() + "";
 

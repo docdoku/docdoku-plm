@@ -45,7 +45,7 @@ import java.util.*;
 @NamedQueries({
         @NamedQuery(name="PartIteration.findUsedByAsSubstitute", query="SELECT p FROM PartIteration p JOIN p.components l JOIN l.substitutes s WHERE s.substitute = :partMaster"),
         @NamedQuery(name="PartIteration.findUsedByAsComponent", query="SELECT p FROM PartIteration p JOIN p.components l WHERE l.component = :partMaster"),
-        @NamedQuery(name="PartIteration.findDistinctInstanceAttributes", query="SELECT DISTINCT i FROM InstanceAttribute i LEFT JOIN PartIteration p WHERE p.partRevision.partMaster.workspace.id = :workspaceId AND i member of p.instanceAttributes"),
+        @NamedQuery(name="PartIteration.findDistinctInstanceAttributes", query="SELECT DISTINCT p.instanceAttributes FROM PartIteration p WHERE p.partRevision.partMaster.workspace.id = :workspaceId"),
         @NamedQuery(name="PartIteration.findWhereLOV", query="SELECT p FROM PartIteration p WHERE EXISTS ( SELECT i FROM InstanceAttributeTemplate i, ListOfValuesAttributeTemplate il WHERE i member of p.instanceAttributeTemplates AND i = il AND il.lov.name = :lovName AND il.lov.workspaceId = :workspace_id)")
 })
 @Entity

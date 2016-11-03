@@ -25,7 +25,6 @@ import com.docdoku.core.configuration.PathDataIteration;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.meta.InstanceAttributeDescriptor;
 import com.docdoku.core.meta.InstanceListOfValuesAttribute;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartLinkList;
@@ -36,9 +35,12 @@ import com.docdoku.core.query.QueryResultRow;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.helpers.LangHelper;
 import com.docdoku.server.rest.collections.QueryResult;
+import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -57,6 +59,7 @@ public class ExcelGenerator {
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private SimpleDateFormat attributeDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    private Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
     public File generateXLSResponse(QueryResult queryResult, Locale locale, String baseURL) {
         File excelFile = new File("export_parts.xls");
         //Blank workbook
@@ -306,12 +309,14 @@ public class ExcelGenerator {
                             List<InstanceAttribute> attributes = lastIteration.getInstanceAttributes();
                             if (attributes != null) {
                                 for (InstanceAttribute attribute : attributes) {
-                                    InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
-                                    if (attributeDescriptor.getName().equals(attributeSelectName)
-                                            && attributeDescriptor.getStringType().equals(attributeSelectType)) {
+                                    InstanceAttributeDTO attrDTO = mapper.map(attribute, InstanceAttributeDTO.class);
+                                    mapper.map(attribute, InstanceAttributeDTO.class);
+
+                                    if (attrDTO.getName().equals(attributeSelectName)
+                                            && attrDTO.getType().name().equals(attributeSelectType)) {
 
                                         attributeValue = attribute.getValue() + "";
-                                        if (attributeDescriptor.getType() == InstanceAttributeDescriptor.Type.DATE) {
+                                        if (attrDTO.getType() == InstanceAttributeDTO.Type.DATE) {
                                             attributeValue = attribute.getValue() != null ? attributeDateFormat.format(attribute.getValue()) : "";
                                         } else if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
@@ -338,12 +343,12 @@ public class ExcelGenerator {
                             List<InstanceAttribute> attributes = pdi.getInstanceAttributes();
                             if (attributes != null) {
                                 for (InstanceAttribute attribute : attributes) {
-                                    InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
-                                    if (attributeDescriptor.getName().equals(attributeSelectName)
-                                            && attributeDescriptor.getStringType().equals(attributeSelectType)) {
+                                    InstanceAttributeDTO attrDTO = mapper.map(attribute, InstanceAttributeDTO.class);
+                                    if (attrDTO.getName().equals(attributeSelectName)
+                                            && attrDTO.getType().name().equals(attributeSelectType)) {
 
                                         attributeValue = attribute.getValue() + "";
-                                        if (attributeDescriptor.getType() == InstanceAttributeDescriptor.Type.DATE) {
+                                        if (attrDTO.getType() == InstanceAttributeDTO.Type.DATE) {
                                             attributeValue = attribute.getValue() != null ? attributeDateFormat.format(attribute.getValue()) : "";
                                         } else if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
@@ -389,10 +394,10 @@ public class ExcelGenerator {
                     List<InstanceAttribute> attributes = lastIteration.getInstanceAttributes();
                     if (attributes != null) {
                         for (InstanceAttribute attribute : attributes) {
-                            InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
+                            InstanceAttributeDTO attrDTO = mapper.map(attribute, InstanceAttributeDTO.class);
 
-                            if (attributeDescriptor.getName().equals(attributeSelectName)
-                                    && attributeDescriptor.getStringType().equals(attributeSelectType)) {
+                            if (attrDTO.getName().equals(attributeSelectName)
+                                    && attrDTO.getType().name().equals(attributeSelectType)) {
                                 commentsSbattr.append(attribute.getId() + "|");
                             }
                         }
@@ -415,10 +420,10 @@ public class ExcelGenerator {
                     List<InstanceAttribute> attributes = pdi.getInstanceAttributes();
                     if (attributes != null) {
                         for (InstanceAttribute attribute : attributes) {
-                            InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
+                            InstanceAttributeDTO attrDTO = mapper.map(attribute, InstanceAttributeDTO.class);
 
-                            if (attributeDescriptor.getName().equals(attributeSelectName)
-                                    && attributeDescriptor.getStringType().equals(attributeSelectType)) {
+                            if (attrDTO.getName().equals(attributeSelectName)
+                                    && attrDTO.getType().name().equals(attributeSelectType)) {
                                 commentsSbpattr.append(attribute.getId() + "|");
                             }
                         }
