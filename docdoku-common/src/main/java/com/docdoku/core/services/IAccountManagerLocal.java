@@ -57,4 +57,6 @@ public interface IAccountManagerLocal {
     List<Account> getAccounts();
 
     Account enableAccount(String login, boolean enabled) throws AccountNotFoundException, NotAllowedException;
+
+    Account authenticateAccount(String login, String password);
 }

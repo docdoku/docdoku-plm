@@ -28,10 +28,7 @@ import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.security.Credential;
 import com.docdoku.core.security.UserGroupMapping;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.util.List;
 import java.util.Locale;
 
@@ -118,4 +115,9 @@ public class AccountDAO {
         return query.getResultList();
     }
 
+
+    public boolean authenticate(String login, String password){
+        Credential credential = em.find(Credential.class, login);
+        return credential != null && credential.authenticate(password);
+    }
 }

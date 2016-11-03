@@ -68,6 +68,22 @@ public class AccountManagerBean implements IAccountManagerLocal {
     }
 
     @Override
+    public Account authenticateAccount(String login, String password) {
+        AccountDAO accountDAO = new AccountDAO(em);
+        Account account = null;
+
+        if(accountDAO.authenticate(login, password)){
+            try {
+                account = getAccount(login);
+            } catch (AccountNotFoundException e) {
+               return null;
+            }
+        }
+
+        return account;
+    }
+
+    @Override
     public Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountAlreadyExistsException, CreationException {
         PlatformOptions.OperationSecurityStrategy registrationStrategy = platformOptionsManager.getRegistrationStrategy();
         Date now = new Date();

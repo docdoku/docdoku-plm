@@ -20,6 +20,7 @@
 
 package com.docdoku.core.security;
 
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -37,6 +38,7 @@ import java.util.logging.Logger;
  */
 @Table(name="CREDENTIAL")
 @javax.persistence.Entity
+@NamedQuery(name="Credential.authenticate", query = "SELECT c FROM Credential c WHERE :login = c.login AND :password = c.password")
 public class Credential implements java.io.Serializable {
 
 
@@ -59,6 +61,15 @@ public class Credential implements java.io.Serializable {
             LOGGER.log(Level.SEVERE, null, pEx);
         }
         return credential;
+    }
+
+    public boolean authenticate(String pPassword){
+        try {
+            return password != null && pPassword != null && md5Sum(pPassword).equals(password);
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException pEx) {
+            LOGGER.log(Level.SEVERE, null, pEx);
+            return false;
+        }
     }
     
     private static String md5Sum(String pText) throws NoSuchAlgorithmException, UnsupportedEncodingException {
