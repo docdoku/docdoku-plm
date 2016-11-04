@@ -27,7 +27,7 @@ casper.options.viewportSize = {
 
 casper.options.onResourceRequested = function (casper, requestData) {
     if (conf.debugRequests) {
-        if(requestData.url.match('/api/')){
+        if (requestData.url.match('/api/')) {
             console.log(requestData.method + ' ' + requestData.url);
             console.log(JSON.stringify(requestData.headers));
         }
@@ -35,7 +35,7 @@ casper.options.onResourceRequested = function (casper, requestData) {
 
     if (conf.waitOnRequest) {
         // do not wait for fonts
-        if(requestData.url.indexOf('fonts') === -1 && requestData.url.indexOf('livereload.js') === -1) {
+        if (requestData.url.indexOf('fonts') === -1 && requestData.url.indexOf('livereload.js') === -1) {
             this.log('Waiting for AJAX request: ' + requestData.url, 'info');
             casper.waitForResource(requestData.url, function () {
                 this.log('AJAX request returned: ' + requestData.url, 'info');
@@ -48,8 +48,8 @@ casper.options.onResourceRequested = function (casper, requestData) {
 
 if (conf.debugResponses) {
     casper.options.onResourceReceived = function (C, response) {
-        if(response.url.match('/api/')){
-            console.log('#'+response.status + ' ' +response.statusText + ' ' + response.url);
+        if (response.url.match('/api/')) {
+            console.log('#' + response.status + ' ' + response.statusText + ' ' + response.url);
             console.log(JSON.stringify(response.headers));
         }
     };
@@ -81,9 +81,12 @@ casper.on('remote.message', function remoteMessage(message) {
 
 casper.test.begin('DocdokuPLM Tests suite', 1, function docdokuPLMTestsSuite() {
     casper.thenOpen(homeUrl, function homePageLoaded() {
+        this.evaluate(function(){
+            localStorage.setItem('jwt','');
+        });
         this.test.assert(true, 'Tests begins');
     });
-    casper.run(function letsGo() {
+    casper.run(function () {
         this.test.done();
     });
 });
