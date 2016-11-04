@@ -7,8 +7,7 @@ describe('Api auth tests', function() {
 
     var jwt, cookie;
 
-    it('Should login and get session id and jwt', function(done) {
-
+    it('Should login and get cookie and jwt', function(done) {
         var client = new DocdokuPlmClient({url:config.url});
         client.getApi().then(function(api){
             api.auth.login({body:{login:config.login,password:config.password}}).then(function(response){
@@ -21,7 +20,21 @@ describe('Api auth tests', function() {
             });
         });
     });
-/*
+
+    it('Should be able tu use jwt', function(done) {
+
+        var client = new DocdokuPlmClient({
+            url:config.url,
+            jwt:jwt
+        });
+
+        client.getApi().then(function(api){
+            api.accounts.getAccount().then(function(response){
+                expect(response.status,200);
+                done();
+            });
+        });
+    });
 
     it('Should be able tu use basic auth', function(done) {
 
@@ -38,7 +51,7 @@ describe('Api auth tests', function() {
                 done();
             });
         });
-    });*/
+    });
 
     it('Should be able tu use cookie', function(done) {
 
