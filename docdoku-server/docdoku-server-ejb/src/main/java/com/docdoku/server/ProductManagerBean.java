@@ -911,18 +911,9 @@ public class ProductManagerBean implements IProductManagerLocal {
         return newLink;
     }
 
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public PartRevision getPartRevision(PartRevisionKey pPartRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
-
-        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
-            PartRevision partRevision = new PartRevisionDAO(em).loadPartR(pPartRPK);
-            if (partRevision.isCheckedOut()) {
-                em.detach(partRevision);
-                partRevision.removeLastIteration();
-            }
-            return partRevision;
-        }
 
         User user = checkPartRevisionReadAccess(pPartRPK);
 

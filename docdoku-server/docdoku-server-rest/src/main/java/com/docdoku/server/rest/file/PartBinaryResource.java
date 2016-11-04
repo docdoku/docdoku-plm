@@ -29,7 +29,6 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
-import com.docdoku.server.filters.GuestProxy;
 import com.docdoku.server.helpers.Streams;
 import com.docdoku.server.rest.exceptions.*;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
@@ -84,7 +83,7 @@ public class PartBinaryResource {
     @Inject
     private IShareManagerLocal shareService;
     @Inject
-    private GuestProxy guestProxy;
+    private IPublicEntityManagerLocal publicEntityManager;
     @Inject
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
 
@@ -283,7 +282,7 @@ public class PartBinaryResource {
         BinaryResource binaryResource;
 
         if(uuid != null && !uuid.isEmpty()){
-            binaryResource = guestProxy.getBinaryResourceForSharedPart(fullName);
+            binaryResource = publicEntityManager.getBinaryResourceForSharedPart(fullName);
         }else {
             binaryResource = getBinaryResource(fullName);
         }
@@ -327,12 +326,12 @@ public class PartBinaryResource {
     private InputStream getConvertedBinaryResource(BinaryResource binaryResource, String outputFormat, String uuid) throws FileConversionException {
         try {
             if(uuid != null && !uuid.isEmpty()){
-                return guestProxy.getPartConvertedResource(outputFormat, binaryResource);
+                return publicEntityManager.getPartConvertedResource(outputFormat, binaryResource);
             }
             if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
                 return documentResourceGetterService.getPartConvertedResource(outputFormat, binaryResource);
             } else {
-                return guestProxy.getPartConvertedResource(outputFormat, binaryResource);
+                return publicEntityManager.getPartConvertedResource(outputFormat, binaryResource);
             }
         } catch (Exception e) {
             throw new FileConversionException(e);
@@ -349,7 +348,7 @@ public class PartBinaryResource {
     }
 
     private boolean canAccess(PartIterationKey partIKey) throws UserNotActiveException, EntityNotFoundException {
-        if(guestProxy.canAccess(partIKey)){
+        if(publicEntityManager.canAccess(partIKey)){
             return true;
         }
         return productService.canAccess(partIKey);
@@ -357,7 +356,7 @@ public class PartBinaryResource {
 
     private BinaryResource getBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
-        BinaryResource publicBinaryResourceForPart = guestProxy.getPublicBinaryResourceForPart(fullName);
+        BinaryResource publicBinaryResourceForPart = publicEntityManager.getPublicBinaryResourceForPart(fullName);
         if (publicBinaryResourceForPart != null) {
             return publicBinaryResourceForPart;
         }

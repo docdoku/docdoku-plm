@@ -1,72 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app metadata-complete="false" version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
-
-    <!--Filter chain-->
-
-    <!-- Auth with cookie first -->
-    <filter>
-        <filter-name>SessionFilter</filter-name>
-        <filter-class>com.docdoku.server.filters.SessionFilter</filter-class>
-        <async-supported>true</async-supported>
-    </filter>
-    <filter-mapping>
-        <filter-name>SessionFilter</filter-name>
-        <url-pattern>/api/*</url-pattern>
-    </filter-mapping>
-
-    <!-- Auth with JWT - Not functional yet-->
-    <!--
-    <filter>
-        <filter-name>JwtFilter</filter-name>
-        <filter-class>com.docdoku.server.filters.JwtFilter</filter-class>
-        <async-supported>true</async-supported>
-    </filter>
-    <filter-mapping>
-        <filter-name>JwtFilter</filter-name>
-        <url-pattern>/api/*</url-pattern>
-    </filter-mapping>
-    -->
-
-    <!-- Auth with base 64 in headers -->
-    <filter>
-        <filter-name>BasicFilter</filter-name>
-        <filter-class>com.docdoku.server.filters.BasicFilter</filter-class>
-        <async-supported>true</async-supported>
-    </filter>
-    <filter-mapping>
-        <filter-name>BasicFilter</filter-name>
-        <url-pattern>/api/*</url-pattern>
-    </filter-mapping>
-
-    <!-- Last filter, is this a public resource ?-->
-    <filter>
-        <filter-name>PublicFilter</filter-name>
-        <filter-class>com.docdoku.server.filters.PublicFilter</filter-class>
-        <async-supported>true</async-supported>
-        <init-param>
-            <param-name>publicPaths</param-name>
-            <param-value>/api,/api/accounts/create,/api/viewer,/api/shared/**,/api/languages,/api/timezones,/api/auth/**,/api/files/*/documents/**,/api/files/*/parts/**</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>PublicFilter</filter-name>
-        <url-pattern>/api/*</url-pattern>
-    </filter-mapping>
-
-    <!-- Chain or reject depending on other filters result -->
-    <filter>
-        <filter-name>RequestFilter</filter-name>
-        <filter-class>com.docdoku.server.filters.RequestFilter</filter-class>
-        <async-supported>true</async-supported>
-    </filter>
-    <filter-mapping>
-        <filter-name>RequestFilter</filter-name>
-        <url-pattern>/api/*</url-pattern>
-    </filter-mapping>
-
-    <!--/Filter chain-->
+<web-app metadata-complete="false"
+         version="3.0"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
     <servlet>
+        <display-name>DocdokuPLM Rest Web Services</display-name>
         <servlet-name>javax.ws.rs.core.Application</servlet-name>
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
@@ -74,10 +14,18 @@
             <file-size-threshold>1048576</file-size-threshold>
         </multipart-config>
     </servlet>
+
     <servlet-mapping>
         <servlet-name>javax.ws.rs.core.Application</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
+
+    <env-entry>
+        <env-entry-name>public-paths</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>/api,/api/accounts/create,/api/viewer,/api/shared/**,/api/languages,/api/timezones,/api/auth/**,/api/files/*/documents/**,/api/files/*/parts/**</env-entry-value>
+    </env-entry>
+
     <security-constraint>
         <display-name>WebSocket channels</display-name>
         <web-resource-collection>
@@ -89,24 +37,19 @@
             <role-name>users</role-name>
         </auth-constraint>
     </security-constraint>
-    <login-config>
-        <auth-method>BASIC</auth-method>
-        <realm-name>docdokuRealm</realm-name>
-    </login-config>
+
     <security-role>
-        <description>All the regular users</description>
+        <role-name>guest-proxy</role-name>
+    </security-role>
+    <security-role>
         <role-name>users</role-name>
     </security-role>
-    <listener>
-        <listener-class>
-            com.docdoku.server.http.WebSessionListener
-        </listener-class>
-    </listener>
-    <jsp-config>
-        <jsp-property-group>
-            <url-pattern>*.html</url-pattern>
-            <page-encoding>UTF-8</page-encoding>
-        </jsp-property-group>
-    </jsp-config>
-</web-app>
+    <security-role>
+        <role-name>admin</role-name>
+    </security-role>
 
+    <listener>
+        <listener-class>com.docdoku.server.http.WebSessionListener</listener-class>
+    </listener>
+
+</web-app>

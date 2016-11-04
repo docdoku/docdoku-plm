@@ -265,17 +265,9 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         return docRs.toArray(new DocumentRevision[docRs.size()]);
     }
 
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public DocumentRevision getDocumentRevision(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, DocumentRevisionNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException {
-        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
-            DocumentRevision documentRevision = new DocumentRevisionDAO(em).loadDocR(pDocRPK);
-            if (documentRevision.isCheckedOut()) {
-                em.detach(documentRevision);
-                documentRevision.removeLastIteration();
-            }
-            return documentRevision;
-        }
 
         User user = userManager.checkWorkspaceReadAccess(pDocRPK.getDocumentMaster().getWorkspace());
         Locale userLocale = new Locale(user.getLanguage());

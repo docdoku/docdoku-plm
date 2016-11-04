@@ -18,8 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.jwt;
-
+package com.docdoku.server.auth.jwt;
 
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwk.RsaJwkGenerator;
@@ -28,6 +27,11 @@ import org.jose4j.lang.JoseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * This class generate a RSA key
+ *
+ * @author Morgan Guimard
+ */
 public class RsaJsonWebKeyFactory {
 
     private static final Logger LOGGER = Logger.getLogger(RsaJsonWebKeyFactory.class.getName());
@@ -37,8 +41,8 @@ public class RsaJsonWebKeyFactory {
     private RsaJsonWebKeyFactory() {
     }
 
-    public static RsaJsonWebKey createKey(){
-        if(key == null){
+    public static RsaJsonWebKey createKey() {
+        if (key == null) {
             try {
                 key = RsaJwkGenerator.generateJwk(KEY_SIZE);
             } catch (JoseException ex) {

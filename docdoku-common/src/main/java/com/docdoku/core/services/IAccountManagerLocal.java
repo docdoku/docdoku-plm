@@ -22,6 +22,7 @@ package com.docdoku.core.services;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Organization;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.security.UserGroupMapping;
 
 import java.util.List;
 
@@ -59,4 +60,5 @@ public interface IAccountManagerLocal {
     Account enableAccount(String login, boolean enabled) throws AccountNotFoundException, NotAllowedException;
 
     Account authenticateAccount(String login, String password);
+    UserGroupMapping getUserGroupMapping(String login);
 }

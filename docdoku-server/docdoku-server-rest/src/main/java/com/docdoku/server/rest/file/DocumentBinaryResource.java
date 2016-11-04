@@ -29,7 +29,6 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
-import com.docdoku.server.filters.GuestProxy;
 import com.docdoku.server.helpers.Streams;
 import com.docdoku.server.rest.exceptions.*;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
@@ -60,6 +59,7 @@ import java.text.Normalizer;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RequestScoped
@@ -82,7 +82,7 @@ public class DocumentBinaryResource {
     @Inject
     private IShareManagerLocal shareService;
     @Inject
-    private GuestProxy guestProxy;
+    private IPublicEntityManagerLocal publicEntityManager;
 
     public DocumentBinaryResource() {
     }
@@ -168,7 +168,12 @@ public class DocumentBinaryResource {
 
         } else {
             // Check access right
+            boolean regularUser = contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID);
+            if(regularUser){
+                LOGGER.log(Level.INFO,"loul");
+            }
             DocumentIterationKey docIK = new DocumentIterationKey(workspaceId, documentId, version, iteration);
+
             if (!canAccess(docIK)) {
                 return Response.status(Response.Status.UNAUTHORIZED).build();
             }
@@ -220,7 +225,7 @@ public class DocumentBinaryResource {
             if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
                 return documentResourceGetterService.getDocumentConvertedResource(outputFormat, binaryResource);
             } else {
-                return guestProxy.getDocumentConvertedResource(outputFormat, binaryResource);
+                return publicEntityManager.getDocumentConvertedResource(outputFormat, binaryResource);
             }
         } catch (Exception e) {
             throw new FileConversionException(e);
@@ -228,16 +233,14 @@ public class DocumentBinaryResource {
     }
 
     private boolean canAccess(DocumentIterationKey docIKey) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
-        DocumentRevision publicDocumentRevision = guestProxy.getPublicDocumentRevision(docIKey.getDocumentRevision());
-        if(publicDocumentRevision!=null){
-            return true;
-        }
-        return documentService.canAccess(docIKey);
+        DocumentRevision publicDocumentRevision = publicEntityManager.getPublicDocumentRevision(docIKey.getDocumentRevision());
+        return publicDocumentRevision != null || contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID) && documentService.canAccess(docIKey);
+
     }
 
     private BinaryResource getBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
-        BinaryResource binaryResource = guestProxy.getPublicBinaryResourceForDocument(fullName);
+        BinaryResource binaryResource = publicEntityManager.getPublicBinaryResourceForDocument(fullName);
         if(binaryResource != null){
             return binaryResource;
         }

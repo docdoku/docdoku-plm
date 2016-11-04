@@ -6,13 +6,11 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
-import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.services.IShareManagerLocal;
+import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
-import com.docdoku.server.filters.GuestProxy;
 import com.docdoku.server.rest.dto.DocumentRevisionDTO;
 import com.docdoku.server.rest.dto.PartRevisionDTO;
 import io.swagger.annotations.Api;
@@ -36,7 +34,7 @@ import java.util.Date;
 public class SharedResource {
 
     @Inject
-    private GuestProxy guestProxy;
+    private IPublicEntityManagerLocal publicEntityManager;
 
     @Inject
     private IDocumentManagerLocal documentManager;
@@ -46,6 +44,10 @@ public class SharedResource {
 
     @Inject
     private IShareManagerLocal shareManager;
+
+    @Inject
+    private IContextManagerLocal contextManager;
+
 
     private Mapper mapper;
 
@@ -64,19 +66,18 @@ public class SharedResource {
             throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException,
             DocumentRevisionNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
 
-        // Tries public
+        // Try public shared
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
-        DocumentRevision documentRevision = guestProxy.getPublicDocumentRevision(docKey);
+        DocumentRevision documentRevision = publicEntityManager.getPublicDocumentRevision(docKey);
 
-        if (documentRevision == null) {
-            // Ties authenticated
+        // Try authenticated
+        if (documentRevision == null && contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
             documentRevision = documentManager.getDocumentRevision(docKey);
         }
 
-        DocumentRevisionDTO documentRevisionDTO = mapper.map(documentRevision, DocumentRevisionDTO.class);
-        documentRevisionDTO.setRoutePath(documentRevision.getLocation().getRoutePath());
-
         if (documentRevision != null) {
+            DocumentRevisionDTO documentRevisionDTO = mapper.map(documentRevision, DocumentRevisionDTO.class);
+            documentRevisionDTO.setRoutePath(documentRevision.getLocation().getRoutePath());
             return Response.ok().entity(documentRevisionDTO).build();
         } else {
             return Response.status(Response.Status.FORBIDDEN).build();
@@ -92,12 +93,12 @@ public class SharedResource {
                                                 @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
                                                 @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
-        // Tries public
+        // Try public shared
         PartRevisionKey partKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
-        PartRevision partRevision = guestProxy.getPublicPartRevision(partKey);
+        PartRevision partRevision = publicEntityManager.getPublicPartRevision(partKey);
 
-        if (partRevision == null) {
-            // Ties authenticated
+        // Try authenticated
+        if (partRevision == null && contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
             partRevision = productManager.getPartRevision(partKey);
         }
 

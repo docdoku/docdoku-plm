@@ -9,14 +9,10 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
-import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IFileViewerManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.services.IShareManagerLocal;
+import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
-import com.docdoku.server.filters.GuestProxy;
 import com.docdoku.server.rest.exceptions.ExpiredLinkException;
 import com.docdoku.server.rest.exceptions.UnmatchingUuidException;
 import io.swagger.annotations.Api;
@@ -50,7 +46,7 @@ public class HTMLViewerResource {
     private IShareManagerLocal shareManager;
 
     @Inject
-    private GuestProxy guestProxy;
+    private IPublicEntityManagerLocal publicEntityManager;
 
     public HTMLViewerResource() {
     }
@@ -78,7 +74,7 @@ public class HTMLViewerResource {
 
     private Response getPartHTMLViewer(String fileName) throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException, ExpiredLinkException, UnmatchingUuidException {
 
-        BinaryResource binaryResource = guestProxy.getPublicBinaryResourceForPart(fileName);
+        BinaryResource binaryResource = publicEntityManager.getPublicBinaryResourceForPart(fileName);
         if (binaryResource != null) {
             return Response.ok().entity(viewerManager.getHtmlForViewer(binaryResource, null)).build();
         } else {
@@ -88,7 +84,7 @@ public class HTMLViewerResource {
     }
 
     public Response getDocumentHTMLViewer(String fileName) throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
-        BinaryResource binaryResource = guestProxy.getPublicBinaryResourceForDocument(fileName);
+        BinaryResource binaryResource = publicEntityManager.getPublicBinaryResourceForDocument(fileName);
         if (binaryResource != null) {
             return Response.ok().entity(viewerManager.getHtmlForViewer(binaryResource, null)).build();
         } else {
@@ -120,7 +116,7 @@ public class HTMLViewerResource {
             PartRevision partRevision = ((SharedPart) sharedEntity).getPartRevision();
             PartIteration lastCheckedInIteration = partRevision.getLastCheckedInIteration();
             if(partRevision.getKey().equals(partRPK) && (null != lastCheckedInIteration && lastCheckedInIteration.getIteration() <= holderIteration)){
-                return guestProxy.getBinaryResourceForSharedPart(fileName);
+                return publicEntityManager.getBinaryResourceForSharedPart(fileName);
             }else{
                 throw new UnmatchingUuidException();
             }
@@ -130,7 +126,7 @@ public class HTMLViewerResource {
             DocumentRevision documentRevision = ((SharedDocument) sharedEntity).getDocumentRevision();
             DocumentIteration lastCheckedInIteration = documentRevision.getLastCheckedInIteration();
             if(documentRevision.getKey().equals(docRPK) && (null != lastCheckedInIteration && lastCheckedInIteration.getIteration() <= holderIteration)){
-                return guestProxy.getBinaryResourceForSharedDocument(fileName);
+                return publicEntityManager.getBinaryResourceForSharedDocument(fileName);
             }else{
                 throw new UnmatchingUuidException();
             }

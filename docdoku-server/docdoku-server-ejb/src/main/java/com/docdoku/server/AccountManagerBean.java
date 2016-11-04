@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
 
-@DeclareRoles({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IAccountManagerLocal.class)
 @Stateless(name = "AccountManagerBean")
 public class AccountManagerBean implements IAccountManagerLocal {
@@ -73,6 +73,7 @@ public class AccountManagerBean implements IAccountManagerLocal {
         Account account = null;
 
         if(accountDAO.authenticate(login, password)){
+
             try {
                 account = getAccount(login);
             } catch (AccountNotFoundException e) {
@@ -81,6 +82,11 @@ public class AccountManagerBean implements IAccountManagerLocal {
         }
 
         return account;
+    }
+
+    @Override
+    public UserGroupMapping getUserGroupMapping(String login) {
+        return em.find(UserGroupMapping.class,login);
     }
 
     @Override

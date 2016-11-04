@@ -34,17 +34,20 @@ import java.util.logging.Logger;
  * @since   V2.0
  */
 public class WebSessionListener implements HttpSessionListener {
+
     private static final Logger LOGGER = Logger.getLogger(WebSessionListener.class.getName());
 
     //Notification that a session was created.
     @Override
     public void sessionCreated(HttpSessionEvent httpSessionCreatedEvent) {
         // Nothing to do
+        LOGGER.log(Level.INFO, "Session created event");
     }
 
     //Notification that a session is about to be invalidated.
     @Override
     public void sessionDestroyed(HttpSessionEvent httpSessionDestroyedEvent) {
+        LOGGER.log(Level.INFO, "Session destroyed event");
         HttpSession httpSession = httpSessionDestroyedEvent.getSession();
         String remoteUser = (String)httpSession.getAttribute("remoteUser");
         // Remote User can be null on unauthenticated http session

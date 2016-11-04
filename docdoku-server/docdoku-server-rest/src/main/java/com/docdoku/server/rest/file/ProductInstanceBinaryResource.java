@@ -28,7 +28,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
-import com.docdoku.server.filters.GuestProxy;
+import com.docdoku.core.services.IPublicEntityManagerLocal;
 import com.docdoku.server.helpers.Streams;
 import com.docdoku.server.rest.exceptions.*;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
@@ -78,7 +78,7 @@ public class ProductInstanceBinaryResource {
     private IProductInstanceManagerLocal productInstanceManagerLocal;
 
     @Inject
-    private GuestProxy guestProxy;
+    private IPublicEntityManagerLocal publicEntityManager;
 
     @POST
     @ApiOperation(value = "Upload product instance files", response = Response.class)
@@ -300,7 +300,7 @@ public class ProductInstanceBinaryResource {
         if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
             return productInstanceManagerLocal.getBinaryResource(fullName);
         } else {
-            return guestProxy.getBinaryResourceForProductInstance(fullName);
+            return publicEntityManager.getBinaryResourceForProductInstance(fullName);
         }
     }
 
@@ -309,7 +309,7 @@ public class ProductInstanceBinaryResource {
         if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
             return productInstanceManagerLocal.getPathDataBinaryResource(fullName);
         } else {
-            return guestProxy.getBinaryResourceForPathData(fullName);
+            return publicEntityManager.getBinaryResourceForPathData(fullName);
         }
     }
 
