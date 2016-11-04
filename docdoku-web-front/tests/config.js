@@ -8,7 +8,7 @@ module.exports = {
     contextPath: '/',
 
     // Workspace authentication
-    workspace: 'test',
+    workspace: 'front-test',
     login: 'test',
     pass: 'test',
 
