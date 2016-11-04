@@ -22,7 +22,7 @@ package com.docdoku.api;
 
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.services.LanguagesApi;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;

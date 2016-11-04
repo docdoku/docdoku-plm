@@ -27,7 +27,7 @@ import com.docdoku.api.models.WorkspaceDTO;
 import com.docdoku.api.models.WorkspaceListDTO;
 import com.docdoku.api.services.AccountsApi;
 import com.docdoku.api.services.WorkspacesApi;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;

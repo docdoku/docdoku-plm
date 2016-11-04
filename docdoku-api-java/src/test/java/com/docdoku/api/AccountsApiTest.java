@@ -23,7 +23,7 @@ package com.docdoku.api;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.AccountDTO;
 import com.docdoku.api.services.AccountsApi;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;

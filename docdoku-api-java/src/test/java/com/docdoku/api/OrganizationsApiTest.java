@@ -5,7 +5,7 @@ import com.docdoku.api.models.AccountDTO;
 import com.docdoku.api.models.OrganizationDTO;
 import com.docdoku.api.models.UserDTO;
 import com.docdoku.api.services.OrganizationsApi;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
