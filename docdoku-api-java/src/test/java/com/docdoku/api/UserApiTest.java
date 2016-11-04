@@ -34,7 +34,7 @@ import java.util.List;
 @RunWith(JUnit4.class)
 public class UserApiTest {
 
-    private UsersApi usersApi = new UsersApi(TestConfig.BASIC_CLIENT);
+    private UsersApi usersApi = new UsersApi(TestConfig.REGULAR_USER_CLIENT);
 
     @Test
     public void whoamiTest() throws ApiException {

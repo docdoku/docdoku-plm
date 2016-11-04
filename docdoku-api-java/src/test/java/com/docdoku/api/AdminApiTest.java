@@ -57,7 +57,7 @@ public class AdminApiTest {
     public void enableWorkspaceTest() throws ApiException {
 
         AdminApi adminApi = new AdminApi(TestConfig.ROOT_CLIENT);
-        WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.BASIC_CLIENT);
+        WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT);
 
         WorkspaceDTO workspace = new WorkspaceDTO();
         workspace.setId(UUID.randomUUID().toString());

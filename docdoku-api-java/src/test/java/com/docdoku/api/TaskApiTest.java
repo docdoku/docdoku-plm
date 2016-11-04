@@ -37,12 +37,12 @@ import java.util.UUID;
 @RunWith(JUnit4.class)
 public class TaskApiTest {
 
-    private WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.BASIC_CLIENT);
-    private RolesApi rolesApi = new RolesApi(TestConfig.BASIC_CLIENT);
-    private UsersApi usersApi = new UsersApi(TestConfig.BASIC_CLIENT);
-    private WorkflowModelsApi workflowModelsApi = new WorkflowModelsApi(TestConfig.BASIC_CLIENT);
-    private WorkspaceWorkflowsApi workspaceWorkflowsApi = new WorkspaceWorkflowsApi(TestConfig.BASIC_CLIENT);
-    private TasksApi tasksApi = new TasksApi(TestConfig.BASIC_CLIENT);
+    private WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT);
+    private RolesApi rolesApi = new RolesApi(TestConfig.REGULAR_USER_CLIENT);
+    private UsersApi usersApi = new UsersApi(TestConfig.REGULAR_USER_CLIENT);
+    private WorkflowModelsApi workflowModelsApi = new WorkflowModelsApi(TestConfig.REGULAR_USER_CLIENT);
+    private WorkspaceWorkflowsApi workspaceWorkflowsApi = new WorkspaceWorkflowsApi(TestConfig.REGULAR_USER_CLIENT);
+    private TasksApi tasksApi = new TasksApi(TestConfig.REGULAR_USER_CLIENT);
 
     @Test
     public void tests() throws ApiException {

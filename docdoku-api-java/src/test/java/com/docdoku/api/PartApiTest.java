@@ -43,8 +43,8 @@ import java.util.UUID;
 @RunWith(JUnit4.class)
 public class PartApiTest {
 
-    private PartApi partApi = new PartApi(TestConfig.BASIC_CLIENT);
-    private PartsApi partsApi = new PartsApi(TestConfig.BASIC_CLIENT);
+    private PartApi partApi = new PartApi(TestConfig.REGULAR_USER_CLIENT);
+    private PartsApi partsApi = new PartsApi(TestConfig.REGULAR_USER_CLIENT);
 
     @Test
     public void partApiUsageTests() throws ApiException {
@@ -114,12 +114,12 @@ public class PartApiTest {
         File file = new File(fileURL.getPath());
 
         PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(part);
-        UploadDownloadHelper.uploadAttachedFile(lastIteration,TestConfig.BASIC_CLIENT,file);
+        UploadDownloadHelper.uploadAttachedFile(lastIteration,TestConfig.REGULAR_USER_CLIENT,file);
         part = partsApi.getPartRevision(TestConfig.WORKSPACE, part.getNumber(), part.getVersion());
         lastIteration = LastIterationHelper.getLastIteration(part);
         Assert.assertFalse(lastIteration.getAttachedFiles().isEmpty());
         BinaryResourceDTO binaryResourceDTO = lastIteration.getAttachedFiles().get(0);
-        File downloadedFile = UploadDownloadHelper.downloadFile(binaryResourceDTO.getFullName(), TestConfig.BASIC_CLIENT);
+        File downloadedFile = UploadDownloadHelper.downloadFile(binaryResourceDTO.getFullName(), TestConfig.REGULAR_USER_CLIENT);
         Assert.assertTrue(FileUtils.contentEquals(file, downloadedFile));
 
     }
@@ -138,13 +138,13 @@ public class PartApiTest {
         File file = new File(fileURL.getPath());
 
         PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(part);
-        UploadDownloadHelper.uploadNativeCADFile(lastIteration,TestConfig.BASIC_CLIENT,file);
+        UploadDownloadHelper.uploadNativeCADFile(lastIteration,TestConfig.REGULAR_USER_CLIENT,file);
         part = partsApi.getPartRevision(TestConfig.WORKSPACE, part.getNumber(), part.getVersion());
         lastIteration = LastIterationHelper.getLastIteration(part);
         BinaryResourceDTO nativeCADFile = lastIteration.getNativeCADFile();
         Assert.assertNotNull(nativeCADFile);
 
-        File downloadedFile = UploadDownloadHelper.downloadFile(nativeCADFile.getFullName(), TestConfig.BASIC_CLIENT);
+        File downloadedFile = UploadDownloadHelper.downloadFile(nativeCADFile.getFullName(), TestConfig.REGULAR_USER_CLIENT);
         Assert.assertTrue(FileUtils.contentEquals(file, downloadedFile));
 
     }

@@ -43,8 +43,8 @@ import java.util.zip.ZipFile;
 @RunWith(JUnit4.class)
 public class UploadDownloadConsistencyTest {
 
-    private DocumentApi documentApi = new DocumentApi(TestConfig.BASIC_CLIENT);
-    private FoldersApi foldersApi = new FoldersApi(TestConfig.BASIC_CLIENT);
+    private DocumentApi documentApi = new DocumentApi(TestConfig.REGULAR_USER_CLIENT);
+    private FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
 
 
     @Test
@@ -64,10 +64,10 @@ public class UploadDownloadConsistencyTest {
         Assert.assertEquals(1,originalEntries.size());
 
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(document);
-        UploadDownloadHelper.uploadAttachedFile(lastIteration, TestConfig.BASIC_CLIENT, file);
+        UploadDownloadHelper.uploadAttachedFile(lastIteration, TestConfig.REGULAR_USER_CLIENT, file);
         document = documentApi.getDocumentRevision(TestConfig.WORKSPACE, document.getDocumentMasterId(), document.getVersion());
         lastIteration = LastIterationHelper.getLastIteration(document);
-        File downloadedFile = UploadDownloadHelper.downloadFile(lastIteration.getAttachedFiles().get(0).getFullName(), TestConfig.BASIC_CLIENT);
+        File downloadedFile = UploadDownloadHelper.downloadFile(lastIteration.getAttachedFiles().get(0).getFullName(), TestConfig.REGULAR_USER_CLIENT);
 
         List<String> downloadedEntries = getEntries(downloadedFile);
         Assert.assertTrue(new HashSet<>(originalEntries).equals(new HashSet<>(downloadedEntries)));

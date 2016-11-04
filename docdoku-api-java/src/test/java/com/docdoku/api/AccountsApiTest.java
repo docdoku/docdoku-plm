@@ -42,7 +42,7 @@ public class AccountsApiTest {
 
     @Test
     public void getAccountTest() throws ApiException {
-        AccountDTO account = new AccountsApi(TestConfig.BASIC_CLIENT).getAccount();
+        AccountDTO account = new AccountsApi(TestConfig.REGULAR_USER_CLIENT).getAccount();
         Assert.assertEquals(account.getLogin(), TestConfig.LOGIN);
     }
 
@@ -51,7 +51,7 @@ public class AccountsApiTest {
 
         String newName = UUID.randomUUID().toString().substring(0, 8);
 
-        AccountsApi accountsApi = new AccountsApi(TestConfig.BASIC_CLIENT);
+        AccountsApi accountsApi = new AccountsApi(TestConfig.REGULAR_USER_CLIENT);
         AccountDTO account = accountsApi.getAccount();
         account.setName(newName);
 

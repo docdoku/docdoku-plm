@@ -42,9 +42,9 @@ import java.util.UUID;
 @RunWith(JUnit4.class)
 public class DocumentApiTest {
 
-    private DocumentApi documentApi = new DocumentApi(TestConfig.BASIC_CLIENT);
-    private DocumentsApi documentsApi = new DocumentsApi(TestConfig.BASIC_CLIENT);
-    private FoldersApi foldersApi = new FoldersApi(TestConfig.BASIC_CLIENT);
+    private DocumentApi documentApi = new DocumentApi(TestConfig.REGULAR_USER_CLIENT);
+    private DocumentsApi documentsApi = new DocumentsApi(TestConfig.REGULAR_USER_CLIENT);
+    private FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
 
     @Test
     public void documentApiUsageTests() throws ApiException {
@@ -113,14 +113,14 @@ public class DocumentApiTest {
         File file = new File(fileURL.getPath());
 
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(document);
-        UploadDownloadHelper.uploadAttachedFile(lastIteration, TestConfig.BASIC_CLIENT, file);
+        UploadDownloadHelper.uploadAttachedFile(lastIteration, TestConfig.REGULAR_USER_CLIENT, file);
 
         document = documentApi.getDocumentRevision(TestConfig.WORKSPACE, document.getDocumentMasterId(), document.getVersion());
 
         lastIteration = LastIterationHelper.getLastIteration(document);
         Assert.assertFalse(lastIteration.getAttachedFiles().isEmpty());
         BinaryResourceDTO binaryResourceDTO = lastIteration.getAttachedFiles().get(0);
-        File downloadedFile = UploadDownloadHelper.downloadFile(binaryResourceDTO.getFullName(), TestConfig.BASIC_CLIENT);
+        File downloadedFile = UploadDownloadHelper.downloadFile(binaryResourceDTO.getFullName(), TestConfig.REGULAR_USER_CLIENT);
         Assert.assertTrue(FileUtils.contentEquals(file, downloadedFile));
 
     }

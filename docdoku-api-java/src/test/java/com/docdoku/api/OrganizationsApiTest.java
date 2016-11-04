@@ -5,7 +5,9 @@ import com.docdoku.api.models.AccountDTO;
 import com.docdoku.api.models.OrganizationDTO;
 import com.docdoku.api.models.UserDTO;
 import com.docdoku.api.services.OrganizationsApi;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -16,72 +18,72 @@ import java.util.UUID;
 @RunWith(JUnit4.class)
 public class OrganizationsApiTest {
 
-    @Test
-    public void createOrganizationTest() throws ApiException {
-        OrganizationDTO organizationDTO = TestUtils.createOrganization();
-        OrganizationDTO organization = new OrganizationsApi(new DocdokuPLMBasicClient(TestConfig.URL, TestConfig.LOGIN, TestConfig.PASSWORD).getClient()).getOrganization();
-        Assert.assertEquals(organization.getName(), organizationDTO.getName());
-    }
+    private final static OrganizationsApi organizationsApi = new OrganizationsApi(TestConfig.REGULAR_USER_CLIENT);
 
-    @Test
-    public void getOrganizationTest() throws ApiException {
-        OrganizationDTO organization = new OrganizationsApi(TestConfig.BASIC_CLIENT).getOrganization();
-        organization.setName(TestConfig.NAME);
-        Assert.assertEquals(organization.getName(), TestConfig.NAME);
+    @BeforeClass
+    public static void initOrganization() throws ApiException {
+        OrganizationDTO oldOrganization = organizationsApi.getOrganization();
+        if(oldOrganization.getName() != null) {
+            organizationsApi.deleteOrganization();
+        }
+        OrganizationDTO organization = TestUtils.createOrganization();
+        OrganizationDTO fetchedOrganization = organizationsApi.getOrganization();
+        Assert.assertEquals(organization, fetchedOrganization);
     }
 
     @Test
     public void updateOrganizationTest() throws ApiException {
         String newName = UUID.randomUUID().toString().substring(0, 8);
-        OrganizationsApi organizationsApi = new OrganizationsApi(TestConfig.BASIC_CLIENT);
         OrganizationDTO organization = organizationsApi.getOrganization();
         organization.setName(newName);
         OrganizationDTO updatedOrganization = organizationsApi.updateOrganization(organization);
-        Assert.assertEquals(updatedOrganization.getName(), newName);
-        Assert.assertEquals(updatedOrganization, organization);
+        Assert.assertEquals(newName,updatedOrganization.getName());
+        Assert.assertEquals(organization, updatedOrganization);
     }
 
+
     @Test
-    public void addMemberToOrganizationTest() throws ApiException {
+    public void memberTestSuite() throws ApiException {
+        addMemberToOrganizationTest();
+        getMembersTest();
+        moveMemberDownTest();
+        moveMemberUpTest();
+        removeMemberFromOrganizationTest();
+    }
+
+
+    private void addMemberToOrganizationTest() throws ApiException {
         AccountDTO newAccount = TestUtils.createAccount();
         UserDTO userToAdd = new UserDTO();
         userToAdd.setLogin(newAccount.getLogin());
-        OrganizationsApi organizationsApi = new OrganizationsApi(TestConfig.BASIC_CLIENT);
         organizationsApi.addMember(userToAdd);
         List<AccountDTO> membersOfOrganization = organizationsApi.getMembers();
         Assert.assertEquals(membersOfOrganization.stream().filter(accountDTO -> accountDTO.getLogin().equals(userToAdd.getLogin())).count(), 1);
     }
 
-    @Test
-    public void getMembersTest() throws ApiException {
-        OrganizationsApi organizationsApi = new OrganizationsApi(TestConfig.BASIC_CLIENT);
+
+    private void getMembersTest() throws ApiException {
         Assert.assertEquals(organizationsApi.getMembers().size(), 2);
     }
 
-    @Test
-    public void moveMemberDownTest() throws ApiException {
+    private void moveMemberDownTest() throws ApiException {
         UserDTO firstUser = new UserDTO();
         firstUser.setLogin(TestConfig.LOGIN);
-        OrganizationsApi organizationsApi = new OrganizationsApi(TestConfig.BASIC_CLIENT);
         organizationsApi.moveMemberDown(firstUser);
         List<AccountDTO> membersOfOrganization = organizationsApi.getMembers();
         Assert.assertEquals(membersOfOrganization.get(1).getLogin(), TestConfig.LOGIN);
     }
 
-    @Test
-    public void moveMemberUpTest() throws ApiException {
+    private void moveMemberUpTest() throws ApiException {
         UserDTO firstUser = new UserDTO();
         firstUser.setLogin(TestConfig.LOGIN);
-        OrganizationsApi organizationsApi = new OrganizationsApi(TestConfig.BASIC_CLIENT);
         organizationsApi.moveMemberUp(firstUser);
         List<AccountDTO> membersOfOrganization = organizationsApi.getMembers();
         Assert.assertEquals(membersOfOrganization.get(0).getLogin(), TestConfig.LOGIN);
     }
 
-    @Test
-    public void removeMemberFromOrganizationTest() throws ApiException {
+    private void removeMemberFromOrganizationTest() throws ApiException {
         UserDTO userToDelete = new UserDTO();
-        OrganizationsApi organizationsApi = new OrganizationsApi(TestConfig.BASIC_CLIENT);
         List<AccountDTO> membersOfOrganizationBeforeDeletion = organizationsApi.getMembers();
         userToDelete.setLogin(membersOfOrganizationBeforeDeletion.get(1).getLogin());
         organizationsApi.removeMember(userToDelete);
@@ -89,11 +91,11 @@ public class OrganizationsApiTest {
         Assert.assertEquals(membersOfOrganizationAfterDeletion.stream().filter(accountDTO -> accountDTO.getLogin().equals(userToDelete.getLogin())).count(), 0);
     }
 
-    @Test
-    public void deleteOrganizationTest() throws ApiException {
-        OrganizationsApi organizationsApi = new OrganizationsApi(TestConfig.BASIC_CLIENT);
+    @AfterClass
+    public static void deleteOrganization() throws ApiException {
         organizationsApi.deleteOrganization();
-        Assert.assertEquals(organizationsApi.getOrganization().getName(), null);
+        OrganizationDTO organization = organizationsApi.getOrganization();
+        Assert.assertNull(organization.getName());
     }
 
 }

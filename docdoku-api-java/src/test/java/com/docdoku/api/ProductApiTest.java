@@ -38,9 +38,9 @@ import java.util.UUID;
 @RunWith(JUnit4.class)
 public class ProductApiTest {
 
-    private PartApi partApi = new PartApi(TestConfig.BASIC_CLIENT);
-    private PartsApi partsApi = new PartsApi(TestConfig.BASIC_CLIENT);
-    private ProductsApi productsApi = new ProductsApi(TestConfig.BASIC_CLIENT);
+    private PartApi partApi = new PartApi(TestConfig.REGULAR_USER_CLIENT);
+    private PartsApi partsApi = new PartsApi(TestConfig.REGULAR_USER_CLIENT);
+    private ProductsApi productsApi = new ProductsApi(TestConfig.REGULAR_USER_CLIENT);
 
     @Test
     public void createProductTest() throws ApiException {

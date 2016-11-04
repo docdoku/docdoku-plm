@@ -42,16 +42,16 @@ import java.util.UUID;
 @RunWith(JUnit4.class)
 public class WorkflowApiTest {
 
-    private WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.BASIC_CLIENT);
-    private RolesApi rolesApi = new RolesApi(TestConfig.BASIC_CLIENT);
-    private UsersApi usersApi = new UsersApi(TestConfig.BASIC_CLIENT);
-    private WorkflowModelsApi workflowModelsApi = new WorkflowModelsApi(TestConfig.BASIC_CLIENT);
-    private WorkspaceWorkflowsApi workspaceWorkflowsApi = new WorkspaceWorkflowsApi(TestConfig.BASIC_CLIENT);
-    private WorkflowsApi workflowsApi = new WorkflowsApi(TestConfig.BASIC_CLIENT);
-    private TasksApi tasksApi = new TasksApi(TestConfig.BASIC_CLIENT);
-    private PartsApi partsApi = new PartsApi(TestConfig.BASIC_CLIENT);
-    private DocumentApi documentApi = new DocumentApi(TestConfig.BASIC_CLIENT);
-    private FoldersApi foldersApi = new FoldersApi(TestConfig.BASIC_CLIENT);
+    private WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT);
+    private RolesApi rolesApi = new RolesApi(TestConfig.REGULAR_USER_CLIENT);
+    private UsersApi usersApi = new UsersApi(TestConfig.REGULAR_USER_CLIENT);
+    private WorkflowModelsApi workflowModelsApi = new WorkflowModelsApi(TestConfig.REGULAR_USER_CLIENT);
+    private WorkspaceWorkflowsApi workspaceWorkflowsApi = new WorkspaceWorkflowsApi(TestConfig.REGULAR_USER_CLIENT);
+    private WorkflowsApi workflowsApi = new WorkflowsApi(TestConfig.REGULAR_USER_CLIENT);
+    private TasksApi tasksApi = new TasksApi(TestConfig.REGULAR_USER_CLIENT);
+    private PartsApi partsApi = new PartsApi(TestConfig.REGULAR_USER_CLIENT);
+    private DocumentApi documentApi = new DocumentApi(TestConfig.REGULAR_USER_CLIENT);
+    private FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
 
 
     @Test
@@ -130,10 +130,10 @@ public class WorkflowApiTest {
         File file = new File(fileURL.getPath());
 
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(createdDocument);
-        UploadDownloadHelper.uploadAttachedFile(lastIteration, TestConfig.BASIC_CLIENT, file);
+        UploadDownloadHelper.uploadAttachedFile(lastIteration, TestConfig.REGULAR_USER_CLIENT, file);
         DocumentRevisionDTO documentRevision = documentApi.getDocumentRevision(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
         lastIteration = LastIterationHelper.getLastIteration(documentRevision);
-        UploadDownloadHelper.downloadFile(lastIteration.getAttachedFiles().get(0).getFullName(), TestConfig.BASIC_CLIENT);
+        UploadDownloadHelper.downloadFile(lastIteration.getAttachedFiles().get(0).getFullName(), TestConfig.REGULAR_USER_CLIENT);
 
         // Check in
         documentApi.checkInDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");

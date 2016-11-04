@@ -45,9 +45,12 @@ public class TestConfig {
 
     public static ApiClient GUEST_CLIENT;
     public static ApiClient BASIC_CLIENT;
-    public static ApiClient ROOT_CLIENT;
+
     public static ApiClient JWT_CLIENT;
     public static ApiClient COOKIE_CLIENT;
+
+    public static ApiClient ROOT_CLIENT;
+    public static ApiClient REGULAR_USER_CLIENT;
 
     static {
         parseProperties();
@@ -74,8 +77,10 @@ public class TestConfig {
 
         BASIC_CLIENT = new DocdokuPLMBasicClient(URL, LOGIN, PASSWORD, DEBUG).getClient();
         COOKIE_CLIENT = new DocdokuPLMCookieClient(URL, LOGIN, PASSWORD, DEBUG).getClient();
-        ROOT_CLIENT = new DocdokuPLMJWTClient(URL, ROOT_LOGIN, ROOT_PASSWORD, DEBUG).getClient();
         JWT_CLIENT = new DocdokuPLMJWTClient(URL, LOGIN, PASSWORD, DEBUG).getClient();
+
+        ROOT_CLIENT = new DocdokuPLMJWTClient(URL, ROOT_LOGIN, ROOT_PASSWORD, DEBUG).getClient();
+        REGULAR_USER_CLIENT = JWT_CLIENT;
 
     }
 }

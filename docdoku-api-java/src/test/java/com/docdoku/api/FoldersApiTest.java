@@ -36,7 +36,7 @@ public class FoldersApiTest {
 
     @Test
     public void getRootFoldersTest() throws ApiException {
-        FoldersApi foldersApi = new FoldersApi(TestConfig.BASIC_CLIENT);
+        FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
         List<FolderDTO> rootFolders = foldersApi.getRootFolders(TestConfig.WORKSPACE, null);
         Assert.assertNotNull(rootFolders);
     }
@@ -46,7 +46,7 @@ public class FoldersApiTest {
         String folderName = "Folder-"+UUID.randomUUID().toString().substring(0, 8);
         FolderDTO folder = new FolderDTO();
         folder.setName(folderName);
-        FoldersApi foldersApi = new FoldersApi(TestConfig.BASIC_CLIENT);
+        FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
         foldersApi.createSubFolder(TestConfig.WORKSPACE,TestConfig.WORKSPACE, folder);
         List<FolderDTO> rootFolders = foldersApi.getRootFolders(TestConfig.WORKSPACE, null);
         Assert.assertEquals(rootFolders.stream()
