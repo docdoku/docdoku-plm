@@ -23,8 +23,8 @@ package com.docdoku.api;
 import com.docdoku.api.client.ApiClient;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.AccountDTO;
-import com.docdoku.api.services.AccountsApi;
-import okhttp3.Credentials;
+import com.docdoku.api.models.LoginRequestDTO;
+import com.docdoku.api.services.AuthApi;
 
 import java.util.List;
 import java.util.Map;
@@ -33,47 +33,50 @@ import java.util.logging.Logger;
 
 /**
  * This class helps to create the swagger client.
+ *
  * @author Morgan Guimard
  */
-public class DocdokuPLMCookieClient extends DocdokuPLMClient{
+public class DocdokuPLMCookieClient extends DocdokuPLMClient {
 
     private String cookie;
 
     private static final Logger LOGGER = Logger.getLogger(DocdokuPLMCookieClient.class.getName());
 
     public DocdokuPLMCookieClient(String host, String login, String password) {
-        this(host,login,password,false);
+        this(host, login, password, false);
     }
 
-    public DocdokuPLMCookieClient(String host, String login, String password, boolean debug)  {
-        super(host,debug);
+    public DocdokuPLMCookieClient(String host, String login, String password, boolean debug) {
+        super(host, debug);
         connect(login, password);
     }
 
+    public void connect(String login, String password) {
 
-    public void connect(String login, String password){
-
-        client.addDefaultHeader("Authorization",  Credentials.basic(login, password));
+        LoginRequestDTO loginRequest = new LoginRequestDTO();
+        loginRequest.setLogin(login);
+        loginRequest.setPassword(password);
 
         try {
-            AccountDTO account = new AccountsApi(client).getAccount();
-            LOGGER.log(Level.INFO,"Connected as  " + account.getName());
+            AccountDTO account = new AuthApi(client).login(loginRequest);
+            LOGGER.log(Level.INFO, "Connected as  " + account.getLogin());
             Map<String, List<String>> responseHeaders = client.getResponseHeaders();
             System.out.println(responseHeaders);
             List<String> strings = responseHeaders.get("Set-Cookie");
-            if(strings != null && !strings.isEmpty()){
+            if (strings != null && !strings.isEmpty()) {
                 this.cookie = strings.get(0);
                 createClient();
                 client.addDefaultHeader("Cookie", this.cookie);
             } else {
-                LOGGER.log(Level.WARNING,"Cannot fetch cookie");
+                LOGGER.log(Level.WARNING, "Cannot fetch cookie");
             }
 
         } catch (ApiException e) {
-            LOGGER.log(Level.SEVERE,"Cannot connect to docdoku plm server http response code = " + client.getStatusCode());        }
+            LOGGER.log(Level.SEVERE, "Cannot connect to docdoku plm server http response code = " + client.getStatusCode());
+        }
     }
 
-    public ApiClient getClient(){
+    public ApiClient getClient() {
         return client;
     }
 

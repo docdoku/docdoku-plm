@@ -52,16 +52,19 @@ public class DocdokuPLMJWTClient extends DocdokuPLMClient{
     @Override
     public void connect(String login, String password){
 
-        LoginRequestDTO loginRequestDTO = new LoginRequestDTO();
-        loginRequestDTO.setLogin(login);
-        loginRequestDTO.setPassword(password);
+        LoginRequestDTO loginRequest = new LoginRequestDTO();
+        loginRequest.setLogin(login);
+        loginRequest.setPassword(password);
 
         try {
-            AccountDTO account = new AuthApi(client).login(loginRequestDTO);
-            LOGGER.log(Level.INFO,"Connected as  " + account.getName());
+
+            AccountDTO account = new AuthApi(client).login(loginRequest);
+            LOGGER.log(Level.INFO,"Connected as  " + account.getLogin());
+
             Map<String, List<String>> responseHeaders = client.getResponseHeaders();
             System.out.println(responseHeaders);
             List<String> strings = responseHeaders.get("jwt");
+
             if(strings != null && !strings.isEmpty()){
                 this.token = strings.get(0);
                 createClient();
