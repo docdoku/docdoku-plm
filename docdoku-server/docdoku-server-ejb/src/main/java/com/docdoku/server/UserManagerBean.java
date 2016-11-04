@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-@DeclareRoles({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IUserManagerLocal.class)
 @Stateless(name = "UserManagerBean")
 public class UserManagerBean implements IUserManagerLocal {

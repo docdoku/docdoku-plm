@@ -41,6 +41,7 @@ import com.docdoku.server.dao.PartRevisionDAO;
 import com.docdoku.server.resourcegetters.DocumentResourceGetter;
 
 import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
@@ -54,10 +55,12 @@ import java.util.Locale;
 /**
  * EJB that trusts REST layer. Provide public documents, parts and binary resources services.
  *
+ *
  * @Author Morgan Guimard
  **/
 
-@DeclareRoles({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+@DeclareRoles({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+@RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IPublicEntityManagerLocal.class)
 @Stateless(name = "PublicEntityBean")
 public class PublicEntityManagerBean implements IPublicEntityManagerLocal {
@@ -70,6 +73,7 @@ public class PublicEntityManagerBean implements IPublicEntityManagerLocal {
     private Instance<DocumentResourceGetter> documentResourceGetters;
 
     @Override
+    @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     public PartRevision getPublicPartRevision(PartRevisionKey partRevisionKey) {
         PartRevision partRevision = em.find(PartRevision.class, partRevisionKey);
         if (partRevision != null && partRevision.isPublicShared()) {
@@ -83,6 +87,7 @@ public class PublicEntityManagerBean implements IPublicEntityManagerLocal {
     }
 
     @Override
+    @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     public DocumentRevision getPublicDocumentRevision(DocumentRevisionKey documentRevisionKey) {
         DocumentRevision documentRevision = em.find(DocumentRevision.class, documentRevisionKey);
         if (documentRevision != null && documentRevision.isPublicShared()) {
@@ -96,6 +101,7 @@ public class PublicEntityManagerBean implements IPublicEntityManagerLocal {
     }
 
     @Override
+    @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     public BinaryResource getPublicBinaryResourceForDocument(String fullName) throws FileNotFoundException {
         BinaryResource binaryResource = new BinaryResourceDAO(em).loadBinaryResource(fullName);
         String workspaceId = binaryResource.getWorkspaceId();
@@ -106,6 +112,7 @@ public class PublicEntityManagerBean implements IPublicEntityManagerLocal {
     }
 
     @Override
+    @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     public BinaryResource getPublicBinaryResourceForPart(String fileName) throws FileNotFoundException {
         BinaryResource binaryResource = new BinaryResourceDAO(em).loadBinaryResource(fileName);
         String workspaceId = binaryResource.getWorkspaceId();
@@ -116,16 +123,19 @@ public class PublicEntityManagerBean implements IPublicEntityManagerLocal {
     }
 
     @Override
+    @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     public BinaryResource getBinaryResourceForSharedPart(String fileName) throws FileNotFoundException {
         return new BinaryResourceDAO(em).loadBinaryResource(fileName);
     }
 
     @Override
+    @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     public BinaryResource getBinaryResourceForSharedDocument(String fileName) throws FileNotFoundException {
         return new BinaryResourceDAO(em).loadBinaryResource(fileName);
     }
 
     @Override
+    @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     public InputStream getPartConvertedResource(String outputFormat, BinaryResource binaryResource) throws ConvertedResourceException {
 
         // todo : use authenticated user locale, or request locale, or default locale.
@@ -151,28 +161,33 @@ public class PublicEntityManagerBean implements IPublicEntityManagerLocal {
     }
 
     @Override
+    @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     public boolean canAccess(PartIterationKey partIKey) throws PartRevisionNotFoundException {
         PartRevision partRevision = new PartRevisionDAO(em).loadPartR(partIKey.getPartRevision());
         return partRevision.isPublicShared() && partRevision.getLastCheckedInIteration().getIteration() >= partIKey.getIteration();
     }
 
     @Override
+    @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     public boolean canAccess(DocumentIterationKey docIKey) throws DocumentRevisionNotFoundException {
         DocumentRevision documentRevision = new DocumentRevisionDAO(em).loadDocR(docIKey.getDocumentRevision());
         return documentRevision.isPublicShared() && documentRevision.getLastCheckedInIteration().getIteration() >= docIKey.getIteration();
     }
 
     @Override
+    @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     public BinaryResource getBinaryResourceForProductInstance(String fullName) throws FileNotFoundException {
         return new BinaryResourceDAO(em).loadBinaryResource(fullName);
     }
 
     @Override
+    @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     public BinaryResource getBinaryResourceForPathData(String fullName) throws FileNotFoundException {
         return new BinaryResourceDAO(em).loadBinaryResource(fullName);
     }
 
     @Override
+    @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     public InputStream getDocumentConvertedResource(String outputFormat, BinaryResource binaryResource) throws ConvertedResourceException {
 
         // todo : use authenticated user locale, or request locale, or default locale.

@@ -69,7 +69,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IProductManagerLocal.class)
 @Stateless(name = "ProductManagerBean")
 public class ProductManagerBean implements IProductManagerLocal {
@@ -555,14 +555,9 @@ public class ProductManagerBean implements IProductManagerLocal {
 
     }
 
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public BinaryResource getBinaryResource(String pFullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException, WorkspaceNotEnabledException {
-
-        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
-            // Don't check access right because it is do before. (Is public or isShared)
-            return new BinaryResourceDAO(em).loadBinaryResource(pFullName);
-        }
 
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
         Locale userLocale = new Locale(user.getLanguage());
@@ -2401,28 +2396,16 @@ public class ProductManagerBean implements IProductManagerLocal {
     }
 
 
-    @RolesAllowed({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public boolean canAccess(PartRevisionKey partRKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, WorkspaceNotEnabledException {
-        PartRevision partRevision;
-        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
-            partRevision = new PartRevisionDAO(em).loadPartR(partRKey);
-            return partRevision.isPublicShared();
-        }
-
         User user = userManager.checkWorkspaceReadAccess(partRKey.getPartMaster().getWorkspace());
         return canUserAccess(user, partRKey);
     }
 
-    @RolesAllowed({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public boolean canAccess(PartIterationKey partIKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, PartIterationNotFoundException, WorkspaceNotEnabledException {
-        PartRevision partRevision;
-        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
-            partRevision = new PartRevisionDAO(em).loadPartR(partIKey.getPartRevision());
-            return partRevision.isPublicShared() && partRevision.getLastCheckedInIteration().getIteration() >= partIKey.getIteration();
-        }
-
         User user = userManager.checkWorkspaceReadAccess(partIKey.getWorkspaceId());
         return canUserAccess(user, partIKey);
     }
@@ -2454,7 +2437,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         return user;
     }
 
-    @RolesAllowed({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public boolean canWrite(PartRevisionKey partRKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
@@ -3641,17 +3624,12 @@ public class ProductManagerBean implements IProductManagerLocal {
         return documentIterationLinks;
     }
 
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public PartIteration findPartIterationByBinaryResource(BinaryResource binaryResource) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         BinaryResourceDAO binaryResourceDAO;
-
-        if (contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
-            binaryResourceDAO = new BinaryResourceDAO(em);
-        } else {
-            User user = userManager.checkWorkspaceReadAccess(binaryResource.getWorkspaceId());
-            binaryResourceDAO = new BinaryResourceDAO(new Locale(user.getLanguage()),em);
-        }
+        User user = userManager.checkWorkspaceReadAccess(binaryResource.getWorkspaceId());
+        binaryResourceDAO = new BinaryResourceDAO(new Locale(user.getLanguage()),em);
         return binaryResourceDAO.getPartHolder(binaryResource);
     }
 

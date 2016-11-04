@@ -37,7 +37,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This class set the caller group to guest-proxy if the requested resource is public
+ * This class set the caller group to guest if the requested resource is public
  *
  * @author Morgan Guimard
  */
@@ -55,7 +55,7 @@ public class GuestSAM extends CustomSAM {
         LOGGER.log(Level.INFO, "Validating request @"+request.getMethod() +" " + request.getRequestURI());
 
         CallerPrincipalCallback callerPrincipalCallback = new CallerPrincipalCallback(clientSubject, "");
-        GroupPrincipalCallback groupPrincipalCallback = new GroupPrincipalCallback(clientSubject, new String[]{UserGroupMapping.GUEST_PROXY_ROLE_ID});
+        GroupPrincipalCallback groupPrincipalCallback = new GroupPrincipalCallback(clientSubject, new String[]{UserGroupMapping.GUEST_ROLE_ID});
         Callback[] callbacks = {callerPrincipalCallback, groupPrincipalCallback};
 
         try {

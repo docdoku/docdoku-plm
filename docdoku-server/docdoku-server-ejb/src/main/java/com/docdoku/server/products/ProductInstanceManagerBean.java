@@ -55,7 +55,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IProductInstanceManagerLocal.class)
 @Stateless(name = "ProductInstanceManagerBean")
 public class ProductInstanceManagerBean implements IProductInstanceManagerLocal {
@@ -678,14 +678,9 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
 
     @LogDocument
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public BinaryResource getBinaryResource(String fullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, FileNotFoundException, NotAllowedException, WorkspaceNotEnabledException {
-
-        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
-            // Don't check access right because it is done before. (Is public or isShared)
-            return new BinaryResourceDAO(em).loadBinaryResource(fullName);
-        }
 
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(fullName));
         Locale userLocale = new Locale(user.getLanguage());
@@ -945,11 +940,6 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public BinaryResource getPathDataBinaryResource(String fullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, AccessRightException, WorkspaceNotEnabledException {
-
-        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
-            // Don't check access right because it is done before. (Is public or isShared)
-            return new BinaryResourceDAO(em).loadBinaryResource(fullName);
-        }
 
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(fullName));
         Locale userLocale = new Locale(user.getLanguage());

@@ -39,7 +39,7 @@ import javax.persistence.PersistenceContext;
 import java.util.Locale;
 import java.util.logging.Logger;
 
-@DeclareRoles({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IOrganizationManagerLocal.class)
 @Stateless(name = "OrganizationManagerBean")
 public class OrganizationManagerBean implements IOrganizationManagerLocal {

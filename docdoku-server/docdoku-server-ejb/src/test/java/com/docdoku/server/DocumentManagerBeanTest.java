@@ -30,7 +30,6 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceDateAttribute;
 import com.docdoku.core.meta.InstanceTextAttribute;
 import com.docdoku.core.security.ACL;
-import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
@@ -221,27 +220,11 @@ public class DocumentManagerBeanTest {
 
     /**
      *
-     *  Test to download a document file as a guest
-     */
+     *  Test to download a document file
+     *  */
     @Test
-    public void getBinaryResourceAsGuest()throws Exception{
+    public void getBinaryResourceTest()throws Exception{
         //Given
-        Mockito.when(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)).thenReturn(true);
-        Mockito.when(userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(DocumentUtil.FULL_NAME))).thenReturn(user);
-        Mockito.when(contextManager.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)).thenReturn(true);
-        Mockito.when(em.find(BinaryResource.class, DocumentUtil.FULL_NAME)).thenReturn(binaryResource);
-        BinaryResource binaryResource = documentManagerBean.getBinaryResource(DocumentUtil.FULL_NAME);
-        //Then
-        Assert.assertNotNull(binaryResource);
-    }
-    /**
-     *
-     *  Test to download a document file as not a guest
-     */
-    @Test
-    public void getBinaryResourceAsNotGuest()throws Exception{
-        //Given
-        Mockito.when(ctx.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)).thenReturn(true);
         Mockito.when(userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(DocumentUtil.FULL_NAME))).thenReturn(user);
         Mockito.when(em.find(BinaryResource.class, DocumentUtil.FULL_NAME)).thenReturn(binaryResource);
         Mockito.when(documentIterationQuery.getSingleResult()).thenReturn(documentIteration);

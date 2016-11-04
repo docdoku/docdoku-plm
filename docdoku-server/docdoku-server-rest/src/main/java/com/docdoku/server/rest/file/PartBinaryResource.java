@@ -65,7 +65,7 @@ import java.util.logging.Logger;
 
 @RequestScoped
 @Api(hidden = true, value = "part-binary", description = "Operations about part files")
-@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID})
 public class PartBinaryResource {
 
     private static final Logger LOGGER = Logger.getLogger(PartBinaryResource.class.getName());
@@ -351,7 +351,10 @@ public class PartBinaryResource {
         if(publicEntityManager.canAccess(partIKey)){
             return true;
         }
-        return productService.canAccess(partIKey);
+        if(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
+            return productService.canAccess(partIKey);
+        }
+        return false;
     }
 
     private BinaryResource getBinaryResource(String fullName)

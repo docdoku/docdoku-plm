@@ -38,7 +38,7 @@ import java.util.logging.Logger;
 /**
  * @author Charles Fallourd on 10/02/16.
  */
-@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(ICascadeActionManagerLocal.class)
 @Stateless(name = "CascadeActionManagerBean")
 public class CascadeActionManagerBean implements ICascadeActionManagerLocal {

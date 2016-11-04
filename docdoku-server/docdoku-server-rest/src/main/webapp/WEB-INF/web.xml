@@ -39,7 +39,7 @@
     </security-constraint>
 
     <security-role>
-        <role-name>guest-proxy</role-name>
+        <role-name>guest</role-name>
     </security-role>
     <security-role>
         <role-name>users</role-name>

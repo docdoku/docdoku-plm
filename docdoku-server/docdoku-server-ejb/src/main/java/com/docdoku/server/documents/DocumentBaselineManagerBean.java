@@ -42,7 +42,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
 
-@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IDocumentBaselineManagerLocal.class)
 @Stateless(name = "DocumentBaselineManagerBean")
 public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLocal {

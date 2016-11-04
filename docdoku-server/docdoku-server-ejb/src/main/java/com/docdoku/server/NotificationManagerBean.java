@@ -48,7 +48,7 @@ import java.util.*;
 /**
  * @author Florent Garin on 07/09/16
  */
-@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(INotificationManagerLocal.class)
 @Stateless(name = "NotificationManagerBean")
 public class NotificationManagerBean implements INotificationManagerLocal {

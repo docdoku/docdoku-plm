@@ -3,8 +3,8 @@
 <glassfish-web-app>
 
     <security-role-mapping>
-        <role-name>guest-proxy</role-name>
-        <group-name>guest-proxy</group-name>
+        <role-name>guest</role-name>
+        <group-name>guest</group-name>
     </security-role-mapping>
 
     <security-role-mapping>

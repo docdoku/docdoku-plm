@@ -33,7 +33,8 @@ import javax.ws.rs.Path;
 @RequestScoped
 @Api(value = "files", description = "Operations about files")
 @Path("files")
-@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_ROLE_ID})
+@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_ROLE_ID})
 public class FileResource {
 
     @Inject

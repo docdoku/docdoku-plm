@@ -46,7 +46,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
-@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IDocumentWorkflowManagerLocal.class)
 @Stateless(name = "DocumentWorkflowManagerBean")
 public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLocal {

@@ -27,7 +27,6 @@ import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
-import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.PartUsageLinkDAO;
@@ -284,7 +283,6 @@ public class ProductManagerBeanTest {
         partRevision.setTags(tags);
 
         PartRevisionKey partRevisionKey = partRevision.getKey();
-        Mockito.when(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)).thenReturn(true);
         Mockito.when(userManager.checkWorkspaceReadAccess(ProductUtil.WORKSPACE_ID)).thenReturn(user);
         Mockito.when(userManager.checkWorkspaceWriteAccess(ProductUtil.WORKSPACE_ID)).thenReturn(user);
         Mockito.when(em.find(PartRevision.class, partRevisionKey)).thenReturn(partRevision);
@@ -303,7 +301,6 @@ public class ProductManagerBeanTest {
         String[] tags = null;
         partRevision.setTags(null);
         PartRevisionKey partRevisionKey = partRevision.getKey();
-        Mockito.when(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)).thenReturn(true);
         Mockito.when(userManager.checkWorkspaceReadAccess(ProductUtil.WORKSPACE_ID)).thenReturn(user);
         Mockito.when(userManager.checkWorkspaceWriteAccess(ProductUtil.WORKSPACE_ID)).thenReturn(user);
         Mockito.when(em.find(PartRevision.class, partRevisionKey)).thenReturn(partRevision);

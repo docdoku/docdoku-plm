@@ -46,7 +46,7 @@ import java.util.Locale;
 /**
  * @author Lebeau Julien on 03/03/15.
  */
-@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(ILOVManagerLocal.class)
 @Stateless(name = "LOVManagerBean")
 public class LOVManagerBean implements ILOVManagerLocal {
