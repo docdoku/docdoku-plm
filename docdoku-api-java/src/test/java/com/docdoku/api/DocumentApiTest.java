@@ -135,16 +135,19 @@ public class DocumentApiTest {
 
         DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreation, TestConfig.WORKSPACE);
 
+        String attrName = UUID.randomUUID().toString().substring(0, 8);
+        String attrValue = UUID.randomUUID().toString().substring(0, 8);
+
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(document);
         InstanceAttributeDTO attribute = new InstanceAttributeDTO();
-        attribute.setName("ATTR_NAME");
+        attribute.setName(attrName);
         attribute.setType(InstanceAttributeDTO.TypeEnum.TEXT);
-        attribute.setValue("ATTR_VALUE");
+        attribute.setValue(attrValue);
         lastIteration.getInstanceAttributes().add(attribute);
         documentApi.updateDocumentIteration(TestConfig.WORKSPACE, documentCreation.getReference(), "A", "1", lastIteration);
         documentApi.checkInDocument(TestConfig.WORKSPACE, documentCreation.getReference(), "A", "");
 
-        String attributeSearchQuery = "TEXT:ATTR_NAME:ATTR_VALUE";
+        String attributeSearchQuery = "TEXT:"+attrName+":"+attrValue;
 
         // Let some time to server for data indexing (asynchronous)
         Thread.sleep(2000);
