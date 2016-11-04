@@ -501,7 +501,8 @@ public class DocumentResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response publishDocumentRevision(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
                                             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
-                                            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
+                                            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion,
+                                            @ApiParam(name = "body", defaultValue = "") String body)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
         documentService.setDocumentPublicShared(new DocumentRevisionKey(workspaceId, documentId, documentVersion), true);
         return Response.ok().build();
