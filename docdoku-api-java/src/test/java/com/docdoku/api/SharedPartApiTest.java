@@ -45,7 +45,7 @@ public class SharedPartApiTest {
 
         // Create a part
         PartCreationDTO partCreationDTO = new PartCreationDTO();
-        partCreationDTO.setNumber(UUID.randomUUID().toString().substring(0, 8));
+        partCreationDTO.setNumber(TestUtils.randomString());
         partCreationDTO.setName("PublicPart");
 
         PartRevisionDTO part = partsApi.createNewPart(TestConfig.WORKSPACE, partCreationDTO);
@@ -81,7 +81,7 @@ public class SharedPartApiTest {
 
         // Create a part
         PartCreationDTO partCreationDTO = new PartCreationDTO();
-        partCreationDTO.setNumber(UUID.randomUUID().toString().substring(0, 8));
+        partCreationDTO.setNumber(TestUtils.randomString());
         partCreationDTO.setName("PublicPart");
 
         PartRevisionDTO part = partsApi.createNewPart(TestConfig.WORKSPACE, partCreationDTO);

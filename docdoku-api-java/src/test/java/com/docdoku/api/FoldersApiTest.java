@@ -43,7 +43,7 @@ public class FoldersApiTest {
 
     @Test
     public void createRootFoldersTest() throws ApiException {
-        String folderName = "Folder-"+UUID.randomUUID().toString().substring(0, 8);
+        String folderName = "Folder-"+TestUtils.randomString();
         FolderDTO folder = new FolderDTO();
         folder.setName(folderName);
         FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);

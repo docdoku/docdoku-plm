@@ -37,7 +37,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @RunWith(JUnit4.class)
 public class WorkflowApiTest {
@@ -58,7 +57,7 @@ public class WorkflowApiTest {
     public void testWorkflowOnWorkspacesWorkflow() throws ApiException {
 
         // Create a workflow model
-        String workflowModelReference = "W_MODEL-" + UUID.randomUUID().toString().substring(0, 8);
+        String workflowModelReference = "W_MODEL-" + TestUtils.randomString();
         WorkflowModelDTO workflowModel = createModel(workflowModelReference);
         Assert.assertEquals(workflowModel.getId(), workflowModelReference);
 
@@ -66,7 +65,7 @@ public class WorkflowApiTest {
 
         // Create a workflow container
         WorkspaceWorkflowCreationDTO workspaceWorkflowCreationDTO = new WorkspaceWorkflowCreationDTO();
-        workspaceWorkflowCreationDTO.setId(UUID.randomUUID().toString().substring(0, 8));
+        workspaceWorkflowCreationDTO.setId(TestUtils.randomString());
         workspaceWorkflowCreationDTO.setRoleMapping(roleMapping);
         workspaceWorkflowCreationDTO.setWorkflowModelId(workflowModel.getId());
 
@@ -83,7 +82,7 @@ public class WorkflowApiTest {
     public void testWorkflowOnPart() throws ApiException {
 
         // Create a workflow model
-        String workflowModelReference = "W_MODEL-" + UUID.randomUUID().toString().substring(0, 8);
+        String workflowModelReference = "W_MODEL-" + TestUtils.randomString();
         WorkflowModelDTO workflowModel = createModel(workflowModelReference);
         Assert.assertEquals(workflowModel.getId(), workflowModelReference);
 
@@ -93,7 +92,7 @@ public class WorkflowApiTest {
 
         // Create a part
         PartCreationDTO part = new PartCreationDTO();
-        part.setNumber(UUID.randomUUID().toString().substring(0, 8));
+        part.setNumber(TestUtils.randomString());
         part.setWorkflowModelId(workflowModelReference);
         part.setRoleMapping(roleMapping);
         PartRevisionDTO newPart = partsApi.createNewPart(TestConfig.WORKSPACE, part);
@@ -112,7 +111,7 @@ public class WorkflowApiTest {
     public void testWorkflowOnDocument() throws ApiException {
 
         // Create a workflow model
-        String workflowModelReference = "W_MODEL-" + UUID.randomUUID().toString().substring(0, 8);
+        String workflowModelReference = "W_MODEL-" + TestUtils.randomString();
         WorkflowModelDTO workflowModel = createModel(workflowModelReference);
         Assert.assertEquals(workflowModel.getId(), workflowModelReference);
 
@@ -120,7 +119,7 @@ public class WorkflowApiTest {
 
         // Create a document
         DocumentCreationDTO document = new DocumentCreationDTO();
-        document.setReference(UUID.randomUUID().toString().substring(0,8));
+        document.setReference(TestUtils.randomString());
         document.setWorkflowModelId(workflowModelReference);
         document.setRoleMapping(roleMapping);
 
@@ -221,7 +220,7 @@ public class WorkflowApiTest {
 
     public WorkflowModelDTO createModel(String workflowModelReference) throws ApiException {
 
-        String roleName = "ROLE-" + UUID.randomUUID().toString().substring(0, 8);
+        String roleName = "ROLE-" + TestUtils.randomString();
 
         // Get current user to create a role with default assignee
         UserDTO user = usersApi.whoAmI(TestConfig.WORKSPACE);

@@ -60,7 +60,7 @@ public class AdminApiTest {
         WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT);
 
         WorkspaceDTO workspace = new WorkspaceDTO();
-        workspace.setId(UUID.randomUUID().toString());
+        workspace.setId(TestUtils.randomString());
         workspacesApi.createWorkspace(workspace, TestConfig.LOGIN);
 
         WorkspaceDTO disabledWorkspace = adminApi.enableWorkspace(workspace.getId(), false, "");
@@ -77,7 +77,7 @@ public class AdminApiTest {
     public void updateAccountTest() throws ApiException {
         AccountDTO account = TestUtils.createAccount();
 
-        String newName = UUID.randomUUID().toString().substring(0, 8);
+        String newName = TestUtils.randomString();
         account.setName(newName);
 
         AdminApi adminApi = new AdminApi(TestConfig.ROOT_CLIENT);

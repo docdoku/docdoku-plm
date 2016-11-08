@@ -37,7 +37,7 @@ public class UserApiTest {
     private UsersApi usersApi = new UsersApi(TestConfig.REGULAR_USER_CLIENT);
 
     @Test
-    public void whoamiTest() throws ApiException {
+    public void whoAmITest() throws ApiException {
         UserDTO currentUser = usersApi.whoAmI(TestConfig.WORKSPACE);
         Assert.assertEquals(currentUser.getLogin(),TestConfig.LOGIN);
         Assert.assertEquals(currentUser.getWorkspaceId(),TestConfig.WORKSPACE);

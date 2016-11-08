@@ -33,7 +33,7 @@ public class OrganizationsApiTest {
 
     @Test
     public void updateOrganizationTest() throws ApiException {
-        String newName = UUID.randomUUID().toString().substring(0, 8);
+        String newName = TestUtils.randomString();
         OrganizationDTO organization = organizationsApi.getOrganization();
         organization.setName(newName);
         OrganizationDTO updatedOrganization = organizationsApi.updateOrganization(organization);

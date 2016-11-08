@@ -32,8 +32,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.util.UUID;
-
 /**
  * This class tests DocdokuPLMClient class
  *
@@ -66,7 +64,7 @@ public class DocdokuPLMClientTest {
         Assert.assertEquals(TestConfig.LOGIN, account.getLogin());
 
         WorkspaceDTO workspace = new WorkspaceDTO();
-        workspace.setId(UUID.randomUUID().toString());
+        workspace.setId(TestUtils.randomString());
 
         WorkspaceDTO createdWorkspace = workspacesApi.createWorkspace(workspace, TestConfig.LOGIN);
         WorkspaceListDTO workspacesForConnectedUser = workspacesApi.getWorkspacesForConnectedUser();

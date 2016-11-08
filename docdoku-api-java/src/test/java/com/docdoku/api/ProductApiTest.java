@@ -33,7 +33,6 @@ import org.junit.runners.JUnit4;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @RunWith(JUnit4.class)
 public class ProductApiTest {
@@ -45,9 +44,9 @@ public class ProductApiTest {
     @Test
     public void createProductTest() throws ApiException {
 
-        String p1Number = UUID.randomUUID().toString().substring(0, 8);
-        String p2Number = UUID.randomUUID().toString().substring(0, 8);
-        String p3Number = UUID.randomUUID().toString().substring(0, 8);
+        String p1Number = TestUtils.randomString();
+        String p2Number = TestUtils.randomString();
+        String p3Number = TestUtils.randomString();
 
         String[] partNumbers = {p1Number, p2Number, p3Number};
         PartCreationDTO part = new PartCreationDTO();
@@ -95,7 +94,7 @@ public class ProductApiTest {
 
 
         ConfigurationItemDTO product = new ConfigurationItemDTO();
-        product.setId(UUID.randomUUID().toString().substring(0,8));
+        product.setId(TestUtils.randomString());
         product.setDesignItemNumber(p1Number);
         product.setDescription("Generated product");
         product.setWorkspaceId(TestConfig.WORKSPACE);
@@ -113,8 +112,10 @@ public class ProductApiTest {
                 .filter(productBaselineDTO -> productBaseline.getId().equals(productBaselineDTO.getId()))
                 .count());
 
-        String instancesJSON = productsApi.getInstances(TestConfig.WORKSPACE, product.getId(), "latest", "-1", true);
-        Assert.assertNotNull(instancesJSON);
+        List<LeafDTO> leaves = productsApi.getInstances(TestConfig.WORKSPACE, product.getId(), "latest", "-1", true);
+
+        Assert.assertNotNull(leaves);
+        Assert.assertFalse(leaves.isEmpty());
 
     }
 

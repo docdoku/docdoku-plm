@@ -51,7 +51,7 @@ public class DocumentApiTest {
 
         // Create a document
         DocumentCreationDTO document = new DocumentCreationDTO();
-        document.setReference(UUID.randomUUID().toString().substring(0, 8));
+        document.setReference(TestUtils.randomString());
         document.setTitle("GeneratedDoc");
 
         DocumentRevisionDTO createdDocument = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, document, TestConfig.WORKSPACE);
@@ -104,7 +104,7 @@ public class DocumentApiTest {
 
         // Create a document
         DocumentCreationDTO documentCreation = new DocumentCreationDTO();
-        documentCreation.setReference(UUID.randomUUID().toString().substring(0, 8));
+        documentCreation.setReference(TestUtils.randomString());
         documentCreation.setTitle("GeneratedDoc");
 
         DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreation, TestConfig.WORKSPACE);
@@ -130,13 +130,13 @@ public class DocumentApiTest {
 
         // Create a document
         DocumentCreationDTO documentCreation = new DocumentCreationDTO();
-        documentCreation.setReference(UUID.randomUUID().toString().substring(0, 8));
-        documentCreation.setTitle(UUID.randomUUID().toString().substring(0, 8));
+        documentCreation.setReference(TestUtils.randomString());
+        documentCreation.setTitle(TestUtils.randomString());
 
         DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreation, TestConfig.WORKSPACE);
 
-        String attrName = UUID.randomUUID().toString().substring(0, 8);
-        String attrValue = UUID.randomUUID().toString().substring(0, 8);
+        String attrName = TestUtils.randomString();
+        String attrValue = TestUtils.randomString();
 
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(document);
         InstanceAttributeDTO attribute = new InstanceAttributeDTO();
@@ -176,11 +176,11 @@ public class DocumentApiTest {
     @Test
     public void attributesAdvancedSearchTests() throws ApiException, InterruptedException {
 
-        String attributeValue1 = UUID.randomUUID().toString().substring(0, 8);
-        String attributeValue2 = UUID.randomUUID().toString().substring(0, 8);
-        String attributeValue3 = UUID.randomUUID().toString().substring(0, 8);
-        String attrName1 = UUID.randomUUID().toString().substring(0, 8);
-        String attrName2 = UUID.randomUUID().toString().substring(0, 8);
+        String attributeValue1 = TestUtils.randomString();
+        String attributeValue2 = TestUtils.randomString();
+        String attributeValue3 = TestUtils.randomString();
+        String attrName1 = TestUtils.randomString();
+        String attrName2 = TestUtils.randomString();
 
         DocumentRevisionDTO document1 = createDocumentWithAttributes(attrName1, attrName2, attributeValue1);
         DocumentRevisionDTO document2 = createDocumentWithAttributes(attrName1, attrName2, attributeValue2);
@@ -256,8 +256,8 @@ public class DocumentApiTest {
     @Test
     public void folderAdvancedSearch() throws ApiException, InterruptedException {
 
-        String folder1 = UUID.randomUUID().toString().substring(0, 8);
-        String folder2 = UUID.randomUUID().toString().substring(0, 8);
+        String folder1 = TestUtils.randomString();
+        String folder2 = TestUtils.randomString();
         DocumentRevisionDTO document1 = createDocumentsInFolder(folder1);
         DocumentRevisionDTO document2 = createDocumentsInFolder(folder2);
 
@@ -286,7 +286,7 @@ public class DocumentApiTest {
         foldersApi.createSubFolder(TestConfig.WORKSPACE, TestConfig.WORKSPACE, folderDTO);
 
         DocumentCreationDTO documentCreation = new DocumentCreationDTO();
-        documentCreation.setReference(UUID.randomUUID().toString().substring(0, 8));
+        documentCreation.setReference(TestUtils.randomString());
         foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreation, TestConfig.WORKSPACE+":"+folderName);
         return documentApi.checkInDocument(TestConfig.WORKSPACE, documentCreation.getReference(), "A", "");
     }
@@ -294,7 +294,7 @@ public class DocumentApiTest {
     private DocumentRevisionDTO createDocumentWithAttributes(String attrName1, String attrName2, String attrValue) throws ApiException {
 
         DocumentCreationDTO documentCreation = new DocumentCreationDTO();
-        documentCreation.setReference(UUID.randomUUID().toString().substring(0, 8));
+        documentCreation.setReference(TestUtils.randomString());
         DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreation, TestConfig.WORKSPACE);
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(document);
 

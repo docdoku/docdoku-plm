@@ -48,7 +48,7 @@ public class SharedDocumentApiTest {
 
         // Create a document
         DocumentCreationDTO documentCreationDTO = new DocumentCreationDTO();
-        documentCreationDTO.setReference(UUID.randomUUID().toString().substring(0, 8));
+        documentCreationDTO.setReference(TestUtils.randomString());
         documentCreationDTO.setTitle("PublicDoc");
 
         DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreationDTO, TestConfig.WORKSPACE);
@@ -85,7 +85,7 @@ public class SharedDocumentApiTest {
 
         // Create a document
         DocumentCreationDTO documentCreationDTO = new DocumentCreationDTO();
-        documentCreationDTO.setReference(UUID.randomUUID().toString().substring(0, 8));
+        documentCreationDTO.setReference(TestUtils.randomString());
         documentCreationDTO.setTitle("PublicDoc");
 
         DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreationDTO, TestConfig.WORKSPACE);

@@ -38,7 +38,6 @@ import org.junit.runners.JUnit4;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.UUID;
 
 @RunWith(JUnit4.class)
 public class PartApiTest {
@@ -51,7 +50,7 @@ public class PartApiTest {
 
         // Create a part
         PartCreationDTO part = new PartCreationDTO();
-        part.setNumber(UUID.randomUUID().toString().substring(0, 8));
+        part.setNumber(TestUtils.randomString());
         part.setName("GeneratedPart");
 
         PartRevisionDTO createdPart = partsApi.createNewPart(TestConfig.WORKSPACE, part);
@@ -106,7 +105,7 @@ public class PartApiTest {
 
         // Create a part
         PartCreationDTO partCreation = new PartCreationDTO();
-        partCreation.setNumber(UUID.randomUUID().toString().substring(0, 8));
+        partCreation.setNumber(TestUtils.randomString());
         partCreation.setName("GeneratedPart");
 
         PartRevisionDTO part = partsApi.createNewPart(TestConfig.WORKSPACE, partCreation);
@@ -130,7 +129,7 @@ public class PartApiTest {
 
         // Create a part
         PartCreationDTO partCreation = new PartCreationDTO();
-        partCreation.setNumber(UUID.randomUUID().toString().substring(0, 8));
+        partCreation.setNumber(TestUtils.randomString());
         partCreation.setName("GeneratedPart");
 
         PartRevisionDTO part = partsApi.createNewPart(TestConfig.WORKSPACE, partCreation);

@@ -28,8 +28,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.util.UUID;
-
 @RunWith(JUnit4.class)
 public class AccountsApiTest {
 
@@ -49,7 +47,7 @@ public class AccountsApiTest {
     @Test
     public void updateAccountTest() throws ApiException {
 
-        String newName = UUID.randomUUID().toString().substring(0, 8);
+        String newName = TestUtils.randomString();
 
         AccountsApi accountsApi = new AccountsApi(TestConfig.REGULAR_USER_CLIENT);
         AccountDTO account = accountsApi.getAccount();

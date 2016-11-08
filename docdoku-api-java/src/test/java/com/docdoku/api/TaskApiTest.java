@@ -47,9 +47,9 @@ public class TaskApiTest {
     @Test
     public void tests() throws ApiException {
 
-        String workflowModelReference = "W_MODEL-" + UUID.randomUUID().toString().substring(0, 8);
-        String roleName = "ROLE-" + UUID.randomUUID().toString().substring(0, 8);
-        String groupId = "GROUP-" + UUID.randomUUID().toString().substring(0, 8);
+        String workflowModelReference = "W_MODEL-" + TestUtils.randomString();
+        String roleName = "ROLE-" + TestUtils.randomString();
+        String groupId = "GROUP-" + TestUtils.randomString();
 
         // Get current user to create a role with default assignee
         UserDTO user = usersApi.whoAmI(TestConfig.WORKSPACE);
@@ -112,7 +112,7 @@ public class TaskApiTest {
 
         // Create a workflow container
         WorkspaceWorkflowCreationDTO workspaceWorkflowCreationDTO = new WorkspaceWorkflowCreationDTO();
-        workspaceWorkflowCreationDTO.setId(UUID.randomUUID().toString().substring(0, 8));
+        workspaceWorkflowCreationDTO.setId(TestUtils.randomString());
         workspaceWorkflowCreationDTO.setRoleMapping(roleMapping);
         workspaceWorkflowCreationDTO.setWorkflowModelId(workflowModel.getId());
 

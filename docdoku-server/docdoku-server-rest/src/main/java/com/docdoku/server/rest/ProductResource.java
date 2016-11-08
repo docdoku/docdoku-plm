@@ -223,7 +223,7 @@ public class ProductResource {
     }
 
     @GET
-    @ApiOperation(value = "Get configuration item", response = ComponentDTO.class)
+    @ApiOperation(value = "Get configuration item", response = ConfigurationItemDTO.class)
     @Path("{ciId}")
     @Produces(MediaType.APPLICATION_JSON)
     public ConfigurationItemDTO getConfigurationItem(@PathParam("workspaceId") String workspaceId,
@@ -240,7 +240,7 @@ public class ProductResource {
     }
 
     @DELETE
-    @ApiOperation(value = "Delete configuration item", response = ComponentDTO.class)
+    @ApiOperation(value = "Delete configuration item", response = Response.class)
     @Path("{ciId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteConfigurationItem(@PathParam("workspaceId") String workspaceId,
@@ -358,7 +358,7 @@ public class ProductResource {
 
 
     @GET
-    @ApiOperation(value = "Get instances", response = String.class)
+    @ApiOperation(value = "Get instances", response = LeafDTO.class, responseContainer = "List")
     @Path("{ciId}/instances")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getInstances(@Context Request request,
@@ -723,7 +723,7 @@ public class ProductResource {
     @ApiOperation(value = "Cascade undo checkout", response = CascadeResult.class)
     @Path("{ciId}/cascade-undocheckout")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response cascadeUndocheckout(@PathParam("workspaceId") String workspaceId,
+    public Response cascadeUndoCheckout(@PathParam("workspaceId") String workspaceId,
                                         @PathParam("ciId") String ciId,
                                         @QueryParam("configSpec") String configSpecType,
                                         @QueryParam("path") String path,
