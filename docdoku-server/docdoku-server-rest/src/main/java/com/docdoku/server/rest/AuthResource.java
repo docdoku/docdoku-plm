@@ -12,9 +12,7 @@ import com.docdoku.server.rest.dto.AccountDTO;
 import com.docdoku.server.rest.dto.LoginRequestDTO;
 import com.docdoku.server.rest.dto.PasswordRecoverDTO;
 import com.docdoku.server.rest.dto.PasswordRecoveryRequestDTO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -60,11 +58,19 @@ public class AuthResource {
 
     @POST
     @Path("/login")
-    @ApiOperation(value = "Try to authenticate", response = AccountDTO.class)
+    @ApiOperation(value = "Try to authenticate",
+            response = AccountDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful login"),
+            @ApiResponse(code = 403, message = "Unsuccessful login"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(@Context HttpServletRequest request, @Context HttpServletResponse response,
-                          @ApiParam(required = true, value = "Login request") LoginRequestDTO loginRequestDTO)
+    public Response login(
+            @Context HttpServletRequest request,
+            @Context HttpServletResponse response,
+            @ApiParam(required = true, value = "Login request") LoginRequestDTO loginRequestDTO)
             throws AccountNotFoundException {
 
         String login = loginRequestDTO.getLogin();
@@ -102,9 +108,15 @@ public class AuthResource {
 
     @POST
     @Path("/recovery")
-    @ApiOperation(value = "Send password recovery request", response = Response.class)
+    @ApiOperation(value = "Send password recovery request",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful request"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response sendPasswordRecovery(@ApiParam(required = true, value = "Password recovery request") PasswordRecoveryRequestDTO passwordRecoveryRequestDTO)
+    public Response sendPasswordRecovery(
+            @ApiParam(required = true, value = "Password recovery request") PasswordRecoveryRequestDTO passwordRecoveryRequestDTO)
             throws AccountNotFoundException {
         String login = passwordRecoveryRequestDTO.getLogin();
         Account account = accountManager.getAccount(login);
@@ -114,9 +126,15 @@ public class AuthResource {
 
     @POST
     @Path("/recover")
-    @ApiOperation(value = "Recover password", response = Response.class)
+    @ApiOperation(value = "Recover password",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful request"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response sendPasswordRecover(@ApiParam(required = true, value = "Password recovery process") PasswordRecoverDTO passwordRecoverDTO)
+    public Response sendPasswordRecover(
+            @ApiParam(required = true, value = "Password recovery process") PasswordRecoverDTO passwordRecoverDTO)
             throws PasswordRecoveryRequestNotFoundException {
         userManager.recoverPassword(passwordRecoverDTO.getUuid(), passwordRecoverDTO.getNewPassword());
         return Response.ok().build();
@@ -124,9 +142,15 @@ public class AuthResource {
 
     @GET
     @Path("/logout")
-    @ApiOperation(value = "Log out connected user", response = Response.class)
+    @ApiOperation(value = "Log out connected user",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful logout"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response logout(@Context HttpServletRequest request) {
+    public Response logout(
+            @Context HttpServletRequest request) {
         request.getSession().invalidate();
         try {
             request.logout();

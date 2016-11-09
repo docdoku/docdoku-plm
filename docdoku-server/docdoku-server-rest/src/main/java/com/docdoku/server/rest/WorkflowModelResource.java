@@ -30,9 +30,7 @@ import com.docdoku.core.workflow.WorkflowModelKey;
 import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.ActivityModelDTO;
 import com.docdoku.server.rest.dto.WorkflowModelDTO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -71,9 +69,17 @@ public class WorkflowModelResource {
     }
 
     @GET
-    @ApiOperation(value = "Get workflow models", response = WorkflowModelDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get workflow models",
+            response = WorkflowModelDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of WorkflowModelDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowModelDTO[] getWorkflowModelsInWorkspace(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+    public WorkflowModelDTO[] getWorkflowModelsInWorkspace(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         WorkflowModel[] workflowModels = workflowService.getWorkflowModels(workspaceId);
@@ -87,11 +93,18 @@ public class WorkflowModelResource {
     }
 
     @GET
-    @ApiOperation(value = "Get workflow model", response = WorkflowModelDTO.class)
+    @ApiOperation(value = "Get workflow model",
+            response = WorkflowModelDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of WorkflowModelDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{workflowModelId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowModelDTO getWorkflowModelInWorkspace(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                                        @ApiParam(required = true, value = "Workflow model id") @PathParam("workflowModelId") String workflowModelId)
+    public WorkflowModelDTO getWorkflowModelInWorkspace(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Workflow model id") @PathParam("workflowModelId") String workflowModelId)
             throws EntityNotFoundException, UserNotActiveException {
 
         WorkflowModel workflowModel = workflowService.getWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
@@ -99,38 +112,61 @@ public class WorkflowModelResource {
     }
 
     @DELETE
-    @ApiOperation(value = "Delete workflow model", response = Response.class)
+    @ApiOperation(value = "Delete workflow model",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful deletion of WorkflowModelDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{workflowModelId}")
-    public Response delWorkflowModel(@PathParam("workspaceId") String workspaceId,
-                                     @PathParam("workflowModelId") String workflowModelId)
+    public Response delWorkflowModel(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Workflow model id") @PathParam("workflowModelId") String workflowModelId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, EntityConstraintException {
         workflowService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
-        return Response.status(Response.Status.OK).build();
+        return Response.ok().build();
     }
 
     @PUT
-    @ApiOperation(value = "Update workflow model", response = WorkflowModelDTO.class)
+    @ApiOperation(value = "Update workflow model",
+            response = WorkflowModelDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of updated WorkflowModelDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{workflowModelId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowModelDTO updateWorkflowModel(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                                @ApiParam(required = true, value = "Workflow model id") @PathParam("workflowModelId") String workflowModelId,
-                                                @ApiParam(required = true, value = "Workflow model to update") WorkflowModelDTO workflowModelDTOToPersist)
-            throws EntityNotFoundException, AccessRightException, EntityAlreadyExistsException, CreationException, UserNotActiveException, NotAllowedException {
+    public WorkflowModelDTO updateWorkflowModel(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Workflow model id") @PathParam("workflowModelId") String workflowModelId,
+            @ApiParam(required = true, value = "Workflow model to update") WorkflowModelDTO workflowModelDTOToPersist)
+            throws EntityNotFoundException, AccessRightException, EntityAlreadyExistsException, CreationException,
+            UserNotActiveException, NotAllowedException {
 
         WorkflowModelKey workflowModelKey = new WorkflowModelKey(workspaceId, workflowModelId);
         List<ActivityModelDTO> activityModelDTOsList = workflowModelDTOToPersist.getActivityModels();
         ActivityModel[] activityModels = extractActivityModelFromDTO(activityModelDTOsList);
-        WorkflowModel workflowModel = workflowService.updateWorkflowModel(workflowModelKey, workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);
+        WorkflowModel workflowModel = workflowService.updateWorkflowModel(workflowModelKey,
+                workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);
         return mapper.map(workflowModel, WorkflowModelDTO.class);
     }
 
     @PUT
-    @ApiOperation(value = "Update workflow model ACL", response = Response.class)
+    @ApiOperation(value = "Update workflow model ACL",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful update of WorkflowModelDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{workflowModelId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateWorkflowModelACL(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String pWorkspaceId,
-                                           @ApiParam(required = true, value = "Workflow model id") @PathParam("workflowModelId") String workflowModelId,
-                                           @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
+    public Response updateWorkflowModelACL(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String pWorkspaceId,
+            @ApiParam(required = true, value = "Workflow model id") @PathParam("workflowModelId") String workflowModelId,
+            @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
@@ -153,12 +189,21 @@ public class WorkflowModelResource {
     }
 
     @POST
-    @ApiOperation(value = "Create workflow model", response = WorkflowModelDTO.class)
+    @ApiOperation(value = "Create workflow model",
+            response = WorkflowModelDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of created WorkflowModelDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowModelDTO createWorkflowModel(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                                @ApiParam(required = true, value = "Workflow model to create rules to set") WorkflowModelDTO workflowModelDTOToPersist)
-            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, NotAllowedException, AccessRightException, CreationException {
+    public WorkflowModelDTO createWorkflowModel(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Workflow model to create rules to set") WorkflowModelDTO workflowModelDTOToPersist)
+            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, NotAllowedException,
+            AccessRightException, CreationException {
+
         List<ActivityModelDTO> activityModelDTOsList = workflowModelDTOToPersist.getActivityModels();
         ActivityModel[] activityModels = extractActivityModelFromDTO(activityModelDTOsList);
         WorkflowModel workflowModel = workflowService.createWorkflowModel(workspaceId, workflowModelDTOToPersist.getReference(), workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);

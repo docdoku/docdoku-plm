@@ -13,9 +13,7 @@ import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
 import com.docdoku.server.rest.dto.DocumentRevisionDTO;
 import com.docdoku.server.rest.dto.PartRevisionDTO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -58,11 +56,18 @@ public class SharedResource {
 
     @GET
     @Path("{workspaceId}/documents/{documentId}-{documentVersion}")
-    @ApiOperation(value = "Get document revision", response = DocumentRevisionDTO.class)
+    @ApiOperation(value = "Get document revision",
+            response = DocumentRevisionDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of DocumentRevisionDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPublicSharedDocumentRevision(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                                    @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
-                                                    @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
+    public Response getPublicSharedDocumentRevision(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
+            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
             throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException,
             DocumentRevisionNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
 
@@ -87,11 +92,19 @@ public class SharedResource {
 
     @GET
     @Path("{workspaceId}/parts/{partNumber}-{partVersion}")
-    @ApiOperation(value = "Get part revision", response = PartRevisionDTO.class)
+    @ApiOperation(value = "Get part revision",
+            response = PartRevisionDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of DocumentRevisionDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPublicSharedPartRevision(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                                @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
-                                                @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
+    public Response getPublicSharedPartRevision(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
+            @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
         // Try public shared
         PartRevisionKey partKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
@@ -112,10 +125,18 @@ public class SharedResource {
 
     @GET
     @Path("{uuid}/documents")
-    @ApiOperation(value = "Get shared document", response = DocumentRevisionDTO.class)
+    @ApiOperation(value = "Get shared document",
+            response = DocumentRevisionDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of DocumentRevisionDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getDocumentWithSharedEntity(@ApiParam(required = false, value = "Password for resource") @HeaderParam("password") String password,
-                                                @ApiParam(required = true, value = "Resource token")  @PathParam("uuid") String uuid) throws SharedEntityNotFoundException {
+    public Response getDocumentWithSharedEntity(
+            @ApiParam(required = false, value = "Password for resource") @HeaderParam("password") String password,
+            @ApiParam(required = true, value = "Resource token") @PathParam("uuid") String uuid)
+            throws SharedEntityNotFoundException {
 
         SharedEntity sharedEntity = shareManager.findSharedEntityForGivenUUID(uuid);
 
@@ -135,10 +156,18 @@ public class SharedResource {
 
     @GET
     @Path("{uuid}/parts")
-    @ApiOperation(value = "Get shared part", response = PartRevisionDTO.class)
+    @ApiOperation(value = "Get shared part",
+            response = PartRevisionDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of PartRevisionDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPartWithSharedEntity(@ApiParam(required = false, value = "Password for resource") @HeaderParam("password") String password,
-                                            @ApiParam(required = true, value = "Resource token") @PathParam("uuid") String uuid) throws SharedEntityNotFoundException {
+    public Response getPartWithSharedEntity(
+            @ApiParam(required = false, value = "Password for resource") @HeaderParam("password") String password,
+            @ApiParam(required = true, value = "Resource token") @PathParam("uuid") String uuid)
+            throws SharedEntityNotFoundException {
 
         SharedEntity sharedEntity = shareManager.findSharedEntityForGivenUUID(uuid);
 

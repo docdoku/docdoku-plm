@@ -22,6 +22,8 @@ package com.docdoku.server.rest;
 import com.docdoku.core.security.UserGroupMapping;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -47,7 +49,13 @@ public class LanguagesResource {
     }
 
     @GET
-    @ApiOperation(value = "Get languages", response = String.class, responseContainer = "List")
+    @ApiOperation(value = "Get languages",
+            response = String.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of supported languages"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response getLanguages()  {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();

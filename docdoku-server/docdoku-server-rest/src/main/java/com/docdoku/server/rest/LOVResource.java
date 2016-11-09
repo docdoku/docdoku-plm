@@ -25,9 +25,7 @@ import com.docdoku.core.meta.ListOfValuesKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ILOVManagerLocal;
 import com.docdoku.server.rest.dto.ListOfValuesDTO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -73,9 +71,16 @@ public class LOVResource {
     @ApiOperation(value = "Get a list of  ListOfValues for given parameters",
             response = ListOfValuesDTO.class,
             responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of ListOfValuesDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getLOVs(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+    public Response getLOVs(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
+
         List<ListOfValuesDTO> lovsDTO = new ArrayList<>();
         List<ListOfValues> lovs = lovManager.findLOVFromWorkspace(workspaceId);
 
@@ -90,13 +95,21 @@ public class LOVResource {
 
     @POST
     @ApiOperation(value = "Create ListOfValues",
-            response = ListOfValuesDTO.class,
-            responseContainer = "List")
+            response = ListOfValuesDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successful retrieval of created ListOfValuesDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createLOV(@ApiParam(required = true, value = "Workspace id")  @PathParam("workspaceId") String workspaceId,
-                              @ApiParam(required = true, value = "LOV to create") ListOfValuesDTO lovDTO)
-            throws ListOfValuesAlreadyExistsException, CreationException, UnsupportedEncodingException, UserNotFoundException, AccessRightException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
+    public Response createLOV(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "LOV to create") ListOfValuesDTO lovDTO)
+            throws ListOfValuesAlreadyExistsException, CreationException, UnsupportedEncodingException,
+            UserNotFoundException, AccessRightException, UserNotActiveException, WorkspaceNotFoundException,
+            WorkspaceNotEnabledException {
+
         ListOfValues lov = mapper.map(lovDTO, ListOfValues.class);
         lovManager.createLov(workspaceId, lov.getName(), lov.getValues());
         return Response.created(URI.create(URLEncoder.encode(lov.getName(), "UTF-8"))).entity(lovDTO).build();
@@ -105,12 +118,19 @@ public class LOVResource {
     @GET
     @ApiOperation(value = "Get the ListOfValues from the given parameters",
             response = ListOfValuesDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successful retrieval of ListOfValuesDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{name}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ListOfValuesDTO getLOV(@ApiParam(required = true, value = "Workspace id")  @PathParam("workspaceId") String workspaceId,
-                                  @ApiParam(required = true, value = "Name")  @PathParam("name") String name)
+    public ListOfValuesDTO getLOV(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Name") @PathParam("name") String name)
             throws ListOfValuesNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
+
         ListOfValuesKey lovKey = new ListOfValuesKey(workspaceId, name);
         ListOfValues lov = lovManager.findLov(lovKey);
         return mapper.map(lov, ListOfValuesDTO.class);
@@ -120,27 +140,40 @@ public class LOVResource {
     @Path("/{name}")
     @ApiOperation(value = "Update the ListOfValues",
             response = ListOfValuesDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successful retrieval of updated ListOfValuesDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ListOfValuesDTO updateLOV(@ApiParam(required = true, value = "Workspace id")  @PathParam("workspaceId") String workspaceId,
-                                     @ApiParam(required = true, value = "Name")  @PathParam("name") String name,
-                                     @ApiParam(required = true, value = "LOV to update") ListOfValuesDTO lovDTO)
+    public ListOfValuesDTO updateLOV(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Name") @PathParam("name") String name,
+            @ApiParam(required = true, value = "LOV to update") ListOfValuesDTO lovDTO)
             throws ListOfValuesNotFoundException, ListOfValuesAlreadyExistsException, CreationException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException {
+
         ListOfValuesKey lovKey = new ListOfValuesKey(workspaceId, name);
         ListOfValues lov = mapper.map(lovDTO, ListOfValues.class);
 
-        ListOfValues newLovUpdated = lovManager.updateLov(lovKey, lov.getName(), workspaceId, lov.getValues());
-        return mapper.map(newLovUpdated, ListOfValuesDTO.class);
+        ListOfValues updatedLOV = lovManager.updateLov(lovKey, lov.getName(), workspaceId, lov.getValues());
+        return mapper.map(updatedLOV, ListOfValuesDTO.class);
     }
 
     @DELETE
     @Path("/{name}")
     @ApiOperation(value = "Delete the ListOfValues",
             response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successful deletion of ListOfValuesDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteLOV(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                              @ApiParam(required = true, value = "Name") @PathParam("name") String name)
+    public Response deleteLOV(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Name") @PathParam("name") String name)
             throws ListOfValuesNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException, WorkspaceNotEnabledException {
         ListOfValuesKey lovKey = new ListOfValuesKey(workspaceId, name);
         lovManager.deleteLov(lovKey);

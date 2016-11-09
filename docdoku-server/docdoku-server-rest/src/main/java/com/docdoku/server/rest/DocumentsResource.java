@@ -29,9 +29,7 @@ import com.docdoku.core.services.IDocumentWorkflowManagerLocal;
 import com.docdoku.server.rest.dto.CountDTO;
 import com.docdoku.server.rest.dto.DocumentRevisionDTO;
 import com.docdoku.server.rest.util.SearchQueryParser;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -87,12 +85,21 @@ public class DocumentsResource {
     }
 
     @GET
-    @ApiOperation(value = "Get documents in workspace", response = DocumentRevisionDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get documents in workspace",
+            response = DocumentRevisionDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of DocumentRevisionDTO. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO[] getDocumentsInWorkspace(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                                         @ApiParam(required = false, value = "Start offset", defaultValue = "0") @QueryParam("start") int start,
-                                                         @ApiParam(required = false, value = "Max results", defaultValue = "20")  @QueryParam("max") int max)
-            throws UserNotActiveException, ESServerException, WorkspaceNotFoundException, UserNotFoundException, BaselineNotFoundException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
+    public DocumentRevisionDTO[] getDocumentsInWorkspace(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = false, value = "Start offset", defaultValue = "0") @QueryParam("start") int start,
+            @ApiParam(required = false, value = "Max results", defaultValue = "20") @QueryParam("max") int max)
+            throws UserNotActiveException, ESServerException, WorkspaceNotFoundException, UserNotFoundException,
+            BaselineNotFoundException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
 
         int maxResult = max != 0 ? max : 20;
 
@@ -112,25 +119,33 @@ public class DocumentsResource {
 
 
     @GET
-    @ApiOperation(value = "Search documents", response = DocumentRevisionDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Search documents",
+            response = DocumentRevisionDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of searched DocumentRevisionDTO. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("search")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO[] searchDocumentRevision(@Context UriInfo uri,
-                                                        @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                                        @ApiParam(required = false, value = "Query")  @QueryParam("q") String q,
-                                                        @ApiParam(required = false, value = "Document id") @QueryParam("id") String id,
-                                                        @ApiParam(required = false, value = "Document title") @QueryParam("title") String title,
-                                                        @ApiParam(required = false, value = "Document type") @QueryParam("type") String type,
-                                                        @ApiParam(required = false, value = "Document version") @QueryParam("version") String version,
-                                                        @ApiParam(required = false, value = "Document author") @QueryParam("author") String author,
-                                                        @ApiParam(required = false, value = "Document tags") @QueryParam("tags") String tags,
-                                                        @ApiParam(required = false, value = "Document files content") @QueryParam("content") String content,
-                                                        @ApiParam(required = false, value = "Document created from date") @QueryParam("createdFrom") String createdFrom,
-                                                        @ApiParam(required = false, value = "Document creation to date") @QueryParam("createdTo") String createdTo,
-                                                        @ApiParam(required = false, value = "Document modified from date") @QueryParam("modifiedFrom") String modifiedFrom,
-                                                        @ApiParam(required = false, value = "Document modified to date") @QueryParam("modifiedTo") String modifiedTo,
-                                                        @ApiParam(required = false, value = "Document attributes") @QueryParam("attributes") String attributes,
-                                                        @ApiParam(required = false, value = "Folder") @QueryParam("folder") String folder
+    public DocumentRevisionDTO[] searchDocumentRevision(
+            @Context UriInfo uri,
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = false, value = "Query") @QueryParam("q") String q,
+            @ApiParam(required = false, value = "Document id") @QueryParam("id") String id,
+            @ApiParam(required = false, value = "Document title") @QueryParam("title") String title,
+            @ApiParam(required = false, value = "Document type") @QueryParam("type") String type,
+            @ApiParam(required = false, value = "Document version") @QueryParam("version") String version,
+            @ApiParam(required = false, value = "Document author") @QueryParam("author") String author,
+            @ApiParam(required = false, value = "Document tags") @QueryParam("tags") String tags,
+            @ApiParam(required = false, value = "Document files content") @QueryParam("content") String content,
+            @ApiParam(required = false, value = "Document created from date") @QueryParam("createdFrom") String createdFrom,
+            @ApiParam(required = false, value = "Document creation to date") @QueryParam("createdTo") String createdTo,
+            @ApiParam(required = false, value = "Document modified from date") @QueryParam("modifiedFrom") String modifiedFrom,
+            @ApiParam(required = false, value = "Document modified to date") @QueryParam("modifiedTo") String modifiedTo,
+            @ApiParam(required = false, value = "Document attributes") @QueryParam("attributes") String attributes,
+            @ApiParam(required = false, value = "Folder") @QueryParam("folder") String folder
     ) throws EntityNotFoundException, UserNotActiveException, ESServerException {
         MultivaluedMap<String, String> params = uri.getQueryParameters();
         DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseDocumentStringQuery(workspaceId, params);
@@ -150,20 +165,36 @@ public class DocumentsResource {
     }
 
     @GET
-    @ApiOperation(value = "Count documents", response = CountDTO.class)
+    @ApiOperation(value = "Count documents",
+            response = CountDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of documents count"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("count")
     @Produces(MediaType.APPLICATION_JSON)
-    public CountDTO getDocumentsInWorkspaceCount(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+    public CountDTO getDocumentsInWorkspaceCount(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
+
         return new CountDTO(documentService.getDocumentsInWorkspaceCount(Tools.stripTrailingSlash(workspaceId)));
     }
 
 
     @GET
-    @ApiOperation(value = "Get checked out documents", response = DocumentRevisionDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get checked out documents",
+            response = DocumentRevisionDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of checked out documents. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("checkedout")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO[] getCheckedOutDocuments(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+    public DocumentRevisionDTO[] getCheckedOutDocuments(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         DocumentRevision[] checkedOutDocumentRevisions = documentService.getCheckedOutDocumentRevisions(workspaceId);
@@ -181,22 +212,39 @@ public class DocumentsResource {
     }
 
     @GET
-    @ApiOperation(value = "Count checked out documents", response = DocumentRevisionDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Count checked out documents",
+            response = DocumentRevisionDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of checked out documents count"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("countCheckedOut")
     @Produces(MediaType.APPLICATION_JSON)
-    public CountDTO countCheckedOutDocs(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+    public CountDTO countCheckedOutDocs(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, WorkspaceNotEnabledException {
+
         return new CountDTO(documentService.getCheckedOutDocumentRevisions(workspaceId).length);
     }
 
 
     @GET
-    @ApiOperation(value = "searchDocumentRevisionsToLink : todo doc", response = DocumentRevisionDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Search documents by id and/or name",
+            response = DocumentRevisionDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of searched documents. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("doc_revs")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO[] searchDocumentRevisionsToLink(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                                               @ApiParam(required = true, value = "Query") @QueryParam("q") String q,
-                                                               @ApiParam(required = false, value = "Max results" , defaultValue = "20") @QueryParam("l") int limit)
+    public DocumentRevisionDTO[] searchDocumentRevisionsToLink(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Query") @QueryParam("q") String q,
+            @ApiParam(required = false, value = "Max results", defaultValue = "20") @QueryParam("l") int limit)
             throws EntityNotFoundException, UserNotActiveException {
 
         int maxResults = limit == 0 ? 20 : limit;

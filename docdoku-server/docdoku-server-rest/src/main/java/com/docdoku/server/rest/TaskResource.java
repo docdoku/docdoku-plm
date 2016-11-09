@@ -33,9 +33,7 @@ import com.docdoku.core.workflow.ActivityKey;
 import com.docdoku.core.workflow.TaskKey;
 import com.docdoku.core.workflow.TaskWrapper;
 import com.docdoku.server.rest.dto.*;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -81,13 +79,22 @@ public class TaskResource {
 
 
     @GET
-    @ApiOperation(value = "Get assigned tasks for given user", response = TaskDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get assigned tasks for given user",
+            response = TaskDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of TaskDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{assignedUserLogin}/assigned")
     @Produces(MediaType.APPLICATION_JSON)
     public TaskDTO[] getAssignedTasksForGivenUser(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Assigned user login") @PathParam("assignedUserLogin") String assignedUserLogin)
-            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException,
+            WorkspaceNotEnabledException {
+
         TaskWrapper[] runningTasksForGivenUser = taskManager.getAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
         List<TaskDTO> taskDTOs = new ArrayList<>();
         for (TaskWrapper taskWrapper : runningTasksForGivenUser) {
@@ -102,13 +109,20 @@ public class TaskResource {
     }
 
     @GET
-    @ApiOperation(value = "Get task", response = TaskDTO.class)
+    @ApiOperation(value = "Get task",
+            response = TaskDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of TaskDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{taskId}")
     @Produces(MediaType.APPLICATION_JSON)
     public TaskDTO getTask(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Task id") @PathParam("taskId") String taskId)
-            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, TaskNotFoundException, AccessRightException, WorkspaceNotEnabledException {
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException,
+            TaskNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
         String[] split = taskId.split("-");
 
@@ -129,7 +143,14 @@ public class TaskResource {
     }
 
     @GET
-    @ApiOperation(value = "Get documents where user has assigned tasks", response = DocumentRevisionDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get documents where user has assigned tasks",
+            response = DocumentRevisionDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of DocumentRevisionDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{assignedUserLogin}/documents")
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO[] getDocumentsWhereGivenUserHasAssignedTasks(
@@ -163,13 +184,20 @@ public class TaskResource {
     }
 
     @GET
-    @ApiOperation(value = "Get parts where user has assigned tasks", response = PartRevisionDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get parts where user has assigned tasks",
+            response = PartRevisionDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of PartRevisionDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{assignedUserLogin}/parts")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPartsWhereGivenUserHasAssignedTasks(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Assigned user login") @PathParam("assignedUserLogin") String assignedUserLogin,
-            @QueryParam("filter") String filter)
+            @ApiParam(required = false, value = "Task status filter") @QueryParam("filter") String filter)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
 
         PartRevision[] withTaskPartRevisions;
@@ -199,7 +227,13 @@ public class TaskResource {
 
 
     @PUT
-    @ApiOperation(value = "Approve or reject task on document", response = Response.class)
+    @ApiOperation(value = "Approve or reject task on document",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successful task process"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{taskId}/process")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response processTask(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -213,7 +247,7 @@ public class TaskResource {
         int index = Integer.valueOf(split[2]);
 
         taskManager.processTask(workspaceId, new TaskKey(new ActivityKey(workflowId, step), index), taskProcessDTO.getAction().name(), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
 }

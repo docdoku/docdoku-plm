@@ -27,9 +27,7 @@ import com.docdoku.core.exceptions.WorkspaceNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.DocumentRevisionDTO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -63,11 +61,23 @@ public class CheckedOutDocumentResource {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
+
+    // TODO : this method should not have the checkoutUser parameter. Or at least use it.
+
     @GET
     @Path("{checkoutUser}/documents")
-    @ApiOperation(value = "Get documents checked out by caller", response = DocumentRevisionDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get documents checked out by caller",
+            response = DocumentRevisionDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of checked out documents. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO[] getDocumentsCheckedOutByUser(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+    public DocumentRevisionDTO[] getDocumentsCheckedOutByUser(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Checkout user login") @PathParam("checkoutUser") String checkoutUser)
             throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, WorkspaceNotEnabledException {
 
         DocumentRevision[] docRs = documentService.getCheckedOutDocumentRevisions(workspaceId);

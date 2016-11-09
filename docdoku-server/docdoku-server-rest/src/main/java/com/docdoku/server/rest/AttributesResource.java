@@ -27,9 +27,7 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -75,11 +73,17 @@ public class AttributesResource {
 
     @GET
     @Path("part-iterations")
-    @ApiOperation(value = "Get parts attributes list for given workspace",
+    @ApiOperation(value = "Get parts instance attributes list for given workspace",
             response = InstanceAttributeDTO.class,
             responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of InstanceAttributeDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPartIterationsAttributes(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+    public Response getPartIterationsAttributes(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         List<InstanceAttribute> attributes = productManager.getPartIterationsInstanceAttributesInWorkspace(workspaceId);
         List<InstanceAttributeDTO> dtos = new ArrayList<>();
@@ -105,11 +109,17 @@ public class AttributesResource {
 
     @GET
     @Path("path-data")
-    @ApiOperation(value = "Get path data attributes list for given workspace",
+    @ApiOperation(value = "Get path data instance attributes list for given workspace",
             response = InstanceAttributeDTO.class,
             responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of InstanceAttributeDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathDataAttributes(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+    public Response getPathDataAttributes(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         List<InstanceAttribute> attributes = productManager.getPathDataInstanceAttributesInWorkspace(workspaceId);
         List<InstanceAttributeDTO> dtos = new ArrayList<>();

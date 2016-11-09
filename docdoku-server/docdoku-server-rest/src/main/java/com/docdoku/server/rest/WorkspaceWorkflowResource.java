@@ -19,17 +19,15 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.workflow.WorkspaceWorkflow;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IWorkflowManagerLocal;
+import com.docdoku.core.workflow.WorkspaceWorkflow;
 import com.docdoku.server.rest.dto.RoleMappingDTO;
 import com.docdoku.server.rest.dto.WorkspaceWorkflowCreationDTO;
 import com.docdoku.server.rest.dto.WorkspaceWorkflowDTO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -67,10 +65,19 @@ public class WorkspaceWorkflowResource {
     }
 
     @GET
-    @ApiOperation(value = "Get workspace workflow list", response = WorkspaceWorkflowDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get workspace workflow list",
+            response = WorkspaceWorkflowDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of WorkspaceWorkflowDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getWorkspaceWorkflowList(@ApiParam(required = true, value = "Workspace id")  @PathParam("workspaceId") String workspaceId)
-            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
+    public Response getWorkspaceWorkflowList(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException,
+            WorkspaceNotEnabledException {
 
         WorkspaceWorkflow[] workspaceWorkflowList = workflowService.getWorkspaceWorkflowList(workspaceId);
         List<WorkspaceWorkflowDTO> workspaceWorkflowListDTO = new ArrayList<>();
@@ -84,23 +91,41 @@ public class WorkspaceWorkflowResource {
     }
 
     @GET
-    @ApiOperation(value = "Get workspace workflow", response = WorkspaceWorkflowDTO.class)
+    @ApiOperation(value = "Get workspace workflow",
+            response = WorkspaceWorkflowDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of WorkspaceWorkflowDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{workspaceWorkflowId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceWorkflowDTO getWorkspaceWorkflow(@ApiParam(required = true, value = "Workspace id")  @PathParam("workspaceId") String workspaceId,
-                                                     @ApiParam(required = true, value = "Workspace workflow id")  @PathParam("workspaceWorkflowId") String workspaceWorkflowId)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, WorkflowNotFoundException, WorkspaceNotEnabledException {
+    public WorkspaceWorkflowDTO getWorkspaceWorkflow(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Workspace workflow id") @PathParam("workspaceWorkflowId") String workspaceWorkflowId)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
+            WorkflowNotFoundException, WorkspaceNotEnabledException {
+
         WorkspaceWorkflow workspaceWorkflow = workflowService.getWorkspaceWorkflow(workspaceId, workspaceWorkflowId);
         return mapper.map(workspaceWorkflow, WorkspaceWorkflowDTO.class);
     }
 
 
     @POST
-    @ApiOperation(value = "Instantiate workspace workflow from workflow model", response = WorkspaceWorkflowDTO.class)
+    @ApiOperation(value = "Instantiate workspace workflow from workflow model",
+            response = WorkspaceWorkflowDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of WorkspaceWorkflowDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceWorkflowDTO createWorkspaceWorkflow(@ApiParam(required = true, value = "Workspace id")  @PathParam("workspaceId") String workspaceId,
-                                                        @ApiParam(required = true, value = "Workspace workflow to create") WorkspaceWorkflowCreationDTO workflowCreationDTO)
-            throws RoleNotFoundException, WorkspaceNotFoundException, UserNotFoundException, AccessRightException, WorkflowModelNotFoundException, NotAllowedException, UserGroupNotFoundException, WorkspaceNotEnabledException {
+    public WorkspaceWorkflowDTO createWorkspaceWorkflow(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Workspace workflow to create") WorkspaceWorkflowCreationDTO workflowCreationDTO)
+            throws RoleNotFoundException, WorkspaceNotFoundException, UserNotFoundException, AccessRightException,
+            WorkflowModelNotFoundException, NotAllowedException, UserGroupNotFoundException,
+            WorkspaceNotEnabledException {
 
         Map<String, Collection<String>> userRoleMapping = new HashMap<>();
         Map<String, Collection<String>> groupRoleMapping = new HashMap<>();
@@ -120,11 +145,20 @@ public class WorkspaceWorkflowResource {
 
     @DELETE
     @Path("{workspaceWorkflowId}")
-    @ApiOperation(value = "Delete a workspace workflow ", response = Response.class)
+    @ApiOperation(value = "Delete a workspace workflow ",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successful deletion operation"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteWorkspaceWorkflow(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                            @ApiParam(required = true, value = "Workspace workflow id") @PathParam("workspaceWorkflowId") String workspaceWorkflowId) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkspaceNotEnabledException {
-        workflowService.deleteWorkspaceWorkflow(workspaceId,workspaceWorkflowId);
-        return Response.ok().build();
+    public Response deleteWorkspaceWorkflow(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Workspace workflow id") @PathParam("workspaceWorkflowId") String workspaceWorkflowId)
+            throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkspaceNotEnabledException {
+
+        workflowService.deleteWorkspaceWorkflow(workspaceId, workspaceWorkflowId);
+        return Response.noContent().build();
     }
 }

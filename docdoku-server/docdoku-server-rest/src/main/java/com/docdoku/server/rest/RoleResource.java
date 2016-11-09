@@ -28,9 +28,7 @@ import com.docdoku.core.workflow.RoleKey;
 import com.docdoku.server.rest.dto.RoleDTO;
 import com.docdoku.server.rest.dto.UserDTO;
 import com.docdoku.server.rest.dto.UserGroupDTO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -54,7 +52,7 @@ import java.util.logging.Logger;
  * @author Morgan Guimard
  */
 @RequestScoped
-@Api(hidden=true, value = "roles", description = "Operations about roles")
+@Api(hidden = true, value = "roles", description = "Operations about roles")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class RoleResource {
@@ -75,9 +73,17 @@ public class RoleResource {
     }
 
     @GET
-    @ApiOperation(hidden = false, value = "Get roles", response = RoleDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get roles",
+            response = RoleDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of RoleDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public RoleDTO[] getRolesInWorkspace(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+    public RoleDTO[] getRolesInWorkspace(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         Role[] roles = roleService.getRoles(workspaceId);
@@ -92,10 +98,18 @@ public class RoleResource {
     }
 
     @GET
-    @ApiOperation(value = "Get roles in use", response = RoleDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get roles in use",
+            response = RoleDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of RoleDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("inuse")
     @Produces(MediaType.APPLICATION_JSON)
-    public RoleDTO[] getRolesInUseInWorkspace(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+    public RoleDTO[] getRolesInUseInWorkspace(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         Role[] roles = roleService.getRolesInUse(workspaceId);
@@ -111,7 +125,13 @@ public class RoleResource {
 
 
     @POST
-    @ApiOperation(value = "Create role", response = RoleDTO.class)
+    @ApiOperation(value = "Create role",
+            response = RoleDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of created RoleDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createRole(
@@ -124,12 +144,12 @@ public class RoleResource {
         List<String> userLogins = new ArrayList<>();
         List<String> userGroupIds = new ArrayList<>();
         if (userDTOs != null) {
-           for(UserDTO userDTO:userDTOs){
-               userLogins.add(userDTO.getLogin());
-           }
+            for (UserDTO userDTO : userDTOs) {
+                userLogins.add(userDTO.getLogin());
+            }
         }
         if (groupDTOs != null) {
-            for(UserGroupDTO groupDTO:groupDTOs){
+            for (UserGroupDTO groupDTO : groupDTOs) {
                 userGroupIds.add(groupDTO.getId());
             }
         }
@@ -146,13 +166,20 @@ public class RoleResource {
     }
 
     @PUT
-    @ApiOperation(value = "Update role", response = RoleDTO.class)
+    @ApiOperation(value = "Update role",
+            response = RoleDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of updated RoleDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{roleName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateRole(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                               @ApiParam(required = true, value = "Role name")  @PathParam("roleName") String roleName,
-                               @ApiParam(required = true, value = "Role to update") RoleDTO roleDTO)
+    public Response updateRole(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Role name") @PathParam("roleName") String roleName,
+            @ApiParam(required = true, value = "Role to update") RoleDTO roleDTO)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         List<UserDTO> userDTOs = roleDTO.getDefaultAssignedUsers();
@@ -160,12 +187,12 @@ public class RoleResource {
         List<String> userLogins = new ArrayList<>();
         List<String> userGroupIds = new ArrayList<>();
         if (userDTOs != null) {
-            for(UserDTO userDTO:userDTOs){
+            for (UserDTO userDTO : userDTOs) {
                 userLogins.add(userDTO.getLogin());
             }
         }
         if (groupDTOs != null) {
-            for(UserGroupDTO groupDTO:groupDTOs){
+            for (UserGroupDTO groupDTO : groupDTOs) {
                 userGroupIds.add(groupDTO.getId());
             }
         }
@@ -181,16 +208,23 @@ public class RoleResource {
     }
 
     @DELETE
-    @ApiOperation(value = "Delete role", response = Response.class)
+    @ApiOperation(value = "Delete role",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successful deletion of RoleDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{roleName}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteRole(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                               @ApiParam(required = true, value = "Role name")  @PathParam("roleName") String roleName)
+    public Response deleteRole(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Role name") @PathParam("roleName") String roleName)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException {
 
         RoleKey roleKey = new RoleKey(workspaceId, roleName);
         roleService.deleteRole(roleKey);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     private RoleDTO mapRoleToDTO(Role role) {

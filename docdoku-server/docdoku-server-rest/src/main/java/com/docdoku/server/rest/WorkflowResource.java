@@ -24,9 +24,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.WorkflowDTO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -69,24 +67,42 @@ public class WorkflowResource {
     }
 
     @GET
-    @ApiOperation(value = "Get instantiated workflow", response = WorkflowDTO.class)
+    @ApiOperation(value = "Get instantiated workflow",
+            response = WorkflowDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of WorkflowDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{workflowId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowDTO getWorkflowInstance(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                           @ApiParam(required = true, value = "Workflow id")  @PathParam("workflowId") int workflowId)
+    public WorkflowDTO getWorkflowInstance(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Workflow id") @PathParam("workflowId") int workflowId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+
         Workflow workflow = workflowService.getWorkflow(workspaceId, workflowId);
         return mapper.map(workflow, WorkflowDTO.class);
     }
 
     @GET
-    @ApiOperation(value = "Get workflow's aborted workflows", response = WorkflowDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get workflow's aborted workflows",
+            response = WorkflowDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of WorkflowDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{workflowId}/aborted")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getWorkflowAbortedWorkflows(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                                @ApiParam(required = true, value = "Workflow id")  @PathParam("workflowId") int workflowId)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, WorkflowNotFoundException, AccessRightException, WorkspaceNotEnabledException {
-        Workflow[] abortedWorkflows =  workflowService.getWorkflowAbortedWorkflows(workspaceId, workflowId);
+    public Response getWorkflowAbortedWorkflows(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Workflow id") @PathParam("workflowId") int workflowId)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
+            WorkflowNotFoundException, AccessRightException, WorkspaceNotEnabledException {
+
+        Workflow[] abortedWorkflows = workflowService.getWorkflowAbortedWorkflows(workspaceId, workflowId);
 
         List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<>();
 

@@ -36,9 +36,7 @@ import com.docdoku.server.rest.dto.LightPathToPathLinkDTO;
 import com.docdoku.server.rest.dto.PathToPathLinkDTO;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -80,11 +78,20 @@ public class ProductBaselinesResource {
     }
 
     @GET
-    @ApiOperation(value = "Get product-baseline with given configuration item", response = ProductBaselineDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get product-baseline with given configuration item",
+            response = ProductBaselineDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of ProductBaselineDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProductBaselines(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                        @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId)
+    public Response getProductBaselines(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId)
             throws UserNotActiveException, EntityNotFoundException, AccessRightException {
+
         List<ProductBaseline> productBaselines;
         if (ciId != null) {
             ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId, ciId);
@@ -105,13 +112,22 @@ public class ProductBaselinesResource {
     }
 
     @POST
-    @ApiOperation(value = "Create product-baseline", response = ProductBaselineDTO.class)
+    @ApiOperation(value = "Create product-baseline",
+            response = ProductBaselineDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of ProductBaselineDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductBaselineDTO createProductBaseline(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                                    @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String pCiId,
-                                                    @ApiParam(required = true, value = "Product baseline to create") ProductBaselineDTO productBaselineDTO)
-            throws UserNotActiveException, EntityNotFoundException, NotAllowedException, AccessRightException, PartRevisionNotReleasedException, EntityConstraintException, CreationException, PathToPathLinkAlreadyExistsException {
+    public ProductBaselineDTO createProductBaseline(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String pCiId,
+            @ApiParam(required = true, value = "Product baseline to create") ProductBaselineDTO productBaselineDTO)
+            throws UserNotActiveException, EntityNotFoundException, NotAllowedException, AccessRightException,
+            PartRevisionNotReleasedException, EntityConstraintException, CreationException,
+            PathToPathLinkAlreadyExistsException {
 
         String ciId = (pCiId != null) ? pCiId : productBaselineDTO.getConfigurationItemId();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
@@ -135,25 +151,42 @@ public class ProductBaselinesResource {
     }
 
     @DELETE
-    @ApiOperation(value = "Delete product-baseline", response = Response.class)
+    @ApiOperation(value = "Delete product-baseline",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successful deletion of ProductBaselineDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{baselineId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteProductBaseline(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                          @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
-                                          @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId)
-            throws EntityNotFoundException, AccessRightException, UserNotActiveException, EntityConstraintException {
+    public Response deleteProductBaseline(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException,
+            EntityConstraintException {
+
         productBaselineService.deleteBaseline(workspaceId, baselineId);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @GET
-    @ApiOperation(value = "Get product-baseline", response = ProductBaselineDTO.class)
+    @ApiOperation(value = "Get product-baseline",
+            response = ProductBaselineDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of ProductBaselineDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{baselineId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductBaselineDTO getProductBaseline(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                                 @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
-                                                 @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId)
+    public ProductBaselineDTO getProductBaseline(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+
         ProductBaseline productBaseline = productBaselineService.getBaseline(baselineId);
         ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline, ProductBaselineDTO.class);
         productBaselineDTO.setPathToPathLinks(getPathToPathLinksForGivenBaseline(productBaseline));
@@ -187,14 +220,23 @@ public class ProductBaselinesResource {
     }
 
     @GET
-    @ApiOperation(value = "Get product-baseline's part", response = BaselinedPartDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get product-baseline's part",
+            response = BaselinedPartDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of BaselinedPartDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{baselineId}/parts")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProductBaselineParts(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
-                                            @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId,
-                                            @ApiParam(required = true, value = "Query") @QueryParam("q") String q)
+    public Response getProductBaselineParts(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId,
+            @ApiParam(required = true, value = "Query") @QueryParam("q") String q)
             throws EntityNotFoundException, UserNotActiveException {
+
         int maxResults = 8;
         List<BaselinedPart> baselinedPartList = productBaselineService.getBaselinedPartWithReference(baselineId, q, maxResults);
 
@@ -207,13 +249,23 @@ public class ProductBaselinesResource {
     }
 
     @GET
-    @ApiOperation(value = "Get product-baseline's path-to-path links", response = LightPathToPathLinkDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get product-baseline's path-to-path links",
+            response = LightPathToPathLinkDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of LightPathToPathLinkDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{baselineId}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathToPathLinkTypes(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                           @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
-                                           @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, WorkspaceNotEnabledException {
+    public Response getPathToPathLinkTypes(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
+            BaselineNotFoundException, WorkspaceNotEnabledException {
+
         List<String> pathToPathLinkTypes = productBaselineService.getPathToPathLinkTypes(workspaceId, ciId, baselineId);
         List<LightPathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
         for (String type : pathToPathLinkTypes) {
@@ -226,15 +278,26 @@ public class ProductBaselinesResource {
     }
 
     @GET
-    @ApiOperation(value = "Get product-baseline's path-to-path links for given source and target", response = LightPathToPathLinkDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get product-baseline's path-to-path links for given source and target",
+            response = LightPathToPathLinkDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of LightPathToPathLinkDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{baselineId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathToPathLinkFromSourceAndTarget(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                                         @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
-                                                         @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId,
-                                                         @ApiParam(required = true, value = "Source path") @PathParam("sourcePath") String sourcePathAsString,
-                                                         @ApiParam(required = true, value = "Target path") @PathParam("targetPath") String targetPathAsString)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
+    public Response getPathToPathLinkFromSourceAndTarget(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
+            @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId,
+            @ApiParam(required = true, value = "Source path") @PathParam("sourcePath") String sourcePathAsString,
+            @ApiParam(required = true, value = "Target path") @PathParam("targetPath") String targetPathAsString)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException,
+            ProductInstanceMasterNotFoundException, BaselineNotFoundException, ConfigurationItemNotFoundException,
+            PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
+
         List<PathToPathLink> pathToPathLinks = productBaselineService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, baselineId, sourcePathAsString, targetPathAsString);
         List<PathToPathLinkDTO> dtos = new ArrayList<>();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, configurationItemId);

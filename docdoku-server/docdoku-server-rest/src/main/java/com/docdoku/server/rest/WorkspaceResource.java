@@ -22,15 +22,14 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserMembership;
 import com.docdoku.core.services.*;
 import com.docdoku.server.rest.dto.*;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -44,7 +43,6 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.*;
-import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -153,9 +151,16 @@ public class WorkspaceResource {
     }
 
     @GET
-    @ApiOperation(value = "Get workspace list for authenticated user", response = WorkspaceListDTO.class)
+    @ApiOperation(value = "Get workspace list for authenticated user",
+            response = WorkspaceListDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of WorkspaceListDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceListDTO getWorkspacesForConnectedUser() throws EntityNotFoundException {
+    public WorkspaceListDTO getWorkspacesForConnectedUser()
+            throws EntityNotFoundException {
 
         WorkspaceListDTO workspaceListDTO = new WorkspaceListDTO();
 
@@ -172,10 +177,18 @@ public class WorkspaceResource {
     }
 
     @GET
-    @ApiOperation(value = "Get detailed workspace list for authenticated user", response = WorkspaceDetailsDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get detailed workspace list for authenticated user",
+            response = WorkspaceDetailsDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of WorkspaceDetailsDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/more")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getDetailedWorkspacesForConnectedUser() throws EntityNotFoundException {
+    public Response getDetailedWorkspacesForConnectedUser()
+            throws EntityNotFoundException {
         List<WorkspaceDetailsDTO> workspaceListDTO = new ArrayList<>();
 
         for (Workspace workspace : userManager.getWorkspacesWhereCallerIsActive()) {
@@ -186,7 +199,14 @@ public class WorkspaceResource {
     }
 
     @GET
-    @ApiOperation(value = "Get online users visible by current user", response = UserDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get online users visible by current user",
+            response = UserDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of UserDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("reachable-users")
     @Produces(MediaType.APPLICATION_JSON)
     public UserDTO[] getReachableUsersForCaller()
@@ -203,42 +223,75 @@ public class WorkspaceResource {
     }
 
     @PUT
-    @ApiOperation(value = "Update workspace", response = WorkspaceDTO.class)
+    @ApiOperation(value = "Update workspace",
+            response = WorkspaceDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of updated WorkspaceDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateWorkspace(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                    @ApiParam(required = true, value = "Workspace values to update") WorkspaceDTO workspaceDTO)
-            throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccountNotFoundException, AccessRightException {
+    public Response updateWorkspace(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Workspace values to update") WorkspaceDTO workspaceDTO)
+            throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException,
+            AccountNotFoundException, AccessRightException {
+
         Workspace workspace = userManager.updateWorkspace(workspaceId, workspaceDTO.getDescription(), workspaceDTO.isFolderLocked());
         return Response.ok(mapper.map(workspace, WorkspaceDTO.class)).build();
     }
 
     @PUT
     @Path("/{workspaceId}/index")
-    @ApiOperation(value = "Index the workspace", response = Response.class)
+    @ApiOperation(value = "Index the workspace",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Accepted indexation (asynchronous method)"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response synchronizeIndexer(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                       @ApiParam(name = "body", defaultValue = "") String body)
+    public Response synchronizeIndexer(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(name = "body", defaultValue = "") String body)
             throws AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+
         workspaceManager.synchronizeIndexer(workspaceId);
-        return Response.ok().build();
+        return Response.accepted().build();
     }
 
     @DELETE
-    @ApiOperation(value = "Delete workspace", response = Response.class)
+    @ApiOperation(value = "Delete workspace",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Accepted deletion (asynchronous method)"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteWorkspace(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId) {
         workspaceManager.deleteWorkspace(workspaceId);
-        return Response.ok().build();
+        return Response.accepted().build();
     }
 
     @GET
-    @ApiOperation(value = "Get user groups", response = UserGroupDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get user groups",
+            response = UserGroupDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of UserGroupDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/user-group")
     @Produces(MediaType.APPLICATION_JSON)
-    public UserGroupDTO[] getUserGroups(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException, WorkspaceNotEnabledException {
+    public UserGroupDTO[] getUserGroups(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
+            AccountNotFoundException, WorkspaceNotEnabledException {
+
         UserGroup[] userGroups = userManager.getUserGroups(workspaceId);
         UserGroupDTO[] userGroupDTOs = new UserGroupDTO[userGroups.length];
         for (int i = 0; i < userGroups.length; i++) {
@@ -248,36 +301,65 @@ public class WorkspaceResource {
     }
 
     @POST
-    @ApiOperation(value = "Create user group", response = UserGroupDTO.class)
+    @ApiOperation(value = "Create user group",
+            response = UserGroupDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of created UserGroupDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/user-group")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public UserGroupDTO createGroup(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                    @ApiParam(required = true, value = "UserGroup to create") UserGroupDTO userGroupDTO)
-            throws UserGroupAlreadyExistsException, AccessRightException, AccountNotFoundException, CreationException, WorkspaceNotFoundException {
+    public UserGroupDTO createGroup(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "UserGroup to create") UserGroupDTO userGroupDTO)
+            throws UserGroupAlreadyExistsException, AccessRightException, AccountNotFoundException,
+            CreationException, WorkspaceNotFoundException {
+
         UserGroup userGroup = userManager.createUserGroup(userGroupDTO.getId(), workspaceId);
         return mapper.map(userGroup, UserGroupDTO.class);
     }
 
     @DELETE
-    @ApiOperation(value = "Remove user group", response = UserGroupDTO.class)
+    @ApiOperation(value = "Remove user group",
+            response = UserGroupDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successful removal of user from UserGroupDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/user-group/{groupId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response removeGroup(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                @ApiParam(required = true, value = "Group id") @PathParam("groupId") String groupId)
-            throws UserGroupNotFoundException, AccessRightException, EntityConstraintException, AccountNotFoundException, WorkspaceNotFoundException {
+    public Response removeGroup(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Group id") @PathParam("groupId") String groupId)
+            throws UserGroupNotFoundException, AccessRightException, EntityConstraintException,
+            AccountNotFoundException, WorkspaceNotFoundException {
+
         userManager.removeUserGroups(workspaceId, new String[]{groupId});
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
-    @ApiOperation(value = "Add user to workspace", response = Response.class)
+    @ApiOperation(value = "Add user to workspace",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successful addition of user in UserGroupDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/add-user")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addUser(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                            @ApiParam(required = false, value = "Group id") @QueryParam("group") String groupId,
-                            @ApiParam(required = true, value = "User to add") UserDTO userDTO) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, UserGroupNotFoundException, com.docdoku.core.exceptions.NotAllowedException, AccountNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {
+    public Response addUser(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = false, value = "Group id") @QueryParam("group") String groupId,
+            @ApiParam(required = true, value = "User to add") UserDTO userDTO)
+            throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException,
+            AccessRightException, UserGroupNotFoundException,
+            AccountNotFoundException, UserAlreadyExistsException,
+            FolderAlreadyExistsException, CreationException {
 
         if (groupId != null && !groupId.isEmpty()) {
             userManager.addUserInGroup(new UserGroupKey(workspaceId, groupId), userDTO.getLogin());
@@ -285,27 +367,43 @@ public class WorkspaceResource {
             userManager.addUserInWorkspace(workspaceId, userDTO.getLogin());
         }
 
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
-    @ApiOperation(value = "Set a new admin", response = WorkspaceDTO.class)
+    @ApiOperation(value = "Set a new admin",
+            response = WorkspaceDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of updated Workspace"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/admin")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response setNewAdmin(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                @ApiParam(required = true, value = "New admin user") UserDTO userDTO)
-            throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
+    public Response setNewAdmin(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "New admin user") UserDTO userDTO)
+            throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException,
+            UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
 
         Workspace workspace = workspaceManager.changeAdmin(workspaceId, userDTO.getLogin());
         return Response.ok(mapper.map(workspace, WorkspaceDTO.class)).build();
     }
 
     @POST
-    @ApiOperation(value = "Create workspace", response = WorkspaceDTO.class)
+    @ApiOperation(value = "Create workspace",
+            response = WorkspaceDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of created Workspace"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceDTO createWorkspace(@ApiParam(value = "Login for workspace admin", required = false) @QueryParam("userLogin") String userLogin,
-                                        @ApiParam(value = "Workspace to create", required = true) WorkspaceDTO workspaceDTO)
-            throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException, AccountNotFoundException, ESIndexNamingException, IOException, com.docdoku.core.exceptions.NotAllowedException {
+    public WorkspaceDTO createWorkspace(
+            @ApiParam(value = "Login for workspace admin", required = false) @QueryParam("userLogin") String userLogin,
+            @ApiParam(value = "Workspace to create", required = true) WorkspaceDTO workspaceDTO)
+            throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException,
+            CreationException, AccountNotFoundException, ESIndexNamingException, IOException, NotAllowedException {
         Account account;
         if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
             account = accountManager.getAccount(userLogin);
@@ -318,12 +416,20 @@ public class WorkspaceResource {
     }
 
     @PUT
-    @ApiOperation(value = "Set user access in workspace", response = Response.class)
+    @ApiOperation(value = "Set user access in workspace",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of updated UserDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/user-access")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response setUserAccess(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
-                                  @ApiParam(value = "User to grant access in workspace", required = true) UserDTO userDTO)
+    public Response setUserAccess(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
+            @ApiParam(value = "User to grant access in workspace", required = true) UserDTO userDTO)
             throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+
         if (userDTO.getMembership() == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -332,95 +438,157 @@ public class WorkspaceResource {
     }
 
     @PUT
-    @ApiOperation(value = "Set group access in workspace", response = Response.class)
+    @ApiOperation(value = "Set group access in workspace",
+            response = WorkspaceUserGroupMemberShipDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of updated WorkspaceUserGroupMemberShipDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/group-access")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response setGroupAccess(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
-                                   @ApiParam(value = "User to grant access in group", required = true) WorkspaceUserGroupMemberShipDTO workspaceUserGroupMemberShipDTO)
-            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserGroupNotFoundException {
+    public Response setGroupAccess(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
+            @ApiParam(value = "User to grant access in group", required = true) WorkspaceUserGroupMemberShipDTO workspaceUserGroupMemberShipDTO)
+            throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException,
+            UserGroupNotFoundException {
 
         WorkspaceUserGroupMembership membership = userManager.grantGroupAccess(workspaceId, workspaceUserGroupMemberShipDTO.getMemberId(), workspaceUserGroupMemberShipDTO.isReadOnly());
         return Response.ok(mapper.map(membership, WorkspaceUserGroupMemberShipDTO.class)).build();
     }
 
     @PUT
-    @ApiOperation(value = "Remove user from group", response = UserGroupDTO.class)
+    @ApiOperation(value = "Remove user from group",
+            response = UserGroupDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of updated UserGroupDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/remove-from-group/{groupId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response removeUserFromGroup(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
-                                        @ApiParam(value = "Group id", required = true) @PathParam("groupId") String groupId,
-                                        @ApiParam(value = "User to remove from group", required = true) UserDTO userDTO)
-            throws AccessRightException, UserGroupNotFoundException, AccountNotFoundException, WorkspaceNotFoundException {
+    public Response removeUserFromGroup(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
+            @ApiParam(value = "Group id", required = true) @PathParam("groupId") String groupId,
+            @ApiParam(value = "User to remove from group", required = true) UserDTO userDTO)
+            throws AccessRightException, UserGroupNotFoundException, AccountNotFoundException,
+            WorkspaceNotFoundException {
+
         UserGroup userGroup = userManager.removeUserFromGroup(new UserGroupKey(workspaceId, groupId), userDTO.getLogin());
         return Response.ok(mapper.map(userGroup, UserGroupDTO.class)).build();
     }
 
     @PUT
-    @ApiOperation(value = "Remove user from workspace", response = WorkspaceDTO.class)
+    @ApiOperation(value = "Remove user from workspace",
+            response = WorkspaceDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of updated WorkspaceDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/remove-from-workspace")
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeUserFromWorkspace(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
                                             @ApiParam(value = "User to remove from workspace", required = true) UserDTO userDTO)
-            throws UserGroupNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, DocumentRevisionNotFoundException, UserNotActiveException, com.docdoku.core.exceptions.NotAllowedException {
+            throws UserGroupNotFoundException, AccessRightException, UserNotFoundException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, DocumentRevisionNotFoundException, UserNotActiveException {
         Workspace workspace = userManager.removeUser(workspaceId, userDTO.getLogin());
         return Response.ok(mapper.map(workspace, WorkspaceDTO.class)).build();
     }
 
     @PUT
-    @ApiOperation(value = "Enable user", response = Response.class)
+    @ApiOperation(value = "Enable user",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successful enable operation"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/enable-user")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response enableUser(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
-                               @ApiParam(value = "User to enable", required = true) UserDTO userDTO)
+    public Response enableUser(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
+            @ApiParam(value = "User to enable", required = true) UserDTO userDTO)
             throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+
         userManager.activateUser(workspaceId, userDTO.getLogin());
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
-    @ApiOperation(value = "Disable user", response = Response.class)
+    @ApiOperation(value = "Disable user",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successful disable operation"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/disable-user")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response disableUser(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
-                                @ApiParam(value = "User to disable", required = true) UserDTO userDTO)
+    public Response disableUser(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
+            @ApiParam(value = "User to disable", required = true) UserDTO userDTO)
             throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+
         userManager.passivateUser(workspaceId, userDTO.getLogin());
         return Response.ok().build();
     }
 
     @PUT
-    @ApiOperation(value = "Enable group", response = Response.class)
+    @ApiOperation(value = "Enable group",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successful enable operation"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/enable-group")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response enableGroup(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
-                                @ApiParam(value = "Group to enable", required = true) UserGroupDTO userGroupDTO)
+    public Response enableGroup(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
+            @ApiParam(value = "Group to enable", required = true) UserGroupDTO userGroupDTO)
             throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+
         userManager.activateUserGroup(workspaceId, userGroupDTO.getId());
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
-    @ApiOperation(value = "Disable group", response = Response.class)
+    @ApiOperation(value = "Disable group",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successful disable operation"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/disable-group")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response disableGroup(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
-                                 @ApiParam(value = "Group to disable", required = true) UserGroupDTO userGroupDTO)
+    public Response disableGroup(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
+            @ApiParam(value = "Group to disable", required = true) UserGroupDTO userGroupDTO)
             throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+
         userManager.passivateUserGroup(workspaceId, userGroupDTO.getId());
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
-
     @GET
-    @ApiOperation(value = "Get stats overview for workspace", response = StatsOverviewDTO.class)
+    @ApiOperation(value = "Get stats overview for workspace",
+            response = StatsOverviewDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of StatsOverviewDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/stats-overview")
     @Produces(MediaType.APPLICATION_JSON)
-    public StatsOverviewDTO getStatsOverview(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId)
-            throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
+    public StatsOverviewDTO getStatsOverview(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId)
+            throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException,
+            UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
 
         StatsOverviewDTO statsOverviewDTO = new StatsOverviewDTO();
 
-        boolean admin = false;
+        boolean admin;
 
         if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
             admin = true;
@@ -444,11 +612,19 @@ public class WorkspaceResource {
     }
 
     @GET
-    @ApiOperation(value = "Get disk usage stats for workspace", response = DiskUsageSpaceDTO.class)
+    @ApiOperation(value = "Get disk usage stats for workspace",
+            response = DiskUsageSpaceDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of DiskUsageSpaceDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/disk-usage-stats")
     @Produces(MediaType.APPLICATION_JSON)
-    public DiskUsageSpaceDTO getDiskSpaceUsageStats(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId)
+    public DiskUsageSpaceDTO getDiskSpaceUsageStats(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId)
             throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+
         DiskUsageSpaceDTO diskUsageSpaceDTO = new DiskUsageSpaceDTO();
         diskUsageSpaceDTO.setDocuments(documentService.getDiskUsageForDocumentsInWorkspace(workspaceId));
         diskUsageSpaceDTO.setParts(productService.getDiskUsageForPartsInWorkspace(workspaceId));
@@ -457,11 +633,19 @@ public class WorkspaceResource {
         return diskUsageSpaceDTO;
     }
 
+    // TODO add DTO mapping. (quite tricky as keys are dynamic) find a way to be usable from generated API
     @GET
-    @ApiOperation(value = "Get checked out documents stats for workspace", response = String.class)
+    @ApiOperation(value = "Get checked out documents stats for workspace",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of documents stats"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/checked-out-documents-stats")
     @Produces(MediaType.APPLICATION_JSON)
-    public JsonObject getCheckedOutDocumentsStats(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId)
+    public JsonObject getCheckedOutDocumentsStats(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId)
             throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
 
         DocumentRevision[] checkedOutDocumentRevisions = documentService.getAllCheckedOutDocumentRevisions(workspaceId);
@@ -487,11 +671,19 @@ public class WorkspaceResource {
 
     }
 
+    // TODO add DTO mapping. (quite tricky as keys are dynamic) find a way to be usable from generated API
     @GET
-    @ApiOperation(value = "Get checked out parts stats for workspace", response = JsonObject.class)
+    @ApiOperation(value = "Get checked out parts stats for workspace",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of parts stats"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/checked-out-parts-stats")
     @Produces(MediaType.APPLICATION_JSON)
-    public JsonObject getCheckedOutPartsStats(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId)
+    public JsonObject getCheckedOutPartsStats(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId)
             throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
 
         PartRevision[] checkedOutPartRevisions = productService.getAllCheckedOutPartRevisions(workspaceId);
@@ -518,11 +710,19 @@ public class WorkspaceResource {
     }
 
     @GET
-    @ApiOperation(value = "Get user stats for workspace", response = JsonObject.class)
+    @ApiOperation(value = "Get user stats for workspace",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of users stats"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{workspaceId}/users-stats")
     @Produces(MediaType.APPLICATION_JSON)
-    public JsonObject getUsersStats(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException, AccessRightException, WorkspaceNotEnabledException {
+    public JsonObject getUsersStats(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
+            AccountNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
         WorkspaceUserMembership[] workspaceUserMemberships = userManager.getWorkspaceUserMemberships(workspaceId);
         WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceUserGroupMemberships(workspaceId);

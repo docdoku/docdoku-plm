@@ -22,6 +22,8 @@ package com.docdoku.server.rest;
 import com.docdoku.core.security.UserGroupMapping;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -56,7 +58,14 @@ public class TimeZoneResource {
     }
 
     @GET
-    @ApiOperation(value = "Get timezones", response = String.class, responseContainer = "List")
+    @ApiOperation(value = "Get timezones",
+            response = String.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of timezones. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTimeZones()  {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();

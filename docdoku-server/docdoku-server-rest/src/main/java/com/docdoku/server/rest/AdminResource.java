@@ -29,9 +29,7 @@ import com.docdoku.core.services.*;
 import com.docdoku.server.rest.dto.AccountDTO;
 import com.docdoku.server.rest.dto.PlatformOptionsDTO;
 import com.docdoku.server.rest.dto.WorkspaceDTO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -94,7 +92,13 @@ public class AdminResource implements Serializable {
 
     @GET
     @Path("disk-usage-stats")
-    @ApiOperation(value = "Get disk usage stats", response = String.class)
+    @ApiOperation(value = "Get disk usage stats",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of disk usage statistics"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public JsonObject getDiskSpaceUsageStats()
             throws AccountNotFoundException {
@@ -114,10 +118,17 @@ public class AdminResource implements Serializable {
 
     @GET
     @Path("users-stats")
-    @ApiOperation(value = "Get users stats", response = String.class)
+    @ApiOperation(value = "Get users stats",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of user statistics"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public JsonObject getUsersStats()
-            throws AccountNotFoundException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
+            throws AccountNotFoundException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException,
+            UserNotActiveException, WorkspaceNotEnabledException {
 
         JsonObjectBuilder userStats = Json.createObjectBuilder();
 
@@ -134,7 +145,13 @@ public class AdminResource implements Serializable {
 
     @GET
     @Path("documents-stats")
-    @ApiOperation(value = "Get documents stats", response = String.class)
+    @ApiOperation(value = "Get documents stats",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of documents statistics"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public JsonObject getDocumentsStats()
             throws AccountNotFoundException, WorkspaceNotFoundException, AccessRightException {
@@ -154,10 +171,17 @@ public class AdminResource implements Serializable {
 
     @GET
     @Path("products-stats")
-    @ApiOperation(value = "Get products stats", response = String.class)
+    @ApiOperation(value = "Get products stats",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of products statistics"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public JsonObject getProductsStats()
-            throws AccountNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
+            throws AccountNotFoundException, UserNotFoundException, UserNotActiveException,
+            WorkspaceNotFoundException, WorkspaceNotEnabledException {
 
         JsonObjectBuilder productsStats = Json.createObjectBuilder();
 
@@ -174,10 +198,17 @@ public class AdminResource implements Serializable {
 
     @GET
     @Path("parts-stats")
-    @ApiOperation(value = "Get parts stats", response = String.class)
+    @ApiOperation(value = "Get parts stats",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of parts statistics"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public JsonObject getPartsStats()
-            throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
+            throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotFoundException,
+            UserNotActiveException, WorkspaceNotEnabledException {
 
         JsonObjectBuilder partsStats = Json.createObjectBuilder();
 
@@ -193,66 +224,106 @@ public class AdminResource implements Serializable {
 
 
     @PUT
-    @ApiOperation(value = "Synchronize index for workspace")
+    @ApiOperation(value = "Synchronize index for workspace",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Accepted delete operation (asynchronous method)"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("index/{workspaceId}")
-    public Response indexWorkspace(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
-                                   @ApiParam(value = "Put content", name = "body") String body) {
+    public Response indexWorkspace(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
+            @ApiParam(value = "Put content", name = "body") String body) {
         workspaceManager.synchronizeIndexer(workspaceId);
-        return Response.ok().build();
+        return Response.status(Response.Status.ACCEPTED).build();
 
     }
 
     @PUT
-    @ApiOperation(value = "Synchronize index for all workspaces", response = Response.class)
+    @ApiOperation(value = "Synchronize index for all workspaces",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Accepted delete operation (asynchronous method)"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("index-all")
-    public Response indexAllWorkspaces(@ApiParam(name = "body", defaultValue = "") String body)
+    public Response indexAllWorkspaces(
+            @ApiParam(name = "body", defaultValue = "") String body)
             throws AccountNotFoundException {
         Workspace[] administratedWorkspaces = userManager.getAdministratedWorkspaces();
         for (Workspace workspace : administratedWorkspaces) {
             workspaceManager.synchronizeIndexer(workspace.getId());
         }
-        return Response.ok().build();
+        return Response.status(Response.Status.ACCEPTED).build();
     }
 
     @GET
     @Path("platform-options")
-    @ApiOperation(value = "Get platform options", response = PlatformOptionsDTO.class)
+    @ApiOperation(value = "Get platform options",
+            response = PlatformOptionsDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of PlatformOptions"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public PlatformOptionsDTO getPlatformOptions() {
         return mapper.map(platformOptionsManager.getPlatformOptions(), PlatformOptionsDTO.class);
     }
 
-
     @PUT
     @Path("platform-options")
-    @ApiOperation(value = "Set platform options", response = Response.class)
+    @ApiOperation(value = "Set platform options",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Successful retrieval of PlatformOptions"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response setPlatformOptions(@ApiParam("Options to set") PlatformOptionsDTO platformOptionsDTO) {
+    public Response setPlatformOptions(
+            @ApiParam("Options to set") PlatformOptionsDTO platformOptionsDTO) {
         platformOptionsManager.setRegistrationStrategy(platformOptionsDTO.getRegistrationStrategy());
         platformOptionsManager.setWorkspaceCreationStrategy(platformOptionsDTO.getWorkspaceCreationStrategy());
         return Response.ok().build();
     }
 
     @PUT
-    @ApiOperation(value = "Enable or disable workspace", response = WorkspaceDTO.class)
+    @ApiOperation(value = "Enable or disable workspace",
+            response = WorkspaceDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of updated Workspace"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("workspace/{workspaceId}/enable")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceDTO enableWorkspace(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
-                                        @ApiParam(value = "Enabled", required = true) @QueryParam("enabled") boolean enabled,
-                                        @ApiParam(value = "Put content", name = "body") String body)
+    public WorkspaceDTO enableWorkspace(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
+            @ApiParam(value = "Enabled", required = true) @QueryParam("enabled") boolean enabled,
+            @ApiParam(value = "Put content", name = "body") String body)
             throws WorkspaceNotFoundException {
         Workspace workspace = workspaceManager.enableWorkspace(workspaceId, enabled);
         return mapper.map(workspace, WorkspaceDTO.class);
     }
 
     @PUT
-    @ApiOperation(value = "Enable or disable account", response = AccountDTO.class)
+    @ApiOperation(value = "Enable or disable account",
+            response = AccountDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of updated Account"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("accounts/{login}/enable")
     @Produces(MediaType.APPLICATION_JSON)
-    public AccountDTO enableAccount(@ApiParam(value = "Workspace id", required = true) @PathParam("login") String login,
-                                    @ApiParam(value = "Enabled", required = true) @QueryParam("enabled") boolean enabled,
-                                    @ApiParam(value = "Put content", name = "body") String body)
+    public AccountDTO enableAccount(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("login") String login,
+            @ApiParam(value = "Enabled", required = true) @QueryParam("enabled") boolean enabled,
+            @ApiParam(value = "Put content", name = "body") String body)
             throws WorkspaceNotFoundException, AccountNotFoundException, NotAllowedException {
         Account account = accountManager.enableAccount(login, enabled);
         return mapper.map(account, AccountDTO.class);
@@ -261,7 +332,14 @@ public class AdminResource implements Serializable {
 
     @GET
     @Path("accounts")
-    @ApiOperation(value = "Get accounts ", response = AccountDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get accounts ",
+            response = AccountDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of Accounts"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public List<AccountDTO> getAccounts() {
         List<Account> accounts = accountManager.getAccounts();
@@ -274,10 +352,17 @@ public class AdminResource implements Serializable {
 
     @PUT
     @Path("accounts")
-    @ApiOperation(value = "Update account", response = AccountDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of updated Account"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @ApiOperation(value = "Update account",
+            response = AccountDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public AccountDTO updateAccount(@ApiParam(required = true, value = "Updated account") AccountDTO accountDTO)
+    public AccountDTO updateAccount(
+            @ApiParam(required = true, value = "Updated account") AccountDTO accountDTO)
             throws AccountNotFoundException, NotAllowedException {
 
         Account account = accountManager.updateAccount(

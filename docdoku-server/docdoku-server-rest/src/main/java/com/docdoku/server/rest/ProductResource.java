@@ -43,9 +43,7 @@ import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.PathChoiceDTO;
 import com.docdoku.server.rest.util.FileDownloadTools;
 import com.docdoku.server.rest.util.FileExportProductEntity;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -100,9 +98,17 @@ public class ProductResource {
     }
 
     @GET
-    @ApiOperation(value = "Get configuration items", response = ConfigurationItemDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get configuration items",
+            response = ConfigurationItemDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of ConfigurationItemDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public ConfigurationItemDTO[] getConfigurationItems(@PathParam("workspaceId") String workspaceId)
+    public ConfigurationItemDTO[] getConfigurationItems(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, NotAllowedException {
 
         String wksId = Tools.stripTrailingSlash(workspaceId);
@@ -122,11 +128,19 @@ public class ProductResource {
     }
 
     @POST
-    @ApiOperation(value = "Create configuration item", response = ConfigurationItemDTO.class)
+    @ApiOperation(value = "Create configuration item",
+            response = ConfigurationItemDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successful retrieval of ConfigurationItemDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createConfigurationItem(@PathParam("workspaceId") String workspaceId,
-                                            @ApiParam(required = true, value = "Product to create") ConfigurationItemDTO configurationItemDTO)
-            throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException {
+    public Response createConfigurationItem(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Product to create") ConfigurationItemDTO configurationItemDTO)
+            throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException,
+            NotAllowedException {
 
         ConfigurationItem configurationItem = productService.createConfigurationItem(configurationItemDTO.getWorkspaceId(), configurationItemDTO.getId(), configurationItemDTO.getDescription(), configurationItemDTO.getDesignItemNumber());
         ConfigurationItemDTO configurationItemDTOCreated = mapper.map(configurationItem, ConfigurationItemDTO.class);
@@ -143,15 +157,24 @@ public class ProductResource {
 
 
     @GET
-    @ApiOperation(value = "Filter part", response = PartRevisionDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Filter part",
+            response = PartRevisionDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of PartRevisionDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/bom")
     @Produces(MediaType.APPLICATION_JSON)
-    public PartRevisionDTO[] filterPart(@PathParam("workspaceId") String workspaceId,
-                                        @PathParam("ciId") String ciId,
-                                        @QueryParam("configSpec") String configSpecType,
-                                        @QueryParam("path") String path,
-                                        @QueryParam("diverge") boolean diverge)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
+    public PartRevisionDTO[] filterPart(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = false, value = "Config spec") @QueryParam("configSpec") String configSpecType,
+            @ApiParam(required = false, value = "Complete path of part") @QueryParam("path") String path,
+            @ApiParam(required = false, value = "Discover substitute links") @QueryParam("diverge") boolean diverge)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException,
+            EntityConstraintException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
@@ -187,17 +210,25 @@ public class ProductResource {
     }
 
     @GET
-    @ApiOperation(value = "Filter product structure", response = ComponentDTO.class)
+    @ApiOperation(value = "Filter product structure",
+            response = ComponentDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of ComponentDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/filter")
     @Produces(MediaType.APPLICATION_JSON)
-    public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId,
-                                               @PathParam("ciId") String ciId,
-                                               @QueryParam("configSpec") String configSpecType,
-                                               @QueryParam("path") String path,
-                                               @QueryParam("depth") Integer depth,
-                                               @QueryParam("linkType") String linkType,
-                                               @QueryParam("diverge") boolean diverge)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
+    public ComponentDTO filterProductStructure(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = false, value = "Config spec") @QueryParam("configSpec") String configSpecType,
+            @ApiParam(required = false, value = "Complete path of part") @QueryParam("path") String path,
+            @ApiParam(required = false, value = "Depth to stop at") @QueryParam("depth") Integer depth,
+            @ApiParam(required = false, value = "Type link to filter") @QueryParam("linkType") String linkType,
+            @ApiParam(required = false, value = "Discover substitute links") @QueryParam("diverge") boolean diverge)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException,
+            EntityConstraintException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
@@ -223,11 +254,18 @@ public class ProductResource {
     }
 
     @GET
-    @ApiOperation(value = "Get configuration item", response = ConfigurationItemDTO.class)
+    @ApiOperation(value = "Get configuration item",
+            response = ConfigurationItemDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of ConfigurationItemDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ConfigurationItemDTO getConfigurationItem(@PathParam("workspaceId") String workspaceId,
-                                                     @PathParam("ciId") String ciId)
+    public ConfigurationItemDTO getConfigurationItem(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         ConfigurationItem ci = productService.getConfigurationItem(ciKey);
@@ -240,27 +278,43 @@ public class ProductResource {
     }
 
     @DELETE
-    @ApiOperation(value = "Delete configuration item", response = Response.class)
+    @ApiOperation(value = "Delete configuration item",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successful deletion of ConfigurationItemDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteConfigurationItem(@PathParam("workspaceId") String workspaceId,
-                                            @PathParam("ciId") String ciId)
-            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, EntityConstraintException {
+    public Response deleteConfigurationItem(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId)
+            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException,
+            EntityConstraintException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         productService.deleteConfigurationItem(ciKey);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @GET
-    @ApiOperation(value = "Search paths", response = PathDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Search paths",
+            response = PathDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of PathDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/paths")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response searchPaths(@PathParam("workspaceId") String workspaceId,
-                                @PathParam("ciId") String ciId,
-                                @QueryParam("search") String search,
-                                @QueryParam("configSpec") String configSpecType,
-                                @QueryParam("diverge") boolean diverge)
+    public Response searchPaths(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Search value") @QueryParam("search") String search,
+            @ApiParam(required = false, value = "Config spec") @QueryParam("configSpec") String configSpecType,
+            @ApiParam(required = false, value = "Discover substitute links") @QueryParam("diverge") boolean diverge)
             throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, NotAllowedException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
@@ -280,19 +334,30 @@ public class ProductResource {
 
     @ApiOperation(value = "SubResource : LayerResource")
     @Path("{ciId}/layers")
-    public LayerResource processLayers(@PathParam("workspaceId") String workspaceId,
-                                       @PathParam("ciId") String ciId) {
+    public LayerResource processLayers(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId) {
         return layerResource;
     }
 
     @GET
-    @ApiOperation(value = "Get baseline creation path choices", response = PathChoiceDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get baseline creation path choices",
+            response = PathChoiceDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of PathChoiceDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/path-choices")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBaselineCreationPathChoices(@PathParam("workspaceId") String workspaceId,
-                                                   @PathParam("ciId") String ciId,
-                                                   @QueryParam("type") String pType)
-            throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, PartMasterNotFoundException, NotAllowedException, EntityConstraintException, WorkspaceNotEnabledException {
+    public Response getBaselineCreationPathChoices(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = false, value = "Baseline type") @QueryParam("type") String pType)
+            throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
+            UserNotFoundException, PartMasterNotFoundException, NotAllowedException,
+            EntityConstraintException, WorkspaceNotEnabledException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
@@ -319,12 +384,22 @@ public class ProductResource {
     }
 
     @GET
-    @ApiOperation(value = "Get baseline creation version choices", response = BaselinedPartDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get baseline creation version choices",
+            response = BaselinedPartDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of BaselinedPartDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/versions-choices")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBaselineCreationVersionsChoices(@PathParam("workspaceId") String workspaceId,
-                                                       @PathParam("ciId") String ciId)
-            throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, PartMasterNotFoundException, NotAllowedException, EntityConstraintException, WorkspaceNotEnabledException {
+    public Response getBaselineCreationVersionsChoices(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId)
+            throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
+            UserNotFoundException, PartMasterNotFoundException, NotAllowedException,
+            EntityConstraintException, WorkspaceNotEnabledException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
@@ -358,16 +433,25 @@ public class ProductResource {
 
 
     @GET
-    @ApiOperation(value = "Get instances", response = LeafDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get instances",
+            response = LeafDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of LeafDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/instances")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getInstances(@Context Request request,
-                                 @PathParam("workspaceId") String workspaceId,
-                                 @PathParam("ciId") String ciId,
-                                 @QueryParam("configSpec") String configSpecType,
-                                 @QueryParam("path") String path,
-                                 @QueryParam("diverge") boolean diverge)
+    public Response getInstances(
+            @Context Request request,
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Config spec") @QueryParam("configSpec") String configSpecType,
+            @ApiParam(required = true, value = "Complete path to start from") @QueryParam("path") String path,
+            @ApiParam(required = false, value = "Discover substitute links") @QueryParam("diverge") boolean diverge)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
+
         Response.ResponseBuilder rb = fakeSimilarBehavior(request);
         if (rb != null) {
             return rb.build();
@@ -392,15 +476,23 @@ public class ProductResource {
     }
 
     @POST
-    @ApiOperation(value = "Get instances for multiple paths", response = Response.class)
+    @ApiOperation(value = "Get instances for multiple paths",
+            response = LeafDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of LeafDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/instances")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getInstancesForMultiplePath(@Context Request request,
-                                                @PathParam("workspaceId") String workspaceId,
-                                                @PathParam("ciId") String ciId,
-                                                @QueryParam("diverge") boolean diverge,
-                                                @ApiParam(required = true, value = "list of paths to filter") PathListDTO pathsDTO)
+    public Response getInstancesForMultiplePath(
+            @Context Request request,
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = false, value = "Discover substitute links") @QueryParam("diverge") boolean diverge,
+            @ApiParam(required = true, value = "List of paths to start from") PathListDTO pathsDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         Response.ResponseBuilder rb = fakeSimilarBehavior(request);
@@ -431,12 +523,20 @@ public class ProductResource {
     }
 
     @GET
-    @ApiOperation(value = "Get last release of part", response = PartRevisionDTO.class)
+    @ApiOperation(value = "Get last release of part",
+            response = PartRevisionDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of PartRevisionDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/releases/last")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getLastRelease(@PathParam("workspaceId") String workspaceId,
-                                   @PathParam("ciId") String ciId)
+    public Response getLastRelease(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
         PartRevision partRevision = productService.getLastReleasePartRevision(ciKey);
@@ -464,7 +564,6 @@ public class ProductResource {
     }
 
 
-
     @ApiOperation(value = "Get ProductConfigurationsResource")
     @Path("baselines")
     public ProductBaselinesResource getAllBaselines() {
@@ -476,6 +575,7 @@ public class ProductResource {
     public ProductBaselinesResource getBaselines() {
         return productBaselinesResource;
     }
+
     @ApiOperation(value = "Get all ProductInstancesResource")
     @Path("product-instances")
     public ProductInstancesResource getAllProductInstances() {
@@ -490,15 +590,24 @@ public class ProductResource {
     // -- refactor with regex to merge 2 by 2
 
 
+    // TODO : set the appropriate response class for generated API usage
     @GET
-    @ApiOperation(value = "Export files", response = Response.class)
+    @ApiOperation(value = "Export files",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful export"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/export-files")
-    public Response exportFiles(@PathParam("workspaceId") String workspaceId,
-                                @PathParam("ciId") String ciId,
-                                @QueryParam("configSpecType") String configSpecType,
-                                @QueryParam("exportNativeCADFiles") boolean exportNativeCADFiles,
-                                @QueryParam("exportDocumentLinks") boolean exportDocumentLinks)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, WorkspaceNotEnabledException {
+    public Response exportFiles(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = false, value = "Config spec") @QueryParam("configSpecType") String configSpecType,
+            @ApiParam(required = false, value = "Export native cad files flag") @QueryParam("exportNativeCADFiles") boolean exportNativeCADFiles,
+            @ApiParam(required = false, value = "Export linked documents attached files flag") @QueryParam("exportDocumentLinks") boolean exportDocumentLinks)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException,
+            ProductInstanceMasterNotFoundException, WorkspaceNotEnabledException {
 
         if (configSpecType == null) {
             configSpecType = "wip";
@@ -537,59 +646,102 @@ public class ProductResource {
     }
 
     @POST
-    @ApiOperation(value = "Create path to path link", response = LightPathToPathLinkDTO.class)
+    @ApiOperation(value = "Create path to path link",
+            response = LightPathToPathLinkDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of created LightPathToPathLinkDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/path-to-path-links")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public LightPathToPathLinkDTO createPathToPathLink(@PathParam("workspaceId") String workspaceId,
-                                                       @PathParam("ciId") String configurationItemId,
-                                                       @PathParam("serialNumber") String serialNumber,
-                                                       @ApiParam(required = true, value = "Path to path link to create") LightPathToPathLinkDTO pathToPathLinkDTO)
-            throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathCyclicException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, NotAllowedException, WorkspaceNotEnabledException {
-        PathToPathLink pathToPathLink = productService.createPathToPathLink(workspaceId, configurationItemId, pathToPathLinkDTO.getType(), pathToPathLinkDTO.getSourcePath(), pathToPathLinkDTO.getTargetPath(), pathToPathLinkDTO.getDescription());
+    public LightPathToPathLinkDTO createPathToPathLink(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Product instance serial number") @PathParam("serialNumber") String serialNumber,
+            @ApiParam(required = true, value = "Path to path link to create") LightPathToPathLinkDTO pathToPathLinkDTO)
+            throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException,
+            CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException,
+            AccessRightException, PathToPathCyclicException, ConfigurationItemNotFoundException,
+            PartUsageLinkNotFoundException, NotAllowedException, WorkspaceNotEnabledException {
+
+        PathToPathLink pathToPathLink = productService.createPathToPathLink(workspaceId, ciId, pathToPathLinkDTO.getType(), pathToPathLinkDTO.getSourcePath(), pathToPathLinkDTO.getTargetPath(), pathToPathLinkDTO.getDescription());
         return mapper.map(pathToPathLink, LightPathToPathLinkDTO.class);
     }
 
     @PUT
-    @ApiOperation(value = "Update path to path link", response = LightPathToPathLinkDTO.class)
+    @ApiOperation(value = "Update path to path link",
+            response = LightPathToPathLinkDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of updated LightPathToPathLinkDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/path-to-path-links/{pathToPathLinkId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public LightPathToPathLinkDTO updatePathToPathLink(@PathParam("workspaceId") String workspaceId,
-                                                       @PathParam("ciId") String configurationItemId,
-                                                       @PathParam("serialNumber") String serialNumber,
-                                                       @PathParam("pathToPathLinkId") int pathToPathLinkId,
-                                                       @ApiParam(required = true, value = "Path to path link to update") LightPathToPathLinkDTO pathToPathLinkDTO)
-            throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathCyclicException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, NotAllowedException, PathToPathLinkNotFoundException, WorkspaceNotEnabledException {
-        PathToPathLink pathToPathLink = productService.updatePathToPathLink(workspaceId, configurationItemId, pathToPathLinkId, pathToPathLinkDTO.getDescription());
+    public LightPathToPathLinkDTO updatePathToPathLink(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Product instance serial number") @PathParam("serialNumber") String serialNumber,
+            @ApiParam(required = true, value = "Path to path link id") @PathParam("pathToPathLinkId") int pathToPathLinkId,
+            @ApiParam(required = true, value = "Path to path link to update") LightPathToPathLinkDTO pathToPathLinkDTO)
+            throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException,
+            CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException,
+            AccessRightException, PathToPathCyclicException, ConfigurationItemNotFoundException,
+            PartUsageLinkNotFoundException, NotAllowedException, PathToPathLinkNotFoundException,
+            WorkspaceNotEnabledException {
+
+        PathToPathLink pathToPathLink = productService.updatePathToPathLink(workspaceId, ciId, pathToPathLinkId, pathToPathLinkDTO.getDescription());
         return mapper.map(pathToPathLink, LightPathToPathLinkDTO.class);
     }
 
     @DELETE
-    @ApiOperation(value = "Delete path to path link", response = Response.class)
+    @ApiOperation(value = "Delete path to path link",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successful deletion of PathToPathLink"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/path-to-path-links/{pathToPathLinkId}")
-    public Response deletePathToPathLink(@PathParam("workspaceId") String workspaceId,
-                                         @PathParam("ciId") String configurationItemId,
-                                         @PathParam("serialNumber") String serialNumber,
-                                         @PathParam("pathToPathLinkId") int pathToPathLinkId)
-            throws PathToPathLinkNotFoundException, UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, ConfigurationItemNotFoundException, WorkspaceNotEnabledException {
-        productService.deletePathToPathLink(workspaceId, configurationItemId, pathToPathLinkId);
-        return Response.ok().build();
+    public Response deletePathToPathLink(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Product instance serial number") @PathParam("serialNumber") String serialNumber,
+            @ApiParam(required = true, value = "Path to path link id") @PathParam("pathToPathLinkId") int pathToPathLinkId)
+            throws PathToPathLinkNotFoundException, UserNotActiveException, WorkspaceNotFoundException,
+            UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException,
+            ConfigurationItemNotFoundException, WorkspaceNotEnabledException {
+
+        productService.deletePathToPathLink(workspaceId, ciId, pathToPathLinkId);
+        return Response.noContent().build();
     }
 
     @GET
-    @ApiOperation(value = "Get path to path links from source and target", response = Response.class)
+    @ApiOperation(value = "Get path to path links from source and target",
+            response = PathToPathLinkDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of PathToPathLinkDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathToPathLinkFromSourceAndTarget(@PathParam("workspaceId") String workspaceId,
-                                                         @PathParam("ciId") String configurationItemId,
-                                                         @PathParam("sourcePath") String sourcePathAsString,
-                                                         @PathParam("targetPath") String targetPathAsString)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
-        List<PathToPathLink> pathToPathLinks = productService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, sourcePathAsString, targetPathAsString);
+    public Response getPathToPathLinkFromSourceAndTarget(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Complete source path") @PathParam("sourcePath") String sourcePathAsString,
+            @ApiParam(required = true, value = "Complete target path") @PathParam("targetPath") String targetPathAsString)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
+            ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
+
+        List<PathToPathLink> pathToPathLinks = productService.getPathToPathLinkFromSourceAndTarget(workspaceId, ciId, sourcePathAsString, targetPathAsString);
         List<PathToPathLinkDTO> dtos = new ArrayList<>();
 
-        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, configurationItemId);
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
         for (PathToPathLink pathToPathLink : pathToPathLinks) {
             PathToPathLinkDTO pathToPathLinkDTO = mapper.map(pathToPathLink, PathToPathLinkDTO.class);
@@ -618,13 +770,24 @@ public class ProductResource {
     }
 
     @GET
-    @ApiOperation(value = "Get path to path links types", response = LightPathToPathLinkDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get path to path links types",
+            response = LightPathToPathLinkDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of LightPathToPathLinkDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId,
-                                           @PathParam("ciId") String configurationItemId)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, WorkspaceNotEnabledException {
-        List<String> pathToPathLinkTypes = productService.getPathToPathLinkTypes(workspaceId, configurationItemId);
+    public Response getPathToPathLinkTypes(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
+            AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException,
+            WorkspaceNotEnabledException {
+
+        List<String> pathToPathLinkTypes = productService.getPathToPathLinkTypes(workspaceId, ciId);
         List<LightPathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
         for (String type : pathToPathLinkTypes) {
             LightPathToPathLinkDTO pathToPathLinkDTO = new LightPathToPathLinkDTO();
@@ -636,14 +799,25 @@ public class ProductResource {
     }
 
     @GET
-    @ApiOperation(value = "Decode string path", response = LightPartLinkDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Decode string path",
+            response = LightPartLinkDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of LightPartLinkDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/decode-path/{path}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response decodePath(@PathParam("workspaceId") String workspaceId,
-                               @PathParam("ciId") String configurationItemId,
-                               @PathParam("path") String pathAsString)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
-        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, configurationItemId);
+    public Response decodePath(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Complete path to decode") @PathParam("path") String pathAsString)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
+            BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException,
+            WorkspaceNotEnabledException {
+
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         List<PartLink> path = productService.decodePath(ciKey, pathAsString);
         List<LightPartLinkDTO> lightPartLinkDTOs = new ArrayList<>();
         for (PartLink partLink : path) {
@@ -655,20 +829,31 @@ public class ProductResource {
     }
 
     @GET
-    @ApiOperation(value = "Get document links for given part operation", response = DocumentIterationLinkDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get document links for given part operation",
+            response = DocumentIterationLinkDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of DocumentIterationLinkDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/document-links/{partNumber: [^/].*}-{partVersion:[A-Z]+}-{partIteration:[0-9]+}/{configSpec}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getDocumentLinksForGivenPartIteration(@PathParam("workspaceId") String workspaceId,
-                                                          @PathParam("ciId") String configurationItemId,
-                                                          @PathParam("partNumber") String partNumber,
-                                                          @PathParam("partVersion") String partVersion,
-                                                          @PathParam("partIteration") int partIteration,
-                                                          @PathParam("configSpec") String configSpec)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, PartIterationNotFoundException, WorkspaceNotEnabledException {
+    public Response getDocumentLinksForGivenPartIteration(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
+            @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion,
+            @ApiParam(required = true, value = "Part iteration") @PathParam("partIteration") int partIteration,
+            @ApiParam(required = false, value = "Config spec") @PathParam("configSpec") String configSpec)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
+            AccessRightException, ProductInstanceMasterNotFoundException, BaselineNotFoundException,
+            ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, PartIterationNotFoundException,
+            WorkspaceNotEnabledException {
 
         List<DocumentIterationLinkDTO> dtos = new ArrayList<>();
         PartIterationKey partIterationKey = new PartIterationKey(workspaceId, partNumber, partVersion, partIteration);
-        List<DocumentIterationLink> documentIterationLinkList = productService.getDocumentLinksAsDocumentIterations(workspaceId, configurationItemId, configSpec, partIterationKey);
+        List<DocumentIterationLink> documentIterationLinkList = productService.getDocumentLinksAsDocumentIterations(workspaceId, ciId, configSpec, partIterationKey);
         for (DocumentIterationLink documentIterationLink : documentIterationLinkList) {
 
             DocumentIteration documentIteration = documentIterationLink.getDocumentIteration();
@@ -690,45 +875,76 @@ public class ProductResource {
     }
 
     @PUT
-    @ApiOperation(value = "Cascade checkout", response = CascadeResult.class)
+    @ApiOperation(value = "Cascade check out",
+            response = CascadeResult.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of CascadeResult"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/cascade-checkout")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response cascadeCheckout(@PathParam("workspaceId") String workspaceId,
-                                    @PathParam("ciId") String ciId,
-                                    @QueryParam("configSpec") String configSpecType,
-                                    @QueryParam("path") String path,
-                                    @ApiParam(name = "body", defaultValue = "") String body)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
+    public Response cascadeCheckout(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = false, value = "Config spec") @QueryParam("configSpec") String configSpecType,
+            @ApiParam(required = true, value = "Complete path to checkout from") @QueryParam("path") String path,
+            @ApiParam(name = "body", defaultValue = "") String body)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
+            ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException,
+            NotAllowedException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
+
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         CascadeResult cascadeResult = cascadeActionService.cascadeCheckout(ciKey, path);
         return Response.ok(cascadeResult).build();
     }
 
     @PUT
-    @ApiOperation(value = "Cascade checkint", response = CascadeResult.class)
+    @ApiOperation(value = "Cascade check in",
+            response = CascadeResult.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of CascadeResult"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/cascade-checkin")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response cascadeCheckin(@PathParam("workspaceId") String workspaceId,
-                                   @PathParam("ciId") String ciId,
-                                   @QueryParam("configSpec") String configSpecType,
-                                   @QueryParam("path") String path,
-                                   @ApiParam(required = true, value = "Iteration note to add") IterationNoteDTO iterationNoteDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
+    public Response cascadeCheckin(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = false, value = "Config spec") @QueryParam("configSpec") String configSpecType,
+            @ApiParam(required = true, value = "Complete path to checkin from") @QueryParam("path") String path,
+            @ApiParam(required = true, value = "Iteration note to add") IterationNoteDTO iterationNoteDTO)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
+            ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException,
+            NotAllowedException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
+
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         CascadeResult cascadeResult = cascadeActionService.cascadeCheckin(ciKey, path, iterationNoteDTO.getIterationNote());
         return Response.ok(cascadeResult).build();
     }
 
     @PUT
-    @ApiOperation(value = "Cascade undo checkout", response = CascadeResult.class)
+    @ApiOperation(value = "Cascade undo check out",
+            response = CascadeResult.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of CascadeResult"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{ciId}/cascade-undocheckout")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response cascadeUndoCheckout(@PathParam("workspaceId") String workspaceId,
-                                        @PathParam("ciId") String ciId,
-                                        @QueryParam("configSpec") String configSpecType,
-                                        @QueryParam("path") String path,
-                                        @ApiParam(name = "body", defaultValue = "") String body)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
+    public Response cascadeUndoCheckOut(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = false, value = "Config spec") @QueryParam("configSpec") String configSpecType,
+            @ApiParam(required = true, value = "Complete path to undo checkout from") @QueryParam("path") String path,
+            @ApiParam(name = "body", defaultValue = "") String body)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
+            ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException,
+            NotAllowedException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
+        
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         CascadeResult cascadeResult = cascadeActionService.cascadeUndocheckout(ciKey, path);
         return Response.ok(cascadeResult).build();
@@ -762,7 +978,7 @@ public class ProductResource {
         PartRevision partR = retainedIteration.getPartRevision();
 
         // Filter ACL on partR
-        if(!component.isVirtual() && !productService.canAccess(partR.getKey())){
+        if (!component.isVirtual() && !productService.canAccess(partR.getKey())) {
             return null;
         }
 

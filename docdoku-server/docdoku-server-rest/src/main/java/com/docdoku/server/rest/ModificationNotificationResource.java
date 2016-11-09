@@ -23,9 +23,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.ModificationNotificationDTO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -55,12 +53,19 @@ public class ModificationNotificationResource {
     }
 
     @PUT
-    @ApiOperation(value = "Acknowledge modification notification", response = Response.class)
+    @ApiOperation(value = "Acknowledge modification notification",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful acknowledge of ModificationNotification"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{notificationId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response acknowledgeNotification(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                            @ApiParam(required = true, value = "Notification id")  @PathParam("notificationId") int notificationId,
-                                            @ApiParam(required = true, value = "Modification notification to acknowledge") ModificationNotificationDTO notificationDTO)
+    public Response acknowledgeNotification(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Notification id") @PathParam("notificationId") int notificationId,
+            @ApiParam(required = true, value = "Modification notification to acknowledge") ModificationNotificationDTO notificationDTO)
             throws UserNotFoundException, AccessRightException, PartRevisionNotFoundException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
 
         productService.updateModificationNotification(workspaceId, notificationId, notificationDTO.getAckComment());

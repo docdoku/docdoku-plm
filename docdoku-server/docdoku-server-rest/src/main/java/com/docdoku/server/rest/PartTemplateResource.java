@@ -29,9 +29,7 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.*;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -71,9 +69,17 @@ public class PartTemplateResource {
     }
 
     @GET
-    @ApiOperation(value = "Get part master templates", response = PartMasterTemplateDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get part master templates",
+            response = PartMasterTemplateDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of PartMasterTemplateDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public PartMasterTemplateDTO[] getPartMasterTemplates(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+    public PartMasterTemplateDTO[] getPartMasterTemplates(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
 
@@ -88,11 +94,18 @@ public class PartTemplateResource {
     }
 
     @GET
-    @ApiOperation(value = "Get part master template", response = PartMasterTemplateDTO.class)
+    @ApiOperation(value = "Get part master template",
+            response = PartMasterTemplateDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of PartMasterTemplateDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{templateId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public PartMasterTemplateDTO getPartMasterTemplate(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                                       @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId)
+    public PartMasterTemplateDTO getPartMasterTemplate(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId)
             throws EntityNotFoundException, UserNotActiveException {
 
         PartMasterTemplate partMasterTemplate = productService.getPartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId));
@@ -100,11 +113,18 @@ public class PartTemplateResource {
     }
 
     @GET
-    @ApiOperation(value = "Generate part master template id", response = TemplateGeneratedIdDTO.class)
+    @ApiOperation(value = "Generate part master template id",
+            response = TemplateGeneratedIdDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of TemplateGeneratedIdDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{templateId}/generate_id")
     @Produces(MediaType.APPLICATION_JSON)
-    public TemplateGeneratedIdDTO generatePartMasterTemplateId(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                                               @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId)
+    public TemplateGeneratedIdDTO generatePartMasterTemplateId(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId)
             throws EntityNotFoundException, UserNotActiveException {
 
         String generatedId = productService.generateId(workspaceId, templateId);
@@ -112,12 +132,20 @@ public class PartTemplateResource {
     }
 
     @POST
-    @ApiOperation(value = "Crate part master template", response = PartMasterTemplateDTO.class)
+    @ApiOperation(value = "Crate part master template",
+            response = PartMasterTemplateDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of created PartMasterTemplateDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PartMasterTemplateDTO createPartMasterTemplate(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                                          @ApiParam(required = true, value = "Part master template to create") PartTemplateCreationDTO templateCreationDTO)
-            throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException {
+    public PartMasterTemplateDTO createPartMasterTemplate(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Part master template to create") PartTemplateCreationDTO templateCreationDTO)
+            throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException,
+            NotAllowedException {
 
         String id = templateCreationDTO.getReference();
         String partType = templateCreationDTO.getPartType();
@@ -154,13 +182,20 @@ public class PartTemplateResource {
     }
 
     @PUT
-    @ApiOperation(value = "Update part master template", response = PartMasterTemplateDTO.class)
+    @ApiOperation(value = "Update part master template",
+            response = PartMasterTemplateDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of updated PartMasterTemplateDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{templateId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PartMasterTemplateDTO updatePartMasterTemplate(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                                          @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
-                                                          @ApiParam(required = true, value = "Part master template to update") PartMasterTemplateDTO partMasterTemplateDTO)
+    public PartMasterTemplateDTO updatePartMasterTemplate(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
+            @ApiParam(required = true, value = "Part master template to update") PartMasterTemplateDTO partMasterTemplateDTO)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
         String partType = partMasterTemplateDTO.getPartType();
@@ -197,12 +232,19 @@ public class PartTemplateResource {
     }
 
     @PUT
-    @ApiOperation(value = "Update part master template ACL", response = Response.class)
+    @ApiOperation(value = "Update part master template ACL",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful update of ACL"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{templateId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updatePartMasterTemplateACL(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                                @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
-                                                @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
+    public Response updatePartMasterTemplateACL(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
+            @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
         if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
@@ -227,40 +269,63 @@ public class PartTemplateResource {
     }
 
     @DELETE
-    @ApiOperation(value = "Delete part master template", response = Response.class)
+    @ApiOperation(value = "Delete part master template",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successful deletion of PartMasterTemplateDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{templateId}")
-    public Response deletePartMasterTemplate(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                             @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId)
+    public Response deletePartMasterTemplate(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         productService.deletePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId));
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @DELETE
-    @ApiOperation(value = "Remove attached file from part master template", response = Response.class)
+    @ApiOperation(value = "Remove attached file from part master template",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successful file deletion of PartMasterTemplateDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{templateId}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response removeAttachedFile(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                       @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
-                                       @ApiParam(required = true, value = "File name") @PathParam("fileName") String fileName)
+    public Response removeAttachedFile(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
+            @ApiParam(required = true, value = "File name") @PathParam("fileName") String fileName)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         String fileFullName = workspaceId + "/part-templates/" + templateId + "/" + fileName;
         productService.removeFileFromTemplate(fileFullName);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
-    @ApiOperation(value = "Rename attached file in part master template", response = Response.class)
+    @ApiOperation(value = "Rename attached file in part master template",
+            response = FileDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful file renaming of PartMasterTemplateDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{templateId}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FileDTO renameAttachedFile(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                      @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
-                                      @ApiParam(required = true, value = "File name") @PathParam("fileName") String fileName,
-                                      @ApiParam(required = true, value = "File to rename") FileDTO fileDTO)
-            throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, AccessRightException, FileAlreadyExistsException, StorageException, NotAllowedException, WorkspaceNotEnabledException {
+    public FileDTO renameAttachedFile(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
+            @ApiParam(required = true, value = "File name") @PathParam("fileName") String fileName,
+            @ApiParam(required = true, value = "File to rename") FileDTO fileDTO)
+            throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException,
+            FileNotFoundException, AccessRightException, FileAlreadyExistsException, StorageException,
+            NotAllowedException, WorkspaceNotEnabledException {
 
         String fileFullName = workspaceId + "/part-templates/" + templateId + "/" + fileName;
         BinaryResource binaryResource = productService.renameFileInTemplate(fileFullName, fileDTO.getShortName());

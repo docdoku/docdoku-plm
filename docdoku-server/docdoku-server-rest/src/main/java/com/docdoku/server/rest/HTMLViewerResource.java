@@ -15,8 +15,7 @@ import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
 import com.docdoku.server.rest.exceptions.ExpiredLinkException;
 import com.docdoku.server.rest.exceptions.UnmatchingUuidException;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -53,8 +52,19 @@ public class HTMLViewerResource {
 
     @GET
     @Produces(MediaType.TEXT_HTML)
-    @ApiOperation(value = "Get html viewer for document")
-    public Response getHtmlViewerForFile(@QueryParam("uuid") final String uuid, @QueryParam("fileName") final String fileName) throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException, ExpiredLinkException, UnmatchingUuidException {
+    @ApiOperation(value = "Get html viewer for document",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of Viewer"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    public Response getHtmlViewerForFile(
+            @ApiParam(required = false, value = "Uuid of shared entity") @QueryParam("uuid") final String uuid,
+            @ApiParam(required = true, value = "File name") @QueryParam("fileName") final String fileName)
+            throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException,
+            ExpiredLinkException, UnmatchingUuidException {
+
         if (uuid != null && !uuid.isEmpty()) {
             SharedEntity sharedEntity = shareManager.findSharedEntityForGivenUUID(uuid);
             BinaryResource sharedResource = checkUuidValidity(sharedEntity, fileName);
@@ -72,7 +82,8 @@ public class HTMLViewerResource {
     }
 
 
-    private Response getPartHTMLViewer(String fileName) throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException, ExpiredLinkException, UnmatchingUuidException {
+    private Response getPartHTMLViewer(String fileName) throws NotAllowedException, AccessRightException,
+            UserNotActiveException, EntityNotFoundException, ExpiredLinkException, UnmatchingUuidException {
 
         BinaryResource binaryResource = publicEntityManager.getPublicBinaryResourceForPart(fileName);
         if (binaryResource != null) {
@@ -83,7 +94,9 @@ public class HTMLViewerResource {
         }
     }
 
-    public Response getDocumentHTMLViewer(String fileName) throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
+    public Response getDocumentHTMLViewer(String fileName) throws NotAllowedException, AccessRightException,
+            UserNotActiveException, EntityNotFoundException {
+
         BinaryResource binaryResource = publicEntityManager.getPublicBinaryResourceForDocument(fileName);
         if (binaryResource != null) {
             return Response.ok().entity(viewerManager.getHtmlForViewer(binaryResource, null)).build();
@@ -95,7 +108,9 @@ public class HTMLViewerResource {
 
 
     private BinaryResource checkUuidValidity(SharedEntity sharedEntity, String fileName)
-            throws UnmatchingUuidException, NotAllowedException, WorkspaceNotFoundException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException, ExpiredLinkException, WorkspaceNotEnabledException {
+            throws UnmatchingUuidException, NotAllowedException, WorkspaceNotFoundException, AccessRightException,
+            FileNotFoundException, UserNotFoundException, UserNotActiveException,
+            ExpiredLinkException, WorkspaceNotEnabledException {
 
         // Compare types
         String holderType = BinaryResource.parseHolderType(fileName);

@@ -30,9 +30,7 @@ import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.change.ChangeOrderDTO;
 import com.docdoku.server.rest.dto.change.ChangeRequestDTO;
 import com.docdoku.server.rest.dto.change.MilestoneDTO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -74,9 +72,16 @@ public class MilestonesResource {
     @ApiOperation(value = "Get milestones for given parameters",
             response = MilestoneDTO.class,
             responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of MilestoneDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getMilestones(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+    public Response getMilestones(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
+
         List<Milestone> milestones = changeManager.getMilestones(workspaceId);
         List<MilestoneDTO> milestoneDTOs = new ArrayList<>();
         for (Milestone milestone : milestones) {
@@ -93,11 +98,18 @@ public class MilestonesResource {
     @POST
     @ApiOperation(value = "Create milestone",
             response = MilestoneDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of created MilestoneDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public MilestoneDTO createMilestone(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                        @ApiParam(required = true, value = "Milestone to create") MilestoneDTO milestoneDTO)
+    public MilestoneDTO createMilestone(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Milestone to create") MilestoneDTO milestoneDTO)
             throws EntityNotFoundException, AccessRightException, EntityAlreadyExistsException {
+
         Milestone milestone = changeManager.createMilestone(workspaceId, milestoneDTO.getTitle(), milestoneDTO.getDescription(), milestoneDTO.getDueDate());
         milestoneDTO = mapper.map(milestone, MilestoneDTO.class);
         milestoneDTO.setWritable(true);
@@ -107,11 +119,18 @@ public class MilestonesResource {
     @GET
     @ApiOperation(value = "Get milestone",
             response = MilestoneDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of MilestoneDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}")
-    public MilestoneDTO getMilestone(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                     @ApiParam(required = true, value = "Milestone id") @PathParam("milestoneId") int milestoneId)
+    public MilestoneDTO getMilestone(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Milestone id") @PathParam("milestoneId") int milestoneId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+
         Milestone milestone = changeManager.getMilestone(workspaceId, milestoneId);
         MilestoneDTO milestoneDTO = mapper.map(milestone, MilestoneDTO.class);
         milestoneDTO.setWritable(changeManager.isMilestoneWritable(milestone));
@@ -123,13 +142,20 @@ public class MilestonesResource {
     @PUT
     @ApiOperation(value = "Update milestone",
             response = MilestoneDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of updated MilestoneDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}")
-    public MilestoneDTO updateMilestone(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                        @ApiParam(required = true, value = "Milestone id") @PathParam("milestoneId") int milestoneId,
-                                        @ApiParam(required = true, value = "Milestone to update") MilestoneDTO pMilestoneDTO)
+    public MilestoneDTO updateMilestone(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Milestone id") @PathParam("milestoneId") int milestoneId,
+            @ApiParam(required = true, value = "Milestone to update") MilestoneDTO pMilestoneDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+
         Milestone milestone = changeManager.updateMilestone(milestoneId, workspaceId, pMilestoneDTO.getTitle(), pMilestoneDTO.getDescription(), pMilestoneDTO.getDueDate());
         MilestoneDTO milestoneDTO = mapper.map(milestone, MilestoneDTO.class);
         milestoneDTO.setWritable(changeManager.isMilestoneWritable(milestone));
@@ -141,10 +167,16 @@ public class MilestonesResource {
     @DELETE
     @ApiOperation(value = "Delete milestone",
             response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful deletion of MilestoneDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}")
-    public Response removeMilestone(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                    @ApiParam(required = true, value = "Milestone id") @PathParam("milestoneId") int milestoneId)
+    public Response removeMilestone(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Milestone id") @PathParam("milestoneId") int milestoneId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException {
         changeManager.deleteMilestone(workspaceId, milestoneId);
         return Response.ok().build();
@@ -154,11 +186,18 @@ public class MilestonesResource {
     @ApiOperation(value = "Get requests for the given milestone",
             response = ChangeRequestDTO.class,
             responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of created ChangeRequestDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}/requests")
-    public Response getRequestsByMilestone(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                           @ApiParam(required = true, value = "Milestone id") @PathParam("milestoneId") int milestoneId)
+    public Response getRequestsByMilestone(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Milestone id") @PathParam("milestoneId") int milestoneId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+
         List<ChangeRequest> changeRequests = changeManager.getChangeRequestsByMilestone(workspaceId, milestoneId);
         List<ChangeRequestDTO> changeRequestDTOs = new ArrayList<>();
         for (ChangeRequest changeRequest : changeRequests) {
@@ -172,11 +211,18 @@ public class MilestonesResource {
     @ApiOperation(value = "Get orders for the given milestone",
             response = ChangeOrderDTO.class,
             responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of created ChangeOrderDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}/orders")
-    public Response getOrdersByMilestone(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                         @ApiParam(required = true, value = "Milestone id") @PathParam("milestoneId") int milestoneId)
+    public Response getOrdersByMilestone(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Milestone id") @PathParam("milestoneId") int milestoneId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+
         List<ChangeOrder> changeOrders = changeManager.getChangeOrdersByMilestone(workspaceId, milestoneId);
         List<ChangeOrderDTO> changeOrderDTOs = new ArrayList<>();
         for (ChangeOrder changeOrder : changeOrders) {
@@ -189,12 +235,19 @@ public class MilestonesResource {
     @PUT
     @ApiOperation(value = "Update ACL of the milestone",
             response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful ACL update of MilestoneDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{milestoneId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateMilestoneACL(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                       @ApiParam(required = true, value = "Milestone id") @PathParam("milestoneId") int milestoneId,
-                                       @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
+    public Response updateMilestoneACL(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Milestone id") @PathParam("milestoneId") int milestoneId,
+            @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+
         if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
             Map<String, String> userEntries = new HashMap<>();

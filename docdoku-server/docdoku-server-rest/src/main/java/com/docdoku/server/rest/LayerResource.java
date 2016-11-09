@@ -29,9 +29,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.LayerDTO;
 import com.docdoku.server.rest.dto.MarkerDTO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -60,10 +58,18 @@ public class LayerResource {
     }
 
     @GET
-    @ApiOperation(value = "Get layers", response = LayerDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get layers",
+            response = LayerDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of LayerDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public LayerDTO[] getLayersInProduct(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                         @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId)
+    public LayerDTO[] getLayersInProduct(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId)
             throws EntityNotFoundException, UserNotActiveException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
@@ -77,12 +83,19 @@ public class LayerResource {
 
 
     @POST
-    @ApiOperation(value = "Create layers", response = LayerDTO.class)
+    @ApiOperation(value = "Create layers",
+            response = LayerDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of created LayerDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public LayerDTO createLayer(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
-                                @ApiParam(required = true, value = "Layer to create") LayerDTO layer)
+    public LayerDTO createLayer(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Layer to create") LayerDTO layer)
             throws EntityNotFoundException, AccessRightException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
@@ -91,14 +104,21 @@ public class LayerResource {
     }
 
     @PUT
-    @ApiOperation(value = "Update layer", response = LayerDTO.class)
+    @ApiOperation(value = "Update layer",
+            response = LayerDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of updated LayerDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{layerId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public LayerDTO updateLayer(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
-                                @ApiParam(required = true, value = "Layer id") @PathParam("layerId") int layerId,
-                                @ApiParam(required = true, value = "Layer to update") LayerDTO layer)
+    public LayerDTO updateLayer(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Layer id") @PathParam("layerId") int layerId,
+            @ApiParam(required = true, value = "Layer to update") LayerDTO layer)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
@@ -108,11 +128,17 @@ public class LayerResource {
 
     @DELETE
     @ApiOperation(value = "Delete layer", response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful deletion of LayerDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{layerId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteLayer(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
-                                @ApiParam(required = true, value = "Layer id") @PathParam("layerId") int layerId)
+    public Response deleteLayer(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Layer id") @PathParam("layerId") int layerId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         productService.deleteLayer(workspaceId, layerId);
@@ -120,12 +146,20 @@ public class LayerResource {
     }
 
     @GET
-    @ApiOperation(value = "Get markers", response = MarkerDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get markers",
+            response = MarkerDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of MarkerDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{layerId}/markers")
     @Produces(MediaType.APPLICATION_JSON)
-    public MarkerDTO[] getMarkersInLayer(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                         @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
-                                         @ApiParam(required = true, value = "Layer id") @PathParam("layerId") int layerId)
+    public MarkerDTO[] getMarkersInLayer(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Layer id") @PathParam("layerId") int layerId)
             throws EntityNotFoundException, UserNotActiveException {
 
         Layer layer = productService.getLayer(layerId);
@@ -139,14 +173,21 @@ public class LayerResource {
     }
 
     @POST
-    @ApiOperation(value = "Create marker", response = MarkerDTO.class)
+    @ApiOperation(value = "Create marker",
+            response = MarkerDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of created MarkerDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{layerId}/markers")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public MarkerDTO createMarker(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                  @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
-                                  @ApiParam(required = true, value = "Layer id") @PathParam("layerId") int layerId,
-                                  @ApiParam(required = true, value = "Marker to create") MarkerDTO markerDTO)
+    public MarkerDTO createMarker(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Layer id") @PathParam("layerId") int layerId,
+            @ApiParam(required = true, value = "Marker to create") MarkerDTO markerDTO)
             throws EntityNotFoundException, AccessRightException {
 
         Marker marker = productService.createMarker(layerId, markerDTO.getTitle(), markerDTO.getDescription(), markerDTO.getX(), markerDTO.getY(), markerDTO.getZ());
@@ -154,17 +195,24 @@ public class LayerResource {
     }
 
     @DELETE
-    @ApiOperation(value = "Delete marker", response = Response.class)
+    @ApiOperation(value = "Delete marker",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful deletion of LayerDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{layerId}/markers/{markerId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteMarker(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                 @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
-                                 @ApiParam(required = true, value = "Layer id") @PathParam("layerId") int layerId,
-                                 @ApiParam(required = true, value = "Marker id")  @PathParam("markerId") int markerId)
+    public Response deleteMarker(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
+            @ApiParam(required = true, value = "Layer id") @PathParam("layerId") int layerId,
+            @ApiParam(required = true, value = "Marker id") @PathParam("markerId") int markerId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         productService.deleteMarker(layerId, markerId);
-        return Response.status(Response.Status.OK).build();
+        return Response.ok().build();
     }
 }

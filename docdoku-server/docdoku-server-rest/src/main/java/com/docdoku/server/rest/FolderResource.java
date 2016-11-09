@@ -34,9 +34,7 @@ import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.*;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -78,7 +76,14 @@ public class FolderResource {
 
     @GET
     @Path("{folderId}/documents/")
-    @ApiOperation(value = "Get documents in folder", response = DocumentRevisionDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get documents in folder",
+            response = DocumentRevisionDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of DocumentRevisionDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO[] getDocumentsWithGivenFolderIdAndWorkspaceId(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -103,7 +108,13 @@ public class FolderResource {
 
     @POST
     @Path("{folderId}/documents/")
-    @ApiOperation(value = "Create document", response = DocumentRevisionDTO.class)
+    @ApiOperation(value = "Create document",
+            response = DocumentRevisionDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successful retrieval of created DocumentRevisionDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createDocumentMasterInFolder(
@@ -152,23 +163,24 @@ public class FolderResource {
                 groupRoleMapping.put(roleMappingDTO.getRoleName(), roleMappingDTO.getGroupIds());
             }
         }
-        DocumentRevision createdDocRs = documentService.createDocumentMaster(decodedCompletePath, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries, userRoleMapping, groupRoleMapping);
+        DocumentRevision createdDocRs = documentService.createDocumentMaster(decodedCompletePath, pDocMID, pTitle,
+                pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries, userRoleMapping,
+                groupRoleMapping);
 
         DocumentRevisionDTO docRsDTO = mapper.map(createdDocRs, DocumentRevisionDTO.class);
         docRsDTO.setPath(createdDocRs.getLocation().getCompletePath());
         docRsDTO.setLifeCycleState(createdDocRs.getLifeCycleState());
 
         try {
-            return Response.created(URI.create(URLEncoder.encode(pDocMID + "-" + createdDocRs.getVersion(), "UTF-8"))).entity(docRsDTO).build();
+            return Response.created(URI.create(URLEncoder.encode(pDocMID + "-" + createdDocRs.getVersion(), "UTF-8")))
+                    .entity(docRsDTO)
+                    .build();
         } catch (UnsupportedEncodingException ex) {
             LOGGER.log(Level.WARNING, null, ex);
             return Response.ok().build();
         }
     }
 
-    private String getPathFromUrlParams(String workspaceId, String folderId) {
-        return folderId == null ? Tools.stripTrailingSlash(workspaceId) : Tools.stripTrailingSlash(FolderDTO.replaceColonWithSlash(folderId));
-    }
 
     /**
      * Retrieves representation of folders located at the root of the given workspace
@@ -177,26 +189,193 @@ public class FolderResource {
      * @return The array of folders
      */
     @GET
-    @ApiOperation(value = "Get root folders", response = FolderDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get root folders",
+            response = FolderDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of FolderDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO[] getRootFolders(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                      @ApiParam(required = false, value = "Config spec") @QueryParam("configSpec") String configSpecType)
+    public FolderDTO[] getRootFolders(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = false, value = "Config spec") @QueryParam("configSpec") String configSpecType)
             throws EntityNotFoundException, UserNotActiveException {
         String completePath = Tools.stripTrailingSlash(workspaceId);
         return getFolders(workspaceId, completePath, true, configSpecType);
     }
 
     @GET
-    @ApiOperation(value = "Get sub folders", response = FolderDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get sub folders",
+            response = FolderDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of FolderDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{completePath}/folders")
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO[] getSubFolders(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                     @ApiParam(required = true, value = "Folder id") @PathParam("completePath") String folderId,
-                                     @ApiParam(required = false, value = "Config spec") @QueryParam("configSpec") String configSpecType)
+    public FolderDTO[] getSubFolders(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Folder id") @PathParam("completePath") String folderId,
+            @ApiParam(required = false, value = "Config spec") @QueryParam("configSpec") String configSpecType)
             throws EntityNotFoundException, UserNotActiveException {
         String decodedCompletePath = FolderDTO.replaceColonWithSlash(folderId);
         String completePath = Tools.stripTrailingSlash(decodedCompletePath);
         return getFolders(workspaceId, completePath, false, configSpecType);
+    }
+
+    /**
+     * PUT method for updating or creating an instance of FolderResource
+     */
+    @PUT
+    @ApiOperation(value = "Rename a folder",
+            response = FolderDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of updated FolderDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @Path("{folderId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public FolderDTO renameFolder(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Folder id") @PathParam("folderId") String folderPath,
+            @ApiParam(value = "Folder with new name", required = true) FolderDTO folderDTO)
+            throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException, CreationException {
+
+        String decodedCompletePath = FolderDTO.replaceColonWithSlash(folderPath);
+        String completePath = Tools.stripTrailingSlash(decodedCompletePath);
+        String destParentFolder = FolderDTO.extractParentFolder(completePath);
+        String folderName = folderDTO.getName();
+
+        documentService.moveFolder(completePath, destParentFolder, folderName);
+
+        String completeRenamedFolderId = destParentFolder + '/' + folderName;
+        String encodedRenamedFolderId = FolderDTO.replaceSlashWithColon(completeRenamedFolderId);
+
+        FolderDTO renamedFolderDTO = new FolderDTO();
+        renamedFolderDTO.setPath(destParentFolder);
+        renamedFolderDTO.setName(folderName);
+        renamedFolderDTO.setId(encodedRenamedFolderId);
+
+        return renamedFolderDTO;
+    }
+
+    /**
+     * PUT method for moving folder into an other
+     */
+    @PUT
+    @ApiOperation(value = "Move a folder",
+            response = FolderDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of updated FolderDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @Path("{folderId}/move")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public FolderDTO moveFolder(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Folder id") @PathParam("folderId") String folderPath,
+            @ApiParam(required = true, value = "Folder to move") FolderDTO folderDTO)
+            throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException, CreationException {
+
+        String decodedCompletePath = FolderDTO.replaceColonWithSlash(folderPath);
+        String completePath = Tools.stripTrailingSlash(decodedCompletePath);
+
+        String destParentFolder = FolderDTO.replaceColonWithSlash(folderDTO.getId());
+        String folderName = Tools.stripLeadingSlash(FolderDTO.extractName(completePath));
+
+        documentService.moveFolder(completePath, destParentFolder, folderName);
+
+        String completeRenamedFolderId = destParentFolder + '/' + folderName;
+        String encodedRenamedFolderId = FolderDTO.replaceSlashWithColon(completeRenamedFolderId);
+
+        FolderDTO renamedFolderDTO = new FolderDTO();
+        renamedFolderDTO.setPath(destParentFolder);
+        renamedFolderDTO.setName(folderName);
+        renamedFolderDTO.setId(encodedRenamedFolderId);
+
+        return renamedFolderDTO;
+    }
+
+    @POST
+    @ApiOperation(value = "Create a sub folder",
+            response = FolderDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of created FolderDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @Path("{parentFolderPath}/folders")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public FolderDTO createSubFolder(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Parent folder id") @PathParam("parentFolderPath") String parentFolderPath,
+            @ApiParam(value = "Folder to create", required = true) FolderDTO folder)
+            throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException,
+            UserNotActiveException, CreationException {
+
+        String decodedCompletePath = FolderDTO.replaceColonWithSlash(parentFolderPath);
+
+        String folderName = folder.getName();
+        return createFolder(decodedCompletePath, folderName);
+    }
+
+    @POST
+    @ApiOperation(value = "Create root folder",
+            response = FolderDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of created FolderDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public FolderDTO createRootFolder(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Folder to create") FolderDTO folder)
+            throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException,
+            UserNotActiveException, CreationException {
+
+        String folderName = folder.getName();
+        return createFolder(workspaceId, folderName);
+    }
+
+    /**
+     * DELETE method for deleting an instance of FolderResource
+     *
+     * @param completePath the folder path
+     * @return the array of the documents that have also been deleted
+     */
+    @DELETE
+    @ApiOperation(value = "Delete root folder",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful deletion of FolderDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @Path("{folderId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteRootFolder(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Folder id") @PathParam("folderId") String completePath)
+            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException,
+            ESServerException, EntityConstraintException {
+
+        deleteFolder(completePath);
+        return Response.ok().build();
+    }
+
+    private String getPathFromUrlParams(String workspaceId, String folderId) {
+        return folderId == null ? Tools.stripTrailingSlash(workspaceId) : Tools.stripTrailingSlash(FolderDTO.replaceColonWithSlash(folderId));
     }
 
     private FolderDTO[] getFolders(String workspaceId, String completePath, boolean rootFolder, String configSpecType)
@@ -224,117 +403,9 @@ public class FolderResource {
         return folderDTOs;
     }
 
-    /**
-     * PUT method for updating or creating an instance of FolderResource
-     */
-    @PUT
-    @ApiOperation(value = "Rename a folder", response = FolderDTO.class)
-    @Path("{folderId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO renameFolder(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                  @ApiParam(required = true, value = "Folder id") @PathParam("folderId") String folderPath,
-                                  @ApiParam(value = "Folder with new name", required = true) FolderDTO folderDTO)
-            throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException, CreationException {
-
-        String decodedCompletePath = FolderDTO.replaceColonWithSlash(folderPath);
-        String completePath = Tools.stripTrailingSlash(decodedCompletePath);
-        String destParentFolder = FolderDTO.extractParentFolder(completePath);
-        String folderName = folderDTO.getName();
-
-        documentService.moveFolder(completePath, destParentFolder, folderName);
-
-        String completeRenamedFolderId = destParentFolder + '/' + folderName;
-        String encodedRenamedFolderId = FolderDTO.replaceSlashWithColon(completeRenamedFolderId);
-
-        FolderDTO renamedFolderDTO = new FolderDTO();
-        renamedFolderDTO.setPath(destParentFolder);
-        renamedFolderDTO.setName(folderName);
-        renamedFolderDTO.setId(encodedRenamedFolderId);
-
-        return renamedFolderDTO;
-    }
-
-    /**
-     * PUT method for moving folder into an other
-     */
-    @PUT
-    @ApiOperation(value = "Move a folder", response = FolderDTO.class)
-    @Path("{folderId}/move")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO moveFolder(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                @ApiParam(required = true, value = "Folder id") @PathParam("folderId") String folderPath,
-                                @ApiParam(required = true, value = "Folder to move") FolderDTO folderDTO)
-            throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException, CreationException {
-
-        String decodedCompletePath = FolderDTO.replaceColonWithSlash(folderPath);
-        String completePath = Tools.stripTrailingSlash(decodedCompletePath);
-
-        String destParentFolder = FolderDTO.replaceColonWithSlash(folderDTO.getId());
-        String folderName = Tools.stripLeadingSlash(FolderDTO.extractName(completePath));
-
-        documentService.moveFolder(completePath, destParentFolder, folderName);
-
-        String completeRenamedFolderId = destParentFolder + '/' + folderName;
-        String encodedRenamedFolderId = FolderDTO.replaceSlashWithColon(completeRenamedFolderId);
-
-        FolderDTO renamedFolderDTO = new FolderDTO();
-        renamedFolderDTO.setPath(destParentFolder);
-        renamedFolderDTO.setName(folderName);
-        renamedFolderDTO.setId(encodedRenamedFolderId);
-
-        return renamedFolderDTO;
-    }
-
-    @POST
-    @ApiOperation(value = "Create a sub folder", response = FolderDTO.class)
-    @Path("{parentFolderPath}/folders")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO createSubFolder(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                     @ApiParam(required = true, value = "Parent folder id") @PathParam("parentFolderPath") String parentFolderPath,
-                                     @ApiParam(value = "Folder to create", required = true) FolderDTO folder)
-            throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException, UserNotActiveException, CreationException {
-
-        String decodedCompletePath = FolderDTO.replaceColonWithSlash(parentFolderPath);
-
-        String folderName = folder.getName();
-        return createFolder(decodedCompletePath, folderName);
-    }
-
-    @POST
-    @ApiOperation(value = "Create root folder", response = FolderDTO.class)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO createRootFolder(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                      @ApiParam(required = true, value = "Folder to create") FolderDTO folder)
-            throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException, UserNotActiveException, CreationException {
-
-        String folderName = folder.getName();
-        return createFolder(workspaceId, folderName);
-    }
-
-    /**
-     * DELETE method for deleting an instance of FolderResource
-     *
-     * @param completePath the folder path
-     * @return the array of the documents that have also been deleted
-     */
-    @DELETE
-    @ApiOperation(value = "Delete root folder", response = Response.class)
-    @Path("{folderId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteRootFolder(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                     @ApiParam(required = true, value = "Folder id") @PathParam("folderId") String completePath)
-            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, ESServerException, EntityConstraintException {
-
-        deleteFolder(completePath);
-        return Response.status(Response.Status.OK).build();
-    }
-
     private DocumentRevisionKey[] deleteFolder(String pCompletePath)
-            throws EntityNotFoundException, ESServerException, AccessRightException, NotAllowedException, EntityConstraintException, UserNotActiveException {
+            throws EntityNotFoundException, ESServerException, AccessRightException, NotAllowedException,
+            EntityConstraintException, UserNotActiveException {
 
         String decodedCompletePath = FolderDTO.replaceColonWithSlash(pCompletePath);
         String completePath = Tools.stripTrailingSlash(decodedCompletePath);

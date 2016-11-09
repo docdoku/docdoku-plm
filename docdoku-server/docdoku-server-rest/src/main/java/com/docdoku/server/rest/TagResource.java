@@ -33,9 +33,7 @@ import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.*;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -79,9 +77,17 @@ public class TagResource {
     }
 
     @GET
-    @ApiOperation(value = "Get tags in workspace", response = TagDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get tags in workspace",
+            response = TagDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of TagDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTagsInWorkspace(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+    public Response getTagsInWorkspace(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         String[] tagsName = documentService.getTags(workspaceId);
@@ -94,11 +100,18 @@ public class TagResource {
     }
 
     @POST
-    @ApiOperation(value = "Create tag in workspace", response = TagDTO.class)
+    @ApiOperation(value = "Create tag in workspace",
+            response = TagDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of TagDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public TagDTO createTag(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                            @ApiParam(value = "Tag to create", required = true) TagDTO tag)
+    public TagDTO createTag(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(value = "Tag to create", required = true) TagDTO tag)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, CreationException {
 
         documentService.createTag(workspaceId, tag.getLabel());
@@ -106,37 +119,59 @@ public class TagResource {
     }
 
     @POST
-    @ApiOperation(value = "Create tags in workspace", response = Response.class)
+    @ApiOperation(value = "Create tags in workspace",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successful creation of TagDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/multiple")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createTags(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                               @ApiParam(value = "Tag list to create", required = true) TagListDTO tagList)
-            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, CreationException {
+    public Response createTags(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(value = "Tag list to create", required = true) TagListDTO tagList)
+            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException,
+            AccessRightException, CreationException {
 
         for (TagDTO tagDTO : tagList.getTags()) {
             documentService.createTag(workspaceId, tagDTO.getLabel());
         }
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @DELETE
-    @ApiOperation(value = "Delete tag in workspace", response = Response.class)
+    @ApiOperation(value = "Delete tag in workspace",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successful deletion of TagDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{tagId}")
-    public Response deleteTag(@PathParam("workspaceId") String workspaceId,
-                              @PathParam("tagId") String tagId)
+    public Response deleteTag(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Tag id") @PathParam("tagId") String tagId)
             throws EntityNotFoundException, AccessRightException {
 
         documentService.deleteTag(new TagKey(workspaceId, tagId));
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @GET
-    @ApiOperation(value = "Get documents from given tag id", response = DocumentRevisionDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get documents from given tag id",
+            response = DocumentRevisionDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of DocumentRevisionDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{tagId}/documents/")
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRevisionDTO[] getDocumentsWithGivenTagIdAndWorkspaceId(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-            @ApiParam(required = true, value = "Tag id")  @PathParam("tagId") String tagId)
+            @ApiParam(required = true, value = "Tag id") @PathParam("tagId") String tagId)
             throws EntityNotFoundException, UserNotActiveException {
 
         TagKey tagKey = new TagKey(workspaceId, tagId);
@@ -157,7 +192,14 @@ public class TagResource {
 
     @POST
     @Path("{tagId}/documents/")
-    @ApiOperation(value = "Create document", response = Response.class)
+    @ApiOperation(value = "Create document",
+            response = DocumentRevisionDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of DocumentRevisionDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createDocumentMasterInRootFolderWithTag(

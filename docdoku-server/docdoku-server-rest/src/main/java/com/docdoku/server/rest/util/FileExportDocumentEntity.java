@@ -23,6 +23,9 @@ package com.docdoku.server.rest.util;
 /**
  * @author Elisabel Généreux on 21/09/16.
  */
+
+// TODO : this seems to be used as a DTO class. Rename and move it to DTO package. Add annotations
+
 public class FileExportDocumentEntity {
     private String workspaceId;
     private Integer baselineId;

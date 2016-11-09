@@ -84,12 +84,16 @@ public class AccountResource {
 
     @GET
     @Path("/me")
-    @ApiOperation(value = "Get authenticated user's account", response = AccountDTO.class)
+    @ApiOperation(value = "Get authenticated user's account",
+            response = AccountDTO.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 401, message = "Account not enabled or authentication not sufficient")
+            @ApiResponse(code = 200, message = "Successful retrieval of AccountDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public AccountDTO getAccount() throws AccountNotFoundException {
+    public AccountDTO getAccount()
+            throws AccountNotFoundException {
         Account account = accountManager.getMyAccount();
         AccountDTO accountDTO = mapper.map(account, AccountDTO.class);
         accountDTO.setAdmin(contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID));
@@ -98,13 +102,17 @@ public class AccountResource {
 
     @PUT
     @Path("/me")
-    @ApiOperation(value = "Update user's account", response = AccountDTO.class)
+    @ApiOperation(value = "Update user's account",
+            response = AccountDTO.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Account updated")
+            @ApiResponse(code = 200, message = "Successful retrieval of updated AccountDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public AccountDTO updateAccount(@ApiParam(required = true, value = "Updated account") AccountDTO accountDTO)
+    public AccountDTO updateAccount(
+            @ApiParam(required = true, value = "Updated account") AccountDTO accountDTO)
             throws AccountNotFoundException {
         Account account = accountManager.updateAccount(accountDTO.getName(), accountDTO.getEmail(), accountDTO.getLanguage(), accountDTO.getNewPassword(), accountDTO.getTimeZone());
         return mapper.map(account, AccountDTO.class);
@@ -112,15 +120,18 @@ public class AccountResource {
 
     @POST
     @Path("/create")
-    @ApiOperation(value = "Create user's account", response = AccountDTO.class)
+    @ApiOperation(value = "Create user's account",
+            response = AccountDTO.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Account created, and logged in"),
-            @ApiResponse(code = 202, message = "Account created, but not yet enabled"),
-            @ApiResponse(code = 500, message = "Internal server error"),
+            @ApiResponse(code = 200, message = "Successful retrieval of created AccountDTO. Response will contain authentication token."),
+            @ApiResponse(code = 202, message = "Account creation successful, but not yet enabled"),
+            @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createAccount(@Context HttpServletRequest request, @Context HttpServletResponse response,
-                                  @ApiParam(required = true, value = "Account to create") AccountDTO accountDTO)
+    public Response createAccount(
+            @Context HttpServletRequest request,
+            @Context HttpServletResponse response,
+            @ApiParam(required = true, value = "Account to create") AccountDTO accountDTO)
             throws AccountAlreadyExistsException, CreationException {
         Account account = accountManager.createAccount(accountDTO.getLogin(), accountDTO.getName(), accountDTO.getEmail(), accountDTO.getLanguage(), accountDTO.getNewPassword(), accountDTO.getTimeZone());
 
@@ -143,7 +154,7 @@ public class AccountResource {
 
             return Response.ok()
                     .entity(mapper.map(account, AccountDTO.class))
-                    .header("jwt", JWTokenFactory.createToken(new UserGroupMapping(login,UserGroupMapping.REGULAR_USER_ROLE_ID)))
+                    .header("jwt", JWTokenFactory.createToken(new UserGroupMapping(login, UserGroupMapping.REGULAR_USER_ROLE_ID)))
                     .build();
 
         } else {
@@ -159,7 +170,9 @@ public class AccountResource {
             response = WorkspaceDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
-            @ApiResponse(code = 401, message = "Account not enabled or authentication not sufficient"),
+            @ApiResponse(code = 200, message = "Successful retrieval of Workspaces. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)
     public Response getWorkspaces() {
@@ -177,12 +190,16 @@ public class AccountResource {
 
     @PUT
     @Path("gcm")
-    @ApiOperation(value = "Update GCM account for authenticated user", response = Response.class)
+    @ApiOperation(value = "Update GCM account for authenticated user",
+            response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "GCM account updated"),
+            @ApiResponse(code = 200, message = "Successful retrieval of created GCMAccount."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
     })
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response setGCMAccount(@ApiParam(required = true, value = "GCM account to set") GCMAccountDTO data)
+    public Response setGCMAccount(
+            @ApiParam(required = true, value = "GCM account to set") GCMAccountDTO data)
             throws EntityAlreadyExistsException, AccountNotFoundException, CreationException {
         accountManager.setGCMAccount(data.getGcmId());
         return Response.ok().build();
@@ -191,11 +208,15 @@ public class AccountResource {
 
     @DELETE
     @Path("gcm")
-    @ApiOperation(value = "Update GCM account for authenticated user", response = Response.class)
+    @ApiOperation(value = "Update GCM account for authenticated user",
+            response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "GCM account deleted"),
+            @ApiResponse(code = 200, message = "Successful delete of GCMAccount"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
     })
-    public Response deleteGCMAccount() throws EntityNotFoundException {
+    public Response deleteGCMAccount()
+            throws EntityNotFoundException {
         accountManager.deleteGCMAccount();
         return Response.ok().build();
     }
