@@ -19,7 +19,6 @@
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlbeans</groupId>
