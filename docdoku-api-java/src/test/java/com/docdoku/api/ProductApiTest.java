@@ -115,7 +115,8 @@ public class ProductApiTest {
         List<LeafDTO> leaves = productsApi.getInstances(TestConfig.WORKSPACE, product.getId(), "latest", "-1", true);
 
         Assert.assertNotNull(leaves);
-        Assert.assertFalse(leaves.isEmpty());
+        // No geometric data uploaded
+        Assert.assertTrue(leaves.isEmpty());
 
     }
 
