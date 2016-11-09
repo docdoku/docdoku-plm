@@ -35,9 +35,7 @@ import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 import com.docdoku.server.rest.interceptors.Compress;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -88,16 +86,25 @@ public class DocumentBinaryResource {
     }
 
     @POST
-    @ApiOperation(value = "Upload document file", response = Response.class)
+    @ApiOperation(value = "Upload document file",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Upload success"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{iteration}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public Response uploadDocumentFiles(@Context HttpServletRequest request,
-                                        @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
-                                        @ApiParam(required = true, value = "Document master id")  @PathParam("documentId") final String documentId,
-                                        @ApiParam(required = true, value = "Workspace version")  @PathParam("version") final String version,
-                                        @ApiParam(required = true, value = "Document iteration")  @PathParam("iteration") final int iteration)
-            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException {
+    public Response uploadDocumentFiles(
+            @Context HttpServletRequest request,
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
+            @ApiParam(required = true, value = "Document master id") @PathParam("documentId") final String documentId,
+            @ApiParam(required = true, value = "Workspace version") @PathParam("version") final String version,
+            @ApiParam(required = true, value = "Document iteration") @PathParam("iteration") final int iteration)
+            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException,
+            NotAllowedException, CreationException {
+
         try {
             String fileName = null;
             DocumentIterationKey docPK = new DocumentIterationKey(workspaceId, documentId, version, iteration);
@@ -117,39 +124,35 @@ public class DocumentBinaryResource {
         }
     }
 
-    private String uploadAFile(Part formPart, DocumentIterationKey docPK)
-            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException, UserNotActiveException, StorageException, IOException {
-
-        String fileName = Normalizer.normalize(formPart.getSubmittedFileName(), Normalizer.Form.NFC);
-        // Init the binary resource with a null length
-        BinaryResource binaryResource = documentService.saveFileInDocument(docPK, fileName, 0);
-        OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
-        long length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
-        documentService.saveFileInDocument(docPK, fileName, length);
-        documentPostUploaderService.process(binaryResource);
-        return fileName;
-    }
-
     // TODO split method using query params for uuid and virtualSubResource
     // TODO -> will simplify swagger json generation
     @GET
-    @ApiOperation(value = "Download document file", response = Response.class)
+    @ApiOperation(value = "Download document file",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Download success"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{iteration}/{fileName}{uuid:(/uuid/[^/]+?)?}{virtualSubResource : (/[^/]+?)?}")
     @Compress
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response downloadDocumentFile(@Context Request request,
-                                         @HeaderParam("Range") String range,
-                                         @HeaderParam("Referer") String referer,
-                                         @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
-                                         @ApiParam(required = true, value = "Document master id")  @PathParam("documentId") final String documentId,
-                                         @ApiParam(required = true, value = "Workspace version")  @PathParam("version") final String version,
-                                         @ApiParam(required = true, value = "Document iteration")  @PathParam("iteration") final int iteration,
-                                         @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
-                                         @ApiParam(required = false, value = "Virtual sub resource") @PathParam("virtualSubResource") final String virtualSubResource,
-                                         @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
-                                         @ApiParam(required = false, value = "Output") @QueryParam("output") String output,
-                                         @ApiParam(required = false, value = "Resource token") @PathParam("uuid") final String pUuid)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, NotModifiedException, PreconditionFailedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
+    public Response downloadDocumentFile(
+            @Context Request request,
+            @HeaderParam("Range") String range,
+            @HeaderParam("Referer") String referer,
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
+            @ApiParam(required = true, value = "Document master id") @PathParam("documentId") final String documentId,
+            @ApiParam(required = true, value = "Workspace version") @PathParam("version") final String version,
+            @ApiParam(required = true, value = "Document iteration") @PathParam("iteration") final int iteration,
+            @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
+            @ApiParam(required = false, value = "Virtual sub resource") @PathParam("virtualSubResource") final String virtualSubResource,
+            @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
+            @ApiParam(required = false, value = "Output") @QueryParam("output") String output,
+            @ApiParam(required = false, value = "Resource token") @PathParam("uuid") final String pUuid)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException,
+            NotModifiedException, PreconditionFailedException, RequestedRangeNotSatisfiableException,
+            UnmatchingUuidException, ExpiredLinkException {
 
         String fullName;
         if (pUuid != null && !pUuid.isEmpty()) {
@@ -169,8 +172,8 @@ public class DocumentBinaryResource {
         } else {
             // Check access right
             boolean regularUser = contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID);
-            if(regularUser){
-                LOGGER.log(Level.INFO,"loul");
+            if (regularUser) {
+                LOGGER.log(Level.INFO, "loul");
             }
             DocumentIterationKey docIK = new DocumentIterationKey(workspaceId, documentId, version, iteration);
 
@@ -183,6 +186,18 @@ public class DocumentBinaryResource {
         return downloadDocumentFile(request, range, fullName, virtualSubResource, type, output);
     }
 
+    private String uploadAFile(Part formPart, DocumentIterationKey docPK)
+            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException, UserNotActiveException, StorageException, IOException {
+
+        String fileName = Normalizer.normalize(formPart.getSubmittedFileName(), Normalizer.Form.NFC);
+        // Init the binary resource with a null length
+        BinaryResource binaryResource = documentService.saveFileInDocument(docPK, fileName, 0);
+        OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
+        long length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
+        documentService.saveFileInDocument(docPK, fileName, length);
+        documentPostUploaderService.process(binaryResource);
+        return fileName;
+    }
 
     private Response downloadDocumentFile(Request request, String range, String fullName, String virtualSubResource, String type, String output)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, NotModifiedException, PreconditionFailedException, RequestedRangeNotSatisfiableException {
@@ -241,10 +256,9 @@ public class DocumentBinaryResource {
     private BinaryResource getBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
         BinaryResource binaryResource = publicEntityManager.getPublicBinaryResourceForDocument(fullName);
-        if(binaryResource != null){
+        if (binaryResource != null) {
             return binaryResource;
-        }
-        else{
+        } else {
             return documentService.getBinaryResource(fullName);
         }
     }

@@ -34,9 +34,7 @@ import com.docdoku.server.rest.exceptions.*;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -92,16 +90,25 @@ public class PartBinaryResource {
     }
 
     @POST
-    @ApiOperation(value = "Upload CAD file", response = Response.class)
+    @ApiOperation(value = "Upload CAD file",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Upload success"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{iteration}/" + NATIVE_CAD_SUBTYPE)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public Response uploadNativeCADFile(@Context HttpServletRequest request,
-                                        @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
-                                        @ApiParam(required = true, value = "Part number") @PathParam("partNumber") final String partNumber,
-                                        @ApiParam(required = true, value = "Part version") @PathParam("version") final String version,
-                                        @ApiParam(required = true, value = "Part iteration") @PathParam("iteration") final int iteration)
-            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException {
+    public Response uploadNativeCADFile(
+            @Context HttpServletRequest request,
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
+            @ApiParam(required = true, value = "Part number") @PathParam("partNumber") final String partNumber,
+            @ApiParam(required = true, value = "Part version") @PathParam("version") final String version,
+            @ApiParam(required = true, value = "Part iteration") @PathParam("iteration") final int iteration)
+            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException,
+            AccessRightException, NotAllowedException, CreationException {
+
         try {
 
             PartIterationKey partPK = new PartIterationKey(workspaceId, partNumber, version, iteration);
@@ -127,16 +134,25 @@ public class PartBinaryResource {
     }
 
     @POST
-    @ApiOperation(value = "Upload attached file", response = Response.class)
+    @ApiOperation(value = "Upload attached file",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Upload success"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{iteration}/" + ATTACHED_FILES_SUBTYPE)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public Response uploadAttachedFiles(@Context HttpServletRequest request,
-                                        @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
-                                        @ApiParam(required = true, value = "Part number") @PathParam("partNumber") final String partNumber,
-                                        @ApiParam(required = true, value = "Part version") @PathParam("version") final String version,
-                                        @ApiParam(required = true, value = "Part iteration") @PathParam("iteration") final int iteration)
-            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException {
+    public Response uploadAttachedFiles(
+            @Context HttpServletRequest request,
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
+            @ApiParam(required = true, value = "Part number") @PathParam("partNumber") final String partNumber,
+            @ApiParam(required = true, value = "Part version") @PathParam("version") final String version,
+            @ApiParam(required = true, value = "Part iteration") @PathParam("iteration") final int iteration)
+            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException,
+            NotAllowedException, CreationException {
+
         try {
 
             PartIterationKey partPK = new PartIterationKey(workspaceId, partNumber, version, iteration);
@@ -165,77 +181,116 @@ public class PartBinaryResource {
 
     // Split on several methods because of Path conflict when we use regex
     @GET
-    @ApiOperation(value = "Download direct part file", response = Response.class)
+    @ApiOperation(value = "Download direct part file",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Download success"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{iteration}/{fileName}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response downloadDirectPartFile(@Context Request request,
-                                           @HeaderParam("Range") String range,
-                                           @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
-                                           @ApiParam(required = true, value = "Part number") @PathParam("partNumber") final String partNumber,
-                                           @ApiParam(required = true, value = "Part version") @PathParam("version") final String version,
-                                           @ApiParam(required = true, value = "Part iteration") @PathParam("iteration") final int iteration,
-                                           @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
-                                           @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
-                                           @ApiParam(required = false, value = "Output") @QueryParam("output") String output)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
+    public Response downloadDirectPartFile(
+            @Context Request request,
+            @HeaderParam("Range") String range,
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
+            @ApiParam(required = true, value = "Part number") @PathParam("partNumber") final String partNumber,
+            @ApiParam(required = true, value = "Part version") @PathParam("version") final String version,
+            @ApiParam(required = true, value = "Part iteration") @PathParam("iteration") final int iteration,
+            @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
+            @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
+            @ApiParam(required = false, value = "Output") @QueryParam("output") String output)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException,
+            PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException,
+            UnmatchingUuidException, ExpiredLinkException {
+
         return downloadPartFile(request, range, null, workspaceId, partNumber, version, iteration, null, fileName, type, output, null);
     }
 
     @GET
-    @ApiOperation(value = "Upload part file from uuid", response = Response.class)
+    @ApiOperation(value = "Download part file from uuid",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Download success"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{iteration}/{fileName}/uuid/{uuid}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response downloadPartFileWithUuid(@Context Request request,
-                                             @HeaderParam("Range") String range,
-                                             @HeaderParam("Referer") String referer,
-                                             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
-                                             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") final String partNumber,
-                                             @ApiParam(required = true, value = "Part version") @PathParam("version") final String version,
-                                             @ApiParam(required = true, value = "Part iteration") @PathParam("iteration") final int iteration,
-                                             @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
-                                             @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
-                                             @ApiParam(required = false, value = "Output") @QueryParam("output") String output,
-                                             @ApiParam(required = true, value = "Resource token")  @PathParam("uuid") final String uuid)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
+    public Response downloadPartFileWithUuid(
+            @Context Request request,
+            @HeaderParam("Range") String range,
+            @HeaderParam("Referer") String referer,
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
+            @ApiParam(required = true, value = "Part number") @PathParam("partNumber") final String partNumber,
+            @ApiParam(required = true, value = "Part version") @PathParam("version") final String version,
+            @ApiParam(required = true, value = "Part iteration") @PathParam("iteration") final int iteration,
+            @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
+            @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
+            @ApiParam(required = false, value = "Output") @QueryParam("output") String output,
+            @ApiParam(required = true, value = "Resource token") @PathParam("uuid") final String uuid)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException,
+            PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException,
+            UnmatchingUuidException, ExpiredLinkException {
+
         return downloadPartFile(request, range, referer, workspaceId, partNumber, version, iteration, null, fileName, type, output, uuid);
     }
 
     @GET
-    @ApiOperation(value = "Download part file with subtype", response = Response.class)
+    @ApiOperation(value = "Download part file with subtype",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Download success"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{iteration}/{subType}/{fileName}/")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response downloadPartFileWithSubtype(@Context Request request,
-                                                @HeaderParam("Range") String range,
-                                                @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
-                                                @ApiParam(required = true, value = "Part number") @PathParam("partNumber") final String partNumber,
-                                                @ApiParam(required = true, value = "Part version") @PathParam("version") final String version,
-                                                @ApiParam(required = true, value = "Part iteration") @PathParam("iteration") final int iteration,
-                                                @ApiParam(required = true, value = "Sub type") @PathParam("subType") final String subType,
-                                                @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
-                                                @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
-                                                @ApiParam(required = false, value = "Output") @QueryParam("output") String output)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
+    public Response downloadPartFileWithSubtype(
+            @Context Request request,
+            @HeaderParam("Range") String range,
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
+            @ApiParam(required = true, value = "Part number") @PathParam("partNumber") final String partNumber,
+            @ApiParam(required = true, value = "Part version") @PathParam("version") final String version,
+            @ApiParam(required = true, value = "Part iteration") @PathParam("iteration") final int iteration,
+            @ApiParam(required = true, value = "Sub type") @PathParam("subType") final String subType,
+            @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
+            @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
+            @ApiParam(required = false, value = "Output") @QueryParam("output") String output)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException,
+            PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException,
+            UnmatchingUuidException, ExpiredLinkException {
+
         return downloadPartFile(request, range, null, workspaceId, partNumber, version, iteration, subType, fileName, type, output, null);
     }
 
 
     @GET
-    @ApiOperation(value = "Download part file", response = Response.class)
+    @ApiOperation(value = "Download part file",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Download success"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("/{iteration}/{subType}/{fileName}/uuid/{uuid}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response downloadPartFile(@Context Request request,
-                                     @HeaderParam("Range") String range,
-                                     @HeaderParam("Referer") String referer,
-                                     @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
-                                     @ApiParam(required = true, value = "Part number") @PathParam("partNumber") final String partNumber,
-                                     @ApiParam(required = true, value = "Part version") @PathParam("version") final String version,
-                                     @ApiParam(required = true, value = "Part iteration") @PathParam("iteration") final int iteration,
-                                     @ApiParam(required = true, value = "Sub type") @PathParam("subType") final String subType,
-                                     @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
-                                     @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
-                                     @ApiParam(required = false, value = "Output") @QueryParam("output") String output,
-                                     @PathParam("uuid") final String pUuid)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
+    public Response downloadPartFile(
+            @Context Request request,
+            @HeaderParam("Range") String range,
+            @HeaderParam("Referer") String referer,
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
+            @ApiParam(required = true, value = "Part number") @PathParam("partNumber") final String partNumber,
+            @ApiParam(required = true, value = "Part version") @PathParam("version") final String version,
+            @ApiParam(required = true, value = "Part iteration") @PathParam("iteration") final int iteration,
+            @ApiParam(required = true, value = "Sub type") @PathParam("subType") final String subType,
+            @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
+            @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
+            @ApiParam(required = false, value = "Output") @QueryParam("output") String output,
+            @PathParam("uuid") final String pUuid)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException,
+            PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException,
+            UnmatchingUuidException, ExpiredLinkException {
 
         String fullName;
         if (pUuid != null && !pUuid.isEmpty()) {
@@ -281,9 +336,9 @@ public class PartBinaryResource {
 
         BinaryResource binaryResource;
 
-        if(uuid != null && !uuid.isEmpty()){
+        if (uuid != null && !uuid.isEmpty()) {
             binaryResource = publicEntityManager.getBinaryResourceForSharedPart(fullName);
-        }else {
+        } else {
             binaryResource = getBinaryResource(fullName);
         }
 
@@ -325,7 +380,7 @@ public class PartBinaryResource {
      */
     private InputStream getConvertedBinaryResource(BinaryResource binaryResource, String outputFormat, String uuid) throws FileConversionException {
         try {
-            if(uuid != null && !uuid.isEmpty()){
+            if (uuid != null && !uuid.isEmpty()) {
                 return publicEntityManager.getPartConvertedResource(outputFormat, binaryResource);
             }
             if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
@@ -348,10 +403,10 @@ public class PartBinaryResource {
     }
 
     private boolean canAccess(PartIterationKey partIKey) throws UserNotActiveException, EntityNotFoundException {
-        if(publicEntityManager.canAccess(partIKey)){
+        if (publicEntityManager.canAccess(partIKey)) {
             return true;
         }
-        if(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
+        if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
             return productService.canAccess(partIKey);
         }
         return false;

@@ -23,6 +23,7 @@ import com.docdoku.core.configuration.DocumentBaseline;
 import com.docdoku.core.configuration.DocumentCollection;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentBaselineManagerLocal;
 import com.docdoku.server.rest.dto.baseline.BaselinedDocumentDTO;
@@ -123,7 +124,7 @@ public class DocumentBaselinesResource {
     public Response createDocumentBaseline(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document baseline to create") DocumentBaselineDTO documentBaselineDTO)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, com.docdoku.core.exceptions.NotAllowedException {
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         List<BaselinedDocumentDTO> baselinedDocumentsDTO = documentBaselineDTO.getBaselinedDocuments();
         List<DocumentRevisionKey> documentRevisionKeys = new ArrayList<>();
