@@ -614,6 +614,12 @@ public class MailerBean implements IMailerLocal {
     }
 
     private void sendMessage(String email, String name, String subject, String content) throws MessagingException {
+
+        if(email == null || email.isEmpty()){
+            LOGGER.log(Level.WARNING, "Cannot send mail, email is empty");
+            return;
+        }
+
         try {
             InternetAddress emailAddress = new InternetAddress(email, name);
             Message message = new MimeMessage(mailSession);
@@ -626,6 +632,7 @@ public class MailerBean implements IMailerLocal {
         } catch (UnsupportedEncodingException e) {
             logUnsupportedEncodingException(e);
         }
+
     }
 
 }
