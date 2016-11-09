@@ -24,7 +24,6 @@
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
             <version>2.5-SNAPSHOT</version>
-            <scope>provided</scope><!-- FIXME why a provided scope ? -->
         </dependency>
 
         <dependency>
