@@ -89,7 +89,7 @@ public class DocumentBinaryResource {
     @ApiOperation(value = "Upload document file",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Upload success"),
+            @ApiResponse(code = 204, message = "Upload success"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -117,7 +117,7 @@ public class DocumentBinaryResource {
             if (formParts.size() == 1) {
                 return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI() + URLEncoder.encode(fileName, "UTF-8"));
             }
-            return Response.ok().build();
+            return Response.noContent().build();
 
         } catch (IOException | ServletException | StorageException e) {
             return BinaryResourceUpload.uploadError(e);

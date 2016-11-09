@@ -165,7 +165,7 @@ public class LOVResource {
     @ApiOperation(value = "Delete the ListOfValues",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successful deletion of ListOfValuesDTO"),
+            @ApiResponse(code = 204, message = "Successful deletion of ListOfValuesDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -177,6 +177,6 @@ public class LOVResource {
             throws ListOfValuesNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException, WorkspaceNotEnabledException {
         ListOfValuesKey lovKey = new ListOfValuesKey(workspaceId, name);
         lovManager.deleteLov(lovKey);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 }

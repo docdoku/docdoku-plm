@@ -168,7 +168,7 @@ public class MilestonesResource {
     @ApiOperation(value = "Delete milestone",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful deletion of MilestoneDTO"),
+            @ApiResponse(code = 204, message = "Successful deletion of MilestoneDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -179,7 +179,7 @@ public class MilestonesResource {
             @ApiParam(required = true, value = "Milestone id") @PathParam("milestoneId") int milestoneId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException {
         changeManager.deleteMilestone(workspaceId, milestoneId);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @GET
@@ -236,7 +236,7 @@ public class MilestonesResource {
     @ApiOperation(value = "Update ACL of the milestone",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful ACL update of MilestoneDTO"),
+            @ApiResponse(code = 204, message = "Successful ACL update of MilestoneDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -265,6 +265,6 @@ public class MilestonesResource {
         } else {
             changeManager.removeACLFromMilestone(workspaceId, milestoneId);
         }
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 }

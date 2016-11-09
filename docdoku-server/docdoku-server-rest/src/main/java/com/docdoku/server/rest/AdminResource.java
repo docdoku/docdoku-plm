@@ -278,7 +278,7 @@ public class AdminResource implements Serializable {
     @ApiOperation(value = "Set platform options",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 202, message = "Successful retrieval of PlatformOptions"),
+            @ApiResponse(code = 204, message = "Successful update of PlatformOptions"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -288,7 +288,7 @@ public class AdminResource implements Serializable {
             @ApiParam("Options to set") PlatformOptionsDTO platformOptionsDTO) {
         platformOptionsManager.setRegistrationStrategy(platformOptionsDTO.getRegistrationStrategy());
         platformOptionsManager.setWorkspaceCreationStrategy(platformOptionsDTO.getWorkspaceCreationStrategy());
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT

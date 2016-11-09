@@ -171,7 +171,7 @@ public class ChangeOrdersResource {
     @ApiOperation(value = "Delete order",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful deletion of ChangeOrderDTO"),
+            @ApiResponse(code = 204, message = "Successful deletion of ChangeOrderDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -182,7 +182,7 @@ public class ChangeOrdersResource {
             @ApiParam(required = true, value = "Order id") @PathParam("orderId") int orderId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         changeManager.deleteChangeOrder(orderId);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
 

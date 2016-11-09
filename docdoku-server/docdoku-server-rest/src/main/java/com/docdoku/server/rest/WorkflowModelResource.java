@@ -115,7 +115,7 @@ public class WorkflowModelResource {
     @ApiOperation(value = "Delete workflow model",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful deletion of WorkflowModelDTO"),
+            @ApiResponse(code = 204, message = "Successful deletion of WorkflowModelDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -125,7 +125,7 @@ public class WorkflowModelResource {
             @ApiParam(required = true, value = "Workflow model id") @PathParam("workflowModelId") String workflowModelId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, EntityConstraintException {
         workflowService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
@@ -157,7 +157,7 @@ public class WorkflowModelResource {
     @ApiOperation(value = "Update workflow model ACL",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful update of WorkflowModelDTO"),
+            @ApiResponse(code = 204, message = "Successful update of WorkflowModelDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -185,7 +185,7 @@ public class WorkflowModelResource {
         } else {
             workflowService.removeACLFromWorkflow(pWorkspaceId, workflowModelId);
         }
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @POST

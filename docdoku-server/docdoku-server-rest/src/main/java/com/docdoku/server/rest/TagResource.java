@@ -262,7 +262,7 @@ public class TagResource {
             return Response.created(URI.create(URLEncoder.encode(pDocMID + "-" + createdDocRs.getVersion(), "UTF-8"))).entity(docRsDTO).build();
         } catch (UnsupportedEncodingException ex) {
             LOGGER.log(Level.WARNING, null, ex);
-            return Response.ok().build();
+            return Response.ok().entity(docRsDTO).build();
         }
     }
 

@@ -530,7 +530,7 @@ public class WorkspaceResource {
             throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
 
         userManager.passivateUser(workspaceId, userDTO.getLogin());
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT

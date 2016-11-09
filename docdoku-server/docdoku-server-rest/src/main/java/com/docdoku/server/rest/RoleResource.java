@@ -161,7 +161,7 @@ public class RoleResource {
             return Response.created(URI.create(URLEncoder.encode(roleCreatedDTO.getName(), "UTF-8"))).entity(roleCreatedDTO).build();
         } catch (UnsupportedEncodingException ex) {
             LOGGER.log(Level.WARNING, null, ex);
-            return Response.ok().build();
+            return Response.ok().entity(roleCreatedDTO).build();
         }
     }
 
@@ -203,7 +203,7 @@ public class RoleResource {
             return Response.created(URI.create(URLEncoder.encode(roleUpdatedDTO.getName(), "UTF-8"))).entity(roleUpdatedDTO).build();
         } catch (UnsupportedEncodingException ex) {
             LOGGER.log(Level.WARNING, null, ex);
-            return Response.ok().build();
+            return Response.ok().entity(roleUpdatedDTO).build();
         }
     }
 

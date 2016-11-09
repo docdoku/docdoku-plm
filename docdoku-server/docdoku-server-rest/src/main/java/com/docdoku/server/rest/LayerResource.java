@@ -129,7 +129,7 @@ public class LayerResource {
     @DELETE
     @ApiOperation(value = "Delete layer", response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful deletion of LayerDTO"),
+            @ApiResponse(code = 204, message = "Successful deletion of LayerDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -142,7 +142,7 @@ public class LayerResource {
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         productService.deleteLayer(workspaceId, layerId);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @GET
@@ -198,7 +198,7 @@ public class LayerResource {
     @ApiOperation(value = "Delete marker",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful deletion of LayerDTO"),
+            @ApiResponse(code = 204, message = "Successful deletion of LayerDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -213,6 +213,6 @@ public class LayerResource {
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         productService.deleteMarker(layerId, markerId);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 }

@@ -177,7 +177,7 @@ public class FolderResource {
                     .build();
         } catch (UnsupportedEncodingException ex) {
             LOGGER.log(Level.WARNING, null, ex);
-            return Response.ok().build();
+            return Response.ok().entity(docRsDTO).build();
         }
     }
 
@@ -358,7 +358,7 @@ public class FolderResource {
     @ApiOperation(value = "Delete root folder",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful deletion of FolderDTO"),
+            @ApiResponse(code = 204, message = "Successful deletion of FolderDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -371,7 +371,7 @@ public class FolderResource {
             ESServerException, EntityConstraintException {
 
         deleteFolder(completePath);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     private String getPathFromUrlParams(String workspaceId, String folderId) {

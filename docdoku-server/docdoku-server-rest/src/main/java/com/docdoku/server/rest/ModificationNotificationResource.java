@@ -56,7 +56,7 @@ public class ModificationNotificationResource {
     @ApiOperation(value = "Acknowledge modification notification",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful acknowledge of ModificationNotification"),
+            @ApiResponse(code = 204, message = "Successful acknowledge of ModificationNotification"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -69,7 +69,7 @@ public class ModificationNotificationResource {
             throws UserNotFoundException, AccessRightException, PartRevisionNotFoundException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
 
         productService.updateModificationNotification(workspaceId, notificationId, notificationDTO.getAckComment());
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
 

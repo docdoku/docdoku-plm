@@ -131,7 +131,7 @@ public class OrganizationResource {
     @ApiOperation(value = "Delete authenticated user's organization",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful deletion of OrganizationDTO"),
+            @ApiResponse(code = 204, message = "Successful deletion of OrganizationDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -141,7 +141,7 @@ public class OrganizationResource {
 
         Organization organization = getOrganizationOfCurrentUser();
         organizationManager.deleteOrganization(organization.getName());
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @GET
@@ -175,7 +175,7 @@ public class OrganizationResource {
     @ApiOperation(value = "Add a member to the authenticated user's organization",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful member add operation"),
+            @ApiResponse(code = 204, message = "Successful member add operation"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -188,7 +188,7 @@ public class OrganizationResource {
         Account member = accountManager.getAccount(userDTO.getLogin());
         organization.addMember(member);
         organizationManager.updateOrganization(organization);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
@@ -197,7 +197,7 @@ public class OrganizationResource {
     @ApiOperation(value = "Remove a member to the authenticated user's organization",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful member removal operation"),
+            @ApiResponse(code = 204, message = "Successful member removal operation"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -210,7 +210,7 @@ public class OrganizationResource {
             Account member = accountManager.getAccount(userDTO.getLogin());
             organization.removeMember(member);
             organizationManager.updateOrganization(organization);
-            return Response.ok().build();
+            return Response.noContent().build();
 
             // TODO remove catch blocks and let exception mappers do the job
         } catch (AccessRightException e) {
@@ -228,7 +228,7 @@ public class OrganizationResource {
     @ApiOperation(value = "Move a member up in the authenticated user's organization",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful member moved operation"),
+            @ApiResponse(code = 204, message = "Successful member moved operation"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -242,7 +242,7 @@ public class OrganizationResource {
             Collections.swap(members, i - 1, i);
             organizationManager.updateOrganization(organization);
         }
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     //TODO : refactor to one method with the one above, with query param "up/down"
@@ -252,7 +252,7 @@ public class OrganizationResource {
     @ApiOperation(value = "Move a member down in the authenticated user's organization",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful member moved operation"),
+            @ApiResponse(code = 204, message = "Successful member moved operation"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -269,7 +269,7 @@ public class OrganizationResource {
             Collections.swap(members, i + 1, i);
             organizationManager.updateOrganization(organization);
         }
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
 

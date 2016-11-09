@@ -321,7 +321,7 @@ public class PartResource {
     @ApiOperation(value = "Retry conversion",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful conversion retry"),
+            @ApiResponse(code = 204, message = "Successful conversion retry"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -342,9 +342,9 @@ public class PartResource {
         if (nativeCADFile != null) {
             try {
                 converterService.convertCADFileToOBJ(partIPK, nativeCADFile);
-                return Response.ok().build();
+                return Response.noContent().build();
             } catch (Exception e) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
             }
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -425,7 +425,7 @@ public class PartResource {
     @ApiOperation(value = "Update part ACL",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful ACL removal of PartRevisionDTO"),
+            @ApiResponse(code = 204, message = "Successful ACL removal of PartRevisionDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -458,14 +458,14 @@ public class PartResource {
         } else {
             productService.removeACLFromPartRevision(revisionKey);
         }
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
     @ApiOperation(value = "Create new part version",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful retrieval of the new version of PartRevisionDTO"),
+            @ApiResponse(code = 204, message = "Successful retrieval of the new version of PartRevisionDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -516,7 +516,7 @@ public class PartResource {
 
         productService.createPartRevision(revisionKey, description, workflowModelId, userEntries, userGroupEntries, userRoleMapping, groupRoleMapping);
 
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
@@ -569,7 +569,7 @@ public class PartResource {
     @ApiOperation(value = "Delete part",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful deletion of PartRevisionDTO"),
+            @ApiResponse(code = 204, message = "Successful deletion of PartRevisionDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -582,14 +582,14 @@ public class PartResource {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
         productService.deletePartRevision(revisionKey);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @DELETE
     @ApiOperation(value = "Remove file from part iteration",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful deletion of file of PartRevisionDTO"),
+            @ApiResponse(code = 204, message = "Successful deletion of file of PartRevisionDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -606,7 +606,7 @@ public class PartResource {
         PartIterationKey partIKey = new PartIterationKey(workspaceId, partNumber, partVersion, partIteration);
         String fileFullName = workspaceId + "/parts/" + partNumber + "/" + partVersion + "/" + partIteration + "/" + subType + "/" + fileName;
         productService.removeFileInPartIteration(partIKey, subType, fileFullName);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
@@ -668,7 +668,7 @@ public class PartResource {
     @ApiOperation(value = "Publish part revision",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful publish of PartRevisionDTO"),
+            @ApiResponse(code = 204, message = "Successful publish of PartRevisionDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -682,7 +682,7 @@ public class PartResource {
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         productService.setPublicSharedPart(new PartRevisionKey(workspaceId, partNumber, partVersion), true);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     // Todo : refactor to only one method with the one above. Use a query param to set on/off public sharing
@@ -690,7 +690,7 @@ public class PartResource {
     @ApiOperation(value = "Unpublish part revision",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful un-publish of PartRevisionDTO"),
+            @ApiResponse(code = 204, message = "Successful un-publish of PartRevisionDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -704,7 +704,7 @@ public class PartResource {
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         productService.setPublicSharedPart(new PartRevisionKey(workspaceId, partNumber, partVersion), false);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @GET

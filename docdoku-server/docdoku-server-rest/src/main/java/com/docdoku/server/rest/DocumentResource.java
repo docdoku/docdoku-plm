@@ -217,7 +217,7 @@ public class DocumentResource {
     @ApiOperation(value = "Subscribe to notifications on change events",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful change event subscription"),
+            @ApiResponse(code = 204, message = "Successful change event subscription"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -229,14 +229,14 @@ public class DocumentResource {
             @ApiParam(name = "body", defaultValue = "") String body)
             throws EntityNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException {
         documentService.subscribeToIterationChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
     @ApiOperation(value = "Unsubscribe from notifications on change events",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful change event un-subscription"),
+            @ApiResponse(code = 204, message = "Successful change event un-subscription"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -248,14 +248,14 @@ public class DocumentResource {
             @ApiParam(name = "body", defaultValue = "") String body)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         documentService.unsubscribeToIterationChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
     @ApiOperation(value = "Subscribe to notifications on state events",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful state event subscription"),
+            @ApiResponse(code = 204, message = "Successful state event subscription"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -267,14 +267,14 @@ public class DocumentResource {
             @ApiParam(name = "body", defaultValue = "") String body)
             throws EntityNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException {
         documentService.subscribeToStateChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
     @ApiOperation(value = "Unsubscribe to notifications on state events",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful state event un-subscription"),
+            @ApiResponse(code = 204, message = "Successful state event un-subscription"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -286,7 +286,7 @@ public class DocumentResource {
             @ApiParam(name = "body", defaultValue = "") String body)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         documentService.unsubscribeToStateChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
@@ -558,7 +558,7 @@ public class DocumentResource {
     @ApiOperation(value = "Delete the document",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful deletion of DocumentRevisionDTO"),
+            @ApiResponse(code = 204, message = "Successful deletion of DocumentRevisionDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -571,7 +571,7 @@ public class DocumentResource {
             ESServerException, EntityConstraintException {
 
         documentService.deleteDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
@@ -604,7 +604,7 @@ public class DocumentResource {
     @ApiOperation(value = "Remove attached file from document",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful deletion of file"),
+            @ApiResponse(code = 204, message = "Successful deletion of file"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -618,7 +618,7 @@ public class DocumentResource {
             throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException {
         String fileFullName = workspaceId + "/documents/" + documentId + "/" + documentVersion + "/" + docIteration + "/" + fileName;
         documentService.removeFileFromDocument(fileFullName);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @POST
@@ -654,7 +654,7 @@ public class DocumentResource {
     @ApiOperation(value = "Publish a document",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful publication"),
+            @ApiResponse(code = 204, message = "Successful publication"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -667,14 +667,14 @@ public class DocumentResource {
             @ApiParam(name = "body", defaultValue = "") String body)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
         documentService.setDocumentPublicShared(new DocumentRevisionKey(workspaceId, documentId, documentVersion), true);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
     @ApiOperation(value = "Unpublish a document",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful un-publication"),
+            @ApiResponse(code = 204, message = "Successful un-publication"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -687,14 +687,14 @@ public class DocumentResource {
             @ApiParam(name = "body", defaultValue = "") String body)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
         documentService.setDocumentPublicShared(new DocumentRevisionKey(workspaceId, documentId, documentVersion), false);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
     @ApiOperation(value = "Update document's ACL",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful ACL removal"),
+            @ApiResponse(code = 204, message = "Successful ACL removal"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -725,7 +725,7 @@ public class DocumentResource {
         } else {
             documentService.removeACLFromDocumentRevision(documentRevisionKey);
         }
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @GET

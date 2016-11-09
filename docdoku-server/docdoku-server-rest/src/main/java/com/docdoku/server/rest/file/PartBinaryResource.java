@@ -137,7 +137,7 @@ public class PartBinaryResource {
     @ApiOperation(value = "Upload attached file",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Upload success"),
+            @ApiResponse(code = 204, message = "Upload success"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -172,7 +172,7 @@ public class PartBinaryResource {
                 return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI() + URLEncoder.encode(fileName, UTF8_ENCODING));
             }
 
-            return Response.ok().build();
+            return Response.noContent().build();
 
         } catch (IOException | ServletException | StorageException e) {
             return BinaryResourceUpload.uploadError(e);

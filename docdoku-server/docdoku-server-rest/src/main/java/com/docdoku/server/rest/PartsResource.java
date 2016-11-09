@@ -358,7 +358,7 @@ public class PartsResource {
     @ApiOperation(value = "Delete custom query",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful deletion of QueryDTO"),
+            @ApiResponse(code = 204, message = "Successful deletion of QueryDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -370,7 +370,7 @@ public class PartsResource {
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
 
         productService.deleteQuery(workspaceId, queryId);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @GET

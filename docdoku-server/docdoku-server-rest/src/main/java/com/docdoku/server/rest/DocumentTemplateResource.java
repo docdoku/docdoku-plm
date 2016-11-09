@@ -210,7 +210,7 @@ public class DocumentTemplateResource {
     @ApiOperation(value = "Update document template ACL",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful ACL update"),
+            @ApiResponse(code = 204, message = "Successful ACL update"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -240,14 +240,14 @@ public class DocumentTemplateResource {
             documentService.removeACLFromDocumentMasterTemplate(workspaceId, templateId);
         }
 
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @DELETE
     @ApiOperation(value = "Delete document template",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful deletion of DocumentMasterTemplateDTO"),
+            @ApiResponse(code = 204, message = "Successful deletion of DocumentMasterTemplateDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -258,14 +258,14 @@ public class DocumentTemplateResource {
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         documentService.deleteDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @DELETE
     @ApiOperation(value = "Remove attached file from document template",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful deletiojn of file in DocumentMasterTemplateDTO"),
+            @ApiResponse(code = 204, message = "Successful deletiojn of file in DocumentMasterTemplateDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -280,7 +280,7 @@ public class DocumentTemplateResource {
         String fileFullName = workspaceId + "/document-templates/" + templateId + "/" + fileName;
 
         documentService.removeFileFromTemplate(fileFullName);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT

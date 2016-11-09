@@ -235,7 +235,7 @@ public class PartTemplateResource {
     @ApiOperation(value = "Update part master template ACL",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful update of ACL"),
+            @ApiResponse(code = 204, message = "Successful update of ACL"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -265,7 +265,7 @@ public class PartTemplateResource {
             productService.removeACLFromPartMasterTemplate(workspaceId, templateId);
         }
 
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @DELETE

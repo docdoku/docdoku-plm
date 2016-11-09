@@ -197,7 +197,7 @@ public class ChangeRequestsResource {
     @ApiOperation(value = "Delete request",
             response = ChangeRequestDTO.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful deletion of ChangeRequestDTO"),
+            @ApiResponse(code = 204, message = "Successful deletion of ChangeRequestDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -208,7 +208,7 @@ public class ChangeRequestsResource {
             @PathParam("requestId") int requestId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException {
         changeManager.deleteChangeRequest(workspaceId, requestId);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
 

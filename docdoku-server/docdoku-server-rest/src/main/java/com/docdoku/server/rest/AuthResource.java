@@ -111,7 +111,7 @@ public class AuthResource {
     @ApiOperation(value = "Send password recovery request",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful request"),
+            @ApiResponse(code = 204, message = "Successful request"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)
@@ -121,7 +121,7 @@ public class AuthResource {
         String login = passwordRecoveryRequestDTO.getLogin();
         Account account = accountManager.getAccount(login);
         userManager.createPasswordRecoveryRequest(account);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @POST
@@ -129,7 +129,7 @@ public class AuthResource {
     @ApiOperation(value = "Recover password",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful request"),
+            @ApiResponse(code = 204, message = "Successful recover request"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)
@@ -137,7 +137,7 @@ public class AuthResource {
             @ApiParam(required = true, value = "Password recovery process") PasswordRecoverDTO passwordRecoverDTO)
             throws PasswordRecoveryRequestNotFoundException {
         userManager.recoverPassword(passwordRecoverDTO.getUuid(), passwordRecoverDTO.getNewPassword());
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @GET
@@ -145,7 +145,7 @@ public class AuthResource {
     @ApiOperation(value = "Log out connected user",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful logout"),
+            @ApiResponse(code = 204, message = "Successful logout"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)
@@ -158,6 +158,6 @@ public class AuthResource {
             LOGGER.log(Level.SEVERE, null, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 }

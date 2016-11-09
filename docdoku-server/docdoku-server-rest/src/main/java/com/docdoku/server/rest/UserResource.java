@@ -189,7 +189,7 @@ public class UserResource {
             return Response.created(URI.create(URLEncoder.encode(tagName, "UTF-8"))).entity(subDTO).build();
         } catch (UnsupportedEncodingException ex) {
             LOGGER.log(Level.WARNING, null, ex);
-            return Response.ok().build();
+            return Response.ok().entity(subDTO).build();
         }
     }
 

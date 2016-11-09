@@ -116,7 +116,7 @@ public class DocumentBaselinesResource {
     @ApiOperation(value = "Create baseline",
             response = DocumentBaselineDTO.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful retrieval of created DocumentBaselineDTO"),
+            @ApiResponse(code = 201, message = "Successful retrieval of created DocumentBaselineDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -134,7 +134,7 @@ public class DocumentBaselinesResource {
         }
 
         DocumentBaseline baseline = documentBaselineService.createBaseline(workspaceId, documentBaselineDTO.getName(), documentBaselineDTO.getType(), documentBaselineDTO.getDescription(), documentRevisionKeys);
-        return prepareCreateResponse(getBaseline(workspaceId, baseline.getId()));
+        return prepareCreatedResponse(getBaseline(workspaceId, baseline.getId()));
     }
 
 
@@ -149,7 +149,7 @@ public class DocumentBaselinesResource {
     @ApiOperation(value = "Delete a baseline",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful deletion of DocumentBaselineDTO"),
+            @ApiResponse(code = 204, message = "Successful deletion of DocumentBaselineDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -161,7 +161,7 @@ public class DocumentBaselinesResource {
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         documentBaselineService.deleteBaseline(workspaceId, baselineId);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     /**
@@ -253,12 +253,12 @@ public class DocumentBaselinesResource {
      * @param baselineDTO The document baseline to add
      * @return The reponse with the document baseline
      */
-    private Response prepareCreateResponse(DocumentBaselineDTO baselineDTO) {
+    private Response prepareCreatedResponse(DocumentBaselineDTO baselineDTO) {
         try {
             return Response.created(URI.create(URLEncoder.encode(String.valueOf(baselineDTO.getId()), "UTF-8"))).entity(baselineDTO).build();
         } catch (UnsupportedEncodingException ex) {
             LOGGER.log(Level.WARNING, null, ex);
-            return Response.ok().build();
+            return Response.ok().entity(baselineDTO).build();
         }
     }
 }

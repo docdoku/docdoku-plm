@@ -193,7 +193,7 @@ public class AccountResource {
     @ApiOperation(value = "Update GCM account for authenticated user",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful retrieval of created GCMAccount."),
+            @ApiResponse(code = 204, message = "Successful retrieval of created GCMAccount."),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -202,7 +202,7 @@ public class AccountResource {
             @ApiParam(required = true, value = "GCM account to set") GCMAccountDTO data)
             throws EntityAlreadyExistsException, AccountNotFoundException, CreationException {
         accountManager.setGCMAccount(data.getGcmId());
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
 
@@ -211,14 +211,14 @@ public class AccountResource {
     @ApiOperation(value = "Update GCM account for authenticated user",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful delete of GCMAccount"),
+            @ApiResponse(code = 204, message = "Successful delete of GCMAccount"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
     public Response deleteGCMAccount()
             throws EntityNotFoundException {
         accountManager.deleteGCMAccount();
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
 }

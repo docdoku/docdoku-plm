@@ -195,7 +195,7 @@ public class ChangeIssuesResource {
     @ApiOperation(value = "Delete issue",
             response = ChangeIssueDTO.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful deletion"),
+            @ApiResponse(code = 204, message = "Successful deletion"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -205,7 +205,7 @@ public class ChangeIssuesResource {
             @ApiParam(required = true, value = "Issue id") @PathParam("issueId") int issueId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException {
         changeManager.deleteChangeIssue(issueId);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
@@ -275,7 +275,7 @@ public class ChangeIssuesResource {
     @ApiOperation(value = "Delete a tag attached to an issue",
             response = ChangeIssueDTO.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful retrieval of updated ChangeIssueDTO"),
+            @ApiResponse(code = 204, message = "Successful retrieval of updated ChangeIssueDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -286,7 +286,7 @@ public class ChangeIssuesResource {
             @ApiParam(required = true, value = "Tag name") @PathParam("tagName") String tagName)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         changeManager.removeChangeIssueTag(workspaceId, issueId, tagName);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
