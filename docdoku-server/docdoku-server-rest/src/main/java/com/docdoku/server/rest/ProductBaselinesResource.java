@@ -145,7 +145,7 @@ public class ProductBaselinesResource {
                 name, type, description, partIterationKeys, productBaselineDTO.getSubstituteLinks(), productBaselineDTO.getOptionalUsageLinks());
         ProductBaselineDTO dto = mapper.map(baseline, ProductBaselineDTO.class);
         dto.setConfigurationItemLatestRevision(baseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
-        dto.setHasObsoletePartRevisions(!productBaselineService.getObsoletePartRevisionsInBaseline(workspaceId, dto.getId()).isEmpty());
+        dto.setHasObsoletePartRevisions(!productBaselineService.getObsoletePartRevisionsInBaseline(workspaceId, baseline.getId()).isEmpty());
 
         return dto;
     }
