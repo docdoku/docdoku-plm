@@ -144,6 +144,7 @@
                 <configuration>
                     <apiSources>
                         <apiSource>
+                            <host>${env.API_HOST}</host>
                             <basePath>/api</basePath>
                             <locations>
                                 <location>com.docdoku.server.rest</location>
