@@ -23,6 +23,7 @@ package com.docdoku.api.models.utils;
 import com.docdoku.api.client.ApiClient;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.client.Pair;
+import com.docdoku.api.models.BinaryResourceDTO;
 import com.docdoku.api.models.DocumentIterationDTO;
 import com.docdoku.api.models.PartIterationDTO;
 
@@ -38,60 +39,85 @@ import java.util.zip.GZIPInputStream;
 /**
  * This class helps to upload and download files on documents and parts
  *
- * @implNote : This is a temporary class and will be removed as soon as fix generated upload and download
- *             methods with swagger-codegen
- *
  * @author Morgan Guimard
+ * @implNote : This is a temporary class and will be removed as soon as fix generated upload and download
+ * methods with swagger-codegen
  */
 public class UploadDownloadHelper {
 
     private static final int CHUNK_SIZE = 1024 * 8;
 
-    public static void uploadAttachedFile(PartIterationDTO partIterationDTO, ApiClient client, File file) throws ApiException {
+    /**
+     * Upload an attached file to a {@link com.docdoku.core.product.PartIteration}
+     *
+     * @param partIteration: the part iteration to attach the file
+     * @param client:        the client to use for authentication
+     * @param file:          the file to upload
+     */
+    public static void uploadAttachedFile(PartIterationDTO partIteration, ApiClient client, File file) throws ApiException {
         String path = "/files/{workspaceId}/parts/{number}/{version}/{iteration}/attachedfiles".replaceAll("\\{format\\}", "json")
-                .replaceAll("\\{" + "workspaceId" + "\\}", client.escapeString(partIterationDTO.getWorkspaceId()))
-                .replaceAll("\\{" + "number" + "\\}", client.escapeString(partIterationDTO.getNumber()))
-                .replaceAll("\\{" + "version" + "\\}", client.escapeString(partIterationDTO.getVersion()))
-                .replaceAll("\\{" + "iteration" + "\\}", String.valueOf(partIterationDTO.getIteration()));
+                .replaceAll("\\{" + "workspaceId" + "\\}", client.escapeString(partIteration.getWorkspaceId()))
+                .replaceAll("\\{" + "number" + "\\}", client.escapeString(partIteration.getNumber()))
+                .replaceAll("\\{" + "version" + "\\}", client.escapeString(partIteration.getVersion()))
+                .replaceAll("\\{" + "iteration" + "\\}", String.valueOf(partIteration.getIteration()));
 
         upload(path, file, client);
     }
 
-    public static void uploadAttachedFile(DocumentIterationDTO documentIterationDTO, ApiClient client, File file) throws ApiException {
+    /**
+     * Upload an attached file to a {@link com.docdoku.core.document.DocumentIteration}
+     *
+     * @param documentIteration: the document iteration to attach the file
+     * @param client:            the client to use for authentication
+     * @param file:              the file to upload
+     */
+    public static void uploadAttachedFile(DocumentIterationDTO documentIteration, ApiClient client, File file) throws ApiException {
 
         String path = "/files/{workspaceId}/documents/{documentId}/{version}/{iteration}".replaceAll("\\{format\\}", "json")
-                .replaceAll("\\{" + "workspaceId" + "\\}", client.escapeString(documentIterationDTO.getWorkspaceId()))
-                .replaceAll("\\{" + "documentId" + "\\}", client.escapeString(documentIterationDTO.getDocumentMasterId()))
-                .replaceAll("\\{" + "version" + "\\}", client.escapeString(documentIterationDTO.getVersion()))
-                .replaceAll("\\{" + "iteration" + "\\}", String.valueOf(documentIterationDTO.getIteration()));
+                .replaceAll("\\{" + "workspaceId" + "\\}", client.escapeString(documentIteration.getWorkspaceId()))
+                .replaceAll("\\{" + "documentId" + "\\}", client.escapeString(documentIteration.getDocumentMasterId()))
+                .replaceAll("\\{" + "version" + "\\}", client.escapeString(documentIteration.getVersion()))
+                .replaceAll("\\{" + "iteration" + "\\}", String.valueOf(documentIteration.getIteration()));
 
-        upload(path,file,client);
+        upload(path, file, client);
 
     }
 
-    public static void uploadNativeCADFile(PartIterationDTO partIterationDTO, ApiClient client, File file) throws ApiException {
+    /**
+     * Upload a native CAD file to a {@link com.docdoku.core.product.PartIteration}
+     *
+     * @param partIteration: the document iteration to attach the file
+     * @param client:        the client to use for authentication
+     * @param file:          the file to upload
+     */
+    public static void uploadNativeCADFile(PartIterationDTO partIteration, ApiClient client, File file) throws ApiException {
         String path = "/files/{workspaceId}/parts/{number}/{version}/{iteration}/nativecad".replaceAll("\\{format\\}", "json")
-                .replaceAll("\\{" + "workspaceId" + "\\}", client.escapeString(partIterationDTO.getWorkspaceId()))
-                .replaceAll("\\{" + "number" + "\\}", client.escapeString(partIterationDTO.getNumber()))
-                .replaceAll("\\{" + "version" + "\\}", client.escapeString(partIterationDTO.getVersion()))
-                .replaceAll("\\{" + "iteration" + "\\}", String.valueOf(partIterationDTO.getIteration()));
+                .replaceAll("\\{" + "workspaceId" + "\\}", client.escapeString(partIteration.getWorkspaceId()))
+                .replaceAll("\\{" + "number" + "\\}", client.escapeString(partIteration.getNumber()))
+                .replaceAll("\\{" + "version" + "\\}", client.escapeString(partIteration.getVersion()))
+                .replaceAll("\\{" + "iteration" + "\\}", String.valueOf(partIteration.getIteration()));
 
-        upload(path,file,client);
+        upload(path, file, client);
     }
 
-    private static void upload(String path, File file, ApiClient client) throws ApiException {
-        List<Pair> queryParams = new ArrayList<Pair>();
-        Map<String, String> headerParams = new HashMap<String, String>();
-        Map<String, Object> formParams = new HashMap<String, Object>();
-        formParams.put("upload", file);
-        final String[] accepts = {};
-        final String accept = client.selectHeaderAccept(accepts);
-        final String[] contentTypes = {MediaType.MULTIPART_FORM_DATA};
-        final String contentType = client.selectHeaderContentType(contentTypes);
-        String[] authNames = new String[]{};
-        client.invokeAPI(path, "POST", queryParams, file, headerParams, formParams, accept, contentType, authNames, null);
+    /**
+     * Download files from any entities
+     *
+     * @param binaryResource: the resource holding the file
+     * @param client:   the client to use for authentication
+     * @return the downloaded file
+     */
+    public static File downloadFile(BinaryResourceDTO binaryResource, ApiClient client) throws ApiException {
+      return downloadFile(binaryResource.getFullName(),client);
     }
 
+    /**
+     * Download files from any entities
+     *
+     * @param fileName: the file full name
+     * @param client:   the client to use for authentication
+     * @return the downloaded file
+     */
     public static File downloadFile(String fileName, ApiClient client) throws ApiException {
         String path = "/files/" + fileName;
         List<Pair> queryParams = new ArrayList<Pair>();
@@ -111,6 +137,18 @@ public class UploadDownloadHelper {
         return encoding != null && "gzip".equals(encoding.get(0)) ? uncompress(file) : file;
     }
 
+    private static void upload(String path, File file, ApiClient client) throws ApiException {
+        List<Pair> queryParams = new ArrayList<Pair>();
+        Map<String, String> headerParams = new HashMap<String, String>();
+        Map<String, Object> formParams = new HashMap<String, Object>();
+        formParams.put("upload", file);
+        final String[] accepts = {};
+        final String accept = client.selectHeaderAccept(accepts);
+        final String[] contentTypes = {MediaType.MULTIPART_FORM_DATA};
+        final String contentType = client.selectHeaderContentType(contentTypes);
+        String[] authNames = new String[]{};
+        client.invokeAPI(path, "POST", queryParams, file, headerParams, formParams, accept, contentType, authNames, null);
+    }
 
     private static File uncompress(File file) {
         File out = new File(file.getAbsolutePath() + ".unzip");

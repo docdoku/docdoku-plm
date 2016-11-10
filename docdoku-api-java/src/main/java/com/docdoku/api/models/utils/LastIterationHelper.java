@@ -26,18 +26,32 @@ import com.docdoku.api.models.PartIterationDTO;
 import com.docdoku.api.models.PartRevisionDTO;
 /**
  * This class helps to get last iteration from documents or parts
+ *
  * @Author Morgan Guimard
  */
 public class LastIterationHelper {
 
-    public static DocumentIterationDTO getLastIteration(DocumentRevisionDTO documentRevisionDTO){
-        int iterations = documentRevisionDTO.getDocumentIterations().size();
-        return documentRevisionDTO.getDocumentIterations().get(iterations - 1);
+    /**
+     * Get the last iteration of a {@link com.docdoku.core.document.DocumentIteration}
+     *
+     * @param documentRevision: the document revision to search in
+     * @return the last iteration of document revision
+     */
+    public static DocumentIterationDTO getLastIteration(DocumentRevisionDTO documentRevision){
+        int iterations = documentRevision.getDocumentIterations().size();
+        return documentRevision.getDocumentIterations().get(iterations - 1);
     }
 
-    public static PartIterationDTO getLastIteration(PartRevisionDTO partRevisionDTO){
-        int iterations = partRevisionDTO.getPartIterations().size();
-        return partRevisionDTO.getPartIterations().get(iterations - 1);
+    /**
+     * Get the last iteration of a {@link com.docdoku.core.product.PartIteration}
+     *
+     *
+     * @param partRevision: the part revision to search in
+     * @return the last iteration of part revision
+     */
+    public static PartIterationDTO getLastIteration(PartRevisionDTO partRevision){
+        int iterations = partRevision.getPartIterations().size();
+        return partRevision.getPartIterations().get(iterations - 1);
     }
 
 }

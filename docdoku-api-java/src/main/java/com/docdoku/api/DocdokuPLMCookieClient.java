@@ -20,7 +20,6 @@
 
 package com.docdoku.api;
 
-import com.docdoku.api.client.ApiClient;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.AccountDTO;
 import com.docdoku.api.models.LoginRequestDTO;
@@ -33,25 +32,33 @@ import java.util.logging.Logger;
 
 /**
  * This class helps to create the swagger client.
+ * <p>
+ * This client will try to sign in, then it uses the cookie sent from server.
  *
  * @author Morgan Guimard
  */
-public class DocdokuPLMCookieClient extends DocdokuPLMClient {
 
-    private String cookie;
+public class DocdokuPLMCookieClient extends DocdokuPLMClient {
 
     private static final Logger LOGGER = Logger.getLogger(DocdokuPLMCookieClient.class.getName());
 
+    /**
+     * Stored cookie
+     */
+    private String cookie;
+
+    /**
+     * Default DocdokuPLMCookieClient constructor
+     */
     public DocdokuPLMCookieClient(String host, String login, String password) {
         this(host, login, password, false);
     }
 
+    /**
+     * DocdokuPLMCookieClient constructor, debug flag can be set.
+     */
     public DocdokuPLMCookieClient(String host, String login, String password, boolean debug) {
         super(host, debug);
-        connect(login, password);
-    }
-
-    public void connect(String login, String password) {
 
         LoginRequestDTO loginRequest = new LoginRequestDTO();
         loginRequest.setLogin(login);
@@ -64,9 +71,9 @@ public class DocdokuPLMCookieClient extends DocdokuPLMClient {
             System.out.println(responseHeaders);
             List<String> strings = responseHeaders.get("Set-Cookie");
             if (strings != null && !strings.isEmpty()) {
-                this.cookie = strings.get(0);
+                cookie = strings.get(0);
                 createClient();
-                client.addDefaultHeader("Cookie", this.cookie);
+                client.addDefaultHeader("Cookie", cookie);
             } else {
                 LOGGER.log(Level.WARNING, "Cannot fetch cookie");
             }
@@ -74,10 +81,6 @@ public class DocdokuPLMCookieClient extends DocdokuPLMClient {
         } catch (ApiException e) {
             LOGGER.log(Level.SEVERE, "Cannot connect to docdoku plm server http response code = " + client.getStatusCode());
         }
-    }
-
-    public ApiClient getClient() {
-        return client;
     }
 
 }

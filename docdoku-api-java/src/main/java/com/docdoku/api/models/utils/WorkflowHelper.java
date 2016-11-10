@@ -29,11 +29,18 @@ import java.util.Set;
 
 /**
  * This class helps to manipulate workflow objects
+ *
  * @Author Morgan Guimard
  */
 public class WorkflowHelper {
 
-    public static ActivityDTO getCurrentActivity(WorkflowDTO workflow){
+    /**
+     * Find the current activity in a workflow.
+     *
+     * @param workflow: the workflow to search in
+     * @return the current activity of the given workflow
+     */
+    public static ActivityDTO getCurrentActivity(WorkflowDTO workflow) {
 
         List<ActivityDTO> activities = workflow.getActivities();
         int currentStep = getCurrentStep(workflow);
@@ -45,7 +52,13 @@ public class WorkflowHelper {
 
     }
 
-    public static int getCurrentStep(WorkflowDTO workflow){
+    /**
+     * Find the current activity step in a workflow
+     *
+     * @param workflow: the workflow to search in
+     * @return the current activity step of the given workflow
+     */
+    public static int getCurrentStep(WorkflowDTO workflow) {
         List<ActivityDTO> activities = workflow.getActivities();
         int i = 0;
         for (ActivityDTO activity : activities) {
@@ -58,25 +71,42 @@ public class WorkflowHelper {
         return i;
     }
 
-
-    public static List<TaskDTO> getRunningTasks(WorkflowDTO workflowDTO) {
-        return getRunningTasks(getCurrentActivity(workflowDTO));
+    /**
+     * Get all running tasks in a workflow
+     *
+     * @param workflow: the workflow to search in
+     * @return the list of running tasks for the given workflow
+     */
+    public static List<TaskDTO> getRunningTasks(WorkflowDTO workflow) {
+        return getRunningTasks(getCurrentActivity(workflow));
     }
 
-    public static List<TaskDTO> getRunningTasks(ActivityDTO currentActivity) {
+    /**
+     * Get all running tasks in an activity
+     *
+     * @param activity: the activity to search in
+     * @return the list of running tasks for the given activity
+     */
+    public static List<TaskDTO> getRunningTasks(ActivityDTO activity) {
         List<TaskDTO> tasks = new ArrayList<>();
-        for(TaskDTO task : currentActivity.getTasks()){
-            if(TaskDTO.StatusEnum.IN_PROGRESS.equals(task.getStatus())){
+        for (TaskDTO task : activity.getTasks()) {
+            if (TaskDTO.StatusEnum.IN_PROGRESS.equals(task.getStatus())) {
                 tasks.add(task);
             }
         }
         return tasks;
     }
 
+    /**
+     * Get all roles involved in a workflow model
+     *
+     * @param workflowModel: the workflow model to search in
+     * @return the list of distinct involved roles
+     */
     public static Set<RoleDTO> getRolesInvolved(WorkflowModelDTO workflowModel) {
         Set<RoleDTO> roles = new HashSet<>();
-        for(ActivityModelDTO activityModelDTO:workflowModel.getActivityModels()){
-            for(TaskModelDTO taskModelDTO : activityModelDTO.getTaskModels()){
+        for (ActivityModelDTO activityModelDTO : workflowModel.getActivityModels()) {
+            for (TaskModelDTO taskModelDTO : activityModelDTO.getTaskModels()) {
                 roles.add(taskModelDTO.getRole());
             }
         }

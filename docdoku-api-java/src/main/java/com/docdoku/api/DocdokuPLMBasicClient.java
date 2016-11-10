@@ -20,26 +20,30 @@
 
 package com.docdoku.api;
 
-import com.docdoku.api.client.ApiClient;
 import okhttp3.Credentials;
 
 /**
  * This class helps to create the swagger client.
+ * <p>
+ * This client will always send the 'Authorization' field in headers, with Base64(login:password) as value
+ *
  * @author Morgan Guimard
  */
-public class DocdokuPLMBasicClient extends DocdokuPLMClient{
+public class DocdokuPLMBasicClient extends DocdokuPLMClient {
 
+    /**
+     * DocdokuPLMBasicClient default constructor, debug disabled.
+     */
     public DocdokuPLMBasicClient(String host, String login, String password) {
-        this(host,login,password,false);
+        this(host, login, password, false);
     }
 
-    public DocdokuPLMBasicClient(String host, String login, String password, boolean debug)  {
-        super(host,debug);
+    /**
+     * DocdokuPLMBasicClient constructor, debug flag can be set.
+     */
+    public DocdokuPLMBasicClient(String host, String login, String password, boolean debug) {
+        super(host, debug);
         client.addDefaultHeader("Authorization", Credentials.basic(login, password));
-    }
-
-    public ApiClient getClient(){
-        return client;
     }
 
 }

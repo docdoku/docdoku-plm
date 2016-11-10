@@ -32,25 +32,32 @@ import java.util.logging.Logger;
 
 /**
  * This class helps to create the swagger client.
+ * <p>
+ * This client will try to sign in, then it uses the jwt token sent from server.
+ *
  * @author Morgan Guimard
  */
-public class DocdokuPLMJWTClient extends DocdokuPLMClient{
-
-    private String token;
+public class DocdokuPLMJWTClient extends DocdokuPLMClient {
 
     private static final Logger LOGGER = Logger.getLogger(DocdokuPLMJWTClient.class.getName());
 
+    /**
+     * Stored jwt token
+     */
+    private String token;
+
+    /**
+     * Default DocdokuPLMJWTClient constructor
+     */
     public DocdokuPLMJWTClient(String host, String login, String password) {
-        this(host,login,password,false);
+        this(host, login, password, false);
     }
 
-    public DocdokuPLMJWTClient(String host, String login, String password, boolean debug)  {
-        super(host,debug);
-        connect(login, password);
-    }
-
-    @Override
-    public void connect(String login, String password){
+    /**
+     * DocdokuPLMJWTClient constructor, debug flag can be set.
+     */
+    public DocdokuPLMJWTClient(String host, String login, String password, boolean debug) {
+        super(host, debug);
 
         LoginRequestDTO loginRequest = new LoginRequestDTO();
         loginRequest.setLogin(login);
@@ -59,22 +66,22 @@ public class DocdokuPLMJWTClient extends DocdokuPLMClient{
         try {
 
             AccountDTO account = new AuthApi(client).login(loginRequest);
-            LOGGER.log(Level.INFO,"Connected as  " + account.getLogin());
+            LOGGER.log(Level.INFO, "Connected as  " + account.getLogin());
 
             Map<String, List<String>> responseHeaders = client.getResponseHeaders();
             System.out.println(responseHeaders);
             List<String> strings = responseHeaders.get("jwt");
 
-            if(strings != null && !strings.isEmpty()){
+            if (strings != null && !strings.isEmpty()) {
                 this.token = strings.get(0);
                 createClient();
                 client.addDefaultHeader("Authorization", "Bearer " + this.token);
             } else {
-                LOGGER.log(Level.WARNING,"Cannot fetch token");
+                LOGGER.log(Level.WARNING, "Cannot fetch token");
             }
 
         } catch (ApiException e) {
-            LOGGER.log(Level.SEVERE,"Cannot connect to docdoku plm server http response code = " + client.getStatusCode());
+            LOGGER.log(Level.SEVERE, "Cannot connect to docdoku plm server http response code = " + client.getStatusCode());
         }
 
     }

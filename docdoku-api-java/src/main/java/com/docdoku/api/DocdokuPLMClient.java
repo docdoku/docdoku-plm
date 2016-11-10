@@ -26,22 +26,47 @@ import java.text.SimpleDateFormat;
 
 /**
  * This class helps to create the swagger client.
+ * <p>
+ * This client does not use any authentication.
+ *
  * @author Morgan Guimard
  */
 public class DocdokuPLMClient {
 
+    /**
+     * Swagger ApiClient
+     */
     protected ApiClient client;
+
+    /**
+     * Api endpoint (http://localhost:8080/api)
+     */
     protected String host;
+
+    /**
+     * Debug flag. Turn on to log detailed http requests.
+     */
     protected boolean debug;
 
+    /**
+     * DocdokuPLMClient constructor
+     */
     public DocdokuPLMClient(String host, boolean debug) {
         this.host = host;
         this.debug = debug;
         createClient();
     }
 
-    public void connect(String login, String password){}
+    /**
+     * Get the ApiClient
+     */
+    public ApiClient getClient() {
+        return client;
+    }
 
+    /**
+     * Instantiate the swagger ApiClient
+     */
     protected void createClient() {
         client = new ApiClient();
         client.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
@@ -49,7 +74,4 @@ public class DocdokuPLMClient {
         client.setDebugging(debug);
     }
 
-    public ApiClient getClient() {
-        return client;
-    }
 }
