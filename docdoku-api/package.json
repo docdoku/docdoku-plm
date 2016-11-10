@@ -1,0 +1,9 @@
+{
+  "name": "docdoku-api",
+  "version": "1.0.0",
+  "description": "Simply install swagger-ui",
+  "author": "Morgan Guimard",
+  "devDependencies": {
+    "swagger-ui": "^2.2.6"
+  }
+}
