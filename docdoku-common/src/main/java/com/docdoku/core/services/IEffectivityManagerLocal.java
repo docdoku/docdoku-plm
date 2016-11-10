@@ -19,7 +19,7 @@ public interface IEffectivityManagerLocal {
     Effectivity getEffectivity(String pId) throws EffectivityNotFoundException;
     List<Effectivity> getEffectivities();
     List<Effectivity> getEffectivityOfConfigurationItem(String pConfigurationItemId);
-    Effectivity updateEffectivity(String pId, String pName, String pDescription, ConfigurationItem pConfigurationItem) throws EffectivityNotFoundException;
+    Effectivity updateEffectivity(String pId, String pName, String pDescription) throws EffectivityNotFoundException;
     void deleteEffectivity(String pId) throws EffectivityNotFoundException;
 
 }

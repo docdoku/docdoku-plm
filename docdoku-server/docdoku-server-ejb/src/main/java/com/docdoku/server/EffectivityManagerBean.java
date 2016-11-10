@@ -85,12 +85,11 @@ public class EffectivityManagerBean implements IEffectivityManagerLocal {
     }
 
     @Override
-    public Effectivity updateEffectivity(String pId, String pName, String pDescription, ConfigurationItem pConfigurationItem) throws EffectivityNotFoundException {
+    public Effectivity updateEffectivity(String pId, String pName, String pDescription) throws EffectivityNotFoundException {
         EffectivityDAO effectivityDAO = new EffectivityDAO(em);
         Effectivity effectivity = effectivityDAO.loadEffectivity(pId);
         effectivity.setName(pName);
         effectivity.setDescription(pDescription);
-        effectivity.setConfigurationItem(pConfigurationItem);
         effectivityDAO.updateEffectivity(effectivity);
         return effectivity;
     }
