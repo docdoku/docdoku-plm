@@ -140,6 +140,9 @@ public class EffectivityResource {
             effectivity = effectivityManager.updateLotBasedEffectivity(effectivityId,
                     effectivityDTO.getName(), effectivityDTO.getDescription(),
                     ((LotBasedEffectivityDTO)effectivityDTO).getStartLotId(), ((LotBasedEffectivityDTO)effectivityDTO).getEndLotId());
+        } else {
+            effectivity = effectivityManager.updateEffectivity(effectivityId,
+                    effectivityDTO.getName(), effectivityDTO.getDescription());
         }
         return Response.ok(mapper.map(effectivity, EffectivityDTO.class)).build();
     }
