@@ -22,6 +22,10 @@ public class EffectivityApiTest {
     private EffectivityApi effectivityApi = new EffectivityApi(TestConfig.BASIC_CLIENT);
 
     private ConfigurationItemDTO createConfigurationItemDTO() throws ApiException {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setLogin(TestConfig.LOGIN);
+        userDTO.setWorkspaceId(TestConfig.WORKSPACE);
+
         // Part creation
         String partNumber = UUID.randomUUID().toString().substring(0, 8);
         PartCreationDTO part = new PartCreationDTO();
@@ -41,21 +45,19 @@ public class EffectivityApiTest {
         product.setDesignItemNumber(partNumber);
         product.setDescription("Generated product by tests");
         product.setWorkspaceId(TestConfig.WORKSPACE);
+
         return productsApi.createConfigurationItem(TestConfig.WORKSPACE, product);
     }
 
     @Test
     public void createSerialNumberBasedEffectivityTest() throws ApiException {
         ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
-        String generatedId = UUID.randomUUID().toString().substring(0, 8);
 
         SerialNumberBasedEffectivityDTO serialNumberBasedEffectivityDTO = new SerialNumberBasedEffectivityDTO();
-        serialNumberBasedEffectivityDTO.setName(generatedId);
-        SerialNumberBasedEffectivityDTO serialNumberBasedEffectivity = effectivityApi.createSerialNumberBasedEffectivity(
-                serialNumberBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
+        serialNumberBasedEffectivityDTO.setName(UUID.randomUUID().toString().substring(0, 8));
+        SerialNumberBasedEffectivityDTO serialNumberBasedEffectivity = new EffectivityApi(TestConfig.BASIC_CLIENT)
+                .createSerialNumberBasedEffectivity(serialNumberBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
         Assert.assertEquals(serialNumberBasedEffectivity.getName(), serialNumberBasedEffectivityDTO.getName());
-
-        effectivityApi.deleteEffectivity(serialNumberBasedEffectivity.getId());
     }
 
     @Test

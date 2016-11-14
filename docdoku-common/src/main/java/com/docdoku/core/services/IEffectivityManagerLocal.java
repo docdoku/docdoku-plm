@@ -24,5 +24,4 @@ public interface IEffectivityManagerLocal {
     DateBasedEffectivity updateDateBasedEffectivity(int pId, String pName, String pDescription, Date pStartDate, Date pEndDate) throws EffectivityNotFoundException;
     LotBasedEffectivity updateLotBasedEffectivity(int pId, String pName, String pDescription, String pStartLotId, String pEndLotId) throws EffectivityNotFoundException;
     void deleteEffectivity(int pId) throws EffectivityNotFoundException;
-
 }
