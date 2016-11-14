@@ -23,10 +23,10 @@ public class EffectivityDAO {
         mLocale=Locale.getDefault();
     }
 
-    public Effectivity loadEffectivity(String pId) throws EffectivityNotFoundException {
+    public Effectivity loadEffectivity(int pId) throws EffectivityNotFoundException {
         Effectivity effectivity = em.find(Effectivity.class,pId);
         if (effectivity == null) {
-            throw new EffectivityNotFoundException(mLocale, pId);
+            throw new EffectivityNotFoundException(mLocale, String.valueOf(pId));
         } else {
             return effectivity;
         }

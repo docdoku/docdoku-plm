@@ -69,7 +69,7 @@ public class EffectivityManagerBean implements IEffectivityManagerLocal {
     }
 
     @Override
-    public Effectivity getEffectivity(String pId) throws EffectivityNotFoundException {
+    public Effectivity getEffectivity(int pId) throws EffectivityNotFoundException {
         return new EffectivityDAO(em).loadEffectivity(pId);
     }
 
@@ -85,18 +85,53 @@ public class EffectivityManagerBean implements IEffectivityManagerLocal {
     }
 
     @Override
-    public Effectivity updateEffectivity(String pId, String pName, String pDescription, ConfigurationItem pConfigurationItem) throws EffectivityNotFoundException {
+    public Effectivity updateEffectivity(int pId, String pName, String pDescription) throws EffectivityNotFoundException {
         EffectivityDAO effectivityDAO = new EffectivityDAO(em);
         Effectivity effectivity = effectivityDAO.loadEffectivity(pId);
         effectivity.setName(pName);
         effectivity.setDescription(pDescription);
-        effectivity.setConfigurationItem(pConfigurationItem);
         effectivityDAO.updateEffectivity(effectivity);
         return effectivity;
     }
 
     @Override
-    public void deleteEffectivity(String pId) throws EffectivityNotFoundException {
+    public SerialNumberBasedEffectivity updateSerialNumberBasedEffectivity(int pId, String pName, String pDescription, String pStartNumber, String pEndNumber) throws EffectivityNotFoundException {
+        EffectivityDAO effectivityDAO = new EffectivityDAO(em);
+        SerialNumberBasedEffectivity serialNumberBasedEffectivity = (SerialNumberBasedEffectivity) effectivityDAO.loadEffectivity(pId);
+        serialNumberBasedEffectivity.setName(pName);
+        serialNumberBasedEffectivity.setDescription(pDescription);
+        serialNumberBasedEffectivity.setStartNumber(pStartNumber);
+        serialNumberBasedEffectivity.setEndNumber(pEndNumber);
+        effectivityDAO.updateEffectivity(serialNumberBasedEffectivity);
+        return serialNumberBasedEffectivity;
+    }
+
+    @Override
+    public DateBasedEffectivity updateDateBasedEffectivity(int pId, String pName, String pDescription, Date pStartDate, Date pEndDate) throws EffectivityNotFoundException {
+        EffectivityDAO effectivityDAO = new EffectivityDAO(em);
+        DateBasedEffectivity dateBasedEffectivity = (DateBasedEffectivity) effectivityDAO.loadEffectivity(pId);
+        dateBasedEffectivity.setName(pName);
+        dateBasedEffectivity.setDescription(pDescription);
+        dateBasedEffectivity.setStartDate(pStartDate);
+        dateBasedEffectivity.setEndDate(pEndDate);
+        effectivityDAO.updateEffectivity(dateBasedEffectivity);
+        return dateBasedEffectivity;
+    }
+
+    @Override
+    public LotBasedEffectivity updateLotBasedEffectivity(int pId, String pName, String pDescription, String pStartLotId, String pEndLotId) throws EffectivityNotFoundException {
+        EffectivityDAO effectivityDAO = new EffectivityDAO(em);
+        LotBasedEffectivity lotBasedEffectivity = (LotBasedEffectivity) effectivityDAO.loadEffectivity(pId);
+        lotBasedEffectivity.setName(pName);
+        lotBasedEffectivity.setDescription(pDescription);
+        lotBasedEffectivity.setStartLotId(pStartLotId);
+        lotBasedEffectivity.setEndLotId(pEndLotId);
+        effectivityDAO.updateEffectivity(lotBasedEffectivity);
+        return lotBasedEffectivity;
+    }
+
+    @Override
+    public void deleteEffectivity(int pId) throws EffectivityNotFoundException {
         EffectivityDAO effectivityDAO = new EffectivityDAO(em);
         Effectivity effectivity = effectivityDAO.loadEffectivity(pId);
         effectivityDAO.removeEffectivity(effectivity);
