@@ -61,15 +61,15 @@ public class PartResourceTest {
     @Mock
     private IUserManagerLocal userManager;
     @Spy
-    Workspace workspace = new Workspace();
+    private Workspace workspace = new Workspace();
     @Spy
-    private User user = new User(workspace, new Account("login", "user", "@docdoku.com", "en", new Date(),null));
+    private User user = new User(workspace, new Account("login", "user", "test@docdoku.com", "en", new Date(), null));
     @Spy
     private PartMaster partMaster = new PartMaster(workspace, "partNumber", user);
     @Spy
     private PartMaster subPartMaster = new PartMaster(workspace, "SubPartNumber", user);
     @Spy
-    Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
+    private Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
 
     @Before
     public void setup() throws Exception {
@@ -81,7 +81,7 @@ public class PartResourceTest {
     public void createComponents() {
         //Given
         PartIterationDTO data = new PartIterationDTO(ResourceUtil.WORKSPACE_ID, "partName", "partNumber", "A", 1);
-        List partUsageLinkDTOs = new ArrayList<PartUsageLinkDTO>();
+        List<PartUsageLinkDTO> partUsageLinkDTOs = new ArrayList<>();
         PartUsageLinkDTO partUsageLinkDTO = new PartUsageLinkDTO();
         partUsageLinkDTO.setAmount(2);
         partUsageLinkDTO.setUnit("");
@@ -97,13 +97,13 @@ public class PartResourceTest {
         substituteLinkDTO.setUnit("Kg");
         ComponentDTO subComponentDTO = new ComponentDTO("subComponent01");
         substituteLinkDTO.setSubstitute(subComponentDTO);
-        List<CADInstanceDTO> cadInstanceDTOs = new ArrayList<CADInstanceDTO>();
-        List<CADInstanceDTO> subCadInstanceDTOs = new ArrayList<CADInstanceDTO>();
-        cadInstanceDTOs.add(new CADInstanceDTO((Double) 12.0, (Double) 12.0, (Double) 12.0, (Double) 62.0, (Double) 24.0, (Double) 95.0));
-        cadInstanceDTOs.add(new CADInstanceDTO((Double) 22.0, (Double) 12.0, (Double) 72.0, (Double) 52.0, (Double) 14.0, (Double) 45.0));
-        subCadInstanceDTOs.add(new CADInstanceDTO((Double) 10.0, (Double) 11.0, (Double) 12.0, (Double) 13.0, (Double) 14.0, (Double) 15.0));
-        subCadInstanceDTOs.add(new CADInstanceDTO((Double) 110.0, (Double) 10.0, (Double) 10.0, (Double) 52.0, (Double) 14.0, (Double) 45.0));
-        subCadInstanceDTOs.add(new CADInstanceDTO((Double) 120.0, (Double) 10.0, (Double) 10.0, (Double) 52.0, (Double) 14.0, (Double) 45.0));
+        List<CADInstanceDTO> cadInstanceDTOs = new ArrayList<>();
+        List<CADInstanceDTO> subCadInstanceDTOs = new ArrayList<>();
+        cadInstanceDTOs.add(new CADInstanceDTO(12.0, 12.0, 12.0, 62.0, 24.0, 95.0));
+        cadInstanceDTOs.add(new CADInstanceDTO(22.0, 12.0, 72.0, 52.0, 14.0, 45.0));
+        subCadInstanceDTOs.add(new CADInstanceDTO(10.0, 11.0, 12.0, 13.0, 14.0, 15.0));
+        subCadInstanceDTOs.add(new CADInstanceDTO(110.0, 10.0, 10.0, 52.0, 14.0, 45.0));
+        subCadInstanceDTOs.add(new CADInstanceDTO(120.0, 10.0, 10.0, 52.0, 14.0, 45.0));
 
         substituteLinkDTO.setCadInstances(subCadInstanceDTOs);
         substituteDTOs.add(substituteLinkDTO);
@@ -141,19 +141,19 @@ public class PartResourceTest {
         assertTrue(newComponents.get(0).getCadInstances().size() == 2);
 
         // check if the cad instances mapping of the part usage link is correct
-        assertTrue(newComponents.get(0).getCadInstances().get(0).getRx() == (Double) 12.0);
-        assertTrue(newComponents.get(0).getCadInstances().get(0).getRy() == (Double) 12.0);
-        assertTrue(newComponents.get(0).getCadInstances().get(0).getRz() == (Double) 12.0);
-        assertTrue(newComponents.get(0).getCadInstances().get(0).getTx() == (Double) 62.0);
-        assertTrue(newComponents.get(0).getCadInstances().get(0).getTy() == (Double) 24.0);
-        assertTrue(newComponents.get(0).getCadInstances().get(0).getTz() == (Double) 95.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(0).getRx() == 12.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(0).getRy() == 12.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(0).getRz() == 12.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(0).getTx() == 62.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(0).getTy() == 24.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(0).getTz() == 95.0);
 
-        assertTrue(newComponents.get(0).getCadInstances().get(1).getRx() == (Double) 22.0);
-        assertTrue(newComponents.get(0).getCadInstances().get(1).getRy() == (Double) 12.0);
-        assertTrue(newComponents.get(0).getCadInstances().get(1).getRz() == (Double) 72.0);
-        assertTrue(newComponents.get(0).getCadInstances().get(1).getTx() == (Double) 52.0);
-        assertTrue(newComponents.get(0).getCadInstances().get(1).getTy() == (Double) 14.0);
-        assertTrue(newComponents.get(0).getCadInstances().get(1).getTz() == (Double) 45.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(1).getRx() == 22.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(1).getRy() == 12.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(1).getRz() == 72.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(1).getTx() == 52.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(1).getTy() == 14.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(1).getTz() == 45.0);
         // check if the cad instances mapping of the substitute part usage link is correct
         assertTrue(newComponents.get(0).getSubstitutes().get(0).getCadInstances().size() == 3);
         assertTrue(newComponents.get(0).getSubstitutes().get(0).getCadInstances().get(0).getRx() == 10);

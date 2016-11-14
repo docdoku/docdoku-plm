@@ -29,7 +29,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.List;
-import java.util.UUID;
 
 @RunWith(JUnit4.class)
 public class FoldersApiTest {
@@ -37,20 +36,53 @@ public class FoldersApiTest {
     @Test
     public void getRootFoldersTest() throws ApiException {
         FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
-        List<FolderDTO> rootFolders = foldersApi.getRootFolders(TestConfig.WORKSPACE, null);
+        List<FolderDTO> rootFolders = foldersApi.getRootFolders(TestConfig.WORKSPACE);
         Assert.assertNotNull(rootFolders);
     }
 
     @Test
     public void createRootFoldersTest() throws ApiException {
-        String folderName = "Folder-"+TestUtils.randomString();
+        String folderName = "Folder-" + TestUtils.randomString();
         FolderDTO folder = new FolderDTO();
         folder.setName(folderName);
         FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
-        foldersApi.createSubFolder(TestConfig.WORKSPACE,TestConfig.WORKSPACE, folder);
-        List<FolderDTO> rootFolders = foldersApi.getRootFolders(TestConfig.WORKSPACE, null);
+        foldersApi.createSubFolder(TestConfig.WORKSPACE, TestConfig.WORKSPACE, folder);
+        List<FolderDTO> rootFolders = foldersApi.getRootFolders(TestConfig.WORKSPACE);
         Assert.assertEquals(rootFolders.stream()
                 .filter(folderDTO -> folderName.equals(folderDTO.getName()))
-                .count(),1);
+                .count(), 1);
+    }
+
+    @Test
+    public void nonExistingFolderTest() throws ApiException {
+        String nonExistingFolderName = "SomethingNotExisting";
+        String folderCompletePath = TestConfig.WORKSPACE + ":" + nonExistingFolderName;
+        FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
+        try {
+            foldersApi.getSubFolders(TestConfig.WORKSPACE, folderCompletePath);
+        } catch (ApiException e) {
+            Assert.assertEquals(404, foldersApi.getApiClient().getStatusCode());
+        }
+    }
+
+
+    @Test
+    public void existingFolderTest() throws ApiException {
+
+        String folderName = "Folder-" + TestUtils.randomString();
+        FolderDTO folder = new FolderDTO();
+        folder.setName(folderName);
+        FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
+        foldersApi.createSubFolder(TestConfig.WORKSPACE, TestConfig.WORKSPACE, folder);
+
+        String subFolderName = "SubFolder-" + TestUtils.randomString();
+        FolderDTO subFolder = new FolderDTO();
+        subFolder.setName(subFolderName);
+        FolderDTO createdSubFolder = foldersApi.createSubFolder(TestConfig.WORKSPACE, TestConfig.WORKSPACE + ":" + folderName, subFolder);
+        List<FolderDTO> subFolders = foldersApi.getSubFolders(TestConfig.WORKSPACE, TestConfig.WORKSPACE + ":" + folderName);
+
+        Assert.assertEquals(1,subFolders.size());
+        Assert.assertEquals(createdSubFolder.getName(),subFolders.get(0).getName());
+
     }
 }

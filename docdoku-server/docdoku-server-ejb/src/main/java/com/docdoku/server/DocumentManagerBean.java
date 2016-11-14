@@ -214,6 +214,12 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
     @Override
     public String[] getFolders(String pCompletePath) throws WorkspaceNotFoundException, FolderNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(Folder.parseWorkspaceId(pCompletePath));
+
+        Folder folder = em.find(Folder.class,pCompletePath);
+        if(folder == null){
+            throw new FolderNotFoundException(new Locale(user.getLanguage()),pCompletePath);
+        }
+
         Folder[] subFolders = new FolderDAO(new Locale(user.getLanguage()), em).getSubFolders(pCompletePath);
         String[] shortNames = new String[subFolders.length];
         int i = 0;

@@ -39,6 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * @author Morgan Guimard on 09/04/15.
@@ -73,18 +74,18 @@ public class QueryDAO {
             persistQueryRules(query.getQueryRule());
             em.persist(query);
             em.flush();
-            persistContexts(query,query.getContexts());
-        }catch (EntityExistsException pEEEx) {
-            LOGGER.log(Level.FINEST,null,pEEEx);
+            persistContexts(query, query.getContexts());
+        } catch (EntityExistsException pEEEx) {
+            LOGGER.log(Level.FINEST, null, pEEEx);
             throw new QueryAlreadyExistsException(mLocale, query);
         } catch (PersistenceException pPEx) {
-            LOGGER.log(Level.FINEST,null,pPEx);
+            LOGGER.log(Level.FINEST, null, pPEx);
             throw new CreationException(mLocale);
         }
     }
 
     private void persistContexts(Query query, List<QueryContext> contexts) {
-        for(QueryContext context:contexts){
+        for (QueryContext context : contexts) {
             context.setParentQuery(query);
             em.persist(context);
         }
@@ -96,11 +97,11 @@ public class QueryDAO {
         em.persist(queryRule);
         em.flush();
 
-        if(!queryRule.hasSubRules()){
+        if (!queryRule.hasSubRules()) {
             return;
         }
 
-        for(QueryRule subRule : queryRule.getSubQueryRules()){
+        for (QueryRule subRule : queryRule.getSubQueryRules()) {
             subRule.setParentQueryRule(queryRule);
             persistQueryRules(subRule);
         }
@@ -119,17 +120,16 @@ public class QueryDAO {
                     .setParameter("workspaceId", workspaceId)
                     .setParameter("name", name)
                     .getSingleResult();
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             return null;
         }
     }
 
     public Query loadQuery(int id) {
-        Query query = em.find(Query.class, id);
-        return query;
+        return em.find(Query.class, id);
     }
 
-    public void removeQuery(Query query){
+    public void removeQuery(Query query) {
         em.remove(query);
         em.flush();
     }
@@ -143,8 +143,8 @@ public class QueryDAO {
         Expression workspaceExp = pm.get("workspace");
         Predicate rulesPredicate = null;
         String firstCondition = query.getQueryRule().getCondition();
-        if ( firstCondition != null) {
-             rulesPredicate = getPredicate(query.getQueryRule());
+        if (firstCondition != null) {
+            rulesPredicate = getPredicate(query.getQueryRule());
         }
         Predicate workspacePredicate = cb.and(cb.equal(workspaceExp, workspace));
 
@@ -152,18 +152,18 @@ public class QueryDAO {
         Predicate prJoinPredicate = cb.and(cb.equal(pm.get("number"), pr.get("partMasterNumber")), cb.equal(pm.get("workspace"), workspace));
 
         // Join PartIteration
-        Join<PartIteration,PartRevision> piJoin = pi.join("partRevision");
+        Join<PartIteration, PartRevision> piJoin = pi.join("partRevision");
         Predicate piJoinPredicate = piJoin.on(cb.and(cb.equal(pi.get("partRevision").get("partMasterNumber"), pr.get("partMasterNumber")), cb.equal(pr.get("partMaster").get("workspace"), workspace))).getOn();
 
 
-        if ( firstCondition != null) {
+        if (firstCondition != null) {
             cq.where(cb.and(
                     rulesPredicate,
                     workspacePredicate,
                     prJoinPredicate,
                     piJoinPredicate
             ));
-        }else{
+        } else {
             cq.where(cb.and(
                     workspacePredicate,
                     prJoinPredicate,
@@ -173,118 +173,111 @@ public class QueryDAO {
 
 
         TypedQuery<PartRevision> tp = em.createQuery(cq);
-        Set<PartRevision> revisions = new HashSet<>();
 
-        for(PartRevision part : tp.getResultList()){
-            if(part.getLastCheckedInIteration() != null) {
-                revisions.add(part);
-            }
-        }
+        Set<PartRevision> revisions = tp.getResultList().stream()
+                .filter(part -> part.getLastCheckedInIteration() != null)
+                .collect(Collectors.toSet());
 
         return new ArrayList<>(revisions);
     }
 
-    private Predicate getPredicate(QueryRule queryRule){
+    private Predicate getPredicate(QueryRule queryRule) {
 
         String condition = queryRule.getCondition();
 
         List<QueryRule> subQueryRules = queryRule.getSubQueryRules();
 
-        if(subQueryRules != null && !subQueryRules.isEmpty()){
+        if (subQueryRules != null && !subQueryRules.isEmpty()) {
 
             Predicate[] predicates = new Predicate[subQueryRules.size()];
 
-            for(int i = 0; i < predicates.length; i++){
+            for (int i = 0; i < predicates.length; i++) {
                 Predicate predicate = getPredicate(subQueryRules.get(i));
                 predicates[i] = predicate;
             }
 
-            if("OR".equals(condition)){
+            if ("OR".equals(condition)) {
                 return cb.or(predicates);
-            }
-            else if("AND".equals(condition)){
+            } else if ("AND".equals(condition)) {
                 return cb.and(predicates);
             }
 
             throw new IllegalArgumentException();
 
-        }else{
+        } else {
             return getRulePredicate(queryRule);
         }
     }
 
-    private Predicate getRulePredicate(QueryRule queryRule){
+    private Predicate getRulePredicate(QueryRule queryRule) {
 
         String field = queryRule.getField();
         String operator = queryRule.getOperator();
         List<String> values = queryRule.getValues();
         String type = queryRule.getType();
 
-        if(field.startsWith("pm.")){
-            return getPartMasterPredicate(field.substring(3), operator, values , type);
+        if (field.startsWith("pm.")) {
+            return getPartMasterPredicate(field.substring(3), operator, values, type);
         }
 
-        if(field.startsWith("pr.")){
+        if (field.startsWith("pr.")) {
             return getPartRevisionPredicate(field.substring(3), operator, values, type);
         }
 
-        if(field.startsWith("author.")){
+        if (field.startsWith("author.")) {
             return getAuthorPredicate(field.substring(7), operator, values, type);
         }
 
-        if(field.startsWith("attr-TEXT.")){
-            return getInstanceTextAttributePredicate(field.substring(10), operator, values, type);
+        if (field.startsWith("attr-TEXT.")) {
+            return getInstanceTextAttributePredicate(field.substring(10), operator, values);
         }
 
-        if(field.startsWith("attr-LONG_TEXT.")){
-            return getInstanceLongTextAttributePredicate(field.substring(15), operator, values, type);
+        if (field.startsWith("attr-LONG_TEXT.")) {
+            return getInstanceLongTextAttributePredicate(field.substring(15), operator, values);
         }
 
-        if(field.startsWith("attr-DATE.")){
-            return getInstanceDateAttributePredicate(field.substring(10), operator, values, type);
+        if (field.startsWith("attr-DATE.")) {
+            return getInstanceDateAttributePredicate(field.substring(10), operator, values);
         }
 
-        if(field.startsWith("attr-BOOLEAN.")){
-            return getInstanceBooleanAttributePredicate(field.substring(13), operator, values, type);
+        if (field.startsWith("attr-BOOLEAN.")) {
+            return getInstanceBooleanAttributePredicate(field.substring(13), operator, values);
         }
 
-        if(field.startsWith("attr-URL.")){
-            return getInstanceURLAttributePredicate(field.substring(9), operator, values, type);
+        if (field.startsWith("attr-URL.")) {
+            return getInstanceURLAttributePredicate(field.substring(9), operator, values);
         }
 
-        if(field.startsWith("attr-NUMBER.")){
-            return getInstanceNumberAttributePredicate(field.substring(12), operator, values, type);
+        if (field.startsWith("attr-NUMBER.")) {
+            return getInstanceNumberAttributePredicate(field.substring(12), operator, values);
         }
 
-        if(field.startsWith("attr-LOV.")){
-            return getInstanceLovAttributePredicate(field.substring(9), operator, values, type);
+        if (field.startsWith("attr-LOV.")) {
+            return getInstanceLovAttributePredicate(field.substring(9), operator, values);
         }
 
-        if(field.startsWith("attr-PART_NUMBER.")){
-            return getInstancePartNumberAttributePredicate(field.substring(17), operator, values, type);
+        if (field.startsWith("attr-PART_NUMBER.")) {
+            return getInstancePartNumberAttributePredicate(field.substring(17), operator, values);
         }
 
         throw new IllegalArgumentException();
     }
 
     private Predicate getAuthorPredicate(String field, String operator, List<String> values, String type) {
-        return getPredicate(pr.get("author").get(field),operator,values,type);
+        return getPredicate(pr.get("author").get(field), operator, values, type);
     }
 
     private Predicate getPartRevisionPredicate(String field, String operator, List<String> values, String type) {
-        if("checkInDate".equals(field)){
+        if ("checkInDate".equals(field)) {
             Predicate lastIterationPredicate = cb.equal(cb.size(pr.get("partIterations")), pi.get("iteration"));
             return cb.and(lastIterationPredicate, getPredicate(pi.get("checkInDate"), operator, values, type));
-        }
-        else if("status".equals(field)){
+        } else if ("status".equals(field)) {
             if (values.size() == 1) {
                 return getPredicate(pr.get(field), operator, values, "status");
             }
-        }
-        else if("tags".equals(field)){
+        } else if ("tags".equals(field)) {
             return getTagsPredicate(values);
-        }
-        else if("linkedDocuments".equals(field)){
+        } else if ("linkedDocuments".equals(field)) {
             // should be ignored, returning always true for the moment
             return cb.and();
         }
@@ -294,7 +287,7 @@ public class QueryDAO {
     private Predicate getTagsPredicate(List<String> values) {
         Root<Tag> tag = cq.from(Tag.class);
         Predicate prPredicate = tag.in(pr.get("tags"));
-        Predicate valuesPredicate = cb.equal(tag.get("label"),values);
+        Predicate valuesPredicate = cb.equal(tag.get("label"), values);
         return cb.and(prPredicate, valuesPredicate);
     }
 
@@ -303,23 +296,23 @@ public class QueryDAO {
     }
 
     // Instances Attributes
-    private Predicate getInstanceURLAttributePredicate(String field, String operator, List<String> values, String type) {
+    private Predicate getInstanceURLAttributePredicate(String field, String operator, List<String> values) {
         Root<InstanceURLAttribute> iua = cq.from(InstanceURLAttribute.class);
         Predicate valuesPredicate = getPredicate(iua.get("urlValue"), operator, values, "string");
         Predicate memberPredicate = iua.in(pi.get("instanceAttributes"));
         return cb.and(cb.equal(iua.get("name"), field), valuesPredicate, memberPredicate);
     }
 
-    private Predicate getInstanceBooleanAttributePredicate(String field, String operator, List<String> values, String type) {
+    private Predicate getInstanceBooleanAttributePredicate(String field, String operator, List<String> values) {
         if (values.size() == 1) {
             Root<InstanceBooleanAttribute> iba = cq.from(InstanceBooleanAttribute.class);
             Predicate valuesPredicate = cb.equal(iba.get("booleanValue"), Boolean.parseBoolean(values.get(0)));
             Predicate memberPredicate = iba.in(pi.get("instanceAttributes"));
-            switch(operator){
+            switch (operator) {
                 case "equal":
-                    return cb.and(cb.equal(iba.get("name"),field),valuesPredicate,memberPredicate);
+                    return cb.and(cb.equal(iba.get("name"), field), valuesPredicate, memberPredicate);
                 case "not_equal":
-                    return cb.and(cb.equal(iba.get("name"),field),valuesPredicate.not(),memberPredicate);
+                    return cb.and(cb.equal(iba.get("name"), field), valuesPredicate.not(), memberPredicate);
                 default:
                     break;
             }
@@ -328,19 +321,19 @@ public class QueryDAO {
         throw new IllegalArgumentException();
     }
 
-    private Predicate getInstanceNumberAttributePredicate(String field, String operator, List<String> values, String type) {
+    private Predicate getInstanceNumberAttributePredicate(String field, String operator, List<String> values) {
         Root<InstanceNumberAttribute> ina = cq.from(InstanceNumberAttribute.class);
         Predicate valuesPredicate = getPredicate(ina.get("numberValue"), operator, values, "double");
         Predicate memberPredicate = ina.in(pi.get("instanceAttributes"));
-        return cb.and(cb.equal(ina.get("name"),field),valuesPredicate,memberPredicate);
+        return cb.and(cb.equal(ina.get("name"), field), valuesPredicate, memberPredicate);
     }
 
-    private Predicate getInstanceLovAttributePredicate(String field, String operator, List<String> values, String type) {
+    private Predicate getInstanceLovAttributePredicate(String field, String operator, List<String> values) {
         if (values.size() == 1) {
             Root<InstanceListOfValuesAttribute> ila = cq.from(InstanceListOfValuesAttribute.class);
             Predicate valuesPredicate = cb.equal(ila.get("indexValue"), Integer.parseInt(values.get(0)));
             Predicate memberPredicate = ila.in(pi.get("instanceAttributes"));
-            switch(operator) {
+            switch (operator) {
                 case "equal":
                     return cb.and(cb.equal(ila.get("name"), field), valuesPredicate, memberPredicate);
                 case "not_equal":
@@ -353,44 +346,45 @@ public class QueryDAO {
         throw new IllegalArgumentException();
     }
 
-    private Predicate getInstanceDateAttributePredicate(String field, String operator, List<String> values, String type) {
+    private Predicate getInstanceDateAttributePredicate(String field, String operator, List<String> values) {
         Root<InstanceDateAttribute> ida = cq.from(InstanceDateAttribute.class);
         Predicate valuesPredicate = getPredicate(ida.get("dateValue"), operator, values, "date");
         Predicate memberPredicate = ida.in(pi.get("instanceAttributes"));
-        return cb.and(cb.equal(ida.get("name"),field),valuesPredicate,memberPredicate);
+        return cb.and(cb.equal(ida.get("name"), field), valuesPredicate, memberPredicate);
     }
 
-    private Predicate getInstanceLongTextAttributePredicate(String field, String operator, List<String> values, String type) {
+    private Predicate getInstanceLongTextAttributePredicate(String field, String operator, List<String> values) {
         Root<InstanceLongTextAttribute> ita = cq.from(InstanceLongTextAttribute.class);
         Predicate valuesPredicate = getPredicate(ita.get("longTextValue"), operator, values, "string");
         Predicate memberPredicate = ita.in(pi.get("instanceAttributes"));
-        return cb.and(cb.equal(ita.get("name"),field),valuesPredicate,memberPredicate);
+        return cb.and(cb.equal(ita.get("name"), field), valuesPredicate, memberPredicate);
     }
 
-    private Predicate getInstancePartNumberAttributePredicate(String field, String operator, List<String> values, String type) {
+    private Predicate getInstancePartNumberAttributePredicate(String field, String operator, List<String> values) {
         Root<InstancePartNumberAttribute> ita = cq.from(InstancePartNumberAttribute.class);
         Predicate valuesPredicate = getPredicate(ita.get("partMasterValue").get("number"), operator, values, "string");
         Predicate memberPredicate = ita.in(pi.get("instanceAttributes"));
-        return cb.and(cb.equal(ita.get("name"),field),valuesPredicate,memberPredicate);
+        return cb.and(cb.equal(ita.get("name"), field), valuesPredicate, memberPredicate);
     }
 
-    private Predicate getInstanceTextAttributePredicate(String field, String operator, List<String> values, String type) {
+    private Predicate getInstanceTextAttributePredicate(String field, String operator, List<String> values) {
         Root<InstanceTextAttribute> ita = cq.from(InstanceTextAttribute.class);
         Predicate valuesPredicate = getPredicate(ita.get("textValue"), operator, values, "string");
         Predicate memberPredicate = ita.in(pi.get("instanceAttributes"));
-        return cb.and(cb.equal(ita.get("name"),field),valuesPredicate,memberPredicate);
+        return cb.and(cb.equal(ita.get("name"), field), valuesPredicate, memberPredicate);
     }
 
 
     // Rule parsing
-
-    private Predicate getPredicate(Expression fieldExp, String operator, List<String> values, String type){
+    // Safe casts for expressions
+    @SuppressWarnings("unchecked")
+    private Predicate getPredicate(Expression fieldExp, String operator, List<String> values, String type) {
 
         List<?> operands;
 
-        switch(type){
-            case "string" :
-                operands=values;
+        switch (type) {
+            case "string":
+                operands = values;
                 break;
             case "date":
                 try {
@@ -398,7 +392,7 @@ public class QueryDAO {
                     //TODO: the pattern for the date format should be declared somewhere.
                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
                     df.setTimeZone(TimeZone.getTimeZone("UTC"));
-                    List<Date> temp = new ArrayList<Date>();
+                    List<Date> temp = new ArrayList<>();
                     for (String string : values) {
                         temp.add(df.parse(string));
                     }
@@ -409,86 +403,90 @@ public class QueryDAO {
                 break;
             case "double":
                 try {
-                    List<Double> temp = new ArrayList<Double>();
-                    for (String string : values) {
-                        temp.add(Double.parseDouble(string));
-                    }
-                    operands = temp;
-                }catch(NumberFormatException e){
+                    operands = values.stream()
+                            .map(Double::parseDouble)
+                            .collect(Collectors.toList());
+                } catch (NumberFormatException e) {
                     throw new IllegalArgumentException();
                 }
                 break;
             case "status":
-                List<PartRevision.RevisionStatus> temp = new ArrayList<>();
-                for (String string : values) {
-                    temp.add(PartRevision.RevisionStatus.valueOf(string));
-                }
-                operands = temp;
+                operands = values.stream()
+                        .map(PartRevision.RevisionStatus::valueOf)
+                        .collect(Collectors.toList());
                 break;
-            default :
-                operands=values;
+            default:
+                operands = values;
                 break;
         }
 
-        switch (operator){
-            case "between" :
+        switch (operator) {
+            case "between":
                 if (operands.size() == 2) {
-                    if("date".equals(type)){
-                        return cb.between(fieldExp, (Date)operands.get(0), (Date)operands.get(1));
+                    if ("date".equals(type)) {
+                        return cb.between(fieldExp, (Date) operands.get(0), (Date) operands.get(1));
 
-                    } else if("double".equals(type)){
+                    } else if ("double".equals(type)) {
                         return cb.between(fieldExp, (Double) operands.get(0), (Double) operands.get(1));
                     }
                 }
                 break;
-            case "equal" :
-                if("date".equals(type)){
+            case "equal":
+                if ("date".equals(type)) {
                     Date date1 = (Date) operands.get(0);
                     Calendar c = Calendar.getInstance();
                     c.setTime(date1);
                     c.add(Calendar.DATE, 1);
                     Date date2 = c.getTime();
+
                     return cb.between(fieldExp, date1, date2);
 
                 } else {
-                    return cb.equal(fieldExp,operands.get(0));
+                    return cb.equal(fieldExp, operands.get(0));
                 }
-            case "not_equal" : return cb.equal(fieldExp, operands.get(0)).not();
+            case "not_equal":
+                return cb.equal(fieldExp, operands.get(0)).not();
 
-            case "contains" : return cb.like(fieldExp, "%" + operands.get(0) + "%");
-            case "not_contains" : return cb.like(fieldExp, "%"+operands.get(0)+"%").not();
+            case "contains":
+                return cb.like(fieldExp, "%" + operands.get(0) + "%");
+            case "not_contains":
+                return cb.like(fieldExp, "%" + operands.get(0) + "%").not();
 
-            case "begins_with" : return cb.like(fieldExp, operands.get(0)+"%");
-            case "not_begins_with" : return  cb.like(fieldExp, operands.get(0)+"%").not();
+            case "begins_with":
+                return cb.like(fieldExp, operands.get(0) + "%");
+            case "not_begins_with":
+                return cb.like(fieldExp, operands.get(0) + "%").not();
 
-            case "ends_with" : return cb.like(fieldExp, "%"+operands.get(0));
-            case "not_ends_with" : return cb.like(fieldExp, "%"+operands.get(0)).not();
+            case "ends_with":
+                return cb.like(fieldExp, "%" + operands.get(0));
+            case "not_ends_with":
+                return cb.like(fieldExp, "%" + operands.get(0)).not();
 
             case "less":
-                if("date".equals(type)){
-                    return cb.lessThan(fieldExp,(Date)operands.get(0));
-                } else if("double".equals(type)){
-                    return cb.lessThan(fieldExp,(Double)operands.get(0));
+                if ("date".equals(type)) {
+                    return cb.lessThan(fieldExp, (Date) operands.get(0));
+                } else if ("double".equals(type)) {
+                    return cb.lessThan(fieldExp, (Double) operands.get(0));
                 }
                 break;
             case "less_or_equal":
-                if("date".equals(type)){
+                if ("date".equals(type)) {
                     return cb.lessThanOrEqualTo(fieldExp, (Date) operands.get(0));
-                } else if("double".equals(type)){
+                } else if ("double".equals(type)) {
                     return cb.lessThanOrEqualTo(fieldExp, (Double) operands.get(0));
                 }
                 break;
             case "greater":
-                if("date".equals(type)){
+                if ("date".equals(type)) {
                     return cb.greaterThan(fieldExp, (Date) operands.get(0));
-                } else if("double".equals(type)){
+                } else if ("double".equals(type)) {
                     return cb.greaterThan(fieldExp, (Double) operands.get(0));
                 }
                 break;
             case "greater_or_equal":
-                if("date".equals(type)){
+                if ("date".equals(type)) {
                     return cb.greaterThanOrEqualTo(fieldExp, (Date) operands.get(0));
-                } else if("double".equals(type)){
+                } else if ("double".equals(type)) {
                     return cb.greaterThanOrEqualTo(fieldExp, (Double) operands.get(0));
                 }
                 break;

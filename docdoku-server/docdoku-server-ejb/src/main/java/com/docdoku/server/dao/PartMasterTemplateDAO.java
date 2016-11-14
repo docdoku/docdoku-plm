@@ -26,10 +26,7 @@ import com.docdoku.core.meta.ListOfValuesKey;
 import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.product.PartMasterTemplateKey;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
+import javax.persistence.*;
 import java.util.List;
 import java.util.Locale;
 
@@ -48,10 +45,6 @@ public class PartMasterTemplateDAO {
         mLocale = Locale.getDefault();
     }
 
-    public void updatePartMTemplate(PartMasterTemplate pTemplate) {
-        em.merge(pTemplate);
-    }
-
     public PartMasterTemplate removePartMTemplate(PartMasterTemplateKey pKey) throws PartMasterTemplateNotFoundException {
         PartMasterTemplate template = loadPartMTemplate(pKey);
         em.remove(template);
@@ -59,7 +52,7 @@ public class PartMasterTemplateDAO {
     }
 
     public List<PartMasterTemplate> findAllPartMTemplates(String pWorkspaceId) {
-        Query query = em.createQuery("SELECT DISTINCT t FROM PartMasterTemplate t WHERE t.workspaceId = :workspaceId");
+        TypedQuery<PartMasterTemplate> query = em.createQuery("SELECT DISTINCT t FROM PartMasterTemplate t WHERE t.workspaceId = :workspaceId", PartMasterTemplate.class);
         return query.setParameter("workspaceId", pWorkspaceId).getResultList();
     }
 

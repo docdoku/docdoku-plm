@@ -45,7 +45,7 @@ public class FolderListCommand extends BaseCommandLine {
     public void execImpl() throws Exception {
         FoldersApi foldersApi = new FoldersApi(client);
         String decodedPath = folder == null ? workspace : workspace+":"+folder;
-        List<FolderDTO> folders = foldersApi.getSubFolders(workspace,decodedPath,null);
+        List<FolderDTO> folders = foldersApi.getSubFolders(workspace,decodedPath);
         output.printFolders(folders);
     }
 

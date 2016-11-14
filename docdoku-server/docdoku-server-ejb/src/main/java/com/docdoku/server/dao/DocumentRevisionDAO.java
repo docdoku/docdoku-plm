@@ -229,7 +229,7 @@ public class DocumentRevisionDAO {
 
     public List<DocumentRevision> getAllDocumentRevisions(String workspaceId) {
         String excludedFolders = workspaceId + "/~%";
-        Query query = em.createNamedQuery("DocumentRevision.findByWorkspace", DocumentRevision.class)
+        TypedQuery<DocumentRevision> query = em.createNamedQuery("DocumentRevision.findByWorkspace", DocumentRevision.class)
                 .setParameter("workspaceId", workspaceId)
                 .setParameter("excludedFolders", excludedFolders);
         return query.getResultList();
@@ -242,7 +242,7 @@ public class DocumentRevisionDAO {
 
         String excludedFolders = workspaceId + "/~%";
 
-        Query query =em.createNamedQuery("DocumentRevision.findByWorkspace.filterUserACLEntry", DocumentRevision.class)
+        TypedQuery<DocumentRevision> query = em.createNamedQuery("DocumentRevision.findByWorkspace.filterUserACLEntry", DocumentRevision.class)
                         .setParameter("workspaceId", workspaceId)
                         .setParameter("user", user)
                         .setParameter("excludedFolders", excludedFolders);

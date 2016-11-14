@@ -23,7 +23,6 @@ import com.docdoku.core.product.Import;
 import com.docdoku.core.product.ImportResult;
 import com.docdoku.core.services.IProductManagerLocal;
 
-import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
@@ -43,8 +42,10 @@ public class FileImportInterceptor {
     private IProductManagerLocal productService;
 
     private static final Logger LOGGER = Logger.getLogger(FileImportInterceptor.class.getName());
-    
+
     @AroundInvoke
+    // Safe cast, ignore warning
+    @SuppressWarnings("unchecked")
     public Object createImport(InvocationContext ctx) throws Exception {
 
         Object[] parameters = ctx.getParameters();
@@ -58,27 +59,33 @@ public class FileImportInterceptor {
 
         ImportResult importResult = null;
 
-        try{ // Run the import
+        try { // Run the import
 
             Object proceed = ctx.proceed();
-            Future<ImportResult> result = (Future<ImportResult>) proceed;
-            importResult = result.get();
+
+            if (proceed.getClass().getName().equals(Future.class.getName())) {
+                // SuppressWarnings : unchecked
+                Future<ImportResult> result = (Future<ImportResult>) proceed;
+                importResult = result.get();
+            }
+
+
             return proceed;
 
-        }catch(Exception e){
+        } catch (Exception e) {
 
-            LOGGER.log(Level.SEVERE,"Cannot import the file", e);
+            LOGGER.log(Level.SEVERE, "Cannot import the file", e);
             List<String> errors = new ArrayList<>();
             List<String> warnings = new ArrayList<>();
             errors.add("Unhandled exception");
             importResult = new ImportResult(file, originalFileName, warnings, errors);
             return null;
 
-        }finally {
+        } finally {
             productService.endImport(workspaceId, id, importResult);
         }
-        
+
     }
 
-    
+
 }

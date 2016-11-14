@@ -20,8 +20,11 @@
 
 package com.docdoku.server.util;
 
-/*
- *
+import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
+
+/**
  * @author Asmae CHADID on 07/01/15.
  */
 public class ResourceUtil {
@@ -54,4 +57,18 @@ public class ResourceUtil {
     public static final String TARGET_PART_STORAGE = System.getProperty("java.io.tmpdir") + "/com/docdoku/server/rest/part/uploaded/";
     public static final String SOURCE_PART_STORAGE = "com/docdoku/server/rest/part/toUpload/";
     public static final String FILENAME_TARGET_PART = "new_part_file.txt";
+
+
+    public static String getFilePath(String resourceName) {
+        URL resource = ResourceUtil.class.getClassLoader().getResource(resourceName);
+        return resource != null ? resource.getFile() : null;
+    }
+
+    public static Date getFutureDate() {
+        Date now = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        calendar.add(Calendar.YEAR, 2);
+        return calendar.getTime();
+    }
 }

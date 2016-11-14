@@ -39,7 +39,11 @@ import java.util.concurrent.ConcurrentMap;
     public class RoomTest {
 
     private static Room room = Mockito.mock(Room.class);
+
+    // Safe cast
+    @SuppressWarnings("unchecked")
     private static ConcurrentMap<String, Room> DB = Mockito.mock(ConcurrentHashMap.class);
+
     private static Session userSession1 = Mockito.mock(Session.class);
     private static Principal principal1 = Mockito.mock(Principal.class);
     private static Principal principal2 = Mockito.mock(Principal.class);
@@ -69,9 +73,9 @@ import java.util.concurrent.ConcurrentMap;
 
         Mockito.when(room.getUserSession(Matchers.anyString())).thenCallRealMethod();
         Mockito.when(room.getOtherUserSession(Matchers.any(Session.class))).thenCallRealMethod();
-        Mockito.when(DB.get(Matchers.anyString())).thenReturn(room);
-        Mockito.when(DB.put(Matchers.anyString(), Matchers.any(Room.class))).thenReturn(room);
-        Mockito.when(DB.get("plm").getSessionForUserLogin(Matchers.anyString())).thenCallRealMethod();
+        Mockito.when(RoomTest.DB.get(Matchers.anyString())).thenReturn(room);
+        Mockito.when(RoomTest.DB.put(Matchers.anyString(), Matchers.any(Room.class))).thenReturn(room);
+        Mockito.when(RoomTest.DB.get("plm").getSessionForUserLogin(Matchers.anyString())).thenCallRealMethod();
         Mockito.when(room.getOccupancy()).thenCallRealMethod();
         Mockito.doCallRealMethod().when(room).put();
 

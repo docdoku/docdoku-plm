@@ -205,8 +205,7 @@ public class TagResource {
     public Response createDocumentMasterInRootFolderWithTag(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document to create") DocumentCreationDTO docCreationDTO,
-            @ApiParam(required = true, value = "Tag id") @PathParam("tagId") String tagId,
-            @ApiParam(required = false, value = "Config spec to use") @QueryParam("configSpec") String configSpecType)
+            @ApiParam(required = true, value = "Tag id") @PathParam("tagId") String tagId)
             throws CreationException, FileAlreadyExistsException, DocumentRevisionAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, DocumentMasterAlreadyExistsException, RoleNotFoundException, FolderNotFoundException, WorkflowModelNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, ESServerException, UserGroupNotFoundException, WorkspaceNotEnabledException {
 
         String pDocMID = docCreationDTO.getReference();

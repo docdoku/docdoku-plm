@@ -28,7 +28,7 @@ import java.lang.reflect.Type;
 import java.util.Date;
 
 /**
- * Created by Florent Garin on 12/03/15.
+ * @author Florent Garin
  */
 @Provider
 public class CustomConverterProvider implements ParamConverterProvider {
@@ -36,6 +36,8 @@ public class CustomConverterProvider implements ParamConverterProvider {
     private final DateAdapter dateAdapter = new DateAdapter();
 
     @Override
+    // Safe cast, ignore warning
+    @SuppressWarnings("unchecked")
     public <T> ParamConverter<T> getConverter(Class<T> clazz, Type type, Annotation[] annotations) {
         if (clazz.getName().equals(Date.class.getName())) {
             return (ParamConverter<T>) dateAdapter;

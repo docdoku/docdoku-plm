@@ -141,8 +141,7 @@ public class ProductBaselinesResource {
             partIterationKeys.add(new PartIterationKey(workspaceId, part.getNumber(), part.getVersion(), part.getIteration()));
         }
 
-        ProductBaseline baseline = productBaselineService.createBaseline(ciKey,
-                name, type, description, partIterationKeys, productBaselineDTO.getSubstituteLinks(), productBaselineDTO.getOptionalUsageLinks());
+        ProductBaseline baseline = productBaselineService.createBaseline(ciKey, name, type, description, partIterationKeys, productBaselineDTO.getSubstituteLinks(), productBaselineDTO.getOptionalUsageLinks());
         ProductBaselineDTO dto = mapper.map(baseline, ProductBaselineDTO.class);
         dto.setConfigurationItemLatestRevision(baseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
         dto.setHasObsoletePartRevisions(!productBaselineService.getObsoletePartRevisionsInBaseline(workspaceId, baseline.getId()).isEmpty());

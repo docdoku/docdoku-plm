@@ -199,11 +199,10 @@ public class FolderResource {
     })
     @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO[] getRootFolders(
-            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-            @ApiParam(required = false, value = "Config spec") @QueryParam("configSpec") String configSpecType)
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
         String completePath = Tools.stripTrailingSlash(workspaceId);
-        return getFolders(workspaceId, completePath, true, configSpecType);
+        return getFolders(workspaceId, completePath, true);
     }
 
     @GET
@@ -219,12 +218,11 @@ public class FolderResource {
     @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO[] getSubFolders(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-            @ApiParam(required = true, value = "Folder id") @PathParam("completePath") String folderId,
-            @ApiParam(required = false, value = "Config spec") @QueryParam("configSpec") String configSpecType)
+            @ApiParam(required = true, value = "Folder id") @PathParam("completePath") String folderId)
             throws EntityNotFoundException, UserNotActiveException {
         String decodedCompletePath = FolderDTO.replaceColonWithSlash(folderId);
         String completePath = Tools.stripTrailingSlash(decodedCompletePath);
-        return getFolders(workspaceId, completePath, false, configSpecType);
+        return getFolders(workspaceId, completePath, false);
     }
 
     /**
@@ -378,7 +376,7 @@ public class FolderResource {
         return folderId == null ? Tools.stripTrailingSlash(workspaceId) : Tools.stripTrailingSlash(FolderDTO.replaceColonWithSlash(folderId));
     }
 
-    private FolderDTO[] getFolders(String workspaceId, String completePath, boolean rootFolder, String configSpecType)
+    private FolderDTO[] getFolders(String workspaceId, String completePath, boolean rootFolder)
             throws EntityNotFoundException, UserNotActiveException {
         String[] folderNames = documentService.getFolders(completePath);
         FolderDTO[] folderDTOs = new FolderDTO[folderNames.length];
