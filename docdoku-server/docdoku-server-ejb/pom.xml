@@ -110,7 +110,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-contrib</artifactId>
-            <scope>runetime</scope>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
