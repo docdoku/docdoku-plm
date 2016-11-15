@@ -909,11 +909,23 @@ public class PartResource {
                 for (PartSubstituteLinkDTO substituteLinkDTO : partUsageLinkDTO.getSubstitutes()) {
                     PartMaster substitute = findOrCreatePartMaster(workspaceId, substituteLinkDTO.getSubstitute());
                     if (substitute != null) {
-                        PartSubstituteLink partSubstituteLink = mapper.map(substituteLinkDTO, PartSubstituteLink.class);
+
+                        PartSubstituteLink partSubstituteLink = new PartSubstituteLink();
+                        partSubstituteLink.setAmount(partUsageLinkDTO.getAmount());
+                        partSubstituteLink.setComment(partUsageLinkDTO.getComment());
+                        partSubstituteLink.setReferenceDescription(partUsageLinkDTO.getReferenceDescription());
+                        partSubstituteLink.setUnit(partUsageLinkDTO.getUnit());
+                        partSubstituteLink.setId(partUsageLinkDTO.getId());
+
                         List<CADInstance> subCADInstances = new ArrayList<>();
                         if (substituteLinkDTO.getCadInstances() != null) {
                             for (CADInstanceDTO cadInstanceDTO : substituteLinkDTO.getCadInstances()) {
-                                subCADInstances.add(mapper.map(cadInstanceDTO, CADInstance.class));
+                                CADInstance cadInstance = mapper.map(cadInstanceDTO, CADInstance.class);
+                                cadInstance.setRotationMatrix(new RotationMatrix(cadInstanceDTO.getMatrix()));
+                                if (cadInstance.getRotationType() == null) {
+                                    cadInstance.setRotationType(CADInstance.RotationType.ANGLE);
+                                }
+                                subCADInstances.add(cadInstance);
                             }
                         } else if (substituteLinkDTO.getUnit() == null || substituteLinkDTO.getUnit().isEmpty()) {
                             for (double i = 0; i < substituteLinkDTO.getAmount(); i++) {
@@ -922,6 +934,7 @@ public class PartResource {
                         } else {
                             subCADInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
                         }
+
                         partSubstituteLink.setCadInstances(subCADInstances);
                         partSubstituteLink.setSubstitute(substitute);
                         partSubstituteLinks.add(partSubstituteLink);

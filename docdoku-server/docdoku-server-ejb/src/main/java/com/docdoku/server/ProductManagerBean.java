@@ -883,7 +883,8 @@ public class ProductManagerBean implements IProductManagerLocal {
         newLink.setCadInstances(partUsageLink.getCadInstances());
         newLink.setComment(partUsageLink.getComment());
         newLink.setReferenceDescription(partUsageLink.getReferenceDescription());
-        newLink.setUnit(partUsageLink.getUnit());
+        String linkUnit = partUsageLink.getUnit();
+        newLink.setUnit(linkUnit != null && linkUnit.isEmpty() ? null : linkUnit);
         newLink.setComponent(partUsageLink.getComponent());
 
         List<PartSubstituteLink> substitutes = new ArrayList<>();
@@ -894,7 +895,8 @@ public class ProductManagerBean implements IProductManagerLocal {
             newSubstituteLink.setCadInstances(partSubstituteLink.getCadInstances());
             newSubstituteLink.setComment(partSubstituteLink.getComment());
             newSubstituteLink.setReferenceDescription(partSubstituteLink.getReferenceDescription());
-            newSubstituteLink.setUnit(partSubstituteLink.getUnit());
+            String substituteUnit = partSubstituteLink.getUnit();
+            newSubstituteLink.setUnit(substituteUnit != null && substituteUnit.isEmpty() ? null : substituteUnit);
             newSubstituteLink.setSubstitute(partSubstituteLink.getSubstitute());
             substitutes.add(newSubstituteLink);
         }
