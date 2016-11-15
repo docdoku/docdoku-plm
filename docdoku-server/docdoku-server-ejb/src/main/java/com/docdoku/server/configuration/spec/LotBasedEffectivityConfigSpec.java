@@ -21,10 +21,11 @@
 
 package com.docdoku.server.configuration.spec;
 
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartLink;
-import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.configuration.ProductConfiguration;
+import com.docdoku.core.product.*;
+import com.docdoku.core.util.AlphanumericComparator;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -41,19 +42,38 @@ public class LotBasedEffectivityConfigSpec extends EffectivityConfigSpec {
      */
     private String lotId;
 
-    public LotBasedEffectivityConfigSpec() {
+    private final static Comparator<CharSequence> STRING_COMPARATOR = new AlphanumericComparator();
+
+    public LotBasedEffectivityConfigSpec(String lotId, ConfigurationItem configurationItem) {
+        super(configurationItem);
+        this.lotId=lotId;
+    }
+    public LotBasedEffectivityConfigSpec(String lotId, ProductConfiguration configuration) {
+        super(configuration);
+        this.lotId=lotId;
     }
 
-    @Override
-    public PartIteration filterPartIteration(PartMaster partMaster) {
-        // TODO : implement filter
-        return null;
-    }
 
     @Override
-    public PartLink filterPartLink(List<PartLink> path) {
-        // TODO : implement filter
-        return null;
+    protected boolean isEffective(Effectivity eff){
+        if(eff instanceof LotBasedEffectivity){
+            LotBasedEffectivity lotEff=(LotBasedEffectivity) eff;
+            return isEffective(lotEff);
+        }else
+            return false;
+    }
+    private boolean isEffective(LotBasedEffectivity lotEff){
+        ConfigurationItem ci = lotEff.getConfigurationItem();
+        if(!configurationItem.equals(ci))
+            return false;
+
+        if(STRING_COMPARATOR.compare(lotId, lotEff.getStartLotId())<0)
+            return false;
+
+        if(lotEff.getEndLotId()!=null && STRING_COMPARATOR.compare(lotId, lotEff.getEndLotId())>0)
+            return false;
+
+        return true;
     }
 
 

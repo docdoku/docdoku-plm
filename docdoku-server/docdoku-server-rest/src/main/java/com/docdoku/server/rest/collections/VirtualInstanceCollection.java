@@ -20,7 +20,7 @@
 
 package com.docdoku.server.rest.collections;
 
-import com.docdoku.core.configuration.PSFilter;
+import com.docdoku.core.configuration.ProductStructureFilter;
 import com.docdoku.core.product.PartRevision;
 
 /**
@@ -30,12 +30,12 @@ import com.docdoku.core.product.PartRevision;
 public class VirtualInstanceCollection {
 
     private PartRevision rootPart;
-    private PSFilter filter;
+    private ProductStructureFilter filter;
 
     public VirtualInstanceCollection() {
     }
 
-    public VirtualInstanceCollection(PartRevision rootPart, PSFilter filter) {
+    public VirtualInstanceCollection(PartRevision rootPart, ProductStructureFilter filter) {
         this.rootPart = rootPart;
         this.filter = filter;
     }
@@ -48,11 +48,11 @@ public class VirtualInstanceCollection {
         this.rootPart = rootPart;
     }
 
-    public PSFilter getFilter() {
+    public ProductStructureFilter getFilter() {
         return filter;
     }
 
-    public void setFilter(PSFilter filter) {
+    public void setFilter(ProductStructureFilter filter) {
         this.filter = filter;
     }
 }

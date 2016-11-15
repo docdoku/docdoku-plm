@@ -24,7 +24,7 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.configuration.PSFilter;
+import com.docdoku.core.configuration.ProductStructureFilter;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.*;
@@ -234,7 +234,7 @@ public class PartsResource {
                                                @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") String baselineId)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, PartMasterNotFoundException, WorkspaceNotEnabledException {
 
-        PSFilter filter = filterService.getBaselinePSFilter(Integer.valueOf(baselineId));
+        ProductStructureFilter filter = filterService.getBaselinePSFilter(Integer.valueOf(baselineId));
         PartMaster partMaster = productService.getPartMaster(new PartMasterKey(workspaceId, partNumber));
         List<PartIteration> partIterations = filter.filter(partMaster);
         if (!partIterations.isEmpty()) {

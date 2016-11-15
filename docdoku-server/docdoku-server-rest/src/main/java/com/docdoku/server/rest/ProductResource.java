@@ -22,7 +22,7 @@ package com.docdoku.server.rest;
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.CascadeResult;
-import com.docdoku.core.configuration.PSFilter;
+import com.docdoku.core.configuration.ProductStructureFilter;
 import com.docdoku.core.configuration.PathChoice;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.document.DocumentIteration;
@@ -154,7 +154,7 @@ public class ProductResource {
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
+        ProductStructureFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
         List<PartLink> decodedPath = productService.decodePath(ciKey, path);
         Component component = productService.filterProductStructure(ciKey, filter, decodedPath, 1);
 
@@ -200,7 +200,7 @@ public class ProductResource {
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
+        ProductStructureFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
         Component component;
 
         if (linkType == null) {
@@ -264,7 +264,7 @@ public class ProductResource {
             throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, NotAllowedException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
+        ProductStructureFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
         List<PartLink[]> usagePaths = productService.findPartUsages(ciKey, filter, search);
 
         List<PathDTO> pathsDTO = new ArrayList<>();
@@ -376,7 +376,7 @@ public class ProductResource {
             //this request is resources consuming so we cache the response for 30 minutes
             cc.setMaxAge(60 * 15);
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-            PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
+            ProductStructureFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
             List<PartLink> decodedPath = productService.decodePath(ciKey, path);
 
             List<List<PartLink>> paths = new ArrayList<>();
@@ -413,7 +413,7 @@ public class ProductResource {
 
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
-            PSFilter filter = psFilterService.getPSFilter(ciKey, pathsDTO.getConfigSpec(), diverge);
+            ProductStructureFilter filter = psFilterService.getPSFilter(ciKey, pathsDTO.getConfigSpec(), diverge);
 
             List<List<PartLink>> paths = new ArrayList<>();
 
@@ -506,7 +506,7 @@ public class ProductResource {
 
         FileExportProductEntity fileExportEntity = new FileExportProductEntity();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter psFilter = psFilterService.getPSFilter(ciKey, configSpecType, false);
+        ProductStructureFilter psFilter = psFilterService.getPSFilter(ciKey, configSpecType, false);
 
         fileExportEntity.setPsFilter(psFilter);
         fileExportEntity.setConfigurationItemKey(ciKey);

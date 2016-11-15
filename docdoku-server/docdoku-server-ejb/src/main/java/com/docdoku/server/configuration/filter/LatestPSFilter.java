@@ -22,14 +22,16 @@
 package com.docdoku.server.configuration.filter;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.PSFilter;
+import com.docdoku.core.configuration.ProductStructureFilter;
 import com.docdoku.core.product.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A {@link com.docdoku.core.configuration.ProductConfigSpec} which selects the latest checked in iteration.
+ * A {@link com.docdoku.core.configuration.ProductStructureFilter} implementation
+ * which selects the latest checked in iteration.
  *
  * Filters the usage link to nominal, filters the iteration to the latest checked in.
  * This filter is strict, and will return only one result for the iteration.
@@ -40,7 +42,7 @@ import java.util.List;
  *
  */
 
-public class LatestPSFilter extends PSFilter {
+public class LatestPSFilter implements ProductStructureFilter, Serializable {
 
     private User user;
     private boolean diverge = false;

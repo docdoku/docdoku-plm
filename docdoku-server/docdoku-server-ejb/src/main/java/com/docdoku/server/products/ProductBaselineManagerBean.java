@@ -160,7 +160,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
     private void copyPathToPathLinks(User user, ProductBaseline baseline) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, BaselineNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, PathToPathLinkAlreadyExistsException, CreationException, WorkspaceNotEnabledException {
         ConfigurationItem configurationItem = baseline.getConfigurationItem();
         PartLink rootPartUsageLink = productManager.getRootPartUsageLink(configurationItem.getKey());
-        PSFilter filter = new ProductBaselineConfigSpec(baseline, user);
+        ProductStructureFilter filter = new ProductBaselineConfigSpec(baseline);
 
         List<PartLink> startPath = new ArrayList<>();
         startPath.add(rootPartUsageLink);
@@ -295,7 +295,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(new Locale(user.getLanguage()), em);
         ConfigurationItem configurationItem = configurationItemDAO.loadConfigurationItem(ciKey);
 
-        PSFilter filter;
+        ProductStructureFilter filter;
 
         if(type == null || type.equals(ProductBaseline.BaselineType.RELEASED)){
             filter = new ReleasedPSFilter(user, true);
@@ -370,7 +370,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
         Set<PartIteration> parts = new HashSet<>();
 
-        PSFilter filter = new ReleasedPSFilter(user, true);
+        ProductStructureFilter filter = new ReleasedPSFilter(user, true);
 
         PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em, user, filter) {
             @Override
