@@ -3,7 +3,10 @@ package com.docdoku.server.dao;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.EffectivityAlreadyExistsException;
 import com.docdoku.core.exceptions.EffectivityNotFoundException;
+import com.docdoku.core.product.DateBasedEffectivity;
 import com.docdoku.core.product.Effectivity;
+import com.docdoku.core.product.LotBasedEffectivity;
+import com.docdoku.core.product.SerialNumberBasedEffectivity;
 
 import javax.persistence.*;
 import java.util.List;
@@ -32,8 +35,18 @@ public class EffectivityDAO {
         }
     }
 
-    public List<Effectivity> loadEffectivities() {
-        TypedQuery<Effectivity> query = em.createQuery("SELECT DISTINCT e FROM Effectivity e", Effectivity.class);
+    public List<SerialNumberBasedEffectivity> loadSerialNumberBasedEffectivities() {
+        TypedQuery<SerialNumberBasedEffectivity> query = em.createQuery("SELECT DISTINCT e FROM SerialNumberBasedEffectivity e", SerialNumberBasedEffectivity.class);
+        return query.getResultList();
+    }
+
+    public List<DateBasedEffectivity> loadDateBasedEffectivities() {
+        TypedQuery<DateBasedEffectivity> query = em.createQuery("SELECT DISTINCT e FROM DateBasedEffectivity e", DateBasedEffectivity.class);
+        return query.getResultList();
+    }
+
+    public List<LotBasedEffectivity> loadLotBasedEffectivities() {
+        TypedQuery<LotBasedEffectivity> query = em.createQuery("SELECT DISTINCT e FROM LotBasedEffectivity e", LotBasedEffectivity.class);
         return query.getResultList();
     }
 

@@ -30,7 +30,9 @@ public class EffectivityManagerBean implements IEffectivityManagerLocal {
     private IAccountManagerLocal accountManager;
 
     @Override
-    public SerialNumberBasedEffectivity createSerialNumberBasedEffectivity(String pName, String pDescription, ConfigurationItem pConfigurationItem, String pStartNumber, String pEndNumber) throws EffectivityAlreadyExistsException, CreationException {
+    public SerialNumberBasedEffectivity createSerialNumberBasedEffectivity(
+            String pName, String pDescription, ConfigurationItem pConfigurationItem, String pStartNumber, String pEndNumber)
+            throws EffectivityAlreadyExistsException, CreationException {
         EffectivityDAO effectivityDAO = new EffectivityDAO(em);
         SerialNumberBasedEffectivity serialNumberBasedEffectivity = new SerialNumberBasedEffectivity();
         serialNumberBasedEffectivity.setName(pName);
@@ -43,7 +45,9 @@ public class EffectivityManagerBean implements IEffectivityManagerLocal {
     }
 
     @Override
-    public DateBasedEffectivity createDateBasedEffectivity(String pName, String pDescription, ConfigurationItem pConfigurationItem, Date pStartDate, Date pEndDate) throws EffectivityAlreadyExistsException, CreationException {
+    public DateBasedEffectivity createDateBasedEffectivity(
+            String pName, String pDescription, ConfigurationItem pConfigurationItem, Date pStartDate, Date pEndDate)
+            throws EffectivityAlreadyExistsException, CreationException {
         EffectivityDAO effectivityDAO = new EffectivityDAO(em);
         DateBasedEffectivity dateBasedEffectivity = new DateBasedEffectivity();
         dateBasedEffectivity.setName(pName);
@@ -56,7 +60,9 @@ public class EffectivityManagerBean implements IEffectivityManagerLocal {
     }
 
     @Override
-    public LotBasedEffectivity createLotBasedEffectivity(String pName, String pDescription, ConfigurationItem pConfigurationItem, String pStartLotId, String pEndLotId) throws EffectivityAlreadyExistsException, CreationException {
+    public LotBasedEffectivity createLotBasedEffectivity(
+            String pName, String pDescription, ConfigurationItem pConfigurationItem, String pStartLotId, String pEndLotId)
+            throws EffectivityAlreadyExistsException, CreationException {
         EffectivityDAO effectivityDAO = new EffectivityDAO(em);
         LotBasedEffectivity lotBasedEffectivity = new LotBasedEffectivity();
         lotBasedEffectivity.setName(pName);
@@ -69,13 +75,33 @@ public class EffectivityManagerBean implements IEffectivityManagerLocal {
     }
 
     @Override
-    public Effectivity getEffectivity(int pId) throws EffectivityNotFoundException {
-        return new EffectivityDAO(em).loadEffectivity(pId);
+    public SerialNumberBasedEffectivity getSerialNumberBasedEffectivity(int pId) throws EffectivityNotFoundException {
+        return (SerialNumberBasedEffectivity) new EffectivityDAO(em).loadEffectivity(pId);
     }
 
     @Override
-    public List<Effectivity> getEffectivities() {
-        return new EffectivityDAO(em).loadEffectivities();
+    public DateBasedEffectivity getDateBasedEffectivity(int pId) throws EffectivityNotFoundException {
+        return (DateBasedEffectivity) new EffectivityDAO(em).loadEffectivity(pId);
+    }
+
+    @Override
+    public LotBasedEffectivity getLotBasedEffectivity(int pId) throws EffectivityNotFoundException {
+        return (LotBasedEffectivity) new EffectivityDAO(em).loadEffectivity(pId);
+    }
+
+    @Override
+    public List<SerialNumberBasedEffectivity> getSerialNumberBasedEffectivities() {
+        return new EffectivityDAO(em).loadSerialNumberBasedEffectivities();
+    }
+
+    @Override
+    public List<DateBasedEffectivity> getDateBasedEffectivities() {
+        return new EffectivityDAO(em).loadDateBasedEffectivities();
+    }
+
+    @Override
+    public List<LotBasedEffectivity> getLotBasedEffectivities() {
+        return new EffectivityDAO(em).loadLotBasedEffectivities();
     }
 
     @Override

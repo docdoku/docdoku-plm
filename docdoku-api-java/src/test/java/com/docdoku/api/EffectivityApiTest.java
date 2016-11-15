@@ -89,30 +89,99 @@ public class EffectivityApiTest {
     }
 
     @Test
-    public void getEffectivityTest() throws ApiException {
+    public void getSerialNumberBasedEffectivityTest() throws ApiException {
+        ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
+        String generatedId = UUID.randomUUID().toString().substring(0, 8);
+
+        SerialNumberBasedEffectivityDTO serialNumberBasedEffectivityDTO = new SerialNumberBasedEffectivityDTO();
+        serialNumberBasedEffectivityDTO.setName(generatedId);
+        SerialNumberBasedEffectivityDTO serialNumberBasedEffectivity = effectivityApi.createSerialNumberBasedEffectivity(
+                serialNumberBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
+
+        SerialNumberBasedEffectivityDTO effectivityDTO = effectivityApi.getSerialNumberBasedEffectivity(serialNumberBasedEffectivity.getId());
+
+        Assert.assertEquals(serialNumberBasedEffectivityDTO.getName(), effectivityDTO.getName());
+        effectivityApi.deleteEffectivity(serialNumberBasedEffectivity.getId());
+    }
+
+    @Test
+    public void getDateBasedEffectivityTest() throws ApiException {
+        ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
+        String generatedId = UUID.randomUUID().toString().substring(0, 8);
+
+        DateBasedEffectivityDTO dateBasedEffectivityDTO = new DateBasedEffectivityDTO();
+        dateBasedEffectivityDTO.setName(generatedId);
+        DateBasedEffectivityDTO dateBasedEffectivity = effectivityApi.createDateBasedEffectivity(
+                dateBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
+
+        DateBasedEffectivityDTO effectivityDTO = effectivityApi.getDateBasedEffectivity(dateBasedEffectivity.getId());
+
+        Assert.assertEquals(dateBasedEffectivityDTO.getName(), effectivityDTO.getName());
+        effectivityApi.deleteEffectivity(dateBasedEffectivity.getId());
+    }
+
+    @Test
+    public void getLotBasedEffectivityTest() throws ApiException {
         ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
         String generatedId = UUID.randomUUID().toString().substring(0, 8);
 
         LotBasedEffectivityDTO lotBasedEffectivityDTO = new LotBasedEffectivityDTO();
         lotBasedEffectivityDTO.setName(generatedId);
-        LotBasedEffectivityDTO lotBasedEffectivity = effectivityApi.createLotBasedEffectivity(lotBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
+        LotBasedEffectivityDTO lotBasedEffectivity = effectivityApi.createLotBasedEffectivity(
+                lotBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
 
-        EffectivityDTO effectivityDTO = effectivityApi.getEffectivity(lotBasedEffectivity.getId());
+        LotBasedEffectivityDTO effectivityDTO = effectivityApi.getLotBasedEffectivity(lotBasedEffectivity.getId());
 
         Assert.assertEquals(lotBasedEffectivityDTO.getName(), effectivityDTO.getName());
         effectivityApi.deleteEffectivity(lotBasedEffectivity.getId());
     }
 
     @Test
-    public void getEffectivitiesTest() throws ApiException {
+    public void getSerialNumberBasedEffectivitiesTest() throws ApiException {
+        ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
+        String generatedId = UUID.randomUUID().toString().substring(0, 8);
+
+        SerialNumberBasedEffectivityDTO serialNumberBasedEffectivityDTO = new SerialNumberBasedEffectivityDTO();
+        serialNumberBasedEffectivityDTO.setName(generatedId);
+        SerialNumberBasedEffectivityDTO serialNumberBasedEffectivity = effectivityApi.createSerialNumberBasedEffectivity(
+                serialNumberBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
+
+        List<SerialNumberBasedEffectivityDTO> effectivityDTOList = effectivityApi.getSerialNumberBasedEffectivities();
+        System.out.println(effectivityDTOList.size());
+        EffectivityDTO lastInsertedEffectivityDTO = effectivityDTOList.get(effectivityDTOList.size()-1);
+
+        Assert.assertEquals(serialNumberBasedEffectivityDTO.getName(), lastInsertedEffectivityDTO.getName());
+        effectivityApi.deleteEffectivity(serialNumberBasedEffectivity.getId());
+    }
+
+    @Test
+    public void getDateBasedEffectivitiesTest() throws ApiException {
+        ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
+        String generatedId = UUID.randomUUID().toString().substring(0, 8);
+
+        DateBasedEffectivityDTO dateBasedEffectivityDTO = new DateBasedEffectivityDTO();
+        dateBasedEffectivityDTO.setName(generatedId);
+        DateBasedEffectivityDTO dateBasedEffectivity = effectivityApi.createDateBasedEffectivity(
+                dateBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
+
+        List<DateBasedEffectivityDTO> effectivityDTOList = effectivityApi.getDateBasedEffectivities();
+        EffectivityDTO lastInsertedEffectivityDTO = effectivityDTOList.get(effectivityDTOList.size()-1);
+
+        Assert.assertEquals(dateBasedEffectivityDTO.getName(), lastInsertedEffectivityDTO.getName());
+        effectivityApi.deleteEffectivity(dateBasedEffectivity.getId());
+    }
+
+    @Test
+    public void getLotBasedEffectivitiesTest() throws ApiException {
         ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
         String generatedId = UUID.randomUUID().toString().substring(0, 8);
 
         LotBasedEffectivityDTO lotBasedEffectivityDTO = new LotBasedEffectivityDTO();
         lotBasedEffectivityDTO.setName(generatedId);
-        LotBasedEffectivityDTO lotBasedEffectivity = effectivityApi.createLotBasedEffectivity(lotBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
+        LotBasedEffectivityDTO lotBasedEffectivity = effectivityApi.createLotBasedEffectivity(
+                lotBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
 
-        List<EffectivityDTO> effectivityDTOList = effectivityApi.getEffectivities();
+        List<LotBasedEffectivityDTO> effectivityDTOList = effectivityApi.getLotBasedEffectivities();
         EffectivityDTO lastInsertedEffectivityDTO = effectivityDTOList.get(effectivityDTOList.size()-1);
 
         Assert.assertEquals(lotBasedEffectivityDTO.getName(), lastInsertedEffectivityDTO.getName());
@@ -130,7 +199,7 @@ public class EffectivityApiTest {
 
         lotBasedEffectivityDTO.setName(updatedName);
         EffectivityDTO updatedEffectivity = effectivityApi.updateEffectivity(lotBasedEffectivity.getId(), lotBasedEffectivityDTO);
-        EffectivityDTO effectivityDTO = effectivityApi.getEffectivity(lotBasedEffectivity.getId());
+        EffectivityDTO effectivityDTO = effectivityApi.getLotBasedEffectivity(lotBasedEffectivity.getId());
 
         Assert.assertEquals(updatedEffectivity.getId(), effectivityDTO.getId());
         Assert.assertEquals(updatedEffectivity.getName(), effectivityDTO.getName());
@@ -148,7 +217,7 @@ public class EffectivityApiTest {
         LotBasedEffectivityDTO lotBasedEffectivity = effectivityApi.createLotBasedEffectivity(lotBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
 
         effectivityApi.deleteEffectivity(lotBasedEffectivity.getId());
-        List<EffectivityDTO> effectivities = effectivityApi.getEffectivities();
+        List<LotBasedEffectivityDTO> effectivities = effectivityApi.getLotBasedEffectivities();
         Assert.assertFalse(effectivities.contains(lotBasedEffectivity));
     }
 }

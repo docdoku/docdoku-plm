@@ -50,7 +50,7 @@ public class EffectivityResource {
     }
 
     @POST
-    @Path("/{workspaceId}/serial-number/{confirgurationItemId}")
+    @Path("/serial-number/{workspaceId}/{confirgurationItemId}")
     @ApiOperation(value = "Create Serial number based effectivity on a configuration item", response = SerialNumberBasedEffectivityDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
     public SerialNumberBasedEffectivityDTO createSerialNumberBasedEffectivity(
@@ -67,7 +67,7 @@ public class EffectivityResource {
     }
 
     @POST
-    @Path("/{workspaceId}/date/{confirgurationItemId}")
+    @Path("/date/{workspaceId}/{confirgurationItemId}")
     @ApiOperation(value = "Create Date based effectivity on a configuration item", response = DateBasedEffectivityDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
     public DateBasedEffectivityDTO createDateBasedEffectivity(
@@ -84,7 +84,7 @@ public class EffectivityResource {
     }
 
     @POST
-    @Path("/{workspaceId}/lot/{confirgurationItemId}")
+    @Path("/lot/{workspaceId}/{confirgurationItemId}")
     @ApiOperation(value = "Create Lot based effectivity on a configuration item", response = LotBasedEffectivityDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
     public LotBasedEffectivityDTO createLotBasedEffectivity(
@@ -101,23 +101,67 @@ public class EffectivityResource {
     }
 
     @GET
-    @ApiOperation(value = "Get all effectivities", response = EffectivityDTO.class, responseContainer = "List")
+    @Path("/serial-number")
+    @ApiOperation(value = "Get all serial number based effectivities", response = SerialNumberBasedEffectivityDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getEffectivities() {
-        List<EffectivityDTO> effectivityDTOs = new ArrayList<>();
-        for(Effectivity effectivity : effectivityManager.getEffectivities()) {
-            effectivityDTOs.add(mapper.map(effectivity, EffectivityDTO.class));
+    public Response getSerialNumberBasedEffectivities() {
+        List<SerialNumberBasedEffectivityDTO> effectivityDTOs = new ArrayList<>();
+        for(SerialNumberBasedEffectivity effectivity : effectivityManager.getSerialNumberBasedEffectivities()) {
+            effectivityDTOs.add(mapper.map(effectivity, SerialNumberBasedEffectivityDTO.class));
         }
-        return Response.ok(new GenericEntity<List<EffectivityDTO>>(effectivityDTOs){}).build();
+        return Response.ok(new GenericEntity<List<SerialNumberBasedEffectivityDTO>>(effectivityDTOs){}).build();
     }
 
     @GET
-    @Path("/{effectivityId}")
-    @ApiOperation(value = "Get an effectivity from its ID", response = EffectivityDTO.class)
+    @Path("/date")
+    @ApiOperation(value = "Get all date based effectivities", response = DateBasedEffectivityDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public EffectivityDTO getEffectivity(@ApiParam(required = true, value = "Effectivity id") @PathParam("effectivityId") int effectivityId) throws EffectivityNotFoundException {
-        Effectivity effectivity = effectivityManager.getEffectivity(effectivityId);
-        return mapper.map(effectivity, EffectivityDTO.class);
+    public Response getDateBasedEffectivities() {
+        List<DateBasedEffectivityDTO> effectivityDTOs = new ArrayList<>();
+        for(DateBasedEffectivity effectivity : effectivityManager.getDateBasedEffectivities()) {
+            effectivityDTOs.add(mapper.map(effectivity, DateBasedEffectivityDTO.class));
+        }
+        return Response.ok(new GenericEntity<List<DateBasedEffectivityDTO>>(effectivityDTOs){}).build();
+    }
+
+    @GET
+    @Path("/lot")
+    @ApiOperation(value = "Get all lot based effectivities", response = LotBasedEffectivityDTO.class, responseContainer = "List")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getLotBasedEffectivities() {
+        List<LotBasedEffectivityDTO> effectivityDTOs = new ArrayList<>();
+        for(LotBasedEffectivity effectivity : effectivityManager.getLotBasedEffectivities()) {
+            effectivityDTOs.add(mapper.map(effectivity, LotBasedEffectivityDTO.class));
+        }
+        return Response.ok(new GenericEntity<List<LotBasedEffectivityDTO>>(effectivityDTOs){}).build();
+    }
+
+    @GET
+    @Path("/serial-number/{effectivityId}")
+    @ApiOperation(value = "Get a serial number based effectivity from its ID", response = SerialNumberBasedEffectivityDTO.class)
+    @Produces(MediaType.APPLICATION_JSON)
+    public SerialNumberBasedEffectivityDTO getSerialNumberBasedEffectivity(
+            @ApiParam(required = true, value = "Effectivity id") @PathParam("effectivityId") int effectivityId) throws EffectivityNotFoundException {
+        SerialNumberBasedEffectivity effectivity = effectivityManager.getSerialNumberBasedEffectivity(effectivityId);
+        return mapper.map(effectivity, SerialNumberBasedEffectivityDTO.class);
+    }
+
+    @GET
+    @Path("/date/{effectivityId}")
+    @ApiOperation(value = "Get a serial number based effectivity from its ID", response = DateBasedEffectivityDTO.class)
+    @Produces(MediaType.APPLICATION_JSON)
+    public DateBasedEffectivityDTO getDateBasedEffectivity(@ApiParam(required = true, value = "Effectivity id") @PathParam("effectivityId") int effectivityId) throws EffectivityNotFoundException {
+        DateBasedEffectivity effectivity = effectivityManager.getDateBasedEffectivity(effectivityId);
+        return mapper.map(effectivity, DateBasedEffectivityDTO.class);
+    }
+
+    @GET
+    @Path("/lot/{effectivityId}")
+    @ApiOperation(value = "Get a serial number based effectivity from its ID", response = LotBasedEffectivityDTO.class)
+    @Produces(MediaType.APPLICATION_JSON)
+    public LotBasedEffectivityDTO getLotBasedEffectivity(@ApiParam(required = true, value = "Effectivity id") @PathParam("effectivityId") int effectivityId) throws EffectivityNotFoundException {
+        LotBasedEffectivity effectivity = effectivityManager.getLotBasedEffectivity(effectivityId);
+        return mapper.map(effectivity, LotBasedEffectivityDTO.class);
     }
 
     @PUT
@@ -128,15 +172,15 @@ public class EffectivityResource {
             @ApiParam(required = true, value = "Effectivity id") @PathParam("effectivityId") int effectivityId,
             @ApiParam(required = true, value = "Effectivity values to update") EffectivityDTO effectivityDTO) throws EffectivityNotFoundException {
         Effectivity effectivity = null;
-        if(effectivity.getClass().equals(SerialNumberBasedEffectivityDTO.class)) {
+        if(effectivityDTO.getClass().equals(SerialNumberBasedEffectivityDTO.class)) {
             effectivity = effectivityManager.updateSerialNumberBasedEffectivity(effectivityId,
                     effectivityDTO.getName(), effectivityDTO.getDescription(),
                     ((SerialNumberBasedEffectivityDTO)effectivityDTO).getStartNumber(), ((SerialNumberBasedEffectivityDTO)effectivityDTO).getEndNumber());
-        } else if (effectivity.getClass().equals(DateBasedEffectivityDTO.class)) {
+        } else if (effectivityDTO.getClass().equals(DateBasedEffectivityDTO.class)) {
             effectivity = effectivityManager.updateDateBasedEffectivity(effectivityId,
                     effectivityDTO.getName(), effectivityDTO.getDescription(),
                     ((DateBasedEffectivityDTO)effectivityDTO).getStartDate(), ((DateBasedEffectivityDTO)effectivityDTO).getEndDate());
-        } else if (effectivity.getClass().equals(LotBasedEffectivity.class)) {
+        } else if (effectivityDTO.getClass().equals(LotBasedEffectivity.class)) {
             effectivity = effectivityManager.updateLotBasedEffectivity(effectivityId,
                     effectivityDTO.getName(), effectivityDTO.getDescription(),
                     ((LotBasedEffectivityDTO)effectivityDTO).getStartLotId(), ((LotBasedEffectivityDTO)effectivityDTO).getEndLotId());
