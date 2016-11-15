@@ -125,6 +125,7 @@ public class AccountResource {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of created AccountDTO. Response will contain authentication token."),
             @ApiResponse(code = 202, message = "Account creation successful, but not yet enabled"),
+            @ApiResponse(code = 400, message = "Bad request, read response message for more details"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)

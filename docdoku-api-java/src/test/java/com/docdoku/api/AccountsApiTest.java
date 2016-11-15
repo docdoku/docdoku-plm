@@ -55,7 +55,26 @@ public class AccountsApiTest {
 
         AccountDTO updatedAccount = accountsApi.updateAccount(account);
         Assert.assertEquals(updatedAccount.getName(), newName);
-        Assert.assertEquals(updatedAccount,account);
+        Assert.assertEquals(updatedAccount, account);
+
+    }
+
+    @Test
+    public void createAlreadyExistingAccount() throws ApiException {
+
+        AccountsApi accountsApi = new AccountsApi(TestConfig.GUEST_CLIENT);
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setEmail(TestConfig.EMAIL);
+        accountDTO.setNewPassword(TestConfig.PASSWORD);
+        accountDTO.setLanguage(TestConfig.LANGUAGE);
+        accountDTO.setName(TestConfig.LOGIN);
+        accountDTO.setTimeZone(TestConfig.TIMEZONE);
+
+        try {
+            accountsApi.createAccount(accountDTO);
+        } catch (ApiException e) {
+            Assert.assertEquals(400, e.getCode());
+        }
 
     }
 
