@@ -262,7 +262,7 @@ public class ProductBaseline implements Serializable {
         return substituteLinks.contains(link);
     }
 
-    public boolean isLinkOptional(String link) {
+    public boolean isOptionalLinkRetained(String link) {
         return optionalUsageLinks.contains(link);
     }
 

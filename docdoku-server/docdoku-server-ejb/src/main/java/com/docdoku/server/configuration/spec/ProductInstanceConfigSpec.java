@@ -88,7 +88,7 @@ public class ProductInstanceConfigSpec extends ProductConfigSpec {
         // Check if optional or substitute, nominal link else
         PartLink nominalLink = path.get(path.size()-1);
 
-        if(nominalLink.isOptional() && productInstanceIteration.isLinkOptional(Tools.getPathAsString(path))){
+        if(nominalLink.isOptional() && !productInstanceIteration.isOptionalLinkRetained(Tools.getPathAsString(path))){
             return null;
         }
 

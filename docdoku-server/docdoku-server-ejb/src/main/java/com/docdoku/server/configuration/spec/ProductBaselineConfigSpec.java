@@ -96,7 +96,7 @@ public class ProductBaselineConfigSpec extends ProductConfigSpec {
 
         PartLink nominalLink = path.get(path.size()-1);
 
-        if(nominalLink.isOptional() && productBaseline.isLinkOptional(Tools.getPathAsString(path))){
+        if(nominalLink.isOptional() && !productBaseline.isOptionalLinkRetained(Tools.getPathAsString(path))){
             return null;
         }
 
