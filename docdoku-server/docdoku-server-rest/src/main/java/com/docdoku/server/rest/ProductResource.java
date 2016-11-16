@@ -550,6 +550,7 @@ public class ProductResource {
     }
 
     // TODO : refactor with regex to merge 2 by 2
+/*
 
     @ApiOperation(value = "Get all ProductConfigurationsResource")
     @Path("configurations")
@@ -563,6 +564,7 @@ public class ProductResource {
         return productConfigurationsResource;
     }
 
+*/
 
     @ApiOperation(value = "Get ProductConfigurationsResource")
     @Path("baselines")

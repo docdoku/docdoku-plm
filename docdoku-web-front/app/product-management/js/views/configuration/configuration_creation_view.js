@@ -150,7 +150,8 @@ define([
                     description: this.$inputDescription.val(),
                     substituteLinks:substituteLinks,
                     optionalUsageLinks:optionalUsageLinks,
-                    acl: this.workspaceMembershipsView.toList()
+                    acl: this.workspaceMembershipsView.toList(),
+                    configurationItemId:this.model.get('id')
                 };
 
                 this.model.createConfiguration(data).success(this.onConfigurationCreated.bind(this)).error(this.onError.bind(this));

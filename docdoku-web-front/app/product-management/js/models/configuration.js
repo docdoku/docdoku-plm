@@ -8,9 +8,11 @@ define([
     var Configuration = Backbone.Model.extend({
         urlRoot: function () {
             if (this.configurationItemId) {
-                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.configurationItemId + '/configurations';
+                return App.config.contextPath + '/api/workspaces/'
+                    + App.config.workspaceId + '/product-configurations/' + this.configurationItemId + '/configurations';
             }
-            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/configurations';
+            return App.config.contextPath + '/api/workspaces/'
+                + App.config.workspaceId + '/product-configurations';
         },
         initialize: function () {
             _.bindAll(this);

@@ -86,14 +86,14 @@ define(['backbone'], function (Backbone) {
         createConfiguration: function (configurationArgs) {
             return $.ajax({
                 type: 'POST',
-                url: this.urlRoot() + '/' + this.getId() + '/configurations',
+                url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/product-configurations',
                 data: JSON.stringify(configurationArgs),
                 contentType: 'application/json; charset=utf-8'
             });
         },
 
         getConfigurations: function () {
-            return $.getJSON(this.urlRoot() + '/' + this.getId() + '/configurations');
+            return $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/product-configurations/' + this.getId() + '/configurations');
         },
 
         getReleasedChoices: function () {

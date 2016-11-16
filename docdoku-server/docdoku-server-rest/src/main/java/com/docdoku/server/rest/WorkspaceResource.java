@@ -78,6 +78,9 @@ public class WorkspaceResource {
     private ProductResource products;
 
     @Inject
+    private ProductConfigurationsResource productConfigurations;
+
+    @Inject
     private PartsResource parts;
 
     @Inject
@@ -773,6 +776,12 @@ public class WorkspaceResource {
     @Path("/{workspaceId}/products")
     public ProductResource products() {
         return products;
+    }
+
+    @ApiOperation(value = "ProductConfigurationResource")
+    @Path("/{workspaceId}/product-configurations")
+    public ProductConfigurationsResource productConfigurations() {
+        return productConfigurations;
     }
 
     @ApiOperation(value = "PartsResource")
