@@ -54,7 +54,7 @@ import java.util.Map;
  * @author Morgan Guimard
  */
 @RequestScoped
-@Api(hidden = true, value = "product-configurations", description = "Operations about product configurations")
+@Api(hidden = true, value = "productConfigurations", description = "Operations about product configurations")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ProductConfigurationsResource {
@@ -95,7 +95,7 @@ public class ProductConfigurationsResource {
 
 
     @GET
-    @Path("{ciId}")
+    @Path("{ciId}/configurations")
     @ApiOperation(value = "Get all product configurations for given product",
             response = ProductConfigurationDTO.class,
             responseContainer = "List")

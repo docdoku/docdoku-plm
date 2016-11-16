@@ -15,16 +15,22 @@ define(['backbone',
 
         url:function(){
             if(this.get('identifier')){
-                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.getConfigurationItemId() + '/product-instances/' + this.getSerialNumber();
+                return App.config.contextPath + '/api/workspaces/'
+                    + App.config.workspaceId + '/product-instances/'
+                    + this.getConfigurationItemId() + '/instances/'
+                    + this.getSerialNumber();
             }
             return this.urlRoot();
         },
 
         urlRoot: function () {
             if (this.getConfigurationItemId()) {
-                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.getConfigurationItemId() + '/product-instances';
+                return App.config.contextPath + '/api/workspaces/'
+                    + App.config.workspaceId + '/product-instances/'
+                    + this.getConfigurationItemId() + '/instances';
             } else {
-                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/product-instances';
+                return App.config.contextPath + '/api/workspaces/'
+                    + App.config.workspaceId + '/product-instances';
             }
         },
 
@@ -92,6 +98,16 @@ define(['backbone',
                 contentType: 'application/json; charset=utf-8',
                 success: args.success,
                 error: args.error
+            });
+        },
+        createInstance: function (args, callbacks) {
+            return $.ajax({
+                type: 'POST',
+                url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/product-instances',
+                data: JSON.stringify(args),
+                contentType: 'application/json; charset=utf-8',
+                success: callbacks.success,
+                error: callbacks.error
             });
         },
 

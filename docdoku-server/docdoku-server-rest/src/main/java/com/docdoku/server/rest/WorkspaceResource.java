@@ -81,6 +81,12 @@ public class WorkspaceResource {
     private ProductConfigurationsResource productConfigurations;
 
     @Inject
+    private ProductBaselinesResource productBaselines;
+
+    @Inject
+    private ProductInstancesResource productInstancesResource;
+
+    @Inject
     private PartsResource parts;
 
     @Inject
@@ -436,7 +442,7 @@ public class WorkspaceResource {
         if (userDTO.getMembership() == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        WorkspaceUserMembership workspaceUserMembership = userManager.grantUserAccess(workspaceId, userDTO.getLogin(), userDTO.getMembership() == WorkspaceMembership.READ_ONLY ? true : false);
+        WorkspaceUserMembership workspaceUserMembership = userManager.grantUserAccess(workspaceId, userDTO.getLogin(), userDTO.getMembership() == WorkspaceMembership.READ_ONLY);
         return Response.ok(mapper.map(workspaceUserMembership.getMember(), UserDTO.class)).build();
     }
 
@@ -782,6 +788,18 @@ public class WorkspaceResource {
     @Path("/{workspaceId}/product-configurations")
     public ProductConfigurationsResource productConfigurations() {
         return productConfigurations;
+    }
+
+    @ApiOperation(value = "ProductBaselinesResource")
+    @Path("/{workspaceId}/product-baselines")
+    public ProductBaselinesResource productBaselines() {
+        return productBaselines;
+    }
+
+    @ApiOperation(value = "Get all ProductInstancesResource")
+    @Path("/{workspaceId}/product-instances")
+    public ProductInstancesResource getProductInstances() {
+        return productInstancesResource;
     }
 
     @ApiOperation(value = "PartsResource")

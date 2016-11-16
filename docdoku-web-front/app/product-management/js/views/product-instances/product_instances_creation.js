@@ -5,11 +5,11 @@ define([
     'text!templates/product-instances/product_instances_creation.html',
     'common-objects/models/product_instance',
     'collections/configuration_items',
-    'common-objects/collections/baselines',
+    'common-objects/collections/product_baselines',
     'common-objects/views/attributes/attributes',
     'common-objects/views/security/acl',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, ProductInstanceModel, ConfigurationItemCollection, BaselinesCollection,AttributesView,ACLView, AlertView) {
+], function (Backbone, Mustache, template, ProductInstanceModel, ConfigurationItemCollection, ProductBaselines, AttributesView, ACLView, AlertView) {
     'use strict';
 
     var ProductInstanceCreationView = Backbone.View.extend({
@@ -42,10 +42,10 @@ define([
             }).render();
             this.$inputSerialNumber.customValidity(App.config.i18n.REQUIRED_FIELD);
 
-            if(this.options.baseline){
+            if (this.options.baseline) {
                 this.$inputBaseline.append('<option value="' + this.options.baseline.getId() + '" >' + this.options.baseline.getName() + '</option>');
                 this.$inputConfigurationItem.append('<option value="' + this.options.baseline.getConfigurationItemId() + '" >' + this.options.baseline.getConfigurationItemId() + '</option>');
-            }else{
+            } else {
                 new ConfigurationItemCollection().fetch({success: this.fillConfigurationItemList});
             }
             return this;
@@ -65,7 +65,7 @@ define([
             var self = this;
             this.$inputBaseline.empty();
             this.$inputBaseline.attr('disabled', 'disabled');
-            new BaselinesCollection({}, {productId: self.$inputConfigurationItem.val()}).fetch({
+            new ProductBaselines({}, {productId: self.$inputConfigurationItem.val()}).fetch({
                 success: function (list) {
                     list.each(function (baseline) {
                         self.$inputBaseline.append('<option value="' + baseline.getId() + '" >' + baseline.getName() + '</option>');
@@ -99,17 +99,20 @@ define([
                 baselineId: this.$inputBaseline.val(),
                 instanceAttributes: this.attributesView.collection.toJSON(),
                 acl: this.workspaceMembershipsView.toList()
-
             };
 
             if (data.serialNumber && data.configurationItemId && data.baselineId) {
-                this.model.unset('identifier');
+                this.model.createInstance(data,{
+                    success: this.onProductInstanceCreated,
+                    error: this.onError
+                });
+                /*this.model.unset('identifier');
                 this.model.unset('serialNumber');
                 this.model.save(data, {
                     success: this.onProductInstanceCreated,
                     error: this.onError,
                     wait: true
-                });
+                });*/
             }
 
             e.preventDefault();
@@ -118,9 +121,9 @@ define([
         },
 
         onProductInstanceCreated: function () {
-            this.trigger('info',App.config.i18n.PRODUCT_INSTANCE_CREATED);
+            this.trigger('info', App.config.i18n.PRODUCT_INSTANCE_CREATED);
 
-            if(this.collection){
+            if (this.collection) {
                 this.collection.fetch();
             }
             this.closeModal();

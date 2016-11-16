@@ -21,7 +21,11 @@ define(['backbone',
         },
 
         url: function () {
-            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/' + this.getPath();
+            return App.config.contextPath + '/api/workspaces/'
+                + App.config.workspaceId + '/product-instances/'
+                + App.config.productId + '/instances/'
+                + this.serialNumber + '/pathdata/'
+                + this.getPath();
         },
 
         parse: function (data) {

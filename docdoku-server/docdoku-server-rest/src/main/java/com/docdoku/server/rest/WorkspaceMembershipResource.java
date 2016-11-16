@@ -51,7 +51,7 @@ import java.util.List;
  * @author Morgan Guimard
  */
 @RequestScoped
-@Api(hidden = true, value = "workspace-memberships", description = "Operations about workspace memberships")
+@Api(hidden = true, value = "workspaceMemberships", description = "Operations about workspace memberships")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class WorkspaceMembershipResource {

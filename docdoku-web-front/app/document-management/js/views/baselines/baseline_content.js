@@ -2,14 +2,14 @@
 define([
     'backbone',
     'mustache',
-    'common-objects/collections/baselines',
+    'common-objects/collections/document_baselines',
     'text!templates/baselines/baseline_content.html',
     'views/baselines/baseline_list',
     'text!common-objects/templates/buttons/delete_baseline_button.html',
     'text!common-objects/templates/buttons/snap_button.html',
     'common-objects/views/alert',
     'views/baselines/baseline_creation_view'
-], function (Backbone, Mustache, BaselinesCollection, template, BaselinesListView, deleteButton, snapButton, AlertView, BaselineCreationView) {
+], function (Backbone, Mustache, DocumentBaselines, template, BaselinesListView, deleteButton, snapButton, AlertView, BaselineCreationView) {
     'use strict';
 
     var BaselineContentView = Backbone.View.extend({
@@ -63,7 +63,7 @@ define([
             }
 
             this.listView = new BaselinesListView({
-                collection: new BaselinesCollection({}, {type:'document'})
+                collection: new DocumentBaselines()
             }).render();
 
             this.$el.append(this.listView.el);

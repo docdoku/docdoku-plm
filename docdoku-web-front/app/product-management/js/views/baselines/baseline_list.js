@@ -1,9 +1,9 @@
 /*global _,define*/
 define([
     'backbone',
-    'common-objects/collections/baselines',
+    'common-objects/collections/product_baselines',
     'views/baselines/baseline_list_item'
-], function (Backbone, Baselines, BaselineListItemView) {
+], function (Backbone, ProductBaselines, BaselineListItemView) {
 	'use strict';
     var BaselineListView = Backbone.View.extend({
 
@@ -17,7 +17,7 @@ define([
         },
 
         render: function () {
-            this.collection = new Baselines({}, {productId: this.productId});
+            this.collection = new ProductBaselines();
             this.listenToOnce(this.collection, 'reset', this.onCollectionReset);
             this.collection.fetch({reset: true});
             return this;

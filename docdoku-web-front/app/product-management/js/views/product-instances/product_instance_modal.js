@@ -12,9 +12,9 @@ define([
     'common-objects/views/linked/linked_documents',
     'common-objects/collections/file/attached_file_collection',
     'common-objects/views/alert',
-    'common-objects/collections/baselines',
+    'common-objects/collections/product_baselines',
     'common-objects/views/pathToPathLink/path_to_path_link_item'
-], function (Backbone, Mustache, template, pathTemplate, date, AttributeCollection, ProductInstanceAttributeListView, FileListView, LinkedDocumentCollection, LinkedDocumentsView, AttachedFileCollection, AlertView, Baselines, PathToPathLinkItemView) {
+], function (Backbone, Mustache, template, pathTemplate, date, AttributeCollection, ProductInstanceAttributeListView, FileListView, LinkedDocumentCollection, LinkedDocumentsView, AttachedFileCollection, AlertView, ProductBaselines, PathToPathLinkItemView) {
     'use strict';
     var ProductInstancesModalView = Backbone.View.extend({
         events: {
@@ -73,7 +73,7 @@ define([
             this.renderChoices();
 
             var self = this;
-            this.collection = new Baselines({}, {productId: this.productId});
+            this.collection = new ProductBaselines({}, {productId: this.productId});
             this.collection.fetch({reset: true}).success(function () {
                 self.$('.rebase-baseline-select').html('');
                 _.each(self.collection.models, function (baseline) {
@@ -326,7 +326,11 @@ define([
             //Do the rebase
             var selectedBaselineId = this.$('.rebase-baseline-select').val();
 
-            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/product-instances/' + this.model.getSerialNumber() + '/rebase';
+            var url = App.config.contextPath + '/api/workspaces/'
+                + App.config.workspaceId + '/product-instances/'
+                + this.productId + '/instances/'
+                + this.model.getSerialNumber() + '/rebase';
+
             $.ajax({
                 type: 'PUT',
                 data: JSON.stringify({id: selectedBaselineId}),

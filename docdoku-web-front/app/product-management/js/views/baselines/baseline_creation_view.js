@@ -2,7 +2,6 @@
 define([
 	'backbone',
 	'mustache',
-	'common-objects/collections/baselines',
 	'models/configuration_item',
     'common-objects/models/product_baseline',
 	'collections/configuration_items',
@@ -12,7 +11,7 @@ define([
     'views/baselines/baseline_choice_list',
     'views/baselines/baselined_part_list',
     'views/baselines/baseline_configuration_list'
-], function (Backbone, Mustache, Baselines, ConfigurationItem, ProductBaseline, ConfigurationItemCollection, ConfigurationCollection, template, AlertView, BaselineChoiceListView, BaselinedPartsView, BaselineConfigurationsView) {
+], function (Backbone, Mustache, ConfigurationItem, ProductBaseline, ConfigurationItemCollection, ConfigurationCollection, template, AlertView, BaselineChoiceListView, BaselinedPartsView, BaselineConfigurationsView) {
 
     'use strict';
 
@@ -186,7 +185,8 @@ define([
                     description: this.$inputBaselineDescription.val(),
                     baselinedParts:baselinedParts,
                     substituteLinks:substituteLinks,
-                    optionalUsageLinks:optionalUsageLinks
+                    optionalUsageLinks:optionalUsageLinks,
+                    configurationItemId:this.model.get('id')
                 };
 
                 if(data.name.trim()){

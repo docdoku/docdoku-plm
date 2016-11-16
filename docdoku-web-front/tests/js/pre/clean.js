@@ -86,7 +86,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
                 var baselines = JSON.parse(this.getPageContent());
                 baselines.forEach(function (baseline) {
                     that.log('Deleting baseline ' + baseline.id, 'info');
-                    that.open(apiUrls.getBaselines + '/' + baseline.id, {method: 'DELETE'}).then(function () {
+                    that.open(apiUrls.getBaselines + '/' + baseline.configurationItemId + '/baselines/' + baseline.id, {method: 'DELETE'}).then(function () {
                         that.log('Baseline ' + baseline.id + ' deleted', 'info');
                     });
                 });

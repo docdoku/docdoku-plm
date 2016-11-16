@@ -4,9 +4,9 @@ define([
     'mustache',
     'text!common-objects/templates/udf/user_defined_function.html',
     'collections/configuration_items',
-    'common-objects/collections/baselines',
+    'common-objects/collections/product_baselines',
     'common-objects/views/udf/calculation'
-], function (Backbone, Mustache, template,ConfigurationItemCollection,Baselines, CalculationView) {
+], function (Backbone, Mustache, template,ConfigurationItemCollection,ProductBaselines, CalculationView) {
 
     'use strict';
 
@@ -72,7 +72,7 @@ define([
                     valueList.append('<option value="latest-released">'+App.config.i18n.HEAD_RELEASED+'</option>');
 
                 } else if (typeId === 'baseline') {
-                    new Baselines({},{type:'product',productId:productId}).fetch({success:function(baselines) {
+                    new ProductBaselines({},{productId:productId}).fetch({success:function(baselines) {
                         baselines.each(function(baseline){
                             valueList.append('<option value="'+baseline.getId()+'">'+baseline.getName()+'</option>');
                         });

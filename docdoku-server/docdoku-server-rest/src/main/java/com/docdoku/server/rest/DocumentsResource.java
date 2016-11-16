@@ -59,8 +59,6 @@ public class DocumentsResource {
     @Inject
     private IDocumentWorkflowManagerLocal documentWorkflowService;
     @Inject
-    private DocumentBaselinesResource baselinesResource;
-    @Inject
     private DocumentResource documentResource;
     private Mapper mapper;
 
@@ -77,12 +75,12 @@ public class DocumentsResource {
     public DocumentResource getDocumentResource() {
         return documentResource;
     }
-
+/*
     @ApiOperation(value = "SubResource : DocumentBaselinesResource")
     @Path("baselines")
     public DocumentBaselinesResource getAllBaselines() {
         return baselinesResource;
-    }
+    }*/
 
     @GET
     @ApiOperation(value = "Get documents in workspace",

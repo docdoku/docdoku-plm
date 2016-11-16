@@ -168,7 +168,8 @@ define([
 
             if (this.file) {
 
-                var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/product-instances/import';
+                var baseUrl = App.config.contextPath + '/api/workspaces/'
+                    + App.config.workspaceId + '/product-instances/import';
 
                 var params = {
                     autoFreezeAfterUpdate: this.freeze,

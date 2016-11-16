@@ -75,7 +75,7 @@ define(['backbone'], function (Backbone) {
         createBaseline: function (baselineArgs, callbacks) {
             return $.ajax({
                 type: 'POST',
-                url: this.urlRoot() + '/' + this.getId() + '/baselines',
+                url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/product-baselines',
                 data: JSON.stringify(baselineArgs),
                 contentType: 'application/json; charset=utf-8',
                 success: callbacks.success,
@@ -132,7 +132,7 @@ define(['backbone'], function (Backbone) {
             $.ajax({
                 type: 'DELETE',
                 async: false,
-                url: this.urlRoot() + '/' + this.getId() + '/baselines/' + baselineId,
+                url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/product-baselines/' + this.getId() + '/baselines/' + baselineId,
                 contentType: 'application/json; charset=utf-8',
                 success: function (data) {
                     if (callbacks && _.isFunction(callbacks.success)) {

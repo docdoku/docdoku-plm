@@ -2,7 +2,7 @@
 define([
     'backbone',
     'mustache',
-    'common-objects/collections/baselines',
+    'common-objects/collections/product_baselines',
     'collections/configuration_items',
     'models/configuration_item',
     'text!templates/baselines/baselines_content.html',
@@ -15,7 +15,7 @@ define([
     'views/baselines/baseline_creation_view',
     'views/product-instances/product_instances_creation',
     'common-objects/views/udf/user_defined_function'
-], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection,ConfigurationItem, template, BaselinesListView, deleteButton, snapButton, newProductInstanceButton, udfButton, AlertView, BaselineCreationView, ProductInstanceCreationView, UserDefinedFunctionView) {
+], function (Backbone, Mustache, ProductBaselines, ConfigurationItemCollection,ConfigurationItem, template, BaselinesListView, deleteButton, snapButton, newProductInstanceButton, udfButton, AlertView, BaselineCreationView, ProductInstanceCreationView, UserDefinedFunctionView) {
 	'use strict';
 
     var BaselinesContentView = Backbone.View.extend({
@@ -110,11 +110,11 @@ define([
             }
             if (this.$inputProductId.val()) {
                 this.listView = new BaselinesListView({
-                    collection: new BaselinesCollection({}, {type:'product',productId: this.$inputProductId.val()})
+                    collection: new ProductBaselines({}, {productId: this.$inputProductId.val()})
                 }).render();
             } else {
                 this.listView = new BaselinesListView({
-                    collection: new BaselinesCollection({},{type:'product'})
+                    collection: new ProductBaselines()
                 }).render();
             }
             this.$el.append(this.listView.el);

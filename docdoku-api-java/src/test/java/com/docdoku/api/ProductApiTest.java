@@ -25,6 +25,7 @@ import com.docdoku.api.models.*;
 import com.docdoku.api.models.utils.LastIterationHelper;
 import com.docdoku.api.services.PartApi;
 import com.docdoku.api.services.PartsApi;
+import com.docdoku.api.services.ProductBaselineApi;
 import com.docdoku.api.services.ProductsApi;
 import org.junit.Assert;
 import org.junit.Test;
@@ -40,6 +41,7 @@ public class ProductApiTest {
     private PartApi partApi = new PartApi(TestConfig.REGULAR_USER_CLIENT);
     private PartsApi partsApi = new PartsApi(TestConfig.REGULAR_USER_CLIENT);
     private ProductsApi productsApi = new ProductsApi(TestConfig.REGULAR_USER_CLIENT);
+    private ProductBaselineApi productBaselineApi = new ProductBaselineApi(TestConfig.REGULAR_USER_CLIENT);
 
     @Test
     public void createProductTest() throws ApiException {
@@ -106,8 +108,8 @@ public class ProductApiTest {
         baseline.setName("Generated baseline");
         baseline.setConfigurationItemId(product.getId());
 
-        ProductBaselineDTO productBaseline = productsApi.createProductBaseline(TestConfig.WORKSPACE, product.getId(), baseline);
-        List<ProductBaselineDTO> productBaselines = productsApi.getProductBaselines(TestConfig.WORKSPACE, product.getId());
+        ProductBaselineDTO productBaseline = productBaselineApi.createProductBaseline(TestConfig.WORKSPACE, baseline);
+        List<ProductBaselineDTO> productBaselines = productBaselineApi.getProductBaselinesForProduct(TestConfig.WORKSPACE, product.getId());
         Assert.assertEquals(1, productBaselines.stream()
                 .filter(productBaselineDTO -> productBaseline.getId().equals(productBaselineDTO.getId()))
                 .count());

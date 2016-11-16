@@ -13,9 +13,12 @@ function (Backbone, ProductInstance) {
 
         url: function () {
             if (this.productId) {
-                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/product-instances';
+                return App.config.contextPath + '/api/workspaces/'
+                    + App.config.workspaceId + '/product-instances/'
+                    + this.productId + '/instances';
             }
-            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/product-instances';
+            return App.config.contextPath + '/api/workspaces/'
+                + App.config.workspaceId + '/product-instances';
         }
 
     });

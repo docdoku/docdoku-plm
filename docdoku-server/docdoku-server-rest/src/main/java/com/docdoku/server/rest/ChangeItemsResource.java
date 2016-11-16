@@ -30,7 +30,7 @@ import javax.inject.Inject;
 import javax.ws.rs.Path;
 
 @RequestScoped
-@Api(hidden = true, value = "change-items", description = "Operations about change items")
+@Api(hidden = true, value = "changeItems", description = "Operations about change items")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ChangeItemsResource {

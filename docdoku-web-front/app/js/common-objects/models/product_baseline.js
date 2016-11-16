@@ -4,6 +4,15 @@ define(['common-objects/models/baseline'],
 function(Baseline){
 	'use strict';
 	var ProductBaseline = Baseline.extend({
+        urlRoot: function () {
+            var ciId = this.getConfigurationItemId();
+            if (ciId) {
+                return App.config.contextPath + '/api/workspaces/'
+                    + App.config.workspaceId + '/product-baselines/' + ciId + '/baselines';
+            }
+            return App.config.contextPath + '/api/workspaces/'
+                + App.config.workspaceId + '/product-baselines';
+        },
 		getBaselinedParts:function(){
 			return this.get('baselinedParts');
 		},
@@ -30,15 +39,19 @@ function(Baseline){
         },
 
         getBomUrl: function () {
-            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getConfigurationItemId()) + '/config-spec/'+this.getId()+'/bom' ;
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId
+                + '/' + encodeURIComponent(this.getConfigurationItemId()) + '/config-spec/'+this.getId()+'/bom' ;
         },
 
         getSceneUrl: function () {
-            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getConfigurationItemId()) + '/config-spec/'+this.getId()+'/scene' ;
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId
+                + '/' + encodeURIComponent(this.getConfigurationItemId()) + '/config-spec/'+this.getId()+'/scene' ;
         },
 
         getZipUrl: function () {
-            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + encodeURIComponent(this.getConfigurationItemId()) + '/export-files?configSpecType=' + encodeURIComponent(this.getId());
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId
+                + '/products/' + encodeURIComponent(this.getConfigurationItemId())
+                + '/export-files?configSpecType=' + encodeURIComponent(this.getId());
         },
 
         getSubstitutesParts:function(){

@@ -73,10 +73,10 @@ define([
             var url = '';
 
             if(this.serialNumber) {
-                url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/product-instances/' + this.serialNumber + '/path-to-path-links-types';
+                url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/product-instances/' + this.productId + '/instances/' + this.serialNumber + '/path-to-path-links-types';
             }
             else if(this.baselineId){
-                url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/baselines/' + this.baselineId + '/path-to-path-links-types';
+                url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/product-baselines/' + this.productId + '/baselines/' + this.baselineId + '/path-to-path-links-types';
             }
             else{
                 url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/path-to-path-links-types';
@@ -89,10 +89,10 @@ define([
             var url = '';
 
             if(this.serialNumber){
-                url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/product-instances/' + this.serialNumber + '/path-to-path-links/source/' + this.pathSelected[0].getEncodedPath() + '/target/' + this.pathSelected[1].getEncodedPath();
+                url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/product-instances/' + this.productId + '/instances/' + this.serialNumber + '/path-to-path-links/source/' + this.pathSelected[0].getEncodedPath() + '/target/' + this.pathSelected[1].getEncodedPath();
             }
             else if(this.baselineId){
-                url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/baselines/' + this.baselineId + '/path-to-path-links/source/' + this.pathSelected[0].getEncodedPath() + '/target/' + this.pathSelected[1].getEncodedPath();
+                url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/product-baselines/' + this.productId + '/baselines/' + this.baselineId + '/path-to-path-links/source/' + this.pathSelected[0].getEncodedPath() + '/target/' + this.pathSelected[1].getEncodedPath();
             }
             else{
                 url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/path-to-path-links/source/' + this.pathSelected[0].getEncodedPath() + '/target/' + this.pathSelected[1].getEncodedPath();

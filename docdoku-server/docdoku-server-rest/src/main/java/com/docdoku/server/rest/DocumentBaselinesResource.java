@@ -56,7 +56,7 @@ import java.util.logging.Logger;
  */
 
 @RequestScoped
-@Api(hidden = true, value = "document-baseline", description = "Operations about document baselines")
+@Api(hidden = true, value = "documentBaseline", description = "Operations about document baselines")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class DocumentBaselinesResource {

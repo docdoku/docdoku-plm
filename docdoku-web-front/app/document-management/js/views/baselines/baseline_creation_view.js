@@ -2,12 +2,11 @@
 define([
 	'backbone',
 	'mustache',
-	'common-objects/collections/baselines',
     'common-objects/models/document_baseline',
 	'text!templates/baselines/baseline_creation_view.html',
     'common-objects/views/alert',
     'views/baselines/document_revision_list'
-], function (Backbone, Mustache, Baselines, DocumentBaseline, template, AlertView, DocumentRevisionListView) {
+], function (Backbone, Mustache, DocumentBaseline, template, AlertView, DocumentRevisionListView) {
 
     'use strict';
 

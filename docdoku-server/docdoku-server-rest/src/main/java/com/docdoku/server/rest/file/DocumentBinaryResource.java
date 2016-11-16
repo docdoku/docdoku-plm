@@ -61,7 +61,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RequestScoped
-@Api(hidden = true, value = "document-binary", description = "Operations about document files")
+@Api(hidden = true, value = "documentBinary", description = "Operations about document files")
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_ROLE_ID})
 @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_ROLE_ID})
 public class DocumentBinaryResource {

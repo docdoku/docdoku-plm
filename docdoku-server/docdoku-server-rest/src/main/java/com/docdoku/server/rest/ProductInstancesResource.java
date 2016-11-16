@@ -68,7 +68,7 @@ import java.util.logging.Logger;
  * @author Taylor LABEJOF
  */
 @RequestScoped
-@Api(hidden = true, value = "product-instances", description = "Operations about product-instances")
+@Api(hidden = true, value = "productInstances", description = "Operations about product-instances")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ProductInstancesResource {
@@ -93,6 +93,24 @@ public class ProductInstancesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get product instances in given workspace",
+            response = ProductInstanceMasterDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of ProductInstanceMasterDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getProductInstances(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException, UserNotActiveException {
+        List<ProductInstanceMaster> productInstanceMasterList = productInstanceService.getProductInstanceMasters(workspaceId);
+        return makeList(productInstanceMasterList);
+    }
+
+    @GET
+    @Path("{ciId}/instances")
     @ApiOperation(value = "Get product-instance with given configuration item",
             response = ProductInstanceMasterDTO.class,
             responseContainer = "List")
@@ -106,22 +124,9 @@ public class ProductInstancesResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId)
             throws EntityNotFoundException, UserNotActiveException {
-
-        List<ProductInstanceMaster> productInstanceMasterList;
-        if (ciId != null) {
-            ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId, ciId);
-            productInstanceMasterList = productInstanceService.getProductInstanceMasters(configurationItemKey);
-        } else {
-            productInstanceMasterList = productInstanceService.getProductInstanceMasters(workspaceId);
-        }
-        List<ProductInstanceMasterDTO> dtos = new ArrayList<>();
-        for (ProductInstanceMaster productInstanceMaster : productInstanceMasterList) {
-            ProductInstanceMasterDTO productInstanceMasterDTO = mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
-            productInstanceMasterDTO.setConfigurationItemId(productInstanceMaster.getInstanceOf().getId());
-            dtos.add(productInstanceMasterDTO);
-        }
-        return Response.ok(new GenericEntity<List<ProductInstanceMasterDTO>>((List<ProductInstanceMasterDTO>) dtos) {
-        }).build();
+        ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId, ciId);
+        List<ProductInstanceMaster> productInstanceMasterList = productInstanceService.getProductInstanceMasters(configurationItemKey);
+        return makeList(productInstanceMasterList);
     }
 
     @POST
@@ -185,14 +190,15 @@ public class ProductInstancesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{serialNumber}/iterations/{iteration}")
+    @Path("{ciId}/instances/{serialNumber}/iterations/{iteration}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ProductInstanceMasterDTO updateProductInstanceMaster(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
             @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
             @ApiParam(required = true, value = "Product instance iteration") @PathParam("iteration") int iteration,
-            @ApiParam(required = true, value = "Product instance master to create") ProductInstanceIterationDTO productInstanceCreationDTO)
+            @ApiParam(required = true, value = "Product instance master to update") ProductInstanceIterationDTO productInstanceCreationDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException,
             UserNotActiveException {
 
@@ -222,7 +228,12 @@ public class ProductInstancesResource {
             }
         }
 
-        ProductInstanceMaster productInstanceMaster = productInstanceService.updateProductInstance(workspaceId, iteration, productInstanceCreationDTO.getIterationNote(), new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBasedOn().getId(), attributes, links, documentLinkComments);
+        ProductInstanceMaster productInstanceMaster =
+                productInstanceService.updateProductInstance(workspaceId, iteration,
+                        productInstanceCreationDTO.getIterationNote(),
+                        new ConfigurationItemKey(workspaceId, configurationItemId),
+                        productInstanceCreationDTO.getSerialNumber(),
+                        productInstanceCreationDTO.getBasedOn().getId(), attributes, links, documentLinkComments);
 
         return mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
     }
@@ -235,7 +246,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{serialNumber}")
+    @Path("{ciId}/instances/{serialNumber}")
     @Produces(MediaType.APPLICATION_JSON)
     public ProductInstanceMasterDTO getProductInstance(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -301,7 +312,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("{serialNumber}/iterations/{iteration}/files/{fileName}")
+    @Path("{ciId}/instances/{serialNumber}/iterations/{iteration}/files/{fileName}")
     public Response removeAttachedFile(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Product instance iteration") @PathParam("iteration") int iteration,
@@ -324,7 +335,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{serialNumber}/acl")
+    @Path("{ciId}/instances/{serialNumber}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateProductInstanceACL(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -362,7 +373,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{serialNumber}")
+    @Path("{ciId}/instances/{serialNumber}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteProductInstanceMaster(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -383,7 +394,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{serialNumber}/iterations")
+    @Path("{ciId}/instances/{serialNumber}/iterations")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getProductInstanceIterations(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -410,7 +421,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{serialNumber}/iterations/{iteration}")
+    @Path("{ciId}/instances/{serialNumber}/iterations/{iteration}")
     @Produces(MediaType.APPLICATION_JSON)
     public ProductInstanceIterationDTO getProductInstanceIteration(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -433,7 +444,7 @@ public class ProductInstancesResource {
     })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{serialNumber}/rebase")
+    @Path("{ciId}/instances/{serialNumber}/rebase")
     public Response rebaseProductInstance(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
@@ -458,7 +469,7 @@ public class ProductInstancesResource {
     })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{serialNumber}/iterations/{iteration}/files/{fileName}")
+    @Path("{ciId}/instances/{serialNumber}/iterations/{iteration}/files/{fileName}")
     public FileDTO renameAttachedFile(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
@@ -483,7 +494,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{serialNumber}/pathdata/{path}")
+    @Path("{ciId}/instances/{serialNumber}/pathdata/{path}")
     @Produces(MediaType.APPLICATION_JSON)
     public PathDataMasterDTO getPathData(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -539,7 +550,7 @@ public class ProductInstancesResource {
     })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{serialNumber}/pathdata/{pathDataId}/iterations/{iteration}/files/{fileName}")
+    @Path("{ciId}/instances/{serialNumber}/pathdata/{pathDataId}/iterations/{iteration}/files/{fileName}")
     public FileDTO renameAttachedFileInPathData(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
@@ -568,7 +579,7 @@ public class ProductInstancesResource {
     })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{serialNumber}/pathdata/{pathDataId}/iterations/{iteration}/files/{fileName}")
+    @Path("{ciId}/instances/{serialNumber}/pathdata/{pathDataId}/iterations/{iteration}/files/{fileName}")
     public Response deleteAttachedFileInPathData(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
@@ -594,7 +605,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{serialNumber}/pathdata/{pathDataId}")
+    @Path("{ciId}/instances/{serialNumber}/pathdata/{pathDataId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deletePathData(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -617,7 +628,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{serialNumber}/pathdata/{pathDataId}")
+    @Path("{ciId}/instances/{serialNumber}/pathdata/{pathDataId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public PathDataMasterDTO addNewPathDataIteration(
@@ -690,7 +701,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{serialNumber}/pathdata/{path}/new")
+    @Path("{ciId}/instances/{serialNumber}/pathdata/{path}/new")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public PathDataMasterDTO createPathDataMaster(
@@ -739,7 +750,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{serialNumber}/pathdata/{pathDataId}/iterations/{iteration}")
+    @Path("{ciId}/instances/{serialNumber}/pathdata/{pathDataId}/iterations/{iteration}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public PathDataMasterDTO updatePathData(
@@ -805,7 +816,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{serialNumber}/path-to-path-links-types")
+    @Path("{ciId}/instances/{serialNumber}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPathToPathLinkTypes(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -833,7 +844,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{serialNumber}/link-path-part/{pathPart}")
+    @Path("{ciId}/instances/{serialNumber}/link-path-part/{pathPart}")
     @Produces(MediaType.APPLICATION_JSON)
     public LightPartMasterDTO getPartFromPathLink(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -860,7 +871,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{serialNumber}/path-to-path-links")
+    @Path("{ciId}/instances/{serialNumber}/path-to-path-links")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPathToPathLinks(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -887,7 +898,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{serialNumber}/path-to-path-links/{pathToPathLinkId}")
+    @Path("{ciId}/instances/{serialNumber}/path-to-path-links/{pathToPathLinkId}")
     @Produces(MediaType.APPLICATION_JSON)
     public LightPathToPathLinkDTO getPathToPathLink(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -911,7 +922,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{serialNumber}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
+    @Path("{ciId}/instances/{serialNumber}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPathToPathLinksForGivenSourceAndTarget(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -963,7 +974,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{serialNumber}/path-to-path-links-roots/{type}")
+    @Path("{ciId}/instances/{serialNumber}/path-to-path-links-roots/{type}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRootPathToPathLinks(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -1057,6 +1068,17 @@ public class ProductInstancesResource {
             pathToPathLinkDTOs.add(pathToPathLinkDTO);
         }
         return pathToPathLinkDTOs;
+    }
+
+    private Response makeList(List<ProductInstanceMaster> productInstanceMasterList) {
+        List<ProductInstanceMasterDTO> dtos = new ArrayList<>();
+        for (ProductInstanceMaster productInstanceMaster : productInstanceMasterList) {
+            ProductInstanceMasterDTO productInstanceMasterDTO = mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
+            productInstanceMasterDTO.setConfigurationItemId(productInstanceMaster.getInstanceOf().getId());
+            dtos.add(productInstanceMasterDTO);
+        }
+        return Response.ok(new GenericEntity<List<ProductInstanceMasterDTO>>((List<ProductInstanceMasterDTO>) dtos) {
+        }).build();
     }
 
 }

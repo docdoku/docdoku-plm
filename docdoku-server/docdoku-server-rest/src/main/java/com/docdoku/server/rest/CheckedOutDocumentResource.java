@@ -43,7 +43,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @RequestScoped
-@Api(hidden = true, value = "checked-out-documents", description = "Operations about checked out documents")
+@Api(hidden = true, value = "checkedOutDocuments", description = "Operations about checked out documents")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class CheckedOutDocumentResource {

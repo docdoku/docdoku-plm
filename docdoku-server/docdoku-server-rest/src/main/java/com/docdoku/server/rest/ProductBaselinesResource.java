@@ -56,7 +56,7 @@ import java.util.List;
  * @author Taylor LABEJOF
  */
 @RequestScoped
-@Api(hidden = true, value = "product-baseline", description = "Operations about product-baseline")
+@Api(hidden = true, value = "productBaseline", description = "Operations about product-baseline")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ProductBaselinesResource {
@@ -78,6 +78,26 @@ public class ProductBaselinesResource {
     }
 
     @GET
+    @ApiOperation(value = "Get product-baselines with given workspace",
+            response = ProductBaselineDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of ProductBaselineDTOs. It can be an empty list."),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllProductBaselines(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
+            throws UserNotActiveException, EntityNotFoundException, AccessRightException {
+
+        List<ProductBaseline> productBaselines = productBaselineService.getAllBaselines(workspaceId);
+        return makeList(productBaselines, workspaceId);
+    }
+
+
+    @GET
+    @Path("{ciId}/baselines")
     @ApiOperation(value = "Get product-baseline with given configuration item",
             response = ProductBaselineDTO.class,
             responseContainer = "List")
@@ -87,28 +107,14 @@ public class ProductBaselinesResource {
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProductBaselines(
+    public Response getProductBaselinesForProduct(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId)
             throws UserNotActiveException, EntityNotFoundException, AccessRightException {
 
-        List<ProductBaseline> productBaselines;
-        if (ciId != null) {
-            ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId, ciId);
-            productBaselines = productBaselineService.getBaselines(configurationItemKey);
-        } else {
-            productBaselines = productBaselineService.getAllBaselines(workspaceId);
-        }
-        List<ProductBaselineDTO> baselinesDTO = new ArrayList<>();
-        for (ProductBaseline productBaseline : productBaselines) {
-            ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline, ProductBaselineDTO.class);
-            productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
-            productBaselineDTO.setConfigurationItemLatestRevision(productBaseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
-            productBaselineDTO.setHasObsoletePartRevisions(!productBaselineService.getObsoletePartRevisionsInBaseline(workspaceId, productBaseline.getId()).isEmpty());
-            baselinesDTO.add(productBaselineDTO);
-        }
-        return Response.ok(new GenericEntity<List<ProductBaselineDTO>>((List<ProductBaselineDTO>) baselinesDTO) {
-        }).build();
+        ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId, ciId);
+        List<ProductBaseline> productBaselines = productBaselineService.getBaselines(configurationItemKey);
+        return makeList(productBaselines,workspaceId);
     }
 
     @POST
@@ -123,13 +129,12 @@ public class ProductBaselinesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public ProductBaselineDTO createProductBaseline(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String pCiId,
             @ApiParam(required = true, value = "Product baseline to create") ProductBaselineDTO productBaselineDTO)
             throws UserNotActiveException, EntityNotFoundException, NotAllowedException, AccessRightException,
             PartRevisionNotReleasedException, EntityConstraintException, CreationException,
             PathToPathLinkAlreadyExistsException {
 
-        String ciId = (pCiId != null) ? pCiId : productBaselineDTO.getConfigurationItemId();
+        String ciId = productBaselineDTO.getConfigurationItemId();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         String description = productBaselineDTO.getDescription();
         String name = productBaselineDTO.getName();
@@ -157,7 +162,7 @@ public class ProductBaselinesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{baselineId}")
+    @Path("{ciId}/baselines/{baselineId}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteProductBaseline(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -178,7 +183,7 @@ public class ProductBaselinesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{baselineId}")
+    @Path("{ciId}/baselines/{baselineId}")
     @Produces(MediaType.APPLICATION_JSON)
     public ProductBaselineDTO getProductBaseline(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -227,7 +232,7 @@ public class ProductBaselinesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{baselineId}/parts")
+    @Path("{ciId}/baselines/{baselineId}/parts")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getProductBaselineParts(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -256,7 +261,7 @@ public class ProductBaselinesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{baselineId}/path-to-path-links-types")
+    @Path("{ciId}/baselines/{baselineId}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPathToPathLinkTypes(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -285,7 +290,7 @@ public class ProductBaselinesResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("{baselineId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
+    @Path("{ciId}/baselines/{baselineId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPathToPathLinkFromSourceAndTarget(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
@@ -358,4 +363,18 @@ public class ProductBaselinesResource {
         }
         return pathToPathLinkDTOs;
     }
+
+    private Response makeList(List<ProductBaseline> productBaselines, String workspaceId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, WorkspaceNotEnabledException {
+        List<ProductBaselineDTO> baselinesDTO = new ArrayList<>();
+        for (ProductBaseline productBaseline : productBaselines) {
+            ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline, ProductBaselineDTO.class);
+            productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
+            productBaselineDTO.setConfigurationItemLatestRevision(productBaseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
+            productBaselineDTO.setHasObsoletePartRevisions(!productBaselineService.getObsoletePartRevisionsInBaseline(workspaceId, productBaseline.getId()).isEmpty());
+            baselinesDTO.add(productBaselineDTO);
+        }
+        return Response.ok(new GenericEntity<List<ProductBaselineDTO>>((List<ProductBaselineDTO>) baselinesDTO) {
+        }).build();
+    }
+
 }

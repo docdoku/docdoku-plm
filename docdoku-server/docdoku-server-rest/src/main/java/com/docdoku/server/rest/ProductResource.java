@@ -549,49 +549,6 @@ public class ProductResource {
         return Response.ok(partRevisionDTO).build();
     }
 
-    // TODO : refactor with regex to merge 2 by 2
-/*
-
-    @ApiOperation(value = "Get all ProductConfigurationsResource")
-    @Path("configurations")
-    public ProductConfigurationsResource getAllConfigurations() {
-        return productConfigurationsResource;
-    }
-
-    @ApiOperation(value = "Get ProductConfigurationsResource")
-    @Path("{ciId}/configurations")
-    public ProductConfigurationsResource getConfigurations() {
-        return productConfigurationsResource;
-    }
-
-*/
-
-    @ApiOperation(value = "Get ProductConfigurationsResource")
-    @Path("baselines")
-    public ProductBaselinesResource getAllBaselines() {
-        return productBaselinesResource;
-    }
-
-    @ApiOperation(value = "Get ProductBaselinesResource")
-    @Path("{ciId}/baselines")
-    public ProductBaselinesResource getBaselines() {
-        return productBaselinesResource;
-    }
-
-    @ApiOperation(value = "Get all ProductInstancesResource")
-    @Path("product-instances")
-    public ProductInstancesResource getAllProductInstances() {
-        return productInstancesResource;
-    }
-
-    @ApiOperation(value = "Get ProductInstancesResource")
-    @Path("{ciId}/product-instances")
-    public ProductInstancesResource getProductInstances() {
-        return productInstancesResource;
-    }
-    // -- refactor with regex to merge 2 by 2
-
-
     // TODO : set the appropriate response class for generated API usage
     @GET
     @ApiOperation(value = "Export files",

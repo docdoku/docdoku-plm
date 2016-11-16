@@ -3,9 +3,8 @@ define([
     'backbone',
     'mustache',
     'common-objects/models/workspace',
-	'common-objects/collections/baselines',
     'text!templates/content.html'
-], function (Backbone, Mustache, Workspace, Baselines, template) {
+], function (Backbone, Mustache, Workspace, template) {
 	'use strict';
     var AppView = Backbone.View.extend({
 

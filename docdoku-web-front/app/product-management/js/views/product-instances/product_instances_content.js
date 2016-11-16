@@ -4,7 +4,7 @@ define([
     'mustache',
     'common-objects/collections/product_instances',
     'collections/configuration_items',
-    'common-objects/collections/baselines',
+    'common-objects/collections/product_baselines',
     'text!templates/product-instances/product_instances_content.html',
     'views/product-instances/product_instances_list',
     'views/product-instances/product_instances_creation',
@@ -14,7 +14,7 @@ define([
     'text!common-objects/templates/buttons/import_button.html',
     'common-objects/views/alert',
     'views/product-instances/product_instances_importer'
-], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, BaselinesCollection, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton, aclButton, newProductInstanceButton,importButton, AlertView,ProductInstanceImporterView) {
+], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, ProductBaselines, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton, aclButton, newProductInstanceButton,importButton, AlertView,ProductInstanceImporterView) {
     'use strict';
     var ProductInstancesContentView = Backbone.View.extend({
 
@@ -54,7 +54,7 @@ define([
             });
 
             var self = this;
-            new BaselinesCollection({}, {productId: ''}).fetch({
+            new ProductBaselines().fetch({
                 success: function (list) {
                     if (!list.length) {
                         self.$notifications.append(new AlertView({

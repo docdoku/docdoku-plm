@@ -16,8 +16,10 @@ define(['backbone'
 
         urlRoot: function () {
             if (this.getConfigurationItemId) {
-                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.getConfigurationItemId() +
-                    '/product-instances/' + this.getSerialNumber() + '/iterations/';
+                return App.config.contextPath + '/api/workspaces/'
+                    + App.config.workspaceId + '/product-instances/'
+                    + this.getConfigurationItemId() + '/instances/'
+                    + this.getSerialNumber() + '/iterations/';
             } else {
                 return this.prototype.urlRoot();
             }

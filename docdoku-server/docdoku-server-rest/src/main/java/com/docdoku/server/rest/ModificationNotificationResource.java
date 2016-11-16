@@ -41,7 +41,7 @@ import javax.ws.rs.core.Response;
  */
 
 @RequestScoped
-@Api(hidden = true, value = "modification-notifications", description = "Operations about modification notifications")
+@Api(hidden = true, value = "modificationNotifications", description = "Operations about modification notifications")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ModificationNotificationResource {

@@ -21,11 +21,10 @@
 package com.docdoku.api;
 
 import com.docdoku.api.client.ApiException;
-import com.docdoku.api.models.AccountDTO;
-import com.docdoku.api.models.OrganizationDTO;
-import com.docdoku.api.models.WorkspaceDTO;
+import com.docdoku.api.models.*;
 import com.docdoku.api.services.AccountsApi;
 import com.docdoku.api.services.OrganizationsApi;
+import com.docdoku.api.services.PartsApi;
 import com.docdoku.api.services.WorkspacesApi;
 
 import java.util.Random;
@@ -83,5 +82,12 @@ public class TestUtils {
 
     public static Double randomTranslation() {
         return MIN_TRANSLATION + (MAX_TRANSLATION - MIN_TRANSLATION) * new Random().nextDouble();
+    }
+
+    public static PartRevisionDTO createPart(String workspaceId, String partName) throws ApiException {
+        PartCreationDTO part = new PartCreationDTO();
+        part.setNumber(TestUtils.randomString());
+        part.setName(partName);
+        return new PartsApi(TestConfig.REGULAR_USER_CLIENT).createNewPart(workspaceId, part);
     }
 }
