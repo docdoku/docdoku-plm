@@ -296,7 +296,7 @@ public class PartTemplateResource {
     })
     @Path("{templateId}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response removeAttachedFile(
+    public Response removeAttachedFileFromPartTemplate(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
             @ApiParam(required = true, value = "File name") @PathParam("fileName") String fileName)
@@ -318,7 +318,7 @@ public class PartTemplateResource {
     @Path("{templateId}/files/{fileName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FileDTO renameAttachedFile(
+    public FileDTO renameAttachedFileInPartTemplate(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Template id") @PathParam("templateId") String templateId,
             @ApiParam(required = true, value = "File name") @PathParam("fileName") String fileName,

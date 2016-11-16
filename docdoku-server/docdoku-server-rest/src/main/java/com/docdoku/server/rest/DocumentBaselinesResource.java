@@ -229,7 +229,7 @@ public class DocumentBaselinesResource {
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Path("{baselineId}/export-files")
-    public Response exportFiles(
+    public Response exportDocumentFiles(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId)
             throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, WorkspaceNotEnabledException {

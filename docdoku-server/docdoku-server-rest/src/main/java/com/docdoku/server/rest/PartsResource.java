@@ -161,7 +161,7 @@ public class PartsResource {
     })
     @Path("tags/{tagId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPartRevisions(
+    public Response getPartRevisionsByTag(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Tag id") @PathParam("tagId") String tagId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
@@ -545,7 +545,7 @@ public class PartsResource {
     @Path("import")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response importAttributes(
+    public Response importPartAttributes(
             @Context HttpServletRequest request,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = false, value = "Auto check out parts flag") @QueryParam("autoCheckout") boolean autoCheckout,

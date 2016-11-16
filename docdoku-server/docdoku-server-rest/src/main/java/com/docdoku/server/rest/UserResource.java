@@ -172,7 +172,7 @@ public class UserResource {
     @Path("{login}/tag-subscriptions/{tagName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateSubscription(
+    public Response updateUserSubscription(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "User login") @PathParam("login") String login,
             @ApiParam(required = true, value = "Tag name") @PathParam("tagName") String tagName,
@@ -203,7 +203,7 @@ public class UserResource {
     })
     @Path("{login}/tag-subscriptions/{tagName}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteSubscription(
+    public Response deleteUserSubscription(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "User login") @PathParam("login") String login,
             @ApiParam(required = true, value = "Tag name") @PathParam("tagName") String tagName)

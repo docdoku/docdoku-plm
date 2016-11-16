@@ -472,7 +472,7 @@ public class PartResource {
     @Path("/newVersion")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createNewVersion(
+    public Response createNewPartVersion(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
             @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion,
@@ -620,7 +620,7 @@ public class PartResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/iterations/{partIteration}/files/{subType}/{fileName}")
-    public FileDTO renameAttachedFile(
+    public FileDTO renameAttachedFileInPartIteration(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
             @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion,
@@ -718,7 +718,7 @@ public class PartResource {
     })
     @Path("/aborted-workflows")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAbortedWorkflows(
+    public Response getAbortedWorkflowsInPart(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
             @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion)
@@ -826,7 +826,7 @@ public class PartResource {
 
 
     @GET
-    @ApiOperation(value = "Get instances",
+    @ApiOperation(value = "Get instances under given part, head view",
             response = LeafDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
@@ -836,7 +836,7 @@ public class PartResource {
     })
     @Path("/instances")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getInstances(
+    public Response getInstancesUnderPart(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
             @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion)

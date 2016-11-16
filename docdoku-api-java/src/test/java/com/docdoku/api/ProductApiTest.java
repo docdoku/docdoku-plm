@@ -114,7 +114,7 @@ public class ProductApiTest {
                 .filter(productBaselineDTO -> productBaseline.getId().equals(productBaselineDTO.getId()))
                 .count());
 
-        List<LeafDTO> leaves = productsApi.getInstances(TestConfig.WORKSPACE, product.getId(), "latest", "-1", true);
+        List<LeafDTO> leaves = productsApi.getFilteredInstances(TestConfig.WORKSPACE, product.getId(), "latest", "-1", true);
 
         Assert.assertNotNull(leaves);
         // No geometric data uploaded

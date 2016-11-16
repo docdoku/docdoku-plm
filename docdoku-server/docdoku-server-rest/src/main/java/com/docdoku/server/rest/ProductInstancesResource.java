@@ -102,7 +102,7 @@ public class ProductInstancesResource {
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProductInstances(
+    public Response getAllProductInstances(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
         List<ProductInstanceMaster> productInstanceMasterList = productInstanceService.getProductInstanceMasters(workspaceId);
@@ -313,7 +313,7 @@ public class ProductInstancesResource {
     })
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{ciId}/instances/{serialNumber}/iterations/{iteration}/files/{fileName}")
-    public Response removeAttachedFile(
+    public Response removeAttachedFileFromProductInstance(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Product instance iteration") @PathParam("iteration") int iteration,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
@@ -470,7 +470,7 @@ public class ProductInstancesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{ciId}/instances/{serialNumber}/iterations/{iteration}/files/{fileName}")
-    public FileDTO renameAttachedFile(
+    public FileDTO renameAttachedFileInProductInstance(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
             @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
@@ -818,7 +818,7 @@ public class ProductInstancesResource {
     })
     @Path("{ciId}/instances/{serialNumber}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathToPathLinkTypes(
+    public Response getPathToPathLinkTypesInProductInstance(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
             @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber)
@@ -1004,7 +1004,7 @@ public class ProductInstancesResource {
     @Path("import")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response importAttributes(
+    public Response importProductInstanceAttributes(
             @Context HttpServletRequest request,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = false, value = "Auto freeze after update flag") @QueryParam("autoFreezeAfterUpdate") boolean autoFreezeAfterUpdate,

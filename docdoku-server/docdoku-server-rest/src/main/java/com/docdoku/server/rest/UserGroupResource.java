@@ -165,7 +165,7 @@ public class UserGroupResource {
     @Path("{groupId}/tag-subscriptions/{tagName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateSubscription(
+    public Response updateUserGroupSubscription(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Group id") @PathParam("groupId") String groupId,
             @ApiParam(required = true, value = "Tag name") @PathParam("tagName") String tagName,
@@ -196,7 +196,7 @@ public class UserGroupResource {
     })
     @Path("{groupId}/tag-subscriptions/{tagName}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteSubscription(
+    public Response deleteUserGroupSubscription(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Group id id") @PathParam("groupId") String groupId,
             @ApiParam(required = true, value = "Tag name") @PathParam("tagName") String tagName)

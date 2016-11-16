@@ -83,7 +83,7 @@ public class ProductStructureApiTest {
 
         ConfigurationItemDTO fetchedProduct = productsApi.getConfigurationItem(workspace.getId(), product.getId());
         Assert.assertEquals(fetchedProduct.getDesignItemNumber(), rootPart.getNumber());
-        List<LeafDTO> leaves = productsApi.getInstances(product.getWorkspaceId(), product.getId(), "latest", "-1", false);
+        List<LeafDTO> leaves = productsApi.getFilteredInstances(product.getWorkspaceId(), product.getId(), "latest", "-1", false);
         Assert.assertFalse(leaves.isEmpty());
         Assert.assertEquals(partsAsLeaves.size(),leaves.size());
     }

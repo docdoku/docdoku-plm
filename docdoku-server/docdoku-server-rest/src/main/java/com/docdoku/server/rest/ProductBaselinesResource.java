@@ -263,7 +263,7 @@ public class ProductBaselinesResource {
     })
     @Path("{ciId}/baselines/{baselineId}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathToPathLinkTypes(
+    public Response getPathToPathLinkTypesInBaseline(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
             @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId)
@@ -292,7 +292,7 @@ public class ProductBaselinesResource {
     })
     @Path("{ciId}/baselines/{baselineId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathToPathLinkFromSourceAndTarget(
+    public Response getPathToPathLinkInProductBaseline(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
             @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId,

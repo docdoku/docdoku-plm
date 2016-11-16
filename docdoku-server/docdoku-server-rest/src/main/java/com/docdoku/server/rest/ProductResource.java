@@ -433,7 +433,7 @@ public class ProductResource {
 
 
     @GET
-    @ApiOperation(value = "Get instances",
+    @ApiOperation(value = "Get instances under given path, and config spec",
             response = LeafDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
@@ -443,7 +443,7 @@ public class ProductResource {
     })
     @Path("{ciId}/instances")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getInstances(
+    public Response getFilteredInstances(
             @Context Request request,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
@@ -559,7 +559,7 @@ public class ProductResource {
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Path("{ciId}/export-files")
-    public Response exportFiles(
+    public Response exportProductFiles(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
             @ApiParam(required = false, value = "Config spec") @QueryParam("configSpecType") String configSpecType,
@@ -689,7 +689,7 @@ public class ProductResource {
     })
     @Path("{ciId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathToPathLinkFromSourceAndTarget(
+    public Response getPathToPathLinkInProduct(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
             @ApiParam(required = true, value = "Complete source path") @PathParam("sourcePath") String sourcePathAsString,
@@ -739,7 +739,7 @@ public class ProductResource {
     })
     @Path("{ciId}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPathToPathLinkTypes(
+    public Response getPathToPathLinkTypesInProduct(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
