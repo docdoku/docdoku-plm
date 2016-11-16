@@ -437,12 +437,11 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
         partMasterWorkspaceId = pPartMasterWorkspaceId;
     }
 
-    public Set<Effectivity> getEffectivities() {
-        return effectivities;
-    }
+    public Set<Effectivity> getEffectivities() { return effectivities; }
     public void setEffectivities(Set<Effectivity> effectivities) {
         this.effectivities = effectivities;
     }
+    public boolean removeEffectivity(Effectivity pEffectivity) { return this.effectivities.remove(pEffectivity); }
 
     public boolean isPublicShared() {
         return publicShared;

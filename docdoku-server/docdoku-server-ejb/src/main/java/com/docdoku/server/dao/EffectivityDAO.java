@@ -3,14 +3,13 @@ package com.docdoku.server.dao;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.EffectivityAlreadyExistsException;
 import com.docdoku.core.exceptions.EffectivityNotFoundException;
-import com.docdoku.core.product.DateBasedEffectivity;
-import com.docdoku.core.product.Effectivity;
-import com.docdoku.core.product.LotBasedEffectivity;
-import com.docdoku.core.product.SerialNumberBasedEffectivity;
+import com.docdoku.core.product.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class EffectivityDAO {
     private EntityManager em;
@@ -26,6 +25,15 @@ public class EffectivityDAO {
         mLocale=Locale.getDefault();
     }
 
+    public List<Effectivity> getListEffectivities(Set<Effectivity> pEffectivitySet) {
+        Object[] objects = pEffectivitySet.toArray();
+        List<Effectivity> effectivities = new ArrayList<>();
+        for(int i=0; i<objects.length; i++) {
+            effectivities.add((Effectivity)objects[i]);
+        }
+        return effectivities;
+    }
+
     public Effectivity loadEffectivity(int pId) throws EffectivityNotFoundException {
         Effectivity effectivity = em.find(Effectivity.class,pId);
         if (effectivity == null) {
@@ -35,19 +43,37 @@ public class EffectivityDAO {
         }
     }
 
-    public List<SerialNumberBasedEffectivity> loadSerialNumberBasedEffectivities() {
-        TypedQuery<SerialNumberBasedEffectivity> query = em.createQuery("SELECT DISTINCT e FROM SerialNumberBasedEffectivity e", SerialNumberBasedEffectivity.class);
-        return query.getResultList();
+    public List<SerialNumberBasedEffectivity> loadSerialNumberBasedEffectivities(PartRevision pPartRevision) {
+        List<Effectivity> effectivities = this.getListEffectivities(pPartRevision.getEffectivities());
+        List<SerialNumberBasedEffectivity> serialNumberBasedEffectivities = new ArrayList<>();
+        for(Effectivity effectivity : effectivities) {
+            if(effectivity.getClass().equals(SerialNumberBasedEffectivity.class)) {
+                serialNumberBasedEffectivities.add((SerialNumberBasedEffectivity) effectivity);
+            }
+        }
+        return serialNumberBasedEffectivities;
     }
 
-    public List<DateBasedEffectivity> loadDateBasedEffectivities() {
-        TypedQuery<DateBasedEffectivity> query = em.createQuery("SELECT DISTINCT e FROM DateBasedEffectivity e", DateBasedEffectivity.class);
-        return query.getResultList();
+    public List<DateBasedEffectivity> loadDateBasedEffectivities(PartRevision pPartRevision) {
+        List<Effectivity> effectivities = this.getListEffectivities(pPartRevision.getEffectivities());
+        List<DateBasedEffectivity> dateBasedEffectivities = new ArrayList<>();
+        for(Effectivity effectivity : effectivities) {
+            if(effectivity.getClass().equals(DateBasedEffectivity.class)) {
+                dateBasedEffectivities.add((DateBasedEffectivity) effectivity);
+            }
+        }
+        return dateBasedEffectivities;
     }
 
-    public List<LotBasedEffectivity> loadLotBasedEffectivities() {
-        TypedQuery<LotBasedEffectivity> query = em.createQuery("SELECT DISTINCT e FROM LotBasedEffectivity e", LotBasedEffectivity.class);
-        return query.getResultList();
+    public List<LotBasedEffectivity> loadLotBasedEffectivities(PartRevision pPartRevision) {
+        List<Effectivity> effectivities = this.getListEffectivities(pPartRevision.getEffectivities());
+        List<LotBasedEffectivity> lotBasedEffectivities = new ArrayList<>();
+        for(Effectivity effectivity : effectivities) {
+            if(effectivity.getClass().equals(LotBasedEffectivity.class)) {
+                lotBasedEffectivities.add((LotBasedEffectivity) effectivity);
+            }
+        }
+        return lotBasedEffectivities;
     }
 
     public List<Effectivity> findEffectivitiesOfConfigurationItem(String pConfigurationItemId) {

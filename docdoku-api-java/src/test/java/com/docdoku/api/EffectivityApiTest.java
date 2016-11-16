@@ -21,181 +21,214 @@ public class EffectivityApiTest {
     private ProductsApi productsApi = new ProductsApi(TestConfig.BASIC_CLIENT);
     private EffectivityApi effectivityApi = new EffectivityApi(TestConfig.BASIC_CLIENT);
 
-    private ConfigurationItemDTO createConfigurationItemDTO() throws ApiException {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setLogin(TestConfig.LOGIN);
-        userDTO.setWorkspaceId(TestConfig.WORKSPACE);
+    private static String partNumber = UUID.randomUUID().toString().substring(0, 8);
 
-        // Part creation
-        String partNumber = UUID.randomUUID().toString().substring(0, 8);
+    private PartRevisionDTO partRevisionDTO = null;
+    private ConfigurationItemDTO configurationItemDTO = null;
+
+    private PartRevisionDTO createPartRevisionDTO() throws ApiException {
+        partNumber = UUID.randomUUID().toString().substring(0, 8);
+
         PartCreationDTO part = new PartCreationDTO();
         part.setNumber(partNumber);
         partsApi.createNewPart(TestConfig.WORKSPACE, part);
 
-        PartRevisionDTO p1 = partApi.getPartRevision(TestConfig.WORKSPACE, partNumber, "A");
-        PartIterationDTO i1 = LastIterationHelper.getLastIteration(p1);
+        partRevisionDTO = partApi.getPartRevision(TestConfig.WORKSPACE, partNumber, "A");
+        PartIterationDTO i1 = LastIterationHelper.getLastIteration(partRevisionDTO);
         List<PartUsageLinkDTO> components = new ArrayList<>();
         i1.setComponents(components);
 
         partApi.updatePartIteration(TestConfig.WORKSPACE, partNumber, "A", 1, i1);
+        return partRevisionDTO;
+    }
 
+    private ConfigurationItemDTO createConfigurationItemDTO() throws ApiException {
         // Configuration Item creation
-        ConfigurationItemDTO product = new ConfigurationItemDTO();
-        product.setId(UUID.randomUUID().toString().substring(0,8));
-        product.setDesignItemNumber(partNumber);
-        product.setDescription("Generated product by tests");
-        product.setWorkspaceId(TestConfig.WORKSPACE);
+        configurationItemDTO = new ConfigurationItemDTO();
+        configurationItemDTO.setId(UUID.randomUUID().toString().substring(0, 8));
+        configurationItemDTO.setDesignItemNumber(partNumber);
+        configurationItemDTO.setDescription("Generated product by tests");
+        configurationItemDTO.setWorkspaceId(TestConfig.WORKSPACE);
 
-        return productsApi.createConfigurationItem(TestConfig.WORKSPACE, product);
+        productsApi.createConfigurationItem(TestConfig.WORKSPACE, configurationItemDTO);
+        return configurationItemDTO;
     }
 
     @Test
     public void createSerialNumberBasedEffectivityTest() throws ApiException {
-        ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
+        this.createPartRevisionDTO();
+        this.createConfigurationItemDTO();
 
         SerialNumberBasedEffectivityDTO serialNumberBasedEffectivityDTO = new SerialNumberBasedEffectivityDTO();
         serialNumberBasedEffectivityDTO.setName(UUID.randomUUID().toString().substring(0, 8));
-        SerialNumberBasedEffectivityDTO serialNumberBasedEffectivity = new EffectivityApi(TestConfig.BASIC_CLIENT)
-                .createSerialNumberBasedEffectivity(serialNumberBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
-        Assert.assertEquals(serialNumberBasedEffectivity.getName(), serialNumberBasedEffectivityDTO.getName());
+        SerialNumberBasedEffectivityDTO serialNumberBasedEffectivity = effectivityApi.createSerialNumberBasedEffectivity(
+                        serialNumberBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId(), partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
+
+        List<SerialNumberBasedEffectivityDTO> retreiveEffectivities = effectivityApi.getSerialNumberBasedEffectivities(
+                TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
+
+        Assert.assertEquals(serialNumberBasedEffectivity.getName(), serialNumberBasedEffectivity.getName());
+        Assert.assertTrue(retreiveEffectivities.contains(serialNumberBasedEffectivity));
+
+        effectivityApi.deleteEffectivity(TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion(), serialNumberBasedEffectivity.getId());
     }
 
     @Test
     public void createDateBasedEffectivityTest() throws ApiException {
-        ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
+        this.createPartRevisionDTO();
+        this.createConfigurationItemDTO();
         String generatedId = UUID.randomUUID().toString().substring(0, 8);
 
         DateBasedEffectivityDTO dateBasedEffectivityDTO = new DateBasedEffectivityDTO();
         dateBasedEffectivityDTO.setName(generatedId);
-        DateBasedEffectivityDTO dateBasedEffectivity = effectivityApi.createDateBasedEffectivity(dateBasedEffectivityDTO,
-                TestConfig.WORKSPACE, configurationItemDTO.getId());
-        Assert.assertEquals(dateBasedEffectivity.getName(), dateBasedEffectivityDTO.getName());
+        DateBasedEffectivityDTO dateBasedEffectivity = effectivityApi.createDateBasedEffectivity(
+                dateBasedEffectivityDTO, TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
 
-        effectivityApi.deleteEffectivity(dateBasedEffectivity.getId());
+        List<DateBasedEffectivityDTO> retreiveEffectivities = effectivityApi.getDateBasedEffectivities(
+                TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
+
+        Assert.assertEquals(dateBasedEffectivityDTO.getName(), dateBasedEffectivity.getName());
+        Assert.assertTrue(retreiveEffectivities.contains(dateBasedEffectivity));
+
+        effectivityApi.deleteEffectivity(TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion(), dateBasedEffectivity.getId());
     }
 
     @Test
     public void createLotBasedEffectivityTest() throws ApiException {
-        ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
+        this.createPartRevisionDTO();
+        this.createConfigurationItemDTO();
         String generatedId = UUID.randomUUID().toString().substring(0, 8);
 
         LotBasedEffectivityDTO lotBasedEffectivityDTO = new LotBasedEffectivityDTO();
         lotBasedEffectivityDTO.setName(generatedId);
-        LotBasedEffectivityDTO lotBasedEffectivity = effectivityApi.createLotBasedEffectivity(lotBasedEffectivityDTO,
-                TestConfig.WORKSPACE, configurationItemDTO.getId());
-        Assert.assertEquals(lotBasedEffectivity.getName(), lotBasedEffectivityDTO.getName());
+        LotBasedEffectivityDTO lotBasedEffectivity = effectivityApi.createLotBasedEffectivity(
+                lotBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId(), partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
 
-        effectivityApi.deleteEffectivity(lotBasedEffectivity.getId());
+        List<LotBasedEffectivityDTO> retreiveEffectivities = effectivityApi.getLotBasedEffectivities(
+                TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
+
+        Assert.assertEquals(lotBasedEffectivityDTO.getName(), lotBasedEffectivity.getName());
+        Assert.assertTrue(retreiveEffectivities.contains(lotBasedEffectivity));
+
+        effectivityApi.deleteEffectivity(TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion(), lotBasedEffectivity.getId());
     }
 
     @Test
     public void getSerialNumberBasedEffectivityTest() throws ApiException {
-        ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
+        this.createPartRevisionDTO();
+        this.createConfigurationItemDTO();
         String generatedId = UUID.randomUUID().toString().substring(0, 8);
 
         SerialNumberBasedEffectivityDTO serialNumberBasedEffectivityDTO = new SerialNumberBasedEffectivityDTO();
         serialNumberBasedEffectivityDTO.setName(generatedId);
         SerialNumberBasedEffectivityDTO serialNumberBasedEffectivity = effectivityApi.createSerialNumberBasedEffectivity(
-                serialNumberBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
+                serialNumberBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId(), partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
 
         SerialNumberBasedEffectivityDTO effectivityDTO = effectivityApi.getSerialNumberBasedEffectivity(serialNumberBasedEffectivity.getId());
 
         Assert.assertEquals(serialNumberBasedEffectivityDTO.getName(), effectivityDTO.getName());
-        effectivityApi.deleteEffectivity(serialNumberBasedEffectivity.getId());
+        effectivityApi.deleteEffectivity(TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion(), serialNumberBasedEffectivity.getId());
     }
 
     @Test
     public void getDateBasedEffectivityTest() throws ApiException {
-        ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
+        this.createPartRevisionDTO();
+        this.createConfigurationItemDTO();
         String generatedId = UUID.randomUUID().toString().substring(0, 8);
 
         DateBasedEffectivityDTO dateBasedEffectivityDTO = new DateBasedEffectivityDTO();
         dateBasedEffectivityDTO.setName(generatedId);
         DateBasedEffectivityDTO dateBasedEffectivity = effectivityApi.createDateBasedEffectivity(
-                dateBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
+                dateBasedEffectivityDTO, TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
 
         DateBasedEffectivityDTO effectivityDTO = effectivityApi.getDateBasedEffectivity(dateBasedEffectivity.getId());
 
         Assert.assertEquals(dateBasedEffectivityDTO.getName(), effectivityDTO.getName());
-        effectivityApi.deleteEffectivity(dateBasedEffectivity.getId());
+        effectivityApi.deleteEffectivity(TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion(), dateBasedEffectivity.getId());
     }
 
     @Test
     public void getLotBasedEffectivityTest() throws ApiException {
-        ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
+        this.createPartRevisionDTO();
+        this.createConfigurationItemDTO();
         String generatedId = UUID.randomUUID().toString().substring(0, 8);
 
         LotBasedEffectivityDTO lotBasedEffectivityDTO = new LotBasedEffectivityDTO();
         lotBasedEffectivityDTO.setName(generatedId);
         LotBasedEffectivityDTO lotBasedEffectivity = effectivityApi.createLotBasedEffectivity(
-                lotBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
+                lotBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId(), partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
 
         LotBasedEffectivityDTO effectivityDTO = effectivityApi.getLotBasedEffectivity(lotBasedEffectivity.getId());
 
         Assert.assertEquals(lotBasedEffectivityDTO.getName(), effectivityDTO.getName());
-        effectivityApi.deleteEffectivity(lotBasedEffectivity.getId());
+        effectivityApi.deleteEffectivity(TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion(), lotBasedEffectivity.getId());
     }
 
     @Test
     public void getSerialNumberBasedEffectivitiesTest() throws ApiException {
-        ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
+        this.createPartRevisionDTO();
+        this.createConfigurationItemDTO();
         String generatedId = UUID.randomUUID().toString().substring(0, 8);
 
         SerialNumberBasedEffectivityDTO serialNumberBasedEffectivityDTO = new SerialNumberBasedEffectivityDTO();
         serialNumberBasedEffectivityDTO.setName(generatedId);
         SerialNumberBasedEffectivityDTO serialNumberBasedEffectivity = effectivityApi.createSerialNumberBasedEffectivity(
-                serialNumberBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
+                serialNumberBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId(), partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
 
-        List<SerialNumberBasedEffectivityDTO> effectivityDTOList = effectivityApi.getSerialNumberBasedEffectivities();
+        List<SerialNumberBasedEffectivityDTO> effectivityDTOList = effectivityApi.getSerialNumberBasedEffectivities(TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
         System.out.println(effectivityDTOList.size());
         EffectivityDTO lastInsertedEffectivityDTO = effectivityDTOList.get(effectivityDTOList.size()-1);
 
         Assert.assertEquals(serialNumberBasedEffectivityDTO.getName(), lastInsertedEffectivityDTO.getName());
-        effectivityApi.deleteEffectivity(serialNumberBasedEffectivity.getId());
+        effectivityApi.deleteEffectivity(TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion(), serialNumberBasedEffectivity.getId());
     }
 
     @Test
     public void getDateBasedEffectivitiesTest() throws ApiException {
-        ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
+        this.createPartRevisionDTO();
+        this.createConfigurationItemDTO();
         String generatedId = UUID.randomUUID().toString().substring(0, 8);
 
         DateBasedEffectivityDTO dateBasedEffectivityDTO = new DateBasedEffectivityDTO();
         dateBasedEffectivityDTO.setName(generatedId);
         DateBasedEffectivityDTO dateBasedEffectivity = effectivityApi.createDateBasedEffectivity(
-                dateBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
+                dateBasedEffectivityDTO, TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
 
-        List<DateBasedEffectivityDTO> effectivityDTOList = effectivityApi.getDateBasedEffectivities();
+        List<DateBasedEffectivityDTO> effectivityDTOList = effectivityApi.getDateBasedEffectivities(TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
         EffectivityDTO lastInsertedEffectivityDTO = effectivityDTOList.get(effectivityDTOList.size()-1);
 
         Assert.assertEquals(dateBasedEffectivityDTO.getName(), lastInsertedEffectivityDTO.getName());
-        effectivityApi.deleteEffectivity(dateBasedEffectivity.getId());
+        effectivityApi.deleteEffectivity(TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion(), dateBasedEffectivity.getId());
     }
 
     @Test
     public void getLotBasedEffectivitiesTest() throws ApiException {
-        ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
+        this.createPartRevisionDTO();
+        this.createConfigurationItemDTO();
         String generatedId = UUID.randomUUID().toString().substring(0, 8);
 
         LotBasedEffectivityDTO lotBasedEffectivityDTO = new LotBasedEffectivityDTO();
         lotBasedEffectivityDTO.setName(generatedId);
         LotBasedEffectivityDTO lotBasedEffectivity = effectivityApi.createLotBasedEffectivity(
-                lotBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
+                lotBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId(), partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
 
-        List<LotBasedEffectivityDTO> effectivityDTOList = effectivityApi.getLotBasedEffectivities();
+        List<LotBasedEffectivityDTO> effectivityDTOList = effectivityApi.getLotBasedEffectivities(TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
         EffectivityDTO lastInsertedEffectivityDTO = effectivityDTOList.get(effectivityDTOList.size()-1);
 
         Assert.assertEquals(lotBasedEffectivityDTO.getName(), lastInsertedEffectivityDTO.getName());
-        effectivityApi.deleteEffectivity(lotBasedEffectivity.getId());
+        effectivityApi.deleteEffectivity(TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion(), lotBasedEffectivity.getId());
     }
 
     @Test
     public void updateEffectivityTest() throws ApiException {
-        ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
+        this.createPartRevisionDTO();
+        this.createConfigurationItemDTO();
         String updatedName = UUID.randomUUID().toString().substring(0, 8);
 
         LotBasedEffectivityDTO lotBasedEffectivityDTO = new LotBasedEffectivityDTO();
         lotBasedEffectivityDTO.setName(UUID.randomUUID().toString().substring(0, 8));
-        LotBasedEffectivityDTO lotBasedEffectivity = effectivityApi.createLotBasedEffectivity(lotBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
+        LotBasedEffectivityDTO lotBasedEffectivity = effectivityApi.createLotBasedEffectivity(
+                lotBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId(), partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
 
         lotBasedEffectivityDTO.setName(updatedName);
         EffectivityDTO updatedEffectivity = effectivityApi.updateEffectivity(lotBasedEffectivity.getId(), lotBasedEffectivityDTO);
@@ -204,20 +237,22 @@ public class EffectivityApiTest {
         Assert.assertEquals(updatedEffectivity.getId(), effectivityDTO.getId());
         Assert.assertEquals(updatedEffectivity.getName(), effectivityDTO.getName());
         Assert.assertNotEquals(lotBasedEffectivity.getName(), effectivityDTO.getName());
-        effectivityApi.deleteEffectivity(lotBasedEffectivity.getId());
+        effectivityApi.deleteEffectivity(TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion(), lotBasedEffectivity.getId());
     }
 
     @Test
     public void deleteEffectivityTest() throws ApiException {
-        ConfigurationItemDTO configurationItemDTO = this.createConfigurationItemDTO();
+        this.createPartRevisionDTO();
+        this.createConfigurationItemDTO();
         String updatedName = UUID.randomUUID().toString().substring(0, 8);
 
         LotBasedEffectivityDTO lotBasedEffectivityDTO = new LotBasedEffectivityDTO();
         lotBasedEffectivityDTO.setName(UUID.randomUUID().toString().substring(0, 8));
-        LotBasedEffectivityDTO lotBasedEffectivity = effectivityApi.createLotBasedEffectivity(lotBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId());
+        LotBasedEffectivityDTO lotBasedEffectivity = effectivityApi.createLotBasedEffectivity(
+                lotBasedEffectivityDTO, TestConfig.WORKSPACE, configurationItemDTO.getId(), partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
 
-        effectivityApi.deleteEffectivity(lotBasedEffectivity.getId());
-        List<LotBasedEffectivityDTO> effectivities = effectivityApi.getLotBasedEffectivities();
+        effectivityApi.deleteEffectivity(TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion(), lotBasedEffectivity.getId());
+        List<LotBasedEffectivityDTO> effectivities = effectivityApi.getLotBasedEffectivities(TestConfig.WORKSPACE, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
         Assert.assertFalse(effectivities.contains(lotBasedEffectivity));
     }
 }

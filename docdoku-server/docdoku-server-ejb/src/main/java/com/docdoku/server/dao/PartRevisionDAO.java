@@ -21,13 +21,11 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.PartRevisionAlreadyExistsException;
 import com.docdoku.core.exceptions.PartRevisionNotFoundException;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.*;
-import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.Workflow;
 
 import javax.persistence.*;
@@ -192,5 +190,11 @@ public class PartRevisionDAO {
                 .setParameter("workspaceId", pWorkspaceId)
                 .setParameter("login", assignedUserLogin)
                 .getResultList();
+    }
+
+    public void removePartRevisionEffectivity(PartRevision pPartRevision, Effectivity pEffectivity) {
+        pPartRevision.removeEffectivity(pEffectivity);
+        em.merge(pPartRevision);
+        em.flush();
     }
 }

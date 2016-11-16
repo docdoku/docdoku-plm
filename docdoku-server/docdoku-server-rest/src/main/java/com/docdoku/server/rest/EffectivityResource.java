@@ -50,87 +50,116 @@ public class EffectivityResource {
     }
 
     @POST
-    @Path("/serial-number/{workspaceId}/{confirgurationItemId}")
+    @Path("/serial-number/{workspaceId}/{configurationItemId}/{partRevisionNumber}-{partRevisionVersion}")
     @ApiOperation(value = "Create Serial number based effectivity on a configuration item", response = SerialNumberBasedEffectivityDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
     public SerialNumberBasedEffectivityDTO createSerialNumberBasedEffectivity(
-            @ApiParam(required = true, value = "Serial Number Based Effectivity to create") SerialNumberBasedEffectivityDTO srEffectivity,
+            @ApiParam(required = true, value = "Effectivity to create") SerialNumberBasedEffectivityDTO effectivity,
             @ApiParam(required = true, value = "Id of the effectivity workspace") @PathParam("workspaceId") String workspaceId,
-            @ApiParam(required = true, value = "Id of the effectivity configuration item") @PathParam("confirgurationItemId") String confirgurationItemId)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, WorkspaceNotEnabledException,
-            EffectivityAlreadyExistsException, CreationException {
-        ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId, confirgurationItemId);
-        ConfigurationItem configurationItem = productManager.getConfigurationItem(configurationItemKey);
-        SerialNumberBasedEffectivity serialNumberBasedEffectivity = effectivityManager.createSerialNumberBasedEffectivity(srEffectivity.getName(),
-                srEffectivity.getDescription(), configurationItem, srEffectivity.getStartNumber(), srEffectivity.getEndNumber());
+            @ApiParam(required = true, value = "Id of the effectivity configuration item") @PathParam("configurationItemId") String configurationItemId,
+            @ApiParam(required = true, value = "Number of the effectivity part revision") @PathParam("partRevisionNumber") String partRevisionNumber,
+            @ApiParam(required = true, value = "Version of the effectivity part revision") @PathParam("partRevisionVersion") String partRevisionVersion)
+            throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, AccessRightException,
+            WorkspaceNotEnabledException, ConfigurationItemNotFoundException, EffectivityAlreadyExistsException, CreationException {
+
+        PartRevision partRevision = productManager.getPartRevision(new PartRevisionKey(workspaceId, partRevisionNumber, partRevisionVersion));
+        ConfigurationItem configurationItem = productManager.getConfigurationItem(new ConfigurationItemKey(workspaceId, configurationItemId));
+
+        SerialNumberBasedEffectivity serialNumberBasedEffectivity = effectivityManager.createSerialNumberBasedEffectivity(
+                partRevision, effectivity.getName(), effectivity.getDescription(), configurationItem, effectivity.getStartNumber(),
+                effectivity.getEndNumber());
         return mapper.map(serialNumberBasedEffectivity, SerialNumberBasedEffectivityDTO.class);
     }
 
     @POST
-    @Path("/date/{workspaceId}/{confirgurationItemId}")
+    @Path("/date/{workspaceId}/{partRevisionNumber}-{partRevisionVersion}")
     @ApiOperation(value = "Create Date based effectivity on a configuration item", response = DateBasedEffectivityDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
     public DateBasedEffectivityDTO createDateBasedEffectivity(
-            @ApiParam(required = true, value = "Serial Number Based Effectivity to create") DateBasedEffectivityDTO dateEffectivity,
+            @ApiParam(required = true, value = "Effectivity to create") DateBasedEffectivityDTO effectivity,
             @ApiParam(required = true, value = "Id of the effectivity workspace") @PathParam("workspaceId") String workspaceId,
-            @ApiParam(required = true, value = "Id of the effectivity configuration item") @PathParam("confirgurationItemId") String confirgurationItemId)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, WorkspaceNotEnabledException,
-            EffectivityAlreadyExistsException, CreationException {
-        ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId, confirgurationItemId);
-        ConfigurationItem configurationItem = productManager.getConfigurationItem(configurationItemKey);
-        DateBasedEffectivity dateBasedEffectivity = effectivityManager.createDateBasedEffectivity(dateEffectivity.getName(),
-                dateEffectivity.getDescription(), configurationItem, dateEffectivity.getStartDate(), dateEffectivity.getEndDate());
+            @ApiParam(required = true, value = "Number of the effectivity part revision") @PathParam("partRevisionNumber") String partRevisionNumber,
+            @ApiParam(required = true, value = "Version of the effectivity part revision") @PathParam("partRevisionVersion") String partRevisionVersion)
+            throws EffectivityAlreadyExistsException, CreationException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException,
+            UserNotFoundException, AccessRightException, WorkspaceNotEnabledException {
+
+        PartRevision partRevision = productManager.getPartRevision(new PartRevisionKey(workspaceId, partRevisionNumber, partRevisionVersion));
+
+        DateBasedEffectivity dateBasedEffectivity = effectivityManager.createDateBasedEffectivity(
+                partRevision, effectivity.getName(), effectivity.getDescription(), effectivity.getStartDate(), effectivity.getEndDate());
         return mapper.map(dateBasedEffectivity, DateBasedEffectivityDTO.class);
     }
 
     @POST
-    @Path("/lot/{workspaceId}/{confirgurationItemId}")
+    @Path("/lot/{workspaceId}/{configurationItemId}/{partRevisionNumber}-{partRevisionVersion}")
     @ApiOperation(value = "Create Lot based effectivity on a configuration item", response = LotBasedEffectivityDTO.class)
     @Produces(MediaType.APPLICATION_JSON)
     public LotBasedEffectivityDTO createLotBasedEffectivity(
-            @ApiParam(required = true, value = "Lot Based Effectivity to create") LotBasedEffectivityDTO lotEffectivity,
+            @ApiParam(required = true, value = "Lot Based Effectivity to create") LotBasedEffectivityDTO effectivity,
             @ApiParam(required = true, value = "Id of the effectivity workspace") @PathParam("workspaceId") String workspaceId,
-            @ApiParam(required = true, value = "Id of the effectivity configuration item") @PathParam("confirgurationItemId") String confirgurationItemId)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, WorkspaceNotEnabledException,
-            EffectivityAlreadyExistsException, CreationException {
-        ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId, confirgurationItemId);
-        ConfigurationItem configurationItem = productManager.getConfigurationItem(configurationItemKey);
-        LotBasedEffectivity lotBasedEffectivity = effectivityManager.createLotBasedEffectivity(lotEffectivity.getName(),
-                lotEffectivity.getDescription(), configurationItem, lotEffectivity.getStartLotId(), lotEffectivity.getEndLotId());
+            @ApiParam(required = true, value = "Id of the effectivity configuration item") @PathParam("configurationItemId") String configurationItemId,
+            @ApiParam(required = true, value = "Number of the effectivity part revision") @PathParam("partRevisionNumber") String partRevisionNumber,
+            @ApiParam(required = true, value = "Version of the effectivity part revision") @PathParam("partRevisionVersion") String partRevisionVersion)
+            throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, AccessRightException,
+            WorkspaceNotEnabledException, ConfigurationItemNotFoundException, EffectivityAlreadyExistsException, CreationException {
+
+        PartRevision partRevision = productManager.getPartRevision(new PartRevisionKey(workspaceId, partRevisionNumber, partRevisionVersion));
+        ConfigurationItem configurationItem = productManager.getConfigurationItem(new ConfigurationItemKey(workspaceId, configurationItemId));
+
+        LotBasedEffectivity lotBasedEffectivity = effectivityManager.createLotBasedEffectivity(
+                partRevision, effectivity.getName(), effectivity.getDescription(), configurationItem, effectivity.getStartLotId(), effectivity.getEndLotId());
         return mapper.map(lotBasedEffectivity, LotBasedEffectivityDTO.class);
     }
 
     @GET
-    @Path("/serial-number")
+    @Path("/serial-number/{workspaceId}/{partRevisionNumber}-{partRevisionVersion}")
     @ApiOperation(value = "Get all serial number based effectivities", response = SerialNumberBasedEffectivityDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSerialNumberBasedEffectivities() {
+    public Response getSerialNumberBasedEffectivities(
+            @ApiParam(required = true, value = "Id of the effectivity workspace") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Number of the effectivity part revision") @PathParam("partRevisionNumber") String partRevisionNumber,
+            @ApiParam(required = true, value = "Version of the effectivity part revision") @PathParam("partRevisionVersion") String partRevisionVersion)
+            throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, AccessRightException, WorkspaceNotEnabledException {
+        PartRevision partRevision = productManager.getPartRevision(new PartRevisionKey(workspaceId, partRevisionNumber, partRevisionVersion));
+
         List<SerialNumberBasedEffectivityDTO> effectivityDTOs = new ArrayList<>();
-        for(SerialNumberBasedEffectivity effectivity : effectivityManager.getSerialNumberBasedEffectivities()) {
+        for(SerialNumberBasedEffectivity effectivity : effectivityManager.getSerialNumberBasedEffectivities(partRevision)) {
             effectivityDTOs.add(mapper.map(effectivity, SerialNumberBasedEffectivityDTO.class));
         }
         return Response.ok(new GenericEntity<List<SerialNumberBasedEffectivityDTO>>(effectivityDTOs){}).build();
     }
 
     @GET
-    @Path("/date")
+    @Path("/date/{workspaceId}/{partRevisionNumber}-{partRevisionVersion}")
     @ApiOperation(value = "Get all date based effectivities", response = DateBasedEffectivityDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getDateBasedEffectivities() {
+    public Response getDateBasedEffectivities(
+            @ApiParam(required = true, value = "Id of the effectivity workspace") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Number of the effectivity part revision") @PathParam("partRevisionNumber") String partRevisionNumber,
+            @ApiParam(required = true, value = "Version of the effectivity part revision") @PathParam("partRevisionVersion") String partRevisionVersion)
+            throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, AccessRightException, WorkspaceNotEnabledException {
+        PartRevision partRevision = productManager.getPartRevision(new PartRevisionKey(workspaceId, partRevisionNumber, partRevisionVersion));
+
         List<DateBasedEffectivityDTO> effectivityDTOs = new ArrayList<>();
-        for(DateBasedEffectivity effectivity : effectivityManager.getDateBasedEffectivities()) {
+        for(DateBasedEffectivity effectivity : effectivityManager.getDateBasedEffectivities(partRevision)) {
             effectivityDTOs.add(mapper.map(effectivity, DateBasedEffectivityDTO.class));
         }
         return Response.ok(new GenericEntity<List<DateBasedEffectivityDTO>>(effectivityDTOs){}).build();
     }
 
     @GET
-    @Path("/lot")
+    @Path("/lot/{workspaceId}/{partRevisionNumber}-{partRevisionVersion}")
     @ApiOperation(value = "Get all lot based effectivities", response = LotBasedEffectivityDTO.class, responseContainer = "List")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getLotBasedEffectivities() {
+    public Response getLotBasedEffectivities(
+            @ApiParam(required = true, value = "Id of the effectivity workspace") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Number of the effectivity part revision") @PathParam("partRevisionNumber") String partRevisionNumber,
+            @ApiParam(required = true, value = "Version of the effectivity part revision") @PathParam("partRevisionVersion") String partRevisionVersion)
+            throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, AccessRightException, WorkspaceNotEnabledException {
+        PartRevision partRevision = productManager.getPartRevision(new PartRevisionKey(workspaceId, partRevisionNumber, partRevisionVersion));
+
         List<LotBasedEffectivityDTO> effectivityDTOs = new ArrayList<>();
-        for(LotBasedEffectivity effectivity : effectivityManager.getLotBasedEffectivities()) {
+        for(LotBasedEffectivity effectivity : effectivityManager.getLotBasedEffectivities(partRevision)) {
             effectivityDTOs.add(mapper.map(effectivity, LotBasedEffectivityDTO.class));
         }
         return Response.ok(new GenericEntity<List<LotBasedEffectivityDTO>>(effectivityDTOs){}).build();
@@ -193,10 +222,18 @@ public class EffectivityResource {
 
     @DELETE
     @ApiOperation(value = "Delete workspace", response = Response.class)
-    @Path("/{effectivityId}")
+    @Path("/{workspaceId}/{partRevisionNumber}-{partRevisionVersion}/{effectivityId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteEffectivity(@ApiParam(required = true, value = "Effectivity id") @PathParam("effectivityId") int effectivityId) throws EffectivityNotFoundException {
-        effectivityManager.deleteEffectivity(effectivityId);
+    public Response deleteEffectivity(
+            @ApiParam(required = true, value = "Id of the effectivity workspace") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Number of the effectivity part revision") @PathParam("partRevisionNumber") String partRevisionNumber,
+            @ApiParam(required = true, value = "Version of the effectivity part revision") @PathParam("partRevisionVersion") String partRevisionVersion,
+            @ApiParam(required = true, value = "Effectivity id") @PathParam("effectivityId") int effectivityId)
+            throws EffectivityNotFoundException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException,
+            AccessRightException, WorkspaceNotEnabledException {
+        PartRevision partRevision = productManager.getPartRevision(new PartRevisionKey(workspaceId, partRevisionNumber, partRevisionVersion));
+
+        effectivityManager.deleteEffectivity(partRevision, effectivityId);
         return Response.ok().build();
     }
 

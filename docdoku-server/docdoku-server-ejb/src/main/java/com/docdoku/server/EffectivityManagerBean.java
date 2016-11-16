@@ -8,6 +8,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IEffectivityManagerLocal;
 import com.docdoku.server.dao.EffectivityDAO;
+import com.docdoku.server.dao.PartRevisionDAO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.ejb.Local;
@@ -17,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @DeclareRoles({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IEffectivityManagerLocal.class)
@@ -31,7 +33,7 @@ public class EffectivityManagerBean implements IEffectivityManagerLocal {
 
     @Override
     public SerialNumberBasedEffectivity createSerialNumberBasedEffectivity(
-            String pName, String pDescription, ConfigurationItem pConfigurationItem, String pStartNumber, String pEndNumber)
+            PartRevision pPartRevision, String pName, String pDescription, ConfigurationItem pConfigurationItem, String pStartNumber, String pEndNumber)
             throws EffectivityAlreadyExistsException, CreationException {
         EffectivityDAO effectivityDAO = new EffectivityDAO(em);
         SerialNumberBasedEffectivity serialNumberBasedEffectivity = new SerialNumberBasedEffectivity();
@@ -41,27 +43,38 @@ public class EffectivityManagerBean implements IEffectivityManagerLocal {
         serialNumberBasedEffectivity.setStartNumber(pStartNumber);
         serialNumberBasedEffectivity.setEndNumber(pEndNumber);
         effectivityDAO.createEffectivity(serialNumberBasedEffectivity);
+
+        Set<Effectivity> effectivities = pPartRevision.getEffectivities();
+        effectivities.add(serialNumberBasedEffectivity);
+        pPartRevision.setEffectivities(effectivities);
+        PartRevisionDAO partRevisionDAO = new PartRevisionDAO(em);
+        partRevisionDAO.updateRevision(pPartRevision);
         return serialNumberBasedEffectivity;
     }
 
     @Override
     public DateBasedEffectivity createDateBasedEffectivity(
-            String pName, String pDescription, ConfigurationItem pConfigurationItem, Date pStartDate, Date pEndDate)
+            PartRevision pPartRevision, String pName, String pDescription, Date pStartDate, Date pEndDate)
             throws EffectivityAlreadyExistsException, CreationException {
         EffectivityDAO effectivityDAO = new EffectivityDAO(em);
         DateBasedEffectivity dateBasedEffectivity = new DateBasedEffectivity();
         dateBasedEffectivity.setName(pName);
         dateBasedEffectivity.setDescription(pDescription);
-        dateBasedEffectivity.setConfigurationItem(pConfigurationItem);
         dateBasedEffectivity.setStartDate(pStartDate);
         dateBasedEffectivity.setEndDate(pEndDate);
         effectivityDAO.createEffectivity(dateBasedEffectivity);
+
+        Set<Effectivity> effectivities = pPartRevision.getEffectivities();
+        effectivities.add(dateBasedEffectivity);
+        pPartRevision.setEffectivities(effectivities);
+        PartRevisionDAO partRevisionDAO = new PartRevisionDAO(em);
+        partRevisionDAO.updateRevision(pPartRevision);
         return dateBasedEffectivity;
     }
 
     @Override
     public LotBasedEffectivity createLotBasedEffectivity(
-            String pName, String pDescription, ConfigurationItem pConfigurationItem, String pStartLotId, String pEndLotId)
+            PartRevision pPartRevision, String pName, String pDescription, ConfigurationItem pConfigurationItem, String pStartLotId, String pEndLotId)
             throws EffectivityAlreadyExistsException, CreationException {
         EffectivityDAO effectivityDAO = new EffectivityDAO(em);
         LotBasedEffectivity lotBasedEffectivity = new LotBasedEffectivity();
@@ -71,6 +84,12 @@ public class EffectivityManagerBean implements IEffectivityManagerLocal {
         lotBasedEffectivity.setStartLotId(pStartLotId);
         lotBasedEffectivity.setEndLotId(pEndLotId);
         effectivityDAO.createEffectivity(lotBasedEffectivity);
+
+        Set<Effectivity> effectivities = pPartRevision.getEffectivities();
+        effectivities.add(lotBasedEffectivity);
+        pPartRevision.setEffectivities(effectivities);
+        PartRevisionDAO partRevisionDAO = new PartRevisionDAO(em);
+        partRevisionDAO.updateRevision(pPartRevision);
         return lotBasedEffectivity;
     }
 
@@ -90,18 +109,18 @@ public class EffectivityManagerBean implements IEffectivityManagerLocal {
     }
 
     @Override
-    public List<SerialNumberBasedEffectivity> getSerialNumberBasedEffectivities() {
-        return new EffectivityDAO(em).loadSerialNumberBasedEffectivities();
+    public List<SerialNumberBasedEffectivity> getSerialNumberBasedEffectivities(PartRevision pPartRevision) {
+        return new EffectivityDAO(em).loadSerialNumberBasedEffectivities(pPartRevision);
     }
 
     @Override
-    public List<DateBasedEffectivity> getDateBasedEffectivities() {
-        return new EffectivityDAO(em).loadDateBasedEffectivities();
+    public List<DateBasedEffectivity> getDateBasedEffectivities(PartRevision pPartRevision) {
+        return new EffectivityDAO(em).loadDateBasedEffectivities(pPartRevision);
     }
 
     @Override
-    public List<LotBasedEffectivity> getLotBasedEffectivities() {
-        return new EffectivityDAO(em).loadLotBasedEffectivities();
+    public List<LotBasedEffectivity> getLotBasedEffectivities(PartRevision pPartRevision) {
+        return new EffectivityDAO(em).loadLotBasedEffectivities(pPartRevision);
     }
 
     @Override
@@ -157,9 +176,20 @@ public class EffectivityManagerBean implements IEffectivityManagerLocal {
     }
 
     @Override
-    public void deleteEffectivity(int pId) throws EffectivityNotFoundException {
+    public void deleteEffectivity(PartRevision pPartRevision, int pId) throws EffectivityNotFoundException {
         EffectivityDAO effectivityDAO = new EffectivityDAO(em);
         Effectivity effectivity = effectivityDAO.loadEffectivity(pId);
+        boolean effectivityFind = false;
+
+        Object[] objects = pPartRevision.getEffectivities().toArray();
+        for(int i=0; i<objects.length && !effectivityFind; i++) {
+            if(((Effectivity)objects[i]).getId() == effectivity.getId()) {
+                effectivityFind = true;
+                PartRevisionDAO partRevisionDAO = new PartRevisionDAO(em);
+                partRevisionDAO.removePartRevisionEffectivity(pPartRevision, ((Effectivity)objects[i]));
+            }
+        }
+
         effectivityDAO.removeEffectivity(effectivity);
     }
 }
