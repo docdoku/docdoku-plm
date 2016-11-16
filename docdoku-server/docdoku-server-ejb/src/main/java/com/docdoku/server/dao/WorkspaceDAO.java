@@ -51,43 +51,43 @@ public class WorkspaceDAO {
     private IDataManagerLocal dataManager;
 
     public WorkspaceDAO(Locale pLocale, EntityManager pEM) {
-        em=pEM;
-        mLocale=pLocale;
+        em = pEM;
+        mLocale = pLocale;
     }
-    
+
     public WorkspaceDAO(EntityManager pEM) {
-        em=pEM;
-        mLocale=Locale.getDefault();
+        em = pEM;
+        mLocale = Locale.getDefault();
     }
 
     public WorkspaceDAO(EntityManager pEM, IDataManagerLocal pDataManager) {
-        em=pEM;
+        em = pEM;
         dataManager = pDataManager;
     }
 
-    public void updateWorkspace(Workspace pWorkspace){
+    public void updateWorkspace(Workspace pWorkspace) {
         em.merge(pWorkspace);
     }
-    
+
     public void createWorkspace(Workspace pWorkspace) throws WorkspaceAlreadyExistsException, CreationException, FolderAlreadyExistsException {
-        try{
+        try {
             //the EntityExistsException is thrown only when flush occurs
             em.persist(pWorkspace);
             em.flush();
             new FolderDAO(mLocale, em).createFolder(new Folder(pWorkspace.getId()));
-        }catch(EntityExistsException pEEEx){
+        } catch (EntityExistsException pEEEx) {
             throw new WorkspaceAlreadyExistsException(mLocale, pWorkspace);
-        }catch(PersistenceException pPEx){
+        } catch (PersistenceException pPEx) {
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
             //thrown instead of EntityExistsException
             throw new CreationException(mLocale);
         }
     }
-    
-    
+
+
     public Workspace loadWorkspace(String pID) throws WorkspaceNotFoundException {
-        Workspace workspace=em.find(Workspace.class,pID);      
+        Workspace workspace = em.find(Workspace.class, pID);
         if (workspace == null) {
             throw new WorkspaceNotFoundException(mLocale, pID);
         } else {
@@ -97,13 +97,13 @@ public class WorkspaceDAO {
 
     public long getDiskUsageForWorkspace(String pWorkspaceId) {
         Number result = (Number) em.createNamedQuery("BinaryResource.diskUsageInPath")
-                .setParameter("path", pWorkspaceId+"/%")
+                .setParameter("path", pWorkspaceId + "/%")
                 .getSingleResult();
 
         return result != null ? result.longValue() : 0L;
     }
 
-    public List<Workspace> findWorkspacesWhereUserIsActive(String userLogin){
+    public List<Workspace> findWorkspacesWhereUserIsActive(String userLogin) {
         return em.createNamedQuery("Workspace.findWorkspacesWhereUserIsActive", Workspace.class)
                 .setParameter("userLogin", userLogin)
                 .getResultList();
@@ -112,24 +112,24 @@ public class WorkspaceDAO {
     public void removeWorkspace(Workspace workspace) throws IOException, StorageException, EntityConstraintException, FolderNotFoundException {
 
         String workspaceId = workspace.getId();
-        String pathToMatch = workspaceId.replace("_","\\_").replace("%","\\%")+"/%";
+        String pathToMatch = workspaceId.replace("_", "\\_").replace("%", "\\%") + "/%";
 
         // Keep binaries in memory to delete them if google storage is the default storage provider
         // We also could enhance the way we delete files by using gsutils from google api
         List<BinaryResource> binaryResourcesInWorkspace =
-            em.createQuery("SELECT b FROM BinaryResource b where b.fullName LIKE :pathToMatch", BinaryResource.class)
-                .setParameter("pathToMatch",pathToMatch).getResultList();
+                em.createQuery("SELECT b FROM BinaryResource b where b.fullName LIKE :pathToMatch", BinaryResource.class)
+                        .setParameter("pathToMatch", pathToMatch).getResultList();
 
         // SharedEntities
         em.createQuery("DELETE FROM SharedEntity s where s.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+                .setParameter("workspace", workspace).executeUpdate();
 
         // Subscriptions
         em.createQuery("DELETE FROM IterationChangeSubscription s where s.observedDocumentRevisionWorkspaceId = :workspaceId")
-                .setParameter("workspaceId",workspaceId).executeUpdate();
+                .setParameter("workspaceId", workspaceId).executeUpdate();
 
         em.createQuery("DELETE FROM StateChangeSubscription s where s.observedDocumentRevisionWorkspaceId = :workspaceId")
-                .setParameter("workspaceId",workspaceId).executeUpdate();
+                .setParameter("workspaceId", workspaceId).executeUpdate();
 
         // BaselinedPart
         em.createQuery("DELETE FROM BaselinedPart bp where bp.targetPart.partRevision.partMasterWorkspaceId = :workspaceId")
@@ -141,31 +141,37 @@ public class WorkspaceDAO {
 
         // ProductInstances
         em.createQuery("DELETE FROM ProductInstanceIteration pii where pii.productInstanceMaster.instanceOf.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+                .setParameter("workspace", workspace).executeUpdate();
         em.createQuery("DELETE FROM ProductInstanceMaster pim where pim.instanceOf.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+                .setParameter("workspace", workspace).executeUpdate();
+
         // ProductBaselines
         em.createQuery("DELETE FROM ProductBaseline b where b.configurationItem.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+                .setParameter("workspace", workspace).executeUpdate();
+
+        // ProductConfigurations
+        em.createQuery("DELETE FROM ProductConfiguration c where c.configurationItem.workspace = :workspace")
+                .setParameter("workspace", workspace).executeUpdate();
+
         // DocumentBaselines
         em.createQuery("DELETE FROM DocumentBaseline b where b.author.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+                .setParameter("workspace", workspace).executeUpdate();
 
         // Effectivity
         em.createQuery("DELETE FROM Effectivity e where e.configurationItem.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+                .setParameter("workspace", workspace).executeUpdate();
 
         // PartCollection
         em.createQuery("DELETE FROM PartCollection pc where pc.author.workspaceId = :workspaceId")
-                .setParameter("workspaceId",workspaceId).executeUpdate();
+                .setParameter("workspaceId", workspaceId).executeUpdate();
 
         // DocumentCollection
         em.createQuery("DELETE FROM DocumentCollection dc where dc.author.workspaceId = :workspaceId")
-                .setParameter("workspaceId",workspaceId).executeUpdate();
+                .setParameter("workspaceId", workspaceId).executeUpdate();
 
         // Layers
         em.createQuery("DELETE FROM Layer l where l.configurationItem.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+                .setParameter("workspace", workspace).executeUpdate();
         // Markers
         em.createQuery("DELETE FROM Marker m where m.author.workspace = :workspace")
                 .setParameter("workspace", workspace).executeUpdate();
@@ -209,18 +215,18 @@ public class WorkspaceDAO {
         // Clear all document links ...
         List<DocumentIteration> documentsIteration =
                 em.createQuery("SELECT d FROM DocumentIteration d WHERE d.documentRevision.documentMaster.workspace = :workspace", DocumentIteration.class)
-                        .setParameter("workspace",workspace).getResultList();
+                        .setParameter("workspace", workspace).getResultList();
 
         List<PartIteration> partsIteration =
                 em.createQuery("SELECT p FROM PartIteration p WHERE p.partRevision.partMaster.workspace = :workspace", PartIteration.class)
-                        .setParameter("workspace",workspace).getResultList();
+                        .setParameter("workspace", workspace).getResultList();
 
-        for (DocumentIteration d: documentsIteration) {
+        for (DocumentIteration d : documentsIteration) {
             d.setLinkedDocuments(new HashSet<DocumentLink>());
         }
-        for (PartIteration p: partsIteration) {
+        for (PartIteration p : partsIteration) {
             p.setLinkedDocuments(new HashSet<DocumentLink>());
-            for (PartUsageLink pul: p.getComponents()) {
+            for (PartUsageLink pul : p.getComponents()) {
                 pul.setSubstitutes(new LinkedList<PartSubstituteLink>());
             }
             p.setComponents(new LinkedList<PartUsageLink>());
@@ -238,10 +244,10 @@ public class WorkspaceDAO {
         // Remove parents
         List<DocumentMaster> documentsMaster =
                 em.createQuery("SELECT d FROM DocumentMaster d WHERE d.workspace = :workspace", DocumentMaster.class)
-                        .setParameter("workspace",workspace).getResultList();
+                        .setParameter("workspace", workspace).getResultList();
 
         WorkflowDAO workflowDAO = new WorkflowDAO(em);
-        for (DocumentMaster d: documentsMaster) {
+        for (DocumentMaster d : documentsMaster) {
             workflowDAO.removeWorkflowConstraints(d);
             em.remove(d);
         }
@@ -250,9 +256,9 @@ public class WorkspaceDAO {
 
         List<PartMaster> partsMaster =
                 em.createQuery("SELECT p FROM PartMaster p WHERE p.workspace = :workspace", PartMaster.class)
-                        .setParameter("workspace",workspace).getResultList();
+                        .setParameter("workspace", workspace).getResultList();
 
-        for (PartMaster p: partsMaster) {
+        for (PartMaster p : partsMaster) {
             workflowDAO.removeWorkflowConstraints(p);
             em.remove(p);
         }
@@ -260,21 +266,21 @@ public class WorkspaceDAO {
 
         // Delete folders
         em.createQuery("UPDATE Folder f SET f.parentFolder = NULL WHERE f.parentFolder.completePath = :workspaceId OR f.parentFolder.completePath LIKE :pathToMatch")
-                .setParameter("workspaceId",workspaceId)
-                .setParameter("pathToMatch",pathToMatch)
+                .setParameter("workspaceId", workspaceId)
+                .setParameter("pathToMatch", pathToMatch)
                 .executeUpdate();
         em.createQuery("DELETE FROM Folder f where f.completePath = :workspaceId OR f.completePath LIKE :pathToMatch")
-                .setParameter("workspaceId",workspaceId)
-                .setParameter("pathToMatch",pathToMatch)
+                .setParameter("workspaceId", workspaceId)
+                .setParameter("pathToMatch", pathToMatch)
                 .executeUpdate();
         em.flush();
 
         List<WorkflowModel> workflowModels =
                 em.createQuery("SELECT w FROM WorkflowModel w WHERE w.workspace = :workspace", WorkflowModel.class)
-                        .setParameter("workspace",workspace).getResultList();
+                        .setParameter("workspace", workspace).getResultList();
 
-        WorkflowModelDAO workflowModelDAO = new WorkflowModelDAO(new Locale("en"),em);
-        for (WorkflowModel w: workflowModels) {
+        WorkflowModelDAO workflowModelDAO = new WorkflowModelDAO(new Locale("en"), em);
+        for (WorkflowModel w : workflowModels) {
             workflowModelDAO.removeWorkflowModelConstraints(w);
             em.remove(w);
         }
@@ -282,9 +288,9 @@ public class WorkspaceDAO {
 
         List<WorkspaceWorkflow> workspaceWorkflows =
                 em.createQuery("SELECT ww FROM WorkspaceWorkflow ww WHERE ww.workspace = :workspace", WorkspaceWorkflow.class)
-                        .setParameter("workspace",workspace).getResultList();
+                        .setParameter("workspace", workspace).getResultList();
 
-        for (WorkspaceWorkflow ww: workspaceWorkflows) {
+        for (WorkspaceWorkflow ww : workspaceWorkflows) {
             workflowDAO.removeWorkflowConstraints(ww);
             em.remove(ww);
         }
@@ -293,23 +299,23 @@ public class WorkspaceDAO {
 
         // Tags subscriptions
         em.createQuery("DELETE FROM TagUserSubscription t where t.tag.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+                .setParameter("workspace", workspace).executeUpdate();
 
         em.createQuery("DELETE FROM TagUserGroupSubscription t where t.tag.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+                .setParameter("workspace", workspace).executeUpdate();
 
         // Tags
         em.createQuery("DELETE FROM Tag t where t.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+                .setParameter("workspace", workspace).executeUpdate();
         // Roles
         em.createQuery("DELETE FROM Role r where r.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+                .setParameter("workspace", workspace).executeUpdate();
 
         // LOV
         em.createQuery("DELETE FROM ListOfValuesAttributeTemplate lovat where lovat.lov.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+                .setParameter("workspace", workspace).executeUpdate();
         em.createQuery("DELETE FROM ListOfValues lov where lov.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+                .setParameter("workspace", workspace).executeUpdate();
 
         // Query
         em.createQuery("DELETE FROM QueryContext qc where qc.workspaceId = :workspaceId")
@@ -319,21 +325,21 @@ public class WorkspaceDAO {
 
         // WorkspaceUserGroupMembership
         em.createQuery("DELETE FROM WorkspaceUserGroupMembership w where w.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+                .setParameter("workspace", workspace).executeUpdate();
 
         // WorkspaceUserMembership
         em.createQuery("DELETE FROM WorkspaceUserMembership w where w.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+                .setParameter("workspace", workspace).executeUpdate();
 
         // User groups
         em.createQuery("DELETE FROM UserGroup u where u.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+                .setParameter("workspace", workspace).executeUpdate();
 
         List<UserGroup> userGroups =
-                em.createQuery("SELECT u FROM UserGroup u WHERE u.workspace = :workspace",UserGroup.class)
-                        .setParameter("workspace",workspace).getResultList();
+                em.createQuery("SELECT u FROM UserGroup u WHERE u.workspace = :workspace", UserGroup.class)
+                        .setParameter("workspace", workspace).getResultList();
 
-        for (UserGroup u: userGroups) {
+        for (UserGroup u : userGroups) {
             u.setUsers(new HashSet<User>());
             em.flush();
             em.remove(u);
@@ -341,7 +347,7 @@ public class WorkspaceDAO {
 
         // Users
         em.createQuery("DELETE FROM User u where u.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+                .setParameter("workspace", workspace).executeUpdate();
 
         // Finally delete the workspace
 
@@ -350,7 +356,7 @@ public class WorkspaceDAO {
         em.remove(workspace);
 
         // Delete workspace files
-        dataManager.deleteWorkspaceFolder(workspaceId,binaryResourcesInWorkspace);
+        dataManager.deleteWorkspaceFolder(workspaceId, binaryResourcesInWorkspace);
 
         em.flush();
 
