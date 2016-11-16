@@ -40,7 +40,7 @@ public class TestConfig {
         LOGIN = System.getProperty("login") != null ? System.getProperty("login") : "test";
         PASSWORD = System.getProperty("password") != null ? System.getProperty("password") : "test";
         WORKSPACE = System.getProperty("workspace") != null ? System.getProperty("workspace") : "test";
-        SSL = System.getProperty("ssl") != null ? Boolean.valueOf(System.getProperty("ssl")) : true;
+        SSL = System.getProperty("ssl") != null ? Boolean.valueOf(System.getProperty("ssl")) : false;
     }
 
     public static String[] getAuth() {
