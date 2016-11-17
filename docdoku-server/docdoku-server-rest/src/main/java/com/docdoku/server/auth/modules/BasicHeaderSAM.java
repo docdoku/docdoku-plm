@@ -66,13 +66,13 @@ public class BasicHeaderSAM extends CustomSAM {
 
         byte[] decoded = DatatypeConverter.parseBase64Binary(splitAuthorization[1]);
 
-        String credentials = null;
+        String credentials;
 
         try {
             credentials = new String(decoded, "US-ASCII");
         } catch (UnsupportedEncodingException e) {
-            // TODO re-throw or log, should send failure ?
-            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return AuthStatus.FAILURE;
         }
 
         String[] splitCredentials = credentials.split(":");

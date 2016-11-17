@@ -37,7 +37,7 @@ import java.util.Map;
  */
 public abstract class CustomSAM implements ServerAuthModule {
 
-    protected static final Class[] supportedMessageTypes = new Class[]{HttpServletRequest.class};
+    private static final Class[] supportedMessageTypes = new Class[]{HttpServletRequest.class};
     protected CallbackHandler callbackHandler;
 
     @Override
