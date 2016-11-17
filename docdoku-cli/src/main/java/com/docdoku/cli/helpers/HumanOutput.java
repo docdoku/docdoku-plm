@@ -122,16 +122,6 @@ public class HumanOutput extends CliOutput{
     }
 
     @Override
-    public void printPartMaster(PartMaster pm, long lastModified) {
-        // TODO : rewrite with DTO
-        /*
-        int revColSize = pm.getLastRevision().getVersion().length();
-        for(PartRevision pr:pm.getPartRevisions()){
-            printRevisionStatus(revColSize,pr);
-        }*/
-    }
-
-    @Override
     public void printConversion(ConversionDTO conversion) {
         if(conversion.getSucceed()){
             OUTPUT_STREAM.println(LangHelper.getLocalizedMessage("ConversionSucceed",locale));

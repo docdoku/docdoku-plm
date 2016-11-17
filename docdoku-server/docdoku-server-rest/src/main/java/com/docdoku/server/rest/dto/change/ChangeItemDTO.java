@@ -20,7 +20,8 @@
 
 package com.docdoku.server.rest.dto.change;
 
-import com.docdoku.core.change.ChangeItem;
+import com.docdoku.core.change.ChangeItemCategory;
+import com.docdoku.core.change.ChangeItemPriority;
 import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.docdoku.server.rest.dto.PartIterationDTO;
@@ -65,10 +66,10 @@ public class ChangeItemDTO implements Serializable {
     private String description;
 
     @ApiModelProperty(value = "Change item priority")
-    private ChangeItem.Priority priority;
+    private ChangeItemPriority priority;
 
     @ApiModelProperty(value = "Change item category")
-    private ChangeItem.Category category;
+    private ChangeItemCategory category;
 
     @ApiModelProperty(value = "Change item affected documents")
     private List<DocumentIterationDTO> affectedDocuments;
@@ -162,19 +163,19 @@ public class ChangeItemDTO implements Serializable {
         this.description = description;
     }
 
-    public ChangeItem.Priority getPriority() {
+    public ChangeItemPriority getPriority() {
         return priority;
     }
 
-    public void setPriority(ChangeItem.Priority priority) {
+    public void setPriority(ChangeItemPriority priority) {
         this.priority = priority;
     }
 
-    public ChangeItem.Category getCategory() {
+    public ChangeItemCategory getCategory() {
         return category;
     }
 
-    public void setCategory(ChangeItem.Category category) {
+    public void setCategory(ChangeItemCategory category) {
         this.category = category;
     }
 

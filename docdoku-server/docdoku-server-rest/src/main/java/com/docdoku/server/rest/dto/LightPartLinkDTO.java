@@ -20,7 +20,6 @@
 
 package com.docdoku.server.rest.dto;
 
-import com.docdoku.core.product.PartLink;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -46,12 +45,21 @@ public class LightPartLinkDTO implements Serializable {
     public LightPartLinkDTO() {
     }
 
+    public LightPartLinkDTO(String number, String name, String referenceDescription, String fullId) {
+        this.number = number;
+        this.name = name;
+        this.referenceDescription = referenceDescription;
+        this.fullId = fullId;
+    }
+/*
+
     public LightPartLinkDTO(PartLink partLink) {
         number = partLink.getComponent().getNumber();
         name = partLink.getComponent().getName();
         referenceDescription = partLink.getReferenceDescription();
         fullId = partLink.getFullId();
     }
+*/
 
     public String getNumber() {
         return number;

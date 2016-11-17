@@ -23,10 +23,9 @@ package com.docdoku.cli.commands.documents;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.DocumentIterationDTO;
 import com.docdoku.api.models.DocumentRevisionDTO;
-import com.docdoku.api.models.DocumentRevisionKey;
 import com.docdoku.api.models.UserDTO;
-import com.docdoku.api.services.DocumentApi;
 import com.docdoku.api.models.utils.LastIterationHelper;
+import com.docdoku.api.services.DocumentApi;
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
@@ -94,7 +93,7 @@ public class DocumentCheckOutCommand extends BaseCommandLine {
 
         Locale locale = new AccountsManager().getUserLocale(user);
 
-        DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey();
+        DocumentRevisionDTO documentRevisionKey = new DocumentRevisionDTO();
         documentRevisionKey.setWorkspaceId(workspace);
         documentRevisionKey.setDocumentMasterId(id);
         documentRevisionKey.setVersion(pRevision);

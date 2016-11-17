@@ -39,10 +39,6 @@ import java.io.Serializable;
 @Entity
 public class CADInstance implements Serializable, Cloneable {
 
-    public enum RotationType {
-        ANGLE,MATRIX
-    }
-
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Id
     private int id;

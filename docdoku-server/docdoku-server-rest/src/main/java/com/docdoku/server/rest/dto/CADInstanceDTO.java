@@ -19,7 +19,7 @@
  */
 package com.docdoku.server.rest.dto;
 
-import com.docdoku.core.product.CADInstance;
+import com.docdoku.core.product.RotationType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -52,7 +52,7 @@ public class CADInstanceDTO implements Serializable {
     private double[] matrix;
 
     @ApiModelProperty(value = "Transformation type")
-    private CADInstance.RotationType rotationType;
+    private RotationType rotationType;
 
 
     public CADInstanceDTO() {
@@ -75,11 +75,11 @@ public class CADInstanceDTO implements Serializable {
         this.matrix = matrix;
     }
 
-    public CADInstance.RotationType getRotationType() {
+    public RotationType getRotationType() {
         return rotationType;
     }
 
-    public void setRotationType(CADInstance.RotationType rotationType) {
+    public void setRotationType(RotationType rotationType) {
         this.rotationType = rotationType;
     }
 

@@ -70,15 +70,15 @@ public class PartCreationCommand extends BaseCommandLine {
         PartRevisionDTO pr = partsApi.createNewPart(workspace, partCreationDTO);
 
         PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(pr);
-        PartRevisionKey partRPK = new PartRevisionKey();
+        PartRevisionDTO partRPK = new PartRevisionDTO();
         partRPK.setWorkspaceId(workspace);
-        partRPK.setPartMasterNumber(partNumber);
+        partRPK.setNumber(partNumber);
         partRPK.setVersion(pr.getVersion());
 
-        PartIterationKey partIPK = new PartIterationKey();
+        PartIterationDTO partIPK = new PartIterationDTO();
         partIPK.setWorkspaceId(workspace);
-        partIPK.setPartMasterNumber(partNumber);
-        partIPK.setPartRevisionVersion(pr.getVersion());
+        partIPK.setNumber(partNumber);
+        partIPK.setVersion(pr.getVersion());
         partIPK.setIteration(lastIteration.getIteration());
 
         FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));

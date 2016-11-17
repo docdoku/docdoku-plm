@@ -21,11 +21,9 @@
 package com.docdoku.cli.commands.documents;
 
 import com.docdoku.api.models.DocumentIterationDTO;
-import com.docdoku.api.models.DocumentIterationKey;
 import com.docdoku.api.models.DocumentRevisionDTO;
-import com.docdoku.api.models.DocumentRevisionKey;
-import com.docdoku.api.services.DocumentApi;
 import com.docdoku.api.models.utils.LastIterationHelper;
+import com.docdoku.api.services.DocumentApi;
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
@@ -61,7 +59,7 @@ public class DocumentPutCommand extends BaseCommandLine {
             loadMetadata();
         }
 
-        DocumentRevisionKey docRPK = new DocumentRevisionKey();
+        DocumentRevisionDTO docRPK = new DocumentRevisionDTO();
         docRPK.setWorkspaceId(workspace);
         docRPK.setDocumentMasterId(id);
         docRPK.setVersion(revision);
@@ -70,10 +68,10 @@ public class DocumentPutCommand extends BaseCommandLine {
         DocumentRevisionDTO dr = documentApi.getDocumentRevision(workspace,id,revision);
         DocumentIterationDTO di = LastIterationHelper.getLastIteration(dr);
 
-        DocumentIterationKey docIPK = new DocumentIterationKey();
+        DocumentIterationDTO docIPK = new DocumentIterationDTO();
         docIPK.setWorkspaceId(workspace);
         docIPK.setDocumentMasterId(id);
-        docIPK.setDocumentRevisionVersion(revision);
+        docIPK.setVersion(revision);
         docIPK.setIteration(di.getIteration());
 
         FileHelper fh = new FileHelper(user,password,output, new AccountsManager().getUserLocale(user));

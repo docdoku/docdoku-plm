@@ -24,10 +24,7 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.QueryAlreadyExistsException;
 import com.docdoku.core.meta.*;
-import com.docdoku.core.product.InstancePartNumberAttribute;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.*;
 import com.docdoku.core.query.Query;
 import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryRule;
@@ -412,7 +409,7 @@ public class QueryDAO {
                 break;
             case "status":
                 operands = values.stream()
-                        .map(PartRevision.RevisionStatus::valueOf)
+                        .map(PartRevisionStatus::valueOf)
                         .collect(Collectors.toList());
                 break;
             default:

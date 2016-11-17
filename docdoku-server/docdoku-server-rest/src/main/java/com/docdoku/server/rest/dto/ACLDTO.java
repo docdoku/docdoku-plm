@@ -20,7 +20,7 @@
 
 package com.docdoku.server.rest.dto;
 
-import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLPermission;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -36,20 +36,20 @@ public class ACLDTO implements Serializable {
 
     @XmlElement(nillable = true)
     @ApiModelProperty(value = "Users ACL entries")
-    protected Map<String, ACL.Permission> userEntries = new HashMap<String, ACL.Permission>();
+    protected Map<String, ACLPermission> userEntries = new HashMap<>();
 
     @XmlElement(nillable = true)
     @ApiModelProperty(value = "Groups ACL entries")
-    protected Map<String, ACL.Permission> groupEntries = new HashMap<String, ACL.Permission>();
+    protected Map<String, ACLPermission> groupEntries = new HashMap<>();
 
     public ACLDTO() {
     }
 
-    public void addUserEntry(String login, ACL.Permission perm) {
+    public void addUserEntry(String login, ACLPermission perm) {
         userEntries.put(login, perm);
     }
 
-    public void addGroupEntry(String groupId, ACL.Permission perm) {
+    public void addGroupEntry(String groupId, ACLPermission perm) {
         groupEntries.put(groupId, perm);
     }
 
@@ -61,19 +61,19 @@ public class ACLDTO implements Serializable {
         groupEntries.remove(groupId);
     }
 
-    public Map<String, ACL.Permission> getGroupEntries() {
+    public Map<String, ACLPermission> getGroupEntries() {
         return groupEntries;
     }
 
-    public void setGroupEntries(Map<String, ACL.Permission> groupEntries) {
+    public void setGroupEntries(Map<String, ACLPermission> groupEntries) {
         this.groupEntries = groupEntries;
     }
 
-    public Map<String, ACL.Permission> getUserEntries() {
+    public Map<String, ACLPermission> getUserEntries() {
         return userEntries;
     }
 
-    public void setUserEntries(Map<String, ACL.Permission> userEntries) {
+    public void setUserEntries(Map<String, ACLPermission> userEntries) {
         this.userEntries = userEntries;
     }
 

@@ -98,7 +98,7 @@ public class ChangeIssue extends ChangeItem {
         super(pWorkspace, pName, pAuthor);
     }
 
-    public ChangeIssue(String name, Workspace workspace, User author, User assignee, Date creationDate, String description, Priority priority, Category category, String initiator) {
+    public ChangeIssue(String name, Workspace workspace, User author, User assignee, Date creationDate, String description, ChangeItemPriority priority, ChangeItemCategory category, String initiator) {
         super(name, workspace, author, assignee, creationDate, description, priority, category);
         this.initiator = initiator;
     }

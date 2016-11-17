@@ -118,22 +118,6 @@ public class JSONOutput extends CliOutput {
     }
 
     @Override
-    public void printPartMaster(PartMaster pm, long lastModified) {
-        // TODO : rewrite with DTO
-        /*
-        JsonArrayBuilder jsonRevisions = Json.createArrayBuilder();
-        for (PartRevision pr : pm.getPartRevisions())
-            jsonRevisions.add(getPartRevision(pr, lastModified));
-
-        JsonObject jsonMaster = Json.createObjectBuilder()
-                .add("revisions", jsonRevisions.build()).build();
-
-        //Add jsonMaster ?
-        OUTPUT_STREAM.println(getPartRevision(pm.getLastRevision(), lastModified));
-        */
-    }
-
-    @Override
     public void printConversion(ConversionDTO conversion) {
         JsonObject jsonObj = Json.createObjectBuilder()
                 .add("pending", conversion.getPending())

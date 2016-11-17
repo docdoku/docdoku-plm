@@ -20,7 +20,7 @@
 
 package com.docdoku.server.rest.dto.baseline;
 
-import com.docdoku.core.configuration.DocumentBaseline;
+import com.docdoku.core.configuration.DocumentBaselineType;
 import com.docdoku.server.rest.dto.UserDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -47,7 +47,7 @@ public class DocumentBaselineDTO implements Serializable {
     private Date creationDate;
 
     @ApiModelProperty(value = "Baseline type")
-    private DocumentBaseline.BaselineType type;
+    private DocumentBaselineType type;
 
     @ApiModelProperty(value = "Baselined document list")
     private List<BaselinedDocumentDTO> baselinedDocuments;
@@ -56,15 +56,6 @@ public class DocumentBaselineDTO implements Serializable {
     private UserDTO author;
 
     public DocumentBaselineDTO() {
-    }
-
-    public DocumentBaselineDTO(String name, String description, int id, Date creationDate, DocumentBaseline.BaselineType type, UserDTO author) {
-        this.name = name;
-        this.description = description;
-        this.id = id;
-        this.creationDate = creationDate;
-        this.type = type;
-        this.author = author;
     }
 
     public int getId() {
@@ -99,11 +90,11 @@ public class DocumentBaselineDTO implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public DocumentBaseline.BaselineType getType() {
+    public DocumentBaselineType getType() {
         return type;
     }
 
-    public void setType(DocumentBaseline.BaselineType type) {
+    public void setType(DocumentBaselineType type) {
         this.type = type;
     }
 

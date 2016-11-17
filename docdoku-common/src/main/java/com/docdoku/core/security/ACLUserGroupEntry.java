@@ -20,7 +20,6 @@
 package com.docdoku.core.security;
 
 import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.security.ACL.Permission;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -52,13 +51,13 @@ public class ACLUserGroupEntry implements Serializable, Cloneable {
     })
     private UserGroup principal;
 
-    private Permission permission;
+    private ACLPermission permission;
 
     public ACLUserGroupEntry(){
 
     }
 
-    public ACLUserGroupEntry(ACL acl, UserGroup principal, Permission permission) {
+    public ACLUserGroupEntry(ACL acl, UserGroup principal, ACLPermission permission) {
         setACL(acl);
         setPrincipal(principal);
         setPermission(permission);
@@ -73,7 +72,7 @@ public class ACLUserGroupEntry implements Serializable, Cloneable {
         return acl;
     }
 
-    public void setPermission(Permission permission) {
+    public void setPermission(ACLPermission permission) {
         this.permission = permission;
     }
 
@@ -81,7 +80,7 @@ public class ACLUserGroupEntry implements Serializable, Cloneable {
         this.principal = pPrincipal;
     }
 
-    public Permission getPermission() {
+    public ACLPermission getPermission() {
         return permission;
     }
 

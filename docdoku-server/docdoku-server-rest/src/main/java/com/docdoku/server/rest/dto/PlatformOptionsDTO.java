@@ -20,7 +20,7 @@
 
 package com.docdoku.server.rest.dto;
 
-import com.docdoku.core.admin.PlatformOptions;
+import com.docdoku.core.admin.OperationSecurityStrategy;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -32,27 +32,27 @@ import java.io.Serializable;
 public class PlatformOptionsDTO implements Serializable {
 
     @ApiModelProperty(value = "Registration strategy")
-    private PlatformOptions.OperationSecurityStrategy registrationStrategy;
+    private OperationSecurityStrategy registrationStrategy;
 
     @ApiModelProperty(value = "Workspace creation strategy")
-    private PlatformOptions.OperationSecurityStrategy workspaceCreationStrategy;
+    private OperationSecurityStrategy workspaceCreationStrategy;
 
     public PlatformOptionsDTO() {
     }
 
-    public PlatformOptions.OperationSecurityStrategy getRegistrationStrategy() {
+    public OperationSecurityStrategy getRegistrationStrategy() {
         return registrationStrategy;
     }
 
-    public void setRegistrationStrategy(PlatformOptions.OperationSecurityStrategy registrationStrategy) {
+    public void setRegistrationStrategy(OperationSecurityStrategy registrationStrategy) {
         this.registrationStrategy = registrationStrategy;
     }
 
-    public PlatformOptions.OperationSecurityStrategy getWorkspaceCreationStrategy() {
+    public OperationSecurityStrategy getWorkspaceCreationStrategy() {
         return workspaceCreationStrategy;
     }
 
-    public void setWorkspaceCreationStrategy(PlatformOptions.OperationSecurityStrategy workspaceCreationStrategy) {
+    public void setWorkspaceCreationStrategy(OperationSecurityStrategy workspaceCreationStrategy) {
         this.workspaceCreationStrategy = workspaceCreationStrategy;
     }
 }

@@ -20,7 +20,7 @@
 
 package com.docdoku.server.rest.dto.baseline;
 
-import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.configuration.ProductBaselineType;
 import com.docdoku.server.rest.dto.LightPartLinkListDTO;
 import com.docdoku.server.rest.dto.PathToPathLinkDTO;
 import com.docdoku.server.rest.dto.UserDTO;
@@ -55,7 +55,7 @@ public class ProductBaselineDTO implements Serializable {
     private String configurationItemLatestRevision;
 
     @ApiModelProperty(value = "Baseline type")
-    private ProductBaseline.BaselineType type;
+    private ProductBaselineType type;
 
     @ApiModelProperty(value = "Baselined part list")
     private List<BaselinedPartDTO> baselinedParts;
@@ -196,11 +196,11 @@ public class ProductBaselineDTO implements Serializable {
         this.pathToPathLinks = pathToPathLinks;
     }
 
-    public ProductBaseline.BaselineType getType() {
+    public ProductBaselineType getType() {
         return type;
     }
 
-    public void setType(ProductBaseline.BaselineType type) {
+    public void setType(ProductBaselineType type) {
         this.type = type;
     }
 }

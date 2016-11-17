@@ -19,7 +19,7 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.admin.PlatformOptions;
+import com.docdoku.core.admin.OperationSecurityStrategy;
 import com.docdoku.core.common.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.*;
@@ -172,9 +172,9 @@ public class UserManagerBean implements IUserManagerLocal {
         if (!NamingConvention.correct(pID)) {
             throw new NotAllowedException(new Locale(pAdmin.getLanguage()), "NotAllowedException9", pID);
         }
-        PlatformOptions.OperationSecurityStrategy workspaceCreationStrategy = platformOptionsManager.getWorkspaceCreationStrategy();
+        OperationSecurityStrategy workspaceCreationStrategy = platformOptionsManager.getWorkspaceCreationStrategy();
         Workspace workspace = new Workspace(pID, pAdmin, pDescription, pFolderLocked);
-        workspace.setEnabled(workspaceCreationStrategy.equals(PlatformOptions.OperationSecurityStrategy.NONE));
+        workspace.setEnabled(workspaceCreationStrategy.equals(OperationSecurityStrategy.NONE));
         new WorkspaceDAO(em).createWorkspace(workspace);
         User userToCreate = new User(workspace, pAdmin);
         UserDAO userDAO = new UserDAO(new Locale(pAdmin.getLanguage()), em);

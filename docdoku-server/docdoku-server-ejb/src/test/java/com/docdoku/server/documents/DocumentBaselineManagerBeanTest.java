@@ -24,6 +24,7 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.DocumentBaseline;
+import com.docdoku.core.configuration.DocumentBaselineType;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
@@ -89,7 +90,7 @@ public class DocumentBaselineManagerBeanTest {
 
         //when
         try {
-            docBaselineManagerBean.createBaseline(workspace.getId(), "name", DocumentBaseline.BaselineType.RELEASED, "description", new ArrayList<>());
+            docBaselineManagerBean.createBaseline(workspace.getId(), "name", DocumentBaselineType.RELEASED, "description", new ArrayList<>());
         }catch (NotAllowedException e){
             ResourceBundle bundle = ResourceBundle.getBundle("com.docdoku.core.i18n.LocalStrings", new Locale(user.getLanguage()));
             String expected = bundle.getString("NotAllowedException66");
@@ -140,7 +141,7 @@ public class DocumentBaselineManagerBeanTest {
         List<DocumentRevisionKey> documentRevisionKeys = new ArrayList<>();
         documentRevisionKeys.add(new DocumentRevisionKey(workspace.getId(),documentMaster1.getId(),documentMaster1.getLastRevision().getVersion()));
         documentRevisionKeys.add(new DocumentRevisionKey(workspace.getId(),documentMaster2.getId(),documentMaster2.getLastRevision().getVersion()));
-        DocumentBaseline documentBaseline = docBaselineManagerBean.createBaseline(workspace.getId(), "name", DocumentBaseline.BaselineType.LATEST, "description", documentRevisionKeys);
+        DocumentBaseline documentBaseline = docBaselineManagerBean.createBaseline(workspace.getId(), "name", DocumentBaselineType.LATEST, "description", documentRevisionKeys);
 
         //Then
         Assert.assertTrue(documentBaseline != null);

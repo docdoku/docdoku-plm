@@ -46,7 +46,7 @@ import java.util.*;
 @NamedQueries({
         @NamedQuery(name = "ProductBaseline.findByConfigurationItemId", query = "SELECT b FROM ProductBaseline b WHERE b.configurationItem.id = :ciId AND b.configurationItem.workspace.id = :workspaceId"),
         @NamedQuery(name = "ProductBaseline.getBaselinesForPartRevision", query = "SELECT b FROM ProductBaseline b WHERE b.partCollection IN (SELECT bl.partCollection FROM BaselinedPart bl WHERE bl.targetPart.partRevision = :partRevision)"),
-        @NamedQuery(name = "ProductBaseline.findObsoletePartRevisions", query = "SELECT pr FROM PartRevision pr JOIN ProductBaseline pb JOIN BaselinedPart bp WHERE pb = :productBaseline AND pb.partCollection.id = bp.partCollection.id AND bp.targetPart.partRevision.status = com.docdoku.core.product.PartRevision.RevisionStatus.OBSOLETE AND bp.targetPart.partRevision.partMasterWorkspaceId = :workspaceId")
+        @NamedQuery(name = "ProductBaseline.findObsoletePartRevisions", query = "SELECT pr FROM PartRevision pr JOIN ProductBaseline pb JOIN BaselinedPart bp WHERE pb = :productBaseline AND pb.partCollection.id = bp.partCollection.id AND bp.targetPart.partRevision.status = com.docdoku.core.product.PartRevisionStatus.OBSOLETE AND bp.targetPart.partRevision.partMasterWorkspaceId = :workspaceId")
 
 })
 public class ProductBaseline implements Serializable {
@@ -66,7 +66,7 @@ public class ProductBaseline implements Serializable {
     @Column(nullable = false)
     private String name;
 
-    private BaselineType type = BaselineType.LATEST;
+    private ProductBaselineType type = ProductBaselineType.LATEST;
 
     @Lob
     private String description;
@@ -128,14 +128,10 @@ public class ProductBaseline implements Serializable {
             })
     private List<PathToPathLink> pathToPathLinks = new ArrayList<>();
 
-    public enum BaselineType {
-        LATEST, RELEASED
-    }
-
     public ProductBaseline() {
     }
 
-    public ProductBaseline(User author, ConfigurationItem configurationItem, String name, BaselineType type, String description) {
+    public ProductBaseline(User author, ConfigurationItem configurationItem, String name, ProductBaselineType type, String description) {
         this.author = author;
         this.configurationItem = configurationItem;
         this.name = name;
@@ -186,11 +182,11 @@ public class ProductBaseline implements Serializable {
         this.name = name;
     }
 
-    public BaselineType getType() {
+    public ProductBaselineType getType() {
         return type;
     }
 
-    public void setType(BaselineType type) {
+    public void setType(ProductBaselineType type) {
         this.type = type;
     }
 

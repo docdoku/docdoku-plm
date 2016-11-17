@@ -31,10 +31,7 @@ import com.docdoku.core.product.*;
 import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.query.Query;
 import com.docdoku.core.query.QueryResultRow;
-import com.docdoku.core.security.ACL;
-import com.docdoku.core.security.ACLUserEntry;
-import com.docdoku.core.security.ACLUserGroupEntry;
-import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.security.*;
 import com.docdoku.core.services.IImporterManagerLocal;
 import com.docdoku.core.services.IPSFilterManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
@@ -244,7 +241,7 @@ public class PartsResource {
 
     @POST
     @ApiOperation(value = "Run custom queries",
-            response = QueryResult.class,
+            response = Response.class,
             responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of QueryDTOs. It can be an empty list."),
@@ -486,16 +483,16 @@ public class PartsResource {
             userEntries = new ACLUserEntry[acl.getUserEntries().size()];
             userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
             int i = 0;
-            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+            for (Map.Entry<String, ACLPermission> entry : acl.getUserEntries().entrySet()) {
                 userEntries[i] = new ACLUserEntry();
                 userEntries[i].setPrincipal(new User(new Workspace(workspaceId), new Account(entry.getKey())));
-                userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+                userEntries[i++].setPermission(ACLPermission.valueOf(entry.getValue().name()));
             }
             i = 0;
-            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+            for (Map.Entry<String, ACLPermission> entry : acl.getGroupEntries().entrySet()) {
                 userGroupEntries[i] = new ACLUserGroupEntry();
                 userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
-                userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+                userGroupEntries[i++].setPermission(ACLPermission.valueOf(entry.getValue().name()));
             }
         }
 
@@ -707,7 +704,7 @@ public class PartsResource {
         return queryResult;
     }
 
-    public Response makeQueryResponse(QueryResult queryResult, Locale locale, String baseURL) {
+    private Response makeQueryResponse(QueryResult queryResult, Locale locale, String baseURL) {
         ExcelGenerator excelGenerator = new ExcelGenerator();
         String contentType = "application/vnd.ms-excel";
         String contentDisposition = "attachment; filename=export_parts.xls";

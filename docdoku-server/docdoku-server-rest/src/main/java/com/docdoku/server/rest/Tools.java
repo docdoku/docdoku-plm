@@ -23,24 +23,18 @@ package com.docdoku.server.rest;
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.configuration.BaselinedDocument;
-import com.docdoku.core.configuration.BaselinedDocumentKey;
-import com.docdoku.core.configuration.BaselinedPart;
-import com.docdoku.core.configuration.DocumentCollection;
+import com.docdoku.core.configuration.*;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.server.rest.dto.*;
-import com.docdoku.server.rest.dto.baseline.BaselinedDocumentDTO;
-import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
+import com.docdoku.server.rest.dto.baseline.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Florent Garin
@@ -229,7 +223,7 @@ public class Tools {
     }
 
     public static BaselinedPartDTO mapBaselinedPartToBaselinedPartDTO(BaselinedPart baselinedPart) {
-        return new BaselinedPartDTO(baselinedPart.getTargetPart());
+        return mapPartIterationToBaselinedPart(baselinedPart.getTargetPart());
     }
 
     public static List<BaselinedDocumentDTO> mapBaselinedDocumentsToBaselinedDocumentDTOs(DocumentCollection documentCollection) {
@@ -238,10 +232,63 @@ public class Tools {
 
         for (Map.Entry<BaselinedDocumentKey, BaselinedDocument> map : baselinedDocuments.entrySet()) {
             BaselinedDocument baselinedDocument = map.getValue();
-            baselinedDocumentDTOs.add(new BaselinedDocumentDTO(baselinedDocument.getTargetDocument()));
+            DocumentIteration targetDocument = baselinedDocument.getTargetDocument();
+            baselinedDocumentDTOs.add(new BaselinedDocumentDTO(targetDocument.getDocumentMasterId(), targetDocument.getVersion(),targetDocument.getIteration(),targetDocument.getTitle()));
         }
 
         return baselinedDocumentDTOs;
     }
 
+    public static BaselinedPartDTO mapPartIterationToBaselinedPart(PartIteration partIteration){
+
+        BaselinedPartDTO baselinedPartDTO = new BaselinedPartDTO();
+        baselinedPartDTO.setNumber(partIteration.getPartNumber());
+        baselinedPartDTO.setVersion(partIteration.getVersion());
+        baselinedPartDTO.setName(partIteration.getPartRevision().getPartMaster().getName());
+        baselinedPartDTO.setIteration(partIteration.getIteration());
+
+        List<BaselinedPartOptionDTO> availableIterations = new ArrayList<>();
+        for (PartRevision partRevision : partIteration.getPartRevision().getPartMaster().getPartRevisions()) {
+            BaselinedPartOptionDTO option = new BaselinedPartOptionDTO(partRevision.getVersion(),
+                    partRevision.getLastIteration().getIteration(),
+                    partRevision.isReleased());
+            availableIterations.add(option);
+        }
+        baselinedPartDTO.setAvailableIterations(availableIterations);
+
+        return baselinedPartDTO;
+    }
+
+    public static BaselinedPartDTO createBaselinedPartDTOFromPartList(List<PartIteration> availableParts) {
+        BaselinedPartDTO baselinedPartDTO = new BaselinedPartDTO();
+        PartIteration max = Collections.max(availableParts);
+        baselinedPartDTO.setNumber(max.getPartNumber());
+        baselinedPartDTO.setVersion(max.getVersion());
+        baselinedPartDTO.setName(max.getPartRevision().getPartMaster().getName());
+        baselinedPartDTO.setIteration(max.getIteration());
+        List<BaselinedPartOptionDTO> availableIterations = new ArrayList<>();
+        for (PartIteration partIteration : availableParts) {
+            availableIterations.add(new BaselinedPartOptionDTO(partIteration.getVersion(), partIteration.getIteration(), partIteration.getPartRevision().isReleased()));
+        }
+        baselinedPartDTO.setAvailableIterations(availableIterations);
+        return baselinedPartDTO;
+    }
+
+
+    public static PathChoiceDTO mapPathChoiceDTO(PathChoice choice) {
+        PathChoiceDTO pathChoiceDTO = new PathChoiceDTO();
+        ArrayList<ResolvedPartLinkDTO> resolvedPath = new ArrayList<>();
+        for (ResolvedPartLink resolvedPartLink : choice.getResolvedPath()) {
+            ResolvedPartLinkDTO resolvedPartLinkDTO = new ResolvedPartLinkDTO();
+            PartIteration resolvedIteration = resolvedPartLink.getPartIteration();
+            resolvedPartLinkDTO.setPartIteration(new PartIterationDTO(resolvedIteration.getWorkspaceId(), resolvedIteration.getName(), resolvedIteration.getNumber(), resolvedIteration.getVersion(), resolvedIteration.getIteration()));
+            PartLink partLink = resolvedPartLink.getPartLink();
+            resolvedPartLinkDTO.setPartLink(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId()));
+            resolvedPath.add(resolvedPartLinkDTO);
+        }
+        pathChoiceDTO.setResolvedPath(resolvedPath);
+        Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
+        pathChoiceDTO.setPartUsageLink(mapper.map(choice.getPartUsageLink(), PartUsageLinkDTO.class));
+        return pathChoiceDTO;
+    }
 }

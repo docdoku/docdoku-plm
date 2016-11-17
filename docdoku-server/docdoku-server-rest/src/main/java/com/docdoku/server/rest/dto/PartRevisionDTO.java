@@ -20,7 +20,7 @@
 
 package com.docdoku.server.rest.dto;
 
-import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.PartRevisionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -104,7 +104,7 @@ public class PartRevisionDTO implements Serializable {
 
     @ApiModelProperty(value = "Part status")
     @XmlElement(nillable = true)
-    private PartRevision.RevisionStatus status;
+    private PartRevisionStatus status;
 
     @ApiModelProperty(value = "Part tag list")
     private String[] tags;
@@ -304,11 +304,11 @@ public class PartRevisionDTO implements Serializable {
         this.attributesLocked = attributesLocked;
     }
 
-    public PartRevision.RevisionStatus getStatus() {
+    public PartRevisionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(PartRevision.RevisionStatus status) {
+    public void setStatus(PartRevisionStatus status) {
         this.status = status;
     }
 

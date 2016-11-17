@@ -20,14 +20,14 @@
 
 package com.docdoku.cli.commands.documents;
 
+import com.docdoku.api.models.DocumentCreationDTO;
+import com.docdoku.api.models.DocumentIterationDTO;
+import com.docdoku.api.models.DocumentRevisionDTO;
+import com.docdoku.api.services.FoldersApi;
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.api.models.DocumentCreationDTO;
-import com.docdoku.api.models.DocumentIterationKey;
-import com.docdoku.api.models.DocumentRevisionKey;
-import com.docdoku.api.services.FoldersApi;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -66,15 +66,15 @@ public class DocumentCreationCommand extends BaseCommandLine {
         documentCreationDTO.setReference(id);
 
         foldersApi.createDocumentMasterInFolder(workspace, documentCreationDTO, workspace);
-        DocumentRevisionKey docRPK = new DocumentRevisionKey();
+        DocumentRevisionDTO docRPK = new DocumentRevisionDTO();
         docRPK.setWorkspaceId(workspace);
         docRPK.setDocumentMasterId(id);
         docRPK.setVersion("A");
 
-        DocumentIterationKey docIPK = new DocumentIterationKey();
+        DocumentIterationDTO docIPK = new DocumentIterationDTO();
         docIPK.setWorkspaceId(workspace);
         docIPK.setDocumentMasterId(id);
-        docIPK.setDocumentRevisionVersion("A");
+        docIPK.setVersion("A");
         docIPK.setIteration(1);
 
         FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));

@@ -44,8 +44,8 @@ import java.util.*;
 @Entity
 @NamedQueries({
         @NamedQuery(name="PartRevision.findByWorkspace", query="SELECT pr FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId ORDER BY pr.partMaster.number ASC"),
-        @NamedQuery(name="PartRevision.findByWorkspace.filterUserACLEntry", query="SELECT pr FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId and (pr.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = pr.acl)) ORDER BY pr.partMaster.number ASC"),
-        @NamedQuery(name="PartRevision.countByWorkspace.filterUserACLEntry", query="SELECT count(pr) FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId and (pr.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = pr.acl))"),
+        @NamedQuery(name="PartRevision.findByWorkspace.filterUserACLEntry", query="SELECT pr FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId and (pr.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACLPermission.FORBIDDEN AND au.acl = pr.acl)) ORDER BY pr.partMaster.number ASC"),
+        @NamedQuery(name="PartRevision.countByWorkspace.filterUserACLEntry", query="SELECT count(pr) FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId and (pr.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACLPermission.FORBIDDEN AND au.acl = pr.acl))"),
         @NamedQuery(name="PartRevision.countByWorkspace", query="SELECT count(pr) FROM PartRevision pr WHERE pr.partMasterWorkspaceId = :workspaceId"),
         @NamedQuery(name="PartRevision.findByReferenceOrName", query="SELECT pr FROM PartRevision pr WHERE (pr.partMaster.number LIKE :partNumber OR pr.partMaster.name LIKE :partName) AND pr.partMaster.workspace.id = :workspaceId"),
         @NamedQuery(name="PartRevision.findByWorkflow", query="SELECT p FROM PartRevision p WHERE p.workflow = :workflow"),
@@ -148,7 +148,7 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
 
     private boolean publicShared;
 
-    private RevisionStatus status=RevisionStatus.WIP;
+    private PartRevisionStatus status= PartRevisionStatus.WIP;
 
 
 
@@ -183,10 +183,6 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
                     })
     })
     private StatusChange obsoleteStatusChange;
-
-    public enum RevisionStatus {
-        WIP, RELEASED, OBSOLETE
-    }
 
     public PartRevision(){
     }
@@ -451,22 +447,22 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
         this.publicShared = publicShared;
     }
 
-    public RevisionStatus getStatus() {
+    public PartRevisionStatus getStatus() {
         return status;
     }
-    public void setStatus(RevisionStatus status) {
+    public void setStatus(PartRevisionStatus status) {
         this.status = status;
     }
 
     public boolean isReleased(){
-        return status==RevisionStatus.RELEASED;
+        return status== PartRevisionStatus.RELEASED;
     }
     public boolean isObsolete(){
-        return status==RevisionStatus.OBSOLETE;
+        return status== PartRevisionStatus.OBSOLETE;
     }
     public boolean release(User user){
-        if(this.status==RevisionStatus.WIP){
-            this.status=RevisionStatus.RELEASED;
+        if(this.status== PartRevisionStatus.WIP){
+            this.status= PartRevisionStatus.RELEASED;
             StatusChange statusChange = new StatusChange();
             statusChange.setStatusChangeAuthor(user);
             statusChange.setStatusModificationDate(new Date());
@@ -478,8 +474,8 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
 
     }
     public boolean markAsObsolete(User user){
-        if(this.status==RevisionStatus.RELEASED){
-            this.status=RevisionStatus.OBSOLETE;
+        if(this.status== PartRevisionStatus.RELEASED){
+            this.status= PartRevisionStatus.OBSOLETE;
             StatusChange statusChange = new StatusChange();
             statusChange.setStatusChangeAuthor(user);
             statusChange.setStatusModificationDate(new Date());

@@ -21,11 +21,9 @@
 package com.docdoku.cli.commands.parts;
 
 import com.docdoku.api.models.PartIterationDTO;
-import com.docdoku.api.models.PartIterationKey;
 import com.docdoku.api.models.PartRevisionDTO;
-import com.docdoku.api.models.PartRevisionKey;
-import com.docdoku.api.services.PartApi;
 import com.docdoku.api.models.utils.LastIterationHelper;
+import com.docdoku.api.services.PartApi;
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
@@ -61,19 +59,19 @@ public class PartPutCommand extends BaseCommandLine {
             loadMetadata();
         }
 
-        PartRevisionKey partRPK = new PartRevisionKey();
+        PartRevisionDTO partRPK = new PartRevisionDTO();
         partRPK.setWorkspaceId(workspace);
-        partRPK.setPartMasterNumber(partNumber);
+        partRPK.setNumber(partNumber);
         partRPK.setVersion(revision);
 
         PartApi partApi = new PartApi(client);
         PartRevisionDTO pr = partApi.getPartRevision(workspace, partNumber, revision);
         PartIterationDTO pi = LastIterationHelper.getLastIteration(pr);
 
-        PartIterationKey partIPK = new PartIterationKey();
+        PartIterationDTO partIPK = new PartIterationDTO();
         partIPK.setWorkspaceId(workspace);
-        partIPK.setPartMasterNumber(partNumber);
-        partIPK.setPartRevisionVersion(revision);
+        partIPK.setNumber(partNumber);
+        partIPK.setVersion(revision);
         partIPK.setIteration(pi.getIteration());
 
         FileHelper fh = new FileHelper(user,password,output, new AccountsManager().getUserLocale(user));

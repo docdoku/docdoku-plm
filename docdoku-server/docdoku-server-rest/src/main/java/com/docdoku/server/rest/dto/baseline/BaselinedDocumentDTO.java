@@ -20,14 +20,11 @@
 
 package com.docdoku.server.rest.dto.baseline;
 
-import com.docdoku.core.document.DocumentIteration;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @XmlRootElement
@@ -52,31 +49,10 @@ public class BaselinedDocumentDTO implements Serializable {
     public BaselinedDocumentDTO() {
     }
 
-    public BaselinedDocumentDTO(DocumentIteration documentIteration) {
-        this.documentMasterId = documentIteration.getDocumentMasterId();
-        this.version = documentIteration.getVersion();
-        this.title = documentIteration.getDocumentRevision().getTitle();
-        this.iteration = documentIteration.getIteration();
-    }
-
-    public BaselinedDocumentDTO(List<DocumentIteration> availableDocuments) {
-
-        DocumentIteration max = Collections.max(availableDocuments);
-
-        this.documentMasterId = max.getDocumentMasterId();
-        this.version = max.getVersion();
-        this.title = max.getDocumentRevision().getTitle();
-        this.iteration = max.getIteration();
-
-        this.availableIterations = new ArrayList<>();
-        for (DocumentIteration documentIteration : availableDocuments) {
-            this.availableIterations.add(new BaselinedDocumentOptionDTO(documentIteration.getVersion(), documentIteration.getIteration(), documentIteration.getDocumentRevision().isReleased(), documentIteration.getDocumentRevision().isObsolete()));
-        }
-    }
-
-    public BaselinedDocumentDTO(String number, String version, int iteration) {
-        this.documentMasterId = number;
+    public BaselinedDocumentDTO(String documentMasterId, String version, int iteration, String title) {
+        this.documentMasterId = documentMasterId;
         this.version = version;
+        this.title = title;
         this.iteration = iteration;
     }
 

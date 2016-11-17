@@ -25,7 +25,7 @@ import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
-import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLPermission;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.*;
@@ -227,11 +227,11 @@ public class DocumentTemplateResource {
             Map<String, String> userEntries = new HashMap<>();
             Map<String, String> groupEntries = new HashMap<>();
 
-            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+            for (Map.Entry<String, ACLPermission> entry : acl.getUserEntries().entrySet()) {
                 userEntries.put(entry.getKey(), entry.getValue().name());
             }
 
-            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+            for (Map.Entry<String, ACLPermission> entry : acl.getGroupEntries().entrySet()) {
                 groupEntries.put(entry.getKey(), entry.getValue().name());
             }
 

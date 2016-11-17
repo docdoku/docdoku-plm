@@ -24,6 +24,7 @@ import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.UserKey;
 import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLPermission;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.server.dao.ACLDAO;
@@ -48,28 +49,28 @@ public class ACLFactory {
         if (pUserEntries != null) {
             for (Map.Entry<String, String> entry : pUserEntries.entrySet()) {
                 acl.addEntry(em.find(User.class, new UserKey(pWorkspaceId, entry.getKey())),
-                        ACL.Permission.valueOf(entry.getValue()));
+                        ACLPermission.valueOf(entry.getValue()));
             }
         }
         if (pGroupEntries != null) {
             for (Map.Entry<String, String> entry : pGroupEntries.entrySet()) {
                 acl.addEntry(em.find(UserGroup.class, new UserGroupKey(pWorkspaceId, entry.getKey())),
-                        ACL.Permission.valueOf(entry.getValue()));
+                        ACLPermission.valueOf(entry.getValue()));
             }
         }
         new ACLDAO(em).createACL(acl);
         return acl;
     }
-    public  ACL createACLFromPermissions(String pWorkspaceId, Map<String, ACL.Permission> pUserEntries, Map<String, ACL.Permission> pGroupEntries) {
+    public  ACL createACLFromPermissions(String pWorkspaceId, Map<String, ACLPermission> pUserEntries, Map<String, ACLPermission> pGroupEntries) {
 
         Map<String, String> userEntries = new HashMap<>();
         Map<String, String> groupEntries = new HashMap<>();
 
-        for (Map.Entry<String, ACL.Permission> entry : pUserEntries.entrySet()) {
+        for (Map.Entry<String, ACLPermission> entry : pUserEntries.entrySet()) {
             userEntries.put(entry.getKey(), entry.getValue().name());
         }
 
-        for (Map.Entry<String, ACL.Permission> entry : pGroupEntries.entrySet()) {
+        for (Map.Entry<String, ACLPermission> entry : pGroupEntries.entrySet()) {
             groupEntries.put(entry.getKey(), entry.getValue().name());
         }
 
@@ -78,13 +79,13 @@ public class ACLFactory {
         if (userEntries != null) {
             for (Map.Entry<String, String> entry : userEntries.entrySet()) {
                 acl.addEntry(em.find(User.class, new UserKey(pWorkspaceId, entry.getKey())),
-                        ACL.Permission.valueOf(entry.getValue()));
+                        ACLPermission.valueOf(entry.getValue()));
             }
         }
         if (groupEntries != null) {
             for (Map.Entry<String, String> entry : groupEntries.entrySet()) {
                 acl.addEntry(em.find(UserGroup.class, new UserGroupKey(pWorkspaceId, entry.getKey())),
-                        ACL.Permission.valueOf(entry.getValue()));
+                        ACLPermission.valueOf(entry.getValue()));
             }
         }
         new ACLDAO(em).createACL(acl);
@@ -98,11 +99,11 @@ public class ACLFactory {
            acl.setUserEntries(new HashMap<User, ACLUserEntry>());
            acl.setGroupEntries(new HashMap<UserGroup, ACLUserGroupEntry>());
            for (Map.Entry<String, String> entry : pUserEntries.entrySet()) {
-               acl.addEntry(em.getReference(User.class, new UserKey(workspaceId, entry.getKey())), ACL.Permission.valueOf(entry.getValue()));
+               acl.addEntry(em.getReference(User.class, new UserKey(workspaceId, entry.getKey())), ACLPermission.valueOf(entry.getValue()));
            }
 
            for (Map.Entry<String, String> entry : pGroupEntries.entrySet()) {
-               acl.addEntry(em.getReference(UserGroup.class, new UserGroupKey(workspaceId, entry.getKey())), ACL.Permission.valueOf(entry.getValue()));
+               acl.addEntry(em.getReference(UserGroup.class, new UserGroupKey(workspaceId, entry.getKey())), ACLPermission.valueOf(entry.getValue()));
            }
        }
         return acl;

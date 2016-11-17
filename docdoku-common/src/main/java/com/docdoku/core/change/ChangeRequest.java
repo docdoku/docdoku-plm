@@ -110,7 +110,7 @@ public class ChangeRequest extends ChangeItem {
         super(pWorkspace, pName, pAuthor);
     }
 
-    public ChangeRequest(String name, Workspace workspace, User author, User assignee, Date creationDate, String description, Priority priority, Category category, Milestone milestone) {
+    public ChangeRequest(String name, Workspace workspace, User author, User assignee, Date creationDate, String description, ChangeItemPriority priority, ChangeItemCategory category, Milestone milestone) {
         super(name, workspace, author, assignee, creationDate, description, priority, category);
         this.milestone = milestone;
     }

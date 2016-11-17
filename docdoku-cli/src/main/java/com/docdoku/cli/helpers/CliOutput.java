@@ -63,7 +63,6 @@ public abstract class CliOutput {
     public abstract void printPartRevisions(List<PartRevisionDTO> partRevisions);
     public abstract void printBaselines(List<ProductBaselineDTO> productBaselines);
     public abstract void printPartRevision(PartRevisionDTO pr, long lastModified);
-    public abstract void printPartMaster(PartMaster pm, long lastModified);
     public abstract void printConversion(ConversionDTO conversion);
     public abstract void printAccount(AccountDTO accountDTO);
     public abstract void printDocumentRevision(DocumentRevisionDTO dr, long lastModified);

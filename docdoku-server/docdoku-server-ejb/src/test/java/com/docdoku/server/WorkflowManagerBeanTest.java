@@ -23,6 +23,7 @@ package com.docdoku.server;
 import com.docdoku.core.common.*;
 import com.docdoku.core.exceptions.AccessRightException;
 import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLPermission;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.WorkflowModelKey;
@@ -81,7 +82,7 @@ public class WorkflowManagerBeanTest {
         //Given
         WorkflowModel workflowModel = new WorkflowModel(workspace, WorkflowUtil.WORKSPACE_ID, user, "");
         ACL acl = new ACL();
-        acl.addEntry(user, ACL.Permission.READ_ONLY);
+        acl.addEntry(user, ACLPermission.READ_ONLY);
         workflowModel.setAcl(acl);
         // User has read access to the workspace
         Mockito.when(userManager.checkWorkspaceReadAccess(WorkflowUtil.WORKSPACE_ID)).thenReturn(user);
@@ -103,9 +104,9 @@ public class WorkflowManagerBeanTest {
         Map<String, String> userEntries = new HashMap<>();
         User user2 = new User(workspace,new Account(WorkflowUtil.USER2_LOGIN , WorkflowUtil.USER2_NAME,WorkflowUtil.USER2_MAIL, "en", new Date(), null));
         User user3 = new User(workspace,new Account(WorkflowUtil.USER3_LOGIN , WorkflowUtil.USER3_NAME,WorkflowUtil.USER3_MAIL, "en", new Date(), null));
-        userEntries.put(user.getLogin(), ACL.Permission.FORBIDDEN.name());
-        userEntries.put(user2.getLogin(), ACL.Permission.READ_ONLY.name());
-        userEntries.put(user3.getLogin(), ACL.Permission.FULL_ACCESS.name());
+        userEntries.put(user.getLogin(), ACLPermission.FORBIDDEN.name());
+        userEntries.put(user2.getLogin(), ACLPermission.READ_ONLY.name());
+        userEntries.put(user3.getLogin(), ACLPermission.FULL_ACCESS.name());
 
         // User has read access to the workspace
         Mockito.when(userManager.checkWorkspaceReadAccess(WorkflowUtil.WORKSPACE_ID)).thenReturn(user);
@@ -119,9 +120,9 @@ public class WorkflowManagerBeanTest {
         //Then
         Assert.assertEquals(workflow.getAcl().getGroupEntries().size() ,0 );
         Assert.assertEquals(workflow.getAcl().getUserEntries().size() , 3);
-        Assert.assertEquals(workflow.getAcl().getUserEntries().get(user).getPermission() , ACL.Permission.FORBIDDEN);
-        Assert.assertEquals(workflow.getAcl().getUserEntries().get(user2).getPermission() , ACL.Permission.READ_ONLY);
-        Assert.assertEquals(workflow.getAcl().getUserEntries().get(user3).getPermission() , ACL.Permission.FULL_ACCESS);
+        Assert.assertEquals(workflow.getAcl().getUserEntries().get(user).getPermission() , ACLPermission.FORBIDDEN);
+        Assert.assertEquals(workflow.getAcl().getUserEntries().get(user2).getPermission() , ACLPermission.READ_ONLY);
+        Assert.assertEquals(workflow.getAcl().getUserEntries().get(user3).getPermission() , ACLPermission.FULL_ACCESS);
 
 
     }
@@ -138,21 +139,21 @@ public class WorkflowManagerBeanTest {
         WorkflowModel workflowModel = new WorkflowModel(workspace, WorkflowUtil.WORKSPACE_ID, user, "");
         ACL acl = new ACL();
         // user2 had READ_ONLY access in the existing acl
-        acl.addEntry(user2, ACL.Permission.READ_ONLY);
-        acl.addEntry(group1, ACL.Permission.FULL_ACCESS);
+        acl.addEntry(user2, ACLPermission.READ_ONLY);
+        acl.addEntry(group1, ACLPermission.FULL_ACCESS);
         workflowModel.setAcl(acl);
 
-        userEntries.put(user.getLogin(), ACL.Permission.FORBIDDEN.name());
+        userEntries.put(user.getLogin(), ACLPermission.FORBIDDEN.name());
         // user2 has non access FORBIDDEN in the new acl
-        userEntries.put(user2.getLogin(), ACL.Permission.FORBIDDEN.name());
-        userEntries.put(user3.getLogin(), ACL.Permission.FULL_ACCESS.name());
+        userEntries.put(user2.getLogin(), ACLPermission.FORBIDDEN.name());
+        userEntries.put(user3.getLogin(), ACLPermission.FULL_ACCESS.name());
 
 
         //user2 belong to group1
         group1.addUser(user2);
         group1.addUser(user);
         //group1 has FULL_ACCESS
-        grpEntries.put(group1.getId(),ACL.Permission.FULL_ACCESS.name());
+        grpEntries.put(group1.getId(),ACLPermission.FULL_ACCESS.name());
 
 
         // User has read access to the workspace
@@ -173,9 +174,9 @@ public class WorkflowManagerBeanTest {
         //Then
         Assert.assertEquals(workflow.getAcl().getGroupEntries().size(),1 );
         Assert.assertEquals(workflow.getAcl().getUserEntries().size() , 3);
-        Assert.assertEquals(workflow.getAcl().getUserEntries().get(user).getPermission() , ACL.Permission.FORBIDDEN);
-        Assert.assertEquals(workflow.getAcl().getUserEntries().get(user2).getPermission() , ACL.Permission.FORBIDDEN);
-        Assert.assertEquals(workflow.getAcl().getUserEntries().get(user3).getPermission() , ACL.Permission.FULL_ACCESS);
+        Assert.assertEquals(workflow.getAcl().getUserEntries().get(user).getPermission() , ACLPermission.FORBIDDEN);
+        Assert.assertEquals(workflow.getAcl().getUserEntries().get(user2).getPermission() , ACLPermission.FORBIDDEN);
+        Assert.assertEquals(workflow.getAcl().getUserEntries().get(user3).getPermission() , ACLPermission.FULL_ACCESS);
 
     }
 

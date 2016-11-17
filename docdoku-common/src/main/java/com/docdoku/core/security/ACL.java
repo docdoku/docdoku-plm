@@ -58,12 +58,6 @@ public class ACL implements Serializable, Cloneable{
     @MapKey(name="principal")
     private Map<UserGroup,ACLUserGroupEntry> groupEntries=new HashMap<UserGroup,ACLUserGroupEntry>();
 
-    public enum Permission{
-        FORBIDDEN,
-        READ_ONLY,
-        FULL_ACCESS
-    }
-
     private boolean enabled=true;
 
     public ACL(){
@@ -89,10 +83,10 @@ public class ACL implements Serializable, Cloneable{
     public boolean hasReadAccess(User user){
         ACLUserEntry userAccess=userEntries.get(user);
         if(userAccess!=null)
-            return !userAccess.getPermission().equals(Permission.FORBIDDEN);
+            return !userAccess.getPermission().equals(ACLPermission.FORBIDDEN);
         else{
             for(Map.Entry<UserGroup, ACLUserGroupEntry> entry:groupEntries.entrySet()){
-                if(entry.getKey().isMember(user) && !entry.getValue().getPermission().equals(Permission.FORBIDDEN)) {
+                if(entry.getKey().isMember(user) && !entry.getValue().getPermission().equals(ACLPermission.FORBIDDEN)) {
                     return true;
                 }
             }
@@ -103,10 +97,10 @@ public class ACL implements Serializable, Cloneable{
     public boolean hasWriteAccess(User user){
         ACLUserEntry userAccess=userEntries.get(user);
         if(userAccess!=null)
-            return userAccess.getPermission().equals(Permission.FULL_ACCESS);
+            return userAccess.getPermission().equals(ACLPermission.FULL_ACCESS);
         else{
             for(Map.Entry<UserGroup, ACLUserGroupEntry> entry:groupEntries.entrySet()){
-                if(entry.getKey().isMember(user) && entry.getValue().getPermission().equals(Permission.FULL_ACCESS)) {
+                if(entry.getKey().isMember(user) && entry.getValue().getPermission().equals(ACLPermission.FULL_ACCESS)) {
                     return true;
                 }
             }
@@ -114,11 +108,11 @@ public class ACL implements Serializable, Cloneable{
         return false;
     }
 
-    public void addEntry(User user, Permission perm){
+    public void addEntry(User user, ACLPermission perm){
         userEntries.put(user, new ACLUserEntry(this,user,perm));
     }
 
-    public void addEntry(UserGroup group, Permission perm){
+    public void addEntry(UserGroup group, ACLPermission perm){
         groupEntries.put(group, new ACLUserGroupEntry(this,group,perm));
     }
 

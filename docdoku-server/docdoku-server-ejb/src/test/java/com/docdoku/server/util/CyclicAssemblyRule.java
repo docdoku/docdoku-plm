@@ -23,7 +23,7 @@ package com.docdoku.server.util;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.configuration.ProductBaselineType;
 import com.docdoku.core.product.*;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -117,8 +117,8 @@ public class CyclicAssemblyRule implements TestRule {
         return "baseline";
     }
 
-    public ProductBaseline.BaselineType getType() {
-        return ProductBaseline.BaselineType.LATEST;
+    public ProductBaselineType getType() {
+        return ProductBaselineType.LATEST;
     }
 
     public String getDescription() {

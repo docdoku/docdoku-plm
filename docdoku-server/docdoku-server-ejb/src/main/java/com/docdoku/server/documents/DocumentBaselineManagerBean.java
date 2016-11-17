@@ -58,7 +58,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentBaseline createBaseline(String workspaceId, String name, DocumentBaseline.BaselineType type, String description, List<DocumentRevisionKey> documentRevisionKeys)
+    public DocumentBaseline createBaseline(String workspaceId, String name, DocumentBaselineType type, String description, List<DocumentRevisionKey> documentRevisionKeys)
             throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FolderNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, NotAllowedException, WorkspaceNotEnabledException {
 
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
@@ -165,11 +165,11 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
         }
     }
 
-    private DocumentIteration filterBaselinedDocument(DocumentBaseline.BaselineType type, DocumentRevisionKey documentRevisionKey) throws DocumentRevisionNotFoundException {
+    private DocumentIteration filterBaselinedDocument(DocumentBaselineType type, DocumentRevisionKey documentRevisionKey) throws DocumentRevisionNotFoundException {
         DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(em);
         DocumentRevision documentRevision = documentRevisionDAO.loadDocR(documentRevisionKey);
 
-        if (type.equals(DocumentBaseline.BaselineType.RELEASED)) {
+        if (type.equals(DocumentBaselineType.RELEASED)) {
             return (documentRevision.isReleased() || documentRevision.isObsolete()) ? documentRevision.getLastIteration() : null;
 
         } else {

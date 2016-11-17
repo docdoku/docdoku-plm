@@ -20,7 +20,7 @@
 package com.docdoku.server.configuration.spec;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.configuration.ProductBaselineType;
 import com.docdoku.core.configuration.ProductConfigSpec;
 import com.docdoku.core.product.*;
 import com.docdoku.core.util.Tools;
@@ -43,14 +43,14 @@ public class ProductBaselineCreationConfigSpec extends ProductConfigSpec {
     private Set<String> retainedSubstituteLinks = new HashSet<>();
     private Set<String> retainedOptionalUsageLinks = new HashSet<>();
 
-    private ProductBaseline.BaselineType type;
+    private ProductBaselineType type;
 
     private User user;
 
     public ProductBaselineCreationConfigSpec(){
     }
 
-    public ProductBaselineCreationConfigSpec(User user, ProductBaseline.BaselineType type, List<PartIteration> partIterations, List<String> substituteLinks, List<String> optionalUsageLinks) {
+    public ProductBaselineCreationConfigSpec(User user, ProductBaselineType type, List<PartIteration> partIterations, List<String> substituteLinks, List<String> optionalUsageLinks) {
         this.user = user;
         this.partIterations = partIterations;
         this.substituteLinks = substituteLinks;
@@ -68,7 +68,7 @@ public class ProductBaselineCreationConfigSpec extends ProductConfigSpec {
     @Override
     public PartIteration filterPartIteration(PartMaster partMaster) {
 
-        if(type.equals(ProductBaseline.BaselineType.RELEASED)){
+        if(type.equals(ProductBaselineType.RELEASED)){
 
             for(PartIteration pi : partIterations){
                 if(pi.getPartRevision().getPartMaster().getKey().equals(partMaster.getKey())){
@@ -84,7 +84,7 @@ public class ProductBaselineCreationConfigSpec extends ProductConfigSpec {
                 return pi;
             }
 
-        }else if(type.equals(ProductBaseline.BaselineType.LATEST)){
+        }else if(type.equals(ProductBaselineType.LATEST)){
 
             PartIteration pi = partMaster.getLastRevision().getLastCheckedInIteration();
 

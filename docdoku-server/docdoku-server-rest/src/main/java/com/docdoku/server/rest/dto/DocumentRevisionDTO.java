@@ -20,7 +20,7 @@
 
 package com.docdoku.server.rest.dto;
 
-import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -112,7 +112,7 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
 
     @XmlElement(nillable = true)
     @ApiModelProperty(value = "Document status")
-    private DocumentRevision.RevisionStatus status;
+    private DocumentRevisionStatus status;
 
     @ApiModelProperty(value = "Obsolete date")
     private Date obsoleteDate;
@@ -363,11 +363,11 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
         this.attributesLocked = attributesLocked;
     }
 
-    public DocumentRevision.RevisionStatus getStatus() {
+    public DocumentRevisionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(DocumentRevision.RevisionStatus status) {
+    public void setStatus(DocumentRevisionStatus status) {
         this.status = status;
     }
 

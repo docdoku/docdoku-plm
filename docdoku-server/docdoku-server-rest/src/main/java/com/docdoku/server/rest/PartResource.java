@@ -31,10 +31,7 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.*;
-import com.docdoku.core.security.ACL;
-import com.docdoku.core.security.ACLUserEntry;
-import com.docdoku.core.security.ACLUserGroupEntry;
-import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.security.*;
 import com.docdoku.core.services.IConverterManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
@@ -445,11 +442,11 @@ public class PartResource {
             Map<String, String> userEntries = new HashMap<>();
             Map<String, String> groupEntries = new HashMap<>();
 
-            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+            for (Map.Entry<String, ACLPermission> entry : acl.getUserEntries().entrySet()) {
                 userEntries.put(entry.getKey(), entry.getValue().name());
             }
 
-            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+            for (Map.Entry<String, ACLPermission> entry : acl.getGroupEntries().entrySet()) {
                 groupEntries.put(entry.getKey(), entry.getValue().name());
             }
 
@@ -491,16 +488,16 @@ public class PartResource {
             userEntries = new ACLUserEntry[acl.getUserEntries().size()];
             userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
             int i = 0;
-            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+            for (Map.Entry<String, ACLPermission> entry : acl.getUserEntries().entrySet()) {
                 userEntries[i] = new ACLUserEntry();
                 userEntries[i].setPrincipal(new User(new Workspace(workspaceId), new Account(entry.getKey())));
-                userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+                userEntries[i++].setPermission(ACLPermission.valueOf(entry.getValue().name()));
             }
             i = 0;
-            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+            for (Map.Entry<String, ACLPermission> entry : acl.getGroupEntries().entrySet()) {
                 userGroupEntries[i] = new ACLUserGroupEntry();
                 userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
-                userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+                userGroupEntries[i++].setPermission(ACLPermission.valueOf(entry.getValue().name()));
             }
         }
 
@@ -894,7 +891,7 @@ public class PartResource {
                         CADInstance cadInstance = mapper.map(cadInstanceDTO, CADInstance.class);
                         cadInstance.setRotationMatrix(new RotationMatrix(cadInstanceDTO.getMatrix()));
                         if (cadInstance.getRotationType() == null) {
-                            cadInstance.setRotationType(CADInstance.RotationType.ANGLE);
+                            cadInstance.setRotationType(RotationType.ANGLE);
                         }
                         cadInstances.add(cadInstance);
 
@@ -923,7 +920,7 @@ public class PartResource {
                                 CADInstance cadInstance = mapper.map(cadInstanceDTO, CADInstance.class);
                                 cadInstance.setRotationMatrix(new RotationMatrix(cadInstanceDTO.getMatrix()));
                                 if (cadInstance.getRotationType() == null) {
-                                    cadInstance.setRotationType(CADInstance.RotationType.ANGLE);
+                                    cadInstance.setRotationType(RotationType.ANGLE);
                                 }
                                 subCADInstances.add(cadInstance);
                             }

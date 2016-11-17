@@ -70,15 +70,15 @@ public class PartCheckInCommand extends BaseCommandLine {
         PartRevisionDTO pr = partApi.getPartRevision(workspace,partNumber,revision);
         PartIterationDTO pi = LastIterationHelper.getLastIteration(pr);
 
-        PartRevisionKey partRPK = new PartRevisionKey();
+        PartRevisionDTO partRPK = new PartRevisionDTO();
         partRPK.setWorkspaceId(workspace);
-        partRPK.setPartMasterNumber(partNumber);
+        partRPK.setNumber(partNumber);
         partRPK.setVersion(revision);
 
-        PartIterationKey partIPK = new PartIterationKey();
+        PartIterationDTO partIPK = new PartIterationDTO();
         partIPK.setWorkspaceId(workspace);
-        partIPK.setPartMasterNumber(partNumber);
-        partIPK.setPartRevisionVersion(revision);
+        partIPK.setNumber(partNumber);
+        partIPK.setVersion(revision);
         partIPK.setIteration(pi.getIteration());
 
         if(!noUpload){

@@ -24,7 +24,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartLink;
-import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLPermission;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
@@ -148,7 +148,7 @@ public class ProductConfigurationsResource {
         for (String path : productConfiguration.getSubstituteLinks()) {
             LightPartLinkListDTO partDTOs = new LightPartLinkListDTO();
             for (PartLink partLink : productService.decodePath(ciKey, path)) {
-                partDTOs.getPartLinks().add(new LightPartLinkDTO(partLink));
+                partDTOs.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId()));
             }
             substitutesParts.add(partDTOs);
         }
@@ -156,7 +156,7 @@ public class ProductConfigurationsResource {
         for (String path : productConfiguration.getOptionalUsageLinks()) {
             LightPartLinkListDTO partDTOs = new LightPartLinkListDTO();
             for (PartLink partLink : productService.decodePath(ciKey, path)) {
-                partDTOs.getPartLinks().add(new LightPartLinkDTO(partLink));
+                partDTOs.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId()));
             }
             optionalParts.add(partDTOs);
         }
@@ -190,8 +190,8 @@ public class ProductConfigurationsResource {
         String name = pProductConfigurationDTO.getName();
 
         ACLDTO acldto = pProductConfigurationDTO.getAcl();
-        Map<String, ACL.Permission> userEntries = new HashMap<>();
-        Map<String, ACL.Permission> grpEntries = new HashMap<>();
+        Map<String, ACLPermission> userEntries = new HashMap<>();
+        Map<String, ACLPermission> grpEntries = new HashMap<>();
         if (acldto != null) {
             userEntries = acldto.getUserEntries();
             grpEntries = acldto.getGroupEntries();
@@ -229,11 +229,11 @@ public class ProductConfigurationsResource {
             Map<String, String> userEntries = new HashMap<>();
             Map<String, String> groupEntries = new HashMap<>();
 
-            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+            for (Map.Entry<String, ACLPermission> entry : acl.getUserEntries().entrySet()) {
                 userEntries.put(entry.getKey(), entry.getValue().name());
             }
 
-            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+            for (Map.Entry<String, ACLPermission> entry : acl.getGroupEntries().entrySet()) {
                 groupEntries.put(entry.getKey(), entry.getValue().name());
             }
 

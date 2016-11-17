@@ -30,6 +30,7 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceDateAttribute;
 import com.docdoku.core.meta.InstanceTextAttribute;
 import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLPermission;
 import com.docdoku.core.services.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
@@ -103,7 +104,7 @@ public class DocumentManagerBeanTest {
         binaryResource = new BinaryResource(DocumentUtil.FULL_NAME,DocumentUtil.DOCUMENT_SIZE,new Date());
         documentIteration = new DocumentIteration();
         acl = new ACL();
-        acl.addEntry(user, ACL.Permission.READ_ONLY);
+        acl.addEntry(user, ACLPermission.READ_ONLY);
 
         folder = new Folder(DocumentUtil.WORKSPACE_ID+"/"+user.getName()+"/folders/"+DocumentUtil.FOLDER);
         documentRevision = new DocumentRevision();
@@ -358,7 +359,7 @@ public class DocumentManagerBeanTest {
         documentRevision.setCheckOutUser(user);
         documentRevision.setCheckOutDate(new Date());
         acl = new ACL();
-        acl.addEntry(user, ACL.Permission.READ_ONLY);
+        acl.addEntry(user, ACLPermission.READ_ONLY);
         documentRevision.setACL(acl);
 
         DocumentRevisionKey pKey = new DocumentRevisionKey(workspace.getId(), documentMaster.getId(), documentRevision.getVersion());

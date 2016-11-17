@@ -20,15 +20,11 @@
 
 package com.docdoku.server.rest.dto.baseline;
 
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartRevision;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @XmlRootElement
@@ -51,43 +47,6 @@ public class BaselinedPartDTO implements Serializable {
     private List<BaselinedPartOptionDTO> availableIterations;
 
     public BaselinedPartDTO() {
-    }
-
-    public BaselinedPartDTO(PartIteration partIteration) {
-        this.number = partIteration.getPartNumber();
-        this.version = partIteration.getVersion();
-        this.name = partIteration.getPartRevision().getPartMaster().getName();
-        this.iteration = partIteration.getIteration();
-
-        this.availableIterations = new ArrayList<>();
-        for (PartRevision partRevision : partIteration.getPartRevision().getPartMaster().getPartRevisions()) {
-            BaselinedPartOptionDTO option = new BaselinedPartOptionDTO(partRevision.getVersion(),
-                    partRevision.getLastIteration().getIteration(),
-                    partRevision.isReleased());
-            this.availableIterations.add(option);
-        }
-    }
-
-    public BaselinedPartDTO(List<PartIteration> availableParts) {
-
-        PartIteration max = Collections.max(availableParts);
-
-        this.number = max.getPartNumber();
-        this.version = max.getVersion();
-        this.name = max.getPartRevision().getPartMaster().getName();
-        this.iteration = max.getIteration();
-
-        this.availableIterations = new ArrayList<>();
-        for (PartIteration partIteration : availableParts) {
-            this.availableIterations.add(new BaselinedPartOptionDTO(partIteration.getVersion(), partIteration.getIteration(), partIteration.getPartRevision().isReleased()));
-        }
-
-    }
-
-    public BaselinedPartDTO(String number, String version, int iteration) {
-        this.number = number;
-        this.version = version;
-        this.iteration = iteration;
     }
 
     public String getNumber() {

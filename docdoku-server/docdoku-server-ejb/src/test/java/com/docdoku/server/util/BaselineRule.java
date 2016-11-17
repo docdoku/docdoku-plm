@@ -23,7 +23,7 @@ package com.docdoku.server.util;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.configuration.ProductBaselineType;
 import com.docdoku.core.product.*;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -40,7 +40,7 @@ import java.util.List;
      public class BaselineRule implements TestRule {
 
     private String name ;
-    private ProductBaseline.BaselineType type;
+    private ProductBaselineType type;
     private String description;
     private Workspace workspace;
     private User user;
@@ -50,7 +50,7 @@ import java.util.List;
     private List<String> substituteLinks = new ArrayList<>();
     private List<String> optionalUsageLinks = new ArrayList<>();;
 
-    public BaselineRule(String baselineName,ProductBaseline.BaselineType type,String description,String workspaceId,String login,String partId,String productId,boolean released){
+    public BaselineRule(String baselineName,ProductBaselineType type,String description,String workspaceId,String login,String partId,String productId,boolean released){
         name = baselineName;
         this.type = type;
         this.description = description;
@@ -66,7 +66,7 @@ import java.util.List;
             PartRevision revision = new PartRevision(partMaster, "A", user);
             iterationLists.add(new PartIteration(revision, user));
             revision.setPartIterations(iterationLists);
-            revision.setStatus(PartRevision.RevisionStatus.RELEASED);
+            revision.setStatus(PartRevisionStatus.RELEASED);
             revisions.add(revision);
             partMaster.setPartRevisions(revisions);
         }
@@ -74,7 +74,7 @@ import java.util.List;
         configurationItem.setDesignItem(partMaster);
     }
 
-    public BaselineRule(String baselineName,ProductBaseline.BaselineType type,String description,String workspaceId,String login,String partId,String productId,boolean released,boolean checkedOut){
+    public BaselineRule(String baselineName,ProductBaselineType type,String description,String workspaceId,String login,String partId,String productId,boolean released,boolean checkedOut){
         this(baselineName,type,description,workspaceId,login,partId,productId,released);
         if (checkedOut){
             this.partMaster.getLastReleasedRevision().getIteration(1).getPartRevision().setCheckOutUser(this.user);
@@ -169,7 +169,7 @@ import java.util.List;
         return name;
     }
 
-    public ProductBaseline.BaselineType getType() {
+    public ProductBaselineType getType() {
         return type;
     }
 

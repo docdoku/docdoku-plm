@@ -49,7 +49,7 @@ public class DocumentBaseline implements Serializable {
     @Column(nullable = false)
     private String name;
 
-    private BaselineType type = BaselineType.LATEST;
+    private DocumentBaselineType type = DocumentBaselineType.LATEST;
 
     @Lob
     private String description;
@@ -67,13 +67,10 @@ public class DocumentBaseline implements Serializable {
     })
     private User author;
 
-    public enum BaselineType {
-        LATEST, RELEASED
-    }
-
     public DocumentBaseline() {
     }
-    public DocumentBaseline(User author, String name, BaselineType type, String description) {
+
+    public DocumentBaseline(User author, String name, DocumentBaselineType type, String description) {
         this.author = author;
         this.name = name;
         this.type = type;
@@ -102,11 +99,11 @@ public class DocumentBaseline implements Serializable {
         this.name = name;
     }
 
-    public BaselineType getType() {
+    public DocumentBaselineType getType() {
         return type;
     }
 
-    public void setType(BaselineType type) {
+    public void setType(DocumentBaselineType type) {
         this.type = type;
     }
 

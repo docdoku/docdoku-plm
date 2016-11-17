@@ -21,6 +21,7 @@ package com.docdoku.core.services;
 
 import com.docdoku.core.configuration.BaselinedDocumentBinaryResourceCollection;
 import com.docdoku.core.configuration.DocumentBaseline;
+import com.docdoku.core.configuration.DocumentBaselineType;
 import com.docdoku.core.configuration.DocumentCollection;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
@@ -49,7 +50,7 @@ public interface IDocumentBaselineManagerLocal {
      * @throws com.docdoku.core.exceptions.UserNotActiveException If the connected user is disable
      * @throws com.docdoku.core.exceptions.DocumentRevisionNotFoundException If a given document revision can't be find
      */
-    DocumentBaseline createBaseline(String workspaceId, String name, DocumentBaseline.BaselineType type, String description, List<DocumentRevisionKey> documentRevisionKeys) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FolderNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, NotAllowedException, WorkspaceNotEnabledException;
+    DocumentBaseline createBaseline(String workspaceId, String name, DocumentBaselineType type, String description, List<DocumentRevisionKey> documentRevisionKeys) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FolderNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, NotAllowedException, WorkspaceNotEnabledException;
     /**
      * Get all {@link com.docdoku.core.configuration.DocumentBaseline}s of a specific workspace
      * @param workspaceId Id of the specific workspace.

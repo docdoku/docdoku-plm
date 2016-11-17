@@ -20,6 +20,7 @@
 
 package com.docdoku.server;
 
+import com.docdoku.core.admin.OperationSecurityStrategy;
 import com.docdoku.core.admin.PlatformOptions;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IPlatformOptionsManagerLocal;
@@ -53,27 +54,27 @@ public class PlatformOptionsManagerBean implements IPlatformOptionsManagerLocal 
     }
 
     @Override
-    public PlatformOptions.OperationSecurityStrategy getWorkspaceCreationStrategy(){
+    public OperationSecurityStrategy getWorkspaceCreationStrategy(){
         PlatformOptions platformOptions = loadPlatformOptions();
         return platformOptions.getWorkspaceCreationStrategy();
     }
 
     @Override
-    public PlatformOptions.OperationSecurityStrategy getRegistrationStrategy(){
+    public OperationSecurityStrategy getRegistrationStrategy(){
         PlatformOptions platformOptions = loadPlatformOptions();
         return platformOptions.getRegistrationStrategy();
     }
 
     @Override
     @RolesAllowed(UserGroupMapping.ADMIN_ROLE_ID)
-    public void setWorkspaceCreationStrategy(PlatformOptions.OperationSecurityStrategy strategy){
+    public void setWorkspaceCreationStrategy(OperationSecurityStrategy strategy){
         PlatformOptions platformOptions = loadPlatformOptions();
         platformOptions.setWorkspaceCreationStrategy(strategy);
     }
 
     @Override
     @RolesAllowed(UserGroupMapping.ADMIN_ROLE_ID)
-    public void setRegistrationStrategy(PlatformOptions.OperationSecurityStrategy strategy){
+    public void setRegistrationStrategy(OperationSecurityStrategy strategy){
         PlatformOptions platformOptions = loadPlatformOptions();
         platformOptions.setRegistrationStrategy(strategy);
     }

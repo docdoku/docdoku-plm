@@ -20,13 +20,9 @@
 
 package com.docdoku.server.rest.dto.baseline;
 
-import com.docdoku.core.configuration.PathChoice;
-import com.docdoku.core.configuration.ResolvedPartLink;
 import com.docdoku.server.rest.dto.PartUsageLinkDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -44,15 +40,6 @@ public class PathChoiceDTO implements Serializable {
     private PartUsageLinkDTO partUsageLink;
 
     public PathChoiceDTO() {
-    }
-
-    public PathChoiceDTO(PathChoice choice) {
-        for (ResolvedPartLink resolvedPartLink : choice.getResolvedPath()) {
-            resolvedPath.add(new ResolvedPartLinkDTO(resolvedPartLink));
-        }
-
-        Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
-        partUsageLink = mapper.map(choice.getPartUsageLink(), PartUsageLinkDTO.class);
     }
 
     public List<ResolvedPartLinkDTO> getResolvedPath() {

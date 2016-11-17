@@ -211,45 +211,45 @@ public class FileHelper {
         conn.connect();
     }
 
-    private static String getPartURL(URL serverURL, PartIterationKey pPartIPK, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
+    private static String getPartURL(URL serverURL, PartIterationDTO pPartIPK, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
         return serverURL
                 + "/api/files/"
                 + URLEncoder.encode(pPartIPK.getWorkspaceId(), "UTF-8") + "/"
                 + "parts/"
-                + URLEncoder.encode(pPartIPK.getPartMasterNumber(), "UTF-8") + "/"
-                + pPartIPK.getPartRevisionVersion() + "/"
+                + URLEncoder.encode(pPartIPK.getNumber(), "UTF-8") + "/"
+                + pPartIPK.getVersion() + "/"
                 + pPartIPK.getIteration() + "/nativecad/"
                 + pRemoteFileName;
     }
 
-    private static String getDocumentURL(URL serverURL, DocumentIterationKey pDocIPK, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
+    private static String getDocumentURL(URL serverURL, DocumentIterationDTO pDocIPK, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
         return serverURL
                 + "/api/files/"
                 + URLEncoder.encode(pDocIPK.getWorkspaceId(), "UTF-8") + "/"
                 + "documents/"
                 + URLEncoder.encode(pDocIPK.getDocumentMasterId(), "UTF-8") + "/"
-                + pDocIPK.getDocumentRevisionVersion()+ "/"
+                + pDocIPK.getVersion()+ "/"
                 + pDocIPK.getIteration() + "/"
                 + pRemoteFileName;
     }
 
-    public static String getPartURLUpload(URL serverURL, PartIterationKey pPart) throws UnsupportedEncodingException, MalformedURLException {
+    public static String getPartURLUpload(URL serverURL, PartIterationDTO pPart) throws UnsupportedEncodingException, MalformedURLException {
         return serverURL
                 + "/api/files/"
                 + URLEncoder.encode(pPart.getWorkspaceId(), "UTF-8") + "/"
                 + "parts/"
-                + URLEncoder.encode(pPart.getPartMasterNumber(), "UTF-8") + "/"
-                + pPart.getPartRevisionVersion() + "/"
+                + URLEncoder.encode(pPart.getNumber(), "UTF-8") + "/"
+                + pPart.getVersion() + "/"
                 + pPart.getIteration() + "/nativecad/";
     }
 
-    private static String getDocumentURLUpload(URL serverURL, DocumentIterationKey docIPK) throws UnsupportedEncodingException {
+    private static String getDocumentURLUpload(URL serverURL, DocumentIterationDTO docIPK) throws UnsupportedEncodingException {
         return serverURL
                 + "/api/files/"
                 + URLEncoder.encode(docIPK.getWorkspaceId(), "UTF-8") + "/"
                 + "documents/"
                 + URLEncoder.encode(docIPK.getDocumentMasterId(), "UTF-8") + "/"
-                + docIPK.getDocumentRevisionVersion() + "/"
+                + docIPK.getVersion() + "/"
                 + docIPK.getIteration();
     }
 
@@ -259,7 +259,7 @@ public class FileHelper {
         return "y".equalsIgnoreCase(response);
     }
 
-    public void uploadNativeCADFile(URL serverURL, File cadFile, PartIterationKey partIPK) throws IOException, LoginException, NoSuchAlgorithmException {
+    public void uploadNativeCADFile(URL serverURL, File cadFile, PartIterationDTO partIPK) throws IOException, LoginException, NoSuchAlgorithmException {
         String digest = uploadFile(cadFile, FileHelper.getPartURLUpload(serverURL, partIPK));
 
         File path = cadFile.getParentFile();
@@ -274,10 +274,10 @@ public class FileHelper {
         String fileName =  nativeCADFile.getName();
         UserDTO checkOutUser = pr.getCheckOutUser();
         PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(pr);
-        PartIterationKey partIPK = new PartIterationKey();
+        PartIterationDTO partIPK = new PartIterationDTO();
         partIPK.setWorkspaceId(workspace);
-        partIPK.setPartMasterNumber(partNumber);
-        partIPK.setPartRevisionVersion(pr.getVersion());
+        partIPK.setNumber(partNumber);
+        partIPK.setVersion(pr.getVersion());
         partIPK.setIteration(pi.getIteration());
 
         boolean writable = (checkOutUser != null) && (checkOutUser.getLogin().equals(login)) && (lastIteration.getIteration()==pi.getIteration());
@@ -297,22 +297,22 @@ public class FileHelper {
         saveMetadata(meta, partIPK, digest, localFile);
     }
 
-    private void saveMetadata(MetaDirectoryManager meta, PartIterationKey partIPK, String digest, File localFile) throws IOException {
+    private void saveMetadata(MetaDirectoryManager meta, PartIterationDTO partIPK, String digest, File localFile) throws IOException {
         String filePath=localFile.getAbsolutePath();
         meta.setDigest(filePath,digest);
-        meta.setPartNumber(filePath,partIPK.getPartMasterNumber());
+        meta.setPartNumber(filePath,partIPK.getNumber());
         meta.setWorkspace(filePath,partIPK.getWorkspaceId());
-        meta.setRevision(filePath,partIPK.getPartRevisionVersion());
+        meta.setRevision(filePath,partIPK.getVersion());
         meta.setIteration(filePath,partIPK.getIteration());
         meta.setLastModifiedDate(filePath, localFile.lastModified());
     }
 
-    private void saveMetadata(MetaDirectoryManager meta, DocumentIterationKey docIPK, String digest, File localFile) throws IOException {
+    private void saveMetadata(MetaDirectoryManager meta, DocumentIterationDTO docIPK, String digest, File localFile) throws IOException {
         String filePath=localFile.getAbsolutePath();
         meta.setDigest(filePath,digest);
         meta.setDocumentId(filePath,docIPK.getDocumentMasterId());
         meta.setWorkspace(filePath,docIPK.getWorkspaceId());
-        meta.setRevision(filePath,docIPK.getDocumentRevisionVersion());
+        meta.setRevision(filePath,docIPK.getVersion());
         meta.setIteration(filePath,docIPK.getIteration());
         meta.setLastModifiedDate(filePath, localFile.lastModified());
     }
@@ -321,10 +321,10 @@ public class FileHelper {
         for(BinaryResourceDTO binaryResourceDTO:di.getAttachedFiles()){
             String fileName = binaryResourceDTO.getName();
             UserDTO checkOutUser = dr.getCheckOutUser();
-            DocumentIterationKey docIPK = new DocumentIterationKey();
+            DocumentIterationDTO docIPK = new DocumentIterationDTO();
             docIPK.setWorkspaceId(workspace);
             docIPK.setDocumentMasterId(id);
-            docIPK.setDocumentRevisionVersion(dr.getVersion());
+            docIPK.setVersion(dr.getVersion());
             docIPK.setIteration(di.getIteration());
 
             DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(dr);
@@ -350,7 +350,7 @@ public class FileHelper {
     }
 
 
-    public void uploadDocumentFile(URL serverURL, File file, DocumentIterationKey docIPK) throws IOException, LoginException, NoSuchAlgorithmException {
+    public void uploadDocumentFile(URL serverURL, File file, DocumentIterationDTO docIPK) throws IOException, LoginException, NoSuchAlgorithmException {
         String digest = uploadFile(file, FileHelper.getDocumentURLUpload(serverURL, docIPK));
 
         File path = file.getParentFile();

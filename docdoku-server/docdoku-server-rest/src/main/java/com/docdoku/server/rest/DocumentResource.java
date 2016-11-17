@@ -32,10 +32,7 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartLink;
-import com.docdoku.core.security.ACL;
-import com.docdoku.core.security.ACLUserEntry;
-import com.docdoku.core.security.ACLUserGroupEntry;
-import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.security.*;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentWorkflowManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
@@ -374,16 +371,16 @@ public class DocumentResource {
             userEntries = new ACLUserEntry[acl.getUserEntries().size()];
             userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
             int i = 0;
-            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+            for (Map.Entry<String, ACLPermission> entry : acl.getUserEntries().entrySet()) {
                 userEntries[i] = new ACLUserEntry();
                 userEntries[i].setPrincipal(new User(new Workspace(workspaceId), new Account(entry.getKey())));
-                userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+                userEntries[i++].setPermission(ACLPermission.valueOf(entry.getValue().name()));
             }
             i = 0;
-            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+            for (Map.Entry<String, ACLPermission> entry : acl.getGroupEntries().entrySet()) {
                 userGroupEntries[i] = new ACLUserGroupEntry();
                 userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
-                userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+                userGroupEntries[i++].setPermission(ACLPermission.valueOf(entry.getValue().name()));
             }
         }
 
@@ -713,11 +710,11 @@ public class DocumentResource {
             Map<String, String> userEntries = new HashMap<>();
             Map<String, String> groupEntries = new HashMap<>();
 
-            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+            for (Map.Entry<String, ACLPermission> entry : acl.getUserEntries().entrySet()) {
                 userEntries.put(entry.getKey(), entry.getValue().name());
             }
 
-            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+            for (Map.Entry<String, ACLPermission> entry : acl.getGroupEntries().entrySet()) {
                 groupEntries.put(entry.getKey(), entry.getValue().name());
             }
 
@@ -879,7 +876,7 @@ public class DocumentResource {
             LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
             List<PartLink> path = productService.decodePath(productInstanceMaster.getInstanceOf().getKey(), pathDataMaster.getPath());
             for (PartLink partLink : path) {
-                partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink));
+                partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId()));
             }
             dto.setPartLinksList(partLinksList);
 

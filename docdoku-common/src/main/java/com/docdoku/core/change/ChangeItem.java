@@ -77,11 +77,7 @@ public abstract class ChangeItem implements Serializable {
     @Lob
     protected String description;
 
-    protected Priority priority;
-
-    public enum Priority {
-        LOW, MEDIUM, HIGH, EMERGENCY
-    }
+    protected ChangeItemPriority priority;
 
     /**
      * An adaptive change maintains functionality for a different platform or
@@ -90,11 +86,7 @@ public abstract class ChangeItem implements Serializable {
      * A perfective change adds functionality.
      * A preventive change improves maintainability.
      */
-    protected Category category;
-
-    public enum Category {
-        ADAPTIVE, CORRECTIVE, PERFECTIVE, PREVENTIVE, OTHER
-    }
+    protected ChangeItemCategory category;
 
     @ManyToMany
     protected Set<PartIteration> affectedParts = new HashSet<>();
@@ -111,7 +103,7 @@ public abstract class ChangeItem implements Serializable {
         author=pAuthor;
     }
 
-    protected ChangeItem(String name, Workspace workspace, User author, User assignee, Date creationDate, String description, Priority priority, Category category) {
+    protected ChangeItem(String name, Workspace workspace, User author, User assignee, Date creationDate, String description, ChangeItemPriority priority, ChangeItemCategory category) {
         this.name = name;
         this.workspace = workspace;
         this.author = author;
@@ -129,17 +121,17 @@ public abstract class ChangeItem implements Serializable {
         return id;
     }
 
-    public Category getCategory() {
+    public ChangeItemCategory getCategory() {
         return category;
     }
-    public void setCategory(Category category) {
+    public void setCategory(ChangeItemCategory category) {
         this.category = category;
     }
 
-    public Priority getPriority() {
+    public ChangeItemPriority getPriority() {
         return priority;
     }
-    public void setPriority(Priority priority) {
+    public void setPriority(ChangeItemPriority priority) {
         this.priority = priority;
     }
 

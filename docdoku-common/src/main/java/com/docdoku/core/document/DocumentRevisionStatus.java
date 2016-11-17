@@ -18,19 +18,13 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.core.services;
+package com.docdoku.core.document;
 
-import com.docdoku.core.admin.OperationSecurityStrategy;
-import com.docdoku.core.admin.PlatformOptions;
 
 /**
  *
  * @author Morgan Guimard
  */
-public interface IPlatformOptionsManagerLocal {
-    OperationSecurityStrategy getWorkspaceCreationStrategy();
-    OperationSecurityStrategy getRegistrationStrategy();
-    void setWorkspaceCreationStrategy(OperationSecurityStrategy strategy);
-    void setRegistrationStrategy(OperationSecurityStrategy strategy);
-    PlatformOptions getPlatformOptions();
+public enum DocumentRevisionStatus {
+    WIP, RELEASED, OBSOLETE
 }

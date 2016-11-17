@@ -21,10 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.CascadeResult;
-import com.docdoku.core.configuration.PSFilter;
-import com.docdoku.core.configuration.PathChoice;
-import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.configuration.*;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationLink;
 import com.docdoku.core.document.DocumentLink;
@@ -361,12 +358,12 @@ public class ProductResource {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
-        ProductBaseline.BaselineType type;
+        ProductBaselineType type;
 
         if (pType == null || "LATEST".equals(pType)) {
-            type = ProductBaseline.BaselineType.LATEST;
+            type = ProductBaselineType.LATEST;
         } else if ("RELEASED".equals(pType)) {
-            type = ProductBaseline.BaselineType.RELEASED;
+            type = ProductBaselineType.RELEASED;
         } else {
             throw new IllegalArgumentException("Type must be either RELEASED or LATEST");
         }
@@ -376,7 +373,7 @@ public class ProductResource {
         List<PathChoiceDTO> pathChoiceDTOs = new ArrayList<>();
 
         for (PathChoice choice : choices) {
-            pathChoiceDTOs.add(new PathChoiceDTO(choice));
+            pathChoiceDTOs.add(Tools.mapPathChoiceDTO(choice));
         }
 
         return Response.ok(new GenericEntity<List<PathChoiceDTO>>((List<PathChoiceDTO>) pathChoiceDTOs) {
@@ -423,7 +420,7 @@ public class ProductResource {
         for (Map.Entry<PartMaster, List<PartIteration>> entry : map.entrySet()) {
             List<PartIteration> availableParts = entry.getValue();
             if (availableParts.size() == 1 && !availableParts.get(0).getPartRevision().isReleased() || availableParts.size() > 1) {
-                partsDTO.add(new BaselinedPartDTO(availableParts));
+                partsDTO.add(Tools.createBaselinedPartDTOFromPartList(availableParts));
             }
         }
 
@@ -710,13 +707,13 @@ public class ProductResource {
             List<PartLink> targetPath = productService.decodePath(ciKey, pathToPathLink.getTargetPath());
 
             for (PartLink partLink : sourcePath) {
-                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());
                 sourceLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
             List<LightPartLinkDTO> targetLightPartLinkDTOs = new ArrayList<>();
             for (PartLink partLink : targetPath) {
-                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());
                 targetLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
@@ -780,7 +777,7 @@ public class ProductResource {
         List<PartLink> path = productService.decodePath(ciKey, pathAsString);
         List<LightPartLinkDTO> lightPartLinkDTOs = new ArrayList<>();
         for (PartLink partLink : path) {
-            LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+            LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());
             lightPartLinkDTOs.add(lightPartLinkDTO);
         }
         return Response.ok(new GenericEntity<List<LightPartLinkDTO>>((List<LightPartLinkDTO>) lightPartLinkDTOs) {
@@ -1053,13 +1050,13 @@ public class ProductResource {
 
             List<LightPartLinkDTO> sourceLightPartLinkDTOs = new ArrayList<>();
             for (PartLink partLink : sourcePath) {
-                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());
                 sourceLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
             List<LightPartLinkDTO> targetLightPartLinkDTOs = new ArrayList<>();
             for (PartLink partLink : targetPath) {
-                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());
                 targetLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 

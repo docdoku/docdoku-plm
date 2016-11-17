@@ -21,6 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.configuration.ProductBaselineType;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.ConfigurationItemKey;
@@ -138,7 +139,7 @@ public class ProductBaselinesResource {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         String description = productBaselineDTO.getDescription();
         String name = productBaselineDTO.getName();
-        ProductBaseline.BaselineType type = productBaselineDTO.getType();
+        ProductBaselineType type = productBaselineDTO.getType();
 
         List<BaselinedPartDTO> baselinedPartsDTO = productBaselineDTO.getBaselinedParts();
         List<PartIterationKey> partIterationKeys = new ArrayList<>();
@@ -205,14 +206,14 @@ public class ProductBaselinesResource {
         for (String path : productBaseline.getSubstituteLinks()) {
             LightPartLinkListDTO lightPartLinkListDTO = new LightPartLinkListDTO();
             for (PartLink partLink : productService.decodePath(ciKey, path)) {
-                lightPartLinkListDTO.getPartLinks().add(new LightPartLinkDTO(partLink));
+                lightPartLinkListDTO.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId()));
             }
             substitutesParts.add(lightPartLinkListDTO);
         }
         for (String path : productBaseline.getOptionalUsageLinks()) {
             LightPartLinkListDTO lightPartLinkListDTO = new LightPartLinkListDTO();
             for (PartLink partLink : productService.decodePath(ciKey, path)) {
-                lightPartLinkListDTO.getPartLinks().add(new LightPartLinkDTO(partLink));
+                lightPartLinkListDTO.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId()));
             }
             optionalParts.add(lightPartLinkListDTO);
         }
@@ -314,13 +315,13 @@ public class ProductBaselinesResource {
             List<PartLink> targetPath = productService.decodePath(ciKey, pathToPathLink.getTargetPath());
 
             for (PartLink partLink : sourcePath) {
-                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());
                 sourceLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
             List<LightPartLinkDTO> targetLightPartLinkDTOs = new ArrayList<>();
             for (PartLink partLink : targetPath) {
-                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());
                 targetLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
@@ -346,13 +347,13 @@ public class ProductBaselinesResource {
 
             List<LightPartLinkDTO> sourceLightPartLinkDTOs = new ArrayList<>();
             for (PartLink partLink : sourcePath) {
-                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());
                 sourceLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
             List<LightPartLinkDTO> targetLightPartLinkDTOs = new ArrayList<>();
             for (PartLink partLink : targetPath) {
-                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink);
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());
                 targetLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
