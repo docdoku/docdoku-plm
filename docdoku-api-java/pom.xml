@@ -205,15 +205,19 @@
                 <configuration>
                     <groups>
                         <group>
-                            <title>DocdokuPLM Java API</title>
+                            <title>DocdokuPLM Java client API</title>
                             <packages>com.docdoku.api:com.docdoku.api.*</packages>
+                        </group>
+                        <group>
+                            <title>DocdokuPLM Extension points API</title>
+                            <packages>com.docdoku.server:com.docdoku.server.*</packages>
                         </group>
                         <group>
                             <title>DocdokuPLM core documentation</title>
                             <packages>com.docdoku.core.*</packages>
                         </group>
                     </groups>
-                    <sourcepath>${project.parent.basedir}/docdoku-common/src/main/java:${project.build.directory}/generated-sources/swagger/src/main/java/:${project.basedir}/src/main/java</sourcepath>
+                    <sourcepath>${project.parent.basedir}/docdoku-common/src/main/java:${project.build.directory}/generated-sources/swagger/src/main/java/:${project.basedir}/src/main/java:${project.parent.basedir}/docdoku-server/docdoku-server-ext/src/main/java</sourcepath>
                 </configuration>
             </plugin>
         </plugins>
