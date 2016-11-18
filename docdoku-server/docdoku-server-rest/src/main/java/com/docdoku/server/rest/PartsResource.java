@@ -83,6 +83,9 @@ public class PartsResource {
     private PartResource partResource;
 
     @Inject
+    private PartEffectivity partEffectivity;
+
+    @Inject
     private IPSFilterManagerLocal filterService;
 
     @EJB
@@ -102,6 +105,13 @@ public class PartsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public PartResource getPartResource() {
         return partResource;
+    }
+
+    @ApiOperation(value = "SubResource : PartEffectivity")
+    @Path("{partNumber: [^/].*}-{partVersion:[A-Z]+}/effectivities")
+    @Produces(MediaType.APPLICATION_JSON)
+    public PartEffectivity getPartEffectivity() {
+        return partEffectivity;
     }
 
     @GET

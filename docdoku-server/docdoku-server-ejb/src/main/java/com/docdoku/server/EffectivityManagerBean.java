@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 @DeclareRoles({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
@@ -94,39 +93,8 @@ public class EffectivityManagerBean implements IEffectivityManagerLocal {
     }
 
     @Override
-    public SerialNumberBasedEffectivity getSerialNumberBasedEffectivity(int pId) throws EffectivityNotFoundException {
-        return (SerialNumberBasedEffectivity) new EffectivityDAO(em).loadEffectivity(pId);
-    }
-
-    @Override
-    public DateBasedEffectivity getDateBasedEffectivity(int pId) throws EffectivityNotFoundException {
-        return (DateBasedEffectivity) new EffectivityDAO(em).loadEffectivity(pId);
-    }
-
-    @Override
-    public LotBasedEffectivity getLotBasedEffectivity(int pId) throws EffectivityNotFoundException {
-        return (LotBasedEffectivity) new EffectivityDAO(em).loadEffectivity(pId);
-    }
-
-    @Override
-    public List<SerialNumberBasedEffectivity> getSerialNumberBasedEffectivities(PartRevision pPartRevision) {
-        return new EffectivityDAO(em).loadSerialNumberBasedEffectivities(pPartRevision);
-    }
-
-    @Override
-    public List<DateBasedEffectivity> getDateBasedEffectivities(PartRevision pPartRevision) {
-        return new EffectivityDAO(em).loadDateBasedEffectivities(pPartRevision);
-    }
-
-    @Override
-    public List<LotBasedEffectivity> getLotBasedEffectivities(PartRevision pPartRevision) {
-        return new EffectivityDAO(em).loadLotBasedEffectivities(pPartRevision);
-    }
-
-    @Override
-    public List<Effectivity> getEffectivityOfConfigurationItem(String pConfigurationItemId) {
-        EffectivityDAO effectivityDAO = new EffectivityDAO(em);
-        return effectivityDAO.findEffectivitiesOfConfigurationItem(pConfigurationItemId);
+    public Effectivity getEffectivity(int pId) throws EffectivityNotFoundException {
+        return new EffectivityDAO(em).loadEffectivity(pId);
     }
 
     @Override

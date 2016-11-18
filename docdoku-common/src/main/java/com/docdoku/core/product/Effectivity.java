@@ -40,7 +40,7 @@ import java.io.Serializable;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "Effectivity.removeEffectivitiesFromConfigurationItem", query = "DELETE FROM Effectivity e WHERE e.configurationItem.id = :configurationItemId AND e.configurationItem.workspace.id = :workspaceId"),
-    @NamedQuery(name = "Effectivity.ofConfigurationItem", query = "SELECT e FROM Effectivity e WHERE e.configurationItem.id = :configurationItemId")
+
 })
 
 public abstract class Effectivity implements Serializable {
@@ -59,7 +59,6 @@ public abstract class Effectivity implements Serializable {
         @JoinColumn(name = "CONFIGURATIONITEM_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
     private ConfigurationItem configurationItem;
-
 
     public Effectivity() {
     }

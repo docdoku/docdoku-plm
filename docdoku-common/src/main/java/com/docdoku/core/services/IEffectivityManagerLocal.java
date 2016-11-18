@@ -17,15 +17,8 @@ public interface IEffectivityManagerLocal {
     DateBasedEffectivity createDateBasedEffectivity(PartRevision pPartRevision, String pName, String pDescription, Date pStartDate, Date pEndDate) throws EffectivityAlreadyExistsException, CreationException;
     LotBasedEffectivity createLotBasedEffectivity(PartRevision pPartRevision, String pName, String pDescription, ConfigurationItem pConfigurationItem, String pStartLotId, String pEndLotId) throws EffectivityAlreadyExistsException, CreationException;
 
-    SerialNumberBasedEffectivity getSerialNumberBasedEffectivity(int pId) throws EffectivityNotFoundException;
-    DateBasedEffectivity getDateBasedEffectivity(int pId) throws EffectivityNotFoundException;
-    LotBasedEffectivity getLotBasedEffectivity(int pId) throws EffectivityNotFoundException;
+    Effectivity getEffectivity(int pId) throws EffectivityNotFoundException;
 
-    List<SerialNumberBasedEffectivity> getSerialNumberBasedEffectivities(PartRevision pPartRevision);
-    List<DateBasedEffectivity> getDateBasedEffectivities(PartRevision pPartRevision);
-    List<LotBasedEffectivity> getLotBasedEffectivities(PartRevision pPartRevision);
-
-    List<Effectivity> getEffectivityOfConfigurationItem(String pConfigurationItemId);
     Effectivity updateEffectivity(int pId, String pName, String pDescription) throws EffectivityNotFoundException;
     SerialNumberBasedEffectivity updateSerialNumberBasedEffectivity(int pId, String pName, String pDescription, String pStartNumber, String pEndNumber) throws EffectivityNotFoundException;
     DateBasedEffectivity updateDateBasedEffectivity(int pId, String pName, String pDescription, Date pStartDate, Date pEndDate) throws EffectivityNotFoundException;
