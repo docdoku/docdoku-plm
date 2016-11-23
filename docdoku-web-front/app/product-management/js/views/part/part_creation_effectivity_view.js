@@ -154,16 +154,14 @@ define([
         createEffectivity: function() {
             var context = this;
             this.Part.createEffectivity(this.effectivity).then(function(data) {
-                console.log(data);
                 context.$notifications.append(new AlertView({
                     type: 'success',
                     message: App.config.i18n.CREATE_NEW_EFFECTIVITY_SUCCESS
                 }).render().$el);
             }, function(error) {
-                console.log(error);
                 context.$notifications.append(new AlertView({
                     type: 'error',
-                    message: "Error"
+                    message: error ? error.responseText : App.config.CREATE_NEW_EFFECTIVITY_ERROR
                 }).render().$el);
             });
         },

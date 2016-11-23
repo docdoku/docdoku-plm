@@ -126,6 +126,7 @@ define({
 	CREATE_BASELINE: 'Créer une baseline',
     CREATE_DOCUMENTS_COLLECTION: 'Créer une collection de documents',
     CREATE_NEW_EFFECTIVITY: 'Créer une nouvelle effectivité',
+    CREATE_NEW_EFFECTIVITY_ERROR: 'L\'effectivité n\'a pas été créée',
     CREATE_NEW_EFFECTIVITY_SUCCESS: 'L\'effectivité a été créée',
 	CREATE_NEW_PART: 'Créer un nouvel article',
     CREATE_NEW_PART_AS_SUBSTITUTE: 'Créer un nouvel article comme variante',

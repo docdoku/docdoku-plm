@@ -3,6 +3,7 @@ package com.docdoku.core.services;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.EffectivityAlreadyExistsException;
 import com.docdoku.core.exceptions.EffectivityNotFoundException;
+import com.docdoku.core.exceptions.UpdateException;
 import com.docdoku.core.product.*;
 
 import java.util.Date;
@@ -20,9 +21,9 @@ public interface IEffectivityManagerLocal {
     Effectivity getEffectivity(int pId) throws EffectivityNotFoundException;
 
     Effectivity updateEffectivity(int pId, String pName, String pDescription) throws EffectivityNotFoundException;
-    SerialNumberBasedEffectivity updateSerialNumberBasedEffectivity(int pId, String pName, String pDescription, String pStartNumber, String pEndNumber) throws EffectivityNotFoundException;
-    DateBasedEffectivity updateDateBasedEffectivity(int pId, String pName, String pDescription, Date pStartDate, Date pEndDate) throws EffectivityNotFoundException;
-    LotBasedEffectivity updateLotBasedEffectivity(int pId, String pName, String pDescription, String pStartLotId, String pEndLotId) throws EffectivityNotFoundException;
+    SerialNumberBasedEffectivity updateSerialNumberBasedEffectivity(int pId, String pName, String pDescription, String pStartNumber, String pEndNumber) throws EffectivityNotFoundException, UpdateException;
+    DateBasedEffectivity updateDateBasedEffectivity(int pId, String pName, String pDescription, Date pStartDate, Date pEndDate) throws EffectivityNotFoundException, UpdateException;
+    LotBasedEffectivity updateLotBasedEffectivity(int pId, String pName, String pDescription, String pStartLotId, String pEndLotId) throws EffectivityNotFoundException, UpdateException;
 
     void deleteEffectivity(PartRevision pPartRevision, int pId) throws EffectivityNotFoundException;
 }

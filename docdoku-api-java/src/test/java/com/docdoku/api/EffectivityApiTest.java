@@ -11,6 +11,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,6 +72,8 @@ public class EffectivityApiTest {
         effectivityDTO.setConfigurationItemKey(configurationItemKey);
         effectivityDTO.setDescription("Generated effectivity by tests");
         effectivityDTO.setTypeEffectivity(EffectivityDTO.TypeEffectivityEnum.SERIALNUMBERBASEDEFFECTIVITY);
+        effectivityDTO.setStartNumber("1");
+        effectivityDTO.setEndNumber("1");
         effectivityDTO.setName(UUID.randomUUID().toString().substring(0, 8));
 
         EffectivityDTO createdEffectivityDTO = partsApi.createEffectivity(effectivityDTO, workspaceId, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
@@ -84,6 +87,8 @@ public class EffectivityApiTest {
         effectivityDTO.setConfigurationItemKey(configurationItemKey);
         effectivityDTO.setDescription("Generated effectivity by tests");
         effectivityDTO.setTypeEffectivity(EffectivityDTO.TypeEffectivityEnum.DATEBASEDEFFECTIVITY);
+        effectivityDTO.setStartDate(new Date());
+        effectivityDTO.setEndDate(new Date());
         effectivityDTO.setName(UUID.randomUUID().toString().substring(0, 8));
 
         createdEffectivityDTO = partsApi.createEffectivity(effectivityDTO, workspaceId, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
@@ -97,6 +102,8 @@ public class EffectivityApiTest {
         effectivityDTO.setConfigurationItemKey(configurationItemKey);
         effectivityDTO.setDescription("Generated effectivity by tests");
         effectivityDTO.setTypeEffectivity(EffectivityDTO.TypeEffectivityEnum.LOTBASEDEFFECTIVITY);
+        effectivityDTO.setStartLotId("1");
+        effectivityDTO.setEndLotId("1");
         effectivityDTO.setName(UUID.randomUUID().toString().substring(0, 8));
 
         createdEffectivityDTO = partsApi.createEffectivity(effectivityDTO, workspaceId, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
@@ -125,8 +132,9 @@ public class EffectivityApiTest {
         EffectivityDTO effectivityDTO = new EffectivityDTO();
         effectivityDTO.setConfigurationItemKey(configurationItemKey);
         effectivityDTO.setDescription("Generated effectivity by tests");
-        effectivityDTO.setStartNumber("1");
         effectivityDTO.setTypeEffectivity(EffectivityDTO.TypeEffectivityEnum.SERIALNUMBERBASEDEFFECTIVITY);
+        effectivityDTO.setStartNumber("1");
+        effectivityDTO.setEndNumber("1");
         effectivityDTO.setName(UUID.randomUUID().toString().substring(0, 8));
         EffectivityDTO createdEffectivityDTO = partsApi.createEffectivity(effectivityDTO, workspaceId, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
 
@@ -157,6 +165,8 @@ public class EffectivityApiTest {
         effectivityDTO.setConfigurationItemKey(configurationItemKey);
         effectivityDTO.setDescription("Generated effectivity by tests");
         effectivityDTO.setTypeEffectivity(EffectivityDTO.TypeEffectivityEnum.SERIALNUMBERBASEDEFFECTIVITY);
+        effectivityDTO.setStartNumber("1");
+        effectivityDTO.setEndNumber("1");
         effectivityDTO.setName(UUID.randomUUID().toString().substring(0, 8));
         EffectivityDTO createdEffectivityDTO = partsApi.createEffectivity(effectivityDTO, workspaceId, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
 
@@ -188,6 +198,8 @@ public class EffectivityApiTest {
         effectivityDTO.setConfigurationItemKey(configurationItemKey);
         effectivityDTO.setDescription("Generated effectivity by tests");
         effectivityDTO.setTypeEffectivity(EffectivityDTO.TypeEffectivityEnum.SERIALNUMBERBASEDEFFECTIVITY);
+        effectivityDTO.setStartNumber("1");
+        effectivityDTO.setEndNumber("1");
         effectivityDTO.setName(UUID.randomUUID().toString().substring(0, 8));
         EffectivityDTO createdEffectivityDTO = partsApi.createEffectivity(effectivityDTO, workspaceId, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
 
@@ -221,6 +233,8 @@ public class EffectivityApiTest {
         effectivityDTO.setConfigurationItemKey(configurationItemKey);
         effectivityDTO.setDescription("Generated effectivity by tests");
         effectivityDTO.setTypeEffectivity(EffectivityDTO.TypeEffectivityEnum.SERIALNUMBERBASEDEFFECTIVITY);
+        effectivityDTO.setStartNumber("1");
+        effectivityDTO.setEndNumber("1");
         effectivityDTO.setName(UUID.randomUUID().toString().substring(0, 8));
         EffectivityDTO createdEffectivityDTO = partsApi.createEffectivity(effectivityDTO, workspaceId, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
 

@@ -1,6 +1,8 @@
 package com.docdoku.server.rest;
 
+import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.EffectivityNotFoundException;
+import com.docdoku.core.exceptions.UpdateException;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IEffectivityManagerLocal;
@@ -73,7 +75,7 @@ public class EffectivityResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateEffectivity(
             @ApiParam(required = true, value = "Effectivity id") @PathParam("effectivityId") int effectivityId,
-            @ApiParam(required = true, value = "Effectivity values to update") EffectivityDTO effectivityDTO) throws EffectivityNotFoundException {
+            @ApiParam(required = true, value = "Effectivity values to update") EffectivityDTO effectivityDTO) throws EffectivityNotFoundException, UpdateException {
         Effectivity effectivity = null;
         if(effectivityDTO.getClass().equals(SerialNumberBasedEffectivityDTO.class)) {
             effectivity = effectivityManager.updateSerialNumberBasedEffectivity(effectivityId,

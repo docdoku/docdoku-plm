@@ -127,6 +127,7 @@ define({
         CREATE_BASELINE: 'Create a baseline',
         CREATE_DOCUMENTS_COLLECTION: 'Create a documents collection',
         CREATE_NEW_EFFECTIVITY: 'Create a new effectivity',
+        CREATE_NEW_EFFECTIVITY_ERROR: 'Effectivity not created',
         CREATE_NEW_EFFECTIVITY_SUCCESS: 'Effectivity created',
         CREATE_NEW_PART: 'Create a new part',
         CREATE_NEW_PART_AS_SUBSTITUTE: 'Create a new part as a substitute',

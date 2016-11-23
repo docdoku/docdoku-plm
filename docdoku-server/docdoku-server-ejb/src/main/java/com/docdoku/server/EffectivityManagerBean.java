@@ -3,6 +3,7 @@ package com.docdoku.server;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.EffectivityAlreadyExistsException;
 import com.docdoku.core.exceptions.EffectivityNotFoundException;
+import com.docdoku.core.exceptions.UpdateException;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
@@ -17,6 +18,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Set;
 
 @DeclareRoles({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
@@ -41,6 +43,14 @@ public class EffectivityManagerBean implements IEffectivityManagerLocal {
         serialNumberBasedEffectivity.setConfigurationItem(pConfigurationItem);
         serialNumberBasedEffectivity.setStartNumber(pStartNumber);
         serialNumberBasedEffectivity.setEndNumber(pEndNumber);
+        try {
+            if (pStartNumber.isEmpty() || pEndNumber.isEmpty() || pConfigurationItem.getId() == null) {
+                throw new CreationException(Locale.getDefault());
+            }
+        } catch (NullPointerException npe) {
+            throw new CreationException(Locale.getDefault());
+        }
+
         effectivityDAO.createEffectivity(serialNumberBasedEffectivity);
 
         Set<Effectivity> effectivities = pPartRevision.getEffectivities();
@@ -62,6 +72,13 @@ public class EffectivityManagerBean implements IEffectivityManagerLocal {
         dateBasedEffectivity.setStartDate(pStartDate);
         dateBasedEffectivity.setEndDate(pEndDate);
         effectivityDAO.createEffectivity(dateBasedEffectivity);
+        try {
+            if (pStartDate == null || pEndDate == null) {
+                throw new CreationException(Locale.getDefault());
+            }
+        } catch (NullPointerException npe) {
+            throw new CreationException(Locale.getDefault());
+        }
 
         Set<Effectivity> effectivities = pPartRevision.getEffectivities();
         effectivities.add(dateBasedEffectivity);
@@ -83,6 +100,13 @@ public class EffectivityManagerBean implements IEffectivityManagerLocal {
         lotBasedEffectivity.setStartLotId(pStartLotId);
         lotBasedEffectivity.setEndLotId(pEndLotId);
         effectivityDAO.createEffectivity(lotBasedEffectivity);
+        try {
+            if (pStartLotId.isEmpty() || pEndLotId.isEmpty() || pConfigurationItem.getId() == null) {
+                throw new CreationException(Locale.getDefault());
+            }
+        } catch (NullPointerException npe) {
+            throw new CreationException(Locale.getDefault());
+        }
 
         Set<Effectivity> effectivities = pPartRevision.getEffectivities();
         effectivities.add(lotBasedEffectivity);
@@ -108,37 +132,58 @@ public class EffectivityManagerBean implements IEffectivityManagerLocal {
     }
 
     @Override
-    public SerialNumberBasedEffectivity updateSerialNumberBasedEffectivity(int pId, String pName, String pDescription, String pStartNumber, String pEndNumber) throws EffectivityNotFoundException {
+    public SerialNumberBasedEffectivity updateSerialNumberBasedEffectivity(int pId, String pName, String pDescription, String pStartNumber, String pEndNumber) throws EffectivityNotFoundException, UpdateException {
         EffectivityDAO effectivityDAO = new EffectivityDAO(em);
         SerialNumberBasedEffectivity serialNumberBasedEffectivity = (SerialNumberBasedEffectivity) effectivityDAO.loadEffectivity(pId);
         serialNumberBasedEffectivity.setName(pName);
         serialNumberBasedEffectivity.setDescription(pDescription);
         serialNumberBasedEffectivity.setStartNumber(pStartNumber);
         serialNumberBasedEffectivity.setEndNumber(pEndNumber);
+        try {
+            if (pStartNumber.isEmpty() || pEndNumber.isEmpty()) {
+                throw new UpdateException(Locale.getDefault());
+            }
+        } catch (NullPointerException npe) {
+            throw new UpdateException(Locale.getDefault());
+        }
         effectivityDAO.updateEffectivity(serialNumberBasedEffectivity);
         return serialNumberBasedEffectivity;
     }
 
     @Override
-    public DateBasedEffectivity updateDateBasedEffectivity(int pId, String pName, String pDescription, Date pStartDate, Date pEndDate) throws EffectivityNotFoundException {
+    public DateBasedEffectivity updateDateBasedEffectivity(int pId, String pName, String pDescription, Date pStartDate, Date pEndDate) throws EffectivityNotFoundException, UpdateException {
         EffectivityDAO effectivityDAO = new EffectivityDAO(em);
         DateBasedEffectivity dateBasedEffectivity = (DateBasedEffectivity) effectivityDAO.loadEffectivity(pId);
         dateBasedEffectivity.setName(pName);
         dateBasedEffectivity.setDescription(pDescription);
         dateBasedEffectivity.setStartDate(pStartDate);
         dateBasedEffectivity.setEndDate(pEndDate);
+        try {
+            if (pStartDate == null || pEndDate == null) {
+                throw new UpdateException(Locale.getDefault());
+            }
+        } catch (NullPointerException npe) {
+            throw new UpdateException(Locale.getDefault());
+        }
         effectivityDAO.updateEffectivity(dateBasedEffectivity);
         return dateBasedEffectivity;
     }
 
     @Override
-    public LotBasedEffectivity updateLotBasedEffectivity(int pId, String pName, String pDescription, String pStartLotId, String pEndLotId) throws EffectivityNotFoundException {
+    public LotBasedEffectivity updateLotBasedEffectivity(int pId, String pName, String pDescription, String pStartLotId, String pEndLotId) throws EffectivityNotFoundException, UpdateException {
         EffectivityDAO effectivityDAO = new EffectivityDAO(em);
         LotBasedEffectivity lotBasedEffectivity = (LotBasedEffectivity) effectivityDAO.loadEffectivity(pId);
         lotBasedEffectivity.setName(pName);
         lotBasedEffectivity.setDescription(pDescription);
         lotBasedEffectivity.setStartLotId(pStartLotId);
         lotBasedEffectivity.setEndLotId(pEndLotId);
+        try {
+            if (pStartLotId.isEmpty() || pEndLotId.isEmpty()) {
+                throw new UpdateException(Locale.getDefault());
+            }
+        } catch (NullPointerException npe) {
+            throw new UpdateException(Locale.getDefault());
+        }
         effectivityDAO.updateEffectivity(lotBasedEffectivity);
         return lotBasedEffectivity;
     }

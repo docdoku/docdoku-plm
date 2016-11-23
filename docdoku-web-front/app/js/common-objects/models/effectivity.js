@@ -6,9 +6,9 @@ define([
         'use strict';
 
         var Effectivity = Backbone.Model.extend({
-            effectivityTypes: [{id: 'SERIALNUMBERBASEDEFFECTIVITY', name: 'EFFECTIVITY_SERIAL_NUMBER'},
-                                    {id: 'DATEBASEDEFFECTIVITY', name: 'EFFECTIVITY_DATE'},
-                                    {id: 'LOTBASEDEFFECTIVITY', name: 'EFFECTIVITY_LOT'}],
+            effectivityTypes: [ {id: 'SERIALNUMBERBASEDEFFECTIVITY', name: 'EFFECTIVITY_SERIAL_NUMBER'},
+                                {id: 'DATEBASEDEFFECTIVITY', name: 'EFFECTIVITY_DATE'},
+                                {id: 'LOTBASEDEFFECTIVITY', name: 'EFFECTIVITY_LOT'}],
 
             getEffectivityTypeByName: function(typeName) {
               return _.find(this.effectivityTypes, function(elt) {

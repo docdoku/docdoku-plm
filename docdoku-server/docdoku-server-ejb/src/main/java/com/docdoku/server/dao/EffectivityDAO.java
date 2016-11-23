@@ -15,23 +15,9 @@ public class EffectivityDAO {
     private EntityManager em;
     private Locale mLocale;
 
-    public EffectivityDAO(Locale pLocale, EntityManager pEM) {
-        em=pEM;
-        mLocale=pLocale;
-    }
-
     public EffectivityDAO(EntityManager pEM) {
         em=pEM;
         mLocale=Locale.getDefault();
-    }
-
-    public List<Effectivity> getListEffectivities(Set<Effectivity> pEffectivitySet) {
-        Object[] objects = pEffectivitySet.toArray();
-        List<Effectivity> effectivities = new ArrayList<>();
-        for(int i=0; i<objects.length; i++) {
-            effectivities.add((Effectivity)objects[i]);
-        }
-        return effectivities;
     }
 
     public Effectivity loadEffectivity(int pId) throws EffectivityNotFoundException {
@@ -41,50 +27,6 @@ public class EffectivityDAO {
         } else {
             return effectivity;
         }
-    }
-
-    public List<SerialNumberBasedEffectivity> loadSerialNumberBasedEffectivities(PartRevision pPartRevision) {
-        List<Effectivity> effectivities = this.getListEffectivities(pPartRevision.getEffectivities());
-        List<SerialNumberBasedEffectivity> serialNumberBasedEffectivities = new ArrayList<>();
-        for(Effectivity effectivity : effectivities) {
-            if(effectivity.getClass().equals(SerialNumberBasedEffectivity.class)) {
-                serialNumberBasedEffectivities.add((SerialNumberBasedEffectivity) effectivity);
-            }
-        }
-        return serialNumberBasedEffectivities;
-    }
-
-    public List<DateBasedEffectivity> loadDateBasedEffectivities(PartRevision pPartRevision) {
-        List<Effectivity> effectivities = this.getListEffectivities(pPartRevision.getEffectivities());
-        List<DateBasedEffectivity> dateBasedEffectivities = new ArrayList<>();
-        for(Effectivity effectivity : effectivities) {
-            if(effectivity.getClass().equals(DateBasedEffectivity.class)) {
-                dateBasedEffectivities.add((DateBasedEffectivity) effectivity);
-            }
-        }
-        return dateBasedEffectivities;
-    }
-
-    public List<LotBasedEffectivity> loadLotBasedEffectivities(PartRevision pPartRevision) {
-        List<Effectivity> effectivities = this.getListEffectivities(pPartRevision.getEffectivities());
-        List<LotBasedEffectivity> lotBasedEffectivities = new ArrayList<>();
-        for(Effectivity effectivity : effectivities) {
-            if(effectivity.getClass().equals(LotBasedEffectivity.class)) {
-                lotBasedEffectivities.add((LotBasedEffectivity) effectivity);
-            }
-        }
-        return lotBasedEffectivities;
-    }
-
-    public List<Effectivity> findEffectivitiesOfConfigurationItem(String pConfigurationItemId) {
-        List<Effectivity> effectivities = null;
-        try {
-            effectivities = em.createNamedQuery("Effectivity.ofConfigurationItem", Effectivity.class)
-                    .setParameter("configurationItemId", pConfigurationItemId).getResultList();
-        } catch (NoResultException ex) {
-            // null will be returned
-        }
-        return effectivities;
     }
 
     public void updateEffectivity(Effectivity effectivity) {
