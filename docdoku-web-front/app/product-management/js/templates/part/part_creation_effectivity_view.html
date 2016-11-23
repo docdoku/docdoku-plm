@@ -1,0 +1,42 @@
+<div id="part_creation_modal" class="modal">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>{{i18n.NEW_EFFECTIVITY}}</h3>
+    </div>
+    <div class="modal-body">
+        <div class="notifications"></div>
+        <h4></h4>
+        <form id="part_creation_effectivity_form" class="form-horizontal effectivity-form">
+            <div class="control-group">
+                <label class="control-label" for="inputEffectivityType">{{i18n.EFFECTIVITY_TYPE}}</label>
+
+                <div class="controls">
+                    <select id="inputEffectivityType" required>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="inputEffectivityName">{{i18n.EFFECTIVITY_NAME}}</label>
+
+                <div class="controls">
+                    <input type="text" id="inputEffectivityName" placeholder="{{i18n.NAME}}"/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="inputEffectivityDescription">{{i18n.EFFECTIVITY_DESCRIPTION}}</label>
+
+                <div class="controls">
+                    <textarea id="inputEffectivityDescription" placeholder="{{i18n.DESCRIPTION}}" rows="3"></textarea>
+                </div>
+            </div>
+
+            <div id="specificFields"></div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+        <button class="btn btn-primary" form="part_creation_effectivity_form">{{i18n.CREATE_NEW_EFFECTIVITY}}</button>
+    </div>
+</div>

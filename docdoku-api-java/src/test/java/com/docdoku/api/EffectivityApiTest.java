@@ -125,12 +125,14 @@ public class EffectivityApiTest {
         EffectivityDTO effectivityDTO = new EffectivityDTO();
         effectivityDTO.setConfigurationItemKey(configurationItemKey);
         effectivityDTO.setDescription("Generated effectivity by tests");
+        effectivityDTO.setStartNumber("1");
         effectivityDTO.setTypeEffectivity(EffectivityDTO.TypeEffectivityEnum.SERIALNUMBERBASEDEFFECTIVITY);
         effectivityDTO.setName(UUID.randomUUID().toString().substring(0, 8));
         EffectivityDTO createdEffectivityDTO = partsApi.createEffectivity(effectivityDTO, workspaceId, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
 
         List<EffectivityDTO> effectivityDTOList = partsApi.getEffectivities(workspaceId, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
         Assert.assertTrue(effectivityDTOList.contains(createdEffectivityDTO));
+        Assert.assertEquals(effectivityDTOList.get(effectivityDTOList.indexOf(createdEffectivityDTO)).getStartNumber(), "1");
 
         partsApi.deleteEffectivity(workspaceId, partRevisionDTO.getNumber(), partRevisionDTO.getVersion(), createdEffectivityDTO.getId());
 

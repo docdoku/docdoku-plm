@@ -7,6 +7,7 @@ define([
     'text!common-objects/templates/part/part_modal.html',
     'common-objects/views/attributes/attributes',
     'common-objects/views/attributes/template_new_attributes',
+    'common-objects/views/part/part_effectivity_view',
     'common-objects/views/part/part_assembly_view',
     'common-objects/views/part/modification_notification_group_list_view',
     'common-objects/views/linked/linked_documents',
@@ -19,7 +20,7 @@ define([
     'common-objects/utils/date',
     'common-objects/views/tags/tag',
     'common-objects/models/tag'
-], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, TemplateNewAttributesView, PartAssemblyView, ModificationNotificationGroupListView, LinkedDocumentsView, UsedByView, AlertView, LinkedDocumentCollection, LinkedDocumentIterationCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
+], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, TemplateNewAttributesView, PartEffectivityView, PartAssemblyView, ModificationNotificationGroupListView, LinkedDocumentsView, UsedByView, AlertView, LinkedDocumentCollection, LinkedDocumentIterationCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
 
     'use strict';
 
@@ -28,7 +29,6 @@ define([
         initialize: function () {
 
             this.iterations = this.model.getIterations();
-
             this.iteration = this.options.iteration && this.options.iteration < this.iterations.size() ?
                 this.iterations.get(this.options.iteration) : this.model.getLastIteration();
 
@@ -149,6 +149,7 @@ define([
                 this.initCadFileUploadView();
                 this.initAttachedFilesUploadView();
                 this.initAttributesView();
+                this.initPartEffectivityView();
                 this.initPartAssemblyView();
                 this.initLinkedDocumentsView();
                 this.initUsedByView();
@@ -289,6 +290,15 @@ define([
 
         updateConversionStatusView:function(){
             this.conversionStatusView.launch();
+        },
+
+        initPartEffectivityView: function () {
+            this.partEffectivityView = new PartEffectivityView({
+                el: '#effectivity-list',
+                collection: new Backbone.Collection(this.iteration.getComponents()),
+                editMode: this.editMode,
+                model: this.model
+            }).render();
         },
 
         initPartAssemblyView: function () {

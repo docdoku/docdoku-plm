@@ -517,6 +517,27 @@ define([
                     return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getPartKey();
                 }
                 return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/';
+            },
+
+            createEffectivity:function(effectivity) {
+                return $.ajax({
+                    type: 'POST',
+                    url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getPartKey() + '/effectivities',
+                    data: JSON.stringify(effectivity),
+                    contentType: 'application/json; charset=utf-8'
+                });
+            },
+
+            getEffectivities:function() {
+                return $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getPartKey() + '/effectivities');
+            },
+
+            deleteEffectivity:function(effectivityId) {
+                return $.ajax({
+                    type: 'DELETE',
+                    url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getPartKey() + '/effectivities/' + effectivityId,
+                    contentType: 'application/json; charset=utf-8'
+                });
             }
 
         });

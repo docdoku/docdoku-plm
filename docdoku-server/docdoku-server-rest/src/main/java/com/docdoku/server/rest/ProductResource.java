@@ -9,13 +9,13 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * DocDokuPLM is distributed in the hope that it will be useful,  
- * but WITHOUT ANY WARRANTY; without even the implied warranty of  
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
- * GNU Affero General Public License for more details.  
- *  
- * You should have received a copy of the GNU Affero General Public License  
- * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.docdoku.server.rest;
 
@@ -119,6 +119,31 @@ public class ProductResource {
         }
 
         return dtos;
+    }
+
+    @GET
+    @ApiOperation(value = "Search configuration items", response = ConfigurationItemDTO.class, responseContainer = "List")
+    @Path("numbers")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchConfigurationItemId(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                              @ApiParam(required = true, value = "Query") @QueryParam("q") String q)
+            throws UserNotActiveException, UserNotFoundException, WorkspaceNotEnabledException, WorkspaceNotFoundException {
+
+        String wksId = Tools.stripTrailingSlash(workspaceId);
+        List<ConfigurationItem> cis = productService.getConfigurationItems(wksId);
+        List<ConfigurationItemDTO> ciDTOs = new ArrayList<>();
+
+        for(int i=0; i<cis.size() && ciDTOs.size() < 8; i++) {
+            ConfigurationItem ci = cis.get(i);
+
+            if(ci.getId().contains(q)) {
+                ciDTOs.add(new ConfigurationItemDTO(mapper.map(ci.getAuthor(), UserDTO.class), ci.getId(), ci.getWorkspaceId(),
+                        ci.getDescription(), ci.getDesignItem().getNumber(), ci.getDesignItem().getName(), ci.getDesignItem().getLastRevision().getVersion()));
+            }
+        }
+
+        return Response.ok(new GenericEntity<List<ConfigurationItemDTO>>(ciDTOs) {
+        }).build();
     }
 
     @POST

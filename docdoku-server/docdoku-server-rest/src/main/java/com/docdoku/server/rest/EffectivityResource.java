@@ -78,7 +78,7 @@ public class EffectivityResource {
         if(effectivityDTO.getClass().equals(SerialNumberBasedEffectivityDTO.class)) {
             effectivity = effectivityManager.updateSerialNumberBasedEffectivity(effectivityId,
                     effectivityDTO.getName(), effectivityDTO.getDescription(),
-                    effectivityDTO.getStartSerialNumber(), effectivityDTO.getEndSerialNumber());
+                    effectivityDTO.getStartNumber(), effectivityDTO.getEndNumber());
         } else if (effectivityDTO.getClass().equals(DateBasedEffectivityDTO.class)) {
             effectivity = effectivityManager.updateDateBasedEffectivity(effectivityId,
                     effectivityDTO.getName(), effectivityDTO.getDescription(),

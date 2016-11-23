@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 @RequestScoped
-@Api(hidden = true, value = "parts effecitivities", description = "Operation about parts effectivities")
+@Api(hidden = true, value = "parts effectivities", description = "Operation about parts effectivities")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class PartEffectivity {
@@ -68,8 +68,8 @@ public class PartEffectivity {
             ConfigurationItem configurationItem = productManager.getConfigurationItem(effectivity.getConfigurationItemKey());
             if (typeEffectivity.equals(TypeEffectivity.SERIALNUMBERBASEDEFFECTIVITY)) {
                 createdEffectivity = effectivityManager.createSerialNumberBasedEffectivity(
-                        partRevision, effectivity.getName(), effectivity.getDescription(), configurationItem, effectivity.getStartSerialNumber(),
-                        effectivity.getEndSerialNumber());
+                        partRevision, effectivity.getName(), effectivity.getDescription(), configurationItem, effectivity.getStartNumber(),
+                        effectivity.getEndNumber());
             } else if (typeEffectivity.equals(TypeEffectivity.LOTBASEDEFFECTIVITY)) {
                 createdEffectivity = effectivityManager.createLotBasedEffectivity(
                         partRevision, effectivity.getName(), effectivity.getDescription(), configurationItem, effectivity.getStartLotId(),
@@ -95,16 +95,20 @@ public class PartEffectivity {
         List<EffectivityDTO> effectivityDTOs = new ArrayList<>();
 
         for(Effectivity effectivity : effectivitySet) {
+            EffectivityDTO current = null;
             TypeEffectivity typeEffectivity = null;
-            EffectivityDTO current = mapper.map(effectivity, EffectivityDTO.class);
 
             if(effectivity.getClass().equals(SerialNumberBasedEffectivity.class)) {
+                current = mapper.map((SerialNumberBasedEffectivity) effectivity, EffectivityDTO.class);
                 typeEffectivity = TypeEffectivity.SERIALNUMBERBASEDEFFECTIVITY;
             } else if(effectivity.getClass().equals(DateBasedEffectivity.class)) {
+                current = mapper.map((DateBasedEffectivity) effectivity, EffectivityDTO.class);
                 typeEffectivity = TypeEffectivity.DATEBASEDEFFECTIVITY;
             } else if(effectivity.getClass().equals(LotBasedEffectivity.class)) {
+                current = mapper.map((LotBasedEffectivity) effectivity, EffectivityDTO.class);
                 typeEffectivity = TypeEffectivity.LOTBASEDEFFECTIVITY;
             }
+
             current.setTypeEffectivity(typeEffectivity);
             effectivityDTOs.add(current);
         }

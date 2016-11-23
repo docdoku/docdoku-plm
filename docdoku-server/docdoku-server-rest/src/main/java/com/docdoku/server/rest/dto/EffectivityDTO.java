@@ -1,6 +1,5 @@
 package com.docdoku.server.rest.dto;
 
-import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.TypeEffectivity;
 import io.swagger.annotations.ApiModel;
@@ -32,10 +31,10 @@ public class EffectivityDTO implements Serializable {
     private TypeEffectivity typeEffectivity;
 
     @ApiModelProperty(value = "Start number of the Serial Number")
-    private String startSerialNumber;
+    private String startNumber;
 
     @ApiModelProperty(value = "End number of the Serial Number")
-    private String endSerialNumber;
+    private String endNumber;
 
     @ApiModelProperty(value = "Start date of the Effectivity")
     private Date startDate;
@@ -72,13 +71,13 @@ public class EffectivityDTO implements Serializable {
 
     public void setTypeEffectivity(TypeEffectivity typeEffectivity) { this.typeEffectivity = typeEffectivity; }
 
-    public String getStartSerialNumber() { return startSerialNumber; }
+    public String getStartNumber() { return startNumber; }
 
-    public void setStartSerialNumber(String startNumber) { this.startSerialNumber = startNumber; }
+    public void setStartNumber(String startNumber) { this.startNumber = startNumber; }
 
-    public String getEndSerialNumber() { return endSerialNumber; }
+    public String getEndNumber() { return endNumber; }
 
-    public void setEndSerialNumberNumber(String endNumber) { this.endSerialNumber = endNumber; }
+    public void setEndNumber(String endNumber) { this.endNumber = endNumber; }
 
     public Date getStartDate() { return startDate; }
 
