@@ -26,7 +26,10 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
+            this.$el.html(Mustache.render(template, {
+                i18n: App.config.i18n,
+                isNewEffectivity: true
+            }));
             this.bindDomElements();
 
             this.setTypeEffectivityOptions();

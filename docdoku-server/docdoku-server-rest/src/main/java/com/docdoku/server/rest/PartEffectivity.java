@@ -78,6 +78,9 @@ public class PartEffectivity {
         }
 
         returnedEffectivityDTO = mapper.map(createdEffectivity, EffectivityDTO.class);
+        if(!createdEffectivity.getClass().equals(DateBasedEffectivity.class)) {
+            returnedEffectivityDTO.setConfigurationItemKey(effectivity.getConfigurationItemKey());
+        }
         returnedEffectivityDTO.setTypeEffectivity(effectivity.getTypeEffectivity());
         return returnedEffectivityDTO;
     }
@@ -110,6 +113,9 @@ public class PartEffectivity {
             }
 
             current.setTypeEffectivity(typeEffectivity);
+            if(!effectivity.getClass().equals(DateBasedEffectivity.class)) {
+                current.setConfigurationItemKey(effectivity.getConfigurationItem().getKey());
+            }
             effectivityDTOs.add(current);
         }
 

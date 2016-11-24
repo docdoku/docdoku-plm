@@ -65,7 +65,9 @@ public class EffectivityResource {
             typeEffectivity = TypeEffectivity.LOTBASEDEFFECTIVITY;
         }
         effectivityDTO.setTypeEffectivity(typeEffectivity);
-
+        if(!effectivity.getClass().equals(DateBasedEffectivity.class)) {
+            effectivityDTO.setConfigurationItemKey(effectivity.getConfigurationItem().getKey());
+        }
         return effectivityDTO;
     }
 
@@ -77,15 +79,15 @@ public class EffectivityResource {
             @ApiParam(required = true, value = "Effectivity id") @PathParam("effectivityId") int effectivityId,
             @ApiParam(required = true, value = "Effectivity values to update") EffectivityDTO effectivityDTO) throws EffectivityNotFoundException, UpdateException {
         Effectivity effectivity = null;
-        if(effectivityDTO.getClass().equals(SerialNumberBasedEffectivityDTO.class)) {
+        if(effectivityDTO.getTypeEffectivity().equals(TypeEffectivity.SERIALNUMBERBASEDEFFECTIVITY)) {
             effectivity = effectivityManager.updateSerialNumberBasedEffectivity(effectivityId,
                     effectivityDTO.getName(), effectivityDTO.getDescription(),
                     effectivityDTO.getStartNumber(), effectivityDTO.getEndNumber());
-        } else if (effectivityDTO.getClass().equals(DateBasedEffectivityDTO.class)) {
+        } else if (effectivityDTO.getTypeEffectivity().equals(TypeEffectivity.DATEBASEDEFFECTIVITY)) {
             effectivity = effectivityManager.updateDateBasedEffectivity(effectivityId,
                     effectivityDTO.getName(), effectivityDTO.getDescription(),
                     effectivityDTO.getStartDate(), effectivityDTO.getEndDate());
-        } else if (effectivityDTO.getClass().equals(LotBasedEffectivity.class)) {
+        } else if (effectivityDTO.getTypeEffectivity().equals(TypeEffectivity.LOTBASEDEFFECTIVITY)) {
             effectivity = effectivityManager.updateLotBasedEffectivity(effectivityId,
                     effectivityDTO.getName(), effectivityDTO.getDescription(),
                     effectivityDTO.getStartLotId(), effectivityDTO.getEndLotId());
@@ -95,6 +97,9 @@ public class EffectivityResource {
         }
         EffectivityDTO returnedEffectivityDTO = mapper.map(effectivity, EffectivityDTO.class);
         returnedEffectivityDTO.setTypeEffectivity(effectivityDTO.getTypeEffectivity());
+        if(!effectivity.getClass().equals(DateBasedEffectivity.class)) {
+            returnedEffectivityDTO.setConfigurationItemKey(effectivity.getConfigurationItem().getKey());
+        }
         return Response.ok(returnedEffectivityDTO).build();
     }
 

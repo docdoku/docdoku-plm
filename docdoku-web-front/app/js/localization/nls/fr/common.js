@@ -212,6 +212,7 @@ define({
     EMBED_SCENE: 'Exporter la scène',
     EMPTY_CHOICES:'Impossible de créer une configuration sans choix',
     EMPTY_REVISION_NOTE:'Pas de note de résivision. Ajoutez en une ou décochez cette option',
+    END: 'Fin',
 	ENTER_NAV: 'Commencer la navigation',
 	ERROR: 'Erreur',
     ERRORS: 'Erreurs : ',

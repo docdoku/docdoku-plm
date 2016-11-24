@@ -2,7 +2,7 @@
     <label class="control-label" for="inputProductId">{{i18n.PRODUCT}}</label>
 
     <div class="controls">
-        <input type="text" id="inputProductId" placeholder="{{i18n.PRODUCT}}" required/>
+        <input type="text" id="inputProductId" placeholder="{{i18n.PRODUCT}}" value="{{effectivity.configurationItemKey.id}}" required/>
     </div>
 </div>
 
@@ -10,7 +10,7 @@
     <label class="control-label" for="inputStart">{{i18n.EFFECTIVITY_START_NUMBER}}</label>
 
     <div class="controls">
-        <input type="text" id="inputStart" required/>
+        <input type="text" id="inputStart"  value="{{effectivity.startNumber}}"required/>
     </div>
 </div>
 
@@ -18,6 +18,6 @@
     <label class="control-label" for="inputEnd">{{i18n.EFFECTIVITY_END_NUMBER}}</label>
 
     <div class="controls">
-        <input type="text" id="inputEnd" required/>
+        <input type="text" id="inputEnd"  value="{{effectivity.endNumber}}"required/>
     </div>
 </div>

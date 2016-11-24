@@ -1,7 +1,12 @@
 <div id="part_creation_modal" class="modal">
     <div class="modal-header">
         <a class="close" data-dismiss="modal">×</a>
+        {{#isNewEffectivity}}
         <h3>{{i18n.NEW_EFFECTIVITY}}</h3>
+        {{/isNewEffectivity}}
+        {{^isNewEffectivity}}
+        <h3>{{i18n.UPDATE_EFFECTIVITY}}</h3>
+        {{/isNewEffectivity}}
     </div>
     <div class="modal-body">
         <div class="notifications"></div>
@@ -11,8 +16,13 @@
                 <label class="control-label" for="inputEffectivityType">{{i18n.EFFECTIVITY_TYPE}}</label>
 
                 <div class="controls">
+                    {{#isNewEffectivity}}
                     <select id="inputEffectivityType" required>
                     </select>
+                    {{/isNewEffectivity}}
+                    {{^isNewEffectivity}}
+                    <input type="text" readonly value="{{typeEffectivity}}">
+                    {{/isNewEffectivity}}
                 </div>
             </div>
 
@@ -20,7 +30,7 @@
                 <label class="control-label" for="inputEffectivityName">{{i18n.EFFECTIVITY_NAME}}</label>
 
                 <div class="controls">
-                    <input type="text" id="inputEffectivityName" placeholder="{{i18n.NAME}}"/>
+                    <input type="text" id="inputEffectivityName" placeholder="{{i18n.NAME}}" value="{{effectivity.name}}"/>
                 </div>
             </div>
 
@@ -28,7 +38,7 @@
                 <label class="control-label" for="inputEffectivityDescription">{{i18n.EFFECTIVITY_DESCRIPTION}}</label>
 
                 <div class="controls">
-                    <textarea id="inputEffectivityDescription" placeholder="{{i18n.DESCRIPTION}}" rows="3"></textarea>
+                    <textarea id="inputEffectivityDescription" placeholder="{{i18n.DESCRIPTION}}" rows="3">{{effectivity.description}}</textarea>
                 </div>
             </div>
 
@@ -37,6 +47,11 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+        {{#isNewEffectivity}}
         <button class="btn btn-primary" form="part_creation_effectivity_form">{{i18n.CREATE_NEW_EFFECTIVITY}}</button>
+        {{/isNewEffectivity}}
+        {{^isNewEffectivity}}
+        <button class="btn btn-primary" form="part_creation_effectivity_form">{{i18n.UPDATE_EFFECTIVITY}}</button>
+        {{/isNewEffectivity}}
     </div>
 </div>

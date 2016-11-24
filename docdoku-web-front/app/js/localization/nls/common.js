@@ -212,6 +212,7 @@ define({
         EMAIL:'Email',
         EMPTY_CHOICES:'Cannot create a configuration without choices.',
         EMPTY_REVISION_NOTE:'Empty revision note.Please uncheck option or write note',
+        END: 'End',
         ENTER_NAV: 'Start the navigation',
 		ERROR: 'Error',
         ERRORS: 'Errors:',

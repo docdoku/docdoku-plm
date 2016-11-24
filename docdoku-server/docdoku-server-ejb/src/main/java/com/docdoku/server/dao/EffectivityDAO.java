@@ -31,6 +31,7 @@ public class EffectivityDAO {
 
     public void updateEffectivity(Effectivity effectivity) {
         em.merge(effectivity);
+        em.flush();
     }
 
     public void removeEffectivity(Effectivity pEffectivity) {

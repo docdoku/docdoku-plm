@@ -14,22 +14,27 @@ define([
     var PartCreationView = Backbone.View.extend({
 
         events: {
-            'submit #part_creation_effectivity_form': 'onSubmitForm',
-            'change #inputEffectivityType': 'onTypeEffectivityChange'
+            'submit #part_creation_effectivity_form': 'onSubmitForm'
         },
 
         initialize: function () {
+            this.model = this.options.model;
             this.Effectivity = new Effectivity();
             this.selectedPart = this.options.selectedPart;
             this.effectivityTypes = this.Effectivity.effectivityTypes;
+            this.effectivity = this.options.effectivity;
             _.bindAll(this);
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
+            this.$el.html(Mustache.render(template, {
+                i18n: App.config.i18n,
+                isNewEffectivity: false,
+                effectivity: this.effectivity,
+                typeEffectivity: App.config.i18n[this.Effectivity.getEffectivityTypeById(this.effectivity.typeEffectivity).name]
+            }));
             this.bindDomElements();
 
-            this.setTypeEffectivityOptions();
             this.showTypeEffectivityFields();
 
             return this;
@@ -37,7 +42,6 @@ define([
 
         bindDomElements: function () {
             this.$notifications = this.$el.find('.notifications').first();
-            this.$inputEffectivityType = this.$('#inputEffectivityType');
             this.$inputEffectivityName = this.$('#inputEffectivityName');
             this.$inputEffectivityDescription = this.$('#inputEffectivityDescription');
             this.$specificFields = this.$('#specificFields');
@@ -72,45 +76,39 @@ define([
             });
         },
 
-        onTypeEffectivityChange: function() {
-            this.showTypeEffectivityFields();
-        },
-
         showTypeEffectivityFields: function() {
-            var currentType = this.$inputEffectivityType.val();
+            var currentType = this.effectivity.typeEffectivity;
             var fields = null;
             switch(currentType) {
               case this.Effectivity.getEffectivityTypeById('SERIALNUMBERBASEDEFFECTIVITY').id:
                 fields = effectivitySerialNumber;
                 break;
-              case this.Effectivity.getEffectivityTypeById('DATEBASEDEFFECTIVITY').id:
+                case this.Effectivity.getEffectivityTypeById('DATEBASEDEFFECTIVITY').id:
                 fields = effectivityDate;
+                this.effectivity.startDate = moment(this.effectivity.startDate).format('YYYY-MM-DD');
+                this.effectivity.endDate = moment(this.effectivity.endDate).format('YYYY-MM-DD');
                 break;
               case this.Effectivity.getEffectivityTypeById('LOTBASEDEFFECTIVITY').id:
                 fields = effectivityLot;
                 break;
             }
-            this.$specificFields.html(Mustache.render(fields, {i18n: App.config.i18n}));
+            this.$specificFields.html(Mustache.render(fields, {
+                i18n: App.config.i18n,
+                effectivity: this.effectivity
+            }));
             this.bindDomFieldElements();
-        },
-
-        setTypeEffectivityOptions: function () {
-            var context = this;
-            _.each(this.effectivityTypes, function (effectivity) {
-                context.$inputEffectivityType.append('<option value="' + effectivity.id + '">' + App.config.i18n[effectivity.name] + '</option>');
-            });
         },
 
         onSubmitForm: function (e) {
             this.$notifications.empty();
 
-            this.effectivity = {
-              name: this.$inputEffectivityName.val(),
-              description: this.$inputEffectivityDescription.val(),
-              typeEffectivity: this.$inputEffectivityType.val()
+            this.updatedEffectivity = {
+                name: this.$inputEffectivityName.val(),
+                description: this.$inputEffectivityDescription.val(),
+                typeEffectivity: this.effectivity.typeEffectivity
             };
 
-            var currentType = this.$inputEffectivityType.val();
+            var currentType = this.effectivity.typeEffectivity;
             var start, end;
 
             switch(currentType) {
@@ -129,39 +127,38 @@ define([
             }
 
             if(currentType !== this.Effectivity.getEffectivityTypeById('DATEBASEDEFFECTIVITY').id) {
-                this.effectivity.configurationItemKey = {
+                this.updatedEffectivity.configurationItemKey = {
                     id: this.$inputProductId.val(),
                     workspace: App.config.workspaceId
                 };
-                this.effectivity[start] = this.$inputStart.val();
-                this.effectivity[end] = this.$inputEnd.val();
+                this.updatedEffectivity[start] = this.$inputStart.val();
+                this.updatedEffectivity[end] = this.$inputEnd.val();
             } else {
-                this.effectivity[start] = moment(this.$inputStart.val()).format();
-                this.effectivity[end] = moment(this.$inputEnd.val()).format();
+                this.updatedEffectivity[start] = moment(this.$inputStart.val()).format();
+                this.updatedEffectivity[end] = moment(this.$inputEnd.val()).format();
             }
 
-            this.Part = new Part({
-              partKey: this.selectedPart.getPartKey()
-            });
-
-            this.createEffectivity();
+            this.updateEffectivity();
 
             e.preventDefault();
             e.stopPropagation();
             return false;
         },
 
-        createEffectivity: function() {
+        updateEffectivity: function() {
             var context = this;
-            this.Part.createEffectivity(this.effectivity).then(function(data) {
+            this.Effectivity.updateEffectivity(this.effectivity.id, this.updatedEffectivity).then(function(data) {
                 context.$notifications.append(new AlertView({
                     type: 'success',
-                    message: App.config.i18n.CREATE_NEW_EFFECTIVITY_SUCCESS
+                    message: App.config.i18n.UPDATE_EFFECTIVITY_SUCCESS
                 }).render().$el);
+                context.model.effectivities[_.indexOf(context.model.effectivities, context.effectivity)] = data;
+                // TODO : Transmit the change to parent PartEffectivitiesView Effectivity list
+
             }, function(error) {
                 context.$notifications.append(new AlertView({
                     type: 'error',
-                    message: error ? error.responseText : App.config.CREATE_NEW_EFFECTIVITY_ERROR
+                    message: error ? error.responseText : App.config.UPDATE_EFFECTIVITY_ERROR
                 }).render().$el);
             });
         },

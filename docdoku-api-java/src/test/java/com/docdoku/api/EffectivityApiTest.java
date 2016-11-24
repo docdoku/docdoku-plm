@@ -204,11 +204,14 @@ public class EffectivityApiTest {
         EffectivityDTO createdEffectivityDTO = partsApi.createEffectivity(effectivityDTO, workspaceId, partRevisionDTO.getNumber(), partRevisionDTO.getVersion());
 
         effectivityDTO.setName(UUID.randomUUID().toString().substring(0, 8));
+        effectivityDTO.setStartNumber("2");
         EffectivityDTO updatedEffectivityDTO = effectivityApi.updateEffectivity(createdEffectivityDTO.getId(), effectivityDTO);
 
         Assert.assertNotEquals(createdEffectivityDTO.getName(), updatedEffectivityDTO.getName());
+        Assert.assertNotEquals(createdEffectivityDTO.getStartNumber(), updatedEffectivityDTO.getStartNumber());
         Assert.assertEquals(createdEffectivityDTO.getDescription(), updatedEffectivityDTO.getDescription());
         Assert.assertEquals(createdEffectivityDTO.getTypeEffectivity(), updatedEffectivityDTO.getTypeEffectivity());
+        Assert.assertEquals(createdEffectivityDTO.getEndNumber(), updatedEffectivityDTO.getEndNumber());
 
         partsApi.deleteEffectivity(workspaceId, partRevisionDTO.getNumber(), partRevisionDTO.getVersion(), createdEffectivityDTO.getId());
 

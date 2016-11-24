@@ -10,15 +10,9 @@ define([
                                 {id: 'DATEBASEDEFFECTIVITY', name: 'EFFECTIVITY_DATE'},
                                 {id: 'LOTBASEDEFFECTIVITY', name: 'EFFECTIVITY_LOT'}],
 
-            getEffectivityTypeByName: function(typeName) {
-              return _.find(this.effectivityTypes, function(elt) {
-                return elt.name = typeName;
-              });
-            },
-
             getEffectivityTypeById: function(typeId) {
               return _.find(this.effectivityTypes, function(elt) {
-                return elt.id = typeId;
+                return elt.id === typeId;
               });
             },
 
@@ -65,6 +59,19 @@ define([
             getEndLotId: function() {
               return this.get('endLotId');
             },
+
+            getEffectivity: function(effectivityId) {
+                return $.getJSON(App.config.contextPath + '/api/effectivities/' + effectivityId);
+            },
+
+            updateEffectivity: function(effectivityId, effectivity) {
+                return $.ajax({
+                    type: 'PUT',
+                    url: App.config.contextPath + '/api/effectivities/' + effectivityId,
+                    data: JSON.stringify(effectivity),
+                    contentType: 'application/json; charset=utf-8'
+                });
+            }
 
         });
 
