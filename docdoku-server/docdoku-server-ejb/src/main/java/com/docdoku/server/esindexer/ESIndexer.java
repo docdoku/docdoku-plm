@@ -427,7 +427,7 @@ public class ESIndexer {
         try {
             generateIndex(ESTools.formatIndexName(workspaceId));
         } catch (ESIndexAlreadyExistsException e) {
-            LOGGER.log(Level.WARNING, "Cannot generate index: " + workspaceId + "already exists");
+            LOGGER.log(Level.WARNING, "Cannot generate index: " + workspaceId + " already exists");
         } catch (ESIndexNamingException e) {
             LOGGER.log(Level.SEVERE, null, e);
             if (!silent) {
