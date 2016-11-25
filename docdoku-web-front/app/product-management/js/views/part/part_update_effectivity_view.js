@@ -152,8 +152,7 @@ define([
                     type: 'success',
                     message: App.config.i18n.UPDATE_EFFECTIVITY_SUCCESS
                 }).render().$el);
-                context.model.effectivities[_.indexOf(context.model.effectivities, context.effectivity)] = data;
-                // TODO : Transmit the change to parent PartEffectivitiesView Effectivity list
+                context.options.updateCallback();
 
             }, function(error) {
                 context.$notifications.append(new AlertView({

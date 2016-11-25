@@ -13,6 +13,9 @@ define([
 
     var PartEffectivitiesView = Backbone.View.extend({
 
+        events: {
+        },
+
         initialize: function () {
             this.model.effectivities = [];
             this.Effectivity = new Effectivity();
@@ -23,7 +26,6 @@ define([
         },
 
         render:function(){
-            console.log('render');
             var context = this;
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n, editMode: this.options.editMode}));
@@ -68,14 +70,16 @@ define([
         },
 
         onButtonUpdate: function(partEffectivityView) {
+            var context = this;
             this.partUpdateEffectivityView = new PartUpdateEffectivityView({
                 model: this.model,
                 productId: this.productId,
-                effectivity: partEffectivityView.options.effectivity
+                effectivity: partEffectivityView.options.effectivity,
+                updateCallback: function() {
+                    context.render();
+                }
             }).render();
             this.partUpdateEffectivityView.openModal();
-            // TODO : See also common-objects/views/part/part_update_effectivity_view
-            // When update, has to update effectivities of the current context to render the changes
         },
 
         onButtonDelete: function(partEffectivityView) {
