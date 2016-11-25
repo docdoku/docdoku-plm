@@ -20,13 +20,13 @@
 
 package com.docdoku.api;
 
+import com.docdoku.api.client.ApiClient;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.*;
-import com.docdoku.api.services.AccountsApi;
-import com.docdoku.api.services.OrganizationsApi;
-import com.docdoku.api.services.PartsApi;
-import com.docdoku.api.services.WorkspacesApi;
+import com.docdoku.api.services.*;
+import org.junit.Assert;
 
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -90,4 +90,70 @@ public class TestUtils {
         part.setName(partName);
         return new PartsApi(TestConfig.REGULAR_USER_CLIENT).createNewPart(workspaceId, part);
     }
+
+    public static void assertUserCanEditDocument(ApiClient client, DocumentRevisionDTO document, boolean expect) {
+        DocumentApi documentApi = new DocumentApi(client);
+        try {
+            documentApi.checkOutDocument(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion(), "");
+            Assert.assertTrue(expect);
+            documentApi.undoCheckOutDocument(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion(), "");
+        } catch (ApiException e) {
+            Assert.assertFalse(expect);
+        }
+    }
+
+    public static void assertUserCanRetrieveDocument(ApiClient client, DocumentRevisionDTO document, boolean expect) {
+
+        // Unit access
+        try {
+            new DocumentApi(client).getDocumentRevision(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion());
+            Assert.assertTrue(expect);
+        } catch (ApiException e) {
+            Assert.assertEquals(403, e.getCode());
+            Assert.assertFalse(expect);
+        }
+        // From lists access
+        try {
+            List<DocumentRevisionDTO> documentsInWorkspace = new DocumentsApi(client)
+                    .getDocumentsInWorkspace(document.getWorkspaceId(), 0, 100);
+
+            DocumentRevisionDTO documentRevisionDTO = documentsInWorkspace
+                    .stream()
+                    .filter(d -> d.getDocumentMasterId().equals(document.getDocumentMasterId()))
+                    .findFirst().orElse(null);
+
+            if (expect) {
+                Assert.assertNotNull(documentRevisionDTO);
+            } else {
+                Assert.assertNull(documentRevisionDTO);
+            }
+
+        } catch (ApiException e) {
+
+        }
+
+    }
+
+
+    public static DocumentRevisionDTO createDocument(String workspaceId, List<ACLEntryDTO> userEntries, List<ACLEntryDTO> groupEntries) throws ApiException {
+        ACLDTO acl = new ACLDTO();
+
+        if(null != userEntries){
+            acl.getUserEntries().addAll(userEntries);
+        }
+
+        if(null != groupEntries) {
+            acl.getGroupEntries().addAll(groupEntries);
+        }
+
+        DocumentCreationDTO document = new DocumentCreationDTO();
+        document.setReference(TestUtils.randomString());
+        document.setAcl(acl);
+
+        DocumentRevisionDTO createdDocument = new FoldersApi(TestConfig.REGULAR_USER_CLIENT).createDocumentMasterInFolder(workspaceId, document, workspaceId);
+        return new DocumentApi(TestConfig.REGULAR_USER_CLIENT).checkInDocument(workspaceId, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
+    }
+
+
+
 }

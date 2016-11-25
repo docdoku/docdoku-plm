@@ -23,11 +23,10 @@ import com.docdoku.core.change.ChangeOrder;
 import com.docdoku.core.change.ChangeRequest;
 import com.docdoku.core.change.Milestone;
 import com.docdoku.core.exceptions.*;
-import com.docdoku.core.security.ACL;
-import com.docdoku.core.security.ACLPermission;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IChangeManagerLocal;
 import com.docdoku.server.rest.dto.ACLDTO;
+import com.docdoku.server.rest.dto.ACLEntryDTO;
 import com.docdoku.server.rest.dto.change.ChangeOrderDTO;
 import com.docdoku.server.rest.dto.change.ChangeRequestDTO;
 import com.docdoku.server.rest.dto.change.MilestoneDTO;
@@ -254,11 +253,11 @@ public class MilestonesResource {
             Map<String, String> userEntries = new HashMap<>();
             Map<String, String> groupEntries = new HashMap<>();
 
-            for (Map.Entry<String, ACLPermission> entry : acl.getUserEntries().entrySet()) {
+            for (ACLEntryDTO entry : acl.getUserEntries()) {
                 userEntries.put(entry.getKey(), entry.getValue().name());
             }
 
-            for (Map.Entry<String, ACLPermission> entry : acl.getGroupEntries().entrySet()) {
+            for (ACLEntryDTO entry : acl.getGroupEntries()) {
                 groupEntries.put(entry.getKey(), entry.getValue().name());
             }
 

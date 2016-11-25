@@ -27,30 +27,32 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 @XmlRootElement
-@ApiModel(value="ACLDTO", description="This class is the representation of an {@link com.docdoku.core.security.ACL} entity")
+@ApiModel(value = "ACLDTO", description = "This class is the representation of an {@link com.docdoku.core.security.ACL} entity")
 public class ACLDTO implements Serializable {
 
     @XmlElement(nillable = true)
     @ApiModelProperty(value = "Users ACL entries")
-    protected Map<String, ACLPermission> userEntries = new HashMap<>();
+    private List<ACLEntryDTO> userEntries = new ArrayList<>();
 
     @XmlElement(nillable = true)
     @ApiModelProperty(value = "Groups ACL entries")
-    protected Map<String, ACLPermission> groupEntries = new HashMap<>();
+    private List<ACLEntryDTO> groupEntries = new ArrayList<>();
 
     public ACLDTO() {
     }
 
     public void addUserEntry(String login, ACLPermission perm) {
-        userEntries.put(login, perm);
+        ACLEntryDTO aclEntryDTO = new ACLEntryDTO(login, perm);
+        userEntries.add(aclEntryDTO);
     }
 
     public void addGroupEntry(String groupId, ACLPermission perm) {
-        groupEntries.put(groupId, perm);
+        ACLEntryDTO aclEntryDTO = new ACLEntryDTO(groupId, perm);
+        groupEntries.add(aclEntryDTO);
     }
 
     public void removeUserEntry(String login) {
@@ -61,19 +63,19 @@ public class ACLDTO implements Serializable {
         groupEntries.remove(groupId);
     }
 
-    public Map<String, ACLPermission> getGroupEntries() {
+    public List<ACLEntryDTO> getGroupEntries() {
         return groupEntries;
     }
 
-    public void setGroupEntries(Map<String, ACLPermission> groupEntries) {
+    public void setGroupEntries(List<ACLEntryDTO> groupEntries) {
         this.groupEntries = groupEntries;
     }
 
-    public Map<String, ACLPermission> getUserEntries() {
+    public List<ACLEntryDTO> getUserEntries() {
         return userEntries;
     }
 
-    public void setUserEntries(Map<String, ACLPermission> userEntries) {
+    public void setUserEntries(List<ACLEntryDTO> userEntries) {
         this.userEntries = userEntries;
     }
 

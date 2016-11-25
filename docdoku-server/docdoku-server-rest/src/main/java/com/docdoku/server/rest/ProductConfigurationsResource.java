@@ -29,6 +29,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.ACLDTO;
+import com.docdoku.server.rest.dto.ACLEntryDTO;
 import com.docdoku.server.rest.dto.LightPartLinkDTO;
 import com.docdoku.server.rest.dto.LightPartLinkListDTO;
 import com.docdoku.server.rest.dto.baseline.ProductConfigurationDTO;
@@ -193,8 +194,12 @@ public class ProductConfigurationsResource {
         Map<String, ACLPermission> userEntries = new HashMap<>();
         Map<String, ACLPermission> grpEntries = new HashMap<>();
         if (acldto != null) {
-            userEntries = acldto.getUserEntries();
-            grpEntries = acldto.getGroupEntries();
+            for(ACLEntryDTO entry : acldto.getUserEntries()){
+                userEntries.put(entry.getKey(),entry.getValue());
+            }
+            for(ACLEntryDTO entry : acldto.getGroupEntries()){
+                grpEntries.put(entry.getKey(),entry.getValue());
+            }
         }
 
         ProductConfiguration productConfiguration = productBaselineService.createProductConfiguration(ciKey, name, description, pProductConfigurationDTO.getSubstituteLinks(), pProductConfigurationDTO.getOptionalUsageLinks(), userEntries, grpEntries);
@@ -229,11 +234,11 @@ public class ProductConfigurationsResource {
             Map<String, String> userEntries = new HashMap<>();
             Map<String, String> groupEntries = new HashMap<>();
 
-            for (Map.Entry<String, ACLPermission> entry : acl.getUserEntries().entrySet()) {
+            for (ACLEntryDTO entry : acl.getUserEntries()) {
                 userEntries.put(entry.getKey(), entry.getValue().name());
             }
 
-            for (Map.Entry<String, ACLPermission> entry : acl.getGroupEntries().entrySet()) {
+            for (ACLEntryDTO entry : acl.getGroupEntries()) {
                 groupEntries.put(entry.getKey(), entry.getValue().name());
             }
 

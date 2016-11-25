@@ -10,8 +10,8 @@ define([], function () {
             }
 
             var permission = false;
-            var userEntries = acl.userEntries.entry;
-            var groupEntries = acl.groupEntries.entry;
+            var userEntries = acl.userEntries;
+            var groupEntries = acl.groupEntries;
 
             var userLogin = App.config.login;
             var userGroups = App.config.groups;

@@ -75,16 +75,14 @@ define([
             if (this.useACL) {
 
                 var data = {};
-                data.userEntries = {};
-                data.groupEntries = {};
+                data.userEntries = [];
+                data.groupEntries = [];
 
-                data.userEntries.entry = [];
-                data.groupEntries.entry = [];
                 this.userMemberships.each(function (userMembership) {
-                    data.userEntries.entry.push({key: userMembership.key(), value: userMembership.getPermission()});
+                    data.userEntries.push({key: userMembership.key(), value: userMembership.getPermission()});
                 });
                 this.userGroupMemberships.each(function (userGroupMembership) {
-                    data.groupEntries.entry.push({key: userGroupMembership.key(), value: userGroupMembership.getPermission()});
+                    data.groupEntries.push({key: userGroupMembership.key(), value: userGroupMembership.getPermission()});
                 });
                 return data;
 

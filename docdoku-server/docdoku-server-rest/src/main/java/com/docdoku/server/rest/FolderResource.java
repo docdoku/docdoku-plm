@@ -138,13 +138,13 @@ public class FolderResource {
             userEntries = new ACLUserEntry[acl.getUserEntries().size()];
             userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
             int i = 0;
-            for (Map.Entry<String, ACLPermission> entry : acl.getUserEntries().entrySet()) {
+            for (ACLEntryDTO entry : acl.getUserEntries()) {
                 userEntries[i] = new ACLUserEntry();
                 userEntries[i].setPrincipal(new User(new Workspace(workspaceId), new Account(entry.getKey())));
                 userEntries[i++].setPermission(ACLPermission.valueOf(entry.getValue().name()));
             }
             i = 0;
-            for (Map.Entry<String, ACLPermission> entry : acl.getGroupEntries().entrySet()) {
+            for (ACLEntryDTO entry : acl.getGroupEntries()) {
                 userGroupEntries[i] = new ACLUserGroupEntry();
                 userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
                 userGroupEntries[i++].setPermission(ACLPermission.valueOf(entry.getValue().name()));

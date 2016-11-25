@@ -21,14 +21,13 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.security.ACL;
-import com.docdoku.core.security.ACLPermission;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.WorkflowModelKey;
 import com.docdoku.server.rest.dto.ACLDTO;
+import com.docdoku.server.rest.dto.ACLEntryDTO;
 import com.docdoku.server.rest.dto.ActivityModelDTO;
 import com.docdoku.server.rest.dto.WorkflowModelDTO;
 import io.swagger.annotations.*;
@@ -174,11 +173,11 @@ public class WorkflowModelResource {
             Map<String, String> userEntries = new HashMap<>();
             Map<String, String> groupEntries = new HashMap<>();
 
-            for (Map.Entry<String, ACLPermission> entry : acl.getUserEntries().entrySet()) {
+            for (ACLEntryDTO entry : acl.getUserEntries()) {
                 userEntries.put(entry.getKey(), entry.getValue().name());
             }
 
-            for (Map.Entry<String, ACLPermission> entry : acl.getGroupEntries().entrySet()) {
+            for (ACLEntryDTO entry : acl.getGroupEntries()) {
                 groupEntries.put(entry.getKey(), entry.getValue().name());
             }
 

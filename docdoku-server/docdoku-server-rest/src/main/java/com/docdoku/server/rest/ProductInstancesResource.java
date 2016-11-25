@@ -159,8 +159,12 @@ public class ProductInstancesResource {
         }
 
         if (acldto != null) {
-            userEntries = acldto.getUserEntries();
-            grpEntries = acldto.getGroupEntries();
+            for(ACLEntryDTO entry : acldto.getUserEntries()){
+                userEntries.put(entry.getKey(),entry.getValue());
+            }
+            for(ACLEntryDTO entry : acldto.getGroupEntries()){
+                grpEntries.put(entry.getKey(),entry.getValue());
+            }
         }
         Set<DocumentRevisionDTO> linkedDocs = productInstanceCreationDTO.getLinkedDocuments();
         DocumentRevisionKey[] links = null;
@@ -349,11 +353,11 @@ public class ProductInstancesResource {
             Map<String, String> userEntries = new HashMap<>();
             Map<String, String> groupEntries = new HashMap<>();
 
-            for (Map.Entry<String, ACLPermission> entry : acl.getUserEntries().entrySet()) {
+            for (ACLEntryDTO entry : acl.getUserEntries()) {
                 userEntries.put(entry.getKey(), entry.getValue().name());
             }
 
-            for (Map.Entry<String, ACLPermission> entry : acl.getGroupEntries().entrySet()) {
+            for (ACLEntryDTO entry : acl.getGroupEntries()) {
                 groupEntries.put(entry.getKey(), entry.getValue().name());
             }
 

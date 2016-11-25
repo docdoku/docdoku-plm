@@ -47,7 +47,7 @@ define([
                 that.useACL = false;
 
                 if (that.acl) {
-                    if (that.acl.userEntries.entry.length > 0 || that.acl.groupEntries.entry.length > 0) {
+                    if (that.acl.userEntries.length > 0 || that.acl.groupEntries.length > 0) {
                         that.useACL = true;
                         that.$usingAcl.removeClass('hide');
                     }
@@ -59,7 +59,7 @@ define([
                     that.onNoAclGiven();
                 } else {
 
-                    _.each(that.acl.userEntries.entry, function (entry) {
+                    _.each(that.acl.userEntries, function (entry) {
                         var userLogin = entry.key;
                         var permission = entry.value;
                         var editMode = that.options.editMode && userLogin !== that.admin.getLogin() && userLogin !== App.config.login;
@@ -69,7 +69,7 @@ define([
                     });
 
 
-                    _.each(that.acl.groupEntries.entry, function (entry) {
+                    _.each(that.acl.groupEntries, function (entry) {
                         var groupId = entry.key;
                         var permission = entry.value;
                         var editMode = that.options.editMode;
@@ -127,18 +127,15 @@ define([
         toList: function () {
 
             var dto = {};
-            dto.userEntries = {};
-            dto.groupEntries = {};
-
-            dto.userEntries.entry = [];
-            dto.groupEntries.entry = [];
+            dto.userEntries = [];
+            dto.groupEntries = [];
 
             if (this.useACL) {
                 _(this.aclUserEntries).each(function (aclEntry) {
-                    dto.userEntries.entry.push({key: aclEntry.key(), value: aclEntry.getPermission()});
+                    dto.userEntries.push({key: aclEntry.key(), value: aclEntry.getPermission()});
                 });
                 _(this.aclUserGroupEntries).each(function (aclEntry) {
-                    dto.groupEntries.entry.push({key: aclEntry.key(), value: aclEntry.getPermission()});
+                    dto.groupEntries.push({key: aclEntry.key(), value: aclEntry.getPermission()});
                 });
                 return dto;
             }
