@@ -2,7 +2,7 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/part/part_creation_effectivity_view.html',
+    'text!common-objects/templates/part/part_creation_effectivity_view.html',
     'text!common-objects/templates/part/part_effectivity_serial_number.html',
     'text!common-objects/templates/part/part_effectivity_date.html',
     'text!common-objects/templates/part/part_effectivity_lot.html',

@@ -72,6 +72,7 @@ define([
             var self = this;
             self.model.fetch().success(function () {
                 var partModalView = new PartModalView({
+                    isPartModal: true,
                     model: self.model
                 });
                 partModalView.show();

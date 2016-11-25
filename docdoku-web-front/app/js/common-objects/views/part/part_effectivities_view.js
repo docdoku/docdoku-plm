@@ -5,7 +5,7 @@ define([
     'common-objects/models/effectivity',
     'text!common-objects/templates/part/part_effectivities.html',
     'common-objects/views/part/part_effectivity_view',
-    'views/part/part_update_effectivity_view',
+    'common-objects/views/part/part_update_effectivity_view',
     'common-objects/views/alert'
 ], function (Backbone, Mustache, Effectivity, template, PartEffectivityView, PartUpdateEffectivityView, AlertView) {
 

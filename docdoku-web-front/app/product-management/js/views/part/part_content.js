@@ -8,7 +8,7 @@ define([
     'text!templates/part/part_content.html',
     'views/part/part_list',
     'views/part/part_creation_view',
-    'views/part/part_creation_effectivity_view',
+    'common-objects/views/part/part_creation_effectivity_view',
     'views/part/part_new_version',
     'common-objects/views/prompt',
     'common-objects/views/security/acl_edit',

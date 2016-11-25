@@ -32,6 +32,7 @@ define([
                 this.iterations.get(this.options.iteration) : this.model.getLastIteration();
 
             this.productId = this.options.productId;
+            this.isPartModal = this.options.isPartModal || false;
             this.productConfigSpec = this.options.productConfigSpec;
 
             ModalView.prototype.initialize.apply(this, arguments);
@@ -148,7 +149,9 @@ define([
                 this.initCadFileUploadView();
                 this.initAttachedFilesUploadView();
                 this.initAttributesView();
-                this.initPartEffectivitiesView();
+                if(this.isPartModal) {
+                    this.initPartEffectivitiesView();
+                }
                 this.initPartAssemblyView();
                 this.initLinkedDocumentsView();
                 this.initUsedByView();
